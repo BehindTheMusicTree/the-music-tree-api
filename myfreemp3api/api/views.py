@@ -18,4 +18,11 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 def SongView(request):
     if (request.method == "GET"):
-        return JsonResponse(json.loads("{\"count\": 1,\"results\": [{\"name\": \"jojo\", \"author\": \"jiji\"}]}"), safe=False)
+        return JsonResponse(json.loads("""
+        {\"count\": 2,
+        \"results\": 
+        [
+            {\"name\": \"Trauma\", \"author\": \"Nto\"},
+            {\"name\": \"Africa\", \"author\": \"Toto\"}
+        ]}
+        """), safe=False)
