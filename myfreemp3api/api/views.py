@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 import json
+from myfreemp3api.scrapper import myfreemp3_scrapper
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -18,11 +19,12 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 def SongView(request):
     if (request.method == "GET"):
-        return JsonResponse(json.loads("""
-        {\"count\": 2,
-        \"results\": 
-        [
-            {\"name\": \"Trauma\", \"author\": \"Nto\"},
-            {\"name\": \"Africa\", \"author\": \"Toto\"}
-        ]}
-        """), safe=False)
+        # return JsonResponse(json.loads("""
+        # {\"count\": 2,
+        # \"results\": 
+        # [
+        #     {\"name\": \"Trauma\", \"author\": \"Nto\"},
+        #     {\"name\": \"Africa\", \"author\": \"Toto\"}
+        # ]}
+        # """), safe=False)
+        return JsonResponse(myfreemp3_scrapper.scrap(), safe=False)
