@@ -1,8 +1,7 @@
 from pickle import FALSE, TRUE
 import requests
-import string
 import json
-import configuration as cfg
+import myfreemp3api.myfreemp3_scrapper.configuration as cfg
 
 from myfreemp3api.modele.song import Song
 
@@ -37,5 +36,5 @@ def scrap ():
         songsJsonText += json.dumps(song.__dict__)
     songsJsonText += "]}"
     print(songsJsonText)
-    
+
     return json.loads(songsJsonText)
