@@ -15,4 +15,4 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 def SongView(request):
     if (request.method == "GET"):
-        return JsonResponse(scrapper.scrap(), safe=False)
+        return JsonResponse(scrapper.scrap(request.GET.get('search', '')), safe=False)

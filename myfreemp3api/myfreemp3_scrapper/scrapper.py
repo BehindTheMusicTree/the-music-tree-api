@@ -6,11 +6,11 @@ import myfreemp3api.api.configuration as api_cfg
 
 from myfreemp3api.modele.song import Song
 
-def scrap ():
+def scrap (search):
   
     # data to be sent to api
     data = {
-        'q':'Jul',
+        'q': search,
         'page':'0'
     }
     
