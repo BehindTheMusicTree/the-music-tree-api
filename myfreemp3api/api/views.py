@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from .serializers import *
 from django.http import JsonResponse
 from myfreemp3api.myfreemp3_scrapper import scrapper
+import myfreemp3api.api.configuration as api_cfg
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -15,4 +16,5 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 def SongView(request):
     if (request.method == "GET"):
-        return JsonResponse(scrapper.scrap(), safe=False)
+        searchParameterName = api_cfg.configuration["searchParameterName"]
+        return JsonResponse(scrapper.scrap(request.GET.get(searchParameterName, '')), safe=False)

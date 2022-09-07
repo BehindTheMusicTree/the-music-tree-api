@@ -6,11 +6,11 @@ import myfreemp3api.api.configuration as api_cfg
 
 from myfreemp3api.modele.song import Song
 
-def scrap ():
+def scrap (search):
   
     # data to be sent to api
     data = {
-        'q':'Jul',
+        'q': search,
         'page':'0'
     }
     
@@ -35,12 +35,12 @@ def getSongsFromMyfreemp3Json (json):
     return songs
 
 def getJsonTextFromSongs (songs):
-    songsJsonText = "{\"" + api_cfg.configuration["dataFieldName"] + "\": ["
+    songsJsonText = "["
     firstSong = True
     for song in songs:
         if firstSong: firstSong = False
         else: songsJsonText += ", "
         songsJsonText += json.dumps(song.__dict__)
-    songsJsonText += "]}"
+    songsJsonText += "]"
     return songsJsonText
     
