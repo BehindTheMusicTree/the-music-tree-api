@@ -31,7 +31,9 @@ def getSongsFromMyfreemp3Json (json):
             songs.append(Song(
                 songJson[myfreemp3_cfg.configuration["titleFieldName"]]
                 , songJson[myfreemp3_cfg.configuration["artistFieldName"]]
-                , songJson[myfreemp3_cfg.configuration["durationFieldName"]]))
+                , songJson[myfreemp3_cfg.configuration["durationFieldName"]]
+                , songJson[myfreemp3_cfg.configuration["dateFieldName"]]
+                , songJson[myfreemp3_cfg.configuration["urlFieldName"]]))
     return songs
 
 def getJsonTextFromSongs (songs):
