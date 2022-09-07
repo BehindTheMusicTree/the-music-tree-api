@@ -16,5 +16,5 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 def SongView(request):
     if (request.method == "GET"):
-        searchParameterName = api_cfg.configuration["searchParameterName"]
-        return JsonResponse(scrapper.scrap(request.GET.get(searchParameterName, '')), safe=False)
+        queryParameterName = api_cfg.configuration["queryParameterName"]
+        return JsonResponse(scrapper.scrap(request.GET.get(queryParameterName, '')), safe=False)

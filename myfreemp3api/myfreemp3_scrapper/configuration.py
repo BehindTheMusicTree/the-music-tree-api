@@ -6,5 +6,7 @@ configuration = {
     "dataFieldName" : "response",
     "titleFieldName" : "title",
     "artistFieldName" : "artist",
+    "urlFieldName" : "url",
+    "dateFieldName" : "date",
     "durationFieldName" : "duration"
 }
