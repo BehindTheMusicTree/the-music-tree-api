@@ -35,12 +35,12 @@ def getSongsFromMyfreemp3Json (json):
     return songs
 
 def getJsonTextFromSongs (songs):
-    songsJsonText = "{\"" + api_cfg.configuration["dataFieldName"] + "\": ["
+    songsJsonText = "["
     firstSong = True
     for song in songs:
         if firstSong: firstSong = False
         else: songsJsonText += ", "
         songsJsonText += json.dumps(song.__dict__)
-    songsJsonText += "]}"
+    songsJsonText += "]"
     return songsJsonText
     
