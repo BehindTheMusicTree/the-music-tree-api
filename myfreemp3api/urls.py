@@ -16,5 +16,5 @@ urlpatterns = [
     path('users', include('django.contrib.auth.urls')),
     path('users/create', views.UserCreationView),
 
-    path('songs/', views.SongView)
+    path('songs/', views.SongsView)
 ]

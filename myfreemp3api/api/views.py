@@ -35,10 +35,19 @@ def UserCreationView(request):
         userId = user_creation_controller.CreateUser(name, email, password)
         return HttpResponseRedirect(str(userId))
 
+@csrf_exempt
+@api_view(['GET'])
+def LoginView(request):
+    if (request.method == "GET"):
+        name = request.POST['name']
+        email = request.POST['email']
+        password = request.POST['password']
+        userId = user_creation_controller.CreateUser(name, email, password)
+        return HttpResponseRedirect(str(userId))
+
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def SongView(request):
+def SongsView(request):
     if (request.method == "GET"):
-        queryParameterName = api_cfg.configuration["query"]
-        return JsonResponse(scrapper.scrap(request.GET.get(queryParameterName, '')), safe = False)
+        return JsonResponse(scrapper.scrap(request.GET.get("query", '')), safe = False)
