@@ -4,9 +4,11 @@
 
 <h1>The form method="get" attribute</h1>
 
-<form action="http://185.224.139.218:8080/user/create" method="post" target="_blank">{% csrf_token %} 
+<form action="http://127.0.0.1:8000/users/create" method="post" target="_blank">{% csrf_token %} 
   <label for="name">name:</label>
   <input type="text" id="name" name="name"><br><br>
+  <label for="email">email:</label>
+  <input type="text" id="email" name="email"><br><br>
   <label for="password">password:</label>
   <input type="text" id="password" name="password"><br><br>
   <input type="submit" value="Submit">
