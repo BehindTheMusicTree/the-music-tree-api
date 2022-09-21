@@ -16,6 +16,7 @@ def scrap (search):
     
     # sending post request and saving response as response object
     responseText = requests.post(url = myfreemp3_cfg.configuration["postUrl"], data = data).text
+
     myfreemp3songsJsonText = "{" + responseText.split("{",2)[2]
     myfreemp3songsJsonText = myfreemp3songsJsonText[:len(myfreemp3songsJsonText) - 4]
     myfreemp3songsJson = json.loads(myfreemp3songsJsonText)
@@ -24,9 +25,9 @@ def scrap (search):
     songsJsonText = getJsonTextFromSongs(songs)
     return json.loads(songsJsonText)
 
-def getSongsFromMyfreemp3Json (json):
+def getSongsFromMyfreemp3Json (dataDict):
     songs = []
-    for songJson in json[myfreemp3_cfg.configuration["dataFieldName"]]:
+    for songJson in dataDict[myfreemp3_cfg.configuration["dataFieldName"]]:
         if songJson != "apple":
             songs.append(Song(
                 songJson[myfreemp3_cfg.configuration["titleFieldName"]]

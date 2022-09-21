@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-configuration = {
-    "queryParameterName" : "query",
-    
+configuration = {    
     "dataFieldName" : "data",
     "titleFieldName" : "title",
     "artistFieldName" : "artist",
