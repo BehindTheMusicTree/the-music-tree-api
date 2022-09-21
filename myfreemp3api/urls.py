@@ -1,4 +1,5 @@
 from django.urls import include, path
+from django.contrib import admin
 
 from rest_framework import routers
 from rest_framework.authtoken import views as authtoken_views
@@ -12,8 +13,9 @@ router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('admin/', admin.site.urls),
     path('users/login', authtoken_views.obtain_auth_token),
-    path('users', include('django.contrib.auth.urls')),
+    path('users/', include('django.contrib.auth.urls')),
     path('users/create', views.UserCreationView),
 
     path('songs/', views.SongsView)
