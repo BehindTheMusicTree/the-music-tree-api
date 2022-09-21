@@ -1,4 +1,5 @@
-from ..serializers import *
+from shutil import which
+from .serializers import *
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
@@ -20,10 +21,14 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
  
-class SongDownloadView(APIView):
+class SongsExternalView(APIView):
  
     def get(self, request):
-        return JsonResponse(scrapper.scrap(request.query_params["query"]), safe = False)
+        if request.GET.get('source', False) == "myfreemp3":
+            return JsonResponse(scrapper.scrap(request.GET.get('query', False)), safe = False)
+        else:
+            return JsonResponse({'status':'false','message':"The specified source doesn\'t exist"}
+            , status=500)
 
 @csrf_exempt
 @api_view(['POST'])
