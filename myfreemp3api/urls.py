@@ -2,9 +2,10 @@ from django.urls import include, path
 from django.contrib import admin
 
 from rest_framework import routers
-from rest_framework.authtoken import views as authtoken_views
 
-from myfreemp3api.api import views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from myfreemp3api.api.views import views
 
 
 router = routers.DefaultRouter()
@@ -14,9 +15,9 @@ router.register(r'groups', views.GroupViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('users/login', authtoken_views.obtain_auth_token),
-    path('users/', include('django.contrib.auth.urls')),
-    path('users/create', views.UserCreationView),
-
-    path('songs/', views.SongsView)
+    path('auth/', include('django.contrib.auth.urls')),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('users/create/', views.UserCreationView),
+    path('song_download/search/', views.SongDownloadView.as_view()),
 ]
