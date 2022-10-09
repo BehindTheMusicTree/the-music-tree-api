@@ -20,5 +20,5 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/create/', views.UserCreationView),
     path('songs/external/', views.SongsExternalView.as_view()),
-    path('songs/external/download/', views.SongsExternalDownloadView.as_view()),
+    path('songs/external/download/', views.ExternalSongDownloadView.as_view()),
 ]
