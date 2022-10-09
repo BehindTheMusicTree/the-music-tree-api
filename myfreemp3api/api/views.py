@@ -1,6 +1,3 @@
-from pyexpat import model
-
-from myfreemp3api.api import models
 from .serializers import *
 
 from rest_framework import viewsets

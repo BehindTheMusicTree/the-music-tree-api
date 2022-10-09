@@ -1,6 +1,7 @@
 import os
 import requests
 import myfreemp3api.settings as apiSettings
+from myfreemp3api.models import SongDB
 
 def downloadExternalSong (user, song):
     userLibraryPath = apiSettings.LIBRARIES_PATH + user.get_username() + "/"
@@ -23,3 +24,6 @@ def downloadExternalSong (user, song):
 
     with open(internalSongFilePath, 'wb') as file:
         file.write(externalSong.content)
+
+    songDB = SongDB(path=internalSongFilePath, user=user)
+    songDB.save()
