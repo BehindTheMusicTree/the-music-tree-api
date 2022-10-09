@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+EXTERNAL_SOURCE_MYFREEMP3 = "myfreemp3"
+EXTERNAL_SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"
+FIELD_QUERY = "query"
+FIELD_SOURCE = "source"
+FIELD_MESSAGE = "message"
+FIELD_STATUS = "status"
+FIELD_DATA = "data"
+FIELD_TITLE = "title"
+FIELD_ARTIST = "artist"
+FIELD_URL = "url"
+FIELD_DATE = "date"
+FIELD_DURATION = "duration"
+FIELD_EXTERNAL_SONG_URL = "url"
