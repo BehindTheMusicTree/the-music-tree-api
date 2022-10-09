@@ -8,11 +8,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import os
 
-from pathlib import Path
-from datetime import timedelta
+import pathlib
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -113,13 +113,12 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=100),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=100),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 LOG_PATH = os.path.join(BASE_DIR, "log/")
-MYFREEMP3_SCRAPPER_LOG_FOLDER_PATH = os.path.join(LOG_PATH, "myfreemp3Scrapper/")
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
