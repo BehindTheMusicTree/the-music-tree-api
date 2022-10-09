@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 configuration = {    
-    "logFolderBase" : "/var/log/447bpm/",
-    "logFolderMyfreemp3" : "myfreemp3/",
+    "externalSourceMyfreemp3" : "myfreemp3",
+    "externalSourceDoesntExistMessage" : "The specified source doesn\'t exist",
 
     "dataFieldName" : "data",
     "titleFieldName" : "title",
