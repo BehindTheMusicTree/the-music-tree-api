@@ -1,5 +1,3 @@
-from .serializers import *
-
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -7,10 +5,13 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse, HttpResponseRedirect
 
+from .serializers import UserSerializer, GroupSerializer, SongDBSerializer
+
 import myfreemp3api.api.settings as apiSettings
 import myfreemp3api.myfreemp3scrapper.scrapper as myfreemp3scrapper
 import myfreemp3api.api.controller.externalSongDownloadController as externalSongDownloadController
 from myfreemp3api.model.song import Song
+from myfreemp3api.models import SongDB
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -19,8 +20,14 @@ class UserViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+class SongDBViewSet(viewsets.ModelViewSet):
+    serializer_class = SongDBSerializer
+
+    def get_queryset(self):
+        return SongDB.objects.filter(user=self.request.user)
  
-class SongsExternalView(APIView):
+class ExternalSongsView(APIView):
  
     def get(self, request):
         if request.GET.get(apiSettings.FIELD_SOURCE, False) == apiSettings.EXTERNAL_SOURCE_MYFREEMP3:

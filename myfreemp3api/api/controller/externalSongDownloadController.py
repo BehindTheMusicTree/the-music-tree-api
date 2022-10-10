@@ -13,7 +13,7 @@ def downloadExternalSong (user, song):
     externalSong = requests.get(externalSongUrl)
     externalSongName, externalSongExtension = os.path.splitext(externalSongUrl)
 
-    internalSongFilePathWithoutExtension = userLibraryPath + "/" + song.artist + " - " + song.title
+    internalSongFilePathWithoutExtension = userLibraryPath + song.artist + " - " + song.title
     internalSongFilePath = internalSongFilePathWithoutExtension + externalSongExtension
 
     existingFileCount = 0
