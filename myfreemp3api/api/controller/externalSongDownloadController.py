@@ -1,5 +1,8 @@
 import os
 import requests
+
+import eyed3
+
 import myfreemp3api.settings as apiSettings
 from myfreemp3api.models import SongDB
 
@@ -24,6 +27,15 @@ def downloadExternalSong (user, song):
 
     with open(internalSongFilePath, 'wb') as file:
         file.write(externalSong.content)
-
-    songDB = SongDB(path=internalSongFilePath, user=user)
+    
+    songfile = eyed3.load(internalSongFilePath)
+    songTags = songfile.tag
+    songDB = SongDB(path=internalSongFilePath, 
+        user=user, 
+        title=songTags.title, 
+        artist=songTags.artist, 
+        album=songTags.album, 
+        genre=songTags.genre, 
+        duration=songfile.info.time_secs, 
+        rating=songTags.popularities.get("rating"))
     songDB.save()
