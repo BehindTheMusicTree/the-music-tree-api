@@ -46,11 +46,11 @@ def getMyfreemp3ResponseJsonFromMyfreemp3ResponseText (myfreemp3ResponseJsonResp
     myfreemp3songsJsonText = myfreemp3songsJsonText[:len(myfreemp3songsJsonText) - 4]
     return json.loads(myfreemp3songsJsonText)
 
-def scrap (search):
+def scrap (search, page):
 
     dataToSendToMyfreemp3 = {
         'q': search,
-        'page':'0'
+        'page': str(page)
     }
     
     responseText = requests.post(url = myfreemp3Settings.POST_URL, data = dataToSendToMyfreemp3).text
