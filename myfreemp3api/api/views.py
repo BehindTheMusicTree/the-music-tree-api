@@ -1,10 +1,11 @@
-from urllib.parse import parse_qs, urlencode,  urlsplit
+from mutagen.easyid3 import EasyID3
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import status
 
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse, HttpResponseRedirect
@@ -13,19 +14,10 @@ from django.core.paginator import Paginator
 from .serializers import UserSerializer, GroupSerializer, SongDBSerializer
 
 import myfreemp3api.api.settings as apiSettings
-import myfreemp3api.myfreemp3scrapper.scrapper as myfreemp3scrapper
 import myfreemp3api.api.controller.externalSongDownloadController as externalSongDownloadController
-from myfreemp3api.model.song import Song
+from myfreemp3api.model.externalsong import ExternalSong
 from myfreemp3api.models import SongDB
-
-def replace_query_param(url, param, newValue):
-    parsed = urlsplit(url)
-    query_dict = parse_qs(parsed.query)
-    query_dict[param][0] = newValue
-    query_new = urlencode(query_dict, doseq=True)
-    parsed=parsed._replace(query=query_new)
-    return parsed.geturl()
-
+import myfreemp3api.myfreemp3scrapper.scrapper as myfreemp3scrapper
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -34,12 +26,52 @@ class UserViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-
+    
 class SongDBViewSet(viewsets.ModelViewSet):
     serializer_class = SongDBSerializer
 
     def get_queryset(self):
         return SongDB.objects.filter(user=self.request.user)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def song_detail(request, pk):
+    try:
+        song = SongDB.objects.get(pk=pk)
+    except song.DoesNotExist:
+        return JsonResponse(status=status.HTTP_404_NOT_FOUND)
+
+    songDBSerializer = SongDBSerializer(song, data=request.data)
+
+    if request.method == 'GET':
+        if songDBSerializer.is_valid():
+            return JsonResponse(songDBSerializer.data)
+        return JsonResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        if songDBSerializer.is_valid():
+            songDBSerializer.save()
+            songFile = EasyID3(song.path)
+            if song.title is None:
+                song.title = ""
+            songFile[apiSettings.ID3_TAG_TITLE] = song.title
+            if song.artist is None:
+                song.artist = ""
+            songFile[apiSettings.ID3_TAG_ARTIST] = song.artist
+            if song.album is None:
+                song.album = ""
+            songFile[apiSettings.ID3_TAG_ALBUM] = song.album 
+            if song.genre is None:
+                song.genre = ""
+            songFile[apiSettings.ID3_TAG_GENRE] = song.genre 
+            if song.rating is None:
+                song.rating = 0
+            songFile[apiSettings.ID3_TAG_RATING] = str(song.rating)
+            if song.language is None:
+                song.language = ""
+            songFile[apiSettings.ID3_TAG_LANGUAGE] = song.language
+            songFile.save()
+            return JsonResponse(songDBSerializer.data)
+        return JsonResponse(songDBSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class ExternalSongsView(generics.ListAPIView):
 
@@ -63,7 +95,7 @@ class ExternalSongsView(generics.ListAPIView):
                 {
                     apiSettings.FIELD_STATUS :'false',
                     apiSettings.FIELD_DURATION : apiSettings.EXTERNAL_SOURCE_DOESNT_EXIST_MESSAGE
-                }, status = 500)
+                }, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
  
 class ExternalSongDownloadView(APIView):
  
@@ -72,9 +104,14 @@ class ExternalSongDownloadView(APIView):
         title = request.POST[apiSettings.FIELD_TITLE]
         artist = request.POST[apiSettings.FIELD_ARTIST]
         date = request.POST[apiSettings.FIELD_DATE]
-        song = Song(title, artist, None, date, externalSongUrl)
-        externalSongDownloadController.downloadExternalSong(request.user, song)
-        return JsonResponse({'url': externalSongUrl}, safe = False)
+        externalSong = ExternalSong(title, artist, None, date, externalSongUrl)
+        songDB = externalSongDownloadController.downloadExternalSong(request.user, externalSong)
+        songDBSerializer = SongDBSerializer(songDB, data = request.data)
+        if songDBSerializer.is_valid():
+            return JsonResponse(songDBSerializer.data)
+        else:
+            return JsonResponse(songDBSerializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 def UserCreationView(request):
