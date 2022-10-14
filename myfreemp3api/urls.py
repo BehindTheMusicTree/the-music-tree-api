@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.contrib import admin
 
 from rest_framework import routers
@@ -10,10 +10,10 @@ from myfreemp3api.api import views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
-router.register(r'songs', views.SongDBViewSet, basename='song')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('songs/<int:pk>/', views.song_detail),
     path('admin/', admin.site.urls),
     path('auth/', include('django.contrib.auth.urls')),
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

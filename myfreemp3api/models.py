@@ -10,4 +10,5 @@ class SongDB(models.Model):
     genre = models.CharField(max_length=200, default=None, blank=True, null=True)
     duration = models.CharField(max_length=200, default=None, blank=True, null=True)
     rating = models.IntegerField (default=None, blank=True, null=True)
+    language = models.CharField (max_length=200, default=None, blank=True, null=True)
     added_on = models.DateTimeField(auto_now_add=True)

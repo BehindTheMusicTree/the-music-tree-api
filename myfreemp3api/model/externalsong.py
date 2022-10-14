@@ -1,4 +1,4 @@
-class Song:
+class ExternalSong:
     def __init__(self, title, artist, duration, date, url):
         self.title = title
         self.artist = artist
