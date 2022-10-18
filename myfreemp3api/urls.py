@@ -13,6 +13,7 @@ router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('songs/', views.song_list),
     path('songs/<int:pk>/', views.song_detail),
     path('admin/', admin.site.urls),
     path('auth/', include('django.contrib.auth.urls')),

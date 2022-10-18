@@ -1,3 +1,5 @@
+from ast import Delete
+from http.client import HTTPResponse
 from mutagen.easyid3 import EasyID3
 
 from rest_framework import viewsets
@@ -8,8 +10,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
 from django.contrib.auth.models import User, Group
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
+import django.views.defaults
 
 from .serializers import UserSerializer, GroupSerializer, SongDBSerializer
 
@@ -33,45 +36,59 @@ class SongDBViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return SongDB.objects.filter(user=self.request.user)
 
+@api_view(['GET'])
+def song_list(request):
+    try:
+        songDBs = SongDB.objects.filter(user=request.user)
+        return JsonResponse(SongDBSerializer(songDBs).data)
+
+    except SongDB.DoesNotExist as exception:
+        return django.views.defaults.page_not_found(request=request, exception=exception)
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def song_detail(request, pk):
     try:
-        song = SongDB.objects.get(pk=pk)
-    except song.DoesNotExist:
-        return JsonResponse(status=status.HTTP_404_NOT_FOUND)
+        songDB = SongDB.objects.get(pk=pk)
+    except SongDB.DoesNotExist as exception:
+        return django.views.defaults.page_not_found(request=request, exception=exception)
 
-    songDBSerializer = SongDBSerializer(song, data=request.data)
+    songDBSerializer = SongDBSerializer(songDB, data=request.data)
 
-    if request.method == 'GET':
-        if songDBSerializer.is_valid():
+    if songDBSerializer.is_valid():
+
+        if request.method == 'GET':
             return JsonResponse(songDBSerializer.data)
-        return JsonResponse(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'PUT':
-        if songDBSerializer.is_valid():
+        if request.method == 'PUT':
             songDBSerializer.save()
-            songFile = EasyID3(song.path)
-            if song.title is None:
-                song.title = ""
-            songFile[apiSettings.ID3_TAG_TITLE] = song.title
-            if song.artist is None:
-                song.artist = ""
-            songFile[apiSettings.ID3_TAG_ARTIST] = song.artist
-            if song.album is None:
-                song.album = ""
-            songFile[apiSettings.ID3_TAG_ALBUM] = song.album 
-            if song.genre is None:
-                song.genre = ""
-            songFile[apiSettings.ID3_TAG_GENRE] = song.genre 
-            if song.rating is None:
-                song.rating = 0
-            songFile[apiSettings.ID3_TAG_RATING] = str(song.rating)
-            if song.language is None:
-                song.language = ""
-            songFile[apiSettings.ID3_TAG_LANGUAGE] = song.language
+            songFile = EasyID3(songDB.path)
+            if songDB.title is None:
+                songDB.title = ""
+            songFile[apiSettings.ID3_TAG_TITLE] = songDB.title
+            if songDB.artist is None:
+                songDB.artist = ""
+            songFile[apiSettings.ID3_TAG_ARTIST] = songDB.artist
+            if songDB.album is None:
+                songDB.album = ""
+            songFile[apiSettings.ID3_TAG_ALBUM] = songDB.album 
+            if songDB.genre is None:
+                songDB.genre = ""
+            songFile[apiSettings.ID3_TAG_GENRE] = songDB.genre 
+            if songDB.rating is None:
+                songDB.rating = 0
+            songFile[apiSettings.ID3_TAG_RATING] = str(songDB.rating)
+            if songDB.language is None:
+                songDB.language = ""
+            songFile[apiSettings.ID3_TAG_LANGUAGE] = songDB.language
             songFile.save()
+
             return JsonResponse(songDBSerializer.data)
-        return JsonResponse(songDBSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if request.method == 'DELETE':
+            songDB.delete()
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+    
+    return JsonResponse(songDBSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 class ExternalSongsView(generics.ListAPIView):
 
