@@ -6,6 +6,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import generics
+from rest_framework.renderers import JSONRenderer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
@@ -138,3 +139,22 @@ def UserCreationView(request):
         password = request.POST['password']
         userId = userCreationController.CreateUser(name, email, password)
         return HttpResponseRedirect(str(userId))
+
+
+
+def get_default_payload_from_data_base_manager(count, current, next, previous, baseManagerData):
+    return get_default_payload_from_data_json(
+        count, 
+        current, 
+        next, 
+        previous, 
+        JSONRenderer().render(baseManagerData))
+
+def get_default_payload_from_data_json(count, current, next, previous, dataJson):
+    return {
+        "count": count,
+        "current": current,
+        "next": next,
+        "previous": previous,
+        "data": dataJson
+    }
