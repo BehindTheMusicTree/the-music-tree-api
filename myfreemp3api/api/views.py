@@ -1,5 +1,6 @@
 from ast import Delete
 from http.client import HTTPResponse
+import logging
 from mutagen.easyid3 import EasyID3
 
 from rest_framework import viewsets
@@ -30,18 +31,13 @@ class UserViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    
-class SongDBViewSet(viewsets.ModelViewSet):
-    serializer_class = SongDBSerializer
-
-    def get_queryset(self):
-        return SongDB.objects.filter(user=self.request.user)
 
 @api_view(['GET'])
 def song_list(request):
     try:
         songDBs = SongDB.objects.filter(user=request.user)
-        return JsonResponse(SongDBSerializer(songDBs).data)
+        data = list(songDBs.values())        
+        return get_json_response_paginated(request, data)
 
     except SongDB.DoesNotExist as exception:
         return django.views.defaults.page_not_found(request=request, exception=exception)
@@ -100,14 +96,7 @@ class ExternalSongsView(generics.ListAPIView):
             externalSongs = myfreemp3scrapper.scrap(query, pageNumber)
             paginator = Paginator(externalSongs, PageNumberPagination.page_size)
             page_object = paginator.get_page(pageNumber)
-            payload = {
-                "count": len(externalSongs),
-                "current": pageNumber,
-                "next": page_object.has_next(),
-                "previous": page_object.has_previous(),
-                "data": externalSongs
-            }
-            return JsonResponse(payload)
+            return get_json_response_paginated(request, externalSongs)
         else:
             return JsonResponse(
                 {
@@ -130,7 +119,6 @@ class ExternalSongDownloadView(APIView):
         else:
             return JsonResponse(songDBSerializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(['POST'])
 def UserCreationView(request):
     if (request.method == "POST"):
@@ -140,21 +128,16 @@ def UserCreationView(request):
         userId = userCreationController.CreateUser(name, email, password)
         return HttpResponseRedirect(str(userId))
 
+def get_json_response_paginated(request, dataJsonList):
 
+    pageNumber = request.GET.get(apiSettings.FIELD_PAGE, 0)
+    paginator = Paginator(dataJsonList, PageNumberPagination.page_size)
+    page_object = paginator.get_page(pageNumber)
 
-def get_default_payload_from_data_base_manager(count, current, next, previous, baseManagerData):
-    return get_default_payload_from_data_json(
-        count, 
-        current, 
-        next, 
-        previous, 
-        JSONRenderer().render(baseManagerData))
-
-def get_default_payload_from_data_json(count, current, next, previous, dataJson):
-    return {
-        "count": count,
-        "current": current,
-        "next": next,
-        "previous": previous,
-        "data": dataJson
-    }
+    return JsonResponse({
+        "count": len(dataJsonList),
+        "current": pageNumber,
+        "next": page_object.has_next(),
+        "previous": page_object.has_previous(),
+        "data": dataJsonList
+    })
