@@ -20,6 +20,8 @@ from myfreemp3api.models import ExternalSong
 from myfreemp3api.models import SongDB
 import myfreemp3api.myfreemp3scrapper.scrapper as myfreemp3scrapper
 
+from myfreemp3api.dao.librarySongDAO import LibrarySongDAO
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
@@ -79,7 +81,7 @@ def song_detail(request, pk):
             return JsonResponse(songDBSerializer.data)
 
         if request.method == 'DELETE':
-            songDB.delete()
+            LibrarySongDAO.delete(songDB)
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     
     return JsonResponse(songDBSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
