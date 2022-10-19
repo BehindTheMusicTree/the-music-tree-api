@@ -23,4 +23,5 @@ requests==2.22.0
 simplejson==3.16.0
 pathlib==1.0.1
 mutagen==1.46.0
+django-extensions==3.2.1
 
