@@ -9,10 +9,13 @@ from myfreemp3api.models import SongDB
 import myfreemp3api.myfreemp3scrapper.scrapper as myfreemp3scrapper
 
 class ExternalSongMyfreemp3DAO:
+    
     def get_list(query, pageNumber):
+
         return myfreemp3scrapper.scrap(query, pageNumber)
 
     def download(user, title, artist, duration, date, externalSongUrl):
+
         userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
 
         if not os.path.exists(userLibraryPath):

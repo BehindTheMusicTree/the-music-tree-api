@@ -12,15 +12,17 @@ from myfreemp3api.models import SongDB
 class LibrarySongDAO:
 
     def get(songDBId):
+        
         return SongDB.objects.get(pk=songDBId)
 
     def delete(songDBId):
+
         songDB = SongDB.objects.get(pk=songDBId)
         os.remove(songDB.path)
         songDB.delete()
 
     def update(songId, title, artist, album, genre, rating, language):
-        
+
         songDB = SongDB.objects.get(pk=songId)
         songDB.title=title
         songDB.artist=artist
