@@ -12,3 +12,11 @@ class SongDB(models.Model):
     rating = models.IntegerField (default=None, blank=True, null=True)
     language = models.CharField (max_length=200, default=None, blank=True, null=True)
     added_on = models.DateTimeField(auto_now_add=True)
+
+class ExternalSong:
+    def __init__(self, title, artist, duration, date, url):
+        self.title = title
+        self.artist = artist
+        self.duration = duration
+        self.date = date
+        self.url = url

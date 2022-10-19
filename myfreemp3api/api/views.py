@@ -1,13 +1,9 @@
-from ast import Delete
-from http.client import HTTPResponse
-import logging
 from mutagen.easyid3 import EasyID3
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import generics
-from rest_framework.renderers import JSONRenderer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
@@ -20,7 +16,7 @@ from .serializers import UserSerializer, GroupSerializer, SongDBSerializer
 
 import myfreemp3api.api.settings as apiSettings
 import myfreemp3api.api.controller.externalSongDownloadController as externalSongDownloadController
-from myfreemp3api.model.externalsong import ExternalSong
+from myfreemp3api.models import ExternalSong
 from myfreemp3api.models import SongDB
 import myfreemp3api.myfreemp3scrapper.scrapper as myfreemp3scrapper
 
@@ -88,37 +84,41 @@ def song_detail(request, pk):
     
     return JsonResponse(songDBSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
-class ExternalSongsView(generics.ListAPIView):
-
-    def list(self, request):
-        if request.GET.get(apiSettings.FIELD_SOURCE, False) == apiSettings.EXTERNAL_SOURCE_MYFREEMP3:
-            query = request.GET.get(apiSettings.FIELD_QUERY, False)
-            pageNumber = request.GET.get(apiSettings.FIELD_PAGE, 0)
-            externalSongs = myfreemp3scrapper.scrap(query, pageNumber)
-            paginator = Paginator(externalSongs, PageNumberPagination.page_size)
-            page_object = paginator.get_page(pageNumber)
-            return get_json_response_paginated(request, externalSongs)
-        else:
-            return JsonResponse(
-                {
-                    apiSettings.FIELD_STATUS :'false',
-                    apiSettings.FIELD_DURATION : apiSettings.EXTERNAL_SOURCE_DOESNT_EXIST_MESSAGE
-                }, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
+@api_view(['GET'])
+def external_song_list(request):
+    if request.GET.get(apiSettings.FIELD_SOURCE, False) == apiSettings.EXTERNAL_SOURCE_MYFREEMP3:
+        query = request.GET.get(apiSettings.FIELD_QUERY, False)
+        pageNumber = request.GET.get(apiSettings.FIELD_PAGE, 0)
+        externalSongs = myfreemp3scrapper.scrap(query, pageNumber)
+        paginator = Paginator(externalSongs, PageNumberPagination.page_size)
+        page_object = paginator.get_page(pageNumber)
+        return get_json_response_paginated(request, externalSongs)
+    else:
+        return JsonResponse(
+            {
+                apiSettings.FIELD_STATUS :'false',
+                apiSettings.FIELD_DURATION : apiSettings.EXTERNAL_SOURCE_DOESNT_EXIST_MESSAGE
+            }, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
  
-class ExternalSongDownloadView(APIView):
- 
-    def post(self, request):
-        externalSongUrl = request.POST[apiSettings.FIELD_EXTERNAL_SONG_URL]
-        title = request.POST[apiSettings.FIELD_TITLE]
-        artist = request.POST[apiSettings.FIELD_ARTIST]
-        date = request.POST[apiSettings.FIELD_DATE]
-        externalSong = ExternalSong(title, artist, None, date, externalSongUrl)
-        songDB = externalSongDownloadController.downloadExternalSong(request.user, externalSong)
-        songDBSerializer = SongDBSerializer(songDB, data = request.data)
-        if songDBSerializer.is_valid():
-            return JsonResponse(songDBSerializer.data)
-        else:
-            return JsonResponse(songDBSerializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+@api_view(['POST'])
+def external_song_download(request):
+    externalSongUrl = request.POST[apiSettings.FIELD_EXTERNAL_SONG_URL]
+    title = request.POST[apiSettings.FIELD_TITLE]
+    artist = request.POST[apiSettings.FIELD_ARTIST]
+    duration = request.POST[apiSettings.FIELD_DURATION]
+    date = request.POST[apiSettings.FIELD_DATE]
+    externalSong = ExternalSong(
+        title=title, 
+        artist=artist, 
+        duration=duration, 
+        date=date, 
+        url=externalSongUrl)
+    songDB = externalSongDownloadController.downloadExternalSong(request.user, externalSong)
+    songDBSerializer = SongDBSerializer(songDB, data=request.data, context={'request': request})
+    if songDBSerializer.is_valid():
+        return JsonResponse(songDBSerializer.data)
+    else:
+        return JsonResponse(songDBSerializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 def UserCreationView(request):
