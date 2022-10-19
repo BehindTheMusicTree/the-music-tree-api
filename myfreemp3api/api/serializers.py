@@ -17,10 +17,11 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SongDBSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='song-detail', read_only=True)
     class Meta:
         model = SongDB
         fields = [
-            "id", 
+            'url',
             "title", 
             "artist", 
             "album", 

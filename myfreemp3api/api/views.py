@@ -36,8 +36,9 @@ class GroupViewSet(viewsets.ModelViewSet):
 def song_list(request):
     try:
         songDBs = SongDB.objects.filter(user=request.user)
-        data = list(songDBs.values())        
-        return get_json_response_paginated(request, data)
+        songDBsSerializer = SongDBSerializer(songDBs, many=True, context={'request': request})
+        songDBsData = list(songDBsSerializer.data)        
+        return get_json_response_paginated(request, songDBsData)
 
     except SongDB.DoesNotExist as exception:
         return django.views.defaults.page_not_found(request=request, exception=exception)

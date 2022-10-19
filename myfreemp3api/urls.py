@@ -13,8 +13,8 @@ router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('songs/', views.song_list),
-    path('songs/<int:pk>/', views.song_detail),
+    path('songs/', views.song_list, name='song-list'),
+    path('songs/<int:pk>/', views.song_detail, name='song-detail'),
     path('admin/', admin.site.urls),
     path('auth/', include('django.contrib.auth.urls')),
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
