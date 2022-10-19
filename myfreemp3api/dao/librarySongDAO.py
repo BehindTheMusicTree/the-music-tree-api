@@ -14,7 +14,8 @@ class LibrarySongDAO:
     def get(songDBId):
         return SongDB.objects.get(pk=songDBId)
 
-    def delete(songDB):
+    def delete(songDBId):
+        songDB = SongDB.objects.get(pk=songDBId)
         os.remove(songDB.path)
         songDB.delete()
 

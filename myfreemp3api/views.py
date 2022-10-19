@@ -64,7 +64,7 @@ def song_detail(request, pk):
             return django.views.defaults.page_not_found(request=request, exception=exception)
     
     if request.method == 'DELETE':
-        LibrarySongDAO.delete(songDB)
+        LibrarySongDAO.delete(pk)
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
  
 @api_view(['GET'])
