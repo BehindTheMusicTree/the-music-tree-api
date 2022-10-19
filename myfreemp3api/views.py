@@ -14,9 +14,9 @@ import myfreemp3api.api.settings as apiSettings
 import myfreemp3api.api.controller.externalSongDownloadController as externalSongDownloadController
 from myfreemp3api.models import ExternalSong
 from myfreemp3api.models import SongDB
-import myfreemp3api.myfreemp3scrapper.scrapper as myfreemp3scrapper
 
-from myfreemp3api.dao.librarySongDAO import LibrarySongDAO
+from myfreemp3api.dao.LibrarySongDAO import LibrarySongDAO
+from myfreemp3api.dao.ExternalSongMyfreemp3DAO import ExternalSongMyfreemp3DAO
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -39,7 +39,7 @@ def song_list(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def song_detail(request, pk):
-    
+
     if request.method == 'GET':
         try:
             songDB = LibrarySongDAO.get(pk)
@@ -71,13 +71,15 @@ def song_detail(request, pk):
  
 @api_view(['GET'])
 def external_song_list(request):
-    if request.GET.get(apiSettings.FIELD_SOURCE, False) == apiSettings.EXTERNAL_SOURCE_MYFREEMP3:
-        query = request.GET.get(apiSettings.FIELD_QUERY, False)
-        pageNumber = request.GET.get(apiSettings.FIELD_PAGE, 0)
-        externalSongs = myfreemp3scrapper.scrap(query, pageNumber)
-        paginator = Paginator(externalSongs, PageNumberPagination.page_size)
-        page_object = paginator.get_page(pageNumber)
+
+    externalSource = request.GET.get(apiSettings.FIELD_SOURCE, False)
+    query = request.GET.get(apiSettings.FIELD_QUERY, False)
+    pageNumber = request.GET.get(apiSettings.FIELD_PAGE, 0)
+
+    if externalSource == apiSettings.EXTERNAL_SOURCE_MYFREEMP3:
+        externalSongs = ExternalSongMyfreemp3DAO.get_list(query, pageNumber)
         return get_json_response_paginated(request, externalSongs)
+
     else:
         return JsonResponse(
             {
