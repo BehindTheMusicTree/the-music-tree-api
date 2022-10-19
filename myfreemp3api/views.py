@@ -11,12 +11,10 @@ import django.views.defaults
 from .serializers import UserSerializer, GroupSerializer, SongDBSerializer
 
 import myfreemp3api.api.settings as apiSettings
-import myfreemp3api.api.controller.externalSongDownloadController as externalSongDownloadController
-from myfreemp3api.models import ExternalSong
 from myfreemp3api.models import SongDB
 
-from myfreemp3api.dao.LibrarySongDAO import LibrarySongDAO
-from myfreemp3api.dao.ExternalSongMyfreemp3DAO import ExternalSongMyfreemp3DAO
+from myfreemp3api.dao.librarySongDAO import LibrarySongDAO
+from myfreemp3api.dao.externalSongMyfreemp3DAO import ExternalSongMyfreemp3DAO
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -89,19 +87,17 @@ def external_song_list(request):
  
 @api_view(['POST'])
 def external_song_download(request):
-    externalSongUrl = request.POST[apiSettings.FIELD_EXTERNAL_SONG_URL]
-    title = request.POST[apiSettings.FIELD_TITLE]
-    artist = request.POST[apiSettings.FIELD_ARTIST]
-    duration = request.POST[apiSettings.FIELD_DURATION]
-    date = request.POST[apiSettings.FIELD_DATE]
-    externalSong = ExternalSong(
-        title=title, 
-        artist=artist, 
-        duration=duration, 
-        date=date, 
-        url=externalSongUrl)
-    songDB = externalSongDownloadController.downloadExternalSong(request.user, externalSong)
+
+    songDB = ExternalSongMyfreemp3DAO.download(
+        user=request.user, 
+        title=request.POST[apiSettings.FIELD_TITLE], 
+        artist=request.POST[apiSettings.FIELD_ARTIST], 
+        duration=request.POST[apiSettings.FIELD_DURATION], 
+        date=request.POST[apiSettings.FIELD_DATE], 
+        externalSongUrl=request.POST[apiSettings.FIELD_EXTERNAL_SONG_URL])
+
     songDBSerializer = SongDBSerializer(songDB, data=request.data, context={'request': request})
+
     if songDBSerializer.is_valid():
         return JsonResponse(songDBSerializer.data)
     else:
