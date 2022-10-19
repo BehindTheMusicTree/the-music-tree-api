@@ -20,6 +20,6 @@ urlpatterns = [
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/create/', views.UserCreationView),
-    path('external/songs/', views.ExternalSongsView.as_view()),
-    path('external/songs/download/', views.ExternalSongDownloadView.as_view()),
+    path('external/songs/', views.external_song_list, name='external-song-list'),
+    path('external/songs/download/', views.external_song_download, name='external-song-download'),
 ]
