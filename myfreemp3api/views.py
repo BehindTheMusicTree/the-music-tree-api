@@ -1,9 +1,5 @@
-from mutagen.easyid3 import EasyID3
-
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
-from rest_framework.views import APIView
-from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
@@ -48,43 +44,32 @@ def song_detail(request, pk):
     except SongDB.DoesNotExist as exception:
         return django.views.defaults.page_not_found(request=request, exception=exception)
 
-    songDBSerializer = SongDBSerializer(songDB, data=request.data)
 
-    if songDBSerializer.is_valid():
+    if request.method == 'GET':
+        songDB = SongDB.objects.get(pk=pk)
+        songDBSerializer = SongDBSerializer(songDB, context={'request': request})
+        return JsonResponse(songDBSerializer.data)
 
-        if request.method == 'GET':
-            return JsonResponse(songDBSerializer.data)
+    if request.method == 'PUT':        
+        try:
+            songDBUpdated = LibrarySongDAO.update(
+                songId=pk,
+                title=request.data[apiSettings.FIELD_TITLE],
+                artist=request.data[apiSettings.FIELD_ARTIST],
+                album=request.data[apiSettings.FIELD_ALBUM],
+                genre=request.data[apiSettings.FIELD_GENRE],
+                rating=request.data[apiSettings.FIELD_RATING],
+                language=request.data[apiSettings.FIELD_LANGUAGE],)
+            
+            songDBUpdatedSerializer = SongDBSerializer(songDBUpdated, context={'request': request})
+            return JsonResponse(songDBUpdatedSerializer.data)
 
-        if request.method == 'PUT':
-            songDBSerializer.save()
-            songFile = EasyID3(songDB.path)
-            if songDB.title is None:
-                songDB.title = ""
-            songFile[apiSettings.ID3_TAG_TITLE] = songDB.title
-            if songDB.artist is None:
-                songDB.artist = ""
-            songFile[apiSettings.ID3_TAG_ARTIST] = songDB.artist
-            if songDB.album is None:
-                songDB.album = ""
-            songFile[apiSettings.ID3_TAG_ALBUM] = songDB.album 
-            if songDB.genre is None:
-                songDB.genre = ""
-            songFile[apiSettings.ID3_TAG_GENRE] = songDB.genre 
-            if songDB.rating is None:
-                songDB.rating = 0
-            songFile[apiSettings.ID3_TAG_RATING] = str(songDB.rating)
-            if songDB.language is None:
-                songDB.language = ""
-            songFile[apiSettings.ID3_TAG_LANGUAGE] = songDB.language
-            songFile.save()
-
-            return JsonResponse(songDBSerializer.data)
-
-        if request.method == 'DELETE':
-            LibrarySongDAO.delete(songDB)
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        except SongDB.DoesNotExist as exception:
+            return django.views.defaults.page_not_found(request=request, exception=exception)
     
-    return JsonResponse(songDBSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'DELETE':
+        LibrarySongDAO.delete(songDB)
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
  
 @api_view(['GET'])
 def external_song_list(request):
