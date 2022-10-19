@@ -39,16 +39,14 @@ def song_list(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def song_detail(request, pk):
-    try:
-        songDB = SongDB.objects.get(pk=pk)
-    except SongDB.DoesNotExist as exception:
-        return django.views.defaults.page_not_found(request=request, exception=exception)
-
-
+    
     if request.method == 'GET':
-        songDB = SongDB.objects.get(pk=pk)
-        songDBSerializer = SongDBSerializer(songDB, context={'request': request})
-        return JsonResponse(songDBSerializer.data)
+        try:
+            songDB = LibrarySongDAO.get(pk)
+            songDBSerializer = SongDBSerializer(songDB, context={'request': request})
+            return JsonResponse(songDBSerializer.data)
+        except SongDB.DoesNotExist as exception:
+            return django.views.defaults.page_not_found(request=request, exception=exception)
 
     if request.method == 'PUT':        
         try:
