@@ -5,7 +5,7 @@ from rest_framework import routers
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from myfreemp3api.api import views
+from . import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
