@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -15,8 +16,17 @@ class SongDB(models.Model):
     language = models.CharField (max_length=200, default=None, blank=True, null=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def filename(self):
+        return os.path.basename(self.path)
+
+    @property
+    def fileExtension(self):
+        filename, fileExtension = os.path.splitext(self.path)
+        return fileExtension
+
 class ExternalSong:
-    def __init__(self, title, artist, duration, date, url):
+    def __init__(self, filename, title, artist, duration, date, url):
         self.title = title
         self.artist = artist
         self.duration = duration

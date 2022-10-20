@@ -22,6 +22,8 @@ class SongDBSerializer(serializers.HyperlinkedModelSerializer):
         model = SongDB
         fields = [
             'url',
+            'filename',
+            'fileExtension',
             "title", 
             "artist", 
             "album", 
