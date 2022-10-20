@@ -12,11 +12,11 @@ def getSongsFromMyfreemp3Json (dataDict):
     for songJson in dataDict[myfreemp3Settings.FIELD_DATA]:
         if songJson != "apple":
             songs.append(ExternalSong(
-                songJson[myfreemp3Settings.FIELD_TITLE]
-                , songJson[myfreemp3Settings.FIELD_ARTIST]
-                , songJson[myfreemp3Settings.FIELD_DURATION]
-                , songJson[myfreemp3Settings.FIELD_DATE]
-                , songJson[myfreemp3Settings.FIELD_URL]))
+                title=songJson[myfreemp3Settings.FIELD_TITLE], 
+                artist=songJson[myfreemp3Settings.FIELD_ARTIST], 
+                duration=songJson[myfreemp3Settings.FIELD_DURATION], 
+                releasedOn=songJson[myfreemp3Settings.FIELD_RELEASED_ON],
+                url=songJson[myfreemp3Settings.FIELD_URL]))
     return songs
 
 def logResponseText (responseText):

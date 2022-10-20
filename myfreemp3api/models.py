@@ -26,9 +26,9 @@ class SongDB(models.Model):
         return fileExtension
 
 class ExternalSong:
-    def __init__(self, filename, title, artist, duration, date, url):
+    def __init__(self, title, artist, duration, releasedOn, url):
         self.title = title
         self.artist = artist
         self.duration = duration
-        self.date = date
+        self.releasedOn = releasedOn
         self.url = url
