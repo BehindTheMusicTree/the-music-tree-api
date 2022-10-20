@@ -31,4 +31,4 @@ class SongDBSerializer(serializers.HyperlinkedModelSerializer):
             "duration", 
             "rating", 
             "language", 
-            "added_on"]
+            "addedOn"]
