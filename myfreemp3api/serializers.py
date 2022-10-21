@@ -1,27 +1,26 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
-from myfreemp3api.models import SongDB
+from myfreemp3api.models import LibrarySong
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups']
+        fields = ['id', 'username', 'email', 'groups']
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['url', 'name']
+        fields = ['name']
 
 
-class SongDBSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='song-detail', read_only=True)
+class LibrarySongSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SongDB
+        model = LibrarySong
         fields = [
-            'url',
+            'uuid',
             'filename',
             'fileExtension',
             "title", 

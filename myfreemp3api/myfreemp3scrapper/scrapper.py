@@ -5,13 +5,13 @@ import json
 
 import myfreemp3api.myfreemp3scrapper.settings as myfreemp3Settings
 
-from myfreemp3api.models import ExternalSong
+from myfreemp3api.models import MineSong
 
 def getSongsFromMyfreemp3Json (dataDict):
     songs = []
     for songJson in dataDict[myfreemp3Settings.FIELD_DATA]:
         if songJson != "apple":
-            songs.append(ExternalSong(
+            songs.append(MineSong(
                 title=songJson[myfreemp3Settings.FIELD_TITLE], 
                 artist=songJson[myfreemp3Settings.FIELD_ARTIST], 
                 duration=songJson[myfreemp3Settings.FIELD_DURATION], 

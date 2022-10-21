@@ -1,4 +1,4 @@
 from django.contrib import admin
 
-from .models import SongDB
-admin.site.register(SongDB)
+from .models import LibrarySong
+admin.site.register(LibrarySong)
