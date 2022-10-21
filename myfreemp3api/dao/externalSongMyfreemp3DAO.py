@@ -3,6 +3,8 @@
 import os
 import requests
 
+from slugify import slugify
+
 import myfreemp3api.settings as settings
 from myfreemp3api.models import SongDB
 
@@ -22,30 +24,33 @@ class ExternalSongMyfreemp3DAO:
             os.makedirs(userLibraryPath)
 
         externalSongFile = requests.get(externalSongUrl)
-        externalSongName, externalSongExtension = os.path.splitext(externalSongUrl)
+        externalSongName, songExtension = os.path.splitext(externalSongUrl)
 
-        internalSongFilePathWithoutExtension = userLibraryPath + artist + " - " + title
-        internalSongFilePath = internalSongFilePathWithoutExtension + externalSongExtension
+        artistTitle = artist + " - " + title
+        libraryFilename = artistTitle + songExtension
+        internalSongFilePath = userLibraryPath + libraryFilename
 
         existingFileCount = 0
         while os.path.exists(internalSongFilePath):
             existingFileCount = existingFileCount + 1
-            internalSongFilePath = internalSongFilePathWithoutExtension + " (" + str(existingFileCount) + ")" + externalSongExtension
-
+            libraryFilename = artistTitle + " (" + str(existingFileCount) + ")" + songExtension
+            internalSongFilePath = userLibraryPath + libraryFilename
 
         with open(internalSongFilePath, 'wb') as file:
             file.write(externalSongFile.content)
 
         # Tags of every myfreemp3 downloaded songs are empty 
-        songDB = SongDB(path = internalSongFilePath, 
-            user = user, 
-            title = title, 
-            artist = artist, 
-            album = "", 
-            genre = "", 
-            duration = duration,
-            rating = None,
-            language = "")
+        songDB = SongDB(
+            path=internalSongFilePath, 
+            slug=slugify(user.get_username() + " " + libraryFilename),
+            user=user, 
+            title=title, 
+            artist=artist, 
+            album="", 
+            genre="", 
+            duration=duration,
+            rating=None,
+            language="")
         songDB.save()
 
         return songDB

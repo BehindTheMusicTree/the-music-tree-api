@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
+import logging
+
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
@@ -25,7 +27,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 @api_view(['GET'])
-def song_list(request):
+def song_list(request, user_pk):
     try:
         songDBs = SongDB.objects.filter(user=request.user)
         songDBsSerializer = SongDBSerializer(songDBs, many=True, context={'request': request})
@@ -36,11 +38,11 @@ def song_list(request):
         return django.views.defaults.page_not_found(request=request, exception=exception)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def song_detail(request, pk):
+def song_detail(request, user_pk, song_pk):
 
     if request.method == 'GET':
         try:
-            songDB = LibrarySongDAO.get(pk)
+            songDB = LibrarySongDAO.get(song_pk)
             songDBSerializer = SongDBSerializer(songDB, context={'request': request})
             return JsonResponse(songDBSerializer.data)
         except SongDB.DoesNotExist as exception:
@@ -64,7 +66,7 @@ def song_detail(request, pk):
             return django.views.defaults.page_not_found(request=request, exception=exception)
     
     if request.method == 'DELETE':
-        LibrarySongDAO.delete(pk)
+        LibrarySongDAO.delete(songPk)
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
  
 @api_view(['GET'])
@@ -96,13 +98,8 @@ def external_song_download(request):
         date=request.POST[apiSettings.FIELD_DATE], 
         externalSongUrl=request.POST[apiSettings.FIELD_EXTERNAL_SONG_URL])
 
-    songDBSerializer = SongDBSerializer(songDB, data=request.data, context={'request': request})
-
-    if songDBSerializer.is_valid():
-        return JsonResponse(songDBSerializer.data)
-    else:
-        return JsonResponse(songDBSerializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    return JsonResponse(SongDBSerializer(songDB).data)
+    
 @api_view(['POST'])
 def UserCreationView(request):
     if (request.method == "POST"):
