@@ -3,8 +3,6 @@ from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
-import logging
-
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
@@ -27,7 +25,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 @api_view(['GET'])
-def song_list(request, user_pk):
+def song_list(request, userPk):
     try:
         songDBs = SongDB.objects.filter(user=request.user)
         songDBsSerializer = SongDBSerializer(songDBs, many=True)
@@ -38,20 +36,19 @@ def song_list(request, user_pk):
         return django.views.defaults.page_not_found(request=request, exception=exception)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def song_detail(request, user_pk, song_pk):
+def song_detail(request, userPk, songUuid):
 
     if request.method == 'GET':
         try:
-            songDB = LibrarySongDAO.get(song_pk)
-            songDBSerializer = SongDBSerializer(songDB, context={'request': request})
-            return JsonResponse(songDBSerializer.data)
+            songDB = LibrarySongDAO.get(songUuid)
+            return JsonResponse(SongDBSerializer(songDB).data)
         except SongDB.DoesNotExist as exception:
             return django.views.defaults.page_not_found(request=request, exception=exception)
 
     if request.method == 'PUT':        
         try:
             songDBUpdated = LibrarySongDAO.update(
-                songId=pk,
+                songUuid=songUuid,
                 title=request.data[apiSettings.FIELD_TITLE],
                 artist=request.data[apiSettings.FIELD_ARTIST],
                 album=request.data[apiSettings.FIELD_ALBUM],
@@ -66,7 +63,7 @@ def song_detail(request, user_pk, song_pk):
             return django.views.defaults.page_not_found(request=request, exception=exception)
     
     if request.method == 'DELETE':
-        LibrarySongDAO.delete(songPk)
+        LibrarySongDAO.delete(songUuid)
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
  
 @api_view(['GET'])
