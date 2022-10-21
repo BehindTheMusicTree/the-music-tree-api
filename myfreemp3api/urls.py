@@ -13,13 +13,13 @@ router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('users/<userPk>/songs/', views.song_list, name='song-list'),
-    path('users/<userPk>/songs/<songUuid>/', views.song_detail, name='song-detail'),
     path('admin/', admin.site.urls),
     path('auth/', include('django.contrib.auth.urls')),
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/create/', views.UserCreationView),
-    path('external/songs/', views.external_song_list, name='external-song-list'),
-    path('external/songs/download/', views.external_song_download, name='external-song-download'),
+    path('users/<userId>/songs/', views.library_song_list, name='library-song-list'),
+    path('users/<userId>/songs/<songId>/', views.library_song_detail, name='library-song-detail'),
+    path('mine/songs/', views.mine_song_list, name='mine-song-list'),
+    path('mine/songs/download/', views.mine_song_download, name='mine-song-download'),
 ]

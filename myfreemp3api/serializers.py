@@ -1,13 +1,13 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
-from myfreemp3api.models import SongDB
+from myfreemp3api.models import LibrarySong
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'groups']
+        fields = ['id', 'username', 'email', 'groups']
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -16,9 +16,9 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ['name']
 
 
-class SongDBSerializer(serializers.ModelSerializer):
+class LibrarySongSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SongDB
+        model = LibrarySong
         fields = [
             'uuid',
             'filename',

@@ -4,35 +4,35 @@ import os
 
 from mutagen.easyid3 import EasyID3
 
-from myfreemp3api.serializers import SongDBSerializer
+from myfreemp3api.serializers import LibrarySongSerializer
 
 import myfreemp3api.api.settings as apiSettings
-from myfreemp3api.models import SongDB
+from myfreemp3api.models import LibrarySong
 
 class LibrarySongDAO:
 
-    def get(songDBUuid):
+    def get(uuid):
         
-        return SongDB.objects.get(uuid=songDBUuid)
+        return LibrarySong.objects.get(uuid=uuid)
 
-    def delete(songDBUuid):
+    def delete(uuid):
 
-        songDB = SongDB.objects.get(uuid=songDBUuid)
-        os.remove(songDB.path)
-        songDB.delete()
+        song = LibrarySong.objects.get(uuid=uuid)
+        os.remove(song.path)
+        song.delete()
 
-    def update(songUuid, title, artist, album, genre, rating, language):
+    def update(uuid, title, artist, album, genre, rating, language):
 
-        songDB = SongDB.objects.get(uuid=songUuid)
-        songDB.title=title
-        songDB.artist=artist
-        songDB.album=album
-        songDB.genre=genre
-        songDB.rating=rating
-        songDB.language=language
-        songDB.save()
+        song = LibrarySong.objects.get(uuid=uuid)
+        song.title=title
+        song.artist=artist
+        song.album=album
+        song.genre=genre
+        song.rating=rating
+        song.language=language
+        song.save()
 
-        songFile = EasyID3(songDB.path)
+        songFile = EasyID3(song.path)
 
         if title is None:
             title = ""
@@ -54,4 +54,4 @@ class LibrarySongDAO:
         songFile[apiSettings.ID3_TAG_LANGUAGE] = language
         songFile.save()
 
-        return songDB
+        return song
