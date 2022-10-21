@@ -20,7 +20,7 @@ class SongDBSerializer(serializers.ModelSerializer):
     class Meta:
         model = SongDB
         fields = [
-            'slug',
+            'uuid',
             'filename',
             'fileExtension',
             "title", 

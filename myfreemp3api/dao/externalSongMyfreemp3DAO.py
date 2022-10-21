@@ -2,7 +2,6 @@
 
 import os
 import requests
-import uuid
 
 import myfreemp3api.settings as settings
 from myfreemp3api.models import SongDB
@@ -41,7 +40,6 @@ class ExternalSongMyfreemp3DAO:
         # Tags of every myfreemp3 downloaded songs are empty 
         songDB = SongDB(
             path=internalSongFilePath, 
-            slug=str(uuid.uuid4()),
             user=user, 
             title=title, 
             artist=artist, 

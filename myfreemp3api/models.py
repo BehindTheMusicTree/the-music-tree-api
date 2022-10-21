@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 import os
+import shortuuid
 
 from django.db import models
 from django.contrib.auth.models import User
 
 class SongDB(models.Model):
     path = models.CharField(max_length=200)
-    slug = models.CharField(max_length=200)
+    # Django's UUIDField won't validate a shortuuid
+    uuid = models.CharField(unique=True, default=shortuuid.uuid, max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, default=None, blank=True, null=True)
     artist = models.CharField(max_length=200, default=None, blank=True, null=True)
