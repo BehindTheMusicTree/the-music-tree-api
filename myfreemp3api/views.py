@@ -30,7 +30,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 def song_list(request, user_pk):
     try:
         songDBs = SongDB.objects.filter(user=request.user)
-        songDBsSerializer = SongDBSerializer(songDBs, many=True, context={'request': request})
+        songDBsSerializer = SongDBSerializer(songDBs, many=True)
         songDBsData = list(songDBsSerializer.data)        
         return get_json_response_paginated(request, songDBsData)
 

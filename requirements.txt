@@ -23,5 +23,3 @@ requests==2.22.0
 simplejson==3.16.0
 pathlib==1.0.1
 mutagen==1.46.0
-python-slugify==6.1.2
-
