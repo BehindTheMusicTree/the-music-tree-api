@@ -38,7 +38,7 @@ def library_song_list(request, userId):
         return django.views.defaults.page_not_found(request=request, exception=exception)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def library_song_detail(request, userId, songId):
+def library_song_detail(request, username, songId):
 
     if request.method == 'GET':
         try:
@@ -101,7 +101,7 @@ def mine_song_download(request):
 def user_create(request):
     
     username=request.POST[apiSettings.USER_FIELD_USERNAME]
-    if userDAO.get(username=username) != None:
+    if userDAO.exists(username=username) == True:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
     user = userDAO.create(
