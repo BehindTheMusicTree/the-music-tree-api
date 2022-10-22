@@ -1,2 +1,2 @@
-# bodzify
-Dig tracks in the cloud and sort them with a genre-oriented structure
+# Bodzify API
+API to dig and download tracks using a genre-based structure
