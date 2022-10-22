@@ -8,46 +8,45 @@ from bodzify.models import LibrarySong
 
 import bodzify.myfreemp3scrapper.scrapper as myfreemp3scrapper
 
-class MineSongMyfreemp3DAO:
-    
-    def get_list(query, pageNumber):
 
-        return myfreemp3scrapper.scrap(query, pageNumber)
+def get_list(query, pageNumber):
 
-    def download(user, title, artist, duration, date, mineSongUrl):
+    return myfreemp3scrapper.scrap(query, pageNumber)
 
-        userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
+def download(user, title, artist, duration, date, mineSongUrl):
 
-        if not os.path.exists(userLibraryPath):
-            os.makedirs(userLibraryPath)
+    userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
 
-        externalSongFile = requests.get(mineSongUrl)
-        externalSongName, songExtension = os.path.splitext(mineSongUrl)
+    if not os.path.exists(userLibraryPath):
+        os.makedirs(userLibraryPath)
 
-        artistTitle = artist + " - " + title
-        libraryFilename = artistTitle + songExtension
+    externalSongFile = requests.get(mineSongUrl)
+    externalSongName, songExtension = os.path.splitext(mineSongUrl)
+
+    artistTitle = artist + " - " + title
+    libraryFilename = artistTitle + songExtension
+    internalSongFilePath = userLibraryPath + libraryFilename
+
+    existingFileCount = 0
+    while os.path.exists(internalSongFilePath):
+        existingFileCount = existingFileCount + 1
+        libraryFilename = artistTitle + " (" + str(existingFileCount) + ")" + songExtension
         internalSongFilePath = userLibraryPath + libraryFilename
 
-        existingFileCount = 0
-        while os.path.exists(internalSongFilePath):
-            existingFileCount = existingFileCount + 1
-            libraryFilename = artistTitle + " (" + str(existingFileCount) + ")" + songExtension
-            internalSongFilePath = userLibraryPath + libraryFilename
+    with open(internalSongFilePath, 'wb') as file:
+        file.write(externalSongFile.content)
 
-        with open(internalSongFilePath, 'wb') as file:
-            file.write(externalSongFile.content)
+    # Tags of every myfreemp3 downloaded songs are empty 
+    librarySong = LibrarySong(
+        path=internalSongFilePath, 
+        user=user, 
+        title=title, 
+        artist=artist, 
+        album="", 
+        genre="", 
+        duration=duration,
+        rating=None,
+        language="")
+    librarySong.save()
 
-        # Tags of every myfreemp3 downloaded songs are empty 
-        songDB = LibrarySong(
-            path=internalSongFilePath, 
-            user=user, 
-            title=title, 
-            artist=artist, 
-            album="", 
-            genre="", 
-            duration=duration,
-            rating=None,
-            language="")
-        songDB.save()
-
-        return songDB
+    return librarySong
