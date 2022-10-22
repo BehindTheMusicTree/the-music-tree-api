@@ -10,11 +10,11 @@ import django.views.defaults
 
 from .serializers import UserSerializer, GroupSerializer, LibrarySongSerializer
 
-import myfreemp3api.api.settings as apiSettings
-from myfreemp3api.models import LibrarySong
+import bodzify.api.settings as apiSettings
+from bodzify.models import LibrarySong
 
-from myfreemp3api.dao.librarySongDAO import LibrarySongDAO
-from myfreemp3api.dao.mineSongMyfreemp3DAO import MineSongMyfreemp3DAO
+from bodzify.dao.librarySongDAO import LibrarySongDAO
+from bodzify.dao.mineSongMyfreemp3DAO import MineSongMyfreemp3DAO
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')

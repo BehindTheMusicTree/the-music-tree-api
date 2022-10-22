@@ -3,30 +3,30 @@ import os
 import requests
 import json
 
-import myfreemp3api.myfreemp3scrapper.settings as myfreemp3Settings
+import bodzify.myfreemp3scrapper.settings as myfreemp3ScrapperSettings
 
-from myfreemp3api.models import MineSong
+from bodzify.models import MineSong
 
 def getSongsFromMyfreemp3Json (dataDict):
     songs = []
-    for songJson in dataDict[myfreemp3Settings.FIELD_DATA]:
+    for songJson in dataDict[myfreemp3ScrapperSettings.FIELD_DATA]:
         if songJson != "apple":
             songs.append(MineSong(
-                title=songJson[myfreemp3Settings.FIELD_TITLE], 
-                artist=songJson[myfreemp3Settings.FIELD_ARTIST], 
-                duration=songJson[myfreemp3Settings.FIELD_DURATION], 
-                releasedOn=songJson[myfreemp3Settings.FIELD_RELEASED_ON],
-                url=songJson[myfreemp3Settings.FIELD_URL]))
+                title=songJson[myfreemp3ScrapperSettings.FIELD_TITLE], 
+                artist=songJson[myfreemp3ScrapperSettings.FIELD_ARTIST], 
+                duration=songJson[myfreemp3ScrapperSettings.FIELD_DURATION], 
+                releasedOn=songJson[myfreemp3ScrapperSettings.FIELD_RELEASED_ON],
+                url=songJson[myfreemp3ScrapperSettings.FIELD_URL]))
     return songs
 
 def logResponseText (responseText):
-    myfreemp3ScrapperLogFolderPath = myfreemp3Settings.LOG_FOLDER_PATH
+    myfreemp3ScrapperLogFolderPath = myfreemp3ScrapperSettings.LOG_FOLDER_PATH
     
     if not os.path.exists(myfreemp3ScrapperLogFolderPath):
         os.makedirs(myfreemp3ScrapperLogFolderPath)
 
-    logFileName = datetime.datetime.now().strftime(myfreemp3Settings.LOG_FILE_NAME_FORMAT) + ".txt"
-    f = open(myfreemp3Settings.LOG_FOLDER_PATH + logFileName, "x")
+    logFileName = datetime.datetime.now().strftime(myfreemp3ScrapperSettings.LOG_FILE_NAME_FORMAT) + ".txt"
+    f = open(myfreemp3ScrapperSettings.LOG_FOLDER_PATH + logFileName, "x")
     f.write(responseText)
     f.close()
 
@@ -52,7 +52,7 @@ def scrap (search, page):
         'page': str(page)
     }
     
-    responseText = requests.post(url = myfreemp3Settings.POST_URL, data = dataToSendToMyfreemp3).text
+    responseText = requests.post(url = myfreemp3ScrapperSettings.POST_URL, data = dataToSendToMyfreemp3).text
     logResponseText(responseText)
 
     myfreemp3songsJson = getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(responseText)

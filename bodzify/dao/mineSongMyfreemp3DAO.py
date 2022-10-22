@@ -3,10 +3,10 @@
 import os
 import requests
 
-import myfreemp3api.settings as settings
-from myfreemp3api.models import LibrarySong
+import bodzify.settings as settings
+from bodzify.models import LibrarySong
 
-import myfreemp3api.myfreemp3scrapper.scrapper as myfreemp3scrapper
+import bodzify.myfreemp3scrapper.scrapper as myfreemp3scrapper
 
 class MineSongMyfreemp3DAO:
     

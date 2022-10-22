@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User, Group
+
 from rest_framework import serializers
 
-from myfreemp3api.models import LibrarySong
+from bodzify.models import LibrarySong
 
 
 class UserSerializer(serializers.ModelSerializer):
