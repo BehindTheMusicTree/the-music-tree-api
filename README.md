@@ -1,2 +1,2 @@
-# myfreemp3-api-python
-API to search and download tracks from mymp3.to in python
+# Bodzify API
+API to dig and download tracks using a genre-based structure
