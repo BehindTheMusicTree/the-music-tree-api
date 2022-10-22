@@ -5,6 +5,10 @@ MINE_SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"
 MINE_FIELD_SOURCE = "source"
 MINE_FIELD_SONG_URL = "url"
 
+USER_FIELD_USERNAME = "username"
+USER_FIELD_EMAIL = "email"
+USER_FIELD_PASSWORD = "password"
+
 FIELD_QUERY = "query"
 FIELD_PAGE = "page"
 
