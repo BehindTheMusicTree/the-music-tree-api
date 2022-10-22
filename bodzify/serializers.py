@@ -8,7 +8,7 @@ from bodzify.models import LibrarySong
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'groups']
+        fields = ['username', 'email', 'groups']
 
 
 class GroupSerializer(serializers.ModelSerializer):
