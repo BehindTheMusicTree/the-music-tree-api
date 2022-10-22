@@ -4,10 +4,10 @@ import os
 
 from mutagen.easyid3 import EasyID3
 
-from myfreemp3api.serializers import LibrarySongSerializer
+from bodzify.serializers import LibrarySongSerializer
 
-import myfreemp3api.api.settings as apiSettings
-from myfreemp3api.models import LibrarySong
+import bodzify.api.settings as apiSettings
+from bodzify.models import LibrarySong
 
 class LibrarySongDAO:
 

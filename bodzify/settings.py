@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
-    'myfreemp3api'
+    'bodzify'
 ]
 
 MIDDLEWARE = [
@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'myfreemp3api.urls'
+ROOT_URLCONF = 'bodzify.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'myfreemp3api.wsgi.application'
+WSGI_APPLICATION = 'bodzify.wsgi.application'
 
 DATABASES = {
     'default': {
