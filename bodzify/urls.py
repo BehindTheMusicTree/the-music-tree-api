@@ -17,8 +17,8 @@ urlpatterns = [
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/create/', views.user_create, name='user-create'),
-    path('users/<userId>/songs/', views.library_song_list, name='library-song-list'),
-    path('users/<userId>/songs/<songId>/', views.library_song_detail, name='library-song-detail'),
+    path('users/<username>/songs/', views.library_song_list, name='library-song-list'),
+    path('users/<username>/songs/<songId>/', views.library_song_detail, name='library-song-detail'),
     path('mine/songs/', views.mine_song_list, name='mine-song-list'),
     path('mine/songs/download/', views.mine_song_download, name='mine-song-download'),
 ]
