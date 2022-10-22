@@ -1,10 +1,12 @@
 from rest_framework import viewsets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
+import rest_framework.permissions as permissions
+
 
 from django.contrib.auth.models import User, Group
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 import django.views.defaults
 
@@ -13,8 +15,9 @@ from .serializers import UserSerializer, GroupSerializer, LibrarySongSerializer
 import bodzify.api.settings as apiSettings
 from bodzify.models import LibrarySong
 
-from bodzify.dao.librarySongDAO import LibrarySongDAO
-from bodzify.dao.mineSongMyfreemp3DAO import MineSongMyfreemp3DAO
+import bodzify.dao.librarySongDAO as librarySongDAO
+import bodzify.dao.mineSongMyfreemp3DAO as mineSongMyfreemp3DAO
+import bodzify.dao.userDAO as userDAO
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
@@ -39,13 +42,13 @@ def library_song_detail(request, userId, songId):
 
     if request.method == 'GET':
         try:
-            return JsonResponse(LibrarySongSerializer(LibrarySongDAO.get(uuid=songId)).data)
+            return JsonResponse(LibrarySongSerializer(librarySongDAO.get(uuid=songId)).data)
         except LibrarySong.DoesNotExist as exception:
             return django.views.defaults.page_not_found(request=request, exception=exception)
 
     if request.method == 'PUT':        
         try:
-            songDBUpdated = LibrarySongDAO.update(
+            songDBUpdated = librarySongDAO.update(
                 uuid=songId,
                 title=request.data[apiSettings.FIELD_TITLE],
                 artist=request.data[apiSettings.FIELD_ARTIST],
@@ -60,7 +63,7 @@ def library_song_detail(request, userId, songId):
             return django.views.defaults.page_not_found(request=request, exception=exception)
     
     if request.method == 'DELETE':
-        LibrarySongDAO.delete(uuid=songId)
+        librarySongDAO.delete(uuid=songId)
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
  
 @api_view(['GET'])
@@ -71,7 +74,7 @@ def mine_song_list(request):
     pageNumber = request.GET.get(apiSettings.FIELD_PAGE, 0)
 
     if mineSource == apiSettings.MINE_SOURCE_MYFREEMP3:
-        mineSongs = MineSongMyfreemp3DAO.get_list(query, pageNumber)
+        mineSongs = mineSongMyfreemp3DAO.get_list(query, pageNumber)
         return get_json_response_paginated(request, mineSongs)
 
     else:
@@ -84,7 +87,7 @@ def mine_song_list(request):
 @api_view(['POST'])
 def mine_song_download(request):
     
-    librarySong = MineSongMyfreemp3DAO.download(
+    librarySong = mineSongMyfreemp3DAO.download(
         user=request.user, 
         title=request.POST[apiSettings.FIELD_TITLE], 
         artist=request.POST[apiSettings.FIELD_ARTIST], 
@@ -95,13 +98,17 @@ def mine_song_download(request):
     return JsonResponse(LibrarySongSerializer(librarySong).data)
     
 @api_view(['POST'])
-def UserCreationView(request):
-    if (request.method == "POST"):
-        name = request.POST['name']
-        email = request.POST['email']
-        password = request.POST['password']
-        userId = userCreationController.CreateUser(name, email, password)
-        return HttpResponseRedirect(str(userId))
+def user_create(request):
+    
+    username=request.POST[apiSettings.USER_FIELD_USERNAME]
+    if userDAO.get(username=username) != None:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+    user = userDAO.create(
+        username=username,
+        email=request.POST[apiSettings.USER_FIELD_EMAIL], 
+        password=request.POST[apiSettings.USER_FIELD_PASSWORD])
+    return JsonResponse(UserSerializer(user).data)
 
 def get_json_response_paginated(request, dataJsonList):
 
