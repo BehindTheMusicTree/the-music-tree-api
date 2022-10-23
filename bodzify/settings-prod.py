@@ -30,6 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '185.224.139.218',
     'bodzify.com',
+    'www.bodzify.com',
 ]
 
 INSTALLED_APPS = [
