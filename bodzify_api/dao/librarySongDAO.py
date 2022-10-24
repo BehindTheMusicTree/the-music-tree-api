@@ -4,10 +4,8 @@ import os
 
 from mutagen.easyid3 import EasyID3
 
-from bodzify.serializers import LibrarySongSerializer
-
-import bodzify.api.settings as apiSettings
-from bodzify.models import LibrarySong
+import bodzify_api.api.settings as apiSettings
+from bodzify_api.models import LibrarySong
 
 def get(uuid):
     

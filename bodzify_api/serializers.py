@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 
 from rest_framework import serializers
 
-from bodzify.models import LibrarySong
+from bodzify_api.models import LibrarySong
 
 
 class UserSerializer(serializers.ModelSerializer):
