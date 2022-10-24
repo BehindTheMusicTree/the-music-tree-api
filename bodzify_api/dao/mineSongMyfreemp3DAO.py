@@ -3,10 +3,10 @@
 import os
 import requests
 
-import bodzify.settings as settings
-from bodzify.models import LibrarySong
+import bodzify_api.settings as settings
+from bodzify_api.models import LibrarySong
 
-import bodzify.myfreemp3scrapper.scrapper as myfreemp3scrapper
+import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
 
 
 def get_list(query, pageNumber):

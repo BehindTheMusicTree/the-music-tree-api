@@ -5,7 +5,7 @@ from rest_framework import routers
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from . import views
+import bodzify_api.views as views
 
 router = routers.DefaultRouter()
 router.register(r'groups', views.GroupViewSet)

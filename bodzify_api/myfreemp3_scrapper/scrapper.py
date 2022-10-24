@@ -3,9 +3,8 @@ import os
 import requests
 import json
 
-import bodzify.myfreemp3scrapper.settings as myfreemp3ScrapperSettings
-
-from bodzify.models import MineSong
+import bodzify_api.myfreemp3_scrapper.settings as myfreemp3ScrapperSettings
+from bodzify_api.models import MineSong
 
 def getSongsFromMyfreemp3Json (dataDict):
     songs = []

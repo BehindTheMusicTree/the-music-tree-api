@@ -11,6 +11,10 @@ import os
 import pathlib
 import datetime
 
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
@@ -25,7 +29,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '185.224.139.218',
-    '127.0.0.1'
+    'bodzify.com',
+    'www.bodzify.com',
 ]
 
 INSTALLED_APPS = [
@@ -38,7 +43,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
-    'bodzify'
+    'bodzify_api'
 ]
 
 MIDDLEWARE = [
@@ -51,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'bodzify.urls'
+ROOT_URLCONF = 'bodzify_api.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'bodzify.wsgi.application'
+WSGI_APPLICATION = 'bodzify_api.wsgi.application'
 
 DATABASES = {
     'default': {
