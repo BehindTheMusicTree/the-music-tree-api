@@ -24,7 +24,7 @@ FIELD_RATING = "rating"
 FIELD_LANGUAGE = "language"
 FIELD_DURATION = "duration"
 FIELD_URL = "url"
-FIELD_DATE = "date"
+FIELD_RELEASE_DATE = "releaseDate"
 
 ID3_TAG_TITLE = "title"
 ID3_TAG_ARTIST = "artist"
