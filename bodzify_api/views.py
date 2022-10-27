@@ -99,11 +99,11 @@ def mine_song_download(request):
     
     librarySong = mineSongMyfreemp3DAO.download(
         user=request.user, 
-        title=request.POST[apiSettings.FIELD_TITLE], 
-        artist=request.POST[apiSettings.FIELD_ARTIST], 
-        duration=request.POST[apiSettings.FIELD_DURATION], 
-        date=request.POST[apiSettings.FIELD_DATE], 
-        mineSongUrl=request.POST[apiSettings.MINE_FIELD_SONG_URL])
+        title=request.data[apiSettings.FIELD_TITLE], 
+        artist=request.data[apiSettings.FIELD_ARTIST], 
+        duration=request.data[apiSettings.FIELD_DURATION], 
+        date=request.data[apiSettings.FIELD_RELEASE_DATE], 
+        mineSongUrl=request.data[apiSettings.MINE_FIELD_SONG_URL])
 
     return JsonResponse(LibrarySongSerializer(librarySong).data)
     
