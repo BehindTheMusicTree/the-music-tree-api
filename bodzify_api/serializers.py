@@ -22,6 +22,7 @@ class LibrarySongSerializer(serializers.ModelSerializer):
         model = LibrarySong
         fields = [
             'uuid',
+            'url',
             'filename',
             'fileExtension',
             "title", 
