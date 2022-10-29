@@ -1,0 +1,10 @@
+
+*.pyc
+
+db.sqlite3
+
+*.mp3
+
+*.log
+
+log/myfreemp3Scrapper/
