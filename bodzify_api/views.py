@@ -102,7 +102,7 @@ def mine_song_download(request):
         title=request.data[apiSettings.FIELD_TITLE], 
         artist=request.data[apiSettings.FIELD_ARTIST], 
         duration=request.data[apiSettings.FIELD_DURATION], 
-        date=request.data[apiSettings.FIELD_RELEASE_DATE], 
+        releaseDate=request.data[apiSettings.FIELD_RELEASE_DATE], 
         mineSongUrl=request.data[apiSettings.MINE_FIELD_SONG_URL])
 
     return JsonResponse(LibrarySongSerializer(librarySong).data)
