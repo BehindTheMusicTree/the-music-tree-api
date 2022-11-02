@@ -1,12 +1,13 @@
+import os
+
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 import rest_framework.exceptions as exceptions
 
-
 from django.contrib.auth.models import User, Group
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from django.core.paginator import Paginator
 import django.views.defaults
 
@@ -45,14 +46,14 @@ def library_song_detail(request, username, songId):
 
         if request.method == 'GET':
             try:
-                return JsonResponse(LibrarySongSerializer(librarySongDAO.get(uuid=songId)).data)
+                return JsonResponse(LibrarySongSerializer(librarySongDAO.get(uuid=songUuid)).data)
             except LibrarySong.DoesNotExist as exception:
                 return django.views.defaults.page_not_found(request=request, exception=exception)
 
         if request.method == 'PUT':        
             try:
                 songDBUpdated = librarySongDAO.update(
-                    uuid=songId,
+                    uuid=songUuid,
                     title=request.data[apiSettings.FIELD_TITLE],
                     artist=request.data[apiSettings.FIELD_ARTIST],
                     album=request.data[apiSettings.FIELD_ALBUM],
@@ -66,10 +67,21 @@ def library_song_detail(request, username, songId):
                 return django.views.defaults.page_not_found(request=request, exception=exception)
         
         if request.method == 'DELETE':
-            librarySongDAO.delete(uuid=songId)
+            librarySongDAO.delete(uuid=songUuid)
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     else:
         return getHttpResponseWhenPermissionDenied(request)
+
+@api_view(['GET'])
+def library_song_download(request, username, songId):
+    song = LibrarySong.objects.get(uuid=songId)
+    fileHandle = open(song.path, "rb")
+
+    response = FileResponse(fileHandle, content_type='whatever')
+    response['Content-Length'] = os.path.getsize(song.path)
+    response['Content-Disposition'] = 'attachment; filename="%s"' % song.filename
+
+    return response
 
 def getHttpResponseWhenPermissionDenied(request):
     return django.views.defaults.permission_denied(
@@ -102,7 +114,7 @@ def mine_song_download(request):
         title=request.data[apiSettings.FIELD_TITLE], 
         artist=request.data[apiSettings.FIELD_ARTIST], 
         duration=request.data[apiSettings.FIELD_DURATION], 
-        date=request.data[apiSettings.FIELD_RELEASE_DATE], 
+        releaseDate=request.data[apiSettings.FIELD_RELEASE_DATE], 
         mineSongUrl=request.data[apiSettings.MINE_FIELD_SONG_URL])
 
     return JsonResponse(LibrarySongSerializer(librarySong).data)

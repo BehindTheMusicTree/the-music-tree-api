@@ -19,6 +19,8 @@ urlpatterns = [
     path('users/create/', views.user_create, name='user-create'),
     path('users/<username>/songs/', views.library_song_list, name='library-song-list'),
     path('users/<username>/songs/<songId>/', views.library_song_detail, name='library-song-detail'),
+    path('users/<username>/songs/<songId>/download/', 
+        views.library_song_download, name='library-song-download'),
     path('mine/songs/', views.mine_song_list, name='mine-song-list'),
     path('mine/songs/download/', views.mine_song_download, name='mine-song-download'),
 ]

@@ -8,12 +8,11 @@ from bodzify_api.models import LibrarySong
 
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
 
-
 def get_list(query, pageNumber):
 
     return myfreemp3scrapper.scrap(query, pageNumber)
 
-def download(user, title, artist, duration, date, mineSongUrl):
+def download(user, title, artist, duration, releaseDate, mineSongUrl):
 
     userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
 
@@ -38,7 +37,7 @@ def download(user, title, artist, duration, date, mineSongUrl):
 
     # Tags of every myfreemp3 downloaded songs are empty 
     librarySong = LibrarySong(
-        path=internalSongFilePath, 
+        path=internalSongFilePath,
         user=user, 
         title=title, 
         artist=artist, 

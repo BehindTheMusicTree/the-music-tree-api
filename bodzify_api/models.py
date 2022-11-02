@@ -28,6 +28,10 @@ class LibrarySong(models.Model):
         filename, fileExtension = os.path.splitext(self.path)
         return fileExtension
 
+    @property
+    def relativeUrl(self):
+        return "/users/" + self.user.username + "/songs/" + self.uuid + "/"
+
 class MineSong:
     def __init__(self, title, artist, duration, releasedOn, url):
         self.title = title
