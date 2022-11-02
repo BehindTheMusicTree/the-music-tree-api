@@ -9,7 +9,6 @@ class LibrarySong(models.Model):
     path = models.CharField(max_length=200)
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(unique=True, default=shortuuid.uuid, max_length=200)
-    url = models.CharField(unique=True, max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, default=None, blank=True, null=True)
     artist = models.CharField(max_length=200, default=None, blank=True, null=True)
@@ -28,6 +27,10 @@ class LibrarySong(models.Model):
     def fileExtension(self):
         filename, fileExtension = os.path.splitext(self.path)
         return fileExtension
+
+    @property
+    def relativeUrl(self):
+        return "/users/" + self.user.username + "/songs/" + self.uuid + "/"
 
 class MineSong:
     def __init__(self, title, artist, duration, releasedOn, url):
