@@ -44,7 +44,7 @@ def download(user, title, artist, duration, releaseDate, mineSongUrl):
         album="", 
         genre="", 
         duration=duration,
-        rating=None,
+        rating=-1,
         language="")
     librarySong.save()
 
