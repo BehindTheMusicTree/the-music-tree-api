@@ -40,7 +40,7 @@ def library_song_list(request, username):
         return getHttpResponseWhenPermissionDenied(request)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def library_song_detail(request, username, songId):
+def library_song_detail(request, username, songUuid):
 
     if username == request.user.username:
 
@@ -73,8 +73,8 @@ def library_song_detail(request, username, songId):
         return getHttpResponseWhenPermissionDenied(request)
 
 @api_view(['GET'])
-def library_song_download(request, username, songId):
-    song = LibrarySong.objects.get(uuid=songId)
+def library_song_download(request, username, songUuid):
+    song = LibrarySong.objects.get(uuid=songUuid)
     fileHandle = open(song.path, "rb")
 
     response = FileResponse(fileHandle, content_type='whatever')
