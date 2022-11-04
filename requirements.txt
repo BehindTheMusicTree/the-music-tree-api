@@ -24,3 +24,4 @@ simplejson==3.16.0
 pathlib==1.0.1
 mutagen==1.46.0
 shortuuid==1.0.9
+drf-spectacular==0.24.2
