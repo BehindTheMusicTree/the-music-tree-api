@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'drf_spectacular',
     'rest_framework',
     'rest_framework.authtoken',
     'bodzify_api'
