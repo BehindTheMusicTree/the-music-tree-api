@@ -39,11 +39,10 @@ class GroupViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 def library_genre_create(request, username):
     if username == request.user.username:
-        genre = Genre(
-            name=request.data[apiSettings.LIBRARY_GENRE_NAME_FIELD], 
-            parent=request.data[apiSettings.LIBRARY_GENRE_PARENT_FIELD],
-            user=request.user)
-        genreCreated = GenreDAO.create(genre)
+        genreCreated = GenreDAO.create(
+            user=request.user, 
+            genreName=request.data[apiSettings.LIBRARY_GENRE_NAME_FIELD],
+            parentUuid=request.data[apiSettings.LIBRARY_GENRE_PARENT_UUID_FIELD])
         if genreCreated != None:
             return JsonResponse(GenreSerializer(genreCreated).data)
         else:

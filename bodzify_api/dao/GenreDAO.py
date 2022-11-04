@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 
-import logging
-
 from bodzify_api.models import Genre
 
 class GenreDAO:
-    def create(genre):
-        if Genre.objects.filter(name=genre.name, user=genre.user).exists() == False:
-            genre.save()
-            return genre
+    def create(user, genreName, parentUuid):
+        parentGenre = Genre.objects.get(uuid=parentUuid, user=user)
+        if parentGenre != None:
+            if Genre.objects.filter(name=genreName, user=user).exists() == False:
+                genre = Genre(name=genreName, parent=parentGenre, user=user)
+                genre.save()
+                return genre
+            else:
+                return None
         else:
             return None
 
