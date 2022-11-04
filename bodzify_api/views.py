@@ -40,8 +40,8 @@ class GroupViewSet(viewsets.ModelViewSet):
 def library_genre_create(request, username):
     if username == request.user.username:
         genre = Genre(
-            name=request.data["name"], 
-            parent=request.data["parent"],
+            name=request.data[apiSettings.LIBRARY_GENRE_NAME_FIELD], 
+            parent=request.data[apiSettings.LIBRARY_GENRE_PARENT_FIELD],
             user=request.user)
         genreCreated = GenreDAO.create(genre)
         if genreCreated != None:
