@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'drf_spectacular',
+    'drf_spectacular_sidecar',
     'rest_framework',
     'rest_framework.authtoken',
     'bodzify_api'
@@ -121,6 +122,9 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API to handle genre oriented music libraries ',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
 }
 
 SIMPLE_JWT = {
