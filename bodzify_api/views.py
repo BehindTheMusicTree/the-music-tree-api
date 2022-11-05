@@ -26,24 +26,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
-@api_view(['POST'])
-def library_genre_create(request, username):
-    genreCreated = GenreDAO.create(
-        user=request.user, 
-        genreName=request.data[apiSettings.LIBRARY_GENRE_NAME_FIELD],
-        parentUuid=request.data[apiSettings.LIBRARY_GENRE_PARENT_UUID_FIELD])
-    if genreCreated != None:
-        return JsonResponse(GenreSerializer(genreCreated).data)
-    else:
-        return getHttpResponseWhenIssueWithBadRequest(request)
-
-@api_view(['GET'])
-def library_genre_list(request, username):
-    if username == request.user.username:
-        genres = GenreDAO.getAllByUser(request.user)
-        genresData = list(GenreSerializer(genres, many=True).data)      
-        return get_json_response_paginated(request, genresData)
-
 def getHttpResponseWhenPermissionDenied(request):
     return django.views.defaults.permission_denied(
                 request=request, 
