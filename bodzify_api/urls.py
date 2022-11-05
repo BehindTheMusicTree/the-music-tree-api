@@ -8,9 +8,11 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 import bodzify_api.views as views
+from bodzify_api.viewset.LibraryTrackViewSet import LibraryTrackViewSet
 
 router = routers.DefaultRouter()
 router.register(r'groups', views.GroupViewSet)
+router.register(r'tracks', LibraryTrackViewSet, basename='track')
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -27,14 +29,6 @@ urlpatterns = [
         views.library_genre_create, 
         name='library-genre-create'),
     path('users/<username>/library/genres/', views.library_genre_list, name='library-genre-list'),
-
-    path('users/<username>/library/tracks/', views.library_track_list, name='library-track-list'),
-    path('users/<username>/library/tracks/<trackUuid>/', 
-        views.library_track_detail, 
-        name='library-track-detail'),
-    path('users/<username>/library/tracks/<trackUuid>/download/', 
-        views.library_track_download, 
-        name='library-track-download'),
 
     path('mine/tracks/', views.mine_track_list, name='mine-track-list'),
     path('mine/tracks/download/', views.mine_track_download, name='mine-track-download'),

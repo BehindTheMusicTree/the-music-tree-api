@@ -19,7 +19,7 @@ class Genre(models.Model):
 class LibraryTrack(models.Model):
     path = models.CharField(max_length=200)
     # Django's UUIDField won't validate a shortuuid
-    uuid = models.CharField(unique=True, default=shortuuid.uuid, max_length=200, editable=False)
+    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=200, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, default=None, blank=True, null=True)
     artist = models.CharField(max_length=200, default=None, blank=True, null=True)

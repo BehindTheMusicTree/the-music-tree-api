@@ -1,9 +1,3 @@
-import os
-
-import json
-
-import logging
-
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
@@ -11,8 +5,7 @@ from rest_framework import status
 import rest_framework.exceptions as exceptions
 
 from django.contrib.auth.models import User, Group
-from django.http import JsonResponse, HttpResponse, FileResponse
-from django.core import serializers
+from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 
 import django.views.defaults
@@ -21,9 +14,6 @@ from .serializers import UserSerializer, GroupSerializer, LibraryTrackSerializer
 
 import bodzify_api.api.settings as apiSettings
 
-from bodzify_api.models import LibraryTrack, Genre
-
-from bodzify_api.dao.LibraryTrackDAO import LibraryDAO
 from bodzify_api.dao.MineTrackMyfreemp3DAO import MineTrackMyfreemp3DAO
 from bodzify_api.dao.UserDAO import UserDAO
 from bodzify_api.dao.GenreDAO import GenreDAO
@@ -38,17 +28,14 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 def library_genre_create(request, username):
-    if username == request.user.username:
-        genreCreated = GenreDAO.create(
-            user=request.user, 
-            genreName=request.data[apiSettings.LIBRARY_GENRE_NAME_FIELD],
-            parentUuid=request.data[apiSettings.LIBRARY_GENRE_PARENT_UUID_FIELD])
-        if genreCreated != None:
-            return JsonResponse(GenreSerializer(genreCreated).data)
-        else:
-            return getHttpResponseWhenIssueWithBadRequest(request)
+    genreCreated = GenreDAO.create(
+        user=request.user, 
+        genreName=request.data[apiSettings.LIBRARY_GENRE_NAME_FIELD],
+        parentUuid=request.data[apiSettings.LIBRARY_GENRE_PARENT_UUID_FIELD])
+    if genreCreated != None:
+        return JsonResponse(GenreSerializer(genreCreated).data)
     else:
-        return getHttpResponseWhenPermissionDenied(request)
+        return getHttpResponseWhenIssueWithBadRequest(request)
 
 @api_view(['GET'])
 def library_genre_list(request, username):
@@ -56,58 +43,6 @@ def library_genre_list(request, username):
         genres = GenreDAO.getAllByUser(request.user)
         genresData = list(GenreSerializer(genres, many=True).data)      
         return get_json_response_paginated(request, genresData)
-
-@api_view(['GET'])
-def library_track_list(request, username):
-    if username == request.user.username:
-        libraryTracks = LibraryDAO.getAllByUser(request.user)
-        libraryTracksData = list(LibraryTrackSerializer(libraryTracks, many=True).data)        
-        return get_json_response_paginated(request, libraryTracksData)
-
-    else:
-        return getHttpResponseWhenPermissionDenied(request)
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def library_track_detail(request, username, trackUuid):
-    if username == request.user.username:
-        if request.method == 'GET':
-            try:
-                return JsonResponse(LibraryTrackSerializer(LibraryDAO.get(uuid=trackUuid)).data)
-            except LibraryTrack.DoesNotExist as exception:
-                return django.views.defaults.page_not_found(request=request, exception=exception)
-
-        if request.method == 'PUT':        
-            try:
-                trackDBUpdated = LibraryDAO.update(
-                    uuid=trackUuid,
-                    title=request.data[apiSettings.FIELD_TITLE],
-                    artist=request.data[apiSettings.FIELD_ARTIST],
-                    album=request.data[apiSettings.FIELD_ALBUM],
-                    genre=request.data[apiSettings.FIELD_GENRE],
-                    rating=request.data[apiSettings.FIELD_RATING],
-                    language=request.data[apiSettings.FIELD_LANGUAGE],)
-                
-                return JsonResponse(LibraryTrackSerializer(trackDBUpdated).data)
-
-            except LibraryTrack.DoesNotExist as exception:
-                return django.views.defaults.page_not_found(request=request, exception=exception)
-        
-        if request.method == 'DELETE':
-            LibraryDAO.delete(uuid=trackUuid)
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-    else:
-        return getHttpResponseWhenPermissionDenied(request)
-
-@api_view(['GET'])
-def library_track_download(request, username, trackUuid):
-    track = LibraryDAO.get(uuid=trackUuid)
-    fileHandle = open(track.path, "rb")
-
-    response = FileResponse(fileHandle, content_type='whatever')
-    response['Content-Length'] = os.path.getsize(track.path)
-    response['Content-Disposition'] = 'attachment; filename="%s"' % track.filename
-
-    return response
 
 def getHttpResponseWhenPermissionDenied(request):
     return django.views.defaults.permission_denied(
