@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 
 from rest_framework import serializers
 
-from bodzify_api.models import LibrarySong, Genre
+from bodzify_api.models import LibraryTrack, Genre
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,9 +26,9 @@ class GenreSerializer(serializers.ModelSerializer):
             'parent',
             "addedOn"]
 
-class LibrarySongSerializer(serializers.ModelSerializer):
+class LibraryTrackSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LibrarySong
+        model = LibraryTrack
         fields = [
             'uuid',
             'relativeUrl',

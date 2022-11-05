@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import os
 import shortuuid
 
@@ -15,7 +16,7 @@ class Genre(models.Model):
     def __str__(self) -> str:
         return self.uuid + " " + self.name + " " + str(self.parent)
 
-class LibrarySong(models.Model):
+class LibraryTrack(models.Model):
     path = models.CharField(max_length=200)
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(unique=True, default=shortuuid.uuid, max_length=200, editable=False)
@@ -40,9 +41,9 @@ class LibrarySong(models.Model):
 
     @property
     def relativeUrl(self):
-        return "/users/" + self.user.username + "/songs/" + self.uuid + "/"
+        return "/users/" + self.user.username + "/tracks/" + self.uuid + "/"
 
-class MineSong:
+class MineTrack:
     def __init__(self, title, artist, duration, releasedOn, url):
         self.title = title
         self.artist = artist

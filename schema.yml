@@ -210,9 +210,9 @@ paths:
       responses:
         '204':
           description: No response body
-  /mine/songs/:
+  /mine/tracks/:
     get:
-      operationId: mine_songs_retrieve
+      operationId: mine_tracks_retrieve
       tags:
       - mine
       security:
@@ -221,9 +221,9 @@ paths:
       responses:
         '200':
           description: No response body
-  /mine/songs/download/:
+  /mine/tracks/download/:
     post:
-      operationId: mine_songs_download_create
+      operationId: mine_tracks_download_create
       tags:
       - mine
       security:
@@ -266,9 +266,9 @@ paths:
       responses:
         '200':
           description: No response body
-  /users/{username}/library/songs/:
+  /users/{username}/library/tracks/:
     get:
-      operationId: users_library_songs_retrieve
+      operationId: users_library_tracks_retrieve
       parameters:
       - in: path
         name: username
@@ -283,12 +283,12 @@ paths:
       responses:
         '200':
           description: No response body
-  /users/{username}/library/songs/{songUuid}/:
+  /users/{username}/library/tracks/{trackUuid}/:
     get:
-      operationId: users_library_songs_retrieve_2
+      operationId: users_library_tracks_retrieve_2
       parameters:
       - in: path
-        name: songUuid
+        name: trackUuid
         schema:
           type: string
         required: true
@@ -306,10 +306,10 @@ paths:
         '200':
           description: No response body
     put:
-      operationId: users_library_songs_update
+      operationId: users_library_tracks_update
       parameters:
       - in: path
-        name: songUuid
+        name: trackUuid
         schema:
           type: string
         required: true
@@ -327,10 +327,10 @@ paths:
         '200':
           description: No response body
     delete:
-      operationId: users_library_songs_destroy
+      operationId: users_library_tracks_destroy
       parameters:
       - in: path
-        name: songUuid
+        name: trackUuid
         schema:
           type: string
         required: true
@@ -347,12 +347,12 @@ paths:
       responses:
         '204':
           description: No response body
-  /users/{username}/library/songs/{songUuid}/download/:
+  /users/{username}/library/tracks/{trackUuid}/download/:
     get:
-      operationId: users_library_songs_download_retrieve
+      operationId: users_library_tracks_download_retrieve
       parameters:
       - in: path
-        name: songUuid
+        name: trackUuid
         schema:
           type: string
         required: true

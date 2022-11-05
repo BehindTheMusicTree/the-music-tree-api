@@ -17,14 +17,14 @@ from django.core.paginator import Paginator
 
 import django.views.defaults
 
-from .serializers import UserSerializer, GroupSerializer, LibrarySongSerializer, GenreSerializer
+from .serializers import UserSerializer, GroupSerializer, LibraryTrackSerializer, GenreSerializer
 
 import bodzify_api.api.settings as apiSettings
 
-from bodzify_api.models import LibrarySong, Genre
+from bodzify_api.models import LibraryTrack, Genre
 
-from bodzify_api.dao.LibrarySongDAO import LibraryDAO
-from bodzify_api.dao.MineSongMyfreemp3DAO import MineSongMyfreemp3DAO
+from bodzify_api.dao.LibraryTrackDAO import LibraryDAO
+from bodzify_api.dao.MineTrackMyfreemp3DAO import MineTrackMyfreemp3DAO
 from bodzify_api.dao.UserDAO import UserDAO
 from bodzify_api.dao.GenreDAO import GenreDAO
 
@@ -58,28 +58,28 @@ def library_genre_list(request, username):
         return get_json_response_paginated(request, genresData)
 
 @api_view(['GET'])
-def library_song_list(request, username):
+def library_track_list(request, username):
     if username == request.user.username:
-        librarySongs = LibraryDAO.getAllByUser(request.user)
-        librarySongsData = list(LibrarySongSerializer(librarySongs, many=True).data)        
-        return get_json_response_paginated(request, librarySongsData)
+        libraryTracks = LibraryDAO.getAllByUser(request.user)
+        libraryTracksData = list(LibraryTrackSerializer(libraryTracks, many=True).data)        
+        return get_json_response_paginated(request, libraryTracksData)
 
     else:
         return getHttpResponseWhenPermissionDenied(request)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def library_song_detail(request, username, songUuid):
+def library_track_detail(request, username, trackUuid):
     if username == request.user.username:
         if request.method == 'GET':
             try:
-                return JsonResponse(LibrarySongSerializer(LibraryDAO.get(uuid=songUuid)).data)
-            except LibrarySong.DoesNotExist as exception:
+                return JsonResponse(LibraryTrackSerializer(LibraryDAO.get(uuid=trackUuid)).data)
+            except LibraryTrack.DoesNotExist as exception:
                 return django.views.defaults.page_not_found(request=request, exception=exception)
 
         if request.method == 'PUT':        
             try:
-                songDBUpdated = LibraryDAO.update(
-                    uuid=songUuid,
+                trackDBUpdated = LibraryDAO.update(
+                    uuid=trackUuid,
                     title=request.data[apiSettings.FIELD_TITLE],
                     artist=request.data[apiSettings.FIELD_ARTIST],
                     album=request.data[apiSettings.FIELD_ALBUM],
@@ -87,25 +87,25 @@ def library_song_detail(request, username, songUuid):
                     rating=request.data[apiSettings.FIELD_RATING],
                     language=request.data[apiSettings.FIELD_LANGUAGE],)
                 
-                return JsonResponse(LibrarySongSerializer(songDBUpdated).data)
+                return JsonResponse(LibraryTrackSerializer(trackDBUpdated).data)
 
-            except LibrarySong.DoesNotExist as exception:
+            except LibraryTrack.DoesNotExist as exception:
                 return django.views.defaults.page_not_found(request=request, exception=exception)
         
         if request.method == 'DELETE':
-            LibraryDAO.delete(uuid=songUuid)
+            LibraryDAO.delete(uuid=trackUuid)
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     else:
         return getHttpResponseWhenPermissionDenied(request)
 
 @api_view(['GET'])
-def library_song_download(request, username, songUuid):
-    song = LibraryDAO.get(uuid=songUuid)
-    fileHandle = open(song.path, "rb")
+def library_track_download(request, username, trackUuid):
+    track = LibraryDAO.get(uuid=trackUuid)
+    fileHandle = open(track.path, "rb")
 
     response = FileResponse(fileHandle, content_type='whatever')
-    response['Content-Length'] = os.path.getsize(song.path)
-    response['Content-Disposition'] = 'attachment; filename="%s"' % song.filename
+    response['Content-Length'] = os.path.getsize(track.path)
+    response['Content-Disposition'] = 'attachment; filename="%s"' % track.filename
 
     return response
 
@@ -120,14 +120,14 @@ def getHttpResponseWhenIssueWithBadRequest(request):
                 exception=exceptions.bad_request)
     
 @api_view(['GET'])
-def mine_song_list(request):
+def mine_track_list(request):
     mineSource = request.GET.get(apiSettings.MINE_FIELD_SOURCE, False)
     query = request.GET.get(apiSettings.FIELD_QUERY, False)
     pageNumber = request.GET.get(apiSettings.FIELD_PAGE, 0)
 
     if mineSource == apiSettings.MINE_SOURCE_MYFREEMP3:
-        mineSongs = MineSongMyfreemp3DAO.get_list(query, pageNumber)
-        return get_json_response_paginated(request, mineSongs)
+        mineTracks = MineTrackMyfreemp3DAO.get_list(query, pageNumber)
+        return get_json_response_paginated(request, mineTracks)
 
     else:
         return JsonResponse(
@@ -137,16 +137,16 @@ def mine_song_list(request):
             }, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
  
 @api_view(['POST'])
-def mine_song_download(request):
-    librarySong = MineSongMyfreemp3DAO.download(
+def mine_track_download(request):
+    libraryTrack = MineTrackMyfreemp3DAO.download(
         user=request.user, 
         title=request.data[apiSettings.FIELD_TITLE], 
         artist=request.data[apiSettings.FIELD_ARTIST], 
         duration=request.data[apiSettings.FIELD_DURATION], 
         releaseDate=request.data[apiSettings.FIELD_RELEASE_DATE], 
-        mineSongUrl=request.data[apiSettings.MINE_FIELD_SONG_URL])
+        mineTrackUrl=request.data[apiSettings.MINE_FIELD_SONG_URL])
 
-    return JsonResponse(LibrarySongSerializer(librarySong).data)
+    return JsonResponse(LibraryTrackSerializer(libraryTrack).data)
     
 @api_view(['POST'])
 def user_create(request):
