@@ -25,4 +25,4 @@ pathlib==1.0.1
 mutagen==1.46.0
 shortuuid==1.0.9
 drf-spectacular==0.24.2
-drf-spectacular[sidecar]==0.24.2
+drf-spectacular-sidecar==2022.11.1
