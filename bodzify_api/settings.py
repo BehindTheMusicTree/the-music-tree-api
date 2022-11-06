@@ -30,7 +30,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '185.224.139.218',
-    '127.0.0.1'
+    '127.0.0.1',
+    'bodzify.com',
+    'www.bodzify.com'
 ]
 
 INSTALLED_APPS = [
@@ -45,7 +47,6 @@ INSTALLED_APPS = [
     'drf_spectacular_sidecar',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_simplejwt',
     'bodzify_api'
 ]
 
