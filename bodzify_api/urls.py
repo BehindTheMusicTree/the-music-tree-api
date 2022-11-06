@@ -26,8 +26,7 @@ urlpatterns = [
 
     path(base + 'auth/', include('django.contrib.auth.urls')),
     path(base + 'auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    # don't know why but /auth/token/refresh/ won't work (ask for username and password)
-    path(base + 'auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path(base + 'auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path(base + 'mine/tracks/download/', views.mine_track_download, name='mine-track-download'),
 
