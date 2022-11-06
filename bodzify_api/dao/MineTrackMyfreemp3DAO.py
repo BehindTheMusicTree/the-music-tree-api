@@ -9,10 +9,10 @@ from bodzify_api.models import LibraryTrack
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
 
 class MineTrackMyfreemp3DAO:
-    def get_list(query, pageNumber):
-        return myfreemp3scrapper.scrap(query, pageNumber)
+    def list(query, pageNumber, pageSize):
+        return myfreemp3scrapper.scrap(query, pageNumber, pageSize)
 
-    def download(user, title, artist, duration, releaseDate, mineTrackUrl):
+    def download(user, title, artist, duration, releaseOn, mineTrackUrl):
         userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
 
         if not os.path.exists(userLibraryPath):

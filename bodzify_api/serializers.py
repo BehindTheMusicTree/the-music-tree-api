@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 
 from rest_framework import serializers
 
-from bodzify_api.models import LibraryTrack, Genre
+from bodzify_api.models import LibraryTrack, MineTrack, Genre, Query
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,3 +45,18 @@ class LibraryTrackSerializer(serializers.ModelSerializer):
             "rating", 
             "language", 
             "addedOn"]
+
+class MineTrackSerializer(serializers.Serializer):
+    class Meta:
+        model = MineTrack
+        fields = [
+            "title", 
+            "artist", 
+            "duration",
+            "releasedOn",
+            "url"]
+
+class QuerySerializer(serializers.Serializer):
+    class Meta:
+        model = Query
+        fields = ["query", "page", "pageNumber"]

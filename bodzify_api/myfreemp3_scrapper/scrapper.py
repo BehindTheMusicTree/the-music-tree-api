@@ -1,15 +1,18 @@
-import datetime
-import os
-import requests
-import json
+import datetime, os, requests, json
 
 import bodzify_api.myfreemp3_scrapper.settings as myfreemp3ScrapperSettings
 from bodzify_api.models import MineTrack
 
-def getTracksFromMyfreemp3Json (dataDict):
+QUERY_FIELD = "q"
+PAGE_FIELD = "page"
+PAGE_SIZE_FIELD = "page_size"
+
+TAG_TO_IGNORE = "apple"
+
+def getTracksFromMyfreemp3Json(dataDict):
     tracks = []
     for trackJson in dataDict[myfreemp3ScrapperSettings.FIELD_DATA]:
-        if trackJson != "apple":
+        if trackJson != TAG_TO_IGNORE:
             tracks.append(MineTrack(
                 title=trackJson[myfreemp3ScrapperSettings.FIELD_TITLE], 
                 artist=trackJson[myfreemp3ScrapperSettings.FIELD_ARTIST], 
@@ -18,7 +21,7 @@ def getTracksFromMyfreemp3Json (dataDict):
                 url=trackJson[myfreemp3ScrapperSettings.FIELD_URL]))
     return tracks
 
-def logResponseText (responseText):
+def logResponseText(responseText):
     myfreemp3ScrapperLogFolderPath = myfreemp3ScrapperSettings.LOG_FOLDER_PATH
     
     if not os.path.exists(myfreemp3ScrapperLogFolderPath):
@@ -29,7 +32,7 @@ def logResponseText (responseText):
     f.write(responseText)
     f.close()
 
-def getJsonTextFromTracks (tracks):
+def getJsonTextFromTracks(tracks):
     tracksJsonText = "["
     firstTrack = True
     for track in tracks:
@@ -39,16 +42,15 @@ def getJsonTextFromTracks (tracks):
     tracksJsonText += "]"
     return tracksJsonText
 
-def getMyfreemp3ResponseJsonFromMyfreemp3ResponseText (myfreemp3ResponseJsonResponseText):
+def getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(myfreemp3ResponseJsonResponseText):
     myfreemp3tracksJsonText = "{" + myfreemp3ResponseJsonResponseText.split("{",2)[2]
     myfreemp3tracksJsonText = myfreemp3tracksJsonText[:len(myfreemp3tracksJsonText) - 4]
     return json.loads(myfreemp3tracksJsonText)
 
-def scrap (search, page):
-
+def scrap(search, page, pageSize):
     dataToSendToMyfreemp3 = {
-        'q': search,
-        'page': str(page)
+        QUERY_FIELD: search,
+        PAGE_FIELD: str(page)
     }
     
     responseText = requests.post(url = myfreemp3ScrapperSettings.POST_URL, data = dataToSendToMyfreemp3).text

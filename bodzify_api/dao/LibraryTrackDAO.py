@@ -4,7 +4,6 @@ import os
 
 from mutagen.easyid3 import EasyID3
 
-import bodzify_api.api.settings as apiSettings
 from bodzify_api.models import LibraryTrack
 
 class LibraryDAO:
