@@ -10,13 +10,12 @@ from django.core.paginator import Paginator
 
 import django.views.defaults
 
-from .serializers import UserSerializer, GroupSerializer, LibraryTrackSerializer, GenreSerializer
+from .serializers import UserSerializer, GroupSerializer, LibraryTrackSerializer
 
 import bodzify_api.api.settings as apiSettings
 
 from bodzify_api.dao.MineTrackMyfreemp3DAO import MineTrackMyfreemp3DAO
 from bodzify_api.dao.UserDAO import UserDAO
-from bodzify_api.dao.GenreDAO import GenreDAO
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
