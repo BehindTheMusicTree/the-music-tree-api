@@ -13,8 +13,8 @@ from bodzify_api.viewset.GenreViewSet import GenreViewSet
 
 router = routers.DefaultRouter()
 router.register(r'groups', views.GroupViewSet)
-router.register(r'tracks', LibraryTrackViewSet, basename='track')
-router.register(r'genres', GenreViewSet, basename='genre')
+router.register(r'tracks', LibraryTrackViewSet)
+router.register(r'genres', GenreViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
