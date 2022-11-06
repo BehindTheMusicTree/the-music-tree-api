@@ -1,18 +1,18 @@
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.contrib import admin
 
 from rest_framework import routers
-
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 import bodzify_api.views as views
+from bodzify_api.viewset.UserViewSet import UserViewSet
 from bodzify_api.viewset.LibraryTrackViewSet import LibraryTrackViewSet
 from bodzify_api.viewset.GenreViewSet import GenreViewSet
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
+router.register(r'users', UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'tracks', LibraryTrackViewSet)
 router.register(r'genres', GenreViewSet)
@@ -26,7 +26,6 @@ urlpatterns = [
 
     path(base + 'auth/', include('django.contrib.auth.urls')),
     path(base + 'auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    
     # don't know why but /auth/token/refresh/ won't work (ask for username and password)
     path(base + 'auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
