@@ -4,7 +4,6 @@ from rest_framework import serializers
 
 from bodzify_api.models import LibraryTrack, Genre
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -17,14 +16,18 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ['name']
 
 class GenreSerializer(serializers.ModelSerializer):
+    def _user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+            
     class Meta:
         model = Genre
-        fields = [
-            'uuid',
-            'user',
-            'name',
-            'parent',
-            "addedOn"]
+        fields = ['uuid', 'name', 'parent', 'addedOn']
+
+    def create(self, validatedGenre):
+        validatedGenre['user'] = self._user()
+        return Genre.objects.create(**validatedGenre)
 
 class LibraryTrackSerializer(serializers.ModelSerializer):
     class Meta:

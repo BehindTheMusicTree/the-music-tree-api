@@ -14,6 +14,11 @@ import datetime
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
+# Before calling a view function, Django starts a transaction. 
+# If the response is produced without problems, Django commits the transaction. 
+# If the view produces an exception, Django rolls back the transaction.
+ATOMIC_REQUESTS = True
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 

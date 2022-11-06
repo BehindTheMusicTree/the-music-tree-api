@@ -5,9 +5,6 @@ MINE_SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"
 MINE_FIELD_SOURCE = "source"
 MINE_FIELD_SONG_URL = "url"
 
-LIBRARY_GENRE_NAME_FIELD = "name"
-LIBRARY_GENRE_PARENT_UUID_FIELD = "parent"
-
 USER_FIELD_USERNAME = "username"
 USER_FIELD_EMAIL = "email"
 USER_FIELD_PASSWORD = "password"

@@ -26,24 +26,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
-@api_view(['POST'])
-def library_genre_create(request, username):
-    genreCreated = GenreDAO.create(
-        user=request.user, 
-        genreName=request.data[apiSettings.LIBRARY_GENRE_NAME_FIELD],
-        parentUuid=request.data[apiSettings.LIBRARY_GENRE_PARENT_UUID_FIELD])
-    if genreCreated != None:
-        return JsonResponse(GenreSerializer(genreCreated).data)
-    else:
-        return getHttpResponseWhenIssueWithBadRequest(request)
-
-@api_view(['GET'])
-def library_genre_list(request, username):
-    if username == request.user.username:
-        genres = GenreDAO.getAllByUser(request.user)
-        genresData = list(GenreSerializer(genres, many=True).data)      
-        return get_json_response_paginated(request, genresData)
-
 def getHttpResponseWhenPermissionDenied(request):
     return django.views.defaults.permission_denied(
                 request=request, 
@@ -101,9 +83,9 @@ def get_json_response_paginated(request, dataJsonList):
     page_object = paginator.get_page(pageNumber)
 
     return JsonResponse({
-        "count": len(dataJsonList),
-        "current": pageNumber,
-        "next": page_object.has_next(),
-        "previous": page_object.has_previous(),
-        "data": dataJsonList
+        apiSettings.RESPONSE_PAGINATED_COUNT: len(dataJsonList),
+        apiSettings.RESPONSE_PAGINATED_CURRENT: pageNumber,
+        apiSettings.RESPONSE_PAGINATED_NEXT: page_object.has_next(),
+        apiSettings.RESPONSE_PAGINATED_PREVIOUS: page_object.has_previous(),
+        apiSettings.RESPONSE_PAGINATED_DATA: dataJsonList
     })

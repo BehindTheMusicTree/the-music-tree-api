@@ -9,10 +9,12 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 import bodzify_api.views as views
 from bodzify_api.viewset.LibraryTrackViewSet import LibraryTrackViewSet
+from bodzify_api.viewset.GenreViewSet import GenreViewSet
 
 router = routers.DefaultRouter()
 router.register(r'groups', views.GroupViewSet)
 router.register(r'tracks', LibraryTrackViewSet, basename='track')
+router.register(r'genres', GenreViewSet, basename='genre')
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -25,12 +27,6 @@ urlpatterns = [
 
     path('users/create/', views.user_create, name='user-create'),
 
-    path('users/<username>/library/genres/create/', 
-        views.library_genre_create, 
-        name='library-genre-create'),
-    path('users/<username>/library/genres/', views.library_genre_list, name='library-genre-list'),
-
-    path('mine/tracks/', views.mine_track_list, name='mine-track-list'),
     path('mine/tracks/download/', views.mine_track_download, name='mine-track-download'),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
