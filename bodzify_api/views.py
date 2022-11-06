@@ -83,9 +83,9 @@ def get_json_response_paginated(request, dataJsonList):
     page_object = paginator.get_page(pageNumber)
 
     return JsonResponse({
-        "count": len(dataJsonList),
-        "current": pageNumber,
-        "next": page_object.has_next(),
-        "previous": page_object.has_previous(),
-        "data": dataJsonList
+        apiSettings.RESPONSE_PAGINATED_COUNT: len(dataJsonList),
+        apiSettings.RESPONSE_PAGINATED_CURRENT: pageNumber,
+        apiSettings.RESPONSE_PAGINATED_NEXT: page_object.has_next(),
+        apiSettings.RESPONSE_PAGINATED_PREVIOUS: page_object.has_previous(),
+        apiSettings.RESPONSE_PAGINATED_DATA: dataJsonList
     })

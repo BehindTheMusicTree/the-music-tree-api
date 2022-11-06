@@ -23,16 +23,11 @@ class GenreSerializer(serializers.ModelSerializer):
             
     class Meta:
         model = Genre
-        fields = [
-            'uuid',
-            'name',
-            'parent',
-            "addedOn"]
+        fields = ['uuid', 'name', 'parent', 'addedOn']
 
-    def create(self, validated_data):
-        validated_data['user'] = self._user()
-        obj = Genre.objects.create(**validated_data)
-        return obj
+    def create(self, validatedGenre):
+        validatedGenre['user'] = self._user()
+        return Genre.objects.create(**validatedGenre)
 
 class LibraryTrackSerializer(serializers.ModelSerializer):
     class Meta:
