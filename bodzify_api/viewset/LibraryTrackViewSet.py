@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from rest_framework import status
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 
 import django.views.defaults
@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponse
 from bodzify_api.serializers import LibraryTrackSerializer
 from bodzify_api.models import LibraryTrack
 from bodzify_api.dao.LibraryTrackDAO import LibraryDAO
-from bodzify_api.viewset.BaseViewSet import BaseViewSet
+import bodzify_api.viewset.utility as viewset_utility
 from bodzify_api.models import Genre
 
 TITLE_FIELD = "title"
@@ -21,7 +21,7 @@ LANGUAGE_FIELD = "language"
 DURATION_FIELD = "duration"
 RELEASE_DATE_FIELD = "releaseDate"
 
-class LibraryTrackViewSet(BaseViewSet):
+class LibraryTrackViewSet(viewsets.ModelViewSet):
     serializer_class = LibraryTrackSerializer
     queryset = LibraryTrack.objects.all()
 
@@ -48,5 +48,7 @@ class LibraryTrackViewSet(BaseViewSet):
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
-        return BaseViewSet.getFileResponseForTrackDownload(request=request, trackModel=LibraryDAO.get(uuid=pk))
+        return viewset_utility.GetFileResponseForTrackDownload(
+            request=request, 
+            trackModel=LibraryDAO.get(uuid=pk))
         

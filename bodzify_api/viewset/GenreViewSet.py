@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
+from rest_framework import viewsets
+
 from bodzify_api.serializers import GenreSerializer
 from bodzify_api.models import Genre
 
-from bodzify_api.viewset.BaseViewSet import BaseViewSet
+import bodzify_api.viewset.utility as viewset_utility
 
 NAME_FIELD = "name"
 UUID_FIELD = "parent"
 
-class GenreViewSet(BaseViewSet):
+class GenreViewSet(viewsets.ModelViewSet):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
 
@@ -16,4 +18,4 @@ class GenreViewSet(BaseViewSet):
         genreName = request.data[NAME_FIELD]
         if Genre.objects.filter(name=genreName).exists() == False:
             return super().create(request, *args, **kwargs) 
-        return BaseViewSet.getHttpResponseWhenIssueWithBadRequest(request)
+        return viewset_utility.GetHttpResponseWhenBadRequest(request)
