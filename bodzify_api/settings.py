@@ -28,13 +28,6 @@ SECRET_KEY = 'django-insecure-se!awu%q2sg9i@dz)s(-hj5m)c+z#14xm@t@_&l&^p(avj=5j_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '185.224.139.218',
-    '127.0.0.1',
-    'bodzify.com',
-    'www.bodzify.com'
-]
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -203,3 +196,8 @@ LOGGING = {
 }
 
 LIBRARIES_PATH = os.path.join(BASE_DIR, "libraries/")
+
+if os.getenv('DJANGO_DEV') == 'true':
+    from bodzify_api.settings_dev import *
+elif os.getenv('DJANGO_PROD') == 'true':
+    from bodzify_api.settings_prod import *
