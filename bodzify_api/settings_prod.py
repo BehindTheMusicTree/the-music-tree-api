@@ -18,6 +18,11 @@ CSRF_COOKIE_SECURE = True
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
+# Before calling a view function, Django starts a transaction. 
+# If the response is produced without problems, Django commits the transaction. 
+# If the view produces an exception, Django rolls back the transaction.
+ATOMIC_REQUESTS = True
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -29,8 +34,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '185.224.139.218',
+    '127.0.0.1',
     'bodzify.com',
-    'www.bodzify.com',
+    'www.bodzify.com'
 ]
 
 INSTALLED_APPS = [
@@ -41,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     'rest_framework',
     'rest_framework.authtoken',
     'bodzify_api'
@@ -117,6 +125,21 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': 'v1'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'bodzify API',
+    'DESCRIPTION': 'API to handle genre oriented music libraries ',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+    'SCHEMA_PATH_PREFIX': '/api/v[0-9]',
 }
 
 SIMPLE_JWT = {
