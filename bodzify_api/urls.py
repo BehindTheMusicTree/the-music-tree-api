@@ -3,6 +3,8 @@ from django.contrib import admin
 
 from rest_framework import routers
 
+import logging
+
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
@@ -16,8 +18,12 @@ router.register(r'groups', views.GroupViewSet)
 router.register(r'tracks', LibraryTrackViewSet)
 router.register(r'genres', GenreViewSet)
 
+logger = logging.getLogger('info')
+logger.info('DOIHDOIUHDODIUHPDOIHUDPOIDHPDIUHDPIUHPIUDHDPIHUDPIDUHPDIUH')
+base = 'api/' + r'^(?P<version>(v1))/'
+
 urlpatterns = [
-    path('', include(router.urls)),
+    path(base, include(router.urls)),
     
     path('admin/', admin.site.urls),
 
