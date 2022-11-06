@@ -4,7 +4,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 import rest_framework.exceptions as exceptions
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.http import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 
@@ -16,10 +16,6 @@ import bodzify_api.api.settings as apiSettings
 
 from bodzify_api.dao.MineTrackMyfreemp3DAO import MineTrackMyfreemp3DAO
 from bodzify_api.dao.UserDAO import UserDAO
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
     
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()

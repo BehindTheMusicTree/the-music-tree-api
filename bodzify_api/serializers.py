@@ -7,7 +7,7 @@ from bodzify_api.models import LibraryTrack, Genre
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'groups']
+        fields = ['username', 'email', 'password']
 
 
 class GroupSerializer(serializers.ModelSerializer):

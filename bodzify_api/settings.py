@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'drf_spectacular_sidecar',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'bodzify_api'
 ]
 
