@@ -41,7 +41,7 @@ class LibraryTrack(models.Model):
 
     @property
     def relativeUrl(self):
-        return "/users/" + self.user.username + "/tracks/" + self.uuid + "/"
+        return "tracks/" + self.uuid + "/"
 
 class MineTrack:
     def __init__(self, title, artist, duration, releasedOn, url):
