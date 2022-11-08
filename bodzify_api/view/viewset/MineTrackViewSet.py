@@ -49,8 +49,8 @@ class MineTrackViewSet(viewsets.GenericViewSet):
             return viewset_utility.GetHttpResponseWhenBadRequest(request)
     
     @action(detail=False, methods=['post'])
-    def download(self, request):
-        libraryTrack = MineTrackMyfreemp3DAO.download(
+    def extract(self, request):
+        libraryTrack = MineTrackMyfreemp3DAO.extract(
             user=request.user, 
             title=request.data[TITLE_FIELD], 
             artist=request.data[ARTIST_FIELD], 
