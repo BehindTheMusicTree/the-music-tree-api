@@ -9,7 +9,7 @@ from django.http import JsonResponse
 
 from bodzify_api.serializers import MineTrackSerializer
 from bodzify_api.dao.MineTrackMyfreemp3DAO import MineTrackMyfreemp3DAO
-import bodzify_api.viewset.utility as viewset_utility
+import bodzify_api.view.utility as viewset_utility
 
 SOURCE_MYFREEMP3 = "myfreemp3"
 SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"

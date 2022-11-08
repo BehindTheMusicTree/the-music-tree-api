@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponse
 from bodzify_api.serializers import LibraryTrackSerializer
 from bodzify_api.models import LibraryTrack
 from bodzify_api.dao.LibraryTrackDAO import LibraryDAO
-import bodzify_api.viewset.utility as viewset_utility
+import bodzify_api.view.utility as viewset_utility
 from bodzify_api.models import Genre
 
 TITLE_FIELD = "title"

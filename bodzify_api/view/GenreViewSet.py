@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from bodzify_api.serializers import GenreSerializer
 from bodzify_api.models import Genre
 
-import bodzify_api.viewset.utility as viewset_utility
+import bodzify_api.view.utility as viewset_utility
 
 NAME_FIELD = "name"
 UUID_FIELD = "parent"
