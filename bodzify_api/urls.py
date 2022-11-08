@@ -6,10 +6,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from bodzify_api.view.UserViewSet import UserViewSet
-from bodzify_api.view.LibraryTrackViewSet import LibraryTrackViewSet
-from bodzify_api.view.GenreViewSet import GenreViewSet
-from bodzify_api.view.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.UserViewSet import UserViewSet
+from bodzify_api.view.viewset.LibraryTrackViewSet import LibraryTrackViewSet
+from bodzify_api.view.viewset.GenreViewSet import GenreViewSet
+from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
 from bodzify_api.view.LogoutView import LogoutView
 
 router = routers.DefaultRouter()

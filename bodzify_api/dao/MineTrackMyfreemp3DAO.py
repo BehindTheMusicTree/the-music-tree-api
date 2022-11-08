@@ -12,7 +12,7 @@ class MineTrackMyfreemp3DAO:
     def list(query, pageNumber, pageSize):
         return myfreemp3scrapper.scrap(query, pageNumber, pageSize)
 
-    def download(user, title, artist, duration, releaseOn, mineTrackUrl):
+    def extract(user, title, artist, duration, releaseOn, mineTrackUrl):
         userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
 
         if not os.path.exists(userLibraryPath):
