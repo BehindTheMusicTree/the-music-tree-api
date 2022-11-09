@@ -2,7 +2,7 @@
 
 import os
 
-import bodzify.settings as settings
+import bodzify_api.settings as settings
 
 LOG_FOLDER_PATH = os.path.join(settings.LOG_PATH, "myfreemp3Scrapper/")
 LOG_FILE_NAME_FORMAT = "%y-%m-%d %H%M%S"

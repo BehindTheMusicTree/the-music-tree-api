@@ -14,6 +14,11 @@ import datetime
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
+# Before calling a view function, Django starts a transaction. 
+# If the response is produced without problems, Django commits the transaction. 
+# If the view produces an exception, Django rolls back the transaction.
+ATOMIC_REQUESTS = True
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -23,11 +28,6 @@ SECRET_KEY = 'django-insecure-se!awu%q2sg9i@dz)s(-hj5m)c+z#14xm@t@_&l&^p(avj=5j_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '185.224.139.218',
-    '127.0.0.1'
-]
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -36,9 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
     'rest_framework',
     'rest_framework.authtoken',
-    'bodzify'
+    'rest_framework_simplejwt',
+    'bodzify_api'
 ]
 
 MIDDLEWARE = [
@@ -51,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'bodzify.urls'
+ROOT_URLCONF = 'bodzify_api.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'bodzify.wsgi.application'
+WSGI_APPLICATION = 'bodzify_api.wsgi.application'
 
 DATABASES = {
     'default': {
@@ -112,6 +115,21 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': 'v1'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'bodzify API',
+    'DESCRIPTION': 'API to handle genre oriented music libraries ',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+    'SCHEMA_PATH_PREFIX': '/api/v[0-9]',
 }
 
 SIMPLE_JWT = {
@@ -178,3 +196,8 @@ LOGGING = {
 }
 
 LIBRARIES_PATH = os.path.join(BASE_DIR, "libraries/")
+
+if os.getenv('DJANGO_DEV') == 'true':
+    from bodzify_api.settings_dev import *
+elif os.getenv('DJANGO_PROD') == 'true':
+    from bodzify_api.settings_prod import *
