@@ -50,67 +50,51 @@ def updateTags(track):
     trackFile[ID3_TAG_LANGUAGE] = languageTag
     trackFile.save()
 
-class LibraryTrackDao:
+def createFromMineTrack(mineTrack, trackFile, user):
+    userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
 
-    def createFromMineTrack(mineTrack, trackFile, user):
-        userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
+    if not os.path.exists(userLibraryPath):
+        os.makedirs(userLibraryPath)
 
-        if not os.path.exists(userLibraryPath):
-            os.makedirs(userLibraryPath)
+    externalTrackName, trackExtension = os.path.splitext(mineTrack.url)
 
-        externalTrackName, trackExtension = os.path.splitext(mineTrack.url)
+    artistTitle = mineTrack.artist + " - " + mineTrack.title
+    libraryFilename = artistTitle + trackExtension
+    internalTrackFilePath = userLibraryPath + libraryFilename
 
-        artistTitle = mineTrack.artist + " - " + mineTrack.title
-        libraryFilename = artistTitle + trackExtension
+    existingFileCount = 0
+    while os.path.exists(internalTrackFilePath):
+        existingFileCount = existingFileCount + 1
+        libraryFilename = artistTitle + " (" + str(existingFileCount) + ")" + trackExtension
         internalTrackFilePath = userLibraryPath + libraryFilename
 
-        existingFileCount = 0
-        while os.path.exists(internalTrackFilePath):
-            existingFileCount = existingFileCount + 1
-            libraryFilename = artistTitle + " (" + str(existingFileCount) + ")" + trackExtension
-            internalTrackFilePath = userLibraryPath + libraryFilename
+    with open(internalTrackFilePath, 'wb') as file:
+        file.write(trackFile.content)
 
-        with open(internalTrackFilePath, 'wb') as file:
-            file.write(trackFile.content)
+    # Tags of every myfreemp3 downloaded tracks are empty 
+    libraryTrack = LibraryTrack(
+        path=internalTrackFilePath,
+        user=user, 
+        title=mineTrack.title, 
+        artist=mineTrack.artist, 
+        album="", 
+        genre=None, 
+        duration=mineTrack.duration,
+        rating=-1,
+        language="")
+    libraryTrack.save()
 
-        # Tags of every myfreemp3 downloaded tracks are empty 
-        libraryTrack = LibraryTrack(
-            path=internalTrackFilePath,
-            user=user, 
-            title=mineTrack.title, 
-            artist=mineTrack.artist, 
-            album="", 
-            genre=None, 
-            duration=mineTrack.duration,
-            rating=-1,
-            language="")
-        libraryTrack.save()
+    updateTags(libraryTrack)
 
-        updateTags(libraryTrack)
+    return libraryTrack
 
-        return libraryTrack
+def get(uuid):
+    return LibraryTrack.objects.get(uuid=uuid)
 
-    def get(uuid):
-        return LibraryTrack.objects.get(uuid=uuid)
+def getAllByUser(user):
+    return LibraryTrack.objects.filter(user=user)
 
-    def getAllByUser(user):
-        return LibraryTrack.objects.filter(user=user)
-
-    def delete(uuid):
-        track = LibraryTrack.objects.get(uuid=uuid)
-        os.remove(track.path)
-        track.delete()
-
-    def update(uuid, title, artist, album, genre, rating, language):
-        track = LibraryTrack.objects.get(uuid=uuid)
-        track.title = title
-        track.artist = artist
-        track.album = album
-        track.genre = genre
-        track.rating = rating
-        track.language = language
-        track.save()
-        
-        updateTags(track)
-
-        return track
+def delete(uuid):
+    track = LibraryTrack.objects.get(uuid=uuid)
+    os.remove(track.path)
+    track.delete()

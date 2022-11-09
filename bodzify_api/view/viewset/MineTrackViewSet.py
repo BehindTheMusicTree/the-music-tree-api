@@ -7,8 +7,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from django.http import JsonResponse
 
-from bodzify_api.serializers import LibraryTrackSerializer
-from bodzify_api.dao.MineTrackMyfreemp3Dao import MineTrackMyfreemp3DAO
+from bodzify_api.serializer.LibraryTrackSerializer import LibraryTrackResponseSerializer
+from bodzify_api.dao import MineTrackMyfreemp3Dao
 import bodzify_api.view.utility as viewset_utility
 
 SOURCE_MYFREEMP3 = "myfreemp3"
@@ -42,7 +42,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
         pageSize = request.GET.get(viewset_utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
 
         if mineSource == SOURCE_MYFREEMP3:
-            mineTracks = MineTrackMyfreemp3DAO.list(query, pageNumber, pageSize)
+            mineTracks = MineTrackMyfreemp3Dao.list(query, pageNumber, pageSize)
             return viewset_utility.GetJsonResponsePaginated(request, mineTracks)
 
         else:
@@ -50,7 +50,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
     
     @action(detail=False, methods=['post'])
     def extract(self, request):
-        libraryTrack = MineTrackMyfreemp3DAO.extract(
+        libraryTrack = MineTrackMyfreemp3Dao.extract(
             user=request.user, 
             title=request.data[TITLE_FIELD], 
             artist=request.data[ARTIST_FIELD], 
@@ -58,4 +58,4 @@ class MineTrackViewSet(viewsets.GenericViewSet):
             releasedOn=request.data[RELEASED_ON_FIELD], 
             mineTrackUrl=request.data[TRACK_URL])
 
-        return JsonResponse(LibraryTrackSerializer(libraryTrack).data)
+        return JsonResponse(LibraryTrackResponseSerializer(libraryTrack).data)
