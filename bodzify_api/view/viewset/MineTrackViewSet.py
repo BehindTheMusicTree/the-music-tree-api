@@ -20,7 +20,7 @@ QUERY_FIELD = "query"
 TITLE_FIELD = "title"
 ARTIST_FIELD = "artist"
 DURATION_FIELD = "duration"
-RELEASED_ON_FIELD = "releaseDate"
+RELEASED_ON_FIELD = "releasedOn"
 TRACK_URL = "url"
 
 class MineTrackViewSet(viewsets.GenericViewSet):    
