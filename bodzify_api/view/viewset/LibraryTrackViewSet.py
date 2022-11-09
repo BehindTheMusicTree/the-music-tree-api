@@ -8,7 +8,7 @@ from django.http import JsonResponse, HttpResponse
 
 from bodzify_api.serializers import LibraryTrackSerializer
 from bodzify_api.models import LibraryTrack
-from bodzify_api.dao.LibraryTrackDAO import LibraryTrackDAO
+from bodzify_api.dao.LibraryTrackDao import LibraryTrackDao
 import bodzify_api.view.utility as viewset_utility
 from bodzify_api.models import Genre
 
@@ -28,7 +28,7 @@ class LibraryTrackViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         genre = Genre.objects.get(uuid=request.data[GENRE_FIELD])
         try:
-            trackDBUpdated = LibraryTrackDAO.update(
+            trackDBUpdated = LibraryTrackDao.update(
                 uuid=pk,
                 title=request.data[TITLE_FIELD],
                 artist=request.data[ARTIST_FIELD],
@@ -43,12 +43,12 @@ class LibraryTrackViewSet(viewsets.ModelViewSet):
             return django.views.defaults.page_not_found(request=request, exception=exception)
         
     def delete(self, request, pk=None):
-        LibraryTrackDAO.delete(uuid=pk)
+        LibraryTrackDao.delete(uuid=pk)
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
         return viewset_utility.GetFileResponseForTrackDownload(
             request=request, 
-            trackModel=LibraryTrackDAO.get(uuid=pk))
+            trackModel=LibraryTrackDao.get(uuid=pk))
         
