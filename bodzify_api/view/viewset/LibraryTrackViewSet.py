@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
-from rest_framework import viewsets, status
+from rest_framework import status
 from rest_framework.decorators import action
 
 import django.views.defaults
 from django.http import JsonResponse, HttpResponse
 
-from bodzify_api.serializers import LibraryTrackSerializer
+from bodzify_api.serializers import LibraryTrackSerializer, LibraryTrackResponseSerializer
 from bodzify_api.models import LibraryTrack
 from bodzify_api.dao.LibraryTrackDao import LibraryTrackDao
+from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 import bodzify_api.view.utility as viewset_utility
 from bodzify_api.models import Genre
 
@@ -21,9 +22,17 @@ LANGUAGE_FIELD = "language"
 DURATION_FIELD = "duration"
 RELEASE_DATE_FIELD = "releasedOn"
 
-class LibraryTrackViewSet(viewsets.ModelViewSet):
-    serializer_class = LibraryTrackSerializer
+class LibraryTrackViewSet(MultiSerializerViewSet):
     queryset = LibraryTrack.objects.all()
+    serializers = {
+        'default': LibraryTrackSerializer,
+        'list':  LibraryTrackResponseSerializer,
+        'retrieve':  LibraryTrackResponseSerializer,
+        'update':  LibraryTrackResponseSerializer,
+    }
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def update(self, request, pk=None):
         genre = Genre.objects.get(uuid=request.data[GENRE_FIELD])

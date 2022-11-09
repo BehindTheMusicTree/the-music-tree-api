@@ -4,6 +4,8 @@ from rest_framework import serializers
 
 from bodzify_api.models import LibraryTrack, MineTrack, Genre, Query
 
+import logging
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -41,6 +43,30 @@ class LibraryTrackSerializer(serializers.ModelSerializer):
             "artist", 
             "album", 
             "genre", 
+            "duration", 
+            "rating", 
+            "language", 
+            "addedOn"]
+
+class LibraryTrackResponseSerializer(serializers.ModelSerializer):
+    genreName = serializers.SerializerMethodField()
+
+    def get_genreName(self, obj):
+        if obj.genre is None:
+            return None
+        return obj.genre.name
+
+    class Meta:
+        model = LibraryTrack
+        fields = [
+            'uuid',
+            'relativeUrl',
+            'filename',
+            'fileExtension',
+            "title", 
+            "artist", 
+            "album", 
+            "genreName", 
             "duration", 
             "rating", 
             "language", 
