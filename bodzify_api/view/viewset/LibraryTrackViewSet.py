@@ -19,7 +19,7 @@ GENRE_FIELD = "genre"
 RATING_FIELD = "rating"
 LANGUAGE_FIELD = "language"
 DURATION_FIELD = "duration"
-RELEASE_DATE_FIELD = "releaseDate"
+RELEASE_DATE_FIELD = "releasedOn"
 
 class LibraryTrackViewSet(viewsets.ModelViewSet):
     serializer_class = LibraryTrackSerializer
