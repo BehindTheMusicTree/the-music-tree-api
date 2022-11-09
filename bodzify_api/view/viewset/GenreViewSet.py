@@ -2,7 +2,7 @@
 
 from rest_framework import viewsets
 
-from bodzify_api.serializers import GenreSerializer
+from bodzify_api.serializer.GenreSerializer import GenreSerializer
 from bodzify_api.models import Genre
 
 import bodzify_api.view.utility as viewset_utility

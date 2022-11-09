@@ -6,7 +6,7 @@ from rest_framework import status, viewsets
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 
-from bodzify_api.serializers import UserSerializer
+from bodzify_api.serializer.UserSerializer import UserSerializer
 
 USER_USERNAME_FIELD = 'username'
 USER_PASSWORD_FIELD = 'password'
