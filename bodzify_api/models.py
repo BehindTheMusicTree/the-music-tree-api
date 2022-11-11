@@ -50,9 +50,3 @@ class MineTrack:
         self.duration = duration
         self.releasedOn = releasedOn
         self.url = url
-
-class Query:
-    def __init__(self, query, page, pageNumber) -> None:
-        self.query = query
-        self.page = page
-        self.pageNumber = pageNumber
