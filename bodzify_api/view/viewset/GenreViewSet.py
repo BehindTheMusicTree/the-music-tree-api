@@ -13,9 +13,3 @@ UUID_FIELD = "parent"
 class GenreViewSet(viewsets.ModelViewSet):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        genreName = request.data[NAME_FIELD]
-        if Genre.objects.filter(name=genreName).exists() == False:
-            return super().create(request, *args, **kwargs) 
-        return viewset_utility.GetHttpResponseWhenBadRequest(request)
