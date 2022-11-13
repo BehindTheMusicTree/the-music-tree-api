@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.contrib import admin
 
 from rest_framework import routers
@@ -29,7 +29,6 @@ urlpatterns = [
     path(base + 'auth/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
     path(base + 'auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path(base + 'auth/logout/', LogoutView.as_view(), name='auth-logout'),
-
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', 

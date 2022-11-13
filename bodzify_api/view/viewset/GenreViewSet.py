@@ -13,3 +13,10 @@ UUID_FIELD = "parent"
 class GenreViewSet(viewsets.ModelViewSet):
     serializer_class = GenreSerializer
     queryset = Genre.objects.all()
+
+    def get_queryset(self):
+        queryset = Genre.objects.all()
+        name = self.request.query_params.get(NAME_FIELD)
+        if name is not None:
+            queryset = queryset.filter(name__contains=name)
+        return queryset
