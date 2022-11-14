@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from django.db.models import Count
+
 from rest_framework import viewsets
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
@@ -24,6 +26,8 @@ class GenreViewSet(viewsets.ModelViewSet):
 
         if name is None: queryset = queryset.filter(parent=parent)
         else: queryset = queryset.filter(name__contains=name, parent=parent)
+
+        queryset = queryset.annotate(track_number=Count('librarytrack'))
         
         return queryset
 
