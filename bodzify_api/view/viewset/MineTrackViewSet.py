@@ -8,6 +8,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from django.http import JsonResponse
 
 from bodzify_api.serializer.LibraryTrackSerializer import LibraryTrackResponseSerializer
+from bodzify_api.serializer.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.dao import MineTrackMyfreemp3Dao
 import bodzify_api.view.utility as viewset_utility
 
@@ -23,7 +24,8 @@ DURATION_FIELD = "duration"
 RELEASED_ON_FIELD = "releasedOn"
 TRACK_URL = "url"
 
-class MineTrackViewSet(viewsets.GenericViewSet):    
+class MineTrackViewSet(viewsets.GenericViewSet):  
+    serializer_class = MineTrackSerializer
     
     @extend_schema(
         parameters=[
