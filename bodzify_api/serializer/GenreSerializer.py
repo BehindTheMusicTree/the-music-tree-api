@@ -1,18 +1,20 @@
 from rest_framework import serializers
 
-from bodzify_api.models import Genre
+from django.db.models import Count
 
-class GenreSerializer(serializers.ModelSerializer):
+from bodzify_api.models import Genre
+import logging
+
+class GenreRequestSerializer(serializers.ModelSerializer):
             
     class Meta:
         model = Genre
         fields = ['uuid', 'name', 'parent', 'addedOn']
 
-    def _user(self):
-        request = self.context.get('request', None)
-        if request:
-            return request.user
-
-    def create(self, validatedGenre):
-        validatedGenre['user'] = self._user()
-        return Genre.objects.create(**validatedGenre)
+class GenreResponseSerializer(serializers.ModelSerializer):
+            
+    trackCount = serializers.IntegerField(source='librarytrack_set.count')    
+    
+    class Meta:
+        model = Genre
+        fields = ['uuid', 'user', 'name', 'parent', 'addedOn', 'trackCount']
