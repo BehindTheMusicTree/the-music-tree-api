@@ -31,6 +31,13 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         'retrieve':  LibraryTrackResponseSerializer,
     }
 
+    def get_queryset(self):
+        queryset = LibraryTrack.objects.all()
+        genreParameter = self.request.query_params.get(GENRE_FIELD)
+        if genreParameter == "": genre = None
+        else: genre = genreParameter
+        return queryset.filter(genre=genre)
+
     @extend_schema(
         request=LibraryTrackSerializer,
         responses=LibraryTrackResponseSerializer
