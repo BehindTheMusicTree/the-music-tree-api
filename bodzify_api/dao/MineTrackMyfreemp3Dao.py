@@ -2,7 +2,7 @@
 
 import requests
 
-from bodzify_api.models import MineTrack
+from bodzify_api.model.track.MineTrack import MineTrack
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
 from bodzify_api.dao import LibraryTrackDao
 

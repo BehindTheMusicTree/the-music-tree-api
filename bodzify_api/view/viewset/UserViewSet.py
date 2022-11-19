@@ -3,13 +3,10 @@
 from rest_framework.decorators import action
 from rest_framework import status, viewsets
 
-from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-import logging
 
 from bodzify_api.serializer.UserSerializer import UserSerializer
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser
 
 

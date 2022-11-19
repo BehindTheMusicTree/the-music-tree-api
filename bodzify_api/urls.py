@@ -1,4 +1,4 @@
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.contrib import admin
 
 from rest_framework import routers
@@ -7,16 +7,20 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 from bodzify_api.view.viewset.UserViewSet import UserViewSet
-from bodzify_api.view.viewset.LibraryTrackViewSet import LibraryTrackViewSet
-from bodzify_api.view.viewset.GenreViewSet import GenreViewSet
-from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.track.LibraryTrackViewSet import LibraryTrackViewSet
+from bodzify_api.view.viewset.tag.GenreViewSet import GenreViewSet
+from bodzify_api.view.viewset.tag.TagViewSet import TagViewSet
+from bodzify_api.view.viewset.track.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.PlaylistViewSet import PlaylistViewSet
 from bodzify_api.view.LogoutView import LogoutView
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'tracks', LibraryTrackViewSet)
 router.register(r'genres', GenreViewSet)
+router.register(r'tags', TagViewSet)
 router.register(r'mine/tracks', MineTrackViewSet, 'mine-track')
+router.register(r'playlists', PlaylistViewSet)
 
 base = 'api/v1/'
 

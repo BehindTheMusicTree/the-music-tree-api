@@ -5,9 +5,12 @@ import os
 from rest_framework import exceptions
 from rest_framework.pagination import PageNumberPagination
 
+from django.db import IntegrityError
 import django.views.defaults
 from django.http import JsonResponse, FileResponse
 from django.core.paginator import Paginator
+
+INTEGRITY_ERROR_MESSAGE = "There is an issue with the object sent"
 
 RESPONSE_FILE_CONTENT_TYPE_VALUE ='file'
 RESPONSE_FILE_CONTENT_LENGTH_FIELD ='Content-Length'
@@ -31,10 +34,15 @@ def GetHttpResponseWhenPermissionDenied(request):
                 request=request, 
                 exception=exceptions.PermissionDenied)
 
-def GetHttpResponseWhenBadRequest(request):
-    return django.views.defaults.bad_request(
-                request=request, 
-                exception=exceptions.bad_request)
+def GetJsonResponseWhenBadRequest(exception = exceptions.bad_request):
+    if type(exception) == IntegrityError:
+        errorMessage = INTEGRITY_ERROR_MESSAGE
+    else:
+        errorMessage = str(exception)
+    return JsonResponse({
+                'success': False, 
+                'errors': errorMessage
+            })
 
 def GetJsonResponsePaginated(request, dataJsonList):
     pageNumber = request.GET.get(REQUEST_PAGINATED_PAGE_FIELD, 0)

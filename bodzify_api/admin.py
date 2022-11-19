@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-from .models import LibraryTrack, Genre
+from .model.track.LibraryTrack import LibraryTrack
 
 admin.site.register(LibraryTrack)
-admin.site.register(Genre)
