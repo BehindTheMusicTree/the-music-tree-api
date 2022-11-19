@@ -2,8 +2,8 @@
 
 from rest_framework import serializers
 
-from bodzify_api.models import LibraryTrack
-from bodzify_api.serializer.GenreSerializer import GenreRequestSerializer
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.tag.TagSerializer import TagResponseSerializer
 
 class LibraryTrackSerializer(serializers.ModelSerializer):
 
@@ -27,7 +27,7 @@ class LibraryTrackSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 class LibraryTrackResponseSerializer(serializers.ModelSerializer):
-    genre = GenreRequestSerializer()
+    genre = TagResponseSerializer()
 
     def get_genreName(self, obj):
         if obj.genre is None:
@@ -50,6 +50,3 @@ class LibraryTrackResponseSerializer(serializers.ModelSerializer):
             "rating", 
             "language", 
             "addedOn"]
-
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)

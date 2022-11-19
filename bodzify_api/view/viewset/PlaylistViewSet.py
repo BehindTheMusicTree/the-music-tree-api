@@ -7,35 +7,32 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from django.http import JsonResponse
 
-from bodzify_api.serializer.LibraryTrackSerializer import LibraryTrackResponseSerializer
-from bodzify_api.serializer.MineTrackSerializer import MineTrackSerializer
+from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
+from bodzify_api.serializer.PlaylistSerializer import PlaylistSerializer
+from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.dao import MineTrackMyfreemp3Dao
 import bodzify_api.view.utility as viewset_utility
+from bodzify_api.model.playlist.Playlist import Playlist
 
-SOURCE_MYFREEMP3 = "myfreemp3"
-SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"
-SOURCE_FIELD = "source"
-SONG_URL_FIELD = "url"
-QUERY_FIELD = "query"
-
-TITLE_FIELD = "title"
+QUERY_PARAMETER = "query"
 ARTIST_FIELD = "artist"
 DURATION_FIELD = "duration"
 RELEASED_ON_FIELD = "releasedOn"
 TRACK_URL = "url"
 
-class MineTrackViewSet(viewsets.GenericViewSet):  
-    serializer_class = MineTrackSerializer
+class PlaylistViewSet(MultiSerializerViewSet):  
+    queryset = Playlist.objects.all()
+    serializers = {
+        'default': PlaylistSerializer,
+        'list':  PlaylistSerializer,
+        'retrieve':  PlaylistSerializer,
+    }
+
     
     @extend_schema(
         parameters=[
-          OpenApiParameter(SOURCE_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
-          OpenApiParameter(QUERY_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
-          OpenApiParameter(
-            viewset_utility.REQUEST_PAGINATED_PAGE_FIELD, 
-            OpenApiTypes.INT, 
-            OpenApiParameter.PATH)
-        ],
+          OpenApiParameter(QUERY_PARAMETER, OpenApiTypes.STR, OpenApiParameter.PATH)
+        ]
     )
     def list(self, request):
         mineSource = request.GET.get(SOURCE_FIELD, False)
@@ -48,7 +45,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
             return viewset_utility.GetJsonResponsePaginated(request, mineTracks)
 
         else:
-            return viewset_utility.GetHttpResponseWhenBadRequest(request)
+            return viewset_utility.GetJsonResponseWhenBadRequest(request)
     
     @action(detail=False, methods=['post'])
     def extract(self, request):
