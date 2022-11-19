@@ -23,24 +23,24 @@ TAG_TO_IGNORE = "apple"
 
 def getTracksFromMyfreemp3Json(dataDict):
     tracks = []
-    for trackJson in dataDict[myfreemp3ScrapperSettings.FIELD_DATA]:
+    for trackJson in dataDict[FIELD_DATA]:
         if trackJson != TAG_TO_IGNORE:
             tracks.append(MineTrack(
-                title=trackJson[myfreemp3ScrapperSettings.FIELD_TITLE], 
-                artist=trackJson[myfreemp3ScrapperSettings.FIELD_ARTIST], 
-                duration=trackJson[myfreemp3ScrapperSettings.FIELD_DURATION], 
-                releasedOn=trackJson[myfreemp3ScrapperSettings.FIELD_RELEASED_ON],
-                url=trackJson[myfreemp3ScrapperSettings.FIELD_URL]))
+                title=trackJson[FIELD_TITLE], 
+                artist=trackJson[FIELD_ARTIST], 
+                duration=trackJson[FIELD_DURATION], 
+                releasedOn=trackJson[FIELD_RELEASED_ON],
+                url=trackJson[FIELD_URL]))
     return tracks
 
 def logResponseText(responseText):
-    myfreemp3ScrapperLogFolderPath = myfreemp3ScrapperSettings.LOG_FOLDER_PATH
+    myfreemp3ScrapperLogFolderPath = LOG_FOLDER_PATH
     
     if not os.path.exists(myfreemp3ScrapperLogFolderPath):
         os.makedirs(myfreemp3ScrapperLogFolderPath)
 
-    logFileName = datetime.datetime.now().strftime(myfreemp3ScrapperSettings.LOG_FILE_NAME_FORMAT) + ".txt"
-    f = open(myfreemp3ScrapperSettings.LOG_FOLDER_PATH + logFileName, "x")
+    logFileName = datetime.datetime.now().strftime(LOG_FILE_NAME_FORMAT) + ".txt"
+    f = open(LOG_FOLDER_PATH + logFileName, "x")
     f.write(responseText)
     f.close()
 
@@ -65,7 +65,7 @@ def scrap(search, page, pageSize):
         PAGE_FIELD: str(page)
     }
     
-    responseText = requests.post(url = myfreemp3ScrapperSettings.POST_URL, data = dataToSendToMyfreemp3).text
+    responseText = requests.post(url = POST_URL, data = dataToSendToMyfreemp3).text
     logResponseText(responseText)
 
     myfreemp3tracksJson = getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(responseText)
