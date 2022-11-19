@@ -5,7 +5,7 @@ import os
 from mutagen.easyid3 import EasyID3
 
 import bodzify_api.settings as settings
-from bodzify_api.model.track import LibraryTrack
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 ID3_TAG_TITLE = "title"
 ID3_TAG_ARTIST = "artist"

@@ -2,8 +2,6 @@
 
 import os, shortuuid
 
-from drf_spectacular.utils import extend_schema_field, OpenApiTypes
-
 from django.db import models
 from django.contrib.auth.models import User
 
