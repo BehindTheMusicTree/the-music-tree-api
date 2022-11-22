@@ -14,6 +14,7 @@ from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewS
 from bodzify_api.serializer.tag.TagSerializer import TagRequestSerializer, TagResponseSerializer
 from bodzify_api.model.tag.Tag import Tag
 from bodzify_api.model.tag.TagType import TagType, TagTypesLabels
+from bodzify_api.model.playlist.TagPlaylist import TagPlaylist
 
 NAME_FIELD = "name"
 PARENT_FIELD = "parent"
@@ -58,12 +59,11 @@ class TagViewSet(MultiSerializerViewSet):
     requestSerializer = TagRequestSerializer(data=request.data)
     requestSerializer.is_valid(raise_exception=True)
     try:
-      if self.tagType is None:
-        tag = requestSerializer.save(user=self.request.user)
-      else:
-        tag = requestSerializer.save(user=self.request.user, type=self.tagType)
+      tag = requestSerializer.save(user=self.request.user, type=self.tagType)
     except IntegrityError as e:
       return utility.GetJsonResponseWhenBadRequest(exception=e)
+
+    TagPlaylist(user=self.request.user, name=tag.name, tag=tag).save()
 
     responseSerializer = TagResponseSerializer(tag)
     headers = self.get_success_headers(responseSerializer.data)
