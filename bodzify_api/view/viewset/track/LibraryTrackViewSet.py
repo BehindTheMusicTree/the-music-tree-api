@@ -54,5 +54,5 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     def download(self, request, pk=None):
         return utility.GetFileResponseForTrackDownload(
             request=request, 
-            trackModel=LibraryTrackDao.get(uuid=pk))
+            track=LibraryTrackDao.get(uuid=pk))
         

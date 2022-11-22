@@ -11,7 +11,7 @@ from bodzify_api.view.viewset.track.LibraryTrackViewSet import LibraryTrackViewS
 from bodzify_api.view.viewset.tag.GenreViewSet import GenreViewSet
 from bodzify_api.view.viewset.tag.TagViewSet import TagViewSet
 from bodzify_api.view.viewset.track.MineTrackViewSet import MineTrackViewSet
-from bodzify_api.view.viewset.PlaylistViewSet import PlaylistViewSet
+from bodzify_api.view.viewset.playlist.PlaylistViewSet import PlaylistViewSet
 from bodzify_api.view.LogoutView import LogoutView
 
 router = routers.DefaultRouter()
