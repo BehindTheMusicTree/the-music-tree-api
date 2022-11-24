@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 
-import shortuuid
-
 from django.db import models
-from django.contrib.auth.models import User
 
 from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.PlaylistType import PlaylistType
 from bodzify_api.model.tag.Tag import Tag
 
-TYPE_GENRE = "genre"
+PLAYLIST_TYPE_TAG_LABEL = "tag"
 
-class TagPlaylist(models.Model):
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=200, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(unique=True, default=shortuuid.uuid, max_length=200, editable=False)
+class TagPlaylist(Playlist):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    addedOn = models.DateTimeField(auto_now_add=True)
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = self.tag.name
+        self.type = PlaylistType.objects.get(label=PLAYLIST_TYPE_TAG_LABEL)

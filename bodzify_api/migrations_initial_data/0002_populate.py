@@ -3,12 +3,19 @@
 from django.db import migrations
 
 from bodzify_api.model.tag.TagType import TagTypesLabels
+from bodzify_api.model.playlist.PlaylistType import PlaylistTypeLabels
 from bodzify_api import settings
 
 def populateTagTypes(apps, schemaEditor):
     TagType = apps.get_model('bodzify_api', 'TagType')
     TagType(label=TagTypesLabels.GENRE).save()
     TagType(label=TagTypesLabels.TAG).save()
+
+def populatePlaylistTypes(apps, schemaEditor):
+    PlaylistType = apps.get_model('bodzify_api', 'PlaylistType')
+    PlaylistType(label=PlaylistTypeLabels.GENRE).save()
+    PlaylistType(label=PlaylistTypeLabels.TAG).save()
+    PlaylistType(label=PlaylistTypeLabels.CUSTOM).save()
 
 class Migration(migrations.Migration):
 
@@ -17,5 +24,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populateTagTypes)
+        migrations.RunPython(populateTagTypes),
+        migrations.RunPython(populatePlaylistTypes)
     ]
