@@ -1,22 +1,20 @@
 #!/usr/bin/env python
 
-from rest_framework import viewsets
-
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from django.http import JsonResponse
-
-from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
-from bodzify_api.serializer.PlaylistSerializer import PlaylistSerializer
+from bodzify_api.serializer.playlist.PlaylistSerializer import PlaylistSerializer
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.dao import MineTrackMyfreemp3Dao
-import bodzify_api.view.utility as viewset_utility
 from bodzify_api.model.playlist.Playlist import Playlist
 
 NAME_PARAMETER = "name"
 
-class PlaylistViewSet(viewsets.GenericViewSet):  
+class PlaylistViewSet(MultiSerializerViewSet):  
     queryset = Playlist.objects.all()
+    serializers = {
+        'default': PlaylistSerializer,
+        'list':  PlaylistSerializer,
+        'retrieve':  PlaylistSerializer,
+    }
 
     def get_queryset(self):
         queryset = Playlist.objects.filter(user=self.request.user)

@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from bodzify_api.model.tag.Tag import Tag
-from bodzify_api.model.playlist.TagPlaylist import TagPlaylist
+from bodzify_api.model.playlist.Playlist import Playlist
 
 class LibraryTrack(models.Model):
     path = models.CharField(max_length=200)
@@ -19,12 +19,9 @@ class LibraryTrack(models.Model):
     genre = models.ForeignKey(Tag, on_delete=models.SET_NULL, default=None, null=True)
     duration = models.CharField(max_length=200, default=None, blank=True, null=True)
     rating = models.IntegerField (default=None, blank=True, null=True)
-    playlists = models.ManyToManyField(TagPlaylist)
+    playlists = models.ManyToManyField(Playlist)
     language = models.CharField (max_length=200, default=None, blank=True, null=True)
     addedOn = models.DateTimeField(auto_now_add=True)
-
-    __original_genre = None
-    hasChangedGenre = False
     
     @property
     def filename(self) -> str:
@@ -39,11 +36,5 @@ class LibraryTrack(models.Model):
     def relativeUrl(self) -> str:
         return "tracks/" + self.uuid + "/"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.__original_genre = self.genre
-
-    def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        super().save(force_insert, force_update, *args, **kwargs)
-        self.hasChangedGenre = self.__original_genre != self.genre
-        self.__original_genre = self.genre
+    def __str__(self) -> str:
+        return str(self.user) + " " + self.artist + " "+ self.title + " " + self.path 

@@ -10,18 +10,13 @@ from django.http import JsonResponse
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSerializer
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.playlist.TagPlaylist import TagPlaylist
+from bodzify_api.model.tag.Tag import Tag
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.dao import LibraryTrackDao
 from bodzify_api.view import utility
 
-TITLE_FIELD = "title"
-ARTIST_FIELD = "artist"
-ALBUM_FIELD = "album"
-GENRE_FIELD = "genre"
-RATING_FIELD = "rating"
-LANGUAGE_FIELD = "language"
-DURATION_FIELD = "duration"
-RELEASE_DATE_FIELD = "releasedOn"
+GENRE_PARAM = "genre"
 
 class LibraryTrackViewSet(MultiSerializerViewSet):
     queryset = LibraryTrack.objects.all()
@@ -32,21 +27,33 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     }
 
     def get_queryset(self):
-        queryset = LibraryTrack.objects.all()
-        genreParameter = self.request.query_params.get(GENRE_FIELD)
-        if genreParameter == "": genre = None
-        else: genre = genreParameter
-        return queryset.filter(genre=genre)
+        queryset = LibraryTrack.objects.filter(user=self.request.user)
+        genre = self.request.query_params.get(GENRE_PARAM)
+        if genre is not None: queryset = queryset.filter(genre=genre)
+        return queryset
 
     @extend_schema(
         request=LibraryTrackSerializer,
         responses=LibraryTrackResponseSerializer
     )
     def update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
-        track = LibraryTrack.objects.get(uuid=kwargs['pk'])
-        LibraryTrackDao.updateTags(track)
-        serializer = LibraryTrackResponseSerializer(track)
+        partial = kwargs.pop('partial', False)
+        track = self.get_object()
+        oldGenre = LibraryTrack.objects.get(uuid=kwargs['pk']).genre
+        requestSerializer = LibraryTrackSerializer(track, data=request.data, partial=partial)
+        requestSerializer.is_valid(raise_exception=True)
+        updatedTrack = requestSerializer.save()
+
+        if oldGenre != updatedTrack.genre:
+            genre = updatedTrack.genre
+            while genre != None:
+                updatedTrack.playlists.add(TagPlaylist.objects.get(tag=genre))
+                genre = genre.parent
+            updatedTrack.save()
+
+        LibraryTrackDao.updateTags(updatedTrack)
+
+        serializer = LibraryTrackResponseSerializer(updatedTrack)
         headers = self.get_success_headers(serializer.data)
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

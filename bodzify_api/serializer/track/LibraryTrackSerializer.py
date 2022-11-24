@@ -27,14 +27,8 @@ class LibraryTrackSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 class LibraryTrackResponseSerializer(serializers.ModelSerializer):
+
     genre = TagResponseSerializer()
-
-    def get_genreName(self, obj):
-        if obj.genre is None:
-            return None
-        else:
-            return obj.genre.name
-
     class Meta:
         model = LibraryTrack
         fields = [
@@ -48,5 +42,6 @@ class LibraryTrackResponseSerializer(serializers.ModelSerializer):
             "genre", 
             "duration", 
             "rating", 
-            "language", 
+            "language",
+            "playlists",
             "addedOn"]
