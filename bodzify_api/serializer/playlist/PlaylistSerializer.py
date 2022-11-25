@@ -11,6 +11,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Playlist
         fields = [
+            "uuid",
             "name", 
             "type", 
             "trackCount",
