@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'bodzify_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'bodzify_api',
+        'USER': 'django',
+        'PASSWORD': 'T6q)32hr6fr',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 

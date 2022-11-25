@@ -27,3 +27,6 @@ djangorestframework==3.13.1
 djangorestframework-simplejwt==4.7.2
 django-database-view==0.3.0
 django-extensions==3.2.1
+psycopg2==2.9.5
+werkzeug==2.2.2
+pyOpenSSL==22.1.0
