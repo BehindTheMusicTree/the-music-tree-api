@@ -34,11 +34,15 @@ class PlaylistViewSet(MultiSerializerViewSet):
         name = self.request.query_params.get(NAME_PARAMETER)
         if name is not None: queryset = queryset.filter(name__contains=name)
 
-        parentUuid = self.request.query_params.get(PARENT_UUID_PARAMETER)
-        if parentUuid is not None: queryset = queryset.filter(criteria__parent__uuid=parentUuid)
+        parentUuidParameterValue = self.request.query_params.get(PARENT_UUID_PARAMETER)
+        if parentUuidParameterValue is not None: 
+            if parentUuidParameterValue == "": 
+                parentUuidFilter = None
+            else : 
+                parentUuidFilter = parentUuidParameterValue
+            queryset = queryset.filter(criteria__parent__uuid=parentUuidFilter)
 
         typeLabel = self.request.query_params.get(TYPE_LABEL_PARAMETER)
-        print(typeLabel)
         if typeLabel is not None: queryset = queryset.filter(type__label=typeLabel)
 
         return queryset
