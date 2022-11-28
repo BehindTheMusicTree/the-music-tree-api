@@ -5,7 +5,7 @@ import os, shortuuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from bodzify_api.model.tag.Tag import Tag
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 
 class LibraryTrack(models.Model):
@@ -16,7 +16,7 @@ class LibraryTrack(models.Model):
     title = models.CharField(max_length=200, default=None, blank=True, null=True)
     artist = models.CharField(max_length=200, default=None, blank=True, null=True)
     album = models.CharField(max_length=200, default=None, blank=True, null=True)
-    genre = models.ForeignKey(Tag, on_delete=models.SET_NULL, default=None, null=True)
+    genre = models.ForeignKey(Criteria, on_delete=models.SET_NULL, default=None, null=True)
     duration = models.CharField(max_length=200, default=None, blank=True, null=True)
     rating = models.IntegerField (default=None, blank=True, null=True)
     playlists = models.ManyToManyField(Playlist)

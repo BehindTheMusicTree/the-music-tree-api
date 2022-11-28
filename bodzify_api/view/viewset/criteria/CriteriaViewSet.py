@@ -11,32 +11,33 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.serializer.tag.TagSerializer import TagRequestSerializer, TagResponseSerializer
-from bodzify_api.model.tag.Tag import Tag
-from bodzify_api.model.tag.TagType import TagType, TagTypesLabels
-from bodzify_api.model.playlist.TagPlaylist import TagPlaylist
-from bodzify_api.model.playlist.GenrePlaylist import GenrePlaylist
+from bodzify_api.serializer.criteria.CriteriaSerializer import (
+    CriteriaRequestSerializer, CriteriaResponseSerializer)
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesLabels
+from bodzify_api.model.playlist.criteria.TagPlaylist import TagPlaylist
+from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
 
 NAME_FIELD = "name"
 PARENT_FIELD = "parent"
 
-class TagViewSet(MultiSerializerViewSet):
-  queryset = Tag.objects.all()
+class CriteriaViewSet(MultiSerializerViewSet):
+  queryset = Criteria.objects.all()
   serializers = {
-    'default': TagRequestSerializer,
-    'list':  TagResponseSerializer,
-    'retrieve':  TagResponseSerializer,
+    'default': CriteriaRequestSerializer,
+    'list':  CriteriaResponseSerializer,
+    'retrieve':  CriteriaResponseSerializer,
   }
 
-  def __init__(self, tagTypeLabel=TagTypesLabels.TAG, **kwargs):
-      if tagTypeLabel is None: 
-        self.tagType = None
+  def __init__(self, criteriaTypeLabel, **kwargs):
+      if criteriaTypeLabel is None: 
+        self.criteriaType = None
       else: 
-        self.tagType = TagType.objects.get(label=tagTypeLabel)
+        self.criteriaType = CriteriaType.objects.get(label=criteriaTypeLabel)
       super().__init__(**kwargs)
 
   def get_queryset(self):
-    queryset = Tag.objects.filter(user=self.request.user)
+    queryset = Criteria.objects.filter(user=self.request.user)
     
     name = self.request.query_params.get(NAME_FIELD)
     if name is not None: queryset = queryset.filter(name__contains=name)
@@ -47,29 +48,29 @@ class TagViewSet(MultiSerializerViewSet):
       else: parent = parentParameter
       queryset = queryset.filter(parent=parent)
       
-    if self.tagType is not None:
-      queryset = queryset.filter(type=self.tagType.id)
+    if self.criteriaType is not None:
+      queryset = queryset.filter(type=self.criteriaType.id)
 
     return queryset
     
   @extend_schema(
-    request=TagRequestSerializer,
-    responses=TagResponseSerializer
+    request=CriteriaRequestSerializer,
+    responses=CriteriaResponseSerializer
   )
   def create(self, request, *args, **kwargs):
-    requestSerializer = TagRequestSerializer(data=request.data)
+    requestSerializer = CriteriaRequestSerializer(data=request.data)
     requestSerializer.is_valid(raise_exception=True)
     try:
-      tag = requestSerializer.save(user=self.request.user, type=self.tagType)
+      criteria = requestSerializer.save(user=self.request.user, type=self.criteriaType)
     except IntegrityError as e:
       return utility.GetJsonResponseWhenBadRequest(exception=e)
 
-    if self.tagType.label == TagTypesLabels.GENRE:
-      GenrePlaylist(user=self.request.user, tag=tag).save()
-    else:
-      TagPlaylist(user=self.request.user, tag=tag).save()
+    if self.criteriaType.label == CriteriaTypesLabels.GENRE:
+      GenrePlaylist(user=self.request.user, criteria=criteria).save()
+    elif self.criteriaType.label == CriteriaTypesLabels.TAG:
+      TagPlaylist(user=self.request.user, criteria=criteria).save()
 
-    responseSerializer = TagResponseSerializer(tag)
+    responseSerializer = CriteriaResponseSerializer(criteria)
     headers = self.get_success_headers(responseSerializer.data)
     
     return JsonResponse(
@@ -84,7 +85,7 @@ class TagViewSet(MultiSerializerViewSet):
       OpenApiParameter(NAME_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
       OpenApiParameter(PARENT_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH)
     ],
-    responses=TagResponseSerializer
+    responses=CriteriaResponseSerializer
   )
   def list(self, request, *args, **kwargs):
       queryset = self.filter_queryset(self.get_queryset())

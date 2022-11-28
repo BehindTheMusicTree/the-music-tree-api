@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.tag.TagSerializer import TagResponseSerializer
+from bodzify_api.serializer.criteria.CriteriaSerializer import CriteriaResponseSerializer
 
 class LibraryTrackSerializer(serializers.ModelSerializer):
 
@@ -28,7 +28,7 @@ class LibraryTrackSerializer(serializers.ModelSerializer):
 
 class LibraryTrackResponseSerializer(serializers.ModelSerializer):
 
-    genre = TagResponseSerializer()
+    genre = CriteriaResponseSerializer()
     class Meta:
         model = LibraryTrack
         fields = [

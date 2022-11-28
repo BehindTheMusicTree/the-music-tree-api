@@ -8,8 +8,8 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 from bodzify_api.view.viewset.UserViewSet import UserViewSet
 from bodzify_api.view.viewset.track.LibraryTrackViewSet import LibraryTrackViewSet
-from bodzify_api.view.viewset.tag.GenreViewSet import GenreViewSet
-from bodzify_api.view.viewset.tag.TagViewSet import TagViewSet
+from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet
+from bodzify_api.view.viewset.criteria.TagViewSet import TagViewSet
 from bodzify_api.view.viewset.track.MineTrackViewSet import MineTrackViewSet
 from bodzify_api.view.viewset.playlist.PlaylistViewSet import PlaylistViewSet
 from bodzify_api.view.LogoutView import LogoutView
@@ -17,10 +17,12 @@ from bodzify_api.view.LogoutView import LogoutView
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'tracks', LibraryTrackViewSet)
-router.register(r'genres', GenreViewSet)
-router.register(r'tags', TagViewSet)
+router.register(r'tags/', TagViewSet)
+router.register(r'genres/', GenreViewSet)
 router.register(r'mine/tracks', MineTrackViewSet, 'mine-track')
 router.register(r'playlists', PlaylistViewSet)
+#router.register(r'playlists/zoomable/', PlaylistViewSet)
+#router.register(r'tagplaylists', TagPlaylistViewSet)
 
 base = 'api/v1/'
 
