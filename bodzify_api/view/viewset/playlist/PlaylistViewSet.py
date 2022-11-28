@@ -8,6 +8,8 @@ from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypeLabels, PlaylistType
 
 NAME_PARAMETER = "name"
+PARENT_UUID_PARAMETER = "parent"
+TYPE_LABEL_PARAMETER = "type"
 
 class PlaylistViewSet(MultiSerializerViewSet):  
     queryset = Playlist.objects.all()
@@ -17,9 +19,9 @@ class PlaylistViewSet(MultiSerializerViewSet):
         'retrieve':  PlaylistSerializer,
     }
 
-    def __init__(self, playlistTypeLabel=PlaylistTypeLabels.CUSTOM, **kwargs):
+    def __init__(self, playlistTypeLabel=None, **kwargs):
         if playlistTypeLabel is None: 
-            self.playlistTypes = None
+            self.playlistType = None
         else:
             self.playlistType = PlaylistType.objects.get(label=playlistTypeLabel)
         super().__init__(**kwargs)
@@ -32,11 +34,20 @@ class PlaylistViewSet(MultiSerializerViewSet):
         name = self.request.query_params.get(NAME_PARAMETER)
         if name is not None: queryset = queryset.filter(name__contains=name)
 
+        parentUuid = self.request.query_params.get(PARENT_UUID_PARAMETER)
+        if parentUuid is not None: queryset = queryset.filter(criteria__parent__uuid=parentUuid)
+
+        typeLabel = self.request.query_params.get(TYPE_LABEL_PARAMETER)
+        print(typeLabel)
+        if typeLabel is not None: queryset = queryset.filter(type__label=typeLabel)
+
         return queryset
 
     @extend_schema(
         parameters=[
-          OpenApiParameter(NAME_PARAMETER, OpenApiTypes.STR, OpenApiParameter.PATH)
+          OpenApiParameter(NAME_PARAMETER, OpenApiTypes.STR, OpenApiParameter.PATH),
+          OpenApiParameter(PARENT_UUID_PARAMETER, OpenApiTypes.STR, OpenApiParameter.PATH),
+          OpenApiParameter(TYPE_LABEL_PARAMETER, OpenApiTypes.STR, OpenApiParameter.PATH)
         ]
     )
     def list(self, request, *args, **kwargs):

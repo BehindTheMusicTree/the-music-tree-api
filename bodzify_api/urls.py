@@ -17,12 +17,10 @@ from bodzify_api.view.LogoutView import LogoutView
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'tracks', LibraryTrackViewSet)
-router.register(r'tags/', TagViewSet)
-router.register(r'genres/', GenreViewSet)
+router.register(r'tags', TagViewSet)
+router.register(r'genres', GenreViewSet)
 router.register(r'mine/tracks', MineTrackViewSet, 'mine-track')
 router.register(r'playlists', PlaylistViewSet)
-#router.register(r'playlists/zoomable/', PlaylistViewSet)
-#router.register(r'tagplaylists', TagPlaylistViewSet)
 
 base = 'api/v1/'
 

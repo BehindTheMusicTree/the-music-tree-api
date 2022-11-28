@@ -13,7 +13,8 @@ class CriteriaRequestSerializer(serializers.ModelSerializer):
 
 class CriteriaResponseSerializer(serializers.ModelSerializer):
                 
+    type = CriteriaTypeSerializer()
+    
     class Meta:
-        type = CriteriaTypeSerializer()
         model = Criteria
         fields = ['uuid', 'name', 'parent', 'type', 'addedOn']

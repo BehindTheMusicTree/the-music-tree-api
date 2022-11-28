@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSerializer
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.dao import LibraryTrackDao
@@ -47,7 +47,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         if oldGenre != updatedTrack.genre:
             genre = updatedTrack.genre
             while genre != None:
-                updatedTrack.playlists.add(CriteriaPlaylist.objects.get(criteria=genre))
+                updatedTrack.playlists.add(GenrePlaylist.objects.get(criteria=genre))
                 genre = genre.parent
             updatedTrack.save()
 
