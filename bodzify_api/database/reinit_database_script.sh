@@ -10,3 +10,4 @@ python3 ~/Git/bodzify-api/manage.py makemigrations bodzify_api
 cp ~/Git/bodzify-api/bodzify_api/database/0002_populate.py ~/Git/bodzify-api/bodzify_api/migrations/
 python3 ~/Git/bodzify-api/manage.py migrate
 python3 ~/Git/bodzify-api/manage.py createsuperuser --username admin --email admin@bodzify.com
+python3 ~/Git/bodzify-api/manage.py runserver
