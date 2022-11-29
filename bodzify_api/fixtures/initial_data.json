@@ -1,0 +1,102 @@
+[
+    {
+        "model": "bodzify_api.criteriatype",
+        "pk": 1,
+        "fields": {
+            "label": "genre"
+        }
+    },
+    {
+        "model": "bodzify_api.criteriatype",
+        "pk": 2,
+        "fields": {
+            "label": "tag"
+        }
+    },
+
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "m5KRxi10OxW4BEOod9Qmjy",
+        "fields": {
+            "name": "All",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "L1ZG85munGytJbJ65fgion",
+        "fields": {
+            "name": "Genreless",
+            "type": 1,
+            "parent": "m5KRxi10OxW4BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "knvci5z2bBkMySDNBfkiJR",
+        "fields": {
+            "name": "Tagged",
+            "type": 2,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
+    },
+
+    {
+        "model": "bodzify_api.playlisttype",
+        "pk": 1,
+        "fields": {
+            "label": "genre"
+        }
+    },
+    {
+        "model": "bodzify_api.playlisttype",
+        "pk": 2,
+        "fields": {
+            "label": "tag"
+        }
+    },
+    {
+        "model": "bodzify_api.playlisttype",
+        "pk": 3,
+        "fields": {
+            "label": "custom"
+        }
+    },
+
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLhbhHSjqEPdZB",
+        "fields": {
+            "name": "All",
+            "criteria": "m5KRxi10OxW4BEOod9Qmjy",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "fields": {
+            "name": "Genreless",
+            "criteria": "L1ZG85munGytJbJ65fgion",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "fields": {
+            "name": "Tagged",
+            "criteria": "knvci5z2bBkMySDNBfkiJR",
+            "type": 2,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
+    }
+]
