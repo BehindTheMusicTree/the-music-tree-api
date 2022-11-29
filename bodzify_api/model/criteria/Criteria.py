@@ -8,8 +8,9 @@ from django.contrib.auth.models import User
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
 
 class CriteriaSpecialNames:
-    GENRE_ALL = "all"
-    TAG_ALL = "all"
+    GENRE_ALL = "All"
+    GENRE_GENRELESS = "Genreless"
+    TAG_ALL = "Tagged"
 
 class Criteria(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=200, editable=False)

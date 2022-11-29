@@ -78,7 +78,6 @@ def createFromMineTrack(mineTrack, trackFile, user):
         title=mineTrack.title, 
         artist=mineTrack.artist, 
         album="", 
-        genre=None, 
         duration=mineTrack.duration,
         rating=-1,
         language="")
