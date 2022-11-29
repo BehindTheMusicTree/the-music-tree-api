@@ -61,11 +61,16 @@ class CriteriaViewSet(MultiSerializerViewSet):
     requestSerializer = CriteriaRequestSerializer(data=request.data)
     requestSerializer.is_valid(raise_exception=True)
 
-    if self.parent is None:
-      self.parent = Criteria.objects.get(type=self.criteriaType, parent=None)
+    parent = requestSerializer.validated_data[PARENT_FIELD]
+
+    if parent is None:
+      parent = Criteria.objects.get(type=self.criteriaType, parent=None)
 
     try:
-      criteria = requestSerializer.save(user=self.request.user, type=self.criteriaType)
+      criteria = requestSerializer.save(
+        user=self.request.user, 
+        type=self.criteriaType, 
+        parent=parent)
     except IntegrityError as e:
       return utility.GetJsonResponseWhenBadRequest(exception=e)
 
