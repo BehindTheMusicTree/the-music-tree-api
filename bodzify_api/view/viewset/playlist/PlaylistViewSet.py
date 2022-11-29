@@ -5,7 +5,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.playlist.PlaylistSerializer import PlaylistSerializer
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypeLabels, PlaylistType
+from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds, PlaylistType
 
 NAME_PARAMETER = "name"
 PARENT_UUID_PARAMETER = "parent"

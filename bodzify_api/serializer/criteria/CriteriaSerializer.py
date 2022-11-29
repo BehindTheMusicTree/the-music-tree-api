@@ -9,7 +9,7 @@ class CriteriaRequestSerializer(serializers.ModelSerializer):
             
     class Meta:
         model = Criteria
-        fields = ['uuid', 'name', 'parent']
+        fields = ['name', 'parent']
 
 class CriteriaResponseSerializer(serializers.ModelSerializer):
                 
