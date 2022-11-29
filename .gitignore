@@ -8,3 +8,13 @@ db.sqlite3
 *.log
 
 log/myfreemp3Scrapper/
+
+bin/
+
+lib/
+
+venv/
+
+share/
+
+pyvenv.cfg
