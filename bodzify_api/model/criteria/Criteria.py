@@ -7,6 +7,11 @@ from django.contrib.auth.models import User
 
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
 
+class CriteriaSpecialNames:
+    GENRE_ALL = "All"
+    GENRE_GENRELESS = "Genreless"
+    TAG_ALL = "Tagged"
+
 class Criteria(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=200, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -19,4 +24,4 @@ class Criteria(models.Model):
         return self.uuid + " " + self.name + " " + str(self.parent)
 
     class Meta:
-        unique_together = ('user', 'name', 'type')
+        unique_together = ('user', 'name', 'type', 'parent')

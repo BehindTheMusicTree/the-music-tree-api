@@ -11,7 +11,6 @@ from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSeri
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
-from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.dao import LibraryTrackDao
 from bodzify_api.view import utility

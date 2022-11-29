@@ -60,6 +60,10 @@ class CriteriaViewSet(MultiSerializerViewSet):
   def create(self, request, *args, **kwargs):
     requestSerializer = CriteriaRequestSerializer(data=request.data)
     requestSerializer.is_valid(raise_exception=True)
+
+    if self.parent is None:
+      self.parent = Criteria.objects.get(type=self.criteriaType, parent=None)
+
     try:
       criteria = requestSerializer.save(user=self.request.user, type=self.criteriaType)
     except IntegrityError as e:
