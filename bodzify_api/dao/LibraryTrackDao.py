@@ -6,6 +6,9 @@ from mutagen.easyid3 import EasyID3
 
 import bodzify_api.settings as settings
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylistSpecialNames
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 
 ID3_TAG_TITLE = "title"
 ID3_TAG_ARTIST = "artist"
@@ -77,13 +80,21 @@ def createFromMineTrack(mineTrack, trackFile, user):
         user=user, 
         title=mineTrack.title, 
         artist=mineTrack.artist, 
-        album="", 
+        album="",
+        genre=Criteria.objects.get(user=user, name=CriteriaSpecialNames.GENRE_GENRELESS),
         duration=mineTrack.duration,
         rating=-1,
         language="")
     libraryTrack.save()
 
+    libraryTrack.playlists.add(
+        Playlist.objects.get(user=user, name=GenrePlaylistSpecialNames.GENRE_ALL))
+    libraryTrack.playlists.add(
+        Playlist.objects.get(user=user, name=GenrePlaylistSpecialNames.GENRE_GENRELESS))
+    libraryTrack.save()
+
     updateTags(libraryTrack)
+
 
     return libraryTrack
 

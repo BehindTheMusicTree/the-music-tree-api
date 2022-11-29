@@ -18,8 +18,8 @@ class LibraryTrack(models.Model):
     album = models.CharField(max_length=200, default=None, blank=True, null=True)
     genre = models.ForeignKey(
         Criteria, 
-        on_delete=models.SET_DEFAULT, 
-        default="L1ZG85munGytJbJ65fgion", # Default : Genreless
+        on_delete=models.DO_NOTHING, 
+        default=None,
         null=False)
     duration = models.CharField(max_length=200, default=None, blank=True, null=True)
     rating = models.IntegerField (default=None, blank=True, null=True)
