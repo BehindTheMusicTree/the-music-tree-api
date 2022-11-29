@@ -10,7 +10,8 @@ from django.http import JsonResponse
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSerializer
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.dao import LibraryTrackDao
 from bodzify_api.view import utility
@@ -44,10 +45,34 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         updatedTrack = requestSerializer.save()
 
         if oldGenre != updatedTrack.genre:
-            genre = updatedTrack.genre
-            while genre != None:
-                updatedTrack.playlists.add(GenrePlaylist.objects.get(criteria=genre))
-                genre = genre.parent
+            newGenre = updatedTrack.genre
+
+            genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypeIds.GENRE)
+
+            newGenreTreeItem = newGenre
+            isNewGenreTreeItemInOldGenreTree = False
+
+            while isNewGenreTreeItemInOldGenreTree is False:
+                updatedTrack.playlists.add(Playlist.objects.get(
+                    user=request.user,
+                    type=genrePlaylistType,
+                    criteria=newGenreTreeItem))
+                newGenreTreeItem = newGenreTreeItem.parent
+
+                oldGenreTreeItem = oldGenre
+                while oldGenreTreeItem is not None and isNewGenreTreeItemInOldGenreTree is False:
+                    isNewGenreTreeItemInOldGenreTree = (newGenreTreeItem == oldGenreTreeItem)
+                    oldGenreTreeItem = oldGenreTreeItem.parent
+
+            commonGenre = newGenreTreeItem
+            oldGenreTreeItem = oldGenre
+
+            while oldGenreTreeItem != commonGenre:
+                updatedTrack.playlists.remove(Playlist.objects.get(
+                    user=request.user,
+                    type=genrePlaylistType,
+                    criteria=oldGenreTreeItem))
+                oldGenreTreeItem = oldGenreTreeItem.parent
             updatedTrack.save()
 
         LibraryTrackDao.updateTags(updatedTrack)
