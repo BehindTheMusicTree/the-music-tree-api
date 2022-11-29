@@ -18,3 +18,5 @@ venv/
 share/
 
 pyvenv.cfg
+
+lib64
