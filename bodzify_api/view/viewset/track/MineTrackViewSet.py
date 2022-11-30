@@ -9,7 +9,7 @@ from django.http import JsonResponse
 
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
-from bodzify_api.dao import MineTrackMyfreemp3Dao
+from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as viewset_utility
 
 SOURCE_MYFREEMP3 = "myfreemp3"
@@ -44,7 +44,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
         pageSize = request.GET.get(viewset_utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
 
         if mineSource == SOURCE_MYFREEMP3:
-            mineTracks = MineTrackMyfreemp3Dao.list(query, pageNumber, pageSize)
+            mineTracks = MineTrackMyfreemp3Service.list(query, pageNumber, pageSize)
             return viewset_utility.GetJsonResponsePaginated(request, mineTracks)
 
         else:
@@ -52,7 +52,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
     
     @action(detail=False, methods=['post'])
     def extract(self, request):
-        libraryTrack = MineTrackMyfreemp3Dao.extract(
+        libraryTrack = MineTrackMyfreemp3Service.extract(
             user=request.user, 
             title=request.data[TITLE_FIELD], 
             artist=request.data[ARTIST_FIELD], 

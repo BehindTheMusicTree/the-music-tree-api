@@ -14,9 +14,9 @@ from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewS
 from bodzify_api.serializer.criteria.CriteriaSerializer import (
     CriteriaRequestSerializer, CriteriaResponseSerializer)
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesLabels
-from bodzify_api.model.playlist.criteria.TagPlaylist import TagPlaylist
-from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
+from bodzify_api.model.criteria.CriteriaType import CriteriaType
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
 NAME_FIELD = "name"
 PARENT_FIELD = "parent"
@@ -29,12 +29,10 @@ class CriteriaViewSet(MultiSerializerViewSet):
     'retrieve':  CriteriaResponseSerializer,
   }
 
-  def __init__(self, criteriaTypeLabel, **kwargs):
-      if criteriaTypeLabel is None: 
-        self.criteriaType = None
-      else: 
-        self.criteriaType = CriteriaType.objects.get(label=criteriaTypeLabel)
+  def __init__(self, criteriaTypeId, playlistTypeId, **kwargs):
       super().__init__(**kwargs)
+      self.criteriaType = CriteriaType.objects.get(id=criteriaTypeId)
+      self.playlistType = PlaylistType.objects.get(id=playlistTypeId)
 
   def get_queryset(self):
     queryset = Criteria.objects.filter(user=self.request.user)
@@ -74,10 +72,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
     except IntegrityError as e:
       return utility.GetJsonResponseWhenBadRequest(exception=e)
 
-    if self.criteriaType.label == CriteriaTypesLabels.GENRE:
-      GenrePlaylist(user=self.request.user, criteria=criteria).save()
-    elif self.criteriaType.label == CriteriaTypesLabels.TAG:
-      TagPlaylist(user=self.request.user, criteria=criteria).save()
+    Playlist(user=self.request.user, criteria=criteria, type=self.playlistType).save()
 
     responseSerializer = CriteriaResponseSerializer(criteria)
     headers = self.get_success_headers(responseSerializer.data)

@@ -5,8 +5,13 @@ import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.PlaylistType import PlaylistType
+from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
+from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
+
+class PlaylistSpecialNames:
+    GENRE_ALL = CriteriaSpecialNames.GENRE_ALL
+    GENRE_GENRELESS = CriteriaSpecialNames.GENRE_GENRELESS
+    TAG_ALL = CriteriaSpecialNames.TAG_ALL
 
 class Playlist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=200, editable=False)
@@ -31,4 +36,5 @@ class Playlist(models.Model):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        if self.criteria is not None: self.name = self.criteria.name
+        if self.criteria is not None: 
+            self.name = self.criteria.name
