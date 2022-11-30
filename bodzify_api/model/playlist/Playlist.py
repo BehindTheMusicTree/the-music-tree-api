@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.PlaylistType import PlaylistType
+from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
 
 class Playlist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=200, editable=False)
@@ -29,6 +29,7 @@ class Playlist(models.Model):
             type=self.type, 
             criteria=self.criteria.parent)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, playlistTypeId=PlaylistTypeIds.CUSTOM, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         if self.criteria is not None: self.name = self.criteria.name
+        self.type = PlaylistType.objects.get(id=playlistTypeId)
