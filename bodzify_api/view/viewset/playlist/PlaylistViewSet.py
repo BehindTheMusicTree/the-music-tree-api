@@ -5,7 +5,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.playlist.PlaylistSerializer import PlaylistSerializer
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds, PlaylistType
+from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
 
 NAME_PARAMETER = "name"
 PARENT_UUID_PARAMETER = "parent"
@@ -19,17 +19,8 @@ class PlaylistViewSet(MultiSerializerViewSet):
         'retrieve':  PlaylistSerializer,
     }
 
-    def __init__(self, playlistTypeLabel=None, **kwargs):
-        if playlistTypeLabel is None: 
-            self.playlistType = None
-        else:
-            self.playlistType = PlaylistType.objects.get(label=playlistTypeLabel)
-        super().__init__(**kwargs)
-
     def get_queryset(self):
         queryset = Playlist.objects.filter(user=self.request.user)
-
-        if self.playlistType is not None: queryset = queryset.filter(type=self.playlistType.id)
         
         name = self.request.query_params.get(NAME_PARAMETER)
         if name is not None: queryset = queryset.filter(name__contains=name)

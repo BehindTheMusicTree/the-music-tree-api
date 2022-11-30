@@ -5,9 +5,11 @@ import os
 from mutagen.easyid3 import EasyID3
 
 import bodzify_api.settings as settings
+import bodzify_api.service.CriteriaService as CriteriaService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylistSpecialNames
+from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
 from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 
 ID3_TAG_TITLE = "title"
@@ -17,6 +19,46 @@ ID3_TAG_GENRE = "genre"
 ID3_TAG_DURATION = "duration"
 ID3_TAG_RATING = "titlesort"
 ID3_TAG_LANGUAGE = "language"
+
+def updatePlaylists(track, user, oldGenre):
+    newGenre = track.genre
+
+    genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypeIds.GENRE)
+
+    commonGenre = CriteriaService.getCommonCriteria(oldGenre, newGenre)
+
+    newGenreTreeItem = newGenre
+
+    while newGenreTreeItem != commonGenre:
+        track.playlists.add(Playlist.objects.get(
+            user=user,
+            type=genrePlaylistType,
+            criteria=newGenreTreeItem))            
+        newGenreTreeItem = newGenreTreeItem.parent
+
+    oldGenreTreeItem = oldGenre
+
+    while oldGenreTreeItem != commonGenre:
+        track.playlists.remove(Playlist.objects.get(
+            user=user,
+            type=genrePlaylistType,
+            criteria=oldGenreTreeItem))
+        oldGenreTreeItem = oldGenreTreeItem.parent
+        
+    track.save()
+
+def update(track, data, partial, RequestSerializerClass, user):
+    oldGenre = LibraryTrack.objects.get(uuid=track.uuid).genre
+    requestSerializer = RequestSerializerClass(track, data=data, partial=partial)
+    requestSerializer.is_valid(raise_exception=True)
+    updatedTrack = requestSerializer.save()
+
+    if oldGenre != updatedTrack.genre:
+        updatePlaylists(track=updatedTrack, user=user, oldGenre=oldGenre)
+
+    updateTags(updatedTrack)
+
+    return updatedTrack
 
 def updateTags(track):
     trackFile = EasyID3(track.path)
@@ -88,21 +130,20 @@ def createFromMineTrack(mineTrack, trackFile, user):
     libraryTrack.save()
 
     libraryTrack.playlists.add(
-        Playlist.objects.get(user=user, name=GenrePlaylistSpecialNames.GENRE_ALL))
+        Playlist.objects.get(
+            user=user, 
+            type__id=PlaylistTypeIds.GENRE, 
+            name=PlaylistSpecialNames.GENRE_ALL))
     libraryTrack.playlists.add(
-        Playlist.objects.get(user=user, name=GenrePlaylistSpecialNames.GENRE_GENRELESS))
+        Playlist.objects.get(
+            user=user, 
+            type__id=PlaylistTypeIds.GENRE, 
+            name=PlaylistSpecialNames.GENRE_GENRELESS))
     libraryTrack.save()
 
     updateTags(libraryTrack)
 
-
     return libraryTrack
-
-def get(uuid):
-    return LibraryTrack.objects.get(uuid=uuid)
-
-def getAllByUser(user):
-    return LibraryTrack.objects.filter(user=user)
 
 def delete(uuid):
     track = LibraryTrack.objects.get(uuid=uuid)
