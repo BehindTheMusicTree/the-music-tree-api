@@ -1,5 +1,23 @@
 [
     {
+        "model": "auth.user", 
+        "pk": 1, 
+        "fields": {
+            "password": "pbkdf2_sha256$390000$bMYF3BrDnVlomh4yjFsTKM$Ed3Ch09T3aCyBlFALcXmmZ1+hZ2bUnHARK5Jl7I2mW0=", 
+            "last_login": null, 
+            "is_superuser": true, 
+            "username": "admin", 
+            "first_name": "", 
+            "last_name": "", 
+            "email": "admin@bodzify.com", 
+            "is_staff": true, 
+            "is_active": true, 
+            "date_joined": "2022-11-30T10:45:27.189Z", 
+            "groups": [], 
+            "user_permissions": []
+        }
+    },
+    {
         "model": "bodzify_api.criteriatype",
         "pk": 1,
         "fields": {
