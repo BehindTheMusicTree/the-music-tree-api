@@ -30,3 +30,4 @@ psycopg2==2.9.5
 werkzeug==2.2.2
 pyOpenSSL==22.1.0
 djangorestframework-recursive==0.1.2
+coverage==6.5.0
