@@ -26,6 +26,4 @@ class CriteriaTestCase(TestCase):
             allGenreCriteria=allGenreCriteria, 
             user=user)
         self.assertTrue(isinstance(criteria, Criteria))
-        self.assertIn(
-            name + " " + allGenreCriteria.uuid + " " + allGenreCriteria.name + " None", 
-            str(criteria))
+        self.assertIn(criteria.uuid + " " + criteria.name, str(criteria))
