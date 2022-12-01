@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'coverage',
     'bodzify_api'
 ]
 
@@ -79,7 +80,7 @@ DB_PASSWORD=os.environ.get("DB_PASSWORD")
 DB_HOST=os.environ.get("DB_HOST")
 DB_PORT=os.environ.get("DB_PORT")
 DB_DATABASE=os.environ.get("DB_DATABASE")
-DB_IS_AVAIL = all([
+DB_IS_AVAILABLE = all([
         DB_USERNAME, 
         DB_PASSWORD, 
         DB_HOST,
@@ -87,7 +88,7 @@ DB_IS_AVAIL = all([
         DB_DATABASE
 ])
 
-if DB_IS_AVAIL:
+if DB_IS_AVAILABLE:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
