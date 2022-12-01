@@ -8,6 +8,5 @@ python3 /var/www/html/bodzify-api/manage.py makemigrations
 python3 /var/www/html/bodzify-api/manage.py migrate --fake-initial
 python3 /var/www/html/bodzify-api/manage.py migrate
 python3 /var/www/html/bodzify-api/manage.py makemigrations bodzify_api
-cp /var/www/html/bodzify-api/bodzify_api/migrations_initial_data/0002_populate.py /var/www/html/bodzify-api/bodzify_api/migrations/
-python3 /var/www/html/bodzify-api/manage.py migrate
-python3 /var/www/html/bodzify-api/manage.py createsuperuser --username admin --email admin@bodzify.com
+python3 /var/www/html/bodzify-api/manage.py loaddata initial_data
+python3 /var/www/html/bodzify-api/manage.py runserver
