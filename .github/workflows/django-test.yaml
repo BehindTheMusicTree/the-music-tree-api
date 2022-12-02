@@ -1,0 +1,48 @@
+name: Django Test
+
+on:
+    workflow_call:
+    workflow_dispatch:
+    push:
+       branches: [dev]
+    pull_request:
+        branches: [dev]
+
+jobs:
+  simple_build:
+    runs-on: ubuntu-latest
+    env:
+      MY_POSTGRES_USER: django
+      MY_POSTGRES_PASSWORD: T6q)32hr6fr
+      MY_POSTGRES_DB: bodzify_api
+    services:
+      postgres_main:
+        image: postgres:14.5
+        env:
+          POSTGRES_USER: ${{ env.MY_POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.MY_POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.MY_POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+           python-version: 3.8
+      - name: Install requirements
+        run: |
+            pip install -r requirements.txt
+      - name: Run tests
+        env:
+          DJANGO_DEV: "false"
+        run: |
+            cd src
+            pytest .
