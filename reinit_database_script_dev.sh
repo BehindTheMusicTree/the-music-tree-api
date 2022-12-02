@@ -9,6 +9,5 @@ python3 ~/Git/bodzify-api/manage.py migrate --fake-initial
 python3 ~/Git/bodzify-api/manage.py migrate
 python3 ~/Git/bodzify-api/manage.py makemigrations bodzify_api
 python3 ~/Git/bodzify-api/manage.py migrate
-python3 ~/Git/bodzify-api/manage.py createsuperuser --username admin --email admin@bodzify.com
 python3 ~/Git/bodzify-api/manage.py loaddata initial_data
 python3 ~/Git/bodzify-api/manage.py runserver

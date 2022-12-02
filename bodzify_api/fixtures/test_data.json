@@ -1,0 +1,31 @@
+[
+    {
+        "model": "auth.user", 
+        "pk": 2, 
+        "fields": 
+        {
+            "password": "pbkdf2_sha256$390000$MkhGyPAC9kQaNahXoroivy$xvl41ZTbtvlRijNI3i2Q3dhj/gUExjbbrL49tD9sx34=", 
+            "last_login": null, 
+            "is_superuser": false, 
+            "username": "user_test", 
+            "first_name": "", 
+            "last_name": "", 
+            "email": "user@test.com", 
+            "is_staff": false, 
+            "is_active": true, 
+            "date_joined": "2022-12-01T17:18:13.767Z", 
+            "groups": [], 
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "m5KRxi10OxW4BEOod9Qmjy",
+        "fields": {
+            "name": "All",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    }
+]

@@ -21,7 +21,7 @@ class Criteria(models.Model):
     addedOn = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return self.uuid + " " + self.name + " " + str(self.parent)
+        return self.uuid + " " + self.name
 
     class Meta:
         unique_together = ('user', 'name', 'type', 'parent')
