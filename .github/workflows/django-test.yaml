@@ -44,5 +44,4 @@ jobs:
         env:
           DJANGO_DEV: "false"
         run: |
-            cd src
             pytest .
