@@ -12,6 +12,7 @@ from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as viewset_utility
 
+
 SOURCE_MYFREEMP3 = "myfreemp3"
 SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"
 SOURCE_FIELD = "source"
@@ -24,9 +25,11 @@ DURATION_FIELD = "duration"
 RELEASED_ON_FIELD = "releasedOn"
 TRACK_URL = "url"
 
+
 class MineTrackViewSet(viewsets.GenericViewSet):  
     serializer_class = MineTrackSerializer
     
+
     @extend_schema(
         parameters=[
           OpenApiParameter(SOURCE_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
@@ -49,6 +52,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
 
         else:
             return viewset_utility.GetJsonResponseWhenBadRequest(request)
+    
     
     @action(detail=False, methods=['post'])
     def extract(self, request):

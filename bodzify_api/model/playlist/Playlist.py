@@ -6,12 +6,14 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
-from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
+from bodzify_api.model.playlist.PlaylistType import PlaylistType
+
 
 class PlaylistSpecialNames:
     GENRE_ALL = CriteriaSpecialNames.GENRE_ALL
     GENRE_GENRELESS = CriteriaSpecialNames.GENRE_GENRELESS
     TAG_ALL = CriteriaSpecialNames.TAG_ALL
+
 
 class Playlist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=200, editable=False)
@@ -25,6 +27,7 @@ class Playlist(models.Model):
     criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE)
     addedOn = models.DateTimeField(auto_now_add=True)
 
+
     @property
     def parent(self):
         if self.criteria is None: return None
@@ -33,6 +36,7 @@ class Playlist(models.Model):
             user=self.user, 
             type=self.type, 
             criteria=self.criteria.parent)
+
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)

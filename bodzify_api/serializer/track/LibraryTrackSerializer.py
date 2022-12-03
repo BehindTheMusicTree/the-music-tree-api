@@ -6,6 +6,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.criteria.CriteriaSerializer import CriteriaResponseSerializer
 from bodzify_api.serializer.playlist.PlaylistSerializer import PlaylistSerializer
 
+
 class LibraryTrackSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -24,13 +25,16 @@ class LibraryTrackSerializer(serializers.ModelSerializer):
             "language", 
             "addedOn"]
 
+
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
 
-class LibraryTrackResponseSerializer(serializers.ModelSerializer):
 
+class LibraryTrackResponseSerializer(serializers.ModelSerializer):
     genre = CriteriaResponseSerializer()
     playlists = PlaylistSerializer(many=True)
+
+    
     class Meta:
         model = LibraryTrack
         fields = [

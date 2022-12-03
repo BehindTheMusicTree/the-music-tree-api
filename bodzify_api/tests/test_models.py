@@ -6,13 +6,16 @@ from django.contrib.auth.models import User
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesIds
 
+
 USER_TEST_PK = 2
+
 
 @pytest.mark.django_db(transaction=True)
 class CriteriaTestCase(TestCase):
 
     fixtures = ['initial_data', 'test_data']
     
+
     def createTestUser(self):
         User.objects.create_user(
             pk=USER_TEST_PK, 
@@ -20,6 +23,7 @@ class CriteriaTestCase(TestCase):
             password="test", 
             email="test@test.com"
         )
+
 
     def createGenreCriteria(self, name, user):
         type = CriteriaType.objects.get(pk=CriteriaTypesIds.GENRE)
@@ -29,6 +33,7 @@ class CriteriaTestCase(TestCase):
             type=type,
             parent=allGenreCriteria,
             user=user)
+
 
     def test_criterias(self):
         userTest = User.objects.get(pk=USER_TEST_PK)

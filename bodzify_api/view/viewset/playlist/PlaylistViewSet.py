@@ -7,9 +7,11 @@ from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewS
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
 
+
 NAME_PARAMETER = "name"
 PARENT_UUID_PARAMETER = "parent"
 TYPE_LABEL_PARAMETER = "type"
+
 
 class PlaylistViewSet(MultiSerializerViewSet):  
     queryset = Playlist.objects.all()
@@ -18,6 +20,7 @@ class PlaylistViewSet(MultiSerializerViewSet):
         'list':  PlaylistSerializer,
         'retrieve':  PlaylistSerializer,
     }
+
 
     def get_queryset(self):
         queryset = Playlist.objects.filter(user=self.request.user)
@@ -37,6 +40,7 @@ class PlaylistViewSet(MultiSerializerViewSet):
         if typeLabel is not None: queryset = queryset.filter(type__label=typeLabel)
 
         return queryset
+
 
     @extend_schema(
         parameters=[

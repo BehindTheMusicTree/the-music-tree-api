@@ -12,6 +12,7 @@ from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
 from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 
+
 ID3_TAG_TITLE = "title"
 ID3_TAG_ARTIST = "artist"
 ID3_TAG_ALBUM = "album"
@@ -19,6 +20,7 @@ ID3_TAG_GENRE = "genre"
 ID3_TAG_DURATION = "duration"
 ID3_TAG_RATING = "titlesort"
 ID3_TAG_LANGUAGE = "language"
+
 
 def updatePlaylists(track, user, oldGenre):
     newGenre = track.genre
@@ -47,6 +49,7 @@ def updatePlaylists(track, user, oldGenre):
         
     track.save()
 
+
 def update(track, data, partial, RequestSerializerClass, user):
     oldGenre = LibraryTrack.objects.get(uuid=track.uuid).genre
     requestSerializer = RequestSerializerClass(track, data=data, partial=partial)
@@ -59,6 +62,7 @@ def update(track, data, partial, RequestSerializerClass, user):
     updateTags(updatedTrack)
 
     return updatedTrack
+
 
 def updateTags(track):
     trackFile = EasyID3(track.path)
@@ -94,6 +98,7 @@ def updateTags(track):
         languageTag = ""
     trackFile[ID3_TAG_LANGUAGE] = languageTag
     trackFile.save()
+
 
 def createFromMineTrack(mineTrack, trackFile, user):
     userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
@@ -144,6 +149,7 @@ def createFromMineTrack(mineTrack, trackFile, user):
     updateTags(libraryTrack)
 
     return libraryTrack
+
 
 def delete(uuid):
     track = LibraryTrack.objects.get(uuid=uuid)

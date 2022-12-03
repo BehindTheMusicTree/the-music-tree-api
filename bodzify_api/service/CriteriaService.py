@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 def getCommonCriteria(criteriaA, criteriaB):
     criteriaATreeItem = criteriaA
     while True:

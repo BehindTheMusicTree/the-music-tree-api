@@ -18,8 +18,10 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
+
 NAME_FIELD = "name"
 PARENT_FIELD = "parent"
+
 
 class CriteriaViewSet(MultiSerializerViewSet):
   queryset = Criteria.objects.all()
@@ -29,10 +31,12 @@ class CriteriaViewSet(MultiSerializerViewSet):
     'retrieve':  CriteriaResponseSerializer,
   }
 
+
   def __init__(self, criteriaTypeId, playlistTypeId, **kwargs):
       super().__init__(**kwargs)
       self.criteriaType = CriteriaType.objects.get(id=criteriaTypeId)
       self.playlistType = PlaylistType.objects.get(id=playlistTypeId)
+
 
   def get_queryset(self):
     queryset = Criteria.objects.filter(user=self.request.user)
@@ -51,6 +55,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
 
     return queryset
     
+
   @extend_schema(
     request=CriteriaRequestSerializer,
     responses=CriteriaResponseSerializer
@@ -83,6 +88,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
       headers=headers,
       safe=False
     )
+
 
   @extend_schema(
     parameters=[

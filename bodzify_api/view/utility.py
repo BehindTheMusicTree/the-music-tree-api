@@ -10,6 +10,7 @@ import django.views.defaults
 from django.http import JsonResponse, FileResponse
 from django.core.paginator import Paginator
 
+
 INTEGRITY_ERROR_MESSAGE = "There is an issue with the object sent"
 
 RESPONSE_FILE_CONTENT_TYPE_VALUE ='file'
@@ -29,10 +30,12 @@ REQUEST_QUERY_FIELD = "query"
 REQUEST_PAGINATED_PAGE_FIELD = "page"
 REQUEST_PAGINATED_PAGE_SIZE_FIELD = "pageSize"
 
+
 def GetHttpResponseWhenPermissionDenied(request):
     return django.views.defaults.permission_denied(
                 request=request, 
                 exception=exceptions.PermissionDenied)
+
 
 def GetJsonResponseWhenBadRequest(exception = exceptions.bad_request):
     if type(exception) == IntegrityError:
@@ -43,6 +46,7 @@ def GetJsonResponseWhenBadRequest(exception = exceptions.bad_request):
                 'success': False, 
                 'errors': errorMessage
             })
+
 
 def GetJsonResponsePaginated(request, dataJsonList):
     pageNumber = request.GET.get(REQUEST_PAGINATED_PAGE_FIELD, 0)
@@ -56,6 +60,7 @@ def GetJsonResponsePaginated(request, dataJsonList):
         PAGINATED_PREVIOUS_FIELD: page_object.has_previous(),
         PAGINATED_RESULTS_FIELD: dataJsonList
     })
+
 
 def GetFileResponseForTrackDownload(request, track):
     fileHandle = open(track.path, "rb")

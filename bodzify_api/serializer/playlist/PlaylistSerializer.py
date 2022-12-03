@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from rest_framework_recursive.fields import RecursiveField
 
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.playlist.PlaylistTypeSerializer import PlaylistTypeSerializer
+
 
 class ParentPlaylistSerializer(serializers.ModelSerializer):
     type = PlaylistTypeSerializer()
@@ -18,14 +18,17 @@ class ParentPlaylistSerializer(serializers.ModelSerializer):
             "trackCount"
         ]
 
+
 class PlaylistSerializer(ParentPlaylistSerializer):
     parent = serializers.SerializerMethodField()
+
 
     def get_parent(self, obj):
         if obj.parent is not None:
             return ParentPlaylistSerializer(obj.parent).data
         else:
             return None
+
 
     class Meta:
         model = Playlist    

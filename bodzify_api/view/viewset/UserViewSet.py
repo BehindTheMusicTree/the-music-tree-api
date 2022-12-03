@@ -14,10 +14,12 @@ USER_USERNAME_FIELD = 'username'
 USER_PASSWORD_FIELD = 'password'
 USER_EMAIL_FIELD = 'email'
 
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
+
 
     def create(self, request, *args, **kwargs):
         requestSerializer = UserSerializer(data=request.data)

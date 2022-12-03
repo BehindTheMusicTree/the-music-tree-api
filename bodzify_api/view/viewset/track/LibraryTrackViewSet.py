@@ -14,7 +14,9 @@ from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewS
 from bodzify_api.service import LibraryTrackService
 from bodzify_api.view import utility
 
+
 GENRE_PARAM = "genre"
+
 
 class LibraryTrackViewSet(MultiSerializerViewSet):
     queryset = LibraryTrack.objects.all()
@@ -24,11 +26,13 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         'retrieve':  LibraryTrackResponseSerializer,
     }
 
+
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
         genre = self.request.query_params.get(GENRE_PARAM)
         if genre is not None: queryset = queryset.filter(genre=genre)
         return queryset
+
 
     @extend_schema(
         request=LibraryTrackSerializer,
@@ -45,6 +49,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         responseSerializer = LibraryTrackResponseSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):

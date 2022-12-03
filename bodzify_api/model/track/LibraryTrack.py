@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 
+
 class LibraryTrack(models.Model):
     path = models.CharField(max_length=200)
     # Django's UUIDField won't validate a shortuuid
@@ -27,18 +28,22 @@ class LibraryTrack(models.Model):
     language = models.CharField (max_length=200, default=None, blank=True, null=True)
     addedOn = models.DateTimeField(auto_now_add=True)
     
+
     @property
     def filename(self) -> str:
         return os.path.basename(self.path)
+
 
     @property
     def fileExtension(self) -> str:
         filename, fileExtension = os.path.splitext(self.path)
         return fileExtension
 
+
     @property
     def relativeUrl(self) -> str:
         return "tracks/" + self.uuid + "/"
+
 
     def __str__(self) -> str:
         return str(self.user) + " " + self.artist + " "+ self.title + " " + self.path 

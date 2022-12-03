@@ -5,9 +5,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
 
+
 REFRESH_TOKEN_FIELD = "refresh_token"
 
+
 class LogoutView(APIView):
+
 
     def post(self, request):
         try:

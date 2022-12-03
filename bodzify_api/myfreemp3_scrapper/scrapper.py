@@ -4,6 +4,7 @@ from bodzify_api.model.track.MineTrack import MineTrack
 
 import bodzify_api.settings as settings
 
+
 LOG_FOLDER_PATH = os.path.join(settings.LOG_PATH, "myfreemp3Scrapper/")
 LOG_FILE_NAME_FORMAT = "%y-%m-%d %H%M%S"
 
@@ -21,6 +22,7 @@ PAGE_SIZE_FIELD = "page_size"
 
 TAG_TO_IGNORE = "apple"
 
+
 def getTracksFromMyfreemp3Json(dataDict):
     tracks = []
     for trackJson in dataDict[FIELD_DATA]:
@@ -33,6 +35,7 @@ def getTracksFromMyfreemp3Json(dataDict):
                 url=trackJson[FIELD_URL]))
     return tracks
 
+
 def logResponseText(responseText):
     myfreemp3ScrapperLogFolderPath = LOG_FOLDER_PATH
     
@@ -44,6 +47,7 @@ def logResponseText(responseText):
     f.write(responseText)
     f.close()
 
+
 def getJsonTextFromTracks(tracks):
     tracksJsonText = "["
     firstTrack = True
@@ -54,10 +58,12 @@ def getJsonTextFromTracks(tracks):
     tracksJsonText += "]"
     return tracksJsonText
 
+
 def getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(myfreemp3ResponseJsonResponseText):
     myfreemp3tracksJsonText = "{" + myfreemp3ResponseJsonResponseText.split("{",2)[2]
     myfreemp3tracksJsonText = myfreemp3tracksJsonText[:len(myfreemp3tracksJsonText) - 4]
     return json.loads(myfreemp3tracksJsonText)
+
 
 def scrap(search, page, pageSize):
     dataToSendToMyfreemp3 = {
