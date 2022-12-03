@@ -34,7 +34,6 @@ class LibraryTrackResponseSerializer(serializers.ModelSerializer):
     genre = CriteriaResponseSerializer()
     playlists = PlaylistSerializer(many=True)
 
-    
     class Meta:
         model = LibraryTrack
         fields = [
@@ -42,12 +41,12 @@ class LibraryTrackResponseSerializer(serializers.ModelSerializer):
             'relativeUrl',
             'filename',
             'fileExtension',
-            "title", 
-            "artist", 
-            "album", 
-            "genre", 
-            "duration", 
-            "rating", 
+            "title",
+            "artist",
+            "album",
+            "genre",
+            "duration",
+            "rating",
             "language",
             "playlists",
             "addedOn"]

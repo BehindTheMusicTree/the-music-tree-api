@@ -1,4 +1,7 @@
-import datetime, os, requests, json
+import datetime
+import os
+import requests
+import json
 
 from bodzify_api.model.track.MineTrack import MineTrack
 
@@ -8,7 +11,10 @@ import bodzify_api.settings as settings
 LOG_FOLDER_PATH = os.path.join(settings.LOG_PATH, "myfreemp3Scrapper/")
 LOG_FILE_NAME_FORMAT = "%y-%m-%d %H%M%S"
 
-POST_URL = 'https://myfreemp3juices.cc/api/search.php?callback=jQuery21307552220673040206_1662375436837' + 'search.json?page={}&page_size={}&search_term=a'
+POST_URL_BASE = 'https://myfreemp3juices.cc/api/'
+POST_URL_SEARCH_PHP_PARAMETER = 'search.php?callback=jQuery21307552220673040206_1662375436837'
+POST_URL_SEARCH_JSON_PARAMETER = 'search.json?page={}&page_size={}&search_term=a'
+POST_URL = POST_URL_BASE + POST_URL_SEARCH_PHP_PARAMETER + POST_URL_SEARCH_JSON_PARAMETER
 FIELD_DATA = "response"
 FIELD_TITLE = "title"
 FIELD_ARTIST = "artist"

@@ -6,12 +6,13 @@ from bodzify_api.serializer.playlist.PlaylistTypeSerializer import PlaylistTypeS
 
 class ParentPlaylistSerializer(serializers.ModelSerializer):
     type = PlaylistTypeSerializer()
-    trackCount = serializers.IntegerField(source='librarytrack_set.count')  
+    trackCount = serializers.IntegerField(source='librarytrack_set.count')
+
     class Meta:
         model = Playlist
         fields = [
             "uuid",
-            "name", 
+            "name",
             "type",
             "criteria",
             "addedOn",
@@ -21,7 +22,6 @@ class ParentPlaylistSerializer(serializers.ModelSerializer):
 
 class PlaylistSerializer(ParentPlaylistSerializer):
     parent = serializers.SerializerMethodField()
-
 
     def get_parent(self, obj):
         if obj.parent is not None:
@@ -34,7 +34,7 @@ class PlaylistSerializer(ParentPlaylistSerializer):
         model = Playlist    
         fields = [
             "uuid",
-            "name", 
+            "name",
             "type",
             "criteria",
             "parent",

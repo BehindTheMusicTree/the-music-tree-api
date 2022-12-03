@@ -7,16 +7,16 @@ from bodzify_api.serializer.criteria.CriteriaTypeSerializer import CriteriaTypeS
 
 
 class CriteriaRequestSerializer(serializers.ModelSerializer):
-            
+
     class Meta:
         model = Criteria
         fields = ['name', 'parent']
 
 
 class CriteriaResponseSerializer(serializers.ModelSerializer):
-                
+
     type = CriteriaTypeSerializer()
-    
+
     class Meta:
         model = Criteria
         fields = ['uuid', 'name', 'parent', 'type', 'addedOn']
