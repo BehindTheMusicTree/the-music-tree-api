@@ -45,4 +45,5 @@ jobs:
           DJANGO_DEV: true
         run: |
             pytest . 
+      - name: Run Flake8
             flake8 .
