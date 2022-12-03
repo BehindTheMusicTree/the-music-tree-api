@@ -44,4 +44,4 @@ jobs:
         env:
           DJANGO_DEV: true
         run: |
-            pytest .
+            pytest . 
