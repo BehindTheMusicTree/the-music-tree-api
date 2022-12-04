@@ -44,7 +44,4 @@ jobs:
         env:
           DJANGO_DEV: true
         run: |
-            pytest . 
-      - name: Run Flake8
-        run: |
-            flake8 . --exclude=*migrations/* --max-line-length=100
+            pytest .
