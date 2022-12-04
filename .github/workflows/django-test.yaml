@@ -46,9 +46,20 @@ jobs:
         run: |
             pytest . 
   flake8:
-    needs: simple_build
+    needs: pytest
     runs-on: ubuntu-latest
     steps: 
       - name: Run Flake8
         run: |
             flake8 . --exclude=*migrations/* --max-line-length=100
+  deploy-to-prod:
+    needs: pytest
+    runs-on: ubuntu-latest
+    steps: 
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@3.1.2
+        with:
+          server: ftp.bodzify.com
+          username: root
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /var/www/html/
