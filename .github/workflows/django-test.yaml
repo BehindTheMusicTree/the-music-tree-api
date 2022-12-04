@@ -44,4 +44,11 @@ jobs:
         env:
           DJANGO_DEV: true
         run: |
-            pytest .
+            pytest . 
+  flake8:
+    needs: simple_build
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Run Flake8
+        run: |
+            flake8 . --exclude=*migrations/* --max-line-length=100
