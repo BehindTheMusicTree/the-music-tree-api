@@ -9,7 +9,7 @@ on:
         branches: [dev]
 
 jobs:
-  simple_build:
+  pytest:
     runs-on: ubuntu-latest
     env:
       MY_POSTGRES_USER: django
