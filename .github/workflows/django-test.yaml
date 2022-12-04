@@ -59,7 +59,7 @@ jobs:
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@3.1.2
         with:
-          server: ftp.bodzify.com
-          username: root
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /var/www/html/
+          ftp-server: ftp.bodzify.com
+          ftp-username: root
+          ftp-password: ${{ secrets.FTP_PASSWORD }}
+          ftp-server-dir: /var/www/html/
