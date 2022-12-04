@@ -23,7 +23,8 @@ class Playlist(models.Model):
         editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, default=None, blank=None, null=False)
-    type = models.ForeignKey(PlaylistType,
+    type = models.ForeignKey(
+        PlaylistType,
         on_delete=models.DO_NOTHING,
         default=None,
         blank=False,
@@ -31,18 +32,19 @@ class Playlist(models.Model):
     criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE)
     addedOn = models.DateTimeField(auto_now_add=True)
 
-
     @property
     def parent(self):
-        if self.criteria is None: return None
-        elif self.criteria.parent is None: return None
-        else: return Playlist.objects.get(
-            user=self.user, 
-            type=self.type, 
-            criteria=self.criteria.parent)
-
+        if self.criteria is None: 
+            return None
+        elif self.criteria.parent is None: 
+            return None
+        else: 
+            return Playlist.objects.get(
+                user=self.user,
+                type=self.type,
+                criteria=self.criteria.parent)
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        if self.criteria is not None: 
+        if self.criteria is not None:
             self.name = self.criteria.name

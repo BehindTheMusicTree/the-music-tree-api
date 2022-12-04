@@ -16,25 +16,23 @@ class CriteriaSpecialNames:
 
 class Criteria(models.Model):
     uuid = models.CharField(
-        primary_key=True, 
-        default=shortuuid.uuid, 
-        max_length=200, 
+        primary_key=True,
+        default=shortuuid.uuid,
+        max_length=200,
         editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
     parent = models.ForeignKey(
-        'self', 
-        on_delete=models.CASCADE, 
-        default=None, 
-        blank=True, 
+        'self',
+        on_delete=models.CASCADE,
+        default=None,
+        blank=True,
         null=True)
     addedOn = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self) -> str:
         return self.uuid + " " + self.name
-
 
     class Meta:
         unique_together = ('user', 'name', 'type', 'parent')
