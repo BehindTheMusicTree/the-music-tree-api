@@ -56,10 +56,12 @@ jobs:
     needs: pytest
     runs-on: ubuntu-latest
     steps: 
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@3.1.2
+    - uses: actions/checkout@v2
+      - name: FTP upload
+        uses: sebastianpopp/ftp-action@releases/v2
         with:
-          ftp-server: ftp.bodzify.com
-          ftp-username: root
-          ftp-password: ${{ secrets.FTP_PASSWORD }}
-          ftp-server-dir: /var/www/html/
+          host: ${{ secrets.FTP_URL }}
+          user: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          remoteDir: "/var/www/html/"
+          options: "--delete --asci"
