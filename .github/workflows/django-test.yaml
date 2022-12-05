@@ -58,5 +58,5 @@ jobs:
     steps: 
       - name: FTP upload
         run: |
-          apt-get update -qq && apt-get install -y -qq lftp
+          sudo apt-get update -qq && apt-get install -y -qq lftp
           lftp -c “set ftp:ssl-allow no; open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_URL; mirror -Rnev --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/”
