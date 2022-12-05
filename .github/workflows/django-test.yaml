@@ -56,12 +56,7 @@ jobs:
     needs: pytest
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v2
       - name: FTP upload
-        uses: sebastianpopp/ftp-action@releases/v2
-        with:
-          host: ${{ secrets.FTP_URL }}
-          user: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          remoteDir: "/var/www/html/"
-          options: "--delete --asci"
+      - script:
+        - apt-get update -qq && apt-get install -y -qq lftp
+        - lftp -c “set ftp:ssl-allow no; open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_URL; mirror -Rnev --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/”
