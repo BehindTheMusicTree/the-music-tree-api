@@ -52,11 +52,19 @@ jobs:
       - name: Run Flake8
         run: |
             flake8 . --exclude=*migrations/* --max-line-length=100
-  deploy-to-prod:
+  ftp-deploy-prod:
     needs: pytest
     runs-on: ubuntu-latest
-    steps: 
-      - name: FTP upload
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
-          lftp -f “set ftp:ssl-allow no; open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_URL; mirror -Rnev --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/”
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v2
+      - name: 📦 Get LFTP
+        run: sudo apt install lftp
+      - name: 🛠️ Configure LFTP
+        run: mkdir ~/.lftp && echo "set ssl:verify-certificate false;" >> ~/.lftp/rc
+      - name: 🔑 Load Secrets
+        run: echo "machine ${{ secrets.FTP_URL }} login ${{ secrets.FTP_USERNAME }} password ${{ secrets.FTP_PASSWORD }}" > ~/.netrc
+      - name: 📄 Upload File
+        run: lftp -e "put -O /var/www/html/ ./README.md" ${{ secrets.FTP_URL }}
+      - name: 📁 Upload Folder
+        run: lftp -e "mirror --parallel=100 -R ./ffmpeg/ /ffmpeg/" ${{ secrets.FTP_URL }}
