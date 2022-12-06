@@ -1,0 +1,1 @@
+# Do not remove this file otherwise dumpdata won't work
