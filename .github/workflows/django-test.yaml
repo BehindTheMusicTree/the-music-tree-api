@@ -65,6 +65,6 @@ jobs:
       - name: 🔑 Load Secrets
         run: echo "machine ${{ secrets.FTP_URL }} login ${{ secrets.FTP_USERNAME }} password ${{ secrets.FTP_PASSWORD }}" > ~/.netrc
       - name: 📄 Upload File
-        run: lftp -e "put -O /var/www/html/ ./README.md" ${{ secrets.FTP_URL }}
+        run: lftp -p 22 -e "put -O /var/www/html/ ./README.md" ${{ secrets.FTP_URL }}
       - name: 📁 Upload Folder 
         run: lftp -e "mirror --parallel=100 -R ./ffmpeg/ /ffmpeg/" ${{ secrets.FTP_URL }}
