@@ -40,11 +40,11 @@ jobs:
       - name: Install requirements
         run: |
             pip install -r requirements.txt
-      - name: Run tests
-        env:
-          DJANGO_DEV: true
-        run: |
-            pytest . 
+      # - name: Run tests
+      #   env:
+      #     DJANGO_DEV: true
+      #   run: |
+      #       pytest . 
   flake8:
     needs: pytest
     runs-on: ubuntu-latest
@@ -65,6 +65,6 @@ jobs:
       - name: 🔑 Load Secrets
         run: echo "machine ${{ secrets.FTP_URL }} login ${{ secrets.FTP_USERNAME }} password ${{ secrets.FTP_PASSWORD }}" > ~/.netrc
       - name: 📄 Upload File
-        run: lftp -p 22 -e "put -O /var/www/html/ ./README.md" ${{ secrets.FTP_URL }}
+        run: lftp -e "put -O /var/www/html/ ./README.md" -u root,+:@IakEDxf#6 bodzify.com:22
       - name: 📁 Upload Folder 
         run: lftp -e "mirror --parallel=100 -R ./ffmpeg/ /ffmpeg/" ${{ secrets.FTP_URL }}
