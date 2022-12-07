@@ -63,7 +63,7 @@ jobs:
         run: > 
           lftp -c "set ssl:verify-certificate false; 
           set sftp:auto-confirm yes; open "sftp://bodzify.com" -p 22 -u root,'${{ secrets.FTP_PASSWORD }}'; 
-          mirror --parallel=100 -R -n -v ~/Git/bodzify-api/ /var/www/html/bodzify-api/ 
+          mirror --parallel=100 -R -n -v . /var/www/html/bodzify-api/ 
           --exclude venv/ --exclude .git/ --exclude /__pycache__/ --exclude log/myfreemp3scrapper/ --delete;"
   # Install-requirements:
   #   needs: Deploy-prod
