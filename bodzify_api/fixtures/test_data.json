@@ -20,12 +20,89 @@
     },
     {
         "model": "bodzify_api.criteria",
-        "pk": "m5KRxi10OxW4BEOod9Qmjy",
+        "pk": "m5KRxi10O884BEOod9Qmjy",
         "fields": {
             "name": "All",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "L1ZG85munGytJb885fgion",
+        "fields": {
+            "name": "Genreless",
+            "type": 1,
+            "parent": "m5KRxi10OxW4BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "Lsji85munDKEjf885fgion",
+        "fields": {
+            "name": "US Rap",
+            "type": 1,
+            "parent": "m5KRxi10OxW4BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLhbhHSjqEPdZ7",
+        "fields": {
+            "name": "All",
+            "criteria": "m5KRxi10O884BEOod9Qmjy",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "FYM1HUIrwLSgzHSHI76dVH",
+        "fields": {
+            "name": "Genreless",
+            "criteria": "L1ZG85munGytJb885fgion",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "Lsji85munDKEjf885fgion",
+        "fields": {
+            "name": "US Rap",
+            "criteria": "L1ZG85munGytJb885fgion",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+
+    {
+        "model": "bodzify_api.librarytrack", 
+        "pk": "dZNZ9jcRdTuMwgWFZ53C99", 
+        "fields": {
+            "path": "/home/andreas/Git/bodzify-api/libraries/admin/L'Artiste - C'est le titre.mp3", 
+            "user": 2, 
+            "title": "C'est le titre", 
+            "artist": "L'Artiste", 
+            "album": "", 
+            "genre": "L1ZG85munGytJbJ65fgion", 
+            "duration": "194", 
+            "rating": -1, 
+            "language": "", 
+            "addedOn": "2022-12-06T10:24:23.058Z", 
+            "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7", 
+                "FYM1HUIrwLSgzHSHI76dVH"
+            ]
         }
     }
 ]
