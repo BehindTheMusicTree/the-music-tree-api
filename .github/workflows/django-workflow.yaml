@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install sshpass
-      - run: sudo apt-get install sshpass
+        run: sudo apt-get install sshpass
       - name: Install requirements
         run: >
           sshpass -p 'u:${{ secrets.FTP_PASSWORD }}' ssh root@bodzify.com 
