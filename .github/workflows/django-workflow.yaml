@@ -12,9 +12,9 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     env:
-      MY_POSTGRES_USER: django
-      MY_POSTGRES_PASSWORD: T6q)32hr6fr
-      MY_POSTGRES_DB: bodzify_api
+      MY_POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
+      MY_POSTGRES_PASSWORD: ${{ secrets.DEV_POSTGRES_PASSWORD }}
+      MY_POSTGRES_DB: ${{ secrets.DEV_POSTGRES_DATABASE }}
     services:
       postgres_main:
         image: postgres:14.5
@@ -62,17 +62,6 @@ jobs:
       - name: 📄 Upload Folder
         run: > 
           lftp -c "set ssl:verify-certificate false; 
-          set sftp:auto-confirm yes; open "sftp://bodzify.com" -p 22 -u root,'${{ secrets.FTP_PASSWORD }}'; 
+          set sftp:auto-confirm yes; open "sftp://${{ secrets.HOST }}" -p 22 -u ${{ secrets.FTP_USER }},'${{ secrets.FTP_PASSWORD }}'; 
           mirror -R -n -v . /var/www/html/bodzify-api/ 
           --exclude .git/ --exclude /__pycache__/ --exclude .pytest_cache/ --exclude log/myfreemp3Scrapper/ --delete;"
-  Install-requirements:
-    needs: FTP-transfer-to-prod
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install sshpass
-        run: sudo apt-get install sshpass
-      - name: Install requirements
-        run: >
-          sshpass -p 'u:${{ secrets.FTP_PASSWORD }}' ssh root@bodzify.com 
-          source /var/www/html/bodzify-api/bin/activate; 
-          pip install -r /var/www/html/bodzify-api/requirements.txt;
