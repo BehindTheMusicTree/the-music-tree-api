@@ -1,4 +1,4 @@
-name: Django Test
+name: Validation and Deployment
 
 on:
     workflow_call:
