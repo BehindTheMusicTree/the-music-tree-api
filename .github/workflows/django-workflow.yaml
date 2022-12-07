@@ -65,14 +65,14 @@ jobs:
           set sftp:auto-confirm yes; open "sftp://bodzify.com" -p 22 -u root,'${{ secrets.FTP_PASSWORD }}'; 
           mirror --parallel=100 -R -n -v . /var/www/html/bodzify-api/ 
           --exclude venv/ --exclude .git/ --exclude /__pycache__/ --exclude log/myfreemp3scrapper/ --delete;"
-  # Install-requirements:
-  #   needs: Deploy-prod
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Install sshpass
-  #     - run: sudo apt-get install sshpass
-  #     - name: Install requirements
-  #       run: >
-  #         sshpass -p 'u:${{ secrets.FTP_PASSWORD }}' ssh root@bodzify.com 
-  #         source /var/www/html/bodzify-api/bin/activate; 
-  #         pip install -r /var/www/html/bodzify-api/requirements.txt;
+  Install-requirements:
+    needs: Deploy-prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install sshpass
+      - run: sudo apt-get install sshpass
+      - name: Install requirements
+        run: >
+          sshpass -p 'u:${{ secrets.FTP_PASSWORD }}' ssh root@bodzify.com 
+          source /var/www/html/bodzify-api/bin/activate; 
+          pip install -r /var/www/html/bodzify-api/requirements.txt;
