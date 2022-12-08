@@ -11,11 +11,13 @@ from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSeri
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.service import LibraryTrackService
-from bodzify_api.view import utility
+import bodzify_api.service.LibraryTrackService as LibraryTrackService
+import bodzify_api.view.utility as utility
+from bodzify_api.forms import UploadFileForm
 
 
-GENRE_PARAM = "genre"
+GENRE_PARAMETER = "genre"
+FILE_PARAMETER = "file"
 
 
 class LibraryTrackViewSet(MultiSerializerViewSet):
@@ -29,7 +31,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        genre = self.request.query_params.get(GENRE_PARAM)
+        genre = self.request.query_params.get(GENRE_PARAMETER)
         if genre is not None: queryset = queryset.filter(genre=genre)
         return queryset
 
@@ -39,7 +41,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         responses=LibraryTrackResponseSerializer
     )
     def update(self, request, *args, **kwargs):
-        updatedTrack = LibraryTrackService.update(
+        updatedTrack = LibraryTrackService.Update(
             track=self.get_object(), 
             data=request.data, 
             partial=kwargs.pop('partial', False),
@@ -53,7 +55,11 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
-        return utility.GetFileResponseForTrackDownload(
-            request=request, 
-            track=LibraryTrack.objects.get(uuid=pk))
-        
+        track = LibraryTrack.objects.get(uuid=pk)
+        return utility.GetFileResponse(request=request, filePath=track.path, filename=track.filename)
+
+
+    def create(self, request, *args, **kwargs):  
+        print(request.FILES)      
+        track = LibraryTrackService.CreateFromUpload(request.user, request.FILES[FILE_PARAMETER])
+        return JsonResponse(LibraryTrackResponseSerializer(track).data)
