@@ -29,7 +29,6 @@ class PlaylistSerializer(ParentPlaylistSerializer):
         else:
             return None
 
-
     class Meta:
         model = Playlist    
         fields = [
