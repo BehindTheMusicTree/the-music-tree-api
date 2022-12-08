@@ -2,15 +2,21 @@
 
 import os
 
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from mutagen.easyid3 import EasyID3
 
 import bodzify_api.settings as settings
 import bodzify_api.service.CriteriaService as CriteriaService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.PlaylistType import PlaylistType, PlaylistTypeIds
-from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
+from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
+from bodzify_api.model.playlist.PlaylistType import PlaylistType
+from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
+from bodzify_api.model.criteria.CriteriaType import CriteriaType
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesIds
 
 
 ID3_TAG_TITLE = "title"
@@ -22,12 +28,12 @@ ID3_TAG_RATING = "titlesort"
 ID3_TAG_LANGUAGE = "language"
 
 
-def updatePlaylists(track, user, oldGenre):
+def UpdatePlaylists(track, user, oldGenre):
     newGenre = track.genre
 
     genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypeIds.GENRE)
 
-    commonGenre = CriteriaService.getCommonCriteria(oldGenre, newGenre)
+    commonGenre = CriteriaService.GetCommonCriteria(oldGenre, newGenre)
 
     newGenreTreeItem = newGenre
 
@@ -50,21 +56,21 @@ def updatePlaylists(track, user, oldGenre):
     track.save()
 
 
-def update(track, data, partial, RequestSerializerClass, user):
+def Update(track, data, partial, RequestSerializerClass, user):
     oldGenre = LibraryTrack.objects.get(uuid=track.uuid).genre
     requestSerializer = RequestSerializerClass(track, data=data, partial=partial)
     requestSerializer.is_valid(raise_exception=True)
     updatedTrack = requestSerializer.save()
 
     if oldGenre != updatedTrack.genre:
-        updatePlaylists(track=updatedTrack, user=user, oldGenre=oldGenre)
+        UpdatePlaylists(track=updatedTrack, user=user, oldGenre=oldGenre)
 
-    updateTags(updatedTrack)
+    UpdateTags(updatedTrack)
 
     return updatedTrack
 
 
-def updateTags(track):
+def UpdateTags(track):
     trackFile = EasyID3(track.path)
 
     titleTag = track.title
@@ -100,15 +106,56 @@ def updateTags(track):
     trackFile.save()
 
 
-def createFromMineTrack(mineTrack, trackFile, user):
+def CreateFromUpload(user, temporaryFile):
+    trackIdTags = EasyID3(temporaryFile.temporary_file_path())
+
+    genreName = trackIdTags[ID3_TAG_GENRE]
+    if Criteria.objects.filter(
+        user=user, type__id=CriteriaTypesIds.GENRE, name=genreName).exists():
+        genre = Criteria.objects.get(user=user, type__id=CriteriaTypesIds.GENRE, name=genreName)
+    else:
+        genre = Criteria(
+            user=user,
+            type=CriteriaType.objects.get(id=CriteriaTypesIds.GENRE),
+            name=genreName,
+            parent=Criteria.objects.get(user=user, name=CriteriaSpecialNames.GENRE_ALL)
+        ).save()
+
+    track = LibraryTrack(
+        user=user,
+        file=temporaryFile,
+        title=trackIdTags[ID3_TAG_TITLE],
+        artist=trackIdTags[ID3_TAG_ARTIST],
+        album=trackIdTags[ID3_TAG_ALBUM],
+        genre=genre,
+        rating=trackIdTags[ID3_TAG_RATING],
+        language=trackIdTags[ID3_TAG_LANGUAGE]
+    ).save()
+
+    AddTrackToGenrePlaylists(user, track)
+    track.playlists.add(Playlist.objects.get(
+            user=user,
+            criteria__name=CriteriaSpecialNames.TAG_ALL
+        )
+    )
+    return track.save()
+
+
+def AddTrackToGenrePlaylists(user, track):
+    while genre is not None:
+        track.playlists.add(Playlist.objects.get(user=user, genre=track.genre))
+        genre = genre.parent
+
+def MoveTemporaryFileToLibrary(user, temporaryFile, libraryTrack):
+    userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
     userLibraryPath = settings.LIBRARIES_PATH + user.get_username() + "/"
 
     if not os.path.exists(userLibraryPath):
         os.makedirs(userLibraryPath)
 
-    externalTrackName, trackExtension = os.path.splitext(mineTrack.url)
+    externalTrackName, trackExtension = os.path.splitext(temporaryFile.temporary_file_path)
 
-    artistTitle = mineTrack.artist + " - " + mineTrack.title
+    artistTitle = libraryTrack.artist + " - " + libraryTrack.title
     libraryFilename = artistTitle + trackExtension
     internalTrackFilePath = userLibraryPath + libraryFilename
 
@@ -119,11 +166,16 @@ def createFromMineTrack(mineTrack, trackFile, user):
         internalTrackFilePath = userLibraryPath + libraryFilename
 
     with open(internalTrackFilePath, 'wb') as file:
-        file.write(trackFile.content)
+        file.write(temporaryFile.content)
+
+    return internalTrackFilePath
+
+
+def CreateFromMineTrack(user, mineTrack, trackFile):
+    internalTrackFilePath = MoveTemporaryFileToLibrary(user=user, temporaryFile=trackFile)
 
     # Tags of every myfreemp3 downloaded tracks are empty 
     libraryTrack = LibraryTrack(
-        path=internalTrackFilePath,
         user=user, 
         title=mineTrack.title, 
         artist=mineTrack.artist, 
@@ -132,21 +184,23 @@ def createFromMineTrack(mineTrack, trackFile, user):
         duration=mineTrack.duration,
         rating=-1,
         language="")
-    libraryTrack.save()
+    libraryTrack.save(path=internalTrackFilePath)
 
     libraryTrack.playlists.add(
         Playlist.objects.get(
             user=user, 
-            type__id=PlaylistTypeIds.GENRE, 
             name=PlaylistSpecialNames.GENRE_ALL))
     libraryTrack.playlists.add(
         Playlist.objects.get(
             user=user, 
-            type__id=PlaylistTypeIds.GENRE, 
             name=PlaylistSpecialNames.GENRE_GENRELESS))
+    libraryTrack.playlists.add(
+        Playlist.objects.get(
+            user=user, 
+            name=PlaylistSpecialNames.TAG_ALL))
     libraryTrack.save()
 
-    updateTags(libraryTrack)
+    UpdateTags(libraryTrack)
 
     return libraryTrack
 
