@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'bodzify_api',
         'USER': 'django',
-        'PASSWORD': 'T6q)32hr6fr',
+        'PASSWORD': 'G#uwM6&NW0!/',
         'HOST': 'localhost',
         'PORT': 5432,
     }
