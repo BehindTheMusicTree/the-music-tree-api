@@ -6,12 +6,19 @@ import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
 
+from upload_validator import FileTypeValidator
+
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.validator.track import track_size
+import bodzify_api.settings as settings
+
+
+def user_directory_path(instance, filename):
+    return settings.LIBRARIES_PATH + 'user_{0}/{1}'.format(instance.user.id, filename)
 
 
 class LibraryTrack(models.Model):
-    path = models.CharField(max_length=200)
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
         primary_key=True,
@@ -19,6 +26,10 @@ class LibraryTrack(models.Model):
         max_length=200,
         editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file = models.FileField(
+        upload_to=user_directory_path, 
+        help_text="Only audio formats accepted", 
+        validators=[FileTypeValidator(allowed_types=[ 'audio/*']), track_size])
     title = models.CharField(max_length=200, default=None, blank=True, null=True)
     artist = models.CharField(max_length=200, default=None, blank=True, null=True)
     album = models.CharField(max_length=200, default=None, blank=True, null=True)
@@ -36,18 +47,18 @@ class LibraryTrack(models.Model):
 
     @property
     def filename(self) -> str:
-        return os.path.basename(self.path)
+        return self.file.name
 
 
     @property
     def fileExtension(self) -> str:
-        filename, fileExtension = os.path.splitext(self.path)
+        filename, fileExtension = os.path.splitext(self.file.name)
         return fileExtension
 
 
     @property
-    def relativeUrl(self) -> str:
-        return "tracks/" + self.uuid + "/"
+    def url(self) -> str:
+        return self.url
 
 
     def __str__(self) -> str:
