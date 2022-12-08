@@ -62,9 +62,9 @@ def GetJsonResponsePaginated(request, dataJsonList):
     })
 
 
-def GetFileResponseForTrackDownload(request, track):
-    fileHandle = open(track.path, "rb")
+def GetFileResponse(request, filePath, filename):
+    fileHandle = open(filePath, "rb")
     response = FileResponse(fileHandle, content_type=RESPONSE_FILE_CONTENT_TYPE_VALUE)
-    response[RESPONSE_FILE_CONTENT_LENGTH_FIELD] = os.path.getsize(track.path)
-    response[RESPONSE_FILE_CONTENT_DISPOSITION_FIELD] = RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE % track.filename
+    response[RESPONSE_FILE_CONTENT_LENGTH_FIELD] = os.path.getsize(filePath)
+    response[RESPONSE_FILE_CONTENT_DISPOSITION_FIELD] = RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE % filename
     return response
