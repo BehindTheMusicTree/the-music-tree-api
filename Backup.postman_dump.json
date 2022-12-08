@@ -1,0 +1,390 @@
+{
+	"version": 1,
+	"collections": [
+		{
+			"id": "5c0a8725-2537-4ac7-83c2-a3f7af3479d5",
+			"uid": "0-5c0a8725-2537-4ac7-83c2-a3f7af3479d5",
+			"name": "Auth",
+			"description": null,
+			"auth": null,
+			"events": null,
+			"variables": [
+				{
+					"key": "BASE_URL",
+					"value": "",
+					"disabled": false
+				}
+			],
+			"order": [
+				"94eacc1e-624f-4dfe-9359-75ebcff5895b"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"createdAt": "2022-12-08T14:46:31.397Z",
+			"folders": [],
+			"requests": [
+				{
+					"id": "94eacc1e-624f-4dfe-9359-75ebcff5895b",
+					"uid": "0-94eacc1e-624f-4dfe-9359-75ebcff5895b",
+					"name": "auth/token/",
+					"url": "{{BASE_URL}}auth/token/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": null,
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "567e6913-c37c-44e6-968f-cc415e44db0b",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody)",
+									"pm.environment.set(\"tokenAccess\", jsonData.access)"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5f2def69-8afe-47d4-9ef8-e856f41f626f",
+								"exec": [
+									"if(pm.globals.get(\"IS_DEV\") == \"1\") {",
+									"    pm.environment.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_DEV\"));",
+									"}",
+									"else{",
+									"    pm.environment.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_PROD\"));",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": "if(pm.globals.get(\"IS_DEV\") == \"1\") {\n    pm.environment.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_DEV\"));\n}\nelse{\n    pm.environment.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_PROD\"));\n}\n",
+					"tests": "var jsonData = JSON.parse(responseBody)\npm.environment.set(\"tokenAccess\", jsonData.access)",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "5c0a8725-2537-4ac7-83c2-a3f7af3479d5",
+					"rawModeData": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+					"pathVariables": {}
+				}
+			]
+		},
+		{
+			"id": "5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+			"uid": "0-5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+			"name": "Tracks",
+			"description": null,
+			"auth": null,
+			"events": null,
+			"variables": [],
+			"order": [
+				"5d160d63-9612-46bf-987c-85fae40e24cd",
+				"0f19984c-3dbd-4f24-b958-ed4c23a38459"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"createdAt": "2022-12-08T15:55:44.461Z",
+			"folders": [],
+			"requests": [
+				{
+					"id": "0f19984c-3dbd-4f24-b958-ed4c23a38459",
+					"uid": "0-0f19984c-3dbd-4f24-b958-ed4c23a38459",
+					"name": "tracks/",
+					"url": "{{BASE_URL}}tracks/",
+					"description": null,
+					"data": [
+						{
+							"key": "file",
+							"value": "/home/mignot/Git/bodzify-api/bodzify_api/test/sample/with_all_tags.mp3",
+							"description": "",
+							"type": "file",
+							"enabled": true
+						}
+					],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "params",
+					"headerData": [
+						{
+							"key": "Authorization",
+							"value": "{{authorization}}",
+							"description": "",
+							"type": "default",
+							"enabled": true
+						}
+					],
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "21fa36fe-25d3-484e-8444-d41cd1649b38",
+								"exec": [
+									"if(pm.globals.get(\"IS_DEV\") == \"1\") {",
+									"    pm.variables.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_DEV\"));",
+									"}",
+									"else{",
+									"    pm.variables.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_PROD\"));",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": "if(pm.globals.get(\"IS_DEV\") == \"1\") {\n    pm.variables.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_DEV\"));\n}\nelse{\n    pm.variables.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_PROD\"));\n}\n",
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+					"headers": "Authorization: {{authorization}}\n",
+					"pathVariables": {}
+				},
+				{
+					"id": "5d160d63-9612-46bf-987c-85fae40e24cd",
+					"uid": "0-5d160d63-9612-46bf-987c-85fae40e24cd",
+					"name": "tracks/",
+					"url": "{{BASE_URL}}tracks/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [
+						{
+							"key": "Authorization",
+							"value": "{{authorization}}",
+							"description": "",
+							"type": "default",
+							"enabled": true
+						}
+					],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0960bdf2-816f-4047-8849-729c006ed903",
+								"exec": [
+									"if(pm.globals.get(\"IS_DEV\") == \"1\") {",
+									"    pm.variables.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_DEV\"));",
+									"}",
+									"else{",
+									"    pm.variables.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_PROD\"));",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"preRequestScript": "if(pm.globals.get(\"IS_DEV\") == \"1\") {\n    pm.variables.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_DEV\"));\n}\nelse{\n    pm.variables.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_PROD\"));\n}\n",
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+					"rawModeData": "",
+					"headers": "Authorization: {{authorization}}\n",
+					"pathVariables": {}
+				}
+			]
+		},
+		{
+			"id": "69372831-b5de-48ff-80f0-9b5621d53e51",
+			"uid": "0-69372831-b5de-48ff-80f0-9b5621d53e51",
+			"name": "Genres",
+			"description": null,
+			"auth": null,
+			"events": null,
+			"variables": [],
+			"order": [
+				"dbf543e5-0cf2-4461-b3e0-0dd02e385838"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"createdAt": "2022-12-08T16:05:35.025Z",
+			"folders": [],
+			"requests": [
+				{
+					"id": "dbf543e5-0cf2-4461-b3e0-0dd02e385838",
+					"uid": "0-dbf543e5-0cf2-4461-b3e0-0dd02e385838",
+					"name": "genres/",
+					"url": "{{BASE_URL}}genres/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5e0ae269-e9e8-4c9c-b2cb-f81fe7380dff",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "69372831-b5de-48ff-80f0-9b5621d53e51",
+					"rawModeData": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				}
+			]
+		}
+	],
+	"environments": [
+		{
+			"id": "aa6c0608-a08c-4fa9-853e-4433dc55d7e7",
+			"name": "admin",
+			"values": [
+				{
+					"key": "USERNAME",
+					"value": "admin",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "PASSWORD",
+					"value": "+12Xvzagbqy",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "BASE_URL",
+					"value": "",
+					"type": "any",
+					"enabled": true
+				},
+				{
+					"key": "tokenAccess",
+					"value": "",
+					"type": "any",
+					"enabled": true
+				}
+			]
+		},
+		{
+			"id": "b99183b2-aab4-41c8-9cc0-734465ff6dc3",
+			"name": "My Workspace - globals",
+			"values": [
+				{
+					"key": "BASE_URL",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "IS_DEV",
+					"value": "1",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "BASE_URL_DEV",
+					"value": "127.0.0.1:8000/api/v1/",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "tokenAccess",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "authorization",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				}
+			]
+		}
+	],
+	"headerPresets": [],
+	"globals": []
+}
