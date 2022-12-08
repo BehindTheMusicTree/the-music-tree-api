@@ -50,7 +50,8 @@ class LibraryTrack(models.Model):
 
     @property
     def filename(self) -> str:
-        return self.file.name
+        filename, fileExtension = os.path.splitext(self.file.name)
+        return filename
 
 
     @property

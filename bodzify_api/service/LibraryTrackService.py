@@ -3,9 +3,9 @@
 import os
 
 from mutagen.mp3 import MP3
+from mutagen.flac import FLAC
 from mutagen.id3 import ID3
 from mutagen.easyid3 import EasyID3
-from mutagen import File as MutagenFile
 
 import bodzify_api.settings as settings
 import bodzify_api.service.CriteriaService as CriteriaService
@@ -20,18 +20,29 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesIds
 
 
-TAG_TITLE = "title"
-TAG_ARTIST = "artist"
-TAG_ALBUM = "album"
-
+# MP3 track tagging is a mess. Here we'll use 3 tagging libraries : mutagen.mp3 ,mutagen.id3 and 
+# mutagen.easyid3 because none of them can handle all the tags 
+TAG_EASYID3_TITLE = "title"
+TAG_EASYID3_ARTIST = "artist"
+TAG_EASYID3_ALBUM = "album"
 # We won't user the ID3v1 genre tag referencing a fix list of genres.
 # See https://en.wikipedia.org/wiki/List_of_ID3v1_Genres
 # Instead we use the "free genre" extended tag.
 # See https://web.archive.org/web/20120310015458/http://www.fortunecity.com/underworld/sonic/3/id3tag.html
 TAG_EASYID3_FREE_GENRE = "genre"
-TAG_DURATION = "duration"
-TAG_RATING = 'POPM'
-TAG_LANGUAGE = "language"
+TAG_EASYID3_RATING = 'POPM'
+TAG_EASYID3_LANGUAGE = "language"
+
+TAG_MP3_DURATION = "duration"
+
+# FLAC files use Vorbis tags
+TAG_VORBIS_TITLE = "title"
+TAG_VORBIS_ARTIST = "artist"
+TAG_VORBIS_ALBUM = "album"
+TAG_VORBIS_GENRE = "genre"
+TAG_VORBIS_RATING = 'POPM'
+TAG_VORBIS_LANGUAGE = "language"
+TAG_VORBIS_RATING = "rating"
 
 
 def UpdatePlaylists(track, user, oldGenre):
@@ -82,17 +93,17 @@ def UpdateTags(track):
     titleTag = track.title
     if titleTag is None:
         titleTag = ""
-    trackFile[TAG_TITLE] = titleTag
+    trackFile[TAG_EASYID3_TITLE] = titleTag
 
     artistTag = track.artist
     if artistTag is None:
         artistTag = ""
-    trackFile[TAG_ARTIST] = artistTag
+    trackFile[TAG_EASYID3_ARTIST] = artistTag
 
     albumTag = track.album
     if albumTag is None:
         albumTag = ""
-    trackFile[TAG_ALBUM] = albumTag
+    trackFile[TAG_EASYID3_ALBUM] = albumTag
 
     if track.genre is None:
         genreTag = ""
@@ -103,22 +114,43 @@ def UpdateTags(track):
     ratingTag = track.rating
     if ratingTag is None:
         ratingTag = -1
-    trackFile[TAG_RATING].rating = str(ratingTag)
+    trackFile[TAG_EASYID3_RATING].rating = str(ratingTag)
 
     languageTag = track.language
     if languageTag is None:
         languageTag = ""
-    trackFile[TAG_LANGUAGE] = languageTag
+    trackFile[TAG_EASYID3_LANGUAGE] = languageTag
     trackFile.save()
 
 
 def CreateFromUpload(user, temporaryFile):
-    trackMp3Tags = MP3(temporaryFile.temporary_file_path())
-    trackId3Tags = ID3(temporaryFile.temporary_file_path())
-    trackEasyId3Tags = EasyID3(temporaryFile.temporary_file_path())
-    print(trackEasyId3Tags)
+    filename, fileExtension = os.path.splitext(temporaryFile.name)
 
-    genreName = trackEasyId3Tags[TAG_EASYID3_FREE_GENRE][0]
+    if fileExtension in ["flac", "FLAC"]:
+        trackId3Tags = ID3(temporaryFile.temporary_file_path())
+        trackEasyId3Tags = EasyID3(temporaryFile.temporary_file_path())
+        trackMp3Tags = MP3(temporaryFile.temporary_file_path())
+
+        title =trackEasyId3Tags[TAG_EASYID3_TITLE][0]
+        artist = trackEasyId3Tags[TAG_EASYID3_ARTIST][0]
+        album = trackEasyId3Tags[TAG_EASYID3_ALBUM][0]
+        genreName = trackEasyId3Tags[TAG_EASYID3_FREE_GENRE][0]
+        rating = next(v for k,v in trackId3Tags.items() if TAG_EASYID3_RATING in k).rating
+        duration = trackMp3Tags.info.length
+        language = trackEasyId3Tags[TAG_EASYID3_LANGUAGE][0]
+        
+    else:
+        trackFlacTags = FLAC(temporaryFile.temporary_file_path())
+
+        title = trackFlacTags[TAG_EASYID3_TITLE][0]
+        artist = trackFlacTags[TAG_EASYID3_ARTIST][0]
+        album = trackFlacTags[TAG_EASYID3_ALBUM][0]
+        genreName = trackFlacTags[TAG_VORBIS_GENRE][0]
+        duration = trackFlacTags.info.length
+        rating = trackFlacTags[TAG_VORBIS_RATING][0]
+        language = trackFlacTags[TAG_EASYID3_LANGUAGE][0]
+
+
     if Criteria.objects.filter(
         user=user, type__id=CriteriaTypesIds.GENRE, name=genreName).exists():
         genre = Criteria.objects.get(user=user, type__id=CriteriaTypesIds.GENRE, name=genreName
@@ -140,13 +172,13 @@ def CreateFromUpload(user, temporaryFile):
     track = LibraryTrack.objects.create(
         user=user,
         file=temporaryFile,
-        title=trackEasyId3Tags[TAG_TITLE][0],
-        artist=trackEasyId3Tags[TAG_ARTIST][0],
-        album=trackEasyId3Tags[TAG_ALBUM][0],
+        title=title,
+        artist=artist,
+        album=album,
         genre=genre,
-        duration=trackMp3Tags.info.length,
-        rating=next(v for k,v in trackId3Tags.items() if TAG_RATING in k).rating,
-        language=trackEasyId3Tags[TAG_LANGUAGE][0]
+        duration=duration,
+        rating=rating,
+        language=language
     )
 
     AddTrackToGenrePlaylists(user, track)

@@ -52,9 +52,10 @@ class ViewTestCase(TestCase):
         badExtensionSampleTrackRelativePath = settings.TEST_SAMPLE_PATH + "bad_extension.mp4"
         sampleTrackWithNonExistingGenreFooRelativePath = (
             settings.TEST_SAMPLE_PATH + "genre_non_existing.mp3")
-        goodFlacSampleRelativePath = settings.TEST_SAMPLE_PATH + "sample.flac"
+        goodFlacSampleRelativePath = settings.TEST_SAMPLE_PATH + "1-08 - Luz De Luna.flac"
         goodWavSampleRelativePath = settings.TEST_SAMPLE_PATH + "sample.wav"
         goodMp3SampleRelativePath = settings.TEST_SAMPLE_PATH + "Eminem_Without_Me.mp3"
+        withAllTagsSampleRelativePath = settings.TEST_SAMPLE_PATH + "with_all_tags.mp3"
 
         tooBigSampleTrackAbsolutePath = os.path.join(currentFolder, 
             tooBigSampleTrackRelativePath)
@@ -65,6 +66,7 @@ class ViewTestCase(TestCase):
         goodFlacSampleAbsolutePath = os.path.join(currentFolder, goodFlacSampleRelativePath)
         goodWavSampleAbsolutePath = os.path.join(currentFolder, goodWavSampleRelativePath)
         goodMp3SampleAbsolutePath = os.path.join(currentFolder, goodMp3SampleRelativePath)
+        withAllTagsSampleAbsolutePath = os.path.join(currentFolder, withAllTagsSampleRelativePath)
         
         with open(tooBigSampleTrackAbsolutePath) as file:
             response = self.postFile(file, client, postExtra)
@@ -82,8 +84,14 @@ class ViewTestCase(TestCase):
         with open(goodFlacSampleAbsolutePath) as file:
             response = self.postFile(file, client, postExtra)
         assert response.status_code == 201
-        
-        with open(goodWavSampleAbsolutePath) as file:
+        track = LibraryTrack.objects.get(__path__endswith="1-08 - Luz De Luna.flac", user=userTest)
+        assert track.title == "Luz De Luna"
+        assert track.artist == "PNL"
+        assert track.album == "Dans La Légende"
+        assert track.genre == "French cloud rap"
+        assert track.fileExtension == ".flac"
+
+        with open(withAllTagsSampleAbsolutePath) as file:
             response = self.postFile(file, client, postExtra)
         assert response.status_code == 201
         
@@ -117,3 +125,8 @@ class ViewTestCase(TestCase):
             user=userTest,
             name=PlaylistSpecialNames.TAG_ALL
         ) in track.playlists
+
+
+        with open(withAllTagsSampleAbsolutePath) as file:
+            response = self.postFile(file, client, postExtra)
+        assert response.status_code == 201
