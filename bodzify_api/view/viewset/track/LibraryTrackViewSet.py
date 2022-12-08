@@ -13,7 +13,6 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 import bodzify_api.service.LibraryTrackService as LibraryTrackService
 import bodzify_api.view.utility as utility
-from bodzify_api.forms import UploadFileForm
 
 
 GENRE_PARAMETER = "genre"
@@ -60,6 +59,5 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
 
     def create(self, request, *args, **kwargs):  
-        print(request.FILES)      
         track = LibraryTrackService.CreateFromUpload(request.user, request.FILES[FILE_PARAMETER])
         return JsonResponse(LibraryTrackResponseSerializer(track).data)

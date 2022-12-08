@@ -15,7 +15,10 @@ import bodzify_api.settings as settings
 
 
 def user_directory_path(instance, filename):
-    return settings.LIBRARIES_PATH + 'user_{0}/{1}'.format(instance.user.id, filename)
+    return '{0}{1}/{2}'.format(
+        settings.USER_LIBRARY_FOLDER_NAME_PREFIXE, 
+        instance.user.id, 
+        filename)
 
 
 class LibraryTrack(models.Model):
@@ -58,8 +61,8 @@ class LibraryTrack(models.Model):
 
     @property
     def url(self) -> str:
-        return self.url
+        return self.file.url
 
 
     def __str__(self) -> str:
-        return str(self.user) + " " + self.artist + " " + self.title + " " + self.path 
+        return str(self.user) + " " + self.artist + " " + self.title + " " + str(self.file) 

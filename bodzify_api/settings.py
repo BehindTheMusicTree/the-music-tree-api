@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'bodzify_api',
         'USER': 'django',
-        'PASSWORD': 'T6q)32hr6fr',
+        'PASSWORD': 'G#uwM6&NW0!/',
         'HOST': 'localhost',
         'PORT': 5432,
     }
@@ -200,8 +200,11 @@ LOGGING = {
     },
 }
 
-LIBRARIES_PATH = os.path.join(BASE_DIR, "libraries/")
-TEST_SAMPLE_PATH = os.path.join(BASE_DIR, "test/samples/")
+MEDIA_ROOT = BASE_DIR / "media"
+LIBRARIES_FOLDER_NAME = "libraries"
+USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
+
+TEST_SAMPLE_PATH = BASE_DIR / "test/samples/"
 
 TRACK_SIZE_LIMIT_IN_MO = 28
 
