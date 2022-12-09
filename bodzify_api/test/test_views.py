@@ -48,6 +48,7 @@ class ViewTestCase(TestCase):
 
         currentFolder = os.path.dirname(__file__)
 
+        imageRelativePath = settings.TEST_SAMPLE_PATH + "image.jpeg"
         tooBigSampleTrackRelativePath = settings.TEST_SAMPLE_PATH + "29Mo.flac"
         badExtensionSampleTrackRelativePath = settings.TEST_SAMPLE_PATH + "bad_extension.mp4"
         sampleTrackWithNonExistingGenreFooRelativePath = (
@@ -57,8 +58,8 @@ class ViewTestCase(TestCase):
         goodMp3SampleRelativePath = settings.TEST_SAMPLE_PATH + "Eminem_Without_Me_sans_genre.mp3"
         withAllTagsSampleRelativePath = settings.TEST_SAMPLE_PATH + "with_all_tags.mp3"
 
-        tooBigSampleTrackAbsolutePath = os.path.join(currentFolder, 
-            tooBigSampleTrackRelativePath)
+        imageAbsolutePath = os.path.join(currentFolder, imageRelativePath)
+        tooBigSampleTrackAbsolutePath = os.path.join(currentFolder, tooBigSampleTrackRelativePath)
         badExtensionSampleTrackAbsolutePath = os.path.join(currentFolder, 
             badExtensionSampleTrackRelativePath)
         sampleTrackWithNonExistingGenreFooAbsolutePath = os.path.join(currentFolder, 
@@ -67,6 +68,10 @@ class ViewTestCase(TestCase):
         goodWavSampleAbsolutePath = os.path.join(currentFolder, goodWavSampleRelativePath)
         goodMp3SampleAbsolutePath = os.path.join(currentFolder, goodMp3SampleRelativePath)
         withAllTagsSampleAbsolutePath = os.path.join(currentFolder, withAllTagsSampleRelativePath)
+        
+        with open(imageAbsolutePath) as file:
+            response = self.postFile(file, client, postExtra)
+        assert response.status_code == 400
         
         with open(tooBigSampleTrackAbsolutePath) as file:
             response = self.postFile(file, client, postExtra)
