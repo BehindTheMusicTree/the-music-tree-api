@@ -49,7 +49,8 @@ class ViewTestCase(TestCase):
         currentFolder = os.path.dirname(__file__)
 
         imageRelativePath = settings.TEST_SAMPLE_PATH + "image.jpeg"
-        tooBigSampleTrackRelativePath = settings.TEST_SAMPLE_PATH + "29Mo.flac"
+        tooBigSampleTrackRelativePath = (settings.TEST_SAMPLE_PATH 
+            + "Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac")
         badExtensionSampleTrackRelativePath = settings.TEST_SAMPLE_PATH + "bad_extension.mp4"
         sampleTrackWithNonExistingGenreFooRelativePath = (
             settings.TEST_SAMPLE_PATH + "genre_non_existing.mp3")
