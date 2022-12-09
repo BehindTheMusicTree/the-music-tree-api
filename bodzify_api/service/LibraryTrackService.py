@@ -175,7 +175,7 @@ def CreateFromUpload(user, uploadedFile):
         else:
             genreName = CriteriaSpecialNames.GENRE_GENRELESS
 
-        duration = trackWavTags.info.length
+        duration = trackWavTags.info.length 
 
         rating = 0
         for key in trackWavTags.tags:
@@ -197,7 +197,7 @@ def CreateFromUpload(user, uploadedFile):
             genreName = CriteriaSpecialNames.GENRE_GENRELESS
 
         duration = trackFlacTags.info.length
-        album = GetValuesFirstElementIfExistInDicOrZero(trackFlacTags, TAG_VORBIS_RATING)
+        rating = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_RATING)
         language = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_LANGUAGE)
 
     else:
@@ -214,12 +214,13 @@ def CreateFromUpload(user, uploadedFile):
         else:
             genreName = CriteriaSpecialNames.GENRE_GENRELESS
 
+        duration = trackMp3Tags.info.length
+        
         rating = 0
         for key in trackId3Tags.items():
             if TAG_EASYID3_RATING in key:
                 rating = trackId3Tags[key].rating
                 
-        duration = trackMp3Tags.info.length
         language = GetValuesFirstElementIfExistInDicOrEmptyString(trackEasyId3Tags, TAG_EASYID3_LANGUAGE)
 
     if Criteria.objects.filter(
