@@ -207,7 +207,7 @@ USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 
 TEST_SAMPLE_PATH = os.path.join(BASE_DIR, "test/samples/")
 
-TRACK_SIZE_LIMIT_IN_MO = 28
+TRACK_SIZE_LIMIT_IN_MO = 500
 
 if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
