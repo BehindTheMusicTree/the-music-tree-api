@@ -5,6 +5,7 @@ import shortuuid
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from upload_validator import FileTypeValidator
 
@@ -16,7 +17,7 @@ import bodzify_api.settings as settings
 
 def user_directory_path(instance, filename):
     return '{0}{1}/{2}'.format(
-        settings.USER_LIBRARY_FOLDER_NAME_PREFIXE, 
+        settings.LIBRARIES_FOLDER_NAME + '/' + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE,
         instance.user.id, 
         filename)
 
@@ -50,8 +51,7 @@ class LibraryTrack(models.Model):
 
     @property
     def filename(self) -> str:
-        filename, fileExtension = os.path.splitext(self.file.name)
-        return filename
+        return os.path.basename(self.file.path)
 
 
     @property
@@ -61,8 +61,8 @@ class LibraryTrack(models.Model):
 
 
     @property
-    def url(self) -> str:
-        return self.file.url
+    def relativeUrl(self) -> str:
+        return 'tracks/' + self.uuid + "/"
 
 
     def __str__(self) -> str:

@@ -54,7 +54,7 @@ class ViewTestCase(TestCase):
             settings.TEST_SAMPLE_PATH + "genre_non_existing.mp3")
         goodFlacSampleRelativePath = settings.TEST_SAMPLE_PATH + "1-08 - Luz De Luna.flac"
         goodWavSampleRelativePath = settings.TEST_SAMPLE_PATH + "sample.wav"
-        goodMp3SampleRelativePath = settings.TEST_SAMPLE_PATH + "Eminem_Without_Me.mp3"
+        goodMp3SampleRelativePath = settings.TEST_SAMPLE_PATH + "Eminem_Without_Me_sans_genre.mp3"
         withAllTagsSampleRelativePath = settings.TEST_SAMPLE_PATH + "with_all_tags.mp3"
 
         tooBigSampleTrackAbsolutePath = os.path.join(currentFolder, 
@@ -91,6 +91,30 @@ class ViewTestCase(TestCase):
         assert track.genre == "French cloud rap"
         assert track.fileExtension == ".flac"
 
+        assert Playlist.objects.get(
+            user=userTest,
+            name="French cloud rap"
+        ) in track.playlists
+        
+        with open(goodWavSampleAbsolutePath) as file:
+            response = self.postFile(file, client, postExtra)
+        assert response.status_code == 201
+        track = LibraryTrack.objects.get(__path__endswith="sample.wav", user=userTest)
+        assert track.title == "La zumba"
+        assert track.artist == "Joni"
+        assert track.album == "BOOM"
+        assert track.genre == "j\"\"\"j"
+        assert track.duration == "2.665374149659864"
+        assert track.rating == 10
+        assert track.language == "French"
+        assert track.fileExtension == ".wav"
+
+        assert Playlist.objects.get(
+            user=userTest,
+            name="French cloud rap"
+        ) in track.playlists
+
+
         with open(withAllTagsSampleAbsolutePath) as file:
             response = self.postFile(file, client, postExtra)
         assert response.status_code == 201
@@ -99,11 +123,13 @@ class ViewTestCase(TestCase):
             response = self.postFile(file, client, postExtra)
         assert response.status_code == 201
 
-        track = LibraryTrack.objects.get(__path__endswith="Eminem_Without_Me.mp3", user=userTest)
+        track = LibraryTrack.objects.get(
+            __path__endswith="Eminem_Without_Me_sans_genre.mp3",
+            user=userTest)
         assert track.title == "Without Me"
         assert track.artist == "Eminem"
         assert track.album == "The Eminem Show (Expanded Edition)"
-        assert track.genre == "US Rap"
+        assert track.genre == "Genreless"
         assert track.fileExtension == ".mp3"
 
         assert Playlist.objects.get(
@@ -115,18 +141,3 @@ class ViewTestCase(TestCase):
             user=userTest,
             name=PlaylistSpecialNames.GENRE_GENRELESS
         ) in track.playlists
-
-        assert Playlist.objects.get(
-            user=userTest,
-            name="US Rap"
-        ) in track.playlists
-
-        assert Playlist.objects.get(
-            user=userTest,
-            name=PlaylistSpecialNames.TAG_ALL
-        ) in track.playlists
-
-
-        with open(withAllTagsSampleAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
-        assert response.status_code == 201

@@ -58,6 +58,6 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         return utility.GetFileResponse(request=request, filePath=track.path, filename=track.filename)
 
 
-    def create(self, request, *args, **kwargs):  
+    def create(self, request, *args, **kwargs):
         track = LibraryTrackService.CreateFromUpload(request.user, request.FILES[FILE_PARAMETER])
         return JsonResponse(LibraryTrackResponseSerializer(track).data)

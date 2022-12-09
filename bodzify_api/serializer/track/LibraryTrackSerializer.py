@@ -13,7 +13,7 @@ class LibraryTrackSerializer(serializers.ModelSerializer):
         model = LibraryTrack
         fields = [
             'uuid',
-            'url',
+            'relativeUrl',
             'filename',
             'fileExtension',
             "title", 
@@ -38,7 +38,7 @@ class LibraryTrackResponseSerializer(serializers.ModelSerializer):
         model = LibraryTrack
         fields = [
             'uuid',
-            'url',
+            'relativeUrl',
             'filename',
             'fileExtension',
             "title",
