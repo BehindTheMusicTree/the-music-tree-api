@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
-import bodzify_api.view.utility as viewset_utility
+import bodzify_api.view.utility as utility
 
 
 SOURCE_MYFREEMP3 = "myfreemp3"
@@ -35,7 +35,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
           OpenApiParameter(SOURCE_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
           OpenApiParameter(QUERY_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
           OpenApiParameter(
-            viewset_utility.REQUEST_PAGINATED_PAGE_FIELD, 
+            utility.REQUEST_PAGINATED_PAGE_FIELD, 
             OpenApiTypes.INT, 
             OpenApiParameter.PATH)
         ],
@@ -43,15 +43,15 @@ class MineTrackViewSet(viewsets.GenericViewSet):
     def list(self, request):
         mineSource = request.GET.get(SOURCE_FIELD, False)
         query = request.GET.get(QUERY_FIELD, False)
-        pageNumber = request.GET.get(viewset_utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
-        pageSize = request.GET.get(viewset_utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
+        pageNumber = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
+        pageSize = request.GET.get(utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
 
         if mineSource == SOURCE_MYFREEMP3:
             mineTracks = MineTrackMyfreemp3Service.list(query, pageNumber, pageSize)
-            return viewset_utility.GetJsonResponsePaginated(request, mineTracks)
+            return utility.GetJsonResponsePaginated(request, mineTracks)
 
         else:
-            return viewset_utility.GetJsonResponseWhenBadRequest(request)
+            return utility.GetJsonResponseWhenBadRequest(request)
     
     
     @action(detail=False, methods=['post'])
