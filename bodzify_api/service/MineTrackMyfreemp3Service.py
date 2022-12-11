@@ -21,4 +21,4 @@ def extract(user, title, artist, duration, releasedOn, mineTrackUrl):
 
     externalTrackFile = requests.get(mineTrackUrl)
     
-    return LibraryTrackService.createFromMineTrack(mineTrack, externalTrackFile, user)
+    return LibraryTrackService.CreateFromMineTrack(mineTrack, externalTrackFile, user)

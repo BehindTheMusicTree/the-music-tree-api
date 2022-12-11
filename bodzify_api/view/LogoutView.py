@@ -5,12 +5,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
 
-
 REFRESH_TOKEN_FIELD = "refresh_token"
 
 
 class LogoutView(APIView):
-
 
     def post(self, request):
         try:
@@ -19,5 +17,5 @@ class LogoutView(APIView):
             token.blacklist()
 
             return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
+        except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)

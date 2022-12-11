@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-def getCommonCriteria(criteriaA, criteriaB):
+def GetCommonCriteria(criteriaA, criteriaB):
     criteriaATreeItem = criteriaA
     while True:
         criteriaBTreeItem = criteriaB
@@ -9,4 +9,4 @@ def getCommonCriteria(criteriaA, criteriaB):
                 return criteriaBTreeItem
             else:
                 criteriaBTreeItem = criteriaBTreeItem.parent
-        criteriaATreeItem = criteriaATreeItem.parent  
+        criteriaATreeItem = criteriaATreeItem.parent

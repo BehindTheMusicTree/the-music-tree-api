@@ -6,8 +6,8 @@ from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
 
 
 class GenreViewSet(CriteriaViewSet):
-  def __init__(self, **kwargs): 
-    super(GenreViewSet,self).__init__(
-      criteriaTypeId=CriteriaTypesIds.GENRE, 
-      playlistTypeId=PlaylistTypeIds.GENRE,
-      **kwargs)
+    def __init__(self, **kwargs):
+        super(GenreViewSet, self).__init__(
+            criteriaTypeId=CriteriaTypesIds.GENRE,
+            playlistTypeId=PlaylistTypeIds.GENRE,
+            **kwargs)

@@ -15,6 +15,7 @@ class CriteriaSpecialNames:
 
 
 class Criteria(models.Model):
+
     uuid = models.CharField(
         primary_key=True,
         default=shortuuid.uuid,
@@ -35,4 +36,4 @@ class Criteria(models.Model):
         return self.uuid + " " + self.name
 
     class Meta:
-        unique_together = ('user', 'name', 'type', 'parent')
+        unique_together = ('user', 'name')

@@ -2,6 +2,7 @@
 
 import os
 
+from rest_framework import status
 from rest_framework import exceptions
 from rest_framework.pagination import PageNumberPagination
 
@@ -13,12 +14,11 @@ from django.core.paginator import Paginator
 
 INTEGRITY_ERROR_MESSAGE = "There is an issue with the object sent"
 
-RESPONSE_FILE_CONTENT_TYPE_VALUE ='file'
-RESPONSE_FILE_CONTENT_LENGTH_FIELD ='Content-Length'
-RESPONSE_FILE_CONTENT_DISPOSITION_FIELD ='Content-Disposition'
-RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE ='attachment; filename="%s"'
-RESPONSE_FILE_CONTENT_LENGTH_FIELD ='Content-Length'
-RESPONSE_FILE_CONTENT_LENGTH_FIELD ='Content-Length'
+RESPONSE_FILE_CONTENT_TYPE_VALUE = 'file'
+RESPONSE_FILE_CONTENT_LENGTH_FIELD = 'Content-Length'
+RESPONSE_FILE_CONTENT_DISPOSITION_FIELD = 'Content-Disposition'
+RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE = 'attachment; filename="%s"'
+RESPONSE_FILE_CONTENT_LENGTH_FIELD = 'Content-Length'
 
 PAGINATED_COUNT_FIELD = "count"
 PAGINATED_CURRENT_FIELD = "current"
@@ -33,19 +33,21 @@ REQUEST_PAGINATED_PAGE_SIZE_FIELD = "pageSize"
 
 def GetHttpResponseWhenPermissionDenied(request):
     return django.views.defaults.permission_denied(
-                request=request, 
-                exception=exceptions.PermissionDenied)
+        request=request, exception=exceptions.PermissionDenied)
 
 
-def GetJsonResponseWhenBadRequest(exception = exceptions.bad_request):
+def GetJsonResponseWhenBadRequest(exception=exceptions.bad_request):
     if type(exception) == IntegrityError:
         errorMessage = INTEGRITY_ERROR_MESSAGE
     else:
         errorMessage = str(exception)
-    return JsonResponse({
-                'success': False, 
-                'errors': errorMessage
-            })
+    return JsonResponse(
+        data={
+            'success': False,
+            'errors': errorMessage
+        },
+        status=status.HTTP_400_BAD_REQUEST
+    )
 
 
 def GetJsonResponsePaginated(request, dataJsonList):
@@ -62,9 +64,10 @@ def GetJsonResponsePaginated(request, dataJsonList):
     })
 
 
-def GetFileResponseForTrackDownload(request, track):
-    fileHandle = open(track.path, "rb")
+def GetFileResponse(filePath, filename):
+    fileHandle = open(filePath, "rb")
     response = FileResponse(fileHandle, content_type=RESPONSE_FILE_CONTENT_TYPE_VALUE)
-    response[RESPONSE_FILE_CONTENT_LENGTH_FIELD] = os.path.getsize(track.path)
-    response[RESPONSE_FILE_CONTENT_DISPOSITION_FIELD] = RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE % track.filename
+    response[RESPONSE_FILE_CONTENT_LENGTH_FIELD] = os.path.getsize(filePath)
+    response[RESPONSE_FILE_CONTENT_DISPOSITION_FIELD] = (
+        RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE % filename)
     return response
