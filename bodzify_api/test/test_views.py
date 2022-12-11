@@ -1,10 +1,14 @@
 import os
+import json
+import magic
+
+from rest_framework import status
 
 from django.urls import reverse
 from django.test import TestCase
 from django.test import Client
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -18,30 +22,36 @@ class ViewTestCase(TestCase):
 
     fixtures = ['initial_data', 'test_data']
 
+    def setUp(self) -> None:
+        self.mime = magic.Magic(mime=True)
+        self.client = Client()
+        return super().setUp()
+
     def test_login(self):
         client = Client()
         data = {
             "username": "user_test", 
             "password": "user_test"
         }
-        response = client.post(
-            reverse("token-obtain-pair"),
-            data
+        response = client.post(reverse("token-obtain-pair"), data)
+
+        assert response.status_code == status.HTTP_200_OK
+        return json.loads(response.content)['access']
+
+
+    def postTrackFile(self, filePath, postExtra):
+        trackFile = SimpleUploadedFile(
+            name=filePath,
+            content=b"file_content",
+            content_type=self.mime.from_file(filePath)
         )
-        assert response.status_code == 200
-
-        return response.access
-
-    def postFile(self, file, client, postExtra):
-        client.post(
-                path='/tracks/', 
-                data={'file': file}, 
-                extra=postExtra)
+        print(trackFile)
+        return self.client.post(
+            path=reverse('librarytrack-list'), data={'file': trackFile}, extra=postExtra)
 
 
     def test_libraryTrackPost(self):
         userTest = User.objects.get(pk=USER_TEST_PK)
-        client = Client()
 
         token = self.test_login()
         postExtra={'HTTP_AUTHORIZATION': f'Bearer {token}'}
@@ -53,7 +63,7 @@ class ViewTestCase(TestCase):
             + "Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac")
         badExtensionSampleTrackRelativePath = settings.TEST_SAMPLE_PATH + "bad_extension.mp4"
         sampleTrackWithNonExistingGenreFooRelativePath = (
-            settings.TEST_SAMPLE_PATH + "genre_non_existing.mp3")
+            settings.TEST_SAMPLE_PATH + "genre_foo_non_existing.mp3")
         goodFlacSampleRelativePath = settings.TEST_SAMPLE_PATH + "1-08 - Luz De Luna.flac"
         goodWavSampleRelativePath = settings.TEST_SAMPLE_PATH + "sample.wav"
         goodMp3SampleRelativePath = settings.TEST_SAMPLE_PATH + "Eminem_Without_Me_sans_genre.mp3"
@@ -69,27 +79,30 @@ class ViewTestCase(TestCase):
         goodWavSampleAbsolutePath = os.path.join(currentFolder, goodWavSampleRelativePath)
         goodMp3SampleAbsolutePath = os.path.join(currentFolder, goodMp3SampleRelativePath)
         withAllTagsSampleAbsolutePath = os.path.join(currentFolder, withAllTagsSampleRelativePath)
-        
-        with open(imageAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
-        assert response.status_code == 400
-        
-        with open(tooBigSampleTrackAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
-        assert response.status_code == 400
-        
-        with open(badExtensionSampleTrackAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
-        assert response.status_code == 400
-        
-        with open(sampleTrackWithNonExistingGenreFooAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
-        assert response.status_code == 201
+
+        response = self.postTrackFile(imageAbsolutePath, postExtra)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+        response = self.postTrackFile(
+            tooBigSampleTrackAbsolutePath, postExtra)
+        print(response.content)
+        # Actually the file is below the limit
+        assert response.status_code == status.HTTP_201_CREATED
+
+        response = self.postTrackFile(
+            badExtensionSampleTrackAbsolutePath,
+            postExtra
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+        response = self.postTrackFile(
+            sampleTrackWithNonExistingGenreFooAbsolutePath, postExtra)
+        print(response.content)
+        assert response.status_code == status.HTTP_201_CREATED
         assert Criteria.objects.filter(user=userTest, type__name="Foo").exists()
-        
-        with open(goodFlacSampleAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
-        assert response.status_code == 201
+
+        response = self.postTrackFile(goodFlacSampleAbsolutePath, postExtra)
+        assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(__path__endswith="1-08 - Luz De Luna.flac", user=userTest)
         assert track.title == "Luz De Luna"
         assert track.artist == "PNL"
@@ -101,9 +114,8 @@ class ViewTestCase(TestCase):
             user=userTest,
             name="French cloud rap"
         ) in track.playlists
-        
-        with open(goodWavSampleAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
+
+        response = self.postTrackFile(goodWavSampleAbsolutePath, postExtra)
         assert response.status_code == 201
         track = LibraryTrack.objects.get(__path__endswith="sample.wav", user=userTest)
         assert track.title == "La zumba"
@@ -120,14 +132,12 @@ class ViewTestCase(TestCase):
             name="French cloud rap"
         ) in track.playlists
 
+        response = self.postTrackFile(
+            withAllTagsSampleAbsolutePath, postExtra)
+        assert response.status_code == status.HTTP_201_CREATED
 
-        with open(withAllTagsSampleAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
-        assert response.status_code == 201
-        
-        with open(goodMp3SampleAbsolutePath) as file:
-            response = self.postFile(file, client, postExtra)
-        assert response.status_code == 201
+        response = self.postTrackFile(goodMp3SampleAbsolutePath, postExtra)
+        assert response.status_code == status.HTTP_201_CREATED
 
         track = LibraryTrack.objects.get(
             __path__endswith="Eminem_Without_Me_sans_genre.mp3",
