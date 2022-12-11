@@ -1,10 +1,14 @@
-from django.urls import include, path
+from django.urls import include
+from django.urls import path
 from django.contrib import admin
 
 from rest_framework import routers
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView
 
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import SpectacularAPIView
+from drf_spectacular.views import SpectacularRedocView
+from drf_spectacular.views import SpectacularSwaggerView
 
 from bodzify_api.view.viewset.UserViewSet import UserViewSet
 from bodzify_api.view.viewset.track.LibraryTrackViewSet import LibraryTrackViewSet
@@ -26,7 +30,7 @@ base = 'api/v1/'
 
 urlpatterns = [
     path(base, include(router.urls)),
-    
+
     path(base + 'admin/', admin.site.urls),
 
     path(base + 'auth/', include('django.contrib.auth.urls')),
@@ -35,7 +39,7 @@ urlpatterns = [
     path(base + 'auth/logout/', LogoutView.as_view(), name='auth-logout'),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/swagger-ui/', 
-        SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(
+        url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]

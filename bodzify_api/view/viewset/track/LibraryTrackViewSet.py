@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import json
-
 
 from rest_framework.decorators import action
 from rest_framework import status
@@ -30,13 +28,12 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         'retrieve':  LibraryTrackResponseSerializer,
     }
 
-
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
         genre = self.request.query_params.get(GENRE_PARAMETER)
-        if genre is not None: queryset = queryset.filter(genre=genre)
+        if genre is not None:
+            queryset = queryset.filter(genre=genre)
         return queryset
-
 
     @extend_schema(
         request=LibraryTrackSerializer,
@@ -44,17 +41,16 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     )
     def update(self, request, *args, **kwargs):
         updatedTrack = LibraryTrackService.Update(
-            track=self.get_object(), 
-            data=request.data, 
+            track=self.get_object(),
+            data=request.data,
             partial=kwargs.pop('partial', False),
-            RequestSerializerClass=LibraryTrackSerializer, 
+            RequestSerializerClass=LibraryTrackSerializer,
             user=request.user)
 
         responseSerializer = LibraryTrackResponseSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
-            responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
+            responseSerializer.data, status=status.HTTP_202_ACCEPTED, headers=headers)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
@@ -62,11 +58,12 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         return utility.GetFileResponse(
             request=request, filePath=track.path, filename=track.filename)
 
-
     def create(self, request, *args, **kwargs):
         form = UploadTrackForm(request.POST, request.FILES)
         if form.is_valid():
             track = LibraryTrackService.CreateFromUpload(
                 request.user, request.FILES[FILE_PARAMETER])
-            return JsonResponse(LibraryTrackResponseSerializer(track).data)
+            return JsonResponse(
+                data=LibraryTrackResponseSerializer(track).data,
+                status=status.HTTP_201_CREATED)
         return utility.GetJsonResponseWhenBadRequest(form.errors)

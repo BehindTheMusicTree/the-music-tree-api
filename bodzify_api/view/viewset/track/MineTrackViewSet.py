@@ -26,17 +26,16 @@ RELEASED_ON_FIELD = "releasedOn"
 TRACK_URL = "url"
 
 
-class MineTrackViewSet(viewsets.GenericViewSet):  
+class MineTrackViewSet(viewsets.GenericViewSet):
     serializer_class = MineTrackSerializer
-    
 
     @extend_schema(
         parameters=[
           OpenApiParameter(SOURCE_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
           OpenApiParameter(QUERY_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
           OpenApiParameter(
-            utility.REQUEST_PAGINATED_PAGE_FIELD, 
-            OpenApiTypes.INT, 
+            utility.REQUEST_PAGINATED_PAGE_FIELD,
+            OpenApiTypes.INT,
             OpenApiParameter.PATH)
         ],
     )
@@ -52,16 +51,16 @@ class MineTrackViewSet(viewsets.GenericViewSet):
 
         else:
             return utility.GetJsonResponseWhenBadRequest(request)
-    
-    
+
     @action(detail=False, methods=['post'])
     def extract(self, request):
         libraryTrack = MineTrackMyfreemp3Service.extract(
-            user=request.user, 
-            title=request.data[TITLE_FIELD], 
-            artist=request.data[ARTIST_FIELD], 
-            duration=request.data[DURATION_FIELD], 
-            releasedOn=request.data[RELEASED_ON_FIELD], 
-            mineTrackUrl=request.data[TRACK_URL])
+            user=request.user,
+            title=request.data[TITLE_FIELD],
+            artist=request.data[ARTIST_FIELD],
+            duration=request.data[DURATION_FIELD],
+            releasedOn=request.data[RELEASED_ON_FIELD],
+            mineTrackUrl=request.data[TRACK_URL]
+        )
 
         return JsonResponse(LibraryTrackResponseSerializer(libraryTrack).data)

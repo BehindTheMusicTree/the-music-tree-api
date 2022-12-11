@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from rest_framework.decorators import action
 from rest_framework import status, viewsets
 
 from django.contrib.auth.models import User
@@ -8,7 +7,6 @@ from django.http import JsonResponse
 
 from bodzify_api.serializer.UserSerializer import UserSerializer
 from rest_framework.permissions import IsAdminUser
-
 
 USER_USERNAME_FIELD = 'username'
 USER_PASSWORD_FIELD = 'password'
@@ -20,7 +18,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
 
-
     def create(self, request, *args, **kwargs):
         requestSerializer = UserSerializer(data=request.data)
         requestSerializer.is_valid(raise_exception=True)
@@ -30,4 +27,5 @@ class UserViewSet(viewsets.ModelViewSet):
             email=request.data[USER_EMAIL_FIELD])
         responseSerializer = UserSerializer(user)
         headers = self.get_success_headers(responseSerializer.data)
-        return JsonResponse(responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return JsonResponse(
+            responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
