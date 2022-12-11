@@ -200,12 +200,14 @@ LOGGING = {
     },
 }
 
+APP_NAME = "bodzify_api"
+APP_ROOT = os.path.join(BASE_DIR, APP_NAME + '/')
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 MEDIA_TEMP = os.path.join(MEDIA_ROOT, "temp/")
 LIBRARIES_FOLDER_NAME = "libraries"
 USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 
-TEST_SAMPLE_PATH = os.path.join(BASE_DIR, "test/samples/")
+TEST_SAMPLE_PATH = os.path.join(APP_ROOT, "test/sample/")
 
 TRACK_SIZE_LIMIT_IN_MO = 500
 
