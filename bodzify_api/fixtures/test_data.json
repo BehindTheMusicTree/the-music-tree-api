@@ -34,7 +34,7 @@
         "fields": {
             "name": "Genreless",
             "type": 1,
-            "parent": "m5KRxi10OxW4BEOod9Qmjy",
+            "parent": "m5KRxi10O884BEOod9Qmjy",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
         }
@@ -45,7 +45,7 @@
         "fields": {
             "name": "US Rap",
             "type": 1,
-            "parent": "m5KRxi10OxW4BEOod9Qmjy",
+            "parent": "m5KRxi10O884BEOod9Qmjy",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
         }
@@ -75,13 +75,34 @@
     },
     {
         "model": "bodzify_api.playlist",
-        "pk": "Lsji85munDKEjf885fgion",
+        "pk": "Lsji85mqisjdjf885fgion",
         "fields": {
             "name": "US Rap",
-            "criteria": "L1ZG85munGytJb885fgion",
+            "criteria": "Lsji85munDKEjf885fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
+        }
+    },
+
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDssLh4BvTARbJEK",
+        "fields": {
+           "user": 2, 
+           "file": "libraries/user_2/07_-_In_Too_Deep.mp3", 
+           "title": "In Too Deep", 
+           "artist": "Sum 41", 
+           "album": "All Killer No Filler", 
+           "genre": "L1ZG85munGytJb885fgion", 
+           "duration": "207.09333333333333", 
+           "rating": 128, 
+           "language": "", 
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrwLSgzHSHI76dVH"
+            ]
         }
     }
 ]
