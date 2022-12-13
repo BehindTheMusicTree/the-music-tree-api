@@ -2,18 +2,11 @@
 
 import os
 
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.files import File
-from django.core.files.storage import default_storage
-
 from mutagen._file import File as MutagenFile
 from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
-from mutagen.wave import WAVE
 from mutagen.id3 import ID3
 from mutagen.easyid3 import EasyID3
-
-import eyed3 
 
 import bodzify_api.settings as settings
 import bodzify_api.service.CriteriaService as CriteriaService
@@ -27,37 +20,22 @@ from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesIds
 
-
-# MP3 track tagging is a mess. Here we'll use 3 tagging libraries : mutagen.mp3 ,mutagen.id3 and 
-# mutagen.easyid3 because none of them can handle all the tags 
-TAG_EASYID3_TITLE = "title"
-TAG_EASYID3_ARTIST = "artist"
-TAG_EASYID3_ALBUM = "album"
-# We won't user the ID3v1 genre tag referencing a fix list of genres.
-# See https://en.wikipedia.org/wiki/List_of_ID3v1_Genres
-# Instead we use the "free genre" extended tag.
-# See https://web.archive.org/web/20120310015458/http://www.fortunecity.com/underworld/sonic/3/id3tag.html
-TAG_EASYID3_FREE_GENRE = "genre"
-TAG_MP3_DURATION = "duration" # The duration tag doesn't belong to ID3
-TAG_EASYID3_RATING = 'POPM'
-TAG_EASYID3_LANGUAGE = "language"
-
-# WAVE (WAV) files are also supposed to use ID3 tags but the tags don't seem to correspond
-TAG_WAVE_TITLE = "TIT2"
-TAG_WAVE_ARTIST = "TPE1"
-TAG_WAVE_ALBUM = "TALB"
-TAG_WAVE_GENRE = "TCON"
-TAG_WAVE_RATING = 'POPM'
-TAG_WAVE_LANGUAGE = "TLAN"
+# MP3 and Wave (.wav) files use ID3 tags
+TAG_ID3_TITLE = 'TIT2'
+TAG_ID3_ARTIST = 'TPE1'
+TAG_ID3_ALBUM = 'TALB'
+TAG_ID3_GENRE = 'TCON'
+TAG_ID3_RATING = 'POPM'
+TAG_ID3_LANGUAGE = 'TLAN'
 
 # FLAC files use Vorbis tags
-TAG_VORBIS_TITLE = "title"
-TAG_VORBIS_ARTIST = "artist"
-TAG_VORBIS_ALBUM = "album"
-TAG_VORBIS_GENRE = "genre"
+TAG_VORBIS_TITLE = 'title'
+TAG_VORBIS_ARTIST = 'artist'
+TAG_VORBIS_ALBUM = 'album'
+TAG_VORBIS_GENRE = 'genre'
 TAG_VORBIS_RATING = 'POPM'
-TAG_VORBIS_LANGUAGE = "language"
-TAG_VORBIS_RATING = "rating"
+TAG_VORBIS_LANGUAGE = 'language'
+TAG_VORBIS_RATING = 'rating'
 
 
 def UpdatePlaylists(track, user, oldGenre):
@@ -155,23 +133,15 @@ def GetValuesFirstElementIfExistInDicOrZero(dic, key):
 def CreateFromUpload(user, uploadedFile):
     filename, fileExtension = os.path.splitext(uploadedFile.name)
 
-    if type(uploadedFile) == InMemoryUploadedFile:
-        file = File(file=uploadedFile, name=uploadedFile.name)
-        filePath = settings.MEDIA_TEMP + file.name
-        default_storage.save(filePath, file)
-    else:
-        filePath = uploadedFile.temporary_file_path()
-
-    if fileExtension in [".wav", ".WAV"]:
-        print(MutagenFile(uploadedFile).keys)
+    if fileExtension in [".wav", ".WAV", ".mp3"]:
         trackWavTags = MutagenFile(uploadedFile)
         
-        title = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_WAVE_TITLE)
-        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_WAVE_ARTIST)
-        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_WAVE_ALBUM)
+        title = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_ID3_TITLE)
+        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_ID3_ARTIST)
+        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_ID3_ALBUM)
 
-        if TAG_WAVE_GENRE in trackWavTags:
-            genreName = trackWavTags[TAG_WAVE_GENRE][0]
+        if TAG_ID3_GENRE in trackWavTags:
+            genreName = trackWavTags[TAG_ID3_GENRE][0]
         else:
             genreName = CriteriaSpecialNames.GENRE_GENRELESS
 
@@ -179,13 +149,13 @@ def CreateFromUpload(user, uploadedFile):
 
         rating = 0
         for key in trackWavTags.tags:
-            if TAG_WAVE_RATING in key:
+            if TAG_ID3_RATING in key:
                 rating = trackWavTags[key].rating
 
-        language = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_WAVE_LANGUAGE)
+        language = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_ID3_LANGUAGE)
 
     elif fileExtension in [".flac", ".FLAC"]:
-        trackFlacTags = FLAC(filePath)
+        trackFlacTags = FLAC(fileobj=uploadedFile)
         
         title = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_TITLE)
         artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_ARTIST)
@@ -198,30 +168,8 @@ def CreateFromUpload(user, uploadedFile):
 
         duration = trackFlacTags.info.length
         rating = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_RATING)
-        language = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_LANGUAGE)
-
-    else:
-        trackId3Tags = ID3(filePath)
-        trackEasyId3Tags = EasyID3(filePath)
-        trackMp3Tags = MP3(filePath)
-
-        title = GetValuesFirstElementIfExistInDicOrEmptyString(trackEasyId3Tags, TAG_EASYID3_TITLE)
-        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackEasyId3Tags, TAG_EASYID3_ARTIST)
-        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackEasyId3Tags, TAG_EASYID3_ALBUM)
-
-        if TAG_EASYID3_FREE_GENRE in trackEasyId3Tags:
-            genreName = trackEasyId3Tags[TAG_EASYID3_FREE_GENRE][0]
-        else:
-            genreName = CriteriaSpecialNames.GENRE_GENRELESS
-
-        duration = trackMp3Tags.info.length
-        
-        rating = 0
-        for key in trackId3Tags.items():
-            if TAG_EASYID3_RATING in key:
-                rating = trackId3Tags[key].rating
-                
-        language = GetValuesFirstElementIfExistInDicOrEmptyString(trackEasyId3Tags, TAG_EASYID3_LANGUAGE)
+        language = GetValuesFirstElementIfExistInDicOrEmptyString(
+            trackFlacTags, TAG_VORBIS_LANGUAGE)
 
     if Criteria.objects.filter(
         user=user, type__id=CriteriaTypesIds.GENRE, name=genreName).exists():
@@ -255,22 +203,17 @@ def CreateFromUpload(user, uploadedFile):
 
     AddTrackToGenrePlaylists(user, track)
 
-
-    if type(uploadedFile) == InMemoryUploadedFile:
-        default_storage.delete(filePath)
-
     return track
 
 
 def AddTrackToGenrePlaylists(user, track):
     genre = track.genre
     while genre is not None:
-        track.playlists.add(Playlist.objects.get(user=user, criteria=track.genre))
+        track.playlists.add(Playlist.objects.get(user=user, criteria=genre))
         genre = genre.parent
     track.save()
 
 def MoveTemporaryFileToLibrary(user, temporaryFile, libraryTrack):
-    userLibraryPath = settings.LIBRARIES_ROOT + user.get_username() + "/"
     userLibraryPath = settings.LIBRARIES_ROOT + user.get_username() + "/"
 
     if not os.path.exists(userLibraryPath):
