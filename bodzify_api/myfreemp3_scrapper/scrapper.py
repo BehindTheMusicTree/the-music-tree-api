@@ -8,7 +8,7 @@ from bodzify_api.model.track.MineTrack import MineTrack
 import bodzify_api.settings as settings
 
 
-LOG_FOLDER_PATH = os.path.join(settings.LOG_PATH, "myfreemp3Scrapper/")
+LOG_MYFREEMP3_FOLDER_PATH = os.path.join(settings.LOG_PATH, "myfreemp3Scrapper/")
 LOG_FILE_NAME_FORMAT = "%y-%m-%d %H%M%S"
 
 POST_URL_BASE = 'https://myfreemp3juices.cc/api/'
@@ -43,13 +43,13 @@ def getTracksFromMyfreemp3Json(dataDict):
 
 
 def logResponseText(responseText):
-    myfreemp3ScrapperLogFolderPath = LOG_FOLDER_PATH
+    myfreemp3ScrapperLogFolderPath = LOG_MYFREEMP3_FOLDER_PATH
     
     if not os.path.exists(myfreemp3ScrapperLogFolderPath):
         os.makedirs(myfreemp3ScrapperLogFolderPath)
 
     logFileName = datetime.datetime.now().strftime(LOG_FILE_NAME_FORMAT) + ".txt"
-    f = open(LOG_FOLDER_PATH + logFileName, "x")
+    f = open(LOG_MYFREEMP3_FOLDER_PATH + logFileName, "x")
     f.write(responseText)
     f.close()
 
