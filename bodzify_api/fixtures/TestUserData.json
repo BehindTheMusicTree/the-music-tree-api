@@ -50,6 +50,28 @@
             "user": 2
         }
     },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "LsjdqoifsjofsiEjf885fgion",
+        "fields": {
+            "name": "Rock",
+            "type": 1,
+            "parent": "m5KRxi10O884BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "Lsjdqoiqsicqjsof885fgion",
+        "fields": {
+            "name": "Nu metal",
+            "type": 1,
+            "parent": "LsjdqoifsjofsiEjf885fgion",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
 
     {
         "model": "bodzify_api.playlist",
@@ -75,10 +97,21 @@
     },
     {
         "model": "bodzify_api.playlist",
+        "pk": "FYM1HUIrqjqjshssI76dVH",
+        "fields": {
+            "name": "Rock",
+            "criteria": "LsjdqoifsjofsiEjf885fgion",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
         "pk": "Lsji85mqisjdjf885fgion",
         "fields": {
-            "name": "US Rap",
-            "criteria": "Lsji85munDKEjf885fgion",
+            "name": "Nu metal",
+            "criteria": "Lsjdqoiqsicqjsof885fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
@@ -94,7 +127,7 @@
            "title": "In Too Deep", 
            "artist": "Sum 41", 
            "album": "All Killer No Filler", 
-           "genre": "L1ZG85munGytJb885fgion", 
+           "genre": "Lsji85munDKEjf885fgion", 
            "duration": "207.09333333333333", 
            "rating": 128, 
            "language": "", 
