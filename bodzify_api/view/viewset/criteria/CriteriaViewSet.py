@@ -23,6 +23,7 @@ PARENT_FIELD = "parent"
 
 
 class CriteriaViewSet(MultiSerializerViewSet):
+
     queryset = Criteria.objects.all()
     serializers = {
         'default': CriteriaRequestSerializer,
@@ -82,7 +83,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
         headers = self.get_success_headers(responseSerializer.data)
 
         return JsonResponse(
-            responseSerializer.data,
+            data=responseSerializer.data,
             status=status.HTTP_201_CREATED,
             headers=headers,
             safe=False
