@@ -12,6 +12,7 @@ from django.core.files.storage import default_storage
 
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSerializer
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
+from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackUpdateRequestSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.form.UploadTrackForm import UploadTrackForm
@@ -29,6 +30,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         'default': LibraryTrackSerializer,
         'list':  LibraryTrackResponseSerializer,
         'retrieve':  LibraryTrackResponseSerializer,
+        'update':  LibraryTrackUpdateRequestSerializer,
     }
 
     def get_queryset(self):
@@ -39,7 +41,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         return queryset
 
     @extend_schema(
-        request=LibraryTrackSerializer,
+        request=LibraryTrackUpdateRequestSerializer,
         responses=LibraryTrackResponseSerializer
     )
     def update(self, request, *args, **kwargs):
@@ -53,7 +55,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         responseSerializer = LibraryTrackResponseSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
-            responseSerializer.data, status=status.HTTP_202_ACCEPTED, headers=headers)
+            responseSerializer.data, status=status.HTTP_200_OK, headers=headers)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
