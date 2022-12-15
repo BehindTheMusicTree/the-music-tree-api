@@ -13,7 +13,7 @@ lib/
 
 media/
 
-/bodzify_api/test/sample/Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac
+/bodzify_api/test/sample/post_Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac
 
 share/
 
@@ -22,3 +22,5 @@ pyvenv.cfg
 lib64
 
 bodzify_api/test/view/track/library/post/sample/Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac
+
+bodzify_api/test/view/track/library/post/sample/post_Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac
