@@ -1,0 +1,130 @@
+[
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "LsjdqoifsjofsiEjf885fgion",
+        "fields": {
+            "name": "Rock",
+            "type": 1,
+            "parent": "m5KRxi10O884BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "LsjdqoqzpsdojEjf885fgion",
+        "fields": {
+            "name": "Rap",
+            "type": 1,
+            "parent": "m5KRxi10O884BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "Lsjdqoiqsicqjsof885fgion",
+        "fields": {
+            "name": "Nu metal",
+            "type": 1,
+            "parent": "LsjdqoifsjofsiEjf885fgion",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "qdsuhqoishcosihqoq",
+        "fields": {
+            "name": "Rap",
+            "criteria": "LsjdqoqzpsdojEjf885fgion",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "FYM1HUIrqjqjshssI76dVH",
+        "fields": {
+            "name": "Rock",
+            "criteria": "LsjdqoifsjofsiEjf885fgion",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "Lsji85mqisjdjf885fgion",
+        "fields": {
+            "name": "Nu metal",
+            "criteria": "Lsjdqoiqsicqjsof885fgion",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 2
+        }
+    },
+
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDssLh4BvTARbJEK",
+        "fields": {
+           "user": 2, 
+           "file": "libraries/user_2/put_1-03 - We're All To Blame", 
+           "title": "1-03 - We're All To Blame", 
+           "artist": "Sum 41", 
+           "album": "All Killer No Filler", 
+           "genre": "LsjdqoifsjofsiEjf885fgion", 
+           "duration": "207.09333333333333", 
+           "rating": 128, 
+           "language": "", 
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrqjqjshssI76dVH"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDoihoihvTARbJEK",
+        "fields": {
+           "user": 2, 
+           "file": "libraries/user_2/put_1-08_-_Luz_De_Luna.flac", 
+           "title": "Luz De Luna", 
+           "artist": "PNL", 
+           "album": "Dans La Légende", 
+           "genre": "LsjdqoqzpsdojEjf885fgion", 
+           "duration": "205.09333333333333", 
+           "rating": 78, 
+           "language": "French", 
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrwLSgzHSHI76dVH"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBcLYVHJ3A",
+        "fields": {
+            "user": 2,
+            "file": "libraries/user_2/put_sample.wav",
+            "title": "La zumba",
+            "artist": "Joni",
+            "album": "BOOM",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": "2.665374149659864",
+            "rating": 8,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    }
+]

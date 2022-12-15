@@ -13,7 +13,7 @@ USER_TEST_PK = 2
 @pytest.mark.django_db
 class CriteriaTestCase(TestCase):
 
-    fixtures = ['initial_data', 'test_data']
+    fixtures = ['initial_data', 'TestUserData']
 
     def createGenreCriteria(self, name, parent, user, type):
         return Criteria.objects.create(

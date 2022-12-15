@@ -26,8 +26,18 @@ class LibraryTrackSerializer(serializers.ModelSerializer):
             "addedOn"]
 
 
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
+class LibraryTrackUpdateRequestSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LibraryTrack
+        fields = [
+            "title", 
+            "artist", 
+            "album", 
+            "genre", 
+            "rating", 
+            "language", 
+        ]
 
 
 class LibraryTrackResponseSerializer(serializers.ModelSerializer):

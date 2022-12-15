@@ -13,9 +13,9 @@ from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as utility
 
 
-SOURCE_MYFREEMP3 = "myfreemp3"
-SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"
 SOURCE_FIELD = "source"
+SOURCE_MYFREEMP3_VALUE = "myfreemp3"
+SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"
 SONG_URL_FIELD = "url"
 QUERY_FIELD = "query"
 
@@ -45,7 +45,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
         pageNumber = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
         pageSize = request.GET.get(utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
 
-        if mineSource == SOURCE_MYFREEMP3:
+        if mineSource == SOURCE_MYFREEMP3_VALUE:
             mineTracks = MineTrackMyfreemp3Service.list(query, pageNumber, pageSize)
             return utility.GetJsonResponsePaginated(request, mineTracks)
 
