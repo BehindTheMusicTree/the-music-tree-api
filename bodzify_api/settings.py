@@ -205,6 +205,7 @@ APP_ROOT = os.path.join(BASE_DIR, APP_NAME + '/')
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 MEDIA_TEMP = os.path.join(MEDIA_ROOT, "temp/")
 LIBRARIES_FOLDER_NAME = "libraries"
+LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
 USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 TRACK_SIZE_LIMIT_IN_MO = 500
 
