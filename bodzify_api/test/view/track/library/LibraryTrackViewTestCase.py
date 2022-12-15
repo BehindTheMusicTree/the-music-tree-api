@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from django.urls import reverse
 
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
@@ -10,5 +13,6 @@ class LibraryTrackViewTestCase(ViewTestCase):
             return self.apiClient.post(
                 path=reverse('librarytrack-list'), data={'file': sampleFile})
 
-    def putSampleTrack(self, data):
-        return self.apiClient.put(data=data)
+    def putSampleTrack(self, trackUuid, data):
+        return self.apiClient.put(
+            path=reverse('librarytrack-detail', kwargs={'pk':trackUuid}), data=data)
