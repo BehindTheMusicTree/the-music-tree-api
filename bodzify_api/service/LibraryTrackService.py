@@ -3,10 +3,41 @@
 import os
 
 from mutagen._file import File as MutagenFile
-from mutagen.mp3 import MP3
+from mutagen.id3 import Frames
 from mutagen.flac import FLAC
-from mutagen.id3 import ID3
 from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3
+from mutagen.id3 import ID3NoHeaderError
+from mutagen.id3 import ID3UnsupportedVersionError
+from mutagen.id3 import CHAP
+from mutagen.id3 import TIT2
+from mutagen.id3 import CTOC
+from mutagen.id3 import TT1
+from mutagen.id3 import TCON
+from mutagen.id3 import COMM
+from mutagen.id3 import TORY
+from mutagen.id3 import PIC
+from mutagen.id3 import TRCK
+from mutagen.id3 import TDRC
+from mutagen.id3 import TDAT
+from mutagen.id3 import TIME
+from mutagen.id3 import LNK
+from mutagen.id3 import TYER
+from mutagen.id3 import IPLS
+from mutagen.id3 import TPE1
+from mutagen.id3 import BinaryFrame
+from mutagen.id3 import POPM
+from mutagen.id3 import APIC
+from mutagen.id3 import CRM
+from mutagen.id3 import TALB
+from mutagen.id3 import TPE2
+from mutagen.id3 import TSOT
+from mutagen.id3 import TPE2
+from mutagen.id3 import TDEN
+from mutagen.id3 import TPE2
+from mutagen.id3 import TIPL
+from mutagen.id3 import Encoding
+from mutagen.id3 import ID3Tags
 
 import bodzify_api.settings as settings
 import bodzify_api.service.CriteriaService as CriteriaService
@@ -21,21 +52,21 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesIds
 
 # MP3 and Wave (.wav) files use ID3 tags
-TAG_ID3_TITLE = 'TIT2'
-TAG_ID3_ARTIST = 'TPE1'
-TAG_ID3_ALBUM = 'TALB'
-TAG_ID3_GENRE = 'TCON'
-TAG_ID3_RATING = 'POPM'
-TAG_ID3_LANGUAGE = 'TLAN'
+ID3_TITLE_TAG = 'TIT2'
+ID3_ARTIST_TAG = 'TPE1'
+ID3_ALBUM_TAG = 'TALB'
+ID3_GENRE_TAG = 'TCON'
+ID3_RATING_TAG = 'POPM'
+ID3_GENRE_APP_EMAIL = 'POPM:bodzify'
+ID3_LANGUAGE_TAG = 'TLAN'
 
 # FLAC files use Vorbis tags
-TAG_VORBIS_TITLE = 'title'
-TAG_VORBIS_ARTIST = 'artist'
-TAG_VORBIS_ALBUM = 'album'
-TAG_VORBIS_GENRE = 'genre'
-TAG_VORBIS_RATING = 'POPM'
-TAG_VORBIS_LANGUAGE = 'language'
-TAG_VORBIS_RATING = 'rating'
+VORBIS_TITLE_TAG = 'title'
+VORBIS_ARTIST_TAG = 'artist'
+VORBIS_ALBUM_TAG = 'album'
+VORBIS_GENRE_TAG = 'genre'
+VORBIS_RATING_TAG = 'rating'
+VORBIS_LANGUAGE_TAG = 'language'
 
 
 def UpdatePlaylists(track, user, oldGenre):
@@ -68,9 +99,15 @@ def UpdatePlaylists(track, user, oldGenre):
 
 def Update(track, data, partial, RequestSerializerClass, user):
     oldGenre = LibraryTrack.objects.get(uuid=track.uuid).genre
+
+    if data['genre'] is None:
+        data['genre'] = Criteria.objects.get(
+            user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
+
     requestSerializer = RequestSerializerClass(track, data=data, partial=partial)
     requestSerializer.is_valid(raise_exception=True)
     updatedTrack = requestSerializer.save()
+
 
     if oldGenre != updatedTrack.genre:
         UpdatePlaylists(track=updatedTrack, user=user, oldGenre=oldGenre)
@@ -81,39 +118,60 @@ def Update(track, data, partial, RequestSerializerClass, user):
 
 
 def UpdateTags(track):
-    trackFile = MP3(track.path)
 
     titleTag = track.title
     if titleTag is None:
         titleTag = ""
-    trackFile[TAG_EASYID3_TITLE] = titleTag
 
     artistTag = track.artist
     if artistTag is None:
         artistTag = ""
-    trackFile[TAG_EASYID3_ARTIST] = artistTag
 
     albumTag = track.album
     if albumTag is None:
         albumTag = ""
-    trackFile[TAG_EASYID3_ALBUM] = albumTag
 
     if track.genre is None:
         genreTag = ""
     else:
         genreTag = track.genre.name
-    trackFile[TAG_EASYID3_FREE_GENRE] = genreTag
 
     ratingTag = track.rating
     if ratingTag is None:
-        ratingTag = -1
-    trackFile[TAG_EASYID3_RATING].rating = str(ratingTag)
+        ratingTag = 0
 
     languageTag = track.language
     if languageTag is None:
         languageTag = ""
-    trackFile[TAG_EASYID3_LANGUAGE] = languageTag
-    trackFile.save()
+
+    if track.fileExtension.lower() in [".wav", ".mp3"]:
+
+        trackId3Tags = ID3(track.file.path)
+
+        trackId3Tags.delall(ID3_RATING_TAG)
+        trackId3Tags.delall(ID3_TITLE_TAG)
+        trackId3Tags.add(TIT2(encoding=3, text=titleTag))
+        trackId3Tags.delall(ID3_ARTIST_TAG)
+        trackId3Tags.add(TIT2(encoding=3, text=artistTag))
+        trackId3Tags.delall(ID3_ALBUM_TAG)
+        trackId3Tags.add(TIT2(encoding=3, text=albumTag))
+        trackId3Tags.delall(ID3_GENRE_TAG)
+        trackId3Tags.add(TIT2(encoding=3, text=genreTag))
+        trackId3Tags.delall(ID3_RATING_TAG)
+        trackId3Tags.add(POPM(email=ID3_GENRE_APP_EMAIL, rating=ratingTag))
+        trackId3Tags.delall(ID3_LANGUAGE_TAG)
+        trackId3Tags.add(TIT2(encoding=3, text=languageTag))
+
+
+    elif track.fileExtension.lower() == ".flac":
+        trackFlacTags = FLAC(track.file.path)
+        trackFlacTags[VORBIS_TITLE_TAG] = titleTag
+        trackFlacTags[VORBIS_ARTIST_TAG] = artistTag
+        trackFlacTags[VORBIS_ALBUM_TAG] = albumTag
+        trackFlacTags[VORBIS_GENRE_TAG] = genreTag
+        trackFlacTags[VORBIS_RATING_TAG][0] = str(ratingTag)
+        trackFlacTags[VORBIS_LANGUAGE_TAG] = languageTag
+        trackFlacTags.save(track.file.path)
 
 
 def GetValuesFirstElementIfExistInDicOrEmptyString(dic, key):
@@ -133,43 +191,45 @@ def GetValuesFirstElementIfExistInDicOrZero(dic, key):
 def CreateFromUpload(user, uploadedFile):
     filename, fileExtension = os.path.splitext(uploadedFile.name)
 
-    if fileExtension in [".wav", ".WAV", ".mp3"]:
-        trackWavTags = MutagenFile(uploadedFile)
+    if fileExtension.lower() in [".wav", ".mp3"]:
+        trackId3Tags = MutagenFile(uploadedFile)
         
-        title = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_ID3_TITLE)
-        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_ID3_ARTIST)
-        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_ID3_ALBUM)
+        title = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_TITLE_TAG)
+        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ARTIST_TAG)
+        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG)
 
-        if TAG_ID3_GENRE in trackWavTags:
-            genreName = trackWavTags[TAG_ID3_GENRE][0]
+        if ID3_GENRE_TAG in trackId3Tags:
+            genreName = trackId3Tags[ID3_GENRE_TAG][0]
         else:
             genreName = CriteriaSpecialNames.GENRE_GENRELESS
 
-        duration = trackWavTags.info.length 
+        duration = trackId3Tags.info.length 
 
         rating = 0
-        for key in trackWavTags.tags:
-            if TAG_ID3_RATING in key:
-                rating = trackWavTags[key].rating
+        for key in trackId3Tags.tags:
+            if ID3_RATING_TAG in key:
+                rating = trackId3Tags[key].rating
 
-        language = GetValuesFirstElementIfExistInDicOrEmptyString(trackWavTags, TAG_ID3_LANGUAGE)
+        language = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_LANGUAGE_TAG)
 
-    elif fileExtension in [".flac", ".FLAC"]:
+    elif fileExtension.lower() == ".flac":
         trackFlacTags = FLAC(fileobj=uploadedFile)
         
-        title = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_TITLE)
-        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_ARTIST)
-        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_ALBUM)
+        title = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_TITLE_TAG)
+        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ARTIST_TAG)
+        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ALBUM_TAG)
 
-        if TAG_VORBIS_GENRE in trackFlacTags:
-            genreName = trackFlacTags[TAG_VORBIS_GENRE][0]
+        if VORBIS_GENRE_TAG in trackFlacTags:
+            genreName = trackFlacTags[VORBIS_GENRE_TAG][0]
         else:
             genreName = CriteriaSpecialNames.GENRE_GENRELESS
 
         duration = trackFlacTags.info.length
-        rating = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, TAG_VORBIS_RATING)
+        rating = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_RATING_TAG)
+        if rating == "":
+            rating = "0"
         language = GetValuesFirstElementIfExistInDicOrEmptyString(
-            trackFlacTags, TAG_VORBIS_LANGUAGE)
+            trackFlacTags, VORBIS_LANGUAGE_TAG)
 
     if Criteria.objects.filter(
         user=user, type__id=CriteriaTypesIds.GENRE, name=genreName).exists():
