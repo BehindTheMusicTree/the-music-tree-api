@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
+
 class PlaylistTypeSerializer(serializers.ModelSerializer):
 
     class Meta:

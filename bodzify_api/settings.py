@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
-    'bodzify_api'
+    'coverage',
+    'bodzify_api',
 ]
 
 MIDDLEWARE = [
@@ -79,9 +80,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'bodzify_api',
         'USER': 'django',
-        'PASSWORD': 'T6q)32hr6fr',
+        'PASSWORD': 'G#uwM6&NW0!/',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': 5432,
     }
 }
 
@@ -199,7 +200,14 @@ LOGGING = {
     },
 }
 
-LIBRARIES_PATH = os.path.join(BASE_DIR, "libraries/")
+APP_NAME = "bodzify_api"
+APP_ROOT = os.path.join(BASE_DIR, APP_NAME + '/')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_TEMP = os.path.join(MEDIA_ROOT, "temp/")
+LIBRARIES_FOLDER_NAME = "libraries"
+LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
+USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
+TRACK_SIZE_LIMIT_IN_MO = 500
 
 if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *

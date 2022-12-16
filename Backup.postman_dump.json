@@ -1,0 +1,838 @@
+{
+	"version": 1,
+	"collections": [
+		{
+			"id": "3aa36701-245f-48da-a799-097323521447",
+			"uid": "0-3aa36701-245f-48da-a799-097323521447",
+			"name": "Mine",
+			"description": null,
+			"auth": null,
+			"events": null,
+			"variables": [],
+			"order": [
+				"d0aec5a2-6227-4e8d-9b35-b1055b7ee1e5"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"createdAt": "2022-12-15T17:44:03.354Z",
+			"folders": [],
+			"requests": [
+				{
+					"id": "d0aec5a2-6227-4e8d-9b35-b1055b7ee1e5",
+					"uid": "0-d0aec5a2-6227-4e8d-9b35-b1055b7ee1e5",
+					"name": "mine/",
+					"url": "{{BASE_URL}}mine/tracks/?source=myfreemp3&query=jul",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [
+						{
+							"key": "Authorization",
+							"value": "{{authorization}}",
+							"description": "",
+							"type": "default",
+							"enabled": true
+						}
+					],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [
+						{
+							"key": "source",
+							"value": "myfreemp3",
+							"equals": true,
+							"description": null,
+							"enabled": true
+						},
+						{
+							"key": "query",
+							"value": "jul",
+							"equals": true,
+							"description": null,
+							"enabled": true
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c407b9ff-a6ec-4991-b265-8ca98067a9d3",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "3aa36701-245f-48da-a799-097323521447",
+					"rawModeData": "",
+					"headers": "Authorization: {{authorization}}\n",
+					"pathVariables": {}
+				}
+			]
+		},
+		{
+			"id": "5c0a8725-2537-4ac7-83c2-a3f7af3479d5",
+			"uid": "0-5c0a8725-2537-4ac7-83c2-a3f7af3479d5",
+			"name": "Auth",
+			"description": null,
+			"auth": null,
+			"events": null,
+			"variables": [
+				{
+					"key": "BASE_URL",
+					"value": "",
+					"disabled": false
+				}
+			],
+			"order": [
+				"94eacc1e-624f-4dfe-9359-75ebcff5895b"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"createdAt": "2022-12-08T14:46:31.397Z",
+			"folders": [],
+			"requests": [
+				{
+					"id": "94eacc1e-624f-4dfe-9359-75ebcff5895b",
+					"uid": "0-94eacc1e-624f-4dfe-9359-75ebcff5895b",
+					"name": "auth/token/",
+					"url": "{{BASE_URL}}auth/token/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": null,
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "567e6913-c37c-44e6-968f-cc415e44db0b",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody)",
+									"pm.environment.set(\"tokenAccess\", jsonData.access)"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5f2def69-8afe-47d4-9ef8-e856f41f626f",
+								"exec": [
+									"if(pm.globals.get(\"IS_DEV\") == \"1\") {",
+									"    pm.environment.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_DEV\"));",
+									"}",
+									"else{",
+									"    pm.environment.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_PROD\"));",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": "if(pm.globals.get(\"IS_DEV\") == \"1\") {\n    pm.environment.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_DEV\"));\n}\nelse{\n    pm.environment.set(\"BASE_URL\", pm.globals.get(\"BASE_URL_PROD\"));\n}\n",
+					"tests": "var jsonData = JSON.parse(responseBody)\npm.environment.set(\"tokenAccess\", jsonData.access)",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "5c0a8725-2537-4ac7-83c2-a3f7af3479d5",
+					"rawModeData": "{\n    \"username\": \"{{USERNAME}}\",\n    \"password\": \"{{PASSWORD}}\"\n}",
+					"pathVariables": {}
+				}
+			]
+		},
+		{
+			"id": "5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+			"uid": "0-5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+			"name": "Track",
+			"description": null,
+			"auth": null,
+			"events": null,
+			"variables": [],
+			"order": [
+				"5d160d63-9612-46bf-987c-85fae40e24cd",
+				"7151e552-cdd9-461b-ba5b-48f13d2e1f96",
+				"0f19984c-3dbd-4f24-b958-ed4c23a38459",
+				"489eda6f-123a-46bd-b10a-5483d58b3777"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"createdAt": "2022-12-08T15:55:44.461Z",
+			"folders": [],
+			"requests": [
+				{
+					"id": "0f19984c-3dbd-4f24-b958-ed4c23a38459",
+					"uid": "0-0f19984c-3dbd-4f24-b958-ed4c23a38459",
+					"name": "tracks/",
+					"url": "{{BASE_URL}}tracks/",
+					"description": null,
+					"data": [
+						{
+							"key": "file",
+							"value": "/home/mignot/Git/bodzify-api/bodzify_api/test/view/track/library/put/sample/07 - In Too Deep.mp3",
+							"description": "",
+							"type": "file",
+							"enabled": true
+						}
+					],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "params",
+					"headerData": [
+						{
+							"key": "Authorization",
+							"value": "{{authorization}}",
+							"description": "",
+							"type": "default",
+							"enabled": true
+						}
+					],
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "21fa36fe-25d3-484e-8444-d41cd1649b38",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+					"headers": "Authorization: {{authorization}}\n",
+					"pathVariables": {}
+				},
+				{
+					"id": "489eda6f-123a-46bd-b10a-5483d58b3777",
+					"uid": "0-489eda6f-123a-46bd-b10a-5483d58b3777",
+					"name": "tracks/{uuid}",
+					"url": "{{BASE_URL}}tracks/dyFYZTP3anyaUBcLYVHJ3A/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [
+						{
+							"key": "Authorization",
+							"value": "{{authorization}}",
+							"description": "",
+							"type": "default",
+							"enabled": true
+						}
+					],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a338cd8f-6fbd-4bb6-bfc9-3a05f55571cd",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+					"rawModeData": "{\n  \"title\": \"Somewhere I Belong\",\n  \"artist\": \"Linkin Park\",\n  \"album\": \"Meteora\",\n  \"genre\": \"WNDgTyjWhuKqepLJcGPws5\",\n  \"rating\": 200,\n  \"language\": \"English\"\n}",
+					"headers": "Authorization: {{authorization}}\n",
+					"pathVariables": {}
+				},
+				{
+					"id": "5d160d63-9612-46bf-987c-85fae40e24cd",
+					"uid": "0-5d160d63-9612-46bf-987c-85fae40e24cd",
+					"name": "tracks/",
+					"url": "{{BASE_URL}}tracks/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [
+						{
+							"key": "Authorization",
+							"value": "{{authorization}}",
+							"description": "",
+							"type": "default",
+							"enabled": true
+						}
+					],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0960bdf2-816f-4047-8849-729c006ed903",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+					"rawModeData": "",
+					"headers": "Authorization: {{authorization}}\n",
+					"pathVariables": {}
+				},
+				{
+					"id": "7151e552-cdd9-461b-ba5b-48f13d2e1f96",
+					"uid": "0-7151e552-cdd9-461b-ba5b-48f13d2e1f96",
+					"name": "tracks/{uuid}/",
+					"url": "{{BASE_URL}}tracks/{{trackUuid}}/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [
+						{
+							"key": "Authorization",
+							"value": "{{authorization}}",
+							"description": "",
+							"type": "default",
+							"enabled": true
+						}
+					],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8762c5c0-40e1-4a5e-a341-bac0f6e76d00",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "5ebeef5d-243a-44ef-b1f2-781f37aae71d",
+					"rawModeData": "",
+					"headers": "Authorization: {{authorization}}\n",
+					"pathVariables": {}
+				}
+			]
+		},
+		{
+			"id": "69372831-b5de-48ff-80f0-9b5621d53e51",
+			"uid": "0-69372831-b5de-48ff-80f0-9b5621d53e51",
+			"name": "Genre",
+			"description": null,
+			"auth": null,
+			"events": null,
+			"variables": [],
+			"order": [
+				"dbf543e5-0cf2-4461-b3e0-0dd02e385838",
+				"f5d66568-339c-40fe-a67a-e1cedde28e16",
+				"ecc73ab9-5b44-4e2e-acca-664f9cd292a4"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"createdAt": "2022-12-08T16:05:35.025Z",
+			"folders": [],
+			"requests": [
+				{
+					"id": "dbf543e5-0cf2-4461-b3e0-0dd02e385838",
+					"uid": "0-dbf543e5-0cf2-4461-b3e0-0dd02e385838",
+					"name": "genres/",
+					"url": "{{BASE_URL}}genres/",
+					"description": null,
+					"data": null,
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": null,
+					"headerData": [],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5e0ae269-e9e8-4c9c-b2cb-f81fe7380dff",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "18a07e59-0a3b-40d5-9f79-88cd2fb48c8a",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody)",
+									"pm.environment.set(\"genreUuid\", jsonData.results[0].uuid)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": null,
+					"tests": "var jsonData = JSON.parse(responseBody)\npm.environment.set(\"genreUuid\", jsonData.results[0].uuid)",
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "69372831-b5de-48ff-80f0-9b5621d53e51",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "ecc73ab9-5b44-4e2e-acca-664f9cd292a4",
+					"uid": "0-ecc73ab9-5b44-4e2e-acca-664f9cd292a4",
+					"name": "genres/{uuid}",
+					"url": "{{BASE_URL}}genres/{{genreUuid}}/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7fa4b414-fb32-4170-856e-7e2a02df1455",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "69372831-b5de-48ff-80f0-9b5621d53e51",
+					"rawModeData": "{\n    \"name\": \"Rap\",\n    \"parent\": \"\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "f5d66568-339c-40fe-a67a-e1cedde28e16",
+					"uid": "0-f5d66568-339c-40fe-a67a-e1cedde28e16",
+					"name": "genres/",
+					"url": "{{BASE_URL}}genres/",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "26a56e6f-b53b-499a-98c9-ce2f561b08e1",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0a5be29d-fdc9-4dd0-877e-2a411165a10e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "69372831-b5de-48ff-80f0-9b5621d53e51",
+					"rawModeData": "{\n    \"name\": \"Rock\",\n    \"parent\": \"m5KRxi10OxW4BEOod9Qmjy\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				}
+			]
+		},
+		{
+			"id": "8f2c20a6-ed5d-41d8-ac7f-0b63abf71008",
+			"uid": "0-8f2c20a6-ed5d-41d8-ac7f-0b63abf71008",
+			"name": "Playlist",
+			"description": null,
+			"auth": null,
+			"events": null,
+			"variables": [],
+			"order": [
+				"0be03c66-4a05-4052-8c7c-19f04a5f43d3"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"createdAt": "2022-12-13T14:56:20.505Z",
+			"folders": [],
+			"requests": [
+				{
+					"id": "0be03c66-4a05-4052-8c7c-19f04a5f43d3",
+					"uid": "0-0be03c66-4a05-4052-8c7c-19f04a5f43d3",
+					"name": "playlists/",
+					"url": "{{BASE_URL}}playlists/",
+					"description": null,
+					"data": null,
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": null,
+					"headerData": [],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{tokenAccess}}"
+							}
+						]
+					},
+					"events": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1be8a0e2-6446-4e87-8e84-024e48c21e13",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e5bef32f-1cdc-410b-be2b-4e4bd1fac0a5",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody)",
+									"pm.environment.set(\"playlistUuid\", jsonData.results[0].uuid)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"responses_order": [],
+					"preRequestScript": null,
+					"tests": "var jsonData = JSON.parse(responseBody)\npm.environment.set(\"playlistUuid\", jsonData.results[0].uuid)",
+					"currentHelper": "bearerAuth",
+					"helperAttributes": {
+						"id": "bearer",
+						"token": "{{tokenAccess}}"
+					},
+					"collectionId": "8f2c20a6-ed5d-41d8-ac7f-0b63abf71008",
+					"headers": "",
+					"pathVariables": {}
+				}
+			]
+		}
+	],
+	"environments": [
+		{
+			"id": "aa6c0608-a08c-4fa9-853e-4433dc55d7e7",
+			"name": "admin",
+			"values": [
+				{
+					"key": "USERNAME",
+					"value": "admin",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "PASSWORD",
+					"value": "+12Xvzagbqy",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "BASE_URL",
+					"value": "",
+					"type": "any",
+					"enabled": true
+				},
+				{
+					"key": "tokenAccess",
+					"value": "",
+					"type": "any",
+					"enabled": true
+				},
+				{
+					"key": "genreUuid",
+					"value": "",
+					"type": "any",
+					"enabled": true
+				},
+				{
+					"key": "trackUuid",
+					"value": "",
+					"type": "any",
+					"enabled": true
+				},
+				{
+					"key": "playlistUuid",
+					"value": "",
+					"type": "any",
+					"enabled": true
+				}
+			]
+		},
+		{
+			"id": "151a2429-6fea-4509-9c69-b224833efe56",
+			"name": "My Workspace - globals",
+			"values": [
+				{
+					"key": "BASE_URL",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "IS_DEV",
+					"value": "1",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "BASE_URL_DEV",
+					"value": "127.0.0.1:8000/api/v1/",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "tokenAccess",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "authorization",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "genreUuid",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "trackUuid",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "playlistUuid",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				}
+			]
+		}
+	],
+	"headerPresets": [],
+	"globals": []
+}

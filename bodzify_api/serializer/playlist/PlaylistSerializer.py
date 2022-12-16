@@ -1,22 +1,24 @@
 from rest_framework import serializers
-from rest_framework_recursive.fields import RecursiveField
 
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.playlist.PlaylistTypeSerializer import PlaylistTypeSerializer
 
+
 class ParentPlaylistSerializer(serializers.ModelSerializer):
     type = PlaylistTypeSerializer()
-    trackCount = serializers.IntegerField(source='librarytrack_set.count')  
+    trackCount = serializers.IntegerField(source='librarytrack_set.count')
+
     class Meta:
         model = Playlist
         fields = [
             "uuid",
-            "name", 
+            "name",
             "type",
             "criteria",
             "addedOn",
             "trackCount"
         ]
+
 
 class PlaylistSerializer(ParentPlaylistSerializer):
     parent = serializers.SerializerMethodField()
@@ -31,7 +33,7 @@ class PlaylistSerializer(ParentPlaylistSerializer):
         model = Playlist    
         fields = [
             "uuid",
-            "name", 
+            "name",
             "type",
             "criteria",
             "parent",
