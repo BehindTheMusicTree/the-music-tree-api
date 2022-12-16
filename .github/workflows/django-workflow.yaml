@@ -9,59 +9,65 @@ on:
         branches: [dev]
 
 jobs:
-  pytest:
+  # pytest:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     MY_POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
+  #     MY_POSTGRES_PASSWORD: ${{ secrets.DEV_POSTGRES_PASSWORD }}
+  #     MY_POSTGRES_DB: ${{ secrets.DEV_POSTGRES_DATABASE }}
+  #   services:
+  #     postgres_main:
+  #       image: postgres:14.5
+  #       env:
+  #         POSTGRES_USER: ${{ env.MY_POSTGRES_USER }}
+  #         POSTGRES_PASSWORD: ${{ env.MY_POSTGRES_PASSWORD }}
+  #         POSTGRES_DB: ${{ env.MY_POSTGRES_DB }}
+  #       ports:
+  #         - 5432:5432
+  #       options: >-
+  #         --health-cmd pg_isready 
+  #         --health-interval 10s 
+  #         --health-timeout 5s 
+  #         --health-retries 5
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+  #     - name: Setup Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v2
+  #       with:
+  #          python-version: 3.10.6
+  #     - name: Install requirements
+  #       run: |
+  #           pip install -r requirements.txt
+  #     - name: Run tests
+  #       env:
+  #         DJANGO_DEV: true
+  #       run: |
+  #           pytest . 
+  # flake8:
+  #   needs: pytest
+  #   runs-on: ubuntu-latest
+  #   steps: 
+  #     - name: Run Flake8
+  #       run: flake8 . --exclude=*migrations/* --max-line-length=100
+  # FTP-transfer-to-prod:
+  #   needs: pytest
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 🛒 Checkout
+  #       uses: actions/checkout@v2
+  #     - name: 📦 Get LFTP
+  #       run: sudo apt install lftp
+  #     - name: 📄 Upload Folder
+  #       run: > 
+  #         lftp -c "set ssl:verify-certificate false; 
+  #         set sftp:auto-confirm yes; open "sftp://${{ secrets.HOST }}" -p 22 -u ${{ secrets.FTP_USER }},'${{ secrets.FTP_PASSWORD }}'; 
+  #         mirror -R -n -v . /var/www/html/bodzify-api/ 
+  #         --exclude .git/ --exclude /__pycache__/ --exclude .pytest_cache/ --exclude log/myfreemp3Scrapper/ --delete;"
+  Start-service:
+    #needs: pytest
     runs-on: ubuntu-latest
-    env:
-      MY_POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
-      MY_POSTGRES_PASSWORD: ${{ secrets.DEV_POSTGRES_PASSWORD }}
-      MY_POSTGRES_DB: ${{ secrets.DEV_POSTGRES_DATABASE }}
-    services:
-      postgres_main:
-        image: postgres:14.5
-        env:
-          POSTGRES_USER: ${{ env.MY_POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.MY_POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ env.MY_POSTGRES_DB }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready 
-          --health-interval 10s 
-          --health-timeout 5s 
-          --health-retries 5
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-           python-version: 3.10.6
-      - name: Install requirements
-        run: |
-            pip install -r requirements.txt
-      - name: Run tests
-        env:
-          DJANGO_DEV: true
-        run: |
-            pytest . 
-  flake8:
-    needs: pytest
-    runs-on: ubuntu-latest
-    steps: 
-      - name: Run Flake8
-        run: flake8 . --exclude=*migrations/* --max-line-length=100
-  FTP-transfer-to-prod:
-    needs: pytest
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🛒 Checkout
-        uses: actions/checkout@v2
-      - name: 📦 Get LFTP
-        run: sudo apt install lftp
-      - name: 📄 Upload Folder
-        run: > 
-          lftp -c "set ssl:verify-certificate false; 
-          set sftp:auto-confirm yes; open "sftp://${{ secrets.HOST }}" -p 22 -u ${{ secrets.FTP_USER }},'${{ secrets.FTP_PASSWORD }}'; 
-          mirror -R -n -v . /var/www/html/bodzify-api/ 
-          --exclude .git/ --exclude /__pycache__/ --exclude .pytest_cache/ --exclude log/myfreemp3Scrapper/ --delete;"
+      - name: Run
+        run: ssh -t ${{ secrets.SSH_USER }}@${{ secrets.HOST }} "sudo python3 /var/www/html/bodzify-api/manage.py runserver_plus 0.0.0.0:443 --cert-file /root/ssl/www_bodzify_com.crt --key-file /root/ssl/www.bodzify.com.key" 
