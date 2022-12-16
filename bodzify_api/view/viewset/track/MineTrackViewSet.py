@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 
@@ -11,12 +11,13 @@ from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResp
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as utility
+from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 
 
 SOURCE_FIELD = "source"
 SOURCE_MYFREEMP3_VALUE = "myfreemp3"
 SOURCE_DOESNT_EXIST_MESSAGE = "The specified source doesn\'t exist"
-SONG_URL_FIELD = "url"
+TRACK_URL_FIELD = "url"
 QUERY_FIELD = "query"
 
 TITLE_FIELD = "title"
@@ -26,7 +27,7 @@ RELEASED_ON_FIELD = "releasedOn"
 TRACK_URL = "url"
 
 
-class MineTrackViewSet(viewsets.GenericViewSet):
+class MineTrackViewSet(MultiSerializerViewSet):
     serializer_class = MineTrackSerializer
 
     @extend_schema(
@@ -63,4 +64,7 @@ class MineTrackViewSet(viewsets.GenericViewSet):
             mineTrackUrl=request.data[TRACK_URL]
         )
 
-        return JsonResponse(LibraryTrackResponseSerializer(libraryTrack).data)
+        responseSerializer = LibraryTrackResponseSerializer(libraryTrack)
+        headers = self.get_success_headers(responseSerializer.data)
+        return JsonResponse(
+            data=responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
