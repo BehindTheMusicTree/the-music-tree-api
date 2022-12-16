@@ -15,12 +15,13 @@ POST_URL_BASE = 'https://myfreemp3juices.cc/api/'
 POST_URL_SEARCH_PHP_PARAMETER = 'search.php?callback=jQuery21307552220673040206_1662375436837'
 POST_URL_SEARCH_JSON_PARAMETER = 'search.json?page={}&page_size={}&search_term=a'
 POST_URL = POST_URL_BASE + POST_URL_SEARCH_PHP_PARAMETER + POST_URL_SEARCH_JSON_PARAMETER
-FIELD_DATA = "response"
-FIELD_TITLE = "title"
-FIELD_ARTIST = "artist"
-FIELD_URL = "url"
-FIELD_RELEASED_ON = "date"
-FIELD_DURATION = "duration"
+
+DATA_FIELD = "response"
+TITLE_FIELD = "title"
+ARTIST_FIELD = "artist"
+URL_FIELD = "url"
+RELEASED_ON_FIELD = "date"
+DURATION_FIELD = "duration"
 
 QUERY_FIELD = "q"
 PAGE_FIELD = "page"
@@ -31,14 +32,14 @@ TAG_TO_IGNORE = "apple"
 
 def getTracksFromMyfreemp3Json(dataDict):
     tracks = []
-    for trackJson in dataDict[FIELD_DATA]:
+    for trackJson in dataDict[DATA_FIELD]:
         if trackJson != TAG_TO_IGNORE:
             tracks.append(MineTrack(
-                title=trackJson[FIELD_TITLE], 
-                artist=trackJson[FIELD_ARTIST], 
-                duration=trackJson[FIELD_DURATION], 
-                releasedOn=trackJson[FIELD_RELEASED_ON],
-                url=trackJson[FIELD_URL]))
+                title=trackJson[TITLE_FIELD], 
+                artist=trackJson[ARTIST_FIELD], 
+                duration=trackJson[DURATION_FIELD], 
+                releasedOn=trackJson[RELEASED_ON_FIELD],
+                url=trackJson[URL_FIELD]))
     return tracks
 
 
@@ -76,7 +77,7 @@ def scrap(search, page, pageSize):
         QUERY_FIELD: search,
         PAGE_FIELD: str(page)
     }
-    
+
     responseText = requests.post(url = POST_URL, data = dataToSendToMyfreemp3).text
     logResponseText(responseText)
 
@@ -84,4 +85,3 @@ def scrap(search, page, pageSize):
     tracks = getTracksFromMyfreemp3Json(myfreemp3tracksJson)
     tracksJsonText = getJsonTextFromTracks(tracks)
     return json.loads(tracksJsonText)
-    
