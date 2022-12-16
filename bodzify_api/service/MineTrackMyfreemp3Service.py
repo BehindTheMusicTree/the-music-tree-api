@@ -37,7 +37,7 @@ def extract(user, title, artist, duration, releasedOn, mineTrackUrl):
     trackTempFileIndividualDirectoryAbsolutePath = (
         settings.MEDIA_TEMP + trackTempFileIndividualDirectoryName + "/")
 
-    os.mkdir(trackTempFileIndividualDirectoryAbsolutePath)
+    os.makedirs(trackTempFileIndividualDirectoryAbsolutePath)
     trackDownloadedFilenameWithoutExtension, trackTempfileExtension = (
         os.path.splitext(mineTrackUrl))
     trackTempFileDefinitiveName = artist + " - " + title + trackTempfileExtension
