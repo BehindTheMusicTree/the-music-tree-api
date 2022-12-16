@@ -7,7 +7,7 @@ bin/
 
 lib/
 
-media/libraries/
+media/libraries/*
 
 media/temp/*
 
