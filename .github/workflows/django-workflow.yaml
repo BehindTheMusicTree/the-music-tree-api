@@ -69,7 +69,11 @@ jobs:
     #needs: pytest
     runs-on: ubuntu-latest
     steps:
-      - name: ko
-        run: ssh-keygen -R ${{ secrets.HOST }}
-      - name: Run
-        run: ssh -t ${{ secrets.SSH_USER }}@${{ secrets.HOST }} "sudo python3 /var/www/html/bodzify-api/manage.py runserver_plus 0.0.0.0:443 --cert-file /root/ssl/www_bodzify_com.crt --key-file /root/ssl/www.bodzify.com.key" 
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.KEY }}
+          script: sudo python3 /var/www/html/bodzify-api/manage.py runserver_plus 0.0.0.0:443 --cert-file /root/ssl/www_bodzify_com.crt --key-file /root/ssl/www.bodzify.com.key
