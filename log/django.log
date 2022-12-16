@@ -37931,3 +37931,5 @@ AttributeError: 'ReturnDict' object has no attribute 'data'
 2022-12-16 00:01:10,023 [WARNING]- Bad Request: /api/v1/tracks/
 2022-12-16 00:01:28,788 [WARNING]- Bad Request: /api/v1/tracks/
 2022-12-16 00:01:29,956 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-16 01:00:49,423 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-16 01:00:52,540 [WARNING]- Bad Request: /api/v1/tracks/
