@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from rest_framework import status
-from rest_framework import viewsets
 from rest_framework.decorators import action
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
