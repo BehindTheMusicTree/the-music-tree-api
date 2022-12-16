@@ -14,6 +14,12 @@ TEST_USER_PK = 2
 class ViewTestCase(TestCase):
 
     def setUp(self, sampleRelativePath="") -> None:
+        testUserLibraryAbsolutePath = (
+            settings.LIBRARIES_PATH 
+            + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE 
+            + str(TEST_USER_PK))
+        if not os.path.exists(testUserLibraryAbsolutePath):
+            os.makedirs(testUserLibraryAbsolutePath)
 
         self.sampleRelativePath = sampleRelativePath
         self.mime = magic.Magic(mime=True)
