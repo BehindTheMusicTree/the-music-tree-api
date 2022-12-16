@@ -20,3 +20,9 @@ pyvenv.cfg
 lib64
 
 bodzify_api/test/view/track/library/post/sample/post_Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac
+
+log/django.log
+
+log/info.log
+
+bodzify_api/migrations/0001_initial.py
