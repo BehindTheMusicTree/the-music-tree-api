@@ -273,33 +273,8 @@ def AddTrackToGenrePlaylists(user, track):
         genre = genre.parent
     track.save()
 
-def MoveTemporaryFileToLibrary(user, temporaryFile, libraryTrack):
-    userLibraryPath = settings.LIBRARIES_ROOT + user.get_username() + "/"
 
-    if not os.path.exists(userLibraryPath):
-        os.makedirs(userLibraryPath)
-
-    externalTrackName, trackExtension = os.path.splitext(temporaryFile.temporary_file_path)
-
-    artistTitle = libraryTrack.artist + " - " + libraryTrack.title
-    libraryFilename = artistTitle + trackExtension
-    internalTrackFilePath = userLibraryPath + libraryFilename
-
-    existingFileCount = 0
-    while os.path.exists(internalTrackFilePath):
-        existingFileCount = existingFileCount + 1
-        libraryFilename = artistTitle + " (" + str(existingFileCount) + ")" + trackExtension
-        internalTrackFilePath = userLibraryPath + libraryFilename
-
-    with open(internalTrackFilePath, 'wb') as file:
-        file.write(temporaryFile.content)
-
-    return internalTrackFilePath
-
-
-def CreateFromMineTrack(user, mineTrack, trackFile):
-    internalTrackFilePath = MoveTemporaryFileToLibrary(user=user, temporaryFile=trackFile)
-
+def CreateFromMineTrack(user, mineTrack, trackTempFileAbsolutePath):
     # Tags of every myfreemp3 downloaded tracks are empty 
     libraryTrack = LibraryTrack(
         user=user, 
@@ -308,9 +283,10 @@ def CreateFromMineTrack(user, mineTrack, trackFile):
         album="",
         genre=Criteria.objects.get(user=user, name=CriteriaSpecialNames.GENRE_GENRELESS),
         duration=mineTrack.duration,
-        rating=-1,
+        rating=0,
         language="")
-    libraryTrack.save(path=internalTrackFilePath)
+    libraryTrack.file.name = trackTempFileAbsolutePath
+    libraryTrack.save()
 
     libraryTrack.playlists.add(
         Playlist.objects.get(
@@ -320,10 +296,6 @@ def CreateFromMineTrack(user, mineTrack, trackFile):
         Playlist.objects.get(
             user=user, 
             name=PlaylistSpecialNames.GENRE_GENRELESS))
-    libraryTrack.playlists.add(
-        Playlist.objects.get(
-            user=user, 
-            name=PlaylistSpecialNames.TAG_ALL))
     libraryTrack.save()
 
     UpdateTags(libraryTrack)
