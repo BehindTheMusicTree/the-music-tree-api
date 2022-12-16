@@ -77,5 +77,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.KEY }}
           script: |
-            pip install -r /var/www/html/bodzify-api/requirements.txt 
+            pip install -r /var/www/html/bodzify-api/requirements.txt
+            sudo lsof -t -i tcp:443 -s tcp:listen | sudo xargs kill
             sudo python3 /var/www/html/bodzify-api/manage.py runserver_plus 0.0.0.0:443 --cert-file /root/ssl/www_bodzify_com.crt --key-file /root/ssl/www.bodzify.com.key
