@@ -23,7 +23,7 @@ ATOMIC_REQUESTS = True
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-se!awu%q2sg9i@dz)s(-hj5m)c+z#14xm@t@_&l&^p(avj=5j_'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
