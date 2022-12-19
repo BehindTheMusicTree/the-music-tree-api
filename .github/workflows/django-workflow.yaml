@@ -69,6 +69,8 @@ jobs:
     needs: FTP-transfer-to-prod
     runs-on: ubuntu-latest
     steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v2
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@v0.1.6
         with:
