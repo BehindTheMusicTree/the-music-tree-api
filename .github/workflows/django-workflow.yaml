@@ -52,7 +52,7 @@ jobs:
   #     - name: Run Flake8
   #       run: flake8 . --exclude=*migrations/* --max-line-length=100
   FTP-transfer-to-prod:
-    needs: pytest
+    # needs: pytest
     runs-on: ubuntu-latest
     steps:
       - name: 🛒 Checkout
