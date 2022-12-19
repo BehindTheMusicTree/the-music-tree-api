@@ -51,25 +51,25 @@ jobs:
   #   steps: 
   #     - name: Run Flake8
   #       run: flake8 . --exclude=*migrations/* --max-line-length=100
-  # FTP-transfer-to-prod:
-  #   needs: pytest
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 🛒 Checkout
-  #       uses: actions/checkout@v2
-  #     - name: 📦 Get LFTP
-  #       run: sudo apt install lftp
-  #     - name: 📄 Upload Folder
-  #       run: > 
-  #         lftp -c "set ssl:verify-certificate false; 
-  #         set sftp:auto-confirm yes; open "sftp://${{ secrets.HOST }}" -p 22 -u ${{ secrets.FTP_USER }},'${{ secrets.FTP_PASSWORD }}'; 
-  #         mirror -R -n -v . /var/www/html/bodzify-api/ 
-  #         --exclude .git/ --exclude /__pycache__/ --exclude .pytest_cache/ --exclude log/myfreemp3Scrapper/ --delete;"
+  FTP-transfer-to-prod:
+    needs: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v2
+      - name: 📦 Get LFTP
+        run: sudo apt install lftp
+      - name: 📄 Upload Folder
+        run: > 
+          lftp -c "set ssl:verify-certificate false; 
+          set sftp:auto-confirm yes; open "sftp://${{ secrets.HOST }}" -p 22 -u ${{ secrets.FTP_USER }},'${{ secrets.FTP_PASSWORD }}'; 
+          mirror -R -n -v . /var/www/html/bodzify-api/ 
+          --exclude .git/ --exclude /__pycache__/ --exclude .pytest_cache/ --exclude log/myfreemp3Scrapper/ --delete;"
   Start-service:
     #needs: pytest
     runs-on: ubuntu-latest
     steps:
-      - name: executing remote ssh commands using password
+      - name: executing remote ssh commands
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.HOST }}
