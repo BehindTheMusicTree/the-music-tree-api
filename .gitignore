@@ -11,8 +11,6 @@ media/libraries/*
 
 media/temp/*
 
-/bodzify_api/test/sample/post_Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac
-
 share/
 
 pyvenv.cfg
