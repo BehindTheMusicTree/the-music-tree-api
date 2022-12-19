@@ -3,13 +3,11 @@
 
 log/myfreemp3Scrapper/
 
-bin/
-
-lib/
-
 media/libraries/*
 
 media/temp/*
+
+venv
 
 share/
 
