@@ -51,7 +51,7 @@ jobs:
   #   steps: 
   #     - name: Run Flake8
   #       run: flake8 . --exclude=*migrations/* --max-line-length=100
-  deploy:
+  Deploy:
     # needs: pytest
     runs-on: ubuntu-latest
     steps:
@@ -67,7 +67,7 @@ jobs:
         remote_user: ${{ secrets.SSH_USER }}
         remote_key: ${{ secrets.KEY }}
   Start-service:
-    needs: FTP-transfer-to-prod
+    needs: Deploy
     runs-on: ubuntu-latest
     steps:
       - name: 🛒 Checkout
