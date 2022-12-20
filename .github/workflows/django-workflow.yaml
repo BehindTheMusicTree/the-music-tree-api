@@ -64,7 +64,7 @@ jobs:
           lftp -c "set ssl:verify-certificate false; 
           set sftp:auto-confirm yes; open "sftp://${{ secrets.HOST }}" -p 22 -u ${{ secrets.FTP_USER }},'${{ secrets.FTP_PASSWORD }}'; 
           mirror -R -n -v . /var/www/html/bodzify-api/ 
-          --exclude .git/ --exclude /__pycache__/ --exclude .pytest_cache/ --exclude log/myfreemp3Scrapper/ --delete;"
+          --exclude .git/ --exclude /__pycache__/ --exclude .pytest_cache/ --exclude log/myfreemp3Scrapper/;"
   Start-service:
     needs: FTP-transfer-to-prod
     runs-on: ubuntu-latest
