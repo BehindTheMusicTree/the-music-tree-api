@@ -202,3 +202,4 @@ if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
 elif os.getenv('DJANGO_PROD') == 'true':
     from bodzify_api.settings_prod import *
+print('lol')
