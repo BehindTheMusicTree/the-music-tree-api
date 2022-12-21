@@ -8,4 +8,4 @@ python3 /var/www/html/bodzify-api/manage.py makemigrations
 python3 /var/www/html/bodzify-api/manage.py makemigrations bodzify_api
 python3 /var/www/html/bodzify-api/manage.py migrate
 python3 /var/www/html/bodzify-api/manage.py loaddata initial_data
-python3 /var/www/html/bodzify-api/manage.py runserver
+python3 /var/www/html/bodzify-api/manage.py runserver_plus 0.0.0.0:443 --cert-file /root/ssl/www_bodzify_com_all.crt --key-file /root/ssl/www.bodzify.com.key
