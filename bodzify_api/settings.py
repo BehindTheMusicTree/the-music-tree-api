@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 import pathlib
 import datetime
-from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
@@ -202,8 +201,3 @@ if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
 elif os.environ.get('DJANGO_PROD') == 'true':
     from bodzify_api.settings_prod import *
-print('lol')
-print(os.getenv)
-print(os.environ.get('DJANGO_PROD'))
-print(os.environ.get('PWD'))
-print(config('PWD'))
