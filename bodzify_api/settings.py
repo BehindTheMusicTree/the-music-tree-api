@@ -128,13 +128,16 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'bodzify API',
-    'DESCRIPTION': 'API to handle genre oriented music libraries ',
+    'DESCRIPTION': 'API to handle genre oriented music libraries',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
     'SCHEMA_PATH_PREFIX': '/api/v[0-9]',
+    'SWAGGER_UI_SETTINGS': {
+        'url': '/schema.yml'
+    },
 }
 
 SIMPLE_JWT = {
