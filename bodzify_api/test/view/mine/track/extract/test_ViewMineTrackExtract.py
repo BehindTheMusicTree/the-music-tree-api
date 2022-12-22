@@ -1,3 +1,5 @@
+import os
+
 from django.urls import reverse
 
 from rest_framework import status
@@ -8,6 +10,7 @@ from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
+import bodzify_api.settings as settings
 
 
 class MineTrackExtractViewTestCase(ViewTestCase):
@@ -28,7 +31,7 @@ class MineTrackExtractViewTestCase(ViewTestCase):
             "url": trackUrl,
             "title": "du rap",
             "artist": "Jul",
-            # No album field returned by myfreemp2
+            # No album field returned by myfreemp3
             "duration": 1.2233,
             "releasedOn": 1290292
         }
@@ -41,3 +44,5 @@ class MineTrackExtractViewTestCase(ViewTestCase):
         assert track.album == ""
         assert track.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
         assert track.rating == 0
+
+        assert os.path.exists(self.testUserLibraryAbsolutePath + "Jul - du rap.mp3")

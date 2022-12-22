@@ -36,3 +36,4 @@ pytest-django==4.5.2
 flake8==6.0.0
 django-upload-validator==1.1.6
 daphne==4.0.0
+pytest-env==0.8.1
