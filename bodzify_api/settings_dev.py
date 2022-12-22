@@ -1,3 +1,5 @@
+import os
+
 ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
@@ -5,12 +7,11 @@ ALLOWED_HOSTS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bodzify_api',
-        'USER': 'django',
-        'PASSWORD': 'G#uwM6&NW0!/',
-        'HOST': 'localhost',
-        'PORT': 5432,
+        'NAME': os.getenv('DB_DATABASE'),
+        'USER': os.getenv('DB_USERNAME'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
         'DISABLE_SERVER_SIDE_CURSORS': True
     }
 }
-print('dev')
