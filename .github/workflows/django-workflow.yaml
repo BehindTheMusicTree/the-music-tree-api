@@ -44,50 +44,41 @@ jobs:
         env:
           DJANGO_DEV: true
         run: |
-            pytest . 
+            pytest .
+
   flake8:
     needs: pytest
     runs-on: ubuntu-latest
     steps: 
       - name: Run Flake8
         run: flake8 . --exclude=*migrations/* --max-line-length=100
-  Deploy:
-    needs: pytest
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: rsync deployments
-      uses: burnett01/rsync-deployments@5.2.1
-      with:
-        switches: -avzr --delete
-        remote_path: ${{ secrets.DEPLOY_PATH }}
-        remote_host: ${{ secrets.HOST }}
-        remote_port: ${{ secrets.SSH_PORT }}
-        remote_user: ${{ secrets.SSH_USER }}
-        remote_key: ${{ secrets.KEY }}
-  Start-service:
-    needs: Deploy
-    runs-on: ubuntu-latest
+
+  Docker:
+    name: Publish - Docker Hub
+    runs-on: ubuntu-18.04
+    needs: [pytest]
     env:
-      SECRET_KEY: ${{ secrets.PROD_DJANGO_SECRET_KEY }}
-      DB_DATABASE: ${{ secrets.PROD_DB_DATABASE }}
-      DB_USERNAME: ${{ secrets.PROD_DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
-      DB_HOST: ${{ secrets.PROD_DB_HOST }}
-      DB_PORT: ${{ secrets.PROD_DB_PORT }}
+      REPO: ${{ secrets.DOCKER_REPO }}
     steps:
-      - name: 🛒 Checkout
-        uses: actions/checkout@v2
-      - name: executing remote ssh commands
-        uses: appleboy/ssh-action@v0.1.6
+      - uses: actions/checkout@v1
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.KEY }}
-          script: |
-            /var/www/html/bodzify-api/venv/bin/pip install -r /var/www/html/bodzify-api/requirements.txt
-            sudo lsof -t -i tcp:443 -s tcp:listen | sudo xargs kill
-            source /var/www/html/bodzify-api/venv/bin/activate 
-            cd /var/www/html/bodzify-api/
-            gunicorn --certfile=/etc/ssl/certs/www.bodzify.com.chained.crt --keyfile=/etc/ssl/certs/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
+          java-version: 11.0.4
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USER }} 
+             -p ${{ secrets.DOCKER_PASS }}
+      - name: Build Docker image
+        run:docker build -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
+      - name: Publish Docker image
+        run: docker push $REPO
+
+  Redeploy:
+    name: Redeploy webhook call
+    runs-on: ubuntu-18.04
+    needs: [docker]
+    steps:
+      - name: Deploy docker container webhook
+        uses: joelwmale/webhook-action@master
+        env:
+          WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL  }}
