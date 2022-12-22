@@ -26,10 +26,11 @@ class ViewTestCase(TestCase):
         self.apiClient = APIClient()
         self.testUser = User.objects.get(pk=TEST_USER_PK)
         self.sampleAbsolutePath = settings.APP_ROOT + self.sampleRelativePath
-        self.testUserLibraryAbsolutePath = (
-            settings.LIBRARIES_PATH
-            + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE 
-            + str(self.testUser.pk))
+        self.testUserLibraryRelativePath = (
+            settings.LIBRARIES_FOLDER_NAME
+            + "/" + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE 
+            + str(self.testUser.pk) + "/")
+        self.testUserLibraryAbsolutePath = settings.MEDIA_ROOT +  self.testUserLibraryRelativePath
 
         self.emptyUserLibrary()
         return super().setUp()
