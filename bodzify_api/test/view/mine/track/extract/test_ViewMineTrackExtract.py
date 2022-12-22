@@ -44,5 +44,5 @@ class MineTrackExtractViewTestCase(ViewTestCase):
         assert track.album == ""
         assert track.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
         assert track.rating == 0
-
-        assert os.path.exists(self.testUserLibraryAbsolutePath + "Jul - du rap.mp3")
+        assert track.file.name == self.testUserLibraryRelativePath + "Jul_-_du_rap.mp3"
+        assert os.path.exists(settings.MEDIA_ROOT + track.file.name)
