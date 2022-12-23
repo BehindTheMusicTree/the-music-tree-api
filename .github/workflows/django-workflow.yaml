@@ -69,6 +69,8 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USER }} 
              -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker image
+        env: 
+          SECRET_KEY: ${{ secrets.PROD_DJANGO_SECRET_KEY }}
         run: docker build -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
       - name: Publish Docker image
         run: docker push $REPO
