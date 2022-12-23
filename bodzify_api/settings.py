@@ -209,6 +209,8 @@ LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
 USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 TRACK_SIZE_LIMIT_IN_MO = 500
 
+print(os.getenv('DJANGO_DEV'))
+print(os.getenv('DJANGO_PROD'))
 if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
 elif os.getenv('DJANGO_PROD') == 'true':

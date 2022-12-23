@@ -7,3 +7,4 @@ ALLOWED_HOSTS = [
     'www.bodzify.com',
     '185.224.139.218'
 ]
+print('la')
