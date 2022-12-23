@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 import pathlib
 import datetime
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
@@ -211,6 +212,8 @@ TRACK_SIZE_LIMIT_IN_MO = 500
 
 print(os.getenv('DJANGO_DEV'))
 print(os.getenv('DJANGO_PROD'))
+logging.getLogger('info').info(os.getenv('DJANGO_PROD'))
+logging.getLogger('info').info(os.getenv('DJANGO_DEV'))
 if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
 elif os.getenv('DJANGO_PROD') == 'true':
