@@ -211,5 +211,5 @@ TRACK_SIZE_LIMIT_IN_MO = 500
 
 if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
-elif os.environ.get('DJANGO_PROD') == 'true':
+elif os.getenv('DJANGO_PROD') == 'true':
     from bodzify_api.settings_prod import *
