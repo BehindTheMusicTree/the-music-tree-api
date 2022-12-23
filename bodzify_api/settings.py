@@ -7,9 +7,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
-
 import pathlib
 import datetime
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
@@ -23,7 +23,7 @@ ATOMIC_REQUESTS = True
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-se!awu%q2sg9i@dz)s(-hj5m)c+z#14xm@t@_&l&^p(avj=5j_'
+# SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -57,6 +57,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_DATABASE'),
+        'USER': os.getenv('DB_USERNAME'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'DISABLE_SERVER_SIDE_CURSORS': True
+    }
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -74,17 +86,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'bodzify_api.wsgi.application'
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bodzify_api',
-        'USER': 'django',
-        'PASSWORD': 'G#uwM6&NW0!/',
-        'HOST': 'localhost',
-        'PORT': 5432,
-    }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -128,13 +129,13 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'bodzify API',
-    'DESCRIPTION': 'API to handle genre oriented music libraries ',
+    'DESCRIPTION': 'API to handle genre oriented music libraries',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
     'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
     'REDOC_DIST': 'SIDECAR',
-    'SCHEMA_PATH_PREFIX': '/api/v[0-9]',
+    'SCHEMA_PATH_PREFIX': '/api/v[0-9]'
 }
 
 SIMPLE_JWT = {
@@ -173,7 +174,7 @@ LOGGING = {
     },
     'loggers': {
         'info': {
-            'handlers': ['info', "console"],
+            'handlers': ['info', 'console', 'django_error'],
             'level': 'DEBUG',
             'propagate': True
         },
@@ -209,6 +210,9 @@ LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
 USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 TRACK_SIZE_LIMIT_IN_MO = 500
 
+open(LOG_PATH + os.getenv('DJANGO_PROD') + ".txt", "w")
+
+open(LOG_PATH + os.getenv('DJANGO_DEV') + ".txt", "w")
 if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
 elif os.getenv('DJANGO_PROD') == 'true':

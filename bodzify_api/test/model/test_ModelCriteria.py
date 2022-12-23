@@ -1,5 +1,3 @@
-import pytest
-
 from django.test import TestCase
 from django.contrib.auth.models import User
 
@@ -9,8 +7,6 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesI
 
 USER_TEST_PK = 2
 
-
-@pytest.mark.django_db
 class CriteriaTestCase(TestCase):
 
     fixtures = ['initial_data', 'TestUserData']

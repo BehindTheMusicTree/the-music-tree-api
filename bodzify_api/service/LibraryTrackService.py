@@ -1,45 +1,17 @@
 #!/usr/bin/env python
 
 import os
+from pathlib import Path
 
 from mutagen._file import File as MutagenFile
 from mutagen.id3 import Frames
 from mutagen.flac import FLAC
-from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3
-from mutagen.id3 import ID3NoHeaderError
-from mutagen.id3 import ID3UnsupportedVersionError
-from mutagen.id3 import CHAP
 from mutagen.id3 import TIT2
-from mutagen.id3 import CTOC
-from mutagen.id3 import TT1
-from mutagen.id3 import TCON
-from mutagen.id3 import COMM
-from mutagen.id3 import TORY
-from mutagen.id3 import PIC
-from mutagen.id3 import TRCK
-from mutagen.id3 import TDRC
-from mutagen.id3 import TDAT
-from mutagen.id3 import TIME
-from mutagen.id3 import LNK
-from mutagen.id3 import TYER
-from mutagen.id3 import IPLS
-from mutagen.id3 import TPE1
-from mutagen.id3 import BinaryFrame
 from mutagen.id3 import POPM
-from mutagen.id3 import APIC
-from mutagen.id3 import CRM
-from mutagen.id3 import TALB
-from mutagen.id3 import TPE2
-from mutagen.id3 import TSOT
-from mutagen.id3 import TPE2
-from mutagen.id3 import TDEN
-from mutagen.id3 import TPE2
-from mutagen.id3 import TIPL
-from mutagen.id3 import Encoding
-from mutagen.id3 import ID3Tags
 
-import bodzify_api.settings as settings
+from django.core.files import File
+
 import bodzify_api.service.CriteriaService as CriteriaService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -285,8 +257,12 @@ def CreateFromMineTrack(user, mineTrack, trackTempFileAbsolutePath):
         duration=mineTrack.duration,
         rating=0,
         language="")
-    libraryTrack.file.name = trackTempFileAbsolutePath
-    libraryTrack.save()
+
+    path = Path(trackTempFileAbsolutePath)
+    with path.open(mode='rb') as f:
+        libraryTrack.file = File(f, name=path.name)
+        libraryTrack.save()
+    
 
     libraryTrack.playlists.add(
         Playlist.objects.get(
