@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-18.04
     needs: [pytest]
     env:
-      REPO: ${{ secrets.DOCKER_REPO }}
+      REPO: mignot/bodzify-api
     steps:
       - uses: actions/checkout@v1
       - name: Set up JDK 11
