@@ -5,6 +5,8 @@ FROM python:3.10-buster
 
 ARG secretKey
 ENV SECRET_KEY=$secretKey
+ENV DJANGO_DEV=false
+ENV DJANGO_PROD=true
 
 ENV DockerHome=/home/app/webapp
 
