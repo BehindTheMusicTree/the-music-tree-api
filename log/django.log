@@ -37933,3 +37933,304 @@ AttributeError: 'ReturnDict' object has no attribute 'data'
 2022-12-16 00:01:29,956 [WARNING]- Bad Request: /api/v1/tracks/
 2022-12-16 01:00:49,423 [WARNING]- Bad Request: /api/v1/tracks/
 2022-12-16 01:00:52,540 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-16 01:07:52,054 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-16 01:07:53,367 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-21 14:23:28,889 [ERROR]- Internal Server Error: /api/v1/mine/tracks/
+Traceback (most recent call last):
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/bodzify_api/view/viewset/track/MineTrackViewSet.py", line 49, in list
+    mineTracks = MineTrackMyfreemp3Service.list(query, pageNumber, pageSize)
+  File "/home/mignot/Git/bodzify-api/bodzify_api/service/MineTrackMyfreemp3Service.py", line 20, in list
+    return myfreemp3scrapper.scrap(query, pageNumber, pageSize)
+  File "/home/mignot/Git/bodzify-api/bodzify_api/myfreemp3_scrapper/scrapper.py", line 85, in scrap
+    tracks = getTracksFromMyfreemp3Json(myfreemp3tracksJson)
+  File "/home/mignot/Git/bodzify-api/bodzify_api/myfreemp3_scrapper/scrapper.py", line 35, in getTracksFromMyfreemp3Json
+    for trackJson in dataDict[DATA_FIELD]:
+TypeError: 'NoneType' object is not iterable
+2022-12-21 23:47:00,769 [WARNING]- Not Found: /api/v1//auth/token/
+2022-12-22 00:09:26,163 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:09:26,365 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:10:07,938 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:10:08,073 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:12:53,212 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:12:53,361 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:13:12,797 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:13:12,916 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:13:47,558 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:13:47,676 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:23:37,523 [ERROR]- Internal Server Error: /api/v1/mine/tracks/extract/
+Traceback (most recent call last):
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/bodzify_api/view/viewset/track/MineTrackViewSet.py", line 57, in extract
+    libraryTrack = MineTrackMyfreemp3Service.extract(
+  File "/home/mignot/Git/bodzify-api/bodzify_api/service/MineTrackMyfreemp3Service.py", line 49, in extract
+    libraryTrack = LibraryTrackService.CreateFromMineTrack(
+  File "/home/mignot/Git/bodzify-api/bodzify_api/service/LibraryTrackService.py", line 265, in CreateFromMineTrack
+    libraryTrack.save()
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 831, in save
+    self.save_base(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 882, in save_base
+    updated = self._save_table(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1025, in _save_table
+    results = self._do_insert(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1066, in _do_insert
+    return manager._insert(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1790, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1656, in execute_sql
+    for sql, params in self.as_sql():
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1580, in as_sql
+    value_rows = [
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1581, in <listcomp>
+    [
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1582, in <listcomp>
+    self.prepare_value(field, self.pre_save_val(field, obj))
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1530, in pre_save_val
+    return field.pre_save(obj, add=True)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 316, in pre_save
+    file.save(file.name, file.file, save=False)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 92, in save
+    self.name = self.storage.save(name, content, max_length=self.field.max_length)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/storage.py", line 56, in save
+    name = self._save(name, content)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/storage.py", line 318, in _save
+    for chunk in content.chunks():
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/base.py", line 55, in chunks
+    self.seek(0)
+ValueError: seek of closed file
+2022-12-22 00:23:38,054 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:23:38,185 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:24:20,725 [ERROR]- Internal Server Error: /api/v1/auth/token/
+Traceback (most recent call last):
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 103, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework_simplejwt/views.py", line 27, in post
+    serializer.is_valid(raise_exception=True)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/serializers.py", line 227, in is_valid
+    self._validated_data = self.run_validation(self.initial_data)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/serializers.py", line 429, in run_validation
+    value = self.validate(value)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework_simplejwt/serializers.py", line 64, in validate
+    data = super().validate(attrs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework_simplejwt/serializers.py", line 43, in validate
+    self.user = authenticate(**authenticate_kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/views/decorators/debug.py", line 42, in sensitive_variables_wrapper
+    return func(*func_args, **func_kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/contrib/auth/__init__.py", line 77, in authenticate
+    user = backend.authenticate(request, **credentials)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/contrib/auth/backends.py", line 46, in authenticate
+    user = UserModel._default_manager.get_by_natural_key(username)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 46, in get_by_natural_key
+    return self.get(**{self.model.USERNAME_FIELD: username})
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/query.py", line 646, in get
+    num = len(clone)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/query.py", line 376, in __len__
+    self._fetch_all()
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1866, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/query.py", line 87, in __iter__
+    results = compiler.execute_sql(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1382, in execute_sql
+    sql, params = self.as_sql()
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 590, in as_sql
+    extra_select, order_by, group_by = self.pre_sql_setup()
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 71, in pre_sql_setup
+    self.setup_query()
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 62, in setup_query
+    self.select, self.klass_info, self.annotation_col_map = self.get_select()
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 291, in get_select
+    sql, params = self.compile(col)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 503, in compile
+    sql, params = node.as_sql(self, self.connection)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/expressions.py", line 1109, in as_sql
+    sql = ".".join(map(compiler.quote_name_unless_alias, identifiers))
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 494, in quote_name_unless_alias
+    r = self.connection.ops.quote_name(name)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/backends/dummy/base.py", line 20, in complain
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: settings.DATABASES is improperly configured. Please supply the ENGINE value. Check settings documentation for more details.
+2022-12-22 00:33:46,980 [ERROR]- Internal Server Error: /api/v1/mine/tracks/extract/
+Traceback (most recent call last):
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/bodzify_api/view/viewset/track/MineTrackViewSet.py", line 57, in extract
+    libraryTrack = MineTrackMyfreemp3Service.extract(
+  File "/home/mignot/Git/bodzify-api/bodzify_api/service/MineTrackMyfreemp3Service.py", line 49, in extract
+    libraryTrack = LibraryTrackService.CreateFromMineTrack(
+  File "/home/mignot/Git/bodzify-api/bodzify_api/service/LibraryTrackService.py", line 265, in CreateFromMineTrack
+    libraryTrack.save()
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 831, in save
+    self.save_base(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 882, in save_base
+    updated = self._save_table(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1025, in _save_table
+    results = self._do_insert(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1066, in _do_insert
+    return manager._insert(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1790, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1656, in execute_sql
+    for sql, params in self.as_sql():
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1580, in as_sql
+    value_rows = [
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1581, in <listcomp>
+    [
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1582, in <listcomp>
+    self.prepare_value(field, self.pre_save_val(field, obj))
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1530, in pre_save_val
+    return field.pre_save(obj, add=True)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 316, in pre_save
+    file.save(file.name, file.file, save=False)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 92, in save
+    self.name = self.storage.save(name, content, max_length=self.field.max_length)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/storage.py", line 56, in save
+    name = self._save(name, content)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/storage.py", line 318, in _save
+    for chunk in content.chunks():
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/base.py", line 55, in chunks
+    self.seek(0)
+ValueError: seek of closed file
+2022-12-22 00:33:47,537 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:33:47,672 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:34:22,140 [ERROR]- Internal Server Error: /api/v1/mine/tracks/extract/
+Traceback (most recent call last):
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/bodzify_api/view/viewset/track/MineTrackViewSet.py", line 57, in extract
+    libraryTrack = MineTrackMyfreemp3Service.extract(
+  File "/home/mignot/Git/bodzify-api/bodzify_api/service/MineTrackMyfreemp3Service.py", line 49, in extract
+    libraryTrack = LibraryTrackService.CreateFromMineTrack(
+  File "/home/mignot/Git/bodzify-api/bodzify_api/service/LibraryTrackService.py", line 265, in CreateFromMineTrack
+    libraryTrack.save()
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 831, in save
+    self.save_base(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 882, in save_base
+    updated = self._save_table(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1025, in _save_table
+    results = self._do_insert(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1066, in _do_insert
+    return manager._insert(
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1790, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1656, in execute_sql
+    for sql, params in self.as_sql():
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1580, in as_sql
+    value_rows = [
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1581, in <listcomp>
+    [
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1582, in <listcomp>
+    self.prepare_value(field, self.pre_save_val(field, obj))
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1530, in pre_save_val
+    return field.pre_save(obj, add=True)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 316, in pre_save
+    file.save(file.name, file.file, save=False)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/db/models/fields/files.py", line 92, in save
+    self.name = self.storage.save(name, content, max_length=self.field.max_length)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/storage.py", line 56, in save
+    name = self._save(name, content)
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/storage.py", line 318, in _save
+    for chunk in content.chunks():
+  File "/home/mignot/Git/bodzify-api/venv/lib/python3.10/site-packages/django/core/files/base.py", line 55, in chunks
+    self.seek(0)
+ValueError: seek of closed file
+2022-12-22 00:37:20,165 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:37:20,295 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:39:46,101 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:39:46,225 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:42:44,135 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:42:44,265 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:48:32,625 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:48:32,751 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:49:09,599 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:49:09,730 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:51:43,083 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 00:51:43,202 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 01:19:02,445 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 01:19:02,567 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 01:34:54,384 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 01:34:54,507 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 01:35:10,593 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 01:35:10,711 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 01:37:00,348 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 01:37:00,472 [WARNING]- Bad Request: /api/v1/tracks/
+2022-12-22 02:21:54,767 [WARNING]- Unauthorized: /api/v1/tracks/
