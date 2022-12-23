@@ -1,3 +1,5 @@
+import pytest
+
 from rest_framework import status
 
 from bodzify_api.test.view.track.library.LibraryTrackViewTestCase import LibraryTrackViewTestCase
@@ -6,6 +8,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 
 
+@pytest.mark.django_db
 class LibraryTrackPostViewTestCase(LibraryTrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackLibraryPostData']
