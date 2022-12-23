@@ -70,7 +70,7 @@ jobs:
              -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker image
         env: 
-          SECRET_KEY: ${{ secrets.PROD_DJANGO_SECRET_KEY }}
+          SECRET_KEY: aaaaa
         run: docker build -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
       - name: Publish Docker image
         run: docker push $REPO
