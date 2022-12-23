@@ -23,7 +23,7 @@ ATOMIC_REQUESTS = True
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+# SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -210,9 +210,9 @@ LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
 USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 TRACK_SIZE_LIMIT_IN_MO = 500
 
-open(LOG_PATH + os.getenv('DJANGO_PROD') + ".txt", "x")
+open(LOG_PATH + os.getenv('DJANGO_PROD') + ".txt", "w")
 
-open(LOG_PATH + os.getenv('DJANGO_DEV') + ".txt", "x")
+open(LOG_PATH + os.getenv('DJANGO_DEV') + ".txt", "w")
 if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
 elif os.getenv('DJANGO_PROD') == 'true':
