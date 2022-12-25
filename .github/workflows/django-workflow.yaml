@@ -9,7 +9,7 @@ on:
         branches: [dev]
 
 jobs:
-  set-up-environment:
+  Pytest:
     runs-on: ubuntu-latest
     env:
       MY_POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
@@ -40,9 +40,6 @@ jobs:
       - name: Install requirements
         run: |
             pip install -r requirements.txt
-  pytest:
-    runs-on: ubuntu-latest
-    steps:
       - name: Run pytest
         env:
           DJANGO_DEV: true
@@ -51,6 +48,7 @@ jobs:
             pytest .
 
   flake8:
+    name: flake8
     needs: pytest
     runs-on: ubuntu-latest
     steps: 
