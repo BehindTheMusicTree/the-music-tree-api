@@ -210,8 +210,6 @@ USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 TRACK_SIZE_LIMIT_IN_MO = 500
 
 open(LOG_PATH + os.getenv('DJANGO_PROD') + ".txt", "w")
-
-open(LOG_PATH + os.getenv('DJANGO_DEV') + ".txt", "w")
 if os.getenv('DJANGO_DEV') == 'true':
     from bodzify_api.settings_dev import *
 elif os.getenv('DJANGO_PROD') == 'true':
