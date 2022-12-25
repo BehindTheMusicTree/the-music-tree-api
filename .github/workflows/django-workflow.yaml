@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: Run Flake8
-        run: flake8 . --exclude=*migrations/* --max-line-length=100
+        run: flake8 . --exclude=migrations/ --max-line-length=100
 
   Docker:
     name: Publish - Docker Hub
