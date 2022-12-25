@@ -43,6 +43,7 @@ jobs:
       - name: Run tests
         env:
           DJANGO_DEV: true
+          DJANGO_PROD: false
         run: |
             pytest .
 
@@ -56,7 +57,7 @@ jobs:
   Docker:
     name: Publish - Docker Hub
     runs-on: ubuntu-18.04
-    # needs: [pytest]
+    needs: [pytest]
     env:
       REPO: mignot/bodzify-api
     steps:
