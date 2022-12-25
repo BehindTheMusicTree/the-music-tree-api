@@ -42,6 +42,7 @@ jobs:
             pip install -r requirements.txt
   pytest:
     runs-on: ubuntu-latest
+    steps:
       - name: Run pytest
         env:
           DJANGO_DEV: true
