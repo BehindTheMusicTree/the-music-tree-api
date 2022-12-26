@@ -4,9 +4,17 @@
 FROM python:3.10-buster 
 
 ARG secretKey
+ARG djangoDev
+ARG djangoProd
 ENV SECRET_KEY=$secretKey
-ENV DJANGO_DEV=false
-ENV DJANGO_PROD=true
+ENV DJANGO_DEV=$djangoDev
+ENV DJANGO_PROD=$djangoProd
+# ENV DB_DATABASE=dbDatabase
+# ENV DB_USERNAME
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
+# ENV DB_PASSWORD=185.224.139.218
 
 ENV DockerHome=/home/app/webapp
 

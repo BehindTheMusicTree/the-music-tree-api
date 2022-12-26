@@ -72,7 +72,9 @@ jobs:
       - name: Build Docker image
         env: 
           SECRET_KEY: aaaaa
-        run: docker build --build-arg secretKey=$SECRET_KEY -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
+        run: |
+          docker build --build-arg secretKey=$SECRET_KEY djangoDev=false djangoProd=true
+          -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
       - name: Publish Docker image
         run: docker push $REPO
 
