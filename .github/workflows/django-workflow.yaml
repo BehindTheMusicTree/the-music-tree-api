@@ -69,11 +69,8 @@ jobs:
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker image
-        env: 
-          SECRET_KEY: ${{ secrets.PROD_DJANGO_SECRET_KEY }}
         run: |
-          docker build 
-          --build-arg secretKey=$SECRET_KEY 
+          docker build --build-arg secretKey=${{ secrets.PROD_DJANGO_SECRET_KEY }} 
           --build-arg djangoDev=false 
           --build-arg djangoProd=true 
           --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }} 
