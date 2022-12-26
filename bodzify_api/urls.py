@@ -1,6 +1,3 @@
-import logging
-import os
-
 from django.urls import include
 from django.urls import path
 from django.contrib import admin
@@ -30,8 +27,6 @@ router.register(r'mine/tracks', MineTrackViewSet, 'mine-track')
 router.register(r'playlists', PlaylistViewSet)
 
 base = 'api/v1/'
-
-logging.getLogger('info').info(os.getenv('DB_PASSWORD'))
 
 urlpatterns = [
     path(base, include(router.urls)),
