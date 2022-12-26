@@ -56,7 +56,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)
         return utility.GetFileResponse(
-            request=request, filePath=track.file.path, filename=track.file.name)
+            filePath=track.file.path, filename=track.file.name)
 
     def create(self, request, *args, **kwargs):
         form = UploadTrackForm(request.POST, request.FILES)
