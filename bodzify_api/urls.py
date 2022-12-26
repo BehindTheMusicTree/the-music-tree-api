@@ -31,7 +31,7 @@ router.register(r'playlists', PlaylistViewSet)
 
 base = 'api/v1/'
 
-logging.getLogger('django').info(os.getenv('DB_DATABASE'))
+logging.getLogger('info').info(os.getenv('DB_PASSWORD'))
 
 urlpatterns = [
     path(base, include(router.urls)),
