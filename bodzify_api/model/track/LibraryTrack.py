@@ -5,7 +5,6 @@ import shortuuid
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from upload_validator import FileTypeValidator
 
