@@ -1,5 +1,3 @@
-import logging
-
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -9,5 +7,3 @@ ALLOWED_HOSTS = [
     'www.bodzify.com',
     '185.224.139.218'
 ]
-print('la')
-logging.getLogger('info').info("PROD")
