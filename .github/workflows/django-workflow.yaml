@@ -71,13 +71,14 @@ jobs:
              -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker image
         env: 
-          SECRET_KEY: aaaaa
+          SECRET_KEY: ${{ secrets.PROD_DJANGO_SECRET_KEY }}
         run: |
-          docker build --build-arg 
-          secretKey=$SECRET_KEY djangoDev=false djangoProd=true 
-          dbDatabase=${{ secrets.PROD_DB_DATABASE }} dbUsername=${{ secrets.ROD_DB_USERNAME }} 
-          dbPassword=${{ secrets.PROD_DB_PASSWORD }} dbHost=${{ secrets.PROD_DB_HOST }}
-          dbPort=${{ secrets.PROD_DB_PORT }}
+          docker build --build-arg secretKey=$SECRET_KEY djangoDev=false --build-arg djangoProd=true 
+          --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }} 
+          --build-arg dbUsername=${{ secrets.ROD_DB_USERNAME }} 
+          --build-arg dbPassword=${{ secrets.PROD_DB_PASSWORD }} 
+          --build-arg dbHost=${{ secrets.PROD_DB_HOST }}
+          --build-arg dbPort=${{ secrets.PROD_DB_PORT }}
           -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
       - name: Publish Docker image
         run: docker push $REPO
