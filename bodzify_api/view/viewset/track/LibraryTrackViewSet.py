@@ -5,7 +5,6 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema
 
 from django.http import JsonResponse
-from django.core.files.storage import default_storage
 
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSerializer
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
@@ -57,7 +56,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)
         return utility.GetFileResponse(
-            request=request, filePath=track.path, filename=track.filename)
+            request=request, filePath=track.file.path, filename=track.file.name)
 
     def create(self, request, *args, **kwargs):
         form = UploadTrackForm(request.POST, request.FILES)
