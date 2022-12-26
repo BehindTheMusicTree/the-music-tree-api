@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-18.04
     needs: [pytest]
     env:
-      REPO: ${{ secrets.DEPLOY_PATH }}
+      REPO: ${{ secrets.DOCKER_REPO }}
     steps:
       - uses: actions/checkout@v2
       - name: Login to Docker Hub
@@ -77,7 +77,7 @@ jobs:
           --build-arg djangoDev=false 
           --build-arg djangoProd=true 
           --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }} 
-          --build-arg dbUsername=${{ secrets.ROD_DB_USERNAME }} 
+          --build-arg dbUsername=${{ secrets.PROD_DB_USERNAME }} 
           --build-arg dbPassword=${{ secrets.PROD_DB_PASSWORD }} 
           --build-arg dbHost=${{ secrets.PROD_DB_HOST }}
           --build-arg dbPort=${{ secrets.PROD_DB_PORT }}
