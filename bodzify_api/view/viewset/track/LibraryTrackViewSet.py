@@ -1,10 +1,14 @@
 #!/usr/bin/env python
+
+import os
+
 from rest_framework.decorators import action
 from rest_framework import status
 
 from drf_spectacular.utils import extend_schema
 
 from django.http import JsonResponse
+from django.http import HttpResponse
 
 from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSerializer
 from bodzify_api.serializer.track.LibraryTrackResponseSerializer import (
@@ -59,8 +63,13 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)
-        return utility.GetFileResponse(
-            filePath=track.file.path, filename=track.file.name)
+        if os.path.exists(track.file.path):
+            return utility.GetFileResponse(filePath=track.file.path, filename=track.file.name)
+        else:
+            track.delete()
+            return HttpResponse(
+                content="""The requested track doesn't exist anymore. It is therefore deleted.""",
+                status=status.HTTP_410_GONE)
 
     def create(self, request, *args, **kwargs):
         form = UploadTrackForm(request.POST, request.FILES)
