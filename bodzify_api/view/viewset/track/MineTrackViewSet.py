@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from rest_framework import status
 from rest_framework.decorators import action
 
@@ -6,7 +7,9 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from django.http import JsonResponse
 
-from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
+from bodzify_api.serializer.track.LibraryTrackResponseSerializer import (
+    LibraryTrackResponseSerializer
+)
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as utility
