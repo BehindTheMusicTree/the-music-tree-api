@@ -2,19 +2,19 @@ import pytest
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.library.LibraryTrackViewTestCase import LibraryTrackViewTestCase
+from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 
 
 @pytest.mark.django_db
-class LibraryTrackPostViewTestCase(LibraryTrackViewTestCase):
+class TrackPostViewTestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackLibraryPostData']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPostData']
 
     def setUp(self) -> None:
-        return super().setUp(sampleRelativePath="test/view/track/library/post/sample/")
+        return super().setUp(sampleRelativePath="test/view/track/post/sample/")
 
     def test_libraryTrackPost(self):
         self.login(self.testUser)

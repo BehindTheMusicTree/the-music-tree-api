@@ -1,32 +1,17 @@
-import shutil
-import os
-
 from rest_framework import status
 
-from bodzify_api.test.view.track.library.LibraryTrackViewTestCase import LibraryTrackViewTestCase
+from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api import settings
 
 
-class LibraryTrackPutViewTestCase(LibraryTrackViewTestCase):
+class TrackPutViewTestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackLibraryPutData']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData']
 
     def setUp(self) -> None:
-        obj= super().setUp()
+        obj= super().setUp("test/view/track/put/sample/")
         self.copySamplesToTestUserLibrary()
         return obj
-
-    def copySamplesToTestUserLibrary(self):
-        sampleFilesDirectoryAbsolutePath = (
-            settings.APP_ROOT + 'test/view/track/library/put/sample/')
-            
-        fileNames = os.listdir(sampleFilesDirectoryAbsolutePath)
-            
-        for fileName in fileNames:
-            shutil.copy(
-                os.path.join(sampleFilesDirectoryAbsolutePath, fileName),
-                self.testUserLibraryAbsolutePath)
 
     def test_libraryTrackPut(self):
         self.login(self.testUser)
