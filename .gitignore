@@ -3,7 +3,9 @@
 
 log/myfreemp3Scrapper/
 
-media/libraries/
+media/libraries/*
+
+!media/libraries/user_4/
 
 media/temp/
 
