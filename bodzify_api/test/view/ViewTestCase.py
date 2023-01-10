@@ -10,30 +10,32 @@ from django.contrib.auth.models import User
 
 import bodzify_api.settings as settings
 
-TEST_USER_PK = 2
+TEST_USERNAME = "test_django"
 
 class ViewTestCase(TestCase):
 
-    def setUp(self, sampleRelativePath="") -> None:
+    def setUpTestUserDirectories(self):
         testUserLibraryAbsolutePath = (
             settings.LIBRARIES_PATH 
             + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE 
-            + str(TEST_USER_PK))
+            + str(self.testUser.pk))
         if not os.path.exists(testUserLibraryAbsolutePath):
             os.makedirs(testUserLibraryAbsolutePath)
-
-        self.sampleDirectoryRelativePath = sampleRelativePath
-        self.mime = magic.Magic(mime=True)
-        self.apiClient = APIClient()
-        self.testUser = User.objects.get(pk=TEST_USER_PK)
         self.sampleDirectoryAbsolutePath = settings.APP_ROOT + self.sampleDirectoryRelativePath
         self.testUserLibraryRelativePath = (
             settings.LIBRARIES_FOLDER_NAME
             + "/" + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE 
             + str(self.testUser.pk) + "/")
         self.testUserLibraryAbsolutePath = settings.MEDIA_ROOT +  self.testUserLibraryRelativePath
-
         self.emptyUserLibrary()
+
+    def setUp(self, sampleRelativePath="") -> None:
+
+        self.sampleDirectoryRelativePath = sampleRelativePath
+        self.mime = magic.Magic(mime=True)
+        self.apiClient = APIClient()
+        self.testUser = User.objects.get(username=TEST_USERNAME)
+        self.setUpTestUserDirectories()
         return super().setUp()
 
     def login(self, user):
