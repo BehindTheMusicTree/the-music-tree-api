@@ -1,15 +1,15 @@
 [
     {
         "model": "auth.user", 
-        "pk": 2, 
+        "pk": 4, 
         "fields": 
         {
-            "password": "pbkdf2_sha256$390000$MkhGyPAC9kQaNahXoroivy$xvl41ZTbtvlRijNI3i2Q3dhj/gUExjbbrL49tD9sx34=", 
+            "password": "pbkdf2_sha256$390000$Efx3vrtD9WjfGGuUR1INSZ$Lrw6/3gBbBjnJYv0tPIfI1RoPH52GrQmBK2pm9TPM8k=", 
             "last_login": null, 
             "is_superuser": false, 
-            "username": "user_test", 
-            "first_name": "", 
-            "last_name": "", 
+            "username": "test_django", 
+            "first_name": "test_firstname", 
+            "last_name": "test_lastname", 
             "email": "user@test.com", 
             "is_staff": false, 
             "is_active": true, 
@@ -25,7 +25,7 @@
             "name": "All",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
     {
@@ -36,7 +36,7 @@
             "type": 1,
             "parent": "m5KRxi10O884BEOod9Qmjy",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
     {
@@ -47,7 +47,7 @@
             "type": 1,
             "parent": "m5KRxi10O884BEOod9Qmjy",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
     {
@@ -58,7 +58,7 @@
             "type": 1,
             "parent": "m5KRxi10O884BEOod9Qmjy",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
     {
@@ -69,7 +69,7 @@
             "type": 1,
             "parent": "LsjdqoifsjofsiEjf885fgion",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
 
@@ -81,7 +81,7 @@
             "criteria": "m5KRxi10O884BEOod9Qmjy",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
     {
@@ -92,7 +92,7 @@
             "criteria": "L1ZG85munGytJb885fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
     {
@@ -103,7 +103,7 @@
             "criteria": "LsjdqoifsjofsiEjf885fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
     {
@@ -114,7 +114,7 @@
             "criteria": "Lsjdqoiqsicqjsof885fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
+            "user": 4
         }
     },
 
@@ -122,17 +122,17 @@
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
-           "user": 2, 
-           "file": "libraries/user_2/07_-_In_Too_Deep.mp3", 
-           "title": "In Too Deep", 
-           "artist": "Sum 41", 
-           "album": "All Killer No Filler", 
-           "genre": "Lsji85munDKEjf885fgion", 
-           "duration": "207.09333333333333", 
-           "rating": 128, 
-           "language": "", 
-           "addedOn": "2022-12-13T14:07:50.906Z", 
-           "playlists": [
+            "user": 4, 
+            "file": "libraries/user_4/07_-_In_Too_Deep.mp3", 
+            "title": "In Too Deep", 
+            "artist": "Sum 41", 
+            "album": "All Killer No Filler", 
+            "genre": "Lsji85munDKEjf885fgion", 
+            "duration": "207.09333333333333", 
+            "rating": 128, 
+            "language": "", 
+            "addedOn": "2022-12-13T14:07:50.906Z", 
+            "playlists": [
                 "LnM1arJrwLhbhHSjqEPdZ7",
                 "FYM1HUIrwLSgzHSHI76dVH"
             ]
