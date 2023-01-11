@@ -1,0 +1,16 @@
+2023-01-10 11:43:39,318 [WARNING]- "POST /api/v1/auth/token/ HTTP/1.1" 401 63
+2023-01-11 09:59:27,744 [INFO]- "POST /api/v1/auth/token/ HTTP/1.1" 200 438
+2023-01-11 09:59:32,921 [WARNING]- "POST /api/v1/auth/token/ HTTP/1.1" 401 63
+2023-01-11 10:00:30,505 [WARNING]- "POST /api/v1/auth/token/ HTTP/1.1" 401 63
+2023-01-11 10:00:48,155 [INFO]- "GET /api/schema/swagger-ui/ HTTP/1.1" 200 4230
+2023-01-11 10:00:48,191 [INFO]- "GET /static/drf_spectacular_sidecar/swagger-ui-dist/swagger-ui.css HTTP/1.1" 304 0
+2023-01-11 10:00:48,221 [INFO]- "GET /static/drf_spectacular_sidecar/swagger-ui-dist/swagger-ui-bundle.js HTTP/1.1" 304 0
+2023-01-11 10:00:48,225 [INFO]- "GET /static/drf_spectacular_sidecar/swagger-ui-dist/swagger-ui-standalone-preset.js HTTP/1.1" 304 0
+2023-01-11 10:00:48,509 [INFO]- "GET /static/drf_spectacular_sidecar/swagger-ui-dist/favicon-32x32.png HTTP/1.1" 304 0
+2023-01-11 10:00:48,622 [INFO]- "GET /api/schema/ HTTP/1.1" 200 85034
+2023-01-11 10:01:10,576 [WARNING]- "GET /api/v1/users/ HTTP/1.1" 401 58
+2023-01-11 10:01:41,170 [INFO]- "POST /api/v1/auth/token/ HTTP/1.1" 200 438
+2023-01-11 10:02:19,692 [INFO]- "GET /api/v1/users/ HTTP/1.1" 200 1003
+2023-01-11 10:03:40,938 [INFO]- "POST /api/v1/users/ HTTP/1.1" 201 326
+2023-01-11 10:11:58,794 [INFO]- "POST /api/v1/auth/token/ HTTP/1.1" 200 438
+2023-01-11 10:12:15,092 [INFO]- "POST /api/v1/auth/token/ HTTP/1.1" 200 438
