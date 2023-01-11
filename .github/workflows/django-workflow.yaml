@@ -11,17 +11,13 @@ on:
 jobs:
   Pytest:
     runs-on: ubuntu-latest
-    env:
-      MY_POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
-      MY_POSTGRES_PASSWORD: ${{ secrets.DEV_POSTGRES_PASSWORD }}
-      MY_POSTGRES_DB: ${{ secrets.DEV_POSTGRES_DATABASE }}
     services:
       postgres_main:
         image: postgres:14.5
         env:
-          POSTGRES_USER: ${{ env.MY_POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.MY_POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ env.MY_POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.DEV_DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DEV_DB_DATABASE }}
         ports:
           - 5432:5432
         options: >-
@@ -42,8 +38,7 @@ jobs:
             pip install -r requirements.txt
       - name: Run pytest
         env:
-          DJANGO_DEV: true
-          DJANGO_PROD: false
+          ENV: DEV
         run: |
             pytest .
 
