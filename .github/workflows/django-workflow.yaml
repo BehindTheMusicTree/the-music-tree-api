@@ -27,7 +27,7 @@ jobs:
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
           POSTGRES_DB: ${{ env.DB_DATABASE }}
         ports:
-          - ${{ secrets.DEV_DB_PORT }}:${{ secrets.DEV_DB_PORT }}
+          - 5432:5432
         options: >-
           --health-cmd pg_isready 
           --health-interval 10s 
