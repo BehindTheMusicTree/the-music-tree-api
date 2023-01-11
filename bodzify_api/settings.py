@@ -56,13 +56,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
+if os.getenv('WEBSERVER_IS_DOCKERIZED') == 'true':
+    dbHost = os.getenv('DOCKERIZED_DB_HOST')
+else:
+    dbHost = os.getenv('UNDOCKERIZED_DB_HOST')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_DATABASE'),
         'USER': os.getenv('DB_USERNAME'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
+        'HOST': dbHost,
         'PORT': os.getenv('DB_PORT'),
         'DISABLE_SERVER_SIDE_CURSORS': True
     }
@@ -209,7 +214,7 @@ LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
 USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 TRACK_SIZE_LIMIT_IN_MO = 500
 
-if os.getenv('DJANGO_DEV') == 'true':
+if os.getenv('ENV') == 'DEV':
     from bodzify_api.settings_dev import *
-elif os.getenv('DJANGO_PROD') == 'true':
+elif os.getenv('ENV') == 'PROD':
     from bodzify_api.settings_prod import *
