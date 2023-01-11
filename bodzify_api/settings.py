@@ -56,18 +56,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
-if os.getenv('WEBSERVER_IS_DOCKERIZED') == 'true':
-    dbHost = os.getenv('DOCKERIZED_DB_HOST')
-else:
-    dbHost = os.getenv('UNDOCKERIZED_DB_HOST')
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_DATABASE'),
         'USER': os.getenv('DB_USERNAME'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': dbHost,
+        'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
         'DISABLE_SERVER_SIDE_CURSORS': True
     }
