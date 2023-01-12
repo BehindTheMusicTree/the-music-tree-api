@@ -75,12 +75,11 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)
-        if os.path.exists(track.file.path):
+        if track.fileExists:
             return utility.GetFileResponse(filePath=track.file.path, filename=track.file.name)
         else:
-            track.delete()
             return HttpResponse(
-                content="""The requested track doesn't exist anymore. It is therefore deleted.""",
+                content="The requested track'sfile is missing.",
                 status=status.HTTP_410_GONE)
 
     def create(self, request, *args, **kwargs):
