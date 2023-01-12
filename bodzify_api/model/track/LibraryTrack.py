@@ -63,6 +63,11 @@ class LibraryTrack(models.Model):
 
 
     @property
+    def fileExists(self) -> bool:
+        return os.path.isfile(self.file.path)
+
+
+    @property
     def relativeUrl(self) -> str:
         return 'tracks/' + self.uuid + "/"
 
