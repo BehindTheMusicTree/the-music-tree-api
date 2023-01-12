@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENV: DEV
-      WEBSERVER_IS_DOCKERIZED: false
       DB_USERNAME: ${{ secrets.DEV_DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
       DB_HOST: ${{ secrets.DEV_UNDOCKERIZED_DB_HOST }}
@@ -44,6 +43,9 @@ jobs:
       - name: Install requirements
         run: |
             pip install -r requirements.txt
+      - name: Set up filesystem
+        run:|
+            bash setup_filesystem.sh
       - name: Run pytest
         run: |
             pytest .
