@@ -5,7 +5,7 @@ import os
 from rest_framework.decorators import action
 from rest_framework import status
 
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from django.http import JsonResponse
 from django.http import HttpResponse
@@ -23,6 +23,9 @@ from bodzify_api.form.UploadTrackForm import UploadTrackForm
 import bodzify_api.service.LibraryTrackService as LibraryTrackService
 import bodzify_api.view.utility as utility
 
+TITLE_PARAMETER = "title"
+ARTIST_PARAMETER = "artist"
+ALBUM_PARAMETER = "album"
 GENRE_PARAMETER = "genre"
 FILE_PARAMETER = "file"
 
@@ -38,9 +41,18 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
+        title = self.request.query_params.get(TITLE_PARAMETER)
+        artist = self.request.query_params.get(ARTIST_PARAMETER)
+        album = self.request.query_params.get(ALBUM_PARAMETER)
         genre = self.request.query_params.get(GENRE_PARAMETER)
+        if title is not None:
+            queryset = queryset.filter(title__icontains=title)
+        if artist is not None:
+            queryset = queryset.filter(artist__icontains=artist)
+        if album is not None:
+            queryset = queryset.filter(album__icontains=album)
         if genre is not None:
-            queryset = queryset.filter(genre=genre)
+            queryset = queryset.filter(genre__icontains=genre)
         return queryset
 
     @extend_schema(
@@ -80,3 +92,26 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
                 data=LibraryTrackResponseSerializer(track).data,
                 status=status.HTTP_201_CREATED)
         return utility.GetJsonResponseWhenBadRequest(form.errors)
+
+    @extend_schema(
+        parameters=[
+          OpenApiParameter(
+            name=TITLE_PARAMETER, 
+            type=OpenApiTypes.STR, 
+            location=OpenApiParameter.QUERY),
+          OpenApiParameter(
+            name=ARTIST_PARAMETER, 
+            type=OpenApiTypes.STR, 
+            location=OpenApiParameter.QUERY),
+          OpenApiParameter(
+            name=ALBUM_PARAMETER, 
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.QUERY),
+          OpenApiParameter(
+            name=GENRE_PARAMETER, 
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.QUERY)
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
