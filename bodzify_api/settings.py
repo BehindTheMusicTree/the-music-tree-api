@@ -198,7 +198,7 @@ LOGGING = {
 
 APP_NAME = "bodzify_api"
 APP_ROOT = os.path.join(BASE_DIR, APP_NAME + '/')
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_ROOT = "/var/lib/bodzify-api/media/"
 MEDIA_TEMP = os.path.join(MEDIA_ROOT, "temp/")
 LIBRARIES_FOLDER_NAME = "libraries"
 LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
