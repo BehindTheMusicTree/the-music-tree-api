@@ -139,7 +139,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-LOG_PATH = os.path.join(BASE_DIR, "log/")
+LOG_PATH = "/var/log/bodzify-api/"
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
