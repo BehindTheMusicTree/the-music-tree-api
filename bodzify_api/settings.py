@@ -151,13 +151,13 @@ LOGGING = {
     'handlers': {
         'django_error': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.FileHandler',
             'filename': LOG_PATH + 'django.log',
             'formatter': 'standard'
         },
         'info': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'logging.FileHandler',
             'filename': LOG_PATH + 'info.log',
             'formatter': 'standard'
         },
