@@ -4,13 +4,13 @@ sudo mkdir -p $mediaDir
 sudo chown $USER $mediaDir
 sudo chmod 775 $mediaDir
 
-djangoLogDir=/var/log/bodzify-api/
+djangoLogDir=/var/log/bodzify-api/django/
 
 sudo mkdir -p $djangoLogDir
 sudo chown $USER $djangoLogDir
 sudo chmod 775 $djangoLogDir
 
-gunicornLogDir=/var/log/bodzify-api/
+gunicornLogDir=/var/log/bodzify-api/gunicorn/
 
 sudo mkdir -p $gunicornLogDir
 sudo chown $USER $gunicornLogDir
