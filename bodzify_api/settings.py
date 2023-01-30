@@ -142,7 +142,7 @@ SIMPLE_JWT = {
 LOG_PATH = "/var/log/bodzify-api/"
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'formatters': {
         'standard': {
             'format': '%(asctime)s [%(levelname)s]- %(message)s'}
@@ -189,7 +189,7 @@ LOGGING = {
             'propagate': True,
         },
         'django.server': {
-            'handlers': ['info'],
+            'handlers': [],
             'level': 'INFO',
             'propagate': True,
         },
