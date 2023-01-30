@@ -149,16 +149,12 @@ LOGGING = {
 
     },
     'handlers': {
-        'django_error': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': LOG_PATH + 'django.log',
-            'formatter': 'standard'
-        },
         'info': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+            'class':'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH + 'info.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
             'formatter': 'standard'
         },
         'console': {
@@ -175,11 +171,6 @@ LOGGING = {
         },
         'django': {
             'handlers': ['info', 'console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ['django_error', 'console'],
             'level': 'DEBUG',
             'propagate': True,
         },
