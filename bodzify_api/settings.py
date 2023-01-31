@@ -149,10 +149,26 @@ LOGGING = {
 
     },
     'handlers': {
+        'general': {
+            'level': 'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': LOG_PATH + 'general.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
         'info': {
             'level': 'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH + 'info.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
+        'access': {
+            'level': 'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': LOG_PATH + 'access.log',
             'maxBytes': 1024*1024*15, # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -164,16 +180,21 @@ LOGGING = {
         }
     },
     'loggers': {
-        'info': {
-            'handlers': ['info', 'console'],
+        '': {
+            'handlers': ['general', 'console'],
             'level': 'DEBUG',
             'propagate': True
         },
-        'django': {
-            'handlers': ['info', 'console'],
+        'info': {
+            'handlers': ['info'],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': True
         },
+        # 'django': {
+        #     'handlers': ['info', 'console'],
+        #     'level': 'DEBUG',
+        #     'propagate': True,
+        # },
         'django.db.backends': {
             'handlers': ['console'],
             'level': 'ERROR',
@@ -184,6 +205,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        'gunicorn.access' : { 
+                'handlers': ['access'], 
+                'level': 'DEBUG', 
+                'propagate': False
+        }
     },
 }
 
