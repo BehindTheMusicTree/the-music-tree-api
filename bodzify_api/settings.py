@@ -139,7 +139,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-LOG_PATH = "/var/log/bodzify-api/django/"
+LOG_PATH = "/var/log/bodzify-api/"
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -190,25 +190,10 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True
         },
-        # 'django': {
-        #     'handlers': ['info', 'console'],
-        #     'level': 'DEBUG',
-        #     'propagate': True,
-        # },
-        'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        'django.server': {
-            'handlers': [],
-            'level': 'INFO',
-            'propagate': True,
-        },
         'gunicorn.access' : { 
                 'handlers': ['access'], 
                 'level': 'DEBUG', 
-                'propagate': False
+                'propagate': True
         }
     },
 }
