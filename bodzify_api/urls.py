@@ -10,12 +10,14 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularRedocView
 from drf_spectacular.views import SpectacularSwaggerView
 
-from bodzify_api.view.UserViewSet import UserViewSet
-from bodzify_api.view.track.LibraryTrackViewSet import LibraryTrackViewSet
-from bodzify_api.view.criteria.GenreViewSet import GenreViewSet
-from bodzify_api.view.criteria.TagViewSet import TagViewSet
-from bodzify_api.view.track.MineTrackViewSet import MineTrackViewSet
-from bodzify_api.view.playlist.PlaylistViewSet import PlaylistViewSet
+from bodzify_api.view.SearchView import SearchView 
+
+from bodzify_api.view.viewset.UserViewSet import UserViewSet
+from bodzify_api.view.viewset.track.LibraryTrackViewSet import LibraryTrackViewSet
+from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet
+from bodzify_api.view.viewset.TagViewSet import TagViewSet
+from bodzify_api.view.viewset.track.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.playlist.PlaylistViewSet import PlaylistViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -35,6 +37,8 @@ urlpatterns = [
     path(base + 'auth/', include('django.contrib.auth.urls')),
     path(base + 'auth/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
     path(base + 'auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+
+    path(base + 'search/', SearchView.as_view(), name='search'),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(

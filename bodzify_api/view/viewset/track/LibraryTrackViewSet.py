@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import os
-
 from django.http import JsonResponse
 from django.http import HttpResponse
 
@@ -18,7 +16,7 @@ from bodzify_api.serializer.track.LibraryTrackUpdateRequestSerializer import (
     LibraryTrackUpdateRequestSerializer
 )
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.view.MultiSerializerViewSet import MultiSerializerViewSet
+from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.form.UploadTrackForm import UploadTrackForm
 import bodzify_api.service.LibraryTrackService as LibraryTrackService
 import bodzify_api.view.utility as utility
