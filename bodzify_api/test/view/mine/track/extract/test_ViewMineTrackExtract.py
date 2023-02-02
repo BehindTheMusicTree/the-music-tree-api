@@ -5,11 +5,8 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
-from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 import bodzify_api.settings as settings
 
 

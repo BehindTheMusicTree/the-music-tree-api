@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.view.viewset.criteria.CriteriaViewSet import CriteriaViewSet
+from bodzify_api.view.criteria.CriteriaViewSet import CriteriaViewSet
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesIds
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
 
