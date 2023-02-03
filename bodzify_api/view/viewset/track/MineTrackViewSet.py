@@ -13,7 +13,7 @@ from bodzify_api.serializer.track.LibraryTrackResponseSerializer import (
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as utility
-from bodzify_api.view.MultiSerializerViewSet import MultiSerializerViewSet
+from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 
 
 SOURCE_FIELD = "source"

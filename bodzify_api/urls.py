@@ -10,12 +10,14 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularRedocView
 from drf_spectacular.views import SpectacularSwaggerView
 
-from bodzify_api.view.UserViewSet import UserViewSet
-from bodzify_api.view.track.LibraryTrackViewSet import LibraryTrackViewSet
-from bodzify_api.view.criteria.GenreViewSet import GenreViewSet
-from bodzify_api.view.criteria.TagViewSet import TagViewSet
-from bodzify_api.view.track.MineTrackViewSet import MineTrackViewSet
-from bodzify_api.view.playlist.PlaylistViewSet import PlaylistViewSet
+from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet 
+
+from bodzify_api.view.viewset.UserViewSet import UserViewSet
+from bodzify_api.view.viewset.track.LibraryTrackViewSet import LibraryTrackViewSet
+from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet
+from bodzify_api.view.viewset.criteria.TagViewSet import TagViewSet
+from bodzify_api.view.viewset.track.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.playlist.PlaylistViewSet import PlaylistViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -24,6 +26,7 @@ router.register(r'tags', TagViewSet)
 router.register(r'genres', GenreViewSet)
 router.register(r'mine/tracks', MineTrackViewSet, 'mine-track')
 router.register(r'playlists', PlaylistViewSet)
+router.register(r'search', SearchApiViewSet, basename='search')
 
 base = 'api/v1/'
 

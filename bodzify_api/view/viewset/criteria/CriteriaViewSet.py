@@ -10,7 +10,7 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from bodzify_api.view import utility
-from bodzify_api.view.MultiSerializerViewSet import MultiSerializerViewSet
+from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.serializer.criteria.CriteriaSerializer import (
     CriteriaRequestSerializer, CriteriaResponseSerializer)
 from bodzify_api.model.criteria.Criteria import Criteria

@@ -6,7 +6,7 @@ from bodzify_api.serializer.playlist.PlaylistWithTrackSerializer import (
     PlaylistWithTrackSerializer
 )
 
-from bodzify_api.view.MultiSerializerViewSet import MultiSerializerViewSet
+from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.playlist.Playlist import Playlist
 
 NAME_PARAMETER = "name"

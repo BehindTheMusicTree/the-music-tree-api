@@ -4,8 +4,7 @@ from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.playlist.PlaylistWithoutParentSerializer import (
-    PlaylistWithoutParentSerializer
-)
+    PlaylistWithoutParentSerializer)
 
 
 class PlaylistWithoutTracksSerializer(PlaylistWithoutParentSerializer):
