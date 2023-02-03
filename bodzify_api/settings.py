@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'coverage',
+    'drf_multiple_model',
     'bodzify_api',
 ]
 
@@ -206,6 +207,8 @@ LIBRARIES_FOLDER_NAME = "libraries"
 LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
 USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 TRACK_SIZE_LIMIT_IN_MO = 500
+
+PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
 if os.getenv('ENV') == 'DEV':
     from bodzify_api.settings_dev import *
