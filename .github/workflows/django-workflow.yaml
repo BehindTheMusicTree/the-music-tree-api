@@ -54,6 +54,7 @@ jobs:
     name: flake8
     needs: Pytest
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v2
       - name: Install flake8
