@@ -85,7 +85,7 @@ def Update(track: LibraryTrack, data, partial, RequestSerializerClass, user: Use
 
     artistName = data[LibraryTrackViewSet.ARTIST_PARAMETER_NAME]    
     data[LibraryTrackViewSet.ARTIST_PARAMETER_NAME] = (
-        ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName))
+        ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
 
     requestSerializer = RequestSerializerClass(track, data=data, partial=partial)
     requestSerializer.is_valid(raise_exception=True)
