@@ -79,13 +79,38 @@
     },
 
     {
+        "model": "bodzify_api.artist",
+        "pk": "36nS4LVDssLh4BvTASKS90",
+        "fields": {
+            "user": 4,
+            "name": "Sum 41" 
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "36nS4LVDssLh4BvTADJS6D",
+        "fields": {
+            "user": 4,
+            "name": "Metal Jacket" 
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "36nS4LVDssLh4BvTASSS65",
+        "fields": {
+            "user": 4,
+            "name": "PNL" 
+        }
+    },
+
+    {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
            "user": 4, 
            "file": "libraries/user_4/nofile1", 
            "title": "1-03 - We're All To Blame", 
-           "artist": "Sum 41", 
+           "artist": "36nS4LVDssLh4BvTASKS90", 
            "album": "All Killer No Filler", 
            "genre": "LsjdqoifsjofsiEjf885fgion", 
            "duration": "207.09333333333333", 
@@ -105,7 +130,7 @@
            "user": 4, 
            "file": "libraries/user_4/nofile2", 
            "title": "Summer Love", 
-           "artist": "Metal Jacket", 
+           "artist": "36nS4LVDssLh4BvTASKS90", 
            "album": "All Killer No Filler", 
            "genre": "LsjdqoifsjofsiEjf885fgion", 
            "duration": "207.09333333333333", 
@@ -125,7 +150,7 @@
            "user": 4, 
            "file": "libraries/user_4/nofile3", 
            "title": "Lalala", 
-           "artist": "PNL", 
+           "artist": "36nS4LVDssLh4BvTASSS65", 
            "album": "J'ai le Sum", 
            "genre": "LsjdqoqzpsdojEjf885fgion", 
            "duration": "205.09333333333333", 
