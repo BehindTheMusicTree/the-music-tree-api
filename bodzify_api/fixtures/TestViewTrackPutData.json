@@ -68,13 +68,46 @@
     },
 
     {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DHD65",
+        "fields": {
+            "user": 4,
+            "name": "Linkin Park"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88589HFY",
+        "fields": {
+            "user": 4,
+            "name": "Sum 43"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DJD67",
+        "fields": {
+            "user": 4,
+            "name": "PNL"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DHD55",
+        "fields": {
+            "user": 4,
+            "name": "Joni"
+        }
+    },
+
+    {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
            "user": 4, 
            "file": "libraries/user_4/put_1-03 - We're All To Blame", 
            "title": "1-03 - We're All To Blame", 
-           "artist": "Sum 41", 
+           "artist": "Lsji85mqisjdjf88589HFY", 
            "album": "All Killer No Filler", 
            "genre": "LsjdqoifsjofsiEjf885fgion", 
            "duration": "207.09333333333333", 
@@ -94,7 +127,7 @@
            "user": 4, 
            "file": "libraries/user_4/put_1-08_-_Luz_De_Luna.flac", 
            "title": "Luz De Luna", 
-           "artist": "PNL", 
+           "artist": "Lsji85mqisjdjf885DJD67", 
            "album": "Dans La Légende", 
            "genre": "LsjdqoqzpsdojEjf885fgion", 
            "duration": "205.09333333333333", 
@@ -114,7 +147,7 @@
             "user": 4,
             "file": "libraries/user_4/put_sample.wav",
             "title": "La zumba",
-            "artist": "Joni",
+            "artist": "Lsji85mqisjdjf885DHD55",
             "album": "BOOM",
             "genre": "L1ZG85munGytJb885fgion",
             "duration": "2.665374149659864",
