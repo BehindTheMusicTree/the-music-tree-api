@@ -37,7 +37,7 @@ class MineTrackExtractViewTestCase(ViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         track = LibraryTrack.objects.get(title="du rap")
-        assert track.artist == "Jul"
+        assert track.artist.name == "Jul"
         assert track.album == ""
         assert track.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
         assert track.rating == 0
