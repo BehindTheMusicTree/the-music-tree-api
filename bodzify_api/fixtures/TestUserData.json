@@ -119,7 +119,7 @@
     },
 
     {
-        "model": "bodzify_api.librarytrack",
+        "model": "bodzify_api.artist",
         "pk": "f36nS4LVDssLh4BvTADD76",
         "fields": {
             "user": 4, 
