@@ -1,33 +1,11 @@
 [
     {
         "model": "bodzify_api.criteria",
-        "pk": "LsjdqoifsjofsiEjf885fgion",
-        "fields": {
-            "name": "Rock",
-            "type": 1,
-            "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "LsjdqoqzpsdojEjf885fgion",
+        "pk": "LsjdqoqzpsdojEjGHGH",
         "fields": {
             "name": "Rap",
             "type": 1,
             "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "Lsjdqoiqsicqjsof885fgion",
-        "fields": {
-            "name": "Nu metal",
-            "type": 1,
-            "parent": "LsjdqoifsjofsiEjf885fgion",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
         }
@@ -38,29 +16,7 @@
         "pk": "qdsuhqoishcosihqoq",
         "fields": {
             "name": "Rap",
-            "criteria": "LsjdqoqzpsdojEjf885fgion",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "FYM1HUIrqjqjshssI76dVH",
-        "fields": {
-            "name": "Rock",
-            "criteria": "LsjdqoifsjofsiEjf885fgion",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "Lsji85mqisjdjf885fgion",
-        "fields": {
-            "name": "Nu metal",
-            "criteria": "Lsjdqoiqsicqjsof885fgion",
+            "criteria": "LsjdqoqzpsdojEjGHGH",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
@@ -109,7 +65,7 @@
            "title": "1-03 - We're All To Blame", 
            "artist": "Lsji85mqisjdjf88589HFY", 
            "album": "All Killer No Filler", 
-           "genre": "LsjdqoifsjofsiEjf885fgion", 
+           "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": "207.09333333333333", 
            "rating": 128, 
            "language": "", 
@@ -129,7 +85,7 @@
            "title": "Luz De Luna", 
            "artist": "Lsji85mqisjdjf885DJD67", 
            "album": "Dans La Légende", 
-           "genre": "LsjdqoqzpsdojEjf885fgion", 
+           "genre": "LsjdqoqzpsdojEjGHGH", 
            "duration": "205.09333333333333", 
            "rating": 78, 
            "language": "French", 
