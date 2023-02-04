@@ -1,12 +1,29 @@
 [
     {
+        "model": "bodzify_api.artist",
+        "pk": "36nS4LVDssLh4BvTd7FDUE",
+        "fields": {
+            "user": 4,
+            "name": "Sum 42"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "36nS4LVDssLh4BvTdDJSof",
+        "fields": {
+            "user": 4,
+            "name": "Joni"
+        }
+    },
+
+    {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTdlbJEK",
         "fields": {
            "user": 4, 
            "file": "libraries/user_4/doesnt exist", 
            "title": "1-03 - We're All To Blame", 
-           "artist": "Sum 41", 
+           "artist": "36nS4LVDssLh4BvTd7FDUE", 
            "album": "All Killer No Filler", 
            "genre": "LsjdqoifsjofsiEjf885fgion", 
            "duration": "207.09333333333333", 
@@ -26,7 +43,7 @@
             "user": 4,
             "file": "libraries/user_4/Jul_-_Le_S_MTgyCmzefzfrzM.mp3",
             "title": "La zumba",
-            "artist": "Joni",
+            "artist": "36nS4LVDssLh4BvTdDJSof",
             "album": "BOOM",
             "genre": "L1ZG85munGytJb885fgion",
             "duration": "2.665374149659864",
