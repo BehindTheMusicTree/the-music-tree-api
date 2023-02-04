@@ -1,33 +1,11 @@
 [
     {
         "model": "bodzify_api.criteria",
-        "pk": "LsjdqoifsjofsiEjf885fgion",
-        "fields": {
-            "name": "Rock",
-            "type": 1,
-            "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "LsjdqoqzpsdojEjf885fgion",
+        "pk": "LsjdqoqzpsdojEjGHGH",
         "fields": {
             "name": "Rap",
             "type": 1,
             "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "Lsjdqoiqsicqjsof885fgion",
-        "fields": {
-            "name": "Nu metal",
-            "type": 1,
-            "parent": "LsjdqoifsjofsiEjf885fgion",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
         }
@@ -38,32 +16,43 @@
         "pk": "qdsuhqoishcosihqoq",
         "fields": {
             "name": "Rap",
-            "criteria": "LsjdqoqzpsdojEjf885fgion",
+            "criteria": "LsjdqoqzpsdojEjGHGH",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
         }
     },
+
     {
-        "model": "bodzify_api.playlist",
-        "pk": "FYM1HUIrqjqjshssI76dVH",
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DHD65",
         "fields": {
-            "name": "Rock",
-            "criteria": "LsjdqoifsjofsiEjf885fgion",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
+            "user": 4,
+            "name": "Linkin Park"
         }
     },
     {
-        "model": "bodzify_api.playlist",
-        "pk": "Lsji85mqisjdjf885fgion",
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88589HFY",
         "fields": {
-            "name": "Nu metal",
-            "criteria": "Lsjdqoiqsicqjsof885fgion",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
+            "user": 4,
+            "name": "Sum 43"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DJD67",
+        "fields": {
+            "user": 4,
+            "name": "PNL"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DHD55",
+        "fields": {
+            "user": 4,
+            "name": "Joni"
         }
     },
 
@@ -74,9 +63,9 @@
            "user": 4, 
            "file": "libraries/user_4/put_1-03 - We're All To Blame", 
            "title": "1-03 - We're All To Blame", 
-           "artist": "Sum 41", 
+           "artist": "Lsji85mqisjdjf88589HFY", 
            "album": "All Killer No Filler", 
-           "genre": "LsjdqoifsjofsiEjf885fgion", 
+           "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": "207.09333333333333", 
            "rating": 128, 
            "language": "", 
@@ -94,9 +83,9 @@
            "user": 4, 
            "file": "libraries/user_4/put_1-08_-_Luz_De_Luna.flac", 
            "title": "Luz De Luna", 
-           "artist": "PNL", 
+           "artist": "Lsji85mqisjdjf885DJD67", 
            "album": "Dans La Légende", 
-           "genre": "LsjdqoqzpsdojEjf885fgion", 
+           "genre": "LsjdqoqzpsdojEjGHGH", 
            "duration": "205.09333333333333", 
            "rating": 78, 
            "language": "French", 
@@ -114,7 +103,7 @@
             "user": 4,
             "file": "libraries/user_4/put_sample.wav",
             "title": "La zumba",
-            "artist": "Joni",
+            "artist": "Lsji85mqisjdjf885DHD55",
             "album": "BOOM",
             "genre": "L1ZG85munGytJb885fgion",
             "duration": "2.665374149659864",

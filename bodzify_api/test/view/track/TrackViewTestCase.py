@@ -14,7 +14,7 @@ class TrackViewTestCase(ViewTestCase):
 
     def putSampleTrack(self, trackUuid, data):
         return self.apiClient.put(
-            path=reverse('librarytrack-detail', kwargs={'pk':trackUuid}), data=data)
+            path=reverse('librarytrack-detail', kwargs={'pk': trackUuid}), data=data)
 
     def downloadTrack(self, trackUuid):
         return self.apiClient.get(path=reverse('librarytrack-download', kwargs={'pk':trackUuid}))

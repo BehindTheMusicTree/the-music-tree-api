@@ -19,7 +19,7 @@ class Criteria(models.Model):
     uuid = models.CharField(
         primary_key=True,
         default=shortuuid.uuid,
-        max_length=200,
+        max_length=22,
         editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)

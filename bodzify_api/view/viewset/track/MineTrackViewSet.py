@@ -49,7 +49,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
         pageSize = request.GET.get(utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
 
         if mineSource == SOURCE_MYFREEMP3_VALUE:
-            mineTracks = MineTrackMyfreemp3Service.list(query, pageNumber, pageSize)
+            mineTracks = MineTrackMyfreemp3Service.List(query, pageNumber, pageSize)
             return utility.GetJsonResponsePaginated(request, mineTracks)
 
         else:
@@ -57,7 +57,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
 
     @action(detail=False, methods=['post'])
     def extract(self, request):
-        libraryTrack = MineTrackMyfreemp3Service.extract(
+        libraryTrack = MineTrackMyfreemp3Service.Extract(
             user=request.user,
             title=request.data[TITLE_FIELD],
             artist=request.data[ARTIST_FIELD],

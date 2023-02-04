@@ -7,11 +7,11 @@ class TrackDownloadViewTestCase(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackDownloadData']
 
     def setUp(self) -> None:
-        obj= super().setUp(sampleRelativePath="test/view/track/download/sample/")
+        obj = super().setUp(sampleRelativePath="test/view/track/download/sample/")
         self.copySamplesToTestUserLibrary()
         return obj
 
-    def test_libraryTrackPut(self):
+    def test_libraryTrackDownload(self):
         self.login(self.testUser)
 
         # File no longer exists

@@ -4,11 +4,13 @@ from rest_framework import serializers
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.criteria.CriteriaSerializer import CriteriaResponseSerializer
+from bodzify_api.serializer.ArtistSerializer import ArtistSerializer
 from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import (
     PlaylistWithoutTracksSerializer)
 
 class LibraryTrackResponseSerializer(serializers.ModelSerializer):
     genre = CriteriaResponseSerializer()
+    artist = ArtistSerializer()
     playlists = PlaylistWithoutTracksSerializer(many=True)
 
     class Meta:
