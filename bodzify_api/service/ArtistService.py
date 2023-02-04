@@ -8,10 +8,10 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 def DeleteArtistIfNoTrackLinked(user: User, artist: Artist):
     if LibraryTrack.objects.filter(user=user, artist=artist).count() == 0:
-        Artist.objects.delete(artist)
+        artist.delete()
 
 
-def GetArtistFromNameAfterHavingEventuallyCreatedIt(user: User, artistName: str) -> str:
+def GetArtistFromNameAfterHavingEventuallyCreatedIt(user: User, artistName: str) -> Artist:
     if artistName is None:
         return None
     else:
