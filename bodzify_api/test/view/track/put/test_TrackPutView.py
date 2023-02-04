@@ -23,7 +23,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
             "title": "Somewhere I Belong",
             "artist": "Linkin Park",
             "album": "Meteora",
-            "genre": "Lsjdqoiqsicqjsof885fgion",
+            "genre": "Lsjdqoiqsicqjsof8800",
             "rating": 200,
             "language": "English"
         }
@@ -44,7 +44,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
             "title": "Give Me Novocain",
             "artist": "Green Day",
             "album": "American Idiot",
-            "genre": "LsjdqoifsjofsiEjf885fgion",  
+            "genre": "LsjdqoifsjofsiEjf885DD",  
             "rating": 0,
             "language": "English, German"
         }
@@ -65,7 +65,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
             "title": "Bohemian Raphsody",
             "artist": "Queen",
             "album": "A Night A the Opera",
-            "genre": "Lsjdqoiqsicqjsof885fgion",
+            "genre": "Lsjdqoiqsicqjsof8800",
             "rating": 2,
             "language": "French"
         }
