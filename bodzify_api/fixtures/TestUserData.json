@@ -120,12 +120,21 @@
 
     {
         "model": "bodzify_api.librarytrack",
+        "pk": "f36nS4LVDssLh4BvTADD76",
+        "fields": {
+            "user": 4, 
+            "name": "Sum 41"
+        }
+    },
+
+    {
+        "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
             "user": 4, 
             "file": "libraries/user_4/07_-_In_Too_Deep.mp3", 
             "title": "In Too Deep", 
-            "artist": "Sum 41", 
+            "artist": "f36nS4LVDssLh4BvTADD76", 
             "album": "All Killer No Filler", 
             "genre": "Lsji85munDKEjf885fgion", 
             "duration": "207.09333333333333", 
