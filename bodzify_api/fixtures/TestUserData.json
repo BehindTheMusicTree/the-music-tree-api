@@ -52,7 +52,7 @@
     },
     {
         "model": "bodzify_api.criteria",
-        "pk": "LsjdqoifsjofsiEjf885fgion",
+        "pk": "LsjdqoifsjofsiEjf885DD",
         "fields": {
             "name": "Rock",
             "type": 1,
@@ -63,11 +63,11 @@
     },
     {
         "model": "bodzify_api.criteria",
-        "pk": "Lsjdqoiqsicqjsof885fgion",
+        "pk": "Lsjdqoiqsicqjsof8800",
         "fields": {
             "name": "Nu metal",
             "type": 1,
-            "parent": "LsjdqoifsjofsiEjf885fgion",
+            "parent": "LsjdqoifsjofsiEjf885DD",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
         }
@@ -100,7 +100,7 @@
         "pk": "FYM1HUIrqjqjshssI76dVH",
         "fields": {
             "name": "Rock",
-            "criteria": "LsjdqoifsjofsiEjf885fgion",
+            "criteria": "LsjdqoifsjofsiEjf885DD",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
@@ -111,7 +111,7 @@
         "pk": "Lsji85mqisjdjf885fgion",
         "fields": {
             "name": "Nu metal",
-            "criteria": "Lsjdqoiqsicqjsof885fgion",
+            "criteria": "Lsjdqoiqsicqjsof8800",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
