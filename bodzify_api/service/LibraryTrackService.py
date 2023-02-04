@@ -3,6 +3,8 @@
 import os
 from pathlib import Path
 
+from django.http.request import QueryDict
+
 from mutagen._file import File as MutagenFile
 from mutagen.id3 import Frames
 from mutagen.flac import FLAC
@@ -16,7 +18,6 @@ from django.contrib.auth.models import User
 import bodzify_api.view.viewset.track.LibraryTrackViewSet as LibraryTrackViewSet
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
-from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -74,20 +75,21 @@ def UpdatePlaylists(track: LibraryTrack, user: User, oldGenre: Criteria):
     track.save()
 
 
-def Update(track: LibraryTrack, data, partial, RequestSerializerClass, user: User):
+def Update(track: LibraryTrack, data: QueryDict, partial, RequestSerializerClass, user: User):
+    mutableData = data.copy()
     oldTrack = LibraryTrack.objects.get(uuid=track.uuid)
     oldGenre = oldTrack.genre
     oldArtist = oldTrack.artist
 
-    if data[LibraryTrackViewSet.GENRE_PARAMETER_NAME] is None:
-        data[LibraryTrackViewSet.GENRE_PARAMETER_NAME] = Criteria.objects.get(
+    if mutableData[LibraryTrackViewSet.GENRE_PARAMETER_NAME] is None:
+        mutableData[LibraryTrackViewSet.GENRE_PARAMETER_NAME] = Criteria.objects.get(
             user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
-    artistName = data[LibraryTrackViewSet.ARTIST_PARAMETER_NAME]    
-    data[LibraryTrackViewSet.ARTIST_PARAMETER_NAME] = (
+    artistName = mutableData[LibraryTrackViewSet.ARTIST_PARAMETER_NAME]    
+    mutableData[LibraryTrackViewSet.ARTIST_PARAMETER_NAME] = (
         ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
 
-    requestSerializer = RequestSerializerClass(track, data=data, partial=partial)
+    requestSerializer = RequestSerializerClass(track, data=mutableData, partial=partial)
     requestSerializer.is_valid(raise_exception=True)
     updatedTrack = requestSerializer.save()
 
@@ -179,7 +181,7 @@ def CreateFromUpload(user: User, uploadedFile):
         trackId3Tags = MutagenFile(uploadedFile)
         
         title = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_TITLE_TAG)
-        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ARTIST_TAG)
+        artistName = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ARTIST_TAG)
         album = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG)
 
         if ID3_GENRE_TAG in trackId3Tags:
@@ -200,7 +202,7 @@ def CreateFromUpload(user: User, uploadedFile):
         trackFlacTags = FLAC(fileobj=uploadedFile)
         
         title = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_TITLE_TAG)
-        artist = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ARTIST_TAG)
+        artistName = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ARTIST_TAG)
         album = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ALBUM_TAG)
 
         if VORBIS_GENRE_TAG in trackFlacTags:
@@ -215,23 +217,11 @@ def CreateFromUpload(user: User, uploadedFile):
         language = GetValuesFirstElementIfExistInDicOrEmptyString(
             trackFlacTags, VORBIS_LANGUAGE_TAG)
 
-    if Criteria.objects.filter(
-        user=user, type__id=CriteriaTypesIds.GENRE, name=genreName).exists():
-        genre = Criteria.objects.get(user=user, type__id=CriteriaTypesIds.GENRE, name=genreName
-        )
-    else:
-        genre = Criteria.objects.create(
-            user=user,
-            type=CriteriaType.objects.get(id=CriteriaTypesIds.GENRE),
-            name=genreName,
-            parent=Criteria.objects.get(user=user, name=CriteriaSpecialNames.GENRE_ALL)
-        )
-        Playlist.objects.create(
-            user=user,
-            criteria=genre,
-            name=genre.name,
-            type=PlaylistType.objects.get(pk=PlaylistTypeIds.GENRE)
-        )
+    genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
+        user=user, criteriaName=genreName)
+
+    artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
+        user=user, artistName=artistName)
 
     track = LibraryTrack.objects.create(
         user=user,
