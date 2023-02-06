@@ -3,7 +3,7 @@ sudo -u postgres -H -- psql -c "create database bodzify_api with owner django;"
 sudo rm -r /var/lib/bodzify-api/*
 sudo rm -r /var/log/bodzify-api/*
 
-homeDir = "/home/app/webapp"
+homeDir="/home/app/webapp"
 python3 $homeDir/bodzify-api/manage.py migrate
 python3 $homeDir/bodzify-api/manage.py migrate --fake
 python3 $homeDir/bodzify-api/manage.py makemigrations 
