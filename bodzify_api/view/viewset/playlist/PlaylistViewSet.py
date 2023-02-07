@@ -2,7 +2,10 @@
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from bodzify_api.serializer.playlist.PlaylistSerializer import PlaylistSerializer
+from bodzify_api.serializer.playlist.PlaylistWithTrackSerializer import (
+    PlaylistWithTrackSerializer
+)
+
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.playlist.Playlist import Playlist
 
@@ -14,9 +17,9 @@ TYPE_LABEL_PARAMETER = "type"
 class PlaylistViewSet(MultiSerializerViewSet):
     queryset = Playlist.objects.all()
     serializers = {
-        'default': PlaylistSerializer,
-        'list':  PlaylistSerializer,
-        'retrieve':  PlaylistSerializer,
+        'default': PlaylistWithTrackSerializer,
+        'list':  PlaylistWithTrackSerializer,
+        'retrieve':  PlaylistWithTrackSerializer,
     }
 
     def get_queryset(self):
@@ -24,7 +27,7 @@ class PlaylistViewSet(MultiSerializerViewSet):
 
         name = self.request.query_params.get(NAME_PARAMETER)
         if name is not None:
-            queryset = queryset.filter(name__contains=name)
+            queryset = queryset.filter(name__icontains=name)
 
         parentUuidParameterValue = self.request.query_params.get(PARENT_UUID_PARAMETER)
         if parentUuidParameterValue is not None:
@@ -42,9 +45,18 @@ class PlaylistViewSet(MultiSerializerViewSet):
 
     @extend_schema(
         parameters=[
-          OpenApiParameter(NAME_PARAMETER, OpenApiTypes.STR, OpenApiParameter.PATH),
-          OpenApiParameter(PARENT_UUID_PARAMETER, OpenApiTypes.STR, OpenApiParameter.PATH),
-          OpenApiParameter(TYPE_LABEL_PARAMETER, OpenApiTypes.STR, OpenApiParameter.PATH)
+          OpenApiParameter(
+            name=NAME_PARAMETER,
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.QUERY),
+          OpenApiParameter(
+            name=PARENT_UUID_PARAMETER,
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.QUERY),
+          OpenApiParameter(
+            name=TYPE_LABEL_PARAMETER,
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.QUERY)
         ]
     )
     def list(self, request, *args, **kwargs):

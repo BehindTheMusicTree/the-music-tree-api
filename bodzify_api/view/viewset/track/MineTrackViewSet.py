@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from rest_framework import status
 from rest_framework.decorators import action
 
@@ -6,7 +7,9 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from django.http import JsonResponse
 
-from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackResponseSerializer
+from bodzify_api.serializer.track.LibraryTrackResponseSerializer import (
+    LibraryTrackResponseSerializer
+)
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as utility
@@ -46,7 +49,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
         pageSize = request.GET.get(utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
 
         if mineSource == SOURCE_MYFREEMP3_VALUE:
-            mineTracks = MineTrackMyfreemp3Service.list(query, pageNumber, pageSize)
+            mineTracks = MineTrackMyfreemp3Service.List(query, pageNumber, pageSize)
             return utility.GetJsonResponsePaginated(request, mineTracks)
 
         else:
@@ -54,7 +57,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
 
     @action(detail=False, methods=['post'])
     def extract(self, request):
-        libraryTrack = MineTrackMyfreemp3Service.extract(
+        libraryTrack = MineTrackMyfreemp3Service.Extract(
             user=request.user,
             title=request.data[TITLE_FIELD],
             artist=request.data[ARTIST_FIELD],

@@ -1,42 +1,29 @@
-import shutil
-import os
-
 from rest_framework import status
 
-from bodzify_api.test.view.track.library.LibraryTrackViewTestCase import LibraryTrackViewTestCase
+from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api import settings
+from bodzify_api.model.Artist import Artist
 
 
-class LibraryTrackPutViewTestCase(LibraryTrackViewTestCase):
+class TrackPutViewTestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackLibraryPutData']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData']
 
     def setUp(self) -> None:
-        obj= super().setUp()
+        obj= super().setUp("test/view/track/put/sample/")
         self.copySamplesToTestUserLibrary()
         return obj
-
-    def copySamplesToTestUserLibrary(self):
-        sampleFilesDirectoryAbsolutePath = (
-            settings.APP_ROOT + 'test/view/track/library/put/sample/')
-            
-        fileNames = os.listdir(sampleFilesDirectoryAbsolutePath)
-            
-        for fileName in fileNames:
-            shutil.copy(
-                os.path.join(sampleFilesDirectoryAbsolutePath, fileName),
-                self.testUserLibraryAbsolutePath)
 
     def test_libraryTrackPut(self):
         self.login(self.testUser)
 
         # On a mp3 file
+        # Existing artist
         data = {
             "title": "Somewhere I Belong",
             "artist": "Linkin Park",
             "album": "Meteora",
-            "genre": "Lsjdqoiqsicqjsof885fgion",
+            "genre": "Lsjdqoiqsicqjsof8800",
             "rating": 200,
             "language": "English"
         }
@@ -45,18 +32,19 @@ class LibraryTrackPutViewTestCase(LibraryTrackViewTestCase):
         assert response.status_code == status.HTTP_200_OK
 
         track = LibraryTrack.objects.get(title="Somewhere I Belong")
-        assert track.artist == "Linkin Park"
+        assert track.artist.name == "Linkin Park"
         assert track.album == "Meteora"
         assert track.genre.name == "Nu metal"
         assert track.rating == 200
         assert track.language == "English"
 
         # On a FLAC file
+        # Non existing artist
         data = {
             "title": "Give Me Novocain",
             "artist": "Green Day",
             "album": "American Idiot",
-            "genre": "LsjdqoifsjofsiEjf885fgion",  
+            "genre": "LsjdqoifsjofsiEjf885DD",  
             "rating": 0,
             "language": "English, German"
         }
@@ -65,18 +53,19 @@ class LibraryTrackPutViewTestCase(LibraryTrackViewTestCase):
         assert response.status_code == status.HTTP_200_OK
                 
         track = LibraryTrack.objects.get(title="Give Me Novocain")
-        assert track.artist == "Green Day"
+        assert track.artist.name == "Green Day"
         assert track.album == "American Idiot"
         assert track.genre.name == "Rock"
         assert track.rating == 0
         assert track.language == "English, German"
 
         # On a wav file
+        # Former artist "Joni" not having any track related left. Must be deleted.
         data = {
             "title": "Bohemian Raphsody",
             "artist": "Queen",
             "album": "A Night A the Opera",
-            "genre": "Lsjdqoiqsicqjsof885fgion",
+            "genre": "Lsjdqoiqsicqjsof8800",
             "rating": 2,
             "language": "French"
         }
@@ -85,8 +74,10 @@ class LibraryTrackPutViewTestCase(LibraryTrackViewTestCase):
         assert response.status_code == status.HTTP_200_OK
                 
         track = LibraryTrack.objects.get(title="Bohemian Raphsody")
-        assert track.artist == "Queen"
+        assert track.artist.name == "Queen"
         assert track.album == "A Night A the Opera"
         assert track.genre.name == "Nu metal"
         assert track.rating == 2
         assert track.language == "French"
+
+        assert Artist.objects.filter(name="Joni").count() == 0

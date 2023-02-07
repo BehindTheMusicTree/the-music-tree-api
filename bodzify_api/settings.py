@@ -36,11 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'drf_spectacular',
-    'drf_spectacular_sidecar',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'coverage',
+    'drf_multiple_model',
     'bodzify_api',
 ]
 
@@ -129,11 +129,8 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     'TITLE': 'bodzify API',
     'DESCRIPTION': 'API to handle genre oriented music libraries',
-    'VERSION': '1.0.0',
+    'VERSION': '0.1.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
-    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
-    'REDOC_DIST': 'SIDECAR',
     'SCHEMA_PATH_PREFIX': '/api/v[0-9]'
 }
 
@@ -143,7 +140,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-LOG_PATH = os.path.join(BASE_DIR, "log/")
+LOG_PATH = "/var/log/bodzify-api/"
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -153,16 +150,28 @@ LOGGING = {
 
     },
     'handlers': {
-        'django_error': {
+        'general': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH + 'django.log',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': LOG_PATH + 'general.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
             'formatter': 'standard'
         },
         'info': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class':'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH + 'info.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
+        'access': {
+            'level': 'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': LOG_PATH + 'access.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
             'formatter': 'standard'
         },
         'console': {
@@ -172,45 +181,36 @@ LOGGING = {
         }
     },
     'loggers': {
-        'info': {
-            'handlers': ['info', 'console', 'django_error'],
+        '': {
+            'handlers': ['general', 'console'],
             'level': 'DEBUG',
             'propagate': True
         },
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ['django_error', 'console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        'django.server': {
+        'info': {
             'handlers': ['info'],
-            'level': 'INFO',
-            'propagate': True,
+            'level': 'DEBUG',
+            'propagate': True
         },
+        'gunicorn.access' : { 
+                'handlers': ['access'], 
+                'level': 'DEBUG', 
+                'propagate': True
+        }
     },
 }
 
 APP_NAME = "bodzify_api"
 APP_ROOT = os.path.join(BASE_DIR, APP_NAME + '/')
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_ROOT = "/var/lib/bodzify-api/media/"
 MEDIA_TEMP = os.path.join(MEDIA_ROOT, "temp/")
 LIBRARIES_FOLDER_NAME = "libraries"
 LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_FOLDER_NAME + '/')
 USER_LIBRARY_FOLDER_NAME_PREFIXE = "user_"
 TRACK_SIZE_LIMIT_IN_MO = 500
 
-open(LOG_PATH + os.getenv('DJANGO_PROD') + ".txt", "w")
-if os.getenv('DJANGO_DEV') == 'true':
+PAGINATION_LIMIT_OFFSET_DEFAULT = 30
+
+if os.getenv('ENV') == 'DEV':
     from bodzify_api.settings_dev import *
-elif os.getenv('DJANGO_PROD') == 'true':
+elif os.getenv('ENV') == 'PROD':
     from bodzify_api.settings_prod import *

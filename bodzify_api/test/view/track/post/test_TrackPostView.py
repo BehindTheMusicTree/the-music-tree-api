@@ -2,19 +2,19 @@ import pytest
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.library.LibraryTrackViewTestCase import LibraryTrackViewTestCase
+from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 
 
 @pytest.mark.django_db
-class LibraryTrackPostViewTestCase(LibraryTrackViewTestCase):
+class TrackPostViewTestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackLibraryPostData']
+    fixtures = ['initial_data', 'TestUserData']
 
     def setUp(self) -> None:
-        return super().setUp(sampleRelativePath="test/view/track/library/post/sample/")
+        return super().setUp(sampleRelativePath="test/view/track/post/sample/")
 
     def test_libraryTrackPost(self):
         self.login(self.testUser)
@@ -45,7 +45,7 @@ class LibraryTrackPostViewTestCase(LibraryTrackViewTestCase):
         response = self.postSampleTrack("post_1-08 - Luz De Luna.flac")
         assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(title="Luz De Luna", user=self.testUser)
-        assert track.artist == "PNL"
+        assert track.artist.name == "PNL"
         assert track.album == "Dans La Légende"
         assert track.genre.name == "French cloud rap"
         assert track.fileExtension == ".flac"
@@ -56,7 +56,7 @@ class LibraryTrackPostViewTestCase(LibraryTrackViewTestCase):
         response = self.postSampleTrack("post_sample.wav")
         assert response.status_code == 201
         track = LibraryTrack.objects.get(title="La zumba", user=self.testUser)
-        assert track.artist == "Joni"
+        assert track.artist.name == "Joni"
         assert track.album == "BOOM"
         assert track.genre.name == "j\"\"\"\"j"
         assert track.duration == "2.665374149659864"
@@ -73,7 +73,7 @@ class LibraryTrackPostViewTestCase(LibraryTrackViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         track = LibraryTrack.objects.get(title="Without Me", user=self.testUser)
-        assert track.artist == "Eminem"
+        assert track.artist.name == "Eminem"
         assert track.album == "The Eminem Show (Expanded Edition)"
         assert track.genre.name == "Genreless"
         assert track.fileExtension == ".mp3"

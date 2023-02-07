@@ -5,12 +5,12 @@ import shortuuid
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.core.validators import FileExtensionValidator
 from upload_validator import FileTypeValidator
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.Artist import Artist
 from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
 import bodzify_api.settings as settings
 
@@ -27,7 +27,7 @@ class LibraryTrack(models.Model):
     uuid = models.CharField(
         primary_key=True,
         default=shortuuid.uuid,
-        max_length=200,
+        max_length=22,
         editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(
@@ -38,7 +38,7 @@ class LibraryTrack(models.Model):
             FileTypeValidator(allowed_types=[ 'audio/*']),
             trackSize])
     title = models.CharField(max_length=200, default=None, blank=True, null=True)
-    artist = models.CharField(max_length=200, default=None, blank=True, null=True)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, null=True)
     album = models.CharField(max_length=200, default=None, blank=True, null=True)
     genre = models.ForeignKey(
         Criteria,
@@ -61,6 +61,11 @@ class LibraryTrack(models.Model):
     def fileExtension(self) -> str:
         filename, fileExtension = os.path.splitext(self.file.name)
         return fileExtension
+
+
+    @property
+    def fileExists(self) -> bool:
+        return os.path.isfile(self.file.path)
 
 
     @property
