@@ -11,6 +11,7 @@ from upload_validator import FileTypeValidator
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.Album import Album
 from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
 import bodzify_api.settings as settings
 
@@ -39,7 +40,7 @@ class LibraryTrack(models.Model):
                     trackSize])
     title = models.CharField(max_length=200, default=None, blank=True, null=True)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, null=True)
-    album = models.CharField(max_length=200, default=None, blank=True, null=True)
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, null=True)
     genre = models.ForeignKey(
             Criteria,
             on_delete=models.DO_NOTHING,
@@ -51,7 +52,7 @@ class LibraryTrack(models.Model):
     playlists = models.ManyToManyField(Playlist)
     language = models.CharField(max_length=200, default=None, blank=True, null=True)
     addedOn = models.DateTimeField(auto_now_add=True)
-    
+
 
     @property
     def filename(self) -> str:
