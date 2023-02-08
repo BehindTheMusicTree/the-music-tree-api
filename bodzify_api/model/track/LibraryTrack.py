@@ -17,35 +17,36 @@ import bodzify_api.settings as settings
 
 def userDirectoryPath(instance, filename):
     return '{0}{1}/{2}'.format(
-        settings.LIBRARIES_FOLDER_NAME + '/' + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE,
-        instance.user.id, 
-        filename)
+            settings.LIBRARIES_FOLDER_NAME + '/' + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE,
+            instance.user.id, 
+            filename)
 
 
 class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
-        primary_key=True,
-        default=shortuuid.uuid,
-        max_length=22,
-        editable=False)
+            primary_key=True,
+            default=shortuuid.uuid,
+            max_length=22,
+            editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(
-        upload_to=userDirectoryPath, 
-        help_text="Only audio formats accepted", 
-        validators=[
-            FileExtensionValidator(['flac', 'wav', 'mp3']), 
-            FileTypeValidator(allowed_types=[ 'audio/*']),
-            trackSize])
+            upload_to=userDirectoryPath, 
+            help_text="Only audio formats accepted", 
+            validators=[
+                    FileExtensionValidator(['flac', 'wav', 'mp3']), 
+                    FileTypeValidator(allowed_types=[ 'audio/*']),
+                    trackSize])
     title = models.CharField(max_length=200, default=None, blank=True, null=True)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, null=True)
     album = models.CharField(max_length=200, default=None, blank=True, null=True)
     genre = models.ForeignKey(
-        Criteria,
-        on_delete=models.DO_NOTHING,
-        default=None,
-        null=False)
-    duration = models.CharField(max_length=200, default=None, blank=True, null=True)
+            Criteria,
+            on_delete=models.DO_NOTHING,
+            default=None,
+            null=False
+    )
+    duration = models.IntegerField(default=None, blank=False, null=False)
     rating = models.IntegerField(default=None, blank=True, null=True)
     playlists = models.ManyToManyField(Playlist)
     language = models.CharField(max_length=200, default=None, blank=True, null=True)
