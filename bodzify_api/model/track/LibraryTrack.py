@@ -26,10 +26,7 @@ def userDirectoryPath(instance, filename):
 class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
-            primary_key=True,
-            default=shortuuid.uuid,
-            max_length=22,
-            editable=False)
+            primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(
             upload_to=userDirectoryPath, 
@@ -38,20 +35,15 @@ class LibraryTrack(models.Model):
                     FileExtensionValidator(['flac', 'wav', 'mp3']), 
                     FileTypeValidator(allowed_types=[ 'audio/*']),
                     trackSize])
-    title = models.CharField(max_length=200, default=None, blank=True, null=True)
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, null=True)
-    album = models.ForeignKey(Album, on_delete=models.CASCADE, null=True)
-    genre = models.ForeignKey(
-            Criteria,
-            on_delete=models.DO_NOTHING,
-            default=None,
-            null=False
-    )
-    duration = models.IntegerField(default=None, blank=False, null=False)
-    rating = models.IntegerField(default=None, blank=True, null=True)
+    title = models.CharField(max_length=200)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, default=None, null=True)
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, default=None, null=True)
+    genre = models.ForeignKey(Criteria, on_delete=models.DO_NOTHING)
+    duration = models.IntegerField()
+    rating = models.IntegerField(default=0)
     playlists = models.ManyToManyField(Playlist)
-    language = models.CharField(max_length=200, default=None, blank=True, null=True)
-    addedOn = models.DateTimeField(auto_now_add=True)
+    language = models.CharField(max_length=200, default=None, null=True)
+    addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
 
     @property
