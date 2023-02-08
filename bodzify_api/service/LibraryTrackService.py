@@ -3,7 +3,9 @@
 import os
 from pathlib import Path
 
+from django.core.files import File
 from django.http.request import QueryDict
+from django.contrib.auth.models import User
 
 from mutagen._file import File as MutagenFile
 from mutagen.id3 import Frames
@@ -12,66 +14,38 @@ from mutagen.id3 import ID3
 from mutagen.id3 import TIT2
 from mutagen.id3 import POPM
 
-from django.core.files import File
-from django.contrib.auth.models import User
-
 import bodzify_api.view.viewset.track.LibraryTrackViewSet as LibraryTrackViewSet
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
+import bodzify_api.service.PlaylistService as PlaylistService
 import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
-from bodzify_api.model.playlist.PlaylistType import PlaylistType
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
+
+TAG_ARTISTS_SEPARATION_CHAR = ","
 
 # MP3 and Wave (.wav) files use ID3 tags
 ID3_TITLE_TAG = 'TIT2'
 ID3_ARTIST_TAG = 'TPE1'
 ID3_ALBUM_TAG = 'TALB'
+ID3_ALBUM_ARTIST_TAG = 'TPE2'
 ID3_GENRE_TAG = 'TCON'
 ID3_RATING_TAG = 'POPM'
-ID3_GENRE_APP_EMAIL = 'POPM:bodzify'
+ID3_RATING_APP_EMAIL = 'POPM:bodzify'
 ID3_LANGUAGE_TAG = 'TLAN'
 
 # FLAC files use Vorbis tags
 VORBIS_TITLE_TAG = 'title'
 VORBIS_ARTIST_TAG = 'artist'
 VORBIS_ALBUM_TAG = 'album'
+VORBIS_ALBUM_ARTISTS_TAG = 'albumartist'
 VORBIS_GENRE_TAG = 'genre'
 VORBIS_RATING_TAG = 'rating'
 VORBIS_LANGUAGE_TAG = 'language'
-
-
-def UpdatePlaylists(track: LibraryTrack, user: User, oldGenre: Criteria):
-    newGenre = track.genre
-
-    genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypeIds.GENRE)
-
-    commonGenre = CriteriaService.GetCommonCriteria(oldGenre, newGenre)
-
-    newGenreTreeItem = newGenre
-
-    while newGenreTreeItem != commonGenre:
-        track.playlists.add(Playlist.objects.get(
-            user=user,
-            type=genrePlaylistType,
-            criteria=newGenreTreeItem))            
-        newGenreTreeItem = newGenreTreeItem.parent
-
-    oldGenreTreeItem = oldGenre
-
-    while oldGenreTreeItem != commonGenre:
-        track.playlists.remove(Playlist.objects.get(
-            user=user,
-            type=genrePlaylistType,
-            criteria=oldGenreTreeItem))
-        oldGenreTreeItem = oldGenreTreeItem.parent
-        
-    track.save()
 
 
 def Update(track: LibraryTrack, data: QueryDict, partial, RequestSerializerClass, user: User):
@@ -80,12 +54,12 @@ def Update(track: LibraryTrack, data: QueryDict, partial, RequestSerializerClass
     oldGenre = oldTrack.genre
     oldArtist = oldTrack.artist
 
-    if mutableData[LibraryTrackViewSet.GENRE_PARAMETER_NAME] is None:
-        mutableData[LibraryTrackViewSet.GENRE_PARAMETER_NAME] = Criteria.objects.get(
+    if mutableData[LibraryTrackViewSet.FILTER_GENRE_PARAMETER_NAME] is None:
+        mutableData[LibraryTrackViewSet.FILTER_GENRE_PARAMETER_NAME] = Criteria.objects.get(
             user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
-    artistName = mutableData[LibraryTrackViewSet.ARTIST_PARAMETER_NAME]    
-    mutableData[LibraryTrackViewSet.ARTIST_PARAMETER_NAME] = (
+    artistName = mutableData[LibraryTrackViewSet.FILTER_ARTIST_PARAMETER_NAME]    
+    mutableData[LibraryTrackViewSet.FILTER_ARTIST_PARAMETER_NAME] = (
         ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
 
     requestSerializer = RequestSerializerClass(track, data=mutableData, partial=partial)
@@ -93,7 +67,7 @@ def Update(track: LibraryTrack, data: QueryDict, partial, RequestSerializerClass
     updatedTrack = requestSerializer.save()
 
     if oldGenre != updatedTrack.genre:
-        UpdatePlaylists(track=updatedTrack, user=user, oldGenre=oldGenre)
+        PlaylistService.UpdatePlaylistsOfTrack(user=user, track=updatedTrack, oldGenre=oldGenre)
 
     if oldArtist != updatedTrack.artist:
         ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(user=user, artist=oldArtist)
@@ -107,13 +81,26 @@ def UpdateTags(track: LibraryTrack):
 
     titleTag = track.title
     if titleTag is None:
-        titleTag = ""
+        titleTag = ""    
+    
+    if track.artist_id is not None:
+        artistTag = track.artist.name
+    else:
+        artistTag = ""     
+    
+    albumArtistsTag = ""
+    if track.album_id is not None:
+        albumTag = track.album.name
 
-    artistTag = track.artist.name
-    if artistTag is None:
-        artistTag = ""
-
-    albumTag = track.album
+        albumArtistNamesIndex = 0
+        for albumArtist in track.album.albumArtists:
+            if albumArtistNamesIndex != 0:
+                albumArtistsTag = albumArtistsTag + TAG_ARTISTS_SEPARATION_CHAR
+            albumArtistsTag = albumArtistsTag + albumArtist
+            albumArtistNamesIndex = albumArtistNamesIndex + 1
+    else:
+        albumTag = ""        
+        
     if albumTag is None:
         albumTag = ""
 
@@ -131,20 +118,20 @@ def UpdateTags(track: LibraryTrack):
         languageTag = ""
 
     if track.fileExtension.lower() in [".wav", ".mp3"]:
-
         trackId3Tags = ID3(track.file.path)
 
-        trackId3Tags.delall(ID3_RATING_TAG)
         trackId3Tags.delall(ID3_TITLE_TAG)
         trackId3Tags.add(TIT2(encoding=3, text=titleTag))
         trackId3Tags.delall(ID3_ARTIST_TAG)
         trackId3Tags.add(TIT2(encoding=3, text=artistTag))
         trackId3Tags.delall(ID3_ALBUM_TAG)
         trackId3Tags.add(TIT2(encoding=3, text=albumTag))
+        trackId3Tags.delall(ID3_ALBUM_ARTIST_TAG)
+        trackId3Tags.add(TIT2(encoding=3, text=albumArtistsTag))
         trackId3Tags.delall(ID3_GENRE_TAG)
         trackId3Tags.add(TIT2(encoding=3, text=genreTag))
         trackId3Tags.delall(ID3_RATING_TAG)
-        trackId3Tags.add(POPM(email=ID3_GENRE_APP_EMAIL, rating=ratingTag))
+        trackId3Tags.add(POPM(email=ID3_RATING_APP_EMAIL, rating=ratingTag))
         trackId3Tags.delall(ID3_LANGUAGE_TAG)
         trackId3Tags.add(TIT2(encoding=3, text=languageTag))
 
@@ -153,6 +140,7 @@ def UpdateTags(track: LibraryTrack):
         trackFlacTags[VORBIS_TITLE_TAG] = titleTag
         trackFlacTags[VORBIS_ARTIST_TAG] = artistTag
         trackFlacTags[VORBIS_ALBUM_TAG] = albumTag
+        trackFlacTags[VORBIS_ALBUM_ARTISTS_TAG] = albumArtistsTag
         trackFlacTags[VORBIS_GENRE_TAG] = genreTag
         trackFlacTags[VORBIS_RATING_TAG][0] = str(ratingTag)
         trackFlacTags[VORBIS_LANGUAGE_TAG] = languageTag
@@ -181,7 +169,10 @@ def CreateFromUpload(user: User, uploadedFile):
         
         title = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_TITLE_TAG)
         artistName = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ARTIST_TAG)
-        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG)
+        albumName = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG)
+        albumArtistsNamesString = (
+            GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG))
+        albumArtistsNames = albumArtistsNamesString.split(TAG_ARTISTS_SEPARATION_CHAR)
 
         if ID3_GENRE_TAG in trackId3Tags:
             genreName = trackId3Tags[ID3_GENRE_TAG][0]
@@ -201,8 +192,9 @@ def CreateFromUpload(user: User, uploadedFile):
         trackFlacTags = FLAC(fileobj=uploadedFile)
         
         title = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_TITLE_TAG)
-        artistName = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ARTIST_TAG)
-        album = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ALBUM_TAG)
+        artistName = (
+                GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ARTIST_TAG))
+        albumName = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ALBUM_TAG)
 
         if VORBIS_GENRE_TAG in trackFlacTags:
             genreName = trackFlacTags[VORBIS_GENRE_TAG][0]
@@ -219,6 +211,9 @@ def CreateFromUpload(user: User, uploadedFile):
     genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
         user=user, criteriaName=genreName)
 
+    album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
+        user=user, artistName=artistName)
+
     artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
         user=user, artistName=artistName)
 
@@ -227,7 +222,7 @@ def CreateFromUpload(user: User, uploadedFile):
         file=uploadedFile,
         title=title,
         artist=artist,
-        album=album,
+        album=albumName,
         genre=genre,
         duration=duration,
         rating=rating,
@@ -269,13 +264,13 @@ def CreateFromMineTrack(user: User, mineTrack: MineTrack, trackTempFileAbsoluteP
     
 
     libraryTrack.playlists.add(
-        Playlist.objects.get(
-            user=user, 
-            name=PlaylistSpecialNames.GENRE_ALL))
+            Playlist.objects.get(
+                user=user, 
+                name=PlaylistSpecialNames.GENRE_ALL))
     libraryTrack.playlists.add(
-        Playlist.objects.get(
-            user=user, 
-            name=PlaylistSpecialNames.GENRE_GENRELESS))
+            Playlist.objects.get(
+                user=user, 
+                name=PlaylistSpecialNames.GENRE_GENRELESS))
     libraryTrack.save()
 
     UpdateTags(libraryTrack)
