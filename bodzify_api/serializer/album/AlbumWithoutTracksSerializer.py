@@ -8,7 +8,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 
 
-class AlbumSerializer(serializers.ModelSerializer):
+class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
     albumArtists = ArtistWithOnlyNameSerializer(many=True)
     trackCount = serializers.IntegerField(source='librarytrack_set.count')
     duration = serializers.SerializerMethodField()
