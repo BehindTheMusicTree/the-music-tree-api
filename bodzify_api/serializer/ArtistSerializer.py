@@ -6,7 +6,8 @@ from bodzify_api.model.Artist import Artist
 
 
 class ArtistSerializer(serializers.ModelSerializer):
+    trackCount = serializers.IntegerField(source='librarytrack_set.count')
 
     class Meta:
         model = Artist
-        fields = ['uuid', 'name']
+        fields = ['uuid', 'name', 'trackCount']
