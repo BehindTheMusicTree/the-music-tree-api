@@ -9,11 +9,9 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from bodzify_api.serializer.track.LibraryTrackDetailedSerializer import (
-    LibraryTrackDetailedSerializer
-)
+    LibraryTrackDetailedSerializer)
 from bodzify_api.serializer.track.LibraryTrackUpdateRequestSerializer import (
-    LibraryTrackUpdateRequestSerializer
-)
+    LibraryTrackUpdateRequestSerializer)
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.form.UploadTrackForm import UploadTrackForm
@@ -63,7 +61,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
             track=self.get_object(),
             data=request.data,
             partial=kwargs.pop('partial', False),
-            RequestSerializerClass=LibraryTrackSerializer,
+            RequestSerializerClass=LibraryTrackDetailedSerializer,
             user=request.user
         )
 

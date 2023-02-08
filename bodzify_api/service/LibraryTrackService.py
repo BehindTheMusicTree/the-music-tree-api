@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 import bodzify_api.view.viewset.track.LibraryTrackViewSet as LibraryTrackViewSet
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
+import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -26,8 +27,6 @@ from bodzify_api.model.playlist.PlaylistType import PlaylistType
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
-from bodzify_api.model.criteria.CriteriaType import CriteriaType
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesIds
 
 # MP3 and Wave (.wav) files use ID3 tags
 ID3_TITLE_TAG = 'TIT2'
@@ -97,7 +96,7 @@ def Update(track: LibraryTrack, data: QueryDict, partial, RequestSerializerClass
         UpdatePlaylists(track=updatedTrack, user=user, oldGenre=oldGenre)
 
     if oldArtist != updatedTrack.artist:
-        ArtistService.DeleteArtistIfNoTrackLinked(user=user, artist=oldArtist)
+        ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(user=user, artist=oldArtist)
 
     UpdateTags(updatedTrack)
 
@@ -257,7 +256,7 @@ def CreateFromMineTrack(user: User, mineTrack: MineTrack, trackTempFileAbsoluteP
         user=user, 
         title=mineTrack.title, 
         artist=artist, 
-        album="",
+        album=None,
         genre=Criteria.objects.get(user=user, name=CriteriaSpecialNames.GENRE_GENRELESS),
         duration=mineTrack.duration,
         rating=0,

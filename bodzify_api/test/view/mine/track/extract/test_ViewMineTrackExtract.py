@@ -38,7 +38,7 @@ class MineTrackExtractViewTestCase(ViewTestCase):
 
         track = LibraryTrack.objects.get(title="du rap")
         assert track.artist.name == "Jul"
-        assert track.album == ""
+        assert track.album == None
         assert track.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
         assert track.rating == 0
         assert track.file.name == self.testUserLibraryRelativePath + "Jul_-_du_rap.mp3"
@@ -62,7 +62,7 @@ class MineTrackExtractViewTestCase(ViewTestCase):
 
         track = LibraryTrack.objects.get(title="Summer Moved On")
         assert track.artist.name == "a-ha"
-        assert track.album == ""
+        assert track.album == None
         assert track.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
         assert track.rating == 0
         assert track.file.name == self.testUserLibraryRelativePath + "a-ha_-_Summer_Moved_On.mp3"
