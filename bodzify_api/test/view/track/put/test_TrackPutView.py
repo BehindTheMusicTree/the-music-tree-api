@@ -33,7 +33,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
 
         track = LibraryTrack.objects.get(title="Somewhere I Belong")
         assert track.artist.name == "Linkin Park"
-        assert track.album == "Meteora"
+        assert track.album.name == "Meteora"
         assert track.genre.name == "Nu metal"
         assert track.rating == 200
         assert track.language == "English"
@@ -54,7 +54,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
                 
         track = LibraryTrack.objects.get(title="Give Me Novocain")
         assert track.artist.name == "Green Day"
-        assert track.album == "American Idiot"
+        assert track.album.name == "American Idiot"
         assert track.genre.name == "Rock"
         assert track.rating == 0
         assert track.language == "English, German"
@@ -75,9 +75,8 @@ class TrackPutViewTestCase(TrackViewTestCase):
                 
         track = LibraryTrack.objects.get(title="Bohemian Raphsody")
         assert track.artist.name == "Queen"
-        assert track.album == "A Night A the Opera"
+        assert track.album.name == "A Night A the Opera"
         assert track.genre.name == "Nu metal"
         assert track.rating == 2
         assert track.language == "French"
-
         assert Artist.objects.filter(name="Joni").count() == 0
