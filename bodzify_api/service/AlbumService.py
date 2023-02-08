@@ -12,22 +12,19 @@ def DeleteAlbumIfNoTrackLinked(user: User, album: Album):
         album.delete()
 
 
-def GetAlbumFromNameAndAlbumArtistsNameAfterHavingEventuallyCreatedThem(
-        user: User, albumName: str, albumArtistNames: list) -> Album:
+def GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
+        user: User, albumName: str, albumArtistsNames: list) -> Album:
     if albumName is None:
         return None
     else:
         albumArtists = []
         artistIndex = 0
-        for artistName in albumArtistNames:
+        for artistName in albumArtistsNames:
             albumArtists[artistIndex] = (
                     ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(artistName))
         try:
             album = Album.objects.get(user=user, name=albumName, albumArtists=albumArtists)
         except Album.DoesNotExist:
-            album = None
-
-        if album is not None:
-            return album
-        else:
-            return Album.objects.create(user=user, name=albumName, albumArtists=albumArtists)
+            album = Album.objects.create(user=user, name=albumName, albumArtists=albumArtists)
+        
+        return album
