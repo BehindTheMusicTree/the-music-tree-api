@@ -56,11 +56,11 @@ def Update(track: LibraryTrack, data: QueryDict, partial, RequestSerializerClass
 
     if mutableData[LibraryTrackViewSet.FILTER_GENRE_PARAMETER_NAME] is None:
         mutableData[LibraryTrackViewSet.FILTER_GENRE_PARAMETER_NAME] = Criteria.objects.get(
-            user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
+                user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
     artistName = mutableData[LibraryTrackViewSet.FILTER_ARTIST_PARAMETER_NAME]    
     mutableData[LibraryTrackViewSet.FILTER_ARTIST_PARAMETER_NAME] = (
-        ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
+            ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
 
     requestSerializer = RequestSerializerClass(track, data=mutableData, partial=partial)
     requestSerializer.is_valid(raise_exception=True)

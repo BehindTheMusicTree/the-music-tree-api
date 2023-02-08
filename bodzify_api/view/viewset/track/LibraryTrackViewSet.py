@@ -87,10 +87,10 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         form = UploadTrackForm(request.POST, request.FILES)
         if form.is_valid():
             track = LibraryTrackService.CreateFromUpload(
-                request.user, request.FILES[FILE_PARAMETER_NAME])
+                    request.user, request.FILES[FILE_PARAMETER_NAME])
             return JsonResponse(
-                data=LibraryTrackDetailedSerializer(track).data,
-                status=status.HTTP_201_CREATED)
+                    data=LibraryTrackDetailedSerializer(track).data,
+                    status=status.HTTP_201_CREATED)
         return utility.GetJsonResponseWhenBadRequest(form.errors)
 
 
