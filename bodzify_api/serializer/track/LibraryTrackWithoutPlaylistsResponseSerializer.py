@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.LibraryTrackResponseSerializer import (
-    LibraryTrackResponseSerializer)
+from bodzify_api.serializer.track.LibraryTrackDetailedSerializer import (
+    LibraryTrackDetailedSerializer)
 
-class LibraryTrackWithoutPlaylistsResponseSerializer(LibraryTrackResponseSerializer):
+class LibraryTrackWithoutPlaylistsResponseSerializer(LibraryTrackDetailedSerializer):
 
     class Meta:
         model = LibraryTrack

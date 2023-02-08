@@ -4,16 +4,16 @@ from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewS
 
 
 from bodzify_api.model.Artist import Artist
-from bodzify_api.serializer.ArtistSerializer import ArtistSerializer
+from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
 
 class ArtistViewSet(MultiSerializerViewSet):
 
     queryset = Artist.objects.all()
     serializers = {
-        'default': ArtistSerializer,
-        'list':  ArtistSerializer,
-        'retrieve':  ArtistSerializer,
-        'update':  ArtistSerializer,
+        'default': ArtistDetailedSerializer,
+        'list':  ArtistDetailedSerializer,
+        'retrieve':  ArtistDetailedSerializer,
+        'update':  ArtistDetailedSerializer,
     }
 
     def get_queryset(self):

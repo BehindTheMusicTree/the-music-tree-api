@@ -19,4 +19,4 @@ class Album(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, default=None, blank=True, null=True)
     year = models.CharField(max_length=4, default=None, blank=True, null=True)
-    albumArtists = models.ManyToManyField(Artist, default=None, null=True)
+    albumArtists = models.ManyToManyField(Artist, default=None)

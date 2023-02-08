@@ -8,9 +8,8 @@ from rest_framework import status
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from bodzify_api.serializer.track.LibraryTrackSerializer import LibraryTrackSerializer
-from bodzify_api.serializer.track.LibraryTrackResponseSerializer import (
-    LibraryTrackResponseSerializer
+from bodzify_api.serializer.track.LibraryTrackDetailedSerializer import (
+    LibraryTrackDetailedSerializer
 )
 from bodzify_api.serializer.track.LibraryTrackUpdateRequestSerializer import (
     LibraryTrackUpdateRequestSerializer
@@ -32,9 +31,9 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     queryset = LibraryTrack.objects.all()
     serializers = {
-        'default': LibraryTrackSerializer,
-        'list':  LibraryTrackResponseSerializer,
-        'retrieve':  LibraryTrackResponseSerializer,
+        'default': LibraryTrackDetailedSerializer,
+        'list':  LibraryTrackDetailedSerializer,
+        'retrieve':  LibraryTrackDetailedSerializer,
         'update':  LibraryTrackUpdateRequestSerializer,
     }
 
@@ -57,7 +56,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     @extend_schema(
         request=LibraryTrackUpdateRequestSerializer,
-        responses=LibraryTrackResponseSerializer
+        responses=LibraryTrackDetailedSerializer
     )
     def update(self, request, *args, **kwargs):
         updatedTrack = LibraryTrackService.Update(
@@ -68,7 +67,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
             user=request.user
         )
 
-        responseSerializer = LibraryTrackResponseSerializer(updatedTrack)
+        responseSerializer = LibraryTrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
 
         return JsonResponse(
@@ -92,7 +91,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
             track = LibraryTrackService.CreateFromUpload(
                 request.user, request.FILES[FILE_PARAMETER_NAME])
             return JsonResponse(
-                data=LibraryTrackResponseSerializer(track).data,
+                data=LibraryTrackDetailedSerializer(track).data,
                 status=status.HTTP_201_CREATED)
         return utility.GetJsonResponseWhenBadRequest(form.errors)
 

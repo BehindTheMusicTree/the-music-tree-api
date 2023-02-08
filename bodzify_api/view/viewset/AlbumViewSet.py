@@ -4,16 +4,15 @@ from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewS
 
 
 from bodzify_api.model.Album import Album
-from bodzify_api.serializer.AlbumSerializer import AlbumSerializer
+from bodzify_api.serializer.album.AlbumDetailedSerializer import AlbumDetailedSerializer
 
 class AlbumViewSet(MultiSerializerViewSet):
 
     queryset = Album.objects.all()
     serializers = {
-        'default': AlbumSerializer,
-        'list':  AlbumSerializer,
-        'retrieve':  AlbumSerializer,
-        'update':  AlbumSerializer,
+        'default': AlbumDetailedSerializer,
+        'list':  AlbumDetailedSerializer,
+        'retrieve':  AlbumDetailedSerializer,
     }
 
     def get_queryset(self):
