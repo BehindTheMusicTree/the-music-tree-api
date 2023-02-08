@@ -57,6 +57,23 @@
     },
 
     {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88888888",
+        "fields": {
+            "user": 4,
+            "name": "Dans La Légende"
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88877765",
+        "fields": {
+            "user": 4,
+            "name": "BOOM"
+        }
+    },
+
+    {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
@@ -64,7 +81,7 @@
            "file": "libraries/user_4/put_1-03 - We're All To Blame", 
            "title": "1-03 - We're All To Blame", 
            "artist": "Lsji85mqisjdjf88589HFY", 
-           "album": "All Killer No Filler", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
            "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": "207.09333333333333", 
            "rating": 128, 
@@ -84,7 +101,7 @@
            "file": "libraries/user_4/put_1-08_-_Luz_De_Luna.flac", 
            "title": "Luz De Luna", 
            "artist": "Lsji85mqisjdjf885DJD67", 
-           "album": "Dans La Légende", 
+           "album": "Lsji85mqisjdjf88888888", 
            "genre": "LsjdqoqzpsdojEjGHGH", 
            "duration": "205.09333333333333", 
            "rating": 78, 
@@ -104,9 +121,9 @@
             "file": "libraries/user_4/put_sample.wav",
             "title": "La zumba",
             "artist": "Lsji85mqisjdjf885DHD55",
-            "album": "BOOM",
+            "album": "Lsji85mqisjdjf88877765",
             "genre": "L1ZG85munGytJb885fgion",
-            "duration": "2.665374149659864",
+            "duration": 234,
             "rating": 8,
             "language": "French",
             "addedOn": "2022-12-15T13:29:04.708Z",
