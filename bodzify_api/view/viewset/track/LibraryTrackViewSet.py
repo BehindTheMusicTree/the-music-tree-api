@@ -9,19 +9,19 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from bodzify_api.serializer.track.LibraryTrackDetailedSerializer import (
-    LibraryTrackDetailedSerializer)
+        LibraryTrackDetailedSerializer)
 from bodzify_api.serializer.track.LibraryTrackUpdateRequestSerializer import (
-    LibraryTrackUpdateRequestSerializer)
+        LibraryTrackUpdateRequestSerializer)
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.form.UploadTrackForm import UploadTrackForm
 import bodzify_api.service.LibraryTrackService as LibraryTrackService
 import bodzify_api.view.utility as utility
 
-TITLE_PARAMETER_NAME = "title"
-ARTIST_PARAMETER_NAME = "artist"
-ALBUM_PARAMETER_NAME = "album"
-GENRE_PARAMETER_NAME = "genre"
+FILTER_TITLE_PARAMETER_NAME = "title"
+FILTER_ARTIST_PARAMETER_NAME = "artist"
+FILTER_ALBUM_PARAMETER_NAME = "album"
+FILTER_GENRE_PARAMETER_NAME = "genre"
 FILE_PARAMETER_NAME = "file"
 
 
@@ -37,10 +37,10 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        title = self.request.query_params.get(TITLE_PARAMETER_NAME)
-        artist = self.request.query_params.get(ARTIST_PARAMETER_NAME)
-        album = self.request.query_params.get(ALBUM_PARAMETER_NAME)
-        genre = self.request.query_params.get(GENRE_PARAMETER_NAME)
+        title = self.request.query_params.get(FILTER_TITLE_PARAMETER_NAME)
+        artist = self.request.query_params.get(FILTER_ARTIST_PARAMETER_NAME)
+        album = self.request.query_params.get(FILTER_ALBUM_PARAMETER_NAME)
+        genre = self.request.query_params.get(FILTER_GENRE_PARAMETER_NAME)
         if title is not None:
             queryset = queryset.filter(title__icontains=title)
         if artist is not None:
@@ -96,22 +96,22 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     @extend_schema(
         parameters=[
-          OpenApiParameter(
-            name=TITLE_PARAMETER_NAME, 
-            type=OpenApiTypes.STR, 
-            location=OpenApiParameter.QUERY),
-          OpenApiParameter(
-            name=ARTIST_PARAMETER_NAME, 
-            type=OpenApiTypes.STR, 
-            location=OpenApiParameter.QUERY),
-          OpenApiParameter(
-            name=ALBUM_PARAMETER_NAME, 
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY),
-          OpenApiParameter(
-            name=GENRE_PARAMETER_NAME, 
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY)
+            OpenApiParameter(
+                    name=FILTER_TITLE_PARAMETER_NAME, 
+                    type=OpenApiTypes.STR, 
+                    location=OpenApiParameter.QUERY),
+            OpenApiParameter(
+                    name=FILTER_ARTIST_PARAMETER_NAME, 
+                    type=OpenApiTypes.STR, 
+                    location=OpenApiParameter.QUERY),
+            OpenApiParameter(
+                    name=FILTER_ALBUM_PARAMETER_NAME, 
+                    type=OpenApiTypes.STR,
+                    location=OpenApiParameter.QUERY),
+            OpenApiParameter(
+                    name=FILTER_GENRE_PARAMETER_NAME, 
+                    type=OpenApiTypes.STR,
+                    location=OpenApiParameter.QUERY)
         ]
     )
     def list(self, request, *args, **kwargs):
