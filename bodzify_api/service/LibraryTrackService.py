@@ -48,21 +48,26 @@ VORBIS_RATING_TAG = 'rating'
 VORBIS_LANGUAGE_TAG = 'language'
 
 
-def Update(track: LibraryTrack, data: QueryDict, partial, RequestSerializerClass, user: User):
-    mutableData = data.copy()
-    oldTrack = LibraryTrack.objects.get(uuid=track.uuid)
+def Update(oldTrack: LibraryTrack, newData: QueryDict, partial, TrackPutSerializerClass, user: User):
+    mutableData = newData.copy()
+    oldTrack = LibraryTrack.objects.get(uuid=oldTrack.uuid)
     oldGenre = oldTrack.genre
     oldArtist = oldTrack.artist
+    oldAlbum = oldTrack.album
 
-    if mutableData[LibraryTrackViewSet.FILTER_GENRE_PARAMETER_NAME] is None:
-        mutableData[LibraryTrackViewSet.FILTER_GENRE_PARAMETER_NAME] = Criteria.objects.get(
+    if mutableData[LibraryTrackViewSet.DATA_GENRE_PARAMETER_NAME] is None:
+        mutableData[LibraryTrackViewSet.DATA_GENRE_PARAMETER_NAME] = Criteria.objects.get(
                 user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
-    artistName = mutableData[LibraryTrackViewSet.FILTER_ARTIST_PARAMETER_NAME]    
-    mutableData[LibraryTrackViewSet.FILTER_ARTIST_PARAMETER_NAME] = (
+    artistName = mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]    
+    mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME] = (
             ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
 
-    requestSerializer = RequestSerializerClass(track, data=mutableData, partial=partial)
+    albumName = mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]    
+    mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME] = (
+            ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
+
+    requestSerializer = TrackPutSerializerClass(oldTrack, data=mutableData, partial=partial)
     requestSerializer.is_valid(raise_exception=True)
     updatedTrack = requestSerializer.save()
 
