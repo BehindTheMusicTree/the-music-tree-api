@@ -73,7 +73,7 @@ class TrackPostViewTestCase(TrackViewTestCase):
         assert track.album.albumArtists.filter(name="Jacky").exists()
         assert track.album.albumArtists.filter(name="Michelle").exists()
         assert track.genre.name == "j\"\"\"\"j"
-        assert track.duration == "2.665374149659864"
+        assert track.duration == 2.665374149659864
         assert track.rating == 8
         assert track.language == "French"
         assert track.fileExtension == ".wav"
