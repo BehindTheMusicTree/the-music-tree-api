@@ -63,9 +63,12 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, partial, TrackPutSerializ
     mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME] = (
             ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
 
-    albumName = mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]    
-    mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME] = (
-            ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
+    albumName = mutableData[LibraryTrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME]  
+    albumArtistsNamesString = mutableData[LibraryTrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME]  
+    albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
+    mutableData[LibraryTrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME] = (
+            AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
+                    user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)).uuid
 
     requestSerializer = TrackPutSerializerClass(oldTrack, data=mutableData, partial=partial)
     requestSerializer.is_valid(raise_exception=True)
@@ -76,6 +79,9 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, partial, TrackPutSerializ
 
     if oldArtist != updatedTrack.artist:
         ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(user=user, artist=oldArtist)
+
+    if oldAlbum != updatedTrack.album:
+        AlbumService.DeleteAlbumIfNoTrackLinked(user=user, album=oldAlbum)
 
     UpdateTags(updatedTrack)
 
@@ -217,17 +223,11 @@ def CreateFromUpload(user: User, uploadedFile):
 
     genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
             user=user, criteriaName=genreName)
-
-
-    albumArtistsNamesWithEventualSpacesAround = (
-            albumArtistsNamesString.split(TAG_ARTISTS_SEPARATION_CHAR))
-    albumArtistsNames = [it.strip() for it in  albumArtistsNamesWithEventualSpacesAround]
+    albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
     album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
-            user=user, albumName=albumName, albumArtistsNames=albumArtistsNames)
-    
+            user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)
     artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
             user=user, artistName=artistName)
-
     track = LibraryTrack.objects.create(
             user=user,
             file=uploadedFile,
@@ -238,10 +238,14 @@ def CreateFromUpload(user: User, uploadedFile):
             duration=duration,
             rating=rating,
             language=language)
-
     AddTrackToGenrePlaylists(user, track)
-
     return track
+
+
+def GetArtistsNamesListFromString(artistsNamesString: str) -> list:
+    albumArtistsNamesWithEventualSpacesAround = (
+            artistsNamesString.split(TAG_ARTISTS_SEPARATION_CHAR))
+    return [it.strip() for it in  albumArtistsNamesWithEventualSpacesAround]
 
 
 def AddTrackToGenrePlaylists(user: User, track: LibraryTrack):
