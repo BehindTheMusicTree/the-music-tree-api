@@ -3,14 +3,14 @@
 from django.db.models import Sum
 from rest_framework import serializers
 
-from bodzify_api.serializer.album.AlbumWithNameAndMetaSerializer import (
-    AlbumWithNameAndMetaSerializer)
+from bodzify_api.serializer.album.AlbumWithoutTracksAndArtistsSerializer import (
+    AlbumWithoutTracksAndArtistsSerializer)
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 class ArtistDetailedSerializer(serializers.ModelSerializer):
-    albums = AlbumWithNameAndMetaSerializer(many=True)
+    albums = AlbumWithoutTracksAndArtistsSerializer(many=True)
     trackCount = serializers.IntegerField(source='librarytrack_set.count')
     duration = serializers.SerializerMethodField()
   
