@@ -171,8 +171,7 @@ def CreateFromUpload(user: User, uploadedFile):
         artistName = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ARTIST_TAG)
         albumName = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG)
         albumArtistsNamesString = (
-            GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG))
-        albumArtistsNames = albumArtistsNamesString.split(TAG_ARTISTS_SEPARATION_CHAR)
+                GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG))
 
         if ID3_GENRE_TAG in trackId3Tags:
             genreName = trackId3Tags[ID3_GENRE_TAG][0]
@@ -195,6 +194,9 @@ def CreateFromUpload(user: User, uploadedFile):
         artistName = (
                 GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ARTIST_TAG))
         albumName = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ALBUM_TAG)
+        albumArtistsNamesString = (
+                GetValuesFirstElementIfExistInDicOrEmptyString(
+                        trackId3Tags, VORBIS_ALBUM_ARTISTS_TAG))
 
         if VORBIS_GENRE_TAG in trackFlacTags:
             genreName = trackFlacTags[VORBIS_GENRE_TAG][0]
@@ -206,28 +208,29 @@ def CreateFromUpload(user: User, uploadedFile):
         if rating == "":
             rating = "0"
         language = GetValuesFirstElementIfExistInDicOrEmptyString(
-            trackFlacTags, VORBIS_LANGUAGE_TAG)
+                trackFlacTags, VORBIS_LANGUAGE_TAG)
 
     genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
-        user=user, criteriaName=genreName)
+            user=user, criteriaName=genreName)
 
+
+    albumArtistsNames = albumArtistsNamesString.split(TAG_ARTISTS_SEPARATION_CHAR)
     album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
-        user=user, artistName=artistName)
-
+            user=user, albumName=albumName, albumArtistsNames=albumArtistsNames)
+    
     artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
-        user=user, artistName=artistName)
+            user=user, artistName=artistName)
 
     track = LibraryTrack.objects.create(
-        user=user,
-        file=uploadedFile,
-        title=title,
-        artist=artist,
-        album=albumName,
-        genre=genre,
-        duration=duration,
-        rating=rating,
-        language=language
-    )
+            user=user,
+            file=uploadedFile,
+            title=title,
+            artist=artist,
+            album=album,
+            genre=genre,
+            duration=duration,
+            rating=rating,
+            language=language)
 
     AddTrackToGenrePlaylists(user, track)
 
