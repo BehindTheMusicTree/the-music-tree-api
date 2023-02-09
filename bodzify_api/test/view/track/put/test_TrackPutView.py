@@ -21,8 +21,8 @@ class TrackPutViewTestCase(TrackViewTestCase):
         # Existing artist
         data = {
             "title": "Somewhere I Belong",
-            "artist": "Linkin Park",
-            "album": "Meteora",
+            "artistName": "Linkin Park",
+            "albumName": "Meteora",
             "genre": "Lsjdqoiqsicqjsof8800",
             "rating": 200,
             "language": "English"
