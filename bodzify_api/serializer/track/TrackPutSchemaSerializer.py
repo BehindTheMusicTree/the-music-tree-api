@@ -11,9 +11,5 @@ class TrackPutSchemaSerializer(serializers.Serializer):
     albumArtistsNames = serializers.CharField(max_length=100)
     genre = serializers.CharField(max_length=100)
     rating = serializers.IntegerField(
-            default=0,
-            validators=[
-                MinValueValidator(0),
-                MaxValueValidator(255)
-            ])
+            default=0, validators=[MinValueValidator(0), MaxValueValidator(255)])
     language = serializers.CharField(max_length=100)
