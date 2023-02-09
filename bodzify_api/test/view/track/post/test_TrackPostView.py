@@ -55,8 +55,8 @@ class TrackPostViewTestCase(TrackViewTestCase):
         track = LibraryTrack.objects.get(title="Luz De Luna", user=self.testUser)
         assert track.artist.name == "PNL"
         assert track.album.name == "Dans La Légende"
-        assert track.album.albumArtists[0].name == "PNL"
-        assert track.album.albumArtists[1].name == "Triste"
+        assert track.album.albumArtists.filter(name="PNL").exists()
+        assert track.album.albumArtists.filter(name="Triste").exists()
         assert track.genre.name == "French cloud rap"
         assert track.fileExtension == ".flac"
         assert track.playlists.filter(name=PlaylistSpecialNames.GENRE_ALL).exists()
@@ -70,8 +70,8 @@ class TrackPostViewTestCase(TrackViewTestCase):
         track = LibraryTrack.objects.get(title="La zumba", user=self.testUser)
         assert track.artist.name == "Joni"
         assert track.album.name == "BOOM"
-        assert track.album.albumArtists[0].name == "Jacky"
-        assert track.album.albumArtists[1].name == "Michelle"
+        assert track.album.albumArtists.filter(name="Jacky").exists()
+        assert track.album.albumArtists.filter(name="Michelle").exists()
         assert track.genre.name == "j\"\"\"\"j"
         assert track.duration == "2.665374149659864"
         assert track.rating == 8
@@ -96,5 +96,5 @@ class TrackPostViewTestCase(TrackViewTestCase):
         assert track.fileExtension == ".mp3"
         assert track.playlists.filter(name=PlaylistSpecialNames.GENRE_GENRELESS).exists()
         assert track.playlists.filter(name=PlaylistSpecialNames.GENRE_ALL).exists()
-        assert track.album.albumArtists[0].name == "Eminem"
-        assert track.album.albumArtists[1].name == "Dad"
+        assert track.album.albumArtists.filter(name="Eminem").exists()
+        assert track.album.albumArtists.filter(name="Dad").exists()
