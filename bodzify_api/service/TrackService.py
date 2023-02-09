@@ -49,10 +49,7 @@ VORBIS_RATING_TAG = 'rating'
 VORBIS_LANGUAGE_TAG = 'language'
 
 
-def Update(oldTrack: LibraryTrack, 
-           newData: QueryDict, 
-           partial, 
-           user: User):
+def Update(oldTrack: LibraryTrack, newData: QueryDict, user: User):
     mutableData = newData.copy()
     oldTrack = LibraryTrack.objects.get(uuid=oldTrack.uuid)
     oldGenre = oldTrack.genre
