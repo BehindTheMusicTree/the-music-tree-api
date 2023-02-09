@@ -8,10 +8,10 @@ from rest_framework import status
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from bodzify_api.serializer.track.LibraryTrackDetailedSerializer import (
-        LibraryTrackDetailedSerializer)
-from bodzify_api.serializer.track.LibraryTrackUpdateRequestSerializer import (
-        LibraryTrackUpdateRequestSerializer)
+from bodzify_api.serializer.track.TrackDetailedSerializer import (
+        TrackDetailedSerializer)
+from bodzify_api.serializer.track.TrackUpdateSerializer import (
+        TrackUpdateSerializer)
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.form.UploadTrackForm import UploadTrackForm
@@ -29,10 +29,10 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     queryset = LibraryTrack.objects.all()
     serializers = {
-        'default': LibraryTrackDetailedSerializer,
-        'list':  LibraryTrackDetailedSerializer,
-        'retrieve':  LibraryTrackDetailedSerializer,
-        'update':  LibraryTrackUpdateRequestSerializer,
+        'default': TrackDetailedSerializer,
+        'list':  TrackDetailedSerializer,
+        'retrieve':  TrackDetailedSerializer,
+        'update':  TrackUpdateSerializer,
     }
 
     def get_queryset(self):
@@ -53,19 +53,19 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
-        request=LibraryTrackUpdateRequestSerializer,
-        responses=LibraryTrackDetailedSerializer
+        request=TrackUpdateSerializer,
+        responses=TrackDetailedSerializer
     )
     def update(self, request, *args, **kwargs):
         updatedTrack = LibraryTrackService.Update(
             track=self.get_object(),
             data=request.data,
             partial=kwargs.pop('partial', False),
-            RequestSerializerClass=LibraryTrackDetailedSerializer,
+            RequestSerializerClass=TrackDetailedSerializer,
             user=request.user
         )
 
-        responseSerializer = LibraryTrackDetailedSerializer(updatedTrack)
+        responseSerializer = TrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
 
         return JsonResponse(
@@ -89,7 +89,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
             track = LibraryTrackService.CreateFromUpload(
                     request.user, request.FILES[FILE_PARAMETER_NAME])
             return JsonResponse(
-                    data=LibraryTrackDetailedSerializer(track).data,
+                    data=TrackDetailedSerializer(track).data,
                     status=status.HTTP_201_CREATED)
         return utility.GetJsonResponseWhenBadRequest(form.errors)
 

@@ -12,8 +12,8 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import (
     PlaylistWithoutTracksSerializer)
-from bodzify_api.serializer.track.LibraryTrackDetailedSerializer import (
-    LibraryTrackDetailedSerializer)
+from bodzify_api.serializer.track.TrackDetailedSerializer import (
+    TrackDetailedSerializer)
 
 QUERY_PARAMETER_NAME = "query"
 QUERY_TITLE_FILTER_NAME = "title"
@@ -61,7 +61,7 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
         querylist = (
             {
                 'queryset': LibraryTrack.objects.all(),
-                'serializer_class': LibraryTrackDetailedSerializer,
+                'serializer_class': TrackDetailedSerializer,
                 'filter_fn': libraryTrackFilter
             },
             {

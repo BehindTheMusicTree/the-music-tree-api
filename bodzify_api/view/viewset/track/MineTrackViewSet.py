@@ -7,8 +7,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from django.http import JsonResponse
 
-from bodzify_api.serializer.track.LibraryTrackDetailedSerializer import (
-    LibraryTrackDetailedSerializer
+from bodzify_api.serializer.track.TrackDetailedSerializer import (
+    TrackDetailedSerializer
 )
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
@@ -66,7 +66,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
             mineTrackUrl=request.data[TRACK_URL]
         )
 
-        responseSerializer = LibraryTrackDetailedSerializer(libraryTrack)
+        responseSerializer = TrackDetailedSerializer(libraryTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
             data=responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)

@@ -5,13 +5,13 @@ from rest_framework import serializers
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.LibraryTrackDetailedSerializer import (
-        LibraryTrackDetailedSerializer)
+from bodzify_api.serializer.track.TrackWithoutAlbumAndPlaylistSerializer import (
+        TrackWithoutAlbumAndPlaylistSerializer)
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 
 
 class AlbumDetailedSerializer(serializers.ModelSerializer):
-    libraryTracks = LibraryTrackDetailedSerializer(
+    libraryTracks = TrackWithoutAlbumAndPlaylistSerializer(
             source='librarytrack_set', read_only=True, many=True)
     albumArtists = ArtistWithOnlyNameSerializer(many=True)
     trackCount = serializers.IntegerField(source='librarytrack_set.count')
