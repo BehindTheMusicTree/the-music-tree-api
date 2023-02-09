@@ -14,7 +14,7 @@ from mutagen.id3 import ID3
 from mutagen.id3 import TIT2
 from mutagen.id3 import POPM
 
-import bodzify_api.view.viewset.track.LibraryTrackViewSet as LibraryTrackViewSet
+import bodzify_api.view.viewset.track.TrackViewSet as TrackViewSet
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
 import bodzify_api.service.PlaylistService as PlaylistService
@@ -48,34 +48,40 @@ VORBIS_RATING_TAG = 'rating'
 VORBIS_LANGUAGE_TAG = 'language'
 
 
-def Update(oldTrack: LibraryTrack, newData: QueryDict, partial, TrackPutSerializerClass, user: User):
+def Update(oldTrack: LibraryTrack, 
+           newData: QueryDict, 
+           partial, 
+           TrackPutSerializerClass, 
+           user: User):
     mutableData = newData.copy()
     oldTrack = LibraryTrack.objects.get(uuid=oldTrack.uuid)
     oldGenre = oldTrack.genre
     oldArtist = oldTrack.artist
     oldAlbum = oldTrack.album
 
-    if mutableData[LibraryTrackViewSet.DATA_GENRE_PARAMETER_NAME] is None:
-        mutableData[LibraryTrackViewSet.DATA_GENRE_PARAMETER_NAME] = Criteria.objects.get(
+    if mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] is None:
+        mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] = Criteria.objects.get(
                 user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
-    artistName = mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]
+    artistName = mutableData[TrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]
     artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
             user=user, artistName=artistName)
     if artist is not None:
-        mutableData[LibraryTrackViewSet.DATA_ARTIST_PARAMETER_NAME] = artist.uuid
+        mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = artist.uuid
     else:
-        mutableData[LibraryTrackViewSet.DATA_ARTIST_PARAMETER_NAME] = None
+        mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = None
 
-    albumName = mutableData[LibraryTrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME]  
-    albumArtistsNamesString = mutableData[LibraryTrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME]  
+    albumName = mutableData[TrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME]
+    if TrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME in mutableData:
+        albumArtistsNamesString = mutableData[
+                TrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME]
     albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
     album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
             user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)
     if album is not None:
-        mutableData[LibraryTrackViewSet.DATA_ALBUM_PARAMETER_NAME] = album.uuid
+        mutableData[TrackViewSet.DATA_ALBUM_PARAMETER_NAME] = album.uuid
     else:
-        mutableData[LibraryTrackViewSet.DATA_ALBUM_PARAMETER_NAME] = None
+        mutableData[TrackViewSet.DATA_ALBUM_PARAMETER_NAME] = None
 
     requestSerializer = TrackPutSerializerClass(oldTrack, data=mutableData, partial=partial)
     requestSerializer.is_valid(raise_exception=True)

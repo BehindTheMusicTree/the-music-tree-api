@@ -8,14 +8,13 @@ from rest_framework import status
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from bodzify_api.serializer.track.TrackDetailedSerializer import (
-        TrackDetailedSerializer)
-from bodzify_api.serializer.track.TrackPutSerializer import (
-        TrackPutSerializer)
+from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
+from bodzify_api.serializer.track.TrackPutSchemaSerializer import TrackPutSchemaSerializer
+from bodzify_api.serializer.track.TrackPutSerializer import TrackPutSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.form.TrackPostForm import TrackPostForm
-import bodzify_api.service.LibraryTrackService as LibraryTrackService
+import bodzify_api.service.TrackService as TrackService
 import bodzify_api.view.utility as utility
 
 DATA_TITLE_PARAMETER_NAME = "title"
@@ -43,7 +42,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         'default': TrackDetailedSerializer,
         'list':  TrackDetailedSerializer,
         'retrieve':  TrackDetailedSerializer,
-        'update':  TrackPutSerializer,
+        'update':  TrackDetailedSerializer,
     }
 
     def get_queryset(self):
@@ -66,12 +65,10 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         return queryset
 
 
-    @extend_schema(
-        request=TrackPutSerializer,
-        responses=TrackDetailedSerializer
-    )
+    
+    @extend_schema(request=TrackPutSchemaSerializer, responses=TrackDetailedSerializer)
     def update(self, request, *args, **kwargs):
-        updatedTrack = LibraryTrackService.Update(
+        updatedTrack = TrackService.Update(
                 oldTrack=self.get_object(),
                 newData=request.data,
                 partial=kwargs.pop('partial', False),
@@ -99,7 +96,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     def create(self, request, *args, **kwargs):
         form = TrackPostForm(request.POST, request.FILES)
         if form.is_valid():
-            track = LibraryTrackService.CreateFromUpload(
+            track = TrackService.CreateFromUpload(
                     request.user, request.FILES[DATA_FILE_PARAMETER_NAME])
             return JsonResponse(
                     data=TrackDetailedSerializer(track).data,

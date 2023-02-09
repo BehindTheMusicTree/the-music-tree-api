@@ -13,7 +13,7 @@ from drf_spectacular.views import SpectacularSwaggerView
 from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet 
 
 from bodzify_api.view.viewset.UserViewSet import UserViewSet
-from bodzify_api.view.viewset.track.LibraryTrackViewSet import LibraryTrackViewSet
+from bodzify_api.view.viewset.track.TrackViewSet import LibraryTrackViewSet
 from bodzify_api.view.viewset.ArtistViewSet import ArtistViewSet
 from bodzify_api.view.viewset.AlbumViewSet import AlbumViewSet
 from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet

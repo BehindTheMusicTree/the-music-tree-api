@@ -25,7 +25,7 @@ class Playlist(models.Model):
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
     @property
-    def parent(self):
+    def parent(self) -> 'Playlist':
         if self.criteria is None: 
             return None
         elif self.criteria.parent is None: 

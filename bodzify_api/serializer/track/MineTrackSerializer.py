@@ -8,9 +8,4 @@ class MineTrackSerializer(serializers.Serializer):
 
     class Meta:
         model = MineTrack
-        fields = [
-            "title", 
-            "artist", 
-            "duration",
-            "releasedOn",
-            "url"]
+        fields = ["title", "artist", "duration", "releasedOn", "url"]

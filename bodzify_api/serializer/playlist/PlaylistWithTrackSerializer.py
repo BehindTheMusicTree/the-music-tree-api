@@ -2,16 +2,14 @@
 
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import (
-    PlaylistWithoutTracksSerializer
-)
+        PlaylistWithoutTracksSerializer)
 from bodzify_api.serializer.track.TrackWithoutPlaylistsSerializer import (
-    TrackWithoutPlaylistsSerializer
-) 
+        TrackWithoutPlaylistsSerializer)
 
 
 class PlaylistWithTrackSerializer(PlaylistWithoutTracksSerializer):
     libraryTracks = TrackWithoutPlaylistsSerializer(
-        source='librarytrack_set', read_only=True, many=True)
+            source='librarytrack_set', read_only=True, many=True)
 
     class Meta:
         model = Playlist    

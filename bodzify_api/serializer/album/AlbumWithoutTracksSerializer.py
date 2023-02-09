@@ -13,7 +13,7 @@ class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
     trackCount = serializers.IntegerField(source='librarytrack_set.count')
     duration = serializers.SerializerMethodField()
 
-    def get_duration(self, obj):
+    def get_duration(self, obj) -> float:
         value = LibraryTrack.objects.filter(album=obj).aggregate(duration=Sum('duration'))
         return value['duration']
 
