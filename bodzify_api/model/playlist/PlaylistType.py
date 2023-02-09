@@ -12,4 +12,4 @@ class PlaylistTypeIds:
 
 
 class PlaylistType(models.Model):
-    label = models.CharField(unique=True, max_length=20, editable=False)
+    label = models.CharField(unique=True, max_length=20, editable=False, default=None)

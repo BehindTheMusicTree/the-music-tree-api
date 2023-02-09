@@ -14,15 +14,21 @@ def DeleteAlbumIfNoTrackLinked(user: User, album: Album):
 
 def GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
         user: User, albumName: str, albumArtistsNames: list) -> Album:
-    if albumName is None:
+    if albumName is None or albumName == "":
         return None
     else:
-        albumArtists = [ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
-                user=user, artistName=artistName) for artistName in albumArtistsNames]
+        if albumArtistsNames is not None:
+            albumArtists = [ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
+                 user=user, artistName=artistName) for artistName in albumArtistsNames]
+        else:
+            albumArtists = None
         try:
-            album = Album.objects.get(user=user, name=albumName, albumArtists=albumArtists)
+            album = Album.objects.get(user=user, name=albumName)
         except Album.DoesNotExist:
             album = Album.objects.create(user=user, name=albumName)
+        
+        
+        if albumArtists != None:
             album.albumArtists.set(albumArtists)
         
         return album

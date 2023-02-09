@@ -13,7 +13,7 @@ def DeleteArtistIfNoTrackAndAlbumLinked(user: User, artist: Artist):
 
 
 def GetArtistFromNameAfterHavingEventuallyCreatedIt(user: User, artistName: str) -> Artist:
-    if artistName is None:
+    if artistName is None or artistName == "":
         return None
     else:
         try:

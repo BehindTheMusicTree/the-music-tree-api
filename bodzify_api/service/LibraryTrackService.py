@@ -59,16 +59,23 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, partial, TrackPutSerializ
         mutableData[LibraryTrackViewSet.DATA_GENRE_PARAMETER_NAME] = Criteria.objects.get(
                 user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
-    artistName = mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]    
-    mutableData[LibraryTrackViewSet.DATA_ARTIST_PARAMETER_NAME] = (
-            ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
+    artistName = mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]
+    artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
+            user=user, artistName=artistName)
+    if artist is not None:
+        mutableData[LibraryTrackViewSet.DATA_ARTIST_PARAMETER_NAME] = artist.uuid
+    else:
+        mutableData[LibraryTrackViewSet.DATA_ARTIST_PARAMETER_NAME] = None
 
     albumName = mutableData[LibraryTrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME]  
     albumArtistsNamesString = mutableData[LibraryTrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME]  
     albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
-    mutableData[LibraryTrackViewSet.DATA_ALBUM_PARAMETER_NAME] = (
-            AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
-                    user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)).uuid
+    album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
+            user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)
+    if album is not None:
+        mutableData[LibraryTrackViewSet.DATA_ALBUM_PARAMETER_NAME] = album.uuid
+    else:
+        mutableData[LibraryTrackViewSet.DATA_ALBUM_PARAMETER_NAME] = None
 
     requestSerializer = TrackPutSerializerClass(oldTrack, data=mutableData, partial=partial)
     requestSerializer.is_valid(raise_exception=True)
@@ -80,7 +87,7 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, partial, TrackPutSerializ
     if oldArtist != updatedTrack.artist and oldArtist != None:
         ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(user=user, artist=oldArtist)
 
-    if oldAlbum != updatedTrack.album and oldTrack != None:
+    if oldAlbum != updatedTrack.album and oldAlbum != None:
         AlbumService.DeleteAlbumIfNoTrackLinked(user=user, album=oldAlbum)
 
     UpdateTags(updatedTrack)
@@ -223,7 +230,12 @@ def CreateFromUpload(user: User, uploadedFile):
 
     genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
             user=user, criteriaName=genreName)
-    albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
+    
+    if albumArtistsNamesString.strip() == "":
+        albumArtistsNamesList = None
+    else:
+        albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
+        
     album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
             user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)
     artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(

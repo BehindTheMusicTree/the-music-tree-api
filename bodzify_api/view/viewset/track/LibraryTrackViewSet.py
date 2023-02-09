@@ -84,6 +84,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
                 status=status.HTTP_201_CREATED,
                 headers=headers)
 
+
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)

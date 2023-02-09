@@ -13,6 +13,6 @@ class Album(models.Model):
     uuid = models.CharField(
             primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
     albumArtists = models.ManyToManyField(Artist)

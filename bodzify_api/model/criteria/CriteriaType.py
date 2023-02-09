@@ -9,7 +9,7 @@ class CriteriaTypesIds:
 
 
 class CriteriaType(models.Model):
-    label = models.CharField(unique=True, max_length=20)
+    label = models.CharField(unique=True, max_length=20, default=None)
 
     def __str__(self) -> str:
         return str(self.id) + " " + self.label
