@@ -3,6 +3,7 @@ from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.Album import Album
 
 
 class TrackPutViewTestCase(TrackViewTestCase):
@@ -42,8 +43,9 @@ class TrackPutViewTestCase(TrackViewTestCase):
         # Non existing artist
         data = {
             "title": "Give Me Novocain",
-            "artist": "Green Day",
-            "album": "American Idiot",
+            "artistName": "Green Day",
+            "albumName": "American Idiot",
+            "albumArtistsNames": "Green Day",
             "genre": "LsjdqoifsjofsiEjf885DD",  
             "rating": 0,
             "language": "English, German"
@@ -55,16 +57,21 @@ class TrackPutViewTestCase(TrackViewTestCase):
         track = LibraryTrack.objects.get(title="Give Me Novocain")
         assert track.artist.name == "Green Day"
         assert track.album.name == "American Idiot"
+        assert track.album.albumArtists.filter(name="Green Day").exists()
         assert track.genre.name == "Rock"
         assert track.rating == 0
         assert track.language == "English, German"
 
-        # On a wav file
+        # On a wav file.
         # Former artist "Joni" not having any track related left. Must be deleted.
+        # Same album's name as an existing one but with different album artists'names. Thus a new 
+        # album has to be created.
+        # The previous track's album hasn't anythink linked to it anymore. It must then be deleted.
         data = {
             "title": "Bohemian Raphsody",
-            "artist": "Queen",
-            "album": "A Night A the Opera",
+            "artistName": "Queen",
+            "albumName": "American Idiot",
+            "albumArtistsNames": "Queen",
             "genre": "Lsjdqoiqsicqjsof8800",
             "rating": 2,
             "language": "French"
@@ -75,7 +82,10 @@ class TrackPutViewTestCase(TrackViewTestCase):
                 
         track = LibraryTrack.objects.get(title="Bohemian Raphsody")
         assert track.artist.name == "Queen"
-        assert track.album.name == "A Night A the Opera"
+        assert track.album.name == "American Idiot"
+        assert track.album.albumArtists.filter(name="Queen").exists()
+        assert Album.objects.filter(user=self.testUser, name="American Idiot").count() == 2
+        assert Album.objects.filter(user=self.testUser, name="BOOM").exists() == False
         assert track.genre.name == "Nu metal"
         assert track.rating == 2
         assert track.language == "French"
