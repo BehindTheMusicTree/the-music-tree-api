@@ -17,14 +17,17 @@ def GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
     if albumName is None:
         return None
     else:
-        albumArtists = []
+        albumArtists = [len(albumArtistsNames)]
         artistIndex = 0
         for artistName in albumArtistsNames:
             albumArtists[artistIndex] = (
-                    ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(artistName))
+                    ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
+                            user=user, artistName=artistName))
+            artistIndex = artistIndex + 1
         try:
             album = Album.objects.get(user=user, name=albumName, albumArtists=albumArtists)
         except Album.DoesNotExist:
-            album = Album.objects.create(user=user, name=albumName, albumArtists=albumArtists)
+            album = Album.objects.create(user=user, name=albumName)
+            album.albumArtists.set(albumArtists)
         
         return album
