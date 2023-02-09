@@ -60,13 +60,13 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, partial, TrackPutSerializ
                 user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
     artistName = mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]    
-    mutableData[LibraryTrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME] = (
+    mutableData[LibraryTrackViewSet.DATA_ARTIST_PARAMETER_NAME] = (
             ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(user, artistName)).uuid
 
     albumName = mutableData[LibraryTrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME]  
     albumArtistsNamesString = mutableData[LibraryTrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME]  
     albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
-    mutableData[LibraryTrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME] = (
+    mutableData[LibraryTrackViewSet.DATA_ALBUM_PARAMETER_NAME] = (
             AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
                     user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)).uuid
 
@@ -77,10 +77,10 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, partial, TrackPutSerializ
     if oldGenre != updatedTrack.genre:
         PlaylistService.UpdatePlaylistsOfTrack(user=user, track=updatedTrack, oldGenre=oldGenre)
 
-    if oldArtist != updatedTrack.artist:
+    if oldArtist != updatedTrack.artist and oldArtist != None:
         ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(user=user, artist=oldArtist)
 
-    if oldAlbum != updatedTrack.album:
+    if oldAlbum != updatedTrack.album and oldTrack != None:
         AlbumService.DeleteAlbumIfNoTrackLinked(user=user, album=oldAlbum)
 
     UpdateTags(updatedTrack)
@@ -104,10 +104,10 @@ def UpdateTags(track: LibraryTrack):
         albumTag = track.album.name
 
         albumArtistNamesIndex = 0
-        for albumArtist in track.album.albumArtists:
+        for albumArtist in track.album.albumArtists.all():
             if albumArtistNamesIndex != 0:
                 albumArtistsTag = albumArtistsTag + TAG_ARTISTS_SEPARATION_CHAR
-            albumArtistsTag = albumArtistsTag + albumArtist
+            albumArtistsTag = albumArtistsTag + albumArtist.name
             albumArtistNamesIndex = albumArtistNamesIndex + 1
     else:
         albumTag = ""        
