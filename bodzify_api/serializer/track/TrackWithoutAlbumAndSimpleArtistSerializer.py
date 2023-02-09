@@ -7,7 +7,7 @@ from bodzify_api.serializer.criteria.CriteriaSerializer import CriteriaResponseS
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 
 
-class LibraryTrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer):
+class TrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer):
     genre = CriteriaResponseSerializer()
     artist = ArtistWithOnlyNameSerializer()
 
