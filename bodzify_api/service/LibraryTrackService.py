@@ -171,7 +171,7 @@ def CreateFromUpload(user: User, uploadedFile):
         artistName = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ARTIST_TAG)
         albumName = GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG)
         albumArtistsNamesString = (
-                GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_TAG))
+                GetValuesFirstElementIfExistInDicOrEmptyString(trackId3Tags, ID3_ALBUM_ARTIST_TAG))
 
         if ID3_GENRE_TAG in trackId3Tags:
             genreName = trackId3Tags[ID3_GENRE_TAG][0]
