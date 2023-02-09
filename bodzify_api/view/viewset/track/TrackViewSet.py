@@ -74,23 +74,23 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
             "precisions below).\n" +
             "- To empty a field (artist or album), the field should be specified with an empty " +
             "string.\n" +
-            "- If the album or the artist is updated, the old artist/album is checked to lookup if" +
-            "it is still linked to something: \n" +
+            "- If the album or the artist is updated, the old artist/album is checked to lookup " +
+            "if it is still linked to something: \n" +
             "   - for an album, if no track is linked, it is deleted;\n" +
-            "   - for an artist, if no track and no album is linked, it is deleted. An artist can " +
-            "have no track linked to it if only it is still linked to an album of a track still " +
-            "in the system. E.g: a user only have one track in his library: 'Jamming' by 'Bob " +
-            "Marley and The Wailers'. The album artists are 'Bob Marley' and 'The Wailers'. " +
+            "   - for an artist, if no track and no album is linked, it is deleted. An artist " +
+            "can have no track linked to it if only it is still linked to an album of a track " +
+            "still in the library. E.g: a user only have one track in his library: 'Jamming' by" +
+            "Bob Marley and The Wailers'. The album artists are 'Bob Marley' and 'The Wailers'. " +
             "The artist 'Bob Marley' is still in the library even if it has no track which has " +
             "the artist 'Bob Marley'.\n\n" +
             "- As two albums can share the same name (e.g from two different artists), the mean " +
             "the system to identify an album is the peer (album'sname/album's artists'names). " +
             "Thus:\n" +
-            "- If it already exists an album with the same name as 'albumName' but with " +
-            "different 'AlbumArtistsNames', an new album is created." +
-            "- Wether the field 'albumArtistsNames' is empty or not specified, it tells that " +
-            "the track's album has no artist." +
-            "- If 'albumName' is empty or missing, the 'albumArtistsNames' is ignored.")
+            "   - If it already exists an album with the same name as 'albumName' but with " +
+            "different 'AlbumArtistsNames', an new album is created.\n" +
+            "   - Wether the field 'albumArtistsNames' is empty or not specified, it tells that " +
+            "the track's album has no artist.\n" +
+            "   - If 'albumName' is empty or missing, the 'albumArtistsNames' is ignored.")
     )
     def update(self, request, *args, **kwargs):
         updatedTrack = TrackService.Update(
@@ -101,7 +101,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
                 data=TrackDetailedSerializer(updatedTrack).data,
-                status=status.HTTP_201_CREATED,
+                status=status.HTTP_200_OK,
                 headers=headers)
 
 
