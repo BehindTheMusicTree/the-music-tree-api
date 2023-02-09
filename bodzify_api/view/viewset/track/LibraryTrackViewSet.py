@@ -10,19 +10,27 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
 from bodzify_api.serializer.track.TrackDetailedSerializer import (
         TrackDetailedSerializer)
-from bodzify_api.serializer.track.TrackUpdateSerializer import (
-        TrackUpdateSerializer)
+from bodzify_api.serializer.track.TrackPutSerializer import (
+        TrackPutSerializer)
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.form.UploadTrackForm import UploadTrackForm
+from bodzify_api.form.TrackPostForm import TrackPostForm
+from bodzify_api.form.TrackPutForm import TrackPutForm
 import bodzify_api.service.LibraryTrackService as LibraryTrackService
 import bodzify_api.view.utility as utility
 
-FILTER_TITLE_PARAMETER_NAME = "title"
-FILTER_ARTIST_PARAMETER_NAME = "artist"
-FILTER_ALBUM_PARAMETER_NAME = "album"
-FILTER_GENRE_PARAMETER_NAME = "genre"
-FILE_PARAMETER_NAME = "file"
+DATA_TITLE_PARAMETER_NAME = "title"
+DATA_ARTIST_NAME_PARAMETER_NAME = "artistName"
+DATA_ALBUM_NAME_PARAMETER_NAME = "albumName"
+DATA_GENRE_PARAMETER_NAME = "genre"
+DATA_LANGUAGE_PARAMETER_NAME = "language"
+DATA_FILE_PARAMETER_NAME = "file"
+
+FILTER_TITLE_PARAMETER_NAME = DATA_TITLE_PARAMETER_NAME
+FILTER_ARTIST_NAME_PARAMETER_NAME = DATA_ARTIST_NAME_PARAMETER_NAME
+FILTER_ALBUM_NAME_PARAMETER_NAME = DATA_ALBUM_NAME_PARAMETER_NAME
+FILTER_GENRE_NAME_PARAMETER_NAME = "genreName"
+FILTER_LANGUAGE_PARAMETER_NAME = DATA_LANGUAGE_PARAMETER_NAME
 
 
 class LibraryTrackViewSet(MultiSerializerViewSet):
@@ -32,45 +40,49 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         'default': TrackDetailedSerializer,
         'list':  TrackDetailedSerializer,
         'retrieve':  TrackDetailedSerializer,
-        'update':  TrackUpdateSerializer,
+        'update':  TrackPutSerializer,
     }
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
         title = self.request.query_params.get(FILTER_TITLE_PARAMETER_NAME)
-        artist = self.request.query_params.get(FILTER_ARTIST_PARAMETER_NAME)
-        album = self.request.query_params.get(FILTER_ALBUM_PARAMETER_NAME)
-        genre = self.request.query_params.get(FILTER_GENRE_PARAMETER_NAME)
+        artistName = self.request.query_params.get(FILTER_ARTIST_NAME_PARAMETER_NAME)
+        albumName = self.request.query_params.get(FILTER_ALBUM_NAME_PARAMETER_NAME)
+        genreName = self.request.query_params.get(FILTER_GENRE_NAME_PARAMETER_NAME)
+        language = self.request.query_params.get(FILTER_LANGUAGE_PARAMETER_NAME)
         if title is not None:
             queryset = queryset.filter(title__icontains=title)
-        if artist is not None:
-            queryset = queryset.filter(artist__name__icontains=artist)
-        if album is not None:
-            queryset = queryset.filter(album__icontains=album)
-        if genre is not None:
-            queryset = queryset.filter(genre__icontains=genre)
+        if artistName is not None:
+            queryset = queryset.filter(artist__name__icontains=artistName)
+        if albumName is not None:
+            queryset = queryset.filter(album__name__icontains=albumName)
+        if genreName is not None:
+            queryset = queryset.filter(genre__name__icontain=genreName)
+        if language is not None:
+            queryset = queryset.filter(language__icontains=language)
         return queryset
 
 
     @extend_schema(
-        request=TrackUpdateSerializer,
+        request=TrackPutSerializer,
         responses=TrackDetailedSerializer
     )
     def update(self, request, *args, **kwargs):
-        updatedTrack = LibraryTrackService.Update(
-            track=self.get_object(),
-            data=request.data,
-            partial=kwargs.pop('partial', False),
-            RequestSerializerClass=TrackDetailedSerializer,
-            user=request.user
-        )
-
-        responseSerializer = TrackDetailedSerializer(updatedTrack)
-        headers = self.get_success_headers(responseSerializer.data)
-
-        return JsonResponse(
-            data=responseSerializer.data, status=status.HTTP_200_OK, headers=headers)
-
+        form = TrackPutForm(request.PUT)
+        if form.is_valid():
+            updatedTrack = LibraryTrackService.Update(
+                    oldTrack=self.get_object(),
+                    newData=request.data,
+                    partial=kwargs.pop('partial', False),
+                    TrackPutSerializerClass=TrackPutSerializer,
+                    user=request.user)
+            responseSerializer = TrackDetailedSerializer(updatedTrack)
+            headers = self.get_success_headers(responseSerializer.data)
+            return JsonResponse(
+                    data=TrackDetailedSerializer(updatedTrack).data,
+                    status=status.HTTP_201_CREATED,
+                    headers=headers)
+        return utility.GetJsonResponseWhenBadRequest(form.errors)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
@@ -84,10 +96,10 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
 
     def create(self, request, *args, **kwargs):
-        form = UploadTrackForm(request.POST, request.FILES)
+        form = TrackPostForm(request.POST, request.FILES)
         if form.is_valid():
             track = LibraryTrackService.CreateFromUpload(
-                    request.user, request.FILES[FILE_PARAMETER_NAME])
+                    request.user, request.FILES[DATA_FILE_PARAMETER_NAME])
             return JsonResponse(
                     data=TrackDetailedSerializer(track).data,
                     status=status.HTTP_201_CREATED)
@@ -97,19 +109,19 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                    name=FILTER_TITLE_PARAMETER_NAME, 
+                    name=DATA_TITLE_PARAMETER_NAME, 
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=FILTER_ARTIST_PARAMETER_NAME, 
+                    name=DATA_ARTIST_NAME_PARAMETER_NAME, 
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=FILTER_ALBUM_PARAMETER_NAME, 
+                    name=DATA_ALBUM_NAME_PARAMETER_NAME, 
                     type=OpenApiTypes.STR,
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=FILTER_GENRE_PARAMETER_NAME, 
+                    name=DATA_GENRE_PARAMETER_NAME, 
                     type=OpenApiTypes.STR,
                     location=OpenApiParameter.QUERY)
         ]
