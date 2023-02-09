@@ -41,14 +41,6 @@
     },
     {
         "model": "bodzify_api.artist",
-        "pk": "Lsji85mqisjdjf885DJD67",
-        "fields": {
-            "user": 4,
-            "name": "PNL"
-        }
-    },
-    {
-        "model": "bodzify_api.artist",
         "pk": "Lsji85mqisjdjf885DHD55",
         "fields": {
             "user": 4,
@@ -56,14 +48,6 @@
         }
     },
 
-    {
-        "model": "bodzify_api.album",
-        "pk": "Lsji85mqisjdjf88888888",
-        "fields": {
-            "user": 4,
-            "name": "Dans La Légende"
-        }
-    },
     {
         "model": "bodzify_api.album",
         "pk": "Lsji85mqisjdjf88877765",
@@ -100,8 +84,8 @@
            "user": 4, 
            "file": "libraries/user_4/put_1-08_-_Luz_De_Luna.flac", 
            "title": "Luz De Luna", 
-           "artist": "Lsji85mqisjdjf885DJD67", 
-           "album": "Lsji85mqisjdjf88888888", 
+           "artist": "", 
+           "album": "", 
            "genre": "LsjdqoqzpsdojEjGHGH", 
            "duration": "205.09333333333333", 
            "rating": 78, 

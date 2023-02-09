@@ -20,8 +20,11 @@ import bodzify_api.service.LibraryTrackService as LibraryTrackService
 import bodzify_api.view.utility as utility
 
 DATA_TITLE_PARAMETER_NAME = "title"
+DATA_ARTIST_PARAMETER_NAME = "artist"
 DATA_ARTIST_NAME_PARAMETER_NAME = "artistName"
+DATA_ALBUM_PARAMETER_NAME = "album"
 DATA_ALBUM_NAME_PARAMETER_NAME = "albumName"
+DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME = "albumArtistsNames"
 DATA_GENRE_PARAMETER_NAME = "genre"
 DATA_LANGUAGE_PARAMETER_NAME = "language"
 DATA_FILE_PARAMETER_NAME = "file"
@@ -29,6 +32,7 @@ DATA_FILE_PARAMETER_NAME = "file"
 FILTER_TITLE_PARAMETER_NAME = DATA_TITLE_PARAMETER_NAME
 FILTER_ARTIST_NAME_PARAMETER_NAME = DATA_ARTIST_NAME_PARAMETER_NAME
 FILTER_ALBUM_NAME_PARAMETER_NAME = DATA_ALBUM_NAME_PARAMETER_NAME
+FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME
 FILTER_GENRE_NAME_PARAMETER_NAME = "genreName"
 FILTER_LANGUAGE_PARAMETER_NAME = DATA_LANGUAGE_PARAMETER_NAME
 
@@ -68,21 +72,18 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         responses=TrackDetailedSerializer
     )
     def update(self, request, *args, **kwargs):
-        form = TrackPutForm(request.PUT)
-        if form.is_valid():
-            updatedTrack = LibraryTrackService.Update(
-                    oldTrack=self.get_object(),
-                    newData=request.data,
-                    partial=kwargs.pop('partial', False),
-                    TrackPutSerializerClass=TrackPutSerializer,
-                    user=request.user)
-            responseSerializer = TrackDetailedSerializer(updatedTrack)
-            headers = self.get_success_headers(responseSerializer.data)
-            return JsonResponse(
-                    data=TrackDetailedSerializer(updatedTrack).data,
-                    status=status.HTTP_201_CREATED,
-                    headers=headers)
-        return utility.GetJsonResponseWhenBadRequest(form.errors)
+        updatedTrack = LibraryTrackService.Update(
+                oldTrack=self.get_object(),
+                newData=request.data,
+                partial=kwargs.pop('partial', False),
+                TrackPutSerializerClass=TrackPutSerializer,
+                user=request.user)
+        responseSerializer = TrackDetailedSerializer(updatedTrack)
+        headers = self.get_success_headers(responseSerializer.data)
+        return JsonResponse(
+                data=TrackDetailedSerializer(updatedTrack).data,
+                status=status.HTTP_201_CREATED,
+                headers=headers)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):

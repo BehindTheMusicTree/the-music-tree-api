@@ -79,18 +79,19 @@ class TrackPostViewTestCase(TrackViewTestCase):
         assert track.fileExtension == ".wav"
         assert track.playlists.filter(name="j\"\"\"\"j").exists()
 
-        # With all tags
+        # With all tags.
         response = self.postSampleTrack("post_with_all_tags.mp3")
         assert response.status_code == status.HTTP_201_CREATED
 
-        # Without genre
+        # Without genre.
         response = self.postSampleTrack("post_Eminem_Without_Me_sans_genre.mp3")
         assert response.status_code == status.HTTP_201_CREATED
 
-        # With two album artists
-        # One album artist existing
+        # With two album artists.
+        # One album artist existing.
+        # No artist.
         track = LibraryTrack.objects.get(title="Without Me", user=self.testUser)
-        assert track.artist.name == "Eminem"
+        assert track.artist_id is None
         assert track.album.name == "The Eminem Show (Expanded Edition)"
         assert track.genre.name == "Genreless"
         assert track.fileExtension == ".mp3"
