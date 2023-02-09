@@ -47,6 +47,14 @@
             "name": "Joni"
         }
     },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88588712",
+        "fields": {
+            "user": 4,
+            "name": "Mich"
+        }
+    },
 
     {
         "model": "bodzify_api.album",
@@ -54,6 +62,14 @@
         "fields": {
             "user": 4,
             "name": "BOOM"
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88112233",
+        "fields": {
+            "user": 4,
+            "name": "Je Casse Tout"
         }
     },
 
@@ -69,7 +85,7 @@
            "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": "207.09333333333333", 
            "rating": 128, 
-           "language": "", 
+           "language": "Latin", 
            "addedOn": "2022-12-13T14:07:50.906Z", 
            "playlists": [
                 "LnM1arJrwLhbhHSjqEPdZ7",
@@ -104,6 +120,26 @@
             "title": "La zumba",
             "artist": "Lsji85mqisjdjf885DHD55",
             "album": "Lsji85mqisjdjf88877765",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 234,
+            "rating": 8,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBcLDDDDDS",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/nonexisting.mp3",
+            "title": "La Joie",
+            "artist": "Lsji85mqisjdjf88588712",
+            "album": "Lsji85mqisjdjf88112233",
             "genre": "L1ZG85munGytJb885fgion",
             "duration": 234,
             "rating": 8,

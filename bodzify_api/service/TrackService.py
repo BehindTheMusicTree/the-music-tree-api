@@ -15,6 +15,7 @@ from mutagen.id3 import TIT2
 from mutagen.id3 import POPM
 
 import bodzify_api.view.viewset.track.TrackViewSet as TrackViewSet
+from bodzify_api.serializer.track.TrackPutSerializer import TrackPutSerializer
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
 import bodzify_api.service.PlaylistService as PlaylistService
@@ -51,7 +52,6 @@ VORBIS_LANGUAGE_TAG = 'language'
 def Update(oldTrack: LibraryTrack, 
            newData: QueryDict, 
            partial, 
-           TrackPutSerializerClass, 
            user: User):
     mutableData = newData.copy()
     oldTrack = LibraryTrack.objects.get(uuid=oldTrack.uuid)
@@ -59,31 +59,40 @@ def Update(oldTrack: LibraryTrack,
     oldArtist = oldTrack.artist
     oldAlbum = oldTrack.album
 
-    if mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] is None:
-        mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] = Criteria.objects.get(
-                user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
+    if TrackViewSet.DATA_GENRE_PARAMETER_NAME in mutableData:
+        if mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] is None:
+            mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] = Criteria.objects.get(
+                    user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
-    artistName = mutableData[TrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]
-    artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
-            user=user, artistName=artistName)
-    if artist is not None:
-        mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = artist.uuid
-    else:
-        mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = None
+    if TrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME in mutableData:
+        artistName = mutableData[TrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]
+        artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
+                user=user, artistName=artistName)
+        if artist is not None:
+            mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = artist.uuid
+        else:
+            mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = None
 
-    albumName = mutableData[TrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME]
-    if TrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME in mutableData:
-        albumArtistsNamesString = mutableData[
-                TrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME]
-    albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
-    album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
-            user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)
-    if album is not None:
-        mutableData[TrackViewSet.DATA_ALBUM_PARAMETER_NAME] = album.uuid
-    else:
-        mutableData[TrackViewSet.DATA_ALBUM_PARAMETER_NAME] = None
+    if TrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME in mutableData:
 
-    requestSerializer = TrackPutSerializerClass(oldTrack, data=mutableData, partial=partial)
+        albumName = mutableData[TrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME]
+
+        if TrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME in mutableData:
+            albumArtistsNamesString = mutableData[
+                    TrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME]
+            albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
+        else:
+            albumArtistsNamesList = None
+
+        album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
+                user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)
+        
+        if album is not None:
+            mutableData[TrackViewSet.DATA_ALBUM_PARAMETER_NAME] = album.uuid
+        else:
+            mutableData[TrackViewSet.DATA_ALBUM_PARAMETER_NAME] = None
+
+    requestSerializer = TrackPutSerializer(instance=oldTrack, data=mutableData, partial=True)
     requestSerializer.is_valid(raise_exception=True)
     updatedTrack = requestSerializer.save()
 
