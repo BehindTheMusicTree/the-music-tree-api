@@ -35,14 +35,14 @@ class LibraryTrack(models.Model):
                     FileExtensionValidator(['flac', 'wav', 'mp3']), 
                     FileTypeValidator(allowed_types=[ 'audio/*']),
                     trackSize])
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=100)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, default=None, null=True)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, default=None, null=True)
     genre = models.ForeignKey(Criteria, on_delete=models.DO_NOTHING)
     duration = models.FloatField()
     rating = models.IntegerField(default=0)
     playlists = models.ManyToManyField(Playlist)
-    language = models.CharField(max_length=200, default=None, null=True)
+    language = models.CharField(max_length=100, default=None, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
 
