@@ -196,7 +196,7 @@ def CreateFromUpload(user: User, uploadedFile):
         albumName = GetValuesFirstElementIfExistInDicOrEmptyString(trackFlacTags, VORBIS_ALBUM_TAG)
         albumArtistsNamesString = (
                 GetValuesFirstElementIfExistInDicOrEmptyString(
-                        trackId3Tags, VORBIS_ALBUM_ARTISTS_TAG))
+                        trackFlacTags, VORBIS_ALBUM_ARTISTS_TAG))
 
         if VORBIS_GENRE_TAG in trackFlacTags:
             genreName = trackFlacTags[VORBIS_GENRE_TAG][0]
@@ -214,7 +214,9 @@ def CreateFromUpload(user: User, uploadedFile):
             user=user, criteriaName=genreName)
 
 
-    albumArtistsNames = albumArtistsNamesString.split(TAG_ARTISTS_SEPARATION_CHAR)
+    albumArtistsNamesWithEventualSpacesAround = (
+            albumArtistsNamesString.split(TAG_ARTISTS_SEPARATION_CHAR))
+    albumArtistsNames = [it.strip() for it in  albumArtistsNamesWithEventualSpacesAround]
     album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
             user=user, albumName=albumName, albumArtistsNames=albumArtistsNames)
     
