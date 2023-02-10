@@ -4,7 +4,12 @@ from django.contrib.auth.models import User
 
 import bodzify_api.service.ArtistService as ArtistService
 from bodzify_api.model.Album import Album
+from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+
+
+def DeleteAlbumAndTracksWithSpecificAlbumArtist(user: User, artist: Artist):
+    return Album.objects.filter(user=user, albumArtists__in=[artist]).delete
 
 
 def DeleteAlbumIfNoTrackLinked(user: User, album: Album):

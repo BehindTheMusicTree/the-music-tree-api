@@ -1,9 +1,17 @@
 #!/usr/bin/env python
 
 from django.contrib.auth.models import User
+import pprint
 
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+import bodzify_api.service.AlbumService as AlbumService
+
+
+def DeleteArtistAndRelativeAlbumsAndTracks(user: User, artist: Artist):
+    pprint.pprint(artist)
+    AlbumService.DeleteAlbumAndTracksWithSpecificAlbumArtist(user=user, artist=artist)
+    artist.delete()
 
 
 def DeleteArtistsIfNoTrackAndAlbumLinked(user: User, artists: list):
