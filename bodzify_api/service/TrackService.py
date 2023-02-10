@@ -98,6 +98,9 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, user: User):
 
     if oldAlbum != updatedTrack.album and oldAlbum != None:
         AlbumService.DeleteAlbumIfNoTrackLinked(user=user, album=oldAlbum)
+        if oldAlbum.albumArtists != None:
+            ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(
+                    user=user, artist=oldAlbum.albumArtists)
 
     if oldArtist != updatedTrack.artist and oldArtist != None:
         ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(user=user, artist=oldArtist)
