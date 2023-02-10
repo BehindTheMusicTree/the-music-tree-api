@@ -159,4 +159,4 @@ class TrackPutViewTestCase(TrackViewTestCase):
         track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBc48766YH")
         assert Album.objects.filter(name='Test6 - Album').count() == 1
         assert Album.objects.filter(uuid='Lsji85mqisjdjf88MLKJY').exists() == False
-        assert Artist.objects.filter(uuid='Lsji85mqisjdjf88L98UJI').exists() == False
+        assert Artist.objects.filter(name='Test6 - Artist3').exists() == False
