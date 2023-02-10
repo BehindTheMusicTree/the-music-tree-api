@@ -96,11 +96,11 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, user: User):
     if oldGenre != updatedTrack.genre:
         PlaylistService.UpdatePlaylistsOfTrack(user=user, track=updatedTrack, oldGenre=oldGenre)
 
-    if oldArtist != updatedTrack.artist and oldArtist != None:
-        ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(user=user, artist=oldArtist)
-
     if oldAlbum != updatedTrack.album and oldAlbum != None:
         AlbumService.DeleteAlbumIfNoTrackLinked(user=user, album=oldAlbum)
+
+    if oldArtist != updatedTrack.artist and oldArtist != None:
+        ArtistService.DeleteArtistIfNoTrackAndAlbumLinked(user=user, artist=oldArtist)
 
     UpdateTagsIfFileExists(updatedTrack)
 
