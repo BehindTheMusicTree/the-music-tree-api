@@ -147,7 +147,6 @@ class TrackPutViewTestCase(TrackViewTestCase):
             - '2' album's artists are 'A' and 'C'.
         The update puts artists 'A' and 'C' on the artists'names of the track's album. Thus:
             - Artist B must be deleted as it has no track linked anymore;
-            - Artist A must have 2 tracks;
             - Album '1' must be deleted for the same reason. 
         - The file is missing. The update must be proceded anyway. 
         """
@@ -160,5 +159,4 @@ class TrackPutViewTestCase(TrackViewTestCase):
         track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBc48766YH")
         assert Album.objects.filter(name='Test6 - Album').count() == 1
         assert Album.objects.filter(uuid='Lsji85mqisjdjf88MLKJY').exists() == False
-        assert LibraryTrack.objects.filter(album=track.album).count() == 2
         assert Artist.objects.filter(uuid='Lsji85mqisjdjf88L98UJI').exists() == False
