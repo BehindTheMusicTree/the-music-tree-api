@@ -47,12 +47,14 @@ class TrackPutViewTestCase(TrackViewTestCase):
         - Old track didn't have an album.
         - Old artist was empty.
         - Lowest rating.
+        - A album artist is sent twice. Only one must be created.
+        - A space lies at the end of the album's artists' names. It musn't be taken into account.
         """
         data = {
             "title": "Give Me Novocain",
             "artistName": "Green Day",
             "albumName": "American Idiot",
-            "albumArtistsNames": "Green Day",
+            "albumArtistsNames": "Green Day, RATM, Green Day, ",
             "genre": "LsjdqoifsjofsiEjf885DD",  
             "rating": 0,
             "language": "English, German"
@@ -62,7 +64,9 @@ class TrackPutViewTestCase(TrackViewTestCase):
         track = LibraryTrack.objects.get(title="Give Me Novocain")
         assert track.artist.name == "Green Day"
         assert track.album.name == "American Idiot"
+        assert len(track.album.albumArtists) == 2
         assert track.album.albumArtists.filter(name="Green Day").exists()
+        assert Artist.objects.filter(name="Green Day").count() == 1
         assert track.genre.name == "Rock"
         assert track.rating == 0
         assert track.language == "English, German"
