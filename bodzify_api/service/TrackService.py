@@ -77,7 +77,7 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, user: User):
         if TrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME in mutableData:
             albumArtistsNamesString = mutableData[
                     TrackViewSet.DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME]
-            albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
+            albumArtistsNamesList = GetNameListFromString(albumArtistsNamesString)
         else:
             albumArtistsNamesList = None
 
@@ -246,7 +246,7 @@ def CreateFromUpload(user: User, uploadedFile):
     if albumArtistsNamesString.strip() == "":
         albumArtistsNamesList = None
     else:
-        albumArtistsNamesList = GetArtistsNamesListFromString(albumArtistsNamesString)
+        albumArtistsNamesList = GetNameListFromString(albumArtistsNamesString)
         
     album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
             user=user, albumName=albumName, albumArtistsNames=albumArtistsNamesList)
@@ -266,11 +266,14 @@ def CreateFromUpload(user: User, uploadedFile):
     return track
 
 
-def GetArtistsNamesListFromString(artistsNamesString: str) -> list:
-    albumArtistsNamesWithEventualSpacesAround = (
-            artistsNamesString.split(TAG_ARTISTS_SEPARATION_CHAR))
-    return [it.strip() for it in  albumArtistsNamesWithEventualSpacesAround]
-
+def GetNameListFromString(namesString: str) -> list:
+    namesWithEventualSpacesAroundAndDuplicates = namesString.split(TAG_ARTISTS_SEPARATION_CHAR)
+    names = list()
+    for nameWithEventualSpacesAround in namesWithEventualSpacesAroundAndDuplicates:
+        name = nameWithEventualSpacesAround.strip()
+        if name != "" and names.count(name) == 0:
+            names.append(name)
+    return names
 
 def AddTrackToGenrePlaylists(user: User, track: LibraryTrack):
     genre = track.genre
