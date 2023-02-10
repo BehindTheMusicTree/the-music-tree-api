@@ -116,3 +116,41 @@ class TrackPutViewTestCase(TrackViewTestCase):
         assert track.title == "La Joie"
         assert track.language == "French12ééù12"
         assert track.rating == 255
+
+        """
+        - The old album shared the same name as an other one but with different artists names.
+        The new album keeps the same name but puts the same artists names as the other one.
+        - artist not specified so unchanged.
+        """
+        data = {
+            "albumName": "Je Casse Tout",
+            "albumArtistsNames": "Mich",
+        }
+        response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcSSSSSSS", data=data)
+        assert response.status_code == status.HTTP_200_OK
+        track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBcSSSSSSS")
+        assert track.artist.name == "Mich"
+        assert Album.objects.filter(name="Je Casse Tout").count() == 1
+
+        """
+        Test 6:
+        - The old track's album '1' shared the same name as another one '2' but with different 
+        artists names:
+            - '1' album's artists are 'A' and 'B';
+            - '2' album's artists are 'A' and 'C'.
+        The update puts artists 'A' and 'C' on the artists'names of the track's album. Thus:
+            - Artist B must be deleted as it has no track linked anymore;
+            - Artist A must have 2 tracks;
+            - Album '1' must be deleted for the same reason. 
+        """
+        data = {
+            "albumName": "Test6 - Album",
+            "albumArtistsNames": "Test6 - Artist1, Test6 - Artist2",
+        }
+        response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBc48766YH", data=data)
+        assert response.status_code == status.HTTP_200_OK
+        track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBc48766YH")
+        assert Album.objects.filter(name='Test6 - Album').count() == 1
+        assert Album.objects.filter(uuid='Lsji85mqisjdjf88MLKJY').exists() == False
+        assert LibraryTrack.objects.filter(album='Lsji85mqisjdjf881DJDHD').count() == 2
+        assert Artist.objects.filter(uuid='Lsji85mqisjdjf88L98UJI').exists() == False

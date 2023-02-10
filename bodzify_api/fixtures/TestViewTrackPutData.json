@@ -55,6 +55,14 @@
             "name": "Mich"
         }
     },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88566654",
+        "fields": {
+            "user": 4,
+            "name": "Pirate"
+        }
+    },
 
     {
         "model": "bodzify_api.album",
@@ -69,7 +77,17 @@
         "pk": "Lsji85mqisjdjf88112233",
         "fields": {
             "user": 4,
-            "name": "Je Casse Tout"
+            "name": "Je Casse Tout",
+            "albumArtists": ["Lsji85mqisjdjf88588712"]
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88176767",
+        "fields": {
+            "user": 4,
+            "name": "Je Casse Tout",
+            "albumArtists": ["Lsji85mqisjdjf88588712", "Lsji85mqisjdjf88566654"]
         }
     },
 
@@ -140,6 +158,112 @@
             "title": "La Joie",
             "artist": "Lsji85mqisjdjf88588712",
             "album": "Lsji85mqisjdjf88112233",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 234,
+            "rating": 8,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBcSSSSSSS",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/nonexisting.mp3",
+            "title": "La Peur",
+            "artist": "Lsji85mqisjdjf88588712",
+            "album": "Lsji85mqisjdjf88176767",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 234,
+            "rating": 8,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBc4444444",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/nonexisting.mp3",
+            "title": "La Peur",
+            "artist": "Lsji85mqisjdjf88588712",
+            "album": "Lsji85mqisjdjf88176767",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 234,
+            "rating": 8,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    },
+
+
+
+    
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88765TDT",
+        "fields": {
+            "user": 4,
+            "name": "Test6 - Artist1"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88LKCFG6",
+        "fields": {
+            "user": 4,
+            "name": "Test6 - Artist2"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88L98UJI",
+        "fields": {
+            "user": 4,
+            "name": "Test6 - Artist3"
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf881DJDHD",
+        "fields": {
+            "user": 4,
+            "name": "Test6 - Album",
+            "albumArtists": ["Lsji85mqisjdjf88765TDT", "Lsji85mqisjdjf88LKCFG6"]
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88MLKJY",
+        "fields": {
+            "user": 4,
+            "name": "Test6 - Album",
+            "albumArtists": ["Lsji85mqisjdjf88765TDT", "Lsji85mqisjdjf88L98UJI"]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBc48766YH",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/nonexisting.mp3",
+            "title": "Test6 - Track",
+            "artist": "Lsji85mqisjdjf88765TDT",
+            "album": "Lsji85mqisjdjf88MLKJY",
             "genre": "L1ZG85munGytJb885fgion",
             "duration": 234,
             "rating": 8,
