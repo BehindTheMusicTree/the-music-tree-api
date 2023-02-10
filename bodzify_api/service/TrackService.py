@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import pprint
 import os
 from pathlib import Path
 
@@ -97,10 +97,10 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, user: User):
         PlaylistService.UpdatePlaylistsOfTrack(user=user, track=updatedTrack, oldGenre=oldGenre)
 
     if oldAlbum != updatedTrack.album and oldAlbum != None:
+        oldAlbumArtists = list(oldAlbum.albumArtists.all())
         AlbumService.DeleteAlbumIfNoTrackLinked(user=user, album=oldAlbum)
-        if oldAlbum.albumArtists is not None:
-            ArtistService.DeleteArtistsIfNoTrackAndAlbumLinked(
-                    user=user, artists=oldAlbum.albumArtists)
+        if oldAlbumArtists is not None:
+            ArtistService.DeleteArtistsIfNoTrackAndAlbumLinked(user=user, artists=oldAlbumArtists)
 
     if oldArtist != updatedTrack.artist and oldArtist != None:
         ArtistService.DeleteArtistsIfNoTrackAndAlbumLinked(user=user, artists=[oldArtist])
