@@ -102,13 +102,15 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, user: User):
     if oldAlbum != updatedTrack.album and oldAlbum != None:
         AlbumService.DeleteAlbumIfNoTrackLinked(user=user, album=oldAlbum)
 
-    UpdateTags(updatedTrack)
+    UpdateTagsIfFileExists(updatedTrack)
 
     return updatedTrack
 
 
-def UpdateTags(track: LibraryTrack):
-
+def UpdateTagsIfFileExists(track: LibraryTrack):
+    if track.fileExists == False:
+        return
+    
     titleTag = track.title
     if titleTag is None:
         titleTag = ""    
@@ -314,7 +316,7 @@ def CreateFromMineTrack(user: User, mineTrack: MineTrack, trackTempFileAbsoluteP
                 name=PlaylistSpecialNames.GENRE_GENRELESS))
     libraryTrack.save()
 
-    UpdateTags(libraryTrack)
+    UpdateTagsIfFileExists(libraryTrack)
 
     return libraryTrack
 

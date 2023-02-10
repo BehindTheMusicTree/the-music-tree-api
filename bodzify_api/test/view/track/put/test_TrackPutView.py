@@ -146,6 +146,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
             - Artist B must be deleted as it has no track linked anymore;
             - Artist A must have 2 tracks;
             - Album '1' must be deleted for the same reason. 
+        - The file is missing. The update must be proceded anyway. 
         """
         data = {
             "albumName": "Test6 - Album",
