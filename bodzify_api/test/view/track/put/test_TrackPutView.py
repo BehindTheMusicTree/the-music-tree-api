@@ -102,6 +102,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
         assert Artist.objects.filter(name="Joni").count() == 0
 
         """
+        Test 4
         - title not specified so unchanged.
         - Max rating.
         - Weird language.
@@ -117,24 +118,26 @@ class TrackPutViewTestCase(TrackViewTestCase):
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLDDDDDS", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBcLDDDDDS")
-        assert track.title == "La Joie"
+        assert track.title == "Test4 - Track"
         assert track.language == "French12ééù12"
         assert track.rating == 255
+        assert track.album.name == "Test4 - Album"
 
         """
+        Test 5:
         - The old album shared the same name as an other one but with different artists names.
         The new album keeps the same name but puts the same artists names as the other one.
         - artist not specified so unchanged.
         """
         data = {
-            "albumName": "Je Casse Tout",
-            "albumArtistsNames": "Mich",
+            "albumName": "Test5 - Album",
+            "albumArtistsNames": "Test5 - Artist2",
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcSSSSSSS", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBcSSSSSSS")
-        assert track.artist.name == "Mich"
-        assert Album.objects.filter(name="Je Casse Tout").count() == 1
+        assert track.artist.name == "Test5 - Artist2"
+        assert Album.objects.filter(name="Test5 - Album").count() == 1
 
         """
         Test 6:

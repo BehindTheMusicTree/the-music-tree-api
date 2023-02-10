@@ -48,46 +48,11 @@
         }
     },
     {
-        "model": "bodzify_api.artist",
-        "pk": "Lsji85mqisjdjf88588712",
-        "fields": {
-            "user": 4,
-            "name": "Mich"
-        }
-    },
-    {
-        "model": "bodzify_api.artist",
-        "pk": "Lsji85mqisjdjf88566654",
-        "fields": {
-            "user": 4,
-            "name": "Pirate"
-        }
-    },
-
-    {
         "model": "bodzify_api.album",
         "pk": "Lsji85mqisjdjf88877765",
         "fields": {
             "user": 4,
             "name": "BOOM"
-        }
-    },
-    {
-        "model": "bodzify_api.album",
-        "pk": "Lsji85mqisjdjf88112233",
-        "fields": {
-            "user": 4,
-            "name": "Je Casse Tout",
-            "albumArtists": ["Lsji85mqisjdjf88588712"]
-        }
-    },
-    {
-        "model": "bodzify_api.album",
-        "pk": "Lsji85mqisjdjf88176767",
-        "fields": {
-            "user": 4,
-            "name": "Je Casse Tout",
-            "albumArtists": ["Lsji85mqisjdjf88588712", "Lsji85mqisjdjf88566654"]
         }
     },
 
@@ -149,15 +114,36 @@
             ]
         }
     },
+
+
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88533345",
+        "fields": {
+            "user": 4,
+            "name": "Test4 - Artist1"
+        }
+    },
+
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88777776",
+        "fields": {
+            "user": 4,
+            "name": "Test4 - Album",
+            "albumArtists": ["Lsji85mqisjdjf88533345"]
+        }
+    },
+
     {
         "model": "bodzify_api.librarytrack",
         "pk": "dyFYZTP3anyaUBcLDDDDDS",
         "fields": {
             "user": 4,
             "file": "libraries/user_4/nonexisting.mp3",
-            "title": "La Joie",
-            "artist": "Lsji85mqisjdjf88588712",
-            "album": "Lsji85mqisjdjf88112233",
+            "title": "Test4 - Track",
+            "artist": "Lsji85mqisjdjf88533345",
+            "album": "Lsji85mqisjdjf88777776",
             "genre": "L1ZG85munGytJb885fgion",
             "duration": 234,
             "rating": 8,
@@ -169,13 +155,51 @@
             ]
         }
     },
+
+
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88566654",
+        "fields": {
+            "user": 4,
+            "name": "Test5 - Artist1"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88588712",
+        "fields": {
+            "user": 4,
+            "name": "Test5 - Artist2"
+        }
+    },
+
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88112233",
+        "fields": {
+            "user": 4,
+            "name": "Test5 - Album",
+            "albumArtists": ["Lsji85mqisjdjf88588712"]
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88176767",
+        "fields": {
+            "user": 4,
+            "name": "Test5 - Album",
+            "albumArtists": ["Lsji85mqisjdjf88566654"]
+        }
+    },
+
     {
         "model": "bodzify_api.librarytrack",
         "pk": "dyFYZTP3anyaUBcSSSSSSS",
         "fields": {
             "user": 4,
             "file": "libraries/user_4/nonexisting.mp3",
-            "title": "La Peur",
+            "title": "Test5 - Track",
             "artist": "Lsji85mqisjdjf88588712",
             "album": "Lsji85mqisjdjf88176767",
             "genre": "L1ZG85munGytJb885fgion",
@@ -189,28 +213,6 @@
             ]
         }
     },
-    {
-        "model": "bodzify_api.librarytrack",
-        "pk": "dyFYZTP3anyaUBc4444444",
-        "fields": {
-            "user": 4,
-            "file": "libraries/user_4/nonexisting.mp3",
-            "title": "La Peur",
-            "artist": "Lsji85mqisjdjf88588712",
-            "album": "Lsji85mqisjdjf88176767",
-            "genre": "L1ZG85munGytJb885fgion",
-            "duration": 234,
-            "rating": 8,
-            "language": "French",
-            "addedOn": "2022-12-15T13:29:04.708Z",
-            "playlists": [
-                "FYM1HUIrwLSgzHSHI76dVH",
-                "LnM1arJrwLhbhHSjqEPdZ7"
-            ]
-        }
-    },
-
-
 
     
     {
@@ -237,6 +239,7 @@
             "name": "Test6 - Artist3"
         }
     },
+
     {
         "model": "bodzify_api.album",
         "pk": "Lsji85mqisjdjf881DJDHD",
