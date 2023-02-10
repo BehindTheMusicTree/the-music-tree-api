@@ -31,12 +31,17 @@ def GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
 def GetAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
         user: User, albumName: str, artists: list):
     
-    album = Album.objects.get(user=user, name=albumName)
-    for albumArtist in artists:
-        albumQueryset = albumQueryset.filter(albumArtists__in=[albumArtist])
+    albumQueryset = Album.objects.filter(user=user, name=albumName)
+    if artists is not None:
+        for albumArtist in artists:
+            albumQueryset = albumQueryset.filter(albumArtists__in=[albumArtist])
+    else:
+        albumQueryset.filter(albumArtists=None)
+
     if albumQueryset.count() == 0:
         album = Album.objects.create(user=user, name=albumName)
-        album.albumArtists.set(artists)
+        if artists is not None:
+            album.albumArtists.set(artists)
     else:
         album = albumQueryset.first()
     return album
