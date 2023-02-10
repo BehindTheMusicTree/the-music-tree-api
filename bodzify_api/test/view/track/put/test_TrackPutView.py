@@ -64,7 +64,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
         track = LibraryTrack.objects.get(title="Give Me Novocain")
         assert track.artist.name == "Green Day"
         assert track.album.name == "American Idiot"
-        assert len(track.album.albumArtists) == 2
+        assert track.album.albumArtists.count() == 2
         assert track.album.albumArtists.filter(name="Green Day").exists()
         assert Artist.objects.filter(name="Green Day").count() == 1
         assert track.genre.name == "Rock"
