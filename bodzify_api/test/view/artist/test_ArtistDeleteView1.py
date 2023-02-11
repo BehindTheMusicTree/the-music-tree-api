@@ -5,11 +5,11 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
-class ArtistDeleteViewTestCase(ArtistViewTestCase):
+class ArtistDeleteViewTestCase1(ArtistViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewArtistDeleteData']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewArtistDeleteData1']
 
-    def test_artistDelete(self):
+    def test_artistDelete1(self):
         self.login(self.testUser)
 
         # Artist with one track

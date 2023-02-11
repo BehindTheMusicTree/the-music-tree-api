@@ -3,16 +3,27 @@
 from django.contrib.auth.models import User
 
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
-def DeleteArtistIfNoTrackLinked(user: User, artist: Artist):
-    if LibraryTrack.objects.filter(user=user, artist=artist).count() == 0:
-        artist.delete()
+def Delete(user: User, artist: Artist):
+    albums = Album.objects.filter(user=user, albumArtists__in=[artist])
+    albumsArtistsList = list(Artist.objects.filter(user=user, album__in=list(albums)))
+    albums.delete()
+    DeleteArtistsIfNoTrackAndAlbumLinked(user=user, artists=albumsArtistsList)
+    artist.delete()
+
+
+def DeleteArtistsIfNoTrackAndAlbumLinked(user: User, artists: list):
+    for artist in artists:
+        if LibraryTrack.objects.filter(user=user, artist=artist).count() == 0:
+            if artist.album_set.count() == 0:
+                artist.delete()
 
 
 def GetArtistFromNameAfterHavingEventuallyCreatedIt(user: User, artistName: str) -> Artist:
-    if artistName is None:
+    if artistName is None or artistName == "":
         return None
     else:
         try:

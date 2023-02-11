@@ -19,6 +19,7 @@ class TrackPostViewTestCase(TrackViewTestCase):
     def test_libraryTrackPost(self):
         self.login(self.testUser)
 
+        # Wrong extension(jpeg)
         response = self.postSampleTrack("post_image.jpeg")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -30,52 +31,71 @@ class TrackPostViewTestCase(TrackViewTestCase):
         #     "post_Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac")
         # assert response.status_code == status.HTTP_201_CREATED
 
+        # No rating
+        # FLAC
         response = self.postSampleTrack("post_sample_without_rating.flac")
         assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(title="Je suis sympa", user=self.testUser)
         assert track.rating == 0
 
+        # Wrong extension (mp4)
         response = self.postSampleTrack("post_bad_extension.mp4")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+        # Genre non existing
         response = self.postSampleTrack("post_genre_foo_non_existing.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert Criteria.objects.filter(user=self.testUser, name="Foo").exists()
 
+        # FLAC
+        # Non existing Album
+        # One non existing Album artist
         response = self.postSampleTrack("post_1-08 - Luz De Luna.flac")
         assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(title="Luz De Luna", user=self.testUser)
         assert track.artist.name == "PNL"
-        assert track.album == "Dans La Légende"
+        assert track.album.name == "Dans La Légende"
+        assert track.album.albumArtists.filter(name="PNL").exists()
+        assert track.album.albumArtists.filter(name="Triste").exists()
         assert track.genre.name == "French cloud rap"
         assert track.fileExtension == ".flac"
-
         assert track.playlists.filter(name=PlaylistSpecialNames.GENRE_ALL).exists()
         assert track.playlists.filter(name="French cloud rap").exists()
 
+        # WAV
+        # Existing artist
+        # Non existing album artists
         response = self.postSampleTrack("post_sample.wav")
         assert response.status_code == 201
         track = LibraryTrack.objects.get(title="La zumba", user=self.testUser)
         assert track.artist.name == "Joni"
-        assert track.album == "BOOM"
+        assert track.album.name == "BOOM"
+        assert track.album.albumArtists.filter(name="Jacky").exists()
+        assert track.album.albumArtists.filter(name="Michelle").exists()
         assert track.genre.name == "j\"\"\"\"j"
-        assert track.duration == "2.665374149659864"
+        assert track.duration == 2.665374149659864
         assert track.rating == 8
         assert track.language == "French"
         assert track.fileExtension == ".wav"
-
         assert track.playlists.filter(name="j\"\"\"\"j").exists()
 
+        # With all tags.
         response = self.postSampleTrack("post_with_all_tags.mp3")
         assert response.status_code == status.HTTP_201_CREATED
 
+        # Without genre.
         response = self.postSampleTrack("post_Eminem_Without_Me_sans_genre.mp3")
         assert response.status_code == status.HTTP_201_CREATED
 
+        # With two album artists.
+        # One album artist existing.
+        # No artist.
         track = LibraryTrack.objects.get(title="Without Me", user=self.testUser)
-        assert track.artist.name == "Eminem"
-        assert track.album == "The Eminem Show (Expanded Edition)"
+        assert track.artist_id is None
+        assert track.album.name == "The Eminem Show (Expanded Edition)"
         assert track.genre.name == "Genreless"
         assert track.fileExtension == ".mp3"
         assert track.playlists.filter(name=PlaylistSpecialNames.GENRE_GENRELESS).exists()
         assert track.playlists.filter(name=PlaylistSpecialNames.GENRE_ALL).exists()
+        assert track.album.albumArtists.filter(name="Eminem").exists()
+        assert track.album.albumArtists.filter(name="Dad").exists()

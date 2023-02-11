@@ -199,6 +199,11 @@ LOGGING = {
     },
 }
 
+if DEBUG:
+    # make all loggers use the console.
+    for logger in LOGGING['loggers']:
+        LOGGING['loggers'][logger]['handlers'] = ['console']
+
 APP_NAME = "bodzify_api"
 APP_ROOT = os.path.join(BASE_DIR, APP_NAME + '/')
 MEDIA_ROOT = "/var/lib/bodzify-api/media/"

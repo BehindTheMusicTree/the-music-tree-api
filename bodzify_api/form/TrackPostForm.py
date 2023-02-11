@@ -5,7 +5,7 @@ from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
 from upload_validator import FileTypeValidator
 
 
-class UploadTrackForm(forms.Form):
+class TrackPostForm(forms.Form):
     file = forms.FileField(
         help_text="Only audio formats accepted",  
         validators=[

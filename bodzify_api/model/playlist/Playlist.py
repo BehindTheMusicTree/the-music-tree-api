@@ -17,23 +17,15 @@ class PlaylistSpecialNames:
 
 class Playlist(models.Model):
     uuid = models.CharField(
-        primary_key=True,
-        default=shortuuid.uuid,
-        max_length=22,
-        editable=False)
+        primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, default=None, blank=None, null=False)
-    type = models.ForeignKey(
-        PlaylistType,
-        on_delete=models.DO_NOTHING,
-        default=None,
-        blank=False,
-        null=False)
+    name = models.CharField(max_length=100, default=None)
+    type = models.ForeignKey(PlaylistType, on_delete=models.DO_NOTHING)
     criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE)
-    addedOn = models.DateTimeField(auto_now_add=True)
+    addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
     @property
-    def parent(self):
+    def parent(self) -> 'Playlist':
         if self.criteria is None: 
             return None
         elif self.criteria.parent is None: 

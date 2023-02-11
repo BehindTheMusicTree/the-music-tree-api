@@ -6,11 +6,13 @@ import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from upload_validator import FileTypeValidator
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.Album import Album
 from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
 import bodzify_api.settings as settings
 
@@ -25,10 +27,7 @@ def userDirectoryPath(instance, filename):
 class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
-            primary_key=True,
-            default=shortuuid.uuid,
-            max_length=22,
-            editable=False)
+            primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(
             upload_to=userDirectoryPath, 
@@ -37,21 +36,17 @@ class LibraryTrack(models.Model):
                     FileExtensionValidator(['flac', 'wav', 'mp3']), 
                     FileTypeValidator(allowed_types=[ 'audio/*']),
                     trackSize])
-    title = models.CharField(max_length=200, default=None, blank=True, null=True)
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, null=True)
-    album = models.CharField(max_length=200, default=None, blank=True, null=True)
-    genre = models.ForeignKey(
-            Criteria,
-            on_delete=models.DO_NOTHING,
-            default=None,
-            null=False
-    )
-    duration = models.IntegerField(default=None, blank=False, null=False)
-    rating = models.IntegerField(default=None, blank=True, null=True)
+    title = models.CharField(max_length=100, default=None)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, default=None, null=True)
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, default=None, null=True)
+    genre = models.ForeignKey(Criteria, on_delete=models.DO_NOTHING)
+    duration = models.FloatField(default=None)
+    rating = models.IntegerField(
+            default=0, validators=[MinValueValidator(0), MaxValueValidator(255)])
     playlists = models.ManyToManyField(Playlist)
-    language = models.CharField(max_length=200, default=None, blank=True, null=True)
-    addedOn = models.DateTimeField(auto_now_add=True)
-    
+    language = models.CharField(max_length=100, default=None, null=True)
+    addedOn = models.DateTimeField(auto_now_add=True, editable=False)
+
 
     @property
     def filename(self) -> str:

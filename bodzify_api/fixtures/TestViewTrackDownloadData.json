@@ -17,6 +17,15 @@
     },
 
     {
+        "model": "bodzify_api.album",
+        "pk": "36nS4LVDssLh4BvTdddddd",
+        "fields": {
+            "user": 4,
+            "name": "Boom"
+        }
+    },
+
+    {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTdlbJEK",
         "fields": {
@@ -24,7 +33,7 @@
            "file": "libraries/user_4/doesnt exist", 
            "title": "1-03 - We're All To Blame", 
            "artist": "36nS4LVDssLh4BvTd7FDUE", 
-           "album": "All Killer No Filler", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
            "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": "207.09333333333333", 
            "rating": 128, 
@@ -44,9 +53,9 @@
             "file": "libraries/user_4/Jul_-_Le_S_MTgyCmzefzfrzM.mp3",
             "title": "La zumba",
             "artist": "36nS4LVDssLh4BvTdDJSof",
-            "album": "BOOM",
+            "album": "36nS4LVDssLh4BvTdddddd",
             "genre": "L1ZG85munGytJb885fgion",
-            "duration": "2.665374149659864",
+            "duration": 2,
             "rating": 8,
             "language": "French",
             "addedOn": "2022-12-15T13:29:04.708Z",

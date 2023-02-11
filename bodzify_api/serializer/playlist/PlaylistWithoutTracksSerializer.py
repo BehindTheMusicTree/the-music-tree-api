@@ -10,7 +10,7 @@ from bodzify_api.serializer.playlist.PlaylistWithoutParentSerializer import (
 class PlaylistWithoutTracksSerializer(PlaylistWithoutParentSerializer):
     parent = serializers.SerializerMethodField()
 
-    def get_parent(self, obj):
+    def get_parent(self, obj) -> PlaylistWithoutParentSerializer:
         if obj.parent is not None:
             return PlaylistWithoutParentSerializer(obj.parent).data
         else:
