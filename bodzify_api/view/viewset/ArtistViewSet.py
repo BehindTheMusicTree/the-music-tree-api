@@ -31,5 +31,5 @@ class ArtistViewSet(MultiSerializerViewSet):
         if Artist.objects.filter(user=user, uuid=artist.uuid).exists() == False:
              raise APIException.NotFound(detail=None, code=None)
         
-        ArtistService.DeleteArtistAndRelativeAlbumsAndTracks(user=user, artist=artist)
+        ArtistService.Delete(user=user, artist=artist)
         return Response(status=status.HTTP_204_NO_CONTENT)
