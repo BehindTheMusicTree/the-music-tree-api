@@ -104,6 +104,15 @@
     },
 
     {
+        "model": "bodzify_api.album",
+        "pk": "36nS4LVDssLh4BvTCCCHCH",
+        "fields": {
+            "user": 4,
+            "name": "J'ai le Sum" 
+        }
+    },
+
+    {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
@@ -111,7 +120,7 @@
            "file": "libraries/user_4/nofile1", 
            "title": "1-03 - We're All To Blame", 
            "artist": "36nS4LVDssLh4BvTASKS90", 
-           "album": "All Killer No Filler", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
            "genre": "LsjdqoifsjofsiEjf885fgion", 
            "duration": "207.09333333333333", 
            "rating": 128, 
@@ -131,7 +140,7 @@
            "file": "libraries/user_4/nofile2", 
            "title": "Summer Love", 
            "artist": "36nS4LVDssLh4BvTASKS90", 
-           "album": "All Killer No Filler", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
            "genre": "LsjdqoifsjofsiEjf885fgion", 
            "duration": "207.09333333333333", 
            "rating": 128, 
@@ -151,9 +160,9 @@
            "file": "libraries/user_4/nofile3", 
            "title": "Lalala", 
            "artist": "36nS4LVDssLh4BvTASSS65", 
-           "album": "J'ai le Sum", 
+           "album": "36nS4LVDssLh4BvTCCCHCH", 
            "genre": "LsjdqoqzpsdojEjf885fgion", 
-           "duration": "205.09333333333333", 
+           "duration": 205, 
            "rating": 78, 
            "language": "French", 
            "addedOn": "2022-12-13T14:07:50.906Z", 

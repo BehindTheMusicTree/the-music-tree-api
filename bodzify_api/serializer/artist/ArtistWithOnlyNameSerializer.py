@@ -5,7 +5,7 @@ from rest_framework import serializers
 from bodzify_api.model.Artist import Artist
 
 
-class ArtistSerializer(serializers.ModelSerializer):
+class ArtistWithOnlyNameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Artist

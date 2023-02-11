@@ -8,7 +8,7 @@ import os
 from bodzify_api.model.track.MineTrack import MineTrack
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
 from bodzify_api.service import ArtistService
-from bodzify_api.service import LibraryTrackService
+from bodzify_api.service import TrackService
 from bodzify_api import settings
 
 TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LETTER_TYPE = string.ascii_lowercase
@@ -45,7 +45,7 @@ def Extract(user, title, artist, duration, releasedOn, mineTrackUrl):
     trackFile = open(trackTempFileAbsolutePath, "wb")
     trackFile.write(response.content)
 
-    libraryTrack = LibraryTrackService.CreateFromMineTrack(
+    libraryTrack = TrackService.CreateFromMineTrack(
         user=user, mineTrack=mineTrack, trackTempFileAbsolutePath=trackTempFileAbsolutePath)
     
     os.remove(trackTempFileAbsolutePath)
