@@ -1,5 +1,4 @@
 from rest_framework import status
-
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.Artist import Artist
@@ -11,7 +10,7 @@ class TrackPutViewTestCase(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData']
 
     def setUp(self) -> None:
-        obj= super().setUp("test/view/track/put/sample/")
+        obj = super().setUp("test/view/track/put/sample/")
         self.copySamplesToTestUserLibrary()
         return obj
 
