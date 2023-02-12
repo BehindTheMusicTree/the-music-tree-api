@@ -18,3 +18,7 @@ class TrackViewTestCase(ViewTestCase):
 
     def downloadTrack(self, trackUuid):
         return self.apiClient.get(path=reverse('librarytrack-download', kwargs={'pk':trackUuid}))
+
+    def deleteTrack(self, trackUuid):        
+        return self.apiClient.delete(path=reverse('librarytrack-detail', kwargs={'pk':trackUuid}))
+
