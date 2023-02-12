@@ -9,11 +9,6 @@ class TrackDeleteViewTestCase2(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackDeleteData2']
 
-    def setUp(self) -> None:
-        obj= super().setUp("test/view/track/delete/sample2/")
-        self.copySamplesToTestUserLibrary()
-        return obj
-
     def test_libraryTrackDelete2(self):
         self.login(self.testUser)
 

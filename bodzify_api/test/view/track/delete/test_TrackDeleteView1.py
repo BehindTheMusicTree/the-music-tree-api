@@ -3,8 +3,6 @@ import os
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.Album import Album
 
 
 class TrackDeleteViewTestCase1(TrackViewTestCase):
