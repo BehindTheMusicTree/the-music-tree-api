@@ -21,4 +21,4 @@ class TrackDeleteViewTestCase2(TrackViewTestCase):
         response = self.deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(user=self.testUser, name="X").exists() == False
-        assert Artist.objects.filer(user=self.testUser, name="Linkin Park").exists() == False
+        assert Artist.objects.filter(user=self.testUser, name="Linkin Park").exists() == False
