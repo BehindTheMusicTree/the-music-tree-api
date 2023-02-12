@@ -73,4 +73,7 @@ class LibraryTrack(models.Model):
     def delete(self):
         if self.fileExists:
             self.file.delete()
-        super(LibraryTrack, self).delete()
+        if LibraryTrack.objects.filter(user=self.user, album=self.album).count() == 1:
+            self.album.delete()
+        else:
+            super(LibraryTrack, self).delete()
