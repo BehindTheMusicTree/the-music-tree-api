@@ -1,18 +1,10 @@
 [
     {
         "model": "bodzify_api.artist",
-        "pk": "Lsji85mqisjdjf885CCCHC",
-        "fields": {
-            "user": 4,
-            "name": "B"
-        }
-    },
-    {
-        "model": "bodzify_api.artist",
         "pk": "Lsji85mqisjdjf885DHD65",
         "fields": {
             "user": 4,
-            "name": "C"
+            "name": "Linkin Park"
         }
     },
     {
@@ -21,7 +13,7 @@
         "fields": {
             "user": 4,
             "name": "X",
-            "albumArtists": ["Lsji85mqisjdjf885CCCHC", "Lsji85mqisjdjf885DHD65"]
+            "albumArtists": ["Lsji85mqisjdjf885DHD65"]
         }
     },
     {
@@ -30,8 +22,8 @@
         "fields": {
            "user": 4, 
            "file": "libraries/user_4/delete_1-03 - We're All To Blame", 
-           "title": "A", 
-           "artist": "Lsji85mqisjdjf885CCCHC", 
+           "title": "1-03 - We're All To Blame", 
+           "artist": "Lsji85mqisjdjf885DHD65", 
            "album": "Lsji85mqisjdjf88MLKJY", 
            "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": 207, 
