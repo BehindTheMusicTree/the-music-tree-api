@@ -19,6 +19,8 @@ class Album(models.Model):
         super(Album, self).delete()
         if artists is not None:
             for artist in artists:
-                if Album.objects.filter(user=self.user, albumArtists__in=[artist]).count() == 0:
-                    if LibraryTrack.objects.filter(user=self.user, artist=artist).count() == 0:
-                        artist.delete()
+                artist.deleteIfNothingLinked()
+            
+    def deleteIfNoTrackLinked(self):
+        if LibraryTrack.objects.filter(user=self.user, album=self).count() == 0:
+            self.delete()

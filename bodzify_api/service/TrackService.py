@@ -51,10 +51,6 @@ VORBIS_LANGUAGE_TAG = 'language'
 
 def Update(oldTrack: LibraryTrack, newData: QueryDict, user: User):
     mutableData = newData.copy()
-    oldTrack = LibraryTrack.objects.get(uuid=oldTrack.uuid)
-    oldGenre = oldTrack.genre
-    oldArtist = oldTrack.artist
-    oldAlbum = oldTrack.album
 
     if TrackViewSet.DATA_GENRE_PARAMETER_NAME in mutableData:
         if mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] is None:
@@ -92,18 +88,6 @@ def Update(oldTrack: LibraryTrack, newData: QueryDict, user: User):
     requestSerializer = TrackPutSerializer(instance=oldTrack, data=mutableData, partial=True)
     requestSerializer.is_valid(raise_exception=True)
     updatedTrack = requestSerializer.save()
-
-    if oldGenre != updatedTrack.genre:
-        PlaylistService.UpdatePlaylistsOfTrack(user=user, track=updatedTrack, oldGenre=oldGenre)
-
-    if oldAlbum != updatedTrack.album and oldAlbum != None:
-        oldAlbumArtists = list(oldAlbum.albumArtists.all())
-        AlbumService.DeleteAlbumIfNoTrackLinked(user=user, album=oldAlbum)
-        if oldAlbumArtists is not None:
-            ArtistService.DeleteArtistsIfNoTrackAndAlbumLinked(user=user, artists=oldAlbumArtists)
-
-    if oldArtist != updatedTrack.artist and oldArtist != None:
-        ArtistService.DeleteArtistsIfNoTrackAndAlbumLinked(user=user, artists=[oldArtist])
 
     UpdateTagsIfFileExists(updatedTrack)
 

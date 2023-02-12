@@ -7,6 +7,10 @@ from django.core.validators import FileExtensionValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from upload_validator import FileTypeValidator
 from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.PlaylistType import PlaylistType
+from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
 import bodzify_api.settings as settings
 
 
@@ -81,3 +85,43 @@ class LibraryTrack(models.Model):
             if LibraryTrack.objects.filter(user=self.user, album=self.album).count() == 1:
                 self.album.delete()
         super(LibraryTrack, self).delete()
+
+
+    def update(self):
+        oldGenre = self.genre
+        oldArtist = self.artist
+        oldAlbum = self.album
+        super.update(LibraryTrack, self).update()
+
+        if oldGenre != self.genre:
+            self.updatePlaylists(oldGenre=oldGenre)
+
+        if oldAlbum != self.album and oldAlbum != None:
+            oldAlbum.deleteIfNoTrackLinked()
+
+        if oldArtist != self.artist and oldArtist != None:
+            oldArtist.deleteIfNothingLinked()
+
+
+    def updatePlaylists(self, oldGenre: Criteria):
+        genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypeIds.GENRE)
+        commonGenre = self.GetCommonCriteria(oldGenre)
+        newGenreTreeItem = self.genre
+
+        while newGenreTreeItem != commonGenre:
+            self.playlists.add(Playlist.objects.get(
+                user=self.user,
+                type=genrePlaylistType,
+                criteria=newGenreTreeItem))            
+            newGenreTreeItem = newGenreTreeItem.parent
+
+        oldGenreTreeItem = oldGenre
+
+        while oldGenreTreeItem != commonGenre:
+            self.playlists.remove(Playlist.objects.get(
+                user=self.user,
+                type=genrePlaylistType,
+                criteria=oldGenreTreeItem))
+            oldGenreTreeItem = oldGenreTreeItem.parent
+            
+        self.save()
