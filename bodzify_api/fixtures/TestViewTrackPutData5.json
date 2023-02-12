@@ -1,0 +1,56 @@
+[
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88566654",
+        "fields": {
+            "user": 4,
+            "name": "Test5 - Artist1"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88588712",
+        "fields": {
+            "user": 4,
+            "name": "Test5 - Artist2"
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88112233",
+        "fields": {
+            "user": 4,
+            "name": "Test5 - Album",
+            "albumArtists": ["Lsji85mqisjdjf88588712"]
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88176767",
+        "fields": {
+            "user": 4,
+            "name": "Test5 - Album",
+            "albumArtists": ["Lsji85mqisjdjf88566654"]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBcSSSSSSS",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/nonexisting.mp3",
+            "title": "Test5 - Track",
+            "artist": "Lsji85mqisjdjf88588712",
+            "album": "Lsji85mqisjdjf88176767",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 234,
+            "rating": 8,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    }
+]
