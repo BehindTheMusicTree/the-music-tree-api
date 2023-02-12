@@ -13,22 +13,25 @@ class TrackPutViewTestCase6(TrackViewTestCase):
         self.login(self.testUser)
 
         """
-        - The old track's album '1' shared the same name as another one '2' but with different 
-        artists names:
-            - '1' album's artists are 'A' and 'B';
-            - '2' album's artists are 'A' and 'C'.
-        The update puts artists 'A' and 'C' on the artists'names of the track's album. Thus:
-            - Artist B must be deleted as it has no track linked anymore;
-            - Album '1' must be deleted for the same reason. 
+        - The old track's album A with uuid 'Lsji85mqisjdjf88MLKJY' shared the same name 'Birds' as 
+        another album B with uuid 'Lsji85mqisjdjf881DJDHD' but with different artists names:
+            - A album's artists are 'Joris Michel' and 'Paula Temple';
+            - B album's artists are 'Joris Michel' and 'Moço'.
+        The update puts artists 'Joris Michel' and 'Moço' on the track's album's artists'names. 
+        Thus:
+            - The 'Paula Temple' artist must be deleted as it has no track or album linked to it 
+            anymore;
+            - B album must be deleted for the same reason. 
         - The file is missing. The update must be proceded anyway. 
         """
         data = {
-            "albumName": "Test6 - Album",
-            "albumArtistsNames": "Test6 - Artist1, Test6 - Artist2",
+            "albumName": "Birds",
+            "albumArtistsNames": "Joris Michel, Moço",
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBc48766YH", data=data)
         assert response.status_code == status.HTTP_200_OK
-        track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBc48766YH")
-        assert Album.objects.filter(name='Test6 - Album').count() == 1
-        assert Album.objects.filter(uuid='Lsji85mqisjdjf88MLKJY').exists() == False
-        assert Artist.objects.filter(name='Test6 - Artist3').exists() == False
+        track = LibraryTrack.objects.get(user=self.testUser, uuid="dyFYZTP3anyaUBc48766YH")
+        assert Album.objects.filter(user=self.testUser, name='Birds').count() == 1
+        assert Album.objects.filter(
+            user=self.testUser, uuid='Lsji85mqisjdjf88MLKJY').exists() == False
+        assert Artist.objects.filter(name='Paula Temple').exists() == False

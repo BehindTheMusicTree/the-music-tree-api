@@ -4,7 +4,7 @@
         "pk": "Lsji85mqisjdjf88765TDT",
         "fields": {
             "user": 4,
-            "name": "Test6 - Artist1"
+            "name": "Joris Michel"
         }
     },
     {
@@ -12,7 +12,7 @@
         "pk": "Lsji85mqisjdjf88LKCFG6",
         "fields": {
             "user": 4,
-            "name": "Test6 - Artist2"
+            "name": "Moço"
         }
     },
     {
@@ -20,7 +20,7 @@
         "pk": "Lsji85mqisjdjf88L98UJI",
         "fields": {
             "user": 4,
-            "name": "Test6 - Artist3"
+            "name": "Paula Temple"
         }
     },
     {
@@ -28,7 +28,7 @@
         "pk": "Lsji85mqisjdjf881DJDHD",
         "fields": {
             "user": 4,
-            "name": "Test6 - Album",
+            "name": "Birds",
             "albumArtists": ["Lsji85mqisjdjf88765TDT", "Lsji85mqisjdjf88LKCFG6"]
         }
     },
@@ -37,7 +37,7 @@
         "pk": "Lsji85mqisjdjf88MLKJY",
         "fields": {
             "user": 4,
-            "name": "Test6 - Album",
+            "name": "Birds",
             "albumArtists": ["Lsji85mqisjdjf88765TDT", "Lsji85mqisjdjf88L98UJI"]
         }
     },
