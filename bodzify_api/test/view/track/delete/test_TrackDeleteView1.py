@@ -18,7 +18,7 @@ class TrackDeleteViewTestCase1(TrackViewTestCase):
         self.login(self.testUser)
 
         """
-        Deleting the track '1-03 - We're All To Blame' must delete associated file.
+        Deleting the track '1-03 - We're All To Blame' must delete the associated file 
         'delete_1-03 - We're All To Blame.mp3'.
         """
         response = self.deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
