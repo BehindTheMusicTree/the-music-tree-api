@@ -1,15 +1,10 @@
 #!/usr/bin/env python
-
 from django.db.models import Q
-
-from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
-    
+from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet    
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import (
     DefaultMultipleModelLimitOffsetPagination)
-
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-
 from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import (
     PlaylistWithoutTracksSerializer)
 from bodzify_api.serializer.track.TrackDetailedSerializer import (

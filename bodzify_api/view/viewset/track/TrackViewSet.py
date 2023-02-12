@@ -1,13 +1,9 @@
 #!/usr/bin/env python
-
 from django.http import JsonResponse
 from django.http import HttpResponse
-
 from rest_framework.decorators import action
 from rest_framework import status
-
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-
 from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.serializer.track.TrackPutSchemaSerializer import TrackPutSchemaSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack

@@ -26,10 +26,4 @@ class ArtistViewSet(MultiSerializerViewSet):
         return super().list(request, *args, **kwargs)
     
     def destroy(self, request, *args, **kwargs):
-        user = request.user
-        artist = self.get_object()
-        if Artist.objects.filter(user=user, uuid=artist.uuid).exists() == False:
-             raise APIException.NotFound(detail=None, code=None)
-        
-        ArtistService.Delete(user=user, artist=artist)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return super().destroy(request, *args, **kwargs)
