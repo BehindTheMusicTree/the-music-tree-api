@@ -14,9 +14,8 @@ class TrackDeleteViewTestCase2(TrackViewTestCase):
 
         """
         Deleting the track '1-03 - We're All To Blame' must also delete : 
-            - The track's album 'X' must also be deleted as it has no track anymore.
-            - The track's artist 'Linkin Park' must also be deleted as it has no associated track 
-        or album anymore.
+            - The track's album 'X' as it has no track anymore.
+            - The track's artist 'Linkin Park' as it has no associated track or album anymore.
         """
         response = self.deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
         assert response.status_code == status.HTTP_204_NO_CONTENT
