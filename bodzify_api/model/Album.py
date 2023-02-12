@@ -16,7 +16,7 @@ class Album(models.Model):
 
     def delete(self):
         artists = list(self.albumArtists.all())
-        super(Album, self).delete()
+        super().delete()
         if artists is not None:
             for artist in artists:
                 artist.deleteIfNothingLinked()
