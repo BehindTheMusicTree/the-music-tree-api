@@ -1,14 +1,11 @@
 #!/usr/bin/env python
-
 import os
 import shortuuid
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from upload_validator import FileTypeValidator
-
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.Artist import Artist
@@ -70,4 +67,10 @@ class LibraryTrack(models.Model):
 
 
     def __str__(self) -> str:
-        return str(self.user) + " " + self.artist + " " + self.title + " " + str(self.file) 
+        return str(self.user) + " " + self.artist + " " + self.title + " " + str(self.file)
+    
+
+    def delete(self):
+        if self.fileExists:
+            self.file.delete()
+        super(LibraryTrack, self).delete()
