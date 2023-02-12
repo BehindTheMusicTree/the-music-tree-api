@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-
 from django.contrib.auth.models import User
-
 import bodzify_api.service.ArtistService as ArtistService
 from bodzify_api.model.Album import Album
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 def GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
