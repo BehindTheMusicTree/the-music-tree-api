@@ -1,7 +1,5 @@
 import pytest
-
 from rest_framework import status
-
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.track.LibraryTrack import LibraryTrack

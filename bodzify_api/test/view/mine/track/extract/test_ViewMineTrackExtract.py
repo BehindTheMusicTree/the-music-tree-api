@@ -1,9 +1,7 @@
+#!/usr/bin/env python
 import os
-
 from django.urls import reverse
-
 from rest_framework import status
-
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
