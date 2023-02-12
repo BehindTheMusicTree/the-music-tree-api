@@ -22,6 +22,7 @@ def userDirectoryPath(instance, filename):
 
 
 class LibraryTrack(models.Model):
+    
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
             primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
@@ -84,28 +85,12 @@ class LibraryTrack(models.Model):
         if self.album_id is not None:
             if LibraryTrack.objects.filter(user=self.user, album=self.album).count() == 1:
                 self.album.delete()
-        super(LibraryTrack, self).delete()
-
-
-    def update(self):
-        oldGenre = self.genre
-        oldArtist = self.artist
-        oldAlbum = self.album
-        super.update(LibraryTrack, self).update()
-
-        if oldGenre != self.genre:
-            self.updatePlaylists(oldGenre=oldGenre)
-
-        if oldAlbum != self.album and oldAlbum != None:
-            oldAlbum.deleteIfNoTrackLinked()
-
-        if oldArtist != self.artist and oldArtist != None:
-            oldArtist.deleteIfNothingLinked()
+        super().delete()
 
 
     def updatePlaylists(self, oldGenre: Criteria):
         genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypeIds.GENRE)
-        commonGenre = self.GetCommonCriteria(oldGenre)
+        commonGenre = self.genre.getCommonCriteria(oldGenre)
         newGenreTreeItem = self.genre
 
         while newGenreTreeItem != commonGenre:
@@ -125,3 +110,18 @@ class LibraryTrack(models.Model):
             oldGenreTreeItem = oldGenreTreeItem.parent
             
         self.save()
+
+    def save(self, *args, **kwargs):
+        oldTrack = LibraryTrack.objects.get(uuid=self.uuid)
+        oldGenre = oldTrack.genre
+        oldArtist = oldTrack.artist
+        oldAlbum = oldTrack.album
+        super().save(*args, **kwargs)
+
+        if oldGenre != self.genre:
+            self.updatePlaylists(oldGenre=oldGenre)
+        if oldAlbum != self.album and oldAlbum != None:
+            oldAlbum.deleteIfNoTrackLinked()
+
+        if oldArtist != self.artist and oldArtist != None:
+            oldArtist.deleteIfNothingLinked()
