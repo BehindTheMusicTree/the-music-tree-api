@@ -230,7 +230,8 @@ def _updateMutagenFileTagIfValueSet(id3: ID3, metadataDict: dict, metadataKey: s
             textFrameClass = TCON
         elif metadataKey == METADATA_DICT_RATING_KEY:
             id3.delall(id3Key)
-            POPM(email=ID3_RATING_APP_EMAIL, rating=metadataDict[METADATA_DICT_RATING_KEY])
+            id3.add(POPM(
+                    email=ID3_RATING_APP_EMAIL, rating=metadataDict[METADATA_DICT_RATING_KEY]))
             return id3
         elif metadataKey == METADATA_DICT_LANGUAGE_KEY:
             id3Key = ID3_LANGUAGE_TEXT_FRAME
@@ -239,7 +240,7 @@ def _updateMutagenFileTagIfValueSet(id3: ID3, metadataDict: dict, metadataKey: s
             raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
         
         id3.delall(id3Key)
-        id3.add(textFrameClass(encoding=3, text=metadataDict[METADATA_DICT_RATING_KEY]))
+        id3.add(textFrameClass(encoding=3, text=metadataDict[metadataKey]))
 
     return id3
 
