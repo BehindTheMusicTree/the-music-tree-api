@@ -54,7 +54,7 @@ class LibraryTrack(models.Model):
     rating = models.IntegerField(
             default=0, validators=[MinValueValidator(0), MaxValueValidator(255)])
     playlists = models.ManyToManyField('bodzify_api.Playlist')
-    language = models.CharField(max_length=100, default=None, null=True)
+    language = models.CharField(max_length=100, blank=True, default=None, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
 
