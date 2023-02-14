@@ -19,7 +19,7 @@ def List(query, pageNumber, pageSize):
 def Extract(user, title, artist, duration, releasedOn, mineTrackUrl):
     mineTrack = MineTrack(
         title = title,
-        artist = artist,
+        artistName = artist,
         duration = duration,
         releasedOn = releasedOn,
         url = mineTrackUrl)
