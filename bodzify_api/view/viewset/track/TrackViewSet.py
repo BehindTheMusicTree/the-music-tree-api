@@ -60,7 +60,6 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         return queryset
 
 
-    
     @extend_schema(
         request=TrackPutSchemaSerializer, 
         responses=TrackDetailedSerializer,
@@ -112,6 +111,13 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
                 status=status.HTTP_410_GONE)
 
 
+    @extend_schema(
+        description=("""
+            Create a track with metadata by uploading a file:
+                - If the file has no metadata 'title', it is set with the file's name without the 
+            extension.
+            """)
+    )
     def create(self, request, *args, **kwargs):
         form = TrackPostForm(request.POST, request.FILES)
         if form.is_valid():
