@@ -7,12 +7,12 @@ from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 
 
 @pytest.mark.django_db
-class TrackPostViewTestCase(TrackPostViewTestCase):
+class TrackPostViewTestCase3(TrackPostViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
-    sampleDirectoryRelativePath = "test/view/track/post/sample/"
+    sampleDirectoryRelativePath = "test/view/track/post/sample/3/"
 
-    def test_libraryTrackPost(self):
+    def test_libraryTrackPost3(self):
         self.login(self.testUser)
 
         # Wrong extension(jpeg)
