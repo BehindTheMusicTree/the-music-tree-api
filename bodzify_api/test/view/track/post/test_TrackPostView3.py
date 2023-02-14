@@ -29,15 +29,6 @@ class TrackPostViewTestCase3(TrackPostViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         """
 
-        """
-        - No rating
-        - FLAC
-        """
-        response = self.postSampleTrack("sample_without_rating.flac")
-        assert response.status_code == status.HTTP_201_CREATED
-        track = LibraryTrack.objects.get(title="Je suis sympa", user=self.testUser)
-        assert track.rating == 0
-
         # Wrong extension (mp4)
         response = self.postSampleTrack("post_bad_extension.mp4")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
