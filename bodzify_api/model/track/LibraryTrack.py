@@ -7,6 +7,7 @@ from django.core.validators import FileExtensionValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from upload_validator import FileTypeValidator
 from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
+from bodzify_api.model.track.LibraryTrackQuerySet import LibraryTrackQuerySet
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
@@ -32,6 +33,8 @@ class LibraryTrack(models.Model):
     ATTRIBUTE_DURATION_LABEL = "duration"
     ATTRIBUTE_RATING_LABEL = "rating"
     ATTRIBUTE_LANGUAGE_LABEL = "language"
+
+    objects = LibraryTrackQuerySet.as_manager()
     
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
