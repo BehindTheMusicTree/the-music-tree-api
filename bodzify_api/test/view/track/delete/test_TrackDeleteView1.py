@@ -8,11 +8,8 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 class TrackDeleteViewTestCase1(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackDeleteData1']
+    sampleDirectoryRelativePath = "test/view/track/delete/sample/1/"
 
-    def setUp(self) -> None:
-        obj= super().setUp("test/view/track/delete/sample1/")
-        self.copySamplesToTestUserLibraryIfNecessary()
-        return obj
 
     def test_libraryTrackDelete1(self):
         self.login(self.testUser)
