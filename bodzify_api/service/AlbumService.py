@@ -5,22 +5,22 @@ from bodzify_api.model.Album import Album
 
 
 def GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
-        user: User, albumName: str, albumArtistsNames: list) -> Album:
+        user: User, albumName: str, albumArtistsNameList: list) -> Album:
     
     if albumName is None or albumName == "":
         return None
     else:
-        if albumArtistsNames is not None:
+        if albumArtistsNameList is not None:
             albumArtists = [ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
-                 user=user, artistName=artistName) for artistName in albumArtistsNames]
+                 user=user, artistName=artistName) for artistName in albumArtistsNameList]
         else:
             albumArtists = None
                 
-        return GetAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
+        return _getAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
                 user=user, albumName=albumName, artists=albumArtists)
     
 
-def GetAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
+def _getAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
         user: User, albumName: str, artists: list):
     
     albumQueryset = Album.objects.filter(user=user, name=albumName)
