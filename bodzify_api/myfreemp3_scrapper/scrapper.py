@@ -36,7 +36,7 @@ def getTracksFromMyfreemp3Json(dataDict):
         if trackJson != TAG_TO_IGNORE:
             tracks.append(MineTrack(
                 title=trackJson[TITLE_FIELD], 
-                artist=trackJson[ARTIST_FIELD], 
+                artistName=trackJson[ARTIST_FIELD], 
                 duration=trackJson[DURATION_FIELD], 
                 releasedOn=trackJson[RELEASED_ON_FIELD],
                 url=trackJson[URL_FIELD]))
