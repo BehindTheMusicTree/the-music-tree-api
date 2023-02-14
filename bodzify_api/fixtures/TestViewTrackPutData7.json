@@ -1,29 +1,13 @@
 [
     {
-        "model": "bodzify_api.artist",
-        "pk": "Lsji85mqisjdjf885DHD55",
-        "fields": {
-            "user": 4,
-            "name": "Joni"
-        }
-    },
-    {
-        "model": "bodzify_api.album",
-        "pk": "Lsji85mqisjdjf88877765",
-        "fields": {
-            "user": 4,
-            "name": "BOOM"
-        }
-    },
-    {
         "model": "bodzify_api.librarytrack",
         "pk": "dyFYZTP3anyaUBcLYVHJ3A",
         "fields": {
             "user": 4,
-            "file": "libraries/user_4/put_sample.wav",
-            "title": "La zumba",
-            "artist": "Lsji85mqisjdjf885DHD55",
-            "album": "Lsji85mqisjdjf88877765",
+            "file": "libraries/user_4/sample_without_tags.wav",
+            "title": "",
+            "artist": "",
+            "album": "",
             "genre": "L1ZG85munGytJb885fgion",
             "duration": 234,
             "rating": 8,
