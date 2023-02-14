@@ -231,12 +231,17 @@ def _updateMutagenFileTagIfValueSet(id3: ID3, metadataDict: dict, metadataKey: s
         elif metadataKey == METADATA_DICT_RATING_KEY:
             id3.delall(id3Key)
             POPM(email=ID3_RATING_APP_EMAIL, rating=metadataDict[METADATA_DICT_RATING_KEY])
-            return
+            return id3
         elif metadataKey == METADATA_DICT_LANGUAGE_KEY:
             id3Key = ID3_LANGUAGE_TEXT_FRAME
             textFrameClass = TLAN
         else:
             raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
+        
+        id3.delall(id3Key)
+        id3.add(textFrameClass(encoding=3, text=metadataDict[METADATA_DICT_RATING_KEY]))
+
+    return id3
 
 
 def _updateFlacFileTagIfValueSet(flacFile: FLAC, metadataUpdateDict: dict, metadataDictKey: str):
@@ -251,14 +256,18 @@ def _updateFlacFileTagIfValueSet(flacFile: FLAC, metadataUpdateDict: dict, metad
             vorbisTagKey = VORBIS_ALBUM_ARTISTS_NAMES_TAG_KEY
         elif metadataDictKey == METADATA_DICT_GENRE_NAME_KEY:
             flacFile[VORBIS_GENRE_NAME_TAG_KEY][0] = metadataUpdateDict[metadataDictKey]
-            return
+            return flacFile
         elif metadataDictKey == METADATA_DICT_RATING_KEY:
-            vorbisTagKey = VORBIS_TITLE_TAG_KEY
+            flacFile[VORBIS_RATING_TAG_KEY] = str(metadataUpdateDict[metadataDictKey])
+            return flacFile
         elif metadataDictKey == METADATA_DICT_LANGUAGE_KEY:
             vorbisTagKey = VORBIS_LANGUAGE_TAG_KEY
         else:
             raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
+        
         flacFile[vorbisTagKey] = metadataUpdateDict[metadataDictKey]
+
+    return flacFile
 
 
 def Update(file, metadataUpdateDict: dict):
@@ -271,7 +280,7 @@ def Update(file, metadataUpdateDict: dict):
             if metadataDictKey == METADATA_DICT_DURATION_KEY:
                 raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
-                _updateMutagenFileTagIfValueSet(
+                trackId3Tags = _updateMutagenFileTagIfValueSet(
                         id3=trackId3Tags, 
                         metadataDict=metadataUpdateDict, 
                         metadataKey=METADATA_DICT_TITLE_KEY)
@@ -282,7 +291,7 @@ def Update(file, metadataUpdateDict: dict):
             if metadataDictKey == METADATA_DICT_DURATION_KEY:
                 raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
-                _updateFlacFileTagIfValueSet(
+                flacFile = _updateFlacFileTagIfValueSet(
                         flacFile=flacFile, 
                         metadataUpdateDict=metadataUpdateDict, 
                         metadataDictKey=metadataDictKey)
