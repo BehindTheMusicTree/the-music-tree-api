@@ -7,6 +7,7 @@ from django.core.validators import FileExtensionValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from upload_validator import FileTypeValidator
 from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
+from bodzify_api.model.track.LibraryTrackQuerySet import LibraryTrackQuerySet
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
@@ -22,6 +23,18 @@ def userDirectoryPath(instance, filename):
 
 
 class LibraryTrack(models.Model):
+
+    ATTRIBUTE_USER_LABEL = "user"
+    ATTRIBUTE_FILE_LABEL = "file"
+    ATTRIBUTE_TITLE_LABEL = "title"
+    ATTRIBUTE_ARTIST_LABEL = "artist"
+    ATTRIBUTE_ALBUM_LABEL = "album"
+    ATTRIBUTE_GENRE_LABEL = "genre"
+    ATTRIBUTE_DURATION_LABEL = "duration"
+    ATTRIBUTE_RATING_LABEL = "rating"
+    ATTRIBUTE_LANGUAGE_LABEL = "language"
+    
+    objects = LibraryTrackQuerySet.as_manager()
     
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
@@ -73,10 +86,6 @@ class LibraryTrack(models.Model):
     @property
     def relativeUrl(self) -> str:
         return 'tracks/' + self.uuid + "/"
-
-
-    def __str__(self) -> str:
-        return str(self.user) + " " + self.artist + " " + self.title + " " + str(self.file)
     
 
     def delete(self):
@@ -108,20 +117,4 @@ class LibraryTrack(models.Model):
                 type=genrePlaylistType,
                 criteria=oldGenreTreeItem))
             oldGenreTreeItem = oldGenreTreeItem.parent
-            
         self.save()
-
-    def save(self, *args, **kwargs):
-        oldTrack = LibraryTrack.objects.get(uuid=self.uuid)
-        oldGenre = oldTrack.genre
-        oldArtist = oldTrack.artist
-        oldAlbum = oldTrack.album
-        super().save(*args, **kwargs)
-
-        if oldGenre != self.genre:
-            self.updatePlaylists(oldGenre=oldGenre)
-        if oldAlbum != self.album and oldAlbum != None:
-            oldAlbum.deleteIfNoTrackLinked()
-
-        if oldArtist != self.artist and oldArtist != None:
-            oldArtist.deleteIfNothingLinked()
