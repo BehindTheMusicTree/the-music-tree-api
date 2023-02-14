@@ -14,7 +14,6 @@ import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
@@ -124,26 +123,31 @@ def CreateFromUpload(user: User, file):
     postSerializerData = dict()
     postSerializerData[LibraryTrack.ATTRIBUTE_USER_LABEL] = user.id
     postSerializerData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = file
-    postSerializerData[LibraryTrack.ATTRIBUTE_TITLE_LABEL] = (
-            tagsDict[AudioMetadataService.METADATA_DICT_TITLE_KEY])
+
+    title = tagsDict[AudioMetadataService.METADATA_DICT_TITLE_KEY]
+    if title == "" or title is None:
+        title, fileExtension = os.path.splitext(file.name)
+    postSerializerData[LibraryTrack.ATTRIBUTE_TITLE_LABEL] = title
     
     artistName = tagsDict[AudioMetadataService.METADATA_DICT_ARTIST_NAME_KEY]
-    artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
+    if artistName is not None and artistName != "":
+        artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
             user=user, artistName=artistName)
-    postSerializerData[LibraryTrack.ATTRIBUTE_ARTIST_LABEL] = artist.uuid
+        postSerializerData[LibraryTrack.ATTRIBUTE_ARTIST_LABEL] = artist.uuid
     
     albumName = tagsDict[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY]
-    albumArtistsNamesString = tagsDict[AudioMetadataService.METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY]
-    if albumArtistsNamesString == "":
-        albumArtistsNameList = None
-    else:
-        albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNamesString)
-    album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
-            user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
-    postSerializerData[LibraryTrack.ATTRIBUTE_ALBUM_LABEL] = album.uuid
+    if albumName is not None and albumName != "":
+        albumArtistsNamesString = tagsDict[AudioMetadataService.METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY]
+        if albumArtistsNamesString == "":
+            albumArtistsNameList = None
+        else:
+            albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNamesString)
+        album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
+                user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
+        postSerializerData[LibraryTrack.ATTRIBUTE_ALBUM_LABEL] = album.uuid
     
     genreName = tagsDict[AudioMetadataService.METADATA_DICT_GENRE_NAME_KEY]
-    if genreName == "":
+    if genreName == "" or genreName is None:
         genreName = CriteriaSpecialNames.GENRE_GENRELESS
     genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
         user=user, criteriaName=genreName)
