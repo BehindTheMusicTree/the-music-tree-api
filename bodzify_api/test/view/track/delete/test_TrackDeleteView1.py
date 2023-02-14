@@ -11,7 +11,7 @@ class TrackDeleteViewTestCase1(TrackViewTestCase):
 
     def setUp(self) -> None:
         obj= super().setUp("test/view/track/delete/sample1/")
-        self.copySamplesToTestUserLibrary()
+        self.copySamplesToTestUserLibraryIfNecessary()
         return obj
 
     def test_libraryTrackDelete1(self):

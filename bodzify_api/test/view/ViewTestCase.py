@@ -16,6 +16,8 @@ TEST_USERNAME = "test_django"
 
 class ViewTestCase(TestCase):
 
+    sampleDirectoryRelativePath=""
+
     def setUpTestUserDirectories(self):
         testUserLibraryAbsolutePath = (
             settings.LIBRARIES_PATH 
@@ -23,7 +25,10 @@ class ViewTestCase(TestCase):
             + str(self.testUser.pk))
         if not os.path.exists(testUserLibraryAbsolutePath):
             os.makedirs(testUserLibraryAbsolutePath)
-        self.sampleDirectoryAbsolutePath = settings.APP_ROOT + self.sampleDirectoryRelativePath
+        
+        if self.sampleDirectoryRelativePath != "":
+            self.sampleDirectoryAbsolutePath = settings.APP_ROOT + self.sampleDirectoryRelativePath
+
         self.testUserLibraryRelativePath = (
             settings.LIBRARIES_FOLDER_NAME
             + "/" + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE 
@@ -31,13 +36,14 @@ class ViewTestCase(TestCase):
         self.testUserLibraryAbsolutePath = settings.MEDIA_ROOT +  self.testUserLibraryRelativePath
         self.emptyUserLibrary()
 
-    def setUp(self, sampleRelativePath="") -> None:
-
-        self.sampleDirectoryRelativePath = sampleRelativePath
+    def setUp(self) -> None:
         self.mime = magic.Magic(mime=True)
         self.apiClient = APIClient()
         self.testUser = User.objects.get(username=TEST_USERNAME)
         self.setUpTestUserDirectories()
+        if self.sampleDirectoryRelativePath != "":
+            self.copySamplesToTestUserLibraryIfNecessary()
+        self.login(self.testUser)
         return super().setUp()
 
     def login(self, user):
@@ -56,9 +62,10 @@ class ViewTestCase(TestCase):
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (filePath, e))
     
-    def copySamplesToTestUserLibrary(self):            
-        fileNames = os.listdir(self.sampleDirectoryAbsolutePath)
-        for fileName in fileNames:
-            shutil.copy(
-                os.path.join(self.sampleDirectoryAbsolutePath, fileName),
-                self.testUserLibraryAbsolutePath)
+    def copySamplesToTestUserLibraryIfNecessary(self):
+        if self.sampleDirectoryRelativePath != "":        
+            fileNames = os.listdir(self.sampleDirectoryAbsolutePath)
+            for fileName in fileNames:
+                shutil.copy(
+                    os.path.join(self.sampleDirectoryAbsolutePath, fileName),
+                    self.testUserLibraryAbsolutePath)

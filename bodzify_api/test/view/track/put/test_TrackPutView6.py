@@ -11,10 +11,9 @@ class TrackPutViewTestCase6(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData6']
 
     def test_libraryTrackPut6(self):
-        self.login(self.testUser)
 
         """
-        - The old track's album A with uuid 'Lsji85mqisjdjf88MLKJY' shared the same name 'Birds' as 
+        The old track's album A with uuid 'Lsji85mqisjdjf88MLKJY' shared the same name 'Birds' as 
         another album B with uuid 'Lsji85mqisjdjf881DJDHD' but with different artists names:
             - A album's artists are 'Joris Michel' and 'Paula Temple';
             - B album's artists are 'Joris Michel' and 'Moço'.

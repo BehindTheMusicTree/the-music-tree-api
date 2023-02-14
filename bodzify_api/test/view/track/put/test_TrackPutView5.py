@@ -8,9 +8,9 @@ from bodzify_api.model.Album import Album
 class TrackPutViewTestCase5(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData5']
+    sampleDirectoryRelativePath = "test/view/track/put/sample/5/"
 
     def test_libraryTrackPut5(self):
-        self.login(self.testUser)
 
         """
         - The old album shared the same name as an other one but with different artists names.

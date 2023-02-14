@@ -7,9 +7,9 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 class TrackPutViewTestCase4(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData4']
+    sampleDirectoryRelativePath = "test/view/track/put/sample/4/"
 
     def test_libraryTrackPut4(self):
-        self.login(self.testUser)
 
         """
         - title not specified so unchanged.

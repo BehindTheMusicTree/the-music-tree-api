@@ -5,11 +5,7 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 class TrackDownloadViewTestCase(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackDownloadData']
-
-    def setUp(self) -> None:
-        obj = super().setUp(sampleRelativePath="test/view/track/download/sample/")
-        self.copySamplesToTestUserLibrary()
-        return obj
+    sampleDirectoryRelativePath = "test/view/track/download/sample/"
 
     def test_libraryTrackDownload(self):
         self.login(self.testUser)
