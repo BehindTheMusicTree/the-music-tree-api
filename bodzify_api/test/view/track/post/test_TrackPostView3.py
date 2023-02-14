@@ -33,7 +33,7 @@ class TrackPostViewTestCase3(TrackPostViewTestCase):
         - No rating
         - FLAC
         """
-        response = self.postSampleTrack("post_sample_without_rating.flac")
+        response = self.postSampleTrack("sample_without_rating.flac")
         assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(title="Je suis sympa", user=self.testUser)
         assert track.rating == 0
