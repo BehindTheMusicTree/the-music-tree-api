@@ -228,7 +228,7 @@ def GetMetadataDictFromFile(file):
     return metadataDict
 
 
-def _updateMutagenFileTagIfValueSet(id3: ID3, metadataDict: dict, metadataKey: str):
+def _updateId3FileTagIfValueSet(id3FileTags: ID3, metadataDict: dict, metadataKey: str):
     if metadataKey in metadataDict:
         if metadataKey == METADATA_DICT_TITLE_KEY:
             id3Key = ID3_TITLE_TEXT_FRAME
@@ -246,20 +246,20 @@ def _updateMutagenFileTagIfValueSet(id3: ID3, metadataDict: dict, metadataKey: s
             id3Key = ID3_GENRE_NAME_TEXT_FRAME
             textFrameClass = TCON
         elif metadataKey == METADATA_DICT_RATING_KEY:
-            id3.delall(id3Key)
-            id3.add(POPM(
+            id3FileTags.delall(ID3_RATING_TEXT_FRAME)
+            id3FileTags.add(POPM(
                     email=ID3_RATING_APP_EMAIL, rating=metadataDict[METADATA_DICT_RATING_KEY]))
-            return id3
+            return id3FileTags
         elif metadataKey == METADATA_DICT_LANGUAGE_KEY:
             id3Key = ID3_LANGUAGE_TEXT_FRAME
             textFrameClass = TLAN
         else:
             raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
         
-        id3.delall(id3Key)
-        id3.add(textFrameClass(encoding=3, text=metadataDict[metadataKey]))
+        id3FileTags.delall(id3Key)
+        id3FileTags.add(textFrameClass(encoding=3, text=metadataDict[metadataKey]))
 
-    return id3
+    return id3FileTags
 
 
 def _updateFlacFileTagIfValueSet(flacFile: FLAC, metadataUpdateDict: dict, metadataDictKey: str):
@@ -303,8 +303,8 @@ def Update(file, metadataUpdateDict: dict):
             if metadataDictKey == METADATA_DICT_DURATION_KEY:
                 raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
-                id3 = _updateMutagenFileTagIfValueSet(
-                        id3=id3, 
+                id3 = _updateId3FileTagIfValueSet(
+                        id3FileTags=id3, 
                         metadataDict=metadataUpdateDict, 
                         metadataKey=metadataDictKey)
         id3.save(file.path)
