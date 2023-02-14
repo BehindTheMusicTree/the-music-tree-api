@@ -326,8 +326,6 @@ def Update(file, metadataUpdateDict: dict):
 
 def _getFirstValueIfExistsOrEmptyString(dict: dict, key: str):
     if key in dict:
-        print(key)
-        print(dict[key][0])
         return dict[key][0]
     else:
         return ""
