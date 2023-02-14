@@ -8,7 +8,7 @@ from bodzify_api.model.Album import Album
 
 class TrackPutViewTestCase1(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData1']
     sampleDirectoryRelativePath = "test/view/track/put/sample/1/"
 
     def test_libraryTrackPut1(self):
