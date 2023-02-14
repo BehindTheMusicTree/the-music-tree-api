@@ -8,6 +8,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 class TrackPostViewTestCase2(TrackPostViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
+    sampleDirectoryRelativePath = "test/view/track/post/sample/"
 
     def test_libraryTrackPost2(self):
         self.login(self.testUser)

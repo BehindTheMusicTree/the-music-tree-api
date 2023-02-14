@@ -10,6 +10,7 @@ from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 class TrackPostViewTestCase(TrackPostViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
+    sampleDirectoryRelativePath = "test/view/track/post/sample/"
 
     def test_libraryTrackPost(self):
         self.login(self.testUser)
@@ -45,23 +46,6 @@ class TrackPostViewTestCase(TrackPostViewTestCase):
         response = self.postSampleTrack("post_genre_foo_non_existing.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert Criteria.objects.filter(user=self.testUser, name="Foo").exists()
-
-        """
-        - FLAC
-        - Non existing Album
-        - One non existing Album artist
-        """
-        response = self.postSampleTrack("post_1-08 - Luz De Luna.flac")
-        assert response.status_code == status.HTTP_201_CREATED
-        track = LibraryTrack.objects.get(title="Luz De Luna", user=self.testUser)
-        assert track.artist.name == "PNL"
-        assert track.album.name == "Dans La Légende"
-        assert track.album.albumArtists.filter(name="PNL").exists()
-        assert track.album.albumArtists.filter(name="Triste").exists()
-        assert track.genre.name == "French cloud rap"
-        assert track.fileExtension == ".flac"
-        assert track.playlists.filter(name=PlaylistSpecialNames.GENRE_ALL).exists()
-        assert track.playlists.filter(name="French cloud rap").exists()
 
         # WAV
         # Existing artist

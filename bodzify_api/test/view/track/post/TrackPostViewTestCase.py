@@ -6,4 +6,3 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 class TrackPostViewTestCase(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
-    sampleDirectoryRelativePath = "test/view/track/post/sample/"
