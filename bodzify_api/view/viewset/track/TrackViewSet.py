@@ -116,7 +116,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         form = TrackPostForm(request.POST, request.FILES)
         if form.is_valid():
             track = TrackService.CreateFromUpload(
-                    request.user, request.FILES[DATA_FILE_PARAMETER_NAME])
+                    request.user, file=request.FILES[DATA_FILE_PARAMETER_NAME])
             return JsonResponse(
                     data=TrackDetailedSerializer(track).data,
                     status=status.HTTP_201_CREATED)
