@@ -19,4 +19,4 @@ class TrackPostViewTestCase11(TrackPostViewTestCase):
         """
         response = self.postSampleTrack("sample_without_tags.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert LibraryTrack.objects.get(user=self.testUser, name='sample_without_tags').exists()
+        assert LibraryTrack.objects.filter(user=self.testUser, title='sample_without_tags').exists()
