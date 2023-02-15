@@ -1,9 +1,4 @@
 #!/usr/bin/env python
-
-from rest_framework.response import Response
-from rest_framework.exceptions import APIException
-from rest_framework import status
-
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.Artist import Artist
 import bodzify_api.service.ArtistService as ArtistService
