@@ -12,4 +12,4 @@ class SearchViewTestCase3(SearchViewTestCase):
         - Test non case-sensitiveness
         """
         response = self.search("Rap")
-        assert response.content.overall_total == 2
+        assert response.json()["overall_total"] == 2

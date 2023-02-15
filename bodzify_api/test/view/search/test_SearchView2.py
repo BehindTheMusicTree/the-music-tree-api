@@ -9,4 +9,4 @@ class SearchViewTestCase2(SearchViewTestCase):
         self.login(self.testUser)
 
         response = self.search("All")
-        assert response.content.overall_total == 1
+        assert response.json()["overall_total"] == 1

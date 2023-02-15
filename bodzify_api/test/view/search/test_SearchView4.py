@@ -12,4 +12,4 @@ class SearchViewTestCase4(SearchViewTestCase):
          - Test query in artist, album or title
         """
         response = self.search("Sum")
-        assert response.content.overall_total == 3
+        assert response.json()["overall_total"] == 3
