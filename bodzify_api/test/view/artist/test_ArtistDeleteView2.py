@@ -11,17 +11,17 @@ class ArtistDeleteViewTestCase2(ArtistViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewArtistDeleteData2']
 
     """
-    - A track 'A' with artist 'B' and album 'X'.
-    - Album 'X' has album artists 'B' and 'C'.
-    - 'Deleting artist 'B' should delete:
-        - track 'A';
-        - album 'X' as it has no track linked anymore;
-        - artist 'C' as it has nor album nor track linked anymore.
+    - A track 'A Life' with artist 'Bertrand' and album 'Xavier'.
+    - Album 'Xavier' has album artists 'Bertrand' and 'Coco Roùa'.
+    - 'Deleting artist 'Bertrand' should delete:
+        - track 'A Life';
+        - album 'Xavier' as it has no track linked anymore;
+        - artist 'Coco Roùa' as it has nor album nor track linked anymore.
     """
     def test_artistDelete2(self):
         self.login(self.testUser)
-        response = self.delete(Artist.objects.get(user=self.testUser, name='B').uuid)
+        response = self.delete(Artist.objects.get(user=self.testUser, name='Bertrand').uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert LibraryTrack.objects.filter(user=self.testUser, title='A').exists() == False
-        assert Album.objects.filter(user=self.testUser, name='X').exists() == False
-        assert Artist.objects.filter(user=self.testUser, name='C').exists() == False
+        assert LibraryTrack.objects.filter(user=self.testUser, title='A Life').exists() == False
+        assert Album.objects.filter(user=self.testUser, name='Xavier').exists() == False
+        assert Artist.objects.filter(user=self.testUser, name='Coco Roùa').exists() == False
