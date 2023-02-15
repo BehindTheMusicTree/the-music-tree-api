@@ -29,15 +29,16 @@ TYPE_PARAMETER_PLAYLIST_VALUE = QUERY_PLAYLIST_FILTER_NAME
 
 
 def libraryTrackFilter(queryset, request, *args, **kwargs):
-    type = request.query_params[TYPE_PARAMETER_TITLE_VALUE]
-    query = request.query_params[QUERY_PARAMETER_NAME]
-    if query != "":
-        queryset = queryset.filter(
-                Q(title__icontains=query) | 
-                Q(artist__icontains=query) | 
-                Q(album__icontains=query)
-        )
-    print(request.user)
+    if TYPE_PARAMETER_TITLE_VALUE in request.query_params:
+        type = request.query_params[TYPE_PARAMETER_TITLE_VALUE]
+    if QUERY_PARAMETER_NAME in request.query_params:
+        query = request.query_params[QUERY_PARAMETER_NAME]
+        if query != "":
+            queryset = queryset.filter(
+                    Q(title__icontains=query) | 
+                    Q(artist__icontains=query) | 
+                    Q(album__icontains=query)
+            )
     return queryset.filter(user=request.user.id)
 
 
