@@ -3,9 +3,8 @@ import os
 import mutagen
 from mutagen._file import File as MutagenFile
 from mutagen.id3 import Frames
-from mutagen.flac import FLAC
-from mutagen.mp3 import MP3
 from mutagen.id3 import ID3
+from mutagen.flac import FLAC
 from mutagen.id3 import TIT2
 from mutagen.id3 import TPE1
 from mutagen.id3 import TALB
@@ -14,7 +13,6 @@ from mutagen.id3 import TCON
 from mutagen.id3 import POPM
 from mutagen.id3 import TLAN
 from mutagen.id3 import ID3NoHeaderError
-from mutagen.mp3 import HeaderNotFoundError
 
 TAG_ARTISTS_SEPARATION_CHAR = ","
 
@@ -57,64 +55,65 @@ def _getDurationFromFileTags(fileTags):
     return fileTags.info.length
 
 
-def _getTitleTagFromId3File(id3: ID3):
-    return _getFirstValueIfExistsOrEmptyString(id3, ID3_TITLE_TEXT_FRAME)
+def _getTitleTagFromId3File(id3FileTags: MutagenFile):
+    return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TITLE_TEXT_FRAME)
 
 
-def _getArtistNameTagFromMutagenFile(id3: ID3):
-    return _getFirstValueIfExistsOrEmptyString(id3, ID3_ARTIST_NAME_TEXT_FRAME)
+def _getArtistNameTagFromMutagenFile(id3FileTags: MutagenFile):
+    return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_ARTIST_NAME_TEXT_FRAME)
 
 
-def _getAlbumNameTagFromMutagenFile(id3: ID3):
-    return _getFirstValueIfExistsOrEmptyString(id3, ID3_ALBUM_NAME_TEXT_FRAME)
+def _getAlbumNameTagFromMutagenFile(id3FileTags: MutagenFile):
+    return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_ALBUM_NAME_TEXT_FRAME)
 
 
-def _getAlbumArtistsNameStringTagFromMutagenFile(id3: ID3):
+def _getAlbumArtistsNameStringTagFromMutagenFile(id3FileTags: MutagenFile):
     albumArtistsNamesStringRaw = (
-            _getFirstValueIfExistsOrEmptyString(id3, ID3_ALBUM_ARTISTS_NAMES_TEXT_FRAME))
+            _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_ALBUM_ARTISTS_NAMES_TEXT_FRAME))
     return albumArtistsNamesStringRaw.strip()
 
 
-def _getGenreNameTagFromMutagenFile(id3: ID3):
-    if ID3_GENRE_NAME_TEXT_FRAME in id3:
-        return id3[ID3_GENRE_NAME_TEXT_FRAME][0]
+def _getGenreNameTagFromMutagenFile(id3FileTags: MutagenFile):
+    if ID3_GENRE_NAME_TEXT_FRAME in id3FileTags:
+        return id3FileTags[ID3_GENRE_NAME_TEXT_FRAME][0]
     else:
         return ""
    
 
-def _getRatingTagFromMutagenFile(id3: ID3):
+def _getRatingTagFromMutagenFile(id3FileTags: MutagenFile):
     rating = 0
-    for key in id3:
+    for key in id3FileTags:
         if ID3_RATING_TEXT_FRAME in key:
-            rating = id3[key].rating
+            rating = id3FileTags[key].rating
     return rating
     
 
-def _getLanguageTagFromMutagenFile(id3: ID3):
-    return _getFirstValueIfExistsOrEmptyString(id3, ID3_LANGUAGE_TEXT_FRAME)
+def _getLanguageTagFromMutagenFile(id3FileTags: MutagenFile):
+    return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_LANGUAGE_TEXT_FRAME)
 
 
-def _getTitleTagFromFlacFile(flacFile: FLAC):
-    return _getFirstValueIfExistsOrEmptyString(flacFile, VORBIS_TITLE_TAG_KEY)
+def _getTitleTagFromFlacFile(flacFileTags: FLAC):
+    return _getFirstValueIfExistsOrEmptyString(flacFileTags, VORBIS_TITLE_TAG_KEY)
 
 
-def _getArtistNameTagFromFlacFile(flacFile: FLAC):
-    return _getFirstValueIfExistsOrEmptyString(flacFile, VORBIS_ARTIST_NAME_TAG_KEY)
+def _getArtistNameTagFromFlacFile(flacFileTags: FLAC):
+    return _getFirstValueIfExistsOrEmptyString(flacFileTags, VORBIS_ARTIST_NAME_TAG_KEY)
 
 
-def _getAlbumNameTagFromFlacFile(flacFile: FLAC):
-    return _getFirstValueIfExistsOrEmptyString(flacFile, VORBIS_ALBUM_NAME_TAG_KEY)
+def _getAlbumNameTagFromFlacFile(flacFileTags: FLAC):
+    return _getFirstValueIfExistsOrEmptyString(flacFileTags, VORBIS_ALBUM_NAME_TAG_KEY)
 
 
-def _getAlbumArtistsNameStringTagFromFlacFile(flacFile: FLAC):
+def _getAlbumArtistsNameStringTagFromFlacFile(flacFileTags: FLAC):
     albumArtistsNamesStringRaw = (
-            _getFirstValueIfExistsOrEmptyString(flacFile, VORBIS_ALBUM_ARTISTS_NAMES_TAG_KEY))
+            _getFirstValueIfExistsOrEmptyString(
+                    flacFileTags, VORBIS_ALBUM_ARTISTS_NAMES_TAG_KEY))
     return albumArtistsNamesStringRaw.strip()
 
 
-def _getGenreNameTagFromFlacFile(flacFile: FLAC):
-    if VORBIS_GENRE_NAME_TAG_KEY in flacFile:
-        return flacFile[VORBIS_GENRE_NAME_TAG_KEY][0]
+def _getGenreNameTagFromFlacFile(flacFileTags: FLAC):
+    if VORBIS_GENRE_NAME_TAG_KEY in flacFileTags:
+        return flacFileTags[VORBIS_GENRE_NAME_TAG_KEY][0]
     else:
         return ""
     
@@ -127,7 +126,7 @@ def _getLanguageTagFromFlacFile(flacFile: FLAC):
     return _getFirstValueIfExistsOrEmptyString(flacFile, VORBIS_LANGUAGE_TAG_KEY)
 
 
-def _getSpecificMetadataFromId3File(id3FileTags: ID3, metadataKey: str):
+def _getSpecificMetadataFromId3File(id3FileTags: MutagenFile, metadataKey: str):
     if metadataKey == METADATA_DICT_TITLE_KEY:
         return _getTitleTagFromId3File(id3FileTags)
     elif metadataKey == METADATA_DICT_ARTIST_NAME_KEY:
@@ -294,34 +293,33 @@ def Update(file, metadataUpdateDict: dict):
     fileExtensionLowered = fileExtension.lower()
 
     if fileExtensionLowered in [".wav", ".mp3"]:
-        id3 = ID3(file.path)
         try:
-            id3 = ID3(file.path)
+            fileTags = ID3(file.path)
         except ID3NoHeaderError:
-            id3 = ID3()
+            fileTags = ID3()
         for metadataDictKey in list(metadataUpdateDict.keys()):
             if metadataDictKey == METADATA_DICT_DURATION_KEY:
                 raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
-                id3 = _updateId3FileTagIfValueSet(
-                        id3FileTags=id3, 
+                fileTags = _updateId3FileTagIfValueSet(
+                        id3FileTags=fileTags, 
                         metadataDict=metadataUpdateDict, 
                         metadataKey=metadataDictKey)
-        id3.save(file.path)
 
     elif fileExtensionLowered == ".flac":
-        flac = FLAC(file.path)
+        fileTags = FLAC(file.path)
         for metadataDictKey in list(metadataUpdateDict.keys()):
             if metadataDictKey == METADATA_DICT_DURATION_KEY:
                 raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
-                flac = _updateFlacFileTagIfValueSet(
-                        flacFile=flac, 
+                fileTags = _updateFlacFileTagIfValueSet(
+                        flacFile=fileTags, 
                         metadataUpdateDict=metadataUpdateDict, 
                         metadataDictKey=metadataDictKey)
-        flac.save(file.path)
     else:
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+
+    fileTags.save(file.path)
 
 
 def _getFirstValueIfExistsOrEmptyString(dict: dict, key: str):
