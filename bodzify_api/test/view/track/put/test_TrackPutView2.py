@@ -19,7 +19,7 @@ class TrackPutViewTestCase2(TrackViewTestCase):
         - Old track didn't have an album.
         - Old artist was empty.
         - Lowest rating.
-        - A album artist is sent twice. Only one must be created.
+        - An album artist is sent twice. Only one must be created.
         - A space lies at the end of the album's artists' names. It musn't be taken into account.
         """
         data = {
