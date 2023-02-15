@@ -1,17 +1,6 @@
 [
     {
         "model": "bodzify_api.criteria",
-        "pk": "LsjdqoifsjofsiEUDUDU",
-        "fields": {
-            "name": "Rock",
-            "type": 1,
-            "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
         "pk": "LsjdqoqzpsdojEjf885",
         "fields": {
             "name": "Rap",
@@ -38,7 +27,7 @@
         "fields": {
             "name": "Nu metal",
             "type": 1,
-            "parent": "LsjdqoifsjofsiEUDUDU",
+            "parent": "LsjdqoifsjofsiEjf885DD",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
         }
@@ -77,15 +66,6 @@
             "user": 4
         }
     },
-
-    {
-        "model": "bodzify_api.artist",
-        "pk": "36nS4LVDssLh4BvTASKS90",
-        "fields": {
-            "user": 4,
-            "name": "Sum 41" 
-        }
-    },
     {
         "model": "bodzify_api.artist",
         "pk": "36nS4LVDssLh4BvTADJS6D",
@@ -119,15 +99,14 @@
            "user": 4, 
            "file": "libraries/user_4/nofile1", 
            "title": "1-03 - We're All To Blame", 
-           "artist": "36nS4LVDssLh4BvTASKS90", 
-           "genre": "LsjdqoifsjofsiEUDUDU", 
+           "artist": "f36nS4LVDssLh4BvTADD76", 
+           "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": "207.09333333333333", 
            "rating": 128, 
            "language": "", 
            "addedOn": "2022-12-13T14:07:50.906Z", 
            "playlists": [
                 "LnM1arJrwLhbhHSjqEPdZ7",
-                "FYM1HUIrqjqjshssI76dVH",
                 "FYM1HUIrqjqjshssI76dVH"
             ]
         }
