@@ -117,7 +117,6 @@
             "user": 4
         }
     },
-
     {
         "model": "bodzify_api.artist",
         "pk": "f36nS4LVDssLh4BvTADD76",
@@ -126,7 +125,6 @@
             "name": "Sum 41"
         }
     },
-    
     {
         "model": "bodzify_api.album",
         "pk": "f36nS4LVDssLh4BvTSST54",
@@ -139,7 +137,6 @@
             ]
         }
     },
-
     {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",

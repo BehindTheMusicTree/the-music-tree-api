@@ -20,19 +20,7 @@
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
         }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "LsjdqoiqsicqjsDDD",
-        "fields": {
-            "name": "Nu metal",
-            "type": 1,
-            "parent": "LsjdqoifsjofsiEjf885DD",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    
+    },    
     {
         "model": "bodzify_api.playlist",
         "pk": "qdsuhqoishcosihqoq",
@@ -56,17 +44,6 @@
         }
     },
     {
-        "model": "bodzify_api.playlist",
-        "pk": "Lsji85mqisjdQQqqqs",
-        "fields": {
-            "name": "Nu metal",
-            "criteria": "LsjdqoiqsicqjsDDD",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
         "model": "bodzify_api.artist",
         "pk": "36nS4LVDssLh4BvTADJS6D",
         "fields": {
@@ -82,7 +59,6 @@
             "name": "PNL" 
         }
     },
-
     {
         "model": "bodzify_api.album",
         "pk": "36nS4LVDssLh4BvTCCCHCH",
@@ -91,7 +67,6 @@
             "name": "J'ai le Sum" 
         }
     },
-
     {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
