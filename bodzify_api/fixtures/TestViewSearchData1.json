@@ -1,7 +1,7 @@
 [
     {
         "model": "bodzify_api.criteria",
-        "pk": "LsjdqoifsjofsiEjf885fgion",
+        "pk": "LsjdqoifsjofsiEUDUDU",
         "fields": {
             "name": "Rock",
             "type": 1,
@@ -12,7 +12,7 @@
     },
     {
         "model": "bodzify_api.criteria",
-        "pk": "LsjdqoqzpsdojEjf885fgion",
+        "pk": "LsjdqoqzpsdojEjf885",
         "fields": {
             "name": "Rap",
             "type": 1,
@@ -34,11 +34,11 @@
     },
     {
         "model": "bodzify_api.criteria",
-        "pk": "Lsjdqoiqsicqjsof885fgion",
+        "pk": "LsjdqoiqsicqjsDDD",
         "fields": {
             "name": "Nu metal",
             "type": 1,
-            "parent": "LsjdqoifsjofsiEjf885fgion",
+            "parent": "LsjdqoifsjofsiEUDUDU",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
         }
@@ -49,7 +49,7 @@
         "pk": "qdsuhqoishcosihqoq",
         "fields": {
             "name": "Rap",
-            "criteria": "LsjdqoqzpsdojEjf885fgion",
+            "criteria": "LsjdqoqzpsdojEjf885",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
@@ -60,7 +60,7 @@
         "pk": "FYM1HUIrqjqjshssI76dVH",
         "fields": {
             "name": "Rock",
-            "criteria": "LsjdqoifsjofsiEjf885fgion",
+            "criteria": "LsjdqoifsjofsiEUDUDU",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
@@ -68,10 +68,10 @@
     },
     {
         "model": "bodzify_api.playlist",
-        "pk": "Lsji85mqisjdjf885fgion",
+        "pk": "Lsji85mqisjdQQqqqs",
         "fields": {
             "name": "Nu metal",
-            "criteria": "Lsjdqoiqsicqjsof885fgion",
+            "criteria": "LsjdqoiqsicqjsDDD",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
@@ -120,14 +120,14 @@
            "file": "libraries/user_4/nofile1", 
            "title": "1-03 - We're All To Blame", 
            "artist": "36nS4LVDssLh4BvTASKS90", 
-           "album": "f36nS4LVDssLh4BvTSST54", 
-           "genre": "LsjdqoifsjofsiEjf885fgion", 
+           "genre": "LsjdqoifsjofsiEUDUDU", 
            "duration": "207.09333333333333", 
            "rating": 128, 
            "language": "", 
            "addedOn": "2022-12-13T14:07:50.906Z", 
            "playlists": [
                 "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrqjqjshssI76dVH",
                 "FYM1HUIrqjqjshssI76dVH"
             ]
         }
@@ -140,8 +140,7 @@
            "file": "libraries/user_4/nofile2", 
            "title": "Summer Love", 
            "artist": "36nS4LVDssLh4BvTASKS90", 
-           "album": "f36nS4LVDssLh4BvTSST54", 
-           "genre": "LsjdqoifsjofsiEjf885fgion", 
+           "genre": "L1ZG85munGytJb885fgion", 
            "duration": "207.09333333333333", 
            "rating": 128, 
            "language": "", 
@@ -161,7 +160,7 @@
            "title": "Lalala", 
            "artist": "36nS4LVDssLh4BvTASSS65", 
            "album": "36nS4LVDssLh4BvTCCCHCH", 
-           "genre": "LsjdqoqzpsdojEjf885fgion", 
+           "genre": "L1ZG85munGytJb885fgion", 
            "duration": 205, 
            "rating": 78, 
            "language": "French", 
