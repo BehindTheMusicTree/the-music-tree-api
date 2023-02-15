@@ -36,9 +36,8 @@ def libraryTrackFilter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                     Q(title__icontains=query) | 
-                    Q(artist__icontains=query) | 
-                    Q(album__icontains=query)
-            )
+                    Q(artist__name__icontains=query) | 
+                    Q(album__name__icontains=query))
     return queryset.filter(user=request.user.id)
 
 
