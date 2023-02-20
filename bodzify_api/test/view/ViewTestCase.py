@@ -18,7 +18,7 @@ class ViewTestCase(TestCase):
 
     sampleDirectoryRelativePath=""
 
-    def setUpTestUserDirectories(self):
+    def _setUpTestUserDirectories(self):
         testUserLibraryAbsolutePath = (
             settings.LIBRARIES_PATH 
             + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE 
@@ -34,15 +34,15 @@ class ViewTestCase(TestCase):
             + "/" + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE 
             + str(self.testUser.pk) + "/")
         self.testUserLibraryAbsolutePath = settings.MEDIA_ROOT +  self.testUserLibraryRelativePath
-        self.emptyUserLibrary()
+        self._emptyUserLibrary()
 
     def setUp(self) -> None:
         self.mime = magic.Magic(mime=True)
         self.apiClient = APIClient()
         self.testUser = User.objects.get(username=TEST_USERNAME)
-        self.setUpTestUserDirectories()
+        self._setUpTestUserDirectories()
         if self.sampleDirectoryRelativePath != "":
-            self.copySamplesToTestUserLibraryIfNecessary()
+            self._copySamplesToTestUserLibraryIfNecessary()
         self.login(self.testUser)
         return super().setUp()
 
@@ -51,7 +51,7 @@ class ViewTestCase(TestCase):
         access = AccessToken.for_user(user)
         self.apiClient.credentials(HTTP_AUTHORIZATION='Bearer {access}')
     
-    def emptyUserLibrary(self):
+    def _emptyUserLibrary(self):
         for filename in os.listdir(self.testUserLibraryAbsolutePath):
             filePath = os.path.join(self.testUserLibraryAbsolutePath, filename)
             try:
@@ -62,10 +62,13 @@ class ViewTestCase(TestCase):
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (filePath, e))
     
-    def copySamplesToTestUserLibraryIfNecessary(self):
+    def _copySamplesToTestUserLibraryIfNecessary(self):
         if self.sampleDirectoryRelativePath != "":        
             fileNames = os.listdir(self.sampleDirectoryAbsolutePath)
             for fileName in fileNames:
                 shutil.copy(
                     os.path.join(self.sampleDirectoryAbsolutePath, fileName),
                     self.testUserLibraryAbsolutePath)
+
+    def doesUserTrackFileExist(self, filename: str):
+        return os.path.isfile(self.testUserLibraryAbsolutePath + filename)
