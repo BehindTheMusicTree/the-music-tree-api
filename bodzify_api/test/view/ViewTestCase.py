@@ -1,15 +1,11 @@
 #!/usr/bin/env python
-
 import magic
 import os
 import shutil
-
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import AccessToken
-
 from django.test import TestCase
 from django.contrib.auth.models import User
-
 import bodzify_api.settings as settings
 
 TEST_USERNAME = "test_django"
