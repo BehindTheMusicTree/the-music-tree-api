@@ -1,8 +1,9 @@
 #!/usr/bin/env python
+from rest_framework.response import Response
 from django.http import JsonResponse
 from django.http import HttpResponse
-from rest_framework.decorators import action
 from rest_framework import status
+from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.serializer.track.TrackPutSchemaSerializer import TrackPutSchemaSerializer
@@ -58,6 +59,11 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         if language is not None:
             queryset = queryset.filter(language__icontains=language)
         return queryset
+
+
+    def destroy(self, request, *args, **kwargs):
+        self.get_object().deleteTrackWithCheckingAlbumAndArtistPotentialDeletion()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
     @extend_schema(
