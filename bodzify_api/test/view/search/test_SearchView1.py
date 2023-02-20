@@ -12,5 +12,4 @@ class SearchViewTestCase1(SearchViewTestCase):
         - Test query returning playlist and track
         """
         response = self.search("metal")
-        print(response.content )
         assert response.json()["overall_total"] == 2
