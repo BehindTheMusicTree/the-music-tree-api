@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import os
 import shortuuid
+from django.dispatch import receiver
 from django.db import models
+from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -84,15 +86,6 @@ class LibraryTrack(models.Model):
     @property
     def relativeUrl(self) -> str:
         return 'tracks/' + self.uuid + "/"
-    
-
-    def delete(self):
-        if self.fileExists:
-            self.file.delete()
-        if self.album_id is not None:
-            if LibraryTrack.objects.filter(user=self.user, album=self.album).count() == 1:
-                self.album.delete()
-        super().delete()
 
 
     def updatePlaylists(self, oldGenre: Criteria):
@@ -134,3 +127,37 @@ class LibraryTrack(models.Model):
                 oldArtist.deleteIfNothingLinked()
         except ObjectDoesNotExist:
             super().save(*args, **kwargs)
+    
+
+    @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
+    def deleteFileIfExists(sender, instance, using, **kwargs):
+        if instance.fileExists:
+            instance.file.delete()
+
+
+    def deleteWithCheckingAlbumAndArtistPotentialDeletion(self):
+        self.deleteEventualRelatedAlbum()
+        self.deleteEventualRelatedArtist()
+        self.delete()
+
+
+    def deleteWithCheckingArtistPotentialDeletion(self):
+        self.deleteEventualRelatedArtist()
+        self.delete()
+
+
+    def deleteWithCheckingAlbumPotentialDeletion(self):
+        self.deleteEventualRelatedAlbum()
+        self.delete()
+
+
+    def deleteEventualRelatedArtist(self):  
+        trackArtistId = self.artist_id
+        if trackArtistId is not None:
+            self.artist.deleteIfNothingLinked()
+
+
+    def deleteEventualRelatedAlbum(self):  
+        trackAlbumId = self.album_id
+        if trackAlbumId is not None:
+            self.album.deleteIfNoTrackLinked()
