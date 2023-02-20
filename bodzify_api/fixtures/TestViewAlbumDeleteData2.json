@@ -4,16 +4,32 @@
         "pk": "Lsji85mqisjdjf885DHD65",
         "fields": {
             "user": 4,
-            "name": "Linkin Park"
+            "name": "Matthew Bellamy"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DFDGD",
+        "fields": {
+            "user": 4,
+            "name": "Muse"
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885GGF56",
+        "fields": {
+            "user": 4,
+            "name": "Feat"
         }
     },
     {
         "model": "bodzify_api.album",
-        "pk": "Lsji85mqisjdjf88MLKJY",
+        "pk": "f36nS4LVDssLh4BvTSST54",
         "fields": {
             "user": 4,
-            "name": "X",
-            "albumArtists": ["Lsji85mqisjdjf885DHD65"]
+            "name": "Black Holes And Revelation",
+            "albumArtists": ["Lsji85mqisjdjf885DFDGD", "Lsji85mqisjdjf885GGF56"]
         }
     },
     {
@@ -21,10 +37,10 @@
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
            "user": 4, 
-           "file": "libraries/user_4/1-03 - We're All To Blame.mp3", 
-           "title": "We're All To Blame", 
+           "file": "libraries/user_4/nofile", 
+           "title": "Assassin", 
            "artist": "Lsji85mqisjdjf885DHD65", 
-           "album": "Lsji85mqisjdjf88MLKJY", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
            "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": 207, 
            "rating": 128,
@@ -38,13 +54,12 @@
     },
     {
         "model": "bodzify_api.librarytrack",
-        "pk": "36nS4LVDssLh4BvTADDHDH",
+        "pk": "36nS4LVDssLh4BvTDCXS45",
         "fields": {
            "user": 4, 
            "file": "libraries/user_4/nofile", 
-           "title": "1-01 - No Reason", 
-           "artist": "Lsji85mqisjdjf885DHD65", 
-           "album": "Lsji85mqisjdjf88MLKJY", 
+           "title": "El Amor", 
+           "artist": "Lsji85mqisjdjf885GGF56", 
            "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": 207, 
            "rating": 128,

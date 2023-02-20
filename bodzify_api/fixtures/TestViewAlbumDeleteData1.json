@@ -4,15 +4,15 @@
         "pk": "Lsji85mqisjdjf885DHD65",
         "fields": {
             "user": 4,
-            "name": "Linkin Park"
+            "name": "Muse"
         }
     },
     {
         "model": "bodzify_api.album",
-        "pk": "Lsji85mqisjdjf88MLKJY",
+        "pk": "f36nS4LVDssLh4BvTSST54",
         "fields": {
             "user": 4,
-            "name": "X",
+            "name": "Black Holes And Revelation",
             "albumArtists": ["Lsji85mqisjdjf885DHD65"]
         }
     },
@@ -21,10 +21,10 @@
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
            "user": 4, 
-           "file": "libraries/user_4/1-03 - We're All To Blame.mp3", 
-           "title": "We're All To Blame", 
+           "file": "libraries/user_4/Assassin.mp3", 
+           "title": "Assassin", 
            "artist": "Lsji85mqisjdjf885DHD65", 
-           "album": "Lsji85mqisjdjf88MLKJY", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
            "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": 207, 
            "rating": 128,
@@ -38,13 +38,13 @@
     },
     {
         "model": "bodzify_api.librarytrack",
-        "pk": "36nS4LVDssLh4BvTADDHDH",
+        "pk": "36nS4LVDssLh4BvTDDDYS5",
         "fields": {
            "user": 4, 
-           "file": "libraries/user_4/nofile", 
-           "title": "1-01 - No Reason", 
+           "file": "libraries/user_4/Starlight.mp3", 
+           "title": "Starlight", 
            "artist": "Lsji85mqisjdjf885DHD65", 
-           "album": "Lsji85mqisjdjf88MLKJY", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
            "genre": "LsjdqoifsjofsiEjf885DD", 
            "duration": 207, 
            "rating": 128,
