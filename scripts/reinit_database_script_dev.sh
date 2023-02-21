@@ -8,9 +8,10 @@ sudo rm -r /var/lib/bodzify-api/*
 python3 $managePath migrate
 python3 $managePath migrate --fake
 python3 $managePath makemigrations 
-python3 $managePath --fake-initial
 python3 $managePath migrate
 python3 $managePath makemigrations bodzify_api
 python3 $managePath migrate
 python3 $managePath loaddata initial_data
+python3 $managePath loaddata initial_data_test_app
+python3 $managePath loaddata initial_data_test_postman
 python3 $managePath runserver
