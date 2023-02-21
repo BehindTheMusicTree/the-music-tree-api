@@ -207,7 +207,7 @@ def GetMetadataDictFromFile(file):
         fileTags = FLAC(fileobj=file)
         title = _getTitleTagFromFlacFile(fileTags)
         artistName = _getArtistNameTagFromFlacFile(fileTags)
-        albumName = _getAlbumArtistsNameStringTagFromFlacFile(fileTags)
+        albumName = _getAlbumNameTagFromFlacFile(fileTags)
         albumArtistsNamesString = _getAlbumArtistsNameStringTagFromFlacFile(fileTags)
         genreName = _getGenreNameTagFromFlacFile(fileTags)
         rating = _getRatingTagFromFlacFile(fileTags) 
