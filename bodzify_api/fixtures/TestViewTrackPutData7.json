@@ -1,5 +1,26 @@
 [
     {
+        "model": "bodzify_api.criteria",
+        "pk": "L1ZG85munGytJb885WWJN8",
+        "fields": {
+            "name": "Techno",
+            "type": 1,
+            "parent": "m5KRxi10O884BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLhbhHSjqCLLLC",
+        "fields": {
+            "criteria": "L1ZG85munGytJb885WWJN8",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
         "model": "bodzify_api.librarytrack",
         "pk": "dyFYZTP3anyaUBcLYVHJ3A",
         "fields": {

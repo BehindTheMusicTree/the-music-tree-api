@@ -15,7 +15,6 @@
         "model": "bodzify_api.playlist",
         "pk": "qdsuhqoishcosihqoq",
         "fields": {
-            "name": "Rap",
             "criteria": "LsjdqoqzpsdojEjGHGH",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
@@ -48,7 +47,6 @@
            "file": "libraries/user_4/1-03 - We're All To Blame", 
            "title": "1-03 - We're All To Blame", 
            "artist": "Lsji85mqisjdjf88589HFY", 
-           "album": "f36nS4LVDssLh4BvTSST54", 
            "genre": "L1ZG85munGytJb885fgion", 
            "duration": "207.09333333333333", 
            "rating": 128, 
