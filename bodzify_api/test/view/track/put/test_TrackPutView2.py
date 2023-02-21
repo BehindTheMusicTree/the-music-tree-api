@@ -14,20 +14,20 @@ class TrackPutViewTestCase2(TrackViewTestCase):
     def test_libraryTrackPut2(self):
 
         """
-        - On a FLAC file.
-        - Non existing new artist.
-        - Old track didn't have an album.
-        - Old artist was empty.
-        - Lowest rating.
-        - An album artist is sent twice. Only one must be created.
+        - On a FLAC file with uuid "36nS4LVDoihoihvTARbJEK";
+        - Non existing new artist "Green Day";
+        - Old track didn't have an album;
+        - Lowest rating 0;
+        - An album artist "Green Day" is sent twice. Only one must be created;
         - A space lies at the end of the album's artists' names. It musn't be taken into account.
+        - New genre "Rock".
         """
         data = {
             "title": "Give Me Novocain",
             "artistName": "Green Day",
             "albumName": "American Idiot",
             "albumArtistsNames": "Green Day, RATM, Green Day, ",
-            "genre": "LsjdqoifsjofsiEjf885DD",  
+            "genre": "L1ZG85munGytJb885WWJN8",  
             "rating": 0,
             "language": "English, German"
         }

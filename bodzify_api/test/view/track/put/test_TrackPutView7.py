@@ -14,20 +14,22 @@ class TrackPutViewTestCase7(TrackViewTestCase):
     def test_libraryTrackPut7(self):
 
         """
-        - wav without tags.
+         - on a wav file without tags;
+         - new genre "Techno";
+         - new artist name is "Queen".
         """
         data = {
             "title": "Bohemian Raphsody",
             "artistName": "Queen",
             "albumName": "A Night At The Opera",
             "albumArtistsNames": "Queen",
-            "genre": "Lsjdqoiqsicqjsof8800",
+            "genre": "L1ZG85munGytJb885WWJN8",
             "language": "French"
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(title="Bohemian Raphsody")
-        assert track.artist_id == None
+        assert track.artist.name == "Queen"
         assert track.album.name == "A Night At The Opera"
         assert track.album.albumArtists.filter(name="Queen").exists()
         assert track.rating == 8

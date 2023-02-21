@@ -62,7 +62,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
 
     def destroy(self, request, *args, **kwargs):
-        self.get_object().deleteTrackWithCheckingAlbumAndArtistPotentialDeletion()
+        self.get_object().deleteWithCheckingAlbumAndArtistPotentialDeletion()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

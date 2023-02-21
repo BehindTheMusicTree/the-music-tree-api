@@ -3,7 +3,7 @@ import pytest
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
+from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
 
 @pytest.mark.django_db
@@ -29,8 +29,8 @@ class TrackPostViewTestCase4(TrackViewTestCase):
         assert track.genre.name == "Genreless"
         assert track.fileExtension == ".mp3"
         assert track.playlists.filter(
-                user=self.testUser, name=PlaylistSpecialNames.GENRE_GENRELESS).exists()
+                user=self.testUser, criteria__name=CriteriaSpecialNames.GENRE_GENRELESS).exists()
         assert track.playlists.filter(
-                user=self.testUser, name=PlaylistSpecialNames.GENRE_ALL).exists()
+                user=self.testUser, criteria__name=CriteriaSpecialNames.GENRE_ALL).exists()
         assert track.album.albumArtists.filter(user=self.testUser, name="Eminem").exists()
         assert track.album.albumArtists.filter(user=self.testUser, name="Dad").exists()

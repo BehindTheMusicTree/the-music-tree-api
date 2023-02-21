@@ -3,7 +3,9 @@ import pytest
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
+from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
 
 @pytest.mark.django_db
@@ -13,10 +15,12 @@ class TrackPostViewTestCase1(TrackViewTestCase):
     sampleDirectoryRelativePath = "test/view/track/post/sample/1/"
 
     """
-    - FLAC
-    - Existing artist "PNL"
-    - Non existing Album
-    - One non existing Album artist "Triste" and one existing "PNL"
+     - FLAC file;
+     - existing artist "PNL";
+     - non existing album "Dans La Légende";
+     - one non existing Album artist "Triste" and one existing "PNL";
+     - with new genre "French cloud rap". Thus the track must be in two playlists: the one linked
+     with the "All" genre and the one linked with the "French cloud rap" genre. 
     """
     def test_libraryTrackPost1(self):
         self.login(self.testUser)
@@ -29,7 +33,13 @@ class TrackPostViewTestCase1(TrackViewTestCase):
         assert track.album.albumArtists.filter(user=self.testUser, name="Triste").exists()
         assert track.genre.name == "French cloud rap"
         assert track.fileExtension == ".flac"
-        assert track.playlists.filter(
-                user=self.testUser, name=PlaylistSpecialNames.GENRE_ALL).exists()
-        assert track.playlists.filter(
-                user=self.testUser, name="French cloud rap").exists()
+        allPlaylist = Playlist.objects.get(
+                user=self.testUser, 
+                type=PlaylistTypeIds.GENRE, 
+                criteria__name=CriteriaSpecialNames.GENRE_ALL)
+        franchCloudRapPlaylist = Playlist.objects.get(
+                user=self.testUser, 
+                type=PlaylistTypeIds.GENRE, 
+                criteria__name="French cloud rap")
+        assert allPlaylist in list(track.playlists.all())
+        assert franchCloudRapPlaylist in list(track.playlists.all())

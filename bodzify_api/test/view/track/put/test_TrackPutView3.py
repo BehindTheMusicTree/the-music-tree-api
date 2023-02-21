@@ -14,20 +14,22 @@ class TrackPutViewTestCase3(TrackViewTestCase):
     def test_libraryTrackPut3(self):
 
         """
-         - On a wav file.
-         - Former artist "Joni" not having any track related left. Must be deleted.
-         - New artist is empty so no artist.
-         - Same album's name as an existing one but with different album artists'names. Thus a new 
-         album has to be created.
-         - Rating isn't specified so unchanged.
-         - The previous track's album hasn't anythink linked to it anymore. It must then be deleted.
+         - on a wav file entitled "La Zumba";
+         - the former artist "Joni" not having any track related left, it must be deleted;
+         - the new artist is empty so no artist;
+         - same album's name "American Idiot" as an existing one but with different album artists'names. Thus a new 
+         album has to be created;
+         - rating isn't specified so unchanged (255);
+         - the previous track's album "BOOM" hasn't anythink linked to it anymore. It must then be 
+        deleted;
+         - new genre "Nu metal".
         """
         data = {
             "title": "Bohemian Raphsody",
             "artistName": "",
             "albumName": "American Idiot",
             "albumArtistsNames": "Queen",
-            "genre": "Lsjdqoiqsicqjsof8800",
+            "genre": "L1ZG85munGytJb885WWJN8",
             "language": "French"
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)
@@ -39,6 +41,6 @@ class TrackPutViewTestCase3(TrackViewTestCase):
         assert Album.objects.filter(user=self.testUser, name="American Idiot").count() == 2
         assert Album.objects.filter(user=self.testUser, name="BOOM").exists() == False
         assert track.genre.name == "Nu metal"
-        assert track.rating == 8
+        assert track.rating == 255
         assert track.language == "French"
         assert Artist.objects.filter(name="Joni").count() == 0

@@ -29,4 +29,4 @@ class TrackPostViewTestCase6(TrackViewTestCase):
         assert track.rating == 8
         assert track.language == "French"
         assert track.fileExtension == ".wav"
-        assert track.playlists.filter(user=self.testUser, name="j\"\"\"\"j").exists()
+        assert track.playlists.filter(user=self.testUser, criteria__name="j\"\"\"\"j").exists()
