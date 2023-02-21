@@ -7,6 +7,9 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 class Artist(models.Model):
+
+    ATTRIBUTE_NAME_LABEL = 'name'
+
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
             primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
@@ -25,7 +28,7 @@ class Artist(models.Model):
 
     def deleteWithAlbumsAndTracks(self):
         for album in list(Album.objects.filter(user=self.user, albumArtists__in=[self]).all()):
-            album.deleteWithTracksAndEventuallyArtists
+            album.deleteWithTracksAndEventuallyArtists()
 
         for track in list(LibraryTrack.objects.filter(user=self.user, artist=self).all()):
             track.deleteWithCheckingAlbumPotentialDeletion()
