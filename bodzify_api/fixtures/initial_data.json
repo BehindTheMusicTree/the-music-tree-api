@@ -90,7 +90,6 @@
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLhbhHSjqEPdZB",
         "fields": {
-            "name": "All",
             "criteria": "m5KRxi10OxW4BEOod9Qmjy",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
@@ -101,15 +100,12 @@
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLsdhyelllPdZB",
         "fields": {
-            "name": "Genreless",
             "criteria": "L1ZG85munGytJbJ65fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 1
         }
     },
-
-
     {
         "model": "auth.user", 
         "pk": 2, 
@@ -163,7 +159,6 @@
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrhhhbhHSjqEPdZB",
         "fields": {
-            "name": "All",
             "criteria": "m5KRxisjexW4BEOod9Qmjq",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
@@ -174,15 +169,12 @@
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrdkdkdjllllPdZB",
         "fields": {
-            "name": "Genreless",
             "criteria": "L1ZG85munGytqjz65fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
         }
     },
-
-
     {
         "model": "auth.user", 
         "pk": 3, 
@@ -236,7 +228,6 @@
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLskdjSjqEPdZB",
         "fields": {
-            "name": "All",
             "criteria": "m5KRxiqqqxW4BEOod9Qmjy",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
@@ -247,7 +238,6 @@
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLskdjllllPdZB",
         "fields": {
-            "name": "Genreless",
             "criteria": "L1ZG85ddddytJbJ65fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
