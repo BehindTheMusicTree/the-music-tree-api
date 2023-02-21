@@ -5,14 +5,8 @@ import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
-
-
-class PlaylistSpecialNames:
-    GENRE_ALL = CriteriaSpecialNames.GENRE_ALL
-    GENRE_GENRELESS = CriteriaSpecialNames.GENRE_GENRELESS
-    TAG_ALL = CriteriaSpecialNames.TAG_ALL
 
 
 class Playlist(models.Model):
