@@ -163,7 +163,7 @@ def CreateFromUpload(user: User, file):
     postSerializer = TrackPostSerializer(data=postSerializerData)
     postSerializer.is_valid(raise_exception=True)
     track = postSerializer.save()
-    _addTrackToGenrePlaylists(user, track)
+    _addTrackToGenresPlaylists(user, track)
     return track
 
 
@@ -177,7 +177,7 @@ def _getArtistsNameListFromString(namesString: str) -> list:
             names.append(name)
     return names
 
-def _addTrackToGenrePlaylists(user: User, track: LibraryTrack):
+def _addTrackToGenresPlaylists(user: User, track: LibraryTrack):
     genre = track.genre
     while genre is not None:
         track.playlists.add(Playlist.objects.get(user=user, criteria=genre))
@@ -208,7 +208,7 @@ def CreateFromMineTrack(user: User, mineTrack: MineTrack, trackTempFileAbsoluteP
     postSerializer = TrackPostSerializer(data=postSerializerData)
     postSerializer.is_valid(raise_exception=True)
     track = postSerializer.save()
-    _addTrackToGenrePlaylists(user=user, track=track)
+    _addTrackToGenresPlaylists(user=user, track=track)
     _updateTagsIfFileExists(track=track)
 
     return track

@@ -16,7 +16,8 @@ def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
             type__id=CriteriaTypesIds.GENRE, 
             name=criteriaName
         ).exists():
-            criteria = Criteria.objects.get(user=user, type__id=CriteriaTypesIds.GENRE, name=criteriaName)
+            criteria = Criteria.objects.get(
+                    user=user, type__id=CriteriaTypesIds.GENRE, name=criteriaName)
     else:
         criteria = Criteria.objects.create(
             user=user,
@@ -27,7 +28,6 @@ def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
         Playlist.objects.create(
             user=user,
             criteria=criteria,
-            name=criteria.name,
             type=PlaylistType.objects.get(pk=PlaylistTypeIds.GENRE)
         )
     return criteria
