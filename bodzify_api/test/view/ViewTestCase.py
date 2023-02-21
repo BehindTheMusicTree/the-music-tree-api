@@ -10,6 +10,7 @@ import bodzify_api.settings as settings
 
 TEST_USERNAME = "test_django"
 
+
 class ViewTestCase(TestCase):
 
     sampleDirectoryRelativePath=""
