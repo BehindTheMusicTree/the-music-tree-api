@@ -13,7 +13,7 @@ class ArtistDeleteViewTestCase2(ArtistViewTestCase):
     """
     - A track 'A Life' with artist 'Bertrand' and album 'Xavier'.
     - Album 'Xavier' has album artists 'Bertrand' and 'Coco Roùa'.
-    - 'Deleting artist 'Bertrand' should delete:
+    - Deleting artist 'Bertrand' should delete:
         - track 'A Life';
         - album 'Xavier' as it has no track linked anymore;
         - artist 'Coco Roùa' as it has nor album nor track linked anymore.

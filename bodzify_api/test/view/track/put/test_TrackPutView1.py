@@ -11,15 +11,15 @@ class TrackPutViewTestCase1(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData1']
     sampleDirectoryRelativePath = "test/view/track/put/sample/1/"
 
+    """
+    - On a mp3 file.
+    - Existing artist.
+    - No new album. The field albumArtistsNames is thus ignored.
+    - Language not specified so unchanged.
+    - Genre "Genreless" not specified so unchanged.
+    """
     def test_libraryTrackPut1(self):
 
-        """
-        - On a mp3 file.
-        - Existing artist.
-        - No new album. The field albumArtistsNames is thus ignored.
-        - Language not specified so unchanged.
-        - Genre not specified so unchanged.
-        """
         data = {
             "title": "Somewhere I Belong",
             "artistName": "Linkin Park",
@@ -32,6 +32,6 @@ class TrackPutViewTestCase1(TrackViewTestCase):
         track = LibraryTrack.objects.get(title="Somewhere I Belong")
         assert track.artist.name == "Linkin Park"
         assert track.album_id == None
-        assert track.genre.name == "Rock"
+        assert track.genre.name == "Genreless"
         assert track.rating == 200
         assert track.language == "Latin"

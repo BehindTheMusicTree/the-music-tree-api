@@ -6,12 +6,12 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.Album import Album
 
 
-class TrackPutViewTestCase7(TrackViewTestCase):
+class TrackPutViewTestCase3(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData7']
-    sampleDirectoryRelativePath = "test/view/track/put/sample/7/"
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData3']
+    sampleDirectoryRelativePath = "test/view/track/put/sample/3/"
 
-    def test_libraryTrackPut7(self):
+    def test_libraryTrackPut3(self):
 
         """
          - On a wav file.

@@ -1,25 +1,25 @@
+#!/usr/bin/env python
 import pytest
 from rest_framework import status
-from bodzify_api.test.view.track.post.TrackPostViewTestCase import TrackPostViewTestCase
-from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.Playlist import PlaylistSpecialNames
 
 
 @pytest.mark.django_db
-class TrackPostViewTestCase1(TrackPostViewTestCase):
+class TrackPostViewTestCase1(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPostData1']
     sampleDirectoryRelativePath = "test/view/track/post/sample/1/"
 
+    """
+    - FLAC
+    - Existing artist "PNL"
+    - Non existing Album
+    - One non existing Album artist "Triste" and one existing "PNL"
+    """
     def test_libraryTrackPost1(self):
         self.login(self.testUser)
-
-        """
-        - FLAC
-        - Non existing Album
-        - One non existing Album artist
-        """
         response = self.postSampleTrack("1-08 - Luz De Luna.flac")
         assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(user=self.testUser, title="Luz De Luna")
