@@ -136,7 +136,7 @@ class LibraryTrack(models.Model):
 
 
     def deleteWithCheckingAlbumAndArtistPotentialDeletion(self):
-        self.deleteEventualRelatedAlbum()
+        self._deleteEventualRelatedAlbum()
         self.deleteEventualRelatedArtist()
         self.delete()
 
@@ -147,7 +147,7 @@ class LibraryTrack(models.Model):
 
 
     def deleteWithCheckingAlbumPotentialDeletion(self):
-        self.deleteEventualRelatedAlbum()
+        self._deleteEventualRelatedAlbum()
         self.delete()
 
 
@@ -157,7 +157,7 @@ class LibraryTrack(models.Model):
             self.artist.deleteIfNothingLinked()
 
 
-    def deleteEventualRelatedAlbum(self):  
+    def _deleteEventualRelatedAlbum(self):  
         trackAlbumId = self.album_id
         if trackAlbumId is not None:
             self.album.deleteIfNoTrackLinked()
