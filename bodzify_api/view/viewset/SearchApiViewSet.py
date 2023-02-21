@@ -41,9 +41,7 @@ def libraryTrackFilter(queryset, request, *args, **kwargs):
         query = request.query_params[QUERY_PARAMETER_NAME]
         if query != "":
             queryset = queryset.filter(
-                Q(title__icontains=query) | 
-                Q(artist__name__icontains=query) | 
-                Q(album__name__icontains=query)
+                title__icontains=query
             ).order_by(LibraryTrack.ATTRIBUTE_TITLE_LABEL)
     return queryset.filter(user=request.user.id)
 
@@ -83,10 +81,10 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
         description=("""
             Search within tracks, albums, artists and playlists.
             The results is a set of four sets:
-                - Playlist (ordered by name);
-                - Artist (ordered by name);
-                - Album (ordered by name);
-                - LibraryTrack (ordered by title).
+                - Playlist (searched and ordered by name);
+                - Artist (searched and ordered by name);
+                - Album (searched and ordered by name);
+                - LibraryTrack (searched and ordered by title).
             """)
     )
     def get_querylist(self):
