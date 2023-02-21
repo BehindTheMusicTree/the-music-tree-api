@@ -1,38 +1,5 @@
 [
     {
-        "model": "bodzify_api.criteria",
-        "pk": "LsjdqoqzpsdojEjf885",
-        "fields": {
-            "name": "Rap",
-            "type": 1,
-            "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "djdjsuehdu78765HDfurjf",
-        "fields": {
-            "name": "rap",
-            "type": 1,
-            "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },    
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "qdsuhqoishcosihqoq",
-        "fields": {
-            "name": "Rap",
-            "criteria": "LsjdqoqzpsdojEjf885",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
         "model": "bodzify_api.artist",
         "pk": "36nS4LVDssLh4BvTADJS6D",
         "fields": {
@@ -41,72 +8,16 @@
         }
     },
     {
-        "model": "bodzify_api.artist",
-        "pk": "36nS4LVDssLh4BvTASSS65",
-        "fields": {
-            "user": 4,
-            "name": "PNL" 
-        }
-    },
-    {
-        "model": "bodzify_api.album",
-        "pk": "36nS4LVDssLh4BvTCCCHCH",
-        "fields": {
-            "user": 4,
-            "name": "J'ai le Sum" 
-        }
-    },
-    {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
            "user": 4, 
            "file": "libraries/user_4/nofile1", 
-           "title": "1-03 - We're All To Blame", 
-           "artist": "f36nS4LVDssLh4BvTADD76", 
-           "genre": "LsjdqoifsjofsiEjf885DD", 
-           "duration": "207.09333333333333", 
-           "rating": 128, 
-           "language": "", 
-           "addedOn": "2022-12-13T14:07:50.906Z", 
-           "playlists": [
-                "LnM1arJrwLhbhHSjqEPdZ7",
-                "FYM1HUIrqjqjshssI76dVH"
-            ]
-        }
-    },
-    {
-        "model": "bodzify_api.librarytrack",
-        "pk": "36nS4LVD89FHYBvTARbGJG",
-        "fields": {
-           "user": 4, 
-           "file": "libraries/user_4/nofile2", 
-           "title": "Summer Love", 
-           "artist": "36nS4LVDssLh4BvTADJS6D", 
+           "title": "We're All To Blame", 
            "genre": "L1ZG85munGytJb885fgion", 
            "duration": "207.09333333333333", 
            "rating": 128, 
            "language": "", 
-           "addedOn": "2022-12-13T14:07:50.906Z", 
-           "playlists": [
-                "LnM1arJrwLhbhHSjqEPdZ7",
-                "FYM1HUIrqjqjshssI76dVH"
-            ]
-        }
-    },
-    {
-        "model": "bodzify_api.librarytrack",
-        "pk": "36nS4LVDoihoihvTADJR78",
-        "fields": {
-           "user": 4, 
-           "file": "libraries/user_4/nofile3", 
-           "title": "Lalala", 
-           "artist": "36nS4LVDssLh4BvTASSS65", 
-           "album": "36nS4LVDssLh4BvTCCCHCH", 
-           "genre": "L1ZG85munGytJb885fgion", 
-           "duration": 205, 
-           "rating": 78, 
-           "language": "French", 
            "addedOn": "2022-12-13T14:07:50.906Z", 
            "playlists": [
                 "LnM1arJrwLhbhHSjqEPdZ7",
