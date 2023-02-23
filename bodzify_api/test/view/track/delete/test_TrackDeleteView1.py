@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-import os
+import pytest
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
+@pytest.mark.django_db
 class TrackDeleteViewTestCase1(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackDeleteData1']

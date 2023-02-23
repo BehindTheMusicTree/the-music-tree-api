@@ -1,0 +1,20 @@
+[
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "lyluyfvluyluycutc",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/Jul_-_Le_S_MTgyCmzefzfrzM.mp3",
+            "title": "La zumba",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 2,
+            "rating": 8,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    }
+]

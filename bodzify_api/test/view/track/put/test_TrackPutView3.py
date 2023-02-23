@@ -14,11 +14,16 @@ class TrackPutViewTestCase3(TrackViewTestCase):
     def test_libraryTrackPut3(self):
 
         """
+        Update:
          - on a wav file entitled "La Zumba";
-         - the former artist "Joni" not having any track related left, it must be deleted;
-         - the new artist is empty so no artist;
-         - same album's name "American Idiot" as an existing one but with different album artists'names. Thus a new 
-         album has to be created;
+         - the former artist "Joni" not having any track related left must be deleted;
+         - the new artist specified is empty so no artist;
+         - same album's name "American Idiot" as an existing one but with an album 
+         artist named "Queen". Thus a new album has to be created;
+         - the old album "American Idiot" (with no album artists) still has a track linked to it. 
+         It must therefore not be 
+         deleted. We should then have two albums "American Idiot" (one with no album artist, one 
+         with album artist "Queen")
          - rating isn't specified so unchanged (255);
          - the previous track's album "BOOM" hasn't anythink linked to it anymore. It must then be 
         deleted;

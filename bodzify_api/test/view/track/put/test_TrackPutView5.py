@@ -12,16 +12,18 @@ class TrackPutViewTestCase5(TrackViewTestCase):
     def test_libraryTrackPut5(self):
 
         """
-        - The old album shared the same name as an other one but with different artists names.
-        The new album keeps the same name but puts the same artists names as the other one.
-        - artist not specified so unchanged.
+        The old album shared the same name "Hello" as another one but with different artists names
+        ("Kendal" for the first one and "Robert De Niro" for the second one). The new album keeps
+        the same name "Hello" but puts the same artist name "Robert De Niro" as the other one.
+        The old album hasn't anything linked to it anymore. It must then be deleted. 
+        The track's artist is not specified. It is therefore unchanged ("Robert De Niro").
         """
         data = {
-            "albumName": "Test5 - Album",
-            "albumArtistsNames": "Test5 - Artist2",
+            "albumName": "Hello",
+            "albumArtistsNames": "Robert De Niro",
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcSSSSSSS", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBcSSSSSSS")
-        assert track.artist.name == "Test5 - Artist2"
-        assert Album.objects.filter(name="Test5 - Album").count() == 1
+        assert track.artist.name == "Robert De Niro"
+        assert Album.objects.filter(name="Hello").count() == 1

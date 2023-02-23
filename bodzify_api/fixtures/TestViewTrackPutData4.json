@@ -1,10 +1,31 @@
 [
     {
+        "model": "bodzify_api.criteria",
+        "pk": "L1ZG85munGytJb885DDJS7",
+        "fields": {
+            "name": "EDM",
+            "type": 1,
+            "parent": "m5KRxi10O884BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLhbhHSjqLLKKJ",
+        "fields": {
+            "criteria": "L1ZG85munGytJb885DDJS7",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
         "model": "bodzify_api.artist",
         "pk": "Lsji85mqisjdjf88533345",
         "fields": {
             "user": 4,
-            "name": "Test4 - Artist1"
+            "name": "David Ghetta"
         }
     },
     {
@@ -12,7 +33,7 @@
         "pk": "Lsji85mqisjdjf88777776",
         "fields": {
             "user": 4,
-            "name": "Test4 - Album",
+            "name": "Love Don't Let Me Go",
             "albumArtists": ["Lsji85mqisjdjf88533345"]
         }
     },
@@ -22,7 +43,7 @@
         "fields": {
             "user": 4,
             "file": "libraries/user_4/nonexisting.mp3",
-            "title": "Test4 - Track",
+            "title": "Tricky",
             "artist": "Lsji85mqisjdjf88533345",
             "album": "Lsji85mqisjdjf88777776",
             "genre": "L1ZG85munGytJb885fgion",

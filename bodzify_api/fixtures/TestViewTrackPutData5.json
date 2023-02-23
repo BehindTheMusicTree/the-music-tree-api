@@ -4,7 +4,7 @@
         "pk": "Lsji85mqisjdjf88566654",
         "fields": {
             "user": 4,
-            "name": "Test5 - Artist1"
+            "name": "Kendal"
         }
     },
     {
@@ -12,7 +12,7 @@
         "pk": "Lsji85mqisjdjf88588712",
         "fields": {
             "user": 4,
-            "name": "Test5 - Artist2"
+            "name": "Robert De Niro"
         }
     },
     {
@@ -20,7 +20,7 @@
         "pk": "Lsji85mqisjdjf88112233",
         "fields": {
             "user": 4,
-            "name": "Test5 - Album",
+            "name": "Hello",
             "albumArtists": ["Lsji85mqisjdjf88588712"]
         }
     },
@@ -29,7 +29,7 @@
         "pk": "Lsji85mqisjdjf88176767",
         "fields": {
             "user": 4,
-            "name": "Test5 - Album",
+            "name": "Hello",
             "albumArtists": ["Lsji85mqisjdjf88566654"]
         }
     },

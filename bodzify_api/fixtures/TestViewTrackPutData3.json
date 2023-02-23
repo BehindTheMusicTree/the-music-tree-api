@@ -56,4 +56,24 @@
             ]
         }
     }
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBcLYJJJUI",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/nofile",
+            "title": "La teuf",
+            "artist": "Lsji85mqisjdjf885DHD55",
+            "album": "Lsji85mqisjdjf88877765",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 234,
+            "rating": 255,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    }
 ]
