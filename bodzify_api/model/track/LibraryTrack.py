@@ -115,16 +115,18 @@ class LibraryTrack(models.Model):
             oldTrack = LibraryTrack.objects.get(uuid=self.uuid)
             oldGenre = oldTrack.genre
             oldArtist = oldTrack.artist
-            oldAlbum = self.album
+            oldAlbum = oldTrack.album
             super().save(*args, **kwargs)
 
             if oldGenre != self.genre:
                 self.updatePlaylists(oldGenre=oldGenre)
+
             if oldAlbum != self.album and oldAlbum != None:
                 oldAlbum.deleteIfNoTrackLinked()
 
             if oldArtist != self.artist and oldArtist != None:
                 oldArtist.deleteIfNothingLinked()
+
         except ObjectDoesNotExist:
             super().save(*args, **kwargs)
     
