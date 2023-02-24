@@ -116,6 +116,8 @@ class LibraryTrack(models.Model):
             oldGenre = oldTrack.genre
             oldArtist = oldTrack.artist
             oldAlbum = oldTrack.album
+            if oldAlbum is not None:
+                oldAlbumArtitst = list(oldAlbum.albumArtists.all())
             super().save(*args, **kwargs)
 
             if oldGenre != self.genre:
@@ -123,6 +125,8 @@ class LibraryTrack(models.Model):
 
             if oldAlbum != self.album and oldAlbum != None:
                 oldAlbum.deleteIfNoTrackLinked()
+                for albumArtist in oldAlbumArtitst:
+                    albumArtist.deleteIfNothingLinked()
 
             if oldArtist != self.artist and oldArtist != None:
                 oldArtist.deleteIfNothingLinked()
