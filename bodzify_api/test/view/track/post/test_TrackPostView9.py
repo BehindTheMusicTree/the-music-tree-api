@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 class TrackPostViewTestCase9(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
-    sampleDirectoryRelativePath = "test/view/track/post/sample/9/"
+    #sampleDirectoryRelativePath = "test/view/track/post/sample/9/"
 
     """
     As the file is too big to be uploaded on Github, the pytest won't work during Github's
