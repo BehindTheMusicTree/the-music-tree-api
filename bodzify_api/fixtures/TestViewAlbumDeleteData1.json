@@ -1,0 +1,59 @@
+[
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DHD65",
+        "fields": {
+            "user": 4,
+            "name": "Muse"
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "f36nS4LVDssLh4BvTSST54",
+        "fields": {
+            "user": 4,
+            "name": "Black Holes And Revelation",
+            "albumArtists": ["Lsji85mqisjdjf885DHD65"]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDssLh4BvTARbJEK",
+        "fields": {
+           "user": 4, 
+           "file": "libraries/user_4/Assassin.mp3", 
+           "title": "Assassin", 
+           "artist": "Lsji85mqisjdjf885DHD65", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
+           "genre": "L1ZG85munGytJb885fgion", 
+           "duration": 207, 
+           "rating": 128,
+           "language": "", 
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrwLSgzHSHI76dVH"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDssLh4BvTDDDYS5",
+        "fields": {
+           "user": 4, 
+           "file": "libraries/user_4/Starlight.mp3", 
+           "title": "Starlight", 
+           "artist": "Lsji85mqisjdjf885DHD65", 
+           "album": "f36nS4LVDssLh4BvTSST54", 
+           "genre": "L1ZG85munGytJb885fgion", 
+           "duration": 207, 
+           "rating": 128,
+           "language": "", 
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrwLSgzHSHI76dVH"
+            ]
+        }
+    }
+]

@@ -1,12 +1,8 @@
 #!/usr/bin/env python
-
 from rest_framework.response import Response
-from rest_framework.exceptions import APIException
 from rest_framework import status
-
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.Artist import Artist
-import bodzify_api.service.ArtistService as ArtistService
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
 
 class ArtistViewSet(MultiSerializerViewSet):
@@ -26,10 +22,5 @@ class ArtistViewSet(MultiSerializerViewSet):
         return super().list(request, *args, **kwargs)
     
     def destroy(self, request, *args, **kwargs):
-        user = request.user
-        artist = self.get_object()
-        if Artist.objects.filter(user=user, uuid=artist.uuid).exists() == False:
-             raise APIException.NotFound(detail=None, code=None)
-        
-        ArtistService.Delete(user=user, artist=artist)
+        self.get_object().deleteWithAlbumsAndTracks()
         return Response(status=status.HTTP_204_NO_CONTENT)

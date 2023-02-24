@@ -40,44 +40,9 @@
         }
     },
     {
-        "model": "bodzify_api.criteria",
-        "pk": "Lsji85munDKEjf885fgion",
-        "fields": {
-            "name": "US Rap",
-            "type": 1,
-            "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "LsjdqoifsjofsiEjf885DD",
-        "fields": {
-            "name": "Rock",
-            "type": 1,
-            "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "Lsjdqoiqsicqjsof8800",
-        "fields": {
-            "name": "Nu metal",
-            "type": 1,
-            "parent": "LsjdqoifsjofsiEjf885DD",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-
-    {
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLhbhHSjqEPdZ7",
         "fields": {
-            "name": "All",
             "criteria": "m5KRxi10O884BEOod9Qmjy",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
@@ -88,76 +53,10 @@
         "model": "bodzify_api.playlist",
         "pk": "FYM1HUIrwLSgzHSHI76dVH",
         "fields": {
-            "name": "Genreless",
             "criteria": "L1ZG85munGytJb885fgion",
             "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "FYM1HUIrqjqjshssI76dVH",
-        "fields": {
-            "name": "Rock",
-            "criteria": "LsjdqoifsjofsiEjf885DD",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "Lsji85mqisjdjf885fgion",
-        "fields": {
-            "name": "Nu metal",
-            "criteria": "Lsjdqoiqsicqjsof8800",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-
-    {
-        "model": "bodzify_api.artist",
-        "pk": "f36nS4LVDssLh4BvTADD76",
-        "fields": {
-            "user": 4, 
-            "name": "Sum 41"
-        }
-    },
-    
-    {
-        "model": "bodzify_api.album",
-        "pk": "f36nS4LVDssLh4BvTSST54",
-        "fields": {
-            "user": 4, 
-            "name": "All Killer No Filler",
-            "year": "2001",
-            "albumArtists": [
-                "f36nS4LVDssLh4BvTADD76"
-            ]
-        }
-    },
-
-    {
-        "model": "bodzify_api.librarytrack",
-        "pk": "36nS4LVDssLh4BvTARbJEK",
-        "fields": {
-            "user": 4, 
-            "file": "libraries/user_4/07_-_In_Too_Deep.mp3", 
-            "title": "In Too Deep", 
-            "artist": "f36nS4LVDssLh4BvTADD76", 
-            "album": "f36nS4LVDssLh4BvTSST54", 
-            "genre": "Lsji85munDKEjf885fgion", 
-            "duration": 207, 
-            "rating": 128, 
-            "language": "", 
-            "addedOn": "2022-12-13T14:07:50.906Z", 
-            "playlists": [
-                "LnM1arJrwLhbhHSjqEPdZ7",
-                "FYM1HUIrwLSgzHSHI76dVH"
-            ]
         }
     }
 ]

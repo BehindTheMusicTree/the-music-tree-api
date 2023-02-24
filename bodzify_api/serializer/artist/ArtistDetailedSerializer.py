@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-
 from django.db.models import Sum
 from rest_framework import serializers
-
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack

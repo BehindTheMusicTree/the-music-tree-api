@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-
 import requests
 import random
 import string
 import os
-
 from bodzify_api.model.track.MineTrack import MineTrack
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
-from bodzify_api.service import ArtistService
 from bodzify_api.service import TrackService
 from bodzify_api import settings
 
@@ -22,7 +19,7 @@ def List(query, pageNumber, pageSize):
 def Extract(user, title, artist, duration, releasedOn, mineTrackUrl):
     mineTrack = MineTrack(
         title = title,
-        artist = artist,
+        artistName = artist,
         duration = duration,
         releasedOn = releasedOn,
         url = mineTrackUrl)

@@ -7,24 +7,32 @@
             "name": "Linkin Park"
         }
     },
-
+    {
+        "model": "bodzify_api.album",
+        "pk": "f36nS4LVDssLh4BvTSST54",
+        "fields": {
+            "user": 4,
+            "name": "X",
+            "albumArtists": ["Lsji85mqisjdjf885DHD65"]
+        }
+    },
     {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
            "user": 4, 
-           "file": "libraries/user_4/put_1-03 - We're All To Blame", 
+           "file": "libraries/user_4/delete_1-03 - We're All To Blame", 
            "title": "1-03 - We're All To Blame", 
            "artist": "Lsji85mqisjdjf885DHD65", 
            "album": "f36nS4LVDssLh4BvTSST54", 
-           "genre": "LsjdqoifsjofsiEjf885DD", 
+           "genre": "L1ZG85munGytJb885fgion", 
            "duration": 207, 
            "rating": 128,
            "language": "", 
            "addedOn": "2022-12-13T14:07:50.906Z", 
            "playlists": [
                 "LnM1arJrwLhbhHSjqEPdZ7",
-                "FYM1HUIrqjqjshssI76dVH"
+                "FYM1HUIrwLSgzHSHI76dVH"
             ]
         }
     }
