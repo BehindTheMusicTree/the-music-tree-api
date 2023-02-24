@@ -22,7 +22,7 @@ class TrackPutViewTestCase6(TrackViewTestCase):
             - The 'Paula Temple' artist must be deleted as it has no track or album linked to it 
             anymore;
             - B album must be deleted for the same reason. 
-        - The file is missing. The update must be proceded anyway. 
+        The file is missing. The update must proceed anyway. 
         """
         data = {
             "albumName": "Birds",

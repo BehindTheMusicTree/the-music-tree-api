@@ -55,7 +55,7 @@
                 "LnM1arJrwLhbhHSjqEPdZ7"
             ]
         }
-    }
+    },
     {
         "model": "bodzify_api.librarytrack",
         "pk": "dyFYZTP3anyaUBcLYJJJUI",
@@ -63,7 +63,6 @@
             "user": 4,
             "file": "libraries/user_4/nofile",
             "title": "La teuf",
-            "artist": "Lsji85mqisjdjf885DHD55",
             "album": "Lsji85mqisjdjf88877765",
             "genre": "L1ZG85munGytJb885fgion",
             "duration": 234,

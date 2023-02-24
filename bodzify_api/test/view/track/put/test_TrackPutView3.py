@@ -16,7 +16,7 @@ class TrackPutViewTestCase3(TrackViewTestCase):
         """
         Update:
          - on a wav file entitled "La Zumba";
-         - the former artist "Joni" not having any track related left must be deleted;
+         - the former artist "Joni", not having any track related left, must be deleted;
          - the new artist specified is empty so no artist;
          - same album's name "American Idiot" as an existing one but with an album 
          artist named "Queen". Thus a new album has to be created;
