@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-
+from rest_framework.response import Response
 from django.http import JsonResponse
 from django.http import HttpResponse
-
-from rest_framework.decorators import action
 from rest_framework import status
-
+from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-
 from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.serializer.track.TrackPutSchemaSerializer import TrackPutSchemaSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -64,7 +61,11 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         return queryset
 
 
-    
+    def destroy(self, request, *args, **kwargs):
+        self.get_object().deleteWithCheckingAlbumAndArtistPotentialDeletion()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
     @extend_schema(
         request=TrackPutSchemaSerializer, 
         responses=TrackDetailedSerializer,
@@ -116,11 +117,18 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
                 status=status.HTTP_410_GONE)
 
 
+    @extend_schema(
+        description=("""
+            Create a track with metadata by uploading a file:
+                - If the file has no metadata 'title', it is set with the file's name without the 
+            extension.
+            """)
+    )
     def create(self, request, *args, **kwargs):
         form = TrackPostForm(request.POST, request.FILES)
         if form.is_valid():
             track = TrackService.CreateFromUpload(
-                    request.user, request.FILES[DATA_FILE_PARAMETER_NAME])
+                    request.user, file=request.FILES[DATA_FILE_PARAMETER_NAME])
             return JsonResponse(
                     data=TrackDetailedSerializer(track).data,
                     status=status.HTTP_201_CREATED)

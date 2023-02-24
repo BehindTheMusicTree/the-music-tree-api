@@ -11,7 +11,6 @@ class CriteriaSpecialNames:
 
 
 class Criteria(models.Model):
-
     uuid = models.CharField(
         primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -19,9 +18,24 @@ class Criteria(models.Model):
     type = models.ForeignKey('bodzify_api.CriteriaType', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
+    
+
+    class Meta:
+        unique_together = ('user', 'name')
+
 
     def __str__(self) -> str:
         return self.uuid + " " + self.name
 
-    class Meta:
-        unique_together = ('user', 'name')
+
+    def getCommonCriteria(self, criteriaB):
+        criteriaATreeItem = self
+        while True:
+            criteriaBTreeItem = criteriaB
+            while criteriaBTreeItem is not None:
+                if criteriaATreeItem == criteriaBTreeItem:
+                    return criteriaBTreeItem
+                else:
+                    criteriaBTreeItem = criteriaBTreeItem.parent
+            criteriaATreeItem = criteriaATreeItem.parent
+

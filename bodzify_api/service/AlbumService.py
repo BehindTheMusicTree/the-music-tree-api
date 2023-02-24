@@ -1,34 +1,26 @@
 #!/usr/bin/env python
-
 from django.contrib.auth.models import User
-
 import bodzify_api.service.ArtistService as ArtistService
 from bodzify_api.model.Album import Album
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-
-
-def DeleteAlbumIfNoTrackLinked(user: User, album: Album):
-    if LibraryTrack.objects.filter(user=user, album=album).count() == 0:
-        album.delete()
 
 
 def GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
-        user: User, albumName: str, albumArtistsNames: list) -> Album:
+        user: User, albumName: str, albumArtistsNameList: list) -> Album:
     
     if albumName is None or albumName == "":
         return None
     else:
-        if albumArtistsNames is not None:
+        if albumArtistsNameList is not None:
             albumArtists = [ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
-                 user=user, artistName=artistName) for artistName in albumArtistsNames]
+                 user=user, artistName=artistName) for artistName in albumArtistsNameList]
         else:
             albumArtists = None
                 
-        return GetAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
+        return _getAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
                 user=user, albumName=albumName, artists=albumArtists)
     
 
-def GetAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
+def _getAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
         user: User, albumName: str, artists: list):
     
     albumQueryset = Album.objects.filter(user=user, name=albumName)

@@ -5,24 +5,28 @@ import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
 
-class PlaylistSpecialNames:
-    GENRE_ALL = CriteriaSpecialNames.GENRE_ALL
-    GENRE_GENRELESS = CriteriaSpecialNames.GENRE_GENRELESS
-    TAG_ALL = CriteriaSpecialNames.TAG_ALL
-
-
 class Playlist(models.Model):
+
+    ATTRIBUTE_CRITERIA_NAME_LABEL = 'criteria__name'
+
     uuid = models.CharField(
         primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, default=None)
+    customName = models.CharField(max_length=100, default=None, blank=True, null=True)
     type = models.ForeignKey(PlaylistType, on_delete=models.DO_NOTHING)
     criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
+
+    @property
+    def name(self) -> str:
+        if self.customName is not None: 
+            return self.customName
+        else:
+            return self.criteria.name
 
     @property
     def parent(self) -> 'Playlist':
@@ -35,8 +39,3 @@ class Playlist(models.Model):
                 user=self.user,
                 type=self.type,
                 criteria=self.criteria.parent)
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        if self.criteria is not None:
-            self.name = self.criteria.name

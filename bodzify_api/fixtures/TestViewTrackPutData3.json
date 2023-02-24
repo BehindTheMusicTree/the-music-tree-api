@@ -1,0 +1,78 @@
+[
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "L1ZG85munGytJb885WWJN8",
+        "fields": {
+            "name": "Nu metal",
+            "type": 1,
+            "parent": "m5KRxi10O884BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLhbhHSjqCLLLC",
+        "fields": {
+            "criteria": "L1ZG85munGytJb885WWJN8",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf885DHD55",
+        "fields": {
+            "user": 4,
+            "name": "Joni"
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf88877765",
+        "fields": {
+            "user": 4,
+            "name": "American Idiot"
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBcLYVHJ3A",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/sample.wav",
+            "title": "La zumba",
+            "artist": "Lsji85mqisjdjf885DHD55",
+            "album": "Lsji85mqisjdjf88877765",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 234,
+            "rating": 255,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "dyFYZTP3anyaUBcLYJJJUI",
+        "fields": {
+            "user": 4,
+            "file": "libraries/user_4/nofile",
+            "title": "La teuf",
+            "album": "Lsji85mqisjdjf88877765",
+            "genre": "L1ZG85munGytJb885fgion",
+            "duration": 234,
+            "rating": 255,
+            "language": "French",
+            "addedOn": "2022-12-15T13:29:04.708Z",
+            "playlists": [
+                "FYM1HUIrwLSgzHSHI76dVH",
+                "LnM1arJrwLhbhHSjqEPdZ7"
+            ]
+        }
+    }
+]

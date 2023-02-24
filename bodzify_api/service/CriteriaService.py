@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
 from django.contrib.auth.models import User
-
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
@@ -11,18 +9,6 @@ from bodzify_api.model.playlist.PlaylistType import PlaylistType
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
 
 
-def GetCommonCriteria(criteriaA, criteriaB):
-    criteriaATreeItem = criteriaA
-    while True:
-        criteriaBTreeItem = criteriaB
-        while criteriaBTreeItem is not None:
-            if criteriaATreeItem == criteriaBTreeItem:
-                return criteriaBTreeItem
-            else:
-                criteriaBTreeItem = criteriaBTreeItem.parent
-        criteriaATreeItem = criteriaATreeItem.parent
-
-
 def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
           user: User, criteriaName: str) -> Criteria:
     if Criteria.objects.filter(
@@ -30,7 +16,8 @@ def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
             type__id=CriteriaTypesIds.GENRE, 
             name=criteriaName
         ).exists():
-            criteria = Criteria.objects.get(user=user, type__id=CriteriaTypesIds.GENRE, name=criteriaName)
+            criteria = Criteria.objects.get(
+                    user=user, type__id=CriteriaTypesIds.GENRE, name=criteriaName)
     else:
         criteria = Criteria.objects.create(
             user=user,
@@ -41,7 +28,6 @@ def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
         Playlist.objects.create(
             user=user,
             criteria=criteria,
-            name=criteria.name,
             type=PlaylistType.objects.get(pk=PlaylistTypeIds.GENRE)
         )
     return criteria
