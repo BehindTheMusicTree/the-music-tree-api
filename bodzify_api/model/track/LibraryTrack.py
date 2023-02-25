@@ -54,8 +54,11 @@ class LibraryTrack(models.Model):
     album = models.ForeignKey('bodzify_api.Album', on_delete=models.CASCADE, default=None, null=True)
     genre = models.ForeignKey('bodzify_api.Criteria', on_delete=models.DO_NOTHING)
     duration = models.FloatField(default=None)
-    rating = models.IntegerField(
-            default=0, validators=[MinValueValidator(0), MaxValueValidator(255)])
+    rating = models.IntegerField(null=True,
+            default=None, validators=[
+                MinValueValidator(0), 
+                MaxValueValidator(settings.TRACK_RATING_MAX)
+            ])
     playlists = models.ManyToManyField('bodzify_api.Playlist')
     language = models.CharField(max_length=100, blank=True, default=None, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
