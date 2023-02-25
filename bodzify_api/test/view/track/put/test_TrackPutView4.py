@@ -8,7 +8,7 @@ class TrackPutViewTestCase4(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData4']
 
-    def test_libraryTrackPut4(self):
+    def test_trackPut4(self):
 
         """
         - Title not specified so unchanged;

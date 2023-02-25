@@ -9,7 +9,7 @@ class TrackPutViewTestCase5(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData5']
 
-    def test_libraryTrackPut5(self):
+    def test_trackPut5(self):
 
         """
         The old album shared the same name "Hello" as another one but with different artists names

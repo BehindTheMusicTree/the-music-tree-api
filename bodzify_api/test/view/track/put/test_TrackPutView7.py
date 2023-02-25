@@ -11,7 +11,7 @@ class TrackPutViewTestCase7(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData7']
     sampleDirectoryRelativePath = "test/view/track/put/sample/7/"
 
-    def test_libraryTrackPut7(self):
+    def test_trackPut7(self):
 
         """
          - on a wav file without tags;

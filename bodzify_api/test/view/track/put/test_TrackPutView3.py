@@ -11,7 +11,7 @@ class TrackPutViewTestCase3(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData3']
     sampleDirectoryRelativePath = "test/view/track/put/sample/3/"
 
-    def test_libraryTrackPut3(self):
+    def test_trackPut3(self):
 
         """
         Update:

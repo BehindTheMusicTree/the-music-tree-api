@@ -1,0 +1,53 @@
+[
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "LsjdqoqzpsdojEjGHGH",
+        "fields": {
+            "name": "Rap",
+            "type": 1,
+            "parent": "m5KRxi10O884BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "qdsuhqoishcosihqoq",
+        "fields": {
+            "criteria": "LsjdqoqzpsdojEjGHGH",
+            "type": 1,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDssLh4BvTARbJEK",
+        "fields": {
+           "user": 4, 
+           "file": "libraries/user_4/with_no_tag.wav", 
+           "title": "1-03 - We're All To Blame", 
+           "duration": "207.09333333333333", 
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrwLSgzHSHI76dVH"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDssLh4BvTAKKKKO",
+        "fields": {
+           "user": 4, 
+           "file": "libraries/user_4/with_all_tags.wav", 
+           "title": "1-03 - We're All To Blame", 
+           "duration": "207.09333333333333", 
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrwLSgzHSHI76dVH"
+            ]
+        }
+    }
+]

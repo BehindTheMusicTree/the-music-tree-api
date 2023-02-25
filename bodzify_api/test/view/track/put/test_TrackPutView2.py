@@ -11,7 +11,7 @@ class TrackPutViewTestCase2(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData2']
     sampleDirectoryRelativePath = "test/view/track/put/sample/2/"
 
-    def test_libraryTrackPut2(self):
+    def test_trackPut2(self):
 
         """
         - On a FLAC file with uuid "36nS4LVDoihoihvTARbJEK";

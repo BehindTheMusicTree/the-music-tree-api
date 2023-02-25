@@ -2,8 +2,6 @@
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.Album import Album
 
 
 class TrackPutViewTestCase1(TrackViewTestCase):
@@ -18,7 +16,7 @@ class TrackPutViewTestCase1(TrackViewTestCase):
     - Language not specified so unchanged.
     - Genre "Genreless" not specified so unchanged.
     """
-    def test_libraryTrackPut1(self):
+    def test_trackPut1(self):
 
         data = {
             "title": "Somewhere I Belong",
