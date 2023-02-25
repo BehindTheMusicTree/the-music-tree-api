@@ -6,7 +6,8 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator
 from django.core.exceptions import ObjectDoesNotExist
 from upload_validator import FileTypeValidator
 from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
