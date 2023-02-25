@@ -6,29 +6,19 @@ from rest_framework import status
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
-from bodzify_api.serializer.track.TrackPutSchemaSerializer import TrackPutSchemaSerializer
+from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.form.TrackPostForm import TrackPostForm
 import bodzify_api.service.TrackService as TrackService
 import bodzify_api.view.utility as utility
 
-DATA_TITLE_PARAMETER_NAME = "title"
-DATA_ARTIST_PARAMETER_NAME = "artist"
-DATA_ARTIST_NAME_PARAMETER_NAME = "artistName"
-DATA_ALBUM_PARAMETER_NAME = "album"
-DATA_ALBUM_NAME_PARAMETER_NAME = "albumName"
-DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME = "albumArtistsNames"
-DATA_GENRE_PARAMETER_NAME = "genre"
-DATA_LANGUAGE_PARAMETER_NAME = "language"
-DATA_FILE_PARAMETER_NAME = "file"
-
-FILTER_TITLE_PARAMETER_NAME = DATA_TITLE_PARAMETER_NAME
-FILTER_ARTIST_NAME_PARAMETER_NAME = DATA_ARTIST_NAME_PARAMETER_NAME
-FILTER_ALBUM_NAME_PARAMETER_NAME = DATA_ALBUM_NAME_PARAMETER_NAME
-FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME
-FILTER_GENRE_NAME_PARAMETER_NAME = "genreName"
-FILTER_LANGUAGE_PARAMETER_NAME = DATA_LANGUAGE_PARAMETER_NAME
+FILTER_TITLE_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_TITLE_LABEL
+FILTER_ARTIST_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
+FILTER_ALBUM_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_NAME_LABEL
+FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL
+FILTER_GENRE_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
+FILTER_LANGUAGE_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_LANGUAGE_LABEL
 
 
 class LibraryTrackViewSet(MultiSerializerViewSet):
@@ -67,7 +57,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
-        request=TrackPutSchemaSerializer, 
+        request=TrackSaveSchemaSerializer, 
         responses=TrackDetailedSerializer,
         description=("""
             Updates a track.\n"
@@ -96,7 +86,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
             """)
     )
     def update(self, request, *args, **kwargs):
-        updatedTrack = TrackService.Update(
+        updatedTrack = TrackService.Save(
                 user=request.user, oldTrack=self.get_object(), requestData=request.data)
         responseSerializer = TrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
@@ -138,19 +128,19 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                    name=DATA_TITLE_PARAMETER_NAME, 
+                    name=TrackSaveSchemaSerializer.ATTRIBUTE_TITLE_LABEL, 
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=DATA_ARTIST_NAME_PARAMETER_NAME, 
+                    name=TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL, 
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=DATA_ALBUM_NAME_PARAMETER_NAME, 
+                    name=TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL, 
                     type=OpenApiTypes.STR,
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=DATA_GENRE_PARAMETER_NAME, 
+                    name=TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL, 
                     type=OpenApiTypes.STR,
                     location=OpenApiParameter.QUERY)
         ]

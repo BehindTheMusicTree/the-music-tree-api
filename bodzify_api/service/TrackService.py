@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 import os
-from pathlib import Path
-from django.core.files import File
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 import bodzify_api.view.viewset.track.TrackViewSet as TrackViewSet
-from bodzify_api.serializer.track.TrackPutSerializer import TrackPutSerializer
+from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
+from bodzify_api.serializer.track.TrackSaveSerializer import TrackSaveSerializer
 from bodzify_api.serializer.track.TrackPostSerializer import TrackPostSerializer
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
 import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
@@ -112,6 +110,24 @@ def _updateTagsIfFileExists(track: LibraryTrack):
     AudioMetadataService.Update(file=track.file, metadataUpdateDict=metadataUpdateDict)
 
 
+def _createFromPostSerializerData(serializerData: QueryDict):
+    postSerializer = TrackPostSerializer(data=serializerData)
+    postSerializer.is_valid(raise_exception=True)
+    track = postSerializer.save()
+    _addTrackToGenresPlaylists(track)
+    return track
+
+
+def CreateFromMineExtract(user: User, requestData: QueryDict, filePath: str):
+    saveSchemaSerializerData = requestData.copy()
+    _updateTagsIfFileExists
+    saveSchemaSerializerData[TrackSaveSchemaSerializer.ATTRIBUTE_FILE_LABEL] = filePath
+    postSerializer = TrackSaveSchemaSerializer(data=saveSchemaSerializerData)
+    postSerializer.is_valid(raise_exception=True)
+
+    return Save(track=postSerializer.save(), user=user)
+
+
 def CreateFromUpload(user: User, file):
     tagsDict = AudioMetadataService.GetMetadataDictFromFile(file)
 
@@ -155,11 +171,7 @@ def CreateFromUpload(user: User, file):
     postSerializerData[LibraryTrack.ATTRIBUTE_LANGUAGE_LABEL] = (
             tagsDict[AudioMetadataService.METADATA_DICT_LANGUAGE_KEY])
     
-    postSerializer = TrackPostSerializer(data=postSerializerData)
-    postSerializer.is_valid(raise_exception=True)
-    track = postSerializer.save()
-    _addTrackToGenresPlaylists(user, track)
-    return track
+    return _createFromPostSerializerData(serializerData=postSerializerData)
 
 
 def _getArtistsNameListFromString(namesString: str) -> list:
@@ -172,12 +184,14 @@ def _getArtistsNameListFromString(namesString: str) -> list:
             names.append(name)
     return names
 
-def _addTrackToGenresPlaylists(user: User, track: LibraryTrack):
+
+def _addTrackToGenresPlaylists(track: LibraryTrack):
     genre = track.genre
     while genre is not None:
-        track.playlists.add(Playlist.objects.get(user=user, criteria=genre))
+        track.playlists.add(Playlist.objects.get(user=track.user, criteria=genre))
         genre = genre.parent
     track.save()
+
 
 def _getSerializerDataFromRequestData(user: User, requestData: QueryDict) -> dict:
     serializerData = requestData.copy()
@@ -186,35 +200,13 @@ def _getSerializerDataFromRequestData(user: User, requestData: QueryDict) -> dic
     serializerData = _setAlbumObjectFromNameAndAlbumArtistsNameInSerializerDataIfSet(user, serializerData)
 
 
-def Update(user: User, oldTrack: LibraryTrack, requestData: QueryDict):
-    putSerializerData = _getSerializerDataFromRequestData(user, requestData)
-    putSerializer = TrackPutSerializer(instance=oldTrack, data=putSerializerData, partial=True)
-    putSerializer.is_valid(raise_exception=True)
-    updatedTrack = putSerializer.save()
+def Save(user: User, requestData: QueryDict, oldTrack: LibraryTrack = None):
+    saveSerializerData = _getSerializerDataFromRequestData(user, requestData)
+    saveSerializer = TrackSaveSerializer(instance=oldTrack, data=saveSerializerData, partial=True)
+    saveSerializer.is_valid(raise_exception=True)
+    savedTrack = saveSerializer.save()
 
-    _addTrackToGenresPlaylists(user=user, track=updatedTrack)
-    _updateTagsIfFileExists(updatedTrack)
+    _addTrackToGenresPlaylists(savedTrack)
+    _updateTagsIfFileExists(savedTrack)
 
-    return updatedTrack
-
-
-def CreateFromMineExtract(user: User, requestData: QueryDict, trackTempFileAbsPath: str):    
-    path = Path(trackTempFileAbsPath)
-    file = path.open(mode='rb')
-
-    postSerializerData = _getSerializerDataFromRequestData(user, requestData)
-    postSerializerData[LibraryTrack.ATTRIBUTE_USER_LABEL] = user.id
-    postSerializerData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(file, name=path.name)
-    postSerializerData[LibraryTrack.ATTRIBUTE_DURATION_LABEL] = (
-        AudioMetadataService.GetSpecificMetadataFromFile(
-                file=trackTempFileAbsPath, 
-                metadataKey=AudioMetadataService.METADATA_DICT_DURATION_KEY)
-    )
-
-    postSerializer = TrackPostSerializer(data=postSerializerData)
-    postSerializer.is_valid(raise_exception=True)
-    track = postSerializer.save()
-    _addTrackToGenresPlaylists(user=user, track=track)
-    _updateTagsIfFileExists(track=track)
-
-    return track
+    return savedTrack
