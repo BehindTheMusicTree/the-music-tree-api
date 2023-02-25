@@ -97,7 +97,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     )
     def update(self, request, *args, **kwargs):
         updatedTrack = TrackService.Update(
-                user=request.user, oldTrack=self.get_object(), newData=request.data)
+                user=request.user, oldTrack=self.get_object(), requestData=request.data)
         responseSerializer = TrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(

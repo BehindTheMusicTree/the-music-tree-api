@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from django.core.validators import MaxValueValidator, MinValueValidator
 from rest_framework import serializers
 

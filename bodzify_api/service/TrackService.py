@@ -18,23 +18,8 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
 
-def Update(user: User, oldTrack: LibraryTrack, newData: QueryDict):
-    mutableData = newData.copy()
-
-    if TrackViewSet.DATA_GENRE_PARAMETER_NAME in mutableData:
-        if mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] is None:
-            mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] = Criteria.objects.get(
-                    user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
-
-    if TrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME in mutableData:
-        artistName = mutableData[TrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]
-        artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
-                user=user, artistName=artistName)
-        if artist is not None:
-            mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = artist.uuid
-        else:
-            mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = None
-
+def _setAlbumObjectFromNameAndAlbumArtistsNameInSerializerDataIfSet(
+        user: User, mutableData: QueryDict):
     if TrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME in mutableData:
 
         albumName = mutableData[TrackViewSet.DATA_ALBUM_NAME_PARAMETER_NAME]
@@ -54,13 +39,23 @@ def Update(user: User, oldTrack: LibraryTrack, newData: QueryDict):
         else:
             mutableData[TrackViewSet.DATA_ALBUM_PARAMETER_NAME] = None
 
-    requestSerializer = TrackPutSerializer(instance=oldTrack, data=mutableData, partial=True)
-    requestSerializer.is_valid(raise_exception=True)
-    updatedTrack = requestSerializer.save()
 
-    _updateTagsIfFileExists(updatedTrack)
+def _setArtistObjectFromNameInSerializerDataIfSet(user: User, mutableData: QueryDict):
+    if TrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME in mutableData:
+        artistName = mutableData[TrackViewSet.DATA_ARTIST_NAME_PARAMETER_NAME]
+        artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
+                user=user, artistName=artistName)
+        if artist is not None:
+            mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = artist.uuid
+        else:
+            mutableData[TrackViewSet.DATA_ARTIST_PARAMETER_NAME] = None
 
-    return updatedTrack
+
+def _setGenreObjectInSerializerData(user: User, mutableData: QueryDict):
+    if TrackViewSet.DATA_GENRE_PARAMETER_NAME in mutableData:
+        if mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] is None:
+            mutableData[TrackViewSet.DATA_GENRE_PARAMETER_NAME] = Criteria.objects.get(
+                    user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
 
 
 def _updateTagsIfFileExists(track: LibraryTrack):
@@ -184,26 +179,37 @@ def _addTrackToGenresPlaylists(user: User, track: LibraryTrack):
         genre = genre.parent
     track.save()
 
+def _getSerializerDataFromRequestData(user: User, requestData: QueryDict) -> dict:
+    serializerData = requestData.copy()
+    serializerData = _setGenreObjectInSerializerData(user, serializerData)
+    serializerData = _setArtistObjectFromNameInSerializerDataIfSet(user, serializerData)
+    serializerData = _setAlbumObjectFromNameAndAlbumArtistsNameInSerializerDataIfSet(user, serializerData)
 
-def CreateFromMineTrack(user: User, mineTrack: MineTrack, trackTempFileAbsolutePath: str):    
-    path = Path(trackTempFileAbsolutePath)
+
+def Update(user: User, oldTrack: LibraryTrack, requestData: QueryDict):
+    putSerializerData = _getSerializerDataFromRequestData(user, requestData)
+    putSerializer = TrackPutSerializer(instance=oldTrack, data=putSerializerData, partial=True)
+    putSerializer.is_valid(raise_exception=True)
+    updatedTrack = putSerializer.save()
+
+    _addTrackToGenresPlaylists(user=user, track=updatedTrack)
+    _updateTagsIfFileExists(updatedTrack)
+
+    return updatedTrack
+
+
+def CreateFromMineExtract(user: User, requestData: QueryDict, trackTempFileAbsPath: str):    
+    path = Path(trackTempFileAbsPath)
     file = path.open(mode='rb')
 
-    postSerializerData = dict()
+    postSerializerData = _getSerializerDataFromRequestData(user, requestData)
     postSerializerData[LibraryTrack.ATTRIBUTE_USER_LABEL] = user.id
     postSerializerData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(file, name=path.name)
-    postSerializerData[LibraryTrack.ATTRIBUTE_TITLE_LABEL] = mineTrack.title
-
-    artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
-            user=user, artistName=mineTrack.artistName)
-    postSerializerData[LibraryTrack.ATTRIBUTE_ARTIST_LABEL] = artist.uuid
-
-    postSerializerData[LibraryTrack.ATTRIBUTE_ALBUM_LABEL] = None
-    genre = Criteria.objects.get(user=user, name=CriteriaSpecialNames.GENRE_GENRELESS)
-    postSerializerData[LibraryTrack.ATTRIBUTE_GENRE_LABEL] = genre.uuid
-    postSerializerData[LibraryTrack.ATTRIBUTE_DURATION_LABEL] = mineTrack.duration
-    postSerializerData[LibraryTrack.ATTRIBUTE_RATING_LABEL] = 0
-    postSerializerData[LibraryTrack.ATTRIBUTE_LANGUAGE_LABEL] = None
+    postSerializerData[LibraryTrack.ATTRIBUTE_DURATION_LABEL] = (
+        AudioMetadataService.GetSpecificMetadataFromFile(
+                file=trackTempFileAbsPath, 
+                metadataKey=AudioMetadataService.METADATA_DICT_DURATION_KEY)
+    )
 
     postSerializer = TrackPostSerializer(data=postSerializerData)
     postSerializer.is_valid(raise_exception=True)
