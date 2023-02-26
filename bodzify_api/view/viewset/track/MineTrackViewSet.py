@@ -1,11 +1,8 @@
 #!/usr/bin/env python
-
 from rest_framework import status
 from rest_framework.decorators import action
-
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from django.http import JsonResponse
-
 from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.serializer.track.TrackExtractSchemaSerializer import TrackExtractSchemaSerializer
@@ -55,15 +52,20 @@ class MineTrackViewSet(MultiSerializerViewSet):
         responses=TrackDetailedSerializer,
         description=("""
             Download a track from myfreemp3. 
-            It is done by providing an URL and optional additional metadata :
-                - "title";
-                - "artist";
+            It is done by providing an URL and metadata:
+                - "title" (required);
+                - "artistName";
+                - "albumName";
+                - "albumArtistsNames";
+                - "genreName";
+                - "rating";
                 - "releasedOn";
+                - "language";
             """)
     )
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        extractSerializer = TrackExtractSchemaSerializer(data=request.POST)
+        extractSerializer = TrackExtractSchemaSerializer(data=request.data)
         extractSerializer.is_valid(raise_exception=True)
         libraryTrack = MineTrackMyfreemp3Service.Extract(user=request.user, requestData=request.data)
         responseSerializer = TrackDetailedSerializer(libraryTrack)
