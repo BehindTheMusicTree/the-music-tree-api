@@ -11,12 +11,12 @@ import bodzify_api.settings as settings
 
 class MineTrackExtractViewTestCaseExistingArtist(MineTrackExtractViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewMineTrackExtractData2']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewMineTrackExtractDataArtist']
 
     """
     With existing artist.
     """
-    def test_mineTrackExtrack2ExistingArtist(self):
+    def test_mineTrackExtractArtistExisting(self):
         self.login(self.testUser)
         trackUrl = ("https://cs9-15v4.vkuseraudio.net/s/v1/acmp/qCKkBk5i-Rl-QBdJM2m2lGbeRX6gB2ji" +
                     "zqo-ZXY7dSsA7VYaDDbb7nHloh42XVdi1gZ-U0BtWIa1I5qZJ3RspFGJbomdr4P-LwffbPvwWnZ" +
