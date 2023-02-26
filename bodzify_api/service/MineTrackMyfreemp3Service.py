@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import pprint
 import requests
 import random
 import string
@@ -32,23 +33,30 @@ def Extract(user: User, requestData: QueryDict):
     
     with open(trackTempFileAbsPath, "wb") as trackFile:
         trackFile.write(response.content)
+        
+    saveData = _getSaveDataFromRequestData(requestData)
     
     with open(trackTempFileAbsPath, "rb") as trackFile:
-        _validateData(requestData=requestData, trackFile=File(trackFile))
+        _validateSaveData(data=saveData, trackFile=File(trackFile))
 
     with open(trackTempFileAbsPath, "rb") as trackFile:
-        saveData = requestData.copy()
         saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
         genreNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
         if genreNameKey not in saveData:
             saveData[genreNameKey] = CriteriaSpecialNames.GENRE_GENRELESS
         saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
-        libraryTrack = TrackService.Save(user=user, requestData=saveData)
+        libraryTrack = TrackService.Save(user=user, inputData=saveData)
 
     os.remove(trackTempFileAbsPath)
     os.rmdir(trackTempFileIndividualDirAbsPath)
 
     return libraryTrack
+
+
+def _getSaveDataFromRequestData(requestData: QueryDict):
+    saveData = requestData.copy()
+    del saveData[MineTrack.ATTRIBUTE_URL_LABEL]
+    return saveData
 
 
 def _getFileExtensionFromUrl(url: str):
@@ -81,9 +89,7 @@ def _generateShortUu(length: int):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
 
 
-def _validateData(requestData: QueryDict, trackFile: File):
-    saveSchemaSerializerData = requestData.copy()
-    saveSchemaSerializerData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
-    saveSchemaSerializerData = requestData.copy()
-    saveSchemaSerializer = TrackSaveSchemaSerializer(data=saveSchemaSerializerData)
+def _validateSaveData(data: QueryDict, trackFile: File):
+    data[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
+    saveSchemaSerializer = TrackSaveSchemaSerializer(data=data)
     saveSchemaSerializer.is_valid(raise_exception=True)
