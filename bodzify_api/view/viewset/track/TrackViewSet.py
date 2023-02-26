@@ -13,15 +13,15 @@ from bodzify_api.form.TrackPostForm import TrackPostForm
 import bodzify_api.service.TrackService as TrackService
 import bodzify_api.view.utility as utility
 
-FILTER_TITLE_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_TITLE_LABEL
+FILTER_TITLE_PARAMETER_NAME = LibraryTrack.ATTRIBUTE_TITLE_LABEL
 FILTER_ARTIST_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
 FILTER_ALBUM_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_NAME_LABEL
 FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL
 FILTER_GENRE_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
-FILTER_LANGUAGE_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_LANGUAGE_LABEL
+FILTER_LANGUAGE_PARAMETER_NAME = LibraryTrack.ATTRIBUTE_LANGUAGE_LABEL
 
 
-class LibraryTrackViewSet(MultiSerializerViewSet):
+class TrackViewSet(MultiSerializerViewSet):
 
     queryset = LibraryTrack.objects.all()
     serializers = {
@@ -108,7 +108,8 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
-        description=("""
+        description=(
+            """
             Create a track with metadata by uploading a file:
                 - If the file has no metadata 'title', it is set with the file's name without the 
             extension.
@@ -118,7 +119,8 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
         form = TrackPostForm(request.POST, request.FILES)
         if form.is_valid():
             track = TrackService.CreateFromUpload(
-                    request.user, file=request.FILES[DATA_FILE_PARAMETER_NAME])
+                    request.user, 
+                    file=request.FILES[TrackSaveSchemaSerializer.ATTRIBUTE_FILE_LABEL])
             return JsonResponse(
                     data=TrackDetailedSerializer(track).data,
                     status=status.HTTP_201_CREATED)
@@ -128,7 +130,7 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                    name=TrackSaveSchemaSerializer.ATTRIBUTE_TITLE_LABEL, 
+                    name=LibraryTrack.ATTRIBUTE_TITLE_LABEL, 
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(

@@ -21,7 +21,10 @@ GET_QUERY_PARAMETER_NAME = "query"
 
 
 class MineTrackViewSet(MultiSerializerViewSet):
-    serializer_class = MineTrackSerializer
+    serializers = {
+        'list':  MineTrackSerializer,
+        'extract':  TrackExtractSchemaSerializer,
+    }
 
     @extend_schema(
         parameters=[
@@ -60,6 +63,8 @@ class MineTrackViewSet(MultiSerializerViewSet):
     )
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
+        extractSerializer = TrackExtractSchemaSerializer(data=request.POST)
+        extractSerializer.is_valid(raise_exception=True)
         libraryTrack = MineTrackMyfreemp3Service.Extract(user=request.user, requestData=request.data)
         responseSerializer = TrackDetailedSerializer(libraryTrack)
         headers = self.get_success_headers(responseSerializer.data)

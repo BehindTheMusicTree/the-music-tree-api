@@ -1,14 +1,9 @@
 #!/usr/bin/env python
-
 from django.http import JsonResponse
 from rest_framework.response import Response
-
 from django.db import IntegrityError
-
 from rest_framework import status
-
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.serializer.criteria.CriteriaSerializer import (
