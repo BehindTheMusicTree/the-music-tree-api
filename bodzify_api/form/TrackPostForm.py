@@ -1,7 +1,7 @@
 from django import forms
 from django.core.validators import FileExtensionValidator
 
-from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
+from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 from upload_validator import FileTypeValidator
 
 
@@ -11,6 +11,6 @@ class TrackPostForm(forms.Form):
         validators=[
             FileExtensionValidator(['flac', 'wav', 'mp3']), 
             FileTypeValidator(allowed_types=[ 'audio/*']),
-            trackSize
+            validateTrackSize
         ]
     )

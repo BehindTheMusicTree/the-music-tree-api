@@ -8,10 +8,13 @@ class TrackSaveSerializer(serializers.ModelSerializer):
     class Meta:
         model = LibraryTrack
         fields = [
+            "user",
+            "file",
             "title", 
             "artist", 
             "album", 
-            "genre", 
+            "genre",
+            "duration",
             "rating", 
             "language", 
         ]
