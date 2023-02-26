@@ -19,7 +19,7 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
         + "kY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
         data = {
             "url": trackUrl,
-            "artist": "Jul",
+            "artistName": "Jul",
             "releasedOn": 1290292
         }
         response = self.extract(data=data)

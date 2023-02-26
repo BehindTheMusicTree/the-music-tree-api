@@ -20,7 +20,7 @@ class MineTrackExtractViewTestCaseUsual(MineTrackExtractViewTestCase):
     - the file extracted should be named "Jul_-_du_rap.mp3" as the artist is "Jul" and the title 
     is "du rap".
     - the extracted track should have no album as myfreemp3 doesn't provide this information;
-    - the extracted track genre should be "Genreless" as myfreemp3 doesn't provide this 
+    - the extracted track genre should be "Genreless" we don't provide one;
     information;
     - the extracted file should be stored in the test user's library.
     """
@@ -33,7 +33,7 @@ class MineTrackExtractViewTestCaseUsual(MineTrackExtractViewTestCase):
         data = {
             "url": trackUrl,
             "title": "du rap",
-            "artist": "Jul",
+            "artistName": "Jul",
             "releasedOn": 1290292
         }
         response = self.extract(data=data)

@@ -18,7 +18,7 @@ class MineTrackExtractViewTestUrl(MineTrackExtractViewTestCase):
         data = {
             "url": trackUrl,
             "title": "du rap",
-            "artist": "Jul",
+            "artistName": "Jul",
             "releasedOn": 1290292
         }
         response = self.extract(data=data)

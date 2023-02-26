@@ -8,14 +8,14 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 import bodzify_api.settings as settings
 
 
-class MineTrackExtractViewTestCaseExistingArtist(MineTrackExtractViewTestCase):
+class MineTrackExtractViewTestCaseExtraField(MineTrackExtractViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewMineTrackExtractDataArtist']
+    fixtures = ['initial_data', 'TestUserData']
 
     """
-    With existing artist.
+    Trying to extract a track with a field not handled should fail with a 400 (bad request).
     """
-    def test_mineTrackExtractArtistExisting(self):
+    def test_mineTrackExtractExtraField(self):
         self.login(self.testUser)
         trackUrl = ("https://cs9-15v4.vkuseraudio.net/s/v1/acmp/qCKkBk5i-Rl-QBdJM2m2lGbeRX6gB2ji" +
                     "zqo-ZXY7dSsA7VYaDDbb7nHloh42XVdi1gZ-U0BtWIa1I5qZJ3RspFGJbomdr4P-LwffbPvwWnZ" +
@@ -23,16 +23,8 @@ class MineTrackExtractViewTestCaseExistingArtist(MineTrackExtractViewTestCase):
         data = {
             "url": trackUrl,
             "title": "Summer Moved On",
-            "artistName": "a-ha",
-            "releasedOn": 1290292
+            "fieldNotHandled": "a-ha"
         }
 
         response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        track = LibraryTrack.objects.get(title="Summer Moved On")
-        assert track.artist.name == "a-ha"
-        assert track.album == None
-        assert track.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
-        assert track.rating == 0
-        assert track.file.name == self.testUserLibraryRelativePath + "a-ha_-_Summer_Moved_On.mp3"
-        assert os.path.exists(settings.MEDIA_ROOT + track.file.name)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
