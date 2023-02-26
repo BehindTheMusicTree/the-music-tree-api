@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-import mutagen
 from mutagen._file import File as MutagenFile
 from mutagen.id3 import Frames
 from mutagen.id3 import ID3
@@ -53,6 +52,101 @@ METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE = """The specified audio metadata k
 handled by the service."""
 
 
+def Update(file, metadataUpdateDict: dict, appRatingMaxValue: int):
+
+    filename, fileExtension = os.path.splitext(file.name)
+    fileExtensionLowered = fileExtension.lower()
+
+    if fileExtensionLowered in [".wav", ".mp3"]:
+        try:
+            fileTags = ID3(file.path)
+        except ID3NoHeaderError:
+            fileTags = ID3()
+        for metadataDictKey in list(metadataUpdateDict.keys()):
+            if metadataDictKey == METADATA_DICT_DURATION_KEY:
+                raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
+            else:
+                fileTags = _getId3FileTagsUpdatedIfTagValueSpecified(
+                        id3FileTags=fileTags, 
+                        updateMetadataDict=metadataUpdateDict, 
+                        updateMetadataKey=metadataDictKey,
+                        appMaxRating=appRatingMaxValue)
+
+    elif fileExtensionLowered == ".flac":
+        fileTags = FLAC(file.path)
+        for metadataDictKey in list(metadataUpdateDict.keys()):
+            if metadataDictKey == METADATA_DICT_DURATION_KEY:
+                raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
+            else:
+                fileTags = _getFlacFileTagsUpdatedIfValueSpecified(
+                        flacFile=fileTags, 
+                        metadataUpdateDict=metadataUpdateDict, 
+                        metadataDictKey=metadataDictKey)
+    else:
+        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+
+    fileTags.save(file.path)
+
+
+def GetSpecificMetadataFromFile(file, metadataKey: str):
+    filename, fileExtension = os.path.splitext(file.name)
+    fileExtensionLowered = fileExtension.lower()
+    if fileExtensionLowered in [".wav", ".mp3"]:
+        mutagenFile = MutagenFile(file)
+        return _getSpecificMetadataFromId3File(id3FileTags=mutagenFile, metadataKey=metadataKey)
+    elif fileExtensionLowered == ".flac":
+        flacFile = FLAC(fileobj=file)
+        return _getSpecificMetadataFromFlacFile(flacFileTags=flacFile, metadataKey=metadataKey)    
+    else:
+        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+        
+
+def GetMetadataDictFromFile(file, normalizedRatingMaxValue: int):
+    filename, fileExtension = os.path.splitext(file.name)
+
+    title = ""
+    artistName = ""
+    albumName = ""
+    albumArtistsNamesString = ""
+    genreName = ""
+    rating = None
+    language = "" 
+    
+    fileExtensionLowered = fileExtension.lower()
+    if fileExtensionLowered in [".wav", ".mp3"]:
+        fileTags = MutagenFile(file)
+        title = _getTitleTagFromId3File(fileTags)
+        artistName = _getArtistNameTagFromMutagenFile(fileTags)
+        albumName = _getAlbumNameTagFromMutagenFile(fileTags)
+        albumArtistsNamesString = _getAlbumArtistsNameStringTagFromMutagenFile(fileTags)
+        genreName = _getGenreNameTagFromMutagenFile(fileTags)
+        rating = _getRatingTagFromMutagenFile(fileTags, normalizedRatingMaxValue) 
+        language = _getLanguageTagFromMutagenFile(fileTags) 
+
+    elif fileExtension.lower() == ".flac":
+        fileTags = FLAC(fileobj=file)
+        title = _getTitleTagFromFlacFile(fileTags)
+        artistName = _getArtistNameTagFromFlacFile(fileTags)
+        albumName = _getAlbumNameTagFromFlacFile(fileTags)
+        albumArtistsNamesString = _getAlbumArtistsNameStringTagFromFlacFile(fileTags)
+        genreName = _getGenreNameTagFromFlacFile(fileTags)
+        rating = _getRatingTagFromFlacFile(fileTags, normalizedRatingMaxValue) 
+        language = _getLanguageTagFromFlacFile(fileTags)
+    else:
+        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+    
+    metadataDict = dict()
+    metadataDict[METADATA_DICT_TITLE_KEY] = title
+    metadataDict[METADATA_DICT_ARTIST_NAME_KEY] = artistName
+    metadataDict[METADATA_DICT_ALBUM_NAME_KEY] = albumName
+    metadataDict[METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY] = albumArtistsNamesString
+    metadataDict[METADATA_DICT_GENRE_NAME_KEY] = genreName
+    metadataDict[METADATA_DICT_DURATION_KEY] = _getDurationFromFileTags(fileTags=fileTags)
+    metadataDict[METADATA_DICT_RATING_KEY] = rating
+    metadataDict[METADATA_DICT_LANGUAGE_KEY] = language
+    return metadataDict
+
+
 def _getDurationFromFileTags(fileTags):
     return fileTags.info.length
 
@@ -80,7 +174,7 @@ def _getGenreNameTagFromMutagenFile(id3FileTags: MutagenFile):
         return id3FileTags[ID3_GENRE_NAME_TEXT_FRAME][0]
     else:
         return ""
-    
+
 
 def _getRatingTagFromRawValue(
         rawValue: int, unnormalizedMaxValue: int = None, normalizedMaxValue: int = None):
@@ -159,7 +253,7 @@ def _getLanguageTagFromFlacFile(flacFile: FLAC):
 
 
 def _getSpecificMetadataFromId3File(
-            id3FileTags: MutagenFile, metadataKey: str, normalizedRatingMaxValue: int):
+            id3FileTags: MutagenFile, metadataKey: str, normalizedRatingMaxValue: int=None):
     if metadataKey == METADATA_DICT_TITLE_KEY:
         return _getTitleTagFromId3File(id3FileTags)
     elif metadataKey == METADATA_DICT_ARTIST_NAME_KEY:
@@ -198,111 +292,64 @@ def _getSpecificMetadataFromFlacFile(
         return _getLanguageTagFromFlacFile(flacFileTags)
 
 
-def GetSpecificMetadataFromFile(file, metadataKey: str):
-    filename, fileExtension = os.path.splitext(file.name)
-    fileExtensionLowered = fileExtension.lower()
-    if fileExtensionLowered in [".wav", ".mp3"]:
-        mutagenFile = mutagen.MutagenFile(file)
-        return _getSpecificMetadataFromId3File(
-                id3FileTags=mutagenFile, 
-                metadataKey=metadataKey,
-                file=file,
-                fileExtensionLowered=fileExtensionLowered)
-    elif fileExtensionLowered == ".flac":
-        flacFile = FLAC(fileobj=file)
-        return _getSpecificMetadataFromFlacFile(flacFileTags=flacFile, metadataKey=metadataKey)    
-    else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-        
-
-def GetMetadataDictFromFile(file, normalizedRatingMaxValue: int):
-    filename, fileExtension = os.path.splitext(file.name)
-
-    title = ""
-    artistName = ""
-    albumName = ""
-    albumArtistsNamesString = ""
-    genreName = ""
-    rating = None
-    language = "" 
-    
-    fileExtensionLowered = fileExtension.lower()
-    if fileExtensionLowered in [".wav", ".mp3"]:
-        fileTags = MutagenFile(file)
-        title = _getTitleTagFromId3File(fileTags)
-        artistName = _getArtistNameTagFromMutagenFile(fileTags)
-        albumName = _getAlbumNameTagFromMutagenFile(fileTags)
-        albumArtistsNamesString = _getAlbumArtistsNameStringTagFromMutagenFile(fileTags)
-        genreName = _getGenreNameTagFromMutagenFile(fileTags)
-        rating = _getRatingTagFromMutagenFile(fileTags, normalizedRatingMaxValue) 
-        language = _getLanguageTagFromMutagenFile(fileTags) 
-
-    elif fileExtension.lower() == ".flac":
-        fileTags = FLAC(fileobj=file)
-        title = _getTitleTagFromFlacFile(fileTags)
-        artistName = _getArtistNameTagFromFlacFile(fileTags)
-        albumName = _getAlbumNameTagFromFlacFile(fileTags)
-        albumArtistsNamesString = _getAlbumArtistsNameStringTagFromFlacFile(fileTags)
-        genreName = _getGenreNameTagFromFlacFile(fileTags)
-        rating = _getRatingTagFromFlacFile(fileTags, normalizedRatingMaxValue) 
-        language = _getLanguageTagFromFlacFile(fileTags)
-    else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-    
-    metadataDict = dict()
-    metadataDict[METADATA_DICT_TITLE_KEY] = title
-    metadataDict[METADATA_DICT_ARTIST_NAME_KEY] = artistName
-    metadataDict[METADATA_DICT_ALBUM_NAME_KEY] = albumName
-    metadataDict[METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY] = albumArtistsNamesString
-    metadataDict[METADATA_DICT_GENRE_NAME_KEY] = genreName
-    metadataDict[METADATA_DICT_DURATION_KEY] = _getDurationFromFileTags(fileTags=fileTags)
-    metadataDict[METADATA_DICT_RATING_KEY] = rating
-    metadataDict[METADATA_DICT_LANGUAGE_KEY] = language
-    return metadataDict
-
-
 def _getId3FileTagsUpdatedIfTagValueSpecified(
-        id3FileTags: ID3, metadataDict: dict, metadataKey: str, normalizedRatingMaxValue: int):
-    if metadataKey in metadataDict:
-        if metadataKey == METADATA_DICT_TITLE_KEY:
+        id3FileTags: ID3, 
+        updateMetadataDict: dict, 
+        updateMetadataKey: str, 
+        appMaxRating: int):
+    if updateMetadataKey in updateMetadataDict:
+        if updateMetadataKey == METADATA_DICT_TITLE_KEY:
             id3Key = ID3_TITLE_TEXT_FRAME
             textFrameClass = TIT2
-        elif metadataKey == METADATA_DICT_ARTIST_NAME_KEY:
+        elif updateMetadataKey == METADATA_DICT_ARTIST_NAME_KEY:
             id3Key = ID3_ARTIST_NAME_TEXT_FRAME
             textFrameClass = TPE1
-        elif metadataKey == METADATA_DICT_ALBUM_NAME_KEY:
+        elif updateMetadataKey == METADATA_DICT_ALBUM_NAME_KEY:
             id3Key = ID3_ALBUM_NAME_TEXT_FRAME
             textFrameClass = TALB
-        elif metadataKey == METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY:
+        elif updateMetadataKey == METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY:
             id3Key = ID3_ALBUM_ARTISTS_NAMES_TEXT_FRAME
             textFrameClass = TPE2
-        elif metadataKey == METADATA_DICT_GENRE_NAME_KEY:
+        elif updateMetadataKey == METADATA_DICT_GENRE_NAME_KEY:
             id3Key = ID3_GENRE_NAME_TEXT_FRAME
             textFrameClass = TCON
-        elif metadataKey == METADATA_DICT_RATING_KEY:
+        elif updateMetadataKey == METADATA_DICT_RATING_KEY:
             id3FileTags.delall(ID3_RATING_TEXT_FRAME)
-            id3FileTags.add(POPM(
-                    email=ID3_RATING_APP_EMAIL, rating=metadataDict[METADATA_DICT_RATING_KEY]))
+            appRating = updateMetadataDict[METADATA_DICT_RATING_KEY]
+            if appRating is not None:
+                id3Rating = _getId3FileRatingFromAppValue(
+                        appRating=appRating,
+                        appMaxRating=appMaxRating)
+                id3FileTags.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3Rating))
             return id3FileTags
-        elif metadataKey == METADATA_DICT_LANGUAGE_KEY:
+        elif updateMetadataKey == METADATA_DICT_LANGUAGE_KEY:
             id3Key = ID3_LANGUAGE_TEXT_FRAME
             textFrameClass = TLAN
         else:
             raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
         
         id3FileTags.delall(id3Key)
-        id3FileTags.add(textFrameClass(encoding=3, text=metadataDict[metadataKey]))
+        id3FileTags.add(textFrameClass(encoding=3, text=updateMetadataDict[updateMetadataKey]))
 
     return id3FileTags
 
 
-def _getFileRatingFromNormalizedValue(
-        normalizedValue: int, normalizedMaxValue: int, fileMaxValue: int):
-    return (fileMaxValue * normalizedMaxValue)/normalizedMaxValue
+def _getId3FileRatingFromAppValue(appRating: int, appMaxRating: int):
+    return _getFileRatingFromAppValue(
+            appRating=appRating,
+            appMaxRating=appMaxRating,
+            fileMaxRating=ID3_RATING_MAX_VALUE)
 
 
-def _getFlacRatingFromNormalizedValue(normalizedValue: int, normalizedMaxValue: int):
-    return
+def _getVorbisFileRatingFromAppValue(appRating: int, appMaxRating: int):
+    return _getFileRatingFromAppValue(
+            appRating=appRating,
+            appMaxRating=appMaxRating,
+            fileMaxRating=VORBIS_RATING_MAX_VALUE)
+
+
+def _getFileRatingFromAppValue(appRating: int, appMaxRating: int, fileMaxRating: int):
+    return (fileMaxRating * appRating)/appMaxRating
 
 
 def _getFlacFileTagsUpdatedIfValueSpecified(
@@ -320,7 +367,13 @@ def _getFlacFileTagsUpdatedIfValueSpecified(
             flacFile[VORBIS_GENRE_NAME_TAG_KEY][0] = metadataUpdateDict[metadataDictKey]
             return flacFile
         elif metadataDictKey == METADATA_DICT_RATING_KEY:
-            flacFile[VORBIS_RATING_TAG_KEY] = str(metadataUpdateDict[metadataDictKey])
+            appRating = metadataUpdateDict[metadataDictKey]
+            if appRating is not None:
+                vorbisRating = _getVorbisFileRatingFromAppValue(
+                        appRating=appRating, appMaxRating=VORBIS_RATING_MAX_VALUE)
+                flacFile[VORBIS_RATING_TAG_KEY] = str(vorbisRating)
+            else:
+                flacFile[VORBIS_RATING_TAG_KEY] = ""
             return flacFile
         elif metadataDictKey == METADATA_DICT_LANGUAGE_KEY:
             vorbisTagKey = VORBIS_LANGUAGE_TAG_KEY
@@ -330,41 +383,6 @@ def _getFlacFileTagsUpdatedIfValueSpecified(
         flacFile[vorbisTagKey] = metadataUpdateDict[metadataDictKey]
 
     return flacFile
-
-
-def Update(file, metadataUpdateDict: dict):
-
-    filename, fileExtension = os.path.splitext(file.name)
-    fileExtensionLowered = fileExtension.lower()
-
-    if fileExtensionLowered in [".wav", ".mp3"]:
-        try:
-            fileTags = ID3(file.path)
-        except ID3NoHeaderError:
-            fileTags = ID3()
-        for metadataDictKey in list(metadataUpdateDict.keys()):
-            if metadataDictKey == METADATA_DICT_DURATION_KEY:
-                raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
-            else:
-                fileTags = _getId3FileTagsUpdatedIfTagValueSpecified(
-                        id3FileTags=fileTags, 
-                        metadataDict=metadataUpdateDict, 
-                        metadataKey=metadataDictKey)
-
-    elif fileExtensionLowered == ".flac":
-        fileTags = FLAC(file.path)
-        for metadataDictKey in list(metadataUpdateDict.keys()):
-            if metadataDictKey == METADATA_DICT_DURATION_KEY:
-                raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
-            else:
-                fileTags = _getFlacFileTagsUpdatedIfValueSpecified(
-                        flacFile=fileTags, 
-                        metadataUpdateDict=metadataUpdateDict, 
-                        metadataDictKey=metadataDictKey)
-    else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-
-    fileTags.save(file.path)
 
 
 def _getFirstValueIfExistsOrEmptyString(dict: dict, key: str):
