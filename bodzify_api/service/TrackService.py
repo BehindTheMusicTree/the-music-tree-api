@@ -31,27 +31,27 @@ def Save(user: User, requestData: QueryDict, oldTrack: LibraryTrack = None):
 
 
 def CreateFromUpload(user: User, file):
-    tagsDict = AudioMetadataService.GetMetadataDictFromFile(
-            file=file, normalizedRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
+    metadata = AudioMetadataService.GetMetadataDictFromFile(
+            file=file, appRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
 
     postSerializerData = dict()
     postSerializerData[LibraryTrack.ATTRIBUTE_USER_LABEL] = user.id
     postSerializerData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = file
 
-    title = tagsDict[AudioMetadataService.METADATA_DICT_TITLE_KEY]
+    title = metadata[AudioMetadataService.METADATA_DICT_TITLE_KEY]
     if title == "" or title is None:
         title, fileExtension = os.path.splitext(file.name)
     postSerializerData[LibraryTrack.ATTRIBUTE_TITLE_LABEL] = title
     
-    artistName = tagsDict[AudioMetadataService.METADATA_DICT_ARTIST_NAME_KEY]
+    artistName = metadata[AudioMetadataService.METADATA_DICT_ARTIST_NAME_KEY]
     if artistName is not None and artistName != "":
         artist = ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
             user=user, artistName=artistName)
         postSerializerData[LibraryTrack.ATTRIBUTE_ARTIST_LABEL] = artist.uuid
     
-    albumName = tagsDict[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY]
+    albumName = metadata[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY]
     if albumName is not None and albumName != "":
-        albumArtistsNamesString = tagsDict[AudioMetadataService.METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY]
+        albumArtistsNamesString = metadata[AudioMetadataService.METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY]
         if albumArtistsNamesString == "":
             albumArtistsNameList = None
         else:
@@ -60,7 +60,7 @@ def CreateFromUpload(user: User, file):
                 user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
         postSerializerData[LibraryTrack.ATTRIBUTE_ALBUM_LABEL] = album.uuid
     
-    genreName = tagsDict[AudioMetadataService.METADATA_DICT_GENRE_NAME_KEY]
+    genreName = metadata[AudioMetadataService.METADATA_DICT_GENRE_NAME_KEY]
     if genreName == "" or genreName is None:
         genreName = CriteriaSpecialNames.GENRE_GENRELESS
     genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
@@ -68,11 +68,11 @@ def CreateFromUpload(user: User, file):
     postSerializerData[LibraryTrack.ATTRIBUTE_GENRE_LABEL] = genre.uuid
 
     postSerializerData[LibraryTrack.ATTRIBUTE_DURATION_LABEL] = (
-            tagsDict[AudioMetadataService.METADATA_DICT_DURATION_KEY])
+            metadata[AudioMetadataService.METADATA_DICT_DURATION_KEY])
     postSerializerData[LibraryTrack.ATTRIBUTE_RATING_LABEL] = (
-            tagsDict[AudioMetadataService.METADATA_DICT_RATING_KEY])
+            metadata[AudioMetadataService.METADATA_DICT_RATING_KEY])
     postSerializerData[LibraryTrack.ATTRIBUTE_LANGUAGE_LABEL] = (
-            tagsDict[AudioMetadataService.METADATA_DICT_LANGUAGE_KEY])
+            metadata[AudioMetadataService.METADATA_DICT_LANGUAGE_KEY])
     
     return _createFromPostSerializerData(serializerData=postSerializerData)
 

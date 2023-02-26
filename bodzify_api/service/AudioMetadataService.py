@@ -101,7 +101,7 @@ def GetSpecificMetadataFromFile(file, metadataKey: str):
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
         
 
-def GetMetadataDictFromFile(file, normalizedRatingMaxValue: int):
+def GetMetadataDictFromFile(file, appRatingMaxValue: int):
     filename, fileExtension = os.path.splitext(file.name)
 
     title = ""
@@ -120,7 +120,7 @@ def GetMetadataDictFromFile(file, normalizedRatingMaxValue: int):
         albumName = _getAlbumNameTagFromMutagenFile(fileTags)
         albumArtistsNamesString = _getAlbumArtistsNameStringTagFromMutagenFile(fileTags)
         genreName = _getGenreNameTagFromMutagenFile(fileTags)
-        rating = _getRatingTagFromMutagenFile(fileTags, normalizedRatingMaxValue) 
+        rating = _getRatingTagFromMutagenFile(fileTags, appRatingMaxValue) 
         language = _getLanguageTagFromMutagenFile(fileTags) 
 
     elif fileExtension.lower() == ".flac":
@@ -130,7 +130,7 @@ def GetMetadataDictFromFile(file, normalizedRatingMaxValue: int):
         albumName = _getAlbumNameTagFromFlacFile(fileTags)
         albumArtistsNamesString = _getAlbumArtistsNameStringTagFromFlacFile(fileTags)
         genreName = _getGenreNameTagFromFlacFile(fileTags)
-        rating = _getRatingTagFromFlacFile(fileTags, normalizedRatingMaxValue) 
+        rating = _getRatingTagFromFlacFile(fileTags, appRatingMaxValue) 
         language = _getLanguageTagFromFlacFile(fileTags)
     else:
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
