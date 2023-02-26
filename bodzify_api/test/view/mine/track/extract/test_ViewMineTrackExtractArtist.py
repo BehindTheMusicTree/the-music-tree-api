@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-from django.urls import reverse
 from rest_framework import status
 from bodzify_api.test.view.mine.track.MineTrackViewTestCase import (
         MineTrackExtractViewTestCase)

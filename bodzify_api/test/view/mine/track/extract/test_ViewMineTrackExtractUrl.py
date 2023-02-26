@@ -1,13 +1,7 @@
 #!/usr/bin/env python
-import os
-from django.urls import reverse
 from rest_framework import status
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
 from bodzify_api.test.view.mine.track.MineTrackViewTestCase import (
         MineTrackExtractViewTestCase)
-from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-import bodzify_api.settings as settings
 
 
 class MineTrackExtractViewTestUrl(MineTrackExtractViewTestCase):
