@@ -177,17 +177,17 @@ def _getGenreNameTagFromMutagenFile(id3FileTags: MutagenFile):
 
 
 def _getEventuallyNormalizedRatingFromFileValue(
-        fileRatingValue: int, fileMaxRatingValue: int=None, appMaxRatingValue: int=None):
-    if fileRatingValue is not None:
-        if appMaxRatingValue is not None:
-            if fileMaxRatingValue is None:
+        fileRating: int, fileMaxRating: int=None, appMaxRating: int=None):
+    if fileRating is not None:
+        if appMaxRating is not None:
+            if fileMaxRating is None:
                 raise ValueError("normalizedMaxValue should be set as normalizedMaxValue is.")
             return _getNormalizedRatingFromFileValue(
-                    ratingValue=fileRatingValue, 
-                    unnormalizedMaxValue=fileMaxRatingValue,
-                    normalizedMaxValue=appMaxRatingValue)
+                    ratingValue=fileRating, 
+                    unnormalizedMaxValue=fileMaxRating,
+                    normalizedMaxValue=appMaxRating)
         else:
-            return fileRatingValue
+            return fileRating
     else:
         return None
    
@@ -203,8 +203,8 @@ def _getRatingTagFromMutagenFile(id3FileTags: MutagenFile, appRatingMaxValue: in
     else:
         return _getEventuallyNormalizedRatingFromFileValue(
                 fileRating=fileRating, 
-                fileMaxRatingValue=ID3_RATING_MAX_VALUE,
-                appMaxRatingValue=appRatingMaxValue)
+                fileMaxRating=ID3_RATING_MAX_VALUE,
+                appMaxRating=appRatingMaxValue)
 
 
 def _getRatingTagFromFlacFile(flacFile: FLAC, appRatingMaxValue: int=None):
@@ -214,8 +214,8 @@ def _getRatingTagFromFlacFile(flacFile: FLAC, appRatingMaxValue: int=None):
     else:
         return _getEventuallyNormalizedRatingFromFileValue(
                 fileRating=fileRating, 
-                fileMaxRatingValue=VORBIS_RATING_MAX_VALUE,
-                appMaxRatingValue=appRatingMaxValue)
+                fileMaxRating=VORBIS_RATING_MAX_VALUE,
+                appMaxRating=appRatingMaxValue)
 
 
 def _getNormalizedRatingFromFileValue(
