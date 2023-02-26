@@ -43,18 +43,6 @@ def getTracksFromMyfreemp3Json(dataDict):
     return tracks
 
 
-def logResponseText(responseText):
-    myfreemp3ScrapperLogFolderPath = LOG_MYFREEMP3_FOLDER_PATH
-    
-    if not os.path.exists(myfreemp3ScrapperLogFolderPath):
-        os.makedirs(myfreemp3ScrapperLogFolderPath)
-
-    logFileName = datetime.datetime.now().strftime(LOG_FILE_NAME_FORMAT) + ".txt"
-    f = open(LOG_MYFREEMP3_FOLDER_PATH + logFileName, "x")
-    f.write(responseText)
-    f.close()
-
-
 def getJsonTextFromTracks(tracks):
     tracksJsonText = "["
     firstTrack = True
@@ -78,10 +66,21 @@ def scrap(search, page, pageSize):
         PAGE_FIELD: str(page)
     }
 
-    responseText = requests.post(url = POST_URL, data = dataToSendToMyfreemp3).text
-    logResponseText(responseText)
-
-    myfreemp3tracksJson = getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(responseText)
+    myFreeMp3ResponseIsInvalid = True
+    while myFreeMp3ResponseIsInvalid:
+        response = requests.post(url = POST_URL, data = dataToSendToMyfreemp3)
+        if response.status_code != 200:
+            raise Exception("Error while scrapping myfreemp3: " + response.reason)
+        responseText = response.text
+        myFreeMp3ResponseIsInvalid = IsResponseTextIsValid(responseText)
+    
+    myfreemp3tracksJson = getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(response.text)        
     tracks = getTracksFromMyfreemp3Json(myfreemp3tracksJson)
     tracksJsonText = getJsonTextFromTracks(tracks)
     return json.loads(tracksJsonText)
+
+def getFirstStringBetweenTwoStrings(string, string1, string2):
+    return string.split(string1,1)[1].split(string2,1)[0]
+
+def IsResponseTextIsValid(responseText):
+    return getFirstStringBetweenTwoStrings(responseText, "response\":", "});") == "null"
