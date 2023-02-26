@@ -6,8 +6,8 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.serializer.criteria.CriteriaSerializer import (
-    CriteriaRequestSerializer, CriteriaResponseSerializer)
+from bodzify_api.serializer.criteria.CriteriaPostSerializer import CriteriaPostSerializer
+from bodzify_api.serializer.criteria.CriteriaDetailedSerializer import CriteriaDetailedSerializer 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -21,9 +21,10 @@ class CriteriaViewSet(MultiSerializerViewSet):
 
     queryset = Criteria.objects.all()
     serializers = {
-        'default': CriteriaRequestSerializer,
-        'list':  CriteriaResponseSerializer,
-        'retrieve':  CriteriaResponseSerializer,
+        'default': CriteriaDetailedSerializer,
+        'list':  CriteriaDetailedSerializer,
+        'retrieve':  CriteriaDetailedSerializer,
+        'create':  CriteriaPostSerializer,
     }
 
     def __init__(self, criteriaTypeId, playlistTypeId, **kwargs):
@@ -52,11 +53,11 @@ class CriteriaViewSet(MultiSerializerViewSet):
         return queryset
 
     @extend_schema(
-        request=CriteriaRequestSerializer,
-        responses=CriteriaResponseSerializer
+        request=CriteriaPostSerializer,
+        responses=CriteriaDetailedSerializer
     )
     def create(self, request, *args, **kwargs):
-        requestSerializer = CriteriaRequestSerializer(data=request.data)
+        requestSerializer = CriteriaPostSerializer(data=request.data)
         requestSerializer.is_valid(raise_exception=True)
 
         parent = requestSerializer.validated_data[PARENT_FIELD]
@@ -74,7 +75,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
 
         Playlist(user=self.request.user, criteria=criteria, type=self.playlistType).save()
 
-        responseSerializer = CriteriaResponseSerializer(criteria)
+        responseSerializer = CriteriaDetailedSerializer(criteria)
         headers = self.get_success_headers(responseSerializer.data)
 
         return JsonResponse(
@@ -89,7 +90,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
             OpenApiParameter(NAME_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
             OpenApiParameter(PARENT_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH)
         ],
-        responses=CriteriaResponseSerializer
+        responses=CriteriaDetailedSerializer
     )
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
