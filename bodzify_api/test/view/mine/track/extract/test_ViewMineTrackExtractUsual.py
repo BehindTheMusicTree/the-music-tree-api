@@ -39,7 +39,8 @@ class MineTrackExtractViewTestCaseUsual(MineTrackExtractViewTestCase):
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(title="du rap")
-        trackMetadata = AudioMetadataService.GetMetadataDictFromFile(file=track.file)
+        trackMetadata = AudioMetadataService.GetMetadataDictFromFile(
+                file=track.file, appRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
         assert track.artist.name == "Jul"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_ARTIST_NAME_KEY] == "Jul"
         assert track.album == None
