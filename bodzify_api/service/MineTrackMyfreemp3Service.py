@@ -65,7 +65,9 @@ def _getTrackTempFileName(mineTrackUrl: str, requestData: QueryDict):
             fileNameWithoutExtension = title
         else:
             fileNameWithoutExtension = artistName + " - " + title
-        return fileNameWithoutExtension + "." + _getFileExtensionFromUrl(mineTrackUrl)
+    else:
+        fileNameWithoutExtension = title
+    return fileNameWithoutExtension + "." + _getFileExtensionFromUrl(mineTrackUrl)
 
 
 def _getTrackTempFileIndividualDirAbsPath():
