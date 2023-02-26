@@ -4,7 +4,6 @@ from django.http.request import QueryDict
 from django.contrib.auth.models import User
 import bodzify_api.settings as settings
 from bodzify_api.serializer.track.TrackSaveSerializer import TrackSaveSerializer
-from bodzify_api.serializer.track.TrackPostSerializer import TrackPostSerializer
 from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 import bodzify_api.service.CriteriaService as CriteriaService
@@ -94,7 +93,7 @@ def _getSaveMutableDataWithAlbumUuidEventuallySet(
 
         albumName = requestData[albumNameKey]
 
-        artistsNamesKey = TrackSaveSchemaSerializer.ATTRIBUTE_ARTISTS_NAMES_LABEL
+        artistsNamesKey = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL
         if artistsNamesKey in requestData:
             albumArtistsNamesString = requestData[artistsNamesKey]
             albumArtistsNamesList = _getArtistsNameListFromString(albumArtistsNamesString)
@@ -196,9 +195,9 @@ def _updateTagsIfFileExists(track: LibraryTrack):
 
 
 def _createFromPostSerializerData(serializerData: QueryDict):
-    postSerializer = TrackPostSerializer(data=serializerData)
-    postSerializer.is_valid(raise_exception=True)
-    track = postSerializer.save()
+    saveSerializer = TrackSaveSerializer(data=serializerData)
+    saveSerializer.is_valid(raise_exception=True)
+    track = saveSerializer.save()
     _addTrackToGenresPlaylists(track)
     return track
 
