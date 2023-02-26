@@ -120,7 +120,7 @@ class TrackViewSet(MultiSerializerViewSet):
         if form.is_valid():
             track = TrackService.CreateFromUpload(
                     request.user, 
-                    file=request.FILES[TrackSaveSchemaSerializer.ATTRIBUTE_FILE_LABEL])
+                    file=request.FILES[LibraryTrack.ATTRIBUTE_FILE_LABEL])
             return JsonResponse(
                     data=TrackDetailedSerializer(track).data,
                     status=status.HTTP_201_CREATED)
