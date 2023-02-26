@@ -5,7 +5,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from django.http import JsonResponse
 from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.serializer.track.MineTrackSerializer import MineTrackSerializer
-from bodzify_api.serializer.track.TrackExtractSchemaSerializer import TrackExtractSchemaSerializer
+from bodzify_api.serializer.track.MineTrackExtractSchemaSerializer import MineTrackExtractSchemaSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
@@ -18,9 +18,10 @@ GET_QUERY_PARAMETER_NAME = "query"
 
 
 class MineTrackViewSet(MultiSerializerViewSet):
+    
     serializers = {
         'list':  MineTrackSerializer,
-        'extract':  TrackExtractSchemaSerializer,
+        'extract':  MineTrackExtractSchemaSerializer,
     }
 
     @extend_schema(
@@ -48,7 +49,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
-        request=TrackExtractSchemaSerializer, 
+        request=MineTrackExtractSchemaSerializer, 
         responses=TrackDetailedSerializer,
         description=("""
             Download a track from myfreemp3. 
@@ -65,8 +66,8 @@ class MineTrackViewSet(MultiSerializerViewSet):
     )
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        extractSerializer = TrackExtractSchemaSerializer(data=request.data)
-        extractSerializer.is_valid(raise_exception=True)
+        serializer = MineTrackExtractSchemaSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         libraryTrack = MineTrackMyfreemp3Service.Extract(user=request.user, requestData=request.data)
         responseSerializer = TrackDetailedSerializer(libraryTrack)
         headers = self.get_success_headers(responseSerializer.data)

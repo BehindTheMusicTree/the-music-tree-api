@@ -8,7 +8,7 @@ class TrackViewTestCase(ViewTestCase):
     def postSampleTrack(self, sampleFileName, dataJson=None):
         with open(self.sampleDirectoryAbsolutePath + sampleFileName, "rb") as sampleFile:
             fileJson = {'file': sampleFile}
-            if dataJson is None:
+            if dataJson is not None:
                 data = self._mergeTwoJsons(fileJson, dataJson)
             else:
                 data = fileJson

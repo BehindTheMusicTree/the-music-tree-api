@@ -9,7 +9,6 @@ from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSe
 from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.form.TrackPostForm import TrackPostForm
 import bodzify_api.service.TrackService as TrackService
 import bodzify_api.view.utility as utility
 
@@ -33,21 +32,22 @@ class TrackViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        title = self.request.query_params.get(FILTER_TITLE_PARAMETER_NAME)
-        artistName = self.request.query_params.get(FILTER_ARTIST_NAME_PARAMETER_NAME)
-        albumName = self.request.query_params.get(FILTER_ALBUM_NAME_PARAMETER_NAME)
-        genreName = self.request.query_params.get(FILTER_GENRE_NAME_PARAMETER_NAME)
-        language = self.request.query_params.get(FILTER_LANGUAGE_PARAMETER_NAME)
-        if title is not None:
-            queryset = queryset.filter(title__icontains=title)
-        if artistName is not None:
-            queryset = queryset.filter(artist__name__icontains=artistName)
-        if albumName is not None:
-            queryset = queryset.filter(album__name__icontains=albumName)
-        if genreName is not None:
-            queryset = queryset.filter(genre__name__icontain=genreName)
-        if language is not None:
-            queryset = queryset.filter(language__icontains=language)
+        titleFilter = self.request.query_params.get(FILTER_TITLE_PARAMETER_NAME)
+        artistNameFilter = self.request.query_params.get(FILTER_ARTIST_NAME_PARAMETER_NAME)
+        albumNameFilter = self.request.query_params.get(FILTER_ALBUM_NAME_PARAMETER_NAME)
+        genreNameFilter = self.request.query_params.get(FILTER_GENRE_NAME_PARAMETER_NAME)
+        languageFilter = self.request.query_params.get(FILTER_LANGUAGE_PARAMETER_NAME)
+        
+        if titleFilter is not None:
+            queryset = queryset.filter(title__icontains=titleFilter)
+        if artistNameFilter is not None:
+            queryset = queryset.filter(artist__name__icontains=artistNameFilter)
+        if albumNameFilter is not None:
+            queryset = queryset.filter(album__name__icontains=albumNameFilter)
+        if genreNameFilter is not None:
+            queryset = queryset.filter(genre__name__icontain=genreNameFilter)
+        if languageFilter is not None:
+            queryset = queryset.filter(language__icontains=languageFilter)
         return queryset
 
 
@@ -87,7 +87,7 @@ class TrackViewSet(MultiSerializerViewSet):
     )
     def update(self, request, *args, **kwargs):
         updatedTrack = TrackService.Save(
-                user=request.user, oldTrack=self.get_object(), requestData=request.data)
+                user=request.user, oldTrack=self.get_object(), inputData=request.data)
         responseSerializer = TrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
@@ -108,23 +108,25 @@ class TrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
+        request=TrackSaveSchemaSerializer,
+        responses=TrackDetailedSerializer,
         description=(
             """
             Create a track with metadata by uploading a file:
                 - If the file has no metadata 'title', it is set with the file's name without the 
-            extension.
+            extension (with an identifier if another track has the same name).
             """)
     )
     def create(self, request, *args, **kwargs):
-        form = TrackPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            track = TrackService.CreateFromUpload(
-                    request.user, 
-                    file=request.FILES[LibraryTrack.ATTRIBUTE_FILE_LABEL])
-            return JsonResponse(
-                    data=TrackDetailedSerializer(track).data,
-                    status=status.HTTP_201_CREATED)
-        return utility.GetJsonResponseWhenBadRequest(form.errors)
+        data = request.data
+        fileKey = LibraryTrack.ATTRIBUTE_FILE_LABEL
+        data[fileKey] = request.FILES[fileKey]
+        serializer = TrackSaveSchemaSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        track = TrackService.Save(user=request.user, inputData=data)
+        return JsonResponse(
+                data=TrackDetailedSerializer(track).data,
+                status=status.HTTP_201_CREATED)
 
 
     @extend_schema(
