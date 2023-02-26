@@ -4,14 +4,14 @@ import bodzify_api.service.ArtistService as ArtistService
 from bodzify_api.model.Album import Album
 
 
-def GetAlbumFromNameAndAlbumArtistsNamesAfterHavingEventuallyCreatedThem(
+def GetAlbumFromNameAndAlbumArtistsNamesAfterEventualCreations(
         user: User, albumName: str, albumArtistsNameList: list) -> Album:
     
     if albumName is None or albumName == "":
         return None
     else:
         if albumArtistsNameList is not None:
-            albumArtists = [ArtistService.GetArtistFromNameAfterHavingEventuallyCreatedIt(
+            albumArtists = [ArtistService.GetArtistFromNameAfterEventualCreation(
                  user=user, artistName=artistName) for artistName in albumArtistsNameList]
         else:
             albumArtists = None

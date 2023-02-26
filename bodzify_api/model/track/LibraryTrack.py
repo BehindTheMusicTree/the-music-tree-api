@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import shortuuid
-import pprint
 from django.dispatch import receiver
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -51,17 +50,18 @@ class LibraryTrack(models.Model):
             null=True)
     title = models.CharField(max_length=100, default=None)
     artist = models.ForeignKey(
-        'bodzify_api.Artist', on_delete=models.CASCADE, default=None, null=True)
-    album = models.ForeignKey('bodzify_api.Album', on_delete=models.CASCADE, default=None, null=True)
+            'bodzify_api.Artist', on_delete=models.CASCADE, default=None, null=True)
+    album = models.ForeignKey(
+            'bodzify_api.Album', on_delete=models.CASCADE, default=None, null=True)
     genre = models.ForeignKey('bodzify_api.Criteria', on_delete=models.DO_NOTHING)
     duration = models.FloatField(default=None)
     rating = models.IntegerField(
-        null=True, 
-        blank=True,
-        validators=[
-            MinValueValidator(0), 
-            MaxValueValidator(settings.TRACK_RATING_MAX_VALUE)
-        ])
+            null=True, 
+            blank=True,
+            validators=[
+                MinValueValidator(0), 
+                MaxValueValidator(settings.TRACK_RATING_MAX_VALUE)
+            ])
     playlists = models.ManyToManyField('bodzify_api.Playlist')
     language = models.CharField(max_length=100, blank=True, default=None, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)

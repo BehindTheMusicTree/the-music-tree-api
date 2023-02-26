@@ -5,7 +5,7 @@ from rest_framework import serializers
 from bodzify_api.serializer.InputSerializer import InputSerializer
 from bodzify_api.validator.MineTrackUrlValidator import validateUrl
 
-class TrackExtractSchemaSerializer(InputSerializer):
+class MineTrackExtractSchemaSerializer(InputSerializer):
     url = serializers.URLField(validators=[validateUrl])
     title = serializers.CharField(max_length=100)
     artistName = serializers.CharField(max_length=100, required=False)
