@@ -5,10 +5,11 @@ from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
 from upload_validator import FileTypeValidator
+from bodzify_api.serializer.InputSerializer import InputSerializer
 from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 
 
-class TrackSaveSchemaSerializer(serializers.Serializer):
+class TrackSaveSchemaSerializer(InputSerializer):
     
         ATTRIBUTE_ARTIST_NAME_LABEL = "artistName"
         ATTRIBUTE_ALBUM_NAME_LABEL = "albumName"

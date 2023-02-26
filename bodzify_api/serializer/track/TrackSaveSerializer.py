@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-from rest_framework import serializers
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
 
 
-class TrackSaveSerializer(serializers.ModelSerializer):
+class TrackSaveSerializer(InputModelSerializer):
 
     class Meta:
         model = LibraryTrack
@@ -18,3 +18,4 @@ class TrackSaveSerializer(serializers.ModelSerializer):
             "rating", 
             "language", 
         ]
+        
