@@ -176,44 +176,49 @@ def _getGenreNameTagFromMutagenFile(id3FileTags: MutagenFile):
         return ""
 
 
-def _getRatingTagFromRawValue(
-        rawValue: int, unnormalizedMaxValue: int = None, normalizedMaxValue: int = None):
-    if rawValue is not None:
-        if normalizedMaxValue is not None:
-            if unnormalizedMaxValue is None:
+def _getEventuallyNormalizedRatingFromFileValue(
+        fileRatingValue: int, fileMaxRatingValue: int=None, appMaxRatingValue: int=None):
+    if fileRatingValue is not None:
+        if appMaxRatingValue is not None:
+            if fileMaxRatingValue is None:
                 raise ValueError("normalizedMaxValue should be set as normalizedMaxValue is.")
-            return _getNormalizedRatingFromValue(
-                    ratingValue=rawValue, 
-                    unnormalizedMaxValue=unnormalizedMaxValue,
-                    normalizedMaxValue=normalizedMaxValue)
+            return _getNormalizedRatingFromFileValue(
+                    ratingValue=fileRatingValue, 
+                    unnormalizedMaxValue=fileMaxRatingValue,
+                    normalizedMaxValue=appMaxRatingValue)
         else:
-            return rawValue
+            return fileRatingValue
     else:
         return None
    
 
-def _getRatingTagFromMutagenFile(
-        id3FileTags: MutagenFile, normalizedRatingMaxValue: int):
-    rawRating = None
+def _getRatingTagFromMutagenFile(id3FileTags: MutagenFile, appRatingMaxValue: int=None):
+    fileRating = None
     for key in id3FileTags:
         if ID3_RATING_TEXT_FRAME in key:
-            rawRating = id3FileTags[key].rating
-
-    return _getRatingTagFromRawValue(
-            ratingValue=rawRating, 
-            unnormalizedMaxValue=ID3_RATING_MAX_VALUE,
-            normalizedMaxValue=normalizedRatingMaxValue)
-
-
-def _getRatingTagFromFlacFile(flacFile: FLAC, normalizedRatingMaxValue: int):
-    rawRating = _getFirstValueIfExistsOrNone(flacFile, VORBIS_RATING_TAG_KEY)
-    return _getRatingTagFromRawValue(
-            ratingValue=rawRating, 
-            unnormalizedMaxValue=VORBIS_RATING_MAX_VALUE,
-            normalizedMaxValue=normalizedRatingMaxValue)
+            fileRating = id3FileTags[key].rating
+            
+    if fileRating is None:
+        return None
+    else:
+        return _getEventuallyNormalizedRatingFromFileValue(
+                fileRating=fileRating, 
+                fileMaxRatingValue=ID3_RATING_MAX_VALUE,
+                appMaxRatingValue=appRatingMaxValue)
 
 
-def _getNormalizedRatingFromValue(
+def _getRatingTagFromFlacFile(flacFile: FLAC, appRatingMaxValue: int=None):
+    fileRating = _getFirstValueIfExistsOrNone(flacFile, VORBIS_RATING_TAG_KEY)
+    if fileRating is None or fileRating == "":
+        return None
+    else:
+        return _getEventuallyNormalizedRatingFromFileValue(
+                fileRating=fileRating, 
+                fileMaxRatingValue=VORBIS_RATING_MAX_VALUE,
+                appMaxRatingValue=appRatingMaxValue)
+
+
+def _getNormalizedRatingFromFileValue(
             ratingValue: int, unnormalizedMaxValue: int, normalizedMaxValue: int):
     return (ratingValue * normalizedMaxValue)/unnormalizedMaxValue
     
