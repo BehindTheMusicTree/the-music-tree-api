@@ -95,8 +95,8 @@ def GetSpecificMetadataFromFile(file, metadataKey: str):
         mutagenFile = MutagenFile(file)
         return _getSpecificMetadataFromId3File(id3FileTags=mutagenFile, metadataKey=metadataKey)
     elif fileExtensionLowered == ".flac":
-        flacFile = FLAC(fileobj=file)
-        return _getSpecificMetadataFromFlacFile(flacFileTags=flacFile, metadataKey=metadataKey)    
+        flacFileTags = FLAC(fileobj=file)
+        return _getSpecificMetadataFromFlacFile(flacFileTags=flacFileTags, metadataKey=metadataKey)    
     else:
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
         

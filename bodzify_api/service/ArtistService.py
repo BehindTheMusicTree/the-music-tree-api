@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from bodzify_api.model.Artist import Artist
 
 
-def GetArtistFromNameAfterHavingEventuallyCreatedIt(user: User, artistName: str) -> Artist:
+def GetArtistFromNameAfterEventualCreation(user: User, artistName: str) -> Artist:
     if artistName is None or artistName == "":
         return None
     else:
