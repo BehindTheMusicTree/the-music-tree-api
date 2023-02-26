@@ -19,7 +19,7 @@ TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH = 20
 
 
 def List(query, pageNumber, pageSize):
-    return myfreemp3scrapper.scrap(query, pageNumber, pageSize)
+    return myfreemp3scrapper.Scrap(query, pageNumber, pageSize)
 
 
 def Extract(user: User, requestData: QueryDict):
@@ -29,7 +29,6 @@ def Extract(user: User, requestData: QueryDict):
     trackTempFileIndividualDirAbsPath = _getTrackTempFileIndividualDirAbsPath()
     trackTempFileName = _getTrackTempFileName(mineTrackUrl, requestData)
     trackTempFileAbsPath = trackTempFileIndividualDirAbsPath + trackTempFileName
-    
     
     with open(trackTempFileAbsPath, "wb") as trackFile:
         trackFile.write(response.content)
@@ -80,10 +79,6 @@ def _getTrackTempFileIndividualDirAbsPath():
 
 def _generateShortUu(length: int):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
-
-
-def _getLastPartOfUrl(url):
-    return url.split("/")[-1]
 
 
 def _validateData(requestData: QueryDict, trackFile: File):
