@@ -30,7 +30,27 @@ PAGE_SIZE_FIELD = "page_size"
 TAG_TO_IGNORE = "apple"
 
 
-def getTracksFromMyfreemp3Json(dataDict):
+def Scrap(search, page, pageSize):
+    dataToSendToMyfreemp3 = {
+        QUERY_FIELD: search,
+        PAGE_FIELD: str(page)
+    }
+
+    myFreeMp3ResponseIsInvalid = True
+    while myFreeMp3ResponseIsInvalid:
+        response = requests.post(url = POST_URL, data = dataToSendToMyfreemp3)
+        if response.status_code != 200:
+            raise Exception("Error while scrapping myfreemp3: " + response.reason)
+        responseText = response.text
+        myFreeMp3ResponseIsInvalid = _isResponseTextIsValid(responseText)
+    
+    myfreemp3tracksJson = _getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(response.text)        
+    tracks = _getTracksFromMyfreemp3Json(myfreemp3tracksJson)
+    tracksJsonText = _getJsonTextFromTracks(tracks)
+    return json.loads(tracksJsonText)
+
+
+def _getTracksFromMyfreemp3Json(dataDict):
     tracks = []
     for trackJson in dataDict[DATA_FIELD]:
         if trackJson != TAG_TO_IGNORE:
@@ -43,7 +63,7 @@ def getTracksFromMyfreemp3Json(dataDict):
     return tracks
 
 
-def getJsonTextFromTracks(tracks):
+def _getJsonTextFromTracks(tracks):
     tracksJsonText = "["
     firstTrack = True
     for track in tracks:
@@ -54,33 +74,17 @@ def getJsonTextFromTracks(tracks):
     return tracksJsonText
 
 
-def getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(myfreemp3ResponseJsonResponseText):
+def _getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(myfreemp3ResponseJsonResponseText):
     myfreemp3tracksJsonText = "{" + myfreemp3ResponseJsonResponseText.split("{",2)[2]
     myfreemp3tracksJsonText = myfreemp3tracksJsonText[:len(myfreemp3tracksJsonText) - 4]
     return json.loads(myfreemp3tracksJsonText)
 
 
-def scrap(search, page, pageSize):
-    dataToSendToMyfreemp3 = {
-        QUERY_FIELD: search,
-        PAGE_FIELD: str(page)
-    }
-
-    myFreeMp3ResponseIsInvalid = True
-    while myFreeMp3ResponseIsInvalid:
-        response = requests.post(url = POST_URL, data = dataToSendToMyfreemp3)
-        if response.status_code != 200:
-            raise Exception("Error while scrapping myfreemp3: " + response.reason)
-        responseText = response.text
-        myFreeMp3ResponseIsInvalid = IsResponseTextIsValid(responseText)
-    
-    myfreemp3tracksJson = getMyfreemp3ResponseJsonFromMyfreemp3ResponseText(response.text)        
-    tracks = getTracksFromMyfreemp3Json(myfreemp3tracksJson)
-    tracksJsonText = getJsonTextFromTracks(tracks)
-    return json.loads(tracksJsonText)
-
-def getFirstStringBetweenTwoStrings(string, string1, string2):
+def _getFirstStringBetweenTwoStrings(string, string1, string2):
     return string.split(string1,1)[1].split(string2,1)[0]
 
-def IsResponseTextIsValid(responseText):
-    return getFirstStringBetweenTwoStrings(responseText, "response\":", "});") == "null"
+
+def _isResponseTextIsValid(responseText):
+    print("REEEESPOOOONSE")
+    print(_getFirstStringBetweenTwoStrings(responseText, "response\":", "});"))
+    return _getFirstStringBetweenTwoStrings(responseText, "response\":", "});") == "null"
