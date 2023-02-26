@@ -31,7 +31,8 @@ def Save(user: User, requestData: QueryDict, oldTrack: LibraryTrack = None):
 
 
 def CreateFromUpload(user: User, file):
-    tagsDict = AudioMetadataService.GetMetadataDictFromFile(file)
+    tagsDict = AudioMetadataService.GetMetadataDictFromFile(
+            file=file, normalizedRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
 
     postSerializerData = dict()
     postSerializerData[LibraryTrack.ATTRIBUTE_USER_LABEL] = user.id
