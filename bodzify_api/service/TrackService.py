@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import pprint
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 import bodzify_api.settings as settings
@@ -61,7 +62,7 @@ def _getSaveDataFromFile(user:User, file):
     
     albumName = metadata[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY]
     if albumName is not None and albumName != "":
-        albumArtistsNameKey = AudioMetadataService.METADATA_DICT_ALBUM_ARTISTS_NAMES_KEY
+        albumArtistsNameKey = AudioMetadataService.METADATA_DICT_ALBUM_ARTISTS_NAME_STRING_KEY
         albumArtistsNameString = metadata[albumArtistsNameKey]
         if albumArtistsNameString == "":
             albumArtistsNameList = None
@@ -104,10 +105,11 @@ def _getSaveMutableDataWithAlbumUuidIfAlbumNameInRequest(
         album = AlbumService.GetAlbumFromNameAndalbumArtistsNameAfterEventualCreations(
                 user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
         
+        albumKey = LibraryTrack.ATTRIBUTE_ALBUM_LABEL 
         if album is not None:
-            saveMutableData[albumNameKey] = album.uuid
+            saveMutableData[albumKey] = album.uuid
         else:
-            saveMutableData[albumNameKey] = None
+            saveMutableData[albumKey] = None
     return saveMutableData
 
 
