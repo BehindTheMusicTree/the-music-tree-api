@@ -10,14 +10,15 @@ class AlbumWithoutTracksAndArtistsSerializer(serializers.ModelSerializer):
     duration = serializers.SerializerMethodField()
 
     def get_duration(self, obj) -> float:
-        value = LibraryTrack.objects.filter(album=obj).aggregate(duration=Sum('duration'))
-        return value['duration']
+        value = LibraryTrack.objects.filter(album=obj).aggregate(
+                duration=Sum(Album.ATTRIBUTE_DURATION_LABEL))
+        return value[Album.ATTRIBUTE_DURATION_LABEL]
 
     class Meta:
         model = Album
         fields = [
-            'uuid',
-            'name',
-            'year',
-            'trackCount',
-            'duration']
+            Album.ATTRIBUTE_UUID_LABEL,
+            Album.ATTRIBUTE_NAME_LABEL,
+            Album.ATTRIBUTE_YEAR_LABEL,
+            Album.ATTRIBUTE_TRACK_COUNT_LABEL,
+            Album.ATTRIBUTE_DURATION_LABEL,]

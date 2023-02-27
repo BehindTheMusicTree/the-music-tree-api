@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.TrackDetailedSerializer import (
+from bodzify_api.serializer.track.output.TrackDetailedSerializer import (
     TrackDetailedSerializer)
 
 class TrackWithoutPlaylistsSerializer(TrackDetailedSerializer):

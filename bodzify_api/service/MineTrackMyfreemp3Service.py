@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pprint
 import requests
 import random
 import string
@@ -13,7 +12,7 @@ from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
-from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
+from bodzify_api.serializer.track.input.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 
 
 TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH = 20

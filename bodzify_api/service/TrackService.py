@@ -3,8 +3,8 @@ import os
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 import bodzify_api.settings as settings
-from bodzify_api.serializer.track.TrackSaveSerializer import TrackSaveSerializer
-from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
+from bodzify_api.serializer.track.input.TrackSaveSerializer import TrackSaveSerializer
+from bodzify_api.serializer.track.input.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
