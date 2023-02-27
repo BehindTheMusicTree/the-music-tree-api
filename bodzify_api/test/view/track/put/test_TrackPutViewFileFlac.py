@@ -18,7 +18,7 @@ class TrackPutViewTestCaseFileFlac(TrackViewTestCase):
      - artistName;
      - albumName;
      - albumArtistsName;
-     - genre;
+     - genreName;
      - rating;
      - language.
     Thus the corresponding tags in the flac file should be updated.
@@ -30,14 +30,14 @@ class TrackPutViewTestCaseFileFlac(TrackViewTestCase):
             "artistName": "Linkin Park",
             "albumName": "Meteora",
             "albumArtistsName": "Garou",
-            "genre": "LsjdqoqzpsdojEjGHGH", # "Rap"
+            "genreName": "LsjdqoqzpsdojEjGHGH", # "Rap"
             "rating": 10, # max value
             "language": "Peruvian"
         }
         response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="36nS4LVDssLh4BvTARbJEK")
-        trackMetadata = AudioMetadataService.GettrackMetadata(track)
+        trackMetadata = AudioMetadataService.GetMetadataDictFromFile(track)
         assert track.title == "Somewhere I Belong"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_TITLE_KEY] == "Somewhere I Belong"
         assert track.artist.name == "Linkin Park"
@@ -58,7 +58,7 @@ class TrackPutViewTestCaseFileFlac(TrackViewTestCase):
      - artistName;
      - albumName;
      - albumArtistsName;
-     - genre;
+     - genreName;
      - rating;
      - language.
     Thus the corresponding tags in the flac file should be updated.
@@ -70,14 +70,14 @@ class TrackPutViewTestCaseFileFlac(TrackViewTestCase):
             "artistName": "Linkin Park",
             "albumName": "Meteora",
             "albumArtistsName": "Garou",
-            "genre": "LsjdqoqzpsdojEjGHGH", # "Rap"
+            "genreName": "LsjdqoqzpsdojEjGHGH", # "Rap"
             "rating": 10, # max value
             "language": "Peruvian"
         }
         response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="36nS4LVDssLh4BvTAKKKKO")
-        trackMetadata = AudioMetadataService.GettrackMetadata(track)
+        trackMetadata = AudioMetadataService.GetMetadataDictFromFile(track)
         assert track.title == "Somewhere I Belong"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_TITLE_KEY] == "Somewhere I Belong"
         assert track.artist.name == "Linkin Park"

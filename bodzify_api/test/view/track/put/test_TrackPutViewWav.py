@@ -23,7 +23,7 @@ class TrackPutViewTestCaseWav(TrackViewTestCase):
             "artistName": "Queen",
             "albumName": "A Night At The Opera",
             "albumArtistsName": "Queen",
-            "genre": "Techno",
+            "genreName": "Techno",
             "language": "French"
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)
