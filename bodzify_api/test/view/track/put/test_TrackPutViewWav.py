@@ -6,18 +6,18 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.Album import Album
 
 
-class TrackPutViewTestCase7(TrackViewTestCase):
+class TrackPutViewTestCaseWav(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData7']
-    sampleDirectoryRelativePath = "test/view/track/put/sample/7/"
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataWav']
+    sampleDirectoryRelativePath = "test/view/track/put/sample/Wav/"
 
-    def test_trackPut7(self):
+    """
+    On a wav file without tags:
+        - new genre "Techno";
+        - new existing artist name is "Queen".
+    """
+    def test_trackPutWavWithoutTags(self):
 
-        """
-         - on a wav file without tags;
-         - new genre "Techno";
-         - new artist name is "Queen".
-        """
         data = {
             "title": "Bohemian Raphsody",
             "artistName": "Queen",

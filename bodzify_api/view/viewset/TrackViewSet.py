@@ -1,23 +1,25 @@
 #!/usr/bin/env python
+import pprint
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
+from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPostSchemaSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
-from bodzify_api.serializer.track.input.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
+from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 import bodzify_api.service.TrackService as TrackService
 import bodzify_api.view.utility as utility
 
 FILTER_TITLE_PARAMETER_NAME = LibraryTrack.ATTRIBUTE_TITLE_LABEL
-FILTER_ARTIST_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
-FILTER_ALBUM_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_NAME_LABEL
+FILTER_ARTIST_NAME_PARAMETER_NAME = TrackUpdateSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
+FILTER_ALBUM_NAME_PARAMETER_NAME = TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_NAME_LABEL
 FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = (
-    TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL)
-FILTER_GENRE_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
+    TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL)
+FILTER_GENRE_NAME_PARAMETER_NAME = TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
 FILTER_LANGUAGE_PARAMETER_NAME = LibraryTrack.ATTRIBUTE_LANGUAGE_LABEL
 
 
@@ -58,7 +60,7 @@ class TrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
-        request=TrackSaveSchemaSerializer, 
+        request=TrackUpdateSchemaSerializer, 
         responses=TrackDetailedSerializer,
         description=("""
             Updates a track.\n"
@@ -87,8 +89,8 @@ class TrackViewSet(MultiSerializerViewSet):
             """)
     )
     def update(self, request, *args, **kwargs):
-        updatedTrack = TrackService.Save(
-                user=request.user, oldTrack=self.get_object(), inputData=request.data)
+        updatedTrack = TrackService.Update(
+                user=request.user, saveSchemaData=request.data, oldTrack=self.get_object())
         responseSerializer = TrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
@@ -109,7 +111,7 @@ class TrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
-        request=TrackSaveSchemaSerializer,
+        request=TrackPostSchemaSerializer,
         responses=TrackDetailedSerializer,
         description=(
             """
@@ -119,12 +121,11 @@ class TrackViewSet(MultiSerializerViewSet):
             """)
     )
     def create(self, request, *args, **kwargs):
-        data = request.data
-        fileKey = LibraryTrack.ATTRIBUTE_FILE_LABEL
-        data[fileKey] = request.FILES[fileKey]
-        serializer = TrackSaveSchemaSerializer(data=data)
+        serializer = TrackPostSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        track = TrackService.Save(user=request.user, inputData=data)
+        track = TrackService.Save(
+                user=request.user, 
+                saveSchemaData=request.data)
         return JsonResponse(
                 data=TrackDetailedSerializer(track).data,
                 status=status.HTTP_201_CREATED)
@@ -137,15 +138,15 @@ class TrackViewSet(MultiSerializerViewSet):
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL, 
+                    name=TrackUpdateSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL, 
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL, 
+                    name=TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL, 
                     type=OpenApiTypes.STR,
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL, 
+                    name=TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL, 
                     type=OpenApiTypes.STR,
                     location=OpenApiParameter.QUERY)
         ]
