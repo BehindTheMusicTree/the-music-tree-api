@@ -90,7 +90,7 @@ class TrackViewSet(MultiSerializerViewSet):
     )
     def update(self, request, *args, **kwargs):
         updatedTrack = TrackService.Update(
-                user=request.user, saveSchemaData=request.data, oldTrack=self.get_object())
+                user=request.user, updateSchemaData=request.data, oldTrack=self.get_object())
         responseSerializer = TrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
@@ -126,9 +126,12 @@ class TrackViewSet(MultiSerializerViewSet):
         track = TrackService.Save(
                 user=request.user, 
                 saveSchemaData=request.data)
+        responseSerializer = TrackDetailedSerializer(track)
+        headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
                 data=TrackDetailedSerializer(track).data,
-                status=status.HTTP_201_CREATED)
+                status=status.HTTP_200_OK,
+                headers=headers)
 
 
     @extend_schema(
