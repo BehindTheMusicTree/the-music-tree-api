@@ -48,7 +48,7 @@ class LibraryTrack(models.Model):
                     FileTypeValidator(allowed_types=[ 'audio/*']),
                     validateTrackSize],
             null=True)
-    title = models.CharField(max_length=100, default=None)
+    title = models.CharField(max_length=settings.TRACK_TITLE_MAX_CHAR, default=None)
     artist = models.ForeignKey(
             'bodzify_api.Artist', on_delete=models.CASCADE, default=None, null=True)
     album = models.ForeignKey(
