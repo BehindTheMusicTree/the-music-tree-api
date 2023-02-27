@@ -6,32 +6,21 @@ from rest_framework import status
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
-from bodzify_api.serializer.track.TrackPutSchemaSerializer import TrackPutSchemaSerializer
+from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.form.TrackPostForm import TrackPostForm
 import bodzify_api.service.TrackService as TrackService
 import bodzify_api.view.utility as utility
 
-DATA_TITLE_PARAMETER_NAME = "title"
-DATA_ARTIST_PARAMETER_NAME = "artist"
-DATA_ARTIST_NAME_PARAMETER_NAME = "artistName"
-DATA_ALBUM_PARAMETER_NAME = "album"
-DATA_ALBUM_NAME_PARAMETER_NAME = "albumName"
-DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME = "albumArtistsNames"
-DATA_GENRE_PARAMETER_NAME = "genre"
-DATA_LANGUAGE_PARAMETER_NAME = "language"
-DATA_FILE_PARAMETER_NAME = "file"
-
-FILTER_TITLE_PARAMETER_NAME = DATA_TITLE_PARAMETER_NAME
-FILTER_ARTIST_NAME_PARAMETER_NAME = DATA_ARTIST_NAME_PARAMETER_NAME
-FILTER_ALBUM_NAME_PARAMETER_NAME = DATA_ALBUM_NAME_PARAMETER_NAME
-FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = DATA_ALBUM_ARTISTS_NAMES_PARAMETER_NAME
-FILTER_GENRE_NAME_PARAMETER_NAME = "genreName"
-FILTER_LANGUAGE_PARAMETER_NAME = DATA_LANGUAGE_PARAMETER_NAME
+FILTER_TITLE_PARAMETER_NAME = LibraryTrack.ATTRIBUTE_TITLE_LABEL
+FILTER_ARTIST_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
+FILTER_ALBUM_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_NAME_LABEL
+FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL
+FILTER_GENRE_NAME_PARAMETER_NAME = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
+FILTER_LANGUAGE_PARAMETER_NAME = LibraryTrack.ATTRIBUTE_LANGUAGE_LABEL
 
 
-class LibraryTrackViewSet(MultiSerializerViewSet):
+class TrackViewSet(MultiSerializerViewSet):
 
     queryset = LibraryTrack.objects.all()
     serializers = {
@@ -43,21 +32,22 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        title = self.request.query_params.get(FILTER_TITLE_PARAMETER_NAME)
-        artistName = self.request.query_params.get(FILTER_ARTIST_NAME_PARAMETER_NAME)
-        albumName = self.request.query_params.get(FILTER_ALBUM_NAME_PARAMETER_NAME)
-        genreName = self.request.query_params.get(FILTER_GENRE_NAME_PARAMETER_NAME)
-        language = self.request.query_params.get(FILTER_LANGUAGE_PARAMETER_NAME)
-        if title is not None:
-            queryset = queryset.filter(title__icontains=title)
-        if artistName is not None:
-            queryset = queryset.filter(artist__name__icontains=artistName)
-        if albumName is not None:
-            queryset = queryset.filter(album__name__icontains=albumName)
-        if genreName is not None:
-            queryset = queryset.filter(genre__name__icontain=genreName)
-        if language is not None:
-            queryset = queryset.filter(language__icontains=language)
+        titleFilter = self.request.query_params.get(FILTER_TITLE_PARAMETER_NAME)
+        artistNameFilter = self.request.query_params.get(FILTER_ARTIST_NAME_PARAMETER_NAME)
+        albumNameFilter = self.request.query_params.get(FILTER_ALBUM_NAME_PARAMETER_NAME)
+        genreNameFilter = self.request.query_params.get(FILTER_GENRE_NAME_PARAMETER_NAME)
+        languageFilter = self.request.query_params.get(FILTER_LANGUAGE_PARAMETER_NAME)
+        
+        if titleFilter is not None:
+            queryset = queryset.filter(title__icontains=titleFilter)
+        if artistNameFilter is not None:
+            queryset = queryset.filter(artist__name__icontains=artistNameFilter)
+        if albumNameFilter is not None:
+            queryset = queryset.filter(album__name__icontains=albumNameFilter)
+        if genreNameFilter is not None:
+            queryset = queryset.filter(genre__name__icontain=genreNameFilter)
+        if languageFilter is not None:
+            queryset = queryset.filter(language__icontains=languageFilter)
         return queryset
 
 
@@ -67,12 +57,12 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
-        request=TrackPutSchemaSerializer, 
+        request=TrackSaveSchemaSerializer, 
         responses=TrackDetailedSerializer,
         description=("""
             Updates a track.\n"
             - To not update a field, it mustn't be specified (e.g the line \"artistName\":... 
-            shouldn't exist). The only exception is the field 'albumArtistsNames' (more 
+            shouldn't exist). The only exception is the field 'albumArtistsName' (more 
             precisions below).\n
             - To empty a field (artist or album), the field should be specified with an empty 
             string.\n
@@ -89,15 +79,15 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
             the system to identify an album is the peer (album'sname/album's artists'names). 
             Thus:\n" +
                - If it already exists an album with the same name as 'albumName' but with 
-            different 'AlbumArtistsNames', an new album is created.\n
-               - Wether the field 'albumArtistsNames' is empty or not specified, it tells that 
+            different 'albumArtistsName', an new album is created.\n
+               - Wether the field 'albumArtistsName' is empty or not specified, it tells that 
             the track's album has no artist.\n
-               - If 'albumName' is empty or missing, the 'albumArtistsNames' is ignored.
+               - If 'albumName' is empty or missing, the 'albumArtistsName' is ignored.
             """)
     )
     def update(self, request, *args, **kwargs):
-        updatedTrack = TrackService.Update(
-                user=request.user, oldTrack=self.get_object(), newData=request.data)
+        updatedTrack = TrackService.Save(
+                user=request.user, oldTrack=self.get_object(), inputData=request.data)
         responseSerializer = TrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
@@ -118,39 +108,43 @@ class LibraryTrackViewSet(MultiSerializerViewSet):
 
 
     @extend_schema(
-        description=("""
+        request=TrackSaveSchemaSerializer,
+        responses=TrackDetailedSerializer,
+        description=(
+            """
             Create a track with metadata by uploading a file:
                 - If the file has no metadata 'title', it is set with the file's name without the 
-            extension.
+            extension (with an identifier if another track has the same name).
             """)
     )
     def create(self, request, *args, **kwargs):
-        form = TrackPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            track = TrackService.CreateFromUpload(
-                    request.user, file=request.FILES[DATA_FILE_PARAMETER_NAME])
-            return JsonResponse(
-                    data=TrackDetailedSerializer(track).data,
-                    status=status.HTTP_201_CREATED)
-        return utility.GetJsonResponseWhenBadRequest(form.errors)
+        data = request.data
+        fileKey = LibraryTrack.ATTRIBUTE_FILE_LABEL
+        data[fileKey] = request.FILES[fileKey]
+        serializer = TrackSaveSchemaSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        track = TrackService.Save(user=request.user, inputData=data)
+        return JsonResponse(
+                data=TrackDetailedSerializer(track).data,
+                status=status.HTTP_201_CREATED)
 
 
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                    name=DATA_TITLE_PARAMETER_NAME, 
+                    name=LibraryTrack.ATTRIBUTE_TITLE_LABEL, 
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=DATA_ARTIST_NAME_PARAMETER_NAME, 
+                    name=TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL, 
                     type=OpenApiTypes.STR, 
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=DATA_ALBUM_NAME_PARAMETER_NAME, 
+                    name=TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL, 
                     type=OpenApiTypes.STR,
                     location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=DATA_GENRE_PARAMETER_NAME, 
+                    name=TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL, 
                     type=OpenApiTypes.STR,
                     location=OpenApiParameter.QUERY)
         ]

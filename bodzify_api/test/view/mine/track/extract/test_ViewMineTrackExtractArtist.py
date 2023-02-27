@@ -1,33 +1,29 @@
 #!/usr/bin/env python
 import os
-from django.urls import reverse
 from rest_framework import status
-from bodzify_api.test.view.mine.track.extract.MineTrackExtractViewTestCase import (
+from bodzify_api.test.view.mine.track.MineTrackViewTestCase import (
         MineTrackExtractViewTestCase)
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 import bodzify_api.settings as settings
 
 
-class MineTrackExtractViewTestCase(MineTrackExtractViewTestCase):
+class MineTrackExtractViewTestCaseExistingArtist(MineTrackExtractViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewMineTrackExtractData2']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewMineTrackExtractDataArtist']
 
-    def test_mineTrackExtrack(self):
+    """
+    With existing artist.
+    """
+    def test_mineTrackExtractArtistExisting(self):
         self.login(self.testUser)
-
-        """
-        - With existing artist
-        """
         trackUrl = ("https://cs9-15v4.vkuseraudio.net/s/v1/acmp/qCKkBk5i-Rl-QBdJM2m2lGbeRX6gB2ji" +
                     "zqo-ZXY7dSsA7VYaDDbb7nHloh42XVdi1gZ-U0BtWIa1I5qZJ3RspFGJbomdr4P-LwffbPvwWnZ" +
                     "_hyJ2dSP4WIET6pg2tz6yUtco3HKAodQaY85KeQocwpIiOzKLUb1hDAf5a7xQ9_NrLESvCw.mp3")
         data = {
             "url": trackUrl,
             "title": "Summer Moved On",
-            "artist": "a-ha",
-            # No album field returned by myfreemp3
-            "duration": 1.2233,
+            "artistName": "a-ha",
             "releasedOn": 1290292
         }
 

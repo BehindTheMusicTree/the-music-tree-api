@@ -1,51 +1,107 @@
 #!/usr/bin/env python
+import pprint
 import requests
 import random
 import string
 import os
-from bodzify_api.model.track.MineTrack import MineTrack
-import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
-from bodzify_api.service import TrackService
+from django.core.files.base import File
+from django.http.request import QueryDict
+from django.contrib.auth.models import User
 from bodzify_api import settings
+import bodzify_api.service.TrackService as TrackService
+from bodzify_api.model.track.MineTrack import MineTrack
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
+import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
+from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 
-TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LETTER_TYPE = string.ascii_lowercase
-TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LENGTH = 20
+
+TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH = 20
 
 
 def List(query, pageNumber, pageSize):
-    return myfreemp3scrapper.scrap(query, pageNumber, pageSize)
+    return myfreemp3scrapper.Scrap(query, pageNumber, pageSize)
 
 
-def Extract(user, title, artist, duration, releasedOn, mineTrackUrl):
-    mineTrack = MineTrack(
-        title = title,
-        artistName = artist,
-        duration = duration,
-        releasedOn = releasedOn,
-        url = mineTrackUrl)
-
+def Extract(user: User, requestData: QueryDict):
+    mineTrackUrl = requestData[MineTrack.ATTRIBUTE_URL_LABEL]
     response = requests.get(mineTrackUrl)
 
-    trackTempFileIndividualDirectoryName = ''.join(
-        random.choice(TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LETTER_TYPE) 
-        for i in range(TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LENGTH))
-
-    trackTempFileIndividualDirectoryAbsolutePath = (
-        settings.MEDIA_TEMP + trackTempFileIndividualDirectoryName + "/")
-
-    os.makedirs(trackTempFileIndividualDirectoryAbsolutePath)
-    trackDownloadedFilenameWithoutExtension, trackTempfileExtension = (
-        os.path.splitext(mineTrackUrl))
-    trackTempFileDefinitiveName = artist + " - " + title + trackTempfileExtension
-    trackTempFileAbsolutePath = (
-        trackTempFileIndividualDirectoryAbsolutePath + trackTempFileDefinitiveName)
-    trackFile = open(trackTempFileAbsolutePath, "wb")
-    trackFile.write(response.content)
-
-    libraryTrack = TrackService.CreateFromMineTrack(
-        user=user, mineTrack=mineTrack, trackTempFileAbsolutePath=trackTempFileAbsolutePath)
+    trackTempFileIndividualDirAbsPath = _getTrackTempFileIndividualDirAbsPath()
+    trackTempFileName = _getTrackFileName(mineTrackUrl, requestData)
+    trackTempFileAbsPath = trackTempFileIndividualDirAbsPath + trackTempFileName
     
-    os.remove(trackTempFileAbsolutePath)
-    os.rmdir(trackTempFileIndividualDirectoryAbsolutePath)
+    with open(trackTempFileAbsPath, "wb") as trackFile:
+        trackFile.write(response.content)
+        
+    saveData = _getSaveDataFromRequestData(requestData)
+    
+    with open(trackTempFileAbsPath, "rb") as trackFile:
+        _validateSaveData(data=saveData, trackFile=File(trackFile))
+
+    with open(trackTempFileAbsPath, "rb") as trackFile:
+        saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
+        genreNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
+        if genreNameKey not in saveData:
+            saveData[genreNameKey] = CriteriaSpecialNames.GENRE_GENRELESS
+        saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
+        libraryTrack = TrackService.Save(user=user, inputData=saveData)
+
+    os.remove(trackTempFileAbsPath)
+    os.rmdir(trackTempFileIndividualDirAbsPath)
 
     return libraryTrack
+
+
+def _getSaveDataFromRequestData(requestData: QueryDict):
+    saveData = requestData.copy()
+    del saveData[MineTrack.ATTRIBUTE_URL_LABEL]
+    return saveData
+
+
+def _getFileExtensionFromUrl(url: str):
+    return url.split(".")[-1]
+
+
+def _getSubstringAfterLastSlash(string: str):
+    return string.split("/")[-1]
+
+
+def _getTrackFileName(mineTrackUrl: str, requestData: QueryDict):
+    titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
+    if titleKey in requestData:
+        title = requestData[titleKey]
+        artistNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
+        if artistNameKey in requestData:
+            artistName = requestData[artistNameKey]
+            if artistName is None or artistName == "":
+                fileNameWithoutExtension = title
+            else:
+                fileNameWithoutExtension = artistName + " - " + title
+        else:
+            fileNameWithoutExtension = title
+    else:
+        partAfterLastSlashOfUrl = _getSubstringAfterLastSlash(mineTrackUrl)
+        if len(partAfterLastSlashOfUrl) > settings.TRACK_TITLE_MAX_CHAR:
+            fileNameWithoutExtension = _generateShortUu(settings.TRACK_TITLE_MAX_CHAR)
+        else:
+            fileNameWithoutExtension = partAfterLastSlashOfUrl
+    return fileNameWithoutExtension + "." + _getFileExtensionFromUrl(mineTrackUrl)
+
+
+def _getTrackTempFileIndividualDirAbsPath():
+    trackTempFileIndividualDirName = (
+            _generateShortUu(TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH))
+    trackTempFileIndividualDirAbsPath = settings.MEDIA_TEMP + trackTempFileIndividualDirName + "/"
+    os.makedirs(trackTempFileIndividualDirAbsPath)
+    return trackTempFileIndividualDirAbsPath
+    
+
+def _generateShortUu(length: int):
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
+
+
+def _validateSaveData(data: QueryDict, trackFile: File):
+    data[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
+    saveSchemaSerializer = TrackSaveSchemaSerializer(data=data)
+    saveSchemaSerializer.is_valid(raise_exception=True)

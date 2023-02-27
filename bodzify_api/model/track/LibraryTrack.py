@@ -6,10 +6,10 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator
 from upload_validator import FileTypeValidator
-from bodzify_api.validator.LibraryTrackSizeValidator import trackSize
+from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
@@ -46,16 +46,22 @@ class LibraryTrack(models.Model):
             validators=[
                     FileExtensionValidator(['flac', 'wav', 'mp3']), 
                     FileTypeValidator(allowed_types=[ 'audio/*']),
-                    trackSize],
+                    validateTrackSize],
             null=True)
-    title = models.CharField(max_length=100, default=None)
+    title = models.CharField(max_length=settings.TRACK_TITLE_MAX_CHAR, default=None)
     artist = models.ForeignKey(
-        'bodzify_api.Artist', on_delete=models.CASCADE, default=None, null=True)
-    album = models.ForeignKey('bodzify_api.Album', on_delete=models.CASCADE, default=None, null=True)
+            'bodzify_api.Artist', on_delete=models.CASCADE, default=None, null=True)
+    album = models.ForeignKey(
+            'bodzify_api.Album', on_delete=models.CASCADE, default=None, null=True)
     genre = models.ForeignKey('bodzify_api.Criteria', on_delete=models.DO_NOTHING)
     duration = models.FloatField(default=None)
     rating = models.IntegerField(
-            default=0, validators=[MinValueValidator(0), MaxValueValidator(255)])
+            null=True, 
+            blank=True,
+            validators=[
+                MinValueValidator(0), 
+                MaxValueValidator(settings.TRACK_RATING_MAX_VALUE)
+            ])
     playlists = models.ManyToManyField('bodzify_api.Playlist')
     language = models.CharField(max_length=100, blank=True, default=None, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
@@ -130,10 +136,8 @@ class LibraryTrack(models.Model):
 
             if oldArtist != self.artist and oldArtist != None:
                 oldArtist.deleteIfNothingLinked()
-
-        except ObjectDoesNotExist:
+        except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
-    
 
     @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
     def deleteFileIfExists(sender, instance, using, **kwargs):

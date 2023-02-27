@@ -2,8 +2,6 @@
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.Album import Album
 
 
 class TrackPutViewTestCase1(TrackViewTestCase):
@@ -14,17 +12,17 @@ class TrackPutViewTestCase1(TrackViewTestCase):
     """
     - On a mp3 file.
     - Existing artist.
-    - No new album. The field albumArtistsNames is thus ignored.
+    - No new album. The field albumArtistsName is thus ignored.
     - Language not specified so unchanged.
     - Genre "Genreless" not specified so unchanged.
     """
-    def test_libraryTrackPut1(self):
+    def test_trackPut1(self):
 
         data = {
             "title": "Somewhere I Belong",
             "artistName": "Linkin Park",
             "albumName": "",
-            "albumArtistsNames": "Garou",
+            "albumArtistsName": "Garou",
             "rating": 200,
         }
         response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)

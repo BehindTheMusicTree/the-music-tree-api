@@ -1,17 +1,21 @@
 #!/usr/bin/env python
-from rest_framework import serializers
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
 
 
-class TrackPutSerializer(serializers.ModelSerializer):
+class TrackSaveSerializer(InputModelSerializer):
 
     class Meta:
         model = LibraryTrack
         fields = [
+            "user",
+            "file",
             "title", 
             "artist", 
             "album", 
-            "genre", 
+            "genre",
+            "duration",
             "rating", 
             "language", 
         ]
+        

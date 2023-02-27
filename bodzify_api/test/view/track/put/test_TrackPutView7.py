@@ -11,7 +11,7 @@ class TrackPutViewTestCase7(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData7']
     sampleDirectoryRelativePath = "test/view/track/put/sample/7/"
 
-    def test_libraryTrackPut7(self):
+    def test_trackPut7(self):
 
         """
          - on a wav file without tags;
@@ -22,8 +22,8 @@ class TrackPutViewTestCase7(TrackViewTestCase):
             "title": "Bohemian Raphsody",
             "artistName": "Queen",
             "albumName": "A Night At The Opera",
-            "albumArtistsNames": "Queen",
-            "genre": "L1ZG85munGytJb885WWJN8",
+            "albumArtistsName": "Queen",
+            "genre": "Techno",
             "language": "French"
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)

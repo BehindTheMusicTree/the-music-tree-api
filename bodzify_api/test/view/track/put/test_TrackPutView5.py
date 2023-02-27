@@ -9,7 +9,7 @@ class TrackPutViewTestCase5(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData5']
 
-    def test_libraryTrackPut5(self):
+    def test_trackPut5(self):
 
         """
         The old album shared the same name "Hello" as another one but with different artists names
@@ -20,7 +20,7 @@ class TrackPutViewTestCase5(TrackViewTestCase):
         """
         data = {
             "albumName": "Hello",
-            "albumArtistsNames": "Robert De Niro",
+            "albumArtistsName": "Robert De Niro",
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcSSSSSSS", data=data)
         assert response.status_code == status.HTTP_200_OK

@@ -10,7 +10,7 @@ class TrackPutViewTestCase6(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutData6']
 
-    def test_libraryTrackPut6(self):
+    def test_trackPut6(self):
 
         """
         The old track's album A with uuid 'Lsji85mqisjdjf88MLKJY' shared the same name 'Birds' as 
@@ -26,7 +26,7 @@ class TrackPutViewTestCase6(TrackViewTestCase):
         """
         data = {
             "albumName": "Birds",
-            "albumArtistsNames": "Joris Michel, Moço",
+            "albumArtistsName": "Joris Michel, Moço",
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBc48766YH", data=data)
         assert response.status_code == status.HTTP_200_OK

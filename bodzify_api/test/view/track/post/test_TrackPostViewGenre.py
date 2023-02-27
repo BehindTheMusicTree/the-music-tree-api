@@ -6,15 +6,15 @@ from bodzify_api.model.criteria.Criteria import Criteria
 
 
 @pytest.mark.django_db
-class TrackPostViewTestCase7(TrackViewTestCase):
+class TrackPostViewTestCaseGenre(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
-    sampleDirectoryRelativePath = "test/view/track/post/sample/7/"
+    sampleDirectoryRelativePath = "test/view/track/post/sample/GenreNonExisting/"
 
     """
     Genre 'foo' non existing.
     """
-    def test_libraryTrackPost7(self):
+    def test_libraryTrackPostGenreNonExisting(self):
         self.login(self.testUser)
         response = self.postSampleTrack("genre_foo_non_existing.mp3")
         assert response.status_code == status.HTTP_201_CREATED
