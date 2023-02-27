@@ -26,6 +26,7 @@ def _userDirectoryPath(instance, filename):
 
 class LibraryTrack(models.Model):
 
+    ATTRIBUTE_UUID_LABEL = "uuid"
     ATTRIBUTE_USER_LABEL = "user"
     ATTRIBUTE_FILE_LABEL = "file"
     ATTRIBUTE_TITLE_LABEL = "title"
