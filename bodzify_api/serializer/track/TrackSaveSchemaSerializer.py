@@ -13,7 +13,7 @@ class TrackSaveSchemaSerializer(InputSerializer):
     
         ATTRIBUTE_ARTIST_NAME_LABEL = "artistName"
         ATTRIBUTE_ALBUM_NAME_LABEL = "albumName"
-        ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL = "albumArtistsNames"
+        ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL = "albumArtistsName"
         ATTRIBUTE_GENRE_NAME_LABEL = "genreName"
 
 
@@ -26,8 +26,8 @@ class TrackSaveSchemaSerializer(InputSerializer):
         title = serializers.CharField(max_length=100, required=False)
         artistName = serializers.CharField(max_length=100, required=False)
         albumName = serializers.CharField(max_length=100, required=False)
-        albumArtistsNames = serializers.CharField(max_length=100, required=False)
-        genre = serializers.CharField(max_length=100, required=False)
+        albumArtistsName = serializers.CharField(max_length=100, required=False)
+        genreName = serializers.CharField(max_length=100, required=False)
         rating = serializers.IntegerField(
                 default=0, 
                 validators=[MinValueValidator(0), MaxValueValidator(255)], 

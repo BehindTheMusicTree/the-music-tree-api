@@ -62,12 +62,12 @@ def _getSaveDataFromFile(user:User, file):
     albumName = metadata[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY]
     if albumName is not None and albumName != "":
         albumArtistsNameKey = AudioMetadataService.METADATA_DICT_ALBUM_ARTISTS_NAMES_KEY
-        albumArtistsNamesString = metadata[albumArtistsNameKey]
-        if albumArtistsNamesString == "":
+        albumArtistsNameString = metadata[albumArtistsNameKey]
+        if albumArtistsNameString == "":
             albumArtistsNameList = None
         else:
-            albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNamesString)
-        album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterEventualCreations(
+            albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNameString)
+        album = AlbumService.GetAlbumFromNameAndalbumArtistsNameAfterEventualCreations(
                 user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
         saveData[LibraryTrack.ATTRIBUTE_ALBUM_LABEL] = album.uuid
     
@@ -96,13 +96,13 @@ def _getSaveMutableDataWithAlbumUuidIfAlbumNameInRequest(
 
         artistsNamesKey = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL
         if artistsNamesKey in requestData:
-            albumArtistsNamesString = requestData[artistsNamesKey]
-            albumArtistsNamesList = _getArtistsNameListFromString(albumArtistsNamesString)
+            albumArtistsNameString = requestData[artistsNamesKey]
+            albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNameString)
         else:
-            albumArtistsNamesList = None
+            albumArtistsNameList = None
 
-        album = AlbumService.GetAlbumFromNameAndAlbumArtistsNamesAfterEventualCreations(
-                user=user, albumName=albumName, albumArtistsNameList=albumArtistsNamesList)
+        album = AlbumService.GetAlbumFromNameAndalbumArtistsNameAfterEventualCreations(
+                user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
         
         if album is not None:
             saveMutableData[albumNameKey] = album.uuid

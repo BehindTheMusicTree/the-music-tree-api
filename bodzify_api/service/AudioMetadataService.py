@@ -39,7 +39,7 @@ VORBIS_LANGUAGE_TAG_KEY = 'language'
 METADATA_DICT_TITLE_KEY = "title"
 METADATA_DICT_ARTIST_NAME_KEY = "artistName"
 METADATA_DICT_ALBUM_NAME_KEY = "albumName"
-METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY = "albumArtistsNamesString"
+METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY = "albumArtistsNameString"
 METADATA_DICT_GENRE_NAME_KEY = "genreName"
 METADATA_DICT_DURATION_KEY = "duration"
 METADATA_DICT_RATING_KEY = "rating"
@@ -107,7 +107,7 @@ def GetMetadataDictFromFile(file, appRatingMaxValue: int):
     title = ""
     artistName = ""
     albumName = ""
-    albumArtistsNamesString = ""
+    albumArtistsNameString = ""
     genreName = ""
     rating = None
     language = "" 
@@ -118,7 +118,7 @@ def GetMetadataDictFromFile(file, appRatingMaxValue: int):
         title = _getTitleTagFromId3File(fileTags)
         artistName = _getArtistNameTagFromMutagenFile(fileTags)
         albumName = _getAlbumNameTagFromMutagenFile(fileTags)
-        albumArtistsNamesString = _getAlbumArtistsNameStringTagFromMutagenFile(fileTags)
+        albumArtistsNameString = _getalbumArtistsNametringTagFromMutagenFile(fileTags)
         genreName = _getGenreNameTagFromMutagenFile(fileTags)
         rating = _getRatingTagFromMutagenFile(fileTags, appRatingMaxValue) 
         language = _getLanguageTagFromMutagenFile(fileTags) 
@@ -128,7 +128,7 @@ def GetMetadataDictFromFile(file, appRatingMaxValue: int):
         title = _getTitleTagFromFlacFile(fileTags)
         artistName = _getArtistNameTagFromFlacFile(fileTags)
         albumName = _getAlbumNameTagFromFlacFile(fileTags)
-        albumArtistsNamesString = _getAlbumArtistsNameStringTagFromFlacFile(fileTags)
+        albumArtistsNameString = _getalbumArtistsNametringTagFromFlacFile(fileTags)
         genreName = _getGenreNameTagFromFlacFile(fileTags)
         rating = _getRatingTagFromFlacFile(fileTags, appRatingMaxValue) 
         language = _getLanguageTagFromFlacFile(fileTags)
@@ -139,7 +139,7 @@ def GetMetadataDictFromFile(file, appRatingMaxValue: int):
     metadataDict[METADATA_DICT_TITLE_KEY] = title
     metadataDict[METADATA_DICT_ARTIST_NAME_KEY] = artistName
     metadataDict[METADATA_DICT_ALBUM_NAME_KEY] = albumName
-    metadataDict[METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY] = albumArtistsNamesString
+    metadataDict[METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY] = albumArtistsNameString
     metadataDict[METADATA_DICT_GENRE_NAME_KEY] = genreName
     metadataDict[METADATA_DICT_DURATION_KEY] = _getDurationFromFileTags(fileTags=fileTags)
     metadataDict[METADATA_DICT_RATING_KEY] = rating
@@ -163,10 +163,10 @@ def _getAlbumNameTagFromMutagenFile(id3FileTags: MutagenFile):
     return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_ALBUM_NAME_TEXT_FRAME)
 
 
-def _getAlbumArtistsNameStringTagFromMutagenFile(id3FileTags: MutagenFile):
-    albumArtistsNamesStringRaw = (
+def _getalbumArtistsNametringTagFromMutagenFile(id3FileTags: MutagenFile):
+    albumArtistsNameStringRaw = (
             _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_ALBUM_ARTISTS_NAMES_TEXT_FRAME))
-    return albumArtistsNamesStringRaw.strip()
+    return albumArtistsNameStringRaw.strip()
 
 
 def _getGenreNameTagFromMutagenFile(id3FileTags: MutagenFile):
@@ -239,11 +239,11 @@ def _getAlbumNameTagFromFlacFile(flacFileTags: FLAC):
     return _getFirstValueIfExistsOrEmptyString(flacFileTags, VORBIS_ALBUM_NAME_TAG_KEY)
 
 
-def _getAlbumArtistsNameStringTagFromFlacFile(flacFileTags: FLAC):
-    albumArtistsNamesStringRaw = (
+def _getalbumArtistsNametringTagFromFlacFile(flacFileTags: FLAC):
+    albumArtistsNameStringRaw = (
             _getFirstValueIfExistsOrEmptyString(
                     flacFileTags, VORBIS_ALBUM_ARTISTS_NAMES_TAG_KEY))
-    return albumArtistsNamesStringRaw.strip()
+    return albumArtistsNameStringRaw.strip()
 
 
 def _getGenreNameTagFromFlacFile(flacFileTags: FLAC):
@@ -266,7 +266,7 @@ def _getSpecificMetadataFromId3File(
     elif metadataKey == METADATA_DICT_ALBUM_NAME_KEY:
         return _getAlbumNameTagFromMutagenFile(id3FileTags)
     elif metadataKey == METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY:
-        return _getAlbumArtistsNameStringTagFromMutagenFile(id3FileTags)
+        return _getalbumArtistsNametringTagFromMutagenFile(id3FileTags)
     elif metadataKey == METADATA_DICT_GENRE_NAME_KEY:
         return _getGenreNameTagFromMutagenFile(id3FileTags)
     elif metadataKey == METADATA_DICT_DURATION_KEY:
@@ -286,7 +286,7 @@ def _getSpecificMetadataFromFlacFile(
     elif metadataKey == METADATA_DICT_ALBUM_NAME_KEY:
         return _getAlbumNameTagFromFlacFile(flacFileTags)
     elif metadataKey == METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY:
-        return _getAlbumArtistsNameStringTagFromFlacFile(flacFileTags)
+        return _getalbumArtistsNametringTagFromFlacFile(flacFileTags)
     elif metadataKey == METADATA_DICT_GENRE_NAME_KEY:
         return _getGenreNameTagFromFlacFile(flacFileTags)
     elif metadataKey == METADATA_DICT_DURATION_KEY:

@@ -28,7 +28,7 @@ def Extract(user: User, requestData: QueryDict):
     response = requests.get(mineTrackUrl)
 
     trackTempFileIndividualDirAbsPath = _getTrackTempFileIndividualDirAbsPath()
-    trackTempFileName = _getTrackTempFileName(mineTrackUrl, requestData)
+    trackTempFileName = _getTrackFileName(mineTrackUrl, requestData)
     trackTempFileAbsPath = trackTempFileIndividualDirAbsPath + trackTempFileName
     
     with open(trackTempFileAbsPath, "wb") as trackFile:
@@ -63,17 +63,29 @@ def _getFileExtensionFromUrl(url: str):
     return url.split(".")[-1]
 
 
-def _getTrackTempFileName(mineTrackUrl: str, requestData: QueryDict):
-    title = requestData[LibraryTrack.ATTRIBUTE_TITLE_LABEL]
-    artistNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
-    if artistNameKey in requestData:
-        artistName = requestData[artistNameKey]
-        if artistName is None or artistName == "":
-            fileNameWithoutExtension = title
+def _getSubstringAfterLastSlash(string: str):
+    return string.split("/")[-1]
+
+
+def _getTrackFileName(mineTrackUrl: str, requestData: QueryDict):
+    titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
+    if titleKey in requestData:
+        title = requestData[titleKey]
+        artistNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
+        if artistNameKey in requestData:
+            artistName = requestData[artistNameKey]
+            if artistName is None or artistName == "":
+                fileNameWithoutExtension = title
+            else:
+                fileNameWithoutExtension = artistName + " - " + title
         else:
-            fileNameWithoutExtension = artistName + " - " + title
+            fileNameWithoutExtension = title
     else:
-        fileNameWithoutExtension = title
+        partAfterLastSlashOfUrl = _getSubstringAfterLastSlash(mineTrackUrl)
+        if len(partAfterLastSlashOfUrl) > settings.TRACK_TITLE_MAX_CHAR:
+            fileNameWithoutExtension = _generateShortUu(settings.TRACK_TITLE_MAX_CHAR)
+        else:
+            fileNameWithoutExtension = partAfterLastSlashOfUrl
     return fileNameWithoutExtension + "." + _getFileExtensionFromUrl(mineTrackUrl)
 
 

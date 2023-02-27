@@ -10,7 +10,7 @@ class MineTrackExtractSchemaSerializer(InputSerializer):
     title = serializers.CharField(max_length=100)
     artistName = serializers.CharField(max_length=100, required=False)
     albumName = serializers.CharField(max_length=100, required=False)
-    albumArtistsNames = serializers.CharField(max_length=100, required=False)
+    albumArtistsName = serializers.CharField(max_length=100, required=False)
     genreName = serializers.CharField(max_length=100, required=False)
     rating = serializers.IntegerField(
             default=0, validators=[MinValueValidator(0), MaxValueValidator(255)], required=False)
