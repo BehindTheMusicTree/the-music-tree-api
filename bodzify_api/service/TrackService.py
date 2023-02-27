@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import pprint
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPostSchemaSerializer
@@ -19,26 +20,23 @@ from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 def Create(user: User, postSchemaData: QueryDict):
     serializer = TrackPostSchemaSerializer(data=postSchemaData)
     serializer.is_valid(raise_exception=True)
-    Save(user=user, saveSchemaData=postSchemaData)
+    return Save(user=user, saveSchemaData=postSchemaData)
     
     
-def Update(user: User, trackId: int, updateSchemaData: QueryDict, oldTrack: LibraryTrack=None):
+def Update(user: User, updateSchemaData: QueryDict, oldTrack: LibraryTrack):
     serializer = TrackUpdateSchemaSerializer(data=updateSchemaData)
     serializer.is_valid(raise_exception=True)
-    Save(user=user, saveSchemaData=updateSchemaData, oldTrack=oldTrack)
+    return Save(user=user, saveSchemaData=updateSchemaData, oldTrack=oldTrack)
 
 
 def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack=None):
     
     fileKey = LibraryTrack.ATTRIBUTE_FILE_LABEL
+    saveDataFromFile = dict()
     if fileKey in saveSchemaData:
         file = saveSchemaData[fileKey]
         if file is not None and file != "":
             saveDataFromFile = _getSaveDataFromFile(user=user, file=file)
-        else:
-            saveDataFromFile = dict()
-    else:
-        saveDataFromFile = dict()
         
     saveData = _getSaveDataOverridenWithInputData(
             user=user, saveData=saveDataFromFile, inputData=saveSchemaData)
@@ -271,7 +269,7 @@ def _getSaveDataOverridenWithInputData(
 
 
 def _getSaveMutableDataWithAttributeEventuallySetInRequestData(
-        attributeKey: str, requestData: QueryDict, saveMutableData: QueryDict):
+        attributeKey: str, saveMutableData: QueryDict, requestData: QueryDict):
     if attributeKey in requestData:
         saveMutableData[attributeKey] = requestData[attributeKey]
     return saveMutableData
