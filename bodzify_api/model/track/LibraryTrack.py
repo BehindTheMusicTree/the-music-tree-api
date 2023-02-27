@@ -45,7 +45,6 @@ class LibraryTrack(models.Model):
             help_text="Only audio formats accepted.", 
             validators=[
                     FileExtensionValidator(['flac', 'wav', 'mp3']), 
-                    FileTypeValidator(allowed_types=[ 'audio/*']),
                     validateTrackSize],
             null=True)
     title = models.CharField(max_length=settings.TRACK_TITLE_MAX_CHAR, default=None)

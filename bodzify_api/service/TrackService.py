@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import os
-import pprint
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
+from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPostSchemaSerializer
 import bodzify_api.settings as settings
 from bodzify_api.serializer.track.input.TrackSaveSerializer import TrackSaveSerializer
-from bodzify_api.serializer.track.input.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
+from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
@@ -16,22 +16,40 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
 
-def Save(user: User, inputData: QueryDict, oldTrack: LibraryTrack=None):
+def Create(user: User, postSchemaData: QueryDict):
+    serializer = TrackPostSchemaSerializer(data=postSchemaData)
+    serializer.is_valid(raise_exception=True)
+    Save(user=user, saveSchemaData=postSchemaData)
+    
+    
+def Update(user: User, trackId: int, updateSchemaData: QueryDict, oldTrack: LibraryTrack=None):
+    serializer = TrackUpdateSchemaSerializer(data=updateSchemaData)
+    serializer.is_valid(raise_exception=True)
+    Save(user=user, saveSchemaData=updateSchemaData, oldTrack=oldTrack)
+
+
+def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack=None):
+    
     fileKey = LibraryTrack.ATTRIBUTE_FILE_LABEL
-    if fileKey in inputData:
-        file = inputData[fileKey]
-        saveDataFromFile = _getSaveDataFromFile(user=user, file=file)
+    if fileKey in saveSchemaData:
+        file = saveSchemaData[fileKey]
+        if file is not None and file != "":
+            saveDataFromFile = _getSaveDataFromFile(user=user, file=file)
+        else:
+            saveDataFromFile = dict()
     else:
         saveDataFromFile = dict()
         
     saveData = _getSaveDataOverridenWithInputData(
-            user=user, saveData=saveDataFromFile, inputData=inputData)
+            user=user, saveData=saveDataFromFile, inputData=saveSchemaData)
     saveData[LibraryTrack.ATTRIBUTE_USER_LABEL] = user.id
     
-    titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
-    if oldTrack is None and saveData[titleKey] is None:
-        saveData[titleKey], extension = os.path.splitext(file.name)
-        
+    if oldTrack is None:    
+        titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
+        if titleKey in saveData:
+            if saveData[titleKey] is None:
+                saveData[titleKey], extension = os.path.splitext(file.name)
+                        
     saveSerializer = TrackSaveSerializer(instance=oldTrack, data=saveData, partial=True)
     saveSerializer.is_valid(raise_exception=True)
     savedTrack = saveSerializer.save()
@@ -90,12 +108,12 @@ def _getSaveDataFromFile(user:User, file):
 
 def _getSaveMutableDataWithAlbumUuidIfAlbumNameInRequest(
         user: User, requestData: QueryDict, saveMutableData: QueryDict):
-    albumNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_NAME_LABEL
+    albumNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_NAME_LABEL
     if albumNameKey in requestData:
 
         albumName = requestData[albumNameKey]
 
-        artistsNamesKey = TrackSaveSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL
+        artistsNamesKey = TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL
         if artistsNamesKey in requestData:
             albumArtistsNameString = requestData[artistsNamesKey]
             albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNameString)
@@ -115,7 +133,7 @@ def _getSaveMutableDataWithAlbumUuidIfAlbumNameInRequest(
 
 def _getSaveMutableDataWithArtistUuidIfSetInRequest(
         user: User, requestData: QueryDict, saveMutableData: QueryDict):
-    artistNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
+    artistNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
     if artistNameKey in requestData:
         artistName = requestData[artistNameKey]
         artist = ArtistService.GetArtistFromNameAfterEventualCreation(
@@ -130,7 +148,7 @@ def _getSaveMutableDataWithArtistUuidIfSetInRequest(
 
 def _getSaveMutableDataWithGenreUuidIfSetInRequest(
         user: User, requestData: QueryDict, saveMutableData: QueryDict):
-    genreNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
+    genreNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
     if genreNameKey in requestData:
         genreName = requestData[genreNameKey]
         if genreName is None:
