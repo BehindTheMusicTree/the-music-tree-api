@@ -35,7 +35,7 @@ def Extract(user: User, requestData: QueryDict):
         trackFile.write(response.content)
         
     saveData = _getSaveDataFromRequestData(requestData)
-    
+
     with open(trackTempFileAbsPath, "rb") as trackFile:
         _validateSaveData(data=saveData, trackFile=File(trackFile))
 
