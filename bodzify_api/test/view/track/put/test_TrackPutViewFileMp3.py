@@ -17,7 +17,7 @@ class TrackPutViewTestCaseFileMp3(TrackViewTestCase):
      - title;
      - artistName;
      - albumName;
-     - albumArtistsNames;
+     - albumArtistsName;
      - genre;
      - rating;
      - language.
@@ -29,7 +29,7 @@ class TrackPutViewTestCaseFileMp3(TrackViewTestCase):
             "title": "Somewhere I Belong",
             "artistName": "Linkin Park",
             "albumName": "Meteora",
-            "albumArtistsNames": "Garou",
+            "albumArtistsName": "Garou",
             "genre": "LsjdqoqzpsdojEjGHGH", # "Rap"
             "rating": 10, # max value
             "language": "Peruvian"
@@ -57,7 +57,7 @@ class TrackPutViewTestCaseFileMp3(TrackViewTestCase):
      - title;
      - artistName;
      - albumName;
-     - albumArtistsNames;
+     - albumArtistsName;
      - genre;
      - rating;
      - language.
@@ -69,7 +69,7 @@ class TrackPutViewTestCaseFileMp3(TrackViewTestCase):
             "title": "Somewhere I Belong",
             "artistName": "Linkin Park",
             "albumName": "Meteora",
-            "albumArtistsNames": "Garou",
+            "albumArtistsName": "Garou",
             "genre": "LsjdqoqzpsdojEjGHGH", # "Rap"
             "rating": 10, # max value
             "language": "Peruvian"

@@ -57,7 +57,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
                 - "title" (required);
                 - "artistName";
                 - "albumName";
-                - "albumArtistsNames";
+                - "albumArtistsName";
                 - "genreName";
                 - "rating";
                 - "releasedOn";

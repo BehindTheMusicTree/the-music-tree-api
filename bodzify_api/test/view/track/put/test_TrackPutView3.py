@@ -27,14 +27,14 @@ class TrackPutViewTestCase3(TrackViewTestCase):
          - rating isn't specified so unchanged (255);
          - the previous track's album "BOOM" hasn't anythink linked to it anymore. It must then be 
         deleted;
-         - new genre "Nu metal".
+         - new existing genre "Nu metal".
         """
         data = {
             "title": "Bohemian Raphsody",
             "artistName": "",
             "albumName": "American Idiot",
-            "albumArtistsNames": "Queen",
-            "genre": "L1ZG85munGytJb885WWJN8",
+            "albumArtistsName": "Queen",
+            "genreName": "Nu metal",
             "language": "French"
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)

@@ -20,14 +20,14 @@ class TrackPutViewTestCase2(TrackViewTestCase):
         - Lowest rating 0;
         - An album artist "Green Day" is sent twice. Only one must be created;
         - A space lies at the end of the album's artists' names. It musn't be taken into account.
-        - New genre "Rock".
+        - New existing genre "Rock".
         """
         data = {
             "title": "Give Me Novocain",
             "artistName": "Green Day",
             "albumName": "American Idiot",
-            "albumArtistsNames": "Green Day, RATM, Green Day, ",
-            "genre": "L1ZG85munGytJb885WWJN8",  
+            "albumArtistsName": "Green Day, RATM, Green Day, ",
+            "genreName": "Rock",  
             "rating": 0,
             "language": "English, German"
         }

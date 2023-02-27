@@ -62,7 +62,7 @@ class TrackViewSet(MultiSerializerViewSet):
         description=("""
             Updates a track.\n"
             - To not update a field, it mustn't be specified (e.g the line \"artistName\":... 
-            shouldn't exist). The only exception is the field 'albumArtistsNames' (more 
+            shouldn't exist). The only exception is the field 'albumArtistsName' (more 
             precisions below).\n
             - To empty a field (artist or album), the field should be specified with an empty 
             string.\n
@@ -79,10 +79,10 @@ class TrackViewSet(MultiSerializerViewSet):
             the system to identify an album is the peer (album'sname/album's artists'names). 
             Thus:\n" +
                - If it already exists an album with the same name as 'albumName' but with 
-            different 'AlbumArtistsNames', an new album is created.\n
-               - Wether the field 'albumArtistsNames' is empty or not specified, it tells that 
+            different 'albumArtistsName', an new album is created.\n
+               - Wether the field 'albumArtistsName' is empty or not specified, it tells that 
             the track's album has no artist.\n
-               - If 'albumName' is empty or missing, the 'albumArtistsNames' is ignored.
+               - If 'albumName' is empty or missing, the 'albumArtistsName' is ignored.
             """)
     )
     def update(self, request, *args, **kwargs):

@@ -24,7 +24,7 @@ class MineTrackExtractViewTestFilename(MineTrackExtractViewTestCase):
             "artist": "Roméo",
         }
         response = self.extract(data=data)
-        trackUuid = response.data['uuid']
+        trackUuid = response.json()['uuid']
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.filename == "Roméo_-_I_m_Here.mp3"
 
@@ -44,6 +44,6 @@ class MineTrackExtractViewTestFilename(MineTrackExtractViewTestCase):
             "title": "Hellö",
         }
         response = self.extract(data=data)
-        trackUuid = response.data['uuid']
+        trackUuid = response.json()['uuid']
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.filename == "Hellö.mp3"

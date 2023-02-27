@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from rest_framework import status
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.mine.track.MineTrackViewTestCase import (
         MineTrackExtractViewTestCase)
 
@@ -9,7 +10,9 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
     fixtures = ['initial_data', 'TestUserData']
 
     """
-    Trying to extract a track without proviging a title should fail with a 400 (bad request).
+    Trying to extract a track without providing a title would set the filename as the title.
+    If the filename is too long (more than 100 characters), it is replaced by a random string
+    of 20 characters.
     """
     def test_mineTrackExtractTitleMissing(self):
         self.login(self.testUser)
@@ -23,4 +26,22 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
             "releasedOn": 1290292
         }
         response = self.extract(data=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_200_OK
+
+
+    """
+    Trying to extract a track without providing a title would set the filename as the title.
+    If the filename is too long (more than 100 characters), it is replaced by a random string
+    of 20 characters. Here "MartijnSchmit-VacsInTheMorning".
+    """
+    def test_mineTrackExtractTitleMissing(self):
+        self.login(self.testUser)
+
+        trackUrl = ("https://ia801408.us.archive.org/31/items/martijn-schmit-vacs-in-the-"
+                + "morning/MartijnSchmit-VacsInTheMorning.mp3")
+        data = {
+            "url": trackUrl
+        }
+        self.extract(data=data)
+        assert LibraryTrack.objects.filter(
+                user=self.testUser, title="MartijnSchmit-VacsInTheMorning").exists()

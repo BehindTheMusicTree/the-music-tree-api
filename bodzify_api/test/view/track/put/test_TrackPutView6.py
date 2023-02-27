@@ -26,7 +26,7 @@ class TrackPutViewTestCase6(TrackViewTestCase):
         """
         data = {
             "albumName": "Birds",
-            "albumArtistsNames": "Joris Michel, Moço",
+            "albumArtistsName": "Joris Michel, Moço",
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBc48766YH", data=data)
         assert response.status_code == status.HTTP_200_OK

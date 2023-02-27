@@ -22,8 +22,8 @@ class TrackPutViewTestCase7(TrackViewTestCase):
             "title": "Bohemian Raphsody",
             "artistName": "Queen",
             "albumName": "A Night At The Opera",
-            "albumArtistsNames": "Queen",
-            "genre": "L1ZG85munGytJb885WWJN8",
+            "albumArtistsName": "Queen",
+            "genre": "Techno",
             "language": "French"
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)

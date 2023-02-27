@@ -20,7 +20,7 @@ class TrackPutViewTestCase5(TrackViewTestCase):
         """
         data = {
             "albumName": "Hello",
-            "albumArtistsNames": "Robert De Niro",
+            "albumArtistsName": "Robert De Niro",
         }
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcSSSSSSS", data=data)
         assert response.status_code == status.HTTP_200_OK

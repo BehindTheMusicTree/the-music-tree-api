@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pprint
 from bodzify_api.test.view.modelless.SearchViewTestCase import SearchViewTestCase
 
 class SearchViewTestCase1(SearchViewTestCase):
