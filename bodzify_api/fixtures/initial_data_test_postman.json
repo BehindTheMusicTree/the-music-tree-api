@@ -22,7 +22,7 @@
         "pk": "m5KRxisjexW4BEOod9Qmjq",
         "fields": {
             "name": "All",
-            "type": 1,
+            "type": 0,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
         }
@@ -32,7 +32,7 @@
         "pk": "L1ZG85munGytqjz65fgion",
         "fields": {
             "name": "Genreless",
-            "type": 1,
+            "type": 0,
             "parent": "m5KRxisjexW4BEOod9Qmjq",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
@@ -43,7 +43,7 @@
         "pk": "knvci5z2bBkMysjeBfkiJR",
         "fields": {
             "name": "Tagged",
-            "type": 2,
+            "type": 1,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
         }
@@ -53,7 +53,7 @@
         "pk": "LnM1arJrhhhbhHSjqEPdZB",
         "fields": {
             "criteria": "m5KRxisjexW4BEOod9Qmjq",
-            "type": 1,
+            "type": 0,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
         }
@@ -63,7 +63,7 @@
         "pk": "LnM1arJrdkdkdjllllPdZB",
         "fields": {
             "criteria": "L1ZG85munGytqjz65fgion",
-            "type": 1,
+            "type": 0,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
         }

@@ -12,6 +12,7 @@ python3 $managePath migrate
 python3 $managePath makemigrations bodzify_api
 python3 $managePath migrate
 python3 $managePath loaddata initial_data
+python3 $managePath loaddata initial_data_admin
 python3 $managePath loaddata initial_data_test_app
 python3 $managePath loaddata initial_data_test_postman
 python3 $managePath runserver
