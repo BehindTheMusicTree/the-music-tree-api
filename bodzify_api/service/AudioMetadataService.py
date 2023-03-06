@@ -39,7 +39,7 @@ VORBIS_LANGUAGE_TAG_KEY = 'language'
 METADATA_DICT_TITLE_KEY = "title"
 METADATA_DICT_ARTIST_NAME_KEY = "artistName"
 METADATA_DICT_ALBUM_NAME_KEY = "albumName"
-METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY = "albumArtistsNameString"
+METADATA_DICT_ALBUM_ARTISTS_NAME_STRING_KEY = "albumArtistsNameString"
 METADATA_DICT_GENRE_NAME_KEY = "genreName"
 METADATA_DICT_DURATION_KEY = "duration"
 METADATA_DICT_RATING_KEY = "rating"
@@ -139,7 +139,7 @@ def GetMetadataDictFromFile(file, appRatingMaxValue: int):
     metadataDict[METADATA_DICT_TITLE_KEY] = title
     metadataDict[METADATA_DICT_ARTIST_NAME_KEY] = artistName
     metadataDict[METADATA_DICT_ALBUM_NAME_KEY] = albumName
-    metadataDict[METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY] = albumArtistsNameString
+    metadataDict[METADATA_DICT_ALBUM_ARTISTS_NAME_STRING_KEY] = albumArtistsNameString
     metadataDict[METADATA_DICT_GENRE_NAME_KEY] = genreName
     metadataDict[METADATA_DICT_DURATION_KEY] = _getDurationFromFileTags(fileTags=fileTags)
     metadataDict[METADATA_DICT_RATING_KEY] = rating
@@ -220,7 +220,7 @@ def _getRatingTagFromFlacFile(flacFile: FLAC, appRatingMaxValue: int=None):
 
 def _getNormalizedRatingFromFileValue(
             ratingValue: int, unnormalizedMaxValue: int, normalizedMaxValue: int):
-    return (ratingValue * normalizedMaxValue)/unnormalizedMaxValue
+    return int(round((ratingValue * normalizedMaxValue)/unnormalizedMaxValue))
     
 
 def _getLanguageTagFromMutagenFile(id3FileTags: MutagenFile):
@@ -265,7 +265,7 @@ def _getSpecificMetadataFromId3File(
         return _getArtistNameTagFromMutagenFile(id3FileTags)
     elif metadataKey == METADATA_DICT_ALBUM_NAME_KEY:
         return _getAlbumNameTagFromMutagenFile(id3FileTags)
-    elif metadataKey == METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY:
+    elif metadataKey == METADATA_DICT_ALBUM_ARTISTS_NAME_STRING_KEY:
         return _getalbumArtistsNametringTagFromMutagenFile(id3FileTags)
     elif metadataKey == METADATA_DICT_GENRE_NAME_KEY:
         return _getGenreNameTagFromMutagenFile(id3FileTags)
@@ -285,7 +285,7 @@ def _getSpecificMetadataFromFlacFile(
         return _getArtistNameTagFromFlacFile(flacFileTags)
     elif metadataKey == METADATA_DICT_ALBUM_NAME_KEY:
         return _getAlbumNameTagFromFlacFile(flacFileTags)
-    elif metadataKey == METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY:
+    elif metadataKey == METADATA_DICT_ALBUM_ARTISTS_NAME_STRING_KEY:
         return _getalbumArtistsNametringTagFromFlacFile(flacFileTags)
     elif metadataKey == METADATA_DICT_GENRE_NAME_KEY:
         return _getGenreNameTagFromFlacFile(flacFileTags)
@@ -312,7 +312,7 @@ def _getId3FileTagsUpdatedIfTagValueSpecified(
         elif updateMetadataKey == METADATA_DICT_ALBUM_NAME_KEY:
             id3Key = ID3_ALBUM_NAME_TEXT_FRAME
             textFrameClass = TALB
-        elif updateMetadataKey == METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY:
+        elif updateMetadataKey == METADATA_DICT_ALBUM_ARTISTS_NAME_STRING_KEY:
             id3Key = ID3_ALBUM_ARTISTS_NAMES_TEXT_FRAME
             textFrameClass = TPE2
         elif updateMetadataKey == METADATA_DICT_GENRE_NAME_KEY:
@@ -354,7 +354,7 @@ def _getVorbisFileRatingFromAppValue(appRating: int, appMaxRating: int):
 
 
 def _getFileRatingFromAppValue(appRating: int, appMaxRating: int, fileMaxRating: int):
-    return (fileMaxRating * appRating)/appMaxRating
+    return int(round((fileMaxRating * appRating)/appMaxRating))
 
 
 def _getFlacFileTagsUpdatedIfValueSpecified(
@@ -366,7 +366,7 @@ def _getFlacFileTagsUpdatedIfValueSpecified(
             vorbisTagKey = VORBIS_ARTIST_NAME_TAG_KEY
         elif metadataDictKey == METADATA_DICT_ALBUM_NAME_KEY:
             vorbisTagKey = VORBIS_ALBUM_NAME_TAG_KEY
-        elif metadataDictKey == METADATA_DICT_ALBUM_ARTISTS_NAMES_STRING_KEY:
+        elif metadataDictKey == METADATA_DICT_ALBUM_ARTISTS_NAME_STRING_KEY:
             vorbisTagKey = VORBIS_ALBUM_ARTISTS_NAMES_TAG_KEY
         elif metadataDictKey == METADATA_DICT_GENRE_NAME_KEY:
             flacFile[VORBIS_GENRE_NAME_TAG_KEY][0] = metadataUpdateDict[metadataDictKey]

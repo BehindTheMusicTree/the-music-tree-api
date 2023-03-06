@@ -26,6 +26,7 @@ def _userDirectoryPath(instance, filename):
 
 class LibraryTrack(models.Model):
 
+    ATTRIBUTE_UUID_LABEL = "uuid"
     ATTRIBUTE_USER_LABEL = "user"
     ATTRIBUTE_FILE_LABEL = "file"
     ATTRIBUTE_TITLE_LABEL = "title"
@@ -45,7 +46,6 @@ class LibraryTrack(models.Model):
             help_text="Only audio formats accepted.", 
             validators=[
                     FileExtensionValidator(['flac', 'wav', 'mp3']), 
-                    FileTypeValidator(allowed_types=[ 'audio/*']),
                     validateTrackSize],
             null=True)
     title = models.CharField(max_length=settings.TRACK_TITLE_MAX_CHAR, default=None)

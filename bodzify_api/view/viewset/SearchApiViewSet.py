@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from django.db.models import Q
 from django.db.models import F
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
@@ -13,7 +12,7 @@ from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWitho
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
 from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import (
     PlaylistWithoutTracksSerializer)
-from bodzify_api.serializer.track.TrackDetailedSerializer import TrackDetailedSerializer
+from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
 
 QUERY_PARAMETER_NAME = "query"
 QUERY_TITLE_FILTER_NAME = "title"

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pprint
 import requests
 import random
 import string
@@ -13,7 +12,7 @@ from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
-from bodzify_api.serializer.track.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
+from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
 
 
 TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH = 20
@@ -41,11 +40,11 @@ def Extract(user: User, requestData: QueryDict):
 
     with open(trackTempFileAbsPath, "rb") as trackFile:
         saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
-        genreNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
+        genreNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
         if genreNameKey not in saveData:
             saveData[genreNameKey] = CriteriaSpecialNames.GENRE_GENRELESS
         saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
-        libraryTrack = TrackService.Save(user=user, inputData=saveData)
+        libraryTrack = TrackService.Create(user=user, postSchemaData=saveData)
 
     os.remove(trackTempFileAbsPath)
     os.rmdir(trackTempFileIndividualDirAbsPath)
@@ -71,7 +70,7 @@ def _getTrackFileName(mineTrackUrl: str, requestData: QueryDict):
     titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
     if titleKey in requestData:
         title = requestData[titleKey]
-        artistNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
+        artistNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
         if artistNameKey in requestData:
             artistName = requestData[artistNameKey]
             if artistName is None or artistName == "":
@@ -103,5 +102,5 @@ def _generateShortUu(length: int):
 
 def _validateSaveData(data: QueryDict, trackFile: File):
     data[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
-    saveSchemaSerializer = TrackSaveSchemaSerializer(data=data)
+    saveSchemaSerializer = TrackUpdateSchemaSerializer(data=data)
     saveSchemaSerializer.is_valid(raise_exception=True)

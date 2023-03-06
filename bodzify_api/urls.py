@@ -13,12 +13,12 @@ from drf_spectacular.views import SpectacularSwaggerView
 from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet 
 
 from bodzify_api.view.viewset.UserViewSet import UserViewSet
-from bodzify_api.view.viewset.track.TrackViewSet import TrackViewSet
+from bodzify_api.view.viewset.TrackViewSet import TrackViewSet
 from bodzify_api.view.viewset.ArtistViewSet import ArtistViewSet
 from bodzify_api.view.viewset.AlbumViewSet import AlbumViewSet
 from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet
 from bodzify_api.view.viewset.criteria.TagViewSet import TagViewSet
-from bodzify_api.view.viewset.track.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
 from bodzify_api.view.viewset.playlist.PlaylistViewSet import PlaylistViewSet
 
 router = routers.DefaultRouter()

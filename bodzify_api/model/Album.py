@@ -7,7 +7,13 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 class Album(models.Model):
 
+    ATTRIBUTE_UUID_LABEL = 'uuid'
     ATTRIBUTE_NAME_LABEL = 'name'
+    ATTRIBUTE_YEAR_LABEL = 'year'
+    ATTRIBUTE_ALBUM_ARTISTS_LABEL = 'albumArtists'
+    ATTRIBUTE_LIBRARY_TRACKS_LABEL = 'libraryTracks'
+    ATTRIBUTE_TRACK_COUNT_LABEL = 'trackCount'
+    ATTRIBUTE_DURATION_LABEL = 'duration'
 
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(

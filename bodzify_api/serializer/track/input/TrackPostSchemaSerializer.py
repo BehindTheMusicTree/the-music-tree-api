@@ -5,31 +5,28 @@ from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
 from upload_validator import FileTypeValidator
+from bodzify_api import settings
 from bodzify_api.serializer.InputSerializer import InputSerializer
 from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 
 
-class TrackSaveSchemaSerializer(InputSerializer):
-    
-        ATTRIBUTE_ARTIST_NAME_LABEL = "artistName"
-        ATTRIBUTE_ALBUM_NAME_LABEL = "albumName"
-        ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL = "albumArtistsName"
-        ATTRIBUTE_GENRE_NAME_LABEL = "genreName"
-
+class TrackPostSchemaSerializer(InputSerializer):
 
         file = serializers.FileField(
                 help_text="Only audio formats accepted.", 
                 validators=[
                         FileExtensionValidator(['flac', 'wav', 'mp3']), 
                         FileTypeValidator(allowed_types=[ 'audio/*']),
-                        validateTrackSize], required=False)
-        title = serializers.CharField(max_length=100, required=False)
-        artistName = serializers.CharField(max_length=100, required=False)
-        albumName = serializers.CharField(max_length=100, required=False)
-        albumArtistsName = serializers.CharField(max_length=100, required=False)
-        genreName = serializers.CharField(max_length=100, required=False)
+                        validateTrackSize], 
+                required=True)
+        title = serializers.CharField(
+                max_length=settings.TRACK_TITLE_MAX_CHAR, required=False)
+        artistName = serializers.CharField(max_length=100, required=False, allow_blank=True)
+        albumName = serializers.CharField(max_length=100, required=False, allow_blank=True)
+        albumArtistsName = serializers.CharField(max_length=100, required=False, allow_blank=True)
+        genreName = serializers.CharField(max_length=100, required=False, allow_blank=True)
         rating = serializers.IntegerField(
-                default=0, 
                 validators=[MinValueValidator(0), MaxValueValidator(255)], 
-                required=False)
-        language = serializers.CharField(max_length=100, required=False)
+                required=False, 
+                allow_null=True)
+        language = serializers.CharField(max_length=100, required=False, allow_blank=True)

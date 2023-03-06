@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-
 import shortuuid
-
 from django.db import models
 from django.contrib.auth.models import User
-
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
 
 class Playlist(models.Model):
 
+    ATTRIBUTE_NAME_LABEL = "name"
+    ATTRIBUTE_PARENT_LABEL = "parent"
+    ATTRIBUTE_TYPE_LABEL = "type"
     ATTRIBUTE_CRITERIA_NAME_LABEL = 'criteria__name'
 
     uuid = models.CharField(

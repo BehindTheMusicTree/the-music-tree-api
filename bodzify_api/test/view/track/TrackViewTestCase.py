@@ -5,7 +5,10 @@ from bodzify_api.test.view.ViewTestCase import ViewTestCase
 
 class TrackViewTestCase(ViewTestCase):
 
-    def postSampleTrack(self, sampleFileName, dataJson=None):
+    def postSampleTrack(self, sampleFileName=None, dataJson=None):
+        if sampleFileName is None:
+            return self.apiClient.post(
+                path=reverse('librarytrack-list'), data={'file': None})
         with open(self.sampleDirectoryAbsolutePath + sampleFileName, "rb") as sampleFile:
             fileJson = {'file': sampleFile}
             if dataJson is not None:
