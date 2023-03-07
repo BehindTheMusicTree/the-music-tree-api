@@ -10,6 +10,7 @@ class RatingSourcesLabelInRatingTag:
     Traktor = 'traktor@native-instruments.d'
     Itunes = 'iTunes'
 
+
 class RatingSourcesIds:
     NoSource = 0
     Bodzify = 1
