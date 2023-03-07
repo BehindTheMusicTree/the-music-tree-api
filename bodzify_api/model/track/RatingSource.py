@@ -3,28 +3,29 @@ from django.db import models
 
 
 class RatingSourcesLabelInRatingTag:
-    NoSource = ''
-    Bodzify = 'bodzify'
-    MusicBee = 'MusicBee'
-    WindowsMediaPlayer = 'Windows Media Player 9 Series'
-    Traktor = 'traktor@native-instruments.d'
-    Itunes = 'iTunes'
+    NONE = ''
+    BODZIFY = 'bodzify'
+    MUSICBEE = 'MusicBee'
+    WMP = 'Windows Media Player 9 Series'
+    TRAKTOR = 'traktor@native-instruments.d'
+    ITUNES = 'iTunes'
 
 
 class RatingSourcesIds:
-    NoSource = 0
-    Bodzify = 1
-    Other = 2
-    MusicBee = 3
-    WindowsMediaPlayer = 4
-    Winamp = 5
-    Itunes = 6
+    NONE = 0
+    BODZIFY = 1
+    OTHER = 2
+    MUSICBEE = 3
+    WMP = 4
+    TRAKTOR = 5
+    WINAMP = 6
+    ITUNES = 7
 
 
 class RatingSource(models.Model):
     label = models.CharField(unique=True, max_length=20, default=None, editable=False)
     labelInRatingTag = models.CharField(unique=True, max_length=20, default=None, editable=False)
-    noStarRating = models.IntegerField(default=None, editable=False)
+    noRating = models.IntegerField(default=None, editable=False, null=True)
     zeroStarRating = models.IntegerField(default=None, editable=False)
     oneStarRating = models.IntegerField(default=None, editable=False)
     twoStarsRating = models.IntegerField(default=None, editable=False)
