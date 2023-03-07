@@ -116,8 +116,14 @@ class TrackViewSet(MultiSerializerViewSet):
         description=(
             """
             Create a track with metadata by uploading a file:
-                - If the file has no metadata 'title', it is set with the file's name without the 
-            extension (with an identifier if another track has the same name).
+                - if the file has no metadata 'title', it is set with the file's name without the 
+            extension (with an identifier if another track has the same name);
+                - some media players allow to edit the rating of a track. In some cases, the
+                rating isn't store in the file's metadata but in a seperate database. In those
+                cases, the rating won't be imported into Bodzify and will be set to null (= no 
+                rating). It is the case for:
+                    - iTunes;
+                    - Windows Media Player's wav files rating.
             """)
     )
     def create(self, request, *args, **kwargs):
