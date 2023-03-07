@@ -123,7 +123,8 @@ class TrackViewSet(MultiSerializerViewSet):
                 cases, the rating won't be imported into Bodzify and will be set to null (= no 
                 rating). It is the case for:
                     - iTunes;
-                    - Windows Media Player's wav files rating.
+                    - Windows Media Player's wav files rating;
+                    - Winamp's wav files rating;
             """)
     )
     def create(self, request, *args, **kwargs):
