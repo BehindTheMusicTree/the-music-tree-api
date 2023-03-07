@@ -12,10 +12,23 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     sampleDirectoryRelativePath = "test/view/track/post/rating/wmp/flac/sample/"
 
     """
+    The uploaded flac track has a no rating from Windows Media Player. The corresponding 
+    value in the app must then be None.
+    """
+    def test_trackPostRatingWmpFlacNoRating(self):     
+        print('no rating')
+        self.login(self.testUser)
+        response = self.postSampleTrack("no rating.flac")
+        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
+        track = LibraryTrack.objects.get(uuid=trackUuid)
+        assert track.rating == None
+
+    """
     The uploaded flac track has a 1 star rating from Windows Media Player. The corresponding 
     value in the app must then be 2.
     """
-    def test_trackPostRatingWmpFlac1Star(self):
+    def test_trackPostRatingWmpFlac1Star(self):     
+        print('1 star')
         self.login(self.testUser)
         response = self.postSampleTrack("1 star.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -27,7 +40,8 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     The uploaded flac track has a 2 stars rating set from Windows Media Player. The corresponding 
     value in the app must then be 4.
     """
-    def test_trackPostRatingWmpFlac2Stars(self):
+    def test_trackPostRatingWmpFlac2Stars(self):  
+        print('2 star')
         self.login(self.testUser)
         response = self.postSampleTrack("2 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -39,7 +53,8 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     The uploaded flac track has a 3 stars rating set from Windows Media Player. The corresponding 
     value in the app must then be 6.
     """
-    def test_trackPostRatingWmpFlac3Stars(self):
+    def test_trackPostRatingWmpFlac3Stars(self):  
+        print('3 star')
         self.login(self.testUser)
         response = self.postSampleTrack("3 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -50,7 +65,8 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     The uploaded flac track has a 4 stars rating set from Windows Media Player. The corresponding 
     value in the app must then be 8.
     """
-    def test_trackPostRatingWmpFlac4Stars(self):
+    def test_trackPostRatingWmpFlac4Stars(self):  
+        print('4 star')
         self.login(self.testUser)
         response = self.postSampleTrack("4 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -61,7 +77,8 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     The uploaded flac track has a 5 stars rating set from Windows Media Player. The corresponding 
     value in the app must then be 10.
     """
-    def test_trackPostRatingWmpFlac5Stars(self):
+    def test_trackPostRatingWmpFlac5Stars(self):  
+        print('5 star')
         self.login(self.testUser)
         response = self.postSampleTrack("5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]

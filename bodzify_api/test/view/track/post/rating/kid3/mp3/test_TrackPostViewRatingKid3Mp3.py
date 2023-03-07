@@ -11,6 +11,17 @@ class TrackPostViewTestCaseRatingKid3Mp3(TrackViewTestCase):
     sampleDirectoryRelativePath = "test/view/track/post/rating/kid3/mp3/sample/"
 
     """
+    The uploaded mp3 track has a no rating from Kid3. The corresponding 
+    value in the app must then be None.
+    """
+    def test_trackPostRatingKid3Mp3NoRating(self):
+        self.login(self.testUser)
+        response = self.postSampleTrack("no rating.mp3")
+        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
+        track = LibraryTrack.objects.get(uuid=trackUuid)
+        assert track.rating == None
+
+    """
     The uploaded mp3 track has a 1 star rating from Kid3. The corresponding 
     value in the app must then be 2.
     """

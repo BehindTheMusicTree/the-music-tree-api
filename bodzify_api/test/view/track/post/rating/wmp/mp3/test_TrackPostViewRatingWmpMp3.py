@@ -12,6 +12,17 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     sampleDirectoryRelativePath = "test/view/track/post/rating/wmp/mp3/sample/"
 
     """
+    The uploaded mp3 track has a no rating from Windows Media Player. The corresponding 
+    value in the app must then be None.
+    """
+    def test_trackPostRatingWmpMp3NoRating(self):
+        self.login(self.testUser)
+        response = self.postSampleTrack("no rating.mp3")
+        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
+        track = LibraryTrack.objects.get(uuid=trackUuid)
+        assert track.rating == None
+
+    """
     The uploaded mp3 track has a 1 star rating from Windows Media Player. The corresponding 
     value in the app must then be 2.
     """

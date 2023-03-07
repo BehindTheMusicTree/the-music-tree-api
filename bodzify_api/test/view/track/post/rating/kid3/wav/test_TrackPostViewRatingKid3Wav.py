@@ -2,68 +2,78 @@
 import pytest
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
 @pytest.mark.django_db
-class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
+class TrackPostViewTestCaseRatingKid3Wav(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
-    sampleDirectoryRelativePath = "test/view/track/post/rating/wmp/flac/sample/"
+    sampleDirectoryRelativePath = "test/view/track/post/rating/kid3/wav/sample/"
 
     """
-    The uploaded flac track has a 1 star rating from Windows Media Player. The corresponding 
+    The uploaded wav track has a no rating from Kid3. The corresponding 
+    value in the app must then be None.
+    """
+    def test_trackPostRatingKid3WavNoRating(self):
+        self.login(self.testUser)
+        response = self.postSampleTrack("no rating.wav")
+        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
+        track = LibraryTrack.objects.get(uuid=trackUuid)
+        assert track.rating == None
+
+    """
+    The uploaded wav track has a 1 star rating from Kid3. The corresponding 
     value in the app must then be 2.
     """
-    def test_trackPostRatingWmpFlac1Star(self):
+    def test_trackPostRatingKid3Wav1Star(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("1 star.flac")
+        response = self.postSampleTrack("1 star.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 2
     
 
     """
-    The uploaded flac track has a 2 stars rating set from Windows Media Player. The corresponding 
+    The uploaded wav track has a 2 stars rating set from Kid3. The corresponding 
     value in the app must then be 4.
     """
-    def test_trackPostRatingWmpFlac2Stars(self):
+    def test_trackPostRatingKid3Wav2Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("2 stars.flac")
+        response = self.postSampleTrack("2 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 4
     
 
     """
-    The uploaded flac track has a 3 stars rating set from Windows Media Player. The corresponding 
+    The uploaded wav track has a 3 stars rating set from Kid3. The corresponding 
     value in the app must then be 6.
     """
-    def test_trackPostRatingWmpFlac3Stars(self):
+    def test_trackPostRatingKid3Wav3Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("3 stars.flac")
+        response = self.postSampleTrack("3 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 6
 
     """
-    The uploaded flac track has a 4 stars rating set from Windows Media Player. The corresponding 
+    The uploaded wav track has a 4 stars rating set from Kid3. The corresponding 
     value in the app must then be 8.
     """
-    def test_trackPostRatingWmpFlac4Stars(self):
+    def test_trackPostRatingKid3Wav4Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("4 stars.flac")
+        response = self.postSampleTrack("4 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 8
 
     """
-    The uploaded flac track has a 5 stars rating set from Windows Media Player. The corresponding 
+    The uploaded wav track has a 5 stars rating set from Kid3. The corresponding 
     value in the app must then be 10.
     """
-    def test_trackPostRatingWmpFlac5Stars(self):
+    def test_trackPostRatingKid3Wav5Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("5 stars.flac")
+        response = self.postSampleTrack("5 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 10
