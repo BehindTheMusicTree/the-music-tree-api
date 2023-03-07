@@ -3,8 +3,8 @@ from django.db import models
 
 
 class CriteriaTypesIds:
-    GENRE = 1
-    TAG = 2
+    GENRE = 0
+    TAG = 1
 
 
 class CriteriaType(models.Model):
