@@ -2,7 +2,6 @@
 import pytest
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
 @pytest.mark.django_db
