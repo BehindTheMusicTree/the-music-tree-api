@@ -6,16 +6,16 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
 @pytest.mark.django_db
-class TrackPostViewTestCaseFileTagsMp3(TrackViewTestCase):
+class TrackPostViewTestCaseFileTypeMp3Tags(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
-    sampleDirectoryRelativePath = "test/view/track/post/FileTags/sample/mp3/"
+    sampleDirectoryRelativePath = "test/view/track/post/fileType/mp3/sample/"
 
     """
     - Mp3 with all tags;
     - the rating source is MusicBee with 2 starts.
     """
-    def test_trackPostFileTagsMp3WithAllTags(self):
+    def test_trackPostFileTypeMp3TagsAll(self):
         self.login(self.testUser)
         response = self.postSampleTrack("with_all_tags.mp3")
         assert response.status_code == status.HTTP_201_CREATED

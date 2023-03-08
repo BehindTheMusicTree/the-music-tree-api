@@ -8,15 +8,15 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 @pytest.mark.django_db
 class TrackPostViewTestCaseFileTagsWav(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPostDataFileTagsWav']
-    sampleDirectoryRelativePath = "test/view/track/post/sample/fileTags/sample/Wav/"
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPostDataFileTypeWavTags']
+    sampleDirectoryRelativePath = "test/view/track/post/sample/fileType/wav/sample/"
 
     """
-    - WAV file;
+    - WAV file with all tags;
     - Existing artist "BOOM";
     - Non existing album artists "Jacky" and "Michelle".
     """
-    def test_trackPostFileTagsWav(self):
+    def test_trackPostFileTypeWavTagsAll(self):
         self.login(self.testUser)
         response = self.postSampleTrack("sample with tags.wav")
         assert response.status_code == status.HTTP_201_CREATED
