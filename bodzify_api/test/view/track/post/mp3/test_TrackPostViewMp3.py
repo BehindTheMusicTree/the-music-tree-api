@@ -1,14 +1,15 @@
 #!/usr/bin/env python
+import pprint
 import pytest
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
 @pytest.mark.django_db
-class TrackPostViewTestCase5(TrackViewTestCase):
+class TrackPostViewTestCaseMp3(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
-    sampleDirectoryRelativePath = "test/view/track/post/sample/5/"
+    sampleDirectoryRelativePath = "test/view/track/post/mp3/sample/"
 
     """
     - mp3 
