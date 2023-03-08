@@ -124,7 +124,7 @@ class TrackViewSet(MultiSerializerViewSet):
                 will be set to null (= no value). 
                 rating). It is the case for:
                     - iTunes' tracks' rating;
-                    - Windows Media Player's wav files rating;
+                    - Windows Media Player's wav and flac files tags;
                     - Winamp's wav files rating;
                     - Traktor's wav files tags;
             """)
