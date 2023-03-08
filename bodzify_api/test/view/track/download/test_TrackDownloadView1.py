@@ -12,5 +12,5 @@ class TrackDownloadViewTestCase1(TrackViewTestCase):
     """
     def test_libraryTrackDownload1FileNotExisting(self):
         self.login(self.testUser)
-        response = self.downloadTrack(trackUuid="36nS4LVDssLh4BvTdlbJEK")
+        response = self._downloadTrack(trackUuid="36nS4LVDssLh4BvTdlbJEK")
         assert response.status_code == status.HTTP_410_GONE

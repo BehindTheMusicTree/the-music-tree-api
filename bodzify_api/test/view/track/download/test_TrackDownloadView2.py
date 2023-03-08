@@ -12,5 +12,5 @@ class TrackDownloadViewTestCase2(TrackViewTestCase):
     """
     def test_libraryTrackDownload2FileExisting(self):
         self.login(self.testUser)
-        response = self.downloadTrack(trackUuid="lyluyfvluyluycutc")
+        response = self._downloadTrack(trackUuid="lyluyfvluyluycutc")
         assert response.status_code == status.HTTP_200_OK

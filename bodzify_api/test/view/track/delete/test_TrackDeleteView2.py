@@ -17,7 +17,7 @@ class TrackDeleteViewTestCase2(TrackViewTestCase):
             - The track's album 'X' as it has no track anymore.
             - The track's artist 'Linkin Park' as it has no associated track or album anymore.
         """
-        response = self.deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
+        response = self._deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(user=self.testUser, name="X").exists() == False
         assert Artist.objects.filter(user=self.testUser, name="Linkin Park").exists() == False

@@ -19,7 +19,7 @@ class TrackDeleteViewTestCase1(TrackViewTestCase):
         Deleting the track entitled 'We're All To Blame' must delete the associated file 
         '1-03 - We're All To Blame.mp3'.
         """
-        response = self.deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
+        response = self._deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(user=self.testUser, title="We're All To Blame").exists() == False
         assert self.doesUserTrackFileExist("1-03 - We're All To Blame.mp3") == False

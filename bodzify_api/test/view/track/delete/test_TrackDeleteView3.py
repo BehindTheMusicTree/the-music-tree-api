@@ -13,5 +13,5 @@ class TrackDeleteViewTestCase3(TrackViewTestCase):
         """
         Deleting the track '1-03 - We're All To Blame' should work even if the track has no file.
         """
-        response = self.deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
+        response = self._deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
         assert response.status_code == status.HTTP_204_NO_CONTENT
