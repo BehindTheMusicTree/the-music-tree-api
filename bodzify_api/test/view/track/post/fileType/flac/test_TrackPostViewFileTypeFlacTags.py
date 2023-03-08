@@ -28,3 +28,16 @@ class TrackPostViewTestCaseFileTypeFlacTags(TrackViewTestCase):
         assert track.rating == 6
         assert track.language == "French"
         assert track.fileExtension == ".flac"
+
+
+    """
+    - Flac file with no tag.
+    - The 'title' must then be set with the file's name without the extension.
+    """
+    def test_libraryTrackPost11(self):
+        self.login(self.testUser)
+
+        response = self.postSampleTrack("sample_without_tags.flac")
+        assert response.status_code == status.HTTP_201_CREATED
+        assert LibraryTrack.objects.filter(
+                user=self.testUser, title='sample_without_tags').exists()
