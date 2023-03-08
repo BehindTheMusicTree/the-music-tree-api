@@ -16,10 +16,8 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp3NoRating(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("no rating.mp3")
-        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
-        track = LibraryTrack.objects.get(uuid=trackUuid)
-        assert track.rating == None
+        self._loginAndPostSampleTrack("no rating.mp3")
+        assert self.postedTrack.rating == None
 
     """
     The uploaded mp3 track has a 1 star rating from Windows Media Player. The corresponding 
@@ -27,10 +25,8 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp31Star(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("1 star.mp3")
-        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
-        track = LibraryTrack.objects.get(uuid=trackUuid)
-        assert track.rating == 2
+        self._loginAndPostSampleTrack("1 star.mp3")
+        assert self.postedTrack.rating == 2
     
 
     """
@@ -39,10 +35,8 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp32Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("2 stars.mp3")
-        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
-        track = LibraryTrack.objects.get(uuid=trackUuid)
-        assert track.rating == 4
+        self._loginAndPostSampleTrack("2 stars.mp3")
+        assert self.postedTrack.rating == 4
     
 
     """
@@ -51,10 +45,8 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp33Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("3 stars.mp3")
-        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
-        track = LibraryTrack.objects.get(uuid=trackUuid)
-        assert track.rating == 6
+        response = self._loginAndPostSampleTrack("3 stars.mp3")
+        assert self.postedTrack.rating == 6
 
     """
     The uploaded mp3 track has a 4 stars rating set from Windows Media Player. The corresponding 
@@ -62,10 +54,8 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp34Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("4 stars.mp3")
-        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
-        track = LibraryTrack.objects.get(uuid=trackUuid)
-        assert track.rating == 8
+        self._loginAndPostSampleTrack("4 stars.mp3")
+        assert self.postedTrack.rating == 8
 
     """
     The uploaded mp3 track has a 5 stars rating set from Windows Media Player. The corresponding 
@@ -73,7 +63,5 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp35Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("5 stars.mp3")
-        trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
-        track = LibraryTrack.objects.get(uuid=trackUuid)
-        assert track.rating == 10
+        self._loginAndPostSampleTrack("5 stars.mp3")
+        assert self.postedTrack.rating == 10

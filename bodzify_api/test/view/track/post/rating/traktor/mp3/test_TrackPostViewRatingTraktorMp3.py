@@ -16,7 +16,7 @@ class TrackPostViewTestCaseRatingTraktorMp3(TrackViewTestCase):
     """
     def test_trackPostRatingTraktorMp3NoRating(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("no rating.mp3")
+        response = self._loginAndPostSampleTrack("no rating.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == None
@@ -27,7 +27,7 @@ class TrackPostViewTestCaseRatingTraktorMp3(TrackViewTestCase):
     """
     def test_trackPostRatingTraktorMp31Star(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("1 star.mp3")
+        response = self._loginAndPostSampleTrack("1 star.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 2
@@ -39,7 +39,7 @@ class TrackPostViewTestCaseRatingTraktorMp3(TrackViewTestCase):
     """
     def test_trackPostRatingTraktorMp32Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("2 stars.mp3")
+        response = self._loginAndPostSampleTrack("2 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 4
@@ -51,7 +51,7 @@ class TrackPostViewTestCaseRatingTraktorMp3(TrackViewTestCase):
     """
     def test_trackPostRatingTraktorMp33Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("3 stars.mp3")
+        response = self._loginAndPostSampleTrack("3 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 6
@@ -62,7 +62,7 @@ class TrackPostViewTestCaseRatingTraktorMp3(TrackViewTestCase):
     """
     def test_trackPostRatingTraktorMp34Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("4 stars.mp3")
+        response = self._loginAndPostSampleTrack("4 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 8
@@ -73,7 +73,7 @@ class TrackPostViewTestCaseRatingTraktorMp3(TrackViewTestCase):
     """
     def test_trackPostRatingTraktorMp35Stars(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("5 stars.mp3")
+        response = self._loginAndPostSampleTrack("5 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 10

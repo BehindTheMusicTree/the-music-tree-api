@@ -17,7 +17,7 @@ class TrackPostViewTestCaseRatingWinampFlac(TrackViewTestCase):
     """
     def test_trackPostRatingWinampFlacNoRating(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("no rating.flac")
+        response = self._loginAndPostSampleTrack("no rating.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == None
@@ -29,7 +29,7 @@ class TrackPostViewTestCaseRatingWinampFlac(TrackViewTestCase):
     """
     def test_trackPostRatingWinampFlac1Star(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("1 star.flac")
+        response = self._loginAndPostSampleTrack("1 star.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 2
@@ -41,7 +41,7 @@ class TrackPostViewTestCaseRatingWinampFlac(TrackViewTestCase):
     """
     def test_trackPostRatingWinampFlac2Stars(self):       
         self.login(self.testUser)
-        response = self.postSampleTrack("2 stars.flac")
+        response = self._loginAndPostSampleTrack("2 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 4
@@ -53,7 +53,7 @@ class TrackPostViewTestCaseRatingWinampFlac(TrackViewTestCase):
     """
     def test_trackPostRatingWinampFlac3Stars(self):       
         self.login(self.testUser)
-        response = self.postSampleTrack("3 stars.flac")
+        response = self._loginAndPostSampleTrack("3 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 6
@@ -65,7 +65,7 @@ class TrackPostViewTestCaseRatingWinampFlac(TrackViewTestCase):
     """
     def test_trackPostRatingWinampFlac4Stars(self):       
         self.login(self.testUser)
-        response = self.postSampleTrack("4 stars.flac")
+        response = self._loginAndPostSampleTrack("4 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 8
@@ -77,7 +77,7 @@ class TrackPostViewTestCaseRatingWinampFlac(TrackViewTestCase):
     """
     def test_trackPostRatingWinampFlac5Stars(self):       
         self.login(self.testUser)
-        response = self.postSampleTrack("5 stars.flac")
+        response = self._loginAndPostSampleTrack("5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 10
