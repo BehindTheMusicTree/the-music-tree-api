@@ -1,19 +1,5 @@
 [
     {
-        "model": "bodzify_api.ratingsource",
-        "pk": 1,
-        "fields": {
-            "label": "none",
-            "labelInRatingTag": "",
-            "noRating": null,
-            "zeroStarRating": 0,
-            "oneStarRating": 51,
-            "twoStarsRating": 102,
-            "threeStarsRating": 153,
-            "fourStarsRating": 204        
-        }
-    },
-    {
         "model": "bodzify_api.criteriatype",
         "pk": 0,
         "fields": {
