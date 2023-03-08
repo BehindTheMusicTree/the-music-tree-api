@@ -15,7 +15,6 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be None.
     """
     def test_trackPostRatingWinampMp3NoRating(self):
-        print('no rating')
         self.login(self.testUser)
         response = self.postSampleTrack("no rating.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -27,7 +26,6 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 2.
     """
     def test_trackPostRatingWinampMp31Star(self):
-        print('1 star')
         self.login(self.testUser)
         response = self.postSampleTrack("1 star.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -40,7 +38,6 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 4.
     """
     def test_trackPostRatingWinampMp32Stars(self):       
-        print('2 star')
         self.login(self.testUser)
         response = self.postSampleTrack("2 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -53,7 +50,6 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 6.
     """
     def test_trackPostRatingWinampMp33Stars(self):       
-        print('3 star')
         self.login(self.testUser)
         response = self.postSampleTrack("3 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -66,7 +62,6 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 8.
     """
     def test_trackPostRatingWinampMp34Stars(self):       
-        print('4 star')
         self.login(self.testUser)
         response = self.postSampleTrack("4 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -79,7 +74,6 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 10.
     """
     def test_trackPostRatingWinampMp35Stars(self):       
-        print('5 star')
         self.login(self.testUser)
         response = self.postSampleTrack("5 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]

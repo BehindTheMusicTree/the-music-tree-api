@@ -16,7 +16,6 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     value in the app must then be None.
     """
     def test_trackPostRatingWmpFlacNoRating(self):     
-        print('no rating')
         self.login(self.testUser)
         response = self.postSampleTrack("no rating.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -28,7 +27,6 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     value in the app must then be 2.
     """
     def test_trackPostRatingWmpFlac1Star(self):     
-        print('1 star')
         self.login(self.testUser)
         response = self.postSampleTrack("1 star.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -41,7 +39,6 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     value in the app must then be 4.
     """
     def test_trackPostRatingWmpFlac2Stars(self):  
-        print('2 star')
         self.login(self.testUser)
         response = self.postSampleTrack("2 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -54,7 +51,6 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     value in the app must then be 6.
     """
     def test_trackPostRatingWmpFlac3Stars(self):  
-        print('3 star')
         self.login(self.testUser)
         response = self.postSampleTrack("3 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -66,7 +62,6 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     value in the app must then be 8.
     """
     def test_trackPostRatingWmpFlac4Stars(self):  
-        print('4 star')
         self.login(self.testUser)
         response = self.postSampleTrack("4 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -78,7 +73,6 @@ class TrackPostViewTestCaseRatingWmpFlac(TrackViewTestCase):
     value in the app must then be 10.
     """
     def test_trackPostRatingWmpFlac5Stars(self):  
-        print('5 star')
         self.login(self.testUser)
         response = self.postSampleTrack("5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
