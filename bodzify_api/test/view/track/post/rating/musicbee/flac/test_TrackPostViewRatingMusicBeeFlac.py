@@ -16,7 +16,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be None.
     """
     def test_trackPostRatingMusicBeeFlacNoRating(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("no rating.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -28,7 +28,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 0.
     """
     def test_trackPostRatingMusicBeeFlac0Star(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("no star.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -40,7 +40,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 1.
     """
     def test_trackPostRatingMusicBeeFlacHalfStar(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("0 5 star.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -52,7 +52,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 2.
     """
     def test_trackPostRatingMusicBeeFlac1Star(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("1 star.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -64,7 +64,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 3.
     """
     def test_trackPostRatingMusicBeeFlac1AndHalfStar(self):        
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("1 5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -76,7 +76,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 4.
     """
     def test_trackPostRatingMusicBeeFlac2Stars(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("2 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -88,7 +88,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 5.
     """
     def test_trackPostRatingMusicBeeFlac2AndHalfStar(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("2 5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -100,7 +100,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 6.
     """
     def test_trackPostRatingMusicBeeFlac3Stars(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("3 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -112,7 +112,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 7.
     """
     def test_trackPostRatingMusicBeeFlac3AndHalfStar(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("3 5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -124,7 +124,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 8.
     """
     def test_trackPostRatingMusicBeeFlac4Stars(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("4 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -136,7 +136,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 9.
     """
     def test_trackPostRatingMusicBeeFlac4AndHalfStar(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("4 5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -148,7 +148,7 @@ class TrackPostViewTestCaseRatingMusicBeeFlac(TrackViewTestCase):
     value in the app must then be 10.
     """
     def test_trackPostRatingMusicBeeFlac5Stars(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)

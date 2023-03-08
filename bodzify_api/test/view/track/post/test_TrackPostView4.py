@@ -18,7 +18,7 @@ class TrackPostViewTestCase4(TrackViewTestCase):
     - No artist.
     """
     def test_libraryTrackPost4(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         response = self._loginAndPostSampleTrack("Eminem_Without_Me_sans_genre.mp3")
         assert response.status_code == status.HTTP_201_CREATED

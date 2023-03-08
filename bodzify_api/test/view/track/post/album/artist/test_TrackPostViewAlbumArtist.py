@@ -13,7 +13,6 @@ class TrackPostViewTestCaseAlbumArtist(TrackViewTestCase):
     - Non existing album artists "Jacky" and "Michelle".
     """
     def test_trackPostAlbumArtistNonExisting(self):
-        self.login(self.testUser)
         self._loginAndPostSampleTrack("sample with tags.wav")
         assert self.postedTrack.album.albumArtists.count() == 2
         assert self.postedTrack.album.albumArtists.filter(

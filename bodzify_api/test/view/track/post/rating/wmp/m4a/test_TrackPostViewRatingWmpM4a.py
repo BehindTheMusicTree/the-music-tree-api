@@ -15,7 +15,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     value in the app must then be None.
     """
     def test_trackPostRatingWmpMp3NoRating(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         self._loginAndPostSampleTrack("no rating.mp3")
         assert self.postedTrack.rating == None
 
@@ -24,7 +24,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     value in the app must then be 2.
     """
     def test_trackPostRatingWmpMp31Star(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         self._loginAndPostSampleTrack("1 star.mp3")
         assert self.postedTrack.rating == 2
     
@@ -34,7 +34,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     value in the app must then be 4.
     """
     def test_trackPostRatingWmpMp32Stars(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         self._loginAndPostSampleTrack("2 stars.mp3")
         assert self.postedTrack.rating == 4
     
@@ -44,7 +44,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     value in the app must then be 6.
     """
     def test_trackPostRatingWmpMp33Stars(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         self._loginAndPostSampleTrack("3 stars.mp3")
         assert self.postedTrack.rating == 6
 
@@ -53,7 +53,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     value in the app must then be 8.
     """
     def test_trackPostRatingWmpMp34Stars(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         self._loginAndPostSampleTrack("4 stars.mp3")
         assert self.postedTrack.rating == 8
 
@@ -62,6 +62,6 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     value in the app must then be 10.
     """
     def test_trackPostRatingWmpMp35Stars(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         self._loginAndPostSampleTrack("5 stars.mp3")
         assert self.postedTrack.rating == 10

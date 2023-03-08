@@ -11,6 +11,6 @@ class TrackDownloadViewTestCase1(TrackViewTestCase):
     The requested track's file doesn't exist. The returned status must be "410 GONE".
     """
     def test_libraryTrackDownload1FileNotExisting(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._downloadTrack(trackUuid="36nS4LVDssLh4BvTdlbJEK")
         assert response.status_code == status.HTTP_410_GONE

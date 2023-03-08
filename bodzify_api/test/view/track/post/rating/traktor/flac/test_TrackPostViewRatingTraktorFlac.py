@@ -15,7 +15,7 @@ class TrackPostViewTestCaseRatingTraktorFlac(TrackViewTestCase):
     value in the app must then be None.
     """
     def test_trackPostRatingTraktorFlacNoRating(self):   
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("no rating.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -27,7 +27,7 @@ class TrackPostViewTestCaseRatingTraktorFlac(TrackViewTestCase):
     value in the app must then be 2.
     """
     def test_trackPostRatingTraktorFlac1Star(self):     
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("1 star.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -39,7 +39,7 @@ class TrackPostViewTestCaseRatingTraktorFlac(TrackViewTestCase):
     value in the app must then be 4.
     """
     def test_trackPostRatingTraktorFlac2Stars(self):  
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("2 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -51,7 +51,7 @@ class TrackPostViewTestCaseRatingTraktorFlac(TrackViewTestCase):
     value in the app must then be 6.
     """
     def test_trackPostRatingTraktorFlac3Stars(self):  
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("3 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -63,7 +63,7 @@ class TrackPostViewTestCaseRatingTraktorFlac(TrackViewTestCase):
     value in the app must then be 8.
     """
     def test_trackPostRatingTraktorFlac4Stars(self):  
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("4 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -75,7 +75,7 @@ class TrackPostViewTestCaseRatingTraktorFlac(TrackViewTestCase):
     value in the app must then be 10.
     """
     def test_trackPostRatingTraktorFlac5Stars(self):  
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("5 stars.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)

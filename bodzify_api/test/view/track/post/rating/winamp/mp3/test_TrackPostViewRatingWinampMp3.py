@@ -15,7 +15,7 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be None.
     """
     def test_trackPostRatingWinampMp3NoRating(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("no rating.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -26,7 +26,7 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 2.
     """
     def test_trackPostRatingWinampMp31Star(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("1 star.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -38,7 +38,7 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 4.
     """
     def test_trackPostRatingWinampMp32Stars(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("2 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -50,7 +50,7 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 6.
     """
     def test_trackPostRatingWinampMp33Stars(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("3 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -62,7 +62,7 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 8.
     """
     def test_trackPostRatingWinampMp34Stars(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("4 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
@@ -74,7 +74,7 @@ class TrackPostViewTestCaseRatingWinampMp3(TrackViewTestCase):
     value in the app must then be 10.
     """
     def test_trackPostRatingWinampMp35Stars(self):       
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._loginAndPostSampleTrack("5 stars.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
