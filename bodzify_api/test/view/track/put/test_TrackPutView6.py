@@ -31,7 +31,6 @@ class TrackPutViewTestCase6(TrackViewTestCase):
         response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBc48766YH", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(user=self.testUser, uuid="dyFYZTP3anyaUBc48766YH")
-        print(Album.objects.filter(user=self.testUser, name='Birds').count())
         assert Album.objects.filter(user=self.testUser, name='Birds').count() == 1
         assert Album.objects.filter(
             user=self.testUser, uuid='Lsji85mqisjdjf88MLKJY').exists() == False
