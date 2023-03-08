@@ -132,12 +132,12 @@ def GetMetadataDictFromFile(file, appRatingMaxValue: int):
     if fileExtensionLowered in [".wav", ".mp3"]:
         fileTags = MutagenFile(file)
         title = _getTitleTagFromId3File(fileTags)
-        artistName = _getArtistNameTagFromMutagenFile(fileTags)
-        albumName = _getAlbumNameTagFromMutagenFile(fileTags)
-        albumArtistsNameString = _getalbumArtistsNametringTagFromMutagenFile(fileTags)
-        genreName = _getGenreNameTagFromMutagenFile(fileTags)
+        artistName = _getArtistNameTagFromId3File(fileTags)
+        albumName = _getAlbumNameTagFromId3File(fileTags)
+        albumArtistsNameString = _getalbumArtistsNametringTagFromId3File(fileTags)
+        genreName = _getGenreNameTagFromId3File(fileTags)
         rating = _getEventuallyNormalizedRatingValueFromId3File(fileTags, appRatingMaxValue) 
-        language = _getLanguageTagFromMutagenFile(fileTags) 
+        language = _getLanguageTagFromId3File(fileTags) 
 
     elif fileExtension.lower() == ".flac":
         fileTags = FLAC(fileobj=file)
@@ -171,21 +171,21 @@ def _getTitleTagFromId3File(id3FileTags: MutagenFile):
     return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.TITLE)
 
 
-def _getArtistNameTagFromMutagenFile(id3FileTags: MutagenFile):
+def _getArtistNameTagFromId3File(id3FileTags: MutagenFile):
     return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.ARTIST_NAME)
 
 
-def _getAlbumNameTagFromMutagenFile(id3FileTags: MutagenFile):
+def _getAlbumNameTagFromId3File(id3FileTags: MutagenFile):
     return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.ALBUM_NAME)
 
 
-def _getalbumArtistsNametringTagFromMutagenFile(id3FileTags: MutagenFile):
+def _getalbumArtistsNametringTagFromId3File(id3FileTags: MutagenFile):
     albumArtistsNameStringRaw = (
             _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.ALBUM_ARTISTS_NAMES))
     return albumArtistsNameStringRaw.strip()
 
 
-def _getGenreNameTagFromMutagenFile(id3FileTags: MutagenFile):
+def _getGenreNameTagFromId3File(id3FileTags: MutagenFile):
     if ID3_TEXT_FRAMES.GENRE_NAME in id3FileTags:
         return id3FileTags[ID3_TEXT_FRAMES.GENRE_NAME][0]
     else:
@@ -246,7 +246,7 @@ def _getEventuallyNormalizedRatingValueFromFlacFile(
                 normalizedRatingMaxValue=normalizedRatingMaxValue)
     
     
-def _getLanguageTagFromMutagenFile(id3FileTags: MutagenFile):
+def _getLanguageTagFromId3File(id3FileTags: MutagenFile):
     return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.LANGUAGE)
 
 
@@ -265,7 +265,7 @@ def _getAlbumNameTagFromFlacFile(flacFileTags: FLAC):
 def _getalbumArtistsNametringTagFromFlacFile(flacFileTags: FLAC):
     albumArtistsNameStringRaw = (
             _getFirstValueIfExistsOrEmptyString(
-                    flacFileTags, VORBIS_TAG_KEYS.ALBUM_NAME))
+                    flacFileTags, VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES))
     return albumArtistsNameStringRaw.strip()
 
 
@@ -285,20 +285,20 @@ def _getSpecificMetadataFromId3File(
     if metadataKey == METADATA_DICT_KEYS.TITLE:
         return _getTitleTagFromId3File(id3FileTags)
     elif metadataKey == METADATA_DICT_KEYS.ARTIST_NAME:
-        return _getArtistNameTagFromMutagenFile(id3FileTags)
+        return _getArtistNameTagFromId3File(id3FileTags)
     elif metadataKey == METADATA_DICT_KEYS.ALBUM_NAME:
-        return _getAlbumNameTagFromMutagenFile(id3FileTags)
+        return _getAlbumNameTagFromId3File(id3FileTags)
     elif metadataKey == METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES:
-        return _getalbumArtistsNametringTagFromMutagenFile(id3FileTags)
+        return _getalbumArtistsNametringTagFromId3File(id3FileTags)
     elif metadataKey == METADATA_DICT_KEYS.GENRE_NAME:
-        return _getGenreNameTagFromMutagenFile(id3FileTags)
+        return _getGenreNameTagFromId3File(id3FileTags)
     elif metadataKey == METADATA_DICT_KEYS.DURATION:
         return _getDurationFromFileTags(id3FileTags)
     elif metadataKey == METADATA_DICT_KEYS.RATING:
         return _getEventuallyNormalizedRatingValueFromId3File(
                 id3FileTags, normalizedRatingMaxValue)
     elif metadataKey == METADATA_DICT_KEYS.LANGUAGE:
-        return _getLanguageTagFromMutagenFile(id3FileTags)
+        return _getLanguageTagFromId3File(id3FileTags)
 
 
 def _getSpecificMetadataFromFlacFile(
