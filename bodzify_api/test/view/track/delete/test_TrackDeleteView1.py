@@ -13,7 +13,7 @@ class TrackDeleteViewTestCase1(TrackViewTestCase):
 
 
     def test_libraryTrackDelete1(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         """
         Deleting the track entitled 'We're All To Blame' must delete the associated file 

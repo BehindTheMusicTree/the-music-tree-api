@@ -10,7 +10,7 @@ class TrackDeleteViewTestCase2(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackDeleteData2']
 
     def test_libraryTrackDelete2(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         """
         Deleting the track '1-03 - We're All To Blame' must also delete : 

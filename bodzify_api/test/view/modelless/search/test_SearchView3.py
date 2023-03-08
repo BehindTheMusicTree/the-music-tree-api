@@ -12,7 +12,7 @@ class SearchViewTestCase3(SearchViewTestCase):
         - the "US rap" playlist.
     """
     def test_search3(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         responseJson = self.search("Rap").json()
         results = responseJson['results']

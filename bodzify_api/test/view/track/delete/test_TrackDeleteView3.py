@@ -8,7 +8,7 @@ class TrackDeleteViewTestCase3(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackDeleteData3']
 
     def test_libraryTrackDelete3(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         """
         Deleting the track '1-03 - We're All To Blame' should work even if the track has no file.

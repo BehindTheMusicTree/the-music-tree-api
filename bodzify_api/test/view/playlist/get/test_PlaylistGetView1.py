@@ -13,7 +13,7 @@ class PlaylistGetViewTestCase1(PlaylistViewTestCase):
     instead of the name of the criteria.
     """
     def test_playlistGet1(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self.get(playlistUuid=Playlist.objects.get(
                 user=self.testUser, customName="Daddy's rock").uuid)
         assert response.json()['name'] == "Daddy's rock"

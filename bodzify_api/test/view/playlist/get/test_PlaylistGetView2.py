@@ -13,7 +13,7 @@ class PlaylistGetViewTestCase1(PlaylistViewTestCase):
     the playlist is the name of the criteria.
     """
     def test_playlistGet1(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self.get(
                 playlistUuid=Playlist.objects.get(user=self.testUser, criteria__name="Rock").uuid)
         assert response.json()['name'] == "Rock"
