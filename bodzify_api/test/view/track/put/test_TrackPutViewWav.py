@@ -26,7 +26,7 @@ class TrackPutViewTestCaseWav(TrackViewTestCase):
             "genreName": "Techno",
             "language": "French"
         }
-        response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)
+        response = self._putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(title="Bohemian Raphsody")
         assert track.artist.name == "Queen"
@@ -63,7 +63,7 @@ class TrackPutViewTestCaseWav(TrackViewTestCase):
             "genreName": "Nu metal",
             "language": "French"
         }
-        response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYKKKDJ", data=data)
+        response = self._putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYKKKDJ", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(title="Bohemian Raphsody")
         assert track.artist_id == None

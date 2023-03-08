@@ -34,7 +34,7 @@ class TrackPutViewTestCaseFileMp3(TrackViewTestCase):
             "rating": 10, # max value
             "language": "Peruvian"
         }
-        response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="36nS4LVDssLh4BvTARbJEK")
         trackMetadata = AudioMetadataService.GetMetadataDictFromFile(track)
@@ -74,7 +74,7 @@ class TrackPutViewTestCaseFileMp3(TrackViewTestCase):
             "rating": 10, # max value
             "language": "Peruvian"
         }
-        response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="36nS4LVDssLh4BvTAKKKKO")
         trackMetadata = AudioMetadataService.GetMetadataDictFromFile(track)

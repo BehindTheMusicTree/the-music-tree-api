@@ -16,5 +16,5 @@ class TrackPutViewTestCaseExtraField(TrackViewTestCase):
             "title": "Somewhere I Belong",
             "nonExistingField": "oifjqoif",
         }
-        response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

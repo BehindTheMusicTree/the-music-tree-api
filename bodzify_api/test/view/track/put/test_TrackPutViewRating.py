@@ -16,7 +16,7 @@ class TrackPutViewTestCase8(TrackViewTestCase):
         data = {
             "rating": 11,
         }
-        response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -29,7 +29,7 @@ class TrackPutViewTestCase8(TrackViewTestCase):
         data = {
             "rating": -1,
         }
-        response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -42,5 +42,5 @@ class TrackPutViewTestCase8(TrackViewTestCase):
         data = {
             "rating": 5.5,
         }
-        response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

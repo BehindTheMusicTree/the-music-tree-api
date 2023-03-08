@@ -28,7 +28,7 @@ class TrackPutViewTestCase6(TrackViewTestCase):
             "albumName": "Birds",
             "albumArtistsName": "Joris Michel, Moço",
         }
-        response = self.putSampleTrack(trackUuid="dyFYZTP3anyaUBc48766YH", data=data)
+        response = self._putSampleTrack(trackUuid="dyFYZTP3anyaUBc48766YH", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(user=self.testUser, uuid="dyFYZTP3anyaUBc48766YH")
         assert Album.objects.filter(user=self.testUser, name='Birds').count() == 1
