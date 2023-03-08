@@ -53,7 +53,11 @@ class RATING_FILE_PROFILE:
     BASE_100 = '100'
     
 BASE_255_RATING_STAR_VALUES = [0, 13, 1, 54, 64, 118, 128, 186, 196, 242, 255]
+BASE_255_PROPORTIONAL_RATING_STAR_VALUES = [
+        None, None, 51, None, 102, None, 153, None, 204, None, 255]
 BASE_100_RATING_STAR_VALUES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+
+TRAKTOR_RATING_TAG_MAIL = 'traktor@native-instruments.de'
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE = """The duration key has a value in the 
@@ -187,43 +191,51 @@ def _getGenreNameTagFromMutagenFile(id3FileTags: MutagenFile):
         return ""
 
 
-def _getEventuallyNormalizedRatingFromFileValue(fileRating: int, normalizedRatingMaxValue: int=None):
-    if fileRating is not None:
+def _getEventuallyNormalizedRatingFromFileValue(
+    fileRatingValue: int, fileRatingEmail: str=None, normalizedRatingMaxValue: int=None):
+    if fileRatingValue is not None:
         if normalizedRatingMaxValue is not None:
+            if fileRatingValue == 0 and fileRatingEmail == TRAKTOR_RATING_TAG_MAIL:
+                return None
             for starRatingBase10 in range(11):
-                if fileRating in [BASE_255_RATING_STAR_VALUES[starRatingBase10], BASE_100_RATING_STAR_VALUES[starRatingBase10]]:
+                if fileRatingValue in [
+                    BASE_255_RATING_STAR_VALUES[starRatingBase10], 
+                    BASE_255_PROPORTIONAL_RATING_STAR_VALUES[starRatingBase10], 
+                    BASE_100_RATING_STAR_VALUES[starRatingBase10]]:
                     return int(starRatingBase10 * normalizedRatingMaxValue / 10)
-            raise ValueError("Rating value not handled: " + str(fileRating))
+            raise ValueError("Rating value not handled: " + str(fileRatingValue))
         else:
-            return fileRating
+            return fileRatingValue
     else:
         return None
    
 
 def _getEventuallyNormalizedRatingValueFromId3File(
-        id3FileTags: MutagenFile, appRatingMaxValue: int=None):
-    fileRating = None
+        id3FileTags: MutagenFile, normalizedRatingMaxValue: int=None):
+    fileRatingValue = None
     pprint.pp(id3FileTags.tags.getall('POPM'))
     for key in id3FileTags:
         if ID3_TEXT_FRAMES.RATING in key:
-            fileRating = id3FileTags[key].rating
-            
-    if fileRating is None:
+            fileRatingTag = id3FileTags[key]
+            fileRatingEmail = fileRatingTag.email
+            fileRatingValue = fileRatingTag.rating            
+    if fileRatingValue is None:
         return None
     else:
         return _getEventuallyNormalizedRatingFromFileValue(
-                fileRating=fileRating, normalizedRatingMaxValue=appRatingMaxValue)
+                fileRatingValue=fileRatingValue, 
+                fileRatingEmail=fileRatingEmail, 
+                normalizedRatingMaxValue=normalizedRatingMaxValue)
 
 
 def _getEventuallyNormalizedRatingValueFromFlacFile(
         flacFileTags: FLAC, normalizedRatingMaxValue: int=None):
     fileRating = _getFirstValueIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.RATING)
-    print(fileRating)
     if fileRating is None or fileRating == "":
         return None
     else:
         return _getEventuallyNormalizedRatingFromFileValue(
-                fileRating=fileRating, normalizedRatingMaxValue=normalizedRatingMaxValue)
+                fileRatingValue=fileRating, normalizedRatingMaxValue=normalizedRatingMaxValue)
     
     
 def _getLanguageTagFromMutagenFile(id3FileTags: MutagenFile):
