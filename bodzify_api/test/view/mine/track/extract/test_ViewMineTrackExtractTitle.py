@@ -15,7 +15,7 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
     of 20 characters.
     """
     def test_mineTrackExtractTitleMissing(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         trackUrl = ("https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
         + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE_KN414JidBi"
@@ -35,7 +35,7 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
     of 20 characters. Here "MartijnSchmit-VacsInTheMorning".
     """
     def test_mineTrackExtractTitleMissing(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         trackUrl = ("https://ia801408.us.archive.org/31/items/martijn-schmit-vacs-in-the-"
                 + "morning/MartijnSchmit-VacsInTheMorning.mp3")

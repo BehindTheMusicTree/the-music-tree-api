@@ -12,7 +12,7 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
     Extract a Wav file.
     """
     def test_mineTrackExtractTitleMissing(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         trackUrl = ("https://hypeddit-gates-prod.s3.amazonaws.com/o7idvi_main?response-content-typ"
                 + "e=application%2Foctet-stream&response-content-disposition=attachment%3B%20f"

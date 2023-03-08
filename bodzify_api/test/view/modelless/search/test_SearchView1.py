@@ -12,7 +12,7 @@ class SearchViewTestCase1(SearchViewTestCase):
      - the "J'ai le Sum" album.
     """
     def test_search1(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         responseJson = self.search("Sum").json()
         assert responseJson['overall_total'] == 3
         results = responseJson['results']

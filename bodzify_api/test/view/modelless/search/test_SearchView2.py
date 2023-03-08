@@ -11,7 +11,7 @@ class SearchViewTestCase2(SearchViewTestCase):
      - the "We're All To Blame" track.
     """
     def test_search2(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         responseJson = self.search("All").json()
         results = responseJson['results']

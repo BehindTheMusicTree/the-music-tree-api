@@ -12,7 +12,7 @@ class MineTrackExtractViewTestUrl(MineTrackExtractViewTestCase):
     Trying to extract a track from a wrong url should fail with a 400 (bad request).
     """
     def test_mineTrackExtrackUrlWrong(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         trackUrl = ("https://wrong-url_OIJOIEFHPOEIHFEPOFIHEOFIH.mp3")
         data = {

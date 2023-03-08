@@ -25,7 +25,7 @@ class MineTrackExtractViewTestCaseUsual(MineTrackExtractViewTestCase):
     - the extracted file should be stored in the test user's library.
     """
     def test_mineTrackExtrackUsual(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         trackUrl = ("https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
         + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE_KN414JidBi"
