@@ -13,7 +13,7 @@ TEST_USERNAME = "test_django"
 
 class ViewTestCase(TestCase):
 
-    sampleDirectoryRelativePath=""
+    sampleDirectoryRelativePath = ""
 
     def _setUpTestUserDirectories(self):
         testUserLibraryAbsolutePath = (

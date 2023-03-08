@@ -25,7 +25,7 @@ class TrackPutViewTestCase1(TrackViewTestCase):
             "albumArtistsName": "Garou",
             "rating": 200,
         }
-        response = self.putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(title="Somewhere I Belong")
         assert track.artist.name == "Linkin Park"

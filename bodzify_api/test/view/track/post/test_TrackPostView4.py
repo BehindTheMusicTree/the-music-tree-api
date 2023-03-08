@@ -2,7 +2,6 @@
 import pytest
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
 
@@ -21,16 +20,16 @@ class TrackPostViewTestCase4(TrackViewTestCase):
     def test_libraryTrackPost4(self):
         self.login(self.testUser)
 
-        response = self.postSampleTrack("Eminem_Without_Me_sans_genre.mp3")
+        response = self._loginAndPostSampleTrack("Eminem_Without_Me_sans_genre.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        track = LibraryTrack.objects.get(user=self.testUser, title="Without Me")
-        assert track.artist_id is None
-        assert track.album.name == "The Eminem Show (Expanded Edition)"
-        assert track.genre.name == "Genreless"
-        assert track.fileExtension == ".mp3"
-        assert track.playlists.filter(
+        assert self.postedTrack.artist_id is None
+        assert self.postedTrack.album.name == "The Eminem Show (Expanded Edition)"
+        assert self.postedTrack.genre.name == "Genreless"
+        assert self.postedTrack.fileExtension == ".mp3"
+        assert self.postedTrack.playlists.filter(
                 user=self.testUser, criteria__name=CriteriaSpecialNames.GENRE_GENRELESS).exists()
-        assert track.playlists.filter(
+        assert self.postedTrack.playlists.filter(
                 user=self.testUser, criteria__name=CriteriaSpecialNames.GENRE_ALL).exists()
-        assert track.album.albumArtists.filter(user=self.testUser, name="Eminem").exists()
-        assert track.album.albumArtists.filter(user=self.testUser, name="Dad").exists()
+        assert self.postedTrack.album.albumArtists.filter(
+                        user=self.testUser, name="Eminem").exists()
+        assert self.postedTrack.album.albumArtists.filter(user=self.testUser, name="Dad").exists()
