@@ -11,6 +11,6 @@ class TrackDownloadViewTestCase2(TrackViewTestCase):
     The requested track's file exists. The returned status must be "200 OK".
     """
     def test_libraryTrackDownload2FileExisting(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self._downloadTrack(trackUuid="lyluyfvluyluycutc")
         assert response.status_code == status.HTTP_200_OK

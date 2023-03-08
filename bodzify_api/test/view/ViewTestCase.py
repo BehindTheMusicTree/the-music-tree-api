@@ -40,10 +40,10 @@ class ViewTestCase(TestCase):
         self._setUpTestUserDirectories()
         if self.sampleDirectoryRelativePath != "":
             self._copySamplesToTestUserLibraryIfNecessary()
-        self.login(self.testUser)
+        self._login(self.testUser)
         return super().setUp()
 
-    def login(self, user):
+    def _login(self, user):
         self.apiClient.force_authenticate(user=user)
         access = AccessToken.for_user(user)
         self.apiClient.credentials(HTTP_AUTHORIZATION='Bearer {access}')

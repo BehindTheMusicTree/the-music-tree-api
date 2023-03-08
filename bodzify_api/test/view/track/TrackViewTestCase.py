@@ -10,10 +10,10 @@ class TrackViewTestCase(ViewTestCase):
     postedTrack = None
 
     def _loginAndPostSampleTrack(self, sampleFileName=None, dataJson=None):
-        self.login(self.testUser)
+        self._login(self.testUser)
         if sampleFileName is None:
             return self.apiClient.post(
-                path=reverse('librarytrack-list'), data={'file': None})
+                path=reverse('librarytrack-list'), data={'file': ''})
         with open(self.sampleDirectoryAbsolutePath + sampleFileName, "rb") as sampleFile:
             fileJson = {'file': sampleFile}
             if dataJson is not None:
@@ -25,6 +25,7 @@ class TrackViewTestCase(ViewTestCase):
             if response.status_code == status.HTTP_201_CREATED:
                 trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
                 self.postedTrack = LibraryTrack.objects.get(uuid=trackUuid)
+            return response
                 
 
     def _putSampleTrack(self, trackUuid, data):
