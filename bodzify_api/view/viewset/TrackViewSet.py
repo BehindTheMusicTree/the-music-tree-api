@@ -139,7 +139,7 @@ class TrackViewSet(MultiSerializerViewSet):
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
                 data=TrackDetailedSerializer(track).data,
-                status=status.HTTP_200_OK,
+                status=status.HTTP_201_CREATED,
                 headers=headers)
 
 
