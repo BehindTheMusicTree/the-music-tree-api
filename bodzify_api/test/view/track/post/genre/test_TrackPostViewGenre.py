@@ -16,6 +16,6 @@ class TrackPostViewTestCaseGenre(TrackViewTestCase):
     """
     def test_libraryTrackPostGenreNonExisting(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("genre_foo_non_existing.mp3")
+        response = self.postSampleTrack("genre_non_existing.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert Criteria.objects.filter(user=self.testUser, name="Foo").exists()
