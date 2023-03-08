@@ -36,6 +36,7 @@ class VORBIS_TAG_KEYS:
     ALBUM_ARTISTS_NAMES = 'albumartist'
     GENRE_NAME = 'genre'
     RATING = 'rating'
+    RATING_TRAKTOR = 'rating wmp'
     LANGUAGE = 'language'
     
 class METADATA_DICT_KEYS:
@@ -192,10 +193,10 @@ def _getGenreNameTagFromMutagenFile(id3FileTags: MutagenFile):
 
 
 def _getEventuallyNormalizedRatingFromFileValue(
-    fileRatingValue: int, fileRatingEmail: str=None, normalizedRatingMaxValue: int=None):
+    fileRatingValue: int, isRatingFromTraktor: bool=False, normalizedRatingMaxValue: int=None):
     if fileRatingValue is not None:
         if normalizedRatingMaxValue is not None:
-            if fileRatingValue == 0 and fileRatingEmail == TRAKTOR_RATING_TAG_MAIL:
+            if fileRatingValue == 0 and isRatingFromTraktor:
                 return None
             for starRatingBase10 in range(11):
                 if fileRatingValue in [
@@ -213,7 +214,6 @@ def _getEventuallyNormalizedRatingFromFileValue(
 def _getEventuallyNormalizedRatingValueFromId3File(
         id3FileTags: MutagenFile, normalizedRatingMaxValue: int=None):
     fileRatingValue = None
-    pprint.pp(id3FileTags.tags.getall('POPM'))
     for key in id3FileTags:
         if ID3_TEXT_FRAMES.RATING in key:
             fileRatingTag = id3FileTags[key]
@@ -224,18 +224,26 @@ def _getEventuallyNormalizedRatingValueFromId3File(
     else:
         return _getEventuallyNormalizedRatingFromFileValue(
                 fileRatingValue=fileRatingValue, 
-                fileRatingEmail=fileRatingEmail, 
+                isRatingFromTraktor=(fileRatingEmail == TRAKTOR_RATING_TAG_MAIL), 
                 normalizedRatingMaxValue=normalizedRatingMaxValue)
 
 
 def _getEventuallyNormalizedRatingValueFromFlacFile(
         flacFileTags: FLAC, normalizedRatingMaxValue: int=None):
     fileRating = _getFirstValueIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.RATING)
+    isRatingFromTraktor = False
+    if fileRating is None:
+        fileRating = _getFirstValueIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.RATING_TRAKTOR)
+        if fileRating is not None:
+            isRatingFromTraktor = True
+        
     if fileRating is None or fileRating == "":
         return None
     else:
         return _getEventuallyNormalizedRatingFromFileValue(
-                fileRatingValue=fileRating, normalizedRatingMaxValue=normalizedRatingMaxValue)
+                fileRatingValue=fileRating, 
+                isRatingFromTraktor=isRatingFromTraktor,
+                normalizedRatingMaxValue=normalizedRatingMaxValue)
     
     
 def _getLanguageTagFromMutagenFile(id3FileTags: MutagenFile):
@@ -335,10 +343,10 @@ def _getId3FileTagsUpdatedIfTagValueSpecified(
             id3Key = ID3_TEXT_FRAMES.GENRE_NAME
             textFrameClass = TCON
         elif updateMetadataKey == METADATA_DICT_KEYS.RATING:
-            appRating = updateMetadataDict[METADATA_DICT_KEYS.RATING]
-            if appRating is not None:
+            normalizedRating = updateMetadataDict[METADATA_DICT_KEYS.RATING]
+            if normalizedRating is not None:
                 id3Rating = _getFileRatingFromNormalizedValue(
-                        normalizedRating=appRating, 
+                        normalizedRating=normalizedRating, 
                         normalizedRatingMaxValue=normalizedRatingMaxValue, 
                         ratingFileProfile=RATING_FILE_PROFILE.BASE_255)
                 id3FileTags.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3Rating))
