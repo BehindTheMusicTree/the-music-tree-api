@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-import pprint
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPostSchemaSerializer
@@ -66,19 +65,20 @@ def _getSaveDataFromFile(user:User, file):
     saveData[LibraryTrack.ATTRIBUTE_USER_LABEL] = user.id
     saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = file
 
-    title = metadata[AudioMetadataService.METADATA_DICT_TITLE_KEY]
+    title = metadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE]
     if title == "" or title is None:
         title, fileExtension = os.path.splitext(file.name)
     saveData[LibraryTrack.ATTRIBUTE_TITLE_LABEL] = title
     
-    artistName = metadata[AudioMetadataService.METADATA_DICT_ARTIST_NAME_KEY]
+    artistName = metadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME]
     if artistName is not None and artistName != "":
-        artist = ArtistService.GetArtistFromNameAfterEventualCreation(user=user, artistName=artistName)
+        artist = ArtistService.GetArtistFromNameAfterEventualCreation(
+                user=user, artistName=artistName)
         saveData[LibraryTrack.ATTRIBUTE_ARTIST_LABEL] = artist.uuid
     
-    albumName = metadata[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY]
+    albumName = metadata[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME]
     if albumName is not None and albumName != "":
-        albumArtistsNameKey = AudioMetadataService.METADATA_DICT_ALBUM_ARTISTS_NAME_STRING_KEY
+        albumArtistsNameKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
         albumArtistsNameString = metadata[albumArtistsNameKey]
         if albumArtistsNameString == "":
             albumArtistsNameList = None
@@ -88,7 +88,7 @@ def _getSaveDataFromFile(user:User, file):
                 user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
         saveData[LibraryTrack.ATTRIBUTE_ALBUM_LABEL] = album.uuid
     
-    genreName = metadata[AudioMetadataService.METADATA_DICT_GENRE_NAME_KEY]
+    genreName = metadata[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME]
     if genreName == "" or genreName is None:
         genreName = CriteriaSpecialNames.GENRE_GENRELESS
     genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
@@ -96,11 +96,11 @@ def _getSaveDataFromFile(user:User, file):
     saveData[LibraryTrack.ATTRIBUTE_GENRE_LABEL] = genre.uuid
 
     saveData[LibraryTrack.ATTRIBUTE_DURATION_LABEL] = (
-            metadata[AudioMetadataService.METADATA_DICT_DURATION_KEY])
+            metadata[AudioMetadataService.METADATA_DICT_KEYS.DURATION])
     saveData[LibraryTrack.ATTRIBUTE_RATING_LABEL] = (
-            metadata[AudioMetadataService.METADATA_DICT_RATING_KEY])
+            metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING])
     saveData[LibraryTrack.ATTRIBUTE_LANGUAGE_LABEL] = (
-            metadata[AudioMetadataService.METADATA_DICT_LANGUAGE_KEY])
+            metadata[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE])
     return saveData
 
 
@@ -168,13 +168,13 @@ def _updateTagsIfFileExists(track: LibraryTrack):
     titleTag = track.title
     if titleTag is None:
         metadataUpdateDict = ""
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_TITLE_KEY] = titleTag
+    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.TITLE] = titleTag
     
     if track.artist_id is not None:
         artistNameTag = track.artist.name
     else:
         artistNameTag = ""
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_ARTIST_NAME_KEY] = artistNameTag
+    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] = artistNameTag
     
     albumArtistsTag = ""
     if track.album_id is not None:
@@ -192,25 +192,25 @@ def _updateTagsIfFileExists(track: LibraryTrack):
         
     if albumNameTag is None:
         albumNameTag = ""
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY] = albumNameTag
+    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] = albumNameTag
 
     if track.genre.name is CriteriaSpecialNames.GENRE_GENRELESS:
         genreNameTag = ""
     else:
         genreNameTag = track.genre.name
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_GENRE_NAME_KEY] = genreNameTag
+    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] = genreNameTag
 
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_RATING_KEY] = track.rating
+    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.RATING] = track.rating
 
     languageTag = track.language
     if languageTag is None:
         languageTag = ""
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_LANGUAGE_KEY] = languageTag
+    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] = languageTag
 
     AudioMetadataService.Update(
             file=track.file, 
             metadataUpdateDict=metadataUpdateDict, 
-            appRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
+            normalizedRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
 
 
 def _getArtistsNameListFromString(namesString: str) -> list:
