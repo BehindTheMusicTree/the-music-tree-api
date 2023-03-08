@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import pytest
 from rest_framework import status
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
@@ -11,23 +10,21 @@ class TrackPostViewTestCaseFileTypeFlacTags(TrackViewTestCase):
     fixtures = ['initial_data', 'TestUserData']
     sampleDirectoryRelativePath = "test/view/track/post/sample/fileType/flac/sample/"
 
+
     """
     FLAC file with all tags.
     """
     def test_trackPostFileTypeFlacTagsAll(self):
-        self.login(self.testUser)
-
-        response = self.postSampleTrack("1-08 - Luz De Luna.flac")
+        response = self._loginAndPostSampleTrack("1-08 - Luz De Luna.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        track = LibraryTrack.objects.get(user=self.testUser, title="Luz De Luna")
-        assert track.artist.name == "PNL"
-        assert track.album.name == "Dans La Légende"
-        assert track.album.albumArtists.filter(user=self.testUser, name="PNL").exists()
-        assert track.genre.name == "French cloud rap"
-        assert track.playlists.filter(user=self.testUser, criteria__name="French cloud rap").exists()
-        assert track.rating == 6
-        assert track.language == "French"
-        assert track.fileExtension == ".flac"
+        assert self.postedTrack.artist.name == "PNL"
+        assert self.postedTrack.album.name == "Dans La Légende"
+        assert self.postedTrack.album.albumArtists.filter(user=self.testUser, name="PNL").exists()
+        assert self.postedTrack.genre.name == "French cloud rap"
+        assert self.postedTrack.playlists.filter(user=self.testUser, criteria__name="French cloud rap").exists()
+        assert self.postedTrack.rating == 6
+        assert self.postedTrack.language == "French"
+        assert self.postedTrack.fileExtension == ".flac"
 
 
     """
@@ -35,9 +32,6 @@ class TrackPostViewTestCaseFileTypeFlacTags(TrackViewTestCase):
     - The 'title' must then be set with the file's name without the extension.
     """
     def test_libraryTrackPost11(self):
-        self.login(self.testUser)
-
-        response = self.postSampleTrack("sample_without_tags.flac")
+        response = self._loginAndPostSampleTrack("sample_without_tags.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert LibraryTrack.objects.filter(
-                user=self.testUser, title='sample_without_tags').exists()
+        assert self.postedTrack.exists()

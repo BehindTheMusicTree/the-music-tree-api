@@ -17,6 +17,6 @@ class TrackPostViewTestCaseMp3(TrackViewTestCase):
     """
     def test_libraryTrackPostMp3WithAllTags(self):
         self.login(self.testUser)
-        response = self.postSampleTrack("with_all_tags.mp3")
+        response = self._loginAndPostSampleTrack("with_all_tags.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         # TODO: test all file tags

@@ -2,7 +2,6 @@
 import pytest
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 @pytest.mark.django_db
@@ -12,22 +11,31 @@ class TrackPostViewTestCaseFileTagsWav(TrackViewTestCase):
     sampleDirectoryRelativePath = "test/view/track/post/sample/fileType/wav/sample/"
 
     """
-    - WAV file with all tags;
+    - Wav file with all tags;
     - Existing artist "BOOM";
     - Non existing album artists "Jacky" and "Michelle".
     """
     def test_trackPostFileTypeWavTagsAll(self):
-        self.login(self.testUser)
-        response = self.postSampleTrack("sample with tags.wav")
+        response = self._loginAndPostSampleTrack("sample with tags.wav")
         assert response.status_code == status.HTTP_201_CREATED
-        track = LibraryTrack.objects.get(user=self.testUser, title="La zumba")
-        assert track.artist.name == "Joni"
-        assert track.album.name == "BOOM"
-        assert track.album.albumArtists.filter(user=self.testUser, name="Jacky").exists()
-        assert track.album.albumArtists.filter(user=self.testUser, name="Michelle").exists()
-        assert track.genre.name == "j\"\"\"\"j"
-        assert track.duration == 2.665374149659864
-        assert track.rating == 8
-        assert track.language == "French"
-        assert track.fileExtension == ".wav"
-        assert track.playlists.filter(user=self.testUser, criteria__name="j\"\"\"\"j").exists()
+        assert self.postedTrack.artist.name == "Joni"
+        assert self.postedTrack.album.name == "BOOM"
+        assert self.postedTrack.album.albumArtists.filter(
+                user=self.testUser, name="Jacky").exists()
+        assert self.postedTrack.album.albumArtists.filter(
+                user=self.testUser, name="Michelle").exists()
+        assert self.postedTrack.genre.name == "j\"\"\"\"j"
+        assert self.postedTrack.duration == 2.665374149659864
+        assert self.postedTrack.rating == 8
+        assert self.postedTrack.language == "French"
+        assert self.postedTrack.fileExtension == ".wav"
+        assert self.postedTrack.playlists.filter(
+                user=self.testUser, criteria__name="j\"\"\"\"j").exists()
+
+
+    """
+    - Wav file with no tag.
+    """
+    def test_trackPostFileTypeWavTagsNone(self):
+        response = self._loginAndPostSampleTrack("sample_without_tags.wav")
+        assert response.status_code == status.HTTP_201_CREATED
