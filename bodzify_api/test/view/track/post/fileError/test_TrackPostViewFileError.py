@@ -12,7 +12,7 @@ from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 class TrackPostViewTestCase1(TrackViewTestCase):
 
         fixtures = ['initial_data', 'TestUserData']
-        sampleDirectoryRelativePath = "test/view/track/post/sample/FileError/"
+        sampleDirectoryRelativePath = "test/view/track/post/fileError/sample/"
 
         """
         The request should fail with 400 (bad request) because the file is missing.

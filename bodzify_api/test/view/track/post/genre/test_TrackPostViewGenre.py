@@ -12,7 +12,7 @@ from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 class TrackPostViewTestCaseGenre(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
-    sampleDirectoryRelativePath = "test/view/track/post/sample/GenreNonExisting/"
+    sampleDirectoryRelativePath = "test/view/track/post/genre/sample/"
 
     """
     Genre 'foo' non existing. The track must be in two playlists: the one linked
