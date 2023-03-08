@@ -10,7 +10,7 @@ class ArtistDeleteViewTestCase1(ArtistViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewArtistDeleteData1']
 
     def test_artistDelete1(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         # Artist with one track
         response = self.delete(artistUuid="Lsji85mqisjdjf885DHD65")

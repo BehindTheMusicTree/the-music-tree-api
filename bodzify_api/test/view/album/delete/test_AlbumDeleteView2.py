@@ -10,7 +10,7 @@ class AlbumDeleteViewTestCase2(AlbumViewTestCase):
     fixtures = ['initial_data', 'TestUserData', 'TestViewAlbumDeleteData2']
 
     def test_albumDelete2(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         """
         The album "Black Holes And Revelation" has:

@@ -19,7 +19,7 @@ class ArtistDeleteViewTestCase2(ArtistViewTestCase):
         - artist 'Coco Roùa' as it has nor album nor track linked anymore.
     """
     def test_artistDelete2(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
         response = self.delete(Artist.objects.get(user=self.testUser, name='Bertrand').uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(user=self.testUser, title='A Life').exists() == False

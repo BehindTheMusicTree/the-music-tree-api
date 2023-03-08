@@ -11,7 +11,7 @@ class AlbumDeleteViewTestCase1(AlbumViewTestCase):
     sampleDirectoryRelativePath = "test/view/album/delete/sample/1/"
 
     def test_albumDelete1(self):
-        self.login(self.testUser)
+        self._login(self.testUser)
 
         """
         The album "Black Holes And Revelation" has two tracks "Assassin" and "Starlight" (with 
