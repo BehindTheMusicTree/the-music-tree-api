@@ -15,7 +15,6 @@ class TrackPostViewTestCaseRatingTraktorMp3(TrackViewTestCase):
     value in the app must then be None.
     """
     def test_trackPostRatingTraktorMp3NoRating(self):
-        print('no rating')
         self.login(self.testUser)
         response = self.postSampleTrack("no rating.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
@@ -27,7 +26,6 @@ class TrackPostViewTestCaseRatingTraktorMp3(TrackViewTestCase):
     value in the app must then be 2.
     """
     def test_trackPostRatingTraktorMp31Star(self):
-        print('1 star')
         self.login(self.testUser)
         response = self.postSampleTrack("1 star.mp3")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
