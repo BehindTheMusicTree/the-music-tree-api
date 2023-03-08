@@ -14,7 +14,7 @@ class TrackPostViewTestCaseRatingTraktorFlac(TrackViewTestCase):
     The uploaded flac track has a no rating from Traktor. The corresponding 
     value in the app must then be None.
     """
-    def test_trackPostRatingTraktorFlacNoRating(self):     
+    def test_trackPostRatingTraktorFlacNoRating(self):   
         self.login(self.testUser)
         response = self.postSampleTrack("no rating.flac")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
