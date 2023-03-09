@@ -52,14 +52,14 @@ def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack=None):
     savedTrack = saveSerializer.save()
 
     _addTrackToGenresPlaylists(savedTrack)
-    _updateTagsIfFileExists(savedTrack)
+    _updateFileTagsIfFileExists(savedTrack)
 
     return savedTrack
 
 
 def _getSaveDataFromFile(user:User, file):
     metadata = AudioMetadataService.GetMetadataDictFromFile(
-            file=file, appRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
+            file=file, normalizedRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
 
     saveData = dict()
     saveData[LibraryTrack.ATTRIBUTE_USER_LABEL] = user.id
@@ -159,7 +159,7 @@ def _getSaveMutableDataWithGenreUuidIfSetInRequest(
     return saveMutableData
 
 
-def _updateTagsIfFileExists(track: LibraryTrack):
+def _updateFileTagsIfFileExists(track: LibraryTrack):
     if track.fileExists == False:
         return
     
