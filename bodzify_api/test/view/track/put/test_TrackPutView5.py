@@ -22,7 +22,7 @@ class TrackPutViewTestCase5(TrackViewTestCase):
             "albumName": "Hello",
             "albumArtistsName": "Robert De Niro",
         }
-        response = self._putSampleTrack(trackUuid="dyFYZTP3anyaUBcSSSSSSS", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="dyFYZTP3anyaUBcSSSSSSS", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBcSSSSSSS")
         assert track.artist.name == "Robert De Niro"

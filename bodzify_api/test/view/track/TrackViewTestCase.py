@@ -7,10 +7,15 @@ from bodzify_api.test.view.ViewTestCase import ViewTestCase
 
 class TrackViewTestCase(ViewTestCase):
     
-    postedTrack = None
+    savedTrack = None
+
 
     def _loginAndPostSampleTrack(self, sampleFileName=None, dataJson=None):
         self._login(self.testUser)
+        return self._postSampleTrack(sampleFileName, dataJson)
+    
+    
+    def _postSampleTrack(self, sampleFileName=None, dataJson=None):
         if sampleFileName is None:
             return self.apiClient.post(
                 path=reverse('librarytrack-list'), data={'file': ''})
@@ -24,19 +29,33 @@ class TrackViewTestCase(ViewTestCase):
                 path=reverse('librarytrack-list'), data=data)
             if response.status_code == status.HTTP_201_CREATED:
                 trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
-                self.postedTrack = LibraryTrack.objects.get(uuid=trackUuid)
+                self.savedTrack = LibraryTrack.objects.get(uuid=trackUuid)
             return response
+        
+        
+    def _putSampleTrack(self, trackUuid, data):
+        response = self.apiClient.put(
+            path=reverse('librarytrack-detail', kwargs={'pk': trackUuid}), 
+            data=data,
+            format='json')
+        if response.status_code == status.HTTP_200_OK:
+            trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
+            self.savedTrack = LibraryTrack.objects.get(uuid=trackUuid)
+        return response
                 
 
-    def _putSampleTrack(self, trackUuid, data):
-        return self.apiClient.put(
-            path=reverse('librarytrack-detail', kwargs={'pk': trackUuid}), data=data)
+    def _loginAndPutSampleTrack(self, trackUuid, data):
+        self._login(self.testUser)
+        return self._putSampleTrack(trackUuid, data)
+
 
     def _downloadTrack(self, trackUuid):
         return self.apiClient.get(path=reverse('librarytrack-download', kwargs={'pk':trackUuid}))
 
+
     def _deleteTrack(self, trackUuid):        
         return self.apiClient.delete(path=reverse('librarytrack-detail', kwargs={'pk':trackUuid}))
+
 
     def _mergeTwoJsons(self, json1, json2):
         json1.update(json2)

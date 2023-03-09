@@ -26,7 +26,7 @@ class TrackPutViewTestCaseWav(TrackViewTestCase):
             "genreName": "Techno",
             "language": "French"
         }
-        response = self._putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="dyFYZTP3anyaUBcLYVHJ3A", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(title="Bohemian Raphsody")
         assert track.artist.name == "Queen"
@@ -39,7 +39,7 @@ class TrackPutViewTestCaseWav(TrackViewTestCase):
     
     """
     Update:
-        - on a wav file entitled "La Zumba";
+    On a wav file entitled "La Zumba":
      - the former artist "Joni", not having any track related left, must be deleted;
         - the new artist specified is empty so no artist;
         - same album's name "American Idiot" as an existing one but with an album 
@@ -63,7 +63,7 @@ class TrackPutViewTestCaseWav(TrackViewTestCase):
             "genreName": "Nu metal",
             "language": "French"
         }
-        response = self._putSampleTrack(trackUuid="dyFYZTP3anyaUBcLYKKKDJ", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="dyFYZTP3anyaUBcLYKKKDJ", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(title="Bohemian Raphsody")
         assert track.artist_id == None

@@ -31,7 +31,7 @@ class TrackPutViewTestCase2(TrackViewTestCase):
             "rating": 0,
             "language": "English, German"
         }
-        response = self._putSampleTrack(trackUuid="36nS4LVDoihoihvTARbJEK", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDoihoihvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(title="Give Me Novocain")
         assert track.artist.name == "Green Day"

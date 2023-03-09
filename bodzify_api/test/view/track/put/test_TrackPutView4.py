@@ -26,7 +26,7 @@ class TrackPutViewTestCase4(TrackViewTestCase):
             "rating": 255,
             "language": "French12ééù12"
         }
-        response = self._putSampleTrack(trackUuid="dyFYZTP3anyaUBcLDDDDDS", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="dyFYZTP3anyaUBcLDDDDDS", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="dyFYZTP3anyaUBcLDDDDDS")
         assert track.title == "Tricky"
