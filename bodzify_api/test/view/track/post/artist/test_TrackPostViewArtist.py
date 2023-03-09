@@ -14,4 +14,4 @@ class TrackPostViewTestCaseArtist(TrackViewTestCase):
     """
     def test_libraryTrackPostArtistExisting(self):
         self._loginAndPostSampleTrack("1-08 - Luz De Luna.flac")
-        assert self.postedTrack.artist.name == "PNL"
+        assert self.savedTrack.artist.name == "PNL"

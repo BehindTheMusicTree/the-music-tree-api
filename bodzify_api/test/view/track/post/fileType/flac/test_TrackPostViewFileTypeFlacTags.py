@@ -17,14 +17,14 @@ class TrackPostViewTestCaseFileTypeFlacTags(TrackViewTestCase):
     def test_trackPostFileTypeFlacTagsAll(self):
         response = self._loginAndPostSampleTrack("1-08 - Luz De Luna.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.postedTrack.artist.name == "PNL"
-        assert self.postedTrack.album.name == "Dans La Légende"
-        assert self.postedTrack.album.albumArtists.filter(user=self.testUser, name="PNL").exists()
-        assert self.postedTrack.genre.name == "French cloud rap"
-        assert self.postedTrack.playlists.filter(user=self.testUser, criteria__name="French cloud rap").exists()
-        assert self.postedTrack.rating == 6
-        assert self.postedTrack.language == "French"
-        assert self.postedTrack.fileExtension == ".flac"
+        assert self.savedTrack.artist.name == "PNL"
+        assert self.savedTrack.album.name == "Dans La Légende"
+        assert self.savedTrack.album.albumArtists.filter(user=self.testUser, name="PNL").exists()
+        assert self.savedTrack.genre.name == "French cloud rap"
+        assert self.savedTrack.playlists.filter(user=self.testUser, criteria__name="French cloud rap").exists()
+        assert self.savedTrack.rating == 6
+        assert self.savedTrack.language == "French"
+        assert self.savedTrack.fileExtension == ".flac"
 
 
     """
@@ -34,4 +34,4 @@ class TrackPostViewTestCaseFileTypeFlacTags(TrackViewTestCase):
     def test_libraryTrackPost11(self):
         response = self._loginAndPostSampleTrack("sample_without_tags.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.postedTrack.exists()
+        assert self.savedTrack.exists()

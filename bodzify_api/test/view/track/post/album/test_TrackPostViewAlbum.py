@@ -17,7 +17,7 @@ class TrackPostViewTestCaseAlbum(TrackViewTestCase):
     def test_libraryTrackPostAlbumNonExisting(self):
         response = self._loginAndPostSampleTrack("1-08 - Luz De Luna.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.postedTrack.album.name == "Dans La Légende"
-        assert self.postedTrack.album.albumArtists.filter(user=self.testUser, name="PNL").exists()
-        assert self.postedTrack.album.albumArtists.filter(
+        assert self.savedTrack.album.name == "Dans La Légende"
+        assert self.savedTrack.album.albumArtists.filter(user=self.testUser, name="PNL").exists()
+        assert self.savedTrack.album.albumArtists.filter(
                 user=self.testUser, name="Triste").exists()
