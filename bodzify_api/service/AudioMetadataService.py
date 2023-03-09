@@ -81,7 +81,7 @@ def Update(file, metadataUpdateDict: dict, normalizedRatingMaxValue: int):
             if metadataDictKey == METADATA_DICT_KEYS.DURATION:
                 raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
-                fileTags = _getId3FileTagsUpdatedIfTagValueSpecified(
+                fileTags = _getId3FileTagsUpdatedWithMetadataValue(
                         id3FileTags=fileTags, 
                         updateMetadataDict=metadataUpdateDict, 
                         updateMetadataKey=metadataDictKey,
@@ -117,7 +117,7 @@ def GetSpecificMetadataFromFile(file, metadataKey: str):
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
         
 
-def GetMetadataDictFromFile(file, appRatingMaxValue: int):
+def GetMetadataDictFromFile(file, normalizedRatingMaxValue: int=None):
     filename, fileExtension = os.path.splitext(file.name)
 
     title = ""
@@ -136,7 +136,7 @@ def GetMetadataDictFromFile(file, appRatingMaxValue: int):
         albumName = _getAlbumNameTagFromId3File(fileTags)
         albumArtistsNameString = _getalbumArtistsNametringTagFromId3File(fileTags)
         genreName = _getGenreNameTagFromId3File(fileTags)
-        rating = _getEventuallyNormalizedRatingValueFromId3File(fileTags, appRatingMaxValue) 
+        rating = _getEventuallyNormalizedRatingValueFromId3File(fileTags, normalizedRatingMaxValue) 
         language = _getLanguageTagFromId3File(fileTags) 
 
     elif fileExtension.lower() == ".flac":
@@ -146,7 +146,7 @@ def GetMetadataDictFromFile(file, appRatingMaxValue: int):
         albumName = _getAlbumNameTagFromFlacFile(fileTags)
         albumArtistsNameString = _getalbumArtistsNametringTagFromFlacFile(fileTags)
         genreName = _getGenreNameTagFromFlacFile(fileTags)
-        rating = _getEventuallyNormalizedRatingValueFromFlacFile(fileTags, appRatingMaxValue) 
+        rating = _getEventuallyNormalizedRatingValueFromFlacFile(fileTags, normalizedRatingMaxValue) 
         language = _getLanguageTagFromFlacFile(fileTags)
     else:
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
@@ -193,7 +193,7 @@ def _getGenreNameTagFromId3File(id3FileTags: MutagenFile):
 
 
 def _getEventuallyNormalizedRatingFromFileValue(
-    fileRatingValue: int, isRatingFromTraktor: bool=False, normalizedRatingMaxValue: int=None):
+    fileRatingValue: int, normalizedRatingMaxValue: int, isRatingFromTraktor: bool=False):
     if fileRatingValue is not None:
         if normalizedRatingMaxValue is not None:
             if fileRatingValue == 0 and isRatingFromTraktor:
@@ -212,7 +212,7 @@ def _getEventuallyNormalizedRatingFromFileValue(
    
 
 def _getEventuallyNormalizedRatingValueFromId3File(
-        id3FileTags: MutagenFile, normalizedRatingMaxValue: int=None):
+        id3FileTags: MutagenFile, normalizedRatingMaxValue: int):
     fileRatingValue = None
     for key in id3FileTags:
         if ID3_TEXT_FRAMES.RATING in key:
@@ -316,54 +316,56 @@ def _getSpecificMetadataFromFlacFile(
     elif metadataKey == METADATA_DICT_KEYS.DURATION:
         return _getDurationFromFileTags(flacFileTags)
     elif metadataKey == METADATA_DICT_KEYS.RATING:
-        return _getEventuallyNormalizedRatingValueFromFlacFile(flacFileTags, normalizedRatingMaxValue)
+        return _getEventuallyNormalizedRatingValueFromFlacFile(
+                flacFileTags, normalizedRatingMaxValue)
     elif metadataKey == METADATA_DICT_KEYS.LANGUAGE:
         return _getLanguageTagFromFlacFile(flacFileTags)
 
 
-def _getId3FileTagsUpdatedIfTagValueSpecified(
+def _getId3FileTagsUpdatedWithMetadataValue(
         id3FileTags: ID3, 
         updateMetadataDict: dict, 
         updateMetadataKey: str, 
         normalizedRatingMaxValue: int):
-    if updateMetadataKey in updateMetadataDict:
-        if updateMetadataKey == METADATA_DICT_KEYS.TITLE:
-            id3Key = ID3_TEXT_FRAMES.TITLE
-            textFrameClass = TIT2
-        elif updateMetadataKey == METADATA_DICT_KEYS.ARTIST_NAME:
-            id3Key = ID3_TEXT_FRAMES.ARTIST_NAME
-            textFrameClass = TPE1
-        elif updateMetadataKey == METADATA_DICT_KEYS.ALBUM_NAME:
-            id3Key = ID3_TEXT_FRAMES.ALBUM_NAME
-            textFrameClass = TALB
-        elif updateMetadataKey == METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES:
-            id3Key = ID3_TEXT_FRAMES.ALBUM_ARTISTS_NAMES
-            textFrameClass = TPE2
-        elif updateMetadataKey == METADATA_DICT_KEYS.GENRE_NAME:
-            id3Key = ID3_TEXT_FRAMES.GENRE_NAME
-            textFrameClass = TCON
-        elif updateMetadataKey == METADATA_DICT_KEYS.RATING:
-            normalizedRating = updateMetadataDict[METADATA_DICT_KEYS.RATING]
-            if normalizedRating is not None:
-                id3Rating = _getFileRatingFromNormalizedValue(
-                        normalizedRating=normalizedRating, 
-                        normalizedRatingMaxValue=normalizedRatingMaxValue, 
-                        ratingFileProfile=RATING_FILE_PROFILE.BASE_255)
-                id3FileTags.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3Rating))
-            return id3FileTags
-        elif updateMetadataKey == METADATA_DICT_KEYS.LANGUAGE:
-            id3Key = ID3_TEXT_FRAMES.LANGUAGE
-            textFrameClass = TLAN
-        else:
-            raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
-        
-        id3FileTags.delall(id3Key)
-        id3FileTags.add(textFrameClass(encoding=3, text=updateMetadataDict[updateMetadataKey]))
+    if updateMetadataKey == METADATA_DICT_KEYS.TITLE:
+        id3Key = ID3_TEXT_FRAMES.TITLE
+        textFrameClass = TIT2
+    elif updateMetadataKey == METADATA_DICT_KEYS.ARTIST_NAME:
+        id3Key = ID3_TEXT_FRAMES.ARTIST_NAME
+        textFrameClass = TPE1
+    elif updateMetadataKey == METADATA_DICT_KEYS.ALBUM_NAME:
+        id3Key = ID3_TEXT_FRAMES.ALBUM_NAME
+        textFrameClass = TALB
+    elif updateMetadataKey == METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES:
+        id3Key = ID3_TEXT_FRAMES.ALBUM_ARTISTS_NAMES
+        textFrameClass = TPE2
+    elif updateMetadataKey == METADATA_DICT_KEYS.GENRE_NAME:
+        id3Key = ID3_TEXT_FRAMES.GENRE_NAME
+        textFrameClass = TCON
+    elif updateMetadataKey == METADATA_DICT_KEYS.RATING:
+        normalizedRating = updateMetadataDict[METADATA_DICT_KEYS.RATING]
+        id3FileTags.delall(ID3_TEXT_FRAMES.RATING)
+        if normalizedRating is not None:
+            id3Rating = _getFileRatingFromNormalizedValue(
+                    normalizedRating=normalizedRating, 
+                    normalizedRatingMaxValue=normalizedRatingMaxValue, 
+                    ratingFileProfile=RATING_FILE_PROFILE.BASE_255)
+            id3FileTags.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3Rating))
+        return id3FileTags
+    elif updateMetadataKey == METADATA_DICT_KEYS.LANGUAGE:
+        id3Key = ID3_TEXT_FRAMES.LANGUAGE
+        textFrameClass = TLAN
+    else:
+        raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
+    
+    id3FileTags.delall(id3Key)
+    id3FileTags.add(textFrameClass(encoding=3, text=updateMetadataDict[updateMetadataKey]))
 
     return id3FileTags
 
 
-def _getFileRatingFromNormalizedValue(normalizedRating: int, normalizedRatingMaxValue: int, ratingFileProfile: str):
+def _getFileRatingFromNormalizedValue(
+        normalizedRating: int, normalizedRatingMaxValue: int, ratingFileProfile: str):
     starRatingBase10 = (int)((normalizedRating * 10)/normalizedRatingMaxValue)
     if ratingFileProfile == RATING_FILE_PROFILE.BASE_255:
         return BASE_255_RATING_STAR_VALUES[starRatingBase10]
@@ -372,7 +374,10 @@ def _getFileRatingFromNormalizedValue(normalizedRating: int, normalizedRatingMax
     
 
 def _getFlacFileTagsUpdatedIfValueSpecified(
-        flacFile: FLAC, metadataUpdateDict: dict, metadataDictKey: str, normalizedRatingMaxValue: int):
+        flacFile: FLAC, 
+        metadataUpdateDict: dict, 
+        metadataDictKey: str, 
+        normalizedRatingMaxValue: int):
     if metadataDictKey in metadataUpdateDict:
         if metadataDictKey == METADATA_DICT_KEYS.TITLE:
             vorbisTagKey = VORBIS_TAG_KEYS.TITLE
