@@ -7,8 +7,8 @@ import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 class TrackPutViewTestCaseWavTags(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataFileWav']
-    sampleDirectoryRelativePath = "test/view/track/put/sample/FileWav/"
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataFileTypeWav']
+    sampleDirectoryRelativePath = "test/view/track/put/fileType/wav/sample/"
 
     """
     On a wav file with uuid "36nS4LVDssLh4BvTARbJEK".
@@ -23,7 +23,7 @@ class TrackPutViewTestCaseWavTags(TrackViewTestCase):
      - language.
     Thus the corresponding tags in the wav file should be updated.
     """
-    def test_trackPutFileWavWhenPreviousHadNoTag(self):
+    def test_trackPutFileTypeWavTagsWhenPreviousHadNoTag(self):
 
         data = {
             "title": "Somewhere I Belong",
@@ -34,20 +34,25 @@ class TrackPutViewTestCaseWavTags(TrackViewTestCase):
             "rating": 10, # max value
             "language": "Peruvian"
         }
-        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="36nS4LVDssLh4BvTARbJEK")
         trackMetadata = AudioMetadataService.GetMetadataDictFromFile(track)
         assert track.title == "Somewhere I Belong"
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_TITLE_KEY] == "Somewhere I Belong"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE] == "Somewhere I Belong"
         assert track.artist.name == "Linkin Park"
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_ARTIST_NAME_KEY] == "Linkin Park"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] == "Linkin Park"
         assert track.album.name == "Meteora"
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY] == "Meteora"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] == "Meteora"
+        assert track.album.name.albumArtists[0] == "Garou"
+        assert trackMetadata[
+                AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] == "Garou"
         assert track.genre.name == "Rap"
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_GENRE_NAME_KEY] == "Rap"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] == "Rap"
         assert track.rating == 10
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_RATING_KEY] == 255 # max wav rating
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 255 # max id3 files
+        assert track.language == "Peruvian"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] == "Peruvian"
         
 
 
@@ -63,7 +68,7 @@ class TrackPutViewTestCaseWavTags(TrackViewTestCase):
      - language.
     Thus the corresponding tags in the wav file should be updated.
     """
-    def test_trackPutFileWavWhenPreviousHadAllTags(self):
+    def test_trackPutFileTypeWavTagsWhenPreviousHadAllTags(self):
 
         data = {
             "title": "Somewhere I Belong",
@@ -74,17 +79,22 @@ class TrackPutViewTestCaseWavTags(TrackViewTestCase):
             "rating": 10, # max value
             "language": "Peruvian"
         }
-        response = self._putSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         track = LibraryTrack.objects.get(uuid="36nS4LVDssLh4BvTAKKKKO")
         trackMetadata = AudioMetadataService.GetMetadataDictFromFile(track)
         assert track.title == "Somewhere I Belong"
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_TITLE_KEY] == "Somewhere I Belong"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE] == "Somewhere I Belong"
         assert track.artist.name == "Linkin Park"
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_ARTIST_NAME_KEY] == "Linkin Park"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] == "Linkin Park"
         assert track.album.name == "Meteora"
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_ALBUM_NAME_KEY] == "Meteora"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] == "Meteora"
+        assert track.album.name.albumArtists[0] == "Garou"
+        assert trackMetadata[
+                AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] == "Garou"
         assert track.genre.name == "Rap"
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_GENRE_NAME_KEY] == "Rap"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] == "Rap"
         assert track.rating == 10
-        assert trackMetadata[AudioMetadataService.METADATA_DICT_RATING_KEY] == 255 # max wav rating
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 255 # max id3 files
+        assert track.language == "Peruvian"
+        assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] == "Peruvian"
