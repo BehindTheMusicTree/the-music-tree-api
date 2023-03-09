@@ -17,7 +17,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     def test_trackPostRatingWmpMp3NoRating(self):
         self._login(self.testUser)
         self._loginAndPostSampleTrack("no rating.mp3")
-        assert self.postedTrack.rating == None
+        assert self.savedTrack.rating == None
 
     """
     The uploaded mp3 track has a 1 star rating from Windows Media Player. The corresponding 
@@ -26,7 +26,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     def test_trackPostRatingWmpMp31Star(self):
         self._login(self.testUser)
         self._loginAndPostSampleTrack("1 star.mp3")
-        assert self.postedTrack.rating == 2
+        assert self.savedTrack.rating == 2
     
 
     """
@@ -36,7 +36,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     def test_trackPostRatingWmpMp32Stars(self):
         self._login(self.testUser)
         self._loginAndPostSampleTrack("2 stars.mp3")
-        assert self.postedTrack.rating == 4
+        assert self.savedTrack.rating == 4
     
 
     """
@@ -46,7 +46,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     def test_trackPostRatingWmpMp33Stars(self):
         self._login(self.testUser)
         self._loginAndPostSampleTrack("3 stars.mp3")
-        assert self.postedTrack.rating == 6
+        assert self.savedTrack.rating == 6
 
     """
     The uploaded mp3 track has a 4 stars rating set from Windows Media Player. The corresponding 
@@ -55,7 +55,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     def test_trackPostRatingWmpMp34Stars(self):
         self._login(self.testUser)
         self._loginAndPostSampleTrack("4 stars.mp3")
-        assert self.postedTrack.rating == 8
+        assert self.savedTrack.rating == 8
 
     """
     The uploaded mp3 track has a 5 stars rating set from Windows Media Player. The corresponding 
@@ -64,4 +64,4 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     def test_trackPostRatingWmpMp35Stars(self):
         self._login(self.testUser)
         self._loginAndPostSampleTrack("5 stars.mp3")
-        assert self.postedTrack.rating == 10
+        assert self.savedTrack.rating == 10

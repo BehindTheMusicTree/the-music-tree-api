@@ -17,13 +17,13 @@ class TrackPostViewTestCaseFileTypeMp3Tags(TrackViewTestCase):
     def test_trackPostFileTypeMp3TagsAll(self):
         response = self._loginAndPostSampleTrack("with_all_tags.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.postedTrack.artist.name == "2Be3"
-        assert self.postedTrack.album.name == "Demain"
-        assert self.postedTrack.album.albumArtists.filter(user=self.testUser, name="2Be3").exists()
-        assert self.postedTrack.album.albumArtists.filter(user=self.testUser, name="Fillip").exists()
-        assert self.postedTrack.genre.name == "Boys band eurodance"
-        assert self.postedTrack.playlists.filter(user=self.testUser, criteria__name="Boys band eurodance").exists()
-        assert self.postedTrack.rating == 4
-        assert self.postedTrack.language == "French"
-        assert self.postedTrack.fileExtension == ".mp3"
+        assert self.savedTrack.artist.name == "2Be3"
+        assert self.savedTrack.album.name == "Demain"
+        assert self.savedTrack.album.albumArtists.filter(user=self.testUser, name="2Be3").exists()
+        assert self.savedTrack.album.albumArtists.filter(user=self.testUser, name="Fillip").exists()
+        assert self.savedTrack.genre.name == "Boys band eurodance"
+        assert self.savedTrack.playlists.filter(user=self.testUser, criteria__name="Boys band eurodance").exists()
+        assert self.savedTrack.rating == 4
+        assert self.savedTrack.language == "French"
+        assert self.savedTrack.fileExtension == ".mp3"
 

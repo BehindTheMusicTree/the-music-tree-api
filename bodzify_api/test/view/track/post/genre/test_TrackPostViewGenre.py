@@ -29,5 +29,5 @@ class TrackPostViewTestCaseGenre(TrackViewTestCase):
                 user=self.testUser, 
                 type=PlaylistTypeIds.GENRE, 
                 criteria__name="Foo")
-        assert allPlaylist in list(self.postedTrack.playlists.all())
-        assert franchCloudRapPlaylist in list(self.postedTrack.playlists.all())
+        assert allPlaylist in list(self.savedTrack.playlists.all())
+        assert franchCloudRapPlaylist in list(self.savedTrack.playlists.all())

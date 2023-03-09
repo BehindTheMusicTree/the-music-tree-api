@@ -18,18 +18,18 @@ class TrackPostViewTestCaseFileTagsWav(TrackViewTestCase):
     def test_trackPostFileTypeWavTagsAll(self):
         response = self._loginAndPostSampleTrack("sample with tags.wav")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.postedTrack.artist.name == "Joni"
-        assert self.postedTrack.album.name == "BOOM"
-        assert self.postedTrack.album.albumArtists.filter(
+        assert self.savedTrack.artist.name == "Joni"
+        assert self.savedTrack.album.name == "BOOM"
+        assert self.savedTrack.album.albumArtists.filter(
                 user=self.testUser, name="Jacky").exists()
-        assert self.postedTrack.album.albumArtists.filter(
+        assert self.savedTrack.album.albumArtists.filter(
                 user=self.testUser, name="Michelle").exists()
-        assert self.postedTrack.genre.name == "j\"\"\"\"j"
-        assert self.postedTrack.duration == 2.665374149659864
-        assert self.postedTrack.rating == 8
-        assert self.postedTrack.language == "French"
-        assert self.postedTrack.fileExtension == ".wav"
-        assert self.postedTrack.playlists.filter(
+        assert self.savedTrack.genre.name == "j\"\"\"\"j"
+        assert self.savedTrack.duration == 2.665374149659864
+        assert self.savedTrack.rating == 8
+        assert self.savedTrack.language == "French"
+        assert self.savedTrack.fileExtension == ".wav"
+        assert self.savedTrack.playlists.filter(
                 user=self.testUser, criteria__name="j\"\"\"\"j").exists()
 
 

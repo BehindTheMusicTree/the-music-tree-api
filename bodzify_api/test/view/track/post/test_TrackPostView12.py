@@ -35,5 +35,5 @@ class TrackPostViewTestCase12(TrackViewTestCase):
                 user=self.testUser, type=PlaylistTypeIds.GENRE, criteria=houseGenre).exists()
         playlist = Playlist.objects.get(
                 user=self.testUser, type=CriteriaTypesIds.GENRE, criteria=houseGenre)
-        assert self.postedTrack in list(playlist.librarytrack_set.all())
-        assert self.postedTrack.genre == houseGenre 
+        assert self.savedTrack in list(playlist.librarytrack_set.all())
+        assert self.savedTrack.genre == houseGenre 

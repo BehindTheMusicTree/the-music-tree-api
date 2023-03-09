@@ -22,14 +22,14 @@ class TrackPostViewTestCase4(TrackViewTestCase):
 
         response = self._loginAndPostSampleTrack("Eminem_Without_Me_sans_genre.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.postedTrack.artist_id is None
-        assert self.postedTrack.album.name == "The Eminem Show (Expanded Edition)"
-        assert self.postedTrack.genre.name == "Genreless"
-        assert self.postedTrack.fileExtension == ".mp3"
-        assert self.postedTrack.playlists.filter(
+        assert self.savedTrack.artist_id is None
+        assert self.savedTrack.album.name == "The Eminem Show (Expanded Edition)"
+        assert self.savedTrack.genre.name == "Genreless"
+        assert self.savedTrack.fileExtension == ".mp3"
+        assert self.savedTrack.playlists.filter(
                 user=self.testUser, criteria__name=CriteriaSpecialNames.GENRE_GENRELESS).exists()
-        assert self.postedTrack.playlists.filter(
+        assert self.savedTrack.playlists.filter(
                 user=self.testUser, criteria__name=CriteriaSpecialNames.GENRE_ALL).exists()
-        assert self.postedTrack.album.albumArtists.filter(
+        assert self.savedTrack.album.albumArtists.filter(
                         user=self.testUser, name="Eminem").exists()
-        assert self.postedTrack.album.albumArtists.filter(user=self.testUser, name="Dad").exists()
+        assert self.savedTrack.album.albumArtists.filter(user=self.testUser, name="Dad").exists()
