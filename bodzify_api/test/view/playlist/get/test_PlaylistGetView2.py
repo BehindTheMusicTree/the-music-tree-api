@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pprint
 from bodzify_api.test.view.playlist.PlaylistViewTestCase import PlaylistViewTestCase
 from bodzify_api.model.playlist.Playlist import Playlist
 
