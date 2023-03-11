@@ -9,6 +9,9 @@ from bodzify_api import settings
 from bodzify_api.serializer.InputSerializer import InputSerializer
 from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 
+ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be 
+        specified if album artists name is."""
+
 
 class TrackUpdateSchemaSerializer(InputSerializer):
     
@@ -36,3 +39,14 @@ class TrackUpdateSchemaSerializer(InputSerializer):
                 required=False, 
                 allow_null=True)
         language = serializers.CharField(max_length=100, required=False, allow_blank=True)
+
+
+        def validate(self, data):
+                if self.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL in data:
+                        if self.ATTRIBUTE_ALBUM_NAME_LABEL not in data:
+                                raise serializers.ValidationError(
+                                        ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
+                        elif data[self.ATTRIBUTE_ALBUM_NAME_LABEL] == "":
+                                raise serializers.ValidationError(
+                                        ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
+                return data

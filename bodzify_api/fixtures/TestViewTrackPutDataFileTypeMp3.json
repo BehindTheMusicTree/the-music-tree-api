@@ -4,7 +4,7 @@
         "pk": "LsjdqoqzpsdojEjGHGH",
         "fields": {
             "name": "Rap",
-            "type": 1,
+            "type": 0,
             "parent": "m5KRxi10O884BEOod9Qmjy",
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
@@ -15,7 +15,7 @@
         "pk": "qdsuhqoishcosihqoq",
         "fields": {
             "criteria": "LsjdqoqzpsdojEjGHGH",
-            "type": 1,
+            "type": 0,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4
         }
@@ -25,7 +25,7 @@
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
            "user": 4, 
-           "file": "libraries/user_4/with_no_tag.flac", 
+           "file": "libraries/user_4/with_no_tag.mp3", 
            "title": "1-03 - We're All To Blame", 
            "genre": "L1ZG85munGytJb885fgion", 
            "duration": "207.09333333333333", 
@@ -41,7 +41,7 @@
         "pk": "36nS4LVDssLh4BvTAKKKKO",
         "fields": {
            "user": 4, 
-           "file": "libraries/user_4/with_all_tags.flac", 
+           "file": "libraries/user_4/with_all_tags.mp3", 
            "title": "1-03 - We're All To Blame", 
            "genre": "L1ZG85munGytJb885fgion", 
            "duration": "207.09333333333333", 
