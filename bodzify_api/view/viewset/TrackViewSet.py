@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pprint
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.http import HttpResponse
@@ -63,13 +62,15 @@ class TrackViewSet(MultiSerializerViewSet):
         request=TrackUpdateSchemaSerializer, 
         responses=TrackDetailedSerializer,
         description=("""
-            Updates a track.\n"
-            - To not update a field, it mustn't be specified (e.g the line \"artistName\":... 
+            Updates a track:\n"
+            - to not update a field, it mustn't be specified (e.g the line \"artistName\":... 
             shouldn't exist). The only exception is the field 'albumArtistsName' (more 
             precisions below).\n
-            - To empty a field (artist or album), the field should be specified with an empty 
+            - to empty a field (artist or album), the field should be specified with an empty 
             string.\n
-            - If the album or the artist is updated, the old artist/album is checked to lookup 
+            - updating the rating will delete all the ratins from other media players like 
+            Windows Media Player or MusicBee (iTunes doesn't write rating in the files); 
+            - if the album or the artist is updated, the old artist/album is checked to lookup 
             if it is still linked to something: \n
                - for an album, if no track is linked, it is deleted;\n
                - for an artist, if no track and no album is linked, it is deleted. An artist 
@@ -78,14 +79,15 @@ class TrackViewSet(MultiSerializerViewSet):
             Bob Marley and The Wailers'. The album artists are 'Bob Marley' and 'The Wailers'. 
             The artist 'Bob Marley' is still in the library even if it has no track which has 
             the artist 'Bob Marley'.\n\n" +
-            - As two albums can share the same name (e.g from two different artists), the mean 
+            - as two albums can share the same name (e.g from two different artists), the mean 
             the system to identify an album is the peer (album'sname/album's artists'names). 
             Thus:\n" +
-               - If it already exists an album with the same name as 'albumName' but with 
+               - if it already exists an album with the same name as 'albumName' but with 
             different 'albumArtistsName', an new album is created.\n
-               - Wether the field 'albumArtistsName' is empty or not specified, it tells that 
+               - wether the field 'albumArtistsName' is empty or not specified, it tells that 
             the track's album has no artist.\n
-               - If 'albumName' is empty or missing, the 'albumArtistsName' is ignored.
+               - if 'albumName' is empty or missing and 'albumArtistsName' is specified, bodzify
+            will reject the request.
             """)
     )
     def update(self, request, *args, **kwargs):

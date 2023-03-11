@@ -179,20 +179,21 @@ def _updateFileTagsIfFileExists(track: LibraryTrack):
     albumArtistsTag = ""
     if track.album_id is not None:
         albumNameTag = track.album.name
-
-        albumArtistNamesIndex = 0
-        for albumArtist in track.album.albumArtists.all():
-            if albumArtistNamesIndex != 0:
+        albumArtistsNameIndex = 0
+        for albumArtist in list(track.album.albumArtists.all()):
+            if albumArtistsNameIndex != 0:
                 albumArtistsTag = (
                     albumArtistsTag + AudioMetadataService.TAG_ARTISTS_SEPARATION_CHAR)
             albumArtistsTag = albumArtistsTag + albumArtist.name
-            albumArtistNamesIndex = albumArtistNamesIndex + 1
+            albumArtistsNameIndex = albumArtistsNameIndex + 1
     else:
         albumNameTag = ""
         
     if albumNameTag is None:
         albumNameTag = ""
     metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] = albumNameTag
+    albumArtistsNameKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
+    metadataUpdateDict[albumArtistsNameKey] = albumArtistsTag
 
     if track.genre.name is CriteriaSpecialNames.GENRE_GENRELESS:
         genreNameTag = ""
