@@ -11,13 +11,8 @@ from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
 
 def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
           user: User, criteriaName: str) -> Criteria:
-    if Criteria.objects.filter(
-            user=user, 
-            type__id=CriteriaTypesIds.GENRE, 
-            name=criteriaName
-        ).exists():
-            criteria = Criteria.objects.get(
-                    user=user, type__id=CriteriaTypesIds.GENRE, name=criteriaName)
+    if Criteria.objects.filter(user=user, name=criteriaName).exists():
+        criteria = Criteria.objects.get(user=user, name=criteriaName)
     else:
         criteria = Criteria.objects.create(
             user=user,
