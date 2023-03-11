@@ -4,22 +4,21 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
+class TrackPutViewRatingFileTypeWavTestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataRatingFileTypeMp3']
-    sampleDirectoryRelativePath = "test/view/track/put/rating/fileType/mp3/sample/"
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataRatingFileTypeWav']
+    sampleDirectoryRelativePath = "test/view/track/put/rating/fileType/wav/sample/"
 
 
     """
     null rating. There shouldn't be a rating tag in the file.
     """
-    def test_trackPutRatingFileTypeMp3None(self):
+    def test_trackPutRatingFileTypeWavNone(self):
 
         data = {
             "rating": None,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) is None
@@ -28,13 +27,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     0 rating. The file's tag value should be 0.
     """
-    def test_trackPutRatingFileTypeMp3Zero(self):
+    def test_trackPutRatingFileTypeWavZero(self):
 
         data = {
             "rating": "0",
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 0
@@ -43,13 +41,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     1 rating. The file's tag value should be 13.
     """
-    def test_trackPutRatingFileTypeMp3One(self):
+    def test_trackPutRatingFileTypeWavOne(self):
 
         data = {
             "rating": 1,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 13
@@ -58,13 +55,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     2 rating. The file's tag value should be 1.
     """
-    def test_trackPutRatingFileTypeMp3Two(self):
+    def test_trackPutRatingFileTypeWavTwo(self):
 
         data = {
             "rating": 2,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 1
@@ -73,13 +69,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     3 rating. The file's tag value should be 54.
     """
-    def test_trackPutRatingFileTypeMp3Three(self):
+    def test_trackPutRatingFileTypeWavThree(self):
 
         data = {
             "rating": 3,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 54
@@ -88,13 +83,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     4 rating. The file's tag value should be 64.
     """
-    def test_trackPutRatingFileTypeMp3Four(self):
+    def test_trackPutRatingFileTypeWavFour(self):
 
         data = {
             "rating": 4,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 64
@@ -103,13 +97,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     5 rating. The file's tag value should be 118.
     """
-    def test_trackPutRatingFileTypeMp3Five(self):
+    def test_trackPutRatingFileTypeWavFive(self):
 
         data = {
             "rating": 5,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 118
@@ -118,13 +111,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     6 rating. The file's tag value should be 128.
     """
-    def test_trackPutRatingFileTypeMp3Six(self):
+    def test_trackPutRatingFileTypeWavSix(self):
 
         data = {
             "rating": 6,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 128
@@ -133,13 +125,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     7 rating. The file's tag value should be 186.
     """
-    def test_trackPutRatingFileTypeMp3Seven(self):
+    def test_trackPutRatingFileTypeWavSeven(self):
 
         data = {
             "rating": 7,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 186
@@ -148,13 +139,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     8 rating. The file's tag value should be 196.
     """
-    def test_trackPutRatingFileTypeMp3Height(self):
+    def test_trackPutRatingFileTypeWavHeight(self):
 
         data = {
             "rating": 8,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 196
@@ -163,13 +153,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     9 rating. The file's tag value should be 242.
     """
-    def test_trackPutRatingFileTypeMp3Nine(self):
+    def test_trackPutRatingFileTypeWavNine(self):
 
         data = {
             "rating": 9,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 242
@@ -178,13 +167,13 @@ class TrackPutViewRatingFileTypeMp3TestCase(TrackViewTestCase):
     """
     10 rating. The file's tag value should be 255.
     """
-    def test_trackPutRatingFileTypeMp3Ten(self):
+    def test_trackPutRatingFileTypeWavTen(self):
 
         data = {
             "rating": 10,
         }
-        response = self._loginAndPutSampleTrack(
-                trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.RATING) == 255
+    

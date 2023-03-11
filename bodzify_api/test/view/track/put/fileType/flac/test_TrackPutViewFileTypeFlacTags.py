@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
 class TrackPutViewTestCaseFileTypeFlacTags(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataFileTypeFlacTags']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataFileTypeFlac']
     sampleDirectoryRelativePath = "test/view/track/put/fileType/flac/sample/"
 
     """
@@ -30,30 +29,28 @@ class TrackPutViewTestCaseFileTypeFlacTags(TrackViewTestCase):
             "artistName": "Linkin Park",
             "albumName": "Meteora",
             "albumArtistsName": "Garou",
-            "genreName": "LsjdqoqzpsdojEjGHGH", # "Rap"
-            "rating": 10, # max value
+            "genreName": "Rap",
+            "rating": 10,
             "language": "Peruvian"
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
-        track = LibraryTrack.objects.get(uuid="36nS4LVDssLh4BvTARbJEK")
-        trackMetadata = AudioMetadataService.GetMetadataDictFromFile(track)
-        assert track.title == "Somewhere I Belong"
+        trackMetadata = AudioMetadataService.GetMetadataDictFromFile(self.savedTrack.file)
+        assert self.savedTrack.title == "Somewhere I Belong"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE] == "Somewhere I Belong"
-        assert track.artist.name == "Linkin Park"
+        assert self.savedTrack.artist.name == "Linkin Park"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] == "Linkin Park"
-        assert track.album.name == "Meteora"
+        assert self.savedTrack.album.name == "Meteora"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] == "Meteora"
-        assert track.album.name.albumArtists[0] == "Garou"
+        assert list(self.savedTrack.album.albumArtists.all())[0].name == "Garou"
         assert trackMetadata[
                 AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] == "Garou"
-        assert track.genre.name == "Rap"
+        assert self.savedTrack.genre.name == "Rap"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] == "Rap"
-        assert track.rating == 10
+        assert self.savedTrack.rating == 10
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 100 # max for Flac
-        assert track.language == "Peruvian"
+        assert self.savedTrack.language == "Peruvian"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] == "Peruvian"
-        
 
 
     """
@@ -75,27 +72,26 @@ class TrackPutViewTestCaseFileTypeFlacTags(TrackViewTestCase):
             "artistName": "Linkin Park",
             "albumName": "Meteora",
             "albumArtistsName": "Garou",
-            "genreName": "LsjdqoqzpsdojEjGHGH", # "Rap"
-            "rating": 10, # max value
+            "genreName": "Rap",
+            "rating": 10,
             "language": "Peruvian"
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
-        track = LibraryTrack.objects.get(uuid="36nS4LVDssLh4BvTAKKKKO")
-        trackMetadata = AudioMetadataService.GetMetadataDictFromFile(track)
-        assert track.title == "Somewhere I Belong"
+        trackMetadata = AudioMetadataService.GetMetadataDictFromFile(self.savedTrack.file)
+        assert self.savedTrack.title == "Somewhere I Belong"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE] == "Somewhere I Belong"
-        assert track.artist.name == "Linkin Park"
+        assert self.savedTrack.artist.name == "Linkin Park"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] == "Linkin Park"
-        assert track.album.name == "Meteora"
+        assert self.savedTrack.album.name == "Meteora"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] == "Meteora"
-        assert track.album.name.albumArtists[0] == "Garou"
+        assert list(self.savedTrack.album.albumArtists.all())[0].name == "Garou"
         assert trackMetadata[
                 AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] == "Garou"
-        assert track.genre.name == "Rap"
+        assert self.savedTrack.genre.name == "Rap"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] == "Rap"
-        assert track.rating == 10
+        assert self.savedTrack.rating == 10
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 100 # max for Flac
-        assert track.language == "Peruvian"
+        assert self.savedTrack.language == "Peruvian"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] == "Peruvian"
         
