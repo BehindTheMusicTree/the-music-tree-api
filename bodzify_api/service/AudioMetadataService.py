@@ -237,13 +237,13 @@ def _getEventuallyNormalizedRatingValueFromId3FileTags(
 
 def _getEventuallyNormalizedRatingValueFromFlacFileTags(
         flacFileTags: FLAC, normalizedRatingMaxValue: int=None):
-    fileRating = _getFirstValueIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.RATING)
+    fileRating = _getFirstValueIntIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.RATING)
     isRatingFromTraktor = False
     if fileRating is None:
-        fileRating = _getFirstValueIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.RATING_TRAKTOR)
+        fileRating = _getFirstValueIntIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.RATING_TRAKTOR)
         if fileRating is not None:
             isRatingFromTraktor = True
-        
+
     if fileRating is None or fileRating == "":
         return None
     else:
@@ -396,8 +396,6 @@ def _getFlacFileTagsUpdatedIfValueSpecified(
             vorbisTagKey = VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES
         elif metadataDictKey == METADATA_DICT_KEYS.GENRE_NAME:
             vorbisTagKey = VORBIS_TAG_KEYS.GENRE_NAME
-            if VORBIS_TAG_KEYS.GENRE_NAME not in flacFileTags:
-                flacFileTags[VORBIS_TAG_KEYS.GENRE_NAME] = [1]
         elif metadataDictKey == METADATA_DICT_KEYS.RATING:
             appRating = metadataUpdateDict[metadataDictKey]
             if appRating is not None:
@@ -407,14 +405,20 @@ def _getFlacFileTagsUpdatedIfValueSpecified(
                         ratingFileProfile=RATING_FILE_PROFILE.BASE_100)
                 flacFileTags[VORBIS_TAG_KEYS.RATING] = str(vorbisRating)
             else:
-                flacFileTags[VORBIS_TAG_KEYS.RATING] = ""
+                del flacFileTags[VORBIS_TAG_KEYS.RATING]
             return flacFileTags
         elif metadataDictKey == METADATA_DICT_KEYS.LANGUAGE:
             vorbisTagKey = VORBIS_TAG_KEYS.LANGUAGE
         else:
             raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
         
-        flacFileTags[vorbisTagKey] = metadataUpdateDict[metadataDictKey]
+        value = metadataUpdateDict[metadataDictKey]
+        if value is not None:
+            if vorbisTagKey not in flacFileTags:
+                flacFileTags[vorbisTagKey] = [1]
+            flacFileTags[vorbisTagKey] = metadataUpdateDict[metadataDictKey]
+        elif vorbisTagKey in flacFileTags:
+            del flacFileTags[vorbisTagKey]
 
     return flacFileTags
 
@@ -426,8 +430,9 @@ def _getFirstValueIfExistsOrEmptyString(dict: dict, key: str):
         return ""
 
 
-def _getFirstValueIfExistsOrNone(dict: dict, key: str):
+def _getFirstValueIntIfExistsOrNone(dict: dict, key: str):
     if key in dict:
-        return int(dict[key][0])
-    else:
-        return None
+        valueString = dict[key][0]
+        if valueString != "":
+            return int(valueString)
+    return None
