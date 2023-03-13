@@ -1,0 +1,18 @@
+[
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDoihoihvTARbJEK",
+        "fields": {
+           "user": 4, 
+           "file": "libraries/user_4/1-08_-_Luz_De_Luna.flac", 
+           "title": "Luz De Luna",
+           "genre": "L1ZG85munGytJb885fgion", 
+           "duration": "205.09333333333333", 
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "FYM1HUIrwLSgzHSHI76dVH"
+            ]
+        }
+    }
+]

@@ -5,17 +5,18 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 class TrackPutViewTestCaseExtraField(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataExtraField']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataAlbumNotSet']
 
 
     """
-    Trying to update a track with extra fields should fail with a 400 error code.
+    Trying to update a track specifying the album artists name field and not the album field 
+    should fail with a 400 error code.
     """
     def test_trackPutExtraField(self):
 
         data = {
             "title": "Somewhere I Belong",
-            "nonExistingField": "oifjqoif",
+            "albumArtistsName": "Muse",
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDoihoihvTARbJEK", data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
