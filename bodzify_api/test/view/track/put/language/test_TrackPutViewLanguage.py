@@ -11,7 +11,6 @@ class TrackPutViewTestCaseLanguage(TrackViewTestCase):
     Language isn't specified. It must not be updated.
     """
     def test_trackPutLanguageUnchanged(self):
-
         data = {
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
@@ -23,7 +22,6 @@ class TrackPutViewTestCaseLanguage(TrackViewTestCase):
     Updating the language value to "French"
     """
     def test_trackPutLanguageFrench(self):
-
         data = {
             "language": "French"
         }
@@ -36,7 +34,6 @@ class TrackPutViewTestCaseLanguage(TrackViewTestCase):
     Language value is empty. The updated value must be None.
     """
     def test_trackPutLanguageNone(self):
-
         data = {
             "language": None
         }
@@ -46,23 +43,10 @@ class TrackPutViewTestCaseLanguage(TrackViewTestCase):
 
 
     """
-    The "language" value is an integer. The status code should then be 400 (bad request).
-    """
-    def test_trackPutLanguageInt(self):
-
-        data = {
-            "rating": 11,
-        }
-        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-
-    """
     The "language" value's length (101) is above the maximum allowed (100). 
     The status code should then be 400 (bad request).
     """
-    def test_trackPutLanguageInt(self):
-
+    def test_trackPutLanguageTooLong(self):
         data = {
             "language": "a" * 101,
         }
