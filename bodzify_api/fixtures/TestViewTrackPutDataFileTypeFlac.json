@@ -11,6 +11,17 @@
         }
     },
     {
+        "model": "bodzify_api.criteria",
+        "pk": "LsjdqoqzpsdojEDKDSK",
+        "fields": {
+            "name": "French cloud rap",
+            "type": 0,
+            "parent": "LsjdqoqzpsdojEjGHGH",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
         "model": "bodzify_api.playlist",
         "pk": "qdsuhqoishcosihqoq",
         "fields": {
@@ -21,15 +32,42 @@
         }
     },
     {
+        "model": "bodzify_api.playlist",
+        "pk": "qdsuhqoishcosDDDKD",
+        "fields": {
+            "criteria": "LsjdqoqzpsdojEDKDSK",
+            "type": 0,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 4
+        }
+    },
+    {
+        "model": "bodzify_api.artist",
+        "pk": "Lsji85mqisjdjf88LKCFG6",
+        "fields": {
+            "user": 4,
+            "name": "PNL"
+        }
+    },
+    {
+        "model": "bodzify_api.album",
+        "pk": "Lsji85mqisjdjf881DJDHD",
+        "fields": {
+            "user": 4,
+            "name": "Dand La Légende",
+            "albumArtists": ["Lsji85mqisjdjf88LKCFG6"]
+        }
+    },
+    {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",
         "fields": {
            "user": 4, 
            "file": "libraries/user_4/with_no_tag.flac", 
-           "title": "1-03 - We're All To Blame", 
+           "title": "with_no_tag", 
            "genre": "L1ZG85munGytJb885fgion", 
            "duration": "207.09333333333333", 
-           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "addedOn": "2022-12-13T14:07:50.906Z",
            "playlists": [
                 "LnM1arJrwLhbhHSjqEPdZ7",
                 "FYM1HUIrwLSgzHSHI76dVH"
@@ -42,13 +80,37 @@
         "fields": {
            "user": 4, 
            "file": "libraries/user_4/with_all_tags.flac", 
-           "title": "1-03 - We're All To Blame", 
-           "genre": "L1ZG85munGytJb885fgion", 
+           "title": "Luz De Luna", 
+           "artist": "Lsji85mqisjdjf88LKCFG6",
+           "album": "Lsji85mqisjdjf881DJDHD",
+           "genre": "LsjdqoqzpsdojEDKDSK", 
            "duration": "207.09333333333333", 
+           "rating": 8,
+           "language": "Latin",
            "addedOn": "2022-12-13T14:07:50.906Z", 
            "playlists": [
                 "LnM1arJrwLhbhHSjqEPdZ7",
-                "FYM1HUIrwLSgzHSHI76dVH"
+                "qdsuhqoishcosDDDKD"
+            ]
+        }
+    },
+    {
+        "model": "bodzify_api.librarytrack",
+        "pk": "36nS4LVDssLh4BvTAKKKKO",
+        "fields": {
+           "user": 4, 
+           "file": "libraries/user_4/with_all_tags2.flac", 
+           "title": "Luz De Luna", 
+           "artist": "Lsji85mqisjdjf88LKCFG6",
+           "album": "Lsji85mqisjdjf881DJDHD",
+           "genre": "LsjdqoqzpsdojEDKDSK", 
+           "duration": "207.09333333333333", 
+           "rating": 8,
+           "language": "Latin",
+           "addedOn": "2022-12-13T14:07:50.906Z", 
+           "playlists": [
+                "LnM1arJrwLhbhHSjqEPdZ7",
+                "qdsuhqoishcosDDDKD"
             ]
         }
     }

@@ -21,7 +21,6 @@
             "user": 4
         }
     },
-
     {
         "model": "bodzify_api.artist",
         "pk": "Lsji85mqisjdjf885DHD65",
@@ -38,7 +37,6 @@
             "name": "Sum 43"
         }
     },
-
     {
         "model": "bodzify_api.librarytrack",
         "pk": "36nS4LVDssLh4BvTARbJEK",

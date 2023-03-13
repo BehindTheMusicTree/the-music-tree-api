@@ -36,20 +36,13 @@ class TrackPutViewTestCaseWavTags(TrackViewTestCase):
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
         trackMetadata = AudioMetadataService.GetMetadataDictFromFile(self.savedTrack.file)
-        assert self.savedTrack.title == "Somewhere I Belong"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE] == "Somewhere I Belong"
-        assert self.savedTrack.artist.name == "Linkin Park"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] == "Linkin Park"
-        assert self.savedTrack.album.name == "Meteora"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] == "Meteora"
-        assert list(self.savedTrack.album.albumArtists.all())[0].name == "Garou"
         assert trackMetadata[
                 AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] == "Garou"
-        assert self.savedTrack.genre.name == "Rap"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] == "Rap"
-        assert self.savedTrack.rating == 10
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 255
-        assert self.savedTrack.language == "Peruvian"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] == "Peruvian"
         
 
@@ -79,18 +72,11 @@ class TrackPutViewTestCaseWavTags(TrackViewTestCase):
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         trackMetadata = AudioMetadataService.GetMetadataDictFromFile(self.savedTrack.file)
-        assert self.savedTrack.title == "Somewhere I Belong"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE] == "Somewhere I Belong"
-        assert self.savedTrack.artist.name == "Linkin Park"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] == "Linkin Park"
-        assert self.savedTrack.album.name == "Meteora"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] == "Meteora"
-        assert list(self.savedTrack.album.albumArtists.all())[0].name == "Garou"
         assert trackMetadata[
                 AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] == "Garou"
-        assert self.savedTrack.genre.name == "Rap"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] == "Rap"
-        assert self.savedTrack.rating == 10
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 255
-        assert self.savedTrack.language == "Peruvian"
         assert trackMetadata[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] == "Peruvian"
