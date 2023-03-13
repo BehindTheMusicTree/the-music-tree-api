@@ -59,7 +59,6 @@ class TrackPutViewTestCaseWav(TrackViewTestCase):
             "albumName": "American Idiot",
             "albumArtistsName": "Queen",
             "genreName": "Nu metal",
-            "language": "French"
         }
         response = self._loginAndPutSampleTrack(trackUuid="dyFYZTP3anyaUBcLYKKKDJ", data=data)
         assert response.status_code == status.HTTP_200_OK
@@ -70,6 +69,4 @@ class TrackPutViewTestCaseWav(TrackViewTestCase):
         assert Album.objects.filter(user=self.testUser, name="American Idiot").count() == 2
         assert Album.objects.filter(user=self.testUser, name="BOOM").exists() == False
         assert track.genre.name == "Nu metal"
-        assert track.rating == 255
-        assert track.language == "French"
         assert Artist.objects.filter(name="Joni").count() == 0

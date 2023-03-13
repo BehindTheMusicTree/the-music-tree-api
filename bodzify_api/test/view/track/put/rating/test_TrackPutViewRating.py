@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
-class TrackPutViewTestCase8(TrackViewTestCase):
+class TrackPutViewTestCaseRating(TrackViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataRating']
 

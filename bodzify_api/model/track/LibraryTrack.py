@@ -62,7 +62,8 @@ class LibraryTrack(models.Model):
                 MaxValueValidator(settings.TRACK_RATING_MAX_VALUE)
             ])
     playlists = models.ManyToManyField('bodzify_api.Playlist')
-    language = models.CharField(max_length=100, blank=True, default=None, null=True)
+    language = models.CharField(
+            max_length=settings.TRACK_LANGUAGE_MAX_CHAR, blank=True, default=None, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
 
