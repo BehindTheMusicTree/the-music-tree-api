@@ -29,4 +29,4 @@ class TrackPostSchemaSerializer(InputSerializer):
                 validators=[MinValueValidator(0), MaxValueValidator(255)], 
                 required=False, 
                 allow_null=True)
-        language = serializers.CharField(max_length=100, required=False, allow_blank=True)
+        language = serializers.CharField(max_length=100, required=False, allow_blank=True, allow_null=True)

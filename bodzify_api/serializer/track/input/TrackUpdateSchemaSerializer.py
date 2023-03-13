@@ -30,15 +30,18 @@ class TrackUpdateSchemaSerializer(InputSerializer):
                 required=False)
         title = serializers.CharField(
                 max_length=settings.TRACK_TITLE_MAX_CHAR, required=False)
-        artistName = serializers.CharField(max_length=100, required=False, allow_blank=True)
-        albumName = serializers.CharField(max_length=100, required=False, allow_blank=True)
+        artistName = serializers.CharField(
+                max_length=100, required=False, allow_blank=True, allow_null=True)
+        albumName = serializers.CharField(
+                max_length=100, required=False, allow_blank=True, allow_null=True)
         albumArtistsName = serializers.CharField(max_length=100, required=False, allow_blank=True)
         genreName = serializers.CharField(max_length=100, required=False, allow_blank=True)
         rating = serializers.IntegerField(
                 validators=[MinValueValidator(0), MaxValueValidator(255)], 
                 required=False, 
                 allow_null=True)
-        language = serializers.CharField(max_length=100, required=False, allow_blank=True)
+        language = serializers.CharField(
+                max_length=100, required=False, allow_blank=True, allow_null=True)
 
 
         def validate(self, data):
