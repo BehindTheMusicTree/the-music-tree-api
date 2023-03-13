@@ -49,4 +49,4 @@ class TrackUpdateSchemaSerializer(InputSerializer):
                         elif data[self.ATTRIBUTE_ALBUM_NAME_LABEL] == "":
                                 raise serializers.ValidationError(
                                         ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
-                return data
+                return super().validate(data)
