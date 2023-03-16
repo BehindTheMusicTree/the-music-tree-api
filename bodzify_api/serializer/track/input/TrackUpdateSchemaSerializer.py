@@ -34,7 +34,8 @@ class TrackUpdateSchemaSerializer(InputSerializer):
                 max_length=100, required=False, allow_blank=True, allow_null=True)
         albumName = serializers.CharField(
                 max_length=100, required=False, allow_blank=True, allow_null=True)
-        albumArtistsName = serializers.CharField(max_length=100, required=False, allow_blank=True)
+        albumArtistsName = serializers.CharField(
+                max_length=100, required=False, allow_blank=True, allow_null=True)
         genreName = serializers.CharField(max_length=100, required=False, allow_blank=True)
         rating = serializers.IntegerField(
                 validators=[MinValueValidator(0), MaxValueValidator(255)], 
@@ -49,7 +50,7 @@ class TrackUpdateSchemaSerializer(InputSerializer):
                         if self.ATTRIBUTE_ALBUM_NAME_LABEL not in data:
                                 raise serializers.ValidationError(
                                         ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
-                        elif data[self.ATTRIBUTE_ALBUM_NAME_LABEL] == "":
+                        elif data[self.ATTRIBUTE_ALBUM_NAME_LABEL] in [None, ""]:
                                 raise serializers.ValidationError(
                                         ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
                 return super().validate(data)

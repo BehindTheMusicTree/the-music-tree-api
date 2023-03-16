@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+import pprint
 from django.contrib.auth.models import User
 import bodzify_api.service.ArtistService as ArtistService
 from bodzify_api.model.Album import Album
 
 
-def GetAlbumFromNameAndalbumArtistsNameAfterEventualCreations(
+def GetAlbumFromNameAndAlbumArtistsNameAfterEventualCreations(
         user: User, albumName: str, albumArtistsNameList: list) -> Album:
     
     if albumName is None or albumName == "":
@@ -28,7 +29,7 @@ def _getAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
         for albumArtist in artists:
             albumQueryset = albumQueryset.filter(albumArtists__in=[albumArtist])
     else:
-        albumQueryset.filter(albumArtists=None)
+        albumQueryset = albumQueryset.filter(albumArtists=None)
 
     if albumQueryset.count() == 0:
         album = Album.objects.create(user=user, name=albumName)

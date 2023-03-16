@@ -34,3 +34,6 @@ class Artist(models.Model):
             track.deleteWithCheckingAlbumPotentialDeletion()
 
         self.delete()
+        
+    def __str__(self) -> str:
+        return self.uuid + " " + self.name

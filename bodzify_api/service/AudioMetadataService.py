@@ -189,7 +189,9 @@ def _getAlbumNameTagFromId3FileTags(id3FileTags: MutagenFile):
 def _getalbumArtistsNametringTagFromId3FileTags(id3FileTags: MutagenFile):
     albumArtistsNameStringRaw = (
             _getFirstValueIfExistsOrNone(id3FileTags, ID3_TEXT_FRAMES.ALBUM_ARTISTS_NAMES))
-    return albumArtistsNameStringRaw.strip()
+    if albumArtistsNameStringRaw is not None:
+        return albumArtistsNameStringRaw.strip()
+    return None
 
 
 def _getGenreNameTagFromId3FileTags(id3FileTags: MutagenFile):

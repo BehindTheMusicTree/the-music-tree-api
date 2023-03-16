@@ -4,35 +4,37 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class TrackPutViewAlbumFileTypeMp3TestCase(TrackViewTestCase):
-
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataAlbumFileTypeMp3']
-    sampleDirectoryRelativePath = "test/view/track/put/album/fileType/mp3/sample/"
+class TrackPutViewAlbumArtistsFileTypeMp3TestCase(TrackViewTestCase):
+    
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataAlbumArtistsFileTypeMp3']
+    sampleDirectoryRelativePath = "test/view/track/put/album/artists/fileType/mp3/sample/"
 
 
     """
-    null album. There shouldn't be a album tag in the file.
+    null album artists. There shouldn't be a album artists tag in the file.
     """
     def test_trackPutAlbumFileTypeMp3None(self):
         data = {
-            "albumName": None,
+            "albumName": "Chuck",
+            "albumArtistsName": None
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, 
-                AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME) in [None, ""]
+                AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES) in [None, ""]
 
 
     """
-    The album is updated to a string of the highest length allowed.
+    The album artists is updated to a string of the highest length allowed.
     """
     def test_trackPutAlbumFileTypeMp3LongestString(self):
         data = {
-            "albumName": "a" * 100,
+            "albumName": "Chuck",
+            "albumArtistsName": "a" * 100
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, 
-                AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME) == "a" * 100
+                AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES) == "a" * 100

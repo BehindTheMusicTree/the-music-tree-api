@@ -46,3 +46,9 @@ class Album(models.Model):
     def deleteIfNoTrackLinked(self):
         if LibraryTrack.objects.filter(user=self.user, album=self).count() == 0:
             self.delete()
+
+    def __str__(self) -> str:
+        string = self.uuid + " " + self.name + " by "
+        for artist in list(self.albumArtists.all()):
+            string = string + str(artist) + " "
+        return string

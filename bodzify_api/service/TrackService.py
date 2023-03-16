@@ -29,7 +29,6 @@ def Update(user: User, updateSchemaData: QueryDict, oldTrack: LibraryTrack):
 
 
 def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack=None):
-    
     fileKey = LibraryTrack.ATTRIBUTE_FILE_LABEL
     saveDataFromFile = dict()
     if fileKey in saveSchemaData:
@@ -84,7 +83,7 @@ def _getSaveDataFromFile(user:User, file):
             albumArtistsNameList = None
         else:
             albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNameString)
-        album = AlbumService.GetAlbumFromNameAndalbumArtistsNameAfterEventualCreations(
+        album = AlbumService.GetAlbumFromNameAndAlbumArtistsNameAfterEventualCreations(
                 user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
         saveData[LibraryTrack.ATTRIBUTE_ALBUM_LABEL] = album.uuid
     
@@ -114,11 +113,14 @@ def _getSaveMutableDataWithAlbumUuidIfAlbumNameInRequest(
         artistsNamesKey = TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL
         if artistsNamesKey in requestData:
             albumArtistsNameString = requestData[artistsNamesKey]
-            albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNameString)
+            if albumArtistsNameString is not None:
+                albumArtistsNameList = _getArtistsNameListFromString(albumArtistsNameString)
+            else:
+                albumArtistsNameList = None
         else:
             albumArtistsNameList = None
 
-        album = AlbumService.GetAlbumFromNameAndalbumArtistsNameAfterEventualCreations(
+        album = AlbumService.GetAlbumFromNameAndAlbumArtistsNameAfterEventualCreations(
                 user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
         
         albumKey = LibraryTrack.ATTRIBUTE_ALBUM_LABEL 

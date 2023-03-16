@@ -92,9 +92,17 @@ class LibraryTrack(models.Model):
     @property
     def relativeUrl(self) -> str:
         return 'tracks/' + self.uuid + "/"
+    
+    
+    def str(self):
+        return (self.uuid + " " + str(self.artist) + " - " + self.title + " album: " + 
+                str(self.album) + " genre: " + str(self.genre) + " duration: " + 
+                str(self.duration) + " rating: " + str(self.rating) + " language: " + 
+                self.language + " addedOn: " + str(self.addedOn) + " file: " + 
+                self.file.name)
 
 
-    def updatePlaylists(self, oldGenre: Criteria):
+    def _updatePlaylists(self, oldGenre: Criteria):
         genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypeIds.GENRE)
         commonGenre = self.genre.getCommonCriteria(oldGenre)
         newGenreTreeItem = self.genre
@@ -123,21 +131,22 @@ class LibraryTrack(models.Model):
             oldArtist = oldTrack.artist
             oldAlbum = oldTrack.album
             if oldAlbum is not None:
-                oldAlbumArtitst = list(oldAlbum.albumArtists.all())
+                oldAlbumArtists = list(oldAlbum.albumArtists.all())
             super().save(*args, **kwargs)
 
             if oldGenre != self.genre:
-                self.updatePlaylists(oldGenre=oldGenre)
+                self._updatePlaylists(oldGenre=oldGenre)
 
             if oldAlbum != self.album and oldAlbum != None:
                 oldAlbum.deleteIfNoTrackLinked()
-                for albumArtist in oldAlbumArtitst:
+                for albumArtist in oldAlbumArtists:
                     albumArtist.deleteIfNothingLinked()
 
             if oldArtist != self.artist and oldArtist != None:
                 oldArtist.deleteIfNothingLinked()
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
+
 
     @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
     def deleteFileIfExists(sender, instance, using, **kwargs):
