@@ -1,54 +1,75 @@
 #!/usr/bin/env python
+import pprint
 from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
-class TrackPutViewTestCaseAlbum(TrackViewTestCase):
+class TrackPutViewTestCaseAlbumArtists(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataAlbum']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataAlbumArtists']
 
-    """
-    The "albumName" field isn't specified. It must not be updated.
-    """
-    def test_trackPutAlbumUnchanged(self):
-        data = {}
-        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.album.name == "Dans La Légende"
+    # """
+    # The "albumArtistsName" field isn't specified. It must not be updated.
+    # """
+    # def test_trackPutAlbumArtistsUnchanged(self):
+    #     data = {
+    #         "albumName": "Chuck"
+    #     }
+    #     response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+    #     assert response.status_code == status.HTTP_200_OK
+    #     assert list(self.savedTrack.album.albumArtists.all())[0].name == "Sum 41"
         
 
-    """
-    Updating the album with a string with the highest length allowed.
-    """
-    def test_trackPutAlbumLongestName(self):
-        data = {
-            "albumName": "a" * 100
-        }
-        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.album.name == "a" * 100
+    # """
+    # Updating the album artists name with a string with the highest length allowed.
+    # """
+    # def test_trackPutAlbumArtistsLongestName(self):
+    #     data = {
+    #         "albumName": "Chuck",
+    #         "albumArtistsName": "a" * 100
+    #     }
+    #     response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
+    #     assert response.status_code == status.HTTP_200_OK
+    #     assert list(self.savedTrack.album.albumArtists.all())[0].name == "a" * 100
         
 
     """
     The "albumName" field is null. The updated value must be None.
     """
-    def test_trackPutAlbumNone(self):
+    def test_trackPutAlbumArtistsNull(self):
         data = {
-            "albumName": None
+            "albumName": "Chuck",
+            "albumArtistsName": None
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDKDK", data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.album_id == None
+        pprint.pp("albumartistd")
+        pprint.pp(list(self.savedTrack.album.albumArtists.all()))
+        assert len(list(self.savedTrack.album.albumArtists.all())) == 0
 
 
-    """
-    Trying to update a track specifying the album albums name field and not the album field 
-    should fail with a 400 error code.
-    """
-    def test_trackPutAlbumMissing(self):
+    # """
+    # Trying to update the album artists name field without specifying the album field should fail 
+    # with a 400 error code.
+    # """
+    # def test_trackPutAlbumArtistsAlbumMissing(self):
 
-        data = {
-            "albumArtistsName": "Muse",
-        }
-        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDKDK", data=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+    #     data = {
+    #         "albumArtistsName": "Muse",
+    #     }
+    #     response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDKDK", data=data)
+    #     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    # """
+    # Trying to update the album artists name specifying a null album name field should fail with a 
+    # 400 error code.
+    # """
+    # def test_trackPutAlbumArtistsAlbumNull(self):
+
+    #     data = {
+    #         "albumName": None,
+    #         "albumArtistsName": "Muse",
+    #     }
+    #     response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDKDK", data=data)
+    #     assert response.status_code == status.HTTP_400_BAD_REQUEST

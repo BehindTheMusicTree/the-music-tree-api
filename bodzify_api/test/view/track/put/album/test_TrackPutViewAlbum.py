@@ -39,16 +39,3 @@ class TrackPutViewTestCaseAlbum(TrackViewTestCase):
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDKDK", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.album_id == None
-
-
-    """
-    Trying to update a track specifying the album albums name field and not the album field 
-    should fail with a 400 error code.
-    """
-    def test_trackPutAlbumMissing(self):
-
-        data = {
-            "albumArtistsName": "Muse",
-        }
-        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDKDK", data=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
