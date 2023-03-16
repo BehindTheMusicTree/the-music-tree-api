@@ -20,10 +20,6 @@ class TrackPutViewLanguageFileTypeWavTestCase(TrackViewTestCase):
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTAKKKKO", data=data)
         assert response.status_code == status.HTTP_200_OK
-        print("koko")
-        print(AudioMetadataService.GetSpecificMetadataFromFile(
-                self.savedTrack.file, 
-                AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE))
         assert AudioMetadataService.GetSpecificMetadataFromFile(
                 self.savedTrack.file, AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE) is None
 
@@ -32,7 +28,6 @@ class TrackPutViewLanguageFileTypeWavTestCase(TrackViewTestCase):
     The language is updated to "Mexican".
     """
     def test_trackPutLanguageFileTypeWavMexican(self):
-
         data = {
             "language": "Mexican",
         }
