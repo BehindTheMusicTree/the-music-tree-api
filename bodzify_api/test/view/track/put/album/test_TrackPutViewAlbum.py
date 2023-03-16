@@ -11,46 +11,44 @@ class TrackPutViewTestCaseAlbum(TrackViewTestCase):
     The "albumName" field isn't specified. It must not be updated.
     """
     def test_trackPutAlbumUnchanged(self):
-        data = {
-        }
+        data = {}
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.album.name == "Dans La Légende"
         
 
     """
-    Updating the album to the the one named "Absolution"
+    Updating the album with a string with the highest length allowed.
     """
-    def test_trackPutAlbumMuse(self):
+    def test_trackPutAlbumLongestName(self):
         data = {
-            "albumName": "Absolution"
+            "albumName": "a" * 100
         }
-        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDDDD", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.album.name == "Absolution"
+        assert self.savedTrack.album.name == "a" * 100
         
 
     """
-    The "albumName" field is empty. The updated value must be None.
+    The "albumName" field is null. The updated value must be None.
     """
     def test_trackPutAlbumNone(self):
         data = {
-            "language": None
+            "albumName": None
         }
-        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDDDD", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDKDK", data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == None
+        assert self.savedTrack.album_id == None
 
 
     """
     Trying to update a track specifying the album albums name field and not the album field 
     should fail with a 400 error code.
     """
-    def test_trackPutExtraField(self):
+    def test_trackPutAlbumMissing(self):
 
         data = {
-            "title": "Somewhere I Belong",
-            "albumAlbumsName": "Muse",
+            "albumArtistsName": "Muse",
         }
-        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDoihoihvTARbJEK", data=data)
+        response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTADDKDK", data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
