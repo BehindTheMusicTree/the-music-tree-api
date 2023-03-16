@@ -4,16 +4,16 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class TrackPutViewLanguageFileTypeWavTestCase(TrackViewTestCase):
+class TrackPutViewLanguageFileTypeMp3TestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataLanguageFileTypeWav']
-    sampleDirectoryRelativePath = "test/view/track/put/language/fileType/wav/sample/"
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataLanguageFileTypeMp3']
+    sampleDirectoryRelativePath = "test/view/track/put/language/fileType/mp3/sample/"
 
 
     """
     null language. There shouldn't be a language tag in the file.
     """
-    def test_trackPutLanguageFileTypeWavNone(self):
+    def test_trackPutLanguageFileTypeMp3None(self):
         data = {
             "language": None,
         }
@@ -25,9 +25,9 @@ class TrackPutViewLanguageFileTypeWavTestCase(TrackViewTestCase):
 
 
     """
-    The language is updated to a 100 character long string.
+    The language is updated to a string of the highest length allowed.
     """
-    def test_trackPutLanguageFileTypeWavLongString(self):
+    def test_trackPutLanguageFileTypeMp3LongestString(self):
         data = {
             "language": "a" * 100,
         }
