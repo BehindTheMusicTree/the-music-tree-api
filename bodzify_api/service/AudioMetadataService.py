@@ -175,20 +175,20 @@ def _getDurationFromFileTags(fileTags):
 
 
 def _getTitleTagFromId3FileTags(id3FileTags: MutagenFile):
-    return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.TITLE)
+    return _getFirstValueIfExistsOrNone(id3FileTags, ID3_TEXT_FRAMES.TITLE)
 
 
 def _getArtistNameTagFromId3FileTags(id3FileTags: MutagenFile):
-    return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.ARTIST_NAME)
+    return _getFirstValueIfExistsOrNone(id3FileTags, ID3_TEXT_FRAMES.ARTIST_NAME)
 
 
 def _getAlbumNameTagFromId3FileTags(id3FileTags: MutagenFile):
-    return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.ALBUM_NAME)
+    return _getFirstValueIfExistsOrNone(id3FileTags, ID3_TEXT_FRAMES.ALBUM_NAME)
 
 
 def _getalbumArtistsNametringTagFromId3FileTags(id3FileTags: MutagenFile):
     albumArtistsNameStringRaw = (
-            _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.ALBUM_ARTISTS_NAMES))
+            _getFirstValueIfExistsOrNone(id3FileTags, ID3_TEXT_FRAMES.ALBUM_ARTISTS_NAMES))
     return albumArtistsNameStringRaw.strip()
 
 
@@ -254,24 +254,24 @@ def _getEventuallyNormalizedRatingValueFromFlacFileTags(
     
     
 def _getLanguageTagFromId3FileTags(id3FileTags: MutagenFile):
-    return _getFirstValueIfExistsOrEmptyString(id3FileTags, ID3_TEXT_FRAMES.LANGUAGE)
+    return _getFirstValueIfExistsOrNone(id3FileTags, ID3_TEXT_FRAMES.LANGUAGE)
 
 
 def _getTitleTagFromFlacFileTags(flacFileTags: FLAC):
-    return _getFirstValueIfExistsOrEmptyString(flacFileTags, VORBIS_TAG_KEYS.TITLE)
+    return _getFirstValueIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.TITLE)
 
 
 def _getArtistNameTagFromFlacFileTags(flacFileTags: FLAC):
-    return _getFirstValueIfExistsOrEmptyString(flacFileTags, VORBIS_TAG_KEYS.ARTIST_NAME)
+    return _getFirstValueIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.ARTIST_NAME)
 
 
 def _getAlbumNameTagFromFlacFileTags(flacFileTags: FLAC):
-    return _getFirstValueIfExistsOrEmptyString(flacFileTags, VORBIS_TAG_KEYS.ALBUM_NAME)
+    return _getFirstValueIfExistsOrNone(flacFileTags, VORBIS_TAG_KEYS.ALBUM_NAME)
 
 
 def _getAlbumArtistsNametringTagFromFlacFileTags(flacFileTags: FLAC):
     albumArtistsNameStringRaw = (
-            _getFirstValueIfExistsOrEmptyString(
+            _getFirstValueIfExistsOrNone(
                     flacFileTags, VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES))
     return albumArtistsNameStringRaw.strip()
 
@@ -284,7 +284,7 @@ def _getGenreNameTagFromFlacFileTags(flacFileTags: FLAC):
     
 
 def _getLanguageTagFromFlacFileTags(flacFile: FLAC):
-    return _getFirstValueIfExistsOrEmptyString(flacFile, VORBIS_TAG_KEYS.LANGUAGE)
+    return _getFirstValueIfExistsOrNone(flacFile, VORBIS_TAG_KEYS.LANGUAGE)
 
 
 def _getSpecificMetadataFromId3File(
@@ -398,15 +398,13 @@ def _getFlacFileTagsUpdatedIfValueSpecified(
             vorbisTagKey = VORBIS_TAG_KEYS.GENRE_NAME
         elif metadataDictKey == METADATA_DICT_KEYS.RATING:
             appRating = metadataUpdateDict[metadataDictKey]
+            vorbisTagKey = VORBIS_TAG_KEYS.RATING
             if appRating is not None:
                 vorbisRating = _getFileRatingFromNormalizedValue(
                         normalizedRating=appRating, 
                         normalizedRatingMaxValue=normalizedRatingMaxValue, 
                         ratingFileProfile=RATING_FILE_PROFILE.BASE_100)
-                flacFileTags[VORBIS_TAG_KEYS.RATING] = str(vorbisRating)
-            else:
-                del flacFileTags[VORBIS_TAG_KEYS.RATING]
-            return flacFileTags
+                metadataUpdateDict[metadataDictKey] = str(vorbisRating)
         elif metadataDictKey == METADATA_DICT_KEYS.LANGUAGE:
             vorbisTagKey = VORBIS_TAG_KEYS.LANGUAGE
         else:
@@ -423,11 +421,11 @@ def _getFlacFileTagsUpdatedIfValueSpecified(
     return flacFileTags
 
 
-def _getFirstValueIfExistsOrEmptyString(dict: dict, key: str):
+def _getFirstValueIfExistsOrNone(dict: dict, key: str):
     if key in dict:
         return dict[key][0]
     else:
-        return ""
+        return None
 
 
 def _getFirstValueIntIfExistsOrNone(dict: dict, key: str):
