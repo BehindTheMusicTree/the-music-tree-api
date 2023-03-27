@@ -13,7 +13,7 @@ class CriteriaSpecialNames:
 class Criteria(models.Model):
     uuid = models.CharField(
         primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=200, default=None)
     type = models.ForeignKey('bodzify_api.CriteriaType', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)

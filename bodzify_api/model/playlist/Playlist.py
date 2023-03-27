@@ -15,7 +15,7 @@ class Playlist(models.Model):
 
     uuid = models.CharField(
         primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     customName = models.CharField(max_length=100, default=None, blank=True, null=True)
     type = models.ForeignKey(PlaylistType, on_delete=models.DO_NOTHING)
     criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE)
