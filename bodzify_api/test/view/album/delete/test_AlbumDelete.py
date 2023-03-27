@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pprint
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.Artist import Artist
