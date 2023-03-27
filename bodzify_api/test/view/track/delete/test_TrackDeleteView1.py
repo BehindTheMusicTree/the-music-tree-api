@@ -22,4 +22,4 @@ class TrackDeleteViewTestCase1(TrackViewTestCase):
         response = self._deleteTrack(trackUuid="36nS4LVDssLh4BvTARbJEK")
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(user=self.testUser, title="We're All To Blame").exists() == False
-        assert self.doesUserTrackFileExist("1-03 - We're All To Blame.mp3") == False
+        assert self._doesUserTrackFileExist("1-03 - We're All To Blame.mp3") == False
