@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesIds
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
@@ -16,7 +16,7 @@ def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
     else:
         criteria = Criteria.objects.create(
             user=user,
-            type=CriteriaType.objects.get(id=CriteriaTypesIds.GENRE),
+            type=CriteriaType.objects.get(id=CriteriaTypesId.GENRE),
             name=criteriaName,
             parent=Criteria.objects.get(user=user, name=CriteriaSpecialNames.GENRE_ALL)
         )

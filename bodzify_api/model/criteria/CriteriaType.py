@@ -2,7 +2,7 @@
 from django.db import models
 
 
-class CriteriaTypesIds:
+class CriteriaTypesId:
     GENRE = 0
     TAG = 1
 
