@@ -3,9 +3,9 @@ from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
-class TrackPutViewTestCaseAlbum(TrackViewTestCase):
+class TrackViewPutAlbumTestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataAlbum']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutAlbumData']
 
     """
     The "albumName" field isn't specified. It must not be updated.

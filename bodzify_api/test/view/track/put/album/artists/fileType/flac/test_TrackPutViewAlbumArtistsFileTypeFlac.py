@@ -6,7 +6,7 @@ import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 class TrackPutViewAlbumArtistsFileTypeFlacTestCase(TrackViewTestCase):
     
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataAlbumArtistsFileTypeFlac']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutAlbumArtistsFileTypeFlacData']
     sampleDirectoryRelativePath = "test/view/track/put/album/artists/fileType/flac/sample/"
 
 

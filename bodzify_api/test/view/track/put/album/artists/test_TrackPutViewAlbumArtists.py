@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-import pprint
 from rest_framework import status
-from bodzify_api.model.Album import Album
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
-class TrackPutViewTestCaseAlbumArtists(TrackViewTestCase):
+class TrackViewPutAlbumArtistsTestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataAlbumArtists']
+    fixtures = ['initial_data', 'TestUserData', 'TestTrackViewPutAlbumArtistsData']
+        
+        
+    def getNameOfCurrentClass(self):
         
 
     """

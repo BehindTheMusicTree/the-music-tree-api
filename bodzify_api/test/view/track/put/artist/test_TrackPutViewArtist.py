@@ -3,9 +3,9 @@ from rest_framework import status
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
-class TrackPutViewTestCaseArtist(TrackViewTestCase):
+class TrackViewArtistTestCase(TrackViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutDataArtist']
+    fixtures = ['initial_data', 'TestUserData', 'TestViewTrackPutArtistData']
 
     """
     The "artistName" field isn't specified. It must not be updated.
