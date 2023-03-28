@@ -6,15 +6,11 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 class MineTrackExtractViewTestFilename(MineTrackExtractViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData']
-
     """
     When extracting a mp3 track proviging a title "I'm Here" and an artist "Roméo", the resulting 
     filename should be "Roméo_-_I_m_Here.mp3".
     """
     def test_mineTrackExtractFilenameWithOnlyTitle(self):
-        self._login(self.testUser)
-
         trackUrl = ("https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
         + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE_KN414JidBi"
         + "kY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
@@ -24,9 +20,7 @@ class MineTrackExtractViewTestFilename(MineTrackExtractViewTestCase):
             "artist": "Roméo",
         }
         response = self._loginAndExtract(data=data)
-        trackUuid = response.json()['uuid']
-        track = LibraryTrack.objects.get(uuid=trackUuid)
-        assert track.filename == "Roméo_-_I_m_Here.mp3"
+        assert self.savedTrack.filename == "Roméo_-_I_m_Here.mp3"
 
 
     """
@@ -34,8 +28,6 @@ class MineTrackExtractViewTestFilename(MineTrackExtractViewTestCase):
     filename should be "Hellö.mp3".
     """
     def test_mineTrackExtractFilenameWithOnlyTitle(self):
-        self._login(self.testUser)
-
         trackUrl = ("https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
         + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE_KN414JidBi"
         + "kY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
@@ -44,6 +36,4 @@ class MineTrackExtractViewTestFilename(MineTrackExtractViewTestCase):
             "title": "Hellö",
         }
         response = self._loginAndExtract(data=data)
-        trackUuid = response.json()['uuid']
-        track = LibraryTrack.objects.get(uuid=trackUuid)
-        assert track.filename == "Hellö.mp3"
+        assert self.savedTrack.filename == "Hellö.mp3"

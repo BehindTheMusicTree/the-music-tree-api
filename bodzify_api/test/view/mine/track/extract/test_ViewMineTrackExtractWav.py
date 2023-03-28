@@ -6,7 +6,6 @@ from bodzify_api.test.view.mine.track.MineTrackViewTestCase import (
 
 class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData']
 
     """
     Extract a Wav file.
