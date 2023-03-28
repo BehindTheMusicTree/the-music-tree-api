@@ -1,8 +1,11 @@
 #!/usr/bin/env python
+import pprint
 import requests
 import random
 import string
 import os
+from django.core.files.temp import NamedTemporaryFile
+from django.core import files
 from django.core.files.base import File
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
@@ -24,30 +27,21 @@ def List(query, pageNumber, pageSize):
 
 def Extract(user: User, requestData: QueryDict):
     mineTrackUrl = requestData[MineTrack.ATTRIBUTE_URL_LABEL]
-    response = requests.get(mineTrackUrl)
+    trackInMemoryFile = requests.get(mineTrackUrl, stream=True)
+    with NamedTemporaryFile(delete=True) as trackTempFile:
+        for block in trackInMemoryFile.iter_content(1024 * 8):
+            if not block:
+                break
+            trackTempFile.write(block)
+        trackTempFile.flush()
+        trackTempFile.seek(0)
 
-    trackTempFileIndividualDirAbsPath = _getTrackTempFileIndividualDirAbsPath()
-    trackTempFileName = _getTrackFileName(mineTrackUrl, requestData)
-    trackTempFileAbsPath = trackTempFileIndividualDirAbsPath + trackTempFileName
-    
-    with open(trackTempFileAbsPath, "wb") as trackFile:
-        trackFile.write(response.content)
-        
-    saveData = _getSaveDataFromRequestData(requestData)
+        saveData = _getSaveDataFromRequestData(requestData)
 
-    with open(trackTempFileAbsPath, "rb") as trackFile:
-        _validateSaveData(data=saveData, trackFile=File(trackFile))
-
-    with open(trackTempFileAbsPath, "rb") as trackFile:
-        saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
-        genreNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
-        if genreNameKey not in saveData:
-            saveData[genreNameKey] = CriteriaSpecialNames.GENRE_GENRELESS
-        saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
+        trackFileName = _getTrackFileName(mineTrackUrl, requestData)
+        saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(
+            trackTempFile, name=trackFileName)
         libraryTrack = TrackService.Create(user=user, postSchemaData=saveData)
-
-    os.remove(trackTempFileAbsPath)
-    os.rmdir(trackTempFileIndividualDirAbsPath)
 
     return libraryTrack
 
@@ -82,7 +76,8 @@ def _getTrackFileName(mineTrackUrl: str, requestData: QueryDict):
     else:
         partAfterLastSlashOfUrl = _getSubstringAfterLastSlash(mineTrackUrl)
         if len(partAfterLastSlashOfUrl) > settings.TRACK_TITLE_MAX_CHAR:
-            fileNameWithoutExtension = _generateShortUu(settings.TRACK_TITLE_MAX_CHAR)
+            fileNameWithoutExtension = _generateShortUu(
+                settings.TRACK_TITLE_MAX_CHAR)
         else:
             fileNameWithoutExtension = partAfterLastSlashOfUrl
     return fileNameWithoutExtension + "." + _getFileExtensionFromUrl(mineTrackUrl)
@@ -90,17 +85,12 @@ def _getTrackFileName(mineTrackUrl: str, requestData: QueryDict):
 
 def _getTrackTempFileIndividualDirAbsPath():
     trackTempFileIndividualDirName = (
-            _generateShortUu(TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH))
-    trackTempFileIndividualDirAbsPath = settings.MEDIA_TEMP + trackTempFileIndividualDirName + "/"
+        _generateShortUu(TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH))
+    trackTempFileIndividualDirAbsPath = settings.MEDIA_TEMP + \
+        trackTempFileIndividualDirName + "/"
     os.makedirs(trackTempFileIndividualDirAbsPath)
     return trackTempFileIndividualDirAbsPath
-    
+
 
 def _generateShortUu(length: int):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
-
-
-def _validateSaveData(data: QueryDict, trackFile: File):
-    data[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(trackFile)
-    saveSchemaSerializer = TrackUpdateSchemaSerializer(data=data)
-    saveSchemaSerializer.is_valid(raise_exception=True)
