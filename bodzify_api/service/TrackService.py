@@ -197,7 +197,7 @@ def _updateFileTagsIfFileExists(track: LibraryTrack):
     albumArtistsNameKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
     metadataUpdateDict[albumArtistsNameKey] = albumArtistsTag
 
-    if track.genre.name is CriteriaSpecialNames.GENRE_GENRELESS:
+    if track.genre.name == CriteriaSpecialNames.GENRE_GENRELESS:
         genreNameTag = ""
     else:
         genreNameTag = track.genre.name
