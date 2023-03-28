@@ -13,7 +13,9 @@ class MineTrackExtractViewTestCase(MineTrackExtractViewTestCase):
 
 
     """
-    Extract a mp3 file with no genre specified.
+    Extract a mp3 file with no genre specified. The genre should be set to "genreless" and the 
+    tag should be empty.
+    
     """
     def test_mineTrackExtrackGenreNone(self):
         trackUrl = (
