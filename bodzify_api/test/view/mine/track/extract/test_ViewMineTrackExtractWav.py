@@ -32,5 +32,5 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
             "rating": 5,
             "language": "fr"
         }
-        response = self.extract(data=data)
+        response = self._loginAndExtract(data=data)
         assert response.status_code == status.HTTP_200_OK

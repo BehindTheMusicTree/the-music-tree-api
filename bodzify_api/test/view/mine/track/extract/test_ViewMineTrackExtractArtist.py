@@ -27,7 +27,7 @@ class MineTrackExtractViewTestCaseExistingArtist(MineTrackExtractViewTestCase):
             "releasedOn": 1290292
         }
 
-        response = self.extract(data=data)
+        response = self._loginAndExtract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(title="Summer Moved On")
         assert track.artist.name == "a-ha"

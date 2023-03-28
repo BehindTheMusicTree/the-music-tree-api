@@ -25,7 +25,7 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
             "artistName": "Jul",
             "releasedOn": 1290292
         }
-        response = self.extract(data=data)
+        response = self._loginAndExtract(data=data)
         assert response.status_code == status.HTTP_200_OK
 
 
@@ -42,6 +42,6 @@ class MineTrackExtractViewTestTitle(MineTrackExtractViewTestCase):
         data = {
             "url": trackUrl
         }
-        self.extract(data=data)
+        self._loginAndExtract(data=data)
         assert LibraryTrack.objects.filter(
                 user=self.testUser, title="MartijnSchmit-VacsInTheMorning").exists()

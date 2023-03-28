@@ -36,7 +36,7 @@ class MineTrackExtractViewTestCaseUsual(MineTrackExtractViewTestCase):
             "artistName": "Jul",
             "releasedOn": 1290292
         }
-        response = self.extract(data=data)
+        response = self._loginAndExtract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
         track = LibraryTrack.objects.get(title="du rap")
         trackMetadata = AudioMetadataService.GetMetadataDictFromFile(

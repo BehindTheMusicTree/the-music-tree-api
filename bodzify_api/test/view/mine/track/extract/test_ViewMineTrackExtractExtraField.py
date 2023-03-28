@@ -1,19 +1,13 @@
 #!/usr/bin/env python
-import os
 from rest_framework import status
 from bodzify_api.test.view.mine.track.MineTrackViewTestCase import (
         MineTrackExtractViewTestCase)
-from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-import bodzify_api.settings as settings
 
 
 class MineTrackExtractViewTestCaseExtraField(MineTrackExtractViewTestCase):
 
-    fixtures = ['initial_data', 'TestUserData']
-
     """
-    Trying to extract a track with a field not handled should fail with a 400 (bad request).
+        Trying to extract a track with a field not handled should fail with a 400 (bad request).
     """
     def test_mineTrackExtractExtraField(self):
         self._login(self.testUser)
@@ -26,5 +20,5 @@ class MineTrackExtractViewTestCaseExtraField(MineTrackExtractViewTestCase):
             "fieldNotHandled": "a-ha"
         }
 
-        response = self.extract(data=data)
+        response = self._loginAndExtract(data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

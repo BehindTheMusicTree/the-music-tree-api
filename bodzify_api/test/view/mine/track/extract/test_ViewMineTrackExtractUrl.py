@@ -21,5 +21,5 @@ class MineTrackExtractViewTestUrl(MineTrackExtractViewTestCase):
             "artistName": "Jul",
             "releasedOn": 1290292
         }
-        response = self.extract(data=data)
+        response = self._loginAndExtract(data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
