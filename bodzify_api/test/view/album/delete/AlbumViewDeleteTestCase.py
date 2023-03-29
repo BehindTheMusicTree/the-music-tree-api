@@ -7,7 +7,7 @@ from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
-class AlbumDeleteTestCase1(AlbumViewTestCase):
+class AlbumViewDeleteTestCase(AlbumViewTestCase):
 
     sampleDirectoryRelativePath = "test/view/album/delete/sample/1/"
 
@@ -17,7 +17,7 @@ class AlbumDeleteTestCase1(AlbumViewTestCase):
 		The deletion of the album must delete the two tracks with their files.
 	"""
 
-    def test_albumDelete2Tracks(self):
+    def test_2TracksLinked(self):
         blackHolesAlbum = G(Album, user=self.testUser, name="Black Holes And Revelations")
         assassinTrack = G(
             LibraryTrack,
@@ -60,7 +60,7 @@ class AlbumDeleteTestCase1(AlbumViewTestCase):
     	- does not trigger the deletion of the artist "Pol" as it has still a track linked to it.
     """
 
-    def test_albumDeleteWithArtistDeletion(self):
+    def test_withArtistDeletion(self):
         matthewArtist = G(Artist, user=self.testUser, name="Matthew Bellamy")
         museArtist = G(Artist, user=self.testUser, name="Muse")
         polArtist = G(Artist, user=self.testUser, name="Pol")

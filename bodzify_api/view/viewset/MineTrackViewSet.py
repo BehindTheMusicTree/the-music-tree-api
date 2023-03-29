@@ -54,7 +54,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
         description=("""
             Download a track from myfreemp3. 
             It is done by providing an URL and metadata:
-                - "title" (required);
+                - "title";
                 - "artistName";
                 - "albumName";
                 - "albumArtistsName";
@@ -62,6 +62,18 @@ class MineTrackViewSet(MultiSerializerViewSet):
                 - "rating";
                 - "releasedOn";
                 - "language";
+                
+            The downloaded track's filename will be set as follow:
+                - if the "artistName" and "title" fields are provided, the filename will be set to 
+                "artistName - title.extension";
+                - else if only the title is provided, the filename will be set to "title.extension";
+                - else if the title and the artist name are set in the metadata of the track, the 
+                filename will be set to "artist name - title.extension";
+                - else if only the title is set in the metadata, the filename will be set to 
+                "title.extension";
+                - else if the length filename of the downloaded track plus de length of the 
+                extension s smaller than 100, the filename will be set to "filename.extension";
+                - else the filename will be set to "random string.extension".
             """)
     )
     @action(detail=False, methods=['post'])

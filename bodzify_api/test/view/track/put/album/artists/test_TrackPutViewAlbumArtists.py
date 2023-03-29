@@ -1,15 +1,10 @@
 #!/usr/bin/env python
 from rest_framework import status
+from bodzify_api import settings
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 
 
-class TrackViewPutAlbumArtistsTestCase(TrackViewTestCase):
-
-    fixtures = ['initial_data', 'TestUserData', 'TestTrackViewPutAlbumArtistsData']
-        
-        
-    def getNameOfCurrentClass(self):
-        
+class TrackViewPutAlbumArtistsTestCase(TrackViewTestCase):        
 
     """
     Updating the album artists name with a string with the highest length allowed.
@@ -17,11 +12,12 @@ class TrackViewPutAlbumArtistsTestCase(TrackViewTestCase):
     def test_trackPutAlbumArtistsLongestName(self):
         data = {
             "albumName": "Chuck",
-            "albumArtistsName": "a" * 100
+            "albumArtistsName": "a" * settings.ALBUM_ARTISTS_FIELD_MAX_CHAR
         }
         response = self._loginAndPutSampleTrack(trackUuid="36nS4LVDssLh4BvTARbJEK", data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert list(self.savedTrack.album.albumArtists.all())[0].name == "a" * 100
+        assert list(self.savedTrack.album.albumArtists.all())[0].name == (
+            "a" * settings.ALBUM_ARTISTS_FIELD_MAX_CHAR)
         
 
     """
