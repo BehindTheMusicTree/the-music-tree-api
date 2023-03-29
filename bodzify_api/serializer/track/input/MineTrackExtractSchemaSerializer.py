@@ -7,7 +7,7 @@ from bodzify_api.validator.MineTrackUrlValidator import validateUrl
 
 class MineTrackExtractSchemaSerializer(InputSerializer):
     url = serializers.URLField(validators=[validateUrl])
-    title = serializers.CharField(max_length=100)
+    title = serializers.CharField(max_length=100, required=False)
     artistName = serializers.CharField(max_length=100, required=False)
     albumName = serializers.CharField(max_length=100, required=False)
     albumArtistsName = serializers.CharField(max_length=100, required=False)
