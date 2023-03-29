@@ -15,10 +15,7 @@ from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
-from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
-
-
-TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH = 20
+from bodzify_api.serializer.track.input.TrackUpdateInterfaceSerializer import TrackUpdateSchemaSerializer
 
 
 def List(query, pageNumber, pageSize):
@@ -38,7 +35,7 @@ def Extract(user: User, requestData: QueryDict):
 
         saveData = _getSaveDataFromRequestData(requestData)
 
-        trackFileName = _getTrackFileName(mineTrackUrl, requestData)
+        trackFileName = _getTrackFileNameWithExtension(mineTrackUrl, requestData)
         saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(
             trackTempFile, name=trackFileName)
         libraryTrack = TrackService.Create(user=user, postSchemaData=saveData)
@@ -60,7 +57,9 @@ def _getSubstringAfterLastSlash(string: str):
     return string.split("/")[-1]
 
 
-def _getTrackFileName(mineTrackUrl: str, requestData: QueryDict):
+def _getTrackFileNameWithExtension(mineTrackUrl: str, requestData: QueryDict):
+    fileExtension = _getFileExtensionFromUrl(mineTrackUrl)
+        
     titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
     if titleKey in requestData:
         title = requestData[titleKey]
@@ -73,23 +72,17 @@ def _getTrackFileName(mineTrackUrl: str, requestData: QueryDict):
                 fileNameWithoutExtension = artistName + " - " + title
         else:
             fileNameWithoutExtension = title
+        filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
     else:
-        partAfterLastSlashOfUrl = _getSubstringAfterLastSlash(mineTrackUrl)
-        if len(partAfterLastSlashOfUrl) > settings.TRACK_TITLE_MAX_CHAR:
+        filenameWithExtension = _getSubstringAfterLastSlash(mineTrackUrl)
+        if len(filenameWithExtension) > settings.TRACK_TITLE_MAX_CHAR:
             fileNameWithoutExtension = _generateShortUu(
-                settings.TRACK_TITLE_MAX_CHAR)
-        else:
-            fileNameWithoutExtension = partAfterLastSlashOfUrl
-    return fileNameWithoutExtension + "." + _getFileExtensionFromUrl(mineTrackUrl)
+                settings.TRACK_TITLE_MAX_CHAR - len(fileExtension) - 1)
+    return filenameWithExtension
 
 
-def _getTrackTempFileIndividualDirAbsPath():
-    trackTempFileIndividualDirName = (
-        _generateShortUu(TRACK_TEMP_FILE_INDIVIDUAL_DIR_NAME_LENGTH))
-    trackTempFileIndividualDirAbsPath = settings.MEDIA_TEMP + \
-        trackTempFileIndividualDirName + "/"
-    os.makedirs(trackTempFileIndividualDirAbsPath)
-    return trackTempFileIndividualDirAbsPath
+def getFilenameWithoutExtension(filename: str):
+    return os.path.splitext(filename)[0]
 
 
 def _generateShortUu(length: int):
