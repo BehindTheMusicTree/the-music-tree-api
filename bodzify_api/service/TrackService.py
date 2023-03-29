@@ -3,9 +3,10 @@ import os
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPostSchemaSerializer
+from bodzify_api.serializer.track.input.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 import bodzify_api.settings as settings
-from bodzify_api.serializer.track.input.TrackSaveSerializer import TrackSaveSerializer
-from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
+from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSaveModelSerializer
+from bodzify_api.serializer.track.input.TrackUpdateInterfaceSerializer import TrackUpdateSchemaSerializer
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
@@ -17,11 +18,20 @@ from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
 
 def Create(user: User, postSchemaData: QueryDict):
-    genreNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
+    genreNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
     if genreNameKey not in postSchemaData:
         postSchemaData[genreNameKey] = ""
     serializer = TrackPostSchemaSerializer(data=postSchemaData)
     serializer.is_valid(raise_exception=True)
+    
+    titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
+    if titleKey in postSchemaData:
+        title = postSchemaData[titleKey]
+        if title == "" or title is None:
+            file = postSchemaData[LibraryTrack.ATTRIBUTE_FILE_LABEL]
+            title, fileExtension = os.path.splitext(file.name)
+            postSchemaData[titleKey] = title
+    
     return Save(user=user, saveSchemaData=postSchemaData)
 
 
@@ -49,7 +59,7 @@ def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack = None):
             if saveData[titleKey] is None:
                 saveData[titleKey], extension = os.path.splitext(file.name)
 
-    saveSerializer = TrackSaveSerializer(
+    saveSerializer = TrackSaveModelSerializer(
         instance=oldTrack, data=saveData, partial=True)
     saveSerializer.is_valid(raise_exception=True)
     savedTrack = saveSerializer.save()
@@ -69,8 +79,6 @@ def _getSaveDataFromFile(user: User, file):
     saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = file
 
     title = metadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE]
-    if title == "" or title is None:
-        title, fileExtension = os.path.splitext(file.name)
     saveData[LibraryTrack.ATTRIBUTE_TITLE_LABEL] = title
 
     artistName = metadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME]
