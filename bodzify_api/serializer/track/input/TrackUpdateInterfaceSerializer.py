@@ -6,11 +6,15 @@ from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
 from upload_validator import FileTypeValidator
 from bodzify_api import settings
-from bodzify_api.serializer.InputSerializer import InputSerializer
+from bodzify_api.serializer.track.input.TrackSaveSchemaSerializer import (
+    TrackSaveSchemaSerializer)
 from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 
+ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be 
+        specified if album artists name is."""
 
-class TrackPostSchemaSerializer(InputSerializer):
+
+class TrackUpdateSchemaSerializer(TrackSaveSchemaSerializer):
 
     file = serializers.FileField(
         help_text="Only audio formats accepted.",
@@ -18,15 +22,15 @@ class TrackPostSchemaSerializer(InputSerializer):
             FileExtensionValidator(['flac', 'wav', 'mp3']),
             FileTypeValidator(allowed_types=['audio/*']),
             validateTrackSize],
-        required=True)
+        required=False)
     title = serializers.CharField(
         max_length=settings.TRACK_TITLE_MAX_CHAR, required=False)
     artistName = serializers.CharField(
-        max_length=settings.ARTIST_NAME_MAX_CHAR, required=False, allow_blank=True)
+        max_length=settings.ARTIST_NAME_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
     albumName = serializers.CharField(
-        max_length=settings.ALBUM_NAME_MAX_CHAR, required=False, allow_blank=True)
+        max_length=settings.ALBUM_NAME_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
     albumArtistsName = serializers.CharField(
-        max_length=100, required=False, allow_blank=True)
+        max_length=100, required=False, allow_blank=True, allow_null=True)
     genreName = serializers.CharField(
         max_length=100, required=False, allow_blank=True)
     rating = serializers.IntegerField(

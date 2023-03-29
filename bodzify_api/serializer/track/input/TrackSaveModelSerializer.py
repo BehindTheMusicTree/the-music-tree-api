@@ -3,7 +3,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
 
 
-class TrackSaveSerializer(InputModelSerializer):
+class TrackSaveModelSerializer(InputModelSerializer):
 
     class Meta:
         model = LibraryTrack
