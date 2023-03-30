@@ -6,7 +6,7 @@ from bodzify_api.test.view.mine.track.MineTrackViewTestCase import (
 import bodzify_api.settings as settings
 
 
-class MineTrackExtractViewTestCase(MineTrackExtractViewTestCase):
+class MineTrackViewExtractFileViewTestCase(MineTrackExtractViewTestCase):
 
     """
     Extract a mp3 file with specified data title and artist:
