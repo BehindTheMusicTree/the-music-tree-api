@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 import os
+from tempfile import NamedTemporaryFile
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
+from django.core.files.base import File
+import requests
+from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPostSchemaSerializer
 from bodzify_api.serializer.track.input.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 import bodzify_api.settings as settings
 from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSaveModelSerializer
-from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
+from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import (
+    TrackUpdateSchemaSerializer)
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
@@ -17,19 +22,41 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
 
+def Extract(user: User, requestData: QueryDict):
+    mineTrackUrl = requestData[MineTrack.ATTRIBUTE_URL_LABEL]
+    trackInMemoryFile = requests.get(mineTrackUrl, stream=True)
+    with NamedTemporaryFile(delete=True) as trackTempFile:
+        for block in trackInMemoryFile.iter_content(1024 * 8):
+            if not block:
+                break
+            trackTempFile.write(block)
+        trackTempFile.flush()
+        trackTempFile.seek(0)
+
+        saveData = _getSaveDataFromRequestData(requestData)
+
+        trackFileName = _getTrackFileNameWithExtension(
+            mineTrackUrl, requestData)
+        saveData[LibraryTrack.ATTRIBUTE_FILE_LABEL] = File(
+            trackTempFile, name=trackFileName)
+        libraryTrack = Create(user=user, postSchemaData=saveData)
+
+    return libraryTrack
+
+
 def Create(user: User, postSchemaData: QueryDict):
     genreNameKey = TrackSaveSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
     if genreNameKey not in postSchemaData:
         postSchemaData[genreNameKey] = ""
     serializer = TrackPostSchemaSerializer(data=postSchemaData)
     serializer.is_valid(raise_exception=True)
-    
+
     titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
     if titleKey not in postSchemaData:
         file = postSchemaData[LibraryTrack.ATTRIBUTE_FILE_LABEL]
         postSchemaData[titleKey] = os.path.basename(file.name).split('.')[0]
-    
-    return Save(user=user, saveSchemaData=postSchemaData)    
+
+    return Save(user=user, saveSchemaData=postSchemaData)
 
 
 def Update(user: User, updateSchemaData: QueryDict, oldTrack: LibraryTrack):
@@ -288,3 +315,46 @@ def _getSaveMutableDataWithAttributeEventuallySetInRequestData(
     if attributeKey in requestData:
         saveMutableData[attributeKey] = requestData[attributeKey]
     return saveMutableData
+
+
+def _getSaveDataFromRequestData(requestData: QueryDict):
+    saveData = requestData.copy()
+    del saveData[MineTrack.ATTRIBUTE_URL_LABEL]
+    return saveData
+
+
+def _getFileExtensionFromUrl(url: str):
+    return url.split(".")[-1]
+
+
+def _getSubstringAfterLastSlash(string: str):
+    return string.split("/")[-1]
+
+
+def _getTrackFileNameWithExtension(mineTrackUrl: str, requestData: QueryDict):
+    fileExtension = _getFileExtensionFromUrl(mineTrackUrl)
+
+    titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
+    if titleKey in requestData:
+        title = requestData[titleKey]
+        artistNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
+        if artistNameKey in requestData:
+            artistName = requestData[artistNameKey]
+            if artistName is None or artistName == "":
+                fileNameWithoutExtension = title
+            else:
+                fileNameWithoutExtension = artistName + " - " + title
+        else:
+            fileNameWithoutExtension = title
+        filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
+    else:
+        filenameWithExtension = _getSubstringAfterLastSlash(mineTrackUrl)
+        if len(filenameWithExtension) > settings.TRACK_FILENAME_MAX_CHAR:
+            fileNameWithoutExtension = _generateShortUu(
+                settings.TRACK_FILENAME_MAX_CHAR - len(fileExtension) - 1)
+            filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
+    return filenameWithExtension
+
+
+def _generateShortUu(length: int):
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
