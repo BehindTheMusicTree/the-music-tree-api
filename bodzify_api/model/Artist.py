@@ -16,6 +16,11 @@ class Artist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=200, default=None)
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=~models.Q(name=""), name="artist_non_empty_name")
+        ]
+
     def delete(self):
         Album.objects.filter(user=self.user, albumArtists__in=[self]).delete()
         LibraryTrack.objects.filter(user=self.user, artist=self).delete()

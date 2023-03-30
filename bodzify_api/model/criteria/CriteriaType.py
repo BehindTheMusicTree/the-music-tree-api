@@ -12,3 +12,8 @@ class CriteriaType(models.Model):
 
     def __str__(self) -> str:
         return str(self.id) + " " + self.label
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=~models.Q(label=""), name="criteria_non_empty_label")
+        ]

@@ -24,6 +24,11 @@ class Album(models.Model):
     year = models.CharField(max_length=4, default=None, null=True)
     albumArtists = models.ManyToManyField('bodzify_api.Artist')
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")
+        ]
+
 
     def deleteWithTracksAndEventuallyArtists(self):
         artistsLinkedToAlbumAndTrack = list()
