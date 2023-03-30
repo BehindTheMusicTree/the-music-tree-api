@@ -59,7 +59,7 @@ def _getSubstringAfterLastSlash(string: str):
 
 def _getTrackFileNameWithExtension(mineTrackUrl: str, requestData: QueryDict):
     fileExtension = _getFileExtensionFromUrl(mineTrackUrl)
-        
+            
     titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
     if titleKey in requestData:
         title = requestData[titleKey]
@@ -75,14 +75,11 @@ def _getTrackFileNameWithExtension(mineTrackUrl: str, requestData: QueryDict):
         filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
     else:
         filenameWithExtension = _getSubstringAfterLastSlash(mineTrackUrl)
-        if len(filenameWithExtension) > settings.TRACK_TITLE_MAX_CHAR:
+        if len(filenameWithExtension) > settings.TRACK_FILENAME_MAX_CHAR:
             fileNameWithoutExtension = _generateShortUu(
-                settings.TRACK_TITLE_MAX_CHAR - len(fileExtension) - 1)
+                settings.TRACK_FILENAME_MAX_CHAR - len(fileExtension) - 1)
+            filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
     return filenameWithExtension
-
-
-def getFilenameWithoutExtension(filename: str):
-    return os.path.splitext(filename)[0]
 
 
 def _generateShortUu(length: int):
