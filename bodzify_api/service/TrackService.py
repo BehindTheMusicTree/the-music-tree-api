@@ -25,14 +25,11 @@ def Create(user: User, postSchemaData: QueryDict):
     serializer.is_valid(raise_exception=True)
     
     titleKey = LibraryTrack.ATTRIBUTE_TITLE_LABEL
-    if titleKey in postSchemaData:
-        title = postSchemaData[titleKey]
-        if title == "" or title is None:
-            file = postSchemaData[LibraryTrack.ATTRIBUTE_FILE_LABEL]
-            title, fileExtension = os.path.splitext(file.name)
-            postSchemaData[titleKey] = title
+    if titleKey not in postSchemaData:
+        file = postSchemaData[LibraryTrack.ATTRIBUTE_FILE_LABEL]
+        postSchemaData[titleKey] = os.path.basename(file.name).split('.')[0]
     
-    return Save(user=user, saveSchemaData=postSchemaData)
+    return Save(user=user, saveSchemaData=postSchemaData)    
 
 
 def Update(user: User, updateSchemaData: QueryDict, oldTrack: LibraryTrack):
