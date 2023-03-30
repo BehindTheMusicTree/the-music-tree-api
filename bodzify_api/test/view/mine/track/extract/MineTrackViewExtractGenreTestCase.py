@@ -7,13 +7,13 @@ from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 import bodzify_api.settings as settings
 
 
-class MineTrackExtractViewTestCase(MineTrackExtractViewTestCase):
+class MineTrackViewExtractGenreTestCase(MineTrackExtractViewTestCase):
 
     """
     Extract a mp3 file with no genre specified. The genre should be set to "genreless" and the 
     tag should be empty.
     """
-    def test_mineTrackExtrackGenreNone(self):
+    def test_none(self):
         trackUrl = (
                 "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
                 + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE_"
