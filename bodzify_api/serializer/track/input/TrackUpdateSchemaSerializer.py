@@ -30,12 +30,13 @@ class TrackUpdateSchemaSerializer(TrackSaveSchemaSerializer):
     albumName = serializers.CharField(
         max_length=settings.ALBUM_NAME_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
     albumArtistsName = serializers.CharField(
-        max_length=100, required=False, allow_blank=True, allow_null=True)
+        max_length=settings.ALBUM_ARTISTS_FIELD_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
     genreName = serializers.CharField(
-        max_length=100, required=False, allow_blank=True)
+        max_length=settings.CRITERIA_NAME_MAX_CHAR, required=False, allow_blank=True)
     rating = serializers.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(255)],
+        validators=[MinValueValidator(0), MaxValueValidator(
+            settings.TRACK_RATING_MAX_VALUE)],
         required=False,
         allow_null=True)
     language = serializers.CharField(
-        max_length=100, required=False, allow_blank=True, allow_null=True)
+        max_length=settings.TRACK_LANGUAGE_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
