@@ -10,8 +10,7 @@ import bodzify_api.settings as settings
 class MineTrackViewExtractGenreTestCase(MineTrackExtractViewTestCase):
 
     """
-    Extract a mp3 file with no genre specified. The genre should be set to "genreless" and the 
-    tag should be empty.
+    No genre specified. The genre should be set to "genreless" and the tag should be empty.
     """
     def test_none(self):
         trackUrl = (

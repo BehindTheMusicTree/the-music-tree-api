@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPostSchemaSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
-from bodzify_api.serializer.track.input.TrackUpdateInterfaceSerializer import TrackUpdateSchemaSerializer
+from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 import bodzify_api.service.TrackService as TrackService

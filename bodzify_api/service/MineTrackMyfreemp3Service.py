@@ -15,7 +15,7 @@ from bodzify_api.model.track.MineTrack import MineTrack
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
-from bodzify_api.serializer.track.input.TrackUpdateInterfaceSerializer import TrackUpdateSchemaSerializer
+from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
 
 
 def List(query, pageNumber, pageSize):
