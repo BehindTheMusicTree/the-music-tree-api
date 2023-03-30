@@ -6,7 +6,7 @@ from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPo
 from bodzify_api.serializer.track.input.TrackSaveSchemaSerializer import TrackSaveSchemaSerializer
 import bodzify_api.settings as settings
 from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSaveModelSerializer
-from bodzify_api.serializer.track.input.TrackUpdateInterfaceSerializer import TrackUpdateSchemaSerializer
+from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
@@ -162,7 +162,7 @@ def _getSaveMutableDataWithGenreUuidIfSetInRequest(
     genreNameKey = TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
     if genreNameKey in requestData:
         genreName = requestData[genreNameKey]
-        if genreName is None:
+        if genreName == "":
             genreUuid = Criteria.objects.get(
                 user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
         else:
