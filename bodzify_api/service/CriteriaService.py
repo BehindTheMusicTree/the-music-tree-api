@@ -6,7 +6,7 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
+from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 
 
 def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
@@ -23,6 +23,6 @@ def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
         Playlist.objects.create(
             user=user,
             criteria=criteria,
-            type=PlaylistType.objects.get(pk=PlaylistTypeIds.GENRE)
+            type=PlaylistType.objects.get(pk=PlaylistTypesId.GENRE)
         )
     return criteria
