@@ -9,34 +9,36 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 class AlbumViewDeleteTestCase(AlbumViewTestCase):
 
-    sampleDirectoryRelativePath = "test/view/album/delete/sample/1/"
-
     """
 		The album "Black Holes And Revelation" has two tracks "Assassin" and "Starlight" (with 
 		respective filenames "Assassin.mp3" and "Starlight.mp3").
-		The deletion of the album must delete the two tracks with their files.
+		The deletion of the album must delete the two tracks linked.
 	"""
 
     def test_2TracksLinked(self):
         blackHolesAlbum = G(Album, user=self.testUser, name="Black Holes And Revelations")
+        assassinTrackFilename = "Assassin.mp3"
         assassinTrack = G(
             LibraryTrack,
             user=self.testUser,
-            file=self.testUserLibraryAbsolutePath + "Assassin.mp3",
+            file=self.testUserLibraryAbsPath + assassinTrackFilename,
             title="Assassin",
             album=blackHolesAlbum,
             genre=self.testUserGenrelessGenre,
             duration=0)
+        starlightTrackFilename = "Starlight.mp3"
         starlightTrack = G(
             LibraryTrack,
             user=self.testUser,
-            file=self.testUserLibraryAbsolutePath + "Starlight.mp3",
+            file=self.testUserLibraryAbsPath + starlightTrackFilename,
             title="Starlight",
             album=blackHolesAlbum,
             genre=self.testUserGenrelessGenre,
             duration=0)
+        assert self.doesTrackFilenameExistInTestUserLibrary(assassinTrackFilename) == True
+        assert self.doesTrackFilenameExistInTestUserLibrary(starlightTrackFilename) == True
 
-        response = self._loginAndDelete(albumUuid=blackHolesAlbum.uuid)
+        response = self.delete(albumUuid=blackHolesAlbum.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(uuid=blackHolesAlbum.uuid).exists() == False
@@ -44,8 +46,8 @@ class AlbumViewDeleteTestCase(AlbumViewTestCase):
             user=self.testUser, title=assassinTrack.title).exists() == False
         assert LibraryTrack.objects.filter(
             user=self.testUser, title=starlightTrack.title).exists() == False
-        assert self._doesUserTrackFileExist(assassinTrack.file.name) == False
-        assert self._doesUserTrackFileExist(starlightTrack.file.name) == False
+        assert self.doesTrackFilenameExistInTestUserLibrary(assassinTrackFilename) == False
+        assert self.doesTrackFilenameExistInTestUserLibrary(starlightTrackFilename) == False
 
     """
     The album "Black Holes And Revelations" has:
@@ -70,7 +72,7 @@ class AlbumViewDeleteTestCase(AlbumViewTestCase):
             name="Black Holes And Revelations",
             albumArtists=[matthewArtist, museArtist]
         )
-        assassinTrack = G(
+        G(
             LibraryTrack,
             user=self.testUser,
             title="Assassin",
@@ -79,7 +81,7 @@ class AlbumViewDeleteTestCase(AlbumViewTestCase):
             genre=self.testUserGenrelessGenre,
             duration=0
         )
-        blueTrack = G(
+        G(
             LibraryTrack,
             user=self.testUser,
             title="Blue",
@@ -88,7 +90,7 @@ class AlbumViewDeleteTestCase(AlbumViewTestCase):
             duration=0
         )
 
-        response = self._loginAndDelete(albumUuid=blackHolesAlbum.uuid)
+        response = self.delete(albumUuid=blackHolesAlbum.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(user=self.testUser, name=matthewArtist.name).exists() == False
         assert Artist.objects.filter(user=self.testUser, name=museArtist.name).exists() == False
