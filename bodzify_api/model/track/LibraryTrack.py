@@ -12,30 +12,38 @@ from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
+from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 import bodzify_api.settings as settings
 
 
 def _userDirectoryPath(instance, filename):
     return '{0}{1}/{2}'.format(
-        settings.LIBRARIES_FOLDER_NAME + '/' +
-        settings.USER_LIBRARY_FOLDER_NAME_PREFIXE,
+        settings.LIBRARIES_DIR_NAME + '/' +
+        settings.USER_LIBRARY_DIR_NAME_PREFIXE,
         instance.user.id,
         filename)
 
 
-class LibraryTrack(models.Model):
+class ATTRIBUTES_LABEL:
+    UUID = "uuid"
+    USER = "user"
+    FILE = "file"
+    TITLE = "title"
+    ARTIST = "artist"
+    ALBUM = "album"
+    GENRE = "genre"
+    DURATION = "duration"
+    RATING = "rating"
+    PLAYLISTS = "playlists"
+    LANGUAGE = "language"
+    ADDED_ON = "addedOn"
+    FILENAME = "filename"
+    FILE_EXTENSION = "fileExtension"
+    FILE_EXISTS = "fileExists"
+    RELATIVE_URL = "relativeUrl"
 
-    ATTRIBUTE_UUID_LABEL = "uuid"
-    ATTRIBUTE_USER_LABEL = "user"
-    ATTRIBUTE_FILE_LABEL = "file"
-    ATTRIBUTE_TITLE_LABEL = "title"
-    ATTRIBUTE_ARTIST_LABEL = "artist"
-    ATTRIBUTE_ALBUM_LABEL = "album"
-    ATTRIBUTE_GENRE_LABEL = "genre"
-    ATTRIBUTE_DURATION_LABEL = "duration"
-    ATTRIBUTE_RATING_LABEL = "rating"
-    ATTRIBUTE_LANGUAGE_LABEL = "language"
+
+class LibraryTrack(models.Model):
 
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
@@ -72,7 +80,8 @@ class LibraryTrack(models.Model):
 
     class Meta:
         constraints = [
-            models.CheckConstraint(check=~models.Q(title=""), name="librarytrack_non_empty_title")
+            models.CheckConstraint(check=~models.Q(
+                title=""), name="librarytrack_non_empty_title")
         ]
 
     @property
@@ -99,15 +108,16 @@ class LibraryTrack(models.Model):
         return 'tracks/' + self.uuid + "/"
 
     def str(self):
-        return (
-            self.uuid + " " + str(self.artist) + " - " + self.title + " album: " +
-            str(self.album) + " genre: " + str(self.genre) + " duration: " +
-            str(self.duration) + " rating: " + str(self.rating) + " language: " +
-            self.language + " addedOn: " + str(self.addedOn) + " file: " +
-            self.file.name)
+        return (self.uuid + " " + str(self.artist) + " - " + self.title + " " +
+                ATTRIBUTES_LABEL.ALBUM + ": " +
+                str(self.album) + " " + ATTRIBUTES_LABEL.GENRE + ": "
+                + str(self.genre) + " " + ATTRIBUTES_LABEL.DURATION + ": " + str(self.duration) +
+                " " + ATTRIBUTES_LABEL.RATING + ": " + str(self.rating) + " " +
+                ATTRIBUTES_LABEL.LANGUAGE + ": " + self.language + " " + ATTRIBUTES_LABEL.ADDED_ON +
+                ": " + str(self.addedOn) + " " + ATTRIBUTES_LABEL.FILE + ": " + self.file.name)
 
     def _updatePlaylists(self, oldGenre: Criteria):
-        genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypeIds.GENRE)
+        genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypesId.GENRE)
         commonGenre = self.genre.getCommonCriteria(oldGenre)
         newGenreTreeItem = self.genre
 
@@ -151,7 +161,7 @@ class LibraryTrack(models.Model):
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
 
-    @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
+    @ receiver(pre_delete, sender='bodzify_api.LibraryTrack')
     def deleteFileIfExists(sender, instance, using, **kwargs):
         if instance.fileExists:
             instance.file.delete()
