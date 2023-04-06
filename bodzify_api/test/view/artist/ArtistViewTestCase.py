@@ -5,6 +5,5 @@ from bodzify_api.test.view.ViewTestCase import ViewTestCase
 
 class ArtistViewTestCase(ViewTestCase):
 
-    def _loginAndDelete(self, artistUuid: str):
-        self._login(self.testUser)
+    def _delete(self, artistUuid: str):
         return self.apiClient.delete(path=reverse('artist-detail', kwargs={'pk': artistUuid}))
