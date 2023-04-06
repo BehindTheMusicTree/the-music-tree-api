@@ -9,9 +9,6 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 class ArtistViewDeleteTestCase(ArtistViewTestCase):
 
-    """
-        Artist "Muse" with one track "Assassin".
-    """
     def test_withOneTrackLinked(self):
         museArtist = G(Artist, name="Muse", user=self.testUser)
         assassinTrack = G(
@@ -22,7 +19,7 @@ class ArtistViewDeleteTestCase(ArtistViewTestCase):
             genre=self.testUserGenrelessGenre,
             duration=0)
 
-        response = self._loginAndDelete(artistUuid=museArtist.uuid)
+        response = self._delete(artistUuid=museArtist.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Artist.objects.filter(uuid=museArtist.uuid).exists() == False
@@ -51,7 +48,8 @@ class ArtistViewDeleteTestCase(ArtistViewTestCase):
                       album=xavierAlbum,
                       genre=self.testUserGenrelessGenre,
                       duration=0)
-        response = self._loginAndDelete(bertrandArtist.uuid)
+        
+        response = self._delete(bertrandArtist.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(uuid=lifeTrack.uuid).exists() == False
         assert Album.objects.filter(uuid=xavierAlbum.uuid).exists() == False
