@@ -275,7 +275,9 @@ def _getAlbumArtistsNametringTagFromFlacFileTags(flacFileTags: FLAC):
     albumArtistsNameStringRaw = (
             _getFirstValueIfExistsOrNone(
                     flacFileTags, VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES))
-    return albumArtistsNameStringRaw.strip()
+    if albumArtistsNameStringRaw is not None:
+        return albumArtistsNameStringRaw.strip()
+    return None
 
 
 def _getGenreNameTagFromFlacFileTags(flacFileTags: FLAC):
