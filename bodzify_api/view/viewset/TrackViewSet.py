@@ -5,21 +5,34 @@ from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-from bodzify_api.serializer.track.input.TrackPostSchemaSerializer import TrackPostSchemaSerializer
-from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
-from bodzify_api.serializer.track.input.TrackUpdateSchemaSerializer import TrackUpdateSchemaSerializer
+from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
+    ATTRIBUTES_LABEL as SCHEMA_ATTRIBUTES_LABEL
+from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
+    TrackExtractSchemaSerializer
+from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
+    ATTRIBUTES_LABEL as SCHEMA_EXTRACT_ATTRIBUTE_LABEL
+from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
+    TrackPostSchemaSerializer
+from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
+    ATTRIBUTES_LABEL as SCHEMA_POST_ATTRIBUTE_LABEL
+from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
+    TrackUpdateSchemaSerializer
+from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
+    ATTRIBUTES_LABEL as SCHEMA_UPDATE_ATTRIBUTE_LABEL
+from bodzify_api.serializer.track.output.TrackDetailedSerializer import \
+    TrackDetailedSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 import bodzify_api.service.TrackService as TrackService
 import bodzify_api.view.utility as utility
 
-FILTER_TITLE_PARAMETER_NAME = LibraryTrack.ATTRIBUTE_TITLE_LABEL
-FILTER_ARTIST_NAME_PARAMETER_NAME = TrackUpdateSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL
-FILTER_ALBUM_NAME_PARAMETER_NAME = TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_NAME_LABEL
-FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = (
-    TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL)
-FILTER_GENRE_NAME_PARAMETER_NAME = TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL
-FILTER_LANGUAGE_PARAMETER_NAME = LibraryTrack.ATTRIBUTE_LANGUAGE_LABEL
+FILTER_TITLE_PARAMETER_NAME = ATTRIBUTES_LABEL.TITLE
+FILTER_ARTIST_NAME_PARAMETER_NAME = SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+FILTER_ALBUM_NAME_PARAMETER_NAME = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
+FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
+FILTER_GENRE_NAME_PARAMETER_NAME = SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+FILTER_LANGUAGE_PARAMETER_NAME = ATTRIBUTES_LABEL.LANGUAGE
 
 
 class TrackViewSet(MultiSerializerViewSet):
@@ -34,16 +47,22 @@ class TrackViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        titleFilter = self.request.query_params.get(FILTER_TITLE_PARAMETER_NAME)
-        artistNameFilter = self.request.query_params.get(FILTER_ARTIST_NAME_PARAMETER_NAME)
-        albumNameFilter = self.request.query_params.get(FILTER_ALBUM_NAME_PARAMETER_NAME)
-        genreNameFilter = self.request.query_params.get(FILTER_GENRE_NAME_PARAMETER_NAME)
-        languageFilter = self.request.query_params.get(FILTER_LANGUAGE_PARAMETER_NAME)
-        
+        titleFilter = self.request.query_params.get(
+            FILTER_TITLE_PARAMETER_NAME)
+        artistNameFilter = self.request.query_params.get(
+            FILTER_ARTIST_NAME_PARAMETER_NAME)
+        albumNameFilter = self.request.query_params.get(
+            FILTER_ALBUM_NAME_PARAMETER_NAME)
+        genreNameFilter = self.request.query_params.get(
+            FILTER_GENRE_NAME_PARAMETER_NAME)
+        languageFilter = self.request.query_params.get(
+            FILTER_LANGUAGE_PARAMETER_NAME)
+
         if titleFilter is not None:
             queryset = queryset.filter(title__icontains=titleFilter)
         if artistNameFilter is not None:
-            queryset = queryset.filter(artist__name__icontains=artistNameFilter)
+            queryset = queryset.filter(
+                artist__name__icontains=artistNameFilter)
         if albumNameFilter is not None:
             queryset = queryset.filter(album__name__icontains=albumNameFilter)
         if genreNameFilter is not None:
@@ -52,14 +71,12 @@ class TrackViewSet(MultiSerializerViewSet):
             queryset = queryset.filter(language__icontains=languageFilter)
         return queryset
 
-
     def destroy(self, request, *args, **kwargs):
         self.get_object().deleteWithCheckingAlbumAndArtistPotentialDeletion()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
     @extend_schema(
-        request=TrackUpdateSchemaSerializer, 
+        request=TrackUpdateSchemaSerializer,
         responses=TrackDetailedSerializer,
         description=("""
             Updates a track:\n"
@@ -92,14 +109,13 @@ class TrackViewSet(MultiSerializerViewSet):
     )
     def update(self, request, *args, **kwargs):
         updatedTrack = TrackService.Update(
-                user=request.user, updateSchemaData=request.data, oldTrack=self.get_object())
+            user=request.user, updateSchemaData=request.data, oldTrack=self.get_object())
         responseSerializer = TrackDetailedSerializer(updatedTrack)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
-                data=TrackDetailedSerializer(updatedTrack).data,
-                status=status.HTTP_200_OK,
-                headers=headers)
-
+            data=TrackDetailedSerializer(updatedTrack).data,
+            status=status.HTTP_200_OK,
+            headers=headers)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
@@ -110,7 +126,6 @@ class TrackViewSet(MultiSerializerViewSet):
             return HttpResponse(
                 content="The requested track's file is missing.",
                 status=status.HTTP_410_GONE)
-
 
     @extend_schema(
         request=TrackPostSchemaSerializer,
@@ -132,38 +147,74 @@ class TrackViewSet(MultiSerializerViewSet):
             """)
     )
     def create(self, request, *args, **kwargs):
-        serializer = TrackPostSchemaSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        track = TrackService.Save(
-                user=request.user, 
-                saveSchemaData=request.data)
+        track = TrackService.Create(
+            user=request.user,
+            postSchemaData=request.data)
         responseSerializer = TrackDetailedSerializer(track)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
-                data=TrackDetailedSerializer(track).data,
-                status=status.HTTP_201_CREATED,
-                headers=headers)
-
+            data=TrackDetailedSerializer(track).data,
+            status=status.HTTP_201_CREATED,
+            headers=headers)
 
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                    name=LibraryTrack.ATTRIBUTE_TITLE_LABEL, 
-                    type=OpenApiTypes.STR, 
-                    location=OpenApiParameter.QUERY),
+                name=ATTRIBUTES_LABEL.TITLE,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=TrackUpdateSchemaSerializer.ATTRIBUTE_ARTIST_NAME_LABEL, 
-                    type=OpenApiTypes.STR, 
-                    location=OpenApiParameter.QUERY),
+                name=ATTRIBUTES_LABEL.ARTIST,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=TrackUpdateSchemaSerializer.ATTRIBUTE_ALBUM_ARTISTS_NAMES_LABEL, 
-                    type=OpenApiTypes.STR,
-                    location=OpenApiParameter.QUERY),
+                name=SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                    name=TrackUpdateSchemaSerializer.ATTRIBUTE_GENRE_NAME_LABEL, 
-                    type=OpenApiTypes.STR,
-                    location=OpenApiParameter.QUERY)
+                name=SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY)
         ]
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        request=TrackExtractSchemaSerializer,
+        responses=TrackDetailedSerializer,
+        description=("""
+            Download a track from the given url to the app. 
+            It is done by providing an URL and metadata:
+                - "title";
+                - "artistName";
+                - "albumName";
+                - "albumArtistsName";
+                - "genreName";
+                - "rating";
+                - "releasedOn";
+                - "language";
+                
+            The downloaded track's filename will be set as follow:
+                - if the "artistName" and "title" fields are provided, the filename will be set to 
+                "artistName - title.extension";
+                - else if only the title is provided, the filename will be set to "title.extension";
+                - else if the title and the artist name are set in the metadata of the track, the 
+                filename will be set to "artist name - title.extension";
+                - else if only the title is set in the metadata, the filename will be set to 
+                "title.extension";
+                - else if the length filename of the downloaded track plus de length of the 
+                extension s smaller than 100, the filename will be set to "filename.extension";
+                - else the filename will be set to "random string.extension".
+            """)
+    )
+    @action(detail=False, methods=['post'])
+    def extract(self, request, *args, **kwargs):
+        serializer = TrackExtractSchemaSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        track = TrackService.Extract(
+            user=request.user, extractSchemaData=request.data)
+        responseSerializer = TrackDetailedSerializer(track)
+        headers = self.get_success_headers(responseSerializer.data)
+        return JsonResponse(
+            data=responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
