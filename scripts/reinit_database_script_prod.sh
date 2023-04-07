@@ -11,7 +11,7 @@ python3 $homeDir/manage.py migrate --fake-initial
 python3 $homeDir/manage.py migrate
 python3 $homeDir/manage.py makemigrations bodzify_api
 python3 $homeDir/manage.py migrate
-python3 $homeDir/manage.py loaddata initial_data
-python3 $homeDir/manage.py loaddata initial_data_admin
-python3 $homeDir/manage.py loaddata initial_data_test_app
-python3 $homeDir/manage.py loaddata initial_data_test_postman
+python3 $homeDir/manage.py loaddata app_initial_data
+python3 $homeDir/manage.py loaddata admin_user_initial_data
+python3 $homeDir/manage.py loaddata app_test_user_initial_data
+python3 $homeDir/manage.py loaddata postman_test_user_initial_data
