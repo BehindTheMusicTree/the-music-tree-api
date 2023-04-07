@@ -16,7 +16,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp3NoRating(self):
         self._login(self.testUser)
-        self._loginAndPostSampleTrack("no rating.mp3")
+        self.postSampleTrack("no rating.mp3")
         assert self.savedTrack.rating == None
 
     """
@@ -25,7 +25,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp31Star(self):
         self._login(self.testUser)
-        self._loginAndPostSampleTrack("1 star.mp3")
+        self.postSampleTrack("1 star.mp3")
         assert self.savedTrack.rating == 2
     
 
@@ -35,7 +35,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp32Stars(self):
         self._login(self.testUser)
-        self._loginAndPostSampleTrack("2 stars.mp3")
+        self.postSampleTrack("2 stars.mp3")
         assert self.savedTrack.rating == 4
     
 
@@ -45,7 +45,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp33Stars(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("3 stars.mp3")
+        response = self.postSampleTrack("3 stars.mp3")
         assert self.savedTrack.rating == 6
 
     """
@@ -54,7 +54,7 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp34Stars(self):
         self._login(self.testUser)
-        self._loginAndPostSampleTrack("4 stars.mp3")
+        self.postSampleTrack("4 stars.mp3")
         assert self.savedTrack.rating == 8
 
     """
@@ -63,5 +63,5 @@ class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
     """
     def test_trackPostRatingWmpMp35Stars(self):
         self._login(self.testUser)
-        self._loginAndPostSampleTrack("5 stars.mp3")
+        self.postSampleTrack("5 stars.mp3")
         assert self.savedTrack.rating == 10
