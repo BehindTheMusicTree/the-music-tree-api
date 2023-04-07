@@ -17,7 +17,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWavNoRating(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("no rating.wav")
+        response = self.postSampleTrack("no rating.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == None
@@ -29,7 +29,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav0Star(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("no star.wav")
+        response = self.postSampleTrack("no star.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 0
@@ -41,7 +41,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWavHalfStar(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("0 5 star.wav")
+        response = self.postSampleTrack("0 5 star.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 1
@@ -53,7 +53,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav1Star(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("1 star.wav")
+        response = self.postSampleTrack("1 star.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 2
@@ -65,7 +65,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav1AndHalfStar(self):        
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("1 5 stars.wav")
+        response = self.postSampleTrack("1 5 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 3
@@ -77,7 +77,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav2Stars(self):       
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("2 stars.wav")
+        response = self.postSampleTrack("2 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 4
@@ -89,7 +89,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav2AndHalfStar(self):       
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("2 5 stars.wav")
+        response = self.postSampleTrack("2 5 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 5
@@ -101,7 +101,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav3Stars(self):       
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("3 stars.wav")
+        response = self.postSampleTrack("3 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 6
@@ -113,7 +113,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav3AndHalfStar(self):       
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("3 5 stars.wav")
+        response = self.postSampleTrack("3 5 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 7
@@ -125,7 +125,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav4Stars(self):       
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("4 stars.wav")
+        response = self.postSampleTrack("4 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 8
@@ -137,7 +137,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav4AndHalfStar(self):       
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("4 5 stars.wav")
+        response = self.postSampleTrack("4 5 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 9
@@ -149,7 +149,7 @@ class TrackPostViewTestCaseRatingMusicBeeWav(TrackViewTestCase):
     """
     def test_trackPostRatingMusicBeeWav5Stars(self):       
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("5 stars.wav")
+        response = self.postSampleTrack("5 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 10
