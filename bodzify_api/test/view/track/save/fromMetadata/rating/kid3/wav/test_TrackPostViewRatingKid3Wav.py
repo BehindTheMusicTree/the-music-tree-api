@@ -16,7 +16,7 @@ class TrackPostViewTestCaseRatingKid3Wav(TrackViewTestCase):
     """
     def test_trackPostRatingKid3WavNoRating(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("no rating.wav")
+        response = self.postSampleTrack("no rating.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == None
@@ -27,7 +27,7 @@ class TrackPostViewTestCaseRatingKid3Wav(TrackViewTestCase):
     """
     def test_trackPostRatingKid3Wav1Star(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("1 star.wav")
+        response = self.postSampleTrack("1 star.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 2
@@ -39,7 +39,7 @@ class TrackPostViewTestCaseRatingKid3Wav(TrackViewTestCase):
     """
     def test_trackPostRatingKid3Wav2Stars(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("2 stars.wav")
+        response = self.postSampleTrack("2 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 4
@@ -51,7 +51,7 @@ class TrackPostViewTestCaseRatingKid3Wav(TrackViewTestCase):
     """
     def test_trackPostRatingKid3Wav3Stars(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("3 stars.wav")
+        response = self.postSampleTrack("3 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 6
@@ -62,7 +62,7 @@ class TrackPostViewTestCaseRatingKid3Wav(TrackViewTestCase):
     """
     def test_trackPostRatingKid3Wav4Stars(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("4 stars.wav")
+        response = self.postSampleTrack("4 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 8
@@ -73,7 +73,7 @@ class TrackPostViewTestCaseRatingKid3Wav(TrackViewTestCase):
     """
     def test_trackPostRatingKid3Wav5Stars(self):
         self._login(self.testUser)
-        response = self._loginAndPostSampleTrack("5 stars.wav")
+        response = self.postSampleTrack("5 stars.wav")
         trackUuid = response.json()[LibraryTrack.ATTRIBUTE_UUID_LABEL]
         track = LibraryTrack.objects.get(uuid=trackUuid)
         assert track.rating == 10
