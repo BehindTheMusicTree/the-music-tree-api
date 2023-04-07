@@ -2,12 +2,12 @@
 
 from bodzify_api.view.viewset.criteria.CriteriaViewSet import CriteriaViewSet
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypeIds
+from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 
 
 class TagViewSet(CriteriaViewSet):
     def __init__(self, **kwargs):
         super(TagViewSet, self).__init__(
           criteriaTypeId=CriteriaTypesId.TAG,
-          playlistTypeId=PlaylistTypeIds.TAG,
+          playlistTypeId=PlaylistTypesId.TAG,
           **kwargs)

@@ -1,11 +1,7 @@
 #!/usr/bin/env python
-from rest_framework import status
-from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-from django.http import JsonResponse
-from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.serializer.track.output.MineTrackSerializer import MineTrackSerializer
-from bodzify_api.serializer.track.input.MineTrackExtractSchemaSerializer import MineTrackExtractSchemaSerializer
+from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import TrackExtractSchemaSerializer
 from bodzify_api.service import MineTrackMyfreemp3Service
 import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
@@ -21,7 +17,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
     
     serializers = {
         'list':  MineTrackSerializer,
-        'extract':  MineTrackExtractSchemaSerializer,
+        'extract':  TrackExtractSchemaSerializer,
     }
 
     @extend_schema(
@@ -46,42 +42,3 @@ class MineTrackViewSet(MultiSerializerViewSet):
 
         else:
             return utility.GetJsonResponseWhenBadRequest(request)
-
-
-    @extend_schema(
-        request=MineTrackExtractSchemaSerializer, 
-        responses=TrackDetailedSerializer,
-        description=("""
-            Download a track from myfreemp3. 
-            It is done by providing an URL and metadata:
-                - "title";
-                - "artistName";
-                - "albumName";
-                - "albumArtistsName";
-                - "genreName";
-                - "rating";
-                - "releasedOn";
-                - "language";
-                
-            The downloaded track's filename will be set as follow:
-                - if the "artistName" and "title" fields are provided, the filename will be set to 
-                "artistName - title.extension";
-                - else if only the title is provided, the filename will be set to "title.extension";
-                - else if the title and the artist name are set in the metadata of the track, the 
-                filename will be set to "artist name - title.extension";
-                - else if only the title is set in the metadata, the filename will be set to 
-                "title.extension";
-                - else if the length filename of the downloaded track plus de length of the 
-                extension s smaller than 100, the filename will be set to "filename.extension";
-                - else the filename will be set to "random string.extension".
-            """)
-    )
-    @action(detail=False, methods=['post'])
-    def extract(self, request, *args, **kwargs):
-        serializer = MineTrackExtractSchemaSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        libraryTrack = MineTrackMyfreemp3Service.Extract(user=request.user, requestData=request.data)
-        responseSerializer = TrackDetailedSerializer(libraryTrack)
-        headers = self.get_success_headers(responseSerializer.data)
-        return JsonResponse(
-            data=responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import inspect
 import magic
 import os
 import shutil
@@ -11,48 +12,53 @@ from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 import bodzify_api.settings as settings
 
-TEST_USERNAME = "test_django"
+TEST_USERNAME = "pytest_user"
+SAMPLE_DIR_NAME = "sample"
+LIBRARY_SAMPLE_DIR_NAME = "library"
+INPUT_SAMPLE_DIR_NAME = "input"
 
 
 class ViewTestCase(TestCase):
 
-    fixtures = ['initial_data', 'TestUserData']
-
-    sampleDirectoryRelativePath = ""
-
-    def _setUpTestUserDirectories(self):
-        testUserLibraryAbsolutePath = (
-            settings.LIBRARIES_PATH
-            + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE
-            + str(self.testUser.pk))
-        if not os.path.exists(testUserLibraryAbsolutePath):
-            os.makedirs(testUserLibraryAbsolutePath)
-
-        if self.sampleDirectoryRelativePath != "":
-            self.sampleDirectoryAbsolutePath = settings.APP_ROOT + \
-                self.sampleDirectoryRelativePath
-
-        self.testUserLibraryRelativePath = (
-            settings.LIBRARIES_FOLDER_NAME
-            + "/" + settings.USER_LIBRARY_FOLDER_NAME_PREFIXE
-            + str(self.testUser.pk) + "/")
-        self.testUserLibraryAbsolutePath = settings.MEDIA_ROOT + \
-            self.testUserLibraryRelativePath
-        self._emptyUserLibrary()
+    fixtures = ['app_initial_data', 'pytest_user_initial_data']
+    testUserLibraryPathRelativeToMediaDir = ""
 
     def setUp(self) -> None:
         self.mime = magic.Magic(mime=True)
         self.apiClient = APIClient()
         self.testUser = User.objects.get(username=TEST_USERNAME)
         self.testUserGenrelessGenre = Criteria.objects.get(
-				user=self.testUser, 
-				type=CriteriaTypesId.GENRE, 
-				name=CriteriaSpecialNames.GENRE_GENRELESS)
+            user=self.testUser,
+            type=CriteriaTypesId.GENRE,
+            name=CriteriaSpecialNames.GENRE_GENRELESS)
         self._setUpTestUserDirectories()
-        if self.sampleDirectoryRelativePath != "":
-            self._copySamplesToTestUserLibraryIfNecessary()
+        if os.path.isdir(self.librarySampleDirAbsPath):
+            self._copyLibrarySamplesToTestUserLibrary()
         self._login(self.testUser)
         return super().setUp()
+
+    def _setUpTestUserDirectories(self):
+        testUserLibraryAbsPath = (
+            settings.LIBRARIES_PATH
+            + settings.USER_LIBRARY_DIR_NAME_PREFIXE
+            + str(self.testUser.pk))
+        if not os.path.exists(testUserLibraryAbsPath):
+            os.makedirs(testUserLibraryAbsPath)
+
+        testDirAbsPathWithoutSlash = os.path.dirname(
+            inspect.getfile(self.__class__))
+        sampleDirAbsPath = testDirAbsPathWithoutSlash + "/" + SAMPLE_DIR_NAME + "/"
+        self.librarySampleDirAbsPath = sampleDirAbsPath + "/" + LIBRARY_SAMPLE_DIR_NAME + "/"
+        self.inputSampleDirAbsPath = sampleDirAbsPath + "/" + INPUT_SAMPLE_DIR_NAME + "/"
+
+        self.testUserLibraryPathRelativeToMediaDir = (
+            settings.LIBRARIES_DIR_NAME + "/"
+            + settings.USER_LIBRARY_DIR_NAME_PREFIXE
+            + str(self.testUser.pk)
+            + "/")
+        self.testUserLibraryAbsPath = settings.MEDIA_ROOT \
+            + self.testUserLibraryPathRelativeToMediaDir
+        self._emptyUserLibrary()
 
     def _login(self, user):
         self.apiClient.force_authenticate(user=user)
@@ -60,8 +66,8 @@ class ViewTestCase(TestCase):
         self.apiClient.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
     def _emptyUserLibrary(self):
-        for filename in os.listdir(self.testUserLibraryAbsolutePath):
-            filePath = os.path.join(self.testUserLibraryAbsolutePath, filename)
+        for filename in os.listdir(self.testUserLibraryAbsPath):
+            filePath = os.path.join(self.testUserLibraryAbsPath, filename)
             try:
                 if os.path.isfile(filePath) or os.path.islink(filePath):
                     os.unlink(filePath)
@@ -70,13 +76,12 @@ class ViewTestCase(TestCase):
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (filePath, e))
 
-    def _copySamplesToTestUserLibraryIfNecessary(self):
-        if self.sampleDirectoryRelativePath != "":
-            fileNames = os.listdir(self.sampleDirectoryAbsolutePath)
-            for fileName in fileNames:
-                shutil.copy(
-                    os.path.join(self.sampleDirectoryAbsolutePath, fileName),
-                    self.testUserLibraryAbsolutePath)
+    def _copyLibrarySamplesToTestUserLibrary(self):
+        filenames = os.listdir(self.librarySampleDirAbsPath)
+        for filename in filenames:
+            shutil.copy(
+                os.path.join(self.librarySampleDirAbsPath, filename),
+                self.testUserLibraryAbsPath)
 
-    def _doesUserTrackFileExist(self, filename: str):
-        return os.path.isfile(self.testUserLibraryAbsolutePath + filename)
+    def doesTrackFilenameExistInTestUserLibrary(self, filename: str):
+        return os.path.isfile(self.testUserLibraryAbsPath + filename)
