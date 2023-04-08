@@ -8,31 +8,31 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 class TestCase(TrackViewTestCase):
 
     def test_None(self):
-        response = self.postSampleTrack("no rating.flac")
+        response = self.postSampleTrack("no rating.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.rating == None
 
     def test_1Then2(self):
-        response = self.postSampleTrack("1 star.flac")
+        response = self.postSampleTrack("1 star.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.rating == 2
-    
+
     def test_2Then4(self):
-        response = self.postSampleTrack("2 stars.flac")
+        response = self.postSampleTrack("2 stars.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.rating == 4
-    
+
     def test_3Then6(self):
-        response = self.postSampleTrack("3 stars.flac")
+        response = self.postSampleTrack("3 stars.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.rating == 6
 
     def test_4Then8(self):
-        response = self.postSampleTrack("4 stars.flac")
+        response = self.postSampleTrack("4 stars.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.rating == 8
 
     def test_5Then10(self):
-        response = self.postSampleTrack("5 stars.flac")
+        response = self.postSampleTrack("5 stars.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.rating == 10
