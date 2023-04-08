@@ -41,19 +41,20 @@ def Extract(user: User, extractSchemaData: QueryDict):
 
         postSchemaData = _getSaveDataFromRequestData(extractSchemaData)
 
-        trackFileName = _getTrackFilenameWithExtension(
+        trackFileName, isFilenameRandomlyGenerated = _getTrackFilenameWithExtension(
             mineTrackUrlLabel, extractSchemaData)
         postSchemaData[TRACK_ATTRIBUTES_LABEL.FILE] = File(
             trackTempFile, name=trackFileName)
-        libraryTrack = Create(user=user, postSchemaData=postSchemaData)
+        libraryTrack = Create(user=user, postSchemaData=postSchemaData,
+                              forceTitleGeneration=isFilenameRandomlyGenerated)
 
     return libraryTrack
 
 
-def Create(user: User, postSchemaData: QueryDict):
+def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool = False):
     serializer = TrackPostSchemaSerializer(data=postSchemaData)
     serializer.is_valid(raise_exception=True)
-    
+
     genreNameKey = SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
     if genreNameKey not in postSchemaData:
         postSchemaData[genreNameKey] = None
@@ -66,7 +67,7 @@ def Create(user: User, postSchemaData: QueryDict):
 
     if TRACK_ATTRIBUTES_LABEL.TITLE not in saveSchemaData:
         filename = os.path.basename(file.name).split('.')[0]
-        if len(filename) > settings.TRACK_GENERATED_TITLE_LEN:
+        if len(filename) > settings.TRACK_FILENAME_MAX_CHAR or forceTitleGeneration:
             title = settings.TRACK_GENERATED_TITLE_PREFIXE + \
                 _generateShortUu(settings.TRACK_GENERATED_TITLE_LEN -
                                  len(settings.TRACK_GENERATED_TITLE_PREFIXE))
@@ -406,7 +407,7 @@ def _getSubstringAfterLastSlash(string: str):
 
 def _getTrackFilenameWithExtension(mineTrackUrl: str, requestData: QueryDict):
     fileExtension = _getFileExtensionFromUrl(mineTrackUrl)
-
+    isFilenameRandomlyGenerated = False
     titleKey = TRACK_ATTRIBUTES_LABEL.TITLE
     if titleKey in requestData:
         title = requestData[titleKey]
@@ -426,7 +427,8 @@ def _getTrackFilenameWithExtension(mineTrackUrl: str, requestData: QueryDict):
             fileNameWithoutExtension = _generateShortUu(
                 settings.TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LEN - len(fileExtension) - 1)
             filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
-    return filenameWithExtension
+            isFilenameRandomlyGenerated = True
+    return filenameWithExtension, isFilenameRandomlyGenerated
 
 
 def _generateShortUu(length: int):
