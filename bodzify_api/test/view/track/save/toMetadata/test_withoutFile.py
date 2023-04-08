@@ -7,9 +7,9 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.Album import Album
 
 
-class TrackPutViewTestCase6(TrackViewTestCase):
+class WithoutFileTestCase(TrackViewTestCase):
 
-    def test(self):
+    def test_okEvenWithoutAFile(self):
         track = G(LibraryTrack, 
                   user=self.testUser,
                   title="Foire",
