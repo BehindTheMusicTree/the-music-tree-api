@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
 class TrackViewExtractTitleTestCase(TrackViewTestCase):
 
     def test_missingThenSetFromFilenameAsItsNotTooLong(self):
-        filename = "MartijnSchmit-VacsInTheMorning.mp3"
+        filename = "MartijnSchmit-VacsInTheMorning"
         trackUrl = ("https://ia801408.us.archive.org/31/items/martijn-schmit-vacs-in-the-"
                     + "morning/" + filename + ".mp3")
         data = {
