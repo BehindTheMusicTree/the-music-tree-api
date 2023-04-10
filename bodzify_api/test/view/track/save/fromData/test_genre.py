@@ -3,7 +3,6 @@ from rest_framework import status
 from ddf import G
 from bodzify_api import settings
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
