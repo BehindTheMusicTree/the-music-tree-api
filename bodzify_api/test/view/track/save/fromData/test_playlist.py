@@ -4,7 +4,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
-from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 
 

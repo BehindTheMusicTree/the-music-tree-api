@@ -27,12 +27,14 @@ from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewS
 import bodzify_api.service.TrackService as TrackService
 import bodzify_api.view.utility as utility
 
-FILTER_TITLE_PARAMETER_NAME = ATTRIBUTES_LABEL.TITLE
-FILTER_ARTIST_NAME_PARAMETER_NAME = SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
-FILTER_ALBUM_NAME_PARAMETER_NAME = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
-FILTER_ALBUM_ARTISTS_NAME_PARAMETER_NAME = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
-FILTER_GENRE_NAME_PARAMETER_NAME = SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
-FILTER_LANGUAGE_PARAMETER_NAME = ATTRIBUTES_LABEL.LANGUAGE
+
+class FILTER_FIELDS:
+    TITLE = ATTRIBUTES_LABEL.TITLE
+    ARTIST_NAME = SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+    ALBUM_NAME = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
+    ALBUM_ARTISTS_NAME = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
+    GENRE_NAME = SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+    LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
 
 
 class TrackViewSet(MultiSerializerViewSet):
@@ -47,16 +49,11 @@ class TrackViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        titleFilter = self.request.query_params.get(
-            FILTER_TITLE_PARAMETER_NAME)
-        artistNameFilter = self.request.query_params.get(
-            FILTER_ARTIST_NAME_PARAMETER_NAME)
-        albumNameFilter = self.request.query_params.get(
-            FILTER_ALBUM_NAME_PARAMETER_NAME)
-        genreNameFilter = self.request.query_params.get(
-            FILTER_GENRE_NAME_PARAMETER_NAME)
-        languageFilter = self.request.query_params.get(
-            FILTER_LANGUAGE_PARAMETER_NAME)
+        titleFilter = self.request.query_params.get(FILTER_FIELDS.TITLE)
+        artistNameFilter = self.request.query_params.get(FILTER_FIELDS.ARTIST_NAME)
+        albumNameFilter = self.request.query_params.get(FILTER_FIELDS.ALBUM_NAME)
+        genreNameFilter = self.request.query_params.get(FILTER_FIELDS.GENRE_NAME)
+        languageFilter = self.request.query_params.get(FILTER_FIELDS.LANGUAGE)
 
         if titleFilter is not None:
             queryset = queryset.filter(title__icontains=titleFilter)

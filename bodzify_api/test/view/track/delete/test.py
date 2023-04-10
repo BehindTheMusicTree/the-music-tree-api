@@ -4,7 +4,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 

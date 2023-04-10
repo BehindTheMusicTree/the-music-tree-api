@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import pytest
 from rest_framework import status
-from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from rest_framework import status
 from bodzify_api import settings
-from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 

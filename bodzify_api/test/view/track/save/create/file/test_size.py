@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import pytest
-from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db
