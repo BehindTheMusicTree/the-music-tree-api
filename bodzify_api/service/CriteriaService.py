@@ -24,16 +24,14 @@ def Create(criteriaTypeId: int, playlistTypeId: int, user: User, postData: Query
         parent = None
 
     if parent in [None, ""]:
-        parent = Criteria.objects.get(
-            user=user, type=criteriaTypeId, parent=None)
+        parent = Criteria.objects.get(user=user, type=criteriaTypeId, parent=None)
 
-    criteria = requestSerializer.save(
-        user=user,
-        type=criteriaTypeId,
-        parent=parent)
+    criteria = requestSerializer.save(user=user,
+                                      type=criteriaTypeId,
+                                      parent=parent)
 
     Playlist(user=user, criteria=criteria, type=playlistTypeId).save()
-    
+
     return criteria
 
 
