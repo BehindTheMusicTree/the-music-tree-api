@@ -9,7 +9,15 @@ class CriteriaSpecialNames:
     GENRE_ALL = "All"
     GENRE_GENRELESS = "Genreless"
     TAG_ALL = "Tagged"
+    
 
+class ATTRIBUTES_LABEL:
+    UUID = "uuid"
+    USER = "user"
+    NAME = "name"
+    TYPE = "type"
+    PARENT = "parent"
+    ADDED_ON = "addedOn"
 
 class Criteria(models.Model):
     uuid = models.CharField(
