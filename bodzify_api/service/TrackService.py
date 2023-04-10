@@ -212,7 +212,7 @@ def _getDict1UpdatedWithGenreUuidFromGenreNameInDict2(
     if genreNameKey in dict2:
         genreName = dict2[genreNameKey]
 
-    if genreName is None:
+    if genreName in [None, ""]:
         genreUuid = Criteria.objects.get(
             user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
     else:
