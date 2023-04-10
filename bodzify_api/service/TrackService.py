@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-import pprint
 import random
 import string
 from tempfile import NamedTemporaryFile
