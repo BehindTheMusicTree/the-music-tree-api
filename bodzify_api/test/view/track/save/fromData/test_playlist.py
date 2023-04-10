@@ -4,12 +4,12 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 
 
 @pytest.mark.django_db
-class PlaylistTestCase(TrackViewTestCase):
+class PlaylistTestCase(ApiViewTestCase):
 
     def test_noGenreThenInTheAllAndGenrelessPlaylists(self):
         data = {

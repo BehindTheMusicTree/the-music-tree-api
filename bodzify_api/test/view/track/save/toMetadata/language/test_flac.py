@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 from rest_framework import status
 from bodzify_api import settings
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class FlacTestCase(TrackViewTestCase):
+class FlacTestCase(ApiViewTestCase):
 
     def test_longest(self):
         language = "a" * settings.TRACK_LANGUAGE_MAX_CHAR

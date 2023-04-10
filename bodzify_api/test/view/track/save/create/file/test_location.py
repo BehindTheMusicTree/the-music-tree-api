@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 from rest_framework import status
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 
 
-class LocationTestCase(TrackViewTestCase):
+class LocationTestCase(ApiViewTestCase):
 
     def test_inLibrary(self):
         filename = "0001.wav"

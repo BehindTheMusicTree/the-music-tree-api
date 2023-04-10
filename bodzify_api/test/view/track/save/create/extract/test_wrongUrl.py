@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 
 
-class WringUrlTestCase(TrackViewTestCase):
+class WringUrlTestCase(ApiViewTestCase):
 
     def test(self):
         trackUrl = ("https://wrong-url_OIJOIEFHPOEIHFEPOFIHEOFIH.mp3")

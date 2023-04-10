@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 
 
-class TypeTestCase(TrackViewTestCase):
+class TypeTestCase(ApiViewTestCase):
 
     def test_wav(self):
         data = {

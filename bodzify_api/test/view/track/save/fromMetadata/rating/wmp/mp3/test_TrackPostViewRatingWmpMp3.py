@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import pytest
 from rest_framework import status
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 @pytest.mark.django_db
-class TrackPostViewTestCaseRatingWmpMp3(TrackViewTestCase):
+class TrackPostViewTestCaseRatingWmpMp3(ApiViewTestCase):
 
     fixtures = ['initial_data', 'TestUserData']
     sampleDirectoryRelativePath = "test/view/track/post/rating/wmp/mp3/sample/"

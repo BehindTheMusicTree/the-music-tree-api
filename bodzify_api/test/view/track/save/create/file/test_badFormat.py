@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import pytest
 from rest_framework import status
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db
-class FormatTextCase(TrackViewTestCase):
+class FormatTextCase(ApiViewTestCase):
 
     def test_errorWhenBadFormat(self):
         response = self.postSampleTrack("format_error.wav")

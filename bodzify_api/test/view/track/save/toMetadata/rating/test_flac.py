@@ -2,11 +2,11 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class TrackPutViewRatingFileTypeFlacTestCase(TrackViewTestCase):
+class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
 
     def test_none(self):
         track = G(LibraryTrack,

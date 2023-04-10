@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 from rest_framework import status
 from bodzify_api import settings
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class AlbumArtistsTestCase(TrackViewTestCase):
+class AlbumArtistsTestCase(ApiViewTestCase):
 
     def test_longest(self):
         albumName = "a" * settings.ALBUM_NAME_MAX_CHAR

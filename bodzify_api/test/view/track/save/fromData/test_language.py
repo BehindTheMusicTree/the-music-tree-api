@@ -4,11 +4,11 @@ from ddf import G
 from bodzify_api import settings
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class LanguageTestCase(TrackViewTestCase):
+class LanguageTestCase(ApiViewTestCase):
 
     def test_notProvided(self):
         language = "French"

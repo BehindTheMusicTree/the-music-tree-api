@@ -4,10 +4,10 @@ from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 
 
-class ArtistTestCase(TrackViewTestCase):
+class ArtistTestCase(ApiViewTestCase):
 
     def test_deleteOldOneBecauseNothingLinkedToIt(self):
         artistName = "a-ha"

@@ -5,10 +5,10 @@ from bodzify_api import settings
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 
 
-class GenreTestCase(TrackViewTestCase):
+class GenreTestCase(ApiViewTestCase):
 
     def test_notProvided(self):
         genre = G(Criteria, user=self.testUser,

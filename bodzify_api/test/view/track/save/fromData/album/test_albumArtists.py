@@ -5,10 +5,10 @@ from bodzify_api import settings
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 
 
-class AlbumArtistsTestCase(TrackViewTestCase):
+class AlbumArtistsTestCase(ApiViewTestCase):
 
     def test_longest(self):
         albumArtistsName = "a" * settings.ALBUM_ARTISTS_FIELD_MAX_CHAR

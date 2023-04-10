@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 from rest_framework import status
 from bodzify_api import settings
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 
 
-class TrackViewExtractTitleTestCase(TrackViewTestCase):
+class TrackViewExtractTitleTestCase(ApiViewTestCase):
 
     def test_missingThenSetFromFilenameAsItsNotTooLong(self):
         filename = "MartijnSchmit-VacsInTheMorning"

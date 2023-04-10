@@ -4,12 +4,12 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.test.view.track.TrackViewTestCase import TrackViewTestCase
+from bodzify_api.test.view.track.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 @pytest.mark.django_db
-class TrackDeleteViewTestCase(TrackViewTestCase):
+class TrackDeleteViewTestCase(ApiViewTestCase):
 
     def test_fileDeletion(self):
         filename = "sample.mp3"
