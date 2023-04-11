@@ -1,20 +1,23 @@
 #!/usr/bin/env python
+from django.db import IntegrityError
 from django.http import JsonResponse
 from rest_framework.response import Response
-from django.db import IntegrityError
 from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.serializer.criteria.CriteriaPostSerializer import CriteriaPostSerializer
-from bodzify_api.serializer.criteria.CriteriaDetailedSerializer import CriteriaDetailedSerializer 
-from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.serializer.criteria.CriteriaDetailedSerializer import CriteriaDetailedSerializer
+from bodzify_api.service import CriteriaService
+from bodzify_api.model.criteria.Criteria import Criteria, \
+    ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
-from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
-NAME_FIELD = "name"
-PARENT_FIELD = "parent"
+
+class FILTER_FIELDS:
+    NAME = CRITERIA_ATTRIBUTES_LABEL.NAME
+    PARENT = CRITERIA_ATTRIBUTES_LABEL.PARENT
 
 
 class CriteriaViewSet(MultiSerializerViewSet):
@@ -35,11 +38,11 @@ class CriteriaViewSet(MultiSerializerViewSet):
     def get_queryset(self):
         queryset = Criteria.objects.filter(user=self.request.user)
 
-        name = self.request.query_params.get(NAME_FIELD)
+        name = self.request.query_params.get(FILTER_FIELDS.NAME)
         if name is not None:
             queryset = queryset.filter(name__contains=name)
 
-        parentParameter = self.request.query_params.get(PARENT_FIELD)
+        parentParameter = self.request.query_params.get(FILTER_FIELDS.PARENT)
         if parentParameter is not None:
             if parentParameter == "":
                 parent = None
@@ -57,38 +60,28 @@ class CriteriaViewSet(MultiSerializerViewSet):
         responses=CriteriaDetailedSerializer
     )
     def create(self, request, *args, **kwargs):
-        requestSerializer = CriteriaPostSerializer(data=request.data)
-        requestSerializer.is_valid(raise_exception=True)
-
-        parent = requestSerializer.validated_data[PARENT_FIELD]
-
-        if parent is None:
-            parent = Criteria.objects.get(type=self.criteriaType, parent=None)
-
         try:
-            criteria = requestSerializer.save(
-                user=self.request.user,
-                type=self.criteriaType,
-                parent=parent)
+            criteria = CriteriaService.Create(criteriaType=self.criteriaType,
+                                              playlistType=self.playlistType,
+                                              user=request.user,
+                                              postData=request.data)
         except IntegrityError as e:
             return utility.GetJsonResponseWhenBadRequest(exception=e)
-
-        Playlist(user=self.request.user, criteria=criteria, type=self.playlistType).save()
 
         responseSerializer = CriteriaDetailedSerializer(criteria)
         headers = self.get_success_headers(responseSerializer.data)
 
-        return JsonResponse(
-            data=responseSerializer.data,
-            status=status.HTTP_201_CREATED,
-            headers=headers,
-            safe=False
-        )
+        return JsonResponse(data=responseSerializer.data,
+                            status=status.HTTP_201_CREATED,
+                            headers=headers,
+                            safe=False)
 
     @extend_schema(
         parameters=[
-            OpenApiParameter(NAME_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH),
-            OpenApiParameter(PARENT_FIELD, OpenApiTypes.STR, OpenApiParameter.PATH)
+            OpenApiParameter(FILTER_FIELDS.NAME, OpenApiTypes.STR,
+                             OpenApiParameter.PATH),
+            OpenApiParameter(FILTER_FIELDS.PARENT, OpenApiTypes.STR,
+                             OpenApiParameter.PATH)
         ],
         responses=CriteriaDetailedSerializer
     )
