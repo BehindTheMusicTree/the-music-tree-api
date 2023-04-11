@@ -23,6 +23,7 @@ class TrackSaveSchemaSerializer(InputSerializer):
     title = serializers.CharField(
         max_length=settings.TRACK_TITLE_MAX_CHAR, 
         required=False, 
+        allow_blank=True, 
         allow_null=True)
     artistName = serializers.CharField(
         max_length=settings.ARTIST_NAME_MAX_CHAR, 
