@@ -61,8 +61,8 @@ class CriteriaViewSet(MultiSerializerViewSet):
     )
     def create(self, request, *args, **kwargs):
         try:
-            criteria = CriteriaService.Create(criteriaTypeId=self.criteriaType.id,
-                                              playlistTypeId=self.playlistType,
+            criteria = CriteriaService.Create(criteriaType=self.criteriaType,
+                                              playlistType=self.playlistType,
                                               user=request.user,
                                               postData=request.data)
         except IntegrityError as e:
