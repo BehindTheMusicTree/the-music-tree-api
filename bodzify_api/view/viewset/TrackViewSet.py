@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
-    ATTRIBUTES_LABEL as SCHEMA_ATTRIBUTES_LABEL
+    ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
     TrackExtractSchemaSerializer
 from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
@@ -30,10 +30,10 @@ import bodzify_api.view.utility as utility
 
 class FILTER_FIELDS:
     TITLE = ATTRIBUTES_LABEL.TITLE
-    ARTIST_NAME = SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
-    ALBUM_NAME = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
-    ALBUM_ARTISTS_NAME = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
-    GENRE_NAME = SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+    ARTIST_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+    ALBUM_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
+    ALBUM_ARTISTS_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
+    GENRE_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
 
 
@@ -165,11 +165,11 @@ class TrackViewSet(MultiSerializerViewSet):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                name=SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
+                name=TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.QUERY),
             OpenApiParameter(
-                name=SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
+                name=TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.QUERY)
         ]
