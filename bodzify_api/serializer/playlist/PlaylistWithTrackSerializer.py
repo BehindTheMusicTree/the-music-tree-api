@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import (
         PlaylistWithoutTracksSerializer)
-from bodzify_api.serializer.track.TrackWithoutPlaylistsSerializer import (
+from bodzify_api.serializer.track.output.TrackWithoutPlaylistsSerializer import (
         TrackWithoutPlaylistsSerializer)
 
 

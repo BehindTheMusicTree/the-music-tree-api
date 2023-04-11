@@ -2,9 +2,9 @@
 from django.db import models
 
 
-class CriteriaTypesIds:
-    GENRE = 1
-    TAG = 2
+class CriteriaTypesId:
+    GENRE = 0
+    TAG = 1
 
 
 class CriteriaType(models.Model):
@@ -12,3 +12,8 @@ class CriteriaType(models.Model):
 
     def __str__(self) -> str:
         return str(self.id) + " " + self.label
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=~models.Q(label=""), name="criteria_non_empty_label")
+        ]

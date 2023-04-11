@@ -1,16 +1,13 @@
 #!/usr/bin/env python
-
 from rest_framework import status, viewsets
-
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-
 from bodzify_api.serializer.UserSerializer import UserSerializer
 from rest_framework.permissions import IsAdminUser
 
-USER_USERNAME_FIELD = 'username'
-USER_PASSWORD_FIELD = 'password'
-USER_EMAIL_FIELD = 'email'
+USERNAME_PARAMETER_NAME = 'username'
+PASSWORD_PARAMETER_NAME = 'password'
+EMAIL_PARAMETER_NAME = 'email'
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -22,9 +19,9 @@ class UserViewSet(viewsets.ModelViewSet):
         requestSerializer = UserSerializer(data=request.data)
         requestSerializer.is_valid(raise_exception=True)
         user = User.objects.create_user(
-            username=request.data[USER_USERNAME_FIELD],
-            password=request.data[USER_PASSWORD_FIELD],
-            email=request.data[USER_EMAIL_FIELD])
+            username=request.data[USERNAME_PARAMETER_NAME],
+            password=request.data[PASSWORD_PARAMETER_NAME],
+            email=request.data[EMAIL_PARAMETER_NAME])
         responseSerializer = UserSerializer(user)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(

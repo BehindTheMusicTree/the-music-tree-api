@@ -3,19 +3,31 @@ import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+import bodzify_api.settings as settings
 
 
 class Album(models.Model):
 
+    ATTRIBUTE_UUID_LABEL = 'uuid'
     ATTRIBUTE_NAME_LABEL = 'name'
+    ATTRIBUTE_YEAR_LABEL = 'year'
+    ATTRIBUTE_ALBUM_ARTISTS_LABEL = 'albumArtists'
+    ATTRIBUTE_LIBRARY_TRACKS_LABEL = 'libraryTracks'
+    ATTRIBUTE_TRACK_COUNT_LABEL = 'trackCount'
+    ATTRIBUTE_DURATION_LABEL = 'duration'
 
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
             primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    name = models.CharField(max_length=100, default=None)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
+    name = models.CharField(max_length=settings.ALBUM_NAME_MAX_CHAR, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
     albumArtists = models.ManyToManyField('bodzify_api.Artist')
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")
+        ]
 
 
     def deleteWithTracksAndEventuallyArtists(self):
@@ -39,3 +51,9 @@ class Album(models.Model):
     def deleteIfNoTrackLinked(self):
         if LibraryTrack.objects.filter(user=self.user, album=self).count() == 0:
             self.delete()
+
+    def __str__(self) -> str:
+        string = self.uuid + " " + self.name + " by "
+        for artist in list(self.albumArtists.all()):
+            string = string + str(artist) + " "
+        return string

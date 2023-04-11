@@ -13,22 +13,22 @@ from drf_spectacular.views import SpectacularSwaggerView
 from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet 
 
 from bodzify_api.view.viewset.UserViewSet import UserViewSet
-from bodzify_api.view.viewset.track.TrackViewSet import LibraryTrackViewSet
+from bodzify_api.view.viewset.TrackViewSet import TrackViewSet
 from bodzify_api.view.viewset.ArtistViewSet import ArtistViewSet
 from bodzify_api.view.viewset.AlbumViewSet import AlbumViewSet
 from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet
 from bodzify_api.view.viewset.criteria.TagViewSet import TagViewSet
-from bodzify_api.view.viewset.track.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
 from bodzify_api.view.viewset.playlist.PlaylistViewSet import PlaylistViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
-router.register(r'tracks', LibraryTrackViewSet)
+router.register(r'tracks', TrackViewSet)
 router.register(r'artists', ArtistViewSet)
 router.register(r'albums', AlbumViewSet)
 router.register(r'tags', TagViewSet)
-router.register(r'genres', GenreViewSet)
-router.register(r'mine/tracks', MineTrackViewSet, 'mine-track')
+router.register(r'genres', GenreViewSet, basename='genre')
+router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
 router.register(r'playlists', PlaylistViewSet)
 router.register(r'search', SearchApiViewSet, basename='search')
 

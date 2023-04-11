@@ -1,51 +1,6 @@
 #!/usr/bin/env python
-import requests
-import random
-import string
-import os
-from bodzify_api.model.track.MineTrack import MineTrack
 import bodzify_api.myfreemp3_scrapper.scrapper as myfreemp3scrapper
-from bodzify_api.service import TrackService
-from bodzify_api import settings
-
-TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LETTER_TYPE = string.ascii_lowercase
-TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LENGTH = 20
 
 
 def List(query, pageNumber, pageSize):
-    return myfreemp3scrapper.scrap(query, pageNumber, pageSize)
-
-
-def Extract(user, title, artist, duration, releasedOn, mineTrackUrl):
-    mineTrack = MineTrack(
-        title = title,
-        artistName = artist,
-        duration = duration,
-        releasedOn = releasedOn,
-        url = mineTrackUrl)
-
-    response = requests.get(mineTrackUrl)
-
-    trackTempFileIndividualDirectoryName = ''.join(
-        random.choice(TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LETTER_TYPE) 
-        for i in range(TRACK_TEMP_FILE_INDIVIDUAL_DIRECTORY_NAME_LENGTH))
-
-    trackTempFileIndividualDirectoryAbsolutePath = (
-        settings.MEDIA_TEMP + trackTempFileIndividualDirectoryName + "/")
-
-    os.makedirs(trackTempFileIndividualDirectoryAbsolutePath)
-    trackDownloadedFilenameWithoutExtension, trackTempfileExtension = (
-        os.path.splitext(mineTrackUrl))
-    trackTempFileDefinitiveName = artist + " - " + title + trackTempfileExtension
-    trackTempFileAbsolutePath = (
-        trackTempFileIndividualDirectoryAbsolutePath + trackTempFileDefinitiveName)
-    trackFile = open(trackTempFileAbsolutePath, "wb")
-    trackFile.write(response.content)
-
-    libraryTrack = TrackService.CreateFromMineTrack(
-        user=user, mineTrack=mineTrack, trackTempFileAbsolutePath=trackTempFileAbsolutePath)
-    
-    os.remove(trackTempFileAbsolutePath)
-    os.rmdir(trackTempFileIndividualDirectoryAbsolutePath)
-
-    return libraryTrack
+    return myfreemp3scrapper.Scrap(query, pageNumber, pageSize)
