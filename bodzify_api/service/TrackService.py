@@ -190,7 +190,7 @@ def _updateFileTagsIfFileExists(track: LibraryTrack):
 
     titleTag = track.title
     if titleTag is None:
-        metadataUpdateDict = ""
+        titleTag = ""
     metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.TITLE] = titleTag
 
     if track.artist_id is not None:
