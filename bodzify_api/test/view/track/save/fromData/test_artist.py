@@ -17,8 +17,7 @@ class ArtistTestCase(ApiViewTestCase):
                   artist=artist,
                   genre=self.testUserGenrelessGenre,
                   duration=0)
-        data = {}
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.putSampleTrack(track.uuid, data={})
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.uuid == artist.uuid
 
