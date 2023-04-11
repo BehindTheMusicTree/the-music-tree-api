@@ -2,7 +2,6 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
-from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
@@ -10,7 +9,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class AlbumTestCase(ApiViewTestCase):
 
     def test_notProvidedThenUnchanged(self):
-        album = G(Artist, user=self.testUser, name="Jojo")
+        album = G(Album, user=self.testUser, name="Jojo")
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",

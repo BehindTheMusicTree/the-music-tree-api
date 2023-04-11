@@ -11,6 +11,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_null(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -26,6 +27,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_zero(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -40,9 +42,10 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_1Then13(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "2Stars.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
-                  rating=2,
+                  rating=4,
                   duration=0)
         data = {
             "rating": 1,
@@ -54,6 +57,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_2Then1(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=8,
@@ -68,6 +72,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_3Then54(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -82,6 +87,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_4Then64(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -96,6 +102,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_5Then118(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -110,6 +117,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_6Then128(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -124,6 +132,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_7Then186(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -138,6 +147,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_8Then196(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -152,6 +162,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_9Then242(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -166,6 +177,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_10Then255(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.mp3",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,

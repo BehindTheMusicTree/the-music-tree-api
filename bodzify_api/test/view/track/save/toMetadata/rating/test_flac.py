@@ -11,6 +11,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_none(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -26,6 +27,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_zero(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -40,9 +42,10 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_1Then10(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "2Stars.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
-                  rating=2,
+                  rating=4,
                   duration=0)
         data = {
             "rating": 1,
@@ -54,9 +57,10 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_2Then20(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
-                  rating=3,
+                  rating=2,
                   duration=0)
         data = {
             "rating": 2,
@@ -68,6 +72,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_3Then30(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -82,6 +87,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_4Then40(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -96,6 +102,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_5Then50(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -110,6 +117,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_6Then60(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -124,6 +132,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_7Then70(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -138,6 +147,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_8Then80(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -152,6 +162,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_9Then90(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,
@@ -166,6 +177,7 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
     def test_10Then100(self):
         track = G(LibraryTrack,
                   user=self.testUser,
+                  file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
                   rating=2,

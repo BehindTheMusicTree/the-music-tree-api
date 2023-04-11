@@ -7,10 +7,12 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
+from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
+    ATTRIBUTES_LABEL as TRACK_SCHEMA_EXTRACT_ATTRIBUTES_LABEL
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class AlbumArtistsTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_longest(self):
         albumArtistsName = "a" * settings.ALBUM_ARTISTS_FIELD_MAX_CHAR
@@ -133,8 +135,8 @@ class AlbumArtistsTestCase(ApiViewTestCase):
     def test_errorWhenAlbumMissing(self):
         trackUrl = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
         data = {
-            "url": trackUrl,
-            "albumArtistsName": "Muse",
+            TRACK_SCHEMA_EXTRACT_ATTRIBUTES_LABEL.URL: trackUrl,
+            TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: "Muse",
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -142,9 +144,9 @@ class AlbumArtistsTestCase(ApiViewTestCase):
     def test_errorWhenAlbumNull(self):
         trackUrl = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
         data = {
-            "url": trackUrl,
-            "albumName": None,
-            "albumArtistsName": "Muse",
+            TRACK_SCHEMA_EXTRACT_ATTRIBUTES_LABEL.URL: trackUrl,
+            TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: None,
+            TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: "Muse",
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -210,8 +212,8 @@ class AlbumArtistsTestCase(ApiViewTestCase):
                         albumArtists=[robertdeniroArtist])
         
         data = {
-            "albumName": hello2Album.name,
-            "albumArtistsName": robertdeniroArtist.name,
+            TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: hello2Album.name,
+            TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: robertdeniroArtist.name,
         }
         response = self.putSampleTrack(trackUuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
@@ -238,7 +240,6 @@ class AlbumArtistsTestCase(ApiViewTestCase):
         }
         response = self.putSampleTrack(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert response.status_code == status.HTTP_201_CREATED
         
         albumArtistsList = list(self.savedTrack.album.albumArtists.all())
         assert len(albumArtistsList) == 2

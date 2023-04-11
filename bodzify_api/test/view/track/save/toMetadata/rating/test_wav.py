@@ -14,7 +14,7 @@ class TestCase(ApiViewTestCase):
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
-                  rating=2,
+                  rating=None,
                   duration=0)
         data = {
             "rating": None,
@@ -45,7 +45,7 @@ class TestCase(ApiViewTestCase):
                   file=self.testUserLibraryAbsPath + "2Stars.wav",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
-                  rating=2,
+                  rating=4,
                   duration=0)
         data = {
             "rating": 1,
@@ -60,7 +60,7 @@ class TestCase(ApiViewTestCase):
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
                   genre=self.testUserGenrelessGenre,
-                  rating=8,
+                  rating=2,
                   duration=0)
         data = {
             "rating": 2,
