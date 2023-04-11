@@ -7,7 +7,7 @@ from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
-class AlbumViewDeleteTestCase(AlbumViewTestCase):
+class TestCase(AlbumViewTestCase):
 
     """
 		The album "Black Holes And Revelation" has two tracks "Assassin" and "Starlight" (with 

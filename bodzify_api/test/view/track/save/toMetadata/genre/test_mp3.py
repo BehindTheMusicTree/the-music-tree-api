@@ -3,27 +3,27 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
+from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
+    ATTRIBUTES_LABEL as SCHEMA_TRACK_ATTRIBUTES_LABEL
 
 
-class Mp3TestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_longest(self):
         genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/mp3/0037.mp3",
-            "genreName": genreName
+            SCHEMA_TRACK_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.extract(data=data)
+        response = self.postSampleTrack(sampleFilename="sample.mp3", dataJson=data)
         assert response.status_code == status.HTTP_201_CREATED
-        genreNameKey = AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME
-        assert self.savedTrackMetadata[genreNameKey] == genreName
+        key = AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME
+        assert self.savedTrackMetadata[key] == genreName
 
     def test_null(self):
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/mp3/0037.mp3",
-            "genreName": None
+            SCHEMA_TRACK_ATTRIBUTES_LABEL.GENRE_NAME: ""
         }
-        response = self.extract(data=data)
+        response = self.postSampleTrack(sampleFilename="sample.mp3", dataJson=data)
         assert response.status_code == status.HTTP_201_CREATED
-        genreNameKey = AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME
-        assert self.savedTrackMetadata[genreNameKey] in ["", None]
+        key = AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME
+        assert self.savedTrackMetadata[key] in ["", None]

@@ -3,17 +3,20 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
+from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
+    ATTRIBUTES_LABEL as SCHEMA_TRACK_ATTRIBUTES_LABEL
 
 
-class AlbumArtistsTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_withCorrectSpacing(self):
+        albumArtistsName = "Chuck Berry,  The Beatles,The Rolling Stones "
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "albumName": "Chuck",
-            "albumArtistsName": "Chuck Berry,  The Beatles,The Rolling Stones "
+            SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
+            SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
         }
-        response = self.extract(data=data)
+        response = self.postSampleTrack(sampleFilename="sample.mp3", dataJson=data)
         assert response.status_code == status.HTTP_201_CREATED
         albumArtistsKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
+        assert self.savedTrackMetadata[albumArtistsKey] == albumArtistsName
         assert self.savedTrackMetadata[albumArtistsKey] == "Chuck Berry,The Beatles,The Rolling Stones"

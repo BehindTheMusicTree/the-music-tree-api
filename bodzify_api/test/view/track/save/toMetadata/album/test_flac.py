@@ -3,27 +3,27 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
+from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
+    ATTRIBUTES_LABEL as SCHEMA_TRACK_ATTRIBUTES_LABEL
 
 
-class AlbumArtistsTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_longest(self):
         albumName = "a" * settings.ALBUM_NAME_MAX_CHAR
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/flac/0127.flac",
-            "albumName": albumName,
+            SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_NAME: albumName
         }
-        response = self.extract(data=data)
+        response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
         assert response.status_code == status.HTTP_201_CREATED
-        albumNameKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME
-        assert self.savedTrackMetadata[albumNameKey] == albumName
+        key = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME
+        assert self.savedTrackMetadata[key] == albumName
 
     def test_null(self):
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/flac/0127.flac",
-            "albumName": None,
+            SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_NAME: ""
         }
-        response = self.extract(data=data)
+        response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
         assert response.status_code == status.HTTP_201_CREATED
-        albumNameKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME
-        assert self.savedTrackMetadata[albumNameKey] in ["", None]
+        key = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME
+        assert self.savedTrackMetadata[key]  in ["", None]

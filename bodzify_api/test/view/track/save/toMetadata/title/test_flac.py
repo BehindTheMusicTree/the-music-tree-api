@@ -19,7 +19,7 @@ class FlacTestCase(ApiViewTestCase):
 
     def test_null(self):
         data = {
-            "title": None
+            "title": ""
         }
         response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
         assert response.status_code == status.HTTP_201_CREATED

@@ -27,7 +27,7 @@ class ApiViewTestCase(ViewTestCase):
             return self.apiClient.post(
                 path=reverse('librarytrack-list'),
                 data={TRACK_ATTRIBUTES_LABEL.FILE: ''},
-                format='json')
+                format='json',)
         with open(self.inputSampleDirAbsPath + sampleFilename, "rb") as sampleFile:
             fileJson = {TRACK_ATTRIBUTES_LABEL.FILE: sampleFile}
             if dataJson is not None:

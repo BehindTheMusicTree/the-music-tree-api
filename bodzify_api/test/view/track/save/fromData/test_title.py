@@ -2,12 +2,12 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api import settings
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
+    ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class TitleTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_notProvided(self):
         title = "Mon Amour"
@@ -21,30 +21,42 @@ class TitleTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.title == title
 
-    def test_errorWhenNull(self):
+    def test_nullThenNull(self):
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Lolilom",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "title" : None
+            TRACK_ATTRIBUTES_LABEL.TITLE: None
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.title == ""
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
+        assert self.savedTrack.title == None
 
-    def test_empty(self):
+    def test_emptyThenNull(self):
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Lolilom",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "title" : ""
+            TRACK_ATTRIBUTES_LABEL.TITLE: ""
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.title == ""
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
+        assert self.savedTrack.title == None
 
     def test_longest(self):
-        title = "a" * settings.TRACK_LANGUAGE_MAX_CHAR
+        title = "a" * (settings.TRACK_LANGUAGE_MAX_CHAR - len(".mp3"))
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Lolilom",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "title": title
+            TRACK_ATTRIBUTES_LABEL.TITLE: title
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.title == title
