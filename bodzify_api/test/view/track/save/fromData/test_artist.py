@@ -4,6 +4,8 @@ from ddf import G
 from bodzify_api import settings
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
+    ATTRIBUTES_LABEL as TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
@@ -21,51 +23,71 @@ class ArtistTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.uuid == artist.uuid
 
-    def test_null(self):
+    def test_nullThenNone(self):
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "artistName" : None
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: None
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist == None
 
     def test_empty(self):
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "artistName" : ""
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: ""
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist == None
 
     def test_longest(self):
         artistName = "a" * settings.ARTIST_NAME_MAX_CHAR
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "artistName": artistName
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.name == artistName
 
     def test_existing(self):
         artistName = "a-ha"
         G(Artist, user=self.testUser, name=artistName)
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "artistName": artistName,
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.name == artistName
 
     def test_notExisting(self):
         artistName = "hoho"
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "artistName": artistName,
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.name == artistName

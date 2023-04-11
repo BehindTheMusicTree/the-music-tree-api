@@ -21,18 +21,31 @@ class ATTRIBUTES_LABEL:
 class TrackSaveSchemaSerializer(InputSerializer):
 
     title = serializers.CharField(
-        max_length=settings.TRACK_TITLE_MAX_CHAR, required=False)
+        max_length=settings.TRACK_TITLE_MAX_CHAR, 
+        required=False, 
+        allow_null=True)
     artistName = serializers.CharField(
-        max_length=settings.ARTIST_NAME_MAX_CHAR, required=False, allow_blank=True)
+        max_length=settings.ARTIST_NAME_MAX_CHAR, 
+        required=False, 
+        allow_blank=True, 
+        allow_null=True)
     albumName = serializers.CharField(
-        max_length=settings.ALBUM_NAME_MAX_CHAR, required=False, allow_blank=True)
+        max_length=settings.ALBUM_NAME_MAX_CHAR, 
+        required=False, 
+        allow_blank=True, 
+        allow_null=True)
     albumArtistsNameString = serializers.CharField(
-        max_length=settings.ALBUM_ARTISTS_FIELD_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
+        max_length=settings.ALBUM_ARTISTS_FIELD_MAX_CHAR,
+        required=False, 
+        allow_blank=True, 
+        allow_null=True)
     genreName = serializers.CharField(
-        max_length=settings.CRITERIA_NAME_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
+        max_length=settings.CRITERIA_NAME_MAX_CHAR, 
+        required=False, 
+        allow_blank=True, 
+        allow_null=True)
     rating = serializers.IntegerField(
-        validators=[MinValueValidator(0),
-                    MaxValueValidator(settings.TRACK_RATING_MAX_VALUE)],
+        validators=[MinValueValidator(0), MaxValueValidator(settings.TRACK_RATING_MAX_VALUE)],
         required=False,
         allow_null=True)
     language = serializers.CharField(
