@@ -9,6 +9,6 @@ class TestCase(ApiViewTestCase):
 
     def test_notProvidedThenGenreless(self):
         response = self.postSampleTrack(
-            sampleFilename="notProvidedThenGenreless.mp3", dataJson={})
+            sampleFilename="notProvided.mp3", dataJson={})
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
