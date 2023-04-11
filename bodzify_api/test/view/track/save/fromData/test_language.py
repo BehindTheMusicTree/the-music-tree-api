@@ -22,7 +22,7 @@ class LanguageTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == language
 
-    def test_nullThenEmpty(self):
+    def test_nullThenNone(self):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
@@ -33,9 +33,9 @@ class LanguageTestCase(ApiViewTestCase):
         }
         response = self.putSampleTrack(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == ""
+        assert self.savedTrack.language == None
 
-    def test_emptyThenEmpty(self):
+    def test_emptyThenNone(self):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
@@ -46,7 +46,7 @@ class LanguageTestCase(ApiViewTestCase):
         }
         response = self.putSampleTrack(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == ""
+        assert self.savedTrack.language == None
 
     def test_longest(self):
         language = "a" * settings.TRACK_LANGUAGE_MAX_CHAR

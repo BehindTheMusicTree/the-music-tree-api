@@ -347,7 +347,10 @@ def _getSaveModelDataFromSaveSchemaData(user: User, saveSchemaData: QueryDict) -
 def _getDict1UpdatedWithDict2KeyIfSet(
         attributeKey: str, dict1: QueryDict, dict2: QueryDict):
     if attributeKey in dict2:
-        dict1[attributeKey] = dict2[attributeKey]
+        value = dict2[attributeKey]
+        if value == "":
+            value = None
+        dict1[attributeKey] = value
     return dict1
 
 
