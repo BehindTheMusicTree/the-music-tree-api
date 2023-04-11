@@ -16,7 +16,7 @@ class FilenameTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.filename == "Roméo_-_Im_Here.wav"
 
-    def test_providingOnlyTitle(self):
+    def test_providingOnlyTitleInDataThenFilenameWithTitle(self):
         trackUrl = (
             "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"
@@ -30,7 +30,7 @@ class FilenameTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.filename == title + ".mp3"
 
-    def test_withoutProvidingTitleNorArtistAndOriginalFilenameTooLong(self):
+    def test_notProvidingTitleNorArtistAndOriginalFilenameTooLongThenGenerateFilename(self):
         trackUrl = (
             "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"
