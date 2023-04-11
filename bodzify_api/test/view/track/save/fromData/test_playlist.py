@@ -38,7 +38,11 @@ class PlaylistTestCase(ApiViewTestCase):
 
     def test_existingGenreWithParentAllThenTrackInExistingPlaylistAndAllPlaylist(self):
         genreName = "Rock"
-        G(Criteria, user=self.testUser, type=CriteriaTypesId.GENRE, name=genreName)
+        dataJson = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
+        }
+        self.postGenre(dataJson)
+        rockGenre = self.savedGenre
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
@@ -53,11 +57,11 @@ class PlaylistTestCase(ApiViewTestCase):
 
         trackPlaylists = self.savedTrack.playlists.all()
         assert len(trackPlaylists) == 2
-        assert trackPlaylists.filter(criteria__name=genreName).exists()
+        assert trackPlaylists.filter(criteria=rockGenre).exists()
         assert trackPlaylists.filter(
             criteria__name=CriteriaSpecialNames.GENRE_ALL).exists()
 
-        genrePlaylist = trackPlaylists.get(name=genreName)
+        genrePlaylist = trackPlaylists.get(criteria=rockGenre)
         assert genrePlaylist.parent.name == CriteriaSpecialNames.GENRE_ALL
 
     def test_existingGenreWith2ParentsThenTrackIn3ExistingPlaylists(self):
@@ -68,18 +72,15 @@ class PlaylistTestCase(ApiViewTestCase):
         }
         self.postGenre(dataJson)
         rockGenre = self.savedGenre
-        rockGenre = G(Criteria, user=self.testUser, type=CriteriaTypesId.GENRE, name="Rock")
-        hardrockGenre = G(Criteria, user=self.testUser,
-                          name=genreName, parent=rockGenre)
-
-        rockPlaylist = G(Playlist,
-                         user=self.testUser,
-                         type=PlaylistTypesId.GENRE,
-                         criteria=rockGenre)
-        hardrockPlaylist = G(Playlist,
-                             user=self.testUser,
-                             type=PlaylistTypesId.GENRE,
-                             criteria=hardrockGenre)
+        rockPlaylist = Playlist.objects.get(criteria=rockGenre)
+        
+        dataJson = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: genreName,
+            CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
+        }
+        self.postGenre(dataJson)
+        hardrockGenre = self.savedGenre
+        hardrockPlaylist = Playlist.objects.get(criteria=hardrockGenre)
 
         track = G(LibraryTrack,
                   user=self.testUser,
