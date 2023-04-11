@@ -9,7 +9,7 @@ from django.core.files.base import File
 import requests
 from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
-    ATTRIBUTES_LABEL as SCHEMA_ATTRIBUTES_LABEL
+    ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
     TrackPostSchemaSerializer
 import bodzify_api.settings as settings
@@ -54,7 +54,7 @@ def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool = F
     serializer = TrackPostSchemaSerializer(data=postSchemaData)
     serializer.is_valid(raise_exception=True)
 
-    genreNameKey = SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+    genreNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
     if genreNameKey not in postSchemaData:
         postSchemaData[genreNameKey] = None
 
@@ -73,6 +73,14 @@ def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool = F
         else:
             title = filename
         saveSchemaData[TRACK_ATTRIBUTES_LABEL.TITLE] = title
+
+    genreNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+    if genreNameKey not in saveSchemaData:
+        saveSchemaData[genreNameKey] = CriteriaSpecialNames.GENRE_GENRELESS
+    else:
+        genreName = saveSchemaData[genreNameKey]
+        if genreName in [None, ""]:
+            saveSchemaData[genreNameKey] = CriteriaSpecialNames.GENRE_GENRELESS
 
     return Save(user=user, saveSchemaData=saveSchemaData)
 
@@ -115,55 +123,9 @@ def _removeNoneOrEmptyKeyFromDict(dict):
     return dict
 
 
-def _getSaveDataFromFile2(user: User, file):
-    metadata = AudioMetadataService.GetMetadataDictFromFile(
-        file=file, normalizedRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
-
-    saveData = dict()
-    saveData[TRACK_ATTRIBUTES_LABEL.USER] = user.id
-    saveData[TRACK_ATTRIBUTES_LABEL.FILE] = file
-
-    title = metadata[AudioMetadataService.METADATA_DICT_KEYS.TITLE]
-    saveData[TRACK_ATTRIBUTES_LABEL.TITLE] = title
-
-    artistName = metadata[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME]
-    if artistName is not None and artistName != "":
-        artist = ArtistService.GetArtistFromNameAfterEventualCreation(
-            user=user, artistName=artistName)
-        saveData[TRACK_ATTRIBUTES_LABEL.ARTIST] = artist.uuid
-
-    albumName = metadata[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME]
-    if albumName is not None and albumName != "":
-        albumArtistsNameKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
-        albumArtistsNameString = metadata[albumArtistsNameKey]
-        if albumArtistsNameString in [None, ""]:
-            albumArtistsNameList = None
-        else:
-            albumArtistsNameList = _getArtistsNameListFromString(
-                albumArtistsNameString)
-        album = AlbumService.GetAlbumFromNameAndAlbumArtistsNameListAfterEventualCreations(
-            user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
-        saveData[TRACK_ATTRIBUTES_LABEL.ALBUM] = album.uuid
-
-    genreName = metadata[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME]
-    if genreName == "" or genreName is None:
-        genreName = CriteriaSpecialNames.GENRE_GENRELESS
-    genre = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
-        user=user, criteriaName=genreName)
-    saveData[TRACK_ATTRIBUTES_LABEL.GENRE] = genre.uuid
-
-    saveData[TRACK_ATTRIBUTES_LABEL.DURATION] = (
-        metadata[AudioMetadataService.METADATA_DICT_KEYS.DURATION])
-    saveData[TRACK_ATTRIBUTES_LABEL.RATING] = (
-        metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING])
-    saveData[TRACK_ATTRIBUTES_LABEL.LANGUAGE] = (
-        metadata[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE])
-    return saveData
-
-
 def _getDict1UpdatedWithArtistUuidIfArtistNameInDict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
-    artistNameKey = SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+    artistNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
     if artistNameKey in dict2:
         artistName = dict2[artistNameKey]
         artist = ArtistService.GetArtistFromNameAfterEventualCreation(
@@ -178,12 +140,12 @@ def _getDict1UpdatedWithArtistUuidIfArtistNameInDict2(
 
 def _getDict1UpdatedWithAlbumUuidIfAlbumNameInDict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
-    albumNameKey = SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME
+    albumNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME
 
     if albumNameKey in dict2:
         albumName = dict2[albumNameKey]
 
-        artistsNamesKey = SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
+        artistsNamesKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
         if artistsNamesKey in dict2:
             albumArtistsNameString = dict2[artistsNamesKey]
             if albumArtistsNameString is not None:
@@ -204,20 +166,19 @@ def _getDict1UpdatedWithAlbumUuidIfAlbumNameInDict2(
     return dict1
 
 
-def _getDict1UpdatedWithGenreUuidFromGenreNameInDict2(
+def _getDict1UpdatedWithGenreUuidIfGenreNameInDict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
-    genreName = None
-    genreNameKey = SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+    genreNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
     if genreNameKey in dict2:
         genreName = dict2[genreNameKey]
 
-    if genreName in [None, ""]:
-        genreUuid = Criteria.objects.get(
-            user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
-    else:
-        genreUuid = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
-            user=user, criteriaName=genreName).uuid
-    dict1[TRACK_ATTRIBUTES_LABEL.GENRE] = genreUuid
+        if genreName in [None, ""]:
+            genreUuid = Criteria.objects.get(
+                user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
+        else:
+            genreUuid = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
+                user=user, criteriaName=genreName).uuid
+        dict1[TRACK_ATTRIBUTES_LABEL.GENRE] = genreUuid
     return dict1
 
 
@@ -311,22 +272,22 @@ def _getSaveSchemaDataOverridenWithInputData(
         dict1=saveSchemaData)
 
     saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME,
+        attributeKey=TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME,
         dict2=inputData,
         dict1=saveSchemaData)
 
     saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME,
+        attributeKey=TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME,
         dict2=inputData,
         dict1=saveSchemaData)
 
     saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
+        attributeKey=TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
         dict2=inputData,
         dict1=saveSchemaData)
 
     saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
+        attributeKey=TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
         dict2=inputData,
         dict1=saveSchemaData)
 
@@ -362,7 +323,7 @@ def _getSaveModelDataFromSaveSchemaData(user: User, saveSchemaData: QueryDict) -
     saveModelData = _getDict1UpdatedWithAlbumUuidIfAlbumNameInDict2(
         user=user, dict1=saveModelData, dict2=saveSchemaData)
 
-    saveModelData = _getDict1UpdatedWithGenreUuidFromGenreNameInDict2(
+    saveModelData = _getDict1UpdatedWithGenreUuidIfGenreNameInDict2(
         user=user, dict1=saveModelData, dict2=saveSchemaData)
 
     saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
@@ -410,7 +371,7 @@ def _getTrackFilenameWithExtension(mineTrackUrl: str, requestData: QueryDict):
     titleKey = TRACK_ATTRIBUTES_LABEL.TITLE
     if titleKey in requestData:
         title = requestData[titleKey]
-        artistNameKey = SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+        artistNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
         if artistNameKey in requestData:
             artistName = requestData[artistNameKey]
             if artistName is None or artistName == "":

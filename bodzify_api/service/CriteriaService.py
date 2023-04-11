@@ -12,7 +12,7 @@ from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 from bodzify_api.serializer.criteria.CriteriaPostSerializer import CriteriaPostSerializer
 
 
-def Create(criteriaTypeId: int, playlistTypeId: int, user: User, postData: QueryDict) -> Criteria:
+def Create(criteriaType: int, playlistType: int, user: User, postData: QueryDict) -> Criteria:
 
     requestSerializer = CriteriaPostSerializer(data=postData)
     requestSerializer.is_valid(raise_exception=True)
@@ -24,13 +24,13 @@ def Create(criteriaTypeId: int, playlistTypeId: int, user: User, postData: Query
         parent = None
 
     if parent in [None, ""]:
-        parent = Criteria.objects.get(user=user, type=criteriaTypeId, parent=None)
+        parent = Criteria.objects.get(user=user, type=criteriaType, parent=None)
 
     criteria = requestSerializer.save(user=user,
-                                      type=criteriaTypeId,
+                                      type=criteriaType,
                                       parent=parent)
 
-    Playlist(user=user, criteria=criteria, type=playlistTypeId).save()
+    Playlist(user=user, criteria=criteria, type=playlistType).save()
 
     return criteria
 
