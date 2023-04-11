@@ -14,11 +14,11 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class TestCase(ApiViewTestCase):
 
     def test_noneThenShouldBeGenreless(self):
-        self.postCriteria(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
+        self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.savedCriteria,
+                  genre=self.savedGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: None
@@ -28,11 +28,11 @@ class TestCase(ApiViewTestCase):
         assert self.savedTrack.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
 
     def test_emptyThenShouldBeGenreless(self):
-        self.postCriteria(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
+        self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.savedCriteria,
+                  genre=self.savedGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: ""
@@ -57,18 +57,18 @@ class TestCase(ApiViewTestCase):
 
     def test_existing(self):
         genreName = "Rock"
-        self.postCriteria(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: genreName})
+        self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: genreName})
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.savedCriteria,
+                  genre=self.savedGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
         response = self.putSampleTrack(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.uuid == self.savedCriteria.uuid
+        assert self.savedTrack.genre.uuid == self.savedGenre.uuid
 
     def test_newSoParentAll(self):
         genreName = "Rock"

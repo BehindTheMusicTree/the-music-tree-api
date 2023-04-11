@@ -11,7 +11,7 @@ import bodzify_api.service.AudioMetadataService as AudioMetadataService
 class ApiViewTestCase(ViewTestCase):
 
     savedTrack = None
-    savedCriteria = None
+    savedGenre = None
 
     def extract(self, data):
         response = self.apiClient.post(
@@ -66,14 +66,14 @@ class ApiViewTestCase(ViewTestCase):
         json1.update(json2)
         return json1
 
-    def postCriteria(self, dataJson):
+    def postGenre(self, dataJson):
         response = self.apiClient.post(
-            path=reverse('criteria-list'),
+            path=reverse('genre-list'),
             data=dataJson,
             format='json')
         if response.status_code == status.HTTP_201_CREATED:
-            self._setSavedCriteriaAttribute(response)
+            self._setSavedGenreAttribute(response)
             
-    def _setSavedCriteriaAttribute(self, response):
-        crteriaUuid = response.json()[CRITERIA_ATTRIBUTES_LABEL.UUID]
-        self.savedCriteria = Criteria.objects.get(uuid=crteriaUuid)
+    def _setSavedGenreAttribute(self, response):
+        uuid = response.json()[CRITERIA_ATTRIBUTES_LABEL.UUID]
+        self.savedGenre = Criteria.objects.get(uuid=uuid)
