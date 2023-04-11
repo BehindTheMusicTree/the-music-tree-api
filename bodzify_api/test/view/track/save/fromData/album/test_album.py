@@ -11,20 +11,7 @@ import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 class ArtistTestCase(ApiViewTestCase):
 
-    def test_notProvided(self):
-        album = G(Artist, user=self.testUser, name="Jojo")
-        track = G(LibraryTrack,
-                  user=self.testUser,
-                  title="Love",
-                  album=album,
-                  genre=self.testUserGenrelessGenre,
-                  duration=0)
-        data = {}
-        response = self.putSampleTrack(track.uuid, data=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.album.uuid == album.uuid
-
-    def test_null(self):
+    def test_nullThenNone(self):
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
             "albumName" : None
@@ -33,7 +20,7 @@ class ArtistTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedTrack.album == None
 
-    def test_empty(self):
+    def test_emptyThenNone(self):
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
             "albumName" : ""

@@ -2,11 +2,25 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
+from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 class AlbumTestCase(ApiViewTestCase):
+
+    def test_notProvidedThenUnchanged(self):
+        album = G(Artist, user=self.testUser, name="Jojo")
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  album=album,
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
+        data = {}
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
+        assert self.savedTrack.album.uuid == album.uuid
 
     def test_deleteOldOneBecauseNothingLinkedToIt(self):
         albumName = "Le Noir"
