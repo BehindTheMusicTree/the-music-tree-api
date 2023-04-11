@@ -10,20 +10,18 @@ class FlacTestCase(ApiViewTestCase):
     def test_longest(self):
         title = "a" * settings.TRACK_TITLE_MAX_CHAR
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/flac/0127.flac",
-            "title": title,
+            "title": title
         }
-        response = self.extract(data=data)
+        response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
         assert response.status_code == status.HTTP_201_CREATED
         titleKey = AudioMetadataService.METADATA_DICT_KEYS.TITLE
         assert self.savedTrackMetadata[titleKey] == title
 
     def test_null(self):
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/flac/0127.flac",
-            "title": None,
+            "title": None
         }
-        response = self.extract(data=data)
+        response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
         assert response.status_code == status.HTTP_201_CREATED
         titleKey = AudioMetadataService.METADATA_DICT_KEYS.TITLE
         assert self.savedTrackMetadata[titleKey] in ["", None]
