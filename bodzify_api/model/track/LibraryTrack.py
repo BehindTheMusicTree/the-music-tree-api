@@ -57,7 +57,7 @@ class LibraryTrack(models.Model):
             validateTrackSize],
         null=True)
     title = models.CharField(
-        max_length=settings.TRACK_TITLE_MAX_CHAR, default=None)
+        max_length=settings.TRACK_TITLE_MAX_CHAR, default=None, null=True)
     artist = models.ForeignKey(
         'bodzify_api.Artist', on_delete=models.CASCADE, default=None, null=True)
     album = models.ForeignKey(
@@ -77,12 +77,6 @@ class LibraryTrack(models.Model):
     language = models.CharField(
         max_length=settings.TRACK_LANGUAGE_MAX_CHAR, blank=True, default=None, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(check=~models.Q(
-                title=""), name="librarytrack_non_empty_title")
-        ]
 
     @property
     def filename(self) -> str:
