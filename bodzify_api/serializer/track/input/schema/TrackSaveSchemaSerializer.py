@@ -29,7 +29,7 @@ class TrackSaveSchemaSerializer(InputSerializer):
     albumArtistsNameString = serializers.CharField(
         max_length=settings.ALBUM_ARTISTS_FIELD_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
     genreName = serializers.CharField(
-        max_length=settings.CRITERIA_NAME_MAX_CHAR, required=False, allow_blank=True)
+        max_length=settings.CRITERIA_NAME_MAX_CHAR, required=False, allow_blank=True, allow_null=True)
     rating = serializers.IntegerField(
         validators=[MinValueValidator(0),
                     MaxValueValidator(settings.TRACK_RATING_MAX_VALUE)],
