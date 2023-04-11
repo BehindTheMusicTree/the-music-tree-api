@@ -4,6 +4,9 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
+    ATTRIBUTES_LABEL as TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 
@@ -11,27 +14,20 @@ from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames
 @pytest.mark.django_db
 class PlaylistTestCase(ApiViewTestCase):
 
-    def test_noGenreThenInTheAllAndGenrelessPlaylists(self):
-        data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-        }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        trackPlaylists = self.savedTrack.playlists.all()
-        assert len(trackPlaylists) == 2
-        assert trackPlaylists.filter(
-            name=CriteriaSpecialNames.GENRE_ALL).exists()
-        assert trackPlaylists.filter(
-            name=CriteriaSpecialNames.GENRE_GENRELESS).exists()
-
     def test_newGenreThenInNewGenrePlaylistAndAllPlaylist(self):
         genreName = "Rock"
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
+        
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "genreName": genreName,
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
+        
         trackPlaylists = self.savedTrack.playlists.all()
         assert len(trackPlaylists) == 2
         assert trackPlaylists.filter(name=genreName).exists()
@@ -41,12 +37,18 @@ class PlaylistTestCase(ApiViewTestCase):
     def test_existingGenreWithParentAllThenTrackInExistingPlaylistAndAllPlaylist(self):
         genreName = "Rock"
         G(Criteria, user=self.testUser, name=genreName)
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
+        
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "genreName": genreName,
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
+        
         trackPlaylists = self.savedTrack.playlists.all()
         assert len(trackPlaylists) == 2
         assert trackPlaylists.filter(name=genreName).exists()
@@ -67,12 +69,18 @@ class PlaylistTestCase(ApiViewTestCase):
                          type=PlaylistTypesId.GENRE, criteria=rockGenre)
         hardrockPlaylist = G(Playlist, user=self.testUser,
                          type=PlaylistTypesId.GENRE, criteria=hardrockGenre)
+        
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "genreName": genreName,
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
+        
         trackPlaylists = self.savedTrack.playlists.all()
         assert len(trackPlaylists) == 3
         assert trackPlaylists.filter(name=hardrockPlaylist.name).exists()

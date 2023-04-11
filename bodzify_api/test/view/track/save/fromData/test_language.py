@@ -2,10 +2,9 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api import settings
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
+    ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
 class LanguageTestCase(ApiViewTestCase):
@@ -23,30 +22,42 @@ class LanguageTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == language
 
-    def test_null(self):
+    def test_nullThenEmpty(self):
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "language" : None
+            TRACK_ATTRIBUTES_LABEL.LANGUAGE: None
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == ""
 
-    def test_empty(self):
+    def test_emptyThenEmpty(self):
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "language" : ""
+            TRACK_ATTRIBUTES_LABEL.LANGUAGE: ""
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == ""
 
     def test_longest(self):
         language = "a" * settings.TRACK_LANGUAGE_MAX_CHAR
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  genre=self.testUserGenrelessGenre,
+                  duration=0)
         data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "language": language
+            TRACK_ATTRIBUTES_LABEL.LANGUAGE: language
         }
-        response = self.extract(data=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == language
