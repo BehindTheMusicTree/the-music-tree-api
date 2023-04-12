@@ -14,7 +14,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   title="Love",
                   album=album,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {}
         response = self.putSampleTrack(track.uuid, data=data)
@@ -28,7 +27,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   title="Foire",
                   album=album,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             "albumName": "Paul",
@@ -45,13 +43,11 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   title="Foire",
                   album=album,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         G(LibraryTrack,
           user=self.testUser,
           title="Josie",
           album=album,
-          genre=self.testUserGenrelessGenre,
           duration=0)
         data = {
             "albumName": "Paul",

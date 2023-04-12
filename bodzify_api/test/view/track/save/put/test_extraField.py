@@ -11,7 +11,6 @@ class ExtraFieldTestCase(ApiViewTestCase):
         track = G(LibraryTrack, 
                   user=self.testUser,
                   title="Foire",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             "nonExistingField": "oifjqoif",

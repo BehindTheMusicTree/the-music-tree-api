@@ -16,7 +16,6 @@ class ArtistTestCase(ApiViewTestCase):
                   user=self.testUser,
                   title="Foire",
                   artist=artist,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             "artistName": "Paul",
@@ -33,13 +32,11 @@ class ArtistTestCase(ApiViewTestCase):
                   user=self.testUser,
                   title="Foire",
                   artist=artist,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         G(LibraryTrack,
           user=self.testUser,
           title="Josie",
           artist=artist,
-          genre=self.testUserGenrelessGenre,
           duration=0)
         data = {
             "artistName": "Paul",
@@ -56,14 +53,12 @@ class ArtistTestCase(ApiViewTestCase):
                   user=self.testUser,
                   title="Foire",
                   artist=artist,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         album = G(Album, user=self.testUser, name="Hunting High and Low", albumArtists=[artist])
         G(LibraryTrack,
           user=self.testUser,
           title="Josie",
           album=album,
-          genre=self.testUserGenrelessGenre,
           duration=0)
         data = {
             "artistName": "Paul",

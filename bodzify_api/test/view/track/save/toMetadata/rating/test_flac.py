@@ -6,14 +6,13 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_none(self):
         track = G(LibraryTrack,
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -29,7 +28,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -44,7 +42,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "2Stars.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=4,
                   duration=0)
         data = {
@@ -59,7 +56,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -74,7 +70,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -89,7 +84,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -104,7 +98,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -119,7 +112,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -134,7 +126,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -149,7 +140,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -164,7 +154,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -179,7 +168,6 @@ class TrackPutViewRatingFileTypeFlacTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.flac",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
