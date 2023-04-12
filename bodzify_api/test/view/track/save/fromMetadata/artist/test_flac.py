@@ -5,7 +5,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db
-class FlacTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
     
     def test_noneThenNone(self):
         response = self.postSampleTrack(sampleFilename="noneThenNone.flac")
