@@ -30,7 +30,7 @@ class Criteria(models.Model):
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
-        unique_together = ('user', 'name')
+        unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)
         constraints = [
             models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")
         ]
