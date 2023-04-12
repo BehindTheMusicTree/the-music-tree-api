@@ -8,8 +8,8 @@ from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
 class SPECIAL_NAMES:
     ALL = "All"
-    GENRED = "Genred"
-    GENRELESS = "Genreless"
+    GENRE_GENRED = "Genred"
+    GENRE_GENRELESS = "Genreless"
 
 
 class ATTRIBUTES_LABEL:
@@ -25,7 +25,7 @@ class Playlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     customName = models.CharField(
         max_length=100, default=None, blank=True, null=True)
-    type = models.ForeignKey(PlaylistType, on_delete=models.DO_NOTHING)
+    type = models.ForeignKey(PlaylistType, on_delete=models.DO_NOTHING, editable=False)
     criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
