@@ -23,7 +23,6 @@ class SearchViewTestCase(ViewTestCase):
         summerloveTrack = G(LibraryTrack,
                             user=self.testUser,
                             title="Summer Love",
-                            genre=self.testUserGenrelessGenre,
                             duration=0)
         sum41Artist = G(Artist, user=self.testUser, name="Sum 41")
         jailesumAlbum = G(Album, user=self.testUser, name="J'ai le Sum")
@@ -42,7 +41,6 @@ class SearchViewTestCase(ViewTestCase):
         werealltoblameTrack = G(LibraryTrack,
                                 user=self.testUser,
                                 title="We're All To Blame",
-                                genre=self.testUserGenrelessGenre,
                                 duration=0)
         response = self._search("All")
         assert response.status_code == 200

@@ -6,8 +6,7 @@ from bodzify_api import settings
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames, \
-    ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
@@ -46,7 +45,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
@@ -70,16 +68,15 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.genre.uuid == self.savedGenre.uuid
 
-    def test_newSoParentAll(self):
+    def test_newSoParentNone(self):
         genreName = "Rock"
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
         response = self.putSampleTrack(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.parent.name == CriteriaSpecialNames.GENRE_ALL
+        assert self.savedTrack.genre.parent == None

@@ -18,7 +18,6 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=filePathRelativeToMediaDir,
                   title="We're All To Blame",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         assert self.doesTrackFilenameExistInTestUserLibrary(filename) == True
         assert track.fileExists == True
@@ -37,7 +36,6 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   title="We're All To Blame",
                   artist=artist,
                   album=album,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         response = self.deleteTrack(trackUuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -51,7 +49,6 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title=trackTitle,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         response = self.deleteTrack(trackUuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT

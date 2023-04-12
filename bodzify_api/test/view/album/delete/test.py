@@ -24,7 +24,6 @@ class TestCase(AlbumViewTestCase):
             file=self.testUserLibraryAbsPath + assassinTrackFilename,
             title="Assassin",
             album=blackHolesAlbum,
-            genre=self.testUserGenrelessGenre,
             duration=0)
         starlightTrackFilename = "Starlight.mp3"
         starlightTrack = G(
@@ -33,7 +32,6 @@ class TestCase(AlbumViewTestCase):
             file=self.testUserLibraryAbsPath + starlightTrackFilename,
             title="Starlight",
             album=blackHolesAlbum,
-            genre=self.testUserGenrelessGenre,
             duration=0)
         assert self.doesTrackFilenameExistInTestUserLibrary(assassinTrackFilename) == True
         assert self.doesTrackFilenameExistInTestUserLibrary(starlightTrackFilename) == True
@@ -78,7 +76,6 @@ class TestCase(AlbumViewTestCase):
             title="Assassin",
             artist=matthewArtist,
             album=blackHolesAlbum,
-            genre=self.testUserGenrelessGenre,
             duration=0
         )
         G(
@@ -86,7 +83,6 @@ class TestCase(AlbumViewTestCase):
             user=self.testUser,
             title="Blue",
             artist=polArtist,
-            genre=self.testUserGenrelessGenre,
             duration=0
         )
 

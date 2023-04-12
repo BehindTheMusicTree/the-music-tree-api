@@ -21,7 +21,6 @@ class PlaylistTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
 
         data = {
@@ -46,7 +45,6 @@ class PlaylistTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
 
         data = {
@@ -85,7 +83,6 @@ class PlaylistTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName

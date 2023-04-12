@@ -7,14 +7,13 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class LanguageTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_notProvided(self):
         language = "French"
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   language=language,
                   duration=0)
         data = {}
@@ -26,7 +25,6 @@ class LanguageTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: None
@@ -39,7 +37,6 @@ class LanguageTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: ""
@@ -53,7 +50,6 @@ class LanguageTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: language

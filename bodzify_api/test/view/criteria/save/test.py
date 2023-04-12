@@ -33,21 +33,6 @@ class TestCase(ApiViewTestCase):
         response = self.postGenre(dataJson=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
     
-    def test_errorWhenGenrelessNameUsed(self):
-        data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: CriteriaSpecialNames.GENRE_GENRELESS
-        }
-        response = self.postGenre(dataJson=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-    
-    def test_parentAllWhenNoParentProvided(self):
-        data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
-        }
-        response = self.postGenre(dataJson=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedGenre.parent.name == CriteriaSpecialNames.GENRE_ALL
-    
     def test_withExistingParent(self):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"

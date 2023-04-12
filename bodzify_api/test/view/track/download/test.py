@@ -11,7 +11,6 @@ class DownloadTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Kobra",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         response = self.downloadTrack(trackUuid=track.uuid)
         assert response.status_code == status.HTTP_410_GONE
@@ -22,7 +21,6 @@ class DownloadTestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=filePathRelativeToMediaDir,
                   title="We're All To Blame",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         response = self.downloadTrack(trackUuid=track.uuid)
         assert response.status_code == status.HTTP_200_OK
