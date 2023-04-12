@@ -13,9 +13,8 @@ class TestCase(ApiViewTestCase):
         assert self.savedTrack.genre == None
     
     def test_longest(self):
-        response = self.postSampleTrack(sampleFilename="100CharGenreName.mp3")
+        response = self.postSampleTrack(sampleFilename="50CharGenreName.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.genre.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
-            "gJQdUyvX9WKnsv0KAtwAiWmi739Fqt2KsGZi7F3Fn9AXPI3"
+        assert self.savedTrack.genre.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5"
 	
 	
