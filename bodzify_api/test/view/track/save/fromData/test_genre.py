@@ -13,7 +13,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_noneThenShouldBeGenreless(self):
+    def test_nullThenNone(self):
         self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
                   user=self.testUser,
@@ -25,9 +25,9 @@ class TestCase(ApiViewTestCase):
         }
         response = self.putSampleTrack(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
+        assert self.savedTrack.genre == None
 
-    def test_emptyThenShouldBeGenreless(self):
+    def test_emptyThenNone(self):
         self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
                   user=self.testUser,
@@ -39,7 +39,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.putSampleTrack(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.name == CriteriaSpecialNames.GENRE_GENRELESS
+        assert self.savedTrack.genre == None
 
     def test_longest(self):
         genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
