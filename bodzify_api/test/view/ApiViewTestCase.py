@@ -78,3 +78,6 @@ class ApiViewTestCase(ViewTestCase):
     def _setSavedGenreAttribute(self, response):
         uuid = response.json()[CRITERIA_ATTRIBUTES_LABEL.UUID]
         self.savedGenre = Criteria.objects.get(uuid=uuid)
+
+    def getPlaylist(self, playlistUuid):
+        return self.apiClient.get(path=reverse('playlist-detail', kwargs={'pk': playlistUuid}))
