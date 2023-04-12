@@ -6,6 +6,12 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
 
+class SPECIAL_NAMES:
+    ALL = "All"
+    GENRED = "Genred"
+    GENRELESS = "Genreless"
+
+
 class ATTRIBUTES_LABEL:
     NAME = "name"
     PARENT = "parent"
