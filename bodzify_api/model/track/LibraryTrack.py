@@ -64,7 +64,8 @@ class LibraryTrack(models.Model):
         'bodzify_api.Album', on_delete=models.CASCADE, default=None, null=True)
     genre = models.ForeignKey('bodzify_api.Criteria',
                               on_delete=models.DO_NOTHING,
-                              default=None)
+                              default=None,
+                              null=True)
     duration = models.FloatField(default=None)
     rating = models.IntegerField(
         null=True,
