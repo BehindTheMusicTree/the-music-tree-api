@@ -4,11 +4,12 @@ from ddf import G
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
-from bodzify_api.test.view.playlist.PlaylistViewTestCase import PlaylistViewTestCase
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.Playlist import Playlist, \
+    ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_NAME
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class NameTestCase(PlaylistViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_withCustomNameShouldDisplayIt(self):
         daddysrockPlaylistCustomName = "Daddy's rock"
@@ -25,7 +26,7 @@ class NameTestCase(PlaylistViewTestCase):
         response = self.get(playlistUuid=rapPlaylist.uuid)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()[
-            Playlist.ATTRIBUTE_NAME_LABEL] == daddysrockPlaylistCustomName
+            PLAYLIST_ATTRIBUTES_NAME.NAME] == daddysrockPlaylistCustomName
 
     def test_withoutCustomNameShouldDisplayName(self):
         rockCriteriaName = "Rock"
@@ -41,4 +42,4 @@ class NameTestCase(PlaylistViewTestCase):
         response = self.get(playlistUuid=rockPlaylist.uuid)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()[
-            Playlist.ATTRIBUTE_NAME_LABEL] == rockCriteriaName
+            PLAYLIST_ATTRIBUTES_NAME.NAME] == rockCriteriaName
