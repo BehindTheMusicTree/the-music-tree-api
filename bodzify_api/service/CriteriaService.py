@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 from django.contrib.auth.models import User
-from django.db import IntegrityError
 from django.http import QueryDict
-from bodzify_api.model.criteria.Criteria import Criteria, CriteriaSpecialNames, \
+from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
@@ -24,7 +23,8 @@ def Create(criteriaType: int, playlistType: int, user: User, postData: QueryDict
         parent = None
 
     if parent in [None, ""]:
-        parent = Criteria.objects.get(user=user, type=criteriaType, parent=None)
+        parent = Criteria.objects.get(
+            user=user, type=criteriaType, parent=None)
 
     criteria = requestSerializer.save(user=user,
                                       type=criteriaType,
@@ -40,16 +40,12 @@ def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
     if Criteria.objects.filter(user=user, name=criteriaName).exists():
         criteria = Criteria.objects.get(user=user, name=criteriaName)
     else:
-        criteria = Criteria.objects.create(
-            user=user,
-            type=CriteriaType.objects.get(id=CriteriaTypesId.GENRE),
-            name=criteriaName,
-            parent=Criteria.objects.get(
-                user=user, name=CriteriaSpecialNames.GENRE_ALL)
-        )
-        Playlist.objects.create(
-            user=user,
-            criteria=criteria,
-            type=PlaylistType.objects.get(pk=PlaylistTypesId.GENRE)
-        )
+        criteria = Criteria.objects.create(user=user,
+                                           type=CriteriaType.objects.get(
+                                               id=CriteriaTypesId.GENRE),
+                                           name=criteriaName)
+        Playlist.objects.create(user=user,
+                                criteria=criteria,
+                                type=PlaylistType.objects.get(
+                                    pk=PlaylistTypesId.GENRE))
     return criteria
