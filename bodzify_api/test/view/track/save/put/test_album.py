@@ -6,7 +6,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class AlbumTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_notProvidedThenUnchanged(self):
         album = G(Album, user=self.testUser, name="Jojo")

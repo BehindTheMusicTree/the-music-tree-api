@@ -73,6 +73,7 @@ class ApiViewTestCase(ViewTestCase):
             format='json')
         if response.status_code == status.HTTP_201_CREATED:
             self._setSavedGenreAttribute(response)
+        return response
             
     def _setSavedGenreAttribute(self, response):
         uuid = response.json()[CRITERIA_ATTRIBUTES_LABEL.UUID]
