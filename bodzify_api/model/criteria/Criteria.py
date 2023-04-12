@@ -3,12 +3,6 @@ import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
 import bodzify_api.settings as settings
-
-
-class CriteriaSpecialNames:
-    GENRE_ALL = "All"
-    GENRE_GENRELESS = "Genreless"
-    TAG_ALL = "Tagged"
     
 
 class ATTRIBUTES_LABEL:
