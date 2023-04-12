@@ -29,31 +29,10 @@
         }
     },
     {
-        "model": "bodzify_api.criteria",
-        "pk": "L1ZG85munGytJb885fgion",
-        "fields": {
-            "name": "Genreless",
-            "type": 0,
-            "parent": "m5KRxi10O884BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLhbhHSjqEPdZ7",
         "fields": {
             "criteria": "m5KRxi10O884BEOod9Qmjy",
-            "type": 0,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "FYM1HUIrwLSgzHSHI76dVH",
-        "fields": {
-            "criteria": "L1ZG85munGytJb885fgion",
             "type": 0,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 4

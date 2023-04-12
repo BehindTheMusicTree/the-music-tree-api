@@ -29,17 +29,6 @@
     },
     {
         "model": "bodzify_api.criteria",
-        "pk": "L1ZG85ddddytJbJ65fgion",
-        "fields": {
-            "name": "Genreless",
-            "type": 0,
-            "parent": "m5KRxiqqqxW4BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 3
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
         "pk": "knvci5zjjjjMySDNBfkiJR",
         "fields": {
             "name": "Tagged",
@@ -53,16 +42,6 @@
         "pk": "LnM1arJrwLskdjSjqEPdZB",
         "fields": {
             "criteria": "m5KRxiqqqxW4BEOod9Qmjy",
-            "type": 0,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 3
-        }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "LnM1arJrwLskdjllllPdZB",
-        "fields": {
-            "criteria": "L1ZG85ddddytJbJ65fgion",
             "type": 0,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 3
