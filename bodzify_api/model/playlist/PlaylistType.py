@@ -6,6 +6,7 @@ class PlaylistTypesId:
     GENRE = 0
     TAG = 1
     CUSTOM = 2
+    AUTOMATIC = 3
 
 
 class PlaylistType(models.Model):
