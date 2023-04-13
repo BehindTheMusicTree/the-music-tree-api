@@ -5,8 +5,7 @@ from django.db import models
 class PlaylistTypesId:
     GENRE = 0
     TAG = 1
-    CUSTOM = 2
-    AUTOMATIC = 3
+    SIMPLE = 2
 
 
 class PlaylistType(models.Model):
