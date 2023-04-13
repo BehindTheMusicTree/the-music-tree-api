@@ -55,10 +55,8 @@ class CriteriaViewSet(MultiSerializerViewSet):
 
         return queryset
 
-    @extend_schema(
-        request=CriteriaPostSerializer,
-        responses=CriteriaDetailedSerializer
-    )
+    @extend_schema(request=CriteriaPostSerializer,
+                   responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         try:
             criteria = CriteriaService.Create(criteriaType=self.criteriaType,
@@ -76,15 +74,13 @@ class CriteriaViewSet(MultiSerializerViewSet):
                             headers=headers,
                             safe=False)
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(FILTER_FIELDS.NAME, OpenApiTypes.STR,
-                             OpenApiParameter.PATH),
-            OpenApiParameter(FILTER_FIELDS.PARENT, OpenApiTypes.STR,
-                             OpenApiParameter.PATH)
-        ],
-        responses=CriteriaDetailedSerializer
-    )
+    @extend_schema(parameters=[OpenApiParameter(FILTER_FIELDS.NAME,
+                                                OpenApiTypes.STR,
+                                                OpenApiParameter.PATH),
+                               OpenApiParameter(FILTER_FIELDS.PARENT,
+                                                OpenApiTypes.STR,
+                                                OpenApiParameter.PATH)],
+                   responses=CriteriaDetailedSerializer)
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
