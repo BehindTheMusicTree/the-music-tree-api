@@ -1,24 +1,20 @@
 #!/usr/bin/env python
-from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import (
-        PlaylistWithoutTracksSerializer)
-from bodzify_api.serializer.track.output.TrackWithoutPlaylistsSerializer import (
-        TrackWithoutPlaylistsSerializer)
+from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL
+from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import \
+    PlaylistWithoutTracksSerializer
+from bodzify_api.serializer.track.output.TrackWithoutPlaylistsSerializer import \
+    TrackWithoutPlaylistsSerializer
 
 
 class PlaylistWithTrackSerializer(PlaylistWithoutTracksSerializer):
     libraryTracks = TrackWithoutPlaylistsSerializer(
-            source='librarytrack_set', read_only=True, many=True)
+        source='librarytrack_set', read_only=True, many=True)
 
     class Meta:
-        model = Playlist    
-        fields = [
-            "uuid",
-            "name",
-            "type",
-            "criteria",
-            "parent",
-            "addedOn",
-            "trackCount",
-            "libraryTracks"
-        ]
+        model = Playlist
+        fields = [ATTRIBUTES_LABEL.UUID,
+                  ATTRIBUTES_LABEL.NAME,
+                  ATTRIBUTES_LABEL.TYPE,
+                  ATTRIBUTES_LABEL.ADDED_ON,
+                  "trackCount",
+                  "libraryTracks"]

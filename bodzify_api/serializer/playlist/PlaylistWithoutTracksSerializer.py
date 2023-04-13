@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from rest_framework import serializers
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.PlaylistWithoutParentSerializer import (
     PlaylistWithoutParentSerializer)
 
@@ -15,13 +15,9 @@ class PlaylistWithoutTracksSerializer(PlaylistWithoutParentSerializer):
             return None
 
     class Meta:
-        model = Playlist    
-        fields = [
-            "uuid",
-            "name",
-            "type",
-            "criteria",
-            "parent",
-            "addedOn",
-            "trackCount",
-        ]
+        model = Playlist
+        fields = [ATTRIBUTES_LABEL.UUID,
+                  ATTRIBUTES_LABEL.NAME,
+                  ATTRIBUTES_LABEL.TYPE,
+                  ATTRIBUTES_LABEL.ADDED_ON,
+                  "trackCount"]
