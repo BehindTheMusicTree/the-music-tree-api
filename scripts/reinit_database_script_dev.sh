@@ -1,6 +1,5 @@
 projectDir=~/Git/bodzify-api
 managePath=~/Git/bodzify-api/manage.py
-echo $managePath
 sudo -u postgres dropdb -e bodzify_api -f
 sudo -u postgres -H -- psql -c "create database bodzify_api with owner django;"
 sudo rm -r $projectDir/bodzify_api/migrations/*
