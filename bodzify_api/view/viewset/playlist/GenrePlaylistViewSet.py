@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
 from bodzify_api.serializer.playlist.PlaylistWithTrackSerializer import \
-    PlaylistWithTrackSerializer
+    PlaylistWithTracksSerializer
 from bodzify_api.service.PlaylistService import PlaylistService
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
@@ -17,9 +17,9 @@ from bodzify_api.model.playlist.criteria.CriteriaPlaylist import \
 class GenrePlaylistViewSet(MultiSerializerViewSet):
     queryset = GenrePlaylist.objects.all()
     serializers = {
-        'default': PlaylistWithTrackSerializer,
-        'list':  PlaylistWithTrackSerializer,
-        'retrieve':  PlaylistWithTrackSerializer,
+        'default': PlaylistWithTracksSerializer,
+        'list':  PlaylistWithTracksSerializer,
+        'retrieve':  PlaylistWithTracksSerializer,
     }
 
     def get_queryset(self):

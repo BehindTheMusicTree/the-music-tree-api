@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
 from bodzify_api.model.playlist.criteria.TagPlaylist import TagPlaylist
 from bodzify_api.serializer.playlist.PlaylistGetParamSerializer import \
     ATTRIBUTES_LABEL as PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.PlaylistWithTrackSerializer import PlaylistWithTrackSerializer
+from bodzify_api.serializer.playlist.PlaylistWithTrackSerializer import PlaylistWithTracksSerializer
 from bodzify_api.service.PlaylistService import PlaylistService
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
@@ -18,9 +18,9 @@ from bodzify_api.model.playlist.criteria.CriteriaPlaylist import \
 
 class PlaylistViewSet(MultiSerializerViewSet):
     serializers = {
-        'default': PlaylistWithTrackSerializer,
-        'list':  PlaylistWithTrackSerializer,
-        'retrieve':  PlaylistWithTrackSerializer,
+        'default': PlaylistWithTracksSerializer,
+        'list':  PlaylistWithTracksSerializer,
+        'retrieve':  PlaylistWithTracksSerializer,
     }
 
     def get_queryset(self):
@@ -61,3 +61,12 @@ class PlaylistViewSet(MultiSerializerViewSet):
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        simplePlaylist = PlaylistService().createSimplePlaylist(
+            self.request.user, self.request.data)
+        
+        responseSerializer = PlaylistWithTracksSerializer(simplePlaylist)
+        headers = self.get_success_headers(responseSerializer.data)
+        return JsonResponse(
+            data=responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
