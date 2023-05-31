@@ -9,8 +9,6 @@ class SPECIAL_NAMES:
 
 class TagPlaylist(CriteriaPlaylist):
 
-    TYPE_LABEL = 'tag'
-
     @property
     def noCriteriaName(self) -> str:
         return SPECIAL_NAMES.TAGLESS
