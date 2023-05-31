@@ -14,7 +14,6 @@ class PlaylistWithTrackSerializer(PlaylistWithoutTracksSerializer):
         model = Playlist
         fields = [ATTRIBUTES_LABEL.UUID,
                   ATTRIBUTES_LABEL.NAME,
-                  ATTRIBUTES_LABEL.TYPE,
                   ATTRIBUTES_LABEL.ADDED_ON,
                   "trackCount",
                   "libraryTracks"]
