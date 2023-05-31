@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 For more information on this file, see
 https://docs.djangoproject.com/en/4.1/topics/settings/
@@ -30,7 +32,8 @@ DEBUG = True
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes', 
+    'polymorphic',
+    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -204,6 +207,7 @@ if DEBUG:
     for logger in LOGGING['loggers']:
         LOGGING['loggers'][logger]['handlers'] = ['console']
 
+API_ROOT_BASE = 'api/v1/'
 APP_NAME = "bodzify_api"
 APP_ROOT = os.path.join(BASE_DIR, APP_NAME + '/')
 MEDIA_ROOT = "/var/lib/bodzify-api/media/"
