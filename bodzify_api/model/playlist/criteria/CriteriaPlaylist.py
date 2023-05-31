@@ -4,25 +4,28 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 
 
-class SPECIAL_NAMES:
-    GENRE_GENRELESS = "Genreless"
-
-
 class ATTRIBUTES_LABEL:
     PARENT = "parent"
-    TYPE = "type"
     CRITERIA_NAME = 'criteria__name'
 
 
 class CriteriaPlaylist(Playlist):
+    
     criteria = models.ForeignKey(
         Criteria, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        abstract = True
 
     @property
     def name(self) -> str:
         if self.criteria is None:
-            return SPECIAL_NAMES.GENRE_GENRELESS
+            return self.noCriteriaName
         return self.criteria.name
+    
+    @property
+    def noCriteriaName(self) -> str:
+        return None
 
     @property
     def parent(self) -> 'Playlist':

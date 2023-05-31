@@ -4,21 +4,22 @@ from bodzify_api import settings
 from bodzify_api.model.playlist.Playlist import Playlist
 
 
+
 class ATTRIBUTES_LABEL:
-    PARENT = "parent"
-    TYPE = "type"
-    CRITERIA_NAME = 'criteria__name'
+    CUSTOM_NAME = 'customName'
 
 
 class SimplePlaylist(Playlist):
+
+    TYPE_LABEL = 'simple'
+
     customName = models.CharField(
         max_length=settings.CRITERIA_NAME_MAX_CHAR, default=None, null=True)
 
     class Meta:
         constraints = [
             models.CheckConstraint(check=~models.Q(
-                customName=""), name="simple_playlist_non_empty_custom_name")
-        ]
+                customName=""), name="simple_playlist_non_empty_custom_name")]
 
     @property
     def name(self) -> str:
