@@ -36,15 +36,5 @@
             "addedOn": "1998-07-14 23:00:00.000 +0100",
             "user": 2
         }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "LnM1arJrhhhbhHSjqEPdZB",
-        "fields": {
-            "criteria": "m5KRxisjexW4BEOod9Qmjq",
-            "type": 0,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 2
-        }
     }
 ]
