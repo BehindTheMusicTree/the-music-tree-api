@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+
 from django.db import IntegrityError
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
@@ -8,11 +9,9 @@ from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.serializer.criteria.CriteriaPostSerializer import CriteriaPostSerializer
 from bodzify_api.serializer.criteria.CriteriaDetailedSerializer import CriteriaDetailedSerializer
-from bodzify_api.service import CriteriaService
+from bodzify_api.service.criteria import CriteriaService
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.CriteriaType import CriteriaType
-from bodzify_api.model.playlist.PlaylistType import PlaylistType
 
 
 class FILTER_FIELDS:
@@ -30,13 +29,12 @@ class CriteriaViewSet(MultiSerializerViewSet):
         'create':  CriteriaPostSerializer,
     }
 
-    def __init__(self, criteriaTypeId, playlistTypeId, **kwargs):
+    def __init__(self, criteriaService: CriteriaService, **kwargs):
         super().__init__(**kwargs)
-        self.criteriaType = CriteriaType.objects.get(id=criteriaTypeId)
-        self.playlistType = PlaylistType.objects.get(id=playlistTypeId)
+        self.criteriaService = criteriaService
 
     def get_queryset(self):
-        queryset = Criteria.objects.filter(user=self.request.user)
+        queryset = self.queryset.filter(user=self.request.user)
 
         name = self.request.query_params.get(FILTER_FIELDS.NAME)
         if name is not None:
@@ -50,19 +48,13 @@ class CriteriaViewSet(MultiSerializerViewSet):
                 parent = parentParameter
             queryset = queryset.filter(parent=parent)
 
-        if self.criteriaType is not None:
-            queryset = queryset.filter(type=self.criteriaType.id)
-
         return queryset
 
     @extend_schema(request=CriteriaPostSerializer,
                    responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         try:
-            criteria = CriteriaService.Create(criteriaType=self.criteriaType,
-                                              playlistType=self.playlistType,
-                                              user=request.user,
-                                              postData=request.data)
+            criteria = self.criteriaService.create(user=request.user, data=request.data)
         except IntegrityError as e:
             return utility.GetJsonResponseWhenBadRequest(exception=e)
 

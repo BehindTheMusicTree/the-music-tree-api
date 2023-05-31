@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.view.viewset.criteria.CriteriaViewSet import CriteriaViewSet
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 
 
 class TagViewSet(CriteriaViewSet):
+
+    queryset = Criteria.objects.filter(type_id=CriteriaTypesId.TAG)
+
     def __init__(self, **kwargs):
-        super(TagViewSet, self).__init__(
-          criteriaTypeId=CriteriaTypesId.TAG,
-          playlistTypeId=PlaylistTypesId.TAG,
-          **kwargs)
+        super().__init__(TagService(), **kwargs)
