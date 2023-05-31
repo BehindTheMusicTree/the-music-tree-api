@@ -6,7 +6,7 @@ from bodzify_api.serializer.track.output.TrackWithoutPlaylistsSerializer import 
     TrackWithoutPlaylistsSerializer
 
 
-class PlaylistWithTrackSerializer(PlaylistWithoutTracksSerializer):
+class PlaylistWithTracksSerializer(PlaylistWithoutTracksSerializer):
     libraryTracks = TrackWithoutPlaylistsSerializer(
         source='librarytrack_set', read_only=True, many=True)
 
