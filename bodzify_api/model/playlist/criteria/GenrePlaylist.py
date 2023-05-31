@@ -8,8 +8,6 @@ class SPECIAL_NAMES:
 
 
 class GenrePlaylist(CriteriaPlaylist):
-    
-    TYPE_LABEL = 'genre'
 
     @property
     def noCriteriaName(self) -> str:
