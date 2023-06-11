@@ -19,7 +19,7 @@ class SimplePlaylistViewSet(MultiSerializerViewSet):
 
     def create(self, request, *args, **kwargs):
         playlistService = PlaylistService()
-        playlist = playlistService.createSimplePlaylist(user=request.user, data=request.data)
+        playlist = playlistService.CreateSimplePlaylist(user=request.user, data=request.data)
 
         responseSerializer = PlaylistWithTracksSerializer(playlist)
         headers = self.get_success_headers(responseSerializer.data)

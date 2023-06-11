@@ -63,7 +63,7 @@ class PlaylistViewSet(MultiSerializerViewSet):
         return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        simplePlaylist = PlaylistService().createSimplePlaylist(
+        simplePlaylist = PlaylistService().CreateSimplePlaylist(
             self.request.user, self.request.data)
         
         responseSerializer = PlaylistWithTracksSerializer(simplePlaylist)

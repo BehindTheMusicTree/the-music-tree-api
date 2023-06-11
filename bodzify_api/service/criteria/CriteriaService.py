@@ -13,39 +13,44 @@ from bodzify_api.serializer.criteria.CriteriaPostSerializer import CriteriaPostS
 
 class CriteriaService:
 
-    def create(self, criteriaType: int, playlistType: int, user: User, postData: QueryDict) -> Criteria:
+    def create(self, user: User, data: QueryDict) -> Criteria:
 
-        requestSerializer = CriteriaPostSerializer(data=postData)
-        requestSerializer.is_valid(raise_exception=True)
+        postSerializer = CriteriaPostSerializer(data=data)
+        postSerializer.is_valid(raise_exception=True)
 
-        key = CRITERIA_ATTRIBUTES_LABEL.PARENT
-        if key in requestSerializer.validated_data:
-            parent = requestSerializer.validated_data[key]
+        parentKey = CRITERIA_ATTRIBUTES_LABEL.PARENT
+        if parentKey in postSerializer.validated_data:
+            parent = postSerializer.validated_data[parentKey]
+            if parent == "":
+                parent = None
         else:
             parent = None
 
-        if parent in [None, ""]:
-            parent = Criteria.objects.get(
-                user=user, type=criteriaType, parent=None)
-
-        criteria = requestSerializer.save(user=user,
-                                          type=criteriaType,
-                                          parent=parent)
+        criteria = postSerializer.save(user=user, parent=parent, type_id=self.getTypeId())
 
         self.createLinkedPlaylist(user=user, criteria=criteria)
-        Playlist(user=user, criteria=criteria, type=playlistType).save()
+        criteriaPlaylistClass = self.getCriteriaPlaylistClass()
+        criteriaPlaylistClass(user=user, criteria=criteria).save()
 
         return criteria
+    
+    def getCriteriaPlaylistClass(self):
+        raise NotImplementedError("You should implement this method in a subclass")
 
-def GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
-        user: User, criteriaName: str) -> Criteria:
 
-    if Criteria.objects.filter(user=user, name=criteriaName).exists():
-        criteria = Criteria.objects.get(user=user, name=criteriaName)
-    else:
-        criteria = Criteria.objects.create(user=user,
-                                            type=CriteriaType.objects.get(
-                                                id=CriteriaTypesId.GENRE),
-                                            name=criteriaName)
-        CriteriaPlaylist.objects.create(user=user, criteria=criteria)
-    return criteria
+    def getCriteriaFromNameAfterHavingEventuallyCreatedIt(
+        self, user: User, criteriaName: str) -> Criteria:
+
+        if Criteria.objects.filter(user=user, name=criteriaName).exists():
+            criteria = Criteria.objects.get(user=user, name=criteriaName)
+        else:
+            criteria = Criteria.objects.create(
+                user=user, type=self.getTypeId(), name=criteriaName)
+            CriteriaPlaylist.objects.create(user=user, criteria=criteria)
+        return criteria
+
+    def getTypeId(self):
+        raise NotImplementedError("You should implement this method in a subclass")
+
+    def createLinkedPlaylist(self, user: User, criteria: Criteria):
+        raise NotImplementedError("You should implement this method in a subclass")
