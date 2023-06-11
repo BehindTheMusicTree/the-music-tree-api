@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
