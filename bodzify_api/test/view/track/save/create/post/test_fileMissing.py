@@ -5,7 +5,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db
-class FileMissingTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_errorWhenMissing(self):
         response = self.postSampleTrack()

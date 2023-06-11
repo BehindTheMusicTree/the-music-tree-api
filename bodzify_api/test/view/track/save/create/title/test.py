@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 from rest_framework import status
-from bodzify_api import settings
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class TrackViewExtractTitleTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_notProvidedThenSetFromFilename(self):
         filenameWithoutExtension = "notTooLongFilename"

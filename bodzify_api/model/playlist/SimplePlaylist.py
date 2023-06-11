@@ -7,7 +7,7 @@ from bodzify_api.model.playlist.Playlist import Playlist
 class SimplePlaylist(Playlist):
 
     name = models.CharField(
-        max_length=settings.CRITERIA_NAME_MAX_CHAR, default=None, null=True)
+        max_length=settings.PLAYLIST_NAME_MAX_CHAR, default=None, null=True)
 
     class Meta:
         constraints = [
