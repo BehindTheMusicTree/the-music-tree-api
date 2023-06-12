@@ -196,8 +196,7 @@ class TrackViewSet(MultiSerializerViewSet):
     def extract(self, request, *args, **kwargs):
         serializer = TrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        track = TrackService.Extract(
-            user=request.user, extractSchemaData=request.data)
+        track = TrackService.Extract(user=request.user, extractSchemaData=request.data)
         responseSerializer = TrackDetailedSerializer(track)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(

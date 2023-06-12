@@ -3,7 +3,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import \
     TrackDetailedSerializer
 
-class TrackWithoutPlaylistsSerializer(TrackDetailedSerializer):
+class TrackWithoutPlaylistsAndGenreSerializer(TrackDetailedSerializer):
 
     class Meta:
         model = LibraryTrack
@@ -15,7 +15,6 @@ class TrackWithoutPlaylistsSerializer(TrackDetailedSerializer):
             ATTRIBUTES_LABEL.TITLE,
             ATTRIBUTES_LABEL.ARTIST,
             ATTRIBUTES_LABEL.ALBUM,
-            ATTRIBUTES_LABEL.GENRE,
             ATTRIBUTES_LABEL.DURATION,
             ATTRIBUTES_LABEL.RATING,
             ATTRIBUTES_LABEL.LANGUAGE,

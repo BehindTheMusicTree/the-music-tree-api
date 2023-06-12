@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
+from bodzify_api.serializer.playlist.output.GenrePlaylistWithTrackSerializer import \
+    GenrePlaylistWithTracksSerializer
 from bodzify_api.serializer.playlist.output.PlaylistWithTrackSerializer import \
     PlaylistWithTracksSerializer
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
@@ -11,9 +13,9 @@ from bodzify_api.model.playlist.criteria.CriteriaPlaylist import \
 class GenrePlaylistViewSet(MultiSerializerViewSet):
     queryset = GenrePlaylist.objects.all()
     serializers = {
-        'default': PlaylistWithTracksSerializer,
-        'list':  PlaylistWithTracksSerializer,
-        'retrieve':  PlaylistWithTracksSerializer,
+        'default': GenrePlaylistWithTracksSerializer,
+        'list':  GenrePlaylistWithTracksSerializer,
+        'retrieve':  GenrePlaylistWithTracksSerializer,
     }
 
     def get_queryset(self):
