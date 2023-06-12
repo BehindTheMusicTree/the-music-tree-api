@@ -8,7 +8,7 @@ from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import \
     ArtistWithOnlyNameSerializer
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import \
     AlbumWithoutTracksSerializer
-from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import \
+from bodzify_api.serializer.playlist.output.PlaylistWithoutTracksSerializer import \
     PlaylistWithoutTracksSerializer
 
 class TrackDetailedSerializer(serializers.ModelSerializer):

@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.PlaylistWithoutParentSerializer import \
+from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import \
     PlaylistWithoutParentSerializer
 
 
@@ -20,4 +20,5 @@ class PlaylistWithoutTracksSerializer(PlaylistWithoutParentSerializer):
         fields = [ATTRIBUTES_LABEL.UUID,
                   ATTRIBUTES_LABEL.NAME,
                   ATTRIBUTES_LABEL.ADDED_ON,
+                  ATTRIBUTES_LABEL.PARENT,
                   "trackCount"]

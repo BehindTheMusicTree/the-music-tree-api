@@ -3,7 +3,7 @@
 from django.http import JsonResponse
 from rest_framework import status
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.playlist.PlaylistWithTrackSerializer import \
+from bodzify_api.serializer.playlist.output.PlaylistWithTrackSerializer import \
     PlaylistWithTracksSerializer
 from bodzify_api.service.PlaylistService import PlaylistService
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet

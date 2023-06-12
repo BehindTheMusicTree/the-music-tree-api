@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import \
+from bodzify_api.serializer.playlist.output.PlaylistWithoutTracksSerializer import \
     PlaylistWithoutTracksSerializer
 from bodzify_api.serializer.track.output.TrackWithoutPlaylistsSerializer import \
     TrackWithoutPlaylistsSerializer

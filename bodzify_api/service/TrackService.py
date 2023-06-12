@@ -7,11 +7,13 @@ from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from django.core.files.base import File
 import requests
+from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
 from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
     TrackPostSchemaSerializer
+from bodzify_api.service.criteria.GenreService import GenreService
 import bodzify_api.settings as settings
 from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSaveModelSerializer
 from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
@@ -48,7 +50,7 @@ def Extract(user: User, extractSchemaData: QueryDict):
     return libraryTrack
 
 
-def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool = False):
+def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool=False):
     serializer = TrackPostSchemaSerializer(data=postSchemaData)
     serializer.is_valid(raise_exception=True)
 
@@ -78,11 +80,9 @@ def Update(user: User, updateSchemaData: QueryDict, oldTrack: LibraryTrack):
 
 
 def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack = None):
-    saveModelData = _getSaveModelDataFromSaveSchemaData(
-        user=user, saveSchemaData=saveSchemaData)
+    saveModelData = _getSaveModelDataFromSaveSchemaData(user=user, saveSchemaData=saveSchemaData)
     saveModelData[TRACK_ATTRIBUTES_LABEL.USER] = user.id
-    saveSerializer = TrackSaveModelSerializer(
-        instance=oldTrack, data=saveModelData, partial=True)
+    saveSerializer = TrackSaveModelSerializer(instance=oldTrack, data=saveModelData, partial=True)
     saveSerializer.is_valid(raise_exception=True)
     savedTrack = saveSerializer.save()
 
@@ -161,7 +161,8 @@ def _getDict1UpdatedWithGenreUuidIfGenreNameInDict2(
         if genreName in ["", None]:
             genreUuid = None
         else:
-            genreUuid = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
+            genreService = GenreService()
+            genreUuid = genreService.getCriteriaFromNameAfterHavingEventuallyCreatedIt(
                 user=user, criteriaName=genreName).uuid
         dict1[TRACK_ATTRIBUTES_LABEL.GENRE] = genreUuid
     return dict1
@@ -236,8 +237,7 @@ def _getArtistsNameListFromString(namesString: str) -> list:
 def _addTrackToGenresPlaylists(track: LibraryTrack):
     genre = track.genre
     while genre is not None:
-        track.playlists.add(Playlist.objects.get(
-            user=track.user, criteria=genre))
+        track.playlists.add(GenrePlaylist.objects.get(user=track.user, criteria=genre))
         genre = genre.parent
     track.save()
 

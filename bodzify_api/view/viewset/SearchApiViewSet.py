@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from django.db.models import F
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
@@ -13,7 +12,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
     ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
-from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import \
+from bodzify_api.serializer.playlist.output.PlaylistWithoutTracksSerializer import \
     PlaylistWithoutTracksSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
 

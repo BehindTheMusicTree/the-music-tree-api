@@ -45,12 +45,12 @@ class CriteriaService:
     def getCriteriaFromNameAfterHavingEventuallyCreatedIt(
         self, user: User, criteriaName: str) -> Criteria:
 
-        if Criteria.objects.filter(user=user, name=criteriaName).exists():
-            criteria = Criteria.objects.get(user=user, name=criteriaName)
+        if Criteria.objects.filter(user=user, type_id=self.getTypeId(), name=criteriaName).exists():
+            criteria = Criteria.objects.get(user=user, type_id=self.getTypeId(), name=criteriaName)
         else:
             criteria = Criteria.objects.create(
-                user=user, type=self.getTypeId(), name=criteriaName)
-            CriteriaPlaylist.objects.create(user=user, criteria=criteria)
+                user=user, type_id=self.getTypeId(), name=criteriaName)
+            self.createLinkedPlaylist(user=user, criteria=criteria)
         return criteria
 
     def getTypeId(self):

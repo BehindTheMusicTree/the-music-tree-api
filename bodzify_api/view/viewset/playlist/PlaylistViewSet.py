@@ -7,9 +7,9 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
 from bodzify_api.model.playlist.criteria.TagPlaylist import TagPlaylist
-from bodzify_api.serializer.playlist.PlaylistGetParamSerializer import \
+from bodzify_api.serializer.playlist.output.PlaylistGetParamSerializer import \
     ATTRIBUTES_LABEL as PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.PlaylistWithTrackSerializer import PlaylistWithTracksSerializer
+from bodzify_api.serializer.playlist.output.PlaylistWithTrackSerializer import PlaylistWithTracksSerializer
 from bodzify_api.service.PlaylistService import PlaylistService
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet

@@ -14,6 +14,7 @@ class ATTRIBUTES_LABEL:
     USER = "user"
     ADDED_ON = "addedOn"
     NAME = "name"
+    PARENT = "parent"
 
 
 class Playlist(PolymorphicModel):
