@@ -7,8 +7,8 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.serializer.criteria.CriteriaPostSerializer import CriteriaPostSerializer
-from bodzify_api.serializer.criteria.CriteriaDetailedSerializer import CriteriaDetailedSerializer
+from bodzify_api.serializer.criteria.input.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
+from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.service.criteria import CriteriaService
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
@@ -26,7 +26,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
         'default': CriteriaDetailedSerializer,
         'list':  CriteriaDetailedSerializer,
         'retrieve':  CriteriaDetailedSerializer,
-        'create':  CriteriaPostSerializer,
+        'create':  CriteriaPostSchemaSerializer,
     }
 
     def __init__(self, criteriaService: CriteriaService, **kwargs):
@@ -50,7 +50,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
 
         return queryset
 
-    @extend_schema(request=CriteriaPostSerializer,
+    @extend_schema(request=CriteriaPostSchemaSerializer,
                    responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         try:
