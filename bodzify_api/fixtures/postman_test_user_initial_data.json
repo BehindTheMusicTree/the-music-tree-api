@@ -16,5 +16,22 @@
             "groups": [], 
             "user_permissions": []
         }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLskdjSjqLLDLD",
+        "fields": {
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype": 13,
+            "user": 2
+        }
+    },
+    {
+        "model": "bodzify_api.genreplaylist",
+        "fields": {
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqLLDLD",
+            "criteria": null,
+            "user": 2
+        }
     }
 ]
