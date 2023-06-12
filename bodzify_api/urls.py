@@ -18,7 +18,9 @@ from bodzify_api.view.viewset.AlbumViewSet import AlbumViewSet
 from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet
 from bodzify_api.view.viewset.criteria.TagViewSet import TagViewSet
 from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
 from bodzify_api.view.viewset.playlist.PlaylistViewSet import PlaylistViewSet
+from bodzify_api.view.viewset.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -28,7 +30,8 @@ router.register(r'albums', AlbumViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'genres', GenreViewSet, basename='genre')
 router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
-router.register(r'playlists', PlaylistViewSet, basename='playlist')
+router.register(r'playlists/simple', SimplePlaylistViewSet, basename='simple-playlist')
+router.register(r'playlists/genre', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'search', SearchApiViewSet, basename='search')
 
 

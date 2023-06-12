@@ -16,5 +16,33 @@
             "groups": [], 
             "user_permissions": []
         }
+    },
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "m5KRxiqqqxW4BEOod9Qmjy",
+        "fields": {
+            "name": "Music",
+            "type": 0,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
+    },
+    {
+        "model": "bodzify_api.genreplaylist",
+        "pk": "LnM1arJrwLskdjSjqEPdZB",
+        "fields": {
+            "criteria": "m5KRxiqqqxW4BEOod9Qmjy",
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
+    },
+    {
+        "model": "bodzify_api.genreplaylist",
+        "pk": "LnM1arJrwLskdjSjqDKSks",
+        "fields": {
+            "criteria": null,
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "user": 1
+        }
     }
 ]
