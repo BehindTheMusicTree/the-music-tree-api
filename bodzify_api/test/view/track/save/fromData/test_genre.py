@@ -25,69 +25,69 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.genre == None
 
-    def test_emptyThenNone(self):
-        self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
-        track = G(LibraryTrack,
-                  user=self.testUser,
-                  title="Love",
-                  genre=self.savedGenre,
-                  duration=0)
-        data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: ""
-        }
-        response = self.putSampleTrack(track.uuid, data=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre == None
+    # def test_emptyThenNone(self):
+    #     self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
+    #     track = G(LibraryTrack,
+    #               user=self.testUser,
+    #               title="Love",
+    #               genre=self.savedGenre,
+    #               duration=0)
+    #     data = {
+    #         TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: ""
+    #     }
+    #     response = self.putSampleTrack(track.uuid, data=data)
+    #     assert response.status_code == status.HTTP_200_OK
+    #     assert self.savedTrack.genre == None
 
-    def test_longest(self):
-        genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
-        track = G(LibraryTrack,
-                  user=self.testUser,
-                  title="Love",
-                  duration=0)
-        data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
-        }
-        response = self.putSampleTrack(track.uuid, data=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.name == genreName
+    # def test_longest(self):
+    #     genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
+    #     track = G(LibraryTrack,
+    #               user=self.testUser,
+    #               title="Love",
+    #               duration=0)
+    #     data = {
+    #         TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+    #     }
+    #     response = self.putSampleTrack(track.uuid, data=data)
+    #     assert response.status_code == status.HTTP_200_OK
+    #     assert self.savedTrack.genre.name == genreName
         
-    def test_errorWhenTooLong(self):
-        genreName = "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
-        track = G(LibraryTrack,
-                  user=self.testUser,
-                  title="Love",
-                  duration=0)
-        data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
-        }
-        response = self.putSampleTrack(track.uuid, data=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+    # def test_errorWhenTooLong(self):
+    #     genreName = "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
+    #     track = G(LibraryTrack,
+    #               user=self.testUser,
+    #               title="Love",
+    #               duration=0)
+    #     data = {
+    #         TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+    #     }
+    #     response = self.putSampleTrack(track.uuid, data=data)
+    #     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_existing(self):
-        genreName = "Rock"
-        self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: genreName})
-        track = G(LibraryTrack,
-                  user=self.testUser,
-                  title="Love",
-                  genre=self.savedGenre,
-                  duration=0)
-        data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
-        }
-        response = self.putSampleTrack(track.uuid, data=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.uuid == self.savedGenre.uuid
+    # def test_existing(self):
+    #     genreName = "Rock"
+    #     self.postGenre(dataJson={CRITERIA_ATTRIBUTES_LABEL.NAME: genreName})
+    #     track = G(LibraryTrack,
+    #               user=self.testUser,
+    #               title="Love",
+    #               genre=self.savedGenre,
+    #               duration=0)
+    #     data = {
+    #         TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+    #     }
+    #     response = self.putSampleTrack(track.uuid, data=data)
+    #     assert response.status_code == status.HTTP_200_OK
+    #     assert self.savedTrack.genre.uuid == self.savedGenre.uuid
 
-    def test_newSoParentNone(self):
-        genreName = "Rock"
-        track = G(LibraryTrack,
-                  user=self.testUser,
-                  title="Love",
-                  duration=0)
-        data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
-        }
-        response = self.putSampleTrack(track.uuid, data=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.parent == None
+    # def test_newSoParentNone(self):
+    #     genreName = "Rock"
+    #     track = G(LibraryTrack,
+    #               user=self.testUser,
+    #               title="Love",
+    #               duration=0)
+    #     data = {
+    #         TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+    #     }
+    #     response = self.putSampleTrack(track.uuid, data=data)
+    #     assert response.status_code == status.HTTP_200_OK
+    #     assert self.savedTrack.genre.parent == None

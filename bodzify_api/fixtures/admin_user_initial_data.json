@@ -27,15 +27,6 @@
         }
     },
     {
-        "model": "bodzify_api.playlist",
-        "pk": "LnM1arJrwLskdjSjqJJJJJ",
-        "fields": {
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype_id": 12,
-            "user": 1
-        }
-    },
-    {
         "model": "bodzify_api.genreplaylist",
         "fields": {
             "playlist_ptr_id" : "LnM1arJrwLskdjSjqDKSks",
@@ -44,9 +35,18 @@
         }
     },
     {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLskdjSjqJcclc",
+        "fields": {
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype_id": 12,
+            "user": 1
+        }
+    },
+    {
         "model": "bodzify_api.simpleplaylist",
         "fields": {
-            "playlist_ptr_id" : "LnM1arJrwLskdjSjqJJJJJ",
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqJcclc",
             "name" : "All",
             "user": 1
         }

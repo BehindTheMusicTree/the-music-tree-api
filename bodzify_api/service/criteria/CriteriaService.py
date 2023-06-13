@@ -27,7 +27,7 @@ class CriteriaService:
         saveData = data.copy()
         saveData[CRITERIA_ATTRIBUTES_LABEL.USER] = user.id
         saveData[CRITERIA_ATTRIBUTES_LABEL.TYPE] = self.getTypeId()
-        saveData[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent
+        saveData[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent.pk if parent is not None else None
         saveSerializer = CriteriaSaveModelSerializer(data=saveData)
         saveSerializer.is_valid(raise_exception=True)
         criteria = saveSerializer.save()
