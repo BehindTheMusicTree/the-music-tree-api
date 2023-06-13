@@ -17,6 +17,9 @@ class SimplePlaylistViewSet(MultiSerializerViewSet):
         'list':  PlaylistWithoutParentSerializer,
         'retrieve':  PlaylistWithoutParentSerializer,
     }
+    
+    def get_queryset(self):
+        return SimplePlaylist.objects.filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         playlistService = PlaylistService()
