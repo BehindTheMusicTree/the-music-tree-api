@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
+from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
 from bodzify_api.model.playlist.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
 from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 from bodzify_api.model.criteria.Criteria import Criteria
 import bodzify_api.settings as settings
@@ -120,21 +120,22 @@ class LibraryTrack(models.Model):
             newGenreTreeItem = self.genre
             while newGenreTreeItem != commonGenre:
                 self.playlists.add(
-                    GenrePlaylist.objects.get(user=self.user, criteria=newGenreTreeItem))
+                    CriteriaPlaylist.objects.get(
+                        user=self.user, type=CriteriaTypesId.GENRE, criteria=newGenreTreeItem))
                 newGenreTreeItem = newGenreTreeItem.parent
         else:
             self.playlists.add(
-                GenrePlaylist.objects.get(user=self.user, criteria=None))
+                CriteriaPlaylist.objects.get(user=self.user, type=CriteriaTypesId.GENRE, criteria=None))
 
         if oldGenre is not None:
             oldGenreTreeItem = oldGenre
             while oldGenreTreeItem != commonGenre:
                 self.playlists.remove(
-                    GenrePlaylist.objects.get(user=self.user, criteria=oldGenreTreeItem))
+                    CriteriaPlaylist.objects.get(user=self.user, type=CriteriaTypesId.GENRE, criteria=oldGenreTreeItem))
                 oldGenreTreeItem = oldGenreTreeItem.parent
         else:
             self.playlists.remove(
-                GenrePlaylist.objects.get(user=self.user, criteria=None))
+                CriteriaPlaylist.objects.get(user=self.user, type=CriteriaTypesId.GENRE, criteria=None))
         
         self.save()
 
@@ -160,7 +161,8 @@ class LibraryTrack(models.Model):
                 oldArtist.deleteIfNothingLinked()
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
-            self.playlists.add(GenrePlaylist.objects.get(user=self.user, criteria=self.genre))
+            self.playlists.add(
+                CriteriaPlaylist.objects.get(user=self.user, type=CriteriaTypesId.GENRE, criteria=self.genre))
 
     @ receiver(pre_delete, sender='bodzify_api.LibraryTrack')
     def deleteFileIfExists(sender, instance, using, **kwargs):

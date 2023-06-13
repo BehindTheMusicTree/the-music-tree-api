@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.http import QueryDict
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.criteria.input.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
 from bodzify_api.serializer.criteria.input.CriteriaSaveModelSerializer import CriteriaSaveModelSerializer
@@ -26,13 +27,13 @@ class CriteriaService:
             
         saveData = data.copy()
         saveData[CRITERIA_ATTRIBUTES_LABEL.USER] = user.id
-        saveData[CRITERIA_ATTRIBUTES_LABEL.TYPE] = self.getTypeId()
+        saveData[CRITERIA_ATTRIBUTES_LABEL.TYPE] = self.getCriteriaTypeId()
         saveData[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent.pk if parent is not None else None
         saveSerializer = CriteriaSaveModelSerializer(data=saveData)
         saveSerializer.is_valid(raise_exception=True)
         criteria = saveSerializer.save()
 
-        self.createLinkedPlaylist(user=user, criteria=criteria)
+        CriteriaPlaylist(user=user, type=CriteriaTypesId.GENRE, criteria=criteria).save()
 
         return criteria
     
@@ -43,13 +44,13 @@ class CriteriaService:
     def getCriteriaFromNameAfterHavingEventuallyCreatedIt(
         self, user: User, criteriaName: str) -> Criteria:
 
-        if Criteria.objects.filter(user=user, type_id=self.getTypeId(), name=criteriaName).exists():
-            criteria = Criteria.objects.get(user=user, type_id=self.getTypeId(), name=criteriaName)
+        if Criteria.objects.filter(user=user, type_id=self.getCriteriaTypeId(), name=criteriaName).exists():
+            criteria = Criteria.objects.get(user=user, type_id=self.getCriteriaTypeId(), name=criteriaName)
         else:
             criteria = Criteria.objects.create(
-                user=user, type_id=self.getTypeId(), name=criteriaName)
+                user=user, type_id=self.getCriteriaTypeId(), name=criteriaName)
             self.createLinkedPlaylist(user=user, criteria=criteria)
         return criteria
 
-    def getTypeId(self):
+    def getCriteriaTypeId(self):
         raise NotImplementedError("You should implement this method in a subclass")

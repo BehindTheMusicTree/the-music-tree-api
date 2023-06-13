@@ -2,12 +2,13 @@
 import os
 import random
 import string
+import requests
 from tempfile import NamedTemporaryFile
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from django.core.files.base import File
-import requests
-from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.playlist.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
@@ -236,7 +237,8 @@ def _getArtistsNameListFromString(namesString: str) -> list:
 def _addTrackToGenresPlaylists(track: LibraryTrack):
     genre = track.genre
     while genre is not None:
-        track.playlists.add(GenrePlaylist.objects.get(user=track.user, criteria=genre))
+        track.playlists.add(CriteriaPlaylist.objects.get(
+            user=track.user, type=CriteriaTypesId.GENRE, criteria=genre))
         genre = genre.parent
     track.save()
 

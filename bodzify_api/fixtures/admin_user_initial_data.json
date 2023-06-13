@@ -27,11 +27,12 @@
         }
     },
     {
-        "model": "bodzify_api.genreplaylist",
+        "model": "bodzify_api.criteriaplaylist",
         "fields": {
             "playlist_ptr_id" : "LnM1arJrwLskdjSjqDKSks",
+            "criteria_type" : 0,
             "criteria": null,
-            "user": 1
+            "user": 4
         }
     },
     {

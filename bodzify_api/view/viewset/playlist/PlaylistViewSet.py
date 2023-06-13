@@ -1,18 +1,22 @@
 #!/usr/bin/env python
-
 from django.http import JsonResponse
 from rest_framework import status
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
+from bodzify_api.model.playlist.criteria.CriteriaPlaylist import CriteriaPlaylist, \
+    TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
 from bodzify_api.model.playlist.criteria.TagPlaylist import TagPlaylist
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.playlist.output.PlaylistGetParamSerializer import \
     ATTRIBUTES_LABEL as PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.output.CriteriaPlaylistWithTrackSerializer import CriteriaPlaylistWithTracksSerializer
+from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTrackSerializer import \
+    CriteriaPlaylistWithTracksSerializer
+from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.service.PlaylistService import PlaylistService
-from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import DefaultMultipleModelLimitOffsetPagination
-from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
+from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
+    DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.criteria.CriteriaPlaylist import \
     ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
@@ -33,13 +37,14 @@ class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
             if typeFilter == SimplePlaylist.TYPE_LABEL:
                 queryset = SimplePlaylist.objects.filter(
                     user=self.request.user)
-            elif typeFilter == GenrePlaylist.TYPE_LABEL:
-                queryset = GenrePlaylist.objects.filter(user=self.request.user)
-            elif typeFilter == TagPlaylist.TYPE_LABEL:
-                queryset = TagPlaylist.objects.filter(user=self.request.user)
+            elif typeFilter == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
+                queryset = CriteriaPlaylist.objects.filter(
+                    user=self.request.user, type=CriteriaTypesId.GENRE)
+            elif typeFilter == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
+                queryset = CriteriaPlaylist.objects.filter(
+                    user=self.request.user, type=CriteriaTypesId.TAG)
         else:
-            queryset = GenrePlaylist.objects.filter(user=self.request.user) | \
-                TagPlaylist.objects.filter(user=self.request.user)
+            queryset = CriteriaPlaylist.objects.filter(user=self.request.user)
 
             parentUuidParamKey = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
             if parentUuidParamKey not in self.request.GET:

@@ -8,7 +8,3 @@ class SPECIAL_NAMES:
 
 
 class GenrePlaylist(CriteriaPlaylist):
-
-    @property
-    def noCriteriaName(self) -> str:
-        return SPECIAL_NAMES.GENRELESS

@@ -1,7 +1,17 @@
 #!/usr/bin/env python
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.CriteriaType import CriteriaType
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.Playlist import Playlist
+
+class SPECIAL_NAMES:
+    GENRELESS = "Genreless"
+    
+
+class TYPES_LABEL:
+    GENRE = "genre"
+    TAG = "tag"
 
 
 class ATTRIBUTES_LABEL:
@@ -13,9 +23,8 @@ class CriteriaPlaylist(Playlist):
     
     criteria = models.ForeignKey(
         Criteria, on_delete=models.CASCADE, blank=True, null=True)
-
-    class Meta:
-        abstract = True
+    criteriaType = models.ForeignKey(
+        CriteriaType, on_delete=models.CASCADE, blank=True, null=False)
 
     @property
     def name(self) -> str:
@@ -25,8 +34,9 @@ class CriteriaPlaylist(Playlist):
     
     @property
     def noCriteriaName(self) -> str:
-        return None
-
+        if self.criteriaType == CriteriaTypesId.GENRE:
+            return SPECIAL_NAMES.GENRELESS
+        
     @property
     def parent(self) -> 'Playlist':
         if self.criteria is None:

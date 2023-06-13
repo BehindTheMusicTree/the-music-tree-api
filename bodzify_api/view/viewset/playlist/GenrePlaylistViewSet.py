@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.playlist.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.playlist.criteria.genre.output.GenrePlaylistWithTracksSerializer import \
     GenrePlaylistWithTracksSerializer
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
@@ -9,7 +10,7 @@ from bodzify_api.model.playlist.criteria.CriteriaPlaylist import \
 
 
 class GenrePlaylistViewSet(MultiSerializerViewSet):
-    queryset = GenrePlaylist.objects.all()
+    queryset = CriteriaPlaylist.objects.all(type=CriteriaTypesId.GENRE)
     serializers = {
         'default': GenrePlaylistWithTracksSerializer,
         'list':  GenrePlaylistWithTracksSerializer,
@@ -17,7 +18,7 @@ class GenrePlaylistViewSet(MultiSerializerViewSet):
     }
 
     def get_queryset(self):
-        queryset = GenrePlaylist.objects.filter(user=self.request.user)
+        queryset = CriteriaPlaylist.objects.filter(user=self.request.user, type=CriteriaTypesId.GENRE)
 
         name = self.request.query_params.get(PLAYLIST_ATTRIBUTES_LABEL.NAME)
         if name is not None:
