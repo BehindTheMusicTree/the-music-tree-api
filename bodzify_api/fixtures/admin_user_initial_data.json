@@ -22,7 +22,7 @@
         "pk": "LnM1arJrwLskdjSjqDKSks",
         "fields": {
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype_id": 13,
+            "polymorphic_ctype_id": ["bodzify_api", "criteriaplaylist"],
             "user": 1
         }
     },
@@ -40,7 +40,7 @@
         "pk": "LnM1arJrwLskdjSjqJcclc",
         "fields": {
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype_id": 10,
+            "polymorphic_ctype_id": ["bodzify_api", "simpleplaylist"],
             "user": 1
         }
     },

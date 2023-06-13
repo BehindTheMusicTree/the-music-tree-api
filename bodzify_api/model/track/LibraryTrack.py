@@ -115,6 +115,8 @@ class LibraryTrack(models.Model):
         
         if oldGenre is not None and self.genre is not None:
             commonGenre = self.genre.getCommonCriteria(oldGenre)
+        else:
+            commonGenre = None
         
         if self.genre is not None:
             newGenreTreeItem = self.genre

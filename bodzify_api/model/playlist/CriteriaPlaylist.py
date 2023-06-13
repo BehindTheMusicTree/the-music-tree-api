@@ -30,9 +30,9 @@ class CriteriaPlaylist(Playlist):
     @property
     def name(self) -> str:
         if self.criteria is None:
-            if self.criteriaType == CriteriaTypesId.GENRE:
+            if self.type.id == CriteriaTypesId.GENRE:
                 return SPECIAL_NAMES.GENRELESS
-            elif self.criteriaType == CriteriaTypesId.TAG:
+            elif self.type.id == CriteriaTypesId.TAG:
                 return SPECIAL_NAMES.TAGLESS
         return self.criteria.name
         

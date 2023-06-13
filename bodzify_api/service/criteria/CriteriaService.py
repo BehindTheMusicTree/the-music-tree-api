@@ -49,7 +49,7 @@ class CriteriaService:
         else:
             criteria = Criteria.objects.create(
                 user=user, type_id=self.getCriteriaTypeId(), name=criteriaName)
-            self.createLinkedPlaylist(user=user, criteria=criteria)
+            CriteriaPlaylist(user=user, type_id=CriteriaTypesId.GENRE, criteria=criteria).save()    
         return criteria
 
     def getCriteriaTypeId(self):
