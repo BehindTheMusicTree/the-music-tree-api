@@ -8,7 +8,7 @@ from bodzify_api import settings
 
 class TestCase(ApiViewTestCase):
     
-    def test_longest(self):
+    def test_longestName(self):
         genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
@@ -17,7 +17,7 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.savedGenre.name == genreName
     
-    def test_errorWhenTooLong(self):
+    def test_errorWhenNameTooLong(self):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
         }

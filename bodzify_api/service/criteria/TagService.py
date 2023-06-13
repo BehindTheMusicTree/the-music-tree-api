@@ -13,6 +13,3 @@ class TagService:
         
     def getType(self):
         return CriteriaTypesId.TAG
-    
-    def getCriteriaPlaylistClass(self):
-        return TagPlaylist

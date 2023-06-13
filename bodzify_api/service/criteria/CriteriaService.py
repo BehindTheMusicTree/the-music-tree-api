@@ -33,8 +33,6 @@ class CriteriaService:
         criteria = saveSerializer.save()
 
         self.createLinkedPlaylist(user=user, criteria=criteria)
-        criteriaPlaylistClass = self.getCriteriaPlaylistClass()
-        criteriaPlaylistClass(user=user, criteria=criteria).save()
 
         return criteria
     
@@ -54,7 +52,4 @@ class CriteriaService:
         return criteria
 
     def getTypeId(self):
-        raise NotImplementedError("You should implement this method in a subclass")
-
-    def createLinkedPlaylist(self, user: User, criteria: Criteria):
         raise NotImplementedError("You should implement this method in a subclass")

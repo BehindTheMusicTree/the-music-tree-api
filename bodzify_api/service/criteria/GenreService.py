@@ -13,6 +13,3 @@ class GenreService(CriteriaService):
         
     def getTypeId(self):
         return CriteriaTypesId.GENRE
-    
-    def getCriteriaPlaylistClass(self):
-        return GenrePlaylist
