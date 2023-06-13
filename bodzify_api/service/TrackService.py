@@ -19,7 +19,6 @@ from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSav
 from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
     TrackUpdateSchemaSerializer
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
-import bodzify_api.service.criteria.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
 import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack

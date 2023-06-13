@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from bodzify_api.model.playlist.criteria.GenrePlaylist import GenrePlaylist
-from bodzify_api.serializer.playlist.output.GenrePlaylistWithTrackSerializer import \
+from bodzify_api.serializer.playlist.criteria.genre.output.GenrePlaylistWithTracksSerializer import \
     GenrePlaylistWithTracksSerializer
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL

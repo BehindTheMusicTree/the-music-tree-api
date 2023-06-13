@@ -115,19 +115,27 @@ class LibraryTrack(models.Model):
         
         if oldGenre is not None and self.genre is not None:
             commonGenre = self.genre.getCommonCriteria(oldGenre)
-        newGenreTreeItem = self.genre
-
-        while newGenreTreeItem != commonGenre:
+        
+        if self.genre is not None:
+            newGenreTreeItem = self.genre
+            while newGenreTreeItem != commonGenre:
+                self.playlists.add(
+                    GenrePlaylist.objects.get(user=self.user, criteria=newGenreTreeItem))
+                newGenreTreeItem = newGenreTreeItem.parent
+        else:
             self.playlists.add(
-                GenrePlaylist.objects.get(user=self.user, criteria=newGenreTreeItem))
-            newGenreTreeItem = newGenreTreeItem.parent
+                GenrePlaylist.objects.get(user=self.user, criteria=None))
 
-        oldGenreTreeItem = oldGenre
-
-        while oldGenreTreeItem != commonGenre:
+        if oldGenre is not None:
+            oldGenreTreeItem = oldGenre
+            while oldGenreTreeItem != commonGenre:
+                self.playlists.remove(
+                    GenrePlaylist.objects.get(user=self.user, criteria=oldGenreTreeItem))
+                oldGenreTreeItem = oldGenreTreeItem.parent
+        else:
             self.playlists.remove(
-                CriteriaPlaylist.objects.get(user=self.user, criteria=oldGenreTreeItem))
-            oldGenreTreeItem = oldGenreTreeItem.parent
+                GenrePlaylist.objects.get(user=self.user, criteria=None))
+        
         self.save()
 
     def save(self, *args, **kwargs):

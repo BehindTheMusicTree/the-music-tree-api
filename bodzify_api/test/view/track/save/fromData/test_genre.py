@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pprint
 from rest_framework import status
 from ddf import G
 from bodzify_api import settings
@@ -52,6 +51,18 @@ class TestCase(ApiViewTestCase):
         response = self.putSampleTrack(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.genre.name == genreName
+        
+    def test_errorWhenTooLong(self):
+        genreName = "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  duration=0)
+        data = {
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+        }
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_existing(self):
         genreName = "Rock"

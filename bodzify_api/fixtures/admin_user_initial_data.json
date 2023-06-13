@@ -22,7 +22,16 @@
         "pk": "LnM1arJrwLskdjSjqDKSks",
         "fields": {
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype": 13,
+            "polymorphic_ctype_id": 13,
+            "user": 1
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLskdjSjqJJJJJ",
+        "fields": {
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype_id": 12,
             "user": 1
         }
     },
@@ -31,6 +40,14 @@
         "fields": {
             "playlist_ptr_id" : "LnM1arJrwLskdjSjqDKSks",
             "criteria": null,
+            "user": 1
+        }
+    },
+    {
+        "model": "bodzify_api.simpleplaylist",
+        "fields": {
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqJJJJJ",
+            "name" : "All",
             "user": 1
         }
     }

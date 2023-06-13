@@ -33,12 +33,17 @@ class Criteria(models.Model):
         return self.uuid + " " + self.name
 
     def getCommonCriteria(self, criteriaB):
+        visited = set()
+        
         criteriaATreeItem = self
-        while True:
-            criteriaBTreeItem = criteriaB
-            while criteriaBTreeItem is not None:
-                if criteriaATreeItem == criteriaBTreeItem:
-                    return criteriaBTreeItem
-                else:
-                    criteriaBTreeItem = criteriaBTreeItem.parent
+        while criteriaATreeItem is not None:
+            visited.add(criteriaATreeItem)
             criteriaATreeItem = criteriaATreeItem.parent
+            
+        criteriaBTreeItem = criteriaB
+        while criteriaBTreeItem is not None:
+            if criteriaBTreeItem in visited:
+                return criteriaBTreeItem
+            criteriaBTreeItem = criteriaBTreeItem.parent
+            
+        return None

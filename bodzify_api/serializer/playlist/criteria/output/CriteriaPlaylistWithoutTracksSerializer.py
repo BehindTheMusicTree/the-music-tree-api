@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-
 from rest_framework import serializers
 from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import \
     PlaylistWithoutParentSerializer
 
 
-class PlaylistWithoutTracksSerializer(PlaylistWithoutParentSerializer):
+class CriteriaPlaylistWithoutTracksSerializer(PlaylistWithoutParentSerializer):
     parent = serializers.SerializerMethodField()
 
     def get_parent(self, obj) -> PlaylistWithoutParentSerializer:

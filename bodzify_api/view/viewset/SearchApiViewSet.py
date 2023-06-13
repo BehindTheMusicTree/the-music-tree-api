@@ -12,8 +12,8 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
     ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
-from bodzify_api.serializer.playlist.output.PlaylistWithoutTracksSerializer import \
-    PlaylistWithoutTracksSerializer
+from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
+    CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
 
 
@@ -101,7 +101,7 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
                 'filter_fn': trackFilter},
             {
                 'queryset': Playlist.objects.all(),
-                'serializer_class': PlaylistWithoutTracksSerializer,
+                'serializer_class': CriteriaPlaylistWithoutTracksSerializer,
                 'filter_fn': playlistFilter},
             {
                 'queryset': Album.objects.all(),

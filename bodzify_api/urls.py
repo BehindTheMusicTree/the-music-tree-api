@@ -19,7 +19,6 @@ from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet
 from bodzify_api.view.viewset.criteria.TagViewSet import TagViewSet
 from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
 from bodzify_api.view.viewset.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
-from bodzify_api.view.viewset.playlist.PlaylistViewSet import PlaylistViewSet
 from bodzify_api.view.viewset.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
 
 router = routers.DefaultRouter()

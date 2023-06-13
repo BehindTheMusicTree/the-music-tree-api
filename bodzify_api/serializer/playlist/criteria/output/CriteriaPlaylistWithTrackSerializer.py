@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-from bodzify_api.serializer.track.output.TrackWithoutPlaylistsAndGenreSerializer import TrackWithoutPlaylistsAndGenreSerializer
 from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.output.PlaylistWithoutTracksSerializer import \
-    PlaylistWithoutTracksSerializer
+from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
+    CriteriaPlaylistWithoutTracksSerializer
+from bodzify_api.serializer.track.output.TrackWithoutPlaylistsSerializer import \
+    TrackWithoutPlaylistsSerializer
 
 
-class GenrePlaylistWithTracksSerializer(PlaylistWithoutTracksSerializer):
-    libraryTracks = TrackWithoutPlaylistsAndGenreSerializer(
+class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializer):
+    libraryTracks = TrackWithoutPlaylistsSerializer(
         source='librarytrack_set', read_only=True, many=True)
 
     class Meta:

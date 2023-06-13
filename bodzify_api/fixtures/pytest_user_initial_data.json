@@ -23,7 +23,7 @@
         "pk": "LnM1arJrwLskdjSjqJJDJD",
         "fields": {
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype": 13,
+            "polymorphic_ctype_id": 13,
             "user": 4
         }
     },

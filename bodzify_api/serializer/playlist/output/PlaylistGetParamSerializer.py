@@ -34,6 +34,5 @@ class PlaylistGetParamSerializer(serializers.Serializer):
                 parent = data[CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT]
                 if parent is not None and type not in [GenrePlaylist.TYPE_LABEL,
                                                        TagPlaylist.TYPE_LABEL]:
-                    raise ValidationError(
-                        "Parent parameter is not allowed for this type")
+                    raise ValidationError("Parent parameter is not allowed for this type")
         return super().validate(data)
