@@ -2,6 +2,7 @@
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
   ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import Playlist, \
@@ -9,7 +10,7 @@ from bodzify_api.model.playlist.Playlist import Playlist, \
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 from django.urls import reverse
 
@@ -56,18 +57,18 @@ class SearchViewTestCase(ViewTestCase):
         rapGenre = G(Criteria,
                      user=self.testUser,
                      name="Rap",
-                     type=CriteriaTypesId.GENRE)
-        G(Playlist,
+                     type_id=CriteriaTypesId.GENRE)
+        G(CriteriaPlaylist,
           user=self.testUser,
-          type=PlaylistTypesId.GENRE,
+          type_id=CriteriaTypesId.GENRE,
           criteria=rapGenre)
         usRapGenre = G(Criteria,
                        user=self.testUser,
                        name="US rap",
-                       type=CriteriaTypesId.GENRE)
-        G(Playlist,
+                       type_id=CriteriaTypesId.GENRE)
+        G(CriteriaPlaylist,
           user=self.testUser,
-          type=PlaylistTypesId.GENRE,
+          type_id=CriteriaTypesId.GENRE,
           criteria=usRapGenre)
         
         response = self._search("Rap")

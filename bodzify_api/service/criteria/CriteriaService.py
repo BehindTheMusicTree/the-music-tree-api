@@ -5,7 +5,7 @@ from django.http import QueryDict
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.criteria.input.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
 from bodzify_api.serializer.criteria.input.CriteriaSaveModelSerializer import CriteriaSaveModelSerializer
 
@@ -33,7 +33,7 @@ class CriteriaService:
         saveSerializer.is_valid(raise_exception=True)
         criteria = saveSerializer.save()
 
-        CriteriaPlaylist(user=user, type=CriteriaTypesId.GENRE, criteria=criteria).save()
+        CriteriaPlaylist(user=user, type_id=CriteriaTypesId.GENRE, criteria=criteria).save()
 
         return criteria
     

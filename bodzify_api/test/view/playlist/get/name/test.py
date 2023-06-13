@@ -3,6 +3,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 from bodzify_api.model.playlist.Playlist import Playlist, \
     ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_NAME
@@ -16,10 +17,10 @@ class TestCase(ApiViewTestCase):
         rapGenre = G(Criteria,
                      user=self.testUser,
                      name="Hard rock",
-                     type=CriteriaTypesId.GENRE)
-        rapPlaylist = G(Playlist,
+                     type_id=CriteriaTypesId.GENRE)
+        rapPlaylist = G(CriteriaPlaylist,
                         user=self.testUser,
-                        type=PlaylistTypesId.GENRE,
+                        type_id=CriteriaTypesId.GENRE,
                         customName=daddysrockPlaylistCustomName,
                         criteria=rapGenre)
 
@@ -33,13 +34,12 @@ class TestCase(ApiViewTestCase):
         rockGenre = G(Criteria,
                       user=self.testUser,
                       name=rockCriteriaName,
-                      type=CriteriaTypesId.GENRE)
-        rockPlaylist = G(Playlist,
+                      type_id=CriteriaTypesId.GENRE)
+        rockPlaylist = G(CriteriaPlaylist,
                          user=self.testUser,
-                         type=PlaylistTypesId.GENRE,
+                         type_id=CriteriaTypesId.GENRE,
                          criteria=rockGenre)
 
         response = self.get(playlistUuid=rockPlaylist.uuid)
         assert response.status_code == status.HTTP_200_OK
-        assert response.json()[
-            PLAYLIST_ATTRIBUTES_NAME.NAME] == rockCriteriaName
+        assert response.json()[PLAYLIST_ATTRIBUTES_NAME.NAME] == rockCriteriaName

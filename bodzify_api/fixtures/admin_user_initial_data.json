@@ -30,7 +30,7 @@
         "model": "bodzify_api.criteriaplaylist",
         "fields": {
             "playlist_ptr_id" : "LnM1arJrwLskdjSjqDKSks",
-            "criteria_type" : 0,
+            "type" : 0,
             "criteria": null,
             "user": 4
         }
@@ -40,7 +40,7 @@
         "pk": "LnM1arJrwLskdjSjqJcclc",
         "fields": {
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype_id": 12,
+            "polymorphic_ctype_id": 10,
             "user": 1
         }
     },

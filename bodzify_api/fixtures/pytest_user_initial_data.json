@@ -23,7 +23,7 @@
         "pk": "LnM1arJrwLskdjSjqJJDJD",
         "fields": {
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype_id": 15,
+            "polymorphic_ctype_id": 13,
             "user": 4
         }
     },
@@ -31,7 +31,7 @@
         "model": "bodzify_api.criteriaplaylist",
         "fields": {
             "playlist_ptr_id" : "LnM1arJrwLskdjSjqJJDJD",
-            "criteria_type" : 0,
+            "type" : 0,
             "criteria": null,
             "user": 4
         }
@@ -41,7 +41,7 @@
         "pk": "LnM1arJrwLskdjSjqccccc",
         "fields": {
             "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype_id": 15,
+            "polymorphic_ctype_id": 10,
             "user": 4
         }
     },

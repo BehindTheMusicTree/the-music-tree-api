@@ -8,7 +8,7 @@ from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from django.core.files.base import File
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
@@ -238,7 +238,7 @@ def _addTrackToGenresPlaylists(track: LibraryTrack):
     genre = track.genre
     while genre is not None:
         track.playlists.add(CriteriaPlaylist.objects.get(
-            user=track.user, type=CriteriaTypesId.GENRE, criteria=genre))
+            user=track.user, type_id=CriteriaTypesId.GENRE, criteria=genre))
         genre = genre.parent
     track.save()
 
