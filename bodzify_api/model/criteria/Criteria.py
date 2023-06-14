@@ -5,11 +5,9 @@ from django.contrib.auth.models import User
 import bodzify_api.settings as settings
 
 
-class CriteriaSpecialNames:
-    GENRE_ALL = "All"
-    GENRE_GENRELESS = "Genreless"
-    TAG_ALL = "Tagged"
-    
+class SPECIAL_NAMES:
+    ALL = "All"
+
 
 class ATTRIBUTES_LABEL:
     UUID = "uuid"
@@ -19,32 +17,40 @@ class ATTRIBUTES_LABEL:
     PARENT = "parent"
     ADDED_ON = "addedOn"
 
+
 class Criteria(models.Model):
     uuid = models.CharField(
         primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    name = models.CharField(max_length=settings.CRITERIA_NAME_MAX_CHAR, default=None)
+    name = models.CharField(
+        max_length=settings.CRITERIA_NAME_MAX_CHAR, default=None)
     type = models.ForeignKey('bodzify_api.CriteriaType',
                              on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
-        unique_together = ('user', 'name')
+        unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)
         constraints = [
-            models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")
+            models.CheckConstraint(check=~models.Q(
+                name=""), name="criteria_non_empty_name")
         ]
 
     def __str__(self) -> str:
         return self.uuid + " " + self.name
 
     def getCommonCriteria(self, criteriaB):
+        visited = set()
+
         criteriaATreeItem = self
-        while True:
-            criteriaBTreeItem = criteriaB
-            while criteriaBTreeItem is not None:
-                if criteriaATreeItem == criteriaBTreeItem:
-                    return criteriaBTreeItem
-                else:
-                    criteriaBTreeItem = criteriaBTreeItem.parent
+        while criteriaATreeItem is not None:
+            visited.add(criteriaATreeItem)
             criteriaATreeItem = criteriaATreeItem.parent
+
+        criteriaBTreeItem = criteriaB
+        while criteriaBTreeItem is not None:
+            if criteriaBTreeItem in visited:
+                return criteriaBTreeItem
+            criteriaBTreeItem = criteriaBTreeItem.parent
+
+        return None

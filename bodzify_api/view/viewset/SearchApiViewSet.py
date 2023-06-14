@@ -12,11 +12,14 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
     ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
-from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import \
-    PlaylistWithoutTracksSerializer
+from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
+    CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
 
-QUERY_PARAMETER_NAME = "query"
+
+class PARAMETER_NAME:
+    QUERY = "query"
+    TYPE = "type"
 
 
 class QUERY_FILTERS_NAME:
@@ -27,9 +30,6 @@ class QUERY_FILTERS_NAME:
     GENRE_NAME = "genreName"
     TAG_NAME = "tagName"
     PLAYLIST_NAME = "playlistName"
-
-
-TYPE_PARAMETER_NAME = "type"
 
 
 class TYPE_PARAMETER_VALUE:
@@ -45,8 +45,8 @@ def trackFilter(queryset, request, *args, **kwargs):
     if TYPE_PARAMETER_VALUE.TITLE in request.query_params:
         type = request.query_params[TYPE_PARAMETER_VALUE.TITLE]
         # TODO: handle type of query
-    if QUERY_PARAMETER_NAME in request.query_params:
-        query = request.query_params[QUERY_PARAMETER_NAME]
+    if PARAMETER_NAME.QUERY in request.query_params:
+        query = request.query_params[PARAMETER_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(
                 title__icontains=query
@@ -55,7 +55,7 @@ def trackFilter(queryset, request, *args, **kwargs):
 
 
 def playlistFilter(queryset, request, *args, **kwargs):
-    query = request.query_params[QUERY_PARAMETER_NAME]
+    query = request.query_params[PARAMETER_NAME.QUERY]
     if query != "":
         queryset = queryset.annotate(
             criteriaName=F(PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_NAME)
@@ -66,7 +66,7 @@ def playlistFilter(queryset, request, *args, **kwargs):
 
 
 def albumFilter(queryset, request, *args, **kwargs):
-    query = request.query_params[QUERY_PARAMETER_NAME]
+    query = request.query_params[PARAMETER_NAME.QUERY]
     if query != "":
         queryset = queryset.filter(name__icontains=query).order_by(
             Album.ATTRIBUTE_NAME_LABEL)
@@ -74,7 +74,7 @@ def albumFilter(queryset, request, *args, **kwargs):
 
 
 def artistFilter(queryset, request, *args, **kwargs):
-    query = request.query_params[QUERY_PARAMETER_NAME]
+    query = request.query_params[PARAMETER_NAME.QUERY]
     if query != "":
         queryset = queryset.filter(name__icontains=query).order_by(
             Artist.ATTRIBUTE_NAME_LABEL)
@@ -85,38 +85,32 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
 
     pagination_class = DefaultMultipleModelLimitOffsetPagination
 
-    @extend_schema(
-        description=("""
-            Search within tracks, albums, artists and playlists.
-            The results is a set of four sets:
-                - Playlist (searched and ordered by name);
-                - Artist (searched and ordered by name);
-                - Album (searched and ordered by name);
-                - LibraryTrack (searched and ordered by title).
-            """)
-    )
+    @extend_schema(description=("""
+                                Search within tracks, albums, artists and playlists.
+                                The results is a set of four sets:
+                                    - Playlist (searched and ordered by name);
+                                    - Artist (searched and ordered by name);
+                                    - Album (searched and ordered by name);
+                                    - LibraryTrack (searched and ordered by title).
+                                """))
     def get_querylist(self):
         querylist = (
             {
                 'queryset': LibraryTrack.objects.all(),
                 'serializer_class': TrackDetailedSerializer,
-                'filter_fn': trackFilter
-            },
+                'filter_fn': trackFilter},
             {
                 'queryset': Playlist.objects.all(),
-                'serializer_class': PlaylistWithoutTracksSerializer,
-                'filter_fn': playlistFilter
-            },
+                'serializer_class': CriteriaPlaylistWithoutTracksSerializer,
+                'filter_fn': playlistFilter},
             {
                 'queryset': Album.objects.all(),
                 'serializer_class': AlbumWithoutTracksSerializer,
-                'filter_fn': albumFilter
-            },
+                'filter_fn': albumFilter},
             {
                 'queryset': Artist.objects.all(),
                 'serializer_class': ArtistDetailedSerializer,
                 'filter_fn': artistFilter
-            },
-        )
+            })
 
         return querylist

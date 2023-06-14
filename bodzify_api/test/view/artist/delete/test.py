@@ -16,7 +16,6 @@ class ArtistViewDeleteTestCase(ArtistViewTestCase):
             user=self.testUser,
             title="Assassin",
             artist=museArtist,
-            genre=self.testUserGenrelessGenre,
             duration=0)
 
         response = self._delete(artistUuid=museArtist.uuid)
@@ -46,7 +45,6 @@ class ArtistViewDeleteTestCase(ArtistViewTestCase):
                       title="Life",
                       artist=bertrandArtist,
                       album=xavierAlbum,
-                      genre=self.testUserGenrelessGenre,
                       duration=0)
         
         response = self._delete(bertrandArtist.uuid)

@@ -5,14 +5,13 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class RatingTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_notProvidedThenUnchanged(self):
         rating = 5
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Korinto",
-                  genre=self.testUserGenrelessGenre,
                   rating=rating,
                   duration=0)
         data = {}
@@ -25,7 +24,6 @@ class RatingTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Korinto",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             "rating": rating
@@ -39,7 +37,6 @@ class RatingTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Korinto",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             "rating": rating
@@ -53,7 +50,6 @@ class RatingTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Korinto",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             "rating": rating
@@ -66,7 +62,6 @@ class RatingTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Korinto",
-                  genre=self.testUserGenrelessGenre,
                   rating=3,
                   duration=0)
         data = {
@@ -80,7 +75,6 @@ class RatingTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Korinto",
-                  genre=self.testUserGenrelessGenre,
                   rating=3,
                   duration=0)
         data = {
@@ -93,7 +87,6 @@ class RatingTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Korinto",
-                  genre=self.testUserGenrelessGenre,
                   rating=3,
                   duration=0)
         data = {
@@ -106,7 +99,6 @@ class RatingTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Korinto",
-                  genre=self.testUserGenrelessGenre,
                   rating=3,
                   duration=0)
         data = {

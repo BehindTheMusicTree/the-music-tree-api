@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.http import HttpResponse
@@ -9,16 +10,10 @@ from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import 
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
     TrackExtractSchemaSerializer
-from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
-    ATTRIBUTES_LABEL as SCHEMA_EXTRACT_ATTRIBUTE_LABEL
 from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
     TrackPostSchemaSerializer
-from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
-    ATTRIBUTES_LABEL as SCHEMA_POST_ATTRIBUTE_LABEL
 from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
     TrackUpdateSchemaSerializer
-from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
-    ATTRIBUTES_LABEL as SCHEMA_UPDATE_ATTRIBUTE_LABEL
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import \
     TrackDetailedSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -50,9 +45,12 @@ class TrackViewSet(MultiSerializerViewSet):
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
         titleFilter = self.request.query_params.get(FILTER_FIELDS.TITLE)
-        artistNameFilter = self.request.query_params.get(FILTER_FIELDS.ARTIST_NAME)
-        albumNameFilter = self.request.query_params.get(FILTER_FIELDS.ALBUM_NAME)
-        genreNameFilter = self.request.query_params.get(FILTER_FIELDS.GENRE_NAME)
+        artistNameFilter = self.request.query_params.get(
+            FILTER_FIELDS.ARTIST_NAME)
+        albumNameFilter = self.request.query_params.get(
+            FILTER_FIELDS.ALBUM_NAME)
+        genreNameFilter = self.request.query_params.get(
+            FILTER_FIELDS.GENRE_NAME)
         languageFilter = self.request.query_params.get(FILTER_FIELDS.LANGUAGE)
 
         if titleFilter is not None:
@@ -72,10 +70,9 @@ class TrackViewSet(MultiSerializerViewSet):
         self.get_object().deleteWithCheckingAlbumAndArtistPotentialDeletion()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @extend_schema(
-        request=TrackUpdateSchemaSerializer,
-        responses=TrackDetailedSerializer,
-        description=("""
+    @extend_schema(request=TrackUpdateSchemaSerializer,
+                   responses=TrackDetailedSerializer,
+                   description=("""
             Updates a track:\n"
             - to not update a field, it mustn't be specified (e.g the line \"artistName\":... 
             shouldn't exist). The only exception is the field 'albumArtistsName' (more 
@@ -103,7 +100,7 @@ class TrackViewSet(MultiSerializerViewSet):
                - if 'albumName' is empty or missing and 'albumArtistsName' is specified, bodzify
             will reject the request.
             """)
-    )
+                   )
     def update(self, request, *args, **kwargs):
         updatedTrack = TrackService.Update(
             user=request.user, updateSchemaData=request.data, oldTrack=self.get_object())
@@ -124,11 +121,10 @@ class TrackViewSet(MultiSerializerViewSet):
                 content="The requested track's file is missing.",
                 status=status.HTTP_410_GONE)
 
-    @extend_schema(
-        request=TrackPostSchemaSerializer,
-        responses=TrackDetailedSerializer,
-        description=(
-            """
+    @extend_schema(request=TrackPostSchemaSerializer,
+                   responses=TrackDetailedSerializer,
+                   description=(
+                       """
             Create a track with metadata by uploading a file:
                 - if the file has no metadata 'title', it is set with the file's name without the 
             extension (with an identifier if another track has the same name);
@@ -142,7 +138,7 @@ class TrackViewSet(MultiSerializerViewSet):
                     - Winamp's wav files rating;
                     - Traktor's wav files tags;
             """)
-    )
+                   )
     def create(self, request, *args, **kwargs):
         track = TrackService.Create(
             user=request.user,
@@ -154,33 +150,25 @@ class TrackViewSet(MultiSerializerViewSet):
             status=status.HTTP_201_CREATED,
             headers=headers)
 
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name=ATTRIBUTES_LABEL.TITLE,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY),
-            OpenApiParameter(
-                name=ATTRIBUTES_LABEL.ARTIST,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY),
-            OpenApiParameter(
-                name=TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY),
-            OpenApiParameter(
-                name=TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY)
-        ]
-    )
+    @extend_schema(parameters=[
+        OpenApiParameter(name=ATTRIBUTES_LABEL.TITLE,
+                         type=OpenApiTypes.STR,
+                         location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=ATTRIBUTES_LABEL.ARTIST,
+                         type=OpenApiTypes.STR,
+                         location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
+                         type=OpenApiTypes.STR,
+                         location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
+                         type=OpenApiTypes.STR,
+                         location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @extend_schema(
-        request=TrackExtractSchemaSerializer,
-        responses=TrackDetailedSerializer,
-        description=("""
+    @extend_schema(request=TrackExtractSchemaSerializer,
+                   responses=TrackDetailedSerializer,
+                   description=("""
             Download a track from the given url to the app. 
             It is done by providing an URL and metadata:
                 - "title";
@@ -203,14 +191,12 @@ class TrackViewSet(MultiSerializerViewSet):
                 - else if the length filename of the downloaded track plus de length of the 
                 extension s smaller than 100, the filename will be set to "filename.extension";
                 - else the filename will be set to "random string.extension".
-            """)
-    )
+            """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
         serializer = TrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        track = TrackService.Extract(
-            user=request.user, extractSchemaData=request.data)
+        track = TrackService.Extract(user=request.user, extractSchemaData=request.data)
         responseSerializer = TrackDetailedSerializer(track)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(

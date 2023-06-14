@@ -2,29 +2,29 @@
 import os
 import random
 import string
+import requests
 from tempfile import NamedTemporaryFile
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from django.core.files.base import File
-import requests
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
     TrackPostSchemaSerializer
+from bodzify_api.service.criteria.GenreService import GenreService
 import bodzify_api.settings as settings
 from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSaveModelSerializer
 from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
     TrackUpdateSchemaSerializer
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
-import bodzify_api.service.CriteriaService as CriteriaService
 import bodzify_api.service.ArtistService as ArtistService
 import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
 
 
 def Extract(user: User, extractSchemaData: QueryDict):
@@ -50,18 +50,14 @@ def Extract(user: User, extractSchemaData: QueryDict):
     return libraryTrack
 
 
-def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool = False):
+def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool=False):
     serializer = TrackPostSchemaSerializer(data=postSchemaData)
     serializer.is_valid(raise_exception=True)
 
-    genreNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
-    if genreNameKey not in postSchemaData:
-        postSchemaData[genreNameKey] = None
-
     file = postSchemaData[TRACK_ATTRIBUTES_LABEL.FILE]
     saveSchemaDataFromFile = _getSaveSchemaDataFromFile(file=file)
-    saveSchemaData = _getSaveSchemaDataOverridenWithInputData(
-        user=user, saveData=saveSchemaDataFromFile, inputData=postSchemaData)
+    saveSchemaData = _getDict1OverridenWithDict2WhenKeyIsProvided(
+        dict1=saveSchemaDataFromFile, dict2=postSchemaData)
     saveSchemaData[TRACK_ATTRIBUTES_LABEL.USER] = user.id
 
     if TRACK_ATTRIBUTES_LABEL.TITLE not in saveSchemaData:
@@ -74,14 +70,6 @@ def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool = F
             title = filename
         saveSchemaData[TRACK_ATTRIBUTES_LABEL.TITLE] = title
 
-    genreNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
-    if genreNameKey not in saveSchemaData:
-        saveSchemaData[genreNameKey] = CriteriaSpecialNames.GENRE_GENRELESS
-    else:
-        genreName = saveSchemaData[genreNameKey]
-        if genreName in [None, ""]:
-            saveSchemaData[genreNameKey] = CriteriaSpecialNames.GENRE_GENRELESS
-
     return Save(user=user, saveSchemaData=saveSchemaData)
 
 
@@ -92,11 +80,9 @@ def Update(user: User, updateSchemaData: QueryDict, oldTrack: LibraryTrack):
 
 
 def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack = None):
-    saveModelData = _getSaveModelDataFromSaveSchemaData(
-        user=user, saveSchemaData=saveSchemaData)
+    saveModelData = _getSaveModelDataFromSaveSchemaData(user=user, saveSchemaData=saveSchemaData)
     saveModelData[TRACK_ATTRIBUTES_LABEL.USER] = user.id
-    saveSerializer = TrackSaveModelSerializer(
-        instance=oldTrack, data=saveModelData, partial=True)
+    saveSerializer = TrackSaveModelSerializer(instance=oldTrack, data=saveModelData, partial=True)
     saveSerializer.is_valid(raise_exception=True)
     savedTrack = saveSerializer.save()
 
@@ -172,11 +158,11 @@ def _getDict1UpdatedWithGenreUuidIfGenreNameInDict2(
     if genreNameKey in dict2:
         genreName = dict2[genreNameKey]
 
-        if genreName in [None, ""]:
-            genreUuid = Criteria.objects.get(
-                user=user, name=CriteriaSpecialNames.GENRE_GENRELESS).uuid
+        if genreName in ["", None]:
+            genreUuid = None
         else:
-            genreUuid = CriteriaService.GetCriteriaFromNameAfterHavingEventuallyCreatedIt(
+            genreService = GenreService()
+            genreUuid = genreService.getCriteriaFromNameAfterHavingEventuallyCreatedIt(
                 user=user, criteriaName=genreName).uuid
         dict1[TRACK_ATTRIBUTES_LABEL.GENRE] = genreUuid
     return dict1
@@ -218,7 +204,7 @@ def _updateFileTagsIfFileExists(track: LibraryTrack):
     albumArtistsNameKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
     metadataUpdateDict[albumArtistsNameKey] = albumArtistsTag
 
-    if track.genre.name == CriteriaSpecialNames.GENRE_GENRELESS:
+    if track.genre == None:
         genreNameTag = ""
     else:
         genreNameTag = track.genre.name
@@ -251,69 +237,39 @@ def _getArtistsNameListFromString(namesString: str) -> list:
 def _addTrackToGenresPlaylists(track: LibraryTrack):
     genre = track.genre
     while genre is not None:
-        track.playlists.add(Playlist.objects.get(
-            user=track.user, criteria=genre))
+        track.playlists.add(CriteriaPlaylist.objects.get(
+            user=track.user, type_id=CriteriaTypesId.GENRE, criteria=genre))
         genre = genre.parent
     track.save()
 
 
-def _getSaveSchemaDataOverridenWithInputData(
-        user: User, saveData: QueryDict, inputData: QueryDict) -> dict:
-    saveSchemaData = saveData.copy()
-
-    saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.FILE,
-        dict2=inputData,
-        dict1=saveSchemaData)
-
-    saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.TITLE,
-        dict2=inputData,
-        dict1=saveSchemaData)
-
-    saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME,
-        dict2=inputData,
-        dict1=saveSchemaData)
-
-    saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME,
-        dict2=inputData,
-        dict1=saveSchemaData)
-
-    saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
-        dict2=inputData,
-        dict1=saveSchemaData)
-
-    saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
-        dict2=inputData,
-        dict1=saveSchemaData)
-
-    saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.RATING,
-        dict2=inputData,
-        dict1=saveSchemaData)
-
-    saveSchemaData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.LANGUAGE,
-        dict2=inputData,
-        dict1=saveSchemaData)
-
-    return saveSchemaData
+def _getDict1OverridenWithDict2WhenKeyIsProvided(dict1: QueryDict, dict2: QueryDict) -> dict:
+    overridenDict1 = dict1.copy()
+    for key in [TRACK_ATTRIBUTES_LABEL.FILE,
+                TRACK_ATTRIBUTES_LABEL.TITLE,
+                TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME,
+                TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME,
+                TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
+                TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
+                TRACK_ATTRIBUTES_LABEL.RATING,
+                TRACK_ATTRIBUTES_LABEL.LANGUAGE]:
+        overridenDict1 = _getDict1UpdatedWithDict2KeyIfSet(
+            key=key,
+            dict1=overridenDict1,
+            dict2=dict2)
+    return overridenDict1
 
 
 def _getSaveModelDataFromSaveSchemaData(user: User, saveSchemaData: QueryDict) -> dict:
     saveModelData = dict()
 
     saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.FILE,
+        key=TRACK_ATTRIBUTES_LABEL.FILE,
         dict1=saveModelData,
         dict2=saveSchemaData)
 
     saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.TITLE,
+        key=TRACK_ATTRIBUTES_LABEL.TITLE,
         dict1=saveModelData,
         dict2=saveSchemaData)
 
@@ -327,17 +283,17 @@ def _getSaveModelDataFromSaveSchemaData(user: User, saveSchemaData: QueryDict) -
         user=user, dict1=saveModelData, dict2=saveSchemaData)
 
     saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.DURATION,
+        key=TRACK_ATTRIBUTES_LABEL.DURATION,
         dict1=saveModelData,
         dict2=saveSchemaData)
 
     saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.RATING,
+        key=TRACK_ATTRIBUTES_LABEL.RATING,
         dict1=saveModelData,
         dict2=saveSchemaData)
 
     saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey=TRACK_ATTRIBUTES_LABEL.LANGUAGE,
+        key=TRACK_ATTRIBUTES_LABEL.LANGUAGE,
         dict1=saveModelData,
         dict2=saveSchemaData)
 
@@ -345,12 +301,12 @@ def _getSaveModelDataFromSaveSchemaData(user: User, saveSchemaData: QueryDict) -
 
 
 def _getDict1UpdatedWithDict2KeyIfSet(
-        attributeKey: str, dict1: QueryDict, dict2: QueryDict):
-    if attributeKey in dict2:
-        value = dict2[attributeKey]
+        key: str, dict1: QueryDict, dict2: QueryDict):
+    if key in dict2:
+        value = dict2[key]
         if value == "":
             value = None
-        dict1[attributeKey] = value
+        dict1[key] = value
     return dict1
 
 

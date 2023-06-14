@@ -7,13 +7,12 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.Album import Album
 
 
-class WithoutFileTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_okEvenWithoutAFile(self):
         track = G(LibraryTrack, 
                   user=self.testUser,
                   title="Foire",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             "title": "Jobo"

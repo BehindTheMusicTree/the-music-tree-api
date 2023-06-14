@@ -18,53 +18,37 @@
         }
     },
     {
-        "model": "bodzify_api.criteria",
-        "pk": "m5KRxi10OxW4BEOod9Qmjy",
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLskdjSjqDKSks",
         "fields": {
-            "name": "All",
-            "type": 0,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype_id": ["bodzify_api", "criteriaplaylist"],
             "user": 1
         }
     },
     {
-        "model": "bodzify_api.criteria",
-        "pk": "L1ZG85munGytJbJ65fgion",
+        "model": "bodzify_api.criteriaplaylist",
         "fields": {
-            "name": "Genreless",
-            "type": 0,
-            "parent": "m5KRxi10OxW4BEOod9Qmjy",
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 1
-        }
-    },
-    {
-        "model": "bodzify_api.criteria",
-        "pk": "knvci5z2bBkMySDNBfkiJR",
-        "fields": {
-            "name": "Tagged",
-            "type": 1,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
-            "user": 1
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqDKSks",
+            "type" : 0,
+            "criteria": null,
+            "user": 4
         }
     },
     {
         "model": "bodzify_api.playlist",
-        "pk": "LnM1arJrwLhbhHSjqEPdZB",
+        "pk": "LnM1arJrwLskdjSjqJcclc",
         "fields": {
-            "criteria": "m5KRxi10OxW4BEOod9Qmjy",
-            "type": 0,
             "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype_id": ["bodzify_api", "simpleplaylist"],
             "user": 1
         }
     },
     {
-        "model": "bodzify_api.playlist",
-        "pk": "LnM1arJrwLsdhyelllPdZB",
+        "model": "bodzify_api.simpleplaylist",
         "fields": {
-            "criteria": "L1ZG85munGytJbJ65fgion",
-            "type": 0,
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqJcclc",
+            "name" : "All",
             "user": 1
         }
     }

@@ -2,17 +2,20 @@
 from rest_framework import serializers
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL
-from bodzify_api.serializer.criteria.CriteriaDetailedSerializer import CriteriaDetailedSerializer
-from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
-from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
-from bodzify_api.serializer.playlist.PlaylistWithoutTracksSerializer import (
-    PlaylistWithoutTracksSerializer)
-
+from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import \
+    CriteriaDetailedSerializer
+from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import \
+    ArtistWithOnlyNameSerializer
+from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import \
+    AlbumWithoutTracksSerializer
+from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import \
+    PlaylistWithoutParentSerializer
+    
 class TrackDetailedSerializer(serializers.ModelSerializer):
     genre = CriteriaDetailedSerializer()
     artist = ArtistWithOnlyNameSerializer()
     album = AlbumWithoutTracksSerializer()
-    playlists = PlaylistWithoutTracksSerializer(many=True)
+    playlists = PlaylistWithoutParentSerializer(many=True)
 
     class Meta:
         model = LibraryTrack

@@ -9,7 +9,7 @@ from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import 
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class ArtistTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_notProvided(self):
         artist = G(Artist, user=self.testUser, name="Jojo")
@@ -17,7 +17,6 @@ class ArtistTestCase(ApiViewTestCase):
                   user=self.testUser,
                   title="Love",
                   artist=artist,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         response = self.putSampleTrack(track.uuid, data={})
         assert response.status_code == status.HTTP_200_OK
@@ -27,7 +26,6 @@ class ArtistTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: None
@@ -40,7 +38,6 @@ class ArtistTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: ""
@@ -54,7 +51,6 @@ class ArtistTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
@@ -69,7 +65,6 @@ class ArtistTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
@@ -83,7 +78,6 @@ class ArtistTestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName

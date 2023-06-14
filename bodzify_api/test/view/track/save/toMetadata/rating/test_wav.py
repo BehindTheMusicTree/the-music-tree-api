@@ -13,7 +13,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=None,
                   duration=0)
         data = {
@@ -29,7 +28,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -44,7 +42,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "2Stars.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=4,
                   duration=0)
         data = {
@@ -59,7 +56,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -74,7 +70,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -89,7 +84,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -104,7 +98,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -119,7 +112,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -134,7 +126,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -149,7 +140,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -164,7 +154,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {
@@ -179,7 +168,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   file=self.testUserLibraryAbsPath + "1Star.wav",
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   rating=2,
                   duration=0)
         data = {

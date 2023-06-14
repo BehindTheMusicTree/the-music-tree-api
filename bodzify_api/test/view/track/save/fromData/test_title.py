@@ -14,7 +14,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title=title,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {}
         response = self.putSampleTrack(track.uuid, data=data)
@@ -25,7 +24,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Lolilom",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.TITLE: None
@@ -38,7 +36,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Lolilom",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.TITLE: ""
@@ -52,7 +49,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Lolilom",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.TITLE: title

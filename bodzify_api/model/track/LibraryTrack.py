@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import os
 import shortuuid
 from django.dispatch import receiver
@@ -8,11 +9,12 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.PlaylistType import PlaylistType
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 import bodzify_api.settings as settings
 
 
@@ -64,7 +66,8 @@ class LibraryTrack(models.Model):
         'bodzify_api.Album', on_delete=models.CASCADE, default=None, null=True)
     genre = models.ForeignKey('bodzify_api.Criteria',
                               on_delete=models.DO_NOTHING,
-                              default=None)
+                              default=None,
+                              null=True)
     duration = models.FloatField(default=None)
     rating = models.IntegerField(
         null=True,
@@ -110,27 +113,41 @@ class LibraryTrack(models.Model):
                 ATTRIBUTES_LABEL.LANGUAGE + ": " + self.language + " " + ATTRIBUTES_LABEL.ADDED_ON +
                 ": " + str(self.addedOn) + " " + ATTRIBUTES_LABEL.FILE + ": " + self.file.name)
 
-    def _updatePlaylists(self, oldGenre: Criteria):
-        genrePlaylistType = PlaylistType.objects.get(id=PlaylistTypesId.GENRE)
-        commonGenre = self.genre.getCommonCriteria(oldGenre)
-        newGenreTreeItem = self.genre
+    def _updateGenrePlaylists(self, oldGenre: Criteria):
+        
+        if oldGenre is not None and self.genre is not None:
+            commonGenre = self.genre.getCommonCriteria(oldGenre)
+        else:
+            commonGenre = None
+            
+        self._addTrackToGenrePlaylists(genreInTreeToStopAddingTheTrack=commonGenre)
 
-        while newGenreTreeItem != commonGenre:
-            self.playlists.add(Playlist.objects.get(
-                user=self.user,
-                type=genrePlaylistType,
-                criteria=newGenreTreeItem))
-            newGenreTreeItem = newGenreTreeItem.parent
-
-        oldGenreTreeItem = oldGenre
-
-        while oldGenreTreeItem != commonGenre:
-            self.playlists.remove(Playlist.objects.get(
-                user=self.user,
-                type=genrePlaylistType,
-                criteria=oldGenreTreeItem))
-            oldGenreTreeItem = oldGenreTreeItem.parent
+        if oldGenre is not None:
+            oldGenreTreeItem = oldGenre
+            while oldGenreTreeItem != commonGenre:
+                self.playlists.remove(
+                    CriteriaPlaylist.objects.get(
+                        user=self.user, type_id=CriteriaTypesId.GENRE, criteria=oldGenreTreeItem))
+                oldGenreTreeItem = oldGenreTreeItem.parent
+        else:
+            self.playlists.remove(
+                CriteriaPlaylist.objects.get(
+                    user=self.user, type_id=CriteriaTypesId.GENRE, criteria=None))
+        
         self.save()
+        
+    def _addTrackToGenrePlaylists(self, genreInTreeToStopAddingTheTrack=None):
+        if self.genre is not None:
+            newGenreTreeItem = self.genre
+            while newGenreTreeItem != genreInTreeToStopAddingTheTrack:
+                self.playlists.add(
+                    CriteriaPlaylist.objects.get(
+                        user=self.user, type_id=CriteriaTypesId.GENRE, criteria=newGenreTreeItem))
+                newGenreTreeItem = newGenreTreeItem.parent
+        else:
+            self.playlists.add(
+                CriteriaPlaylist.objects.get(
+                    user=self.user, type_id=CriteriaTypesId.GENRE, criteria=None))
 
     def save(self, *args, **kwargs):
         try:
@@ -143,7 +160,7 @@ class LibraryTrack(models.Model):
             super().save(*args, **kwargs)
 
             if oldGenre != self.genre:
-                self._updatePlaylists(oldGenre=oldGenre)
+                self._updateGenrePlaylists(oldGenre=oldGenre)
 
             if oldAlbum != self.album and oldAlbum != None:
                 oldAlbum.deleteIfNoTrackLinked()
@@ -154,6 +171,11 @@ class LibraryTrack(models.Model):
                 oldArtist.deleteIfNothingLinked()
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
+            self.playlists.add(
+                SimplePlaylist.objects.get(
+                    user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL))
+            self._addTrackToGenrePlaylists()
+
 
     @ receiver(pre_delete, sender='bodzify_api.LibraryTrack')
     def deleteFileIfExists(sender, instance, using, **kwargs):

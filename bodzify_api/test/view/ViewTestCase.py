@@ -7,9 +7,6 @@ from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import AccessToken
 from django.test import TestCase
 from django.contrib.auth.models import User
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 import bodzify_api.settings as settings
 
 TEST_USERNAME = "pytest_user"
@@ -27,10 +24,6 @@ class ViewTestCase(TestCase):
         self.mime = magic.Magic(mime=True)
         self.apiClient = APIClient()
         self.testUser = User.objects.get(username=TEST_USERNAME)
-        self.testUserGenrelessGenre = Criteria.objects.get(
-            user=self.testUser,
-            type=CriteriaTypesId.GENRE,
-            name=CriteriaSpecialNames.GENRE_GENRELESS)
         self._setUpTestUserDirectories()
         if os.path.isdir(self.librarySampleDirAbsPath):
             self._copyLibrarySamplesToTestUserLibrary()

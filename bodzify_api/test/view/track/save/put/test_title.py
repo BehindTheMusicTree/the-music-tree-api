@@ -14,7 +14,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title=title,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {}
         response = self.putSampleTrack(track.uuid, data=data)

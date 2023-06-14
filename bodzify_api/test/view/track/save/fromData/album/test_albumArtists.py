@@ -19,7 +19,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
@@ -37,7 +36,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         data = {
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
@@ -57,7 +55,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         
         data = {
@@ -85,7 +82,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         
         data = {
@@ -104,7 +100,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         
         data = {
@@ -120,7 +115,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         
         data = {
@@ -160,7 +154,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         
         data = {
@@ -179,7 +172,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         
         data = {
@@ -204,7 +196,6 @@ class TestCase(ApiViewTestCase):
                   user=self.testUser,
                   title="Joie",
                   album=hello1Album,
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         robertdeniroArtist = G(
             Artist, user=self.testUser, name="Robert De Niro")
@@ -230,7 +221,6 @@ class TestCase(ApiViewTestCase):
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Joie",
-                  genre=self.testUserGenrelessGenre,
                   duration=0)
         
         data = {

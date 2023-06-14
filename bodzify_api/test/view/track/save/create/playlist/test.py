@@ -2,7 +2,7 @@
 import pytest
 from rest_framework import status
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
+from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 
 
 @pytest.mark.django_db
@@ -15,6 +15,6 @@ class TestCase(ApiViewTestCase):
         trackPlaylists = self.savedTrack.playlists.all()
         assert len(trackPlaylists) == 2
         assert trackPlaylists.filter(
-            name=CriteriaSpecialNames.GENRE_ALL).exists()
+            name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
         assert trackPlaylists.filter(
-            name=CriteriaSpecialNames.GENRE_GENRELESS).exists()
+            name=PLAYLIST_SPECIAL_NAMES.GENRE_GENRELESS).exists()
