@@ -4,8 +4,10 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 
 
 @pytest.mark.django_db
@@ -54,3 +56,14 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(
             user=self.testUser, title=trackTitle).exists() == False
+        
+    def test_removalFromTheAllPlaylist(self):
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="We're All To Blame",
+                  duration=0)
+        allPlaylist = SimplePlaylist.objects.get(user=self.testUser, name=PLAYLIST_SPECIAL_NAMES.ALL)
+        assert track in allPlaylist.librarytrack_set.all()
+        response = self.deleteTrack(trackUuid=track.uuid)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert track not in allPlaylist.librarytrack_set.all()
