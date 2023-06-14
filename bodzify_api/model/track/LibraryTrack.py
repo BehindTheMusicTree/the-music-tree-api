@@ -9,8 +9,10 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
-from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 from bodzify_api.model.criteria.Criteria import Criteria
 import bodzify_api.settings as settings
@@ -166,6 +168,9 @@ class LibraryTrack(models.Model):
                 oldArtist.deleteIfNothingLinked()
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
+            self.playlists.add(
+                SimplePlaylist.objects.get(
+                    user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL))
             self.playlists.add(
                 CriteriaPlaylist.objects.get(
                     user=self.user, type_id=CriteriaTypesId.GENRE, criteria=self.genre))
