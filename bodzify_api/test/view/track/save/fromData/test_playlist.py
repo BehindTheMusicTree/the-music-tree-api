@@ -2,8 +2,11 @@
 import pytest
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PlaylistSpecialNames
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES, Playlist
+from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL
@@ -11,7 +14,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db
-class PlaylistTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_newGenreThenInNewGenrePlaylistAndAllPlaylist(self):
         genreName = "Rock"
@@ -28,68 +31,85 @@ class PlaylistTestCase(ApiViewTestCase):
 
         trackPlaylists = self.savedTrack.playlists.all()
         assert len(trackPlaylists) == 2
-        assert trackPlaylists.filter(criteria__name=genreName).exists()
-        assert trackPlaylists.filter(name=PlaylistSpecialNames.ALL).exists()
+        criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)
+        assert criteriaPlaylists.filter(
+            criteriaplaylist__criteria__name=genreName).exists()
+        simplePlaylists = trackPlaylists.instance_of(SimplePlaylist)
+        assert simplePlaylists.filter(
+            simpleplaylist__name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
 
-    # def test_existingGenreWithParentAllThenTrackInExistingPlaylistAndAllPlaylist(self):
-    #     genreName = "Rock"
-    #     dataJson = {
-    #         CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
-    #     }
-    #     self.postGenre(dataJson)
-    #     rockGenre = self.savedGenre
-    #     track = G(LibraryTrack,
-    #               user=self.testUser,
-    #               title="Love",
-    #               duration=0)
+    def test_existingGenreThenTrackInExistingPlaylistAndAllPlaylist(self):
+        genreName = "Rock"
+        dataJson = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
+        }
+        self.postGenre(dataJson)
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  duration=0)
 
-    #     data = {
-    #         TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
-    #     }
-    #     response = self.putSampleTrack(track.uuid, data=data)
-    #     assert response.status_code == status.HTTP_200_OK
+        data = {
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+        }
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
 
-    #     trackPlaylists = self.savedTrack.playlists.all()
-    #     assert len(trackPlaylists) == 2
-    #     assert trackPlaylists.filter(criteria=rockGenre).exists()
-    #     assert trackPlaylists.filter(
-    #         criteria__name=CriteriaSpecialNames.GENRE_ALL).exists()
+        trackPlaylists = self.savedTrack.playlists.all()
+        assert len(trackPlaylists) == 2
+        criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)
+        assert criteriaPlaylists.filter(
+            criteriaplaylist__criteria__name=genreName).exists()
+        simplePlaylists = trackPlaylists.instance_of(SimplePlaylist)
+        assert simplePlaylists.filter(
+            simpleplaylist__name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
 
-    #     genrePlaylist = trackPlaylists.get(criteria=rockGenre)
-    #     assert genrePlaylist.parent.name == CriteriaSpecialNames.GENRE_ALL
+    def test_existingGenreWith2SuccessiveParentsThenTrackIn3ExistingPlaylists(self):
+        rockGenreName = "Rock"
+        hardrockGenreName = "Hard rock"
+        emoGenreName = "Emo"
 
-    # def test_existingGenreWith2ParentsThenTrackIn3ExistingPlaylists(self):
-    #     genreName = "Hard rock"
+        dataJson = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: rockGenreName
+        }
+        self.postGenre(dataJson)
+        rockGenre = self.savedGenre
 
-    #     dataJson = {
-    #         CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
-    #     }
-    #     self.postGenre(dataJson)
-    #     rockGenre = self.savedGenre
-    #     rockPlaylist = Playlist.objects.get(criteria=rockGenre)
+        dataJson = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: hardrockGenreName,
+            CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
+        }
+        self.postGenre(dataJson)
+        hardrockGenre = self.savedGenre
+
+        dataJson = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: emoGenreName,
+            CRITERIA_ATTRIBUTES_LABEL.PARENT: hardrockGenre.uuid
+        }
+        self.postGenre(dataJson)
+
+        track = G(LibraryTrack,
+                  user=self.testUser,
+                  title="Love",
+                  duration=0)
+        data = {
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: emoGenreName
+        }
+        response = self.putSampleTrack(track.uuid, data=data)
+        assert response.status_code == status.HTTP_200_OK
+
+        trackPlaylists = self.savedTrack.playlists.all()
+        assert len(trackPlaylists) == 4
         
-    #     dataJson = {
-    #         CRITERIA_ATTRIBUTES_LABEL.NAME: genreName,
-    #         CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
-    #     }
-    #     self.postGenre(dataJson)
-    #     hardrockGenre = self.savedGenre
-    #     hardrockPlaylist = Playlist.objects.get(criteria=hardrockGenre)
+        criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)
+        assert criteriaPlaylists.filter(
+            criteriaplaylist__criteria__name=emoGenreName).exists()
+        assert criteriaPlaylists.filter(
+            criteriaplaylist__criteria__name=hardrockGenreName).exists()
+        assert criteriaPlaylists.filter(
+            criteriaplaylist__criteria__name=rockGenreName).exists()
+        
+        simplePlaylists = trackPlaylists.instance_of(SimplePlaylist)
+        assert simplePlaylists.filter(
+            simpleplaylist__name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
 
-    #     track = G(LibraryTrack,
-    #               user=self.testUser,
-    #               title="Love",
-    #               duration=0)
-    #     data = {
-    #         TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
-    #     }
-    #     response = self.putSampleTrack(track.uuid, data=data)
-    #     assert response.status_code == status.HTTP_200_OK
-
-    #     trackPlaylists = self.savedTrack.playlists.all()
-    #     assert len(trackPlaylists) == 3
-    #     assert trackPlaylists.filter(
-    #         criteria__name=hardrockPlaylist.name).exists()
-    #     assert trackPlaylists.filter(criteria__name=rockPlaylist.name).exists()
-    #     assert trackPlaylists.filter(
-    #         criteria__name=CriteriaSpecialNames.GENRE_ALL).exists()
