@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pprint
 import pytest
 from rest_framework import status
 from ddf import G
