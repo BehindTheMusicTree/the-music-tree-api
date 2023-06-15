@@ -64,7 +64,7 @@ jobs:
 
   Docker:
     name: Publish - Docker Hub
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [pytest]
     env:
       REPO: ${{ secrets.DOCKER_REPO }}
