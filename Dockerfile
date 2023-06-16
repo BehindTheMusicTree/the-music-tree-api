@@ -18,11 +18,13 @@ ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
+ENV AccessLogPath=$DockerHome/logs/access.log
 
 # Copy source and install dependencies
 RUN mkdir -p $DockerHome
 WORKDIR $DockerHome  
-COPY . $DockerHome  
+COPY . $DockerHome
+RUN test -e $AccessLogPath || touch $AccessLogPath
 
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
