@@ -18,7 +18,7 @@ ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
-ENV AccessLogPath=$DockerHome/logs/access.log
+ENV AccessLogPath=$DockerHome/log/access.log
 
 # Copy source and install dependencies
 RUN mkdir -p $DockerHome
