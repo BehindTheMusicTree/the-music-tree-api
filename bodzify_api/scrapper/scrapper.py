@@ -1,10 +1,7 @@
-import datetime
 import os
 import requests
 import json
-
 from bodzify_api.model.track.MineTrack import MineTrack
-
 import bodzify_api.settings as settings
 
 
