@@ -3,7 +3,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.track.output.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import TrackExtractSchemaSerializer
-from bodzify_api.service import MineTrackMyfreemp3Service
+from bodzify_api.service import MineService
 import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 
@@ -41,7 +41,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
             utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
 
         if mineSource == GET_SOURCE_PARAMETER_VALUE_MYFREEMP3:
-            mineTracks = MineTrackMyfreemp3Service.List(
+            mineTracks = MineService.List(
                 query, pageNumber, pageSize)
             return utility.GetJsonResponsePaginated(request, mineTracks)
 
