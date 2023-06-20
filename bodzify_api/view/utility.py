@@ -36,7 +36,7 @@ def GetHttpResponseWhenPermissionDenied(request):
         request=request, exception=exceptions.PermissionDenied)
 
 
-def GetJsonResponseWhenBadRequest(exception=exceptions.bad_request):
+def get_json_response_when_bad_request(exception=exceptions.bad_request):
     if type(exception) == IntegrityError:
         errorMessage = INTEGRITY_ERROR_MESSAGE
     else:
@@ -50,7 +50,7 @@ def GetJsonResponseWhenBadRequest(exception=exceptions.bad_request):
     )
 
 
-def GetJsonResponsePaginated(request, dataJsonList):
+def get_json_response_paginated(request, dataJsonList):
     pageNumber = request.GET.get(REQUEST_PAGINATED_PAGE_FIELD, 0)
     paginator = Paginator(dataJsonList, PageNumberPagination.page_size)
     page_object = paginator.get_page(pageNumber)

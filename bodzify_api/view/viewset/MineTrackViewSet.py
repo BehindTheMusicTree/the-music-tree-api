@@ -34,16 +34,16 @@ class MineTrackViewSet(MultiSerializerViewSet):
                                                 OpenApiTypes.INT,
                                                 OpenApiParameter.PATH)])
     def list(self, request):
-        mineSource = request.GET.get(GET_PARAMETER_NAME.SOURCE, False)
+        mine_source = request.GET.get(GET_PARAMETER_NAME.SOURCE, False)
         query = request.GET.get(GET_PARAMETER_NAME.QUERY, False)
-        pageNumber = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
-        pageSize = request.GET.get(
+        page_number = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
+        page_size = request.GET.get(
             utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
 
-        if mineSource == GET_SOURCE_PARAMETER_VALUE_MYFREEMP3:
-            mineTracks = MineService.List(
-                query, pageNumber, pageSize)
-            return utility.GetJsonResponsePaginated(request, mineTracks)
+        if mine_source == GET_SOURCE_PARAMETER_VALUE_MYFREEMP3:
+            mine_tracks = MineService.List(
+                query, page_number, page_size)
+            return utility.get_json_response_paginated(request, mine_tracks)
 
         else:
-            return utility.GetJsonResponseWhenBadRequest(request)
+            return utility.get_json_response_when_bad_request(request)

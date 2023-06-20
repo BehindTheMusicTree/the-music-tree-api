@@ -56,7 +56,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
         try:
             criteria = self.criteriaService.create(user=request.user, data=request.data)
         except IntegrityError as e:
-            return utility.GetJsonResponseWhenBadRequest(exception=e)
+            return utility.get_json_response_when_bad_request(exception=e)
 
         responseSerializer = CriteriaDetailedSerializer(criteria)
         headers = self.get_success_headers(responseSerializer.data)
