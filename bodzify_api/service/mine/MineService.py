@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 from  bodzify_api.service.mine.connector import FreeSampleConnector
 
-def List(baseUrl, query, pageNumber):
-    return FreeSampleConnector.search(baseUrl, query, pageNumber)
+def List(baseurl, query, page_number):
+    return FreeSampleConnector.search(baseurl, query, page_number)

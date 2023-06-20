@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from bodzify_api.serializer.mine.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import TrackExtractSchemaSerializer
 from bodzify_api.service.mine import MineService
@@ -20,26 +20,27 @@ class MineTrackViewSet(MultiSerializerViewSet):
         'extract':  TrackExtractSchemaSerializer,
     }
 
-    @extend_schema(parameters=[OpenApiParameter(GET_PARAMETER_NAME.SOURCE,
-                                                OpenApiTypes.STR,
-                                                OpenApiParameter.PATH),
-                               OpenApiParameter(GET_PARAMETER_NAME.QUERY,
-                                                OpenApiTypes.STR,
-                                                OpenApiParameter.PATH),
-                               OpenApiParameter(utility.REQUEST_PAGINATED_PAGE_FIELD,
-                                                OpenApiTypes.INT,
-                                                OpenApiParameter.PATH)])
+    @extend_schema(parameters=[
+        OpenApiParameter(GET_PARAMETER_NAME.SOURCE,
+                         OpenApiTypes.STR,
+                         OpenApiParameter.PATH),
+        OpenApiParameter(GET_PARAMETER_NAME.QUERY,
+                         OpenApiTypes.STR,
+                         OpenApiParameter.PATH),
+        OpenApiParameter(utility.REQUEST_PAGINATED_PAGE_FIELD,
+                         OpenApiTypes.INT,
+                         OpenApiParameter.PATH)])
     def list(self, request):
         mine_source = request.GET.get(GET_PARAMETER_NAME.SOURCE, False)
         query = request.GET.get(GET_PARAMETER_NAME.QUERY, False)
-        pageNumber = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
+        page_number = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
 
-        mineTracks = MineService.List(
-            baseUrl=mineSource, query=query, pageNumber=pageNumber)
-        responseSerializer = MineTrackSerializer(mineTracks, many=True)
-        headers = self.get_success_headers(responseSerializer.data)
+        mine_tracks = MineService.List(
+            baseurl=mine_source, query=query, page_number=page_number)
+        response_serializer = MineTrackSerializer(mine_tracks, many=True)
+        headers = self.get_success_headers(response_serializer.data)
 
         return utility.get_json_response_paginated(
-            request=request, 
-            data_json_list=responseSerializer.data, 
+            request=request,
+            data_json_list=response_serializer.data,
             headers=headers)
