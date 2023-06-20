@@ -1,4 +1,6 @@
-.venv
+venv
 .git
 .gitignore
+backup.postman_dump/
 bodzify_api/test/
+bodzify_api/settings_dev.py
