@@ -45,7 +45,7 @@ jobs:
             pip install -r requirements.txt
       - name: Set up filesystem
         run: |
-            bash scripts/setup_filesystem.sh
+            bash scripts/setup_filesystem_workflow.sh
       - name: Run pytest
         run: |
             pytest .
