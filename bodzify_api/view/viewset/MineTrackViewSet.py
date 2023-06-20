@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-from bodzify_api.serializer.track.output.MineTrackSerializer import MineTrackSerializer
+from bodzify_api.serializer.mine.track.MineTrackSerializer import MineTrackSerializer
 from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import TrackExtractSchemaSerializer
-from bodzify_api.service import MineService
+from bodzify_api.service.mine import MineService
 import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 
@@ -11,10 +11,6 @@ from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewS
 class GET_PARAMETER_NAME:
     SOURCE = "source"
     QUERY = "query"
-
-
-GET_SOURCE_PARAMETER_VALUE_MYFREEMP3 = "myfreemp3"
-GET_SOURCE_PARAMETER_VALUE_ERROR_MESSAGE_DOESNT_EXIST = "The specified source doesn\'t exist"
 
 
 class MineTrackViewSet(MultiSerializerViewSet):
@@ -36,14 +32,14 @@ class MineTrackViewSet(MultiSerializerViewSet):
     def list(self, request):
         mine_source = request.GET.get(GET_PARAMETER_NAME.SOURCE, False)
         query = request.GET.get(GET_PARAMETER_NAME.QUERY, False)
-        page_number = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
-        page_size = request.GET.get(
-            utility.REQUEST_PAGINATED_PAGE_SIZE_FIELD, 0)
+        pageNumber = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
 
-        if mine_source == GET_SOURCE_PARAMETER_VALUE_MYFREEMP3:
-            mine_tracks = MineService.List(
-                query, page_number, page_size)
-            return utility.get_json_response_paginated(request, mine_tracks)
+        mineTracks = MineService.List(
+            baseUrl=mineSource, query=query, pageNumber=pageNumber)
+        responseSerializer = MineTrackSerializer(mineTracks, many=True)
+        headers = self.get_success_headers(responseSerializer.data)
 
-        else:
-            return utility.get_json_response_when_bad_request(request)
+        return utility.get_json_response_paginated(
+            request=request, 
+            data_json_list=responseSerializer.data, 
+            headers=headers)

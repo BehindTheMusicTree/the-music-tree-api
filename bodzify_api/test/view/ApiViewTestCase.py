@@ -3,7 +3,8 @@ from django.urls import reverse
 from rest_framework import status
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, Criteria
+from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, \
+    Criteria
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
@@ -48,6 +49,13 @@ class ApiViewTestCase(ViewTestCase):
         if response.status_code == status.HTTP_200_OK:
             self._setSavedTrackAttribute(response)
         return response
+
+    def searchMine(self, source, query):
+        data = {
+            'source': source,
+            'query': query
+        }
+        return self.apiClient.get(path=reverse('mine-track'), data=data)
 
     def downloadTrack(self, trackUuid):
         return self.apiClient.get(path=reverse('librarytrack-download', kwargs={'pk': trackUuid}))
