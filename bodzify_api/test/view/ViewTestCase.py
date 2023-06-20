@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import inspect
-import magic
 import os
 import shutil
 from rest_framework.test import APIClient
@@ -21,7 +20,6 @@ class ViewTestCase(TestCase):
     testUserLibraryPathRelativeToMediaDir = ""
 
     def setUp(self) -> None:
-        self.mime = magic.Magic(mime=True)
         self.apiClient = APIClient()
         self.testUser = User.objects.get(username=TEST_USERNAME)
         self._setUpTestUserDirectories()
