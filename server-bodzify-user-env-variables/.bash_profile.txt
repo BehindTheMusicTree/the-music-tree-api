@@ -1,0 +1,3 @@
+export DOCKERHUB_USERNAME="***"
+export DOCKERHUB_PASSWORD="***"
+export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/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"
