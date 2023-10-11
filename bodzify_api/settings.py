@@ -236,5 +236,5 @@ PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
 if os.getenv('ENV') == 'DEV':
     from bodzify_api.settings_dev import *
-elif os.getenv('ENV') == 'PROD':
-    from bodzify_api.settings_prod import *
+elif os.getenv('ENV') == 'TEST':
+    from bodzify_api.settings_test import *
