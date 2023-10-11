@@ -28,3 +28,9 @@ sudo mkdir -p $webhookScriptsDir
 sudo chown bodzify $webhookScriptsDir
 sudo chgrp bodzify $webhookScriptsDir
 sudo chmod 775 $webhookScriptsDir
+
+sslDir=/etc/ssl/bodzify/
+sudo mkdir -p $sslDir
+sudo chown bodzify $sslDir
+sudo chgrp bodzify $sslDir
+sudo chmod 775 $sslDir

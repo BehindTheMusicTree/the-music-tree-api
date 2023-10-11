@@ -35,4 +35,4 @@ RUN chown -R www-data:www-data /opt/bodzify-api
 # Start server
 EXPOSE 443
 STOPSIGNAL SIGTERM
-CMD gunicorn --certfile=/etc/ssl/certs/www_bodzify_com.crt --keyfile=/etc/ssl/private/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
+CMD gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
