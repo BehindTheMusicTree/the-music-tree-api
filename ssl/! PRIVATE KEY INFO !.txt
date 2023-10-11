@@ -1,0 +1,37 @@
+-----------------------------
+***Where's My Private Key?*** 
+-----------------------------
+
+Your private key will be required to complete your installation. Your private key, as the name suggests, is private to the system that originally created your CSR and will not be provided to you by our support agents or the Certificate Authority. 
+
+You should never share your private key with anyone, and we will never ask you for your private key...EVER! 
+
+----------------------------
+How to Find Your Private Key
+----------------------------
+
+IF you created your CSR on your server, then your private key is already on your machine and you should not need to import it. 
+
+IF you created your CSR using an online tool, then you should have saved your private key on your local machine and can go back and retrieve it to complete your installation. 
+
+----------------------------------
+If You Can't Find Your Private Key
+----------------------------------
+
+Private keys are only created when a new CSR is generated. The CSR and the Private Key are a pair. 
+
+If you are not able to find your original Private Key, then you will need to create a new CSR and re-issue (or re-key) your SSL certificate from your account on our website. 
+
+***Please Note*** To re-issue your SSL, some validation steps may need to be completed again. 
+
+---------------
+How to Re-issue
+---------------
+
+Once you're logged into your account on our website, follow the below steps: 
+
+1. Locate the order that needs to be re-issued and select it. 
+2. Scroll to the bottom of the "Order Details Page". 
+3. Click "Re-issue Certificate" and follow the prompts. 
+
+If you need any help, our support team is ready to assist you! https://comodosslstore.com/support/

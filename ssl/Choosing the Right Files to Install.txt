@@ -1,0 +1,25 @@
+-------------------------
+Installation Instructions
+-------------------------
+
+For a list of common server types and the steps to complete SSL installation on them, please visit the Installation Section of our Knowledgebase here: https://help.comodosslstore.com/support/solutions/folders/22000168667
+
+----------------
+CER - CRT Files
+----------------
+
+These files should be used if your server requires you to browse and upload your certificates into their system. Common servers that use these files are IIS, Exchange, and Plesk. 
+
+The files in this folder are .CER files. If you need .CRT files, simply use a file explorer and manually change the file extension from .CER to .CRT and you'll be all set. 
+
+----------------
+Plain Text Files
+----------------
+
+These files should be used if your server or hosting provider gives you a form to copy/paste your certificates into. Common hosting providers and servers that require these kinds of files are cPanel, GoDaddy, HostGator, and WHM. 
+
+----------
+PKCS7 File
+----------
+
+This file should be used if your server requires that you upload a PKCS7 or .p7b file format for installation. Common server types that require this kind of file are Azure and TomCat. 
