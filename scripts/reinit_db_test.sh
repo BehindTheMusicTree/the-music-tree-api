@@ -3,15 +3,13 @@ sudo -u postgres -H -- psql -c "create database bodzify_api with owner django;"
 sudo rm -r /var/lib/bodzify-api/*
 sudo rm -r /var/log/bodzify-api/*
 
-homeDir="/home/app/webapp"
-python3 $homeDir/manage.py migrate
-python3 $homeDir/manage.py migrate --fake
-python3 $homeDir/manage.py makemigrations 
-python3 $homeDir/manage.py migrate --fake-initial
-python3 $homeDir/manage.py migrate
-python3 $homeDir/manage.py makemigrations bodzify_api
-python3 $homeDir/manage.py migrate
-python3 $homeDir/manage.py loaddata app_initial_data
-python3 $homeDir/manage.py loaddata admin_user_initial_data
-python3 $homeDir/manage.py loaddata mobile_test_user_initial_data
-python3 $homeDir/manage.py loaddata postman_test_user_initial_data
+docker exec BODZIFY_API python manage.py migrate
+docker exec BODZIFY_API python manage.py migrate --fake
+docker exec BODZIFY_API python manage.py migmakemigrationsrate
+docker exec BODZIFY_API python manage.py migrate --fake-initial
+docker exec BODZIFY_API python manage.py makemigrations bodzify_api
+docker exec BODZIFY_API python manage.py migrate
+docker exec BODZIFY_API python manage.py loaddata app_initial_data
+docker exec BODZIFY_API python manage.py loaddata admin_user_initial_data
+docker exec BODZIFY_API python manage.py loaddata mobile_test_user_initial_data
+docker exec BODZIFY_API python manage.py loaddata postman_test_user_initial_data
