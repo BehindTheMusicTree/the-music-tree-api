@@ -5,7 +5,9 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
+
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
@@ -44,14 +46,11 @@ class TrackViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        titleFilter = self.request.query_params.get(FILTER_FIELDS.TITLE)
-        artistNameFilter = self.request.query_params.get(
-            FILTER_FIELDS.ARTIST_NAME)
-        albumNameFilter = self.request.query_params.get(
-            FILTER_FIELDS.ALBUM_NAME)
-        genreNameFilter = self.request.query_params.get(
-            FILTER_FIELDS.GENRE_NAME)
-        languageFilter = self.request.query_params.get(FILTER_FIELDS.LANGUAGE)
+        titleFilter = self.request.GET.get(FILTER_FIELDS.TITLE)
+        artistNameFilter = self.request.GET.get(FILTER_FIELDS.ARTIST_NAME)
+        albumNameFilter = self.request.GET.get(FILTER_FIELDS.ALBUM_NAME)
+        genreNameFilter = self.request.GET.get(FILTER_FIELDS.GENRE_NAME)
+        languageFilter = self.request.GET.get(FILTER_FIELDS.LANGUAGE)
 
         if titleFilter is not None:
             queryset = queryset.filter(title__icontains=titleFilter)
@@ -174,7 +173,7 @@ class TrackViewSet(MultiSerializerViewSet):
                 - "title";
                 - "artistName";
                 - "albumName";
-                - "albumArtistsName";
+                - "albumArtistsNameString";
                 - "genreName";
                 - "rating";
                 - "releasedOn";
