@@ -36,7 +36,7 @@ class Artist(models.Model):
             album.deleteWithTracksAndEventuallyArtists()
 
         for track in list(LibraryTrack.objects.filter(user=self.user, artist=self).all()):
-            track.deleteWithCheckingAlbumPotentialDeletion()
+            track.delete_with_checking_album_potential_deletion()
 
         self.delete()
         
