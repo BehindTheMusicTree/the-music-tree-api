@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+from typing import Optional
 import shortuuid
 from django.dispatch import receiver
 from django.db import models
@@ -13,9 +14,9 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
-from bodzify_api.validator.LibraryTrackSizeValidator import validateTrackSize
 from bodzify_api.model.criteria.Criteria import Criteria
 import bodzify_api.settings as settings
+from bodzify_api.validator.TrackFileValidator import validate_content_type_is_audio, validate_size
 
 
 def _userDirectoryPath(instance, filename):
@@ -54,9 +55,8 @@ class LibraryTrack(models.Model):
     file = models.FileField(
         upload_to=_userDirectoryPath,
         help_text="Only audio formats accepted.",
-        validators=[
-            FileExtensionValidator(['flac', 'wav', 'mp3']),
-            validateTrackSize],
+        validators=[FileExtensionValidator(settings.TRACK_FILE_EXTENSIONS),
+            validate_size],
         null=True)
     title = models.CharField(
         max_length=settings.TRACK_TITLE_MAX_CHAR, default=None, null=True)
@@ -85,14 +85,14 @@ class LibraryTrack(models.Model):
     def filename(self) -> str:
         if self.fileExists:
             return os.path.basename(self.file.path)
-        return None
+        return ""
 
     @property
     def fileExtension(self) -> str:
         if self.fileExists:
-            filename, fileExtension = os.path.splitext(self.file.name)
-            return fileExtension
-        return None
+            filename, file_extension = os.path.splitext(self.file.name)
+            return file_extension
+        return ""
 
     @property
     def fileExists(self) -> bool:
@@ -102,25 +102,28 @@ class LibraryTrack(models.Model):
 
     @property
     def relativeUrl(self) -> str:
-        return 'tracks/' + self.uuid + "/"
+        return "tracks/{self.uuid}/"
 
-    def str(self):
-        return (self.uuid + " " + str(self.artist) + " - " + self.title + " " +
-                ATTRIBUTES_LABEL.ALBUM + ": " +
-                str(self.album) + " " + ATTRIBUTES_LABEL.GENRE + ": "
-                + str(self.genre) + " " + ATTRIBUTES_LABEL.DURATION + ": " + str(self.duration) +
-                " " + ATTRIBUTES_LABEL.RATING + ": " + str(self.rating) + " " +
-                ATTRIBUTES_LABEL.LANGUAGE + ": " + self.language + " " + ATTRIBUTES_LABEL.ADDED_ON +
-                ": " + str(self.addedOn) + " " + ATTRIBUTES_LABEL.FILE + ": " + self.file.name)
+    def __str__(self):
+        album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
+        genre_str = f"{ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
+        duration_str = f"{ATTRIBUTES_LABEL.DURATION}: {str(self.duration)} " if self.duration else ""
+        rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
+        language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
+        file_str = f"{ATTRIBUTES_LABEL.FILE}: {str(self.file.name)} " if self.file else ""
+        return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
+                f"{genre_str}{duration_str}{rating_str}{language_str}"
+                f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.addedOn)} {file_str}")
 
-    def _updateGenrePlaylists(self, oldGenre: Criteria):
+
+    def _update_genre_playlists(self, oldGenre: Optional[Criteria]):
         
         if oldGenre is not None and self.genre is not None:
             commonGenre = self.genre.getCommonCriteria(oldGenre)
         else:
             commonGenre = None
             
-        self._addTrackToGenrePlaylists(genreInTreeToStopAddingTheTrack=commonGenre)
+        self._add_track_to_genre_playlists(genreInTreeToStopAddingTheTrack=commonGenre)
 
         if oldGenre is not None:
             oldGenreTreeItem = oldGenre
@@ -136,7 +139,7 @@ class LibraryTrack(models.Model):
         
         self.save()
         
-    def _addTrackToGenrePlaylists(self, genreInTreeToStopAddingTheTrack=None):
+    def _add_track_to_genre_playlists(self, genreInTreeToStopAddingTheTrack=None):
         if self.genre is not None:
             newGenreTreeItem = self.genre
             while newGenreTreeItem != genreInTreeToStopAddingTheTrack:
@@ -155,54 +158,55 @@ class LibraryTrack(models.Model):
             oldGenre = oldTrack.genre
             oldArtist = oldTrack.artist
             oldAlbum = oldTrack.album
+            oldAlbumArtists = []
             if oldAlbum is not None:
                 oldAlbumArtists = list(oldAlbum.albumArtists.all())
             super().save(*args, **kwargs)
 
             if oldGenre != self.genre:
-                self._updateGenrePlaylists(oldGenre=oldGenre)
+                self._update_genre_playlists(oldGenre=oldGenre)
 
-            if oldAlbum != self.album and oldAlbum != None:
+            if oldAlbum != self.album and oldAlbum is not None:
                 oldAlbum.deleteIfNoTrackLinked()
                 for albumArtist in oldAlbumArtists:
                     albumArtist.deleteIfNothingLinked()
 
-            if oldArtist != self.artist and oldArtist != None:
+            if oldArtist != self.artist and oldArtist is not None:
                 oldArtist.deleteIfNothingLinked()
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
             self.playlists.add(
                 SimplePlaylist.objects.get(
                     user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL))
-            self._addTrackToGenrePlaylists()
+            self._add_track_to_genre_playlists()
 
 
     @ receiver(pre_delete, sender='bodzify_api.LibraryTrack')
-    def deleteFileIfExists(sender, instance, using, **kwargs):
+    def delete_file_if_exists(sender, instance, using, **kwargs):
         if instance.fileExists:
             instance.file.delete()
 
-    def deleteWithCheckingAlbumAndArtistPotentialDeletion(self):
-        trackArtistId = self.artist_id
-        trackAlbumId = self.album_id
+    def delete_with_checking_album_and_artist_potential_deletion(self):
+        trackArtistId = self.artist.id if self.artist else None
+        trackAlbumId = self.album.id if self.album else None
         self.delete()
-        self._deleteEventualRelatedAlbum(trackArtistId)
-        self._deleteEventualRelatedArtist(trackAlbumId)
+        self._delete_eventual_related_album(trackAlbumId)
+        self._delete_eventual_related_artist(trackArtistId)
 
-    def deleteWithCheckingArtistPotentialDeletion(self):
-        trackArtistId = self.artist_id
+    def delete_with_checking_artist_potential_deletion(self):
+        trackArtistId = self.artist.id if self.artist else None
         self.delete()
-        self._deleteEventualRelatedArtist(trackArtistId)
+        self._delete_eventual_related_artist(trackArtistId)
 
-    def deleteWithCheckingAlbumPotentialDeletion(self):
-        trackAlbumId = self.album_id
+    def delete_with_checking_album_potential_deletion(self):
+        trackAlbumId = self.album.id if self.album else None
         self.delete()
-        self._deleteEventualRelatedAlbum(trackAlbumId)
+        self._delete_eventual_related_album(trackAlbumId)
 
-    def _deleteEventualRelatedArtist(self, trackArtistId):
-        if trackArtistId is not None:
+    def _delete_eventual_related_artist(self, track_artist_id):
+        if track_artist_id is not None:
             self.artist.deleteIfNothingLinked()
 
-    def _deleteEventualRelatedAlbum(self, trackAlbumId):
+    def _delete_eventual_related_album(self, trackAlbumId):
         if trackAlbumId is not None:
             self.album.deleteIfNoTrackLinked()
