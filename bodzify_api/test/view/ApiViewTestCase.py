@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from typing import Union
 from django.urls import reverse
 from rest_framework import status
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -11,14 +12,16 @@ import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 class ApiViewTestCase(ViewTestCase):
 
-    savedTrack = None
-    savedGenre = None
+    savedTrack: LibraryTrack
+    savedGenre: Criteria
+
 
     def extract(self, data):
         response = self.apiClient.post(
             path=reverse('librarytrack-extract'),
             data=data,
             format='json')
+        
         if response.status_code == status.HTTP_201_CREATED:
             self._setSavedTrackAttribute(response)
         return response
@@ -67,7 +70,7 @@ class ApiViewTestCase(ViewTestCase):
         trackUuid = response.json()[TRACK_ATTRIBUTES_LABEL.UUID]
         self.savedTrack = LibraryTrack.objects.get(uuid=trackUuid)
         if self.savedTrack.fileExists:
-            self.savedTrackMetadata = AudioMetadataService.GetMetadataDictFromFile(
+            self.savedTrackMetadata = AudioMetadataService.get_metadata_dict_from_file(
                 file=self.savedTrack.file)
 
     def _mergeTwoJsons(self, json1, json2):

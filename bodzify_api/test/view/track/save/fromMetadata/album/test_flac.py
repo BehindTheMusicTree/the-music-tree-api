@@ -15,6 +15,7 @@ class FlacTestCase(ApiViewTestCase):
     def test_longest(self):
         response = self.postSampleTrack(sampleFilename="100CharAlbumName.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
-            "gJQdUyvX9WKnsv0KAtwAiWmi739Fqt2KsGZi7F3Fn9AXPI3"
+        assert self.savedTrack.album.name == "q{9SVjJ5{gE&_!7iu[?ti:QT6D/j" + \
+            "=,zYyJfmj9pRP$U-WK$0rvxD5{B66{Kbp_P{0pV0bR.xDnVA48dLTgfFu96u&" + \
+            "-X#SYQe=WqA"
 	

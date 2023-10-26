@@ -24,7 +24,6 @@ import bodzify_api.service.ArtistService as ArtistService
 import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import Playlist
 
 
 def Extract(user: User, extractSchemaData: QueryDict):
@@ -93,8 +92,8 @@ def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack = None):
 
 
 def _getSaveSchemaDataFromFile(file):
-    metadataDict = AudioMetadataService.GetMetadataDictFromFile(
-        file=file, normalizedRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
+    metadataDict = AudioMetadataService.get_metadata_dict_from_file(
+        file=file, normalized_rating_max_value=settings.TRACK_RATING_MAX_VALUE)
 
     saveData = _removeNoneOrEmptyKeyFromDict(metadataDict)
     saveData[TRACK_ATTRIBUTES_LABEL.FILE] = file
@@ -217,10 +216,10 @@ def _updateFileTagsIfFileExists(track: LibraryTrack):
         languageTag = ""
     metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] = languageTag
 
-    AudioMetadataService.Update(
+    AudioMetadataService.update(
         file=track.file,
-        metadataUpdateDict=metadataUpdateDict,
-        normalizedRatingMaxValue=settings.TRACK_RATING_MAX_VALUE)
+        metadata_update_dict=metadataUpdateDict,
+        normalized_rating_max_value=settings.TRACK_RATING_MAX_VALUE)
 
 
 def _getArtistsNameListFromString(namesString: str) -> list:
