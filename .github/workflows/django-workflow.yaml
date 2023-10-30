@@ -82,9 +82,8 @@ jobs:
           --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }}
           --build-arg dbHost=${{ secrets.PROD_DOCKERIZED_DB_HOST }}
           --build-arg dbPort=${{ secrets.PROD_DB_PORT }}
-          -t bodzify-api:latest -t $DOCKER_REPO:${GITHUB_SHA::8} .
       - name: Publish Docker image
-        run: docker push bodzify-api:latest
+        run: docker push 
 
   Redeploy:
     name: Redeploy webhook call
