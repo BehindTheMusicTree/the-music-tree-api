@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [pytest]
     env:
-      REPO: ${{ secrets.DOCKER_REPO }}
+      DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
     steps:
       - uses: actions/checkout@v2
       - name: Login to Docker Hub
@@ -76,15 +76,15 @@ jobs:
         run:
           docker-compose build
           --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
-          --build-arg env=PROD 
+          --build-arg env=TEST 
           --build-arg dbUsername=${{ secrets.PROD_DB_USERNAME }}
           --build-arg dbPassword='${{ secrets.PROD_DB_PASSWORD }}'
           --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }}
           --build-arg dbHost=${{ secrets.PROD_DOCKERIZED_DB_HOST }}
           --build-arg dbPort=${{ secrets.PROD_DB_PORT }}
-          -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
+          -t $DOCKER_REPO:latest -t $DOCKER_REPO:${GITHUB_SHA::8} .
       - name: Publish Docker image
-        run: docker push $REPO:latest
+        run: docker push bodzify-api:latest
 
   Redeploy:
     name: Redeploy webhook call
