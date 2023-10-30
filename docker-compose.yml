@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    image: mignot/bodzify_api:latest
+    image: mignot/bodzify-api:latest
     build: 
       context: .
     command: gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
