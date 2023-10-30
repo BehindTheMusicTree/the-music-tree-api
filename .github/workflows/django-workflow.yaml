@@ -68,6 +68,7 @@ jobs:
     needs: [pytest]
     env:
       DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+      DOCKER_IMAGE_TAG: ${{ secrets.DOCKER_IMAGE_TAG }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Docker Compose
@@ -77,6 +78,8 @@ jobs:
       - name: Build Docker image
         run:
           docker-compose build
+          --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
+          --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
           --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
           --build-arg env=TEST 
           --build-arg dbUsername=${{ secrets.PROD_DB_USERNAME }}
