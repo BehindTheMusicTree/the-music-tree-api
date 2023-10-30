@@ -1,0 +1,5 @@
+export DOCKERHUB_USERNAME="***"
+export DOCKERHUB_PASSWORD="***"
+export DOCKER_REPO="***"
+export DOCKER_IMAGE_TAG="***"
+export SLACK_WEBHOOK_URL="***"
