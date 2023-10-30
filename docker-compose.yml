@@ -10,15 +10,16 @@ services:
       $dbHost
       $dbPort
   web:
-    build: ./app
-    args:
-      - secretKey=$secretKey
-      - env=$env
-      - dbUsername=$dbUsername
-      - dbPassport=$dbPassword
-      - dbDatabase=$dbDatabase
-      - dbHost=$dbHost
-      - dbPort=$dbPort
+    build: 
+      context: ./app
+      args:
+        - secretKey=$secretKey
+        - env=$env
+        - dbUsername=$dbUsername
+        - dbPassport=$dbPassword
+        - dbDatabase=$dbDatabase
+        - dbHost=$dbHost
+        - dbPort=$dbPort
     command: gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
     volumes:
       - ./app/:/usr/src/app/
