@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  args:
+      $secretKey
+      $env
+      $dbUsername
+      $dbPassword
+      $dbDatabase
+      $dbHost
+      $dbPort
+  web:
+    build: ./app
+    args:
+      - secretKey=$secretKey
+      - env=$env
+      - dbUsername=$dbUsername
+      - dbPassport=$dbPassword
+      - dbDatabase=$dbDatabase
+      - dbHost=$dbHost
+      - dbPort=$dbPort
+    command: gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
+    volumes:
+      - ./app/:/usr/src/app/
+      - /var/www/bodzify-api/static/:/var/www/bodzify-api/static/
+      - /etc/ssl/bodzify/:/etc/ssl/bodzify/
+      - /var/log/bodzify-api:/var/log/bodzify-api/
+      - /var/lib/bodzify-api/media/:/var/lib/bodzify-api/media/
+    ports:
+      - 443:443
