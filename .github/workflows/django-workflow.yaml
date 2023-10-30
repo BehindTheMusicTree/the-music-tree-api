@@ -82,7 +82,6 @@ jobs:
           --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }}
           --build-arg dbHost=${{ secrets.PROD_DOCKERIZED_DB_HOST }}
           --build-arg dbPort=${{ secrets.PROD_DB_PORT }}
-          -t $REPO:latest -t $REPO:${GITHUB_SHA::8} .
       - name: Publish Docker image
         run: docker push $REPO:latest
 
