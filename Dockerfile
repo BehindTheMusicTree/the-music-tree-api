@@ -21,10 +21,17 @@ ENV DockerHome=/home/app/webapp
 ENV LogDir=$DockerHome/log
 ENV AccessLogPath=$LogDir/access.log
 
+# Prevents Python from writing pyc files to disc
+ENV PYTHONDONTWRITEBYTECODE 1 
+# Prevents Python from buffering stdout and stderr
+ENV PYTHONUNBUFFERED 1
+
 # Copy source and install dependencies
 RUN mkdir -p $DockerHome
-WORKDIR $DockerHome  
+WORKDIR $DockerHome
+
 COPY . $DockerHome
+
 RUN mkdir -p $LogDir
 RUN touch $AccessLogPath
 
@@ -32,7 +39,7 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
 RUN chown -R www-data:www-data /opt/bodzify-api
 
-RUN python3 manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput
 
 # Start server
 EXPOSE 443
