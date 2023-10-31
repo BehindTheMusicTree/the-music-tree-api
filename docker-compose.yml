@@ -7,9 +7,10 @@ services:
       - DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}
     image: $DOCKER_REPO:$DOCKER_IMAGE_TAG
     container_name: BODZIFY_API
-    build: /home/app/webapp
+    build: .
     command: gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
     volumes:
+      - ./bodzify_api:/var/www/bodzify-api/
       - /var/www/bodzify-api/static/:/var/www/bodzify-api/static/
       - /etc/ssl/bodzify/:/etc/ssl/bodzify/
       - /var/log/bodzify-api:/var/log/bodzify-api/
