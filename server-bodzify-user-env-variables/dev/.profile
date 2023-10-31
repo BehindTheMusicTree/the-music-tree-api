@@ -15,3 +15,5 @@ export DB_PASSWORD='***' # Put DEV django db password
 export DB_HOST=localhost
 export DB_PORT=*** # Put DEV django db port
 export DB_DATABASE=*** # Put DEV django db database name
+export DOCKER_REPO="***"
+export DOCKER_IMAGE_TAG="***"
