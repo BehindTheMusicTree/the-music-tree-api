@@ -71,8 +71,6 @@ jobs:
       DOCKER_IMAGE_TAG: ${{ secrets.DOCKER_IMAGE_TAG }}
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Docker Compose
-        run: docker-compose -f docker-compose-build.yml up -d
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USER }} -p '${{ secrets.DOCKER_PASSWORD }}'
       - name: Build Docker image
