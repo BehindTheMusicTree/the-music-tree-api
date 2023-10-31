@@ -2,9 +2,6 @@ version: '3.8'
 
 services:
   web:
-    environment:
-      - DOCKER_REPO=${DOCKER_REPO}
-      - DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}
     image: $DOCKER_REPO:$DOCKER_IMAGE_TAG
     container_name: BODZIFY_API
     command: gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
