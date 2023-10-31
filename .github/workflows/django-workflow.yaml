@@ -75,7 +75,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USER }} -p '${{ secrets.DOCKER_PASSWORD }}'
       - name: Build Docker image
         run:
-          docker-compose -f dockercompose-build.yml build
+          docker-compose -f docker-compose-build.yml build
           --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
           --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
           --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
