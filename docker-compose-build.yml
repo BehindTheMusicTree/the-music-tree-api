@@ -7,3 +7,4 @@ services:
       - DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}
     image: $DOCKER_REPO:$DOCKER_IMAGE_TAG
     build: .
+    working_dir: /home/app/webapp
