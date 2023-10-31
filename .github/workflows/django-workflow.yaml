@@ -86,7 +86,7 @@ jobs:
           --build-arg dbHost=${{ secrets.PROD_DOCKERIZED_DB_HOST }}
           --build-arg dbPort=${{ secrets.PROD_DB_PORT }}
       - name: Publish Docker image
-        run: docker-compose push
+        run: docker-compose -f docker-compose-build.yml push
 
   Redeploy:
     name: Redeploy webhook call
