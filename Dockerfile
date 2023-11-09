@@ -40,8 +40,3 @@ RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
 RUN chown -R www-data:www-data /opt/bodzify-api
 
 # RUN python manage.py collectstatic --noinput
-
-# Start server
-EXPOSE 443
-STOPSIGNAL SIGTERM
-CMD gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
