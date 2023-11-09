@@ -3,9 +3,9 @@ version: '3.8'
 services:
   web:
     image: $DOCKER_REPO:$DOCKER_IMAGE_TAG
-    working_dir: /home/app/webapp
+    # working_dir: /home/app/webapp
     container_name: BODZIFY_API
-    # command: gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
+    command: gunicorn --certfile=/etc/ssl/bodzify/www_bodzify_com.crt --keyfile=/etc/ssl/bodzify/www.bodzify.com.key --bind 0.0.0.0:443 -k uvicorn.workers.UvicornWorker bodzify_api.asgi:application
     volumes:
       - /var/www/bodzify-api/:/home/app/webapp
       - /var/www/bodzify-api/static/:/var/www/bodzify-api/static/
