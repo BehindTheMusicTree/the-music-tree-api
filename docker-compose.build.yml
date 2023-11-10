@@ -8,10 +8,3 @@ services:
       - DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}
     image: $DOCKER_REPO:$DOCKER_IMAGE_TAG
     build: .
-  nginx:
-    working_dir: /home/app/webapp
-    build: ./nginx
-    ports:
-      - 1337:80
-    depends_on:
-      - web
