@@ -20,6 +20,8 @@ from bodzify_api.view.viewset.criteria.TagViewSet import TagViewSet
 from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
 from bodzify_api.view.viewset.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
 from bodzify_api.view.viewset.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
+from django.conf.urls.static import static
+
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -49,3 +51,7 @@ urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
                    url_name='schema'), name='swagger-ui'),
                path('api/schema/redoc/',
                     SpectacularRedocView.as_view(url_name='schema'), name='redoc')]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
