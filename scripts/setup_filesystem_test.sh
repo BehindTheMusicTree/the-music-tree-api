@@ -48,3 +48,10 @@ sudo chmod 775 $staticDir
 sudo chown -R bodzify $staticDir
 sudo chgrp -R bodzify $staticDir
 
+webappDir=/var/www/bodzify-api/webapp/
+
+sudo mkdir -p $webappDir
+sudo chmod 775 $webappDir
+sudo chown -R bodzify $webappDir
+sudo chgrp -R bodzify $webappDir
+
