@@ -16,6 +16,7 @@ services:
   nginx:
     working_dir: /home/app/webapp/
     image: nginx:latest
+    container_name: NGINX
     ports:
       - 443:443
     depends_on:
