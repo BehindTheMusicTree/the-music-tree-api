@@ -17,6 +17,7 @@ services:
     working_dir: /home/app/webapp/
     image: nginx:latest
     container_name: NGINX
+    restart: unless-stopped
     volumes:
       - /var/www/static/:/var/www/static/
       - ./nginx/conf.d/:/etc/nginx/conf.d/
