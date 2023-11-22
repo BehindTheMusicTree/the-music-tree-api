@@ -17,6 +17,9 @@ services:
     working_dir: /home/app/webapp/
     image: nginx:latest
     container_name: NGINX
+    volumes:
+      - /var/www/static/:/var/www/static/
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
     ports:
       - 443:443
     depends_on:
