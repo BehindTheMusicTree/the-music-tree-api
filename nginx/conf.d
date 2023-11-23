@@ -12,7 +12,7 @@ server {
 
 server {
     listen 443 ssl;
-    bodzify bodzify.com www.bodzify.com;
+    server_name bodzify.com www.bodzify.com;
 
     ssl_certificate /etc/ssl/bodzify/www.bodzify.com.chained.crt;
     ssl_certificate_key /etc/ssl/bodzify/www.bodzify.com.key;
