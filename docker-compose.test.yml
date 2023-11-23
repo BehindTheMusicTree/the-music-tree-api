@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
     volumes:
       - /var/www/static/:/var/www/static/
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 443:443
     depends_on:
