@@ -55,3 +55,10 @@ sudo chmod 775 $webappDir
 sudo chown -R bodzify $webappDir
 sudo chgrp -R bodzify $webappDir
 
+nginxConfDir=/etc/nginx/
+
+sudo mkdir -p $nginxConfDir
+sudo chmod 775 $nginxConfDir
+sudo chown -R bodzify $nginxConfDir
+sudo chgrp -R bodzify $nginxConfDir
+
