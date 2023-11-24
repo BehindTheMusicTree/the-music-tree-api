@@ -26,7 +26,8 @@ ENV DjangoLog=$LogDir/django.log
 ENV BodzifyApiLog=$LogDir/bodzify-api.log
 
 ENV GunicornLogDir=/var/log/gunicorn/
-ENV GunicornLog=$GunicornLogDir/info.log
+ENV GunicornAccessLog=$GunicornLogDir/access.log
+ENV GunicornErrorLog=$GunicornLogDir/error.log
 
 # Prevents Python from writing pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1 
@@ -47,7 +48,8 @@ RUN touch $DjangoLog
 RUN touch $BodzifyApiLog
 
 RUN mkdir -p $GunicornLogDir
-RUN touch $GunicornLog
+RUN touch $GunicornAccessLog
+RUN touch $GunicornErrorLog
 
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache

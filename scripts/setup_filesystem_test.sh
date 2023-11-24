@@ -71,15 +71,11 @@ sudo chgrp -R bodzify $nginxLogErrorFile
 
 gunicornLogDir=/var/log/gunicorn/
 sudo mkdir -p $gunicornLogDir
+sudo touch ${gunicornLogDir}access.log
+sudo touch ${gunicornLogDir}error.log
 sudo chmod 775 $gunicornLogDir
 sudo chown -R bodzify $gunicornLogDir
 sudo chgrp -R bodzify $gunicornLogDir
-
-gunicornLogFile=${gunicornLogDir}info.log
-sudo touch $gunicornLogFile
-sudo chmod 775 $gunicornLogFile
-sudo chown -R bodzify $gunicornLogFile
-sudo chgrp -R bodzify $gunicornLogFile
 
 webhookLogDir=/var/log/webhook/
 sudo mkdir -p $webhookLogDir
