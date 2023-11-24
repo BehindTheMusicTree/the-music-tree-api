@@ -47,3 +47,7 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
 RUN chown -R www-data:www-data /opt/bodzify-api
 # RUN python manage.py collectstatic --noinput
+
+EXPOSE 8000
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
