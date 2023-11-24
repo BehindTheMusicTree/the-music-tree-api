@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1
 FROM python:3.11-buster 
 
+USER bodzify
+
 ARG secretKey
 ARG env
 ARG dbUsername
@@ -18,8 +20,12 @@ ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
-ENV LogDir=$DockerHome/log
+ENV LogDir=/var/log/bodzify-api/
 ENV AccessLogPath=$LogDir/access.log
+ENV GeneralLogPath=$LogDir/general.log
+ENV InfoLogPath=$LogDir/info.log
+ENV DjangoLogPath=$LogDir/django.log
+ENV BodzifyApiLogPath=$LogDir/bodzify-api.log
 
 # Prevents Python from writing pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1 
@@ -34,6 +40,10 @@ COPY . $DockerHome
 
 RUN mkdir -p $LogDir
 RUN touch $AccessLogPath
+RUN touch $GeneralLogPath
+RUN touch $InfoLogPath
+RUN touch $DjangoLogPath
+RUN touch $BodzifyApiLogPath
 
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
