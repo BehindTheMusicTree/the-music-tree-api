@@ -19,11 +19,14 @@ ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
 ENV LogDir=/var/log/bodzify-api/
-ENV AccessLogPath=$LogDir/access.log
-ENV GeneralLogPath=$LogDir/general.log
-ENV InfoLogPath=$LogDir/info.log
-ENV DjangoLogPath=$LogDir/django.log
-ENV BodzifyApiLogPath=$LogDir/bodzify-api.log
+ENV AccessLog=$LogDir/access.log
+ENV GeneralLog=$LogDir/general.log
+ENV InfoLog=$LogDir/info.log
+ENV DjangoLog=$LogDir/django.log
+ENV BodzifyApiLog=$LogDir/bodzify-api.log
+
+ENV GunicornLogDir=/var/log/gunicorn/
+ENV GunicornLog=$GunicornLogDir/info.log
 
 # Prevents Python from writing pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1 
@@ -37,17 +40,16 @@ WORKDIR $DockerHome
 COPY . $DockerHome
 
 RUN mkdir -p $LogDir
-RUN touch $AccessLogPath
-RUN touch $GeneralLogPath
-RUN touch $InfoLogPath
-RUN touch $DjangoLogPath
-RUN touch $BodzifyApiLogPath
+RUN touch $AccessLog
+RUN touch $GeneralLog
+RUN touch $InfoLog
+RUN touch $DjangoLog
+RUN touch $BodzifyApiLog
+
+RUN mkdir -p $GunicornLogDir
+RUN touch $GunicornLog
 
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
 RUN chown -R www-data:www-data /opt/bodzify-api
 # RUN python manage.py collectstatic --noinput
-
-EXPOSE 8000
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
