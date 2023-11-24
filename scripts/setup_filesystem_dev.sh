@@ -10,6 +10,9 @@ sudo mkdir -p $logDir
 sudo touch ${logDir}access.log
 sudo touch ${logDir}general.log
 sudo touch ${logDir}info.log
+sudo touch ${logDir}django.log
+sudo touch ${logDir}bodzify-api.log
+sudo chown -R $USER $logDir
 sudo chmod -R 775 $logDir
 
 staticDir=/var/www/bodzify-api/static/

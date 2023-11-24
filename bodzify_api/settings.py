@@ -178,6 +178,22 @@ LOGGING = {
             'backupCount': 10,
             'formatter': 'standard'
         },
+        'django': {
+            'level': 'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': LOG_PATH + 'django.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
+        'bodzify-api': {
+            'level': 'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': LOG_PATH + 'bodzify-api.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -191,22 +207,32 @@ LOGGING = {
             'propagate': True
         },
         'info': {
-            'handlers': ['info'],
+            'handlers': ['info', 'console'],
             'level': 'DEBUG',
             'propagate': True
         },
         'gunicorn.access' : { 
-                'handlers': ['access'], 
+                'handlers': ['access', 'console'], 
+                'level': 'DEBUG', 
+                'propagate': True
+        },
+        'access' : { 
+                'handlers': ['access', 'console'], 
+                'level': 'DEBUG', 
+                'propagate': True
+        },
+        'django' : { 
+                'handlers': ['django', 'console'], 
+                'level': 'DEBUG', 
+                'propagate': True
+        },
+        'bodzify_api' : { 
+                'handlers': ['bodzify-api', 'console'], 
                 'level': 'DEBUG', 
                 'propagate': True
         }
     },
 }
-
-if DEBUG:
-    # make all loggers use the console.
-    for logger in LOGGING['loggers']:
-        LOGGING['loggers'][logger]['handlers'] = ['console']
 
 API_ROOT_BASE = 'api/v1/'
 APP_NAME = "bodzify_api"
