@@ -4,9 +4,10 @@ services:
   web:
     working_dir: /home/app/webapp/
     image: mignot/bodzify-api:latest
+    user: "1000:1000"
     container_name: BODZIFY_API
     restart: always
-    command: gunicorn bodzify_api.wsgi:application --config ./gunicorn/gunicorn.conf.py
+    command: gunicorn bodzify_api.wsgi:application -w 4 --bind 0.0.0.0:8000 --error-logfile=/var/log/gunicorn/error.log --log-level=info --access-logfile=/var/log/gunicorn/access.log
     volumes:
       - /var/log/bodzify-api/:/var/log/bodzify-api/
       - /var/log/gunicorn/:/var/log/gunicorn/
@@ -16,6 +17,7 @@ services:
   nginx:
     working_dir: /home/app/webapp/
     image: nginx:latest
+    user: "1000:1000"
     container_name: NGINX
     restart: always
     volumes:

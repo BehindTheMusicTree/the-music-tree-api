@@ -74,8 +74,7 @@ sudo mkdir -p $gunicornLogDir
 sudo touch ${gunicornLogDir}access.log
 sudo touch ${gunicornLogDir}error.log
 sudo chmod 775 $gunicornLogDir
-sudo chown -R bodzify $gunicornLogDir
-sudo chgrp -R bodzify $gunicornLogDir
+sudo chown -R bodzify:bodzify $gunicornLogDir
 
 webhookLogDir=/var/log/webhook/
 sudo mkdir -p $webhookLogDir
