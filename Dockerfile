@@ -35,7 +35,6 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN useradd -ms /bin/bash bodzify
-USER bodzify
 
 # Copy source and install dependencies
 RUN mkdir -p $DockerHome
