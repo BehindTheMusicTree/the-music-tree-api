@@ -7,21 +7,20 @@ services:
     user: "1000:1000"
     container_name: BODZIFY_API
     restart: always
-    command: gunicorn bodzify_api.wsgi:application -w 4 --bind 0.0.0.0:8000 --error-logfile=/var/log/gunicorn/error.log --log-level=info --access-logfile=/var/log/gunicorn/access.log
+    command: gunicorn wsgi:application -w 4 --bind 0.0.0.0:8000 --error-logfile=/var/log/bodzify-api/gunicorn/error.log --log-level=info --access-logfile=/var/log/bodzify-api/gunicorn/access.log
     volumes:
-      - /var/log/bodzify-api/:/var/log/bodzify-api/
-      - /var/log/gunicorn/:/var/log/gunicorn/
+      - /var/log/bodzify-api/webapp/:/var/log/bodzify-api/
+      - /var/log/bodzify-api/gunicorn/:/var/log/gunicorn/
       - /var/lib/bodzify-api/media/:/var/lib/bodzify-api/media/
     ports:
       - "8000:8000"
   nginx:
-    working_dir: /home/app/webapp/
-    image: nginx:latest
+    working_dir: /home/app/nginx/
     user: "1000:1000"
     container_name: NGINX
     restart: always
     volumes:
-      - /var/log/nginx/:/var/log/nginx/
+      - /var/log/bodzify-api/nginx/:/var/log/nginx/
       - /var/www/static/:/var/www/static/
       - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf
       - /etc/ssl/bodzify/:/etc/ssl/bodzify/

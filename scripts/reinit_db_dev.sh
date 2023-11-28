@@ -1,3 +1,5 @@
+#!/bin/bash
+
 projectDir=~/Git/bodzify-api
 managePath=~/Git/bodzify-api/manage.py
 dropdb -e bodzify_api -f

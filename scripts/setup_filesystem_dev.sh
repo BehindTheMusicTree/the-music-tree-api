@@ -1,3 +1,5 @@
+#!/bin/bash
+
 mediaDir=/var/lib/bodzify-api/media/
 
 sudo mkdir -p $mediaDir
