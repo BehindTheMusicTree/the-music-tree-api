@@ -34,7 +34,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-RUN useradd -ms /bin/bash bodzify
+RUN useradd -ms /bin/bash --uid 1000 bodzify
 
 # Copy source and install dependencies
 RUN mkdir -p $DockerHome

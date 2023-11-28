@@ -16,6 +16,7 @@ services:
       - "8000:8000"
   nginx:
     working_dir: /home/app/nginx/
+    image: mignot/nginx:latest
     user: "1000:1000"
     container_name: NGINX
     restart: always
