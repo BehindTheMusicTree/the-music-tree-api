@@ -42,7 +42,7 @@ jobs:
            python-version: 3.11
       - name: Install requirements
         run: |
-            pip install -r requirements.txt
+            pip install -r bodzify_api/requirements.txt
       - name: Set up filesystem
         run: |
             bash scripts/setup_filesystem_workflow.sh
