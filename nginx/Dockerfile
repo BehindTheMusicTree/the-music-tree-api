@@ -10,4 +10,4 @@ RUN mkdir -p $LogDir
 RUN touch $LogDir/AccessLog
 RUN touch $LogDir/ErrorLog
 RUN chown -R bodzify:bodzify $LogDir
-RUN chmod -R bodzify:bodzify $LogDir
+RUN chmod -R 775 $LogDir
