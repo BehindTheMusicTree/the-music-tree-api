@@ -5,11 +5,11 @@ services:
     working_dir: /home/app/webapp/
     image: mignot/bodzify-api:latest
     container_name: BODZIFY_API
+    user: bodzify
     restart: always
-    command: gunicorn wsgi:application -w 4 --bind 0.0.0.0:8000 --error-logfile=/var/log/bodzify-api/gunicorn/error.log --log-level=info --access-logfile=/var/log/bodzify-api/gunicorn/access.log
+    command: gunicorn wsgi:application -w 4 --bind 0.0.0.0:8000 --error-logfile=/var/log/gunicorn/error.log --log-level=info --access-logfile=/var/log/gunicorn/access.log
     volumes:
-      - /var/log/bodzify-api/webapp/:/var/log/bodzify-api/
-      - /var/log/bodzify-api/gunicorn/:/var/log/gunicorn/
+      - /var/log/bodzify-api/:/var/log/
       - /var/lib/bodzify-api/media/:/var/lib/bodzify-api/media/
     ports:
       - "8000:8000"
@@ -18,7 +18,6 @@ services:
     container_name: NGINX
     restart: always
     volumes:
-      - /var/log/bodzify-api/nginx/:/var/log/nginx/
       - /var/www/static/:/var/www/static/
       - /etc/ssl/bodzify/:/etc/ssl/bodzify/
       - /etc/nginx/conf.d/:/etc/nginx/conf.d/

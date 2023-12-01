@@ -18,16 +18,18 @@ ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
-ENV LogDir=/var/log/bodzify-api/
-ENV AccessLog=$LogDir/access.log
-ENV GeneralLog=$LogDir/general.log
-ENV InfoLog=$LogDir/info.log
-ENV DjangoLog=$LogDir/django.log
-ENV BodzifyApiLog=$LogDir/bodzify-api.log
+ENV LogDir=/var/log/
 
-ENV GunicornLogDir=/var/log/gunicorn/
-ENV GunicornAccessLog=$GunicornLogDir/access.log
-ENV GunicornErrorLog=$GunicornLogDir/error.log
+ENV DjangoLogDir=${LogDir}django/
+ENV AccessLog=${DjangoLogDir}access.log
+ENV GeneralLog=${DjangoLogDir}general.log
+ENV InfoLog=${DjangoLogDir}info.log
+ENV DjangoLog=${DjangoLogDir}django.log
+ENV BodzifyApiLog=${DjangoLogDir}bodzify-api.log
+
+ENV GunicornLogDir=${LogDir}gunicorn/
+ENV GunicornAccessLog=${GunicornLogDir}access.log
+ENV GunicornErrorLog=${GunicornLogDir}error.log
 
 # Prevents Python from writing pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1 
@@ -42,17 +44,21 @@ WORKDIR $DockerHome
 
 COPY . $DockerHome
 
-RUN mkdir -p $LogDir
+RUN mkdir $LogDir
+
+RUN mkdir $DjangoLogDir
 RUN touch $AccessLog
 RUN touch $GeneralLog
 RUN touch $InfoLog
 RUN touch $DjangoLog
 RUN touch $BodzifyApiLog
 
-RUN mkdir -p $GunicornLogDir
+RUN mkdir $GunicornLogDir
 RUN touch $GunicornAccessLog
 RUN touch $GunicornErrorLog
-RUN chown -R bodzify:bodzify $GunicornLogDir
+
+RUN chown -R bodzify:bodzify $LogDir
+RUN chmod -R 755 $LogDir
 
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
