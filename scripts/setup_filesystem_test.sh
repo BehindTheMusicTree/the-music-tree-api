@@ -29,11 +29,10 @@ sudo touch ${gunicornLogDir}error.log
 
 webhookLogDir=${bodzifyApiLogDir}webhook/
 sudo mkdir $webhookLogDir
-sudo touch ${webhookLogDir}general.log
 sudo touch ${webhookLogDir}redeploy.log
 
 sudo chown -R bodzify:bodzify $bodzifyApiLogDir
-sudo chmod -R 775 $webappLogDir
+sudo chmod -R 775 $bodzifyApiLogDir
 
 webhookDir=/var/webhooks/
 sudo mkdir $webhookDir
