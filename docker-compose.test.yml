@@ -14,13 +14,14 @@ services:
     ports:
       - "8000:8000"
   nginx:
-    image: mignot/nginx:latest
+    image: nginx:latest
     container_name: NGINX
     restart: always
     volumes:
       - /var/log/bodzify-api/nginx/:/var/log/nginx/
       - /var/www/static/:/var/www/static/
       - /etc/ssl/bodzify/:/etc/ssl/bodzify/
+      - /etc/nginx/conf.d/:/etc/nginx/conf.d/
     ports:
       - "80:80"
       - "443:443"
