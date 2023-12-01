@@ -44,7 +44,7 @@ WORKDIR $DockerHome
 
 COPY . $DockerHome
 
-RUN mkdir $LogDir
+RUN mkdir -p $LogDir
 
 RUN mkdir $DjangoLogDir
 RUN touch $AccessLog
