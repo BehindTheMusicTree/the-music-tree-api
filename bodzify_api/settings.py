@@ -144,7 +144,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-LOG_PATH = "/var/log/bodzify-api/"
+LOG_PATH = "/var/log/django/"
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
