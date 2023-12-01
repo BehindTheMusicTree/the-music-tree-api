@@ -9,13 +9,13 @@ sudo chmod 775 $mediaDir
 bodzifyApiLogDir=/var/log/bodzify-api/
 sudo mkdir $bodzifyApiLogDir
 
-webappLogDir=${bodzifyApiLogDir}webapp/
-sudo mkdir $webappLogDir
-sudo touch ${webappLogDir}access.log
-sudo touch ${webappLogDir}general.log
-sudo touch ${webappLogDir}info.log
-sudo touch ${webappLogDir}django.log
-sudo touch ${webappLogDir}bodzify-api.log
+djangoLogDir=${bodzifyApiLogDir}django/
+sudo mkdir $djangoLogDir
+sudo touch ${djangoLogDir}access.log
+sudo touch ${djangoLogDir}general.log
+sudo touch ${djangoLogDir}info.log
+sudo touch ${djangoLogDir}django.log
+sudo touch ${djangoLogDir}bodzify-api.log
 
 nginxLogDir=${bodzifyApiLogDir}nginx/
 sudo mkdir $nginxLogDir

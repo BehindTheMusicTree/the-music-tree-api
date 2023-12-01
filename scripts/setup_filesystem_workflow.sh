@@ -6,7 +6,7 @@ sudo mkdir -p $mediaDir
 sudo chown $USER $mediaDir
 sudo chmod 775 $mediaDir
 
-logDir=/var/log/django/
+logDir=/var/log/bodzify-api/django/
 
 sudo mkdir -p $logDir
 sudo chown $USER $logDir
