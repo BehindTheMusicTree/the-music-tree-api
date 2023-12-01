@@ -20,12 +20,12 @@ ENV DB_PORT=$dbPort
 ENV DockerHome=/home/app/webapp
 ENV LogDir=/var/log/
 
-ENV DjangoLogDir=${LogDir}django/
-ENV AccessLog=${DjangoLogDir}access.log
-ENV GeneralLog=${DjangoLogDir}general.log
-ENV InfoLog=${DjangoLogDir}info.log
-ENV DjangoLog=${DjangoLogDir}django.log
-ENV BodzifyApiLog=${DjangoLogDir}bodzify-api.log
+ENV WebappLogDir=${LogDir}webapp/
+ENV AccessLog=${WebappLogDir}access.log
+ENV GeneralLog=${WebappLogDir}general.log
+ENV InfoLog=${WebappLogDir}info.log
+ENV DjangoLog=${WebappLogDir}django.log
+ENV BodzifyApiLog=${WebappLogDir}bodzify-api.log
 
 ENV GunicornLogDir=${LogDir}gunicorn/
 ENV GunicornAccessLog=${GunicornLogDir}access.log
@@ -44,7 +44,7 @@ COPY . $DockerHome
 
 RUN mkdir -p $LogDir
 
-RUN mkdir $DjangoLogDir
+RUN mkdir $WebappLogDir
 RUN touch $AccessLog
 RUN touch $GeneralLog
 RUN touch $InfoLog

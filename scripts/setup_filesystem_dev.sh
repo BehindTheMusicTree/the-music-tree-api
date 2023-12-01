@@ -7,15 +7,18 @@ sudo chmod 775 $mediaDir
 sudo chown -R $USER $mediaDir
 
 logDir=/var/log/bodzify-api/
+sudo mkdir $logDir
 
-sudo mkdir -p $logDir
-sudo touch ${logDir}access.log
-sudo touch ${logDir}general.log
-sudo touch ${logDir}info.log
-sudo touch ${logDir}django.log
-sudo touch ${logDir}bodzify-api.log
-sudo chown -R $USER $logDir
-sudo chmod -R 775 $logDir
+djangoLogDir=${logDir}django/
+sudo mkdir $djangoLogDir
+sudo touch ${djangoLogDir}access.log
+sudo touch ${djangoLogDir}general.log
+sudo touch ${djangoLogDir}info.log
+sudo touch ${djangoLogDir}django.log
+sudo touch ${djangoLogDir}bodzify-api.log
+
+sudo chmod -R 775 $djangoLogDir
+sudo chown -R $USER $djangoLogDir
 
 staticDir=/var/www/bodzify-api/static/
 
