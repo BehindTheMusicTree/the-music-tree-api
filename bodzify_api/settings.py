@@ -266,12 +266,6 @@ PLAYLIST_NAME_MAX_CHAR = 50
 
 PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
-ALLOWED_HOSTS = [
-    'bodzify.com',
-    'www.bodzify.com',
-    '85.31.236.153'
-]
-
 if os.getenv('ENV') == 'DEV':
     from bodzify_api.settings_dev import *
 elif os.getenv('ENV') == 'TEST':
