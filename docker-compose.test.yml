@@ -20,7 +20,7 @@ services:
     volumes:
       - /var/www/static/:/var/www/static/
       - /etc/ssl/bodzify/:/etc/ssl/bodzify/
-      - /etc/nginx/conf.d/:/etc/nginx/conf.d/
+      - /etc/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
     ports:
       - "80:80"
       - "443:443"

@@ -12,6 +12,8 @@ import os
 import pathlib
 import datetime
 
+SECURE_SSL_REDIRECT = False
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
