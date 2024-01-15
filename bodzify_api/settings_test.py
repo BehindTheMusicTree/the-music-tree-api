@@ -6,4 +6,5 @@ CSRF_COOKIE_SECURE = True
 ALLOWED_HOSTS = [
     'bodzify.com',
     'www.bodzify.com',
+    'https://bodzify.com'
 ]
