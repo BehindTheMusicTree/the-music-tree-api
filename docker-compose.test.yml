@@ -11,8 +11,10 @@ services:
     volumes:
       # - /var/log/bodzify-api/:/var/log/
       - /var/lib/bodzify-api/media/:/var/lib/bodzify-api/media/
+      - /var/www/static/:/home/app/webapp/staticfiles/
     expose:
       - 8000
+
   nginx:
     image: nginx:latest
     container_name: NGINX
