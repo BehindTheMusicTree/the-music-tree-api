@@ -11,7 +11,7 @@ services:
     volumes:
       # - /var/log/bodzify-api/:/var/log/
       - /var/lib/bodzify-api/media/:/var/lib/bodzify-api/media/
-      - /var/www/static/:/home/app/webapp/staticfiles/
+      - bodzify-staticfiles:/home/app/webapp/staticfiles/
     expose:
       - 8000
 
@@ -20,7 +20,7 @@ services:
     container_name: NGINX
     restart: always
     volumes:
-      - /var/www/static/:/var/www/static/
+      - bodzify-staticfiles:/var/www/static/
       - /etc/ssl/bodzify/:/etc/ssl/bodzify/
       - /etc/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
     ports:
@@ -28,3 +28,6 @@ services:
       - "443:443"
     depends_on:
       - web
+
+volumes:
+  bodzify-staticfiles:
