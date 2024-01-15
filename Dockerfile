@@ -60,4 +60,4 @@ RUN chmod -R 755 $BodzifyApiLogDir
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
 RUN chown -R www-data:www-data /opt/bodzify-api
-# RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput
