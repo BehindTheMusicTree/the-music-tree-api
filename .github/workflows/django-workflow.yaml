@@ -67,10 +67,9 @@ jobs:
     runs-on: ubuntu-latest
     # needs: [pytest]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Collect static files
-        run: bash manage.py collectstatic --noinput;
+        run: python manage.py collectstatic --noinput;
 
   Docker-webapp:
     name: Publish Docker Hub - Webapp
