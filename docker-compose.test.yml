@@ -6,10 +6,9 @@ services:
     image: mignot/bodzify-api:latest
     container_name: BODZIFY_API
     restart: always
-    command: gunicorn bodzify_api.wsgi:application --bind 0.0.0.0:8000 
-    # --error-logfile=/var/log/gunicorn/error.log --log-level=info --access-logfile=/var/log/gunicorn/access.log
+    command: gunicorn bodzify_api.wsgi:application --bind 0.0.0.0:8000 --error-logfile=/var/log/gunicorn/error.log --log-level=info --access-logfile=/var/log/gunicorn/access.log
     volumes:
-      # - /var/log/bodzify-api/:/var/log/
+      - /var/log/bodzify-api/django/:/var/log/bodzify-api/django/
       - /var/lib/bodzify-api/media/:/var/lib/bodzify-api/media/
       - bodzify-staticfiles:/home/app/webapp/staticfiles/
     expose:

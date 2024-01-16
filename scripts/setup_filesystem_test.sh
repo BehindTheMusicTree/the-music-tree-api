@@ -24,8 +24,7 @@ sudo touch ${nginxLogDir}error.log
 
 gunicornLogDir=${bodzifyApiLogDir}gunicorn/
 sudo mkdir $gunicornLogDir
-sudo touch ${gunicornLogDir}access.log
-sudo touch ${gunicornLogDir}error.log
+sudo touch ${gunicornLogDir}general.log
 
 webhookLogDir=${bodzifyApiLogDir}webhook/
 sudo mkdir $webhookLogDir
