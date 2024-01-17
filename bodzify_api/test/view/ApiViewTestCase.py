@@ -101,3 +101,6 @@ class ApiViewTestCase(ViewTestCase):
 
     def getPlaylist(self, playlistUuid):
         return self.apiClient.get(path=reverse('playlist-detail', kwargs={'pk': playlistUuid}))
+
+    def get_albums(self):
+        return self.apiClient.get(path=reverse('album-list'))
