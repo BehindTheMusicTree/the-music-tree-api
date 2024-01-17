@@ -18,16 +18,16 @@ ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
-ENV BodzifyApiLogDir=/var/log/bodzify-api/
+ENV LogDir=/var/log/
 
-ENV DjangoLogDir=${BodzifyApiLogDir}django/
+ENV DjangoLogDir=${LogDir}django/
 ENV DjangoAccessLog=${DjangoLogDir}access.log
 ENV DjangoGeneralLog=${DjangoLogDir}general.log
 ENV DjangoInfoLog=${DjangoLogDir}info.log
 ENV DjangoDjangoLog=${DjangoLogDir}django.log
 ENV DjangoBodzifyApiLog=${DjangoLogDir}bodzify-api.log
 
-ENV GunicornLogDir=${BodzifyApiLogDir}gunicorn/
+ENV GunicornLogDir=${LogDir}gunicorn/
 ENV GunicornAccessLog=${GunicornLogDir}access.log
 ENV GunicornErrorLog=${GunicornLogDir}error.log
 
@@ -42,7 +42,7 @@ WORKDIR $DockerHome
 
 COPY . $DockerHome
 
-RUN mkdir -p $BodzifyApiLogDir
+RUN mkdir -p $LogDir
 
 RUN mkdir $DjangoLogDir
 RUN touch $DjangoAccessLog
@@ -55,7 +55,7 @@ RUN mkdir $GunicornLogDir
 RUN touch $GunicornAccessLog
 RUN touch $GunicornErrorLog
 
-RUN chmod -R 755 $BodzifyApiLogDir
+RUN chmod -R 755 $LogDir
 
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache

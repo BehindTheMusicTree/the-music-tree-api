@@ -6,7 +6,7 @@ sudo chown bodzify $mediaDir
 sudo chgrp bodzify $mediaDir
 sudo chmod 775 $mediaDir
 
-bodzifyApiLogDir=/var/log/bodzify-api/
+bodzifyApiLogDir=/var/log/
 sudo mkdir $bodzifyApiLogDir
 
 djangoLogDir=${bodzifyApiLogDir}django/
@@ -24,7 +24,8 @@ sudo touch ${nginxLogDir}error.log
 
 gunicornLogDir=${bodzifyApiLogDir}gunicorn/
 sudo mkdir $gunicornLogDir
-sudo touch ${gunicornLogDir}general.log
+sudo touch ${nginxLogDir}access.log
+sudo touch ${nginxLogDir}error.log
 
 webhookLogDir=${bodzifyApiLogDir}webhook/
 sudo mkdir $webhookLogDir
