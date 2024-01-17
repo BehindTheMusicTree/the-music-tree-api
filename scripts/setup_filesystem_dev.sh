@@ -11,6 +11,7 @@ sudo mkdir $logDir
 
 djangoLogDir=${logDir}django/
 sudo mkdir $djangoLogDir
+
 sudo touch ${djangoLogDir}access.log
 sudo touch ${djangoLogDir}general.log
 sudo touch ${djangoLogDir}info.log
