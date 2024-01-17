@@ -3,13 +3,8 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_NAME
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase, RESPONSE_KEYS
 
 class TestCase(ApiViewTestCase):
 
@@ -17,11 +12,22 @@ class TestCase(ApiViewTestCase):
         sum41Artist = G(Artist,
                         name="Sum 41",
                         user=self.testUser)
+        allkillernofillerAlbum = G(Album, 
+                        user=self.testUser,
+                        name="All Killer No Filler",
+                        year=2001,
+                        albumArtists=[sum41Artist],)
         chuckAlbum = G(Album, 
                         user=self.testUser,
                         name="Chuck",
-                        year=2001,
+                        year=2004,
                         albumArtists=[sum41Artist],)
+        intoodeepTrack = G(LibraryTrack,
+                    user=self.testUser,
+                    title="In Too Deep",
+                    artist=sum41Artist,
+                    album=chuckAlbum,
+                    duration=128)
         werealltoblameTrack = G(LibraryTrack,
                     user=self.testUser,
                     title="We're All To Blame",
@@ -37,3 +43,5 @@ class TestCase(ApiViewTestCase):
 
         response = self.get_albums()
         assert response.status_code == status.HTTP_200_OK
+        albumsJsonList = response.json()[RESPONSE_KEYS.RESULTS]
+        assert len(albumsJsonList) == 2

@@ -9,6 +9,11 @@ from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATT
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
+class RESPONSE_KEYS:
+    COUNT = 'count'
+    NEXT = 'next'
+    PREVIOUS = 'previous'
+    RESULTS = 'results'
 
 class ApiViewTestCase(ViewTestCase):
 
