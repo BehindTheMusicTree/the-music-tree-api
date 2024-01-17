@@ -9,21 +9,8 @@ sudo chmod 775 $mediaDir
 bodzifyApiLogDir=/var/log/
 sudo mkdir $bodzifyApiLogDir
 
-djangoLogDir=${bodzifyApiLogDir}django/
-sudo mkdir $djangoLogDir
-sudo touch ${djangoLogDir}access.log
-sudo touch ${djangoLogDir}general.log
-sudo touch ${djangoLogDir}info.log
-sudo touch ${djangoLogDir}django.log
-sudo touch ${djangoLogDir}bodzify-api.log
-
 nginxLogDir=${bodzifyApiLogDir}nginx/
 sudo mkdir $nginxLogDir
-sudo touch ${nginxLogDir}access.log
-sudo touch ${nginxLogDir}error.log
-
-gunicornLogDir=${bodzifyApiLogDir}gunicorn/
-sudo mkdir $gunicornLogDir
 sudo touch ${nginxLogDir}access.log
 sudo touch ${nginxLogDir}error.log
 

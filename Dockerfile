@@ -36,7 +36,6 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-# Copy source and install dependencies
 RUN mkdir -p $DockerHome
 WORKDIR $DockerHome
 
@@ -56,6 +55,7 @@ RUN touch $GunicornAccessLog
 RUN touch $GunicornErrorLog
 
 RUN chmod -R 755 $LogDir
+RUN chown -R 100000:100000 $LogDir
 
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
