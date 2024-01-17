@@ -4,10 +4,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import bodzify_api.settings as settings
 
-
 class SPECIAL_NAMES:
     ALL = "All"
-
 
 class ATTRIBUTES_LABEL:
     UUID = "uuid"
@@ -16,7 +14,6 @@ class ATTRIBUTES_LABEL:
     TYPE = "type"
     PARENT = "parent"
     ADDED_ON = "addedOn"
-
 
 class Criteria(models.Model):
     uuid = models.CharField(

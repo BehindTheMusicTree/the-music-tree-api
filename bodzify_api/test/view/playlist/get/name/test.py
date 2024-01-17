@@ -4,9 +4,7 @@ from ddf import G
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
-from bodzify_api.model.playlist.Playlist import Playlist, \
-    ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_NAME
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_NAME
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 

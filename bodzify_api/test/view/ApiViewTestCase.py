@@ -9,6 +9,11 @@ from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATT
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
+class RESPONSE_KEYS:
+    COUNT = 'count'
+    NEXT = 'next'
+    PREVIOUS = 'previous'
+    RESULTS = 'results'
 
 class ApiViewTestCase(ViewTestCase):
 
@@ -101,3 +106,6 @@ class ApiViewTestCase(ViewTestCase):
 
     def getPlaylist(self, playlistUuid):
         return self.apiClient.get(path=reverse('playlist-detail', kwargs={'pk': playlistUuid}))
+
+    def get_albums(self):
+        return self.apiClient.get(path=reverse('album-list'))
