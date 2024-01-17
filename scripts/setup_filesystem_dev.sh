@@ -6,7 +6,7 @@ sudo mkdir -p $mediaDir
 sudo chmod 775 $mediaDir
 sudo chown -R $USER $mediaDir
 
-logDir=/var/log/bodzify-api/
+logDir=/var/log/
 sudo mkdir $logDir
 
 djangoLogDir=${logDir}django/
