@@ -6,20 +6,20 @@ sudo chown bodzify $mediaDir
 sudo chgrp bodzify $mediaDir
 sudo chmod 775 $mediaDir
 
-bodzifyApiLogDir=/var/log/
+logDir=/var/log/
 sudo mkdir $bodzifyApiLogDir
 
-nginxLogDir=${bodzifyApiLogDir}nginx/
+nginxLogDir=${logDir}nginx/
 sudo mkdir $nginxLogDir
 sudo touch ${nginxLogDir}access.log
 sudo touch ${nginxLogDir}error.log
 
-webhookLogDir=${bodzifyApiLogDir}webhook/
+webhookLogDir=${logDir}webhook/
 sudo mkdir $webhookLogDir
 sudo touch ${webhookLogDir}redeploy.log
 
-sudo chown -R bodzify:bodzify $bodzifyApiLogDir
-sudo chmod -R 775 $bodzifyApiLogDir
+sudo chown -R bodzify:bodzify $logDir
+sudo chmod -R 775 $logDir
 
 webhookDir=/var/webhooks/
 sudo mkdir $webhookDir

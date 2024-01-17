@@ -28,7 +28,6 @@ ENV DjangoDjangoLog=${DjangoLogDir}django.log
 ENV DjangoBodzifyApiLog=${DjangoLogDir}bodzify-api.log
 
 ENV GunicornLogDir=${LogDir}gunicorn/
-ENV GunicornAccessLog=${GunicornLogDir}access.log
 ENV GunicornErrorLog=${GunicornLogDir}error.log
 
 # Prevents Python from writing pyc files to disc
@@ -51,7 +50,6 @@ RUN touch $DjangoDjangoLog
 RUN touch $DjangoBodzifyApiLog
 
 RUN mkdir $GunicornLogDir
-RUN touch $GunicornAccessLog
 RUN touch $GunicornErrorLog
 
 RUN chmod -R 755 $LogDir
