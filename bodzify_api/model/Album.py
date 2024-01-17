@@ -5,16 +5,16 @@ from django.contrib.auth.models import User
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 import bodzify_api.settings as settings
 
+class ATTRIBUTES_LABEL:
+    UUID = 'uuid'
+    NAME = 'name'
+    YEAR = 'year'
+    ALBUM_ARTISTS = 'albumArtists'
+    LIBRARY_TRACKS = 'libraryTracks'
+    TRACK_COUNT = 'trackCount'
+    DURATION = 'duration'
 
 class Album(models.Model):
-
-    ATTRIBUTE_UUID_LABEL = 'uuid'
-    ATTRIBUTE_NAME_LABEL = 'name'
-    ATTRIBUTE_YEAR_LABEL = 'year'
-    ATTRIBUTE_ALBUM_ARTISTS_LABEL = 'albumArtists'
-    ATTRIBUTE_LIBRARY_TRACKS_LABEL = 'libraryTracks'
-    ATTRIBUTE_TRACK_COUNT_LABEL = 'trackCount'
-    ATTRIBUTE_DURATION_LABEL = 'duration'
 
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(

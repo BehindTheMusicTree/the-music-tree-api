@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from rest_framework import serializers
-from bodzify_api.model.Album import Album
+from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 
 
 class AlbumWithOnlyNameSerializer(serializers.ModelSerializer):
@@ -8,6 +8,6 @@ class AlbumWithOnlyNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = [
-            Album.ATTRIBUTE_UUID_LABEL , 
-            Album.ATTRIBUTE_NAME_LABEL
+            ALBUM_ATTRIBUTES_LABEL.UUID, 
+            ALBUM_ATTRIBUTES_LABEL.NAME
         ]

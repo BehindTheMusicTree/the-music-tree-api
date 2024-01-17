@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from django.db.models import Sum
 from rest_framework import serializers
-from bodzify_api.model.Album import Album
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIBRARY_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.output.TrackWithoutAlbumAndPlaylistSerializer import (
         TrackWithoutAlbumAndPlaylistSerializer)
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
@@ -17,17 +17,17 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
 
     def get_duration(self, obj) -> float:
         value = LibraryTrack.objects.filter(album=obj).aggregate(
-                duration=Sum(Album.ATTRIBUTE_DURATION_LABEL))
-        return value[LibraryTrack.ATTRIBUTE_DURATION_LABEL]
+                duration=Sum(ALBUM_ATTRIBUTES_LABEL.DURATION))
+        return value[LIBRARY_TRACK_ATTRIBUTES_LABEL.DURATION]
 
     class Meta:
         model = Album
         fields = [
-            Album.ATTRIBUTE_UUID_LABEL,
-            Album.ATTRIBUTE_NAME_LABEL,
-            Album.ATTRIBUTE_YEAR_LABEL,
-            Album.ATTRIBUTE_ALBUM_ARTISTS_LABEL,
-            Album.ATTRIBUTE_LIBRARY_TRACKS_LABEL,
-            Album.ATTRIBUTE_TRACK_COUNT_LABEL,
-            Album.ATTRIBUTE_DURATION_LABEL,
+            ALBUM_ATTRIBUTES_LABEL.UUID,
+            ALBUM_ATTRIBUTES_LABEL.NAME,
+            ALBUM_ATTRIBUTES_LABEL.YEAR,
+            ALBUM_ATTRIBUTES_LABEL.ALBUM_ARTISTS,
+            ALBUM_ATTRIBUTES_LABEL.LIBRARY_TRACKS,
+            ALBUM_ATTRIBUTES_LABEL.TRACK_COUNT,
+            ALBUM_ATTRIBUTES_LABEL.DURATION,
         ]

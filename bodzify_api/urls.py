@@ -22,7 +22,6 @@ from bodzify_api.view.viewset.playlist.GenrePlaylistViewSet import GenrePlaylist
 from bodzify_api.view.viewset.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
 from django.conf.urls.static import static
 
-
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'tracks', TrackViewSet)
@@ -34,7 +33,6 @@ router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
 router.register(r'playlists/simple', SimplePlaylistViewSet, basename='simple-playlist')
 router.register(r'playlists/genre', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'search', SearchApiViewSet, basename='search')
-
 
 urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
 
@@ -51,7 +49,6 @@ urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
                    url_name='schema'), name='swagger-ui'),
                path('api/schema/redoc/',
                     SpectacularRedocView.as_view(url_name='schema'), name='redoc')]
-
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
