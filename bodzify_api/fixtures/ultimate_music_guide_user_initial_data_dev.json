@@ -17,6 +17,124 @@
             "user_permissions": []
         }
     },
+
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "LnM1arJrwLskdjSjqL0999",
+        "fields": {
+            "user": 5,
+            "name": "Rock",
+            "type_id": 0,
+            "addedOn": "1998-07-14 23:00:00.000 +0100"
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLskdjSjqdldld",
+        "fields": {
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype": ["bodzify_api", "criteriaplaylist"],
+            "user": 5
+        }
+    },
+    {
+        "model": "bodzify_api.criteriaplaylist",
+        "fields": {
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqdldld",
+            "type" : 0,
+            "criteria": "LnM1arJrwLskdjSjqL0999",
+            "user": 5
+        }
+    },
+
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "LnM1arJrwLskdjSjq98228",
+        "fields": {
+            "user": 5,
+            "name": "Hip-hop",
+            "type_id": 0,
+            "addedOn": "1998-07-14 23:00:00.000 +0100"
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLskdjSjqlskkk",
+        "fields": {
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype": ["bodzify_api", "criteriaplaylist"],
+            "user": 5
+        }
+    },
+    {
+        "model": "bodzify_api.criteriaplaylist",
+        "fields": {
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqlskkk",
+            "type" : 0,
+            "criteria": "LnM1arJrwLskdjSjq98228",
+            "user": 5
+        }
+    },
+
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "LnM1arJrwLskdjSjqL8877",
+        "fields": {
+            "user": 5,
+            "name": "Rap",
+            "parent": "LnM1arJrwLskdjSjq98228",
+            "type_id": 0,
+            "addedOn": "1998-07-14 23:00:00.000 +0100"
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLskdjSjqdaass",
+        "fields": {
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype": ["bodzify_api", "criteriaplaylist"],
+            "user": 5
+        }
+    },
+    {
+        "model": "bodzify_api.criteriaplaylist",
+        "fields": {
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqdaass",
+            "type" : 0,
+            "criteria": "LnM1arJrwLskdjSjqL8877",
+            "user": 5
+        }
+    },
+
+    {
+        "model": "bodzify_api.criteria",
+        "pk": "LnM1arJrwLskdjSjqL0999",
+        "fields": {
+            "user": 5,
+            "name": "Rock",
+            "type_id": 0,
+            "addedOn": "1998-07-14 23:00:00.000 +0100"
+        }
+    },
+    {
+        "model": "bodzify_api.playlist",
+        "pk": "LnM1arJrwLskdjSjqdldld",
+        "fields": {
+            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "polymorphic_ctype": ["bodzify_api", "criteriaplaylist"],
+            "user": 5
+        }
+    },
+    {
+        "model": "bodzify_api.criteriaplaylist",
+        "fields": {
+            "playlist_ptr_id" : "LnM1arJrwLskdjSjqdldld",
+            "type" : 0,
+            "criteria": "LnM1arJrwLskdjSjqL0999",
+            "user": 5
+        }
+    },
+
     {
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLskdjSjqLLD99",
