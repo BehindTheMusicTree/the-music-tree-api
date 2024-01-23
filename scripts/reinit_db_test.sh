@@ -12,6 +12,6 @@ docker exec BODZIFY_API python manage.py migrate --fake-initial
 docker exec BODZIFY_API python manage.py makemigrations bodzify_api
 docker exec BODZIFY_API python manage.py migrate
 docker exec BODZIFY_API python manage.py loaddata app_initial_data
-docker exec BODZIFY_API python manage.py loaddata admin_user_initial_data
+docker exec BODZIFY_API python manage.py loaddata admin_user_initial_data_test
 docker exec BODZIFY_API python manage.py loaddata mobile_test_user_initial_data
 docker exec BODZIFY_API python manage.py loaddata postman_test_user_initial_data
