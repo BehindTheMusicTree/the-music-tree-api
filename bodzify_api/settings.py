@@ -29,7 +29,7 @@ ATOMIC_REQUESTS = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'bodzify_api.middleware.RequestLoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -176,7 +177,7 @@ LOGGING = {
             'formatter': 'standard'
         },
         'access': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH + 'access.log',
             'maxBytes': 1024*1024*15, # 15MB
@@ -216,9 +217,9 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True
         },
-        'django.request': {
-            'handlers': ['access', 'console'],
-            'level': 'DEBUG',
+        'request': {
+            'handlers': ['access'],
+            'level': 'INFO',
             'propagate': True,
         },
         'django' : { 
