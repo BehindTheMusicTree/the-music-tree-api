@@ -2,8 +2,6 @@
 
 sudo -u postgres dropdb -e bodzify_api -f
 sudo -u postgres -H -- psql -c "create database bodzify_api with owner django;"
-sudo rm -r /var/lib/bodzify-api/*
-sudo rm -r /var/log/bodzify-api/*
 
 docker exec BODZIFY_API python manage.py migrate
 docker exec BODZIFY_API python manage.py migrate --fake

@@ -216,15 +216,10 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True
         },
-        'gunicorn.access' : { 
-                'handlers': ['access', 'console'], 
-                'level': 'DEBUG', 
-                'propagate': True
-        },
-        'access' : { 
-                'handlers': ['access', 'console'], 
-                'level': 'DEBUG', 
-                'propagate': True
+        'django.request': {
+            'handlers': ['access', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
         'django' : { 
                 'handlers': ['django', 'console'], 
