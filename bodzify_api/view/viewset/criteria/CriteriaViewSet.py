@@ -9,7 +9,7 @@ from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.serializer.criteria.input.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
-from bodzify_api.service.criteria import CriteriaService
+from bodzify_api.service.criteria.CriteriaService import CriteriaService
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 
@@ -66,12 +66,13 @@ class CriteriaViewSet(MultiSerializerViewSet):
                             headers=headers,
                             safe=False)
 
-    @extend_schema(parameters=[OpenApiParameter(FILTER_FIELDS.NAME,
-                                                OpenApiTypes.STR,
-                                                OpenApiParameter.PATH),
-                               OpenApiParameter(FILTER_FIELDS.PARENT,
-                                                OpenApiTypes.STR,
-                                                OpenApiParameter.PATH)],
+    @extend_schema(parameters=[OpenApiParameter(name=FILTER_FIELDS.NAME,
+                                                type=OpenApiTypes.STR,
+                                                location=OpenApiParameter.QUERY),
+                               OpenApiParameter(name=FILTER_FIELDS.PARENT,
+                                                type=OpenApiTypes.STR,
+                                                location=OpenApiParameter.QUERY,
+                                                required=False)],
                    responses=CriteriaDetailedSerializer)
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
