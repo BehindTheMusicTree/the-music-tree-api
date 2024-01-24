@@ -17,4 +17,4 @@ python3 $managePath loaddata app_initial_data
 python3 $managePath loaddata admin_user_initial_data_dev
 python3 $managePath loaddata mobile_test_user_initial_data
 python3 $managePath loaddata postman_test_user_initial_data
-python3 $managePath loaddata ultimate_music_guide_user_initial_data_dev
+python3 $managePath loaddata ultimate_music_guide_test_ user_initial_data
