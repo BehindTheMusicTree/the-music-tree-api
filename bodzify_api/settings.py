@@ -85,8 +85,11 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'bodzify_api.middleware.RequestLoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'bodzify_api.middleware.Middleware1',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'bodzify_api.middleware.Middleware2',
     'django.middleware.common.CommonMiddleware',
+    'bodzify_api.middleware.Middleware3',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

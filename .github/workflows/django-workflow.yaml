@@ -6,7 +6,7 @@ on:
     push:
        branches: 
         - dev
-        - add-logs-for-access
+        - fix-request-from-umg
     pull_request:
         branches: [dev]
 
