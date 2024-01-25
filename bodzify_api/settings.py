@@ -12,10 +12,43 @@ import os
 import pathlib
 import datetime
 
-SECURE_SSL_REDIRECT = False
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
+
+API_VERSION = 'v1'
+API_NAME = "bodzify_api"
+API_DESCRIPTION = "API to handle genre oriented music libraries"
+API_ROOT_BASE = 'api/' + API_VERSION + '/'
+API_ROOT = os.path.join(BASE_DIR, API_NAME + '/') 
+CONTACT_EMAIL = "andreas.garcia@bodzify.com"
+MEDIA_ROOT = "/var/lib/bodzify-api/media/"
+MEDIA_TEMP = os.path.join(MEDIA_ROOT, "temp/")
+LIBRARIES_DIR_NAME = "libraries"
+LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_DIR_NAME + '/')
+USER_LIBRARY_DIR_NAME_PREFIXE = "user_"
+TRACK_FILE_SIZE_MIN_IN_MO = 0
+TRACK_FILE_SIZE_MAX_IN_MO = 500
+TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
+TRACK_FILE_CONTENT_TYPES = ['audio/mpeg', 'audio/flac', 'audio/wav']
+TRACK_FILENAME_MAX_CHAR = 100
+TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LEN = 20
+TRACK_TITLE_MAX_CHAR = 100
+TRACK_GENERATED_TITLE_LEN = 20
+TRACK_GENERATED_TITLE_PREFIXE = "bodzify_"
+TRACK_RATING_MAX_VALUE = 10
+TRACK_LANGUAGE_MAX_CHAR = 100
+MINE_TRACK_TITLE_MAX_CHAR = 200
+MINE_TRACK_RELEASED_ON_MAX_CHAR = 200
+MINE_TRACK_URL_MAX_CHAR = 1000
+ALBUM_NAME_MAX_CHAR = 100
+ALBUM_ARTISTS_FIELD_MAX_CHAR = 100
+ARTIST_NAME_MAX_CHAR = 100
+CRITERIA_NAME_MAX_CHAR = 50
+PLAYLIST_NAME_MAX_CHAR = 50
+
+PAGINATION_LIMIT_OFFSET_DEFAULT = 30
+
+SECURE_SSL_REDIRECT = False
 
 # Before calling a view function, Django starts a transaction. 
 # If the response is produced without problems, Django commits the transaction. 
@@ -137,8 +170,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'bodzify API',
-    'DESCRIPTION': 'API to handle genre oriented music libraries',
+    'TITLE': API_NAME,
+    'DESCRIPTION': API_DESCRIPTION,
     'VERSION': '0.1.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': '/api/v[0-9]'
@@ -234,36 +267,6 @@ LOGGING = {
         }
     },
 }
-
-API_ROOT_BASE = 'api/v1/'
-APP_NAME = "bodzify_api"
-APP_ROOT = os.path.join(BASE_DIR, APP_NAME + '/')
-MEDIA_ROOT = "/var/lib/bodzify-api/media/"
-MEDIA_TEMP = os.path.join(MEDIA_ROOT, "temp/")
-LIBRARIES_DIR_NAME = "libraries"
-LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_DIR_NAME + '/')
-USER_LIBRARY_DIR_NAME_PREFIXE = "user_"
-TRACK_FILE_SIZE_MIN_IN_MO = 0
-TRACK_FILE_SIZE_MAX_IN_MO = 500
-TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
-TRACK_FILE_CONTENT_TYPES = ['audio/mpeg', 'audio/flac', 'audio/wav']
-TRACK_FILENAME_MAX_CHAR = 100
-TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LEN = 20
-TRACK_TITLE_MAX_CHAR = 100
-TRACK_GENERATED_TITLE_LEN = 20
-TRACK_GENERATED_TITLE_PREFIXE = "bodzify_"
-TRACK_RATING_MAX_VALUE = 10
-TRACK_LANGUAGE_MAX_CHAR = 100
-MINE_TRACK_TITLE_MAX_CHAR = 200
-MINE_TRACK_RELEASED_ON_MAX_CHAR = 200
-MINE_TRACK_URL_MAX_CHAR = 1000
-ALBUM_NAME_MAX_CHAR = 100
-ALBUM_ARTISTS_FIELD_MAX_CHAR = 100
-ARTIST_NAME_MAX_CHAR = 100
-CRITERIA_NAME_MAX_CHAR = 50
-PLAYLIST_NAME_MAX_CHAR = 50
-
-PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
 if os.getenv('ENV') == 'DEV':
     from bodzify_api.settings_dev import *
