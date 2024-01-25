@@ -6,7 +6,6 @@ on:
     push:
        branches: 
         - dev
-        - add-logs-for-access
     pull_request:
         branches: [dev]
 
