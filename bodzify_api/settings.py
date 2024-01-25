@@ -209,10 +209,18 @@ LOGGING = {
             'backupCount': 10,
             'formatter': 'standard'
         },
-        'access': {
+        'requests_with_trace': {
+            'level': 'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': LOG_PATH + 'requests.debug.log',
+            'maxBytes': 1024*1024*15, # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
+        'requests': {
             'level': 'INFO',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH + 'access.log',
+            'filename': LOG_PATH + 'requests.log',
             'maxBytes': 1024*1024*15, # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -225,7 +233,7 @@ LOGGING = {
             'backupCount': 10,
             'formatter': 'standard'
         },
-        'bodzify-api': {
+        'bodzify_api': {
             'level': 'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH + 'bodzify-api.log',
@@ -250,8 +258,13 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True
         },
+        'django.request': {
+            'handlers': ['requests_with_trace'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         'request': {
-            'handlers': ['access'],
+            'handlers': ['requests'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -261,7 +274,7 @@ LOGGING = {
                 'propagate': True
         },
         'bodzify_api' : { 
-                'handlers': ['bodzify-api', 'console'], 
+                'handlers': ['bodzify_api', 'console'], 
                 'level': 'DEBUG', 
                 'propagate': True
         }
