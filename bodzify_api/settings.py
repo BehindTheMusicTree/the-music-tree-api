@@ -91,9 +91,13 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'bodzify_api.middleware.Middleware3',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'bodzify_api.middleware.Middleware4',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'bodzify_api.middleware.Middleware5',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'bodzify_api.middleware.Middleware6',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'bodzify_api.middleware.Middleware7',
 ]
 
 ROOT_URLCONF = 'bodzify_api.urls'
