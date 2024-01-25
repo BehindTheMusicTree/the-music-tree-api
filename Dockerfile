@@ -21,7 +21,8 @@ ENV DockerHome=/home/app/webapp
 ENV LogDir=/var/log/
 
 ENV DjangoLogDir=${LogDir}django/
-ENV DjangoAccessLog=${DjangoLogDir}access.log
+ENV DjangoRequestsLog=${DjangoLogDir}requests.log
+ENV DjangoRequestsDebugLog=${DjangoLogDir}requests.debug.log
 ENV DjangoGeneralLog=${DjangoLogDir}general.log
 ENV DjangoInfoLog=${DjangoLogDir}info.log
 ENV DjangoDjangoLog=${DjangoLogDir}django.log
@@ -43,7 +44,8 @@ COPY . $DockerHome
 RUN mkdir -p $LogDir
 
 RUN mkdir $DjangoLogDir
-RUN touch $DjangoAccessLog
+RUN touch $DjangoRequestsLog
+RUN touch $DjangoRequestsDebugLog
 RUN touch $DjangoGeneralLog
 RUN touch $DjangoInfoLog
 RUN touch $DjangoDjangoLog
