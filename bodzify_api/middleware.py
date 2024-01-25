@@ -5,8 +5,11 @@ class RequestLoggingMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        logger = logging.getLogger('request')
-        logger.info(f"Incoming Request: {request.method} {request.path}")
+        logMessage = f"Incoming Request: {request.method} {request.path}"
+        requestLogger = logging.getLogger('request')
+        requestLogger.info(logMessage)
+        requestDebugLogger = logging.getLogger('django.request')
+        requestDebugLogger.info(logMessage)
 
         response = self.get_response(request)
         return response
