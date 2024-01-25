@@ -17,9 +17,8 @@ class Middleware1:
 
     def __call__(self, request):
         logger = logging.getLogger('django.request')
-        logger.info(f"Incoming Request1: {request.method} {request.path}")
-
         response = self.get_response(request)
+        logger.info(f"Outgoing Response1: {response.status_code} {response.reason_phrase} {response.content_type}")
         return response
 
 class Middleware2:
@@ -28,9 +27,8 @@ class Middleware2:
 
     def __call__(self, request):
         logger = logging.getLogger('django.request')
-        logger.info(f"Incoming Request2: {request.method} {request.path}")
-
         response = self.get_response(request)
+        logger.info(f"Outgoing Response2: {response.status_code} {response.reason_phrase} {response.content_type}")
         return response
 
 class Middleware3:
@@ -39,9 +37,8 @@ class Middleware3:
 
     def __call__(self, request):
         logger = logging.getLogger('django.request')
-        logger.info(f"Incoming Request3: {request.method} {request.path}")
-
         response = self.get_response(request)
+        logger.info(f"Outgoing Response3: {response.status_code} {response.reason_phrase} {response.content_type}")
         return response
 
 class Middleware4:
@@ -50,9 +47,8 @@ class Middleware4:
 
     def __call__(self, request):
         logger = logging.getLogger('django.request')
-        logger.info(f"Incoming Request4: {request.method} {request.path}")
-
         response = self.get_response(request)
+        logger.info(f"Outgoing Response4: {response.status_code} {response.reason_phrase} {response.content_type}")
         return response
 
 class Middleware5:
@@ -61,9 +57,8 @@ class Middleware5:
 
     def __call__(self, request):
         logger = logging.getLogger('django.request')
-        logger.info(f"Incoming Request5: {request.method} {request.path}")
-
         response = self.get_response(request)
+        logger.info(f"Outgoing Response5: {response.status_code} {response.reason_phrase} {response.content_type}")
         return response
 
 class Middleware6:
@@ -72,9 +67,8 @@ class Middleware6:
 
     def __call__(self, request):
         logger = logging.getLogger('django.request')
-        logger.info(f"Incoming Request6: {request.method} {request.path}")
-
         response = self.get_response(request)
+        logger.info(f"Outgoing Response6: {response.status_code} {response.reason_phrase} {response.content_type}")
         return response
 
 class Middleware7:
@@ -83,7 +77,6 @@ class Middleware7:
 
     def __call__(self, request):
         logger = logging.getLogger('django.request')
-        logger.info(f"Incoming Request7: {request.method} {request.path}")
-
         response = self.get_response(request)
+        logger.info(f"Outgoing Response7: {response.status_code} {response.reason_phrase} {response.content_type}")
         return response
