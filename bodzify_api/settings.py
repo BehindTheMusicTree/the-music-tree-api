@@ -48,6 +48,8 @@ PLAYLIST_NAME_MAX_CHAR = 50
 
 PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 SECURE_SSL_REDIRECT = False
 
 # Before calling a view function, Django starts a transaction. 
@@ -80,6 +82,7 @@ INSTALLED_APPS = [
     'coverage',
     'drf_multiple_model',
     'bodzify_api',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -87,17 +90,12 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'bodzify_api.middleware.Middleware1',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'bodzify_api.middleware.Middleware2',
     'django.middleware.common.CommonMiddleware',
-    'bodzify_api.middleware.Middleware3',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'bodzify_api.middleware.Middleware4',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'bodzify_api.middleware.Middleware5',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'bodzify_api.middleware.Middleware6',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'bodzify_api.middleware.Middleware7',
 ]
 
 ROOT_URLCONF = 'bodzify_api.urls'
