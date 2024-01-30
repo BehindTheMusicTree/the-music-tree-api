@@ -3,7 +3,7 @@
         "model": "auth.user", 
         "pk": 5, 
         "fields": {
-            "password": "pbkdf2_sha256$390000$cqnF7t98F2U2iHxBQYmQsG$zEl4P1JmQA1svBkFn5Pr4iq42FS35RUWkwORRzB5eME=", 
+            "password": "pbkdf2_sha256$390000$bK7SdUtIT8xcYVnk9x9WQF$c8MnMcGDd3faoP2fgYYK33FhWMmXhA2fgAXuA5zp3Cg=", 
             "last_login": null, 
             "is_superuser": false, 
             "username": "ultimate_music_guide", 
