@@ -6,6 +6,7 @@ on:
     push:
        branches: 
         - dev
+        - refactor-using-bodzify-server-project
     pull_request:
         branches: [dev]
 
@@ -95,5 +96,5 @@ jobs:
     steps:
       - name: Deploy docker container webhook
         uses: joelwmale/webhook-action@master
-        env:
-          WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL  }}
+        with:
+          url: ${{ secrets.DEPLOY_WEBHOOK_URL  }}
