@@ -6,6 +6,7 @@ on:
     push:
        branches: 
         - dev
+        - refactor-using-bodzify-server-project
     pull_request:
         branches: [dev]
 
