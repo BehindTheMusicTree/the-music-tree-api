@@ -24,10 +24,6 @@ API_DESCRIPTION = "API to handle genre oriented music libraries"
 API_ROOT_BASE = 'api/' + API_VERSION + '/'
 API_ROOT = os.path.join(BASE_DIR, API_NAME + '/') 
 CONTACT_EMAIL = "andreas.garcia@bodzify.com"
-MEDIA_ROOT = "/var/lib/bodzify-api/media/"
-MEDIA_TEMP = os.path.join(MEDIA_ROOT, "temp/")
-LIBRARIES_DIR_NAME = "libraries"
-LIBRARIES_PATH = os.path.join(MEDIA_ROOT, LIBRARIES_DIR_NAME + '/')
 USER_LIBRARY_DIR_NAME_PREFIXE = "user_"
 TRACK_FILE_SIZE_MIN_IN_MO = 0
 TRACK_FILE_SIZE_MAX_IN_MO = 500
@@ -156,10 +152,6 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -290,5 +282,11 @@ LOGGING = {
 
 if os.getenv('ENV') == 'DEV':
     from bodzify_api.settings_dev import *
+    import bodzify_api.settings_dev as settings_env
+    MEDIA_ROOT = settings_env.MEDIA_ROOT
 elif os.getenv('ENV') == 'TEST':
     from bodzify_api.settings_test import *
+    import bodzify_api.settings_test as settings_env
+    MEDIA_ROOT = settings_env.MEDIA_ROOT
+
+from bodzify_api.settings_media import *

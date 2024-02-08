@@ -9,3 +9,10 @@ ALLOWED_HOSTS = [
     'bodzify.com',
     'www.bodzify.com',
 ]
+
+STATICFILES_DIRS = [
+    "/home/app/webapp/static/",
+]
+STATIC_ROOT =  "/home/app/webapp/staticfiles/"
+
+MEDIA_ROOT = "/var/lib/bodzify-api/media/"
