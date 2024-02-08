@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 import pathlib
 import datetime
+import dotenv
+
+dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
@@ -64,7 +67,7 @@ ATOMIC_REQUESTS = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
