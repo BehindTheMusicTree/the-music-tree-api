@@ -18,7 +18,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
 
     def test_fileDeletion(self):
         filename = "sample.mp3"
-        filePathRelativeToMediaDir = self.test_user_library_path_relative_to_media_dir + filename
+        filePathRelativeToMediaDir = self.test_user_library_path_relative_to_media_dir / filename
         track = G(LibraryTrack,
                   user=self.testUser,
                   file=filePathRelativeToMediaDir,

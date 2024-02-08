@@ -16,7 +16,7 @@ class DownloadTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_410_GONE
 
     def test_ok(self):
-        filePathRelativeToMediaDir = self.test_user_library_path_relative_to_media_dir + "sample.mp3"
+        filePathRelativeToMediaDir = self.test_user_library_path_relative_to_media_dir / "sample.mp3"
         track = G(LibraryTrack,
                   user=self.testUser,
                   file=filePathRelativeToMediaDir,
