@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from ddf import G
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.test.view.ApiViewTestCase import RESPONSE_KEYS, ApiViewTestCase

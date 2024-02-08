@@ -9,20 +9,20 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
-import pathlib
 import datetime
 import dotenv
+from pathlib import Path
 
 dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 API_VERSION = 'v1'
 API_NAME = "bodzify_api"
 API_DESCRIPTION = "API to handle genre oriented music libraries"
 API_ROOT_BASE = 'api/' + API_VERSION + '/'
-API_ROOT = os.path.join(BASE_DIR, API_NAME + '/') 
+API_ROOT = Path(BASE_DIR) / API_NAME
 CONTACT_EMAIL = "andreas.garcia@bodzify.com"
 USER_LIBRARY_DIR_NAME_PREFIXE = "user_"
 TRACK_FILE_SIZE_MIN_IN_MO = 0
@@ -182,7 +182,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-LOG_PATH = "/var/log/django/"
+LOG_PATH = Path('/var/log/django/')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -195,7 +195,7 @@ LOGGING = {
         'general': {
             'level': 'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH + 'general.log',
+            'filename': LOG_PATH / 'general.log',
             'maxBytes': 1024*1024*15, # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -203,7 +203,7 @@ LOGGING = {
         'info': {
             'level': 'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH + 'info.log',
+            'filename': LOG_PATH / 'info.log',
             'maxBytes': 1024*1024*15, # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -211,7 +211,7 @@ LOGGING = {
         'requests_with_trace': {
             'level': 'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH + 'requests.debug.log',
+            'filename': LOG_PATH / 'requests.debug.log',
             'maxBytes': 1024*1024*15, # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -219,7 +219,7 @@ LOGGING = {
         'requests': {
             'level': 'INFO',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH + 'requests.log',
+            'filename': LOG_PATH / 'requests.log',
             'maxBytes': 1024*1024*15, # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -227,7 +227,7 @@ LOGGING = {
         'django': {
             'level': 'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH + 'django.log',
+            'filename': LOG_PATH / 'django.log',
             'maxBytes': 1024*1024*15, # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -235,7 +235,7 @@ LOGGING = {
         'bodzify_api': {
             'level': 'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH + 'bodzify-api.log',
+            'filename': LOG_PATH / 'bodzify-api.log',
             'maxBytes': 1024*1024*15, # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -269,14 +269,14 @@ LOGGING = {
         },
         'django' : { 
                 'handlers': ['django'], 
-                'level': 'DEBUG', 
+                'level': 'INFO', 
                 'propagate': True
         },
         'bodzify_api' : { 
                 'handlers': ['bodzify_api', 'console'], 
                 'level': 'DEBUG', 
                 'propagate': True
-        }
+        },
     },
 }
 
@@ -288,5 +288,8 @@ elif os.getenv('ENV') == 'TEST':
     from bodzify_api.settings_test import *
     import bodzify_api.settings_test as settings_test
     MEDIA_ROOT = settings_test.MEDIA_ROOT
+else:
+    STATIC_ROOT =  BASE_DIR / 'staticfiles'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 from bodzify_api.settings_media import *

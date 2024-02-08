@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+from pathlib import Path
+
+
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = ['https://bodzify.com']
@@ -11,8 +14,8 @@ ALLOWED_HOSTS = [
 ]
 
 STATICFILES_DIRS = [
-    "/home/app/webapp/static/",
+    Path('/home/app/webapp/static/'),
 ]
-STATIC_ROOT =  "/home/app/webapp/staticfiles/"
+STATIC_ROOT =  Path('/home/app/webapp/staticfiles/')
 
-MEDIA_ROOT = "/var/lib/bodzify-api/media/"
+MEDIA_ROOT = Path('/var/lib/bodzify-api/media/')

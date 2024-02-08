@@ -7,4 +7,7 @@ class CriteriaPostSchemaSerializer(InputModelSerializer):
 
     class Meta:
         model = Criteria
-        fields = [ATTRIBUTES_LABEL.NAME, ATTRIBUTES_LABEL.PARENT]
+        fields = [
+            ATTRIBUTES_LABEL.NAME, 
+            ATTRIBUTES_LABEL.PARENT
+        ]

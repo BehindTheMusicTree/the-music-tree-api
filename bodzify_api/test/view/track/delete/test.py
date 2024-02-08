@@ -18,7 +18,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
 
     def test_fileDeletion(self):
         filename = "sample.mp3"
-        filePathRelativeToMediaDir = self.testUserLibraryPathRelativeToMediaDir + filename
+        filePathRelativeToMediaDir = self.test_user_library_path_relative_to_media_dir + filename
         track = G(LibraryTrack,
                   user=self.testUser,
                   file=filePathRelativeToMediaDir,
@@ -79,8 +79,8 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: rockGenreName
         }
-        self.postGenre(dataJson)
-        rockGenre = self.savedGenre
+        self.post_genre(dataJson)
+        rockGenre = self.saved_genre
         rockPlaylist = CriteriaPlaylist.objects.get(
             user=self.testUser, type=CriteriaTypesId.GENRE, criteria=rockGenre)
 
@@ -88,8 +88,8 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
             CRITERIA_ATTRIBUTES_LABEL.NAME: hardrockGenreName,
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
         }
-        self.postGenre(dataJson)
-        hardrockGenre = self.savedGenre
+        self.post_genre(dataJson)
+        hardrockGenre = self.saved_genre
         hardrockPlaylist = CriteriaPlaylist.objects.get(
             user=self.testUser, type=CriteriaTypesId.GENRE, criteria=hardrockGenre)
 
@@ -97,8 +97,8 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
             CRITERIA_ATTRIBUTES_LABEL.NAME: emoGenreName,
             CRITERIA_ATTRIBUTES_LABEL.PARENT: hardrockGenre.uuid
         }
-        self.postGenre(dataJson)
-        emoGenre = self.savedGenre
+        self.post_genre(dataJson)
+        emoGenre = self.saved_genre
         emoPlaylist = CriteriaPlaylist.objects.get(
             user=self.testUser, type=CriteriaTypesId.GENRE, criteria=emoGenre)
 

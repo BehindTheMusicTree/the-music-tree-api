@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 from django.db import IntegrityError
 from django.http import JsonResponse, QueryDict
 from rest_framework.response import Response
@@ -12,6 +13,8 @@ from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import Cr
 from bodzify_api.service.criteria.CriteriaService import CriteriaService
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+
+logger = logging.getLogger('bodzify_api')
 
 
 class FILTER_FIELDS:
@@ -56,6 +59,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
         try:
             criteria = self.criteriaService.create(user=request.user, data=request.data)
         except IntegrityError as e:
+            logger.exception(e)
             return utility.get_json_response_when_bad_request(exception=e)
 
         responseSerializer = CriteriaDetailedSerializer(criteria)

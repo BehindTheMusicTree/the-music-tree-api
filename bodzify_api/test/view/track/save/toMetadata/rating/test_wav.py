@@ -11,7 +11,7 @@ class TestCase(ApiViewTestCase):
     def test_null(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=None,
                   duration=0)
@@ -26,7 +26,7 @@ class TestCase(ApiViewTestCase):
     def test_zero(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -40,7 +40,7 @@ class TestCase(ApiViewTestCase):
     def test_1Then13(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "2Stars.wav",
+                  file=self.test_user_library_abs_path + "2Stars.wav",
                   title="Love",
                   rating=4,
                   duration=0)
@@ -54,7 +54,7 @@ class TestCase(ApiViewTestCase):
     def test_2Then1(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -68,7 +68,7 @@ class TestCase(ApiViewTestCase):
     def test_3Then54(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -82,7 +82,7 @@ class TestCase(ApiViewTestCase):
     def test_4Then64(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -96,7 +96,7 @@ class TestCase(ApiViewTestCase):
     def test_5Then118(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -110,7 +110,7 @@ class TestCase(ApiViewTestCase):
     def test_6Then128(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -124,7 +124,7 @@ class TestCase(ApiViewTestCase):
     def test_7Then186(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -138,7 +138,7 @@ class TestCase(ApiViewTestCase):
     def test_8Then196(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -152,7 +152,7 @@ class TestCase(ApiViewTestCase):
     def test_9Then242(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -166,7 +166,7 @@ class TestCase(ApiViewTestCase):
     def test_10Then255(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.wav",
+                  file=self.test_user_library_abs_path + "1Star.wav",
                   title="Love",
                   rating=2,
                   duration=0)

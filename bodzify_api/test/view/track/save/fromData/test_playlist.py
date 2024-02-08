@@ -43,7 +43,7 @@ class TestCase(ApiViewTestCase):
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
         }
-        self.postGenre(dataJson)
+        self.post_genre(dataJson)
         track = G(LibraryTrack,
                   user=self.testUser,
                   title="Love",
@@ -72,21 +72,21 @@ class TestCase(ApiViewTestCase):
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: rockGenreName
         }
-        self.postGenre(dataJson)
-        rockGenre = self.savedGenre
+        self.post_genre(dataJson)
+        rockGenre = self.saved_genre
 
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: hardrockGenreName,
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
         }
-        self.postGenre(dataJson)
-        hardrockGenre = self.savedGenre
+        self.post_genre(dataJson)
+        hardrockGenre = self.saved_genre
 
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: emoGenreName,
             CRITERIA_ATTRIBUTES_LABEL.PARENT: hardrockGenre.uuid
         }
-        self.postGenre(dataJson)
+        self.post_genre(dataJson)
 
         track = G(LibraryTrack,
                   user=self.testUser,

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from collections.abc import Iterable
 import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -25,7 +26,7 @@ class Criteria(models.Model):
     type = models.ForeignKey('bodzify_api.CriteriaType',
                              on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='child_criteria')
-    root = models.ForeignKey('self', on_delete=models.CASCADE, null=False, related_name='descendant_criteria')
+    root = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
@@ -53,3 +54,7 @@ class Criteria(models.Model):
             criteriaBTreeItem = criteriaBTreeItem.parent
 
         return None
+    
+    def save(self, *args, **kwargs):
+        self.root = self.parent.root if self.parent else self   
+        super(Criteria, self).save(*args, **kwargs)

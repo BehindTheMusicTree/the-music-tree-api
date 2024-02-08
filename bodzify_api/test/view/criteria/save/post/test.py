@@ -12,16 +12,16 @@ class TestCase(ApiViewTestCase):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
         }
-        response = self.postGenre(dataJson=data)
+        response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedGenre.parent.name == None
+        assert self.saved_genre.parent.name == None
         
     def test_playlistCreation(self):
         genreName = "Rock"
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
         }
-        response = self.postGenre(dataJson=data)
+        response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert GenrePlaylist.objects.filter(
             user=self.testUser, criteria__name=genreName).exists()

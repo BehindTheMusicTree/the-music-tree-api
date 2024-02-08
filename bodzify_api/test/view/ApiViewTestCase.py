@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from typing import Union
 from django.urls import reverse
 from rest_framework import status
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -18,7 +17,7 @@ class RESPONSE_KEYS:
 class ApiViewTestCase(ViewTestCase):
 
     savedTrack: LibraryTrack
-    savedGenre: Criteria
+    saved_genre: Criteria
 
     def extract(self, data):
         response = self.apiClient.post(
@@ -36,7 +35,7 @@ class ApiViewTestCase(ViewTestCase):
                 path=reverse('librarytrack-list'),
                 data={TRACK_ATTRIBUTES_LABEL.FILE: ''},
                 format='json',)
-        with open(self.inputSampleDirAbsPath + sampleFilename, "rb") as sampleFile:
+        with open(self.input_sample_dir_abs_path + sampleFilename, "rb") as sampleFile:
             fileJson = {TRACK_ATTRIBUTES_LABEL.FILE: sampleFile}
             if dataJson is not None:
                 data = self._mergeTwoJsons(fileJson, dataJson)
@@ -84,10 +83,10 @@ class ApiViewTestCase(ViewTestCase):
     def get_genres(self):
         return self.apiClient.get(path=reverse('genre-list'))
 
-    def postGenre(self, dataJson):
+    def post_genre(self, data_json):
         response = self.apiClient.post(
             path=reverse('genre-list'),
-            data=dataJson,
+            data=data_json,
             format='json')
         if response.status_code == status.HTTP_201_CREATED:
             self._setSavedGenreAttribute(response)
@@ -104,7 +103,7 @@ class ApiViewTestCase(ViewTestCase):
             
     def _setSavedGenreAttribute(self, response):
         uuid = response.json()[CRITERIA_ATTRIBUTES_LABEL.UUID]
-        self.savedGenre = Criteria.objects.get(uuid=uuid)
+        self.saved_genre = Criteria.objects.get(uuid=uuid)
 
     def getPlaylist(self, playlistUuid):
         return self.apiClient.get(path=reverse('playlist-detail', kwargs={'pk': playlistUuid}))
