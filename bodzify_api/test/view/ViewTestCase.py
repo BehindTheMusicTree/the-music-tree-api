@@ -70,9 +70,8 @@ class ViewTestCase(TestCase):
     def _copyLibrarySamplesToTestUserLibrary(self):
         filenames = os.listdir(self.library_sample_dir_abs_path)
         for filename in filenames:
-            shutil.copy(
-                os.path.join(self.library_sample_dir_abs_path, filename),
+            shutil.copy(self.library_sample_dir_abs_path / filename,
                 self.test_user_library_abs_path)
 
     def doesTrackFilenameExistInTestUserLibrary(self, filename: str):
-        return os.path.isfile(self.test_user_library_abs_path + filename)
+        return os.path.isfile(self.test_user_library_abs_path / filename)
