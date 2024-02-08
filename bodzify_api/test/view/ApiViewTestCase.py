@@ -26,34 +26,34 @@ class ApiViewTestCase(ViewTestCase):
             format='json')
         
         if response.status_code == status.HTTP_201_CREATED:
-            self._setSavedTrackAttribute(response)
+            self._set_saved_track_attribute(response)
         return response
 
-    def postSampleTrack(self, sampleFilename=None, dataJson=None):
-        if sampleFilename is None:
+    def post_sample_track(self, sample_filename=None, data_json=None):
+        if sample_filename is None:
             return self.apiClient.post(
                 path=reverse('librarytrack-list'),
                 data={TRACK_ATTRIBUTES_LABEL.FILE: ''},
                 format='json',)
-        with open(self.input_sample_dir_abs_path + sampleFilename, "rb") as sampleFile:
-            fileJson = {TRACK_ATTRIBUTES_LABEL.FILE: sampleFile}
-            if dataJson is not None:
-                data = self._mergeTwoJsons(fileJson, dataJson)
+        with open(self.input_sample_dir_abs_path / sample_filename, "rb") as sample_file:
+            file_json = {TRACK_ATTRIBUTES_LABEL.FILE: sample_file}
+            if data_json is not None:
+                data = self._merge_two_jsons(file_json, data_json)
             else:
-                data = fileJson
+                data = file_json
             response = self.apiClient.post(
                 path=reverse('librarytrack-list'), data=data)
             if response.status_code == status.HTTP_201_CREATED:
-                self._setSavedTrackAttribute(response)
+                self._set_saved_track_attribute(response)
             return response
 
-    def putSampleTrack(self, trackUuid, data):
+    def put_sample_track(self, track_uuid, data):
         response = self.apiClient.put(
-            path=reverse('librarytrack-detail', kwargs={'pk': trackUuid}),
+            path=reverse('librarytrack-detail', kwargs={'pk': track_uuid}),
             data=data,
             format='json')
         if response.status_code == status.HTTP_200_OK:
-            self._setSavedTrackAttribute(response)
+            self._set_saved_track_attribute(response)
         return response
 
     def searchMine(self, source, query):
@@ -69,14 +69,14 @@ class ApiViewTestCase(ViewTestCase):
     def deleteTrack(self, trackUuid):
         return self.apiClient.delete(path=reverse('librarytrack-detail', kwargs={'pk': trackUuid}))
 
-    def _setSavedTrackAttribute(self, response):
+    def _set_saved_track_attribute(self, response):
         trackUuid = response.json()[TRACK_ATTRIBUTES_LABEL.UUID]
         self.savedTrack = LibraryTrack.objects.get(uuid=trackUuid)
         if self.savedTrack.fileExists:
             self.savedTrackMetadata = AudioMetadataService.get_metadata_dict_from_file(
                 file=self.savedTrack.file)
 
-    def _mergeTwoJsons(self, json1, json2):
+    def _merge_two_jsons(self, json1, json2):
         json1.update(json2)
         return json1
     

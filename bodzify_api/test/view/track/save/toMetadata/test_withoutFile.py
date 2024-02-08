@@ -17,5 +17,5 @@ class TestCase(ApiViewTestCase):
         data = {
             "title": "Jobo"
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK

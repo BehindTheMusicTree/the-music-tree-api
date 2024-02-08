@@ -17,7 +17,7 @@ class TestCase(ApiViewTestCase):
                   language=language,
                   duration=0)
         data = {}
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == language
 
@@ -29,7 +29,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: None
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == None
 
@@ -41,7 +41,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: ""
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == None
 
@@ -54,6 +54,6 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: language
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.language == language

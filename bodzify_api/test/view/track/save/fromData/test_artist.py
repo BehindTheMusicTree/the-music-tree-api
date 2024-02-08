@@ -18,7 +18,7 @@ class TestCase(ApiViewTestCase):
                   title="Love",
                   artist=artist,
                   duration=0)
-        response = self.putSampleTrack(track.uuid, data={})
+        response = self.put_sample_track(track.uuid, data={})
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.uuid == artist.uuid
 
@@ -30,7 +30,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: None
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist == None
 
@@ -42,7 +42,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: ""
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist == None
 
@@ -55,7 +55,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.name == artistName
 
@@ -69,7 +69,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.name == artistName
 
@@ -82,6 +82,6 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.artist.name == artistName

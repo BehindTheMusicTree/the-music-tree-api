@@ -24,7 +24,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
 
         assert list(self.savedTrack.album.albumArtists.all())[
@@ -41,7 +41,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
 
         albumArtistsList = list(self.savedTrack.album.albumArtists.all())
@@ -62,7 +62,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: \
                 museArtistName + ", " + billArtistName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
 
         museAlbumArtist = self.savedTrack.album.albumArtists.get(
@@ -88,7 +88,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: albumName,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         
         assert self.savedTrack.album.uuid == album.uuid
@@ -106,7 +106,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: None
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         
         assert len(list(self.savedTrack.album.albumArtists.all())) == 0
@@ -121,7 +121,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: ""
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         
         assert len(list(self.savedTrack.album.albumArtists.all())) == 0
@@ -159,7 +159,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: albumName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         
         assert self.savedTrack.album_id != chuckAlbum.uuid
@@ -178,7 +178,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: albumName,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: artistName + "," + artistName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         
         assert Album.objects.get(
@@ -206,7 +206,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: hello2Album.name,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: robertdeniroArtist.name,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         
         assert self.savedTrack.album.uuid == hello2Album.uuid
@@ -228,7 +228,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: \
                 pnlArtist.name + "," + tristeArtistName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         
         albumArtistsList = list(self.savedTrack.album.albumArtists.all())

@@ -21,7 +21,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: None
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.genre == None
 
@@ -35,7 +35,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: ""
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.genre == None
 
@@ -48,7 +48,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.genre.name == genreName
         
@@ -61,7 +61,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_existing(self):
@@ -75,7 +75,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.genre.uuid == self.saved_genre.uuid
 
@@ -88,6 +88,6 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.savedTrack.genre.parent == None

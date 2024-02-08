@@ -13,7 +13,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: language
         }
-        response = self.postSampleTrack(sampleFilename="sample.mp3", dataJson=data)
+        response = self.post_sample_track(sample_filename="sample.mp3", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         languageKey = AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE
         assert self.savedTrackMetadata[languageKey] == language
@@ -22,7 +22,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: ""
         }
-        response = self.postSampleTrack(sampleFilename="sample.mp3", dataJson=data)
+        response = self.post_sample_track(sample_filename="sample.mp3", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         languageKey = AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE
         assert self.savedTrackMetadata[languageKey] in ["", None]

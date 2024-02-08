@@ -20,7 +20,7 @@ class ArtistTestCase(ApiViewTestCase):
         data = {
             "artistName": "Paul",
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(
             user=self.testUser, name=artistName).count() == 0
@@ -41,7 +41,7 @@ class ArtistTestCase(ApiViewTestCase):
         data = {
             "artistName": "Paul",
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(
             user=self.testUser, name=artistName).count() == 1
@@ -63,7 +63,7 @@ class ArtistTestCase(ApiViewTestCase):
         data = {
             "artistName": "Paul",
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(
             user=self.testUser, name=artistName).count() == 1
