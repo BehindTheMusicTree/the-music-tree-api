@@ -11,7 +11,7 @@ class TestCase(ApiViewTestCase):
     def test_none(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -26,7 +26,7 @@ class TestCase(ApiViewTestCase):
     def test_zero(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -40,7 +40,7 @@ class TestCase(ApiViewTestCase):
     def test_1Then10(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "2Stars.flac",
+                  file=self.test_user_library_abs_path / "2Stars.flac",
                   title="Love",
                   rating=4,
                   duration=0)
@@ -54,7 +54,7 @@ class TestCase(ApiViewTestCase):
     def test_2Then20(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -68,7 +68,7 @@ class TestCase(ApiViewTestCase):
     def test_3Then30(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -82,7 +82,7 @@ class TestCase(ApiViewTestCase):
     def test_4Then40(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -96,7 +96,7 @@ class TestCase(ApiViewTestCase):
     def test_5Then50(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -110,7 +110,7 @@ class TestCase(ApiViewTestCase):
     def test_6Then60(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -124,7 +124,7 @@ class TestCase(ApiViewTestCase):
     def test_7Then70(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -138,7 +138,7 @@ class TestCase(ApiViewTestCase):
     def test_8Then80(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -152,7 +152,7 @@ class TestCase(ApiViewTestCase):
     def test_9Then90(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
@@ -166,7 +166,7 @@ class TestCase(ApiViewTestCase):
     def test_10Then100(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path + "1Star.flac",
+                  file=self.test_user_library_abs_path / "1Star.flac",
                   title="Love",
                   rating=2,
                   duration=0)
