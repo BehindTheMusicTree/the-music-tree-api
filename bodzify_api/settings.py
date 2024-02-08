@@ -248,12 +248,12 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['general', 'console'],
+            'handlers': ['general'],
             'level': 'DEBUG',
             'propagate': True
         },
         'info': {
-            'handlers': ['info', 'console'],
+            'handlers': ['info'],
             'level': 'DEBUG',
             'propagate': True
         },
@@ -263,12 +263,12 @@ LOGGING = {
             'propagate': True,
         },
         'request': {
-            'handlers': ['requests'],
+            'handlers': ['requests', 'console'],
             'level': 'INFO',
             'propagate': True,
         },
         'django' : { 
-                'handlers': ['django', 'console'], 
+                'handlers': ['django'], 
                 'level': 'DEBUG', 
                 'propagate': True
         },
@@ -282,11 +282,11 @@ LOGGING = {
 
 if os.getenv('ENV') == 'DEV':
     from bodzify_api.settings_dev import *
-    import bodzify_api.settings_dev as settings_env
-    MEDIA_ROOT = settings_env.MEDIA_ROOT
+    import bodzify_api.settings_dev as settings_dev
+    MEDIA_ROOT = settings_dev.MEDIA_ROOT
 elif os.getenv('ENV') == 'TEST':
     from bodzify_api.settings_test import *
-    import bodzify_api.settings_test as settings_env
-    MEDIA_ROOT = settings_env.MEDIA_ROOT
+    import bodzify_api.settings_test as settings_test
+    MEDIA_ROOT = settings_test.MEDIA_ROOT
 
 from bodzify_api.settings_media import *
