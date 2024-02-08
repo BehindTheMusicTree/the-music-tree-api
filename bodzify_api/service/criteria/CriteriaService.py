@@ -22,13 +22,16 @@ class CriteriaService:
             parent = schemaSerializer.validated_data[parentKey]
             if parent == "":
                 parent = None
+            else:
+                parent = Criteria.objects.get(uuid=parent)
         else:
             parent = None
-            
+
         saveData = data.copy()
-        saveData[CRITERIA_ATTRIBUTES_LABEL.USER] = user.id
+        saveData[CRITERIA_ATTRIBUTES_LABEL.USER] = user.pk
         saveData[CRITERIA_ATTRIBUTES_LABEL.TYPE] = self.getCriteriaTypeId()
-        saveData[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent.pk if parent is not None else None
+        saveData[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent.pk if parent is not None else ""
+        saveData[CRITERIA_ATTRIBUTES_LABEL.ROOT] = parent.root if parent is not None else ""
         saveSerializer = CriteriaSaveModelSerializer(data=saveData)
         saveSerializer.is_valid(raise_exception=True)
         criteria = saveSerializer.save()

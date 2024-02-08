@@ -13,6 +13,7 @@ class ATTRIBUTES_LABEL:
     NAME = "name"
     TYPE = "type"
     PARENT = "parent"
+    ROOT = "root"
     ADDED_ON = "addedOn"
 
 class Criteria(models.Model):
@@ -23,7 +24,8 @@ class Criteria(models.Model):
         max_length=settings.CRITERIA_NAME_MAX_CHAR, default=None)
     type = models.ForeignKey('bodzify_api.CriteriaType',
                              on_delete=models.CASCADE)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='child_criteria')
+    root = models.ForeignKey('self', on_delete=models.CASCADE, null=False, related_name='descendant_criteria')
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:

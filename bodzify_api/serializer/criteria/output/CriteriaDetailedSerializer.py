@@ -15,5 +15,6 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
         fields = [ATTRIBUTES_LABEL.UUID, 
                   ATTRIBUTES_LABEL.NAME, 
                   ATTRIBUTES_LABEL.PARENT, 
+                  ATTRIBUTES_LABEL.ROOT, 
                   ATTRIBUTES_LABEL.TYPE, 
                   ATTRIBUTES_LABEL.ADDED_ON]

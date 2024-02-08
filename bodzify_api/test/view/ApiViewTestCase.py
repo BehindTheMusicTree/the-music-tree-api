@@ -20,7 +20,6 @@ class ApiViewTestCase(ViewTestCase):
     savedTrack: LibraryTrack
     savedGenre: Criteria
 
-
     def extract(self, data):
         response = self.apiClient.post(
             path=reverse('librarytrack-extract'),
@@ -81,6 +80,9 @@ class ApiViewTestCase(ViewTestCase):
     def _mergeTwoJsons(self, json1, json2):
         json1.update(json2)
         return json1
+    
+    def get_genres(self):
+        return self.apiClient.get(path=reverse('genre-list'))
 
     def postGenre(self, dataJson):
         response = self.apiClient.post(
