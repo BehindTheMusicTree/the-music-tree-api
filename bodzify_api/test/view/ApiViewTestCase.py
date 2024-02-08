@@ -56,7 +56,7 @@ class ApiViewTestCase(ViewTestCase):
             self._set_saved_track_attribute(response)
         return response
 
-    def searchMine(self, source, query):
+    def search_mine(self, source, query):
         data = {
             'source': source,
             'query': query

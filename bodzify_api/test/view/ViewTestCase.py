@@ -35,7 +35,6 @@ class ViewTestCase(TestCase):
         test_user_library_abs_path = settings.LIBRARIES_PATH / \
                                   (settings.USER_LIBRARY_DIR_NAME_PREFIXE + \
                                   str(self.testUser.pk))
-        logger.debug("test_user_library_abs_path: " + str(test_user_library_abs_path))
         if not test_user_library_abs_path.exists():
             os.makedirs(test_user_library_abs_path)
 
