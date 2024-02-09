@@ -17,4 +17,4 @@ class TestCase(ApiViewTestCase):
         response = self.post_sample_track(sample_filename="sample.mp3", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         albumArtistsKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
-        assert self.savedTrackMetadata[albumArtistsKey] == "Chuck Berry,The Beatles,The Rolling Stones"
+        assert self.saved_track_metadata[albumArtistsKey] == "Chuck Berry,The Beatles,The Rolling Stones"

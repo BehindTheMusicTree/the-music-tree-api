@@ -11,7 +11,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
     def test_null(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -20,13 +20,13 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] in [
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] in [
             "", None]
 
     def test_zero(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -35,12 +35,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 0
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 0
 
     def test_1Then13(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "2Stars.mp3",
+                  file=str(self.test_user_library_abs_path / "2Stars.mp3"),
                   title="Love",
                   rating=4,
                   duration=0)
@@ -49,12 +49,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 13
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 13
 
     def test_2Then1(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=8,
                   duration=0)
@@ -63,12 +63,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 1
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 1
 
     def test_3Then54(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -77,12 +77,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 54
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 54
 
     def test_4Then64(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -91,12 +91,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 64
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 64
 
     def test_5Then118(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -105,12 +105,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 118
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 118
 
     def test_6Then128(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -119,12 +119,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 128
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 128
 
     def test_7Then186(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -133,12 +133,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 186
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 186
 
     def test_8Then196(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -147,12 +147,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 196
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 196
 
     def test_9Then242(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -161,12 +161,12 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 242
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 242
 
     def test_10Then255(self):
         track = G(LibraryTrack,
                   user=self.testUser,
-                  file=self.test_user_library_abs_path / "1Star.mp3",
+                  file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
                   duration=0)
@@ -175,4 +175,4 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 255
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 255

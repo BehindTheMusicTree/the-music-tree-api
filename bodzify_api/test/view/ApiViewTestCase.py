@@ -73,8 +73,8 @@ class ApiViewTestCase(ViewTestCase):
         trackUuid = response.json()[TRACK_ATTRIBUTES_LABEL.UUID]
         self.savedTrack = LibraryTrack.objects.get(uuid=trackUuid)
         if self.savedTrack.fileExists:
-            self.savedTrackMetadata = AudioMetadataService.get_metadata_dict_from_file(
-                file=self.savedTrack.file)
+            self.saved_track_metadata = \
+                AudioMetadataService.get_metadata_dict_from_file(file=self.savedTrack.file)
 
     def _merge_two_jsons(self, json1, json2):
         json1.update(json2)

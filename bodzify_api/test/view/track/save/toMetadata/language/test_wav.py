@@ -16,7 +16,7 @@ class TestCase(ApiViewTestCase):
         response = self.post_sample_track(sample_filename="sample.wav", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         languageKey = AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE
-        assert self.savedTrackMetadata[languageKey] == language
+        assert self.saved_track_metadata[languageKey] == language
 
     def test_null(self):
         data = {
@@ -25,4 +25,4 @@ class TestCase(ApiViewTestCase):
         response = self.post_sample_track(sample_filename="sample.wav", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         languageKey = AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE
-        assert self.savedTrackMetadata[languageKey] in ["", None]
+        assert self.saved_track_metadata[languageKey] in ["", None]
