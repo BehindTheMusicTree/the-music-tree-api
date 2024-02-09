@@ -20,7 +20,7 @@ class TestCase(ApiViewTestCase):
     def test_one_acendant_then_root_is_parent(self):
         rock = G(Criteria,
             name="Rock",
-            user=self.testUser,
+            user=self.test_user,
             type=CriteriaTypesId.GENRE)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk",
@@ -33,11 +33,11 @@ class TestCase(ApiViewTestCase):
     def test_two_acendant_then_root_is_parent_of_parent(self):
         rockGenre = G(Criteria,
             name="Rock",
-            user=self.testUser,
+            user=self.test_user,
             type=CriteriaTypesId.GENRE)
         punkGenre = G(Criteria,
             name="Punk",
-            user=self.testUser,
+            user=self.test_user,
             type=CriteriaTypesId.GENRE,
             parent=rockGenre)
         data = {

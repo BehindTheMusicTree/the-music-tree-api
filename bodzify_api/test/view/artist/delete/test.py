@@ -10,10 +10,10 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 class ArtistViewDeleteTestCase(ArtistViewTestCase):
 
     def test_withOneTrackLinked(self):
-        museArtist = G(Artist, name="Muse", user=self.testUser)
+        museArtist = G(Artist, name="Muse", user=self.test_user)
         assassinTrack = G(
             LibraryTrack,
-            user=self.testUser,
+            user=self.test_user,
             title="Assassin",
             artist=museArtist,
             duration=0)
@@ -34,14 +34,14 @@ class ArtistViewDeleteTestCase(ArtistViewTestCase):
         - artist 'Coco' as it has nor album nor track linked to it anymore.
     """
     def test_withAlbumAndAlbumArtistDeletion(self):
-        bertrandArtist = G(Artist, user=self.testUser, name='Bertrand')
-        cocoArtist = G(Artist, user=self.testUser, name='Coco')
+        bertrandArtist = G(Artist, user=self.test_user, name='Bertrand')
+        cocoArtist = G(Artist, user=self.test_user, name='Coco')
         xavierAlbum = G(Album,
-                        user=self.testUser,
+                        user=self.test_user,
                         name='Xavier',
                         albumArtists=[bertrandArtist, cocoArtist])
         lifeTrack = G(LibraryTrack,
-                      user=self.testUser,
+                      user=self.test_user,
                       title="Life",
                       artist=bertrandArtist,
                       album=xavierAlbum,

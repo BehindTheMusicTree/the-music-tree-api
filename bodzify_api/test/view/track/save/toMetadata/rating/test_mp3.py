@@ -10,7 +10,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
 
     def test_null(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -25,7 +25,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
 
     def test_zero(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -37,9 +37,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 0
 
-    def test_1Then13(self):
+    def test_1__then__13(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "2Stars.mp3"),
                   title="Love",
                   rating=4,
@@ -51,9 +51,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 13
 
-    def test_2Then1(self):
+    def test_2__then__1(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=8,
@@ -65,9 +65,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 1
 
-    def test_3Then54(self):
+    def test_3__then__54(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -79,9 +79,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 54
 
-    def test_4Then64(self):
+    def test_4__then__64(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -93,9 +93,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 64
 
-    def test_5Then118(self):
+    def test_5__then__118(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -107,9 +107,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 118
 
-    def test_6Then128(self):
+    def test_6__then__128(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -121,9 +121,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 128
 
-    def test_7Then186(self):
+    def test_7_then_186(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -135,9 +135,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 186
 
-    def test_8Then196(self):
+    def test_8_then_196(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -149,9 +149,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 196
 
-    def test_9Then242(self):
+    def test_9_then_242(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,
@@ -163,9 +163,9 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 242
 
-    def test_10Then255(self):
+    def test_10_then_255(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=str(self.test_user_library_abs_path / "1Star.mp3"),
                   title="Love",
                   rating=2,

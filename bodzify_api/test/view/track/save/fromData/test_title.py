@@ -12,7 +12,7 @@ class TestCase(ApiViewTestCase):
     def test_notProvided(self):
         title = "Mon Amour"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title=title,
                   duration=0)
         data = {}
@@ -22,7 +22,7 @@ class TestCase(ApiViewTestCase):
 
     def test_nullThenNull(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Lolilom",
                   duration=0)
         data = {
@@ -34,7 +34,7 @@ class TestCase(ApiViewTestCase):
 
     def test_emptyThenNull(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Lolilom",
                   duration=0)
         data = {
@@ -47,7 +47,7 @@ class TestCase(ApiViewTestCase):
     def test_longest(self):
         title = "a" * (settings.TRACK_LANGUAGE_MAX_CHAR - len(".mp3"))
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Lolilom",
                   duration=0)
         data = {

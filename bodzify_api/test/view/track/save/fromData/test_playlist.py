@@ -19,7 +19,7 @@ class TestCase(ApiViewTestCase):
     def test_newGenreThenInNewGenrePlaylistAndAllPlaylist(self):
         genreName = "Rock"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
 
@@ -45,7 +45,7 @@ class TestCase(ApiViewTestCase):
         }
         self.post_genre(dataJson)
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
 
@@ -89,7 +89,7 @@ class TestCase(ApiViewTestCase):
         self.post_genre(dataJson)
 
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {

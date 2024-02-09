@@ -9,7 +9,7 @@ class TestCase(ApiViewTestCase):
     def test_root(self):
         genre = G(Criteria,
             name="Rock",
-            user=self.testUser,
+            user=self.test_user,
             type=CriteriaTypesId.GENRE)
         response = self.get_genres()
         genresJsonList = response.json()[RESPONSE_KEYS.RESULTS]
@@ -19,11 +19,11 @@ class TestCase(ApiViewTestCase):
     def test_not_root(self):
         rockGenre = G(Criteria,
             name="Rock",
-            user=self.testUser,
+            user=self.test_user,
             type=CriteriaTypesId.GENRE)
         punkGenre = G(Criteria,
             name="Punk",
-            user=self.testUser,
+            user=self.test_user,
             type=CriteriaTypesId.GENRE)
         response = self.get_genres()
         genresJsonList = response.json()[RESPONSE_KEYS.RESULTS]

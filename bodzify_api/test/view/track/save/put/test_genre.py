@@ -11,7 +11,7 @@ class TestCase(ApiViewTestCase):
     def test_notProvidedThenUnchanged(self):
         self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   genre=self.saved_genre,
                   duration=0)

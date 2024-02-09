@@ -1,17 +1,16 @@
 #!/usr/bin/env python
+
 from rest_framework import status
 from ddf import G
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.Album import Album
 
 
 class TestCase(ApiViewTestCase):
 
-    def test_okEvenWithoutAFile(self):
+    def test_ok_even_without_a_file(self):
         track = G(LibraryTrack, 
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Foire",
                   duration=0)
         data = {

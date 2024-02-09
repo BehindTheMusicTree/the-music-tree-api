@@ -9,7 +9,7 @@ class ExtraFieldTestCase(ApiViewTestCase):
 
     def test_error(self):
         track = G(LibraryTrack, 
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Foire",
                   duration=0)
         data = {

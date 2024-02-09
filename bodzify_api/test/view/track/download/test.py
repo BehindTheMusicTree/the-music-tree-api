@@ -9,7 +9,7 @@ class DownloadTestCase(ApiViewTestCase):
 
     def test_errorWhenFileNotExisting(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Kobra",
                   duration=0)
         response = self.downloadTrack(trackUuid=track.uuid)
@@ -18,7 +18,7 @@ class DownloadTestCase(ApiViewTestCase):
     def test_ok(self):
         filePathRelativeToMediaDir = self.test_user_library_path_relative_to_media_dir / "sample.mp3"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   file=filePathRelativeToMediaDir,
                   title="We're All To Blame",
                   duration=0)

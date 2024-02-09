@@ -12,7 +12,7 @@ class TestCase(ApiViewTestCase):
     def test_notProvidedThenUnchanged(self):
         title = "Mon Amour"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title=title,
                   duration=0)
         data = {}

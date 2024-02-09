@@ -17,7 +17,7 @@ class TestCase(ApiViewTestCase):
     def test_longest(self):
         albumArtistsName = "a" * settings.ALBUM_ARTISTS_FIELD_MAX_CHAR
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -32,9 +32,9 @@ class TestCase(ApiViewTestCase):
 
     def test_whenAlbumArtistsExist(self):
         albumArtistsName = "Muse"
-        artist = G(Artist, user=self.testUser, name=albumArtistsName)
+        artist = G(Artist, user=self.test_user, name=albumArtistsName)
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -50,10 +50,10 @@ class TestCase(ApiViewTestCase):
 
     def test_whenOneOutOfTwoAlbumArtistsExist(self):
         museArtistName = "Muse"
-        museArtist = G(Artist, user=self.testUser, name=museArtistName)
+        museArtist = G(Artist, user=self.test_user, name=museArtistName)
         billArtistName = "Bill"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         
@@ -75,12 +75,12 @@ class TestCase(ApiViewTestCase):
 
     def test_whenExistingAlbumWithSameAlbumArtists(self):
         albumArtistsName = "Muse"
-        artist = G(Artist, user=self.testUser, name=albumArtistsName)
+        artist = G(Artist, user=self.test_user, name=albumArtistsName)
         albumName = "Absolution"
-        album = G(Album, user=self.testUser,
+        album = G(Album, user=self.test_user,
                   name=albumName, albumArtists=[artist])
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         
@@ -98,7 +98,7 @@ class TestCase(ApiViewTestCase):
 
     def test_nullThenNone(self):        
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         
@@ -113,7 +113,7 @@ class TestCase(ApiViewTestCase):
 
     def test_emptyThenNone(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         
@@ -146,13 +146,13 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_newAlbumWhenAlbumArtistsNotProvided(self):
-        sumArtist = G(Artist, user=self.testUser, name="Sum 41")
+        sumArtist = G(Artist, user=self.test_user, name="Sum 41")
         albumName = "Chuck"
-        chuckAlbum = G(Album, user=self.testUser,
+        chuckAlbum = G(Album, user=self.test_user,
                        name=albumName, albumArtists=[sumArtist])
         
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         
@@ -170,7 +170,7 @@ class TestCase(ApiViewTestCase):
         albumName = "Chuck"
         
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         
@@ -182,24 +182,24 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         
         assert Album.objects.get(
-            user=self.testUser, name=albumName).albumArtists.count() == 1
+            user=self.test_user, name=albumName).albumArtists.count() == 1
         assert Artist.objects.filter(
-            user=self.testUser, name=artistName).count() == 1
+            user=self.test_user, name=artistName).count() == 1
 
     def test_existingAlbumWithSameNameButDifferentAlbumArtist(self):
         kendalArtistName = "Kendal"
-        kendalArtist = G(Artist, user=self.testUser, name=kendalArtistName)
+        kendalArtist = G(Artist, user=self.test_user, name=kendalArtistName)
         albumName = "Hello"
-        hello1Album = G(Album, user=self.testUser,
+        hello1Album = G(Album, user=self.test_user,
                         name=albumName, albumArtists=[kendalArtist])
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Joie",
                   album=hello1Album,
                   duration=0)
         robertdeniroArtist = G(
-            Artist, user=self.testUser, name="Robert De Niro")
-        hello2Album = G(Album, user=self.testUser, name=albumName,
+            Artist, user=self.test_user, name="Robert De Niro")
+        hello2Album = G(Album, user=self.test_user, name=albumName,
                         albumArtists=[robertdeniroArtist])
         
         data = {
@@ -211,15 +211,15 @@ class TestCase(ApiViewTestCase):
         
         assert self.savedTrack.album.uuid == hello2Album.uuid
         assert Album.objects.filter(
-            user=self.testUser, name=albumName).count() == 1
+            user=self.test_user, name=albumName).count() == 1
         assert Artist.objects.filter(
-            user=self.testUser, name=kendalArtistName).exists() == False
+            user=self.test_user, name=kendalArtistName).exists() == False
 
     def test_oneExistingAlbumArtistAndOneNot(self):
-        pnlArtist = G(Artist, user=self.testUser, name="PNL")
+        pnlArtist = G(Artist, user=self.test_user, name="PNL")
         tristeArtistName = "Triste"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Joie",
                   duration=0)
         
@@ -235,5 +235,5 @@ class TestCase(ApiViewTestCase):
         assert len(albumArtistsList) == 2
         assert pnlArtist in albumArtistsList
         tristeArtist = Artist.objects.get(
-            user=self.testUser, name=tristeArtistName)
+            user=self.test_user, name=tristeArtistName)
         assert tristeArtist in albumArtistsList

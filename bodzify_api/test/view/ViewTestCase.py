@@ -24,17 +24,17 @@ class ViewTestCase(TestCase):
 
     def setUp(self) -> None:
         self.apiClient = APIClient()
-        self.testUser = User.objects.get(username=TEST_USERNAME)
+        self.test_user = User.objects.get(username=TEST_USERNAME)
         self._set_up_test_user_directories()
         if os.path.isdir(self.library_sample_dir_abs_path):
             self._copyLibrarySamplesToTestUserLibrary()
-        self._login(self.testUser)
+        self._login(self.test_user)
         return super().setUp()
 
     def _set_up_test_user_directories(self):
         test_user_library_abs_path = settings.LIBRARIES_PATH / \
                                   (settings.USER_LIBRARY_DIR_NAME_PREFIXE + \
-                                  str(self.testUser.pk))
+                                  str(self.test_user.pk))
         if not test_user_library_abs_path.exists():
             os.makedirs(test_user_library_abs_path)
 
@@ -45,7 +45,7 @@ class ViewTestCase(TestCase):
 
         self.test_user_library_path_relative_to_media_dir = \
             Path(settings.LIBRARIES_DIR_NAME) / \
-            (settings.USER_LIBRARY_DIR_NAME_PREFIXE + str(self.testUser.pk))
+            (settings.USER_LIBRARY_DIR_NAME_PREFIXE + str(self.test_user.pk))
         self.test_user_library_abs_path = settings.MEDIA_ROOT / \
             self.test_user_library_path_relative_to_media_dir
         self._empty_user_library()

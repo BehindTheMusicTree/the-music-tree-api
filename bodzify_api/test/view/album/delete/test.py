@@ -16,11 +16,11 @@ class TestCase(AlbumViewTestCase):
 	"""
 
     def test_2TracksLinked(self):
-        blackHolesAlbum = G(Album, user=self.testUser, name="Black Holes And Revelations")
+        blackHolesAlbum = G(Album, user=self.test_user, name="Black Holes And Revelations")
         assassinTrackFilename = "Assassin.mp3"
         assassinTrack = G(
             LibraryTrack,
-            user=self.testUser,
+            user=self.test_user,
             file=self.test_user_library_abs_path / assassinTrackFilename,
             title="Assassin",
             album=blackHolesAlbum,
@@ -28,7 +28,7 @@ class TestCase(AlbumViewTestCase):
         starlightTrackFilename = "Starlight.mp3"
         starlightTrack = G(
             LibraryTrack,
-            user=self.testUser,
+            user=self.test_user,
             file=self.test_user_library_abs_path / starlightTrackFilename,
             title="Starlight",
             album=blackHolesAlbum,
@@ -41,9 +41,9 @@ class TestCase(AlbumViewTestCase):
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(uuid=blackHolesAlbum.uuid).exists() == False
         assert LibraryTrack.objects.filter(
-            user=self.testUser, title=assassinTrack.title).exists() == False
+            user=self.test_user, title=assassinTrack.title).exists() == False
         assert LibraryTrack.objects.filter(
-            user=self.testUser, title=starlightTrack.title).exists() == False
+            user=self.test_user, title=starlightTrack.title).exists() == False
         assert self.doesTrackFilenameExistInTestUserLibrary(assassinTrackFilename) == False
         assert self.doesTrackFilenameExistInTestUserLibrary(starlightTrackFilename) == False
 
@@ -61,18 +61,18 @@ class TestCase(AlbumViewTestCase):
     """
 
     def test_withArtistDeletion(self):
-        matthewArtist = G(Artist, user=self.testUser, name="Matthew Bellamy")
-        museArtist = G(Artist, user=self.testUser, name="Muse")
-        polArtist = G(Artist, user=self.testUser, name="Pol")
+        matthewArtist = G(Artist, user=self.test_user, name="Matthew Bellamy")
+        museArtist = G(Artist, user=self.test_user, name="Muse")
+        polArtist = G(Artist, user=self.test_user, name="Pol")
         blackHolesAlbum = G(
             Album,
-            user=self.testUser,
+            user=self.test_user,
             name="Black Holes And Revelations",
             albumArtists=[matthewArtist, museArtist]
         )
         G(
             LibraryTrack,
-            user=self.testUser,
+            user=self.test_user,
             title="Assassin",
             artist=matthewArtist,
             album=blackHolesAlbum,
@@ -80,7 +80,7 @@ class TestCase(AlbumViewTestCase):
         )
         G(
             LibraryTrack,
-            user=self.testUser,
+            user=self.test_user,
             title="Blue",
             artist=polArtist,
             duration=0
@@ -88,6 +88,6 @@ class TestCase(AlbumViewTestCase):
 
         response = self.delete(albumUuid=blackHolesAlbum.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert Album.objects.filter(user=self.testUser, name=matthewArtist.name).exists() == False
-        assert Artist.objects.filter(user=self.testUser, name=museArtist.name).exists() == False
-        assert Artist.objects.filter(user=self.testUser, name=polArtist.name).exists() == True
+        assert Album.objects.filter(user=self.test_user, name=matthewArtist.name).exists() == False
+        assert Artist.objects.filter(user=self.test_user, name=museArtist.name).exists() == False
+        assert Artist.objects.filter(user=self.test_user, name=polArtist.name).exists() == True

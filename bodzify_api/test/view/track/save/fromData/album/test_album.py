@@ -41,7 +41,7 @@ class ArtistTestCase(ApiViewTestCase):
 
     def test_existing(self):
         albumName = "Kopoe"
-        G(Album, user=self.testUser, name=albumName)
+        G(Album, user=self.test_user, name=albumName)
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
             "albumName": albumName,

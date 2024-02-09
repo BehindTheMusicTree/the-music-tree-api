@@ -24,4 +24,4 @@ class TestCase(ApiViewTestCase):
         response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert GenrePlaylist.objects.filter(
-            user=self.testUser, criteria__name=genreName).exists()
+            user=self.test_user, criteria__name=genreName).exists()

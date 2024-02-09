@@ -12,9 +12,9 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class TestCase(ApiViewTestCase):
 
     def test_notProvided(self):
-        artist = G(Artist, user=self.testUser, name="Jojo")
+        artist = G(Artist, user=self.test_user, name="Jojo")
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   artist=artist,
                   duration=0)
@@ -24,7 +24,7 @@ class TestCase(ApiViewTestCase):
 
     def test_nullThenNone(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -36,7 +36,7 @@ class TestCase(ApiViewTestCase):
 
     def test_empty(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -49,7 +49,7 @@ class TestCase(ApiViewTestCase):
     def test_longest(self):
         artistName = "a" * settings.ARTIST_NAME_MAX_CHAR
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -61,9 +61,9 @@ class TestCase(ApiViewTestCase):
 
     def test_existing(self):
         artistName = "a-ha"
-        G(Artist, user=self.testUser, name=artistName)
+        G(Artist, user=self.test_user, name=artistName)
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -76,7 +76,7 @@ class TestCase(ApiViewTestCase):
     def test_notExisting(self):
         artistName = "hoho"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {

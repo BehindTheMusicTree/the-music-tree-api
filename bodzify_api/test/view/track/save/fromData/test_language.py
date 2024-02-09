@@ -12,7 +12,7 @@ class TestCase(ApiViewTestCase):
     def test_notProvided(self):
         language = "French"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   language=language,
                   duration=0)
@@ -23,7 +23,7 @@ class TestCase(ApiViewTestCase):
 
     def test_nullThenNone(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -35,7 +35,7 @@ class TestCase(ApiViewTestCase):
 
     def test_emptyThenNone(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -48,7 +48,7 @@ class TestCase(ApiViewTestCase):
     def test_longest(self):
         language = "a" * settings.TRACK_LANGUAGE_MAX_CHAR
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {

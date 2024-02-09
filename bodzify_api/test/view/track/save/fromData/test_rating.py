@@ -10,7 +10,7 @@ class TestCase(ApiViewTestCase):
     def test_notProvidedThenUnchanged(self):
         rating = 5
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=rating,
                   duration=0)
@@ -22,7 +22,7 @@ class TestCase(ApiViewTestCase):
     def test_zero(self):
         rating = 0
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   duration=0)
         data = {
@@ -35,7 +35,7 @@ class TestCase(ApiViewTestCase):
     def test_four(self):
         rating = 4
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   duration=0)
         data = {
@@ -48,7 +48,7 @@ class TestCase(ApiViewTestCase):
     def test_ten(self):
         rating = 10
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   duration=0)
         data = {
@@ -60,7 +60,7 @@ class TestCase(ApiViewTestCase):
 
     def test_none(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=3,
                   duration=0)
@@ -73,7 +73,7 @@ class TestCase(ApiViewTestCase):
 
     def test_errorWhenAboveMaximum(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=3,
                   duration=0)
@@ -85,7 +85,7 @@ class TestCase(ApiViewTestCase):
 
     def test_errorWhenBelowMinimum(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=3,
                   duration=0)
@@ -97,7 +97,7 @@ class TestCase(ApiViewTestCase):
 
     def test_errorWhenNotInteger(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=3,
                   duration=0)

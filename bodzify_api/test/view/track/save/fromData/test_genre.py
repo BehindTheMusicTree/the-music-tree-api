@@ -14,7 +14,7 @@ class TestCase(ApiViewTestCase):
     def test_nullThenNone(self):
         self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   genre=self.saved_genre,
                   duration=0)
@@ -28,7 +28,7 @@ class TestCase(ApiViewTestCase):
     def test_emptyThenNone(self):
         self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   genre=self.saved_genre,
                   duration=0)
@@ -42,7 +42,7 @@ class TestCase(ApiViewTestCase):
     def test_longest(self):
         genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -55,7 +55,7 @@ class TestCase(ApiViewTestCase):
     def test_errorWhenTooLong(self):
         genreName = "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
@@ -68,7 +68,7 @@ class TestCase(ApiViewTestCase):
         genreName = "Rock"
         self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: genreName})
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   genre=self.saved_genre,
                   duration=0)
@@ -82,7 +82,7 @@ class TestCase(ApiViewTestCase):
     def test_newSoParentNone(self):
         genreName = "Rock"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
