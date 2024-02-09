@@ -20,7 +20,7 @@ logger = logging.getLogger('bodzify_api')
 class ViewTestCase(TestCase):
 
     fixtures = ['app_initial_data', 'pytest_user_initial_data']
-    test_user_library_path_relative_to_media_dir = ""
+    test_user_library_path_relative_to_media_dir = Path()
 
     def setUp(self) -> None:
         self.apiClient = APIClient()
