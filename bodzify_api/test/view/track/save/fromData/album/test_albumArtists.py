@@ -24,10 +24,10 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        assert list(self.savedTrack.album.albumArtists.all())[
+        assert list(self.saved_track.album.albumArtists.all())[
             0].name == albumArtistsName
 
     def test_whenAlbumArtistsExist(self):
@@ -41,10 +41,10 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        albumArtistsList = list(self.savedTrack.album.albumArtists.all())
+        albumArtistsList = list(self.saved_track.album.albumArtists.all())
         assert len(albumArtistsList) == 1
         assert albumArtistsList[0].uuid == artist.uuid
 
@@ -62,15 +62,15 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: \
                 museArtistName + ", " + billArtistName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        museAlbumArtist = self.savedTrack.album.albumArtists.get(
+        museAlbumArtist = self.saved_track.album.albumArtists.get(
             name=museArtistName)
         assert museAlbumArtist.uuid == museArtist.uuid
-        assert self.savedTrack.album.albumArtists.filter(
+        assert self.saved_track.album.albumArtists.filter(
             name=billArtistName).exists()
-        albumArtists = list(self.savedTrack.album.albumArtists.all())
+        albumArtists = list(self.saved_track.album.albumArtists.all())
         assert len(albumArtists) == 2
 
     def test_whenExistingAlbumWithSameAlbumArtists(self):
@@ -88,11 +88,11 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: albumName,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         
-        assert self.savedTrack.album.uuid == album.uuid
-        albumArtistsList = list(self.savedTrack.album.albumArtists.all())
+        assert self.saved_track.album.uuid == album.uuid
+        albumArtistsList = list(self.saved_track.album.albumArtists.all())
         assert len(albumArtistsList) == 1
         assert albumArtistsList[0].uuid == artist.uuid
 
@@ -106,10 +106,10 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: None
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         
-        assert len(list(self.savedTrack.album.albumArtists.all())) == 0
+        assert len(list(self.saved_track.album.albumArtists.all())) == 0
 
     def test_emptyThenNone(self):
         track = G(LibraryTrack,
@@ -121,10 +121,10 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: ""
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         
-        assert len(list(self.savedTrack.album.albumArtists.all())) == 0
+        assert len(list(self.saved_track.album.albumArtists.all())) == 0
 
     def test_errorWhenAlbumMissing(self):
         trackUrl = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
@@ -159,11 +159,11 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: albumName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         
-        assert self.savedTrack.album_id != chuckAlbum.uuid
-        assert len(list(self.savedTrack.album.albumArtists.all())) == 0
+        assert self.saved_track.album_id != chuckAlbum.uuid
+        assert len(list(self.saved_track.album.albumArtists.all())) == 0
 
     def test_sentTwiceButShouldBeCreatedOnce(self):
         artistName = "Sum"
@@ -178,7 +178,7 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: albumName,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: artistName + "," + artistName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         
         assert Album.objects.get(
@@ -206,10 +206,10 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: hello2Album.name,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: robertdeniroArtist.name,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         
-        assert self.savedTrack.album.uuid == hello2Album.uuid
+        assert self.saved_track.album.uuid == hello2Album.uuid
         assert Album.objects.filter(
             user=self.test_user, name=albumName).count() == 1
         assert Artist.objects.filter(
@@ -228,10 +228,10 @@ class TestCase(ApiViewTestCase):
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: \
                 pnlArtist.name + "," + tristeArtistName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         
-        albumArtistsList = list(self.savedTrack.album.albumArtists.all())
+        albumArtistsList = list(self.saved_track.album.albumArtists.all())
         assert len(albumArtistsList) == 2
         assert pnlArtist in albumArtistsList
         tristeArtist = Artist.objects.get(

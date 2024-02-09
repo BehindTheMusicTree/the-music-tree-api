@@ -9,4 +9,4 @@ class TestCase(ApiViewTestCase):
     def test_notProvidedThenNone(self):
         response = self.post_sample_track(sample_filename="notProvided.mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album == None
+        assert self.saved_track.album == None

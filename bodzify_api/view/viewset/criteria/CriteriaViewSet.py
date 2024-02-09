@@ -8,7 +8,8 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from bodzify_api.serializer.criteria.input.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
+from bodzify_api.serializer.criteria.input.schema.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
+from bodzify_api.serializer.criteria.input.schema.CriteriaUpdateSchemaSerializer import CriteriaUpdateSchemaSerializer
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.service.criteria.CriteriaService import CriteriaService
 from bodzify_api.model.criteria.Criteria import Criteria, \
@@ -34,7 +35,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
 
     def __init__(self, criteriaService: CriteriaService, **kwargs):
         super().__init__(**kwargs)
-        self.criteriaService = criteriaService
+        self.criteria_service = criteriaService
 
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
@@ -57,7 +58,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
                    responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         try:
-            criteria = self.criteriaService.create(user=request.user, data=request.data)
+            criteria = self.criteria_service.create(user=request.user, create_schema_data=request.data)
         except IntegrityError as e:
             logger.exception(e)
             return utility.get_json_response_when_bad_request(exception=e)
@@ -88,3 +89,19 @@ class CriteriaViewSet(MultiSerializerViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+    
+
+    @extend_schema(request=CriteriaUpdateSchemaSerializer,
+                   responses=CriteriaDetailedSerializer,
+                   description=("""Updates a criteria"""))
+    def update(self, request, *args, **kwargs):
+        updated_genre = self.criteria_service.update(
+            user=request.user, 
+            update_schema_data=request.data, 
+            old_criteria=self.get_object())
+        response_serializer = CriteriaDetailedSerializer(updated_genre)
+        headers = self.get_success_headers(response_serializer.data)
+        return JsonResponse(
+            data=CriteriaDetailedSerializer(updated_genre).data,
+            status=status.HTTP_200_OK,
+            headers=headers)

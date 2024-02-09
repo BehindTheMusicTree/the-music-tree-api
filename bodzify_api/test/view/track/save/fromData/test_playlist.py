@@ -26,10 +26,10 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        trackPlaylists = self.savedTrack.playlists.all()
+        trackPlaylists = self.saved_track.playlists.all()
         assert len(trackPlaylists) == 2
         criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)
         assert criteriaPlaylists.filter(
@@ -52,10 +52,10 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        trackPlaylists = self.savedTrack.playlists.all()
+        trackPlaylists = self.saved_track.playlists.all()
         assert len(trackPlaylists) == 2
         criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)
         assert criteriaPlaylists.filter(
@@ -95,10 +95,10 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: emoGenreName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        trackPlaylists = self.savedTrack.playlists.all()
+        trackPlaylists = self.saved_track.playlists.all()
         assert len(trackPlaylists) == 4
         
         criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)

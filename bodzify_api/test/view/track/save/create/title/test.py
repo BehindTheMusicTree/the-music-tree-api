@@ -10,4 +10,4 @@ class TestCase(ApiViewTestCase):
         response = self.post_sample_track(
             sample_filename=filenameWithoutExtension + ".mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.title == filenameWithoutExtension
+        assert self.saved_track.title == filenameWithoutExtension

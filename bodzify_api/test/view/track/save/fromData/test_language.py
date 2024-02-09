@@ -17,9 +17,9 @@ class TestCase(ApiViewTestCase):
                   language=language,
                   duration=0)
         data = {}
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == language
+        assert self.saved_track.language == language
 
     def test_nullThenNone(self):
         track = G(LibraryTrack,
@@ -29,9 +29,9 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: None
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == None
+        assert self.saved_track.language == None
 
     def test_emptyThenNone(self):
         track = G(LibraryTrack,
@@ -41,9 +41,9 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: ""
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == None
+        assert self.saved_track.language == None
 
     def test_longest(self):
         language = "a" * settings.TRACK_LANGUAGE_MAX_CHAR
@@ -54,6 +54,6 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: language
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == language
+        assert self.saved_track.language == language

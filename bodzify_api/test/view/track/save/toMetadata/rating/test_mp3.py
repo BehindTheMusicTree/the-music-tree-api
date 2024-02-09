@@ -18,7 +18,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": None,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] in [
             "", None]
@@ -33,7 +33,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": "0",
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 0
 
@@ -47,7 +47,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 1,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 13
 
@@ -61,7 +61,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 2,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 1
 
@@ -75,7 +75,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 3,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 54
 
@@ -89,7 +89,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 4,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 64
 
@@ -103,7 +103,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 5,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 118
 
@@ -117,7 +117,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 6,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 128
 
@@ -131,7 +131,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 7,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 186
 
@@ -145,7 +145,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 8,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 196
 
@@ -159,7 +159,7 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 9,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 242
 
@@ -173,6 +173,6 @@ class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
         data = {
             "rating": 10,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 255

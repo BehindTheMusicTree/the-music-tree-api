@@ -16,9 +16,9 @@ class TestCase(ApiViewTestCase):
                   album=album,
                   duration=0)
         data = {}
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.album.uuid == album.uuid
+        assert self.saved_track.album.uuid == album.uuid
 
     def test_deleteOldOneBecauseNothingLinkedToIt(self):
         albumName = "Le Noir"
@@ -31,7 +31,7 @@ class TestCase(ApiViewTestCase):
         data = {
             "albumName": "Paul",
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert Album.objects.filter(
             user=self.test_user, name=albumName).count() == 0
@@ -52,7 +52,7 @@ class TestCase(ApiViewTestCase):
         data = {
             "albumName": "Paul",
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert Album.objects.filter(
             user=self.test_user, name=albumName).count() == 1

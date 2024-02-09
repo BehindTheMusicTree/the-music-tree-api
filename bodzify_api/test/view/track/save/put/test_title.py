@@ -9,13 +9,13 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvidedThenUnchanged(self):
+    def test_not_provided_then_unchanged(self):
         title = "Mon Amour"
         track = G(LibraryTrack,
                   user=self.test_user,
                   title=title,
                   duration=0)
         data = {}
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.title == title
+        assert self.saved_track.title == title

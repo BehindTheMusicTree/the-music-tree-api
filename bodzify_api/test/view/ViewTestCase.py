@@ -23,7 +23,7 @@ class ViewTestCase(TestCase):
     test_user_library_path_relative_to_media_dir = Path()
 
     def setUp(self) -> None:
-        self.apiClient = APIClient()
+        self.api_client = APIClient()
         self.test_user = User.objects.get(username=TEST_USERNAME)
         self._set_up_test_user_directories()
         if os.path.isdir(self.library_sample_dir_abs_path):
@@ -51,9 +51,9 @@ class ViewTestCase(TestCase):
         self._empty_user_library()
 
     def _login(self, user):
-        self.apiClient.force_authenticate(user=user)
+        self.api_client.force_authenticate(user=user)
         access = AccessToken.for_user(user)
-        self.apiClient.credentials(HTTP_AUTHORIZATION='Bearer {access}')
+        self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
     def _empty_user_library(self):
         for filename in os.listdir(self.test_user_library_abs_path):

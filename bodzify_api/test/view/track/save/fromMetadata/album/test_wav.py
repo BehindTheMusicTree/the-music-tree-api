@@ -10,12 +10,12 @@ class WavTestCase(ApiViewTestCase):
     def test_noneThenNone(self):
         response = self.post_sample_track(sample_filename="noneThenNone.wav")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album == None
+        assert self.saved_track.album == None
     
     def test_longest(self):
         response = self.post_sample_track(sample_filename="100CharAlbumName.wav")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
+        assert self.saved_track.album.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
             "gJQdUyvX9WKnsv0KAtwAiWmi739Fqt2KsGZi7F3Fn9AXPI3"
 	
 	

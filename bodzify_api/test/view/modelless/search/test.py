@@ -18,7 +18,7 @@ from django.urls import reverse
 class SearchViewTestCase(ViewTestCase):
 
     def _search(self, query):
-        return self.apiClient.get(path=reverse('search-list'), data={'query': query})
+        return self.api_client.get(path=reverse('search-list'), data={'query': query})
 
     def test_inTrackArtistAndAlbum(self):
         summerloveTrack = G(LibraryTrack,

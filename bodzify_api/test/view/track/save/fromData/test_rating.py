@@ -15,9 +15,9 @@ class TestCase(ApiViewTestCase):
                   rating=rating,
                   duration=0)
         data = {}
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == rating
+        assert self.saved_track.rating == rating
 
     def test_zero(self):
         rating = 0
@@ -28,9 +28,9 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": rating
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == rating
+        assert self.saved_track.rating == rating
 
     def test_four(self):
         rating = 4
@@ -41,9 +41,9 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": rating
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == rating
+        assert self.saved_track.rating == rating
 
     def test_ten(self):
         rating = 10
@@ -54,9 +54,9 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": rating
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == rating
+        assert self.saved_track.rating == rating
 
     def test_none(self):
         track = G(LibraryTrack,
@@ -67,9 +67,9 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": None
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == None
+        assert self.saved_track.rating == None
 
     def test_errorWhenAboveMaximum(self):
         track = G(LibraryTrack,
@@ -80,7 +80,7 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": 11,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_errorWhenBelowMinimum(self):
@@ -92,7 +92,7 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": -1,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_errorWhenNotInteger(self):
@@ -104,5 +104,5 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": 5.5,
         }
-        response = self.put_sample_track(track_uuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

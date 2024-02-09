@@ -16,4 +16,4 @@ class TestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.title.startswith(settings.TRACK_GENERATED_TITLE_PREFIXE)
+        assert self.saved_track.title.startswith(settings.TRACK_GENERATED_TITLE_PREFIXE)

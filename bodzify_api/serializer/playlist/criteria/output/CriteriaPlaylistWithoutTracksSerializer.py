@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from rest_framework import serializers
 from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import \

@@ -11,5 +11,6 @@ class CriteriaSaveModelSerializer(InputModelSerializer):
             ATTRIBUTES_LABEL.USER, 
             ATTRIBUTES_LABEL.NAME, 
             ATTRIBUTES_LABEL.PARENT,
+            ATTRIBUTES_LABEL.ROOT,
             ATTRIBUTES_LABEL.TYPE
         ]

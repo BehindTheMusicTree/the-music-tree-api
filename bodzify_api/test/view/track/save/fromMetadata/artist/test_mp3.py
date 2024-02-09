@@ -10,12 +10,12 @@ class TestCase(ApiViewTestCase):
     def test_noneThenNone(self):
         response = self.post_sample_track(sample_filename="noneThenNone.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.artist == None
+        assert self.saved_track.artist == None
     
     def test_longest(self):
         response = self.post_sample_track(sample_filename="100CharArtistName.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.artist.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
+        assert self.saved_track.artist.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
             "gJQdUyvX9WKnsv0KAtwAiWmi739Fqt2KsGZi7F3Fn9AXPI3"
 	
 	

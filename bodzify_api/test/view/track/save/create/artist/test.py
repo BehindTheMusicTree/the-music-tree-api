@@ -6,7 +6,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvidedThenNone(self):
+    def test_not_provided_then_none(self):
         response = self.post_sample_track(sample_filename="notProvided.mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.artist == None
+        assert self.saved_track.artist == None

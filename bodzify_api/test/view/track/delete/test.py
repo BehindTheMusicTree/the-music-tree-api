@@ -26,7 +26,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   duration=0)
         assert self.doesTrackFilenameExistInTestUserLibrary(filename) == True
         assert track.fileExists == True
-        response = self.deleteTrack(trackUuid=track.uuid)
+        response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(uuid=track.uuid).exists() == False
         assert self.doesTrackFilenameExistInTestUserLibrary(filename) == False
@@ -42,7 +42,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   artist=artist,
                   album=album,
                   duration=0)
-        response = self.deleteTrack(trackUuid=track.uuid)
+        response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(
             user=self.test_user, name=albumName).exists() == False
@@ -55,7 +55,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   user=self.test_user,
                   title=trackTitle,
                   duration=0)
-        response = self.deleteTrack(trackUuid=track.uuid)
+        response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(
             user=self.test_user, title=trackTitle).exists() == False
@@ -67,7 +67,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   duration=0)
         allPlaylist = SimplePlaylist.objects.get(user=self.test_user, name=PLAYLIST_SPECIAL_NAMES.ALL)
         assert track in allPlaylist.librarytrack_set.all()
-        response = self.deleteTrack(trackUuid=track.uuid)
+        response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert track not in allPlaylist.librarytrack_set.all()
         
@@ -112,7 +112,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         assert track in hardrockPlaylist.librarytrack_set.all()
         assert track in rockPlaylist.librarytrack_set.all()
         
-        response = self.deleteTrack(trackUuid=track.uuid)
+        response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         
         assert track not in emoPlaylist.librarytrack_set.all()

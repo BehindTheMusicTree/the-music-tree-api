@@ -10,11 +10,11 @@ class TestCase(ApiViewTestCase):
     def test_noneThenNone(self):
         response = self.post_sample_track(sample_filename="noneThenNone.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.genre == None
+        assert self.saved_track.genre == None
     
     def test_longest(self):
         response = self.post_sample_track(sample_filename="50CharGenreName.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.genre.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5"
+        assert self.saved_track.genre.name == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5"
 	
 	

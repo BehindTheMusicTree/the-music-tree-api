@@ -38,6 +38,12 @@ class Criteria(models.Model):
 
     def __str__(self) -> str:
         return self.uuid + " " + self.name
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.root is None:
+            self.root = self
+            self.save(update_fields=[ATTRIBUTES_LABEL.ROOT])
 
     def getCommonCriteria(self, criteriaB):
         visited = set()
@@ -54,7 +60,14 @@ class Criteria(models.Model):
             criteriaBTreeItem = criteriaBTreeItem.parent
 
         return None
+
+    def is_descendant_of(self, other_criteria):
+        current_criteria = self
+        while current_criteria:
+            if current_criteria == other_criteria:
+                return True
+            current_criteria = current_criteria.parent
+        return False
     
-    def save(self, *args, **kwargs):
-        self.root = self.parent.root if self.parent else self   
-        super(Criteria, self).save(*args, **kwargs)
+    def get_children(self):
+        return Criteria.objects.filter(parent=self)

@@ -21,9 +21,9 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: None
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre == None
+        assert self.saved_track.genre == None
 
     def test_emptyThenNone(self):
         self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
@@ -35,9 +35,9 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: ""
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre == None
+        assert self.saved_track.genre == None
 
     def test_longest(self):
         genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
@@ -48,9 +48,9 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.name == genreName
+        assert self.saved_track.genre.name == genreName
         
     def test_errorWhenTooLong(self):
         genreName = "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
@@ -61,7 +61,7 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_existing(self):
@@ -75,9 +75,9 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.uuid == self.saved_genre.uuid
+        assert self.saved_track.genre.uuid == self.saved_genre.uuid
 
     def test_newSoParentNone(self):
         genreName = "Rock"
@@ -88,6 +88,6 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.genre.parent == None
+        assert self.saved_track.genre.parent == None

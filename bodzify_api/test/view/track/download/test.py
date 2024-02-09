@@ -5,14 +5,14 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class DownloadTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_errorWhenFileNotExisting(self):
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Kobra",
                   duration=0)
-        response = self.downloadTrack(trackUuid=track.uuid)
+        response = self.download_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_410_GONE
 
     def test_ok(self):
@@ -22,5 +22,5 @@ class DownloadTestCase(ApiViewTestCase):
                   file=filePathRelativeToMediaDir,
                   title="We're All To Blame",
                   duration=0)
-        response = self.downloadTrack(trackUuid=track.uuid)
+        response = self.download_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_200_OK

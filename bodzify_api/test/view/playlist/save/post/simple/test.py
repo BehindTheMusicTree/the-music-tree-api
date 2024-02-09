@@ -12,12 +12,12 @@ class TestCase(ApiViewTestCase):
         data = {
             PLAYLIST_ATTRIBUTES_LABEL.NAME: "a" * settings.PLAYLIST_NAME_MAX_CHAR
         }
-        response = self.postSimplePlaylist(data)
+        response = self.post_simple_playlist(data)
         assert response.status_code == status.HTTP_201_CREATED
     
     def test_errorWhenTooLong(self):
         data = {
             PLAYLIST_ATTRIBUTES_LABEL.NAME: "a" * (settings.PLAYLIST_NAME_MAX_CHAR + 1)
         }
-        response = self.postSimplePlaylist(dataJson=data)
+        response = self.post_simple_playlist(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

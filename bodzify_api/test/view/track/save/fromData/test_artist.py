@@ -11,18 +11,18 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvided(self):
+    def test_not_provided_then_unchanged(self):
         artist = G(Artist, user=self.test_user, name="Jojo")
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   artist=artist,
                   duration=0)
-        response = self.put_sample_track(track.uuid, data={})
+        response = self.put_sample_track(track.uuid, data_json={})
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.artist.uuid == artist.uuid
+        assert self.saved_track.artist.uuid == artist.uuid
 
-    def test_nullThenNone(self):
+    def test_null_then_none(self):
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
@@ -30,11 +30,11 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: None
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.artist == None
+        assert self.saved_track.artist == None
 
-    def test_empty(self):
+    def test_empty_then_none(self):
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
@@ -42,9 +42,9 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: ""
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.artist == None
+        assert self.saved_track.artist == None
 
     def test_longest(self):
         artistName = "a" * settings.ARTIST_NAME_MAX_CHAR
@@ -55,9 +55,9 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.artist.name == artistName
+        assert self.saved_track.artist.name == artistName
 
     def test_existing(self):
         artistName = "a-ha"
@@ -69,11 +69,11 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.artist.name == artistName
+        assert self.saved_track.artist.name == artistName
 
-    def test_notExisting(self):
+    def test_not_existing(self):
         artistName = "hoho"
         track = G(LibraryTrack,
                   user=self.test_user,
@@ -82,6 +82,6 @@ class TestCase(ApiViewTestCase):
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.put_sample_track(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.artist.name == artistName
+        assert self.saved_track.artist.name == artistName

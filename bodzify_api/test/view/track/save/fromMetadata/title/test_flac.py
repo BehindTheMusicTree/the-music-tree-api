@@ -11,11 +11,11 @@ class FlacTestCase(ApiViewTestCase):
         filename = "noneThenFilename"
         response = self.post_sample_track(sample_filename=filename + ".flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.title == filename
+        assert self.saved_track.title == filename
     
     def test_longest(self):
         response = self.post_sample_track(sample_filename="100CharTitle.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.title == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
+        assert self.saved_track.title == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
             "gJQdUyvX9WKnsv0KAtwAiWmi739Fqt2KsGZi7F3Fn9AXPI3"
 	

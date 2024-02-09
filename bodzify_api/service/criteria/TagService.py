@@ -5,5 +5,5 @@ from bodzify_api.service.criteria.CriteriaService import CriteriaService
 
 class TagService(CriteriaService):
         
-    def getCriteriaTypeId(self):
+    def get_criteria_type_id(self):
         return CriteriaTypesId.TAG
