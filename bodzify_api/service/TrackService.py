@@ -26,40 +26,40 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 
 
-def Extract(user: User, extractSchemaData: QueryDict):
-    mineTrackUrlLabel = extractSchemaData[MINE_TRACK_ATTRIBUTES_LABEL.URL]
-    trackInMemoryFile = requests.get(mineTrackUrlLabel, stream=True)
-    with NamedTemporaryFile(delete=True) as trackTempFile:
-        for block in trackInMemoryFile.iter_content(1024 * 8):
+def extract(user: User, extract_schema_data: QueryDict):
+    mine_track_url_label = extract_schema_data[MINE_TRACK_ATTRIBUTES_LABEL.URL]
+    track_in_memory_file = requests.get(mine_track_url_label, stream=True)
+    with NamedTemporaryFile(delete=True) as track_temp_file:
+        for block in track_in_memory_file.iter_content(1024 * 8):
             if not block:
                 break
-            trackTempFile.write(block)
-        trackTempFile.flush()
-        trackTempFile.seek(0)
+            track_temp_file.write(block)
+        track_temp_file.flush()
+        track_temp_file.seek(0)
 
-        postSchemaData = _getSaveDataFromRequestData(extractSchemaData)
+        post_schema_data = _getSaveDataFromRequestData(extract_schema_data)
 
-        trackFileName, isFilenameRandomlyGenerated = _getTrackFilenameWithExtension(
-            mineTrackUrlLabel, extractSchemaData)
-        postSchemaData[TRACK_ATTRIBUTES_LABEL.FILE] = File(
-            trackTempFile, name=trackFileName)
-        libraryTrack = Create(user=user, postSchemaData=postSchemaData,
+        track_filename, isFilenameRandomlyGenerated = _getTrackFilenameWithExtension(
+            mine_track_url_label, extract_schema_data)
+        post_schema_data[TRACK_ATTRIBUTES_LABEL.FILE] = File(
+            track_temp_file, name=track_filename)
+        library_track = create(user=user, post_schema_data=post_schema_data,
                               forceTitleGeneration=isFilenameRandomlyGenerated)
 
-    return libraryTrack
+    return library_track
 
 
-def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool=False):
-    serializer = TrackPostSchemaSerializer(data=postSchemaData)
+def create(user: User, post_schema_data: QueryDict, forceTitleGeneration: bool=False):
+    serializer = TrackPostSchemaSerializer(data=post_schema_data)
     serializer.is_valid(raise_exception=True)
 
-    file = postSchemaData[TRACK_ATTRIBUTES_LABEL.FILE]
-    saveSchemaDataFromFile = _getSaveSchemaDataFromFile(file=file)
-    saveSchemaData = _getDict1OverridenWithDict2WhenKeyIsProvided(
-        dict1=saveSchemaDataFromFile, dict2=postSchemaData)
-    saveSchemaData[TRACK_ATTRIBUTES_LABEL.USER] = user.id
+    file = post_schema_data[TRACK_ATTRIBUTES_LABEL.FILE]
+    save_schema_data_from_file = _get_save_schema_data_from_file(file=file)
+    save_schema_data = _get_dict1_overriden_with_dict2_when_key_is_provided(
+        dict1=save_schema_data_from_file, dict2=post_schema_data)
+    save_schema_data[TRACK_ATTRIBUTES_LABEL.USER] = user.id
 
-    if TRACK_ATTRIBUTES_LABEL.TITLE not in saveSchemaData:
+    if TRACK_ATTRIBUTES_LABEL.TITLE not in save_schema_data:
         filename = os.path.basename(file.name).split('.')[0]
         if len(filename) > settings.TRACK_FILENAME_MAX_CHAR or forceTitleGeneration:
             title = settings.TRACK_GENERATED_TITLE_PREFIXE + \
@@ -67,31 +67,31 @@ def Create(user: User, postSchemaData: QueryDict, forceTitleGeneration: bool=Fal
                                  len(settings.TRACK_GENERATED_TITLE_PREFIXE))
         else:
             title = filename
-        saveSchemaData[TRACK_ATTRIBUTES_LABEL.TITLE] = title
+        save_schema_data[TRACK_ATTRIBUTES_LABEL.TITLE] = title
 
-    return Save(user=user, saveSchemaData=saveSchemaData)
+    return _save(user=user, save_schema_data=save_schema_data)
 
 
-def Update(user: User, updateSchemaData: QueryDict, oldTrack: LibraryTrack):
-    serializer = TrackUpdateSchemaSerializer(data=updateSchemaData)
+def update(user: User, update_schema_data: QueryDict, oldTrack: LibraryTrack):
+    serializer = TrackUpdateSchemaSerializer(data=update_schema_data)
     serializer.is_valid(raise_exception=True)
-    return Save(user=user, saveSchemaData=updateSchemaData, oldTrack=oldTrack)
+    return _save(user=user, save_schema_data=update_schema_data, old_track=oldTrack)
 
 
-def Save(user: User, saveSchemaData: QueryDict, oldTrack: LibraryTrack = None):
-    saveModelData = _getSaveModelDataFromSaveSchemaData(user=user, saveSchemaData=saveSchemaData)
-    saveModelData[TRACK_ATTRIBUTES_LABEL.USER] = user.id
-    saveSerializer = TrackSaveModelSerializer(instance=oldTrack, data=saveModelData, partial=True)
-    saveSerializer.is_valid(raise_exception=True)
-    savedTrack = saveSerializer.save()
+def _save(user: User, save_schema_data: QueryDict, old_track: LibraryTrack = None):
+    save_model_data = _get_save_model_data_from_save_schema_data(user=user, save_schema_data=save_schema_data)
+    save_model_data[TRACK_ATTRIBUTES_LABEL.USER] = user.id
+    save_serializer = TrackSaveModelSerializer(instance=old_track, data=save_model_data, partial=True)
+    save_serializer.is_valid(raise_exception=True)
+    saved_track = save_serializer.save()
 
-    _addTrackToGenresPlaylists(savedTrack)
-    _updateFileTagsIfFileExists(savedTrack)
+    _add_track_to_genres_playlists(saved_track)
+    _update_file_tags_if_file_exists(saved_track)
 
-    return savedTrack
+    return saved_track
 
 
-def _getSaveSchemaDataFromFile(file):
+def _get_save_schema_data_from_file(file):
     metadataDict = AudioMetadataService.get_metadata_dict_from_file(
         file=file, normalized_rating_max_value=settings.TRACK_RATING_MAX_VALUE)
 
@@ -108,7 +108,7 @@ def _removeNoneOrEmptyKeyFromDict(dict):
     return dict
 
 
-def _getDict1UpdatedWithArtistUuidIfArtistNameInDict2(
+def _get_dict1_updated_with_artist_uuid_if_artist_name_in_dict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
     artistNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
     if artistNameKey in dict2:
@@ -123,7 +123,7 @@ def _getDict1UpdatedWithArtistUuidIfArtistNameInDict2(
     return dict1
 
 
-def _getDict1UpdatedWithAlbumUuidIfAlbumNameInDict2(
+def _get_dict1_updated_with_album_uuid_if_album_name_in_dict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
     albumNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME
 
@@ -151,7 +151,7 @@ def _getDict1UpdatedWithAlbumUuidIfAlbumNameInDict2(
     return dict1
 
 
-def _getDict1UpdatedWithGenreUuidIfGenreNameInDict2(
+def _get_dict1_updated_with_genre_uuid_if_genre_name_in_dict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
     genreNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
     if genreNameKey in dict2:
@@ -167,7 +167,7 @@ def _getDict1UpdatedWithGenreUuidIfGenreNameInDict2(
     return dict1
 
 
-def _updateFileTagsIfFileExists(track: LibraryTrack):
+def _update_file_tags_if_file_exists(track: LibraryTrack):
     if track.fileExists == False:
         return
 
@@ -233,7 +233,7 @@ def _getArtistsNameListFromString(namesString: str) -> list:
     return names
 
 
-def _addTrackToGenresPlaylists(track: LibraryTrack):
+def _add_track_to_genres_playlists(track: LibraryTrack):
     genre = track.genre
     while genre is not None:
         track.playlists.add(CriteriaPlaylist.objects.get(
@@ -242,7 +242,7 @@ def _addTrackToGenresPlaylists(track: LibraryTrack):
     track.save()
 
 
-def _getDict1OverridenWithDict2WhenKeyIsProvided(dict1: QueryDict, dict2: QueryDict) -> dict:
+def _get_dict1_overriden_with_dict2_when_key_is_provided(dict1: QueryDict, dict2: QueryDict) -> dict:
     overridenDict1 = dict1.copy()
     for key in [TRACK_ATTRIBUTES_LABEL.FILE,
                 TRACK_ATTRIBUTES_LABEL.TITLE,
@@ -252,54 +252,52 @@ def _getDict1OverridenWithDict2WhenKeyIsProvided(dict1: QueryDict, dict2: QueryD
                 TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
                 TRACK_ATTRIBUTES_LABEL.RATING,
                 TRACK_ATTRIBUTES_LABEL.LANGUAGE]:
-        overridenDict1 = _getDict1UpdatedWithDict2KeyIfSet(
+        overridenDict1 = _get_dict1_updated_with_dict2_key_if_set(
             key=key,
             dict1=overridenDict1,
             dict2=dict2)
     return overridenDict1
 
+def _get_save_model_data_from_save_schema_data(user: User, save_schema_data: QueryDict) -> dict:
+    save_model_data = dict()
 
-def _getSaveModelDataFromSaveSchemaData(user: User, saveSchemaData: QueryDict) -> dict:
-    saveModelData = dict()
-
-    saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
+    save_model_data = _get_dict1_updated_with_dict2_key_if_set(
         key=TRACK_ATTRIBUTES_LABEL.FILE,
-        dict1=saveModelData,
-        dict2=saveSchemaData)
+        dict1=save_model_data,
+        dict2=save_schema_data)
 
-    saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
+    save_model_data = _get_dict1_updated_with_dict2_key_if_set(
         key=TRACK_ATTRIBUTES_LABEL.TITLE,
-        dict1=saveModelData,
-        dict2=saveSchemaData)
+        dict1=save_model_data,
+        dict2=save_schema_data)
 
-    saveModelData = _getDict1UpdatedWithArtistUuidIfArtistNameInDict2(
-        user=user, dict1=saveModelData, dict2=saveSchemaData)
+    save_model_data = _get_dict1_updated_with_artist_uuid_if_artist_name_in_dict2(
+        user=user, dict1=save_model_data, dict2=save_schema_data)
 
-    saveModelData = _getDict1UpdatedWithAlbumUuidIfAlbumNameInDict2(
-        user=user, dict1=saveModelData, dict2=saveSchemaData)
+    save_model_data = _get_dict1_updated_with_album_uuid_if_album_name_in_dict2(
+        user=user, dict1=save_model_data, dict2=save_schema_data)
 
-    saveModelData = _getDict1UpdatedWithGenreUuidIfGenreNameInDict2(
-        user=user, dict1=saveModelData, dict2=saveSchemaData)
+    save_model_data = _get_dict1_updated_with_genre_uuid_if_genre_name_in_dict2(
+        user=user, dict1=save_model_data, dict2=save_schema_data)
 
-    saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
+    save_model_data = _get_dict1_updated_with_dict2_key_if_set(
         key=TRACK_ATTRIBUTES_LABEL.DURATION,
-        dict1=saveModelData,
-        dict2=saveSchemaData)
+        dict1=save_model_data,
+        dict2=save_schema_data)
 
-    saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
+    save_model_data = _get_dict1_updated_with_dict2_key_if_set(
         key=TRACK_ATTRIBUTES_LABEL.RATING,
-        dict1=saveModelData,
-        dict2=saveSchemaData)
+        dict1=save_model_data,
+        dict2=save_schema_data)
 
-    saveModelData = _getDict1UpdatedWithDict2KeyIfSet(
+    save_model_data = _get_dict1_updated_with_dict2_key_if_set(
         key=TRACK_ATTRIBUTES_LABEL.LANGUAGE,
-        dict1=saveModelData,
-        dict2=saveSchemaData)
+        dict1=save_model_data,
+        dict2=save_schema_data)
 
-    return saveModelData
+    return save_model_data
 
-
-def _getDict1UpdatedWithDict2KeyIfSet(
+def _get_dict1_updated_with_dict2_key_if_set(
         key: str, dict1: QueryDict, dict2: QueryDict):
     if key in dict2:
         value = dict2[key]
@@ -308,20 +306,16 @@ def _getDict1UpdatedWithDict2KeyIfSet(
         dict1[key] = value
     return dict1
 
-
 def _getSaveDataFromRequestData(requestData: QueryDict):
     saveData = requestData.copy()
     del saveData[MINE_TRACK_ATTRIBUTES_LABEL.URL]
     return saveData
 
-
 def _getFileExtensionFromUrl(url: str):
     return url.split(".")[-1]
 
-
 def _getSubstringAfterLastSlash(string: str):
     return string.split("/")[-1]
-
 
 def _getTrackFilenameWithExtension(mineTrackUrl: str, requestData: QueryDict):
     fileExtension = _getFileExtensionFromUrl(mineTrackUrl)
@@ -347,7 +341,6 @@ def _getTrackFilenameWithExtension(mineTrackUrl: str, requestData: QueryDict):
             filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
             isFilenameRandomlyGenerated = True
     return filenameWithExtension, isFilenameRandomlyGenerated
-
 
 def _generateShortUu(length: int):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))

@@ -19,17 +19,17 @@ class TestCase(ApiViewTestCase):
     def test_newGenreThenInNewGenrePlaylistAndAllPlaylist(self):
         genreName = "Rock"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
 
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        trackPlaylists = self.savedTrack.playlists.all()
+        trackPlaylists = self.saved_track.playlists.all()
         assert len(trackPlaylists) == 2
         criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)
         assert criteriaPlaylists.filter(
@@ -43,19 +43,19 @@ class TestCase(ApiViewTestCase):
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
         }
-        self.postGenre(dataJson)
+        self.post_genre(dataJson)
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
 
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        trackPlaylists = self.savedTrack.playlists.all()
+        trackPlaylists = self.saved_track.playlists.all()
         assert len(trackPlaylists) == 2
         criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)
         assert criteriaPlaylists.filter(
@@ -72,33 +72,33 @@ class TestCase(ApiViewTestCase):
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: rockGenreName
         }
-        self.postGenre(dataJson)
-        rockGenre = self.savedGenre
+        self.post_genre(dataJson)
+        rockGenre = self.saved_genre
 
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: hardrockGenreName,
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
         }
-        self.postGenre(dataJson)
-        hardrockGenre = self.savedGenre
+        self.post_genre(dataJson)
+        hardrockGenre = self.saved_genre
 
         dataJson = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: emoGenreName,
             CRITERIA_ATTRIBUTES_LABEL.PARENT: hardrockGenre.uuid
         }
-        self.postGenre(dataJson)
+        self.post_genre(dataJson)
 
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
             TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: emoGenreName
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        trackPlaylists = self.savedTrack.playlists.all()
+        trackPlaylists = self.saved_track.playlists.all()
         assert len(trackPlaylists) == 4
         
         criteriaPlaylists = trackPlaylists.instance_of(CriteriaPlaylist)

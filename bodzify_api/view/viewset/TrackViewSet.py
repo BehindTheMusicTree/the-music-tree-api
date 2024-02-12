@@ -101,12 +101,12 @@ class TrackViewSet(MultiSerializerViewSet):
             """)
                    )
     def update(self, request, *args, **kwargs):
-        updatedTrack = TrackService.Update(
-            user=request.user, updateSchemaData=request.data, oldTrack=self.get_object())
-        responseSerializer = TrackDetailedSerializer(updatedTrack)
-        headers = self.get_success_headers(responseSerializer.data)
+        updated_track = TrackService.update(
+            user=request.user, update_schema_data=request.data, oldTrack=self.get_object())
+        response_serializer = TrackDetailedSerializer(updated_track)
+        headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(
-            data=TrackDetailedSerializer(updatedTrack).data,
+            data=TrackDetailedSerializer(updated_track).data,
             status=status.HTTP_200_OK,
             headers=headers)
 
@@ -139,9 +139,9 @@ class TrackViewSet(MultiSerializerViewSet):
             """)
                    )
     def create(self, request, *args, **kwargs):
-        track = TrackService.Create(
+        track = TrackService.create(
             user=request.user,
-            postSchemaData=request.data)
+            post_schema_data=request.data)
         responseSerializer = TrackDetailedSerializer(track)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(
@@ -195,7 +195,7 @@ class TrackViewSet(MultiSerializerViewSet):
     def extract(self, request, *args, **kwargs):
         serializer = TrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        track = TrackService.Extract(user=request.user, extractSchemaData=request.data)
+        track = TrackService.extract(user=request.user, extract_schema_data=request.data)
         responseSerializer = TrackDetailedSerializer(track)
         headers = self.get_success_headers(responseSerializer.data)
         return JsonResponse(

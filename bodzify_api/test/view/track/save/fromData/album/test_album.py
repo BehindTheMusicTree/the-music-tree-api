@@ -18,7 +18,7 @@ class ArtistTestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album == None
+        assert self.saved_track.album == None
 
     def test_emptyThenNone(self):
         data = {
@@ -27,7 +27,7 @@ class ArtistTestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album == None
+        assert self.saved_track.album == None
 
     def test_longest(self):
         albumName = "a" * settings.ALBUM_NAME_MAX_CHAR
@@ -37,18 +37,18 @@ class ArtistTestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album.name == albumName
+        assert self.saved_track.album.name == albumName
 
     def test_existing(self):
         albumName = "Kopoe"
-        G(Album, user=self.testUser, name=albumName)
+        G(Album, user=self.test_user, name=albumName)
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
             "albumName": albumName,
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album.name == albumName
+        assert self.saved_track.album.name == albumName
 
     def test_notExisting(self):
         albumName = "hoho"
@@ -58,4 +58,4 @@ class ArtistTestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.album.name == albumName
+        assert self.saved_track.album.name == albumName

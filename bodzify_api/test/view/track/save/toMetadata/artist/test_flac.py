@@ -14,16 +14,16 @@ class TestCase(ApiViewTestCase):
         data = {
             SCHEMA_TRACK_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
         }
-        response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
+        response = self.post_sample_track(sample_filename="sample.flac", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         key = AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME
-        assert self.savedTrackMetadata[key] == artistName
+        assert self.saved_track_metadata[key] == artistName
 
     def test_null(self):
         data = {
             SCHEMA_TRACK_ATTRIBUTES_LABEL.ARTIST_NAME: ""
         }
-        response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
+        response = self.post_sample_track(sample_filename="sample.flac", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         key = AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME
-        assert self.savedTrackMetadata[key] in ["", None]
+        assert self.saved_track_metadata[key] in ["", None]

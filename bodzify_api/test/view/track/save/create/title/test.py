@@ -7,7 +7,7 @@ class TestCase(ApiViewTestCase):
 
     def test_notProvidedThenSetFromFilename(self):
         filenameWithoutExtension = "notTooLongFilename"
-        response = self.postSampleTrack(
-            sampleFilename=filenameWithoutExtension + ".mp3", dataJson={})
+        response = self.post_sample_track(
+            sample_filename=filenameWithoutExtension + ".mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.title == filenameWithoutExtension
+        assert self.saved_track.title == filenameWithoutExtension

@@ -10,5 +10,5 @@ Thus the python file object is not available. This test case is to ensure that t
 class InMemoryTestCase(ApiViewTestCase):
 
     def test_in_memory(self):
-        response = self.postSampleTrack("in_memory.flac")
+        response = self.post_sample_track("in_memory.flac")
         assert response.status_code == status.HTTP_201_CREATED

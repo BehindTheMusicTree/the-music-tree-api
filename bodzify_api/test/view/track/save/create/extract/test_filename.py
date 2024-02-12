@@ -14,7 +14,7 @@ class FilenameTestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.filename == "Roméo_-_Im_Here.wav"
+        assert self.saved_track.filename == "Roméo_-_Im_Here.wav"
 
     def test_providingOnlyTitleInDataThenFilenameWithTitle(self):
         trackUrl = (
@@ -28,7 +28,7 @@ class FilenameTestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.filename == title + ".mp3"
+        assert self.saved_track.filename == title + ".mp3"
 
     def test_notProvidingTitleNorArtistAndOriginalFilenameTooLongThenGenerateFilename(self):
         trackUrl = (
@@ -40,5 +40,5 @@ class FilenameTestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert len(self.savedTrack.filename) == \
+        assert len(self.saved_track.filename) == \
             settings.TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LEN

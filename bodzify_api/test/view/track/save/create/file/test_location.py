@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+
+from pathlib import Path
 from rest_framework import status
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
@@ -12,5 +14,5 @@ class LocationTestCase(ApiViewTestCase):
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.file.name == self.testUserLibraryPathRelativeToMediaDir + filename
+        assert Path(self.saved_track.file.name) == self.test_user_library_path_relative_to_media_dir / filename
         assert self.doesTrackFilenameExistInTestUserLibrary(filename)

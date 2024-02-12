@@ -8,13 +8,13 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class FlacTestCase(ApiViewTestCase):
     
     def test_noneThenNone(self):
-        response = self.postSampleTrack(sampleFilename="noneThenNone.flac")
+        response = self.post_sample_track(sample_filename="noneThenNone.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.language == None
+        assert self.saved_track.language == None
     
     def test_longest(self):
-        response = self.postSampleTrack(sampleFilename="100CharLanguage.flac")
+        response = self.post_sample_track(sample_filename="100CharLanguage.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedTrack.language == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
+        assert self.saved_track.language == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
             "gJQdUyvX9WKnsv0KAtwAiWmi739Fqt2KsGZi7F3Fn9AXPI3"
 	

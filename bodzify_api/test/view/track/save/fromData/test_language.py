@@ -12,48 +12,48 @@ class TestCase(ApiViewTestCase):
     def test_notProvided(self):
         language = "French"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   language=language,
                   duration=0)
         data = {}
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == language
+        assert self.saved_track.language == language
 
     def test_nullThenNone(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: None
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == None
+        assert self.saved_track.language == None
 
     def test_emptyThenNone(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: ""
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == None
+        assert self.saved_track.language == None
 
     def test_longest(self):
         language = "a" * settings.TRACK_LANGUAGE_MAX_CHAR
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: language
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.language == language
+        assert self.saved_track.language == language

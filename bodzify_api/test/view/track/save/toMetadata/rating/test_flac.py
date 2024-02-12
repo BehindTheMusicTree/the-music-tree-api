@@ -10,169 +10,169 @@ class TestCase(ApiViewTestCase):
 
     def test_none(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": None,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] in [
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] in [
             "", None]
 
     def test_zero(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": "0",
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 0
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 0
 
-    def test_1Then10(self):
+    def test_1_then_10(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "2Stars.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "2Stars.flac"),
                   title="Love",
                   rating=4,
                   duration=0)
         data = {
             "rating": 1,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 10
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 10
 
-    def test_2Then20(self):
+    def test_2_then_20(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 2,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 20
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 20
 
-    def test_3Then30(self):
+    def test_3_then_30(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 3,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 30
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 30
 
-    def test_4Then40(self):
+    def test_4_then_40(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 4,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 40
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 40
 
-    def test_5Then50(self):
+    def test_5_then_50(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 5,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 50
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 50
 
-    def test_6Then60(self):
+    def test_6_then_60(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 6,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 60
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 60
 
-    def test_7Then70(self):
+    def test_7_then_70(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 7,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 70
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 70
 
-    def test_8Then80(self):
+    def test_8_then_80(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 8,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 80
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 80
 
-    def test_9Then90(self):
+    def test_9_then_90(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 9,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 90
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 90
 
-    def test_10Then100(self):
+    def test_10_then_100(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
-                  file=self.testUserLibraryAbsPath + "1Star.flac",
+                  user=self.test_user,
+                  file=str(self.test_user_library_abs_path / "1Star.flac"),
                   title="Love",
                   rating=2,
                   duration=0)
         data = {
             "rating": 10,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrackMetadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 100
+        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 100

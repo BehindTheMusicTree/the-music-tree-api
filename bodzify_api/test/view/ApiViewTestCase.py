@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from typing import Union
+
+import logging
 from django.urls import reverse
 from rest_framework import status
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -9,6 +10,9 @@ from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATT
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
+
+logger = logging.getLogger('bozify_api')
+
 class RESPONSE_KEYS:
     COUNT = 'count'
     NEXT = 'next'
@@ -17,95 +21,106 @@ class RESPONSE_KEYS:
 
 class ApiViewTestCase(ViewTestCase):
 
-    savedTrack: LibraryTrack
-    savedGenre: Criteria
-
+    saved_track: LibraryTrack
+    saved_genre: Criteria
 
     def extract(self, data):
-        response = self.apiClient.post(
+        response = self.api_client.post(
             path=reverse('librarytrack-extract'),
             data=data,
             format='json')
         
         if response.status_code == status.HTTP_201_CREATED:
-            self._setSavedTrackAttribute(response)
+            self._set_saved_track_attribute(response)
         return response
 
-    def postSampleTrack(self, sampleFilename=None, dataJson=None):
-        if sampleFilename is None:
-            return self.apiClient.post(
+    def post_sample_track(self, sample_filename=None, data_json=None):
+        if sample_filename is None:
+            return self.api_client.post(
                 path=reverse('librarytrack-list'),
                 data={TRACK_ATTRIBUTES_LABEL.FILE: ''},
                 format='json',)
-        with open(self.inputSampleDirAbsPath + sampleFilename, "rb") as sampleFile:
-            fileJson = {TRACK_ATTRIBUTES_LABEL.FILE: sampleFile}
-            if dataJson is not None:
-                data = self._mergeTwoJsons(fileJson, dataJson)
+        with open(self.input_sample_dir_abs_path / sample_filename, "rb") as sample_file:
+            file_json = {TRACK_ATTRIBUTES_LABEL.FILE: sample_file}
+            if data_json is not None:
+                data = self._merge_two_jsons(file_json, data_json)
             else:
-                data = fileJson
-            response = self.apiClient.post(
+                data = file_json
+            response = self.api_client.post(
                 path=reverse('librarytrack-list'), data=data)
             if response.status_code == status.HTTP_201_CREATED:
-                self._setSavedTrackAttribute(response)
+                self._set_saved_track_attribute(response)
             return response
 
-    def putSampleTrack(self, trackUuid, data):
-        response = self.apiClient.put(
-            path=reverse('librarytrack-detail', kwargs={'pk': trackUuid}),
-            data=data,
+    def put_sample_track(self, track_uuid, data_json):
+        response = self.api_client.put(
+            path=reverse('librarytrack-detail', kwargs={'pk': track_uuid}),
+            data=data_json,
             format='json')
         if response.status_code == status.HTTP_200_OK:
-            self._setSavedTrackAttribute(response)
+            self._set_saved_track_attribute(response)
         return response
 
-    def searchMine(self, source, query):
+    def search_mine(self, source, query):
         data = {
             'source': source,
             'query': query
         }
-        return self.apiClient.get(path=reverse('mine-track'), data=data)
+        return self.api_client.get(path=reverse('mine-track'), data=data)
 
-    def downloadTrack(self, trackUuid):
-        return self.apiClient.get(path=reverse('librarytrack-download', kwargs={'pk': trackUuid}))
+    def download_track(self, track_uuid):
+        return self.api_client.get(path=reverse('librarytrack-download', kwargs={'pk': track_uuid}))
 
-    def deleteTrack(self, trackUuid):
-        return self.apiClient.delete(path=reverse('librarytrack-detail', kwargs={'pk': trackUuid}))
+    def delete_track(self, track_uuid):
+        return self.api_client.delete(path=reverse('librarytrack-detail', kwargs={'pk': track_uuid}))
 
-    def _setSavedTrackAttribute(self, response):
-        trackUuid = response.json()[TRACK_ATTRIBUTES_LABEL.UUID]
-        self.savedTrack = LibraryTrack.objects.get(uuid=trackUuid)
-        if self.savedTrack.fileExists:
-            self.savedTrackMetadata = AudioMetadataService.get_metadata_dict_from_file(
-                file=self.savedTrack.file)
+    def _set_saved_track_attribute(self, response):
+        track_uuid = response.json()[TRACK_ATTRIBUTES_LABEL.UUID]
+        self.saved_track = LibraryTrack.objects.get(uuid=track_uuid)
+        if self.saved_track.fileExists:
+            self.saved_track_metadata = \
+                AudioMetadataService.get_metadata_dict_from_file(file=self.saved_track.file)
 
-    def _mergeTwoJsons(self, json1, json2):
+    def _merge_two_jsons(self, json1, json2):
         json1.update(json2)
         return json1
+    
+    def get_genres(self):
+        return self.api_client.get(path=reverse('genre-list'))
 
-    def postGenre(self, dataJson):
-        response = self.apiClient.post(
+    def post_genre(self, data_json):
+        response = self.api_client.post(
             path=reverse('genre-list'),
-            data=dataJson,
+            data=data_json,
             format='json')
         if response.status_code == status.HTTP_201_CREATED:
-            self._setSavedGenreAttribute(response)
+            self._set_saved_genre_attribute(response)
         return response
 
-    def postSimplePlaylist(self, dataJson):
-        response = self.apiClient.post(
+    def put_genre(self, genre_uuid, data_json):
+        response = self.api_client.put(
+            path=reverse('genre-detail', kwargs={'pk': genre_uuid}),
+            data=data_json,
+            format='json')
+        if response.status_code == status.HTTP_200_OK:
+            self._set_saved_genre_attribute(response)
+        return response
+
+    def post_simple_playlist(self, data_json):
+        response = self.api_client.post(
             path=reverse('genre-list'),
-            data=dataJson,
+            data=data_json,
             format='json')
         if response.status_code == status.HTTP_201_CREATED:
-            self._setSavedGenreAttribute(response)
+            self._set_saved_genre_attribute(response)
         return response
             
-    def _setSavedGenreAttribute(self, response):
+    def _set_saved_genre_attribute(self, response):
         uuid = response.json()[CRITERIA_ATTRIBUTES_LABEL.UUID]
-        self.savedGenre = Criteria.objects.get(uuid=uuid)
+        self.saved_genre = Criteria.objects.get(uuid=uuid)
 
-    def getPlaylist(self, playlistUuid):
-        return self.apiClient.get(path=reverse('playlist-detail', kwargs={'pk': playlistUuid}))
+    def get_playlist(self, playlist_uuid):
+        return self.api_client.get(path=reverse('playlist-detail', kwargs={'pk': playlist_uuid}))
 
     def get_albums(self):
-        return self.apiClient.get(path=reverse('album-list'))
+        return self.api_client.get(path=reverse('album-list'))

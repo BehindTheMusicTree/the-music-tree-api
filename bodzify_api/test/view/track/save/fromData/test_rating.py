@@ -10,99 +10,99 @@ class TestCase(ApiViewTestCase):
     def test_notProvidedThenUnchanged(self):
         rating = 5
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=rating,
                   duration=0)
         data = {}
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == rating
+        assert self.saved_track.rating == rating
 
     def test_zero(self):
         rating = 0
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   duration=0)
         data = {
             "rating": rating
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == rating
+        assert self.saved_track.rating == rating
 
     def test_four(self):
         rating = 4
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   duration=0)
         data = {
             "rating": rating
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == rating
+        assert self.saved_track.rating == rating
 
     def test_ten(self):
         rating = 10
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   duration=0)
         data = {
             "rating": rating
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == rating
+        assert self.saved_track.rating == rating
 
     def test_none(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=3,
                   duration=0)
         data = {
             "rating": None
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.rating == None
+        assert self.saved_track.rating == None
 
     def test_errorWhenAboveMaximum(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=3,
                   duration=0)
         data = {
             "rating": 11,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_errorWhenBelowMinimum(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=3,
                   duration=0)
         data = {
             "rating": -1,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_errorWhenNotInteger(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Korinto",
                   rating=3,
                   duration=0)
         data = {
             "rating": 5.5,
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

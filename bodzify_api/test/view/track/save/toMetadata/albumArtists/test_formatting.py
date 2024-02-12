@@ -14,7 +14,7 @@ class TestCase(ApiViewTestCase):
             SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
             SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
         }
-        response = self.postSampleTrack(sampleFilename="sample.mp3", dataJson=data)
+        response = self.post_sample_track(sample_filename="sample.mp3", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         albumArtistsKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
-        assert self.savedTrackMetadata[albumArtistsKey] == "Chuck Berry,The Beatles,The Rolling Stones"
+        assert self.saved_track_metadata[albumArtistsKey] == "Chuck Berry,The Beatles,The Rolling Stones"

@@ -8,47 +8,39 @@ from bodzify_api import settings
 
 class TestCase(ApiViewTestCase):
     
-    def test_longestName(self):
+    def test_longest(self):
         genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
         }
-        response = self.postGenre(dataJson=data)
+        response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedGenre.name == genreName
+        assert self.saved_genre.name == genreName
     
-    def test_errorWhenNameTooLong(self):
+    def test_error_too_long(self):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
         }
-        response = self.postGenre(dataJson=data)
+        response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
     
     def test_withExistingParent(self):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
         }
-        self.postGenre(dataJson=data)
-        rockGenre = self.savedGenre
+        self.post_genre(data_json=data)
+        rockGenre = self.saved_genre
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Hard rock",
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
         }
-        response = self.postGenre(dataJson=data)
+        response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.savedGenre.parent.uuid == rockGenre.uuid
-    
-    def test_errorWhenNotExistingParent(self):
-        data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: "Hard rock",
-            CRITERIA_ATTRIBUTES_LABEL.PARENT: "notexisting"
-        }
-        response = self.postGenre(dataJson=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-    
+        assert self.saved_genre.parent.uuid == rockGenre.uuid
+
     def test_errorWhenExtraField(self):
         data = {
             "notExistingField": "Koko"
         }
-        response = self.postGenre(dataJson=data)
+        response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

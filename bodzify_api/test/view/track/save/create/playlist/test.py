@@ -9,10 +9,10 @@ from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIA
 class TestCase(ApiViewTestCase):
 
     def test_noGenreThenInTheAllAndGenrelessPlaylists(self):
-        response = self.postSampleTrack(sampleFilename="notProvided.mp3", dataJson={})
+        response = self.post_sample_track(sample_filename="notProvided.mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
         
-        trackPlaylists = self.savedTrack.playlists.all()
+        trackPlaylists = self.saved_track.playlists.all()
         assert len(trackPlaylists) == 2
         assert trackPlaylists.filter(
             name=PLAYLIST_SPECIAL_NAMES.ALL).exists()

@@ -18,15 +18,15 @@ from django.urls import reverse
 class SearchViewTestCase(ViewTestCase):
 
     def _search(self, query):
-        return self.apiClient.get(path=reverse('search-list'), data={'query': query})
+        return self.api_client.get(path=reverse('search-list'), data={'query': query})
 
     def test_inTrackArtistAndAlbum(self):
         summerloveTrack = G(LibraryTrack,
-                            user=self.testUser,
+                            user=self.test_user,
                             title="Summer Love",
                             duration=0)
-        sum41Artist = G(Artist, user=self.testUser, name="Sum 41")
-        jailesumAlbum = G(Album, user=self.testUser, name="J'ai le Sum")
+        sum41Artist = G(Artist, user=self.test_user, name="Sum 41")
+        jailesumAlbum = G(Album, user=self.test_user, name="J'ai le Sum")
 
         response = self._search("Sum")
         assert response.status_code == 200
@@ -40,7 +40,7 @@ class SearchViewTestCase(ViewTestCase):
 
     def test_theAllStringIncludingATrack(self):
         werealltoblameTrack = G(LibraryTrack,
-                                user=self.testUser,
+                                user=self.test_user,
                                 title="We're All To Blame",
                                 duration=0)
         response = self._search("All")
@@ -55,19 +55,19 @@ class SearchViewTestCase(ViewTestCase):
 
     def test_nonSensitiveness(self):
         rapGenre = G(Criteria,
-                     user=self.testUser,
+                     user=self.test_user,
                      name="Rap",
                      type_id=CriteriaTypesId.GENRE)
         G(CriteriaPlaylist,
-          user=self.testUser,
+          user=self.test_user,
           type_id=CriteriaTypesId.GENRE,
           criteria=rapGenre)
         usRapGenre = G(Criteria,
-                       user=self.testUser,
+                       user=self.test_user,
                        name="US rap",
                        type_id=CriteriaTypesId.GENRE)
         G(CriteriaPlaylist,
-          user=self.testUser,
+          user=self.test_user,
           type_id=CriteriaTypesId.GENRE,
           criteria=usRapGenre)
         

@@ -12,16 +12,16 @@ class FlacTestCase(ApiViewTestCase):
         data = {
             "title": title
         }
-        response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
+        response = self.post_sample_track(sample_filename="sample.flac", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         titleKey = AudioMetadataService.METADATA_DICT_KEYS.TITLE
-        assert self.savedTrackMetadata[titleKey] == title
+        assert self.saved_track_metadata[titleKey] == title
 
     def test_null(self):
         data = {
             "title": ""
         }
-        response = self.postSampleTrack(sampleFilename="sample.flac", dataJson=data)
+        response = self.post_sample_track(sample_filename="sample.flac", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         titleKey = AudioMetadataService.METADATA_DICT_KEYS.TITLE
-        assert self.savedTrackMetadata[titleKey] in ["", None]
+        assert self.saved_track_metadata[titleKey] in ["", None]

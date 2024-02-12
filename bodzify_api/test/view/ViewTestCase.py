@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import inspect
 import os
+import logging
+from pathlib import Path
 import shutil
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import AccessToken
@@ -13,52 +15,49 @@ SAMPLE_DIR_NAME = "sample"
 LIBRARY_SAMPLE_DIR_NAME = "library"
 INPUT_SAMPLE_DIR_NAME = "input"
 
+logger = logging.getLogger('bodzify_api')
 
 class ViewTestCase(TestCase):
 
     fixtures = ['app_initial_data', 'pytest_user_initial_data']
-    testUserLibraryPathRelativeToMediaDir = ""
+    test_user_library_path_relative_to_media_dir = Path()
 
     def setUp(self) -> None:
-        self.apiClient = APIClient()
-        self.testUser = User.objects.get(username=TEST_USERNAME)
-        self._setUpTestUserDirectories()
-        if os.path.isdir(self.librarySampleDirAbsPath):
+        self.api_client = APIClient()
+        self.test_user = User.objects.get(username=TEST_USERNAME)
+        self._set_up_test_user_directories()
+        if os.path.isdir(self.library_sample_dir_abs_path):
             self._copyLibrarySamplesToTestUserLibrary()
-        self._login(self.testUser)
+        self._login(self.test_user)
         return super().setUp()
 
-    def _setUpTestUserDirectories(self):
-        testUserLibraryAbsPath = (
-            settings.LIBRARIES_PATH
-            + settings.USER_LIBRARY_DIR_NAME_PREFIXE
-            + str(self.testUser.pk))
-        if not os.path.exists(testUserLibraryAbsPath):
-            os.makedirs(testUserLibraryAbsPath)
+    def _set_up_test_user_directories(self):
+        test_user_library_abs_path = settings.LIBRARIES_PATH / \
+                                  (settings.USER_LIBRARY_DIR_NAME_PREFIXE + \
+                                  str(self.test_user.pk))
+        if not test_user_library_abs_path.exists():
+            os.makedirs(test_user_library_abs_path)
 
-        testDirAbsPathWithoutSlash = os.path.dirname(
-            inspect.getfile(self.__class__))
-        sampleDirAbsPath = testDirAbsPathWithoutSlash + "/" + SAMPLE_DIR_NAME + "/"
-        self.librarySampleDirAbsPath = sampleDirAbsPath + "/" + LIBRARY_SAMPLE_DIR_NAME + "/"
-        self.inputSampleDirAbsPath = sampleDirAbsPath + "/" + INPUT_SAMPLE_DIR_NAME + "/"
+        test_dir_abs_path = Path(os.path.dirname(inspect.getfile(self.__class__)))
+        sample_dir_abs_path = test_dir_abs_path / SAMPLE_DIR_NAME
+        self.library_sample_dir_abs_path = sample_dir_abs_path / LIBRARY_SAMPLE_DIR_NAME
+        self.input_sample_dir_abs_path = sample_dir_abs_path / INPUT_SAMPLE_DIR_NAME
 
-        self.testUserLibraryPathRelativeToMediaDir = (
-            settings.LIBRARIES_DIR_NAME + "/"
-            + settings.USER_LIBRARY_DIR_NAME_PREFIXE
-            + str(self.testUser.pk)
-            + "/")
-        self.testUserLibraryAbsPath = settings.MEDIA_ROOT \
-            + self.testUserLibraryPathRelativeToMediaDir
-        self._emptyUserLibrary()
+        self.test_user_library_path_relative_to_media_dir = \
+            Path(settings.LIBRARIES_DIR_NAME) / \
+            (settings.USER_LIBRARY_DIR_NAME_PREFIXE + str(self.test_user.pk))
+        self.test_user_library_abs_path = settings.MEDIA_ROOT / \
+            self.test_user_library_path_relative_to_media_dir
+        self._empty_user_library()
 
     def _login(self, user):
-        self.apiClient.force_authenticate(user=user)
+        self.api_client.force_authenticate(user=user)
         access = AccessToken.for_user(user)
-        self.apiClient.credentials(HTTP_AUTHORIZATION='Bearer {access}')
+        self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
-    def _emptyUserLibrary(self):
-        for filename in os.listdir(self.testUserLibraryAbsPath):
-            filePath = os.path.join(self.testUserLibraryAbsPath, filename)
+    def _empty_user_library(self):
+        for filename in os.listdir(self.test_user_library_abs_path):
+            filePath = os.path.join(self.test_user_library_abs_path, filename)
             try:
                 if os.path.isfile(filePath) or os.path.islink(filePath):
                     os.unlink(filePath)
@@ -68,11 +67,10 @@ class ViewTestCase(TestCase):
                 print('Failed to delete %s. Reason: %s' % (filePath, e))
 
     def _copyLibrarySamplesToTestUserLibrary(self):
-        filenames = os.listdir(self.librarySampleDirAbsPath)
+        filenames = os.listdir(self.library_sample_dir_abs_path)
         for filename in filenames:
-            shutil.copy(
-                os.path.join(self.librarySampleDirAbsPath, filename),
-                self.testUserLibraryAbsPath)
+            shutil.copy(self.library_sample_dir_abs_path / filename,
+                self.test_user_library_abs_path)
 
     def doesTrackFilenameExistInTestUserLibrary(self, filename: str):
-        return os.path.isfile(self.testUserLibraryAbsPath + filename)
+        return os.path.isfile(self.test_user_library_abs_path / filename)

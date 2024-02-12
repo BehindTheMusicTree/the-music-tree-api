@@ -9,11 +9,11 @@ class ExtraFieldTestCase(ApiViewTestCase):
 
     def test_error(self):
         track = G(LibraryTrack, 
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Foire",
                   duration=0)
         data = {
             "nonExistingField": "oifjqoif",
         }
-        response = self.putSampleTrack(trackUuid=track.uuid, data=data)
+        response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

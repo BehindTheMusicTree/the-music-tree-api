@@ -9,10 +9,10 @@ class TestCase(ApiViewTestCase):
         sourceFilenameWithoutExtension = "sample"
         sourceFilenameExtension = ".mp3"
         sourceFilenameWithExtension = sourceFilenameWithoutExtension + sourceFilenameExtension
-        self.postSampleTrack(sampleFilename=sourceFilenameWithExtension)
-        track1 = self.savedTrack
-        response = self.postSampleTrack(sampleFilename=sourceFilenameWithExtension)
-        track2 = self.savedTrack
+        self.post_sample_track(sample_filename=sourceFilenameWithExtension)
+        track1 = self.saved_track
+        response = self.post_sample_track(sample_filename=sourceFilenameWithExtension)
+        track2 = self.saved_track
         assert response.status_code == status.HTTP_201_CREATED
         assert track1.fileExists
         assert track1.filename == sourceFilenameWithExtension

@@ -13,11 +13,11 @@ class TestCase(ApiViewTestCase):
     def test_withCustomNameShouldDisplayIt(self):
         daddysrockPlaylistCustomName = "Daddy's rock"
         rapGenre = G(Criteria,
-                     user=self.testUser,
+                     user=self.test_user,
                      name="Hard rock",
                      type_id=CriteriaTypesId.GENRE)
         rapPlaylist = G(CriteriaPlaylist,
-                        user=self.testUser,
+                        user=self.test_user,
                         type_id=CriteriaTypesId.GENRE,
                         customName=daddysrockPlaylistCustomName,
                         criteria=rapGenre)
@@ -30,11 +30,11 @@ class TestCase(ApiViewTestCase):
     def test_withoutCustomNameShouldDisplayName(self):
         rockCriteriaName = "Rock"
         rockGenre = G(Criteria,
-                      user=self.testUser,
+                      user=self.test_user,
                       name=rockCriteriaName,
                       type_id=CriteriaTypesId.GENRE)
         rockPlaylist = G(CriteriaPlaylist,
-                         user=self.testUser,
+                         user=self.test_user,
                          type_id=CriteriaTypesId.GENRE,
                          criteria=rockGenre)
 

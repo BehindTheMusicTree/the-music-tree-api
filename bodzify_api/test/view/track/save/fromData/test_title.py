@@ -12,47 +12,47 @@ class TestCase(ApiViewTestCase):
     def test_notProvided(self):
         title = "Mon Amour"
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title=title,
                   duration=0)
         data = {}
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.title == title
+        assert self.saved_track.title == title
 
     def test_nullThenNull(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Lolilom",
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.TITLE: None
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.title == None
+        assert self.saved_track.title == None
 
     def test_emptyThenNull(self):
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Lolilom",
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.TITLE: ""
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.title == None
+        assert self.saved_track.title == None
 
     def test_longest(self):
         title = "a" * (settings.TRACK_LANGUAGE_MAX_CHAR - len(".mp3"))
         track = G(LibraryTrack,
-                  user=self.testUser,
+                  user=self.test_user,
                   title="Lolilom",
                   duration=0)
         data = {
             TRACK_ATTRIBUTES_LABEL.TITLE: title
         }
-        response = self.putSampleTrack(track.uuid, data=data)
+        response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.savedTrack.title == title
+        assert self.saved_track.title == title
