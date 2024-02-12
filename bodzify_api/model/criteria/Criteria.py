@@ -14,6 +14,7 @@ class ATTRIBUTES_LABEL:
     NAME = "name"
     TYPE = "type"
     PARENT = "parent"
+    CHILDREN = "children"
     ROOT = "root"
     ADDED_ON = "addedOn"
 
@@ -45,7 +46,7 @@ class Criteria(models.Model):
             self.root = self
             self.save(update_fields=[ATTRIBUTES_LABEL.ROOT])
 
-    def getCommonCriteria(self, criteriaB):
+    def get_common_criteria(self, criteriaB):
         visited = set()
 
         criteriaATreeItem = self
