@@ -38,7 +38,7 @@ class CriteriaService:
         return criteria
     
     def update(self, user: User, update_schema_data: QueryDict, old_criteria: Criteria):
-        serializer = CriteriaUpdateSchemaSerializer(data=update_schema_data)
+        serializer = CriteriaUpdateSchemaSerializer(instance=old_criteria, data=update_schema_data)
         serializer.is_valid(raise_exception=True)
         return self._save(user=user, save_schema_data=update_schema_data, old_criteria=old_criteria)
     
