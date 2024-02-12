@@ -93,7 +93,6 @@ class ApiViewTestCase(ViewTestCase):
             path=reverse('genre-list'),
             data=data_json,
             format='json')
-        logger.debug('status code: ' + str(response.status_code))
         if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_genre_attribute(response)
         return response
@@ -103,7 +102,6 @@ class ApiViewTestCase(ViewTestCase):
             path=reverse('genre-detail', kwargs={'pk': genre_uuid}),
             data=data_json,
             format='json')
-        logger.debug('status code: ' + str(response.status_code))
         if response.status_code == status.HTTP_200_OK:
             self._set_saved_genre_attribute(response)
         return response
