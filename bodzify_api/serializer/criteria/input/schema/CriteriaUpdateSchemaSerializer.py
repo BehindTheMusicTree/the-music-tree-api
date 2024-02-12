@@ -17,7 +17,9 @@ class CriteriaUpdateSchemaSerializer(InputModelSerializer):
     def validate_parent(self, value):
         instance = self.instance
 
-        if instance and value and instance.is_descendant_of(value):
-            raise serializers.ValidationError("Cannot set the new parent as one of the genre's descendants.")
-
+        if instance and value:
+            if instance == value:
+                raise serializers.ValidationError("Cannot set the new parent as the genre itself.")
+            elif value.is_descendant_of(instance):
+                raise serializers.ValidationError("Cannot set the new parent as one of the genre's descendants.")
         return value

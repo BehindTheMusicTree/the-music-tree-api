@@ -50,12 +50,7 @@ class Criteria(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        logger.debug(f"Criteria.save: {self}")
-
         is_root_uptating = ATTRIBUTES_LABEL.ROOT in kwargs.get("update_fields", [])
-        if is_root_uptating:
-            logger.debug(f"root is updating: {self.root}")
-        logger.debug(f"is_root_uptating: {is_root_uptating}")
         if not is_root_uptating:
             is_creation = not self.root
             if is_creation:
@@ -67,9 +62,7 @@ class Criteria(models.Model):
             else:
                 new_root = self.parent.root if self.parent else self
                 if self.root != new_root:
-                    logger.debug("new root")
                     self._update_root_of_criteria_and_children(self, new_root) # type: ignore
-        logger.debug(f"root: {self.root}")
 
     def get_common_criteria(self, criteriaB):
         visited = set()
@@ -88,12 +81,15 @@ class Criteria(models.Model):
         return None
 
     def is_descendant_of(self, other_criteria):
-        current_criteria = self
-        while current_criteria:
-            if current_criteria == other_criteria:
-                return True
-            current_criteria = current_criteria.parent
-        return False
+        return self.is_criteria1_descendant_of_criteria2(self, other_criteria)
+    
+    def is_criteria1_descendant_of_criteria2(self, criteria1: 'Criteria', criteria2: 'Criteria'):
+        if criteria1.parent == criteria2:
+            return True
+        elif criteria1.parent:
+            return self.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
+        else:
+            return False
     
     def get_children(self):
         return Criteria.objects.filter(parent=self)

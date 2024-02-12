@@ -43,7 +43,7 @@ class TestCase(ApiViewTestCase):
             CRITERIA_ATTRIBUTES_LABEL.PARENT: punkHardcoreGenre.uuid
         }
         response = self.put_genre(genre_uuid=rockGenre.uuid, data_json=data)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_error_when_parent_is_itself(self):
         rock_genre = G(Criteria,
@@ -55,4 +55,4 @@ class TestCase(ApiViewTestCase):
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid
         }
         response = self.put_genre(genre_uuid=rock_genre.uuid, data_json=data)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
