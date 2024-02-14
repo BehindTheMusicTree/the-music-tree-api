@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('uuid', models.CharField(default=shortuuid.main.ShortUUID.uuid, editable=False, max_length=22, primary_key=True, serialize=False)),
                 ('name', models.CharField(default=None, max_length=50)),
-                ('addedOn', models.DateTimeField(auto_now_add=True)),
+                ('added_on', models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             name='Playlist',
             fields=[
                 ('uuid', models.CharField(default=shortuuid.main.ShortUUID.uuid, editable=False, max_length=22, primary_key=True, serialize=False)),
-                ('addedOn', models.DateTimeField(auto_now_add=True)),
+                ('added_on', models.DateTimeField(auto_now_add=True)),
                 ('polymorphic_ctype', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='polymorphic_%(app_label)s.%(class)s_set+', to='contenttypes.contenttype')),
                 ('user', models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
@@ -90,7 +90,7 @@ class Migration(migrations.Migration):
                 ('duration', models.FloatField(default=None)),
                 ('rating', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
                 ('language', models.CharField(blank=True, default=None, max_length=100, null=True)),
-                ('addedOn', models.DateTimeField(auto_now_add=True)),
+                ('added_on', models.DateTimeField(auto_now_add=True)),
                 ('album', models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='bodzify_api.album')),
                 ('artist', models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='bodzify_api.artist')),
                 ('genre', models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='bodzify_api.criteria')),

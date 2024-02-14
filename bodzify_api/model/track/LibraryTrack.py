@@ -78,29 +78,29 @@ class LibraryTrack(models.Model):
     playlists = models.ManyToManyField('bodzify_api.Playlist')
     language = models.CharField(
         max_length=settings.TRACK_LANGUAGE_MAX_CHAR, blank=True, default=None, null=True)
-    addedOn = models.DateTimeField(auto_now_add=True, editable=False)
+    added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     @property
     def filename(self) -> str:
-        if self.fileExists:
+        if self.file_exists:
             return os.path.basename(self.file.path)
         return ""
 
     @property
-    def fileExtension(self) -> str:
-        if self.fileExists:
+    def file_extension(self) -> str:
+        if self.file_exists:
             filename, file_extension = os.path.splitext(self.file.name)
             return file_extension
         return ""
 
     @property
-    def fileExists(self) -> bool:
+    def file_exists(self) -> bool:
         if self.file:
             return os.path.isfile(self.file.path)
         return False
 
     @property
-    def relativeUrl(self) -> str:
+    def relative_url(self) -> str:
         return "tracks/" + self.uuid + "/"
 
     def __str__(self):
@@ -112,7 +112,7 @@ class LibraryTrack(models.Model):
         file_str = f"{ATTRIBUTES_LABEL.FILE}: {str(self.file.name)} " if self.file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
                 f"{genre_str}{duration_str}{rating_str}{language_str}"
-                f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.addedOn)} {file_str}")
+                f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
 
 
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
@@ -213,7 +213,7 @@ class LibraryTrack(models.Model):
             album.delete_if_no_track_linked()
 
     def _update_file_tags_if_file_exists(self):
-        if self.fileExists == False:
+        if self.file_exists == False:
             return
 
         metadata_update_dict = dict()

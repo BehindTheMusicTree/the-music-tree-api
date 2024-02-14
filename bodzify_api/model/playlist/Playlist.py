@@ -13,7 +13,7 @@ class SPECIAL_NAMES:
 class ATTRIBUTES_LABEL:
     UUID = "uuid"
     USER = "user"
-    ADDED_ON = "addedOn"
+    ADDED_ON = "added_on"
     NAME = "name"
     PARENT = "parent"
 
@@ -21,7 +21,7 @@ class ATTRIBUTES_LABEL:
 class Playlist(PolymorphicModel):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    addedOn = models.DateTimeField(auto_now_add=True, editable=False)
+    added_on = models.DateTimeField(auto_now_add=True, editable=False)
     
     @property
     def name(self) -> str:

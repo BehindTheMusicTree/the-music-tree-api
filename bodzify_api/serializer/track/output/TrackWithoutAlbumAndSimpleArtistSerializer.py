@@ -23,4 +23,4 @@ class TrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer):
             'duration',
             'rating',
             'language',
-            'addedOn']
+            'added_on']

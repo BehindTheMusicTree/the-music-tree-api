@@ -113,7 +113,7 @@ class TrackViewSet(MultiSerializerViewSet):
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)
-        if track.fileExists:
+        if track.file_exists:
             return utility.GetFileResponse(filePath=track.file.path, filename=track.file.name)
         else:
             return HttpResponse(

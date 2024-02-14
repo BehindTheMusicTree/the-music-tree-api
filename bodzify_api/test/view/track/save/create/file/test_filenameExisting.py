@@ -14,7 +14,7 @@ class TestCase(ApiViewTestCase):
         response = self.post_sample_track(sample_filename=sourcefilename_with_extension)
         track2 = self.saved_track
         assert response.status_code == status.HTTP_201_CREATED
-        assert track1.fileExists
+        assert track1.file_exists
         assert track1.filename == sourcefilename_with_extension
         assert track2.filename.startswith(sourcefilename_without_extension)
         assert track2.filename.endswith(sourceFilenameExtension)

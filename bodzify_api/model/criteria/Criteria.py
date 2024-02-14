@@ -21,7 +21,7 @@ class ATTRIBUTES_LABEL:
     PARENT = "parent"
     CHILDREN = "children"
     ROOT = "root"
-    ADDED_ON = "addedOn"
+    ADDED_ON = "added_on"
 
 class Criteria(models.Model):
     uuid = models.CharField(
@@ -33,7 +33,7 @@ class Criteria(models.Model):
                              on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='child_criteria')
     root = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
-    addedOn = models.DateTimeField(auto_now_add=True, editable=False)
+    added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
         unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)
