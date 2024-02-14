@@ -7,7 +7,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvidedThenUnchanged(self):
+    def test_not_povidedThenUnchanged(self):
         rating = 5
         track = G(LibraryTrack,
                   user=self.test_user,

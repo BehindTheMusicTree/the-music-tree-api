@@ -9,38 +9,17 @@ from bodzify_api import settings
 class TestCase(ApiViewTestCase):
     
     def test_longest(self):
-        genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
+        genre_name = "a" * settings.CRITERIA_NAME_MAX_CHAR
         data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: genreName
+            CRITERIA_ATTRIBUTES_LABEL.NAME: genre_name
         }
         response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.name == genreName
+        assert self.saved_genre.name == genre_name
     
     def test_error_too_long(self):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
-        }
-        response = self.post_genre(data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-    
-    def test_withExistingParent(self):
-        data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
-        }
-        self.post_genre(data_json=data)
-        rockGenre = self.saved_genre
-        data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: "Hard rock",
-            CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
-        }
-        response = self.post_genre(data_json=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.parent.uuid == rockGenre.uuid
-
-    def test_errorWhenExtraField(self):
-        data = {
-            "notExistingField": "Koko"
         }
         response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

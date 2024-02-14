@@ -1,43 +1,44 @@
 #!/usr/bin/env python
-import pprint
+
+from typing import Optional
 from django.contrib.auth.models import User
 import bodzify_api.service.ArtistService as ArtistService
 from bodzify_api.model.Album import Album
 
 
-def GetAlbumFromNameAndAlbumArtistsNameListAfterEventualCreations(
-        user: User, albumName: str, albumArtistsNameList: list) -> Album:
+def get_album_from_name_and_album_artists_name_list_after_eventual_creations(
+        user: User, album_name: str, album_artists_name_list: list) -> Optional[Album]:
     
-    if albumName is None or albumName == "":
+    if album_name is None or album_name == "":
         return None
     else:
-        if albumArtistsNameList is not None:
-            if len(albumArtistsNameList) > 0:
-                albumArtists = [ArtistService.GetArtistFromNameAfterEventualCreation(
-                    user=user, artistName=artistName) for artistName in albumArtistsNameList]
+        if album_artists_name_list is not None:
+            if len(album_artists_name_list) > 0:
+                album_artists = [ArtistService.get_artist_from_name_after_eventual_creation(
+                    user=user, artist_name=artist_name) for artist_name in album_artists_name_list]
             else:
-                albumArtists = []
+                album_artists = []
         else:
-            albumArtists = []
+            album_artists = []
                 
-        return _getAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
-                user=user, albumName=albumName, artists=albumArtists)
+        return _get_album_from_name_and_artists_list_after_having_eventually_created_album(
+                user=user, album_name=album_name, artists=album_artists)
     
 
-def _getAlbumFromNameAndArtistsListAfterHavingEventuallyCreatedTheAlbum(
-        user: User, albumName: str, artists: list):
+def _get_album_from_name_and_artists_list_after_having_eventually_created_album(
+        user: User, album_name: str, artists: list):
     
-    albumQueryset = Album.objects.filter(user=user, name=albumName)
+    album_queryset = Album.objects.filter(user=user, name=album_name)
     if len(artists) > 0:
         for albumArtist in artists:
-            albumQueryset = albumQueryset.filter(albumArtists__in=[albumArtist])
+            album_queryset = album_queryset.filter(album_artists__in=[albumArtist])
     else:
-        albumQueryset = albumQueryset.filter(albumArtists=None)
+        album_queryset = album_queryset.filter(album_artists=None)
 
-    if albumQueryset.count() == 0:
-        album = Album.objects.create(user=user, name=albumName)
+    if album_queryset.count() == 0:
+        album = Album.objects.create(user=user, name=album_name)
         if artists is not None:
-            album.albumArtists.set(artists)
+            album.album_artists.set(artists)
     else:
-        album = albumQueryset.first()
+        album = album_queryset.first()
     return album

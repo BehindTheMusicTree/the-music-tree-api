@@ -17,7 +17,7 @@ class TestCase(ApiViewTestCase):
         assert genreJson[Criteria.ROOT] == genre.uuid
 
     def test_not_root(self):
-        rockGenre = G(Criteria,
+        rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
@@ -29,4 +29,4 @@ class TestCase(ApiViewTestCase):
         genresJsonList = response.json()[RESPONSE_KEYS.RESULTS]
         for jsonElement in genresJsonList:
             if jsonElement[Criteria.UUID] == punkGenre.uuid:
-                assert jsonElement[Criteria.ROOT] == rockGenre.uuid
+                assert jsonElement[Criteria.ROOT] == rock_genre.uuid

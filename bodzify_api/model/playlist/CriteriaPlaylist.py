@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+
+from typing import Optional
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
@@ -21,7 +23,6 @@ class ATTRIBUTES_LABEL:
 
 
 class CriteriaPlaylist(Playlist):
-    
     criteria = models.ForeignKey(
         Criteria, on_delete=models.CASCADE, blank=True, null=True)
     type = models.ForeignKey(
@@ -37,13 +38,12 @@ class CriteriaPlaylist(Playlist):
         return self.criteria.name
         
     @property
-    def parent(self) -> 'Playlist':
+    def parent(self) -> Optional['Playlist']:
         if self.criteria is None:
             return None
         if self.criteria.parent is None:
             return None
         else:
             return CriteriaPlaylist.objects.get(
-                user=self.user,
                 type=self.type,
                 criteria=self.criteria.parent)

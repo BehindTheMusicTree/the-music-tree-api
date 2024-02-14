@@ -16,12 +16,12 @@ class TestCase(ApiViewTestCase):
                         user=self.test_user,
                         name="All Killer No Filler",
                         year=2001,
-                        albumArtists=[sum41Artist],)
+                        album_artists=[sum41Artist],)
         chuckAlbum = G(Album, 
                         user=self.test_user,
                         name="Chuck",
                         year=2004,
-                        albumArtists=[sum41Artist],)
+                        album_artists=[sum41Artist],)
         intoodeepTrack = G(LibraryTrack,
                     user=self.test_user,
                     title="In Too Deep",

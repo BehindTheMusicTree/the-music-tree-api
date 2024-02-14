@@ -8,7 +8,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvidedThenUnchanged(self):
+    def test_not_povidedThenUnchanged(self):
         self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
                   user=self.test_user,

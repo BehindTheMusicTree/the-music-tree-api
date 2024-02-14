@@ -8,17 +8,17 @@ from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as Criteria
 class TestCase(ApiViewTestCase):
 
     def test(self):
-        genreName = "Rock"
+        genre_name = "Rock"
         genre = G(Criteria,
-                      name=genreName,
+                      name=genre_name,
                       user=self.test_user,
                       type=CriteriaTypesId.GENRE)
         response = self.get_genres()
         genresJsonList = response.json()[RESPONSE_KEYS.RESULTS]
         assert len(genresJsonList) == 1
-        rockGenreJson = genresJsonList[0]
-        assert rockGenreJson[Criteria.NAME] == genreName
-        assert rockGenreJson[Criteria.TYPE] == CriteriaTypesId.GENRE
+        rock_genreJson = genresJsonList[0]
+        assert rock_genreJson[Criteria.NAME] == genre_name
+        assert rock_genreJson[Criteria.TYPE] == CriteriaTypesId.GENRE
 
     def test_two(self):
         G(Criteria,

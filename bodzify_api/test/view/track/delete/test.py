@@ -32,10 +32,10 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         assert self.doesTrackFilenameExistInTestUserLibrary(filename) == False
 
     def test_linkedAlbumAndArtistDeletionAsNothingLinkedToItAnymore(self):
-        albumName = "Chuck"
-        album = G(Album, user=self.test_user, name=albumName)
-        artistName = "Sum 41"
-        artist = G(Artist, user=self.test_user, name=artistName)
+        album_name = "Chuck"
+        album = G(Album, user=self.test_user, name=album_name)
+        artist_name = "Sum 41"
+        artist = G(Artist, user=self.test_user, name=artist_name)
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="We're All To Blame",
@@ -45,9 +45,9 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(
-            user=self.test_user, name=albumName).exists() == False
+            user=self.test_user, name=album_name).exists() == False
         assert Artist.objects.filter(
-            user=self.test_user, name=artistName).exists() == False
+            user=self.test_user, name=artist_name).exists() == False
 
     def test_whenNoFileLinked(self):
         trackTitle = "We"
@@ -72,32 +72,32 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         assert track not in allPlaylist.librarytrack_set.all()
         
     def test_removalFromTheGenrePlaylists(self):        
-        rockGenreName = "Rock"
-        hardrockGenreName = "Hard rock"
-        emoGenreName = "Emo"
+        rock_genre_name = "Rock"
+        hardrock_genre_name = "Hard rock"
+        emo_genre_name = "Emo"
 
-        dataJson = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: rockGenreName
+        data_json = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: rock_genre_name
         }
-        self.post_genre(dataJson)
-        rockGenre = self.saved_genre
+        self.post_genre(data_json)
+        rock_genre = self.saved_genre
         rockPlaylist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CriteriaTypesId.GENRE, criteria=rockGenre)
+            user=self.test_user, type=CriteriaTypesId.GENRE, criteria=rock_genre)
 
-        dataJson = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: hardrockGenreName,
-            CRITERIA_ATTRIBUTES_LABEL.PARENT: rockGenre.uuid
+        data_json = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: hardrock_genre_name,
+            CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid
         }
-        self.post_genre(dataJson)
-        hardrockGenre = self.saved_genre
+        self.post_genre(data_json)
+        hardrock_genre = self.saved_genre
         hardrockPlaylist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CriteriaTypesId.GENRE, criteria=hardrockGenre)
+            user=self.test_user, type=CriteriaTypesId.GENRE, criteria=hardrock_genre)
 
-        dataJson = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: emoGenreName,
-            CRITERIA_ATTRIBUTES_LABEL.PARENT: hardrockGenre.uuid
+        data_json = {
+            CRITERIA_ATTRIBUTES_LABEL.NAME: emo_genre_name,
+            CRITERIA_ATTRIBUTES_LABEL.PARENT: hardrock_genre.uuid
         }
-        self.post_genre(dataJson)
+        self.post_genre(data_json)
         emoGenre = self.saved_genre
         emoPlaylist = CriteriaPlaylist.objects.get(
             user=self.test_user, type=CriteriaTypesId.GENRE, criteria=emoGenre)

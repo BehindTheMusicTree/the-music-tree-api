@@ -29,14 +29,14 @@ class TestCase(ApiViewTestCase):
 
     def test_withoutCustomNameShouldDisplayName(self):
         rockCriteriaName = "Rock"
-        rockGenre = G(Criteria,
+        rock_genre = G(Criteria,
                       user=self.test_user,
                       name=rockCriteriaName,
                       type_id=CriteriaTypesId.GENRE)
         rockPlaylist = G(CriteriaPlaylist,
                          user=self.test_user,
                          type_id=CriteriaTypesId.GENRE,
-                         criteria=rockGenre)
+                         criteria=rock_genre)
 
         response = self.get(playlistUuid=rockPlaylist.uuid)
         assert response.status_code == status.HTTP_200_OK

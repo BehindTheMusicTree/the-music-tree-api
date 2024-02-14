@@ -53,10 +53,10 @@ class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
                 queryset = queryset.filter(
                     parent__uuid=self.request.GET[parentUuidParamKey])
 
-        nameKey = PLAYLIST_ATTRIBUTES_LABEL.NAME
-        if nameKey in self.request.GET:
+        nname_key = PLAYLIST_ATTRIBUTES_LABEL.NAME
+        if nname_key in self.request.GET:
             queryset = queryset.filter(
-                name__icontains=self.request.GET[nameKey])
+                name__icontains=self.request.GET[nname_key])
 
         return queryset
 
@@ -70,13 +70,13 @@ class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
         return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        simplePlaylist = PlaylistService().CreateSimplePlaylist(
+        simple_playlist = PlaylistService().create_simple_playlist(
             self.request.user, self.request.data)
         
-        responseSerializer = CriteriaPlaylistWithTracksSerializer(simplePlaylist)
-        headers = self.get_success_headers(responseSerializer.data)
+        response_serializer = CriteriaPlaylistWithTracksSerializer(simple_playlist)
+        headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(
-            data=responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @extend_schema(description=("""
                                 Search within tracks, albums, artists and playlists.

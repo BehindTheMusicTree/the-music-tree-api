@@ -25,7 +25,7 @@ class UserViewSet(viewsets.ModelViewSet):
             username=request.data[PARAMETER_NAME.USERNAME],
             password=request.data[PARAMETER_NAME.PASSWORD],
             email=request.data[PARAMETER_NAME.EMAIL])
-        responseSerializer = UserSerializer(user)
-        headers = self.get_success_headers(responseSerializer.data)
+        response_serializer = UserSerializer(user)
+        headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(
-            responseSerializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)

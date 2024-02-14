@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -18,11 +19,9 @@ class ATTRIBUTES_LABEL:
 
 
 class Playlist(PolymorphicModel):
-    uuid = models.CharField(
-        primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
+    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     addedOn = models.DateTimeField(auto_now_add=True, editable=False)
-
     
     @property
     def name(self) -> str:

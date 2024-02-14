@@ -10,7 +10,7 @@ from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPostSchem
 
 class PlaylistService:
 
-    def CreateSimplePlaylist(self, user: User, data: QueryDict) -> SimplePlaylist:
+    def create_simple_playlist(self, user: User, data: QueryDict) -> SimplePlaylist:
         serializer = SimplePlaylistPostSchemaSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         

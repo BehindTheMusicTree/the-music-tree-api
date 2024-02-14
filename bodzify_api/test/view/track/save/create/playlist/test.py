@@ -12,9 +12,9 @@ class TestCase(ApiViewTestCase):
         response = self.post_sample_track(sample_filename="notProvided.mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
         
-        trackPlaylists = self.saved_track.playlists.all()
-        assert len(trackPlaylists) == 2
-        assert trackPlaylists.filter(
+        track_playlists = self.saved_track.playlists.all()
+        assert len(track_playlists) == 2
+        assert track_playlists.filter(
             name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
-        assert trackPlaylists.filter(
+        assert track_playlists.filter(
             name=PLAYLIST_SPECIAL_NAMES.GENRE_GENRELESS).exists()

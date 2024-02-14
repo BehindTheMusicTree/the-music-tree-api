@@ -11,51 +11,51 @@ import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 class ArtistTestCase(ApiViewTestCase):
 
-    def test_nullThenNone(self):
+    def test_null_then_none(self):
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "albumName" : None
+            "album_name" : None
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.album == None
 
-    def test_emptyThenNone(self):
+    def test_empty_then_none(self):
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "albumName" : ""
+            "album_name" : ""
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.album == None
 
     def test_longest(self):
-        albumName = "a" * settings.ALBUM_NAME_MAX_CHAR
+        album_name = "a" * settings.ALBUM_NAME_MAX_CHAR
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "albumName": albumName
+            "album_name": album_name
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_track.album.name == albumName
+        assert self.saved_track.album.name == album_name
 
     def test_existing(self):
-        albumName = "Kopoe"
-        G(Album, user=self.test_user, name=albumName)
+        album_name = "Kopoe"
+        G(Album, user=self.test_user, name=album_name)
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "albumName": albumName,
+            "album_name": album_name,
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_track.album.name == albumName
+        assert self.saved_track.album.name == album_name
 
     def test_notExisting(self):
-        albumName = "hoho"
+        album_name = "hoho"
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
-            "albumName": albumName,
+            "album_name": album_name,
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_track.album.name == albumName
+        assert self.saved_track.album.name == album_name

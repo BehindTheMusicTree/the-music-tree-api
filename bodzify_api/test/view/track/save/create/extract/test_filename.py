@@ -6,11 +6,11 @@ from bodzify_api import settings
 
 class FilenameTestCase(ApiViewTestCase):
 
-    def test_providingTitleAndArtistNameInData(self):
+    def test_providingTitleAndartist_nameInData(self):
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
             "title": "I'm Here",
-            "artistName": "Roméo",
+            "artist_name": "Roméo",
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED

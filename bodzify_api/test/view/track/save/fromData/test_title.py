@@ -9,7 +9,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvided(self):
+    def test_not_povided(self):
         title = "Mon Amour"
         track = G(LibraryTrack,
                   user=self.test_user,
