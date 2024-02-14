@@ -22,6 +22,10 @@ ENV DockerHome=/home/app/webapp
 ENV StaticFilesDir={DockerHome}/staticfiles
 RUN mkdir $StaticFilesDir
 
+ENV MediaDir=/var/lib/bodzify-api/media
+ENV LibrariesDir={MediaDir}/libraries
+RUN mkdir -p $LibrariesDir
+
 ENV LogDir=/var/log/
 
 ENV DjangoLogDir=${LogDir}django/
