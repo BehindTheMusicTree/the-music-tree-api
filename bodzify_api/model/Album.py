@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ class ATTRIBUTES_LABEL:
     UUID = 'uuid'
     NAME = 'name'
     YEAR = 'year'
-    ALBUM_ARTISTS = 'albumArtists'
+    ALBUM_ARTISTS = 'album_artists'
     LIBRARY_TRACKS = 'libraryTracks'
     TRACK_COUNT = 'trackCount'
     DURATION = 'duration'
@@ -22,38 +23,37 @@ class Album(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
     name = models.CharField(max_length=settings.ALBUM_NAME_MAX_CHAR, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
-    albumArtists = models.ManyToManyField('bodzify_api.Artist')
+    album_artists = models.ManyToManyField('bodzify_api.Artist')
 
     class Meta:
         constraints = [
             models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")
         ]
 
-
-    def deleteWithTracksAndEventuallyArtists(self):
-        artistsLinkedToAlbumAndTrack = list()
-        for track in LibraryTrack.objects.filter(user=self.user, album=self):
+    def delete_with_tracks_and_eventually_artists(self):
+        artists_linked_to_album_and_track = list()
+        for track in LibraryTrack.objects.filter(album=self):
             if track.artist_id is not None:
-                if track.artist not in artistsLinkedToAlbumAndTrack:
-                    artistsLinkedToAlbumAndTrack.append(track.artist)
+                if track.artist not in artists_linked_to_album_and_track:
+                    artists_linked_to_album_and_track.append(track.artist)
             track.delete()
         
-        for albumArtist in list(self.albumArtists.all()):
-            if albumArtist not in artistsLinkedToAlbumAndTrack:
-                artistsLinkedToAlbumAndTrack.append(albumArtist)
+        for album_artist in list(self.album_artists.all()):
+            if album_artist not in artists_linked_to_album_and_track:
+                artists_linked_to_album_and_track.append(album_artist)
 
         self.delete()
         
-        for artist in artistsLinkedToAlbumAndTrack:
-            artist.deleteIfNothingLinked()
+        for artist in artists_linked_to_album_and_track:
+            artist.delete_if_nothing_linked()
 
 
-    def deleteIfNoTrackLinked(self):
-        if LibraryTrack.objects.filter(user=self.user, album=self).count() == 0:
+    def delete_if_no_track_linked(self):
+        if LibraryTrack.objects.filter(album=self).count() == 0:
             self.delete()
 
     def __str__(self) -> str:
-        string = self.uuid + " " + self.name + " by "
-        for artist in list(self.albumArtists.all()):
-            string = string + str(artist) + " "
+        string = str(self.uuid) + " " + self.name + " by "
+        for artist in list(self.album_artists.all()):
+            string = string + " " + str(artist) + " "
         return string

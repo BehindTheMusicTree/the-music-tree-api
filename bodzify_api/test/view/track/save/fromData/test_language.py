@@ -9,7 +9,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvided(self):
+    def test_not_povided(self):
         language = "French"
         track = G(LibraryTrack,
                   user=self.test_user,
@@ -21,7 +21,7 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track.language == language
 
-    def test_nullThenNone(self):
+    def test_null_then_none(self):
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
@@ -33,7 +33,7 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track.language == None
 
-    def test_emptyThenNone(self):
+    def test_empty_then_none(self):
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
@@ -57,3 +57,15 @@ class TestCase(ApiViewTestCase):
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track.language == language
+
+    def test_error_when_too_long(self):
+        language = "a" * (settings.TRACK_LANGUAGE_MAX_CHAR + 1)
+        track = G(LibraryTrack,
+                  user=self.test_user,
+                  title="Love",
+                  duration=0)
+        data = {
+            TRACK_ATTRIBUTES_LABEL.LANGUAGE: language
+        }
+        response = self.put_sample_track(track.uuid, data_json=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

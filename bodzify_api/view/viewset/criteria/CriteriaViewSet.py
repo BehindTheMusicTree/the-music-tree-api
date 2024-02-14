@@ -63,10 +63,10 @@ class CriteriaViewSet(MultiSerializerViewSet):
             logger.exception(e)
             return utility.get_json_response_when_bad_request(exception=e)
 
-        responseSerializer = CriteriaDetailedSerializer(criteria)
-        headers = self.get_success_headers(responseSerializer.data)
+        response_serializer = CriteriaDetailedSerializer(criteria)
+        headers = self.get_success_headers(response_serializer.data)
 
-        return JsonResponse(data=responseSerializer.data,
+        return JsonResponse(data=response_serializer.data,
                             status=status.HTTP_201_CREATED,
                             headers=headers,
                             safe=False)

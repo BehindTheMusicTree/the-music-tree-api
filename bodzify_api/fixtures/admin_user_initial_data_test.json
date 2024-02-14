@@ -21,7 +21,7 @@
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLskdjSjqDKSks",
         "fields": {
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "added_on": "1998-07-14 23:00:00.000 +0100",
             "polymorphic_ctype_id": ["bodzify_api", "criteriaplaylist"],
             "user": 1
         }
@@ -39,7 +39,7 @@
         "model": "bodzify_api.playlist",
         "pk": "LnM1arJrwLskdjSjqJcclc",
         "fields": {
-            "addedOn": "1998-07-14 23:00:00.000 +0100",
+            "added_on": "1998-07-14 23:00:00.000 +0100",
             "polymorphic_ctype_id": ["bodzify_api", "simpleplaylist"],
             "user": 1
         }

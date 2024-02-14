@@ -77,7 +77,7 @@ class ApiViewTestCase(ViewTestCase):
     def _set_saved_track_attribute(self, response):
         track_uuid = response.json()[TRACK_ATTRIBUTES_LABEL.UUID]
         self.saved_track = LibraryTrack.objects.get(uuid=track_uuid)
-        if self.saved_track.fileExists:
+        if self.saved_track.file_exists:
             self.saved_track_metadata = \
                 AudioMetadataService.get_metadata_dict_from_file(file=self.saved_track.file)
 

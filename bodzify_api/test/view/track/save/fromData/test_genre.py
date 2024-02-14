@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from rest_framework import status
 from ddf import G
 from bodzify_api import settings
@@ -11,7 +12,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_nullThenNone(self):
+    def test_null_then_none(self):
         self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
                   user=self.test_user,
@@ -25,7 +26,7 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track.genre == None
 
-    def test_emptyThenNone(self):
+    def test_empty_then_none(self):
         self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: "Rap"})
         track = G(LibraryTrack,
                   user=self.test_user,
@@ -40,53 +41,53 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.genre == None
 
     def test_longest(self):
-        genreName = "a" * settings.CRITERIA_NAME_MAX_CHAR
+        genre_name = "a" * settings.CRITERIA_NAME_MAX_CHAR
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genre_name
         }
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track.genre.name == genreName
+        assert self.saved_track.genre.name == genre_name
         
-    def test_errorWhenTooLong(self):
-        genreName = "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
+    def test_error_when_too_long(self):
+        genre_name = "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genre_name
         }
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_existing(self):
-        genreName = "Rock"
-        self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: genreName})
+        genre_name = "Rock"
+        self.post_genre(data_json={CRITERIA_ATTRIBUTES_LABEL.NAME: genre_name})
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   genre=self.saved_genre,
                   duration=0)
         data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genre_name
         }
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_track.genre.uuid == self.saved_genre.uuid
 
-    def test_newSoParentNone(self):
-        genreName = "Rock"
+    def test_new_so_parent_none(self):
+        genre_name = "Rock"
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genreName
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME: genre_name
         }
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK

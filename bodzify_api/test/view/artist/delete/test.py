@@ -39,7 +39,7 @@ class ArtistViewDeleteTestCase(ArtistViewTestCase):
         xavierAlbum = G(Album,
                         user=self.test_user,
                         name='Xavier',
-                        albumArtists=[bertrandArtist, cocoArtist])
+                        album_artists=[bertrandArtist, cocoArtist])
         lifeTrack = G(LibraryTrack,
                       user=self.test_user,
                       title="Life",

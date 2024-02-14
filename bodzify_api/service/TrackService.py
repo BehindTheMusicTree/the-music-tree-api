@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import os
 import random
 import string
@@ -7,8 +8,6 @@ from tempfile import NamedTemporaryFile
 from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from django.core.files.base import File
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
@@ -19,11 +18,11 @@ import bodzify_api.settings as settings
 from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSaveModelSerializer
 from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
     TrackUpdateSchemaSerializer
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
 import bodzify_api.service.ArtistService as ArtistService
 import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
+import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
 def extract(user: User, extract_schema_data: QueryDict):
@@ -37,19 +36,18 @@ def extract(user: User, extract_schema_data: QueryDict):
         track_temp_file.flush()
         track_temp_file.seek(0)
 
-        post_schema_data = _getSaveDataFromRequestData(extract_schema_data)
+        post_schema_data = _get_save_data_from_request_data(extract_schema_data)
 
-        track_filename, isFilenameRandomlyGenerated = _getTrackFilenameWithExtension(
+        track_filename, isFilenameRandomlyGenerated = _get_track_filename_with_extension(
             mine_track_url_label, extract_schema_data)
         post_schema_data[TRACK_ATTRIBUTES_LABEL.FILE] = File(
             track_temp_file, name=track_filename)
         library_track = create(user=user, post_schema_data=post_schema_data,
-                              forceTitleGeneration=isFilenameRandomlyGenerated)
+                              force_title_generation=isFilenameRandomlyGenerated)
 
     return library_track
 
-
-def create(user: User, post_schema_data: QueryDict, forceTitleGeneration: bool=False):
+def create(user: User, post_schema_data: QueryDict, force_title_generation: bool=False):
     serializer = TrackPostSchemaSerializer(data=post_schema_data)
     serializer.is_valid(raise_exception=True)
 
@@ -61,9 +59,9 @@ def create(user: User, post_schema_data: QueryDict, forceTitleGeneration: bool=F
 
     if TRACK_ATTRIBUTES_LABEL.TITLE not in save_schema_data:
         filename = os.path.basename(file.name).split('.')[0]
-        if len(filename) > settings.TRACK_FILENAME_MAX_CHAR or forceTitleGeneration:
+        if len(filename) > settings.TRACK_FILENAME_MAX_CHAR or force_title_generation:
             title = settings.TRACK_GENERATED_TITLE_PREFIXE + \
-                _generateShortUu(settings.TRACK_GENERATED_TITLE_LEN -
+                _generate_short_uu(settings.TRACK_GENERATED_TITLE_LEN -
                                  len(settings.TRACK_GENERATED_TITLE_PREFIXE))
         else:
             title = filename
@@ -71,50 +69,40 @@ def create(user: User, post_schema_data: QueryDict, forceTitleGeneration: bool=F
 
     return _save(user=user, save_schema_data=save_schema_data)
 
-
-def update(user: User, update_schema_data: QueryDict, oldTrack: LibraryTrack):
+def update(user: User, update_schema_data: QueryDict, old_track: LibraryTrack):
     serializer = TrackUpdateSchemaSerializer(data=update_schema_data)
     serializer.is_valid(raise_exception=True)
-    return _save(user=user, save_schema_data=update_schema_data, old_track=oldTrack)
-
+    return _save(user=user, save_schema_data=update_schema_data, old_track=old_track)
 
 def _save(user: User, save_schema_data: QueryDict, old_track: LibraryTrack = None):
     save_model_data = _get_save_model_data_from_save_schema_data(user=user, save_schema_data=save_schema_data)
     save_model_data[TRACK_ATTRIBUTES_LABEL.USER] = user.id
     save_serializer = TrackSaveModelSerializer(instance=old_track, data=save_model_data, partial=True)
     save_serializer.is_valid(raise_exception=True)
-    saved_track = save_serializer.save()
-
-    _add_track_to_genres_playlists(saved_track)
-    _update_file_tags_if_file_exists(saved_track)
-
-    return saved_track
-
+    return save_serializer.save()
 
 def _get_save_schema_data_from_file(file):
-    metadataDict = AudioMetadataService.get_metadata_dict_from_file(
+    metadata_dict = AudioMetadataService.get_metadata_dict_from_file(
         file=file, normalized_rating_max_value=settings.TRACK_RATING_MAX_VALUE)
 
-    saveData = _removeNoneOrEmptyKeyFromDict(metadataDict)
-    saveData[TRACK_ATTRIBUTES_LABEL.FILE] = file
+    save_data = _remove_none_or_empty_key_from_dict(metadata_dict)
+    save_data[TRACK_ATTRIBUTES_LABEL.FILE] = file
 
-    return saveData
+    return save_data
 
-
-def _removeNoneOrEmptyKeyFromDict(dict):
+def _remove_none_or_empty_key_from_dict(dict):
     for key in list(dict.keys()):
         if dict[key] is None or dict[key] == "":
             del dict[key]
     return dict
 
-
 def _get_dict1_updated_with_artist_uuid_if_artist_name_in_dict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
-    artistNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
-    if artistNameKey in dict2:
-        artistName = dict2[artistNameKey]
-        artist = ArtistService.GetArtistFromNameAfterEventualCreation(
-            user=user, artistName=artistName)
+    artist_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+    if artist_name_key in dict2:
+        artist_name = dict2[artist_name_key]
+        artist = ArtistService.get_artist_from_name_after_eventual_creation(
+            user=user, artist_name=artist_name)
         artistKey = TRACK_ATTRIBUTES_LABEL.ARTIST
         if artist is not None:
             dict1[artistKey] = artist.uuid
@@ -125,138 +113,71 @@ def _get_dict1_updated_with_artist_uuid_if_artist_name_in_dict2(
 
 def _get_dict1_updated_with_album_uuid_if_album_name_in_dict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
-    albumNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME
+    album_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME
 
-    if albumNameKey in dict2:
-        albumName = dict2[albumNameKey]
+    if album_name_key in dict2:
+        album_name = dict2[album_name_key]
 
-        artistsNamesKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING
-        if artistsNamesKey in dict2:
-            albumArtistsNameString = dict2[artistsNamesKey]
-            if albumArtistsNameString is not None:
-                albumArtistsNameList = _getArtistsNameListFromString(
-                    albumArtistsNameString)
+        artists_names_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING
+        if artists_names_key in dict2:
+            album_artists_name_string = dict2[artists_names_key]
+            if album_artists_name_string is not None:
+                album_artists_name_list = _get_artists_name_list_from_string(
+                    album_artists_name_string)
             else:
-                albumArtistsNameList = None
+                album_artists_name_list = None
         else:
-            albumArtistsNameList = None
-        album = AlbumService.GetAlbumFromNameAndAlbumArtistsNameListAfterEventualCreations(
-            user=user, albumName=albumName, albumArtistsNameList=albumArtistsNameList)
+            album_artists_name_list = None
+        album = AlbumService.get_album_from_name_and_album_artists_name_list_after_eventual_creations(
+            user=user, album_name=album_name, album_artists_name_list=album_artists_name_list)
 
-        albumKey = TRACK_ATTRIBUTES_LABEL.ALBUM
+        album_key = TRACK_ATTRIBUTES_LABEL.ALBUM
         if album is not None:
-            dict1[albumKey] = album.uuid
+            dict1[album_key] = album.uuid
         else:
-            dict1[albumKey] = None
+            dict1[album_key] = None
     return dict1
-
 
 def _get_dict1_updated_with_genre_uuid_if_genre_name_in_dict2(
         user: User, dict1: QueryDict, dict2: QueryDict):
-    genreNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
-    if genreNameKey in dict2:
-        genreName = dict2[genreNameKey]
+    genre_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+    if genre_name_key in dict2:
+        genre_name = dict2[genre_name_key]
 
-        if genreName in ["", None]:
-            genreUuid = None
+        if genre_name in ["", None]:
+            genre_uuid = None
         else:
             genreService = GenreService()
-            genreUuid = genreService.getCriteriaFromNameAfterHavingEventuallyCreatedIt(
-                user=user, criteriaName=genreName).uuid
-        dict1[TRACK_ATTRIBUTES_LABEL.GENRE] = genreUuid
+            genre_uuid = genreService.get_criteria_from_name_after_having_eventually_created_it(
+                user=user, criteria_name=genre_name).uuid
+        dict1[TRACK_ATTRIBUTES_LABEL.GENRE] = genre_uuid
     return dict1
 
-
-def _update_file_tags_if_file_exists(track: LibraryTrack):
-    if track.fileExists == False:
-        return
-
-    metadataUpdateDict = dict()
-
-    titleTag = track.title
-    if titleTag is None:
-        titleTag = ""
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.TITLE] = titleTag
-
-    if track.artist_id is not None:
-        artistNameTag = track.artist.name
-    else:
-        artistNameTag = ""
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] = artistNameTag
-
-    albumArtistsTag = ""
-    if track.album_id is not None:
-        albumNameTag = track.album.name
-        albumArtistsNameIndex = 0
-        for albumArtist in list(track.album.albumArtists.all()):
-            if albumArtistsNameIndex != 0:
-                albumArtistsTag = (
-                    albumArtistsTag + AudioMetadataService.TAG_ARTISTS_SEPARATION_CHAR)
-            albumArtistsTag = albumArtistsTag + albumArtist.name
-            albumArtistsNameIndex = albumArtistsNameIndex + 1
-    else:
-        albumNameTag = ""
-
-    if albumNameTag is None:
-        albumNameTag = ""
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] = albumNameTag
-    albumArtistsNameKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
-    metadataUpdateDict[albumArtistsNameKey] = albumArtistsTag
-
-    if track.genre == None:
-        genreNameTag = ""
-    else:
-        genreNameTag = track.genre.name
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] = genreNameTag
-
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.RATING] = track.rating
-
-    languageTag = track.language
-    if languageTag is None:
-        languageTag = ""
-    metadataUpdateDict[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] = languageTag
-
-    AudioMetadataService.update(
-        file=track.file,
-        metadata_update_dict=metadataUpdateDict,
-        normalized_rating_max_value=settings.TRACK_RATING_MAX_VALUE)
-
-
-def _getArtistsNameListFromString(namesString: str) -> list:
-    namesWithEventualSpacesAroundAndDuplicates = namesString.split(
+def _get_artists_name_list_from_string(names_string: str) -> list:
+    names_with_eventual_spaces_around_and_duplicates = names_string.split(
         AudioMetadataService.TAG_ARTISTS_SEPARATION_CHAR)
     names = list()
-    for nameWithEventualSpacesAround in namesWithEventualSpacesAroundAndDuplicates:
-        name = nameWithEventualSpacesAround.strip()
+    for name_with_eventual_spaces_around in names_with_eventual_spaces_around_and_duplicates:
+        name = name_with_eventual_spaces_around.strip()
         if name != "" and names.count(name) == 0:
             names.append(name)
     return names
 
-
-def _add_track_to_genres_playlists(track: LibraryTrack):
-    genre = track.genre
-    while genre is not None:
-        track.playlists.add(CriteriaPlaylist.objects.get(
-            user=track.user, type_id=CriteriaTypesId.GENRE, criteria=genre))
-        genre = genre.parent
-    track.save()
-
-
-def _get_dict1_overriden_with_dict2_when_key_is_provided(dict1: QueryDict, dict2: QueryDict) -> dict:
-    overridenDict1 = dict1.copy()
+def _get_dict1_overriden_with_dict2_when_key_is_provided(dict1: QueryDict, dict2: QueryDict) -> QueryDict:
+    overriden_dict1 = dict1.copy()
     for key in [TRACK_ATTRIBUTES_LABEL.FILE,
                 TRACK_ATTRIBUTES_LABEL.TITLE,
                 TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME,
                 TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME,
-                TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING,
+                TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING,
                 TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
                 TRACK_ATTRIBUTES_LABEL.RATING,
                 TRACK_ATTRIBUTES_LABEL.LANGUAGE]:
-        overridenDict1 = _get_dict1_updated_with_dict2_key_if_set(
+        overriden_dict1 = _get_dict1_updated_with_dict2_key_if_set(
             key=key,
-            dict1=overridenDict1,
+            dict1=overriden_dict1,
             dict2=dict2)
-    return overridenDict1
+    return overriden_dict1
 
 def _get_save_model_data_from_save_schema_data(user: User, save_schema_data: QueryDict) -> dict:
     save_model_data = dict()
@@ -306,41 +227,41 @@ def _get_dict1_updated_with_dict2_key_if_set(
         dict1[key] = value
     return dict1
 
-def _getSaveDataFromRequestData(requestData: QueryDict):
-    saveData = requestData.copy()
-    del saveData[MINE_TRACK_ATTRIBUTES_LABEL.URL]
-    return saveData
+def _get_save_data_from_request_data(requestData: QueryDict):
+    save_data = requestData.copy()
+    del save_data[MINE_TRACK_ATTRIBUTES_LABEL.URL]
+    return save_data
 
 def _getFileExtensionFromUrl(url: str):
     return url.split(".")[-1]
 
-def _getSubstringAfterLastSlash(string: str):
+def _get_substring_after_last_slash(string: str):
     return string.split("/")[-1]
 
-def _getTrackFilenameWithExtension(mineTrackUrl: str, requestData: QueryDict):
-    fileExtension = _getFileExtensionFromUrl(mineTrackUrl)
-    isFilenameRandomlyGenerated = False
-    titleKey = TRACK_ATTRIBUTES_LABEL.TITLE
-    if titleKey in requestData:
-        title = requestData[titleKey]
-        artistNameKey = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
-        if artistNameKey in requestData:
-            artistName = requestData[artistNameKey]
-            if artistName is None or artistName == "":
-                fileNameWithoutExtension = title
+def _get_track_filename_with_extension(mine_track_url: str, requestData: QueryDict):
+    file_extension = _getFileExtensionFromUrl(mine_track_url)
+    is_filename_randomly_generated = False
+    title_key = TRACK_ATTRIBUTES_LABEL.TITLE
+    if title_key in requestData:
+        title = requestData[title_key]
+        artist_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+        if artist_name_key in requestData:
+            artist_name = requestData[artist_name_key]
+            if artist_name is None or artist_name == "":
+                filename_without_extension = title
             else:
-                fileNameWithoutExtension = artistName + " - " + title
+                filename_without_extension = artist_name + " - " + title
         else:
-            fileNameWithoutExtension = title
-        filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
+            filename_without_extension = title
+        filename_with_extension = filename_without_extension + "." + file_extension
     else:
-        filenameWithExtension = _getSubstringAfterLastSlash(mineTrackUrl)
-        if len(filenameWithExtension) > settings.TRACK_FILENAME_MAX_CHAR:
-            fileNameWithoutExtension = _generateShortUu(
-                settings.TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LEN - len(fileExtension) - 1)
-            filenameWithExtension = fileNameWithoutExtension + "." + fileExtension
-            isFilenameRandomlyGenerated = True
-    return filenameWithExtension, isFilenameRandomlyGenerated
+        filename_with_extension = _get_substring_after_last_slash(mine_track_url)
+        if len(filename_with_extension) > settings.TRACK_FILENAME_MAX_CHAR:
+            filename_without_extension = _generate_short_uu(
+                settings.TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LEN - len(file_extension) - 1)
+            filename_with_extension = filename_without_extension + "." + file_extension
+            is_filename_randomly_generated = True
+    return filename_with_extension, is_filename_randomly_generated
 
-def _generateShortUu(length: int):
+def _generate_short_uu(length: int):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))

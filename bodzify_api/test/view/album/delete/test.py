@@ -68,7 +68,7 @@ class TestCase(AlbumViewTestCase):
             Album,
             user=self.test_user,
             name="Black Holes And Revelations",
-            albumArtists=[matthewArtist, museArtist]
+            album_artists=[matthewArtist, museArtist]
         )
         G(
             LibraryTrack,

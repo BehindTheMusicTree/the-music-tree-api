@@ -5,9 +5,9 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvidedThenSetFromFilename(self):
-        filenameWithoutExtension = "notTooLongFilename"
+    def test_not_povidedThenSetFromFilename(self):
+        filename_without_extension = "notTooLongFilename"
         response = self.post_sample_track(
-            sample_filename=filenameWithoutExtension + ".mp3", data_json={})
+            sample_filename=filename_without_extension + ".mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_track.title == filenameWithoutExtension
+        assert self.saved_track.title == filename_without_extension

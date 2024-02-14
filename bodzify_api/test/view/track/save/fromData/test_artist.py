@@ -47,41 +47,41 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.artist == None
 
     def test_longest(self):
-        artistName = "a" * settings.ARTIST_NAME_MAX_CHAR
+        artist_name = "a" * settings.ARTIST_NAME_MAX_CHAR
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artist_name
         }
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track.artist.name == artistName
+        assert self.saved_track.artist.name == artist_name
 
     def test_existing(self):
-        artistName = "a-ha"
-        G(Artist, user=self.test_user, name=artistName)
+        artist_name = "a-ha"
+        G(Artist, user=self.test_user, name=artist_name)
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artist_name
         }
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track.artist.name == artistName
+        assert self.saved_track.artist.name == artist_name
 
     def test_not_existing(self):
-        artistName = "hoho"
+        artist_name = "hoho"
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   duration=0)
         data = {
-            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artistName
+            TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME: artist_name
         }
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track.artist.name == artistName
+        assert self.saved_track.artist.name == artist_name

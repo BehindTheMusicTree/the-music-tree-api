@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from django.db import models
 from bodzify_api import settings
 from bodzify_api.model.playlist.Playlist import Playlist

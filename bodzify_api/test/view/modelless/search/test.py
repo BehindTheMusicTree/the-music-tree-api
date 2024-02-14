@@ -50,8 +50,8 @@ class SearchViewTestCase(ViewTestCase):
         results = responseJson['results']
         trackTitleKey = TRACK_ATTRIBUTES_LABEL.TITLE
         assert results[LibraryTrack.__name__][0][trackTitleKey] == werealltoblameTrack.title
-        playlistNameKey = PLAYLIST_ATTRIBUTES_LABEL.NAME
-        assert results[Playlist.__name__][0][playlistNameKey] == CriteriaSpecialNames.GENRE_ALL
+        playlistNname_key = PLAYLIST_ATTRIBUTES_LABEL.NAME
+        assert results[Playlist.__name__][0][playlistNname_key] == CriteriaSpecialNames.GENRE_ALL
 
     def test_nonSensitiveness(self):
         rapGenre = G(Criteria,

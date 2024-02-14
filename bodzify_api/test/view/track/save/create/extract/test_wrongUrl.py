@@ -7,9 +7,9 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class WringUrlTestCase(ApiViewTestCase):
 
     def test(self):
-        trackUrl = ("https://wrong-url_OIJOIEFHPOEIHFEPOFIHEOFIH.mp3")
+        track_url = ("https://wrong-url_OIJOIEFHPOEIHFEPOFIHEOFIH.mp3")
         data = {
-            "url": trackUrl
+            "url": track_url
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

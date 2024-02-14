@@ -22,18 +22,18 @@ class Artist(models.Model):
         ]
 
     def delete(self):
-        Album.objects.filter(user=self.user, albumArtists__in=[self]).delete()
+        Album.objects.filter(user=self.user, album_artists__in=[self]).delete()
         LibraryTrack.objects.filter(user=self.user, artist=self).delete()
         return super(Artist, self).delete()
     
-    def deleteIfNothingLinked(self):
-        if Album.objects.filter(user=self.user, albumArtists__in=[self]).count() == 0:
+    def delete_if_nothing_linked(self):
+        if Album.objects.filter(user=self.user, album_artists__in=[self]).count() == 0:
             if LibraryTrack.objects.filter(user=self.user, artist=self).count() == 0:
                 self.delete()
 
-    def deleteWithAlbumsAndTracks(self):
-        for album in list(Album.objects.filter(user=self.user, albumArtists__in=[self]).all()):
-            album.deleteWithTracksAndEventuallyArtists()
+    def delete_with_albums_and_tracks(self):
+        for album in list(Album.objects.filter(user=self.user, album_artists__in=[self]).all()):
+            album.delete_with_tracks_and_eventually_artists()
 
         for track in list(LibraryTrack.objects.filter(user=self.user, artist=self).all()):
             track.delete_with_checking_album_potential_deletion()
@@ -41,4 +41,4 @@ class Artist(models.Model):
         self.delete()
         
     def __str__(self) -> str:
-        return self.uuid + " " + self.name
+        return str(self.uuid) + " " + self.name

@@ -24,10 +24,10 @@ class PARAMETER_NAME:
 
 class QUERY_FILTERS_NAME:
     TITLE = "title"
-    ARTIST_NAME = "artistName"
-    ALBUM_NAME = "albumName"
+    ARTIST_NAME = "artist_name"
+    ALBUM_NAME = "album_name"
     YEAR = "year"
-    GENRE_NAME = "genreName"
+    GENRE_NAME = "genre_name"
     TAG_NAME = "tagName"
     PLAYLIST_NAME = "playlistName"
 

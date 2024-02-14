@@ -10,14 +10,14 @@ from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import 
 class TestCase(ApiViewTestCase):
 
     def test_longest(self):
-        albumName = "a" * settings.ALBUM_NAME_MAX_CHAR
+        album_name = "a" * settings.ALBUM_NAME_MAX_CHAR
         data = {
-            SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_NAME: albumName
+            SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_NAME: album_name
         }
         response = self.post_sample_track(sample_filename="sample.flac", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         key = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME
-        assert self.saved_track_metadata[key] == albumName
+        assert self.saved_track_metadata[key] == album_name
 
     def test_null(self):
         data = {

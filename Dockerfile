@@ -18,6 +18,12 @@ ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
+
+ENV StaticFilesDir=${DockerHome}/staticfiles
+
+ENV MediaDir=/var/lib/bodzify-api/media
+ENV LibrariesDir=${MediaDir}/libraries
+
 ENV LogDir=/var/log/
 
 ENV DjangoLogDir=${LogDir}django/
@@ -40,6 +46,9 @@ RUN mkdir -p $DockerHome
 WORKDIR $DockerHome
 
 COPY . $DockerHome
+
+RUN mkdir $StaticFilesDir
+RUN mkdir -p $LibrariesDir
 
 RUN mkdir -p $LogDir
 

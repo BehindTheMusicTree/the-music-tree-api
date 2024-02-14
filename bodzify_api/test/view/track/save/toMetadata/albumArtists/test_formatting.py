@@ -9,12 +9,12 @@ from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import 
 class TestCase(ApiViewTestCase):
 
     def test_withCorrectSpacing(self):
-        albumArtistsName = "Chuck Berry,  The Beatles,The Rolling Stones "
+        album_artistsName = "Chuck Berry,  The Beatles,The Rolling Stones "
         data = {
             SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_NAME: "Chuck",
-            SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAME_STRING: albumArtistsName
+            SCHEMA_TRACK_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING: album_artistsName
         }
         response = self.post_sample_track(sample_filename="sample.mp3", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        albumArtistsKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
-        assert self.saved_track_metadata[albumArtistsKey] == "Chuck Berry,The Beatles,The Rolling Stones"
+        album_artistsKey = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
+        assert self.saved_track_metadata[album_artistsKey] == "Chuck Berry,The Beatles,The Rolling Stones"

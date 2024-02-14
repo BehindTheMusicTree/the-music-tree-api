@@ -5,6 +5,7 @@ from typing import Optional
 import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import QuerySet
 import bodzify_api.settings as settings
 
 logger = logging.getLogger('bodzify_api')
@@ -20,7 +21,7 @@ class ATTRIBUTES_LABEL:
     PARENT = "parent"
     CHILDREN = "children"
     ROOT = "root"
-    ADDED_ON = "addedOn"
+    ADDED_ON = "added_on"
 
 class Criteria(models.Model):
     uuid = models.CharField(
@@ -32,7 +33,7 @@ class Criteria(models.Model):
                              on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='child_criteria')
     root = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
-    addedOn = models.DateTimeField(auto_now_add=True, editable=False)
+    added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
         unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)
@@ -42,27 +43,75 @@ class Criteria(models.Model):
         ]
 
     def __str__(self) -> str:
-        return self.uuid + " " + self.name
-    
-    def get_new_root_value_updating_in_kwargs(self, kwargs):
-        return kwargs.get(ATTRIBUTES_LABEL.ROOT, self.root)
+        return str(self.uuid) + " " + self.name
     
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        self.root = self.parent.root if self.parent else self
+        try:
+            old_criteria = Criteria.objects.get(uuid=self.uuid)        
+            self._update(old_criteria, *args, **kwargs)
 
-        is_root_uptating = ATTRIBUTES_LABEL.ROOT in kwargs.get("update_fields", [])
-        if not is_root_uptating:
-            is_creation = not self.root
-            if is_creation:
-                if self.parent:
-                    self.root = self.parent.root
-                else:
-                    self.root = self
-                self.save(update_fields=[ATTRIBUTES_LABEL.ROOT])
-            else:
-                new_root = self.parent.root if self.parent else self
-                if self.root != new_root:
-                    self._update_root_of_criteria_and_children(self, new_root) # type: ignore
+        except Criteria.DoesNotExist:
+            self._create(*args, **kwargs)
+
+    def _create(self, *args, **kwargs):
+
+        super().save(*args, **kwargs)
+        from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+        CriteriaPlaylist(user=self.user, type=self.type, criteria=self).save()
+
+    def _update(self, old_criteria: 'Criteria', *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        if old_criteria.root != self.root:
+            self._update_root_of_children(criteria=self, new_root=self.root)
+
+        if old_criteria.parent != self.parent:
+            self._update_playlists(old_criteria.parent)
+
+    def _update_playlists(self, old_parent: Optional['Criteria']):
+        common_criteria = self.get_common_criteria(old_parent)
+
+        from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+        criteria_tracks = CriteriaPlaylist.objects.get(criteria=self).librarytrack_set.all()
+
+        if self.parent is not None:
+            self._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
+                criteria=self.parent, 
+                tracks=criteria_tracks,
+                criteria_limit=common_criteria)
+            
+        if old_parent is not None:
+            self._remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
+                criteria=old_parent, 
+                tracks=criteria_tracks, 
+                criteria_limit=common_criteria)
+
+    def _add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(self,
+                                                               criteria: 'Criteria', 
+                                                               tracks: QuerySet, 
+                                                               criteria_limit: Optional['Criteria'] = None):
+        if criteria != criteria_limit:
+            from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+            CriteriaPlaylist.objects.get(criteria=criteria).librarytrack_set.add(*tracks)
+            if criteria.parent is not None:
+                self._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
+                    criteria=criteria.parent, 
+                    tracks=tracks,
+                    criteria_limit=criteria_limit)
+
+    def _remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(self,
+                                                           criteria: 'Criteria', 
+                                                           tracks: QuerySet, 
+                                                           criteria_limit: Optional['Criteria'] = None):
+        if criteria != criteria_limit:
+            from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+            CriteriaPlaylist.objects.get(criteria=criteria).librarytrack_set.remove(*tracks)
+            if criteria.parent is not None:
+                self._remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
+                    criteria=criteria.parent, 
+                    tracks=tracks,
+                    criteria_limit=criteria_limit)
 
     def get_common_criteria(self, criteriaB):
         visited = set()
@@ -94,18 +143,10 @@ class Criteria(models.Model):
     def get_children(self):
         return Criteria.objects.filter(parent=self)
     
-    def _update_root_of_criteria_and_children(self, criteria: 'Criteria', new_root: 'Criteria'):
+    def _update_root_of_children(self, criteria: 'Criteria', new_root: 'Criteria'):
         criteria.root = new_root # type: ignore
-        criteria.save(update_fields=[ATTRIBUTES_LABEL.ROOT])
         children = criteria.get_children()
         if children.exists():
             for child in children:
-                self._update_root_of_criteria_and_children(child, new_root)
-    
-    def _update_root_of_descandants_if_root_different(self, 
-                                                      old_criteria_root: Optional['Criteria'], 
-                                                      saved_criteria: 'Criteria'):
-        if old_criteria_root != saved_criteria.root:
-            self._update_root_of_criteria_and_children(
-                criteria=saved_criteria, 
-                new_root=saved_criteria.root) # type: ignore
+                child.root = new_root
+                child.save()

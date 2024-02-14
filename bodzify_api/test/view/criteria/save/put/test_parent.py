@@ -9,7 +9,7 @@ from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATT
 class TestCase(ApiViewTestCase):
 
     def test_not_provided_then_unchanged(self):
-        rockGenre = G(Criteria,
+        rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
@@ -17,14 +17,14 @@ class TestCase(ApiViewTestCase):
             name="Punk", 
             user=self.test_user, 
             type=CriteriaTypesId.GENRE, 
-            parent=rockGenre)
+            parent=rock_genre)
         data = {}
         response = self.put_genre(genre_uuid=punkGenre.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_genre.parent == rockGenre
+        assert self.saved_genre.parent == rock_genre
 
     def test_error_when_parent_is_one_of_descendants(self):
-        rockGenre = G(Criteria,
+        rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
@@ -32,7 +32,7 @@ class TestCase(ApiViewTestCase):
             name="Punk",
             user=self.test_user,
             type=CriteriaTypesId.GENRE,
-            parent=rockGenre)
+            parent=rock_genre)
         punkHardcoreGenre = G(Criteria,
             name="Punk hardcore",
             user=self.test_user,
@@ -42,7 +42,7 @@ class TestCase(ApiViewTestCase):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: punkHardcoreGenre.uuid
         }
-        response = self.put_genre(genre_uuid=rockGenre.uuid, data_json=data)
+        response = self.put_genre(genre_uuid=rock_genre.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_error_when_parent_is_itself(self):
