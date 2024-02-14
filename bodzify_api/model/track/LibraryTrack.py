@@ -39,11 +39,11 @@ class ATTRIBUTES_LABEL:
     RATING = "rating"
     PLAYLISTS = "playlists"
     LANGUAGE = "language"
-    ADDED_ON = "addedOn"
+    ADDED_ON = "added_on"
     FILENAME = "filename"
-    FILE_EXTENSION = "fileExtension"
-    FILE_EXISTS = "fileExists"
-    RELATIVE_URL = "relativeUrl"
+    FILE_EXTENSION = "file_extension"
+    FILE_EXISTS = "file_exists"
+    RELATIVE_URL = "relative_url"
 
 class LibraryTrack(models.Model):
 
@@ -101,7 +101,7 @@ class LibraryTrack(models.Model):
 
     @property
     def relativeUrl(self) -> str:
-        return "tracks/{self.uuid}/"
+        return "tracks/" + self.uuid + "/"
 
     def __str__(self):
         album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""

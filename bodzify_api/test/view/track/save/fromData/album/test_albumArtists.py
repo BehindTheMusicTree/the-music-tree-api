@@ -127,18 +127,18 @@ class TestCase(ApiViewTestCase):
         assert len(list(self.saved_track.album.album_artists.all())) == 0
 
     def test_errorWhenAlbumMissing(self):
-        trackUrl = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
+        track_url = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
         data = {
-            TRACK_SCHEMA_EXTRACT_ATTRIBUTES_LABEL.URL: trackUrl,
+            TRACK_SCHEMA_EXTRACT_ATTRIBUTES_LABEL.URL: track_url,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING: "Muse",
         }
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_errorWhenAlbumNull(self):
-        trackUrl = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
+        track_url = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
         data = {
-            TRACK_SCHEMA_EXTRACT_ATTRIBUTES_LABEL.URL: trackUrl,
+            TRACK_SCHEMA_EXTRACT_ATTRIBUTES_LABEL.URL: track_url,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME: None,
             TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING: "Muse",
         }
