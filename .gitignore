@@ -18,3 +18,5 @@ bodzify_api/test/view/track/post/sample/post_Big_File 1-01 - Shine On You Crazy 
 .env.dev
 
 .env
+
+bodzify_api/migrations/
