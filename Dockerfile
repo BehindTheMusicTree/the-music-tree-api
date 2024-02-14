@@ -18,6 +18,10 @@ ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
+
+ENV StaticFilesDir={DockerHome}/staticfiles
+RUN mkdir $StaticFilesDir
+
 ENV LogDir=/var/log/
 
 ENV DjangoLogDir=${LogDir}django/
