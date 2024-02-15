@@ -5,11 +5,9 @@ from django.contrib.auth.models import User
 from django.http import QueryDict
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.criteria.input.schema.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
 from bodzify_api.serializer.criteria.input.CriteriaSaveModelSerializer import CriteriaSaveModelSerializer
 from bodzify_api.serializer.criteria.input.schema.CriteriaUpdateSchemaSerializer import CriteriaPutSchemaSerializer
-from django.db.models import QuerySet
 
 from bodzify_api.service.Service import Service
 from rest_framework.serializers import Serializer
