@@ -15,13 +15,14 @@ from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer impo
 from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
     TrackPostSchemaSerializer
 from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
-    TrackUpdateSchemaSerializer
+    TrackPutSchemaSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import \
     TrackDetailedSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
-from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-import bodzify_api.service.TrackService as TrackService
+from bodzify_api.view.viewset.AppViewSet import AppViewSet
+from bodzify_api.service.TrackService import TrackService
+from rest_framework.serializers import ModelSerializer
 import bodzify_api.view.utility as utility
 
 
@@ -34,7 +35,7 @@ class FILTER_FIELDS:
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
 
 
-class TrackViewSet(MultiSerializerViewSet):
+class TrackViewSet(AppViewSet):
 
     queryset = LibraryTrack.objects.all()
     serializers = {
@@ -43,6 +44,9 @@ class TrackViewSet(MultiSerializerViewSet):
         'retrieve':  TrackDetailedSerializer,
         'update':  TrackDetailedSerializer,
     }
+
+    def __init__(self, **kwargs):
+        super().__init__(TrackService(), **kwargs)
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
@@ -64,12 +68,15 @@ class TrackViewSet(MultiSerializerViewSet):
         if languageFilter is not None:
             queryset = queryset.filter(language__icontains=languageFilter)
         return queryset
+    
+    def _get_detailed_serializer(self, instance) -> ModelSerializer:
+        return TrackDetailedSerializer(instance=instance) # type: ignore
 
     def destroy(self, request, *args, **kwargs):
         self.get_object().deleteWithCheckingAlbumAndArtistPotentialDeletion()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @extend_schema(request=TrackUpdateSchemaSerializer,
+    @extend_schema(request=TrackPutSchemaSerializer,
                    responses=TrackDetailedSerializer,
                    description=("""
             Updates a track:\n"
@@ -101,14 +108,7 @@ class TrackViewSet(MultiSerializerViewSet):
             """)
                    )
     def update(self, request, *args, **kwargs):
-        updated_track = TrackService.update(
-            user=request.user, update_schema_data=request.data, old_track=self.get_object())
-        response_serializer = TrackDetailedSerializer(updated_track)
-        headers = self.get_success_headers(response_serializer.data)
-        return JsonResponse(
-            data=TrackDetailedSerializer(updated_track).data,
-            status=status.HTTP_200_OK,
-            headers=headers)
+        return self._update(request, *args, **kwargs)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
@@ -139,15 +139,7 @@ class TrackViewSet(MultiSerializerViewSet):
             """)
                    )
     def create(self, request, *args, **kwargs):
-        track = TrackService.create(
-            user=request.user,
-            post_schema_data=request.data)
-        response_serializer = TrackDetailedSerializer(track)
-        headers = self.get_success_headers(response_serializer.data)
-        return JsonResponse(
-            data=TrackDetailedSerializer(track).data,
-            status=status.HTTP_201_CREATED,
-            headers=headers)
+        return self._create(request, *args, **kwargs)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=ATTRIBUTES_LABEL.TITLE,
@@ -195,7 +187,7 @@ class TrackViewSet(MultiSerializerViewSet):
     def extract(self, request, *args, **kwargs):
         serializer = TrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        track = TrackService.extract(user=request.user, extract_schema_data=request.data)
+        track = self.service.extract(user=request.user, extract_schema_data=request.data)
         response_serializer = TrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from abc import abstractmethod
 import logging
 from django.db import IntegrityError
 from django.http import JsonResponse
@@ -13,9 +14,9 @@ logger = logging.getLogger('bodyzify_api')
 
 class AppViewSet(MultiSerializerViewSet):
     
-    def __init__(self, **kwargs):
+    def __init__(self, service, **kwargs):
         super().__init__(**kwargs)
-        self.service = self._get_service()
+        self.service = service
 
     def _create(self, request, *args, **kwargs):
         try:
@@ -55,9 +56,11 @@ class AppViewSet(MultiSerializerViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data)
     
+    @abstractmethod
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         raise NotImplementedError("This method must be implemented in the subclass")
 
+    @abstractmethod
     def _get_service(self) -> Service:
         raise NotImplementedError("This method must be implemented in the subclass")
     

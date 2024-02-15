@@ -9,7 +9,7 @@ from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL
 from bodzify_api.validator.TrackFileValidator import validate_content_type_is_audio, validate_size
 
 
-class TrackUpdateSchemaSerializer(TrackSaveSchemaSerializer):
+class TrackPutSchemaSerializer(TrackSaveSchemaSerializer):
 
     file = serializers.FileField(
         help_text="Only audio formats accepted.",

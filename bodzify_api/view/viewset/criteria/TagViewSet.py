@@ -10,5 +10,5 @@ class TagViewSet(CriteriaViewSet):
 
     queryset = Criteria.objects.filter(type_id=CRITERIA_TYPES_ID.TAG)
 
-    def _get_service(self):
-        return TagService()
+    def __init__(self, **kwargs):
+        super().__init__(TagService(), **kwargs)

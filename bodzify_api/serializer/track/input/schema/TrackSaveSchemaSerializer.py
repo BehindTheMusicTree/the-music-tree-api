@@ -17,6 +17,7 @@ class ATTRIBUTES_LABEL:
     ALBUM_NAME = "album_name"
     ALBUM_ARTISTS_NAMES_STRING = "album_artists_names_string"
     GENRE_NAME = "genre_name"
+    FORCE_TITLE_GENERATION = "force_title_generation"
 
 
 class TrackSaveSchemaSerializer(InputSerializer):
@@ -54,6 +55,7 @@ class TrackSaveSchemaSerializer(InputSerializer):
         required=False,
         allow_blank=True,
         allow_null=True)
+    force_title_generation = serializers.BooleanField(required=False)
 
     class Meta:
         fields = [TRACK_ATTRIBUTES_LABEL.TITLE,

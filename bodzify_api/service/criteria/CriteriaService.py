@@ -25,7 +25,7 @@ class CriteriaService(Service):
             criteria = Criteria.objects.create(user=user, type_id=self.get_criteria_type_id(), name=criteria_name)
         return criteria
 
-    def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
+    def _get_post_schema_serializer(self, post_schema_data: QueryDict):
         return CriteriaPostSchemaSerializer(data=post_schema_data) # type: ignore
 
     def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
@@ -51,12 +51,12 @@ class CriteriaService(Service):
         save_model_data = QueryDict(mutable=True)
         save_model_data[CRITERIA_ATTRIBUTES_LABEL.USER] = user.pk
 
-        save_model_data = self._get_querydict1_updated_with_querydict2_key_if_set(
+        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
             key=CRITERIA_ATTRIBUTES_LABEL.NAME,
             querydict1=save_model_data,
             querydict2=save_schema_data)
 
-        save_model_data = self._get_querydict1_updated_with_querydict2_key_if_set(
+        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
             key=CRITERIA_ATTRIBUTES_LABEL.PARENT,
             querydict1=save_model_data,
             querydict2=save_schema_data)

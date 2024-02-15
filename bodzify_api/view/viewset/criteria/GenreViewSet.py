@@ -10,5 +10,5 @@ class GenreViewSet(CriteriaViewSet):
 
     queryset = Criteria.objects.filter(type_id=CRITERIA_TYPES_ID.GENRE)
 
-    def _get_service(self):
-        return GenreService()
+    def __init__(self, **kwargs):
+        super().__init__(GenreService(), **kwargs)

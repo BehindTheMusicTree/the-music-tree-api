@@ -48,6 +48,9 @@ class CriteriaViewSet(AppViewSet):
             queryset = queryset.filter(parent=parent)
 
         return queryset
+    
+    def _get_detailed_serializer(self, instance) -> ModelSerializer:
+        return CriteriaDetailedSerializer(instance=instance) # type: ignore
 
     @extend_schema(request=CriteriaPostSchemaSerializer,
                    responses=CriteriaDetailedSerializer)
@@ -70,6 +73,3 @@ class CriteriaViewSet(AppViewSet):
                    description=("""Updates a criteria"""))
     def update(self, request, *args, **kwargs):
         return self._update(request, *args, **kwargs)
-    
-    def _get_detailed_serializer(self, instance) -> ModelSerializer:
-        return CriteriaDetailedSerializer(instance=instance) # type: ignore
