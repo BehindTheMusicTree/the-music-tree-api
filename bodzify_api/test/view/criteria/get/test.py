@@ -14,11 +14,11 @@ class TestCase(ApiViewTestCase):
                       user=self.test_user,
                       type=CriteriaTypesId.GENRE)
         response = self.get_genres()
-        genresJsonList = response.json()[RESPONSE_KEYS.RESULTS]
-        assert len(genresJsonList) == 1
-        rock_genreJson = genresJsonList[0]
-        assert rock_genreJson[Criteria.NAME] == genre_name
-        assert rock_genreJson[Criteria.TYPE] == CriteriaTypesId.GENRE
+        genre_json_list = response.json()[RESPONSE_KEYS.RESULTS]
+        assert len(genre_json_list) == 1
+        rock_genre_json = genre_json_list[0]
+        assert rock_genre_json[Criteria.NAME] == genre_name
+        assert rock_genre_json[Criteria.TYPE] == CriteriaTypesId.GENRE
 
     def test_two(self):
         G(Criteria,
@@ -30,5 +30,5 @@ class TestCase(ApiViewTestCase):
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
         response = self.get_genres()
-        genresJsonList = response.json()[RESPONSE_KEYS.RESULTS]
-        assert len(genresJsonList) == 2
+        genre_json_list = response.json()[RESPONSE_KEYS.RESULTS]
+        assert len(genre_json_list) == 2

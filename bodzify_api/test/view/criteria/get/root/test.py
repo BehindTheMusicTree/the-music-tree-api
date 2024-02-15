@@ -12,21 +12,21 @@ class TestCase(ApiViewTestCase):
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
         response = self.get_genres()
-        genresJsonList = response.json()[RESPONSE_KEYS.RESULTS]
-        genreJson = genresJsonList[0]
-        assert genreJson[Criteria.ROOT] == genre.uuid
+        genre_json_list = response.json()[RESPONSE_KEYS.RESULTS]
+        genre_json = genre_json_list[0]
+        assert genre_json[Criteria.ROOT] == genre.uuid
 
     def test_not_root(self):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
-        punkGenre = G(Criteria,
+        punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
         response = self.get_genres()
-        genresJsonList = response.json()[RESPONSE_KEYS.RESULTS]
-        for jsonElement in genresJsonList:
-            if jsonElement[Criteria.UUID] == punkGenre.uuid:
-                assert jsonElement[Criteria.ROOT] == rock_genre.uuid
+        genre_json_list = response.json()[RESPONSE_KEYS.RESULTS]
+        for json_element in genre_json_list:
+            if json_element[Criteria.UUID] == punk_genre.uuid:
+                assert json_element[Criteria.ROOT] == rock_genre.uuid

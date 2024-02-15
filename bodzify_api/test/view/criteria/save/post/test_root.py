@@ -35,14 +35,14 @@ class TestCase(ApiViewTestCase):
             name="Rock",
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
-        punkGenre = G(Criteria,
+        punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
             type=CriteriaTypesId.GENRE,
             parent=rock_genre)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk hardcore",
-            CRITERIA_ATTRIBUTES_LABEL.PARENT: punkGenre.uuid
+            CRITERIA_ATTRIBUTES_LABEL.PARENT: punk_genre.uuid
         }
         response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED

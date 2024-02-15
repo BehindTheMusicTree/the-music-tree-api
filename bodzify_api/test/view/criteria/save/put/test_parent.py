@@ -13,13 +13,13 @@ class TestCase(ApiViewTestCase):
             name="Rock",
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
-        punkGenre = G(Criteria, 
+        punk_genre = G(Criteria, 
             name="Punk", 
             user=self.test_user, 
             type=CriteriaTypesId.GENRE, 
             parent=rock_genre)
         data = {}
-        response = self.put_genre(genre_uuid=punkGenre.uuid, data_json=data)
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.parent == rock_genre
 
@@ -28,7 +28,7 @@ class TestCase(ApiViewTestCase):
             name="Rock",
             user=self.test_user,
             type=CriteriaTypesId.GENRE)
-        punkGenre = G(Criteria,
+        punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
             type=CriteriaTypesId.GENRE,
@@ -37,7 +37,7 @@ class TestCase(ApiViewTestCase):
             name="Punk hardcore",
             user=self.test_user,
             type=CriteriaTypesId.GENRE,
-            parent=punkGenre)
+            parent=punk_genre)
 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: punkHardcoreGenre.uuid
