@@ -6,7 +6,7 @@ on:
     push:
        branches: 
         - dev
-        - add-tests-for-criteria-playlists
+        - refactor-services
     pull_request:
         branches: [dev]
 
