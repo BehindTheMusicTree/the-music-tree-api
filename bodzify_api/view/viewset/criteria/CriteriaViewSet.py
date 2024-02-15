@@ -9,7 +9,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.serializer.criteria.input.schema.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
-from bodzify_api.serializer.criteria.input.schema.CriteriaUpdateSchemaSerializer import CriteriaUpdateSchemaSerializer
+from bodzify_api.serializer.criteria.input.schema.CriteriaUpdateSchemaSerializer import CriteriaPutSchemaSerializer
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.service.criteria.CriteriaService import CriteriaService
 from bodzify_api.model.criteria.Criteria import Criteria, \
@@ -58,7 +58,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
                    responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         try:
-            criteria = self.criteria_service.create(user=request.user, create_schema_data=request.data)
+            criteria = self.criteria_service.create(user=request.user, post_schema_data=request.data)
         except IntegrityError as e:
             logger.exception(e)
             return utility.get_json_response_when_bad_request(exception=e)
@@ -91,14 +91,14 @@ class CriteriaViewSet(MultiSerializerViewSet):
         return Response(serializer.data)
     
 
-    @extend_schema(request=CriteriaUpdateSchemaSerializer,
+    @extend_schema(request=CriteriaPutSchemaSerializer,
                    responses=CriteriaDetailedSerializer,
                    description=("""Updates a criteria"""))
     def update(self, request, *args, **kwargs):
         updated_genre = self.criteria_service.update(
             user=request.user, 
-            update_schema_data=request.data, 
-            old_criteria=self.get_object())
+            put_schema_data=request.data, 
+            old_instance=self.get_object())
         response_serializer = CriteriaDetailedSerializer(updated_genre)
         headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(
