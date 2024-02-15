@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 
 import logging
-from django.db import IntegrityError
-from django.http import JsonResponse, QueryDict
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-from bodzify_api.view import utility
-from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.serializer.criteria.input.schema.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
 from bodzify_api.serializer.criteria.input.schema.CriteriaUpdateSchemaSerializer import CriteriaPutSchemaSerializer
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
+from bodzify_api.service.Service import Service
 from bodzify_api.service.criteria.CriteriaService import CriteriaService
+from bodzify_api.view.viewset.AppViewSet import AppViewSet
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 
@@ -23,7 +22,7 @@ class FILTER_FIELDS:
     PARENT = CRITERIA_ATTRIBUTES_LABEL.PARENT
 
 
-class CriteriaViewSet(MultiSerializerViewSet):
+class CriteriaViewSet(AppViewSet):
 
     queryset = Criteria.objects.all()
     serializers = {
@@ -32,10 +31,6 @@ class CriteriaViewSet(MultiSerializerViewSet):
         'retrieve':  CriteriaDetailedSerializer,
         'create':  CriteriaPostSchemaSerializer,
     }
-
-    def __init__(self, criteriaService: CriteriaService, **kwargs):
-        super().__init__(**kwargs)
-        self.criteria_service = criteriaService
 
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
@@ -57,19 +52,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
     @extend_schema(request=CriteriaPostSchemaSerializer,
                    responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
-        try:
-            criteria = self.criteria_service.create(user=request.user, post_schema_data=request.data)
-        except IntegrityError as e:
-            logger.exception(e)
-            return utility.get_json_response_when_bad_request(exception=e)
-
-        response_serializer = CriteriaDetailedSerializer(criteria)
-        headers = self.get_success_headers(response_serializer.data)
-
-        return JsonResponse(data=response_serializer.data,
-                            status=status.HTTP_201_CREATED,
-                            headers=headers,
-                            safe=False)
+        return self._create(request, *args, **kwargs)
 
     @extend_schema(parameters=[OpenApiParameter(name=FILTER_FIELDS.NAME,
                                                 type=OpenApiTypes.STR,
@@ -95,7 +78,7 @@ class CriteriaViewSet(MultiSerializerViewSet):
                    responses=CriteriaDetailedSerializer,
                    description=("""Updates a criteria"""))
     def update(self, request, *args, **kwargs):
-        updated_genre = self.criteria_service.update(
+        updated_genre = self.service.update(
             user=request.user, 
             put_schema_data=request.data, 
             old_instance=self.get_object())
@@ -105,3 +88,6 @@ class CriteriaViewSet(MultiSerializerViewSet):
             data=CriteriaDetailedSerializer(updated_genre).data,
             status=status.HTTP_200_OK,
             headers=headers)
+    
+    def _get_detailed_serializer(self, instance):
+        return CriteriaDetailedSerializer(instance=instance)

@@ -7,16 +7,17 @@ from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATT
 from bodzify_api.serializer.playlist.simple.input.model.SimplePlaylistPostModelSerializer import SimplePlaylistPostModelSerializer
 from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPostSchemaSerializer \
     import SimplePlaylistPostSchemaSerializer
+from bodzify_api.service.Service import Service
 
 
-class PlaylistService:
+class PlaylistService(Service):
 
     def create_simple_playlist(self, user: User, data: QueryDict) -> SimplePlaylist:
         serializer = SimplePlaylistPostSchemaSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         
-        saveModelData = data.copy()
-        saveModelData[PLAYLIST_ATTRIBUTES_LABEL.USER] = user.id
-        saveSerializer = SimplePlaylistPostModelSerializer(data=saveModelData)
-        saveSerializer.is_valid(raise_exception=True)
-        return saveSerializer.save()
+        save_model_data = data.copy()
+        save_model_data[PLAYLIST_ATTRIBUTES_LABEL.USER] = user.id
+        save_serializer = SimplePlaylistPostModelSerializer(data=save_model_data)
+        save_serializer.is_valid(raise_exception=True)
+        return save_serializer.save()
