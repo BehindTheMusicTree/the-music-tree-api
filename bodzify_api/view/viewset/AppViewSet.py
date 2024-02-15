@@ -7,6 +7,7 @@ from rest_framework import status
 from bodzify_api.service.Service import Service
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
+from rest_framework.serializers import ModelSerializer
 
 logger = logging.getLogger('bodyzify_api')
 
@@ -31,9 +32,21 @@ class AppViewSet(MultiSerializerViewSet):
                             headers=headers,
                             safe=False)
     
-    def _get_detailed_serializer(self, instance):
-        raise NotImplementedError("This method must be implemented in the subclass")
+    def _update(self, request, *args, **kwargs):
+        updated_instance = self.service.update(
+            user=request.user, 
+            put_schema_data=request.data, 
+            old_instance=self.get_object())
+        response_serializer_data = self._get_detailed_serializer(updated_instance).data
+        headers = self.get_success_headers(response_serializer_data)
+        return JsonResponse(
+            data=response_serializer_data,
+            status=status.HTTP_200_OK,
+            headers=headers)
     
-    def _get_service(self):
+    def _get_detailed_serializer(self, instance) -> ModelSerializer:
+        raise NotImplementedError("This method must be implemented in the subclass")
+
+    def _get_service(self) -> Service:
         raise NotImplementedError("This method must be implemented in the subclass")
     
