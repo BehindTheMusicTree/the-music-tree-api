@@ -17,21 +17,6 @@ from rest_framework.serializers import Serializer
 logger = logging.getLogger('bodzify_api')
 
 class CriteriaService(Service):
-        
-    def _update_playlists_when_updated_criteria_is_root(self, old_parent: Criteria, criteria_playlist_tracks: QuerySet):
-        self._remove_tracks_from_playlist_of_criteria_and_ascendants(
-            criteria=old_parent, tracks=criteria_playlist_tracks)
-    
-    def _remove_tracks_from_playlist_of_criteria_and_ascendants(self, criteria: Criteria, tracks: QuerySet):
-        CriteriaPlaylist.objects.get(criteria=criteria).tracks.remove(*tracks)
-        if criteria.parent is not None:
-            self._remove_tracks_from_playlist_of_criteria_and_ascendants(criteria=criteria.parent, tracks=tracks)
-        
-    def _remove_criteria_playlist_tracks_to_acendants_playlists_of_old_criteria(self, 
-                                                                                old_parent: Criteria, 
-                                                                                saved_criteria: Criteria):
-        tracks = CriteriaPlaylist.objects.get(criteria=saved_criteria).tracks.all()
-        self._remove_tracks_from_playlist_of_criteria_and_ascendants(criteria=old_parent, tracks=tracks)
 
     def get_criteria_from_name_after_having_eventually_created_it(
         self, user: User, criteria_name: str) -> Criteria:
