@@ -2,7 +2,7 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api import settings
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, Criteria
@@ -14,7 +14,7 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         genre_new_name = "Punk"
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genre_new_name
@@ -28,7 +28,7 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: ""
         }
@@ -42,7 +42,7 @@ class TestCase(ApiViewTestCase):
         genre = G(Criteria,
             name=genre_name,
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         data = {}
         response = self.put_genre(genre_uuid=genre.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK

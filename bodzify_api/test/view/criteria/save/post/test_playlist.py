@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 
@@ -19,4 +19,4 @@ class TestCase(ApiViewTestCase):
         assert CriteriaPlaylist.objects.filter(
             user=self.test_user, 
             criteria__name=genre_name,
-            type=CriteriaTypesId.GENRE).exists()
+            type=CRITERIA_TYPES_ID.GENRE).exists()

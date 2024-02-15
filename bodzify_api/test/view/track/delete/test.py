@@ -4,7 +4,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
@@ -82,7 +82,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         self.post_genre(data_json)
         rock_genre = self.saved_genre
         rockPlaylist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CriteriaTypesId.GENRE, criteria=rock_genre)
+            user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=rock_genre)
 
         data_json = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: hardrock_genre_name,
@@ -91,7 +91,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         self.post_genre(data_json)
         hardrock_genre = self.saved_genre
         hardrockPlaylist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CriteriaTypesId.GENRE, criteria=hardrock_genre)
+            user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=hardrock_genre)
 
         data_json = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: emo_genre_name,
@@ -100,7 +100,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         self.post_genre(data_json)
         emoGenre = self.saved_genre
         emoPlaylist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CriteriaTypesId.GENRE, criteria=emoGenre)
+            user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=emoGenre)
 
         track = G(LibraryTrack,
                   user=self.test_user,

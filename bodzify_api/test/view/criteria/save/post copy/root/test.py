@@ -31,19 +31,19 @@ class TestCase(ApiViewTestCase):
         assert self.saved_genre.root == rock
 
     def test_two_acendant_then_root_is_parent_of_parent(self):
-        rock_genre = G(Criteria,
+        rockGenre = G(Criteria,
             name="Rock",
             user=self.test_user,
             type=CRITERIA_TYPES_ID.GENRE)
-        punk_genre = G(Criteria,
+        punkGenre = G(Criteria,
             name="Punk",
             user=self.test_user,
             type=CRITERIA_TYPES_ID.GENRE,
-            parent=rock_genre)
+            parent=rockGenre)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk hardcore",
-            CRITERIA_ATTRIBUTES_LABEL.PARENT: punk_genre.uuid
+            CRITERIA_ATTRIBUTES_LABEL.PARENT: punkGenre.uuid
         }
         response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.root == rock_genre
+        assert self.saved_genre.root == rockGenre

@@ -4,7 +4,7 @@ from typing import Optional
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.Playlist import Playlist
 
 class SPECIAL_NAMES:
@@ -31,9 +31,9 @@ class CriteriaPlaylist(Playlist):
     @property
     def name(self) -> str:
         if self.criteria is None:
-            if self.type.id == CriteriaTypesId.GENRE:
+            if self.type.id == CRITERIA_TYPES_ID.GENRE:
                 return SPECIAL_NAMES.GENRELESS
-            elif self.type.id == CriteriaTypesId.TAG:
+            elif self.type.id == CRITERIA_TYPES_ID.TAG:
                 return SPECIAL_NAMES.TAGLESS
         return self.criteria.name
         

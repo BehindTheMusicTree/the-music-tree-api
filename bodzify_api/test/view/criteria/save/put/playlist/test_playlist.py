@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
@@ -14,7 +14,7 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         genre_new_name = "Punk"
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genre_new_name
@@ -28,7 +28,7 @@ class TestCase(ApiViewTestCase):
         punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         track = G(LibraryTrack, 
                   user=self.test_user, 
                   genre=punk_genre, 
@@ -37,7 +37,7 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
                 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid
@@ -51,11 +51,11 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=rock_genre)
         track = G(LibraryTrack, 
                   user=self.test_user, 
@@ -71,18 +71,18 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(
             criteria=rock_genre,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         assert playlist.librarytrack_set.first() != track
 
     def test_new_parent_ascendant_of_old_parent_then_remove_criteria_playlist_tracks_from_playlists_of_criterias_in_between(self):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         track = G(LibraryTrack, 
                   user=self.test_user, 
                   genre=punk_genre, 
@@ -97,5 +97,5 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(
             criteria=rock_genre,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         assert playlist.librarytrack_set.first() == track

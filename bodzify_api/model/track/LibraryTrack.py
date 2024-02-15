@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
@@ -137,7 +137,7 @@ class LibraryTrack(models.Model):
         else:
             self.playlists.remove(
                 CriteriaPlaylist.objects.get(
-                    user=self.user, type_id=CriteriaTypesId.GENRE, criteria=None))
+                    user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None))
         
     def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
         if self.genre is not None:
@@ -148,7 +148,7 @@ class LibraryTrack(models.Model):
         else:
             self.playlists.add(
                 CriteriaPlaylist.objects.get(
-                    user=self.user, type_id=CriteriaTypesId.GENRE, criteria=None))
+                    user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None))
 
     def save(self, *args, **kwargs):
         try:

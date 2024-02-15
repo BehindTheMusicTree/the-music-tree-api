@@ -2,7 +2,7 @@
 import pytest
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES, Playlist
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, Criteria
@@ -42,7 +42,7 @@ class TestCase(ApiViewTestCase):
         old_genre = G(Criteria,
             name="Metal",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         new_genre_name = "Rock"
         track = G(LibraryTrack,
                   user=self.test_user,
@@ -92,18 +92,18 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name=rock_genre_name,
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         
         hardrock_genre = G(Criteria,
             name=hardrock_genre_name,
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=rock_genre)
         
         G(Criteria,
             name=emo_genre_name,
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=hardrock_genre)
 
         track = G(LibraryTrack,

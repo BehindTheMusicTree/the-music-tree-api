@@ -2,7 +2,7 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_NAME
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
@@ -15,10 +15,10 @@ class TestCase(ApiViewTestCase):
         rapGenre = G(Criteria,
                      user=self.test_user,
                      name="Hard rock",
-                     type_id=CriteriaTypesId.GENRE)
+                     type_id=CRITERIA_TYPES_ID.GENRE)
         rapPlaylist = G(CriteriaPlaylist,
                         user=self.test_user,
-                        type_id=CriteriaTypesId.GENRE,
+                        type_id=CRITERIA_TYPES_ID.GENRE,
                         customName=daddysrockPlaylistCustomName,
                         criteria=rapGenre)
 
@@ -32,10 +32,10 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
                       user=self.test_user,
                       name=rockCriteriaName,
-                      type_id=CriteriaTypesId.GENRE)
+                      type_id=CRITERIA_TYPES_ID.GENRE)
         rockPlaylist = G(CriteriaPlaylist,
                          user=self.test_user,
-                         type_id=CriteriaTypesId.GENRE,
+                         type_id=CRITERIA_TYPES_ID.GENRE,
                          criteria=rock_genre)
 
         response = self.get(playlistUuid=rockPlaylist.uuid)

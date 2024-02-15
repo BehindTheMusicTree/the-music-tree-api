@@ -1,10 +1,20 @@
 #!/usr/bin/env python
+
 from django.db import models
 
 
-class CriteriaTypesId:
+class CRITERIA_TYPES_ID:
     GENRE = 0
     TAG = 1
+
+
+class CRITERIA_TYPES_LABEL:
+    GENRE = "genre"
+    TAG = "tag"
+
+
+class ATTRIBUTES_LABEL:
+    LABEL = "label"
 
 
 class CriteriaType(models.Model):

@@ -10,7 +10,7 @@ from bodzify_api.model.playlist.Playlist import Playlist, \
 from bodzify_api.model.playlist.PlaylistType import PlaylistTypesId
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import CriteriaSpecialNames
-from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CriteriaType, CRITERIA_TYPES_ID
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 from django.urls import reverse
 
@@ -57,18 +57,18 @@ class SearchViewTestCase(ViewTestCase):
         rapGenre = G(Criteria,
                      user=self.test_user,
                      name="Rap",
-                     type_id=CriteriaTypesId.GENRE)
+                     type_id=CRITERIA_TYPES_ID.GENRE)
         G(CriteriaPlaylist,
           user=self.test_user,
-          type_id=CriteriaTypesId.GENRE,
+          type_id=CRITERIA_TYPES_ID.GENRE,
           criteria=rapGenre)
         usRapGenre = G(Criteria,
                        user=self.test_user,
                        name="US rap",
-                       type_id=CriteriaTypesId.GENRE)
+                       type_id=CRITERIA_TYPES_ID.GENRE)
         G(CriteriaPlaylist,
           user=self.test_user,
-          type_id=CriteriaTypesId.GENRE,
+          type_id=CRITERIA_TYPES_ID.GENRE,
           criteria=usRapGenre)
         
         response = self._search("Rap")

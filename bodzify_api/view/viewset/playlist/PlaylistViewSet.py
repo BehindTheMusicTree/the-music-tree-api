@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from rest_framework import status
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
     TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
@@ -38,10 +38,10 @@ class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
                     user=self.request.user)
             elif typeFilter == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
                 queryset = CriteriaPlaylist.objects.filter(
-                    user=self.request.user, type_id=CriteriaTypesId.GENRE)
+                    user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
             elif typeFilter == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
                 queryset = CriteriaPlaylist.objects.filter(
-                    user=self.request.user, type_id=CriteriaTypesId.TAG)
+                    user=self.request.user, type_id=CRITERIA_TYPES_ID.TAG)
         else:
             queryset = CriteriaPlaylist.objects.filter(user=self.request.user)
 
