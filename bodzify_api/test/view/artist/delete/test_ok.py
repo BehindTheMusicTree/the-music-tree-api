@@ -9,20 +9,20 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 class ArtistViewDeleteTestCase(ArtistViewTestCase):
 
-    def test_withOneTrackLinked(self):
-        museArtist = G(Artist, name="Muse", user=self.test_user)
-        assassinTrack = G(
+    def test_with_one_track_linked(self):
+        muse_artist = G(Artist, name="Muse", user=self.test_user)
+        assassin_track = G(
             LibraryTrack,
             user=self.test_user,
             title="Assassin",
-            artist=museArtist,
+            artist=muse_artist,
             duration=0)
 
-        response = self._delete(artistUuid=museArtist.uuid)
+        response = self._delete(artistUuid=muse_artist.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert Artist.objects.filter(uuid=museArtist.uuid).exists() == False
-        assert LibraryTrack.objects.filter(uuid=assassinTrack.uuid).exists() == False
+        assert Artist.objects.filter(uuid=muse_artist.uuid).exists() == False
+        assert LibraryTrack.objects.filter(uuid=assassin_track.uuid).exists() == False
 
 
     """
@@ -33,22 +33,22 @@ class ArtistViewDeleteTestCase(ArtistViewTestCase):
         - album 'Xavier' as it has no track linked anymore;
         - artist 'Coco' as it has nor album nor track linked to it anymore.
     """
-    def test_withAlbumAndAlbumArtistDeletion(self):
-        bertrandArtist = G(Artist, user=self.test_user, name='Bertrand')
-        cocoArtist = G(Artist, user=self.test_user, name='Coco')
-        xavierAlbum = G(Album,
+    def test_with_album_and_album_artist_deletion(self):
+        bertrand_artist = G(Artist, user=self.test_user, name='Bertrand')
+        coco_artist = G(Artist, user=self.test_user, name='Coco')
+        xavier_album = G(Album,
                         user=self.test_user,
                         name='Xavier',
-                        album_artists=[bertrandArtist, cocoArtist])
-        lifeTrack = G(LibraryTrack,
+                        album_artists=[bertrand_artist, coco_artist])
+        life_track = G(LibraryTrack,
                       user=self.test_user,
                       title="Life",
-                      artist=bertrandArtist,
-                      album=xavierAlbum,
+                      artist=bertrand_artist,
+                      album=xavier_album,
                       duration=0)
         
-        response = self._delete(bertrandArtist.uuid)
+        response = self._delete(bertrand_artist.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert LibraryTrack.objects.filter(uuid=lifeTrack.uuid).exists() == False
-        assert Album.objects.filter(uuid=xavierAlbum.uuid).exists() == False
-        assert Artist.objects.filter(uuid=cocoArtist).exists() == False
+        assert LibraryTrack.objects.filter(uuid=life_track.uuid).exists() == False
+        assert Album.objects.filter(uuid=xavier_album.uuid).exists() == False
+        assert Artist.objects.filter(uuid=coco_artist).exists() == False

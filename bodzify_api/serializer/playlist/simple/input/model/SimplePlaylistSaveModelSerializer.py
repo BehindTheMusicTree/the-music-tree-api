@@ -4,7 +4,7 @@ from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 
-class SimplePlaylistPostModelSerializer(InputModelSerializer):
+class SimplePlaylistSaveModelSerializer(InputModelSerializer):
 
     class Meta:
         model = SimplePlaylist

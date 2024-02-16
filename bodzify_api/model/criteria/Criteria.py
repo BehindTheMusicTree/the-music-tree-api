@@ -12,6 +12,7 @@ logger = logging.getLogger('bodzify_api')
 
 class SPECIAL_NAMES:
     ALL = "All"
+    GENRELESS = "Genreless"
 
 class ATTRIBUTES_LABEL:
     UUID = "uuid"

@@ -31,11 +31,12 @@ class CriteriaPlaylist(Playlist):
     @property
     def name(self) -> str:
         if self.criteria is None:
-            if self.type.id == CRITERIA_TYPES_ID.GENRE:
+            if self.type.pk == CRITERIA_TYPES_ID.GENRE:
                 return SPECIAL_NAMES.GENRELESS
-            elif self.type.id == CRITERIA_TYPES_ID.TAG:
+            elif self.type.pk == CRITERIA_TYPES_ID.TAG:
                 return SPECIAL_NAMES.TAGLESS
-        return self.criteria.name
+        else:
+            return self.criteria.name
         
     @property
     def parent(self) -> Optional['Playlist']:

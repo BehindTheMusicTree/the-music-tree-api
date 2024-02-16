@@ -22,6 +22,7 @@ from bodzify_api.model.playlist.CriteriaPlaylist import \
 
 
 class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
+    
     pagination_class = DefaultMultipleModelLimitOffsetPagination
     serializers = {
         'default': CriteriaPlaylistWithTracksSerializer,

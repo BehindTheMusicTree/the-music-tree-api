@@ -9,11 +9,13 @@ from bodzify_api.service.Service import Service
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from rest_framework.serializers import ModelSerializer
+from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger('bodyzify_api')
 
 class AppViewSet(MultiSerializerViewSet):
-    
+    permission_classes = [IsAuthenticated]
+
     def __init__(self, service, **kwargs):
         super().__init__(**kwargs)
         self.service = service

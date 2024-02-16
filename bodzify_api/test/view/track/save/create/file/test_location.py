@@ -15,4 +15,4 @@ class LocationTestCase(ApiViewTestCase):
         response = self.extract(data=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert Path(self.saved_track.file.name) == self.test_user_library_path_relative_to_media_dir / filename
-        assert self.doesTrackFilenameExistInTestUserLibrary(filename)
+        assert self.does_track_filename_exist_in_test_user_library(filename)

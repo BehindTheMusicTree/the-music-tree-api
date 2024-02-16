@@ -24,6 +24,9 @@ class ApiViewTestCase(ViewTestCase):
     saved_track: LibraryTrack
     saved_genre: Criteria
 
+    def search(self, query):
+        return self.api_client.get(path=reverse('search-list'), data={'query': query})
+
     def extract(self, data):
         response = self.api_client.post(
             path=reverse('librarytrack-extract'),
@@ -119,8 +122,8 @@ class ApiViewTestCase(ViewTestCase):
         uuid = response.json()[CRITERIA_ATTRIBUTES_LABEL.UUID]
         self.saved_genre = Criteria.objects.get(uuid=uuid)
 
-    def get_playlist(self, playlist_uuid):
-        return self.api_client.get(path=reverse('playlist-detail', kwargs={'pk': playlist_uuid}))
+    def get_genre_playlist(self, playlist_uuid):
+        return self.api_client.get(path=reverse('genre-playlist-detail', kwargs={'pk': playlist_uuid}))
 
     def get_albums(self):
         return self.api_client.get(path=reverse('album-list'))

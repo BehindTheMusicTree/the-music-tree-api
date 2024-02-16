@@ -72,5 +72,5 @@ class ViewTestCase(TestCase):
             shutil.copy(self.library_sample_dir_abs_path / filename,
                 self.test_user_library_abs_path)
 
-    def doesTrackFilenameExistInTestUserLibrary(self, filename: str):
+    def does_track_filename_exist_in_test_user_library(self, filename: str):
         return os.path.isfile(self.test_user_library_abs_path / filename)

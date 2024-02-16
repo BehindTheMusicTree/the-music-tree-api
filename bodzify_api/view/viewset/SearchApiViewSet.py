@@ -1,13 +1,17 @@
 #!/usr/bin/env python
-from django.db.models import F
+
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
+from bodzify_api.model.criteria.Criteria import SPECIAL_NAMES as CRITERIA_SPECIAL_NAMES
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
+from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import PlaylistWithoutParentSerializer
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
-from bodzify_api.model.Album import Album
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.playlist.Playlist import Playlist, \
-    ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
     ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
@@ -15,6 +19,7 @@ from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetaile
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
     CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
+from rest_framework.permissions import IsAuthenticated
 
 
 class PARAMETER_NAME:
@@ -28,8 +33,8 @@ class QUERY_FILTERS_NAME:
     ALBUM_NAME = "album_name"
     YEAR = "year"
     GENRE_NAME = "genre_name"
-    TAG_NAME = "tagName"
-    PLAYLIST_NAME = "playlistName"
+    TAG_NAME = "tag_name"
+    PLAYLIST_NAME = "playlist_name"
 
 
 class TYPE_PARAMETER_VALUE:
@@ -40,49 +45,61 @@ class TYPE_PARAMETER_VALUE:
     TAG_NAME = QUERY_FILTERS_NAME.TAG_NAME
     PLAYLIST_NAME = QUERY_FILTERS_NAME.PLAYLIST_NAME
 
-
-def trackFilter(queryset, request, *args, **kwargs):
-    if TYPE_PARAMETER_VALUE.TITLE in request.query_params:
-        type = request.query_params[TYPE_PARAMETER_VALUE.TITLE]
+def track_filter(queryset, request, *args, **kwargs):
+    if TYPE_PARAMETER_VALUE.TITLE in request.data:
+        type = request.data[TYPE_PARAMETER_VALUE.TITLE]
         # TODO: handle type of query
-    if PARAMETER_NAME.QUERY in request.query_params:
-        query = request.query_params[PARAMETER_NAME.QUERY]
+    if PARAMETER_NAME.QUERY in request.data:
+        query = request.data[PARAMETER_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(
                 title__icontains=query
             ).order_by(TRACK_ATTRIBUTES_LABEL.TITLE)
     return queryset.filter(user=request.user.id)
 
+def simple_playlist_filter(queryset, request, *args, **kwargs):
+    if PARAMETER_NAME.QUERY in request.data:
+        query = request.data[PARAMETER_NAME.QUERY]
+        if query != "":
+            queryset = queryset.filter(
+                name__icontains=query
+            ).order_by(PLAYLIST_ATTRIBUTES_LABEL.NAME)
+    return queryset
 
-def playlistFilter(queryset, request, *args, **kwargs):
-    query = request.query_params[PARAMETER_NAME.QUERY]
-    if query != "":
-        queryset = queryset.annotate(
-            criteriaName=F(PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_NAME)
-        ).filter(
-            criteriaName__icontains=query
-        ).order_by(PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_NAME)
-    return queryset.filter(user=request.user.id)
+def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) -> bool:
+    return string1.lower() in string2.lower()
 
+def criteria_playlist_filter(queryset, request, *args, **kwargs):
+    if PARAMETER_NAME.QUERY in request.data:
+        query = request.data[PARAMETER_NAME.QUERY]
+        criteria_queryset = queryset
+        if query != "":
+            queryset = queryset.filter(
+                criteria__name=query
+            )
+            if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_SPECIAL_NAMES.GENRELESS):
+                queryset = queryset | criteria_queryset.filter(
+                    criteria__isnull=True,
+                    type_id=CRITERIA_TYPES_ID.GENRE)
+    return queryset
 
-def albumFilter(queryset, request, *args, **kwargs):
-    query = request.query_params[PARAMETER_NAME.QUERY]
-    if query != "":
-        queryset = queryset.filter(name__icontains=query).order_by(
-            Album.ATTRIBUTE_NAME_LABEL)
-    return queryset.filter(user=request.user.id)
+def album_filter(queryset, request, *args, **kwargs):
+    if PARAMETER_NAME.QUERY in request.data:
+        query = request.data[PARAMETER_NAME.QUERY]
+        if query != "":
+            queryset = queryset.filter(name__icontains=query).order_by(ALBUM_ATTRIBUTES_LABEL.NAME)
+    return queryset
 
-
-def artistFilter(queryset, request, *args, **kwargs):
-    query = request.query_params[PARAMETER_NAME.QUERY]
-    if query != "":
-        queryset = queryset.filter(name__icontains=query).order_by(
-            Artist.ATTRIBUTE_NAME_LABEL)
-    return queryset.filter(user=request.user.id)
+def artist_filter(queryset, request, *args, **kwargs):
+    if PARAMETER_NAME.QUERY in request.data:
+        query = request.data[PARAMETER_NAME.QUERY]
+        if query != "":
+            queryset = queryset.filter(name__icontains=query).order_by(ARTIST_ATTRIBUTES_LABEL.NAME)
+    return queryset
 
 
 class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
-
+    permission_classes = [IsAuthenticated]
     pagination_class = DefaultMultipleModelLimitOffsetPagination
 
     @extend_schema(description=("""
@@ -94,23 +111,28 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
                                     - LibraryTrack (searched and ordered by title).
                                 """))
     def get_querylist(self):
+        user = self.request.user 
         querylist = (
             {
-                'queryset': LibraryTrack.objects.all(),
+                'queryset': LibraryTrack.objects.filter(user=user),
                 'serializer_class': TrackDetailedSerializer,
-                'filter_fn': trackFilter},
+                'filter_fn': track_filter},
             {
-                'queryset': Playlist.objects.all(),
+                'queryset': SimplePlaylist.objects.filter(user=user),
+                'serializer_class': PlaylistWithoutParentSerializer,
+                'filter_fn': simple_playlist_filter},
+            {
+                'queryset': CriteriaPlaylist.objects.filter(user=user),
                 'serializer_class': CriteriaPlaylistWithoutTracksSerializer,
-                'filter_fn': playlistFilter},
+                'filter_fn': criteria_playlist_filter},
             {
-                'queryset': Album.objects.all(),
+                'queryset': Album.objects.filter(user=user),
                 'serializer_class': AlbumWithoutTracksSerializer,
-                'filter_fn': albumFilter},
+                'filter_fn': album_filter},
             {
-                'queryset': Artist.objects.all(),
+                'queryset': Artist.objects.filter(user=user),
                 'serializer_class': ArtistDetailedSerializer,
-                'filter_fn': artistFilter
+                'filter_fn': artist_filter
             })
 
         return querylist

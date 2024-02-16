@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIA
 @pytest.mark.django_db
 class TestCase(ApiViewTestCase):
 
-    def test_noGenreThenInTheAllAndGenrelessPlaylists(self):
+    def test_no_genre_then_in_the_all_and_genreless_playlists(self):
         response = self.post_sample_track(sample_filename="notProvided.mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
         
@@ -17,4 +17,4 @@ class TestCase(ApiViewTestCase):
         assert track_playlists.filter(
             name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
         assert track_playlists.filter(
-            name=PLAYLIST_SPECIAL_NAMES.GENRE_GENRELESS).exists()
+            name=PLAYLIST_SPECIAL_NAMES.GENRELESS).exists()

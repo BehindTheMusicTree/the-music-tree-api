@@ -6,9 +6,13 @@ from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
-class Artist(models.Model):
+class ATTRIBUTES_LABEL:
+    UUID = 'uuid'
+    USER = 'user' 
+    NAME = 'name'
 
-    ATTRIBUTE_NAME_LABEL = 'name'
+
+class Artist(models.Model):
 
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(

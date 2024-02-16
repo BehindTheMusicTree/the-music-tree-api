@@ -14,8 +14,8 @@ class TestCase(ApiViewTestCase):
         }
         response = self.post_sample_track(sample_filename="sample.wav", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        titleKey = AudioMetadataService.METADATA_DICT_KEYS.TITLE
-        assert self.saved_track_metadata[titleKey] == title
+        title_key = AudioMetadataService.METADATA_DICT_KEYS.TITLE
+        assert self.saved_track_metadata[title_key] == title
 
     def test_null(self):
         data = {
@@ -23,5 +23,5 @@ class TestCase(ApiViewTestCase):
         }
         response = self.post_sample_track(sample_filename="sample.wav", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        titleKey = AudioMetadataService.METADATA_DICT_KEYS.TITLE
-        assert self.saved_track_metadata[titleKey] in ["", None]
+        title_key = AudioMetadataService.METADATA_DICT_KEYS.TITLE
+        assert self.saved_track_metadata[title_key] in ["", None]

@@ -72,10 +72,6 @@ class TrackViewSet(AppViewSet):
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return TrackDetailedSerializer(instance=instance) # type: ignore
 
-    def destroy(self, request, *args, **kwargs):
-        self.get_object().deleteWithCheckingAlbumAndArtistPotentialDeletion()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
     @extend_schema(request=TrackPutSchemaSerializer,
                    responses=TrackDetailedSerializer,
                    description=("""
@@ -192,3 +188,7 @@ class TrackViewSet(AppViewSet):
         headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(
             data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def destroy(self, request, *args, **kwargs):
+        self.get_object().delete_with_checking_album_and_artist_potential_deletion()
+        return Response(status=status.HTTP_204_NO_CONTENT)

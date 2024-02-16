@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import pytest
 from rest_framework import status
 from ddf import G
@@ -16,22 +17,22 @@ from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATT
 @pytest.mark.django_db
 class TrackDeleteViewTestCase(ApiViewTestCase):
 
-    def test_fileDeletion(self):
+    def test_file_deletion(self):
         filename = "sample.mp3"
-        filePathRelativeToMediaDir = self.test_user_library_path_relative_to_media_dir / filename
+        file_path_relative_to_media_dir = self.test_user_library_path_relative_to_media_dir / filename
         track = G(LibraryTrack,
                   user=self.test_user,
-                  file=filePathRelativeToMediaDir,
+                  file=str(file_path_relative_to_media_dir),
                   title="We're All To Blame",
                   duration=0)
-        assert self.doesTrackFilenameExistInTestUserLibrary(filename) == True
+        assert self.does_track_filename_exist_in_test_user_library(filename) == True
         assert track.fileExists == True
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(uuid=track.uuid).exists() == False
-        assert self.doesTrackFilenameExistInTestUserLibrary(filename) == False
+        assert self.does_track_filename_exist_in_test_user_library(filename) == False
 
-    def test_linkedAlbumAndArtistDeletionAsNothingLinkedToItAnymore(self):
+    def test_linked_album_and_artist_deletion_as_nothing_linked_to_it_anymore(self):
         album_name = "Chuck"
         album = G(Album, user=self.test_user, name=album_name)
         artist_name = "Sum 41"
@@ -49,29 +50,29 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         assert Artist.objects.filter(
             user=self.test_user, name=artist_name).exists() == False
 
-    def test_whenNoFileLinked(self):
-        trackTitle = "We"
+    def test_when_no_file_linked(self):
+        track_title = "We"
         track = G(LibraryTrack,
                   user=self.test_user,
-                  title=trackTitle,
+                  title=track_title,
                   duration=0)
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(
-            user=self.test_user, title=trackTitle).exists() == False
+            user=self.test_user, title=track_title).exists() == False
         
-    def test_removalFromTheAllPlaylist(self):
+    def test_removal_from_the_all_playlist(self):
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="We're All To Blame",
                   duration=0)
-        allPlaylist = SimplePlaylist.objects.get(user=self.test_user, name=PLAYLIST_SPECIAL_NAMES.ALL)
-        assert track in allPlaylist.librarytrack_set.all()
+        all_playlist = SimplePlaylist.objects.get(user=self.test_user, name=PLAYLIST_SPECIAL_NAMES.ALL)
+        assert track in all_playlist.librarytrack_set.all()
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert track not in allPlaylist.librarytrack_set.all()
+        assert track not in all_playlist.librarytrack_set.all()
         
-    def test_removalFromTheGenrePlaylists(self):        
+    def test_removal_from_the_genre_playlists(self):        
         rock_genre_name = "Rock"
         hardrock_genre_name = "Hard rock"
         emo_genre_name = "Emo"
@@ -81,7 +82,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         }
         self.post_genre(data_json)
         rock_genre = self.saved_genre
-        rockPlaylist = CriteriaPlaylist.objects.get(
+        rock_playlist = CriteriaPlaylist.objects.get(
             user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=rock_genre)
 
         data_json = {
@@ -90,7 +91,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         }
         self.post_genre(data_json)
         hardrock_genre = self.saved_genre
-        hardrockPlaylist = CriteriaPlaylist.objects.get(
+        hardrock_playlist = CriteriaPlaylist.objects.get(
             user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=hardrock_genre)
 
         data_json = {
@@ -98,25 +99,25 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
             CRITERIA_ATTRIBUTES_LABEL.PARENT: hardrock_genre.uuid
         }
         self.post_genre(data_json)
-        emoGenre = self.saved_genre
-        emoPlaylist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=emoGenre)
+        emo_genre = self.saved_genre
+        emo_playlist = CriteriaPlaylist.objects.get(
+            user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=emo_genre)
 
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
                   duration=0,
-                  genre=emoGenre)
+                  genre=emo_genre)
         
-        assert track in emoPlaylist.librarytrack_set.all()
-        assert track in hardrockPlaylist.librarytrack_set.all()
-        assert track in rockPlaylist.librarytrack_set.all()
+        assert track in emo_playlist.librarytrack_set.all()
+        assert track in hardrock_playlist.librarytrack_set.all()
+        assert track in rock_playlist.librarytrack_set.all()
         
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         
-        assert track not in emoPlaylist.librarytrack_set.all()
-        assert track not in hardrockPlaylist.librarytrack_set.all()
-        assert track not in rockPlaylist.librarytrack_set.all()
+        assert track not in emo_playlist.librarytrack_set.all()
+        assert track not in hardrock_playlist.librarytrack_set.all()
+        assert track not in rock_playlist.librarytrack_set.all()
         
         

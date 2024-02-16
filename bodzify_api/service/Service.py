@@ -29,6 +29,11 @@ class Service:
         save_serializer.is_valid(raise_exception=True)
         return save_serializer.save()
     
+    def _get_save_model_data_from_save_schema_data(self, user: User, save_schema_data: QueryDict) -> QueryDict:
+        save_model_data = save_schema_data.copy()
+        save_model_data['user'] = user.pk
+        return save_model_data
+    
     @abstractmethod
     def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
@@ -43,12 +48,6 @@ class Service:
     
     @abstractmethod
     def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
-        raise NotImplementedError("You should implement this method in a subclass")
-    
-    @abstractmethod
-    def _get_save_model_data_from_save_schema_data(self, 
-                                                   user: Optional[User],
-                                                   save_schema_data: QueryDict) -> QueryDict:
         raise NotImplementedError("You should implement this method in a subclass")
     
     @staticmethod

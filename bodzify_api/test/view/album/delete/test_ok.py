@@ -14,38 +14,37 @@ class TestCase(AlbumViewTestCase):
 		respective filenames "Assassin.mp3" and "Starlight.mp3").
 		The deletion of the album must delete the two tracks linked.
 	"""
-
-    def test_2TracksLinked(self):
-        blackHolesAlbum = G(Album, user=self.test_user, name="Black Holes And Revelations")
-        assassinTrackFilename = "Assassin.mp3"
-        assassinTrack = G(
+    def test_2_tracks_linked(self):
+        black_holes_album = G(Album, user=self.test_user, name="Black Holes And Revelations")
+        assassin_track_filename = "Assassin.mp3"
+        assassin_track = G(
             LibraryTrack,
             user=self.test_user,
-            file=self.test_user_library_abs_path / assassinTrackFilename,
+            file=str(self.test_user_library_abs_path / assassin_track_filename),
             title="Assassin",
-            album=blackHolesAlbum,
+            album=black_holes_album,
             duration=0)
-        starlightTrackFilename = "Starlight.mp3"
+        starlight_track_filename = "Starlight.mp3"
         starlightTrack = G(
             LibraryTrack,
             user=self.test_user,
-            file=self.test_user_library_abs_path / starlightTrackFilename,
+            file=str(self.test_user_library_abs_path / starlight_track_filename),
             title="Starlight",
-            album=blackHolesAlbum,
+            album=black_holes_album,
             duration=0)
-        assert self.doesTrackFilenameExistInTestUserLibrary(assassinTrackFilename) == True
-        assert self.doesTrackFilenameExistInTestUserLibrary(starlightTrackFilename) == True
+        assert self.does_track_filename_exist_in_test_user_library(assassin_track_filename) == True
+        assert self.does_track_filename_exist_in_test_user_library(starlight_track_filename) == True
 
-        response = self.delete(albumUuid=blackHolesAlbum.uuid)
+        response = self.delete(album_uuid=black_holes_album.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert Album.objects.filter(uuid=blackHolesAlbum.uuid).exists() == False
+        assert Album.objects.filter(uuid=black_holes_album.uuid).exists() == False
         assert LibraryTrack.objects.filter(
-            user=self.test_user, title=assassinTrack.title).exists() == False
+            user=self.test_user, title=assassin_track.title).exists() == False
         assert LibraryTrack.objects.filter(
             user=self.test_user, title=starlightTrack.title).exists() == False
-        assert self.doesTrackFilenameExistInTestUserLibrary(assassinTrackFilename) == False
-        assert self.doesTrackFilenameExistInTestUserLibrary(starlightTrackFilename) == False
+        assert self.does_track_filename_exist_in_test_user_library(assassin_track_filename) == False
+        assert self.does_track_filename_exist_in_test_user_library(starlight_track_filename) == False
 
     """
     The album "Black Holes And Revelations" has:
@@ -59,35 +58,34 @@ class TestCase(AlbumViewTestCase):
     	the only album it was linked to is deleted;
     	- does not trigger the deletion of the artist "Pol" as it has still a track linked to it.
     """
-
-    def test_withArtistDeletion(self):
-        matthewArtist = G(Artist, user=self.test_user, name="Matthew Bellamy")
-        museArtist = G(Artist, user=self.test_user, name="Muse")
-        polArtist = G(Artist, user=self.test_user, name="Pol")
-        blackHolesAlbum = G(
+    def test_with_artist_deletion(self):
+        matthew_artist = G(Artist, user=self.test_user, name="Matthew Bellamy")
+        muse_artist = G(Artist, user=self.test_user, name="Muse")
+        pol_artist = G(Artist, user=self.test_user, name="Pol")
+        black_holes_album = G(
             Album,
             user=self.test_user,
             name="Black Holes And Revelations",
-            album_artists=[matthewArtist, museArtist]
+            album_artists=[matthew_artist, muse_artist]
         )
         G(
             LibraryTrack,
             user=self.test_user,
             title="Assassin",
-            artist=matthewArtist,
-            album=blackHolesAlbum,
+            artist=matthew_artist,
+            album=black_holes_album,
             duration=0
         )
         G(
             LibraryTrack,
             user=self.test_user,
             title="Blue",
-            artist=polArtist,
+            artist=pol_artist,
             duration=0
         )
 
-        response = self.delete(albumUuid=blackHolesAlbum.uuid)
+        response = self.delete(album_uuid=black_holes_album.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert Album.objects.filter(user=self.test_user, name=matthewArtist.name).exists() == False
-        assert Artist.objects.filter(user=self.test_user, name=museArtist.name).exists() == False
-        assert Artist.objects.filter(user=self.test_user, name=polArtist.name).exists() == True
+        assert Album.objects.filter(user=self.test_user, name=matthew_artist.name).exists() == False
+        assert Artist.objects.filter(user=self.test_user, name=muse_artist.name).exists() == False
+        assert Artist.objects.filter(user=self.test_user, name=pol_artist.name).exists() == True

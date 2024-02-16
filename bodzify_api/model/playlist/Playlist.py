@@ -8,6 +8,7 @@ from polymorphic.models import PolymorphicModel
 
 class SPECIAL_NAMES:
     ALL = "All"
+    GENRELESS = "Genreless"
 
 
 class ATTRIBUTES_LABEL:
@@ -16,6 +17,7 @@ class ATTRIBUTES_LABEL:
     ADDED_ON = "added_on"
     NAME = "name"
     PARENT = "parent"
+    CRITERIA_NAME = "criteria__name"
 
 
 class Playlist(PolymorphicModel):

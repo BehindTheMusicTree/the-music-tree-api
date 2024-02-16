@@ -27,6 +27,7 @@ def _get_user_directory_path(instance, filename):
         instance.user.id,
         filename)
 
+
 class ATTRIBUTES_LABEL:
     UUID = "uuid"
     USER = "user"
@@ -179,10 +180,9 @@ class LibraryTrack(models.Model):
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
 
-
     @ receiver(pre_delete, sender='bodzify_api.LibraryTrack')
-    def delete_file_if_exists(sender, instance, using, **kwargs):
-        if instance.fileExists:
+    def delete_file_if_exists(sender, instance: 'LibraryTrack', using, **kwargs):
+        if instance.file_exists:
             instance.file.delete()
 
     def delete_with_checking_album_and_artist_potential_deletion(self):

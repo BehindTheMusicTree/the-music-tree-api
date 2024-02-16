@@ -23,5 +23,5 @@ class ArtistViewSet(MultiSerializerViewSet):
         return super().list(request, *args, **kwargs)
     
     def destroy(self, request, *args, **kwargs):
-        self.get_object().deleteWithAlbumsAndTracks()
+        self.get_object().delete_with_albums_and_tracks()
         return Response(status=status.HTTP_204_NO_CONTENT)
