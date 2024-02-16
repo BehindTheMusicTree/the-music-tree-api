@@ -4,7 +4,7 @@ from rest_framework import status
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
     TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -31,33 +31,32 @@ class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
     }
 
     def get_queryset(self):
-        typekey = PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL.TYPE
-        if typekey in self.request.GET:
-            typeFilter = self.request.GET[typekey]
-            if typeFilter == SimplePlaylist.TYPE_LABEL:
+        type_key = PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL.TYPE
+        if type_key in self.request.GET:
+            type_filter = self.request.GET[type_key]
+            if type_filter == SIMPLE_PLAYLIST_TYPE_LABEL:
                 queryset = SimplePlaylist.objects.filter(
-                    user=self.request.user)
-            elif typeFilter == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
+                    playlist__user=self.request.user)
+            elif type_filter == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
                 queryset = CriteriaPlaylist.objects.filter(
-                    user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
-            elif typeFilter == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
+                    playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
+            elif type_filter == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
                 queryset = CriteriaPlaylist.objects.filter(
-                    user=self.request.user, type_id=CRITERIA_TYPES_ID.TAG)
+                    playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.TAG)
         else:
             queryset = CriteriaPlaylist.objects.filter(user=self.request.user)
 
-            parentUuidParamKey = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
-            if parentUuidParamKey not in self.request.GET:
-                queryset = queryset | SimplePlaylist.objects.filter(
-                    user=self.request.user)
+            parent_uuid_param_key = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
+            if parent_uuid_param_key not in self.request.GET:
+                queryset = queryset | SimplePlaylist.objects.filter(playlist__user=self.request.user)
             else:
                 queryset = queryset.filter(
-                    parent__uuid=self.request.GET[parentUuidParamKey])
+                    parent__uuid=self.request.GET[parent_uuid_param_key])
 
-        nname_key = ATTRIBUTES_LABEL.NAME
-        if nname_key in self.request.GET:
+        name_key = ATTRIBUTES_LABEL.NAME
+        if name_key in self.request.GET:
             queryset = queryset.filter(
-                name__icontains=self.request.GET[nname_key])
+                name__icontains=self.request.GET[name_key])
 
         return queryset
 

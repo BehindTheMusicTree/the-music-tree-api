@@ -3,13 +3,13 @@
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
+  SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
   ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import Playlist, \
-  ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.Criteria import Criteria, SPECIAL_NAMES as CRITERIA_SPECIAL_NAMES
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.test.view.ApiViewTestCase import RESPONSE_KEYS, ApiViewTestCase
 
@@ -47,7 +47,7 @@ class TestCase(ApiViewTestCase):
         track_title_key = TRACK_ATTRIBUTES_LABEL.TITLE
         assert results[LibraryTrack.__name__][0][track_title_key] == werealltoblame_track.title
         playlist_name_key = ATTRIBUTES_LABEL.NAME
-        assert results[SimplePlaylist.__name__][0][playlist_name_key] == CRITERIA_SPECIAL_NAMES.ALL
+        assert results[SimplePlaylist.__name__][0][playlist_name_key] == SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
 
     def test_non_sensitiveness(self):
         rap_criteria_name = "Rap"

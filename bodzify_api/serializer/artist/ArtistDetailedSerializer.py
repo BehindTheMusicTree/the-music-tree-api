@@ -8,7 +8,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 class ArtistDetailedSerializer(serializers.ModelSerializer):
     albums = AlbumWithoutTracksSerializer(source='album_set', many=True)
-    trackCount = serializers.IntegerField(source='librarytrack_set.count')
+    track_count = serializers.IntegerField(source='librarytrack_set.count')
     duration = serializers.SerializerMethodField()
   
     def get_duration(self, obj) -> float:
@@ -17,4 +17,4 @@ class ArtistDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Artist
-        fields = ['uuid', 'name', 'albums', 'trackCount', 'duration']
+        fields = ['uuid', 'name', 'albums', 'track_count', 'duration']

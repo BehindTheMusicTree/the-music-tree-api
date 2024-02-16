@@ -5,7 +5,6 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
@@ -26,7 +25,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   title="We're All To Blame",
                   duration=0)
         assert self.does_track_filename_exist_in_test_user_library(filename) == True
-        assert track.fileExists == True
+        assert track.file_exists == True
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(uuid=track.uuid).exists() == False
@@ -45,10 +44,8 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   duration=0)
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert Album.objects.filter(
-            user=self.test_user, name=album_name).exists() == False
-        assert Artist.objects.filter(
-            user=self.test_user, name=artist_name).exists() == False
+        assert Album.objects.filter(user=self.test_user, name=album_name).exists() == False
+        assert Artist.objects.filter(user=self.test_user, name=artist_name).exists() == False
 
     def test_when_no_file_linked(self):
         track_title = "We"
@@ -84,7 +81,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         }
         self.post_genre(data_json)
         rock_genre = self.saved_genre
-        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre)
+        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
 
         data_json = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: hardrock_genre_name,
@@ -92,7 +89,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         }
         self.post_genre(data_json)
         hardrock_genre = self.saved_genre
-        hardrock_playlist = CriteriaPlaylist.objects.get(criteria=hardrock_genre)
+        hardrock_playlist = CriteriaPlaylist.objects.get(criteria=hardrock_genre).playlist
 
         data_json = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: emo_genre_name,

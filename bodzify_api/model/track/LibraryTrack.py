@@ -167,12 +167,12 @@ class LibraryTrack(models.Model):
         if old_genre is not None:
             old_genre_tree_item = old_genre
             while old_genre_tree_item != genre_limit:
-                self.playlists.remove(CriteriaPlaylist.objects.get(criteria=old_genre_tree_item))
+                self.playlists.remove(CriteriaPlaylist.objects.get(criteria=old_genre_tree_item).playlist)
                 old_genre_tree_item = old_genre_tree_item.parent
         else:
-            self.playlists.remove(
-                CriteriaPlaylist.objects.get(
-                    playlist__user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None))
+            criteria_playlist = CriteriaPlaylist.objects.get(
+                    playlist__user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None)
+            self.playlists.remove(criteria_playlist.playlist)
         
     def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
         if self.genre is not None:
@@ -186,28 +186,28 @@ class LibraryTrack(models.Model):
             self.playlists.add(genreless_criteria_playlist.playlist)
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
-        trackArtistId = self.artist.id if self.artist else None
-        trackAlbumId = self.album.id if self.album else None
+        track_artist_pk = self.artist.pk if self.artist else None
+        track_album_pk = self.album.pk if self.album else None
         self.delete()
-        self._delete_eventual_related_album(trackAlbumId)
-        self._delete_eventual_related_artist(trackArtistId)
+        self._delete_eventual_related_album(track_album_pk)
+        self._delete_eventual_related_artist(track_artist_pk)
 
     def delete_with_checking_artist_potential_deletion(self):
-        trackArtistId = self.artist.id if self.artist else None
+        track_artist_id = self.artist.id if self.artist else None
         self.delete()
-        self._delete_eventual_related_artist(trackArtistId)
+        self._delete_eventual_related_artist(track_artist_id)
 
     def delete_with_checking_album_potential_deletion(self):
-        trackAlbumId = self.album.id if self.album else None
+        track_album_id = self.album.id if self.album else None
         self.delete()
-        self._delete_eventual_related_album(trackAlbumId)
+        self._delete_eventual_related_album(track_album_id)
 
     def _delete_eventual_related_artist(self, track_artist_id):
         if track_artist_id is not None:
             self.artist.delete_if_nothing_linked() # type: ignore
 
-    def _delete_eventual_related_album(self, trackAlbumId):
-        if trackAlbumId is not None:
+    def _delete_eventual_related_album(self, track_album_id):
+        if track_album_id is not None:
             from bodzify_api.model.Album import Album
             album = Album(self.album)
             album.delete_if_no_track_linked()

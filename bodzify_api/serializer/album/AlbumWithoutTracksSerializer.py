@@ -8,7 +8,7 @@ from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWit
 
 class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
     album_artists = ArtistWithOnlyNameSerializer(many=True)
-    trackCount = serializers.IntegerField(source='librarytrack_set.count')
+    track_count = serializers.IntegerField(source='librarytrack_set.count')
     duration = serializers.SerializerMethodField()
 
     def get_duration(self, obj) -> float:

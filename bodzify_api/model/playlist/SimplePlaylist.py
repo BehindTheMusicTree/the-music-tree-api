@@ -3,6 +3,8 @@
 from django.db import models
 from bodzify_api.model.playlist.Playlist import Playlist
 
+TYPE_LABEL = "Simple"
+
 class SPECIAL_NAMES:
     ALL = "All"
 

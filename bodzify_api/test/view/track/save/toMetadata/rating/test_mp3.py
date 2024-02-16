@@ -6,7 +6,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-class TrackPutViewRatingFileTypeMp3TestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_null(self):
         track = G(LibraryTrack,

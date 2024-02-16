@@ -12,7 +12,6 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
     library_tracks = TrackWithoutAlbumAndPlaylistSerializer(
             source='librarytrack_set', read_only=True, many=True)
     album_artists = ArtistWithOnlyNameSerializer(many=True)
-    trackCount = serializers.IntegerField(source='librarytrack_set.count')
     duration = serializers.SerializerMethodField()
 
     def get_duration(self, obj) -> float:

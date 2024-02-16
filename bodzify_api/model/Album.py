@@ -11,8 +11,8 @@ class ATTRIBUTES_LABEL:
     NAME = 'name'
     YEAR = 'year'
     ALBUM_ARTISTS = 'album_artists'
-    LIBRARY_TRACKS = 'libraryTracks'
-    TRACK_COUNT = 'trackCount'
+    LIBRARY_TRACKS = 'library_tracks'
+    TRACK_COUNT = 'track_count'
     DURATION = 'duration'
 
 class Album(models.Model):
@@ -30,6 +30,16 @@ class Album(models.Model):
             models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")
         ]
 
+    def __str__(self) -> str:
+        string = str(self.uuid) + " " + self.name + " by "
+        for artist in list(self.album_artists.all()):
+            string = string + " " + str(artist) + " "
+        return string
+    
+    @property
+    def track_count(self):
+        return self.librarytrack_set.count()
+    
     def delete_with_tracks_and_eventually_artists(self):
         artists_linked_to_album_and_track = list()
         for track in LibraryTrack.objects.filter(album=self):
@@ -51,9 +61,3 @@ class Album(models.Model):
     def delete_if_no_track_linked(self):
         if LibraryTrack.objects.filter(album=self).count() == 0:
             self.delete()
-
-    def __str__(self) -> str:
-        string = str(self.uuid) + " " + self.name + " by "
-        for artist in list(self.album_artists.all()):
-            string = string + " " + str(artist) + " "
-        return string

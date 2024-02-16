@@ -9,10 +9,10 @@ class TestCase(ApiViewTestCase):
 
     def test(self):
         genre_name = "Rock"
-        genre = G(Criteria,
-                      name=genre_name,
-                      user=self.test_user,
-                      type=CRITERIA_TYPES_ID.GENRE)
+        G(Criteria,
+            name=genre_name,
+            user=self.test_user,
+            type=CRITERIA_TYPES_ID.GENRE)
         response = self.get_genres()
         genre_json_list = response.json()[RESPONSE_KEYS.RESULTS]
         assert len(genre_json_list) == 1
