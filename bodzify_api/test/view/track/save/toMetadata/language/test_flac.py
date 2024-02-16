@@ -9,7 +9,7 @@ from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRI
 class TestCase(ApiViewTestCase):
 
     def test_longest(self):
-        language = "a" * settings.TRACK_LANGUAGE_MAX_CHAR
+        language = "a" * settings.TRACK_LANGUAGE_LENGTH_MAX
         data = {
             TRACK_ATTRIBUTES_LABEL.LANGUAGE: language
         }

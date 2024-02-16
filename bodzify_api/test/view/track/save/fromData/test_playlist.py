@@ -55,7 +55,7 @@ class TestCase(ApiViewTestCase):
         response = self.put_sample_track(track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
 
-        old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre)
+        old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).playlist
         assert track not in old_genre_playlist.librarytrack_set.all()
 
     def test_existing_genre_then_track_in_existing_playlist_and_all_playlist(self):

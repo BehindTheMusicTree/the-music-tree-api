@@ -41,7 +41,7 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.genre == None
 
     def test_longest(self):
-        genre_name = "a" * settings.CRITERIA_NAME_MAX_CHAR
+        genre_name = "a" * settings.CRITERIA_NAME_LENGTH_MAX
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
@@ -54,7 +54,7 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.genre.name == genre_name
         
     def test_error_when_too_long(self):
-        genre_name = "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
+        genre_name = "a" * (settings.CRITERIA_NAME_LENGTH_MAX + 1)
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",

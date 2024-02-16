@@ -9,7 +9,7 @@ from bodzify_api import settings
 class TestCase(ApiViewTestCase):
     
     def test_longest(self):
-        genre_name = "a" * settings.CRITERIA_NAME_MAX_CHAR
+        genre_name = "a" * settings.CRITERIA_NAME_LENGTH_MAX
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genre_name
         }
@@ -19,7 +19,7 @@ class TestCase(ApiViewTestCase):
     
     def test_error_too_long(self):
         data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: "a" * (settings.CRITERIA_NAME_MAX_CHAR + 1)
+            CRITERIA_ATTRIBUTES_LABEL.NAME: "a" * (settings.CRITERIA_NAME_LENGTH_MAX + 1)
         }
         response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

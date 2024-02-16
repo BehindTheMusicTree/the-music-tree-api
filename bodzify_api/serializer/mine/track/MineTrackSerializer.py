@@ -5,11 +5,11 @@ from bodzify_api.model.track.MineTrack import MineTrack, ATTRIBUTES_LABEL
 
 
 class MineTrackSerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=settings.MINE_TRACK_TITLE_MAX_CHAR)
-    artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_MAX_CHAR)
+    title = serializers.CharField(max_length=settings.MINE_TRACK_TITLE_LENGTH_MAX)
+    artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_LENGTH_MAX)
     duration = serializers.IntegerField()
-    released_on = serializers.CharField(max_length=settings.MINE_TRACK_RELEASED_ON_MAX_CHAR)
-    url = serializers.CharField(max_length=settings.MINE_TRACK_URL_MAX_CHAR)
+    released_on = serializers.CharField(max_length=settings.MINE_TRACK_RELEASED_ON_LENGTH_MAX)
+    url = serializers.CharField(max_length=settings.MINE_TRACK_URL_LENGTH_MAX)
 
     class Meta:
         fields = [ATTRIBUTES_LABEL.TITLE, 

@@ -17,7 +17,7 @@ class TestCase(ApiViewTestCase):
                       user=self.test_user,
                       name=rock_criteria_name,
                       type=CRITERIA_TYPES_ID.GENRE)
-        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre)
+        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist.uuid
         response = self.get_genre_playlist(playlist_uuid=rock_playlist.uuid)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()[PLAYLIST_ATTRIBUTES_NAME.NAME] == rock_criteria_name

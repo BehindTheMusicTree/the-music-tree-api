@@ -2,7 +2,7 @@
 
 from django.forms import ValidationError
 from rest_framework import serializers
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.CriteriaPlaylist import \
     CriteriaPlaylist, ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
@@ -19,7 +19,7 @@ class PlaylistGetParamSerializer(serializers.Serializer):
     parent = serializers.CharField(required=False)
 
     class Meta:
-        fields = [PLAYLIST_ATTRIBUTES_LABEL.NAME, ATTRIBUTES_LABEL.TYPE]
+        fields = [ATTRIBUTES_LABEL.NAME, ATTRIBUTES_LABEL.TYPE]
 
     def validate(self, data):
         if ATTRIBUTES_LABEL.TYPE in data:

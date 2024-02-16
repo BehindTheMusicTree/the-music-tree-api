@@ -45,7 +45,7 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.title == None
 
     def test_longest(self):
-        title = "a" * (settings.TRACK_LANGUAGE_MAX_CHAR - len(".mp3"))
+        title = "a" * (settings.TRACK_LANGUAGE_LENGTH_MAX - len(".mp3"))
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Lolilom",

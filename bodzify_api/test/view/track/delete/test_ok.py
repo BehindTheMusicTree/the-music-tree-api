@@ -66,7 +66,9 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   user=self.test_user,
                   title="We're All To Blame",
                   duration=0)
-        all_playlist = SimplePlaylist.objects.get(user=self.test_user, name=PLAYLIST_SPECIAL_NAMES.ALL)
+        all_playlist = SimplePlaylist.objects.get(
+            playlist__user=self.test_user, 
+            name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
         assert track in all_playlist.librarytrack_set.all()
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -82,8 +84,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         }
         self.post_genre(data_json)
         rock_genre = self.saved_genre
-        rock_playlist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=rock_genre)
+        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre)
 
         data_json = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: hardrock_genre_name,
@@ -91,8 +92,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         }
         self.post_genre(data_json)
         hardrock_genre = self.saved_genre
-        hardrock_playlist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=hardrock_genre)
+        hardrock_playlist = CriteriaPlaylist.objects.get(criteria=hardrock_genre)
 
         data_json = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: emo_genre_name,
@@ -100,8 +100,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         }
         self.post_genre(data_json)
         emo_genre = self.saved_genre
-        emo_playlist = CriteriaPlaylist.objects.get(
-            user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, criteria=emo_genre)
+        emo_playlist = CriteriaPlaylist.objects.get(criteria=emo_genre).playlist
 
         track = G(LibraryTrack,
                   user=self.test_user,

@@ -59,7 +59,7 @@ class LibraryTrack(models.Model):
             validate_size],
         null=True)
     title = models.CharField(
-        max_length=settings.TRACK_TITLE_MAX_CHAR, default=None, null=True)
+        max_length=settings.TRACK_TITLE_LENGTH_MAX, default=None, null=True)
     artist = models.ForeignKey(
         'bodzify_api.Artist', on_delete=models.CASCADE, default=None, null=True)
     album = models.ForeignKey(
@@ -74,11 +74,11 @@ class LibraryTrack(models.Model):
         blank=True,
         validators=[
             MinValueValidator(0),
-            MaxValueValidator(settings.TRACK_RATING_MAX_VALUE)
+            MaxValueValidator(settings.TRACK_RATING_VALUE_MAX)
         ])
     playlists = models.ManyToManyField('bodzify_api.Playlist')
     language = models.CharField(
-        max_length=settings.TRACK_LANGUAGE_MAX_CHAR, blank=True, default=None, null=True)
+        max_length=settings.TRACK_LANGUAGE_LENGTH_MAX, blank=True, default=None, null=True)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     @property
@@ -115,42 +115,6 @@ class LibraryTrack(models.Model):
                 f"{genre_str}{duration_str}{rating_str}{language_str}"
                 f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
 
-
-    def _update_genre_playlists(self, old_genre: Optional[Criteria]):
-        if old_genre is not None and self.genre is not None:
-            common_genre = self.genre.get_common_criteria(old_genre)
-        else:
-            common_genre = None
-            
-        self._add_track_to_genre_playlists_until_genre_limit(genre_limit=common_genre)
-        self._remove_track_from_old_genre_ascendants_playlists_until_genre_limit(
-            old_genre=old_genre, 
-            genre_limit=common_genre)
-
-    def _remove_track_from_old_genre_ascendants_playlists_until_genre_limit(self, 
-                                                                            old_genre: Optional[Criteria], 
-                                                                            genre_limit=None):
-        if old_genre is not None:
-            old_genre_tree_item = old_genre
-            while old_genre_tree_item != genre_limit:
-                self.playlists.remove(CriteriaPlaylist.objects.get(criteria=old_genre_tree_item))
-                old_genre_tree_item = old_genre_tree_item.parent
-        else:
-            self.playlists.remove(
-                CriteriaPlaylist.objects.get(
-                    user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None))
-        
-    def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
-        if self.genre is not None:
-            new_genre_tree_item = self.genre
-            while new_genre_tree_item != genre_limit:
-                self.playlists.add(CriteriaPlaylist.objects.get(criteria=new_genre_tree_item))
-                new_genre_tree_item = new_genre_tree_item.parent
-        else:
-            self.playlists.add(
-                CriteriaPlaylist.objects.get(
-                    user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None))
-
     def save(self, *args, **kwargs):
         try:
             old_track = LibraryTrack.objects.get(uuid=self.uuid)
@@ -174,9 +138,8 @@ class LibraryTrack(models.Model):
 
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
-            self.playlists.add(
-                SimplePlaylist.objects.get(
-                    user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL))
+            all_simple_playlist = SimplePlaylist.objects.get(playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
+            self.playlists.add(all_simple_playlist.playlist)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
 
@@ -184,6 +147,43 @@ class LibraryTrack(models.Model):
     def delete_file_if_exists(sender, instance: 'LibraryTrack', using, **kwargs):
         if instance.file_exists:
             instance.file.delete()
+
+
+
+    def _update_genre_playlists(self, old_genre: Optional[Criteria]):
+        if old_genre is not None and self.genre is not None:
+            common_genre = self.genre.get_common_criteria(old_genre)
+        else:
+            common_genre = None
+            
+        self._add_track_to_genre_playlists_until_genre_limit(genre_limit=common_genre)
+        self._remove_track_from_old_genre_ascendants_playlists_until_genre_limit(
+            old_genre=old_genre, 
+            genre_limit=common_genre)
+
+    def _remove_track_from_old_genre_ascendants_playlists_until_genre_limit(self, 
+                                                                            old_genre: Optional[Criteria], 
+                                                                            genre_limit=None):
+        if old_genre is not None:
+            old_genre_tree_item = old_genre
+            while old_genre_tree_item != genre_limit:
+                self.playlists.remove(CriteriaPlaylist.objects.get(criteria=old_genre_tree_item))
+                old_genre_tree_item = old_genre_tree_item.parent
+        else:
+            self.playlists.remove(
+                CriteriaPlaylist.objects.get(
+                    playlist__user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None))
+        
+    def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
+        if self.genre is not None:
+            new_genre_tree_item = self.genre
+            while new_genre_tree_item != genre_limit:
+                self.playlists.add(CriteriaPlaylist.objects.get(criteria=new_genre_tree_item).playlist)
+                new_genre_tree_item = new_genre_tree_item.parent
+        else:
+            genreless_criteria_playlist = CriteriaPlaylist.objects.get(
+                    playlist__user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None)
+            self.playlists.add(genreless_criteria_playlist.playlist)
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
         trackArtistId = self.artist.id if self.artist else None
@@ -264,4 +264,4 @@ class LibraryTrack(models.Model):
         AudioMetadataService.update(
             file=self.file,
             metadata_update_dict=metadata_update_dict,
-            normalized_rating_max_value=settings.TRACK_RATING_MAX_VALUE)
+            normalized_rating_max_value=settings.TRACK_RATING_VALUE_MAX)

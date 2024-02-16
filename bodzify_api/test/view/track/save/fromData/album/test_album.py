@@ -28,7 +28,7 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.album == None
 
     def test_longest(self):
-        album_name = "a" * settings.ALBUM_NAME_MAX_CHAR
+        album_name = "a" * settings.ALBUM_NAME_LENGTH_MAX
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav",
             "album_name": album_name

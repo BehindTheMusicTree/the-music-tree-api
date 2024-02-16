@@ -46,7 +46,7 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.language == None
 
     def test_longest(self):
-        language = "a" * settings.TRACK_LANGUAGE_MAX_CHAR
+        language = "a" * settings.TRACK_LANGUAGE_LENGTH_MAX
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",
@@ -59,7 +59,7 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.language == language
 
     def test_error_when_too_long(self):
-        language = "a" * (settings.TRACK_LANGUAGE_MAX_CHAR + 1)
+        language = "a" * (settings.TRACK_LANGUAGE_LENGTH_MAX + 1)
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",

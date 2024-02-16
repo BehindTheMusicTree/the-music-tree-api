@@ -47,7 +47,7 @@ class TestCase(ApiViewTestCase):
         assert self.saved_track.artist == None
 
     def test_longest(self):
-        artist_name = "a" * settings.ARTIST_NAME_MAX_CHAR
+        artist_name = "a" * settings.ARTIST_NAME_LENGTH_MAX
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",

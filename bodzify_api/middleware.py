@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import logging
 
 def _generate_log_about_headers(request):

@@ -3,16 +3,16 @@
 import logging
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
-from bodzify_api.model.criteria.Criteria import SPECIAL_NAMES as CRITERIA_SPECIAL_NAMES
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
+    SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import PlaylistWithoutParentSerializer
+from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithoutParentSerializer import SimplePlaylistWithoutParentSerializer
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
     ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
@@ -63,7 +63,7 @@ def simple_playlist_filter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
-            ).order_by(PLAYLIST_ATTRIBUTES_LABEL.NAME)
+            ).order_by(ATTRIBUTES_LABEL.NAME)
     return queryset
 
 def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) -> bool:
@@ -75,11 +75,14 @@ def criteria_playlist_filter(queryset, request, *args, **kwargs):
         unfiltered_queryset = queryset
         if query != "":
             queryset = unfiltered_queryset.filter(criteria__name__icontains=query)
-            if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_SPECIAL_NAMES.GENRELESS):
-                logger.debug("genreless")
+            if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
                     type_id=CRITERIA_TYPES_ID.GENRE)
+            if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS):
+                queryset = queryset | unfiltered_queryset.filter(
+                    criteria__isnull=True,
+                    type_id=CRITERIA_TYPES_ID.TAG)
     return queryset
 
 def album_filter(queryset, request, *args, **kwargs):
@@ -117,11 +120,11 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
                 'serializer_class': TrackDetailedSerializer,
                 'filter_fn': track_filter},
             {
-                'queryset': SimplePlaylist.objects.filter(user=user),
-                'serializer_class': PlaylistWithoutParentSerializer,
+                'queryset': SimplePlaylist.objects.filter(playlist__user=user),
+                'serializer_class': SimplePlaylistWithoutParentSerializer,
                 'filter_fn': simple_playlist_filter},
             {
-                'queryset': CriteriaPlaylist.objects.filter(user=user),
+                'queryset': CriteriaPlaylist.objects.filter(playlist__user=user),
                 'serializer_class': CriteriaPlaylistWithoutTracksSerializer,
                 'filter_fn': criteria_playlist_filter},
             {

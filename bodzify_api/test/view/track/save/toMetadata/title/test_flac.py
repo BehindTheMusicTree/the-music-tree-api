@@ -8,7 +8,7 @@ import bodzify_api.service.AudioMetadataService as AudioMetadataService
 class FlacTestCase(ApiViewTestCase):
 
     def test_longest(self):
-        title = "a" * settings.TRACK_TITLE_MAX_CHAR
+        title = "a" * settings.TRACK_TITLE_LENGTH_MAX
         data = {
             "title": title
         }

@@ -44,7 +44,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre)
+        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
         assert playlist.librarytrack_set.first() == track
 
     def test_new_parent_not_acendant_of_old_parent_then_remove_criteria_playlist_tracks_from_old_criteria_ascendants_playlist(self):
@@ -69,9 +69,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        playlist = CriteriaPlaylist.objects.get(
-            criteria=rock_genre,
-            type=CRITERIA_TYPES_ID.GENRE)
+        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
         assert playlist.librarytrack_set.first() != track
 
     def test_new_parent_ascendant_of_old_parent_then_remove_criteria_playlist_tracks_from_playlists_of_criterias_in_between(self):
@@ -95,7 +93,5 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        playlist = CriteriaPlaylist.objects.get(
-            criteria=rock_genre,
-            type=CRITERIA_TYPES_ID.GENRE)
+        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
         assert playlist.librarytrack_set.first() == track

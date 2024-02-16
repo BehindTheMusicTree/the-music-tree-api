@@ -10,7 +10,7 @@ from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import 
 class TestCase(ApiViewTestCase):
 
     def test_longest(self):
-        genre_name = "a" * settings.CRITERIA_NAME_MAX_CHAR
+        genre_name = "a" * settings.CRITERIA_NAME_LENGTH_MAX
         data = {
             SCHEMA_TRACK_ATTRIBUTES_LABEL.GENRE_NAME: genre_name
         }

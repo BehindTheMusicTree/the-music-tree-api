@@ -15,7 +15,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class TestCase(ApiViewTestCase):
 
     def test_longest(self):
-        album_artistsName = "a" * settings.ALBUM_ARTISTS_FIELD_MAX_CHAR
+        album_artistsName = "a" * settings.ALBUM_ARTISTS_FIELD_LENGTH_MAX
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Love",

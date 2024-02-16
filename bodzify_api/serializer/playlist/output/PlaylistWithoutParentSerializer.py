@@ -2,18 +2,14 @@
 
 from rest_framework import serializers
 from bodzify_api.model.playlist.Playlist import Playlist, \
-    ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
-
-
-class ATTRIBUTES_LABEL:
-    TRACK_COUNT = "trackCount"
+    ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 
 class PlaylistWithoutParentSerializer(serializers.ModelSerializer):
-    trackCount = serializers.IntegerField(source='librarytrack_set.count')
+    track_count = serializers.IntegerField(source='librarytrack_set.count')
 
     class Meta:
         model = Playlist
-        fields = [PLAYLIST_ATTRIBUTES_LABEL.UUID,
-                  PLAYLIST_ATTRIBUTES_LABEL.NAME,
-                  PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON,
+        fields = [ATTRIBUTES_LABEL.UUID,
+                  ATTRIBUTES_LABEL.NAME,
+                  ATTRIBUTES_LABEL.ADDED_ON,
                   ATTRIBUTES_LABEL.TRACK_COUNT]

@@ -3,7 +3,7 @@
 from django.contrib.auth.models import User
 from django.http import QueryDict
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.simple.input.model.SimplePlaylistSaveModelSerializer import SimplePlaylistSaveModelSerializer
 from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPostSchemaSerializer \
     import SimplePlaylistPostSchemaSerializer
