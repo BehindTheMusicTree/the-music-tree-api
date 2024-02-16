@@ -4,13 +4,14 @@ from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
   ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import Playlist, \
   ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria, SPECIAL_NAMES as CRITERIA_SPECIAL_NAMES
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.view.ApiViewTestCase import RESPONSE_KEYS, ApiViewTestCase
 
 
 class TestCase(ApiViewTestCase):
@@ -24,10 +25,10 @@ class TestCase(ApiViewTestCase):
         jailesum_album = G(Album, user=self.test_user, name="J'ai le Sum")
 
         response = self.search("Sum")
-        assert response.status_code == 200
-        response_json = response.json()
-        assert response_json['overall_total'] == 3
-        results = response_json['results']
+        assert response.status_code == 200 # type: ignore
+        response_json = response.json() # type: ignore
+        assert response_json[RESPONSE_KEYS.OVERALL_TOTAL] == 3
+        results = response_json[RESPONSE_KEYS.RESULTS]
         title_key = TRACK_ATTRIBUTES_LABEL.TITLE
         assert results[LibraryTrack.__name__][0][title_key] == summerlove_track.title
         assert results[Artist.__name__][0][ARTIST_ATTRIBUTES_LABEL.NAME] == sum41_artist.name
@@ -41,32 +42,29 @@ class TestCase(ApiViewTestCase):
         response = self.search("All")
         assert response.status_code == 200
         response_json = response.json()
-        assert response_json['results'] == 6
-        assert response_json['overall_total'] == 2
-        results = response_json['results']
+        assert response_json[RESPONSE_KEYS.OVERALL_TOTAL] == 2
+        results = response_json[RESPONSE_KEYS.RESULTS]
         track_title_key = TRACK_ATTRIBUTES_LABEL.TITLE
         assert results[LibraryTrack.__name__][0][track_title_key] == werealltoblame_track.title
-        playlistNname_key = PLAYLIST_ATTRIBUTES_LABEL.NAME
-        assert results[Playlist.__name__][0][playlistNname_key] == CRITERIA_SPECIAL_NAMES.ALL
+        playlist_name_key = PLAYLIST_ATTRIBUTES_LABEL.NAME
+        assert results[SimplePlaylist.__name__][0][playlist_name_key] == CRITERIA_SPECIAL_NAMES.ALL
 
     def test_non_sensitiveness(self):
+        rap_criteria_name = "Rap"
         G(Criteria,
           user=self.test_user,
-          name="Rap",
+          name=rap_criteria_name,
           type=CRITERIA_TYPES_ID.GENRE)
-        us_rap_genre = G(Criteria,
-                       user=self.test_user,
-                       name="US rap",
-                       type=CRITERIA_TYPES_ID.GENRE)
-        G(CriteriaPlaylist,
+        us_rap_criteria_name = "US rap"
+        G(Criteria,
           user=self.test_user,
-          type_id=CRITERIA_TYPES_ID.GENRE,
-          criteria=us_rap_genre)
+          name=us_rap_criteria_name,
+          type=CRITERIA_TYPES_ID.GENRE)
         
         response = self.search("Rap")
         assert response.status_code == 200
         response_json = response.json()
-        assert response_json['overall_total'] == 2
-        results = response_json['results']
-        assert results[Playlist.__name__][0][PLAYLIST_ATTRIBUTES_LABEL.NAME] == "Rap"
-        assert results[Playlist.__name__][1][PLAYLIST_ATTRIBUTES_LABEL.NAME] == "US rap"
+        assert response_json[RESPONSE_KEYS.OVERALL_TOTAL] == 2
+        results = response_json[RESPONSE_KEYS.RESULTS]
+        assert results[CriteriaPlaylist.__name__][0][PLAYLIST_ATTRIBUTES_LABEL.NAME] == rap_criteria_name
+        assert results[CriteriaPlaylist.__name__][1][PLAYLIST_ATTRIBUTES_LABEL.NAME] == us_rap_criteria_name

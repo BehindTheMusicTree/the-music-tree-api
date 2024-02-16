@@ -11,13 +11,14 @@ from bodzify_api.test.view.ViewTestCase import ViewTestCase
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
 
-logger = logging.getLogger('bozify_api')
+logger = logging.getLogger('bodzify_api')
 
 class RESPONSE_KEYS:
     COUNT = 'count'
     NEXT = 'next'
     PREVIOUS = 'previous'
     RESULTS = 'results'
+    OVERALL_TOTAL = 'overall_total'
 
 class ApiViewTestCase(ViewTestCase):
 

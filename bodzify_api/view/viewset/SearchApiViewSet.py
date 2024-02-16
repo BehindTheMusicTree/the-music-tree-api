@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
 from bodzify_api.model.criteria.Criteria import SPECIAL_NAMES as CRITERIA_SPECIAL_NAMES
@@ -21,11 +22,11 @@ from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTrac
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
 from rest_framework.permissions import IsAuthenticated
 
+logger = logging.getLogger('bodzify_api')
 
 class PARAMETER_NAME:
     QUERY = "query"
     TYPE = "type"
-
 
 class QUERY_FILTERS_NAME:
     TITLE = "title"
@@ -36,7 +37,6 @@ class QUERY_FILTERS_NAME:
     TAG_NAME = "tag_name"
     PLAYLIST_NAME = "playlist_name"
 
-
 class TYPE_PARAMETER_VALUE:
     TITLE = QUERY_FILTERS_NAME.TITLE
     ARTIST_NAME = QUERY_FILTERS_NAME.ARTIST_NAME
@@ -46,11 +46,11 @@ class TYPE_PARAMETER_VALUE:
     PLAYLIST_NAME = QUERY_FILTERS_NAME.PLAYLIST_NAME
 
 def track_filter(queryset, request, *args, **kwargs):
-    if TYPE_PARAMETER_VALUE.TITLE in request.data:
-        type = request.data[TYPE_PARAMETER_VALUE.TITLE]
+    if TYPE_PARAMETER_VALUE.TITLE in request.query_params:
+        type = request.query_params[TYPE_PARAMETER_VALUE.TITLE]
         # TODO: handle type of query
-    if PARAMETER_NAME.QUERY in request.data:
-        query = request.data[PARAMETER_NAME.QUERY]
+    if PARAMETER_NAME.QUERY in request.query_params:
+        query = request.query_params[PARAMETER_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(
                 title__icontains=query
@@ -58,8 +58,8 @@ def track_filter(queryset, request, *args, **kwargs):
     return queryset.filter(user=request.user.id)
 
 def simple_playlist_filter(queryset, request, *args, **kwargs):
-    if PARAMETER_NAME.QUERY in request.data:
-        query = request.data[PARAMETER_NAME.QUERY]
+    if PARAMETER_NAME.QUERY in request.query_params:
+        query = request.query_params[PARAMETER_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
@@ -70,29 +70,28 @@ def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) ->
     return string1.lower() in string2.lower()
 
 def criteria_playlist_filter(queryset, request, *args, **kwargs):
-    if PARAMETER_NAME.QUERY in request.data:
-        query = request.data[PARAMETER_NAME.QUERY]
-        criteria_queryset = queryset
+    if PARAMETER_NAME.QUERY in request.query_params:
+        query = request.query_params[PARAMETER_NAME.QUERY]
+        unfiltered_queryset = queryset
         if query != "":
-            queryset = queryset.filter(
-                criteria__name=query
-            )
+            queryset = unfiltered_queryset.filter(criteria__name__icontains=query)
             if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_SPECIAL_NAMES.GENRELESS):
-                queryset = queryset | criteria_queryset.filter(
+                logger.debug("genreless")
+                queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
                     type_id=CRITERIA_TYPES_ID.GENRE)
     return queryset
 
 def album_filter(queryset, request, *args, **kwargs):
-    if PARAMETER_NAME.QUERY in request.data:
-        query = request.data[PARAMETER_NAME.QUERY]
+    if PARAMETER_NAME.QUERY in request.query_params:
+        query = request.query_params[PARAMETER_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(name__icontains=query).order_by(ALBUM_ATTRIBUTES_LABEL.NAME)
     return queryset
 
 def artist_filter(queryset, request, *args, **kwargs):
-    if PARAMETER_NAME.QUERY in request.data:
-        query = request.data[PARAMETER_NAME.QUERY]
+    if PARAMETER_NAME.QUERY in request.query_params:
+        query = request.query_params[PARAMETER_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(name__icontains=query).order_by(ARTIST_ATTRIBUTES_LABEL.NAME)
     return queryset
