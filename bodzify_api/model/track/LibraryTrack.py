@@ -186,11 +186,11 @@ class LibraryTrack(models.Model):
             self.playlists.add(genreless_criteria_playlist.playlist)
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
-        track_artist_pk = self.artist.pk if self.artist else None
-        track_album_pk = self.album.pk if self.album else None
+        track_artist_uuid = self.artist.uuid if self.artist else None
+        track_album_uuid = self.album.uuid if self.album else None
         self.delete()
-        self._delete_eventual_related_album(track_album_pk)
-        self._delete_eventual_related_artist(track_artist_pk)
+        self._delete_eventual_related_album(track_album_uuid)
+        self._delete_eventual_related_artist(track_artist_uuid)
 
     def delete_with_checking_artist_potential_deletion(self):
         track_artist_id = self.artist.id if self.artist else None
@@ -202,15 +202,15 @@ class LibraryTrack(models.Model):
         self.delete()
         self._delete_eventual_related_album(track_album_id)
 
-    def _delete_eventual_related_artist(self, track_artist_id):
-        if track_artist_id is not None:
-            self.artist.delete_if_nothing_linked() # type: ignore
+    def _delete_eventual_related_artist(self, track_artist_uuid):
+        if track_artist_uuid:
+            from bodzify_api.model.Artist import Artist
+            Artist.objects.get(uuid=track_artist_uuid).delete_if_nothing_linked()
 
-    def _delete_eventual_related_album(self, track_album_id):
-        if track_album_id is not None:
+    def _delete_eventual_related_album(self, track_album_uuid):
+        if track_album_uuid:
             from bodzify_api.model.Album import Album
-            album = Album(self.album)
-            album.delete_if_no_track_linked()
+            Album.objects.get(uuid=track_album_uuid).delete_if_no_track_linked()
 
     def _update_file_tags_if_file_exists(self):
         if self.file_exists == False:
