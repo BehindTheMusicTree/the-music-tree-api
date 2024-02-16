@@ -60,6 +60,10 @@ class TestCase(ApiViewTestCase):
 
     def test_existing_genre_then_track_in_existing_playlist_and_all_playlist(self):
         genre_name = "Rock"
+        genre = G(Criteria,
+            name=genre_name,
+            user=self.test_user,
+            type=CRITERIA_TYPES_ID.GENRE)
         data_json = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genre_name
         }
@@ -77,12 +81,14 @@ class TestCase(ApiViewTestCase):
 
         track_playlists = self.saved_track.playlists.all()
         assert len(track_playlists) == 2
-        criteria_playlists = track_playlists.instance_of(CriteriaPlaylist)
-        assert criteria_playlists.filter(
-            criteriaplaylist__criteria__name=genre_name).exists()
-        simple_playlists = track_playlists.instance_of(SimplePlaylist)
-        assert simple_playlists.filter(
-            simpleplaylist__name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
+
+        genre_playlist = CriteriaPlaylist.objects.get(criteria=genre).playlist
+        assert track in genre_playlist.librarytrack_set.all()
+
+        all_playlist = SimplePlaylist.objects.get(
+            playlist__user=self.test_user, 
+            name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
+        assert track in all_playlist.librarytrack_set.all()
 
     def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
         rock_genre_name = "Rock"
