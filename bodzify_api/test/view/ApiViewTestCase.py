@@ -70,7 +70,7 @@ class ApiViewTestCase(ViewTestCase):
             'source': source,
             'query': query
         }
-        return self.api_client.get(path=reverse('mine-track'), data=data)
+        return self.api_client.get(path=reverse('mine-track-list'), data=data)
 
     def download_track(self, track_uuid):
         return self.api_client.get(path=reverse('librarytrack-download', kwargs={'pk': track_uuid}))
