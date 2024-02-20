@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger('bodyzify_api')
 
-class AppViewSet(MultiSerializerViewSet):
+class AppModelViewSet(MultiSerializerViewSet):
     permission_classes = [IsAuthenticated]
 
     def __init__(self, service, **kwargs):

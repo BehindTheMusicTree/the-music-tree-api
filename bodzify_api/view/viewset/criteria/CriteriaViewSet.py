@@ -9,7 +9,7 @@ from bodzify_api.serializer.criteria.input.schema.CriteriaPostSchemaSerializer i
 from bodzify_api.serializer.criteria.input.schema.CriteriaUpdateSchemaSerializer import CriteriaPutSchemaSerializer
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 
-from bodzify_api.view.viewset.AppViewSet import AppViewSet
+from bodzify_api.view.viewset.AppModelViewSet import AppModelViewSet
 from rest_framework.serializers import ModelSerializer
 from bodzify_api.model.criteria.Criteria import Criteria, \
     ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
@@ -22,7 +22,7 @@ class FILTER_FIELDS:
     PARENT = CRITERIA_ATTRIBUTES_LABEL.PARENT
 
 
-class CriteriaViewSet(AppViewSet):
+class CriteriaViewSet(AppModelViewSet):
 
     queryset = Criteria.objects.all()
     serializers = {
