@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-from rest_framework.response import Response
-from rest_framework import status
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.Artist import Artist
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.service.ArtistService import ArtistService
 
-class ArtistViewSet(MultiSerializerViewSet):
+class ArtistViewSet(AppModelViewSet):
 
     queryset = Artist.objects.all()
     serializers = {
@@ -16,6 +16,9 @@ class ArtistViewSet(MultiSerializerViewSet):
         'update':  ArtistDetailedSerializer,
     }
 
+    def __init__(self, **kwargs):
+        super().__init__(ArtistService(), **kwargs)
+
     def get_queryset(self):
         return Artist.objects.filter(user=self.request.user)
 
@@ -23,5 +26,4 @@ class ArtistViewSet(MultiSerializerViewSet):
         return super().list(request, *args, **kwargs)
     
     def destroy(self, request, *args, **kwargs):
-        self.get_object().delete_with_albums_and_tracks()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return self._destroy(request, *args, **kwargs)
