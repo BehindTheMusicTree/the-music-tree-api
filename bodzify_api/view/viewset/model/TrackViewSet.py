@@ -19,7 +19,7 @@ from bodzify_api.serializer.track.output.TrackDetailedSerializer import \
     TrackDetailedSerializer
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
-from bodzify_api.view.viewset.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.service.TrackService import TrackService
 from rest_framework.serializers import ModelSerializer
 import bodzify_api.view.utility as utility

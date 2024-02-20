@@ -2,7 +2,7 @@
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.service.criteria.GenreService import GenreService
-from bodzify_api.view.viewset.criteria.CriteriaViewSet import CriteriaViewSet
+from bodzify_api.view.viewset.model.criteria.CriteriaViewSet import CriteriaViewSet
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 
 
