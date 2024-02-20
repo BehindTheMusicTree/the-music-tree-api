@@ -31,12 +31,12 @@ class TestCase(ApiViewTestCase):
 
         track_playlists = self.saved_track.playlists.all()
         assert len(track_playlists) == 2
-        criteria_playlists = track_playlists.instance_of(CriteriaPlaylist)
-        assert criteria_playlists.filter(
-            criteriaplaylist__criteria__name=genre_name).exists()
-        simple_playlists = track_playlists.instance_of(SimplePlaylist)
-        assert simple_playlists.filter(
-            simpleplaylist__name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
+
+        criteria_playlists = CriteriaPlaylist.objects.filter(playlist__in=track_playlists)
+        assert criteria_playlists.filter(criteria__name=genre_name).exists()
+
+        simple_playlists = SimplePlaylist.objects.filter(playlist__in=track_playlists)
+        assert simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
 
     def test_new_criteria_then_not_in_old_criteria_playlist_anymore(self):
         old_genre = G(Criteria,
