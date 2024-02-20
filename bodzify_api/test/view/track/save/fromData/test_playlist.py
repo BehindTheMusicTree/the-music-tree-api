@@ -125,15 +125,11 @@ class TestCase(ApiViewTestCase):
         track_playlists = self.saved_track.playlists.all()
         assert len(track_playlists) == 4
         
-        criteria_playlists = track_playlists.instance_of(CriteriaPlaylist)
-        assert criteria_playlists.filter(
-            criteriaplaylist__criteria__name=emo_genre_name).exists()
-        assert criteria_playlists.filter(
-            criteriaplaylist__criteria__name=hardrock_genre_name).exists()
-        assert criteria_playlists.filter(
-            criteriaplaylist__criteria__name=rock_genre_name).exists()
+        track_criteria_playlists = CriteriaPlaylist.objects.filter(playlist__in=track_playlists)
+        assert track_criteria_playlists.filter(criteria__name=emo_genre_name).exists()
+        assert track_criteria_playlists.filter(criteria__name=hardrock_genre_name).exists()
+        assert track_criteria_playlists.filter(criteria__name=rock_genre_name).exists()
         
-        simple_playlists = track_playlists.instance_of(SimplePlaylist)
-        assert simple_playlists.filter(
-            simpleplaylist__name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
+        track_simple_playlists = SimplePlaylist.objects.filter(playlist__in=track_playlists)
+        assert track_simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
 
