@@ -17,7 +17,7 @@ from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.criteria.Criteria import Criteria
 import bodzify_api.settings as settings
 from bodzify_api.validator.TrackFileValidator import validate_size
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
+import bodzify_api.AudioMetadataManager as AudioMetadataManager
 
 
 def _get_user_directory_path(instance, filename):
@@ -221,13 +221,13 @@ class LibraryTrack(models.Model):
         titleTag = self.title
         if titleTag is None:
             titleTag = ""
-        metadata_update_dict[AudioMetadataService.METADATA_DICT_KEYS.TITLE] = titleTag
+        metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.TITLE] = titleTag
 
         if self.artist_id is not None:
             artist_name_tag = self.artist.name
         else:
             artist_name_tag = ""
-        metadata_update_dict[AudioMetadataService.METADATA_DICT_KEYS.ARTIST_NAME] = artist_name_tag
+        metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.ARTIST_NAME] = artist_name_tag
 
         album_artists_tag = ""
         if self.album_id is not None:
@@ -236,7 +236,7 @@ class LibraryTrack(models.Model):
             for albumArtist in list(self.album.album_artists.all()):
                 if album_artists_name_index != 0:
                     album_artists_tag = (
-                        album_artists_tag + AudioMetadataService.TAG_ARTISTS_SEPARATION_CHAR)
+                        album_artists_tag + AudioMetadataManager.TAG_ARTISTS_SEPARATION_CHAR)
                 album_artists_tag = album_artists_tag + albumArtist.name
                 album_artists_name_index = album_artists_name_index + 1
         else:
@@ -244,24 +244,24 @@ class LibraryTrack(models.Model):
 
         if album_name_tag is None:
             album_name_tag = ""
-        metadata_update_dict[AudioMetadataService.METADATA_DICT_KEYS.ALBUM_NAME] = album_name_tag
-        album_artists_name_key = AudioMetadataService.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
+        metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.ALBUM_NAME] = album_name_tag
+        album_artists_name_key = AudioMetadataManager.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
         metadata_update_dict[album_artists_name_key] = album_artists_tag
 
         if self.genre == None:
             genre_name_tag = ""
         else:
             genre_name_tag = self.genre.name
-        metadata_update_dict[AudioMetadataService.METADATA_DICT_KEYS.GENRE_NAME] = genre_name_tag
+        metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.GENRE_NAME] = genre_name_tag
 
-        metadata_update_dict[AudioMetadataService.METADATA_DICT_KEYS.RATING] = self.rating
+        metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.RATING] = self.rating
 
         language_tag = self.language
         if language_tag is None:
             language_tag = ""
-        metadata_update_dict[AudioMetadataService.METADATA_DICT_KEYS.LANGUAGE] = language_tag
+        metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.LANGUAGE] = language_tag
 
-        AudioMetadataService.update(
+        AudioMetadataManager.update(
             file=self.file,
             metadata_update_dict=metadata_update_dict,
             normalized_rating_max_value=settings.TRACK_RATING_VALUE_MAX)

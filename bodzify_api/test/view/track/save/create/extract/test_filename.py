@@ -30,7 +30,7 @@ class FilenameTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.filename == title + ".mp3"
 
-    def test_notProvidingTitleNorArtistAndOriginalFilenameTooLongThenGenerateFilename(self):
+    def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_filename(self):
         track_url = (
             "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"

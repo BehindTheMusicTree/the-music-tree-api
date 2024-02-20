@@ -26,7 +26,7 @@ from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer impor
     TrackPutSchemaSerializer
 import bodzify_api.service.AlbumService as AlbumService
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
+import bodzify_api.AudioMetadataManager as AudioMetadataManager
 
 
 class TrackService(Service):
@@ -130,7 +130,7 @@ class TrackService(Service):
         instance.delete_with_checking_album_and_artist_potential_deletion()
 
     def _get_save_schema_data_from_file(self, file):
-        metadata_dict = AudioMetadataService.get_metadata_dict_from_file(
+        metadata_dict = AudioMetadataManager.get_metadata_dict_from_file(
             file=file, normalized_rating_max_value=settings.TRACK_RATING_VALUE_MAX)
 
         save_data = self._remove_none_or_empty_key_from_dict(metadata_dict)
@@ -202,7 +202,7 @@ class TrackService(Service):
 
     def _get_artists_name_list_from_string(self, names_string: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_string.split(
-            AudioMetadataService.TAG_ARTISTS_SEPARATION_CHAR)
+            AudioMetadataManager.TAG_ARTISTS_SEPARATION_CHAR)
         names = list()
         for name_with_eventual_spaces_around in names_with_eventual_spaces_around_and_duplicates:
             name = name_with_eventual_spaces_around.strip()

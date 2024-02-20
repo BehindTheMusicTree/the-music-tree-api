@@ -3,7 +3,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
+import bodzify_api.AudioMetadataManager as AudioMetadataManager
 
 
 class TestCase(ApiViewTestCase):
@@ -20,7 +20,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] in [
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] in [
             "", None]
 
     def test_zero(self):
@@ -35,7 +35,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 0
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 0
 
     def test_1_then_13(self):
         track = G(LibraryTrack,
@@ -49,7 +49,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 13
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 13
 
     def test_2_then_1(self):
         track = G(LibraryTrack,
@@ -63,7 +63,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 1
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 1
 
     def test_3_then_54(self):
         track = G(LibraryTrack,
@@ -77,7 +77,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 54
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 54
 
     def test_4_then_64(self):
         track = G(LibraryTrack,
@@ -91,7 +91,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 64
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 64
 
     def test_5_then_118(self):
         track = G(LibraryTrack,
@@ -105,7 +105,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 118
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 118
 
     def test_6_then_128(self):
         track = G(LibraryTrack,
@@ -119,7 +119,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 128
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 128
 
     def test_7_then_186(self):
         track = G(LibraryTrack,
@@ -133,7 +133,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 186
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 186
 
     def test_8_then_196(self):
         track = G(LibraryTrack,
@@ -147,7 +147,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 196
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 196
 
     def test_9_then_242(self):
         track = G(LibraryTrack,
@@ -161,7 +161,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 242
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 242
 
     def test_10_then_255(self):
         track = G(LibraryTrack,
@@ -175,4 +175,4 @@ class TestCase(ApiViewTestCase):
         }
         response = self.put_sample_track(track_uuid=track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_track_metadata[AudioMetadataService.METADATA_DICT_KEYS.RATING] == 255
+        assert self.saved_track_metadata[AudioMetadataManager.METADATA_DICT_KEYS.RATING] == 255

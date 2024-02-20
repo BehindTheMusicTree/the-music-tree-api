@@ -8,7 +8,7 @@ from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRI
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, \
     Criteria
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
+import bodzify_api.AudioMetadataManager as AudioMetadataManager
 
 
 logger = logging.getLogger('bodzify_api')
@@ -83,7 +83,7 @@ class ApiViewTestCase(ViewTestCase):
         self.saved_track = LibraryTrack.objects.get(uuid=track_uuid)
         if self.saved_track.file_exists:
             self.saved_track_metadata = \
-                AudioMetadataService.get_metadata_dict_from_file(file=self.saved_track.file)
+                AudioMetadataManager.get_metadata_dict_from_file(file=self.saved_track.file)
 
     def _merge_two_jsons(self, json1, json2):
         json1.update(json2)

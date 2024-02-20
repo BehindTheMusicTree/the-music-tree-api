@@ -2,7 +2,7 @@
 from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-import bodzify_api.service.AudioMetadataService as AudioMetadataService
+import bodzify_api.AudioMetadataManager as AudioMetadataManager
 
 
 class TestCase(ApiViewTestCase):
@@ -14,7 +14,7 @@ class TestCase(ApiViewTestCase):
         }
         response = self.post_sample_track(sample_filename="sample.wav", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        title_key = AudioMetadataService.METADATA_DICT_KEYS.TITLE
+        title_key = AudioMetadataManager.METADATA_DICT_KEYS.TITLE
         assert self.saved_track_metadata[title_key] == title
 
     def test_null(self):
@@ -23,5 +23,5 @@ class TestCase(ApiViewTestCase):
         }
         response = self.post_sample_track(sample_filename="sample.wav", data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
-        title_key = AudioMetadataService.METADATA_DICT_KEYS.TITLE
+        title_key = AudioMetadataManager.METADATA_DICT_KEYS.TITLE
         assert self.saved_track_metadata[title_key] in ["", None]

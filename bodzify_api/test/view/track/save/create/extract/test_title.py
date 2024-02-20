@@ -6,7 +6,7 @@ from bodzify_api import settings
 
 class TestCase(ApiViewTestCase):
 
-    def test_notProvidingTitleNorArtistAndOriginalFilenameTooLongThenGenerateWithAppPrefixe(self):
+    def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_with_app_prefixe(self):
         track_url = (
             "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"
