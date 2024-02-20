@@ -18,8 +18,8 @@ from bodzify_api.view.viewset.AlbumViewSet import AlbumViewSet
 from bodzify_api.view.viewset.model.criteria.GenreViewSet import GenreViewSet
 from bodzify_api.view.viewset.model.criteria.TagViewSet import TagViewSet
 from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
-from bodzify_api.view.viewset.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
-from bodzify_api.view.viewset.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
+from bodzify_api.view.viewset.model.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
+from bodzify_api.view.viewset.model.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
 from django.conf.urls.static import static
 
 router = routers.DefaultRouter()

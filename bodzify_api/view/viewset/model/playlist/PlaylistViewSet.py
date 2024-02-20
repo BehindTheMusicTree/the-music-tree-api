@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from django.http import JsonResponse
 from rest_framework import status
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet

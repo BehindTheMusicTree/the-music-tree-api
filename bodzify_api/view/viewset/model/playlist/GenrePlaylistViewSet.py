@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.playlist.criteria.genre.output.GenrePlaylistWithTracksSerializer import \
