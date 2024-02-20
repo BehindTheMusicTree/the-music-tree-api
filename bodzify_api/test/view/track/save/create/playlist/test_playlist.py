@@ -1,6 +1,9 @@
 #!/usr/bin/env python
+
 import pytest
 from rest_framework import status
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 
@@ -14,7 +17,9 @@ class TestCase(ApiViewTestCase):
         
         track_playlists = self.saved_track.playlists.all()
         assert len(track_playlists) == 2
-        assert track_playlists.filter(
-            name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
-        assert track_playlists.filter(
-            name=PLAYLIST_SPECIAL_NAMES.GENRELESS).exists()
+
+        track_simple_playlists = SimplePlaylist.objects.filter(playlist__in=track_playlists)
+        assert track_simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
+
+        track_criteria_playlists = CriteriaPlaylist.objects.filter(playlist__in=track_playlists)
+        assert track_criteria_playlists.filter(criteria=None).exists()
