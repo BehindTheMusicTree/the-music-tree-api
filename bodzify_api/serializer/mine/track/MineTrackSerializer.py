@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from rest_framework import serializers
 from bodzify_api import settings
-from bodzify_api.model.track.MineTrack import MineTrack, ATTRIBUTES_LABEL
+from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL
 
 
 class MineTrackSerializer(serializers.Serializer):

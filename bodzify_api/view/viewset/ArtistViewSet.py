@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from bodzify_api.model.Artist import Artist
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet

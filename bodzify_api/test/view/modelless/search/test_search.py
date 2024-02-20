@@ -3,8 +3,7 @@
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
-  SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
   ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL

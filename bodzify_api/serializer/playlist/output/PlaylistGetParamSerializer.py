@@ -4,7 +4,7 @@ from django.forms import ValidationError
 from rest_framework import serializers
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.CriteriaPlaylist import \
-    CriteriaPlaylist, ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
+    ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.playlist.CriteriaPlaylist import \
     TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL

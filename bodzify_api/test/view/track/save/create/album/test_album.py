@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from rest_framework import status
-from ddf import G
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 

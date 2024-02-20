@@ -52,7 +52,7 @@ class ViewTestCase(TestCase):
 
     def _login(self, user):
         self.api_client.force_authenticate(user=user)
-        access = AccessToken.for_user(user)
+        AccessToken.for_user(user)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
     def _empty_user_library(self):

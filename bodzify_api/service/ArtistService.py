@@ -1,28 +1,8 @@
 #!/usr/bin/env python
 
-from tempfile import NamedTemporaryFile
 
 from django.contrib.auth.models import User
-from django.core.files.base import File
-from django.http import QueryDict
-from django.http.request import QueryDict
-from rest_framework.serializers import Serializer
 
-import bodzify_api.AudioMetadataManager as AudioMetadataManager
-import bodzify_api.service.AlbumService as AlbumService
-import bodzify_api.settings as settings
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.track.LibraryTrack import \
-    ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
-from bodzify_api.model.track.MineTrack import \
-    ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
-    TrackPostSchemaSerializer
-from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
-    ATTRIBUTES_LABEL as TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
-    ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
-from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.service.Service import Service
 
 

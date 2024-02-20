@@ -47,7 +47,7 @@ class TYPE_PARAMETER_VALUE:
 
 def track_filter(queryset, request, *args, **kwargs):
     if TYPE_PARAMETER_VALUE.TITLE in request.query_params:
-        type = request.query_params[TYPE_PARAMETER_VALUE.TITLE]
+        request.query_params[TYPE_PARAMETER_VALUE.TITLE]
         # TODO: handle type of query
     if PARAMETER_NAME.QUERY in request.query_params:
         query = request.query_params[PARAMETER_NAME.QUERY]

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod
-from typing import Optional
 from django.contrib.auth.models import User
 from django.http import QueryDict
 from rest_framework.serializers import Serializer

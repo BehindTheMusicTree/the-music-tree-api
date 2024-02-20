@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-from yaml import serialize
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
     ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.output.TrackWithoutAlbumAndPlaylistSerializer import TrackWithoutAlbumAndPlaylistSerializer
-from bodzify_api.serializer.track.output.TrackWithoutPlaylistsAndGenreSerializer import TrackWithoutPlaylistsAndGenreSerializer
 from rest_framework import serializers
 from bodzify_api.model.playlist.Playlist import FOREIGN_MODEL_ATTRIBUTES_LABEL as \
 PLAYLIST_FOREIGN_MODEL_ATTRIBUTES_LABEL, FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR

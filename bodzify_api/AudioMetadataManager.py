@@ -5,7 +5,6 @@ import os
 from typing import Optional
 from mutagen._file import File as MutagenFile
 from mutagen.wave import WAVE
-from mutagen.id3 import Frames
 from mutagen.id3 import ID3
 from mutagen.flac import FLAC
 from mutagen.id3._frames import TIT2

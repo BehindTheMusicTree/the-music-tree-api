@@ -281,15 +281,12 @@ LOGGING = {
 }
 
 if os.getenv('ENV') == 'DEV':
-    from bodzify_api.settings_dev import *
     import bodzify_api.settings_dev as settings_dev
     MEDIA_ROOT = settings_dev.MEDIA_ROOT
 elif os.getenv('ENV') == 'TEST':
-    from bodzify_api.settings_test import *
     import bodzify_api.settings_test as settings_test
     MEDIA_ROOT = settings_test.MEDIA_ROOT
 else:
     STATIC_ROOT =  BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'
 
-from bodzify_api.settings_media import *

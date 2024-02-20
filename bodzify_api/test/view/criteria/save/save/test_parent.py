@@ -2,11 +2,8 @@
 
 from rest_framework import status
 from ddf import G
-from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
-    ATTRIBUTES_LABEL as TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
