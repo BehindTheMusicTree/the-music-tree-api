@@ -10,6 +10,7 @@ from django.http.request import QueryDict
 from django.contrib.auth.models import User
 from django.core.files.base import File
 from rest_framework.serializers import Serializer
+from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
@@ -23,9 +24,7 @@ import bodzify_api.settings as settings
 from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSaveModelSerializer
 from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
     TrackPutSchemaSerializer
-import bodzify_api.service.ArtistService as ArtistService
 import bodzify_api.service.AlbumService as AlbumService
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
 import bodzify_api.service.AudioMetadataService as AudioMetadataService
 
@@ -150,7 +149,7 @@ class TrackService(Service):
         artist_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
         if artist_name_key in dict2:
             artist_name = dict2[artist_name_key]
-            artist = ArtistService.get_artist_from_name_after_eventual_creation(
+            artist = Artist.get_artist_from_name_after_eventual_creation(
                 user=user, artist_name=artist_name)
             artist_key = TRACK_ATTRIBUTES_LABEL.ARTIST
             if artist is not None:

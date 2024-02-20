@@ -2,7 +2,7 @@
 
 from typing import Optional
 from django.contrib.auth.models import User
-import bodzify_api.service.ArtistService as ArtistService
+from bodzify_api.model.Artist import Artist
 from bodzify_api.model.Album import Album
 
 
@@ -14,7 +14,7 @@ def get_album_from_name_and_album_artists_name_list_after_eventual_creations(
     else:
         if album_artists_name_list is not None:
             if len(album_artists_name_list) > 0:
-                album_artists = [ArtistService.get_artist_from_name_after_eventual_creation(
+                album_artists = [Artist.get_artist_from_name_after_eventual_creation(
                     user=user, artist_name=artist_name) for artist_name in album_artists_name_list]
             else:
                 album_artists = []

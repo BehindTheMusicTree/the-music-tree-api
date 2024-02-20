@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from typing import Optional
 import shortuuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -24,6 +25,24 @@ class Artist(models.Model):
         constraints = [
             models.CheckConstraint(check=~models.Q(name=""), name="artist_non_empty_name")
         ]
+        
+    def __str__(self) -> str:
+        return str(self.uuid) + " " + self.name
+    
+    @staticmethod
+    def get_artist_from_name_after_eventual_creation(user: User, artist_name: str) -> Optional['Artist']:
+        if artist_name is None or artist_name == "":
+            return None
+        else:
+            try:
+                artist = Artist.objects.get(user=user, name=artist_name)
+            except Artist.DoesNotExist:
+                artist = None
+
+            if artist is not None:
+                return artist
+            else:
+                return Artist.objects.create(user=user, name=artist_name)
 
     def delete(self):
         Album.objects.filter(user=self.user, album_artists__in=[self]).delete()
@@ -43,6 +62,3 @@ class Artist(models.Model):
             track.delete_with_checking_album_potential_deletion()
 
         self.delete()
-        
-    def __str__(self) -> str:
-        return str(self.uuid) + " " + self.name
