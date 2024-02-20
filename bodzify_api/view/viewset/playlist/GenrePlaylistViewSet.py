@@ -19,7 +19,7 @@ class GenrePlaylistViewSet(MultiSerializerViewSet):
 
     def get_queryset(self):
         queryset = CriteriaPlaylist.objects.filter(
-            user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
+            playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
 
         name = self.request.query_params.get(ATTRIBUTES_LABEL.NAME)
         if name is not None:
