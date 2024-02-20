@@ -3,7 +3,7 @@
 from abc import abstractmethod
 import logging
 from django.db import IntegrityError
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 from bodzify_api.service.Service import Service
 from bodzify_api.view import utility
@@ -57,6 +57,10 @@ class AppViewSet(MultiSerializerViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(serializer.data)
+    
+    def _destroy(self, request, *args, **kwargs):
+        self.service.delete(user=request.user, instance=self.get_object())
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     
     @abstractmethod
     def _get_detailed_serializer(self, instance) -> ModelSerializer:

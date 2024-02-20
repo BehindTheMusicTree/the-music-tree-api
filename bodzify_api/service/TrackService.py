@@ -126,6 +126,9 @@ class TrackService(Service):
             library_track = self.create(user=user, post_schema_data=post_schema_data)
 
         return library_track
+    
+    def delete(self, user: User, instance):
+        instance.delete_with_checking_album_and_artist_potential_deletion()
 
     def _get_save_schema_data_from_file(self, file):
         metadata_dict = AudioMetadataService.get_metadata_dict_from_file(
