@@ -3,10 +3,10 @@
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist, \
     ATTRIBUTES_LABELS as SIMPLE_PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.output.PlaylistSerializer import PlaylistSerializer
+from bodzify_api.serializer.playlist.output.PlaylistChildWithoutTrackSerializer import PlaylistChildWithoutTrackSerializer
 
 
-class SimplePlaylistWithoutParentSerializer(PlaylistSerializer):
+class SimplePlaylistWithoutTrackSerializer(PlaylistChildWithoutTrackSerializer):
 
     class Meta:
         model = SimplePlaylist

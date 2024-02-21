@@ -6,21 +6,11 @@ from bodzify_api.model.playlist.CriteriaPlaylist import ATTRIBUTES_LABEL as CRIT
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
+from bodzify_api.serializer.playlist.output.PlaylistChildWithoutTrackSerializer import PlaylistChildWithoutTrackSerializer
 from bodzify_api.serializer.playlist.output.PlaylistSerializer import PlaylistSerializer
 
 
-class CriteriaPlaylistWithoutTracksSerializer(PlaylistSerializer):
-    parent = serializers.SerializerMethodField()
-    uuid = serializers.CharField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.UUID)
-    added_on = serializers.DateTimeField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.ADDED_ON)
-    library_tracks_count = serializers.IntegerField(
-        source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIBRARY_TRACKS + '.count')
-
-    def get_parent(self, obj) -> PlaylistSerializer:
-        if obj.parent is not None:
-            return PlaylistSerializer(obj.parent).data
-        else:
-            return None
+class CriteriaPlaylistWithoutTracksSerializer(PlaylistChildWithoutTrackSerializer):
 
     class Meta:
         model = CriteriaPlaylist
