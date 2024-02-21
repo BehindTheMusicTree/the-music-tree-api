@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 import pprint
+
 import pytest
 from rest_framework import status
+
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db
 class FlacTestCase(ApiViewTestCase):
 
-    def test_noneThenNone(self):
-        response = self.post_sample_track(sample_filename="none_then_none.flac")
+    def test_none_then_none(self):
+        response = self.post_sample_track(
+            sample_filename="none_then_none.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.album.album_artists.count() == 0
 

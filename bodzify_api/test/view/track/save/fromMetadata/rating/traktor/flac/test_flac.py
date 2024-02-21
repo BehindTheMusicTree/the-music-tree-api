@@ -13,27 +13,27 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.rating == None
 
-    def test_1Then2(self):
+    def test_1_then_2(self):
         response = self.post_sample_track("1 star.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.rating == 2
 
-    def test_2Then4(self):
+    def test_2_then_4(self):
         response = self.post_sample_track("2 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.rating == 4
 
-    def test_3Then6(self):
+    def test_3_then_6(self):
         response = self.post_sample_track("3 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.rating == 6
 
-    def test_4Then8(self):
+    def test_4_then_8(self):
         response = self.post_sample_track("4 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.rating == 8
 
-    def test_5Then10(self):
+    def test_5_then_10(self):
         response = self.post_sample_track("5 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.rating == 10
