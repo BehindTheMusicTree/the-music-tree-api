@@ -40,9 +40,9 @@ class TestCase(ApiViewTestCase):
 
     def test_new_criteria_then_not_in_old_criteria_playlist_anymore(self):
         old_genre = G(Criteria,
-            name="Metal",
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE)
+                      name="Metal",
+                      user=self.test_user,
+                      type=CRITERIA_TYPES_ID.GENRE)
         new_genre_name = "Rock"
         track = G(LibraryTrack,
                   user=self.test_user,
@@ -56,14 +56,14 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK
 
         old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).playlist
-        assert track not in old_genre_playlist.librarytrack_set.all()
+        assert track not in old_genre_playlist.library_tracks.all()
 
     def test_existing_genre_then_track_in_existing_playlist_and_all_playlist(self):
         genre_name = "Rock"
         genre = G(Criteria,
-            name=genre_name,
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE)
+                  name=genre_name,
+                  user=self.test_user,
+                  type=CRITERIA_TYPES_ID.GENRE)
         data_json = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genre_name
         }
@@ -83,12 +83,12 @@ class TestCase(ApiViewTestCase):
         assert len(track_playlists) == 2
 
         genre_playlist = CriteriaPlaylist.objects.get(criteria=genre).playlist
-        assert track in genre_playlist.librarytrack_set.all()
+        assert track in genre_playlist.library_tracks.all()
 
         all_playlist = SimplePlaylist.objects.get(
-            playlist__user=self.test_user, 
+            playlist__user=self.test_user,
             name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
-        assert track in all_playlist.librarytrack_set.all()
+        assert track in all_playlist.library_tracks.all()
 
     def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
         rock_genre_name = "Rock"
@@ -96,16 +96,16 @@ class TestCase(ApiViewTestCase):
         emo_genre_name = "Emo"
 
         rock_genre = G(Criteria,
-            name=rock_genre_name,
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE)
-        
+                       name=rock_genre_name,
+                       user=self.test_user,
+                       type=CRITERIA_TYPES_ID.GENRE)
+
         hardrock_genre = G(Criteria,
-            name=hardrock_genre_name,
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE,
-            parent=rock_genre)
-        
+                           name=hardrock_genre_name,
+                           user=self.test_user,
+                           type=CRITERIA_TYPES_ID.GENRE,
+                           parent=rock_genre)
+
         G(Criteria,
             name=emo_genre_name,
             user=self.test_user,
@@ -124,12 +124,11 @@ class TestCase(ApiViewTestCase):
 
         track_playlists = self.saved_track.playlists.all()
         assert len(track_playlists) == 4
-        
+
         track_criteria_playlists = CriteriaPlaylist.objects.filter(playlist__in=track_playlists)
         assert track_criteria_playlists.filter(criteria__name=emo_genre_name).exists()
         assert track_criteria_playlists.filter(criteria__name=hardrock_genre_name).exists()
         assert track_criteria_playlists.filter(criteria__name=rock_genre_name).exists()
-        
+
         track_simple_playlists = SimplePlaylist.objects.filter(playlist__in=track_playlists)
         assert track_simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
-

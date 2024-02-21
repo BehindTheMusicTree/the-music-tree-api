@@ -6,7 +6,7 @@ from bodzify_api.model.playlist.CriteriaPlaylist import ATTRIBUTES_LABEL as CRIT
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
-from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import PlaylistSerializer
+from bodzify_api.serializer.playlist.output.PlaylistSerializer import PlaylistSerializer
 
 
 class CriteriaPlaylistWithoutTracksSerializer(PlaylistSerializer):

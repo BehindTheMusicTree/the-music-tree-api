@@ -14,6 +14,7 @@ from django.dispatch import receiver
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 import bodzify_api.settings as settings
+from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
@@ -60,7 +61,11 @@ class LibraryTrack(models.Model):
                             validators=[FileExtensionValidator(settings.TRACK_FILE_EXTENSIONS), validate_size],
                             null=True)
     title = models.CharField(max_length=settings.TRACK_TITLE_LENGTH_MAX, default=None, null=True)
-    artist = models.ForeignKey('bodzify_api.Artist', on_delete=models.CASCADE, default=None, null=True)
+    artist = models.ForeignKey('bodzify_api.Artist',
+                               on_delete=models.CASCADE,
+                               default=None,
+                               null=True,
+                               related_name=ARTIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS)
     album = models.ForeignKey('bodzify_api.Album',
                               on_delete=models.CASCADE,
                               default=None,

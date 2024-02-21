@@ -11,6 +11,10 @@ class ATTRIBUTES_LABEL:
     UUID = 'uuid'
     USER = 'user'
     NAME = 'name'
+    ALBUMS = 'albums'
+    LIBRARY_TRACKS = 'library_tracks'
+    LIBRARY_TRACKS_COUNT = LIBRARY_TRACKS + '_count'
+    DURATION = 'duration'
 
 
 class Artist(models.Model):
@@ -48,6 +52,8 @@ class Artist(models.Model):
     def delete(self):
         from bodzify_api.model.Album import Album
         Album.objects.filter(user=self.user, album_artists__in=[self]).delete()
+
+        from bodzify_api.model.track.LibraryTrack import LibraryTrack
         LibraryTrack.objects.filter(user=self.user, artist=self).delete()
         return super(Artist, self).delete()
 

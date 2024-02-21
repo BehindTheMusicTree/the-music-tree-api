@@ -57,21 +57,21 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(
             user=self.test_user, title=track_title).exists() == False
-        
+
     def test_removal_from_the_all_playlist(self):
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="We're All To Blame",
                   duration=0)
         all_playlist = SimplePlaylist.objects.get(
-            playlist__user=self.test_user, 
+            playlist__user=self.test_user,
             name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
-        assert track in all_playlist.librarytrack_set.all()
+        assert track in all_playlist.library_tracks.all()
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert track not in all_playlist.librarytrack_set.all()
-        
-    def test_removal_from_the_genre_playlists(self):        
+        assert track not in all_playlist.library_tracks.all()
+
+    def test_removal_from_the_genre_playlists(self):
         rock_genre_name = "Rock"
         hardrock_genre_name = "Hard rock"
         emo_genre_name = "Emo"
@@ -104,16 +104,14 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   title="Love",
                   duration=0,
                   genre=emo_genre)
-        
-        assert track in emo_playlist.librarytrack_set.all()
-        assert track in hardrock_playlist.librarytrack_set.all()
-        assert track in rock_playlist.librarytrack_set.all()
-        
+
+        assert track in emo_playlist.library_tracks.all()
+        assert track in hardrock_playlist.library_tracks.all()
+        assert track in rock_playlist.library_tracks.all()
+
         response = self.delete_track(track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        
-        assert track not in emo_playlist.librarytrack_set.all()
-        assert track not in hardrock_playlist.librarytrack_set.all()
-        assert track not in rock_playlist.librarytrack_set.all()
-        
-        
+
+        assert track not in emo_playlist.library_tracks.all()
+        assert track not in hardrock_playlist.library_tracks.all()
+        assert track not in rock_playlist.library_tracks.all()

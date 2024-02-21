@@ -6,7 +6,7 @@ from rest_framework import status
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
     CriteriaPlaylistWithTracksSerializer
-from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import \
+from bodzify_api.serializer.playlist.output.PlaylistSerializer import \
     PlaylistSerializer
 from bodzify_api.service.PlaylistService import PlaylistService
 from bodzify_api.view.viewset.MultiSerializerViewSet import \
