@@ -26,4 +26,4 @@ class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializ
                   CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT,
                   PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON,
                   PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT,
-                  'library_tracks']
+                  PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS]
