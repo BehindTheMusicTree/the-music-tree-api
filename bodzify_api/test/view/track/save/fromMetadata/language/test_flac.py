@@ -16,7 +16,7 @@ class FlacTestCase(ApiViewTestCase):
 
     def test_longest(self):
         response = self.post_sample_track(
-            sample_filename="100CharLanguage.flac")
+            sample_filename="100_char_language.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_track.language == "4bTyH6zRq7Psk7Y9Pydmb4gTYs9VCVvehPANcaZHbviunfxtl5Kwj" + \
             "gJQdUyvX9WKnsv0KAtwAiWmi739Fqt2KsGZi7F3Fn9AXPI3"
