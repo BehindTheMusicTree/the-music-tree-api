@@ -6,8 +6,6 @@ import shortuuid
 from django.contrib.auth.models import User
 from django.db import models
 
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-
 
 class ATTRIBUTES_LABEL:
     UUID = 'uuid'
@@ -56,6 +54,7 @@ class Artist(models.Model):
     def delete_if_nothing_linked(self):
         from bodzify_api.model.Album import Album
         if Album.objects.filter(user=self.user, album_artists__in=[self]).count() == 0:
+            from bodzify_api.model.track.LibraryTrack import LibraryTrack
             if LibraryTrack.objects.filter(user=self.user, artist=self).count() == 0:
                 self.delete()
 
@@ -64,6 +63,7 @@ class Artist(models.Model):
         for album in list(Album.objects.filter(user=self.user, album_artists__in=[self]).all()):
             album.delete_with_tracks_and_eventually_artists()
 
+        from bodzify_api.model.track.LibraryTrack import LibraryTrack
         for track in list(LibraryTrack.objects.filter(user=self.user, artist=self).all()):
             track.delete_with_checking_album_potential_deletion()
 

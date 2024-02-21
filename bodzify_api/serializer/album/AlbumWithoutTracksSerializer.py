@@ -8,12 +8,11 @@ from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWit
 
 class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
     album_artists = ArtistWithOnlyNameSerializer(many=True)
-    track_count = serializers.IntegerField(source='librarytrack_set.count')
+    library_tracks_count = serializers.IntegerField(source=ALBUM_ATTRIBUTES_LABEL.LIBRARY_TRACKS + '.count')
     duration = serializers.SerializerMethodField()
 
     def get_duration(self, obj) -> float:
-        value = LibraryTrack.objects.filter(album=obj).aggregate(
-                duration=Sum(ALBUM_ATTRIBUTES_LABEL.DURATION))
+        value = LibraryTrack.objects.filter(album=obj).aggregate(duration=Sum(ALBUM_ATTRIBUTES_LABEL.DURATION))
         return value[ALBUM_ATTRIBUTES_LABEL.DURATION]
 
     class Meta:
@@ -23,6 +22,6 @@ class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
             ALBUM_ATTRIBUTES_LABEL.NAME,
             ALBUM_ATTRIBUTES_LABEL.YEAR,
             ALBUM_ATTRIBUTES_LABEL.ALBUM_ARTISTS,
-            ALBUM_ATTRIBUTES_LABEL.TRACK_COUNT,
+            ALBUM_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT,
             ALBUM_ATTRIBUTES_LABEL.DURATION,
         ]

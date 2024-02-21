@@ -8,7 +8,6 @@ from django.db import models
 
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 class ATTRIBUTES_LABEL:
@@ -17,7 +16,7 @@ class ATTRIBUTES_LABEL:
     YEAR = 'year'
     ALBUM_ARTISTS = 'album_artists'
     LIBRARY_TRACKS = 'library_tracks'
-    TRACK_COUNT = 'track_count'
+    LIBRARY_TRACKS_COUNT = LIBRARY_TRACKS + '_count'
     DURATION = 'duration'
 
 
@@ -46,7 +45,7 @@ class Album(models.Model):
 
     @property
     def track_count(self):
-        return self.librarytrack_set.count()
+        return self.library_tracks.count()
 
     @staticmethod
     def _get_album_from_name_and_artists_list_after_having_eventually_created_album(
@@ -89,6 +88,7 @@ class Album(models.Model):
 
     def delete_with_tracks_and_eventually_artists(self):
         artists_linked_to_album_and_track = list()
+        from bodzify_api.model.track.LibraryTrack import LibraryTrack
         for track in LibraryTrack.objects.filter(album=self):
             if track.artist_id is not None:
                 if track.artist not in artists_linked_to_album_and_track:
@@ -105,5 +105,6 @@ class Album(models.Model):
             artist.delete_if_nothing_linked()
 
     def delete_if_no_track_linked(self):
+        from bodzify_api.model.track.LibraryTrack import LibraryTrack
         if LibraryTrack.objects.filter(album=self).count() == 0:
             self.delete()

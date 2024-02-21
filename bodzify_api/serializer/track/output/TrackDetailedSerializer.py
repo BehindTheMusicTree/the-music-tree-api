@@ -9,13 +9,14 @@ from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import \
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import \
     AlbumWithoutTracksSerializer
 from bodzify_api.serializer.playlist.output.PlaylistWithoutParentSerializer import \
-    PlaylistWithoutParentSerializer
-    
+    PlaylistSerializer
+
+
 class TrackDetailedSerializer(serializers.ModelSerializer):
     genre = CriteriaDetailedSerializer()
     artist = ArtistWithOnlyNameSerializer()
     album = AlbumWithoutTracksSerializer()
-    playlists = PlaylistWithoutParentSerializer(many=True)
+    playlists = PlaylistSerializer(many=True)
 
     class Meta:
         model = LibraryTrack
