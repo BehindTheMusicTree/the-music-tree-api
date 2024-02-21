@@ -1,8 +1,15 @@
 {
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.python",
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "always",
+			"source.fixAll": "always"
+		}
+	},
 	"python.analysis.typeCheckingMode": "basic",
-	"editor.formatOnSave": true,
-	"editor.codeActionsOnSave": {
-		"source.organizeImports": "always",
-		"source.fixAll": "always"
-	}
+	"editor.rulers": [
+		120
+	],
+	"python.testing.pytestEnabled": true
 }
