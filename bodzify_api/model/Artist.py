@@ -1,15 +1,17 @@
 #!/usr/bin/env python
+
 from typing import Optional
+
 import shortuuid
-from django.db import models
 from django.contrib.auth.models import User
-from bodzify_api.model.Album import Album
+from django.db import models
+
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 class ATTRIBUTES_LABEL:
     UUID = 'uuid'
-    USER = 'user' 
+    USER = 'user'
     NAME = 'name'
 
 
@@ -17,18 +19,19 @@ class Artist(models.Model):
 
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(
-            primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
+        primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=200, default=None)
 
     class Meta:
         constraints = [
-            models.CheckConstraint(check=~models.Q(name=""), name="artist_non_empty_name")
+            models.CheckConstraint(check=~models.Q(
+                name=""), name="artist_non_empty_name")
         ]
-        
+
     def __str__(self) -> str:
         return str(self.uuid) + " " + self.name
-    
+
     @staticmethod
     def get_artist_from_name_after_eventual_creation(user: User, artist_name: str) -> Optional['Artist']:
         if artist_name is None or artist_name == "":
@@ -45,16 +48,19 @@ class Artist(models.Model):
                 return Artist.objects.create(user=user, name=artist_name)
 
     def delete(self):
+        from bodzify_api.model.Album import Album
         Album.objects.filter(user=self.user, album_artists__in=[self]).delete()
         LibraryTrack.objects.filter(user=self.user, artist=self).delete()
         return super(Artist, self).delete()
-    
+
     def delete_if_nothing_linked(self):
+        from bodzify_api.model.Album import Album
         if Album.objects.filter(user=self.user, album_artists__in=[self]).count() == 0:
             if LibraryTrack.objects.filter(user=self.user, artist=self).count() == 0:
                 self.delete()
 
     def delete_with_albums_and_tracks(self):
+        from bodzify_api.model.Album import Album
         for album in list(Album.objects.filter(user=self.user, album_artists__in=[self]).all()):
             album.delete_with_tracks_and_eventually_artists()
 
