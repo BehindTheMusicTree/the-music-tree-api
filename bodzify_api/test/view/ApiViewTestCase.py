@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 
 import logging
+
 from django.urls import reverse
 from rest_framework import status
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, \
-    Criteria
-from bodzify_api.test.view.ViewTestCase import ViewTestCase
-import bodzify_api.AudioMetadataManager as AudioMetadataManager
 
+import bodzify_api.AudioMetadataManager as AudioMetadataManager
+from bodzify_api.model.criteria.Criteria import \
+    ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.track.LibraryTrack import \
+    ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.test.view.ViewTestCase import ViewTestCase
 
 logger = logging.getLogger('bodzify_api')
+
 
 class RESPONSE_KEYS:
     COUNT = 'count'
@@ -19,6 +23,7 @@ class RESPONSE_KEYS:
     PREVIOUS = 'previous'
     RESULTS = 'results'
     OVERALL_TOTAL = 'overall_total'
+
 
 class ApiViewTestCase(ViewTestCase):
 
@@ -33,7 +38,7 @@ class ApiViewTestCase(ViewTestCase):
             path=reverse('librarytrack-extract'),
             data=data,
             format='json')
-        
+
         if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_track_attribute(response)
         return response
@@ -83,12 +88,13 @@ class ApiViewTestCase(ViewTestCase):
         self.saved_track = LibraryTrack.objects.get(uuid=track_uuid)
         if self.saved_track.file_exists:
             self.saved_track_metadata = \
-                AudioMetadataManager.get_metadata_dict_from_file(file=self.saved_track.file)
+                AudioMetadataManager.get_metadata_dict_from_file(
+                    file=self.saved_track.file)
 
     def _merge_two_jsons(self, json1, json2):
         json1.update(json2)
         return json1
-    
+
     def get_genres(self):
         return self.api_client.get(path=reverse('genre-list'))
 
@@ -118,7 +124,7 @@ class ApiViewTestCase(ViewTestCase):
         if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_genre_attribute(response)
         return response
-            
+
     def _set_saved_genre_attribute(self, response):
         uuid = response.json()[CRITERIA_ATTRIBUTES_LABEL.UUID]
         self.saved_genre = Criteria.objects.get(uuid=uuid)

@@ -1,27 +1,28 @@
 #!/usr/bin/env python
 
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
-from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
-    ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
+from rest_framework.serializers import ModelSerializer
+
+import bodzify_api.view.utility as utility
+from bodzify_api.model.track.LibraryTrack import \
+    ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
     TrackExtractSchemaSerializer
 from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
     TrackPostSchemaSerializer
+from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
+    ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
     TrackPutSchemaSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import \
     TrackDetailedSerializer
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.service.TrackService import TrackService
-from rest_framework.serializers import ModelSerializer
-import bodzify_api.view.utility as utility
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class GET_FILTER_FIELDS:
@@ -31,6 +32,7 @@ class GET_FILTER_FIELDS:
     ALBUM_ARTISTS_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING
     GENRE_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
+
 
 class TrackViewSet(AppModelViewSet):
 
@@ -65,9 +67,9 @@ class TrackViewSet(AppModelViewSet):
         if languageFilter is not None:
             queryset = queryset.filter(language__icontains=languageFilter)
         return queryset
-    
+
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
-        return TrackDetailedSerializer(instance=instance) # type: ignore
+        return TrackDetailedSerializer(instance=instance)  # type: ignore
 
     @extend_schema(parameters=[
         OpenApiParameter(name=ATTRIBUTES_LABEL.TITLE,
@@ -90,7 +92,7 @@ class TrackViewSet(AppModelViewSet):
                    description=("""
             Updates a track:\n"
             - to not update a field, it mustn't be specified (e.g the line \"artist_name\":... 
-            shouldn't exist). The only exception is the field 'album_artistsName' (more 
+            shouldn't exist). The only exception is the field 'album_artists_name' (more 
             precisions below).\n
             - to empty a field (artist or album), the field should be specified with an empty 
             string.\n
@@ -109,10 +111,10 @@ class TrackViewSet(AppModelViewSet):
             the system to identify an album is the peer (album'sname/album's artists'names). 
             Thus:\n" +
                - if it already exists an album with the same name as 'album_name' but with 
-            different 'album_artistsName', an new album is created.\n
-               - wether the field 'album_artistsName' is empty or not specified, it tells that 
+            different 'album_artists_name', an new album is created.\n
+               - wether the field 'album_artists_name' is empty or not specified, it tells that 
             the track's album has no artist.\n
-               - if 'album_name' is empty or missing and 'album_artistsName' is specified, bodzify
+               - if 'album_name' is empty or missing and 'album_artists_name' is specified, bodzify
             will reject the request.
             """)
                    )
@@ -158,7 +160,7 @@ class TrackViewSet(AppModelViewSet):
                 - "title";
                 - "artist_name";
                 - "album_name";
-                - "album_artistsname_string";
+                - "album_artists_name_string";
                 - "genre_name";
                 - "rating";
                 - "releasedOn";
@@ -180,7 +182,8 @@ class TrackViewSet(AppModelViewSet):
     def extract(self, request, *args, **kwargs):
         serializer = TrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        track = self.service.extract(user=request.user, extract_schema_data=request.data)
+        track = self.service.extract(
+            user=request.user, extract_schema_data=request.data)
         response_serializer = TrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(

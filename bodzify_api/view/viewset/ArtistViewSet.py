@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.Artist import Artist
-from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.serializer.artist.ArtistDetailedSerializer import \
+    ArtistDetailedSerializer
 from bodzify_api.service.ArtistService import ArtistService
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+
 
 class ArtistViewSet(AppModelViewSet):
 
@@ -23,6 +25,6 @@ class ArtistViewSet(AppModelViewSet):
 
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-    
+
     def destroy(self, request, *args, **kwargs):
         return self._destroy(request, *args, **kwargs)

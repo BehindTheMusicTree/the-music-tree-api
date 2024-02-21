@@ -1,13 +1,16 @@
 #!/usr/bin/env python
+
 import inspect
-import os
 import logging
-from pathlib import Path
+import os
 import shutil
+from pathlib import Path
+
+from django.contrib.auth.models import User
+from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import AccessToken
-from django.test import TestCase
-from django.contrib.auth.models import User
+
 import bodzify_api.settings as settings
 
 TEST_USERNAME = "pytest_user"
@@ -16,6 +19,7 @@ LIBRARY_SAMPLE_DIR_NAME = "library"
 INPUT_SAMPLE_DIR_NAME = "input"
 
 logger = logging.getLogger('bodzify_api')
+
 
 class ViewTestCase(TestCase):
 
@@ -33,12 +37,12 @@ class ViewTestCase(TestCase):
 
     def _set_up_test_user_directories(self):
         test_user_library_abs_path = settings.LIBRARIES_PATH / \
-                                  (settings.USER_LIBRARY_DIR_NAME_PREFIXE + \
-                                  str(self.test_user.pk))
+            Path(settings.USER_LIBRARY_DIR_NAME_PREFIXE + str(self.test_user.pk))
         if not test_user_library_abs_path.exists():
             os.makedirs(test_user_library_abs_path)
 
-        test_dir_abs_path = Path(os.path.dirname(inspect.getfile(self.__class__)))
+        test_dir_abs_path = Path(os.path.dirname(
+            inspect.getfile(self.__class__)))
         sample_dir_abs_path = test_dir_abs_path / SAMPLE_DIR_NAME
         self.library_sample_dir_abs_path = sample_dir_abs_path / LIBRARY_SAMPLE_DIR_NAME
         self.input_sample_dir_abs_path = sample_dir_abs_path / INPUT_SAMPLE_DIR_NAME
@@ -70,7 +74,7 @@ class ViewTestCase(TestCase):
         filenames = os.listdir(self.library_sample_dir_abs_path)
         for filename in filenames:
             shutil.copy(self.library_sample_dir_abs_path / filename,
-                self.test_user_library_abs_path)
+                        self.test_user_library_abs_path)
 
     def does_track_filename_exist_in_test_user_library(self, filename: str):
         return os.path.isfile(self.test_user_library_abs_path / filename)

@@ -8,10 +8,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import os
 import datetime
-import dotenv
+import os
 from pathlib import Path
+
+import dotenv
 
 dotenv.load_dotenv()
 
@@ -51,8 +52,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 SECURE_SSL_REDIRECT = False
 
-# Before calling a view function, Django starts a transaction. 
-# If the response is produced without problems, Django commits the transaction. 
+# Before calling a view function, Django starts a transaction.
+# If the response is produced without problems, Django commits the transaction.
 # If the view produces an exception, Django rolls back the transaction.
 ATOMIC_REQUESTS = True
 
@@ -194,49 +195,49 @@ LOGGING = {
     'handlers': {
         'general': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'general.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'info': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'info.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'requests_with_trace': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'requests.debug.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'requests': {
             'level': 'INFO',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'requests.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'django': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'django.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'bodzify_api': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'bodzify-api.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
@@ -267,18 +268,23 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'django' : { 
-                'handlers': ['django'], 
-                'level': 'INFO', 
-                'propagate': True
+        'django': {
+            'handlers': ['django'],
+            'level': 'INFO',
+            'propagate': True
         },
-        'bodzify_api' : { 
-                'handlers': ['bodzify_api', 'console'], 
-                'level': 'DEBUG', 
-                'propagate': True
+        'bodzify_api': {
+            'handlers': ['bodzify_api', 'console'],
+            'level': 'DEBUG',
+            'propagate': True
         },
     },
 }
+
+ALLOWED_HOSTS = []
+STATICFILES_DIRS = []
+STATIC_ROOT = ''
+MEDIA_ROOT = ''
 
 if os.getenv('ENV') == 'DEV':
     import bodzify_api.settings_dev as settings_dev
@@ -287,6 +293,9 @@ elif os.getenv('ENV') == 'TEST':
     import bodzify_api.settings_test as settings_test
     MEDIA_ROOT = settings_test.MEDIA_ROOT
 else:
-    STATIC_ROOT =  BASE_DIR / 'staticfiles'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'
 
+MEDIA_TEMP = MEDIA_ROOT / 'temp'
+LIBRARIES_DIR_NAME = 'libraries'
+LIBRARIES_PATH = MEDIA_ROOT / LIBRARIES_DIR_NAME

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from bodzify_api.service.Service import Service
 
 
-class TrackService(Service):
+class ArtistService(Service):
 
     # def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
     #     return TrackPutSchemaSerializer(instance=old_instance, data=put_schema_data) # type: ignore
