@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import pytest
 from rest_framework import status
+
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
@@ -8,5 +9,5 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class FormatTextCase(ApiViewTestCase):
 
     def test_error_when_bad_format(self):
-        response = self.post_sample_track("format_error.wav")
+        response = self.post_sample_track("bad_format.wav")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
