@@ -118,7 +118,7 @@ class ApiViewTestCase(ViewTestCase):
 
     def post_simple_playlist(self, data_json):
         response = self.api_client.post(
-            path=reverse('genre-list'),
+            path=reverse('genre-playlist-list'),
             data=data_json,
             format='json')
         if response.status_code == status.HTTP_201_CREATED:
