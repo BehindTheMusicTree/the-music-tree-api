@@ -1,13 +1,21 @@
 #!/usr/bin/env python
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework.serializers import ModelSerializer
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
     CriteriaPlaylistWithTracksSerializer
-from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
+from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+
+
+class GET_FILTER_FIELDS:
+    NAME = ATTRIBUTES_LABEL.NAME
+    PARENT = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
 
 
 class GenrePlaylistViewSet(AppModelViewSet):
@@ -18,20 +26,35 @@ class GenrePlaylistViewSet(AppModelViewSet):
         'retrieve':  CriteriaPlaylistWithTracksSerializer,
     }
 
+    def __init__(self, **kwargs):
+        super().__init__(None, **kwargs)
+
     def get_queryset(self):
         queryset = CriteriaPlaylist.objects.filter(playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
 
-        name = self.request.query_params.get(ATTRIBUTES_LABEL.NAME)
+        name = self.request.query_params.get(GET_FILTER_FIELDS.NAME)
         if name is not None:
             queryset = queryset.filter(name__icontains=name)
 
-        parentUuidParameterValue = self.request.query_params.get(
-            CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT)
-        if parentUuidParameterValue is not None:
-            if parentUuidParameterValue == "":
-                parentUuidFilter = None
+        parent_uuid_parameter_value = self.request.query_params.get(GET_FILTER_FIELDS.PARENT)
+        if parent_uuid_parameter_value is not None:
+            if parent_uuid_parameter_value == "":
+                parent_uuid_filter = None
             else:
-                parentUuidFilter = parentUuidParameterValue
-            queryset = queryset.filter(criteria__parent__uuid=parentUuidFilter)
+                parent_uuid_filter = parent_uuid_parameter_value
+            queryset = queryset.filter(criteria__parent__uuid=parent_uuid_filter)
 
         return queryset
+
+    def _get_detailed_serializer(self, instance) -> ModelSerializer:
+        return CriteriaPlaylistWithTracksSerializer(instance=instance)  # type: ignore
+
+    @extend_schema(parameters=[
+        OpenApiParameter(name=GET_FILTER_FIELDS.NAME,
+                         type=OpenApiTypes.STR,
+                         location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=GET_FILTER_FIELDS.PARENT,
+                         type=OpenApiTypes.STR,
+                         location=OpenApiParameter.QUERY)])
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)

@@ -14,7 +14,7 @@ from bodzify_api.serializer.playlist.output.PlaylistGetParamSerializer import \
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTrackSerializer import \
     CriteriaPlaylistWithTracksSerializer
 from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
-from bodzify_api.service.PlaylistService import PlaylistService
+from bodzify_api.service.playlist.PlaylistService import PlaylistService
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
@@ -23,7 +23,7 @@ from bodzify_api.model.playlist.CriteriaPlaylist import \
 
 
 class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
-    
+
     pagination_class = DefaultMultipleModelLimitOffsetPagination
     serializers = {
         'default': CriteriaPlaylistWithTracksSerializer,
@@ -73,7 +73,7 @@ class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
     def create(self, request, *args, **kwargs):
         simple_playlist = PlaylistService().create_simple_playlist(
             self.request.user, self.request.data)
-        
+
         response_serializer = CriteriaPlaylistWithTracksSerializer(simple_playlist)
         headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(

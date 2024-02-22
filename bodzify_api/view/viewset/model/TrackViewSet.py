@@ -35,7 +35,6 @@ class GET_FILTER_FIELDS:
 
 
 class TrackViewSet(AppModelViewSet):
-
     queryset = LibraryTrack.objects.all()
     serializers = {
         'default': TrackDetailedSerializer,
@@ -58,8 +57,7 @@ class TrackViewSet(AppModelViewSet):
         if titleFilter is not None:
             queryset = queryset.filter(title__icontains=titleFilter)
         if artist_nameFilter is not None:
-            queryset = queryset.filter(
-                artist__name__icontains=artist_nameFilter)
+            queryset = queryset.filter(artist__name__icontains=artist_nameFilter)
         if album_nameFilter is not None:
             queryset = queryset.filter(album__name__icontains=album_nameFilter)
         if genre_nameFilter is not None:
@@ -72,16 +70,16 @@ class TrackViewSet(AppModelViewSet):
         return TrackDetailedSerializer(instance=instance)  # type: ignore
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=ATTRIBUTES_LABEL.TITLE,
+        OpenApiParameter(name=GET_FILTER_FIELDS.TITLE,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=ATTRIBUTES_LABEL.ARTIST,
+        OpenApiParameter(name=GET_FILTER_FIELDS.ARTIST_NAME,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING,
+        OpenApiParameter(name=GET_FILTER_FIELDS.ALBUM_ARTISTS_NAME,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
+        OpenApiParameter(name=GET_FILTER_FIELDS.GENRE_NAME,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):

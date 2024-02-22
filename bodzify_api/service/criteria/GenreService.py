@@ -5,6 +5,6 @@ from bodzify_api.service.criteria.CriteriaService import CriteriaService
 
 
 class GenreService(CriteriaService):
-        
-    def get_criteria_type_id(self):
-        return CRITERIA_TYPES_ID.GENRE
+
+    def __init__(self) -> None:
+        super().__init__(CRITERIA_TYPES_ID.GENRE)

@@ -8,7 +8,7 @@ from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksS
     CriteriaPlaylistWithTracksSerializer
 from bodzify_api.serializer.playlist.output.PlaylistSerializer import \
     PlaylistSerializer
-from bodzify_api.service.PlaylistService import PlaylistService
+from bodzify_api.service.playlist.PlaylistService import PlaylistService
 from bodzify_api.view.viewset.MultiSerializerViewSet import \
     MultiSerializerViewSet
 
