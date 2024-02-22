@@ -7,9 +7,10 @@ from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_L
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
     CriteriaPlaylistWithTracksSerializer
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
-class CriteriaPlaylistViewSet(MultiSerializerViewSet):
+class GenrePlaylistViewSet(AppModelViewSet):
     queryset = CriteriaPlaylist.objects.filter(type_id=CRITERIA_TYPES_ID.GENRE)
     serializers = {
         'default': CriteriaPlaylistWithTracksSerializer,
@@ -18,8 +19,7 @@ class CriteriaPlaylistViewSet(MultiSerializerViewSet):
     }
 
     def get_queryset(self):
-        queryset = CriteriaPlaylist.objects.filter(
-            playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
+        queryset = CriteriaPlaylist.objects.filter(playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
 
         name = self.request.query_params.get(ATTRIBUTES_LABEL.NAME)
         if name is not None:
