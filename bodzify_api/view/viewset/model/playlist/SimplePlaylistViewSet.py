@@ -6,14 +6,12 @@ from rest_framework import status
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
     CriteriaPlaylistWithTracksSerializer
-from bodzify_api.serializer.playlist.output.PlaylistSerializer import \
-    PlaylistSerializer
+from bodzify_api.serializer.playlist.output.PlaylistSerializer import PlaylistSerializer
 from bodzify_api.service.playlist.PlaylistService import PlaylistService
-from bodzify_api.view.viewset.MultiSerializerViewSet import \
-    MultiSerializerViewSet
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
-class SimplePlaylistViewSet(MultiSerializerViewSet):
+class SimplePlaylistViewSet(AppModelViewSet):
     queryset = SimplePlaylist.objects.all()
     serializers = {
         "default": PlaylistSerializer,

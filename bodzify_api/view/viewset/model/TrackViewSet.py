@@ -8,19 +8,14 @@ from rest_framework.decorators import action
 from rest_framework.serializers import ModelSerializer
 
 import bodzify_api.view.utility as utility
-from bodzify_api.model.track.LibraryTrack import \
-    ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import \
-    TrackExtractSchemaSerializer
-from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
-    TrackPostSchemaSerializer
+from bodzify_api.serializer.track.input.schema.TrackExtractSchemaSerializer import TrackExtractSchemaSerializer
+from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import TrackPostSchemaSerializer
 from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
     ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
-    TrackPutSchemaSerializer
-from bodzify_api.serializer.track.output.TrackDetailedSerializer import \
-    TrackDetailedSerializer
+from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import TrackPutSchemaSerializer
+from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
