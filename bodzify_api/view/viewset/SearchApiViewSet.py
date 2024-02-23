@@ -14,12 +14,12 @@ from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
-    ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
+    LIB_TRACK_ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
     CriteriaPlaylistWithoutTracksSerializer
-from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
+from bodzify_api.serializer.track.output.libTrackDetailedSerializer import TrackDetailedSerializer
 from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger('bodzify_api')
@@ -58,7 +58,7 @@ def track_filter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                 title__icontains=query
-            ).order_by(TRACK_ATTRIBUTES_LABEL.TITLE)
+            ).order_by(LIB_TRACK_ATTRIBUTES_LABEL.TITLE)
     return queryset.filter(user=request.user.id)
 
 
