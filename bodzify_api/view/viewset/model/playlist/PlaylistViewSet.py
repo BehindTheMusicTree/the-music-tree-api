@@ -13,7 +13,7 @@ from bodzify_api.serializer.playlist.output.PlaylistGetParamSerializer import \
     ATTRIBUTES_LABEL as PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTrackSerializer import \
     CriteriaPlaylistWithTracksSerializer
-from bodzify_api.serializer.track.output.TrackDetailedSerializer import TrackDetailedSerializer
+from bodzify_api.serializer.track.output.libTrackDetailedSerializer import TrackDetailedSerializer
 from bodzify_api.service.playlist.PlaylistService import PlaylistService
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
