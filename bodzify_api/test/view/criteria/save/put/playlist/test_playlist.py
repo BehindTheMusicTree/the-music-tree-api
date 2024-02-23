@@ -62,7 +62,7 @@ class TestCase(ApiViewTestCase):
                   genre=punk_genre,
                   title="Rock song",
                   duration=100)
-        self.post_sample_track(data_json={})
+        self.post_sample_lib_track(data_json={})
 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: ''
@@ -86,7 +86,7 @@ class TestCase(ApiViewTestCase):
                   genre=punk_genre,
                   title="Rock song",
                   duration=100)
-        self.post_sample_track(data_json={})
+        self.post_sample_lib_track(data_json={})
 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid

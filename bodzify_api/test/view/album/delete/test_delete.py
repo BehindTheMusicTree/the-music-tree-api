@@ -43,9 +43,9 @@ class TestCase(AlbumViewTestCase):
             title="Starlight",
             album=black_holes_album,
             duration=0)
-        assert self.does_track_filename_exist_in_test_user_library(
+        assert self._does_track_filename_exist_in_test_user_lib(
             assassin_track_filename) == True
-        assert self.does_track_filename_exist_in_test_user_library(
+        assert self._does_track_filename_exist_in_test_user_lib(
             starlight_track_filename) == True
 
         response = self.delete(album_uuid=black_holes_album.uuid)
@@ -57,9 +57,9 @@ class TestCase(AlbumViewTestCase):
             user=self.test_user, title=assassin_track.title).exists() == False
         assert LibraryTrack.objects.filter(
             user=self.test_user, title=starlightTrack.title).exists() == False
-        assert self.does_track_filename_exist_in_test_user_library(
+        assert self._does_track_filename_exist_in_test_user_lib(
             assassin_track_filename) == False
-        assert self.does_track_filename_exist_in_test_user_library(
+        assert self._does_track_filename_exist_in_test_user_lib(
             starlight_track_filename) == False
 
     """

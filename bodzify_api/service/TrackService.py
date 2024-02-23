@@ -17,17 +17,17 @@ import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import \
-    ATTRIBUTES_LABEL as TRACK_ATTRIBUTES_LABEL
+    LIB_TRACK_ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.MineTrack import \
     ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.input.schema.TrackPostSchemaSerializer import \
-    TrackPostSchemaSerializer
-from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
-    ATTRIBUTES_LABEL as TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.input.schema.TrackSaveSchemaSerializer import \
-    ATTRIBUTES_LABEL as TRACK_SCHEMA_ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.input.schema.TrackUpdateSchemaSerializer import \
-    TrackPutSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaPostSerializer import \
+    LibTrackSchemaPostSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import \
+    FIELDS as SCHEMA_SAVE_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import \
+    FIELDS as TRACK_SCHEMA_ATTRIBUTES_LABEL
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaPutSerializer import \
+    LibTrackPutSchemaSerializer
 from bodzify_api.serializer.track.input.TrackSaveModelSerializer import \
     TrackSaveModelSerializer
 from bodzify_api.service.criteria.GenreService import GenreService
@@ -37,27 +37,27 @@ from bodzify_api.service.Service import Service
 class TrackService(Service):
 
     def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
-        return TrackPostSchemaSerializer(data=post_schema_data)  # type: ignore
+        return LibTrackSchemaPostSerializer(data=post_schema_data)  # type: ignore
 
     def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
         # type: ignore
-        return TrackPutSchemaSerializer(instance=old_instance, data=put_schema_data)
+        return LibTrackPutSchemaSerializer(instance=old_instance, data=put_schema_data)
 
     def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
         # type: ignore
         return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
 
     def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
-        file = post_schema_data[TRACK_ATTRIBUTES_LABEL.FILE]
+        file = post_schema_data[LIB_TRACK_ATTRIBUTES_LABEL.FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(
             file=file)
         save_schema_data = self._get_dict1_overriden_with_dict2_when_key_is_provided(
             dict1=save_schema_data_from_file, dict2=post_schema_data)
 
-        if TRACK_ATTRIBUTES_LABEL.TITLE not in save_schema_data:
+        if LIB_TRACK_ATTRIBUTES_LABEL.TITLE not in save_schema_data:
             filename = os.path.basename(file.name).split('.')[0]
             if TRACK_SCHEMA_ATTRIBUTES_LABEL.FORCE_TITLE_GENERATION in post_schema_data:
-                force_title_generation = post_schema_data[TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.FORCE_TITLE_GENERATION]
+                force_title_generation = post_schema_data[SCHEMA_SAVE_FIELDS.FORCE_TITLE_GENERATION]
             else:
                 force_title_generation = False
 
@@ -67,21 +67,21 @@ class TrackService(Service):
                                            len(settings.TRACK_GENERATED_TITLE_PREFIXE))
             else:
                 title = filename
-            save_schema_data[TRACK_ATTRIBUTES_LABEL.TITLE] = title
+            save_schema_data[LIB_TRACK_ATTRIBUTES_LABEL.TITLE] = title
 
         return save_schema_data
 
     def _get_save_model_data_from_save_schema_data(self, user: User, save_schema_data: QueryDict) -> QueryDict:
         save_model_data = QueryDict(mutable=True)
-        save_model_data[TRACK_ATTRIBUTES_LABEL.USER] = user.id
+        save_model_data[LIB_TRACK_ATTRIBUTES_LABEL.USER] = user.id
 
         save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=TRACK_ATTRIBUTES_LABEL.FILE,
+            key=LIB_TRACK_ATTRIBUTES_LABEL.FILE,
             querydict1=save_model_data,
             querydict2=save_schema_data)
 
         save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=TRACK_ATTRIBUTES_LABEL.TITLE,
+            key=LIB_TRACK_ATTRIBUTES_LABEL.TITLE,
             querydict1=save_model_data,
             querydict2=save_schema_data)
 
@@ -95,17 +95,17 @@ class TrackService(Service):
             user=user, dict1=save_model_data, dict2=save_schema_data)
 
         save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=TRACK_ATTRIBUTES_LABEL.DURATION,
+            key=LIB_TRACK_ATTRIBUTES_LABEL.DURATION,
             querydict1=save_model_data,
             querydict2=save_schema_data)
 
         save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=TRACK_ATTRIBUTES_LABEL.RATING,
+            key=LIB_TRACK_ATTRIBUTES_LABEL.RATING,
             querydict1=save_model_data,
             querydict2=save_schema_data)
 
         save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=TRACK_ATTRIBUTES_LABEL.LANGUAGE,
+            key=LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE,
             querydict1=save_model_data,
             querydict2=save_schema_data)
 
@@ -127,10 +127,10 @@ class TrackService(Service):
 
             track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
                 mine_track_url_label, extract_schema_data)
-            post_schema_data[TRACK_ATTRIBUTES_LABEL.FILE] = File(
+            post_schema_data[LIB_TRACK_ATTRIBUTES_LABEL.FILE] = File(
                 track_temp_file, name=track_filename)
             force_title_generation_str = str(is_filename_randomly_generated)
-            post_schema_data[TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.FORCE_TITLE_GENERATION] = force_title_generation_str
+            post_schema_data[SCHEMA_SAVE_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
             library_track = self.create(
                 user=user, post_schema_data=post_schema_data)
 
@@ -144,7 +144,7 @@ class TrackService(Service):
             file=file, normalized_rating_max_value=settings.TRACK_RATING_VALUE_MAX)
 
         save_data = self._remove_none_or_empty_key_from_dict(metadata_dict)
-        save_data[TRACK_ATTRIBUTES_LABEL.FILE] = file
+        save_data[LIB_TRACK_ATTRIBUTES_LABEL.FILE] = file
 
         return save_data
 
@@ -161,7 +161,7 @@ class TrackService(Service):
             artist_name = dict2[artist_name_key]
             artist = Artist.get_artist_from_name_after_eventual_creation(
                 user=user, artist_name=artist_name)
-            artist_key = TRACK_ATTRIBUTES_LABEL.ARTIST
+            artist_key = LIB_TRACK_ATTRIBUTES_LABEL.ARTIST
             if artist is not None:
                 dict1[artist_key] = artist.uuid
             else:
@@ -188,7 +188,7 @@ class TrackService(Service):
             album = Album.get_album_from_name_and_album_artists_name_list_after_eventual_creations(
                 user=user, album_name=album_name, album_artists_name_list=album_artists_name_list)
 
-            album_key = TRACK_ATTRIBUTES_LABEL.ALBUM
+            album_key = LIB_TRACK_ATTRIBUTES_LABEL.ALBUM
             if album is not None:
                 dict1[album_key] = album.uuid
             else:
@@ -207,7 +207,7 @@ class TrackService(Service):
                 genreService = GenreService()
                 genre_uuid = genreService.get_criteria_from_name_after_having_eventually_created_it(
                     user=user, criteria_name=genre_name).uuid
-            dict1[TRACK_ATTRIBUTES_LABEL.GENRE] = genre_uuid
+            dict1[LIB_TRACK_ATTRIBUTES_LABEL.GENRE] = genre_uuid
         return dict1
 
     def _get_artists_name_list_from_string(self, names_string: str) -> list:
@@ -222,14 +222,14 @@ class TrackService(Service):
 
     def _get_dict1_overriden_with_dict2_when_key_is_provided(self, dict1: QueryDict, dict2: QueryDict) -> QueryDict:
         overriden_dict1 = dict1.copy()
-        for key in [TRACK_ATTRIBUTES_LABEL.FILE,
-                    TRACK_ATTRIBUTES_LABEL.TITLE,
+        for key in [LIB_TRACK_ATTRIBUTES_LABEL.FILE,
+                    LIB_TRACK_ATTRIBUTES_LABEL.TITLE,
                     TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME,
                     TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME,
                     TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING,
                     TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
-                    TRACK_ATTRIBUTES_LABEL.RATING,
-                    TRACK_ATTRIBUTES_LABEL.LANGUAGE]:
+                    LIB_TRACK_ATTRIBUTES_LABEL.RATING,
+                    LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE]:
             overriden_dict1 = self.get_querydict1_updated_with_querydict2_key_if_set(
                 key=key,
                 querydict1=overriden_dict1,
@@ -244,7 +244,7 @@ class TrackService(Service):
     def _get_track_filename_with_extension(self, mine_track_url: str, requestData: QueryDict):
         file_extension = self.get_file_extension_from_url(mine_track_url)
         is_filename_randomly_generated = False
-        title_key = TRACK_ATTRIBUTES_LABEL.TITLE
+        title_key = LIB_TRACK_ATTRIBUTES_LABEL.TITLE
         if title_key in requestData:
             title = requestData[title_key]
             artist_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME

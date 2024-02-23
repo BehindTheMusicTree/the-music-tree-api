@@ -18,18 +18,18 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
 
     def test_file_deletion(self):
         filename = "sample.mp3"
-        file_path_relative_to_media_dir = self.test_user_library_path_relative_to_media_dir / filename
+        file_path_relative_to_media_dir = self.test_user_lib_path_relative_to_media_dir / filename
         track = G(LibraryTrack,
                   user=self.test_user,
                   file=str(file_path_relative_to_media_dir),
                   title="We're All To Blame",
                   duration=0)
-        assert self.does_track_filename_exist_in_test_user_library(filename) == True
+        assert self._does_track_filename_exist_in_test_user_lib(filename) == True
         assert track.file_exists == True
-        response = self.delete_track(track_uuid=track.uuid)
+        response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(uuid=track.uuid).exists() == False
-        assert self.does_track_filename_exist_in_test_user_library(filename) == False
+        assert self._does_track_filename_exist_in_test_user_lib(filename) == False
 
     def test_linked_album_and_artist_deletion_as_nothing_linked_to_it_anymore(self):
         album_name = "Chuck"
@@ -42,7 +42,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   artist=artist,
                   album=album,
                   duration=0)
-        response = self.delete_track(track_uuid=track.uuid)
+        response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(user=self.test_user, name=album_name).exists() == False
         assert Artist.objects.filter(user=self.test_user, name=artist_name).exists() == False
@@ -53,7 +53,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
                   user=self.test_user,
                   title=track_title,
                   duration=0)
-        response = self.delete_track(track_uuid=track.uuid)
+        response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(
             user=self.test_user, title=track_title).exists() == False
@@ -67,7 +67,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
             playlist__user=self.test_user,
             name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
         assert track in all_playlist.library_tracks.all()
-        response = self.delete_track(track_uuid=track.uuid)
+        response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert track not in all_playlist.library_tracks.all()
 
@@ -109,7 +109,7 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         assert track in hardrock_playlist.library_tracks.all()
         assert track in rock_playlist.library_tracks.all()
 
-        response = self.delete_track(track_uuid=track.uuid)
+        response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
         assert track not in emo_playlist.library_tracks.all()

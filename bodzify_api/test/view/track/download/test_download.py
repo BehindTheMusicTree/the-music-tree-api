@@ -12,15 +12,15 @@ class TestCase(ApiViewTestCase):
                   user=self.test_user,
                   title="Kobra",
                   duration=0)
-        response = self.download_track(track_uuid=track.uuid)
+        response = self.download_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_410_GONE
 
     def test_ok(self):
-        file_path_relative_to_media_dir = self.test_user_library_path_relative_to_media_dir / "sample.mp3"
+        file_path_relative_to_media_dir = self.test_user_lib_path_relative_to_media_dir / "sample.mp3"
         track = G(LibraryTrack,
                   user=self.test_user,
                   file=str(file_path_relative_to_media_dir),
                   title="We're All To Blame",
                   duration=0)
-        response = self.download_track(track_uuid=track.uuid)
+        response = self.download_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_200_OK
