@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
 
 
@@ -9,12 +9,12 @@ class TrackSaveModelSerializer(InputModelSerializer):
 
     class Meta:
         model = LibraryTrack
-        fields = [ATTRIBUTES_LABEL.USER,
-                  ATTRIBUTES_LABEL.FILE,
-                  ATTRIBUTES_LABEL.TITLE,
-                  ATTRIBUTES_LABEL.ARTIST,
-                  ATTRIBUTES_LABEL.ALBUM,
-                  ATTRIBUTES_LABEL.GENRE,
-                  ATTRIBUTES_LABEL.DURATION,
-                  ATTRIBUTES_LABEL.RATING,
-                  ATTRIBUTES_LABEL.LANGUAGE]
+        fields = [LIB_TRACK_ATTRIBUTES_LABEL.USER,
+                  LIB_TRACK_ATTRIBUTES_LABEL.FILE,
+                  LIB_TRACK_ATTRIBUTES_LABEL.TITLE,
+                  LIB_TRACK_ATTRIBUTES_LABEL.ARTIST,
+                  LIB_TRACK_ATTRIBUTES_LABEL.ALBUM,
+                  LIB_TRACK_ATTRIBUTES_LABEL.GENRE,
+                  LIB_TRACK_ATTRIBUTES_LABEL.DURATION,
+                  LIB_TRACK_ATTRIBUTES_LABEL.RATING,
+                  LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE]
