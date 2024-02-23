@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+
 from rest_framework import serializers
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 
 
-class TrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer):
+class LibTrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer):
     genre = CriteriaDetailedSerializer()
     artist = ArtistWithOnlyNameSerializer()
 
@@ -15,7 +16,7 @@ class TrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer):
             'uuid',
             'relativeUrl',
             'filename',
-            'fileExtension',
+            'file_extension',
             'fileExists',
             'title',
             'artist',

@@ -6,12 +6,12 @@ from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist, \
     ATTRIBUTES_LABELS as SIMPLE_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithoutTrackSerializer import \
     SimplePlaylistWithoutTrackSerializer
-from bodzify_api.serializer.track.output.TrackWithoutAlbumAndPlaylistSerializer import \
-    TrackWithoutAlbumAndPlaylistSerializer
+from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer import \
+    LibTrackWithoutAlbumAndPlaylistSerializer
 
 
 class SimplePlaylistWithTracksSerializer(SimplePlaylistWithoutTrackSerializer):
-    library_tracks = TrackWithoutAlbumAndPlaylistSerializer(
+    library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(
         source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIBRARY_TRACKS, many=True)
 
     class Meta:

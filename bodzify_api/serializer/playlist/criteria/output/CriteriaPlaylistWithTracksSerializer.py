@@ -11,12 +11,12 @@ from bodzify_api.model.playlist.Playlist import \
     FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
     CriteriaPlaylistWithoutTracksSerializer
-from bodzify_api.serializer.track.output.TrackWithoutAlbumAndPlaylistSerializer import \
-    TrackWithoutAlbumAndPlaylistSerializer
+from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer import \
+    LibTrackWithoutAlbumAndPlaylistSerializer
 
 
 class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializer):
-    library_tracks = TrackWithoutAlbumAndPlaylistSerializer(
+    library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(
         source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIBRARY_TRACKS, many=True)
 
     class Meta:
