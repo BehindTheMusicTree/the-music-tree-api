@@ -7,10 +7,10 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db
-class FlacTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_none_then_none(self):
-        response = self.post_sample_library_track(sample_filename="none_then_none.flac")
+        response = self.post_sample_library_track(sample_filename="nonee.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_library_track.album == None
 
