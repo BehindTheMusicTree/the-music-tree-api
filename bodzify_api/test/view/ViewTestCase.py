@@ -19,13 +19,19 @@ LIB_SAMPLE_DIR_NAME = "library"
 INPUT_SAMPLE_DIR_NAME = "input"
 GENERIC_FILE_SAMPLE_DIR_NAME = "generic_file_sample"
 
+
 logger = logging.getLogger('bodzify_api')
 
 
 class ViewTestCase(TestCase):
 
+    class LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION:
+        ONE_STAR = "1 star"
+        TAGS_NONE = "tags none"
+        TAGS_MAX_LENGTH_WITH_LETTER_A = "tags max length with letter a"
+
     fixtures = ['app_initial_data', 'pytest_user_initial_data']
-    test_user_library_path_relative_to_media_dir = Path()
+    test_user_lib_path_relative_to_media_dir = Path()
 
     def setUp(self) -> None:
         self.api_client = APIClient()
@@ -49,9 +55,9 @@ class ViewTestCase(TestCase):
         self.lib_sample_dir_abs_path = specific_test_sample_dir_abs_path / LIB_SAMPLE_DIR_NAME
         self.specific_sample_dir_abs_path = specific_test_sample_dir_abs_path / INPUT_SAMPLE_DIR_NAME
 
-        self.test_user_library_path_relative_to_media_dir = \
-            Path(settings.LIBRARIES_DIR_NAME) / (settings.USER_LIB_DIR_NAME_PREFIXE + str(self.test_user.pk))
-        self.test_user_library_abs_path = settings.MEDIA_ROOT / self.test_user_library_path_relative_to_media_dir
+        self.test_user_lib_path_relative_to_media_dir = \
+            Path(settings.LIB_DIR_NAME) / (settings.USER_LIB_DIR_NAME_PREFIXE + str(self.test_user.pk))
+        self.test_user_lib_abs_path = settings.MEDIA_ROOT / self.test_user_lib_path_relative_to_media_dir
         self.__empty_user_library()
 
     def __login(self, user):
@@ -60,8 +66,8 @@ class ViewTestCase(TestCase):
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
     def __empty_user_library(self):
-        for filename in os.listdir(self.test_user_library_abs_path):
-            filePath = os.path.join(self.test_user_library_abs_path, filename)
+        for filename in os.listdir(self.test_user_lib_abs_path):
+            filePath = os.path.join(self.test_user_lib_abs_path, filename)
             try:
                 if os.path.isfile(filePath) or os.path.islink(filePath):
                     os.unlink(filePath)
@@ -74,7 +80,7 @@ class ViewTestCase(TestCase):
         filenames = os.listdir(self.lib_sample_dir_abs_path)
         for filename in filenames:
             shutil.copy(self.lib_sample_dir_abs_path / filename,
-                        self.test_user_library_abs_path)
+                        self.test_user_lib_abs_path)
 
     def _does_track_filename_exist_in_test_user_lib(self, filename: str):
-        return os.path.isfile(self.test_user_library_abs_path / filename)
+        return os.path.isfile(self.test_user_lib_abs_path / filename)
