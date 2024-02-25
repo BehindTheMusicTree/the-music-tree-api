@@ -20,16 +20,10 @@ from bodzify_api.model.track.LibraryTrack import \
     LIB_TRACK_ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.MineTrack import \
     ATTRIBUTES_LABEL as MINE_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaPostSerializer import \
-    LibTrackSchemaPostSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import \
-    FIELDS as SCHEMA_SAVE_FIELDS
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import \
-    FIELDS as TRACK_SCHEMA_ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaPutSerializer import \
-    LibTrackPutSchemaSerializer
-from bodzify_api.serializer.track.input.TrackSaveModelSerializer import \
-    TrackSaveModelSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaPostSerializer import LibTrackSchemaPostSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import FIELDS as SCHEMA_SAVE_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaPutSerializer import LibTrackPutSchemaSerializer
+from bodzify_api.serializer.track.input.TrackSaveModelSerializer import TrackSaveModelSerializer
 from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.service.Service import Service
 
@@ -40,12 +34,10 @@ class TrackService(Service):
         return LibTrackSchemaPostSerializer(data=post_schema_data)  # type: ignore
 
     def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
-        # type: ignore
-        return LibTrackPutSchemaSerializer(instance=old_instance, data=put_schema_data)
+        return LibTrackPutSchemaSerializer(instance=old_instance, data=put_schema_data)  # type: ignore
 
     def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
-        # type: ignore
-        return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
+        return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)  # type: ignore
 
     def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
         file = post_schema_data[LIB_TRACK_ATTRIBUTES_LABEL.FILE]
@@ -56,7 +48,7 @@ class TrackService(Service):
 
         if LIB_TRACK_ATTRIBUTES_LABEL.TITLE not in save_schema_data:
             filename = os.path.basename(file.name).split('.')[0]
-            if TRACK_SCHEMA_ATTRIBUTES_LABEL.FORCE_TITLE_GENERATION in post_schema_data:
+            if SCHEMA_SAVE_FIELDS.FORCE_TITLE_GENERATION in post_schema_data:
                 force_title_generation = post_schema_data[SCHEMA_SAVE_FIELDS.FORCE_TITLE_GENERATION]
             else:
                 force_title_generation = False
@@ -148,15 +140,9 @@ class TrackService(Service):
 
         return save_data
 
-    def _remove_none_or_empty_key_from_dict(self, dict):
-        for key in list(dict.keys()):
-            if dict[key] is None or dict[key] == "":
-                del dict[key]
-        return dict
-
     def _get_dict1_updated_with_artist_uuid_if_artist_name_in_dict2(self,
                                                                     user: User, dict1: QueryDict, dict2: QueryDict):
-        artist_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+        artist_name_key = SCHEMA_SAVE_FIELDS.ARTIST_NAME
         if artist_name_key in dict2:
             artist_name = dict2[artist_name_key]
             artist = Artist.get_artist_from_name_after_eventual_creation(
@@ -170,12 +156,12 @@ class TrackService(Service):
 
     def _get_dict1_updated_with_album_uuid_if_album_name_in_dict2(self,
                                                                   user: User, dict1: QueryDict, dict2: QueryDict):
-        album_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME
+        album_name_key = SCHEMA_SAVE_FIELDS.ALBUM_NAME
 
         if album_name_key in dict2:
             album_name = dict2[album_name_key]
 
-            artists_names_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING
+            artists_names_key = SCHEMA_SAVE_FIELDS.ALBUM_ARTISTS_NAMES_STRING
             if artists_names_key in dict2:
                 album_artists_name_string = dict2[artists_names_key]
                 if album_artists_name_string is not None:
@@ -197,7 +183,7 @@ class TrackService(Service):
 
     def _get_dict1_updated_with_genre_uuid_if_genre_name_in_dict2(self,
                                                                   user: User, dict1: QueryDict, dict2: QueryDict):
-        genre_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+        genre_name_key = SCHEMA_SAVE_FIELDS.GENRE_NAME
         if genre_name_key in dict2:
             genre_name = dict2[genre_name_key]
 
@@ -224,10 +210,10 @@ class TrackService(Service):
         overriden_dict1 = dict1.copy()
         for key in [LIB_TRACK_ATTRIBUTES_LABEL.FILE,
                     LIB_TRACK_ATTRIBUTES_LABEL.TITLE,
-                    TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME,
-                    TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_NAME,
-                    TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING,
-                    TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME,
+                    SCHEMA_SAVE_FIELDS.ARTIST_NAME,
+                    SCHEMA_SAVE_FIELDS.ALBUM_NAME,
+                    SCHEMA_SAVE_FIELDS.ALBUM_ARTISTS_NAMES_STRING,
+                    SCHEMA_SAVE_FIELDS.GENRE_NAME,
                     LIB_TRACK_ATTRIBUTES_LABEL.RATING,
                     LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE]:
             overriden_dict1 = self.get_querydict1_updated_with_querydict2_key_if_set(
@@ -247,7 +233,7 @@ class TrackService(Service):
         title_key = LIB_TRACK_ATTRIBUTES_LABEL.TITLE
         if title_key in requestData:
             title = requestData[title_key]
-            artist_name_key = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
+            artist_name_key = SCHEMA_SAVE_FIELDS.ARTIST_NAME
             if artist_name_key in requestData:
                 artist_name = requestData[artist_name_key]
                 if artist_name is None or artist_name == "":
