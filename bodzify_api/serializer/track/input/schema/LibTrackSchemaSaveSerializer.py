@@ -25,7 +25,7 @@ class FIELDS:
 
 class LibTrackSchemaSaveSerializer(InputSerializer):
     title = serializers.CharField(
-        max_length=settings.TRACK_TITLE_LENGTH_MAX,
+        max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX,
         required=False,
         allow_blank=True,
         allow_null=True)
@@ -50,7 +50,7 @@ class LibTrackSchemaSaveSerializer(InputSerializer):
         allow_blank=True,
         allow_null=True)
     rating = serializers.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(settings.TRACK_RATING_VALUE_MAX)],
+        validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)],
         required=False,
         allow_null=True)
     language = serializers.CharField(
