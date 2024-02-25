@@ -11,14 +11,14 @@ class TestCase(ApiViewTestCase):
 
     def test_longest_custom_name(self):
         data = {
-            ATTRIBUTES_LABEL.NAME: "a" * settings.PLAYLIST_NAME_LENGTH_MAX
+            ATTRIBUTES_LABEL.NAME: "a" * settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX
         }
         response = self.post_simple_playlist(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_error_when_too_long(self):
         data = {
-            ATTRIBUTES_LABEL.NAME: "a" * (settings.PLAYLIST_NAME_LENGTH_MAX + 1)
+            ATTRIBUTES_LABEL.NAME: "a" * (settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX + 1)
         }
         response = self.post_simple_playlist(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
