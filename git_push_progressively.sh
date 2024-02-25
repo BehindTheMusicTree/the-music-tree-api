@@ -23,6 +23,8 @@ while true; do
     for file in "${files[@]}"; do
         status=$(echo "$file" | awk '{print $1}')
         file_path=$(echo "$file" | awk '{print substr($0, index($0,$2))}')
+        file_path=${file_path%\"}
+        file_path=${file_path#\"}
         if [ -n "$file_path" ]; then
             if [ "$status" == "D" ]; then
                 if git ls-files --error-unmatch "$file_path" >/dev/null 2>&1; then
