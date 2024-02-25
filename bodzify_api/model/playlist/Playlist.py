@@ -57,4 +57,4 @@ class Playlist(PolymorphicModel):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
-    name = models.CharField(max_length=settings.PLAYLIST_NAME_LENGTH_MAX, blank=True, null=True)
+    name = models.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX, blank=True, null=True)
