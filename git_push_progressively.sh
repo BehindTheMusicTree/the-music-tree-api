@@ -1,29 +1,38 @@
 #!/bin/bash
 
-# Check if commit message is passed as an argument
+# Vérifiez si le message de commit est passé en argument
 if [ $# -eq 0 ]; then
-    echo "Please provide a commit message as an argument."
+    echo "Veuillez fournir un message de commit en argument."
     exit 1
 fi
 
 commit_message=$1
 
 while true; do
-    # Get a list of modified files
-    files=$(git status --porcelain | awk '{print $2}' | shuf | head -n 5)
+    # Obtenez une liste des fichiers modifiés
+    IFS=$'\n'
+    files=($(git status --porcelain | awk 'BEGIN{srand()} {print rand() "\t" $0}' | sort -n | cut -f2-))
 
-    # Check if the file list is empty
-    if [ -z "$files" ]; then
-        echo "No files to add. Ending script."
+    # Vérifiez si la liste de fichiers est vide
+    if [ ${#files[@]} -eq 0 ]; then
+        echo "Aucun fichier à ajouter. Fin du script."
         break
     fi
 
-    # Add the files to git's index
-    for file in $files; do
-        git add "$file"
+    # Ajoutez les fichiers à l'index de git
+    for file in "${files[@]}"; do
+        status=$(echo "$file" | awk '{print $1}')
+        file_path=$(echo "$file" | awk '{print substr($0, index($0,$2))}')
+        if [ -n "$file_path" ]; then
+            if [ "$status" == "D" ]; then
+                git rm --cached "$file_path"
+            else
+                git add "$file_path"
+            fi
+        fi
     done
 
-    # Commit and push
+    # Commit et push
     git commit -m "$commit_message"
     git push
 done
