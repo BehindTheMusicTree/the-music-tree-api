@@ -11,9 +11,9 @@ from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.playlist.output.PlaylistGetParamSerializer import \
     ATTRIBUTES_LABEL as PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTrackSerializer import \
+from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
     CriteriaPlaylistWithTracksSerializer
-from bodzify_api.serializer.track.output.libTrackDetailedSerializer import TrackDetailedSerializer
+from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from bodzify_api.service.playlist.PlaylistService import PlaylistService
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
@@ -69,42 +69,3 @@ class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        simple_playlist = PlaylistService().create_simple_playlist(
-            self.request.user, self.request.data)
-
-        response_serializer = CriteriaPlaylistWithTracksSerializer(simple_playlist)
-        headers = self.get_success_headers(response_serializer.data)
-        return JsonResponse(
-            data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    @extend_schema(description=("""
-                                Search within tracks, albums, artists and playlists.
-                                The results is a set of four sets:
-                                    - Playlist (searched and ordered by name);
-                                    - Artist (searched and ordered by name);
-                                    - Album (searched and ordered by name);
-                                    - LibraryTrack (searched and ordered by title).
-                                """))
-    def get_querylist(self):
-        querylist = (
-            {
-                'queryset': LibraryTrack.objects.all(),
-                'serializer_class': TrackDetailedSerializer,
-                'filter_fn': trackFilter},
-            {
-                'queryset': Playlist.objects.all(),
-                'serializer_class': PlaylistWithoutTracksSerializer,
-                'filter_fn': playlistFilter},
-            {
-                'queryset': Album.objects.all(),
-                'serializer_class': AlbumWithoutTracksSerializer,
-                'filter_fn': albumFilter},
-            {
-                'queryset': Artist.objects.all(),
-                'serializer_class': ArtistDetailedSerializer,
-                'filter_fn': artistFilter
-            })
-
-        return querylist
