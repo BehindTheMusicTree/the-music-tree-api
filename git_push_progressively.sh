@@ -25,7 +25,9 @@ while true; do
         file_path=$(echo "$file" | awk '{print substr($0, index($0,$2))}')
         if [ -n "$file_path" ]; then
             if [ "$status" == "D" ]; then
-                git rm --cached "$file_path"
+                if git ls-files --error-unmatch "$file_path" >/dev/null 2>&1; then
+                    git rm --cached "$file_path"
+                fi
             else
                 git add "$file_path"
             fi
