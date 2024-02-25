@@ -5,28 +5,27 @@ import logging
 from django.urls import reverse
 from rest_framework import status
 
-import AudioMetadataManager as AudioMetadataManager
-from model.criteria.Criteria import Criteria
-from model.track.LibraryTrack import LibraryTrack
-from test.view.ViewTestCase import ViewTestCase
+from bodzify_api import AudioMetadataManager
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.test.view.ViewTestCase import ViewTestCase
 from bodzify_api.serializer.track.input.schema.LibTrackSchemaExtractSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
 from bodzify_api.serializer.track.input.schema.LibTrackSchemaPostSerializer import FIELDS as LIB_TRACK_POST_FIELDS
-from serializer.track.output.libTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
-from serializer.criteria.output.CriteriaDetailedSerializer import FIELDS as CRITERIA_GET_FIELDS
+from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
+from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import FIELDS as CRITERIA_GET_FIELDS
 
 
 logger = logging.getLogger('bodzify_api')
 
 
-class RESPONSE_KEYS:
-    COUNT = 'count'
-    NEXT = 'next'
-    PREVIOUS = 'previous'
-    RESULTS = 'results'
-    OVERALL_TOTAL = 'overall_total'
-
-
 class ApiViewTestCase(ViewTestCase):
+
+    class RESPONSE_KEYS:
+        COUNT = 'count'
+        NEXT = 'next'
+        PREVIOUS = 'previous'
+        RESULTS = 'results'
+        OVERALL_TOTAL = 'overall_total'
 
     MINE_TRACK_URL = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
 
@@ -72,11 +71,41 @@ class ApiViewTestCase(ViewTestCase):
                 self._set_saved_lib_track_attribute(response)
             return response
 
-    def post_sample_lib_track(self, sample_filename=None, data_json=None):
-        if sample_filename is None:
+    def post_lib_track_with_generic_sample(self,
+                                           generic_sample_filename_without_extension,
+                                           generic_sample_file_extension,
+                                           data_json=None):
+        filename_with_extension = generic_sample_filename_without_extension + '.' + generic_sample_file_extension
+        generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
+        return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_json=data_json)
+
+    def post_lib_track_with_generic_sample_no_tags(self, generic_sample_extension, data_json=None):
+        filename_without_extension = ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
+        return self.post_lib_track_with_generic_sample(
+            generic_sample_filename_without_extension=filename_without_extension,
+            generic_sample_file_extension=generic_sample_extension,
+            data_json=data_json)
+
+    def post_lib_track_with_generic_sample_tags_max_length_of_a(self, generic_sample_extension, data_json=None):
+        filename_without_extension = \
+            ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
+        return self.post_lib_track_with_generic_sample(
+            generic_sample_filename_without_extension=filename_without_extension,
+            generic_sample_file_extension=generic_sample_extension,
+            data_json=data_json)
+
+    def post_lib_track_with_generic_sample_1_star(self, generic_sample_extension, data_json=None):
+        filename_without_extension = ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
+        return self.post_lib_track_with_generic_sample(
+            generic_sample_filename_without_extension=filename_without_extension,
+            generic_sample_file_extension=generic_sample_extension,
+            data_json=data_json)
+
+    def post_lib_track_with_specific_sample(self, specific_sample_filename=None, data_json=None):
+        if specific_sample_filename is None:
             return self.post_lib_track(file_abs_path=None, data_json=data_json)
         else:
-            file_abs_path = self.specific_sample_dir_abs_path / sample_filename
+            file_abs_path = self.specific_sample_dir_abs_path / specific_sample_filename
             return self.post_lib_track(file_abs_path=file_abs_path, data_json=data_json)
 
     def put_lib_track(self, lib_track_uuid, data_json):
