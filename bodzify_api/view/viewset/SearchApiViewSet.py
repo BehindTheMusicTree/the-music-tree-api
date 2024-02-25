@@ -19,7 +19,7 @@ from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWitho
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
     CriteriaPlaylistWithoutTracksSerializer
-from bodzify_api.serializer.track.output.libTrackDetailedSerializer import TrackDetailedSerializer
+from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger('bodzify_api')
@@ -126,7 +126,7 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
         querylist = (
             {
                 'queryset': LibraryTrack.objects.filter(user=user),
-                'serializer_class': TrackDetailedSerializer,
+                'serializer_class': LibTrackDetailedSerializer,
                 'filter_fn': track_filter},
             {
                 'queryset': SimplePlaylist.objects.filter(playlist__user=user),

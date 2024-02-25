@@ -26,7 +26,7 @@ from bodzify_api.validator.TrackFileValidator import validate_size
 
 def _get_user_directory_path(instance, filename):
     return '{0}{1}/{2}'.format(
-        settings.LIBRARIES_DIR_NAME + '/' +
+        settings.LIB_DIR_NAME + '/' +
         settings.USER_LIB_DIR_NAME_PREFIXE,
         instance.user.id,
         filename)
@@ -58,9 +58,9 @@ class LibraryTrack(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     file = models.FileField(upload_to=_get_user_directory_path,
                             help_text="Only audio formats accepted.",
-                            validators=[FileExtensionValidator(settings.TRACK_FILE_EXTENSIONS), validate_size],
+                            validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS), validate_size],
                             null=True)
-    title = models.CharField(max_length=settings.TRACK_TITLE_LENGTH_MAX, default=None, null=True)
+    title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX, default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,
@@ -78,10 +78,10 @@ class LibraryTrack(models.Model):
         blank=True,
         validators=[
             MinValueValidator(0),
-            MaxValueValidator(settings.TRACK_RATING_VALUE_MAX)
+            MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)
         ])
     playlists = models.ManyToManyField('bodzify_api.Playlist', related_name=PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS)
-    language = models.CharField(max_length=settings.TRACK_LANGUAGE_LENGTH_MAX, blank=True, default=None, null=True)
+    language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX, blank=True, default=None, null=True)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     @property
@@ -271,4 +271,4 @@ class LibraryTrack(models.Model):
         AudioMetadataManager.update(
             file=self.file,
             metadata_update_dict=metadata_update_dict,
-            normalized_rating_max_value=settings.TRACK_RATING_VALUE_MAX)
+            normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
