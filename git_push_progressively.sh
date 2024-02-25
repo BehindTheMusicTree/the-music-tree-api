@@ -28,6 +28,8 @@ while true; do
                 if git ls-files --error-unmatch "$file_path" >/dev/null 2>&1; then
                     git rm --cached "$file_path"
                 fi
+            elif [ "$status" == "??" ]; then
+                git add "$file_path"
             else
                 git add "$file_path"
             fi
