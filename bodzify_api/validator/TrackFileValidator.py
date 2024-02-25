@@ -7,13 +7,13 @@ import bodzify_api.settings as settings
 
 
 def validate_size(file):
-    track_size_max = settings.TRACK_FILE_SIZE_MAX_IN_MO * 1000000
+    track_size_max = settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1000000
     if file.size > track_size_max:
         trackSizeErrorTooLargeMessage = 'File too large. Size should not exceed {size:.3f} Mo.'
         raise ValidationError(
             trackSizeErrorTooLargeMessage.format(size=track_size_max))
 
-    track_size_min = settings.TRACK_FILE_SIZE_MIN_IN_MO * 1000000
+    track_size_min = settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
     if file.size < track_size_min:
         trackSizeErrorTooSmallMessage = 'File too small. Size should be at least {size:.3f} Mo.'
         raise ValidationError(
