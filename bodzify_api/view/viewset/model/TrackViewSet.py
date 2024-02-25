@@ -12,30 +12,29 @@ from bodzify_api.model.track.LibraryTrack import LIB_TRACK_ATTRIBUTES_LABEL as L
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.LibTrackSchemaExtractSerializer import LibTrackSchemaExtractSerializer
 from bodzify_api.serializer.track.input.schema.LibTrackSchemaPostSerializer import LibTrackSchemaPostSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import \
-    FIELDS as TRACK_SCHEMA_ATTRIBUTES_LABEL
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import FIELDS as SAVE_SCHEMA_FIELDS
 from bodzify_api.serializer.track.input.schema.LibTrackSchemaPutSerializer import LibTrackPutSchemaSerializer
-from bodzify_api.serializer.track.output.libTrackDetailedSerializer import TrackDetailedSerializer
+from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class GET_FILTER_FIELDS:
     TITLE = LIB_TRACK_ATTRIBUTES_LABEL.TITLE
-    ARTIST_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.ARTIST_NAME
-    ALBUM_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING
-    ALBUM_ARTISTS_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.ALBUM_ARTISTS_NAMES_STRING
-    GENRE_NAME = TRACK_SCHEMA_ATTRIBUTES_LABEL.GENRE_NAME
+    ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
+    ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING
+    ALBUM_ARTISTS_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING
+    GENRE_NAME = SAVE_SCHEMA_FIELDS.GENRE_NAME
     LANGUAGE = LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE
 
 
 class TrackViewSet(AppModelViewSet):
     queryset = LibraryTrack.objects.all()
     serializers = {
-        'default': TrackDetailedSerializer,
-        'list':  TrackDetailedSerializer,
-        'retrieve':  TrackDetailedSerializer,
-        'update':  TrackDetailedSerializer,
+        'default': LibTrackDetailedSerializer,
+        'list':  LibTrackDetailedSerializer,
+        'retrieve':  LibTrackDetailedSerializer,
+        'update':  LibTrackDetailedSerializer,
     }
 
     def __init__(self, **kwargs):
@@ -43,26 +42,26 @@ class TrackViewSet(AppModelViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        titleFilter = self.request.GET.get(GET_FILTER_FIELDS.TITLE)
-        artist_nameFilter = self.request.GET.get(GET_FILTER_FIELDS.ARTIST_NAME)
-        album_nameFilter = self.request.GET.get(GET_FILTER_FIELDS.ALBUM_NAME)
-        genre_nameFilter = self.request.GET.get(GET_FILTER_FIELDS.GENRE_NAME)
-        languageFilter = self.request.GET.get(GET_FILTER_FIELDS.LANGUAGE)
+        title_filter = self.request.GET.get(GET_FILTER_FIELDS.TITLE)
+        artist_name_filter = self.request.GET.get(GET_FILTER_FIELDS.ARTIST_NAME)
+        album_name_filter = self.request.GET.get(GET_FILTER_FIELDS.ALBUM_NAME)
+        genre_name_filter = self.request.GET.get(GET_FILTER_FIELDS.GENRE_NAME)
+        language_filter = self.request.GET.get(GET_FILTER_FIELDS.LANGUAGE)
 
-        if titleFilter is not None:
-            queryset = queryset.filter(title__icontains=titleFilter)
-        if artist_nameFilter is not None:
-            queryset = queryset.filter(artist__name__icontains=artist_nameFilter)
-        if album_nameFilter is not None:
-            queryset = queryset.filter(album__name__icontains=album_nameFilter)
-        if genre_nameFilter is not None:
-            queryset = queryset.filter(genre__name__icontain=genre_nameFilter)
-        if languageFilter is not None:
-            queryset = queryset.filter(language__icontains=languageFilter)
+        if title_filter is not None:
+            queryset = queryset.filter(title__icontains=title_filter)
+        if artist_name_filter is not None:
+            queryset = queryset.filter(artist__name__icontains=artist_name_filter)
+        if album_name_filter is not None:
+            queryset = queryset.filter(album__name__icontains=album_name_filter)
+        if genre_name_filter is not None:
+            queryset = queryset.filter(genre__name__icontain=genre_name_filter)
+        if language_filter is not None:
+            queryset = queryset.filter(language__icontains=language_filter)
         return queryset
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
-        return TrackDetailedSerializer(instance=instance)  # type: ignore
+        return LibTrackDetailedSerializer(instance=instance)  # type: ignore
 
     @extend_schema(parameters=[
         OpenApiParameter(name=GET_FILTER_FIELDS.TITLE,
@@ -81,7 +80,7 @@ class TrackViewSet(AppModelViewSet):
         return super().list(request, *args, **kwargs)
 
     @extend_schema(request=LibTrackPutSchemaSerializer,
-                   responses=TrackDetailedSerializer,
+                   responses=LibTrackDetailedSerializer,
                    description=("""
             Updates a track:\n"
             - to not update a field, it mustn't be specified (e.g the line \"artist_name\":... 
@@ -115,7 +114,7 @@ class TrackViewSet(AppModelViewSet):
         return self._update(request, *args, **kwargs)
 
     @extend_schema(request=LibTrackSchemaPostSerializer,
-                   responses=TrackDetailedSerializer,
+                   responses=LibTrackDetailedSerializer,
                    description=(
                        """
             Create a track with metadata by uploading a file:
@@ -146,7 +145,7 @@ class TrackViewSet(AppModelViewSet):
                 status=status.HTTP_410_GONE)
 
     @extend_schema(request=LibTrackSchemaExtractSerializer,
-                   responses=TrackDetailedSerializer,
+                   responses=LibTrackDetailedSerializer,
                    description=("""
             Download a track from the given url to the app. 
             It is done by providing an URL and metadata:
@@ -177,7 +176,7 @@ class TrackViewSet(AppModelViewSet):
         serializer.is_valid(raise_exception=True)
         track = self.service.extract(
             user=request.user, extract_schema_data=request.data)
-        response_serializer = TrackDetailedSerializer(track)
+        response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(
             data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
