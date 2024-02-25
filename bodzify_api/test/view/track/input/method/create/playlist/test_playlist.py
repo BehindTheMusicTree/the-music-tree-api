@@ -12,10 +12,11 @@ from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIA
 class TestCase(ApiViewTestCase):
 
     def test_no_genre_then_in_the_all_and_genreless_playlists(self):
-        response = self.post_sample_track(sample_filename="notProvided.mp3", data_json={})
+        response = self.post_lib_track_with_specific_sample(
+            specific_sample_filename="no_genre_provided.mp3", data_json={})
         assert response.status_code == status.HTTP_201_CREATED
-        
-        track_playlists = self.saved_track.playlists.all()
+
+        track_playlists = self.saved_lib_track.playlists.all()
         assert len(track_playlists) == 2
 
         track_simple_playlists = SimplePlaylist.objects.filter(playlist__in=track_playlists)
