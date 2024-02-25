@@ -53,10 +53,10 @@ class TrackService(Service):
             else:
                 force_title_generation = False
 
-            if len(filename) > settings.TRACK_FILENAME_LENGTH_MAX or force_title_generation:
-                title = settings.TRACK_GENERATED_TITLE_PREFIXE + \
-                    self.generate_short_uu(settings.TRACK_GENERATED_TITLE_LEN -
-                                           len(settings.TRACK_GENERATED_TITLE_PREFIXE))
+            if len(filename) > settings.LIB_TRACK_FILENAME_LENGTH_MAX or force_title_generation:
+                title = settings.LIB_TRACK_GENERATED_TITLE_PREFIXE + \
+                    self.generate_short_uu(settings.LIB_TRACK_GENERATED_TITLE_LENGTH -
+                                           len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
             else:
                 title = filename
             save_schema_data[LIB_TRACK_ATTRIBUTES_LABEL.TITLE] = title
@@ -133,7 +133,7 @@ class TrackService(Service):
 
     def _get_save_schema_data_from_file(self, file):
         metadata_dict = AudioMetadataManager.get_metadata_dict_from_file(
-            file=file, normalized_rating_max_value=settings.TRACK_RATING_VALUE_MAX)
+            file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
         save_data = self._remove_none_or_empty_key_from_dict(metadata_dict)
         save_data[LIB_TRACK_ATTRIBUTES_LABEL.FILE] = file
@@ -246,9 +246,9 @@ class TrackService(Service):
         else:
             filename_with_extension = self.get_substring_after_last_slash(
                 mine_track_url)
-            if len(filename_with_extension) > settings.TRACK_FILENAME_LENGTH_MAX:
+            if len(filename_with_extension) > settings.LIB_TRACK_FILENAME_LENGTH_MAX:
                 filename_without_extension = self.generate_short_uu(
-                    settings.TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LEN - len(file_extension) - 1)
+                    settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH - len(file_extension) - 1)
                 filename_with_extension = filename_without_extension + "." + file_extension
                 is_filename_randomly_generated = True
         return filename_with_extension, is_filename_randomly_generated
