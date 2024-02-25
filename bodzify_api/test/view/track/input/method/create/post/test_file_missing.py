@@ -8,5 +8,5 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class TestCase(ApiViewTestCase):
 
     def test_errorWhenMissing(self):
-        response = self.post_sample_library_track()
+        response = self.post_lib_track_with_specific_sample()
         assert response.status_code == status.HTTP_400_BAD_REQUEST
