@@ -11,5 +11,5 @@ class WringUrlTestCase(ApiViewTestCase):
         data = {
             "url": track_url
         }
-        response = self.extract(data=data)
+        response = self.extract(json_data=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
