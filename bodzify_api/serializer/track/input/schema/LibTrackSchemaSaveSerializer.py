@@ -54,7 +54,7 @@ class LibTrackSchemaSaveSerializer(InputSerializer):
         required=False,
         allow_null=True)
     language = serializers.CharField(
-        max_length=settings.TRACK_LANGUAGE_LENGTH_MAX,
+        max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX,
         required=False,
         allow_blank=True,
         allow_null=True)

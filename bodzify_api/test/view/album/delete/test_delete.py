@@ -29,7 +29,7 @@ class TestCase(AlbumViewTestCase):
         assassin_track = G(
             LibraryTrack,
             user=self.test_user,
-            file=str(self.test_user_library_abs_path /
+            file=str(self.test_user_lib_abs_path /
                      assassin_track_filename),
             title="Assassin",
             album=black_holes_album,
@@ -38,7 +38,7 @@ class TestCase(AlbumViewTestCase):
         starlightTrack = G(
             LibraryTrack,
             user=self.test_user,
-            file=str(self.test_user_library_abs_path /
+            file=str(self.test_user_lib_abs_path /
                      starlight_track_filename),
             title="Starlight",
             album=black_holes_album,
