@@ -27,7 +27,7 @@ class ApiViewTestCase(ViewTestCase):
         RESULTS = 'results'
         OVERALL_TOTAL = 'overall_total'
 
-    MINE_TRACK_URL = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
+    SAMPLE_MINE_TRACK_URL = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
 
     saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict
@@ -52,7 +52,8 @@ class ApiViewTestCase(ViewTestCase):
         return response
 
     def extract_default_mine_track(self, json_data):
-        return self.extract(self._merge_two_jsons({LIB_TRACK_EXTRACT_FIELDS.URL: self.MINE_TRACK_URL}, json_data))
+        merged_json = self._merge_two_jsons({LIB_TRACK_EXTRACT_FIELDS.URL: self.SAMPLE_MINE_TRACK_URL}, json_data)
+        return self.extract(merged_json)
 
     def post_lib_track(self, file_abs_path=None, data_json=None):
         if file_abs_path is None:

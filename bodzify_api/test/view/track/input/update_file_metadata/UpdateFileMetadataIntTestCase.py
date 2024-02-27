@@ -1,19 +1,23 @@
 #!/usr/bin/env python
 
-from abc import ABC
+import logging
 from typing import Optional
+
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from rest_framework import status
 
 
-class UpdateFileMetadataIntTestCase(ApiViewTestCase, ABC):
-    save_field: str
-    metadata_dict_key: str
-    file_extension: str
-    value_min: int
-    value_max: int
-    value_min_in_metadata: int
-    value_max_in_metadata: int
+logger = logging.getLogger('bodzify_api')
+
+
+class UpdateFileMetadataIntTestCase(ApiViewTestCase):
+    save_field = None
+    metadata_dict_key = None
+    file_extension = None
+    value_min = None
+    value_max = None
+    value_min_in_metadata = None
+    value_max_in_metadata = None
 
     def _test_value(self, value: Optional[int],
                     value_in_matadata: Optional[int] = None,
@@ -41,30 +45,3 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase, ABC):
             assert self.saved_lib_track_metadata[self.metadata_dict_key] in ["", None]
         else:
             assert self.saved_lib_track_metadata[self.metadata_dict_key] == value_in_matadata
-
-    def test_on_missing_tag_then_ok(self, additional_data_json=None):
-        self._test_value(value=self.value_min,
-                         value_in_matadata=self.value_min_in_metadata,
-                         additional_data_json=additional_data_json,
-                         file_has_tags=False)
-
-    def test_on_present_tag_then_ok(self, additional_data_json=None):
-        self._test_value(value=self.value_min,
-                         value_in_matadata=self.value_min_in_metadata,
-                         additional_data_json=additional_data_json,
-                         file_has_tags=True)
-
-    def test_max_then_ok(self, additional_data_json=None):
-        self._test_value(value=self.value_max,
-                         value_in_matadata=self.value_max_in_metadata,
-                         additional_data_json=additional_data_json,
-                         file_has_tags=False)
-
-    def test_min_then_ok(self, additional_data_json=None):
-        self._test_value(value=self.value_min,
-                         value_in_matadata=self.value_min_in_metadata,
-                         additional_data_json=additional_data_json,
-                         file_has_tags=False)
-
-    def test_none_then_none(self, additional_data_json=None):
-        self._test_value(value=None, additional_data_json=additional_data_json, file_has_tags=False)

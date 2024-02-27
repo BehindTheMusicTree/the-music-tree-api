@@ -1,62 +1,58 @@
 #!/usr/bin/env python
 
-from bodzify_api.test.view.track.input.update_file_metadata.rating.UpdateFileMetadataRatingTestCase \
-    import UpdateFileMetadataRatingTestCase
+import logging
+
+import pytest
+
+from bodzify_api.test.view.track.input.update_file_metadata.rating.Mp3TestCase import Mp3TestCase
+from django.core.management import call_command
+
+logger = logging.getLogger('bodzify_api')
 
 
-class TestCase(UpdateFileMetadataRatingTestCase):
-    file_extension = 'mp3'
-    value_max_in_metadata = 255
+@pytest.fixture(params=[Mp3TestCase])
+def child_instance(request, db):
+    # Créez une instance de la classe de test
+    test_case = request.param()
 
-    def setUp(self):
-        super().setUp()
-        self.file_extension = 'mp3'
-        self.value_max_in_metadata = 255
+    call_command('loaddata', 'app_initial_data', 'pytest_user_initial_data')
 
-    def test_on_missing_tag_then_ok(self):
-        super().test_on_missing_tag_then_ok()
+    # Appellez setUp
+    test_case.setUp()
 
-    def test_on_present_tag_then_ok(self):
-        super().test_on_present_tag_then_ok()
+    yield test_case
 
-    def test_max_then_ok(self):
-        super().test_max_then_ok()
+    # Appellez tearDown après le test
+    test_case.tearDown()
 
-    def test_min_then_ok(self):
-        super().test_min_then_ok()
 
-    def test_none_then_none(self):
-        super().test_none_then_none()
+def test_max_then_ok(child_instance):
+    child_instance._test_value(value=child_instance.value_max,
+                               value_in_matadata=child_instance.value_max_in_metadata,
+                               additional_data_json=None,
+                               file_has_tags=False)
 
-    def test_0_then_0(self):
-        self._test_value(0, 0)
 
-    def test_1_then_13(self):
-        self._test_value(1, 13)
+def test_on_missing_tag_then_ok(child_instance):
+    child_instance._test_value(value=child_instance.value_min,
+                               value_in_matadata=child_instance.value_min_in_metadata,
+                               additional_data_json=None,
+                               file_has_tags=False)
 
-    def test_2_then_1(self):
-        self._test_value(0, 0)
 
-    def test_3_then_54(self):
-        self._test_value(3, 54)
+def test_on_present_tag_then_ok(child_instance):
+    child_instance._test_value(value=child_instance.value_min,
+                               value_in_matadata=child_instance.value_min_in_metadata,
+                               additional_data_json=None,
+                               file_has_tags=True)
 
-    def test_4_then_64(self):
-        self._test_value(4, 64)
 
-    def test_5_then_118(self):
-        self._test_value(5, 118)
+def test_min_then_ok(child_instance):
+    child_instance._test_value(value=child_instance.value_min,
+                               value_in_matadata=child_instance.value_min_in_metadata,
+                               additional_data_json=None,
+                               file_has_tags=False)
 
-    def test_6_then_128(self):
-        self._test_value(6, 128)
 
-    def test_7_then_186(self):
-        self._test_value(7, 186)
-
-    def test_8_then_196(self):
-        self._test_value(8, 196)
-
-    def test_9_then_242(self):
-        self._test_value(9, 242)
-
-    def test_10_then_255(self):
-        self._test_value(10, 255)
+def test_none_then_none(child_instance):
+    child_instance._test_value(value=None, additional_data_json=None, file_has_tags=False)

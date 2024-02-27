@@ -6,7 +6,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from rest_framework import status
 
 
-class UpdateFileMetadataStringTestCase(ApiViewTestCase):
+class UpdateFileMetadataStrTestCase(ApiViewTestCase):
 
     def __init__(self,
                  save_field: str,

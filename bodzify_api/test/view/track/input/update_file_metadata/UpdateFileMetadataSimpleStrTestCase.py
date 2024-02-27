@@ -2,18 +2,18 @@
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStringTestCase import \
-    UpdateFileMetadataStringTestCase
+from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import \
+    UpdateFileMetadataStrTestCase
 
 
-class UpdateFileMetadataSimpleStringTestCase(UpdateFileMetadataStringTestCase):
+class UpdateFileMetadataSimpleStrTestCase(UpdateFileMetadataStrTestCase):
 
-    def __init__(self,
-                 save_field: str,
-                 metadata_dict_key: str,
-                 file_extension: str,
-                 length_max: int,
-                 methodName: str = "runTest") -> None:
+    def setup_method(self,
+                     save_field: str,
+                     metadata_dict_key: str,
+                     file_extension: str,
+                     length_max: int,
+                     methodName: str = "runTest") -> None:
         self.save_field = save_field
         self.metadata_dict_key = metadata_dict_key
         self.file_extension = file_extension
