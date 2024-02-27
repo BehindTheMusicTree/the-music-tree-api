@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from re import L
 from rest_framework import serializers
 from django.core.validators import FileExtensionValidator
 from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import \
@@ -17,6 +18,7 @@ class FIELDS:
     ALBUM_ARTISTS_NAMES_STRING = SAVE_FIELDS.ALBUM_ARTISTS_NAMES_STRING
     GENRE_NAME = SAVE_FIELDS.GENRE_NAME
     RATING = SAVE_FIELDS.RATING
+    LANGUAGE = SAVE_FIELDS.LANGUAGE
 
 
 class LibTrackSchemaPostSerializer(LibTrackSchemaSaveSerializer):
@@ -36,4 +38,5 @@ class LibTrackSchemaPostSerializer(LibTrackSchemaSaveSerializer):
                   FIELDS.ALBUM_NAME,
                   FIELDS.ALBUM_ARTISTS_NAMES_STRING,
                   FIELDS.GENRE_NAME,
-                  FIELDS.RATING,]
+                  FIELDS.RATING,
+                  FIELDS.LANGUAGE]

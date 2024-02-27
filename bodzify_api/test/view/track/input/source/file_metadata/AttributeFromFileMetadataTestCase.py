@@ -11,7 +11,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class AttributeFromFileMetadataTestCase(ApiViewTestCase):
 
     @abstractmethod
-    def test_none_then_ok(self):
+    def test_none_then_none(self):
         pass
 
     @abstractmethod
