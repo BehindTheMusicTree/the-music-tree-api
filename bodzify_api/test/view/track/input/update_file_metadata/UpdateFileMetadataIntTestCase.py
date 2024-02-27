@@ -42,7 +42,7 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
         value_expected_in_matadata = value_expected_in_matadata if value_expected_in_matadata is not None else value
 
         if value_expected_in_matadata is None:
-            if self.lib_track_metadata_dict_key in self.saved_lib_track_metadata
+            if self.lib_track_metadata_dict_key in self.saved_lib_track_metadata:
                 assert self.saved_lib_track_metadata[self.lib_track_metadata_dict_key] in ["", None]
             else:
                 assert True
