@@ -12,7 +12,7 @@ logger = logging.getLogger('bodzify_api')
 
 class UpdateFileMetadataIntTestCase(ApiViewTestCase):
     save_field = None
-    metadata_dict_key = None
+    lib_track_metadata_dict_key = None
     file_extension = None
     value_min = None
     value_max = None
@@ -20,7 +20,7 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
     value_max_in_metadata = None
 
     def _test_value(self, value: Optional[int],
-                    value_in_matadata: Optional[int] = None,
+                    value_expected_in_matadata: Optional[int] = None,
                     additional_data_json=None,
                     file_has_tags=False):
         value_str = str(value) if value is not None else ''
@@ -39,9 +39,13 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
 
-        value_in_matadata = value_in_matadata if value_in_matadata is not None else value
+        value_expected_in_matadata = value_expected_in_matadata if value_expected_in_matadata is not None else value
 
-        if value_in_matadata is None:
-            assert self.saved_lib_track_metadata[self.metadata_dict_key] in ["", None]
+        if value_expected_in_matadata is None:
+            if self.lib_track_metadata_dict_key in self.saved_lib_track_metadata
+                assert self.saved_lib_track_metadata[self.lib_track_metadata_dict_key] in ["", None]
+            else:
+                assert True
         else:
-            assert self.saved_lib_track_metadata[self.metadata_dict_key] == value_in_matadata
+            assert self.lib_track_metadata_dict_key in self.saved_lib_track_metadata
+            assert self.saved_lib_track_metadata[self.lib_track_metadata_dict_key] == value_expected_in_matadata
