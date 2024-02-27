@@ -9,7 +9,7 @@ logger = logging.getLogger('bodzify_api')
 
 class FlacTestCase(UpdateFileMetadataRatingTestCase):
     file_extension = 'flac'
-    value_max_in_metadata = 100
+    value_max_expected_in_metadata = 100
 
     def test_1_then_10(self):
         self._test_value(1, 10)
@@ -44,7 +44,7 @@ class FlacTestCase(UpdateFileMetadataRatingTestCase):
 
 class Mp3TestCase(UpdateFileMetadataRatingTestCase):
     file_extension = 'mp3'
-    value_max_in_metadata = 255
+    value_max_expected_in_metadata = 255
 
     def test_1_then_13(self):
         self._test_value(1, 13)
@@ -79,7 +79,7 @@ class Mp3TestCase(UpdateFileMetadataRatingTestCase):
 
 class WavTestCase(UpdateFileMetadataRatingTestCase):
     file_extension = 'wav'
-    value_max_in_metadata = 255
+    value_max_expected_in_metadata = 255
 
     def test_1_then_13(self):
         self._test_value(1, 13)

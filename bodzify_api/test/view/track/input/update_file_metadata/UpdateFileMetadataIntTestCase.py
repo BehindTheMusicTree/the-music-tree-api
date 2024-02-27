@@ -16,8 +16,8 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
     file_extension = None
     value_min = None
     value_max = None
-    value_min_in_metadata = None
-    value_max_in_metadata = None
+    value_min_expected_in_metadata = None
+    value_max_expected_in_metadata = None
 
     def _test_value(self, value: Optional[int],
                     value_expected_in_matadata: Optional[int] = None,
@@ -48,4 +48,7 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
                 assert True
         else:
             assert self.lib_track_metadata_dict_key in self.saved_lib_track_metadata
+            logger.debug(
+                f"self.saved_lib_track_metadata[self.lib_track_metadata_dict_key]: {self.saved_lib_track_metadata[self.lib_track_metadata_dict_key]}")
+            logger.debug(f"value_expected_in_matadata: {value_expected_in_matadata}")
             assert self.saved_lib_track_metadata[self.lib_track_metadata_dict_key] == value_expected_in_matadata
