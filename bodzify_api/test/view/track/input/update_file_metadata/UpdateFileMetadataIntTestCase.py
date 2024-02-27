@@ -48,7 +48,4 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
                 assert True
         else:
             assert self.lib_track_metadata_dict_key in self.saved_lib_track_metadata
-            logger.debug(
-                f"self.saved_lib_track_metadata[self.lib_track_metadata_dict_key]: {self.saved_lib_track_metadata[self.lib_track_metadata_dict_key]}")
-            logger.debug(f"value_expected_in_matadata: {value_expected_in_matadata}")
             assert self.saved_lib_track_metadata[self.lib_track_metadata_dict_key] == value_expected_in_matadata
