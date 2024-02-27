@@ -4,13 +4,14 @@ import logging
 
 import pytest
 
+from bodzify_api.test.view.track.input.update_file_metadata.rating.WavTestCase import WavTestCase
 from bodzify_api.test.view.track.input.update_file_metadata.rating.Mp3TestCase import Mp3TestCase
 from django.core.management import call_command
 
 logger = logging.getLogger('bodzify_api')
 
 
-@pytest.fixture(params=[Mp3TestCase])
+@pytest.fixture(params=[Mp3TestCase, WavTestCase])
 def child_instance(request, db):
     # Créez une instance de la classe de test
     test_case = request.param()
