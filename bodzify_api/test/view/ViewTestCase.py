@@ -11,6 +11,7 @@ from django.test import TestCase
 import pytest
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import AccessToken
+from django.core.management import call_command
 
 import bodzify_api.settings as settings
 
@@ -31,10 +32,10 @@ class ViewTestCase(TestCase):
         TAGS_NONE = "tags none"
         TAGS_MAX_LENGTH_WITH_LETTER_A = "tags max length with letter a"
 
-    fixtures = ['app_initial_data', 'pytest_user_initial_data']
     test_user_lib_path_relative_to_media_dir = Path()
 
     def setUp(self) -> None:
+        call_command('loaddata', 'app_initial_data', 'pytest_user_initial_data')
         self.api_client = APIClient()
         self.test_user = User.objects.get(username=TEST_USERNAME)
         self.__set_up_test_user_directories()

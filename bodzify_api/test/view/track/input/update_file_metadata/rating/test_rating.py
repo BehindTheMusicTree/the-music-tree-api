@@ -4,26 +4,18 @@ import logging
 
 import pytest
 
+from bodzify_api.test.view.track.input.update_file_metadata.rating.FlacTestCase import FlacTestCase
 from bodzify_api.test.view.track.input.update_file_metadata.rating.WavTestCase import WavTestCase
 from bodzify_api.test.view.track.input.update_file_metadata.rating.Mp3TestCase import Mp3TestCase
-from django.core.management import call_command
 
 logger = logging.getLogger('bodzify_api')
 
 
-@pytest.fixture(params=[Mp3TestCase, WavTestCase])
+@pytest.fixture(params=[Mp3TestCase, WavTestCase, FlacTestCase])
 def child_instance(request, db):
-    # Créez une instance de la classe de test
     test_case = request.param()
-
-    call_command('loaddata', 'app_initial_data', 'pytest_user_initial_data')
-
-    # Appellez setUp
     test_case.setUp()
-
     yield test_case
-
-    # Appellez tearDown après le test
     test_case.tearDown()
 
 
