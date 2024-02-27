@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 import logging
-from bodzify_api.test.view.track.input.update_file_metadata.rating.UpdateFileMetadataRatingTestCase \
-    import UpdateFileMetadataRatingTestCase
+from bodzify_api.test.view.track.input.update_file_metadata.rating.test_case.UpdateFileMetadataRatingTestCase import UpdateFileMetadataRatingTestCase
 
 logger = logging.getLogger('bodzify_api')
 

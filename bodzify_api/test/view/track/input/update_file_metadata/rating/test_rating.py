@@ -4,9 +4,11 @@ import logging
 
 import pytest
 
-from bodzify_api.test.view.track.input.update_file_metadata.rating.FlacTestCase import FlacTestCase
-from bodzify_api.test.view.track.input.update_file_metadata.rating.WavTestCase import WavTestCase
-from bodzify_api.test.view.track.input.update_file_metadata.rating.Mp3TestCase import Mp3TestCase
+from bodzify_api import AudioMetadataManager
+from bodzify_api.test.view.track.input.update_file_metadata.rating.test_case.FlacTestCase import FlacTestCase
+from bodzify_api.test.view.track.input.update_file_metadata.rating.test_case.WavTestCase import WavTestCase
+from bodzify_api.test.view.track.input.update_file_metadata.rating.test_case.Mp3TestCase import Mp3TestCase
+from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import FIELDS as SAVE_FIELDS
 
 logger = logging.getLogger('bodzify_api')
 
