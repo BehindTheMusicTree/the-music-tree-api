@@ -57,3 +57,7 @@ def test_min_then_ok(child_instance):
 
 def test_none_then_none(child_instance):
     child_instance._test_value(value=None, additional_data_json=None, file_has_tags=False)
+
+
+def test_zero_then_0(child_instance):
+    child_instance._test_value(0, 0)

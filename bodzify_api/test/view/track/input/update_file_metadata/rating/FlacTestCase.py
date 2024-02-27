@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 
+import logging
 from bodzify_api.test.view.track.input.update_file_metadata.rating.UpdateFileMetadataRatingTestCase \
     import UpdateFileMetadataRatingTestCase
 
+logger = logging.getLogger('bodzify_api')
 
-class TestCase(UpdateFileMetadataRatingTestCase):
 
-    def __init__(self, methodName: str = "runTest") -> None:
-        super().__init__(file_extension='flac', value_max_in_metadata=100, methodName=methodName)
-
-    def test_zero_then_0(self):
-        self._test_value(0, 0)
+class FlacTestCase(UpdateFileMetadataRatingTestCase):
+    file_extension = 'flac'
+    value_max_in_metadata = 100
 
     def test_1_then_10(self):
         self._test_value(1, 10)

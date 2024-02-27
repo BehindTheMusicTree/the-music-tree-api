@@ -11,9 +11,6 @@ class WavTestCase(UpdateFileMetadataRatingTestCase):
     file_extension = 'wav'
     value_max_in_metadata = 255
 
-    def test_0_then_0(self):
-        self._test_value(0, 0)
-
     def test_1_then_13(self):
         self._test_value(1, 13)
 
