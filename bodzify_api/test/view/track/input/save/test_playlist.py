@@ -27,7 +27,7 @@ class TestCase(ApiViewTestCase):
             PUT_FIELDS.GENRE_NAME: genre_name
         }
         response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
 
         track_playlists = self.saved_lib_track.playlists.all()
         assert len(track_playlists) == 2
@@ -53,10 +53,10 @@ class TestCase(ApiViewTestCase):
             PUT_FIELDS.GENRE_NAME: new_genre_name
         }
         response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
 
         old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).playlist
-        assert lib_track not in old_genre_playlist.lib_tracks.all()
+        assert lib_track not in old_genre_playlist.library_tracks.all()
 
     def test_existing_genre_then_track_in_existing_playlist_and_all_playlist(self):
         genre_name = "Rock"
@@ -64,10 +64,6 @@ class TestCase(ApiViewTestCase):
                   name=genre_name,
                   user=self.test_user,
                   type=CRITERIA_TYPES_ID.GENRE)
-        data_json = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: genre_name
-        }
-        self.post_genre(data_json)
         lib_track = G(LibraryTrack,
                       user=self.test_user,
                       title="Love",
@@ -77,13 +73,13 @@ class TestCase(ApiViewTestCase):
             PUT_FIELDS.GENRE_NAME: genre_name
         }
         response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
 
         track_playlists = self.saved_lib_track.playlists.all()
         assert len(track_playlists) == 2
 
         genre_playlist = CriteriaPlaylist.objects.get(criteria=genre).playlist
-        assert lib_track in genre_playlist.lib_tracks.all()
+        assert lib_track in genre_playlist.library_tracks.all()
 
         all_playlist = SimplePlaylist.objects.get(
             playlist__user=self.test_user,
@@ -120,12 +116,12 @@ class TestCase(ApiViewTestCase):
             PUT_FIELDS.GENRE_NAME: emo_genre_name
         }
         response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
 
         lib_track_playlists = self.saved_lib_track.playlists.all()
         assert len(lib_track_playlists) == 4
 
-        lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(playlist__in=library_track_playlists)
+        lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(playlist__in=lib_track_playlists)
         assert lib_track_criteria_playlists.filter(criteria__name=emo_genre_name).exists()
         assert lib_track_criteria_playlists.filter(criteria__name=hardrock_genre_name).exists()
         assert lib_track_criteria_playlists.filter(criteria__name=rock_genre_name).exists()
