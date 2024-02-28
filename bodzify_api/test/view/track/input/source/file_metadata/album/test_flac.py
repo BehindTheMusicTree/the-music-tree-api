@@ -14,7 +14,7 @@ class TestCase(AttributeFromFileMetadataTestCase):
 
     def test_none_then_none(self):
         response = self.post_lib_track_with_generic_sample_no_tags(generic_sample_extension="flac")
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED # type: ignore
         assert self.saved_lib_track.album == None
 
     def test_longest(self):

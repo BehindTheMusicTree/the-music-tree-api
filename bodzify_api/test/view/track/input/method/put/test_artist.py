@@ -6,10 +6,10 @@ from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.view.ModelStringAttributePutTestCase import ModelStringAttributePutViewTestCase
+from bodzify_api.test.view.track.input.method.put.AttributePutTestCase import AttributeFromPutTestCase
 
 
-class TestCase(ModelStringAttributePutViewTestCase):
+class TestCase(AttributeFromPutTestCase):
 
     def test_not_provided_then_unchanged(self):
         artist = G(Artist, user=self.test_user, name="a-ha")
@@ -18,8 +18,8 @@ class TestCase(ModelStringAttributePutViewTestCase):
                       title="Love",
                       artist=artist,
                       duration=0)
-        response = self.put_lib_track(track.uuid, data_json={})
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track.uuid, data_json={})  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.artist == artist
 
     def test_none_then_none(self):
@@ -31,9 +31,9 @@ class TestCase(ModelStringAttributePutViewTestCase):
                       duration=0)
         artist_new = G(Artist, user=self.test_user, name="koko")
         data = {
-            PUT_FIELDS.ARTIST_NAME: artist_new.name
+            PUT_FIELDS.ARTIST_NAME: artist_new.name  # type: ignore
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.artist == artist_new
 
@@ -47,24 +47,24 @@ class TestCase(ModelStringAttributePutViewTestCase):
         data = {
             PUT_FIELDS.ARTIST_NAME: ''
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.artist == None
 
     def test_not_none_then_update(self):
         artist_old = G(Artist, user=self.test_user, name="a-ha")
-        lib_track(LibraryTrack,
-                  user=self.test_user,
-                  title="koko",
-                  artist=artist_old,
-                  duration=0)
+        lib_track = G(LibraryTrack,
+                      user=self.test_user,
+                      title="koko",
+                      artist=artist_old,
+                      duration=0)
         artist_new = G(Artist, user=self.test_user, name="Koko")
         data = {
-            PUT_FIELDS.ARTIST_NAME: artist_new.name
+            PUT_FIELDS.ARTIST_NAME: artist_new.name  # type: ignore
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album == artist_new
+        assert self.saved_lib_track.artist == artist_new
 
     def test_delete_old_one_because_nothing_linked_to_it(self):
         artist_name = "a-ha"
@@ -75,9 +75,9 @@ class TestCase(ModelStringAttributePutViewTestCase):
                   artist=artist,
                   duration=0)
         data = {
-            PUT_FIELDS.ARTIST_NAME: artist_name
+            PUT_FIELDS.ARTIST_NAME: "Autre artiste"
         }
-        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK
         assert not Artist.objects.filter(user=self.test_user, name=artist_name).exists()
 
@@ -97,8 +97,8 @@ class TestCase(ModelStringAttributePutViewTestCase):
         data = {
             PUT_FIELDS.ARTIST_NAME: artist_name
         }
-        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert Artist.objects.filter(user=self.test_user, name=artist_name).exists()
 
     def test_not_delete_old_one_because_an_album_linked_to_it(self):
@@ -118,6 +118,6 @@ class TestCase(ModelStringAttributePutViewTestCase):
         data = {
             PUT_FIELDS.ARTIST_NAME: artist_name
         }
-        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert Artist.objects.filter(user=self.test_user, name=artist_name).exists()

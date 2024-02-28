@@ -4,10 +4,10 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.view.ModelStringAttributePutTestCase import ModelStringAttributePutViewTestCase
+from bodzify_api.test.view.track.input.method.put.AttributePutTestCase import AttributeFromPutTestCase
 
 
-class TestCase(ModelStringAttributePutViewTestCase):
+class TestCase(AttributeFromPutTestCase):
 
     def test_not_empty_then_ok(self):
         language = "a"
@@ -18,8 +18,8 @@ class TestCase(ModelStringAttributePutViewTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: language
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == language
 
     def test_not_provided_then_unchanged(self):
@@ -30,9 +30,9 @@ class TestCase(ModelStringAttributePutViewTestCase):
                       language=language,
                       duration=0)
         data = {}
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.language == None
+        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert self.saved_lib_track.language == language
 
     def test_none_then_none(self):
         lib_track = G(LibraryTrack,
@@ -43,8 +43,8 @@ class TestCase(ModelStringAttributePutViewTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: None
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == None
 
     def test_empty_then_none(self):
@@ -56,8 +56,8 @@ class TestCase(ModelStringAttributePutViewTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: ""
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == None
 
     def test_not_none_then_update(self):
@@ -70,6 +70,6 @@ class TestCase(ModelStringAttributePutViewTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: language
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == language
