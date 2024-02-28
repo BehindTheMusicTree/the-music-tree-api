@@ -34,7 +34,7 @@ class TestCase(AttributeFromPutTestCase):
             PUT_FIELDS.ARTIST_NAME: artist_new.name  # type: ignore
         }
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.artist == artist_new
 
     def test_empty_then_none(self):
@@ -48,7 +48,7 @@ class TestCase(AttributeFromPutTestCase):
             PUT_FIELDS.ARTIST_NAME: ''
         }
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.artist == None
 
     def test_not_none_then_update(self):
@@ -63,7 +63,7 @@ class TestCase(AttributeFromPutTestCase):
             PUT_FIELDS.ARTIST_NAME: artist_new.name  # type: ignore
         }
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.artist == artist_new
 
     def test_delete_old_one_because_nothing_linked_to_it(self):
@@ -78,7 +78,7 @@ class TestCase(AttributeFromPutTestCase):
             PUT_FIELDS.ARTIST_NAME: "Autre artiste"
         }
         response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert not Artist.objects.filter(user=self.test_user, name=artist_name).exists()
 
     def test_not_delete_old_one_because_a_track_linked_to_it(self):
