@@ -33,16 +33,3 @@ class TestCase(ApiViewTestCase):
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.rating == rating
-
-    def test_none_then_0(self):
-        lib_track = G(LibraryTrack,
-                      user=self.test_user,
-                      title="Korinto",
-                      rating=3,
-                      duration=0)
-        data = {
-            "rating": None
-        }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.rating == None

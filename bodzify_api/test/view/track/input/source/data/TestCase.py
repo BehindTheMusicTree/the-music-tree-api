@@ -3,10 +3,10 @@
 from bodzify_api import settings
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as POST_FIELDS
-from bodzify_api.test.view.track.input.source.data.LibTrackAttributeFromDataTestCase import AttributeFromDataTestCase
+from bodzify_api.test.view.track.input.source.data.LibTrackAttributeFromDataTestCase import AttributeStrFromDataTestCase
 
 
-class TestCase(AttributeFromDataTestCase):
+class TestCase(AttributeStrFromDataTestCase):
     save_field = POST_FIELDS.ALBUM_ARTISTS_NAMES_STRING
     lib_track_metadata_dict_key = AudioMetadataManager.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
     length_max = settings.ALBUM_ARTISTS_FIELD_LENGTH_MAX
