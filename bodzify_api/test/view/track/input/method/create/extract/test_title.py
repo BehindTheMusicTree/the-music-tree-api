@@ -14,6 +14,6 @@ class TestCase(ApiViewTestCase):
         data = {
             "url": track_url
         }
-        response = self.extract(json_data=data)
+        response = self.extract(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.title.startswith(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE)

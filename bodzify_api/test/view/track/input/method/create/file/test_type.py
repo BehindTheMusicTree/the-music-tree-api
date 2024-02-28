@@ -11,7 +11,7 @@ class TypeTestCase(ApiViewTestCase):
         data = {
             "url": "https://lasonotheque.org/UPLOAD/wav/0001.wav"
         }
-        response = self.extract(json_data=data)
+        response = self.extract(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_mp3(self):
@@ -22,5 +22,5 @@ class TypeTestCase(ApiViewTestCase):
         data = {
             "url": track_url,
         }
-        response = self.extract(json_data=data)
+        response = self.extract(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED

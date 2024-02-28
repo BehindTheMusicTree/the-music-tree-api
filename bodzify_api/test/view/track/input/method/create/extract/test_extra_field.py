@@ -10,5 +10,5 @@ class TestCase(ApiViewTestCase):
         data = {
             "fieldNotHandled": "pofkefposkfwp"
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

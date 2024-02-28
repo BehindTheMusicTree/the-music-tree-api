@@ -41,18 +41,18 @@ class ApiViewTestCase(ViewTestCase):
     def search(self, query):
         return self.api_client.get(path=reverse('search-list'), data={'query': query})
 
-    def extract(self, json_data):
+    def extract(self, data_json):
         response = self.api_client.post(
             path=reverse('librarytrack-extract'),
-            data=json_data,
+            data=data_json,
             format='json')
 
         if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_lib_track_attribute(response)
         return response
 
-    def extract_default_mine_track(self, json_data):
-        merged_json = self._merge_two_jsons({LIB_TRACK_EXTRACT_FIELDS.URL: self.SAMPLE_MINE_TRACK_URL}, json_data)
+    def extract_default_mine_track(self, data_json):
+        merged_json = self._merge_two_jsons({LIB_TRACK_EXTRACT_FIELDS.URL: self.SAMPLE_MINE_TRACK_URL}, data_json)
         return self.extract(merged_json)
 
     def post_lib_track(self, file_abs_path=None, data_json=None):

@@ -15,7 +15,7 @@ class TestCase(StringAttributeSaveTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: language
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.language == language
 
@@ -24,13 +24,13 @@ class TestCase(StringAttributeSaveTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: language
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_none_then_none(self):
         data = {
             PUT_FIELDS.LANGUAGE: None
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.language == None

@@ -17,7 +17,7 @@ class TestCase(StringAttributeSaveTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre.name == genre_name
 
@@ -26,14 +26,14 @@ class TestCase(StringAttributeSaveTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_none_then_none(self):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: None
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre == None
 
@@ -43,7 +43,7 @@ class TestCase(StringAttributeSaveTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre.name == genre_name
 
@@ -52,7 +52,7 @@ class TestCase(StringAttributeSaveTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre.name == genre_name
 
@@ -61,6 +61,6 @@ class TestCase(StringAttributeSaveTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.extract_default_mine_track(json_data=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre.parent == None

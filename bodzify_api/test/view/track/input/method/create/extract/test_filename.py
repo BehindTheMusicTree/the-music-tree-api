@@ -12,7 +12,7 @@ class FilenameTestCase(ApiViewTestCase):
             "title": "I'm Here",
             "artist_name": "Roméo",
         }
-        response = self.extract(json_data=data)
+        response = self.extract(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.filename == "Roméo_-_Im_Here.wav"
 
@@ -26,7 +26,7 @@ class FilenameTestCase(ApiViewTestCase):
             "url": track_url,
             "title": title,
         }
-        response = self.extract(json_data=data)
+        response = self.extract(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.filename == title + ".mp3"
 
@@ -38,7 +38,7 @@ class FilenameTestCase(ApiViewTestCase):
         data = {
             "url": track_url
         }
-        response = self.extract(json_data=data)
+        response = self.extract(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert len(self.saved_lib_track.filename) == \
             settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH
