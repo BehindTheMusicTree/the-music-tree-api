@@ -6,7 +6,7 @@ from rest_framework.serializers import ModelSerializer
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.CriteriaPlaylist import ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
     CriteriaPlaylistWithTracksSerializer
 from bodzify_api.service.criteria.GenreService import GenreService
@@ -14,7 +14,7 @@ from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class GET_FILTER_FIELDS:
-    NAME = ATTRIBUTES_LABEL.NAME
+    NAME = PLLAYLIST_ATTRIBUTES_LABEL.NAME
     PARENT = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
 
 

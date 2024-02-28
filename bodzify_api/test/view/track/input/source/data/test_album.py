@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaExtractSerializer import FIELDS as EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
 from bodzify_api.test.view.track.input.source.data.LibTrackAttributeFromDataTestCase import \
     LibTrackAttributeFromDataTestCase
 

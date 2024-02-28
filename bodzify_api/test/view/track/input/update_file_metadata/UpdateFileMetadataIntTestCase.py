@@ -20,7 +20,7 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
     value_max_expected_in_metadata = None
 
     def _test_value(self, value: Optional[int],
-                    value_expected_in_matadata: Optional[int] = None,
+                    value_expected_in_metadata: Optional[int] = None,
                     additional_data_json=None,
                     file_has_tags=False):
         value_str = str(value) if value is not None else ''
@@ -39,13 +39,13 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
 
-        value_expected_in_matadata = value_expected_in_matadata if value_expected_in_matadata is not None else value
+        value_expected_in_metadata = value_expected_in_metadata if value_expected_in_metadata is not None else value
 
-        if value_expected_in_matadata is None:
+        if value_expected_in_metadata is None:
             if self.lib_track_metadata_dict_key in self.saved_lib_track_metadata:
                 assert self.saved_lib_track_metadata[self.lib_track_metadata_dict_key] in ["", None]
             else:
                 assert True
         else:
             assert self.lib_track_metadata_dict_key in self.saved_lib_track_metadata
-            assert self.saved_lib_track_metadata[self.lib_track_metadata_dict_key] == value_expected_in_matadata
+            assert self.saved_lib_track_metadata[self.lib_track_metadata_dict_key] == value_expected_in_metadata

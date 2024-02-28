@@ -6,24 +6,30 @@ from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
 from bodzify_api import settings
 from bodzify_api.serializer.InputSerializer import InputSerializer
-from bodzify_api.model.track.LibraryTrack import LIB_TRACK_ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer import FIELDS as SAVE_MODEL_FIELDS
+from bodzify_api.serializer.album.input.AlbumSaveModelSerializer import FIELDS as ALBUM_SAVE_MODEL_FIELDS
+
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
 
 
 class FIELDS:
-    TITLE = LIB_TRACK_ATTRIBUTES_LABEL.TITLE
-    ARTIST_NAME = LIB_TRACK_ATTRIBUTES_LABEL.ARTIST + "_name"
-    ALBUM_NAME = LIB_TRACK_ATTRIBUTES_LABEL.ARTIST + "_name"
-    ALBUM_ARTISTS_NAMES_STRING = ALBUM_ATTRIBUTES_LABEL.ALBUM_ARTISTS + "_names_string"
-    GENRE_NAME = LIB_TRACK_ATTRIBUTES_LABEL.GENRE + "_name"
-    RATING = LIB_TRACK_ATTRIBUTES_LABEL.RATING
-    LANGUAGE = LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE
+    FILE = SAVE_MODEL_FIELDS.FILE
+    TITLE = SAVE_MODEL_FIELDS.TITLE
+    ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
+    ALBUM_NAME = SAVE_MODEL_FIELDS.ALBUM + "_name"
+    ALBUM_ARTISTS_NAMES_STRING = ALBUM_SAVE_MODEL_FIELDS.ALBUM_ARTISTS + "_names_string"
+    GENRE_NAME = SAVE_MODEL_FIELDS.GENRE + "_name"
+    RATING = SAVE_MODEL_FIELDS.RATING
+    LANGUAGE = SAVE_MODEL_FIELDS.LANGUAGE
     FORCE_TITLE_GENERATION = "force_title_generation"
 
 
-class LibTrackSchemaSaveSerializer(InputSerializer):
+class LibTrackSaveSchemaSerializer(InputSerializer):
+    file = serializers.FileField(
+        allow_empty_file=True,
+        allow_null=True,
+        required=False)
     title = serializers.CharField(
         max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX,
         required=False,
@@ -61,7 +67,8 @@ class LibTrackSchemaSaveSerializer(InputSerializer):
     force_title_generation = serializers.BooleanField(required=False)
 
     class Meta:
-        fields = [FIELDS.TITLE,
+        fields = [FIELDS.FILE,
+                  FIELDS.TITLE,
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,
                   FIELDS.ALBUM_ARTISTS_NAMES_STRING,

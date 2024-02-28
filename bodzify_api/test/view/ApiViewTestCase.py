@@ -9,8 +9,8 @@ from bodzify_api import AudioMetadataManager
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaExtractSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaPostSerializer import FIELDS as LIB_TRACK_POST_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as LIB_TRACK_POST_FIELDS
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import FIELDS as CRITERIA_GET_FIELDS
 
@@ -47,7 +47,7 @@ class ApiViewTestCase(ViewTestCase):
             data=json_data,
             format='json')
 
-        if response.status_code == status.HTTP_201_CREATED:
+        if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_lib_track_attribute(response)
         return response
 
@@ -68,7 +68,7 @@ class ApiViewTestCase(ViewTestCase):
             else:
                 data = file_json
             response = self.api_client.post(path=reverse('librarytrack-list'), data=data)
-            if response.status_code == status.HTTP_201_CREATED:
+            if response.status_code == status.HTTP_201_CREATED:  # type: ignore
                 self._set_saved_lib_track_attribute(response)
             return response
 
@@ -114,7 +114,7 @@ class ApiViewTestCase(ViewTestCase):
             path=reverse('librarytrack-detail', kwargs={'pk': lib_track_uuid}),
             data=data_json,
             format='json')
-        if response.status_code == status.HTTP_200_OK:
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
             self._set_saved_lib_track_attribute(response)
         return response
 
@@ -136,7 +136,7 @@ class ApiViewTestCase(ViewTestCase):
 
     def post_genre(self, data_json):
         response = self.api_client.post(path=reverse('genre-list'), data=data_json, format='json')
-        if response.status_code == status.HTTP_201_CREATED:
+        if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_genre_attribute(response)
         return response
 
@@ -145,20 +145,20 @@ class ApiViewTestCase(ViewTestCase):
             path=reverse('genre-detail', kwargs={'pk': genre_uuid}),
             data=data_json,
             format='json')
-        if response.status_code == status.HTTP_200_OK:
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
             self._set_saved_genre_attribute(response)
         return response
 
     def post_simple_playlist(self, data_json):
         response = self.api_client.post(path=reverse('simple-playlist-list'), data=data_json, format='json')
-        if response.status_code == status.HTTP_201_CREATED:
+        if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_genre_attribute(response)
         return response
 
     def put_simple_playlist(self, simple_playlist_uuid, data_json):
         response = self.api_client.put(
             path=reverse('simple-playlist-detail', kwargs={'pk': simple_playlist_uuid}), data=data_json, format='json')
-        if response.status_code == status.HTTP_200_OK:
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
             self._set_saved_genre_attribute(response)
         return response
 

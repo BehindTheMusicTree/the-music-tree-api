@@ -8,12 +8,12 @@ from rest_framework.decorators import action
 from rest_framework.serializers import ModelSerializer
 
 import bodzify_api.view.utility as utility
-from bodzify_api.model.track.LibraryTrack import LIB_TRACK_ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaExtractSerializer import LibTrackSchemaExtractSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaPostSerializer import LibTrackSchemaPostSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaSaveSerializer import FIELDS as SAVE_SCHEMA_FIELDS
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaPutSerializer import LibTrackPutSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import LibTrackExtractSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import LibTrackPostSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import LibTrackPutSchemaSerializer
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
@@ -113,7 +113,7 @@ class TrackViewSet(AppModelViewSet):
     def update(self, request, *args, **kwargs):
         return self._update(request, *args, **kwargs)
 
-    @extend_schema(request=LibTrackSchemaPostSerializer,
+    @extend_schema(request=LibTrackPostSchemaSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=(
                        """
@@ -144,7 +144,7 @@ class TrackViewSet(AppModelViewSet):
                 content="The requested track's file is missing.",
                 status=status.HTTP_410_GONE)
 
-    @extend_schema(request=LibTrackSchemaExtractSerializer,
+    @extend_schema(request=LibTrackExtractSchemaSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=("""
             Download a track from the given url to the app. 
@@ -172,7 +172,7 @@ class TrackViewSet(AppModelViewSet):
             """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        serializer = LibTrackSchemaExtractSerializer(data=request.data)
+        serializer = LibTrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         track = self.service.extract(
             user=request.user, extract_schema_data=request.data)

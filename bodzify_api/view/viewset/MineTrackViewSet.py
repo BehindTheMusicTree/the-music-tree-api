@@ -2,7 +2,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from bodzify_api.serializer.mine.track.MineTrackSerializer import MineTrackSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaExtractSerializer import LibTrackSchemaExtractSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import LibTrackExtractSchemaSerializer
 from bodzify_api.service.mine import MineService
 import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
@@ -17,7 +17,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
 
     serializers = {
         'list':  MineTrackSerializer,
-        'extract':  LibTrackSchemaExtractSerializer,
+        'extract':  LibTrackExtractSchemaSerializer,
     }
 
     @extend_schema(parameters=[

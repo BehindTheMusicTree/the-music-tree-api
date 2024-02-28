@@ -4,18 +4,18 @@ import logging
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
-    SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.CriteriaPlaylist \
+    import CriteriaPlaylist, SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithoutTrackSerializer import SimplePlaylistWithoutTrackSerializer
+from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithoutTrackSerializer \
+    import SimplePlaylistWithoutTrackSerializer
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
-    LIB_TRACK_ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
     CriteriaPlaylistWithoutTracksSerializer
@@ -49,7 +49,7 @@ class TYPE_PARAMETER_VALUE:
     PLAYLIST_NAME = QUERY_FILTERS_NAME.PLAYLIST_NAME
 
 
-def track_filter(queryset, request, *args, **kwargs):
+def lib_track_filter(queryset, request, *args, **kwargs):
     if TYPE_PARAMETER_VALUE.TITLE in request.query_params:
         request.query_params[TYPE_PARAMETER_VALUE.TITLE]
         # TODO: handle type of query
@@ -68,7 +68,7 @@ def simple_playlist_filter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
-            ).order_by(ATTRIBUTES_LABEL.NAME)
+            ).order_by(PLLAYLIST_ATTRIBUTES_LABEL.NAME)
     return queryset
 
 
@@ -127,7 +127,7 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
             {
                 'queryset': LibraryTrack.objects.filter(user=user),
                 'serializer_class': LibTrackDetailedSerializer,
-                'filter_fn': track_filter},
+                'filter_fn': lib_track_filter},
             {
                 'queryset': SimplePlaylist.objects.filter(playlist__user=user),
                 'serializer_class': SimplePlaylistWithoutTrackSerializer,

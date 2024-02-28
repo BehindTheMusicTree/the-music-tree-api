@@ -9,7 +9,7 @@ from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIA
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaPutSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 

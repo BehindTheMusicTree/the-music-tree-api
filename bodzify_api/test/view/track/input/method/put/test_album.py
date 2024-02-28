@@ -5,7 +5,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaPutSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
 from bodzify_api.test.view.ModelStringAttributePutTestCase import \
     ModelStringAttributePutViewTestCase
 

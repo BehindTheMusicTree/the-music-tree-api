@@ -2,7 +2,7 @@
 
 from django.db.models import Sum
 from rest_framework import serializers
-from bodzify_api.serializer.album.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
+from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
@@ -18,10 +18,9 @@ class ArtistDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Artist
-        fields = [
-            ATTRIBUTES_LABEL.UUID,
-            ATTRIBUTES_LABEL.NAME,
-            ATTRIBUTES_LABEL.ALBUMS,
-            ATTRIBUTES_LABEL.LIBRARY_TRACKS,
-            ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT,
-            ATTRIBUTES_LABEL.DURATION]
+        fields = [ATTRIBUTES_LABEL.UUID,
+                  ATTRIBUTES_LABEL.NAME,
+                  ATTRIBUTES_LABEL.ALBUMS,
+                  ATTRIBUTES_LABEL.LIBRARY_TRACKS,
+                  ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT,
+                  ATTRIBUTES_LABEL.DURATION]

@@ -3,7 +3,7 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.schema.LibTrackSchemaPutSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.test.view.track.input.source.data.LibTrackAttributeFromDataTestCase import \
     LibTrackAttributeFromDataTestCase

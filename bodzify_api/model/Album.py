@@ -68,7 +68,7 @@ class Album(models.Model):
 
     @staticmethod
     def get_album_from_name_and_album_artists_name_list_after_eventual_creations(
-            user: User, album_name: str, album_artists_name_list: list) -> Optional['Album']:
+            user: User, album_name: str, album_artists_name_list: Optional[list]) -> Optional['Album']:
 
         if album_name is None or album_name == "":
             return None

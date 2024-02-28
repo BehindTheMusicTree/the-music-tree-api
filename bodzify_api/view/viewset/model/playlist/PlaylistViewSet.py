@@ -17,7 +17,7 @@ from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTr
 from bodzify_api.service.playlist.PlaylistService import PlaylistService
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.CriteriaPlaylist import \
     ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
 
@@ -54,14 +54,14 @@ class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
                 queryset = queryset.filter(
                     parent__uuid=self.request.GET[parent_uuid_param_key])
 
-        name_key = ATTRIBUTES_LABEL.NAME
+        name_key = PLLAYLIST_ATTRIBUTES_LABEL.NAME
         if name_key in self.request.GET:
             queryset = queryset.filter(
                 name__icontains=self.request.GET[name_key])
 
         return queryset
 
-    @extend_schema(parameters=[OpenApiParameter(name=ATTRIBUTES_LABEL.NAME,
+    @extend_schema(parameters=[OpenApiParameter(name=PLLAYLIST_ATTRIBUTES_LABEL.NAME,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY),
                                OpenApiParameter(name=PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL.TYPE,

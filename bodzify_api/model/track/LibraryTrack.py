@@ -32,7 +32,7 @@ def _get_user_directory_path(instance, filename):
         filename)
 
 
-class LIB_TRACK_ATTRIBUTES_LABEL:
+class ATTRIBUTES_LABEL:
     UUID = "uuid"
     USER = "user"
     FILE = "file"
@@ -108,15 +108,15 @@ class LibraryTrack(models.Model):
         return "tracks/" + self.uuid + "/"
 
     def __str__(self):
-        album_str = f"{LIB_TRACK_ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
-        genre_str = f"{LIB_TRACK_ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
-        duration_str = f"{LIB_TRACK_ATTRIBUTES_LABEL.DURATION}: {str(self.duration)} " if self.duration else ""
-        rating_str = f"{LIB_TRACK_ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
-        language_str = f"{LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
-        file_str = f"{LIB_TRACK_ATTRIBUTES_LABEL.FILE}: {str(self.file.name)} " if self.file else ""
+        album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
+        genre_str = f"{ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
+        duration_str = f"{ATTRIBUTES_LABEL.DURATION}: {str(self.duration)} " if self.duration else ""
+        rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
+        language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
+        file_str = f"{ATTRIBUTES_LABEL.FILE}: {str(self.file.name)} " if self.file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
                 f"{genre_str}{duration_str}{rating_str}{language_str}"
-                f"{LIB_TRACK_ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
+                f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
 
     def save(self, *args, **kwargs):
         try:

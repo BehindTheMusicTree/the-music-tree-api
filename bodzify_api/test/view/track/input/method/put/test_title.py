@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.track.LibraryTrack import LIB_TRACK_ATTRIBUTES_LABEL, LibraryTrack
+from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL, LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
@@ -26,7 +26,7 @@ class TestCase(ApiViewTestCase):
                       duration=0)
         lib_track_title_new = "hey ya"
         data = {
-            LIB_TRACK_ATTRIBUTES_LABEL.TITLE: lib_track_title_new
+            ATTRIBUTES_LABEL.TITLE: lib_track_title_new
         }
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
@@ -39,7 +39,7 @@ class TestCase(ApiViewTestCase):
                       duration=0)
         lib_track_title_new = "hey ya"
         data = {
-            LIB_TRACK_ATTRIBUTES_LABEL.TITLE: ''
+            ATTRIBUTES_LABEL.TITLE: ''
         }
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK

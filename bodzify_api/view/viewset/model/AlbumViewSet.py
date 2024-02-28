@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.Album import Album
-from bodzify_api.serializer.album.AlbumDetailedSerializer import \
-    AlbumDetailedSerializer
+from bodzify_api.serializer.album.output.AlbumDetailedSerializer import AlbumDetailedSerializer
 from bodzify_api.service.AlbumService import AlbumService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
