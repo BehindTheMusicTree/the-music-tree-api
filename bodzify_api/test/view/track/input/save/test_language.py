@@ -13,7 +13,7 @@ class TestCase(FieldStrTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: language
         }
-        response = self.extract_default_mine_track(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.language == language
 
@@ -22,13 +22,13 @@ class TestCase(FieldStrTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: language
         }
-        response = self.extract_default_mine_track(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
-    def test_none_then_none(self):
+    def test_empty_then_none(self):
         data = {
-            PUT_FIELDS.LANGUAGE: None
+            PUT_FIELDS.LANGUAGE: ""
         }
-        response = self.extract_default_mine_track(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.language == None
