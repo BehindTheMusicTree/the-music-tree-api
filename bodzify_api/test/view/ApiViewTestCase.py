@@ -21,7 +21,7 @@ logger = logging.getLogger('bodzify_api')
 
 class ApiViewTestCase(ViewTestCase):
 
-    class RESPONSE_KEYS:
+    class RESPONSE_FIELDS:
         COUNT = 'count'
         NEXT = 'next'
         PREVIOUS = 'previous'

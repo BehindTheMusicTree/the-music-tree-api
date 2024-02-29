@@ -5,7 +5,7 @@ from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase, RESPONSE_KEYS
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 class TestCase(ApiViewTestCase):
@@ -44,6 +44,6 @@ class TestCase(ApiViewTestCase):
             duration=125)
 
         response = self.get_albums()
-        assert response.status_code == status.HTTP_200_OK
-        albums_json_list = response.json()[RESPONSE_KEYS.RESULTS]
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        albums_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
         assert len(albums_json_list) == 2
