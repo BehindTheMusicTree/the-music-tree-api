@@ -28,6 +28,7 @@ class ApiViewTestCase(ViewTestCase):
         OVERALL_TOTAL = 'overall_total'
 
     SAMPLE_MINE_TRACK_URL = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
+    SAMPLE_MINE_TRACK_EXTENSION = SAMPLE_MINE_TRACK_URL.split('.')[-1]
 
     saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict

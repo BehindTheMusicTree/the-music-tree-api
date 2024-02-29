@@ -7,6 +7,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
 from bodzify_api.test.view.track.input.method.put.AttributePutTestCase import AttributeFromPutTestCase
 
+
 class TestCase(AttributeFromPutTestCase):
 
     def test_not_provided_then_unchanged(self):
@@ -16,8 +17,8 @@ class TestCase(AttributeFromPutTestCase):
                       title="Love",
                       album=album,
                       duration=0)
-        response = self.put_lib_track(lib_track.uuid, data_json={}) # type: ignore
-        assert response.status_code == status.HTTP_200_OK # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_json={})  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == album
 
     def test_none_then_none(self):
@@ -30,8 +31,8 @@ class TestCase(AttributeFromPutTestCase):
         data = {
             PUT_FIELDS.ALBUM_NAME: None
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data) # type: ignore
-        assert response.status_code == status.HTTP_200_OK # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == None
 
     def test_empty_then_none(self):
@@ -44,8 +45,8 @@ class TestCase(AttributeFromPutTestCase):
         data = {
             PUT_FIELDS.ALBUM_NAME: ''
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data) # type: ignore
-        assert response.status_code == status.HTTP_200_OK # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == None
 
     def test_not_none_then_update(self):
@@ -57,10 +58,10 @@ class TestCase(AttributeFromPutTestCase):
                       duration=0)
         album_new = G(Album, user=self.test_user, name="koko")
         data = {
-            PUT_FIELDS.ALBUM_NAME: album_new.name # type: ignore
+            PUT_FIELDS.ALBUM_NAME: album_new.name  # type: ignore
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data) # type: ignore
-        assert response.status_code == status.HTTP_200_OK # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == album_new
 
     def test_nothing_linked_to_old_album_anymore_then_delete(self):
@@ -74,8 +75,8 @@ class TestCase(AttributeFromPutTestCase):
         data = {
             PUT_FIELDS.ALBUM_NAME: "Paul",
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data) # type: ignore
-        assert response.status_code == status.HTTP_200_OK # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert not Album.objects.filter(user=self.test_user, name=album_name).exists()
 
     def test_a_track_still_linked_to_album_then_not_delete(self):
@@ -94,6 +95,6 @@ class TestCase(AttributeFromPutTestCase):
         data = {
             PUT_FIELDS.ALBUM_NAME: "Paul",
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data) # type: ignore
-        assert response.status_code == status.HTTP_200_OK # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert Album.objects.filter(user=self.test_user, name=album_name).exists()
