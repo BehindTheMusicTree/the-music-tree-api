@@ -35,10 +35,10 @@ class ApiViewTestCase(ViewTestCase):
     saved_lib_track_metadata: dict
     saved_genre: Criteria
 
-    def setUp(self, methodes_names_to_implenent: Optional[list[str]] = None):
+    def setUp(self, methodes_names_to_implement: Optional[list[str]] = None):
         super().setUp()
-        if methodes_names_to_implenent is not None:
-            for method_name in methodes_names_to_implenent:
+        if methodes_names_to_implement is not None:
+            for method_name in methodes_names_to_implement:
                 if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
                     raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")
 
@@ -96,7 +96,17 @@ class ApiViewTestCase(ViewTestCase):
             generic_sample_file_extension=generic_sample_extension,
             data_json=data_json)
 
-    def post_lib_track_with_generic_sample_tags_max_length_of_a(self, generic_sample_extension, data_json=None):
+    def post_lib_track_with_generic_sample_tag_album_without_album_artists(self,
+                                                                           generic_sample_extension='mp3',
+                                                                           data_json=None):
+        filename_without_extension = \
+            ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_WITHOUT_ALBUM_ARTISTS
+        return self.post_lib_track_with_generic_sample(
+            generic_sample_filename_without_extension=filename_without_extension,
+            generic_sample_file_extension=generic_sample_extension,
+            data_json=data_json)
+
+    def post_lib_track_with_generic_sample_tags_max_length_of_a(self, generic_sample_extension='mp3', data_json=None):
         filename_without_extension = \
             ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
         return self.post_lib_track_with_generic_sample(

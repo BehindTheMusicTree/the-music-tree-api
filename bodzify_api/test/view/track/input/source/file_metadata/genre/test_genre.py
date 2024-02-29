@@ -5,7 +5,7 @@ import logging
 import pytest
 
 from bodzify_api.test import conftest
-from bodzify_api.test.view.track.input.source.file_metadata.language.TestCase \
+from bodzify_api.test.view.track.input.source.file_metadata.genre.TestCase \
     import Mp3TestCase, WavTestCase, FlacTestCase
 
 logger = logging.getLogger('bodzify_api')

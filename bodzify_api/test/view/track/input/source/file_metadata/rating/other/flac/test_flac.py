@@ -3,12 +3,12 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.view.track.input.source.file_metadata.rating.LibraryTrackFromFileMetadataRatingWithHalfFieldTestCase \
-    import LibraryTrackFromFileMetadataRatingWithHalfFieldTestCase
+from bodzify_api.test.view.track.input.source.file_metadata.rating.RatingNotNoneWithHalfValuesAndZeroTestCase \
+    import RatingNotNoneWithHalfValuesAndZeroTestCase
 
 
 @pytest.mark.django_db
-class TestCase(LibraryTrackFromFileMetadataRatingWithHalfFieldTestCase):
+class TestCase(RatingNotNoneWithHalfValuesAndZeroTestCase):
 
     def test_0_then_0(self):
         response = self.post_lib_track_with_specific_sample("0 star.flac")
