@@ -10,7 +10,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, \
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.test.view.ApiViewTestCase import RESPONSE_KEYS, ApiViewTestCase
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 class TestCase(ApiViewTestCase):
@@ -26,12 +26,12 @@ class TestCase(ApiViewTestCase):
         response = self.search("Sum")
         assert response.status_code == 200  # type: ignore
         response_json = response.json()  # type: ignore
-        assert response_json[RESPONSE_KEYS.OVERALL_TOTAL] == 3
-        results = response_json[RESPONSE_KEYS.RESULTS]
+        assert response_json[ApiViewTestCase.RESPONSE_FIELDS.OVERALL_TOTAL] == 3
+        results = response_json[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
         title_key = PLLAYLIST_ATTRIBUTES_LABEL.TITLE
-        assert results[LibraryTrack.__name__][0][title_key] == summerlove_track.title
-        assert results[Artist.__name__][0][ARTIST_ATTRIBUTES_LABEL.NAME] == sum41_artist.name
-        assert results[Album.__name__][0][ARTIST_ATTRIBUTES_LABEL.NAME] == jailesum_album.name
+        assert results[LibraryTrack.__name__][0][title_key] == summerlove_track.title  # type: ignore
+        assert results[Artist.__name__][0][ARTIST_ATTRIBUTES_LABEL.NAME] == sum41_artist.name  # type: ignore
+        assert results[Album.__name__][0][ARTIST_ATTRIBUTES_LABEL.NAME] == jailesum_album.name  # type: ignore
 
     def test_the_all_string_including_a_track(self):
         werealltoblame_track = G(LibraryTrack,
@@ -41,8 +41,8 @@ class TestCase(ApiViewTestCase):
         response = self.search("All")
         assert response.status_code == 200
         response_json = response.json()
-        assert response_json[RESPONSE_KEYS.OVERALL_TOTAL] == 2
-        results = response_json[RESPONSE_KEYS.RESULTS]
+        assert response_json[ApiViewTestCase.RESPONSE_FIELDS.OVERALL_TOTAL] == 2
+        results = response_json[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
         track_title_key = PLLAYLIST_ATTRIBUTES_LABEL.TITLE
         assert results[LibraryTrack.__name__][0][track_title_key] == werealltoblame_track.title
         playlist_name_key = PLLAYLIST_ATTRIBUTES_LABEL.NAME
@@ -63,7 +63,7 @@ class TestCase(ApiViewTestCase):
         response = self.search("Rap")
         assert response.status_code == 200
         response_json = response.json()
-        assert response_json[RESPONSE_KEYS.OVERALL_TOTAL] == 2
-        results = response_json[RESPONSE_KEYS.RESULTS]
+        assert response_json[ApiViewTestCase.RESPONSE_FIELDS.OVERALL_TOTAL] == 2
+        results = response_json[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
         assert results[CriteriaPlaylist.__name__][0][PLLAYLIST_ATTRIBUTES_LABEL.NAME] == rap_criteria_name
         assert results[CriteriaPlaylist.__name__][1][PLLAYLIST_ATTRIBUTES_LABEL.NAME] == us_rap_criteria_name
