@@ -12,9 +12,8 @@ from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIA
 class TestCase(ApiViewTestCase):
 
     def test_no_genre_then_in_the_all_and_genreless_playlists(self):
-        response = self.post_lib_track_with_specific_sample(
-            specific_sample_filename="no_genre_provided.mp3", data_json={})
-        assert response.status_code == status.HTTP_201_CREATED
+        response = self.post_lib_track_with_generic_sample_no_tags()
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
         track_playlists = self.saved_lib_track.playlists.all()
         assert len(track_playlists) == 2

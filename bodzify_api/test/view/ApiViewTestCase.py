@@ -81,7 +81,7 @@ class ApiViewTestCase(ViewTestCase):
         generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
         return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_json=data_json)
 
-    def post_lib_track_with_generic_sample_no_tags(self, generic_sample_extension, data_json=None):
+    def post_lib_track_with_generic_sample_no_tags(self, generic_sample_extension='mp3', data_json=None):
         filename_without_extension = ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
