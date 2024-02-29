@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from ddf import G
 from bodzify_api import settings
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.view.StringFieldSaveTestCase import StringFieldSaveTestCase
+from bodzify_api.test.view.track.input.save.FieldStrTestCase import FieldStrTestCase
 
 
-class TestCase(StringFieldSaveTestCase):
+class TestCase(FieldStrTestCase):
 
     def test_longest_then_ok(self):
         language = "a" * settings.LIB_TRACK_LANGUAGE_LENGTH_MAX
@@ -15,7 +14,7 @@ class TestCase(StringFieldSaveTestCase):
             PUT_FIELDS.LANGUAGE: language
         }
         response = self.extract_default_mine_track(data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.language == language
 
     def test_too_long_then_error(self):
@@ -24,12 +23,12 @@ class TestCase(StringFieldSaveTestCase):
             PUT_FIELDS.LANGUAGE: language
         }
         response = self.extract_default_mine_track(data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_none_then_none(self):
         data = {
             PUT_FIELDS.LANGUAGE: None
         }
         response = self.extract_default_mine_track(data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.language == None

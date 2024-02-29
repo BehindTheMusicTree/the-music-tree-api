@@ -4,8 +4,6 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import \
-    FIELDS as PUT_FIELDS
 
 
 class TestCase(ApiViewTestCase):
@@ -19,8 +17,8 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": rating
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.rating == rating
 
     def test_four(self):
@@ -32,8 +30,8 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": rating
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.rating == rating
 
     def test_ten(self):
@@ -45,8 +43,8 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": rating
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.rating == rating
 
     def test_error_when_above_maximum(self):
@@ -58,8 +56,8 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": 11,
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_error_when_below_minimum(self):
         lib_track = G(LibraryTrack,
@@ -70,8 +68,8 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": -1,
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_error_when_not_integer(self):
         lib_track = G(LibraryTrack,
@@ -82,5 +80,5 @@ class TestCase(ApiViewTestCase):
         data = {
             "rating": 5.5,
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
