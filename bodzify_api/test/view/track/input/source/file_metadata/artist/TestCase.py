@@ -3,13 +3,13 @@
 import logging
 from bodzify_api import settings
 from bodzify_api.test.view.track.input.source.file_metadata.FieldStrFromFileMetadataTestCase \
-    import FieldStrFromFileMetadataTestCase
+    import FieldStrNullableFromFileMetadataTestCase
 from rest_framework import status
 
 logger = logging.getLogger('bodzify_api')
 
 
-class TestCase(FieldStrFromFileMetadataTestCase):
+class TestCase(FieldStrNullableFromFileMetadataTestCase):
     file_extension = None
 
     def test_none_then_none(self):
