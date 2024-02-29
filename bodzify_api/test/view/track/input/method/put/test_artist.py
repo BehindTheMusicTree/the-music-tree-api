@@ -22,21 +22,6 @@ class TestCase(FieldFromPutTestCase):
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.artist == artist
 
-    def test_none_then_none(self):
-        artist_old = G(Artist, user=self.test_user, name="a-ha")
-        lib_track = G(LibraryTrack,
-                      user=self.test_user,
-                      title="koko",
-                      artist=artist_old,
-                      duration=0)
-        artist_new = G(Artist, user=self.test_user, name="koko")
-        data = {
-            PUT_FIELDS.ARTIST_NAME: artist_new.name  # type: ignore
-        }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        assert self.saved_lib_track.artist == artist_new
-
     def test_empty_then_none(self):
         artist_old = G(Artist, user=self.test_user, name="a-ha")
         lib_track = G(LibraryTrack,

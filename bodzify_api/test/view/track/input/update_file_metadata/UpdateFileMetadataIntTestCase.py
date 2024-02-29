@@ -35,9 +35,9 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
                 generic_sample_extension=self.file_extension, data_json=data)
         else:
             response = self.post_lib_track_with_generic_sample_no_tags(
-                generic_sample_extension=self.file_extension, data_json=data)
+                generic_sample_extension=self.file_extension, data_json=data)  # type: ignore
 
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
         value_expected_in_metadata = value_expected_in_metadata if value_expected_in_metadata is not None else value
 

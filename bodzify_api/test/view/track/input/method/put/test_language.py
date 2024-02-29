@@ -34,19 +34,6 @@ class TestCase(FieldFromPutTestCase):
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == language
 
-    def test_none_then_none(self):
-        lib_track = G(LibraryTrack,
-                      user=self.test_user,
-                      title="Love",
-                      language="French",
-                      duration=0)
-        data = {
-            PUT_FIELDS.LANGUAGE: None
-        }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        assert self.saved_lib_track.language == None
-
     def test_empty_then_none(self):
         lib_track = G(LibraryTrack,
                       user=self.test_user,

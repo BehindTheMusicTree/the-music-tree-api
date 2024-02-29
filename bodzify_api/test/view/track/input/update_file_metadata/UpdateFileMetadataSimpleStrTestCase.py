@@ -27,7 +27,7 @@ class UpdateFileMetadataSimpleStrTestCase(UpdateFileMetadataStrTestCase):
         }
         response = self.post_lib_track_with_generic_sample_no_tags(
             generic_sample_extension=self.file_extension, data_json=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track_metadata[self.metadata_dict_key] == value
 
     def test_on_present_tag_then_ok(self):
@@ -47,7 +47,7 @@ class UpdateFileMetadataSimpleStrTestCase(UpdateFileMetadataStrTestCase):
         }
         response = self.post_lib_track_with_generic_sample_no_tags(
             generic_sample_extension=self.file_extension, data_json=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track_metadata[self.metadata_dict_key] == value
 
     def test_none_then_none(self):
@@ -56,5 +56,5 @@ class UpdateFileMetadataSimpleStrTestCase(UpdateFileMetadataStrTestCase):
         }
         response = self.post_lib_track_with_generic_sample_no_tags(
             generic_sample_extension=self.file_extension, data_json=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track_metadata[self.metadata_dict_key] in ["", None]

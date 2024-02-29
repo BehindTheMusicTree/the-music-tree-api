@@ -51,3 +51,16 @@ class TestCase(FieldFromPutTestCase):
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.genre == None
+
+    def test_not_none_then_update(self):
+        genre_name = "rap"
+        lib_track = G(LibraryTrack,
+                      user=self.test_user,
+                      title='lolo',
+                      duration=0)
+        data = {
+            PUT_FIELDS.GENRE_NAME: genre_name
+        }
+        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert self.saved_lib_track.genre.name == genre_name  # type: ignore

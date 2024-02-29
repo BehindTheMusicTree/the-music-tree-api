@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-from abc import abstractmethod
 import pytest
-from rest_framework import status
 
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
@@ -10,10 +8,6 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 @pytest.mark.django_db
 class FieldFromFileMetadataTestCase(ApiViewTestCase):
 
-    @abstractmethod
-    def test_none_then_none(self):
-        pass
-
-    @abstractmethod
-    def test_longest(self):
-        pass
+    def setUp(self):
+        super().setUp(methodes_names_to_implenent=['test_none_then_none',
+                                                   'test_longest'])

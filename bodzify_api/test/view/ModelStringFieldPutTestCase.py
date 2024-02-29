@@ -1,23 +1,12 @@
 #!/usr/bin/env python
 
-from abc import abstractmethod
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 class ModelStringFieldPutViewTestCase(ApiViewTestCase):
-
-    @abstractmethod
-    def test_not_provided_then_unchanged(self):
-        pass
-
-    @abstractmethod
-    def test_none_then_none(self):
-        pass
-
-    @abstractmethod
-    def test_empty_then_none(self):
-        pass
-
-    @abstractmethod
-    def test_not_none_then_update(self):
-        pass
+    
+    def setUp(self):
+        return super().setUp(methodes_names_to_implenent=['test_not_provided_then_unchanged',
+                                                           'test_none_then_none',
+                                                           'test_empty_then_none',
+                                                           'test_not_none_then_update'])

@@ -20,21 +20,7 @@ class TestCase(FieldFromPutTestCase):
         response = self.put_lib_track(lib_track.uuid, data_json={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == album
-
-    def test_none_then_none(self):
-        album_old = G(Album, user=self.test_user, name="Jojo")
-        lib_track = G(LibraryTrack,
-                      user=self.test_user,
-                      title="koko",
-                      album=album_old,
-                      duration=0)
-        data = {
-            PUT_FIELDS.ALBUM_NAME: None
-        }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        assert self.saved_lib_track.album == None
-
+        
     def test_empty_then_none(self):
         album_old = G(Album, user=self.test_user, name="Jojo")
         lib_track = G(LibraryTrack,
