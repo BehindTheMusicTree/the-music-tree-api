@@ -17,4 +17,4 @@ class TestCase(ApiViewTestCase):
             "nonExistingField": "oifjqoif",
         }
         response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

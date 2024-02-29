@@ -5,10 +5,10 @@ from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.view.track.input.method.put.FieldPutTestCase import FieldFromPutTestCase
+from bodzify_api.test.view.track.input.method.put.FieldTestCase import FieldTestCase
 
 
-class TestCase(FieldFromPutTestCase):
+class TestCase(FieldTestCase):
 
     def test_not_provided_then_unchanged(self):
         album = G(Album, user=self.test_user, name="Jojo")
@@ -20,7 +20,7 @@ class TestCase(FieldFromPutTestCase):
         response = self.put_lib_track(lib_track.uuid, data_json={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == album
-        
+
     def test_empty_then_none(self):
         album_old = G(Album, user=self.test_user, name="Jojo")
         lib_track = G(LibraryTrack,

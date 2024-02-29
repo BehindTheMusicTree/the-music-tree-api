@@ -3,15 +3,24 @@
 from bodzify_api.model.playlist.CriteriaPlaylist import ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.output.PlaylistChildWithoutTrackSerializer import PlaylistChildWithoutTrackSerializer
+from bodzify_api.serializer.playlist.output.PlaylistChildWithoutTrackSerializer \
+    import PlaylistChildWithoutTrackSerializer
+
+
+class FIELDS:
+    UUID = PLAYLIST_ATTRIBUTES_LABEL.UUID
+    NAME = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.NAME
+    ADDED_ON = PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON
+    PARENT = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
+    LIBRARY_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT
 
 
 class CriteriaPlaylistWithoutTracksSerializer(PlaylistChildWithoutTrackSerializer):
 
     class Meta:
         model = CriteriaPlaylist
-        fields = [PLAYLIST_ATTRIBUTES_LABEL.UUID,
-                  CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.NAME,
-                  PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON,
-                  CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT,
-                  PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT]
+        fields = [FIELDS.UUID,
+                  FIELDS.NAME,
+                  FIELDS.ADDED_ON,
+                  FIELDS.PARENT,
+                  FIELDS.LIBRARY_TRACKS_COUNT]

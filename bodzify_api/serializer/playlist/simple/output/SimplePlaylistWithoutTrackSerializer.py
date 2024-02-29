@@ -6,11 +6,18 @@ from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist, \
 from bodzify_api.serializer.playlist.output.PlaylistChildWithoutTrackSerializer import PlaylistChildWithoutTrackSerializer
 
 
+class FIELDS:
+    UUID = PLAYLIST_ATTRIBUTES_LABEL.UUID
+    NAME = SIMPLE_PLAYLIST_ATTRIBUTES_LABEL.NAME
+    ADDED_ON = PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON
+    LIBRARY_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT
+
+
 class SimplePlaylistWithoutTrackSerializer(PlaylistChildWithoutTrackSerializer):
 
     class Meta:
         model = SimplePlaylist
-        fields = [PLAYLIST_ATTRIBUTES_LABEL.UUID,
-                  SIMPLE_PLAYLIST_ATTRIBUTES_LABEL.NAME,
-                  PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON,
-                  PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT]
+        fields = [FIELDS.UUID,
+                  FIELDS.NAME,
+                  FIELDS.ADDED_ON,
+                  FIELDS.LIBRARY_TRACKS_COUNT]

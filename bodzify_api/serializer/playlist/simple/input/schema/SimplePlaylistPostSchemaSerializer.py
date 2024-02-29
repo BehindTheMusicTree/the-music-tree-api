@@ -5,8 +5,12 @@ from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLLAYLIST_ATTRIBUTES_LABEL
 
 
+class FIELDS:
+    NAME = PLLAYLIST_ATTRIBUTES_LABEL.NAME
+
+
 class SimplePlaylistPostSchemaSerializer(InputModelSerializer):
 
     class Meta:
         model = SimplePlaylist
-        fields = [PLLAYLIST_ATTRIBUTES_LABEL.NAME]
+        fields = [FIELDS.NAME]
