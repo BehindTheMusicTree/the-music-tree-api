@@ -17,7 +17,7 @@ class TestCase(ApiViewTestCase):
                   user=self.test_user,
                   type=CRITERIA_TYPES_ID.GENRE)
         response = self.get_genres()
-        genre_json_list = response.json()[RESPONSE_FIELDS.RESULTS]
+        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
         rock_genre_json = genre_json_list[0]
         criteria_type_label = rock_genre_json[ATTRIBUTES_LABEL.TYPE][CRITERIA_TYPE_ATTRIBUTES_LABEL.LABEL]
         assert criteria_type_label == CRITERIA_TYPES_LABEL.GENRE

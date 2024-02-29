@@ -18,5 +18,5 @@ class TestCase(ApiViewTestCase):
             user=self.test_user,
             type=CRITERIA_TYPES_ID.GENRE)
         response = self.get_genres()
-        genre_json_list = response.json()[ApiViewTestCase.ApiViewTestCase.ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
+        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
         assert len(genre_json_list) == 2

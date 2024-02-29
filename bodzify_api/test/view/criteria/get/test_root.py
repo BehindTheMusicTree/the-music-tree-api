@@ -29,7 +29,7 @@ class TestCase(ApiViewTestCase):
                        type=CRITERIA_TYPES_ID.GENRE,
                        parent=rock_genre)
         response = self.get_genres()
-        genre_json_list = response.json()[RESPONSE_FIELDS.RESULTS]
+        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
         for json_element in genre_json_list:
             if json_element[ATTRIBUTES_LABEL.UUID] == punk_genre.uuid:
                 assert json_element[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == rock_genre.uuid
