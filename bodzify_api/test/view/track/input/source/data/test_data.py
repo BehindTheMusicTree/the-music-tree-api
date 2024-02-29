@@ -2,7 +2,7 @@
 
 import pytest
 from bodzify_api.test import conftest
-from bodzify_api.test.view.track.input.source.data.AttributeFromDataTestCase \
+from bodzify_api.test.view.track.input.source.data.FieldFromDataTestCase \
     import ArtistTestCase, GenreTestCase, LanguageTestCase, TitleTestCase, RatingTestCase
 
 

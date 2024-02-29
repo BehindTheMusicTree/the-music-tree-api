@@ -3,12 +3,12 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.view.track.input.source.file_metadata.rating.LibraryTrackFromFileMetadataRatingAttributeTestCase \
-    import LibTrackFromFileMetadataRatingAttributeTestCase
+from bodzify_api.test.view.track.input.source.file_metadata.rating.LibraryTrackFromFileMetadataRatingFieldTestCase \
+    import LibTrackFromFileMetadataRatingFieldTestCase
 
 
 @pytest.mark.django_db
-class TestCase(LibTrackFromFileMetadataRatingAttributeTestCase):
+class TestCase(LibTrackFromFileMetadataRatingFieldTestCase):
 
     def test_mp3_then_none(self):
         response = self.post_lib_track_with_generic_sample_no_tags(generic_sample_extension="mp3")

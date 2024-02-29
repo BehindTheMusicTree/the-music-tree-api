@@ -3,12 +3,12 @@
 from abc import abstractmethod
 import pytest
 
-from bodzify_api.test.view.track.input.source.file_metadata.rating.LibraryTrackFromFileMetadataRatingAttributeTestCase \
-    import LibTrackFromFileMetadataRatingAttributeTestCase
+from bodzify_api.test.view.track.input.source.file_metadata.rating.LibraryTrackFromFileMetadataRatingFieldTestCase \
+    import LibTrackFromFileMetadataRatingFieldTestCase
 
 
 @pytest.mark.django_db
-class LibraryTrackFromFileMetadataRatingWithHalfAttributeTestCase(LibTrackFromFileMetadataRatingAttributeTestCase):
+class LibraryTrackFromFileMetadataRatingWithHalfFieldTestCase(LibTrackFromFileMetadataRatingFieldTestCase):
 
     @abstractmethod
     def test_0_then_0(self):

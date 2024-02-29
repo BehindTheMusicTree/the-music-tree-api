@@ -6,7 +6,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from rest_framework import status
 
 
-class AttributeFromPutTestCase(ApiViewTestCase):
+class FieldFromPutTestCase(ApiViewTestCase):
 
     @abstractmethod
     def test_not_provided_then_unchanged(self):

@@ -5,11 +5,10 @@ from ddf import G
 from bodzify_api import settings
 from bodzify_api.model.Artist import Artist
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
-from bodzify_api.test.view.StringAttributeSaveTestCase import \
-    StringAttributeSaveTestCase
+from bodzify_api.test.view.StringFieldSaveTestCase import StringFieldSaveTestCase
 
 
-class TestCase(StringAttributeSaveTestCase):
+class TestCase(StringFieldSaveTestCase):
 
     def test_longest_then_ok(self):
         artist_name = "a" * settings.ARTIST_NAME_LENGTH_MAX

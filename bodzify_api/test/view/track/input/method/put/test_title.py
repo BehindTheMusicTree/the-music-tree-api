@@ -4,10 +4,10 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.view.track.input.method.put.AttributePutTestCase import AttributeFromPutTestCase
+from bodzify_api.test.view.track.input.method.put.FieldPutTestCase import FieldFromPutTestCase
 
 
-class TestCase(AttributeFromPutTestCase):
+class TestCase(FieldFromPutTestCase):
 
     def test_not_empty_then_ok(self):
         title = "a"

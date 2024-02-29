@@ -5,16 +5,16 @@ from urllib import response
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.view.track.input.source.file_metadata.AttributeFromFileMetadataTestCase import \
-    AttributeFromFileMetadataTestCase
+from bodzify_api.test.view.track.input.source.file_metadata.FieldFromFileMetadataTestCase import \
+    FieldFromFileMetadataTestCase
 
 
 @pytest.mark.django_db
-class TestCase(AttributeFromFileMetadataTestCase):
+class TestCase(FieldFromFileMetadataTestCase):
 
     def test_none_then_none(self):
         response = self.post_lib_track_with_generic_sample_no_tags(generic_sample_extension="flac")
-        assert response.status_code == status.HTTP_201_CREATED # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.album == None
 
     def test_longest(self):

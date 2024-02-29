@@ -4,14 +4,14 @@ import logging
 from bodzify_api import settings
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
-from bodzify_api.test.view.track.input.source.file_metadata.AttributeFromFileMetadataTestCase \
-    import AttributeFromFileMetadataTestCase
+from bodzify_api.test.view.track.input.source.file_metadata.FieldFromFileMetadataTestCase \
+    import FieldFromFileMetadataTestCase
 from rest_framework import status
 
 logger = logging.getLogger('bodzify_api')
 
 
-class LanguageTestCase(AttributeFromFileMetadataTestCase):
+class LanguageTestCase(FieldFromFileMetadataTestCase):
     save_field = SAVE_SCHEMA_FIELDS.LANGUAGE
     metadata_dict_key = AudioMetadataManager.METADATA_DICT_KEYS.LANGUAGE,
     length_max = settings.LIB_TRACK_LANGUAGE_LENGTH_MAX

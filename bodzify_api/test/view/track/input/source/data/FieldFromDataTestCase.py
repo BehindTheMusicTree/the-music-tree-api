@@ -5,7 +5,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from rest_framework import status
 
 
-class AttributeFromDataTestCase(ApiViewTestCase):
+class FieldFromDataTestCase(ApiViewTestCase):
     extract_field_key = None
 
     def _test_ok(self, value):
@@ -16,7 +16,7 @@ class AttributeFromDataTestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
 
-class AttributeStrFromDataTestCase(AttributeFromDataTestCase):
+class FieldStrFromDataTestCase(FieldFromDataTestCase):
 
     def test_not_empty_then_ok(self):
         self._test_ok("a")
@@ -25,27 +25,27 @@ class AttributeStrFromDataTestCase(AttributeFromDataTestCase):
         self._test_ok("")
 
 
-class AttributeIntFromDataTestCase(AttributeFromDataTestCase):
+class FieldIntFromDataTestCase(FieldFromDataTestCase):
 
     def test_not_empty_then_ok(self):
         self._test_ok(1)
 
 
-class ArtistTestCase(AttributeStrFromDataTestCase):
+class ArtistTestCase(FieldStrFromDataTestCase):
     extract_field_key = EXTRACT_FIELDS.ARTIST_NAME
 
 
-class GenreTestCase(AttributeStrFromDataTestCase):
+class GenreTestCase(FieldStrFromDataTestCase):
     extract_field_key = EXTRACT_FIELDS.GENRE_NAME
 
 
-class LanguageTestCase(AttributeStrFromDataTestCase):
+class LanguageTestCase(FieldStrFromDataTestCase):
     extract_field_key = EXTRACT_FIELDS.LANGUAGE
 
 
-class TitleTestCase(AttributeStrFromDataTestCase):
+class TitleTestCase(FieldStrFromDataTestCase):
     extract_field_key = EXTRACT_FIELDS.TITLE
 
 
-class RatingTestCase(AttributeIntFromDataTestCase):
+class RatingTestCase(FieldIntFromDataTestCase):
     extract_field_key = EXTRACT_FIELDS.RATING

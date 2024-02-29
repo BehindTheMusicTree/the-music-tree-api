@@ -4,7 +4,7 @@ from abc import abstractmethod
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class StringAttributeSaveTestCase(ApiViewTestCase):
+class StringFieldSaveTestCase(ApiViewTestCase):
 
     @abstractmethod
     def test_longest_then_ok(self):

@@ -4,7 +4,7 @@ from abc import abstractmethod
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class ModelStringAttributePutViewTestCase(ApiViewTestCase):
+class ModelStringFieldPutViewTestCase(ApiViewTestCase):
 
     @abstractmethod
     def test_not_provided_then_unchanged(self):

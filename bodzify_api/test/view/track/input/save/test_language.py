@@ -4,11 +4,10 @@ from rest_framework import status
 from ddf import G
 from bodzify_api import settings
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.view.StringAttributeSaveTestCase import \
-    StringAttributeSaveTestCase
+from bodzify_api.test.view.StringFieldSaveTestCase import StringFieldSaveTestCase
 
 
-class TestCase(StringAttributeSaveTestCase):
+class TestCase(StringFieldSaveTestCase):
 
     def test_longest_then_ok(self):
         language = "a" * settings.LIB_TRACK_LANGUAGE_LENGTH_MAX

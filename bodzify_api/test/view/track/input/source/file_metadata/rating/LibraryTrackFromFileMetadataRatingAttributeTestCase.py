@@ -7,7 +7,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db
-class LibTrackFromFileMetadataRatingAttributeTestCase(ApiViewTestCase):
+class LibTrackFromFileMetadataRatingFieldTestCase(ApiViewTestCase):
 
     @abstractmethod
     def test_none_then_none(self):

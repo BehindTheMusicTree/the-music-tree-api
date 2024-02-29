@@ -6,11 +6,10 @@ from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
-from bodzify_api.test.view.StringAttributeSaveTestCase import \
-    StringAttributeSaveTestCase
+from bodzify_api.test.view.StringFieldSaveTestCase import StringFieldSaveTestCase
 
 
-class TestCase(StringAttributeSaveTestCase):
+class TestCase(StringFieldSaveTestCase):
 
     def test_longest_then_ok(self):
         genre_name = "a" * settings.CRITERIA_NAME_LENGTH_MAX
