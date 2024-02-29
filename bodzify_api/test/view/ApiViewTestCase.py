@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import logging
+from typing import Optional
 
 from django.urls import reverse
 from rest_framework import status
@@ -33,6 +34,13 @@ class ApiViewTestCase(ViewTestCase):
     saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict
     saved_genre: Criteria
+
+    def setUp(self, methodes_names_to_implenent: Optional[list[str]] = None):
+        super().setUp()
+        if methodes_names_to_implenent is not None:
+            for method_name in methodes_names_to_implenent:
+                if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
+                    raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")
 
     @staticmethod
     def _merge_two_jsons(json1, json2):

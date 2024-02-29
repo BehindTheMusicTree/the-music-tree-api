@@ -1,25 +1,13 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod
-from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-from rest_framework import status
 
 
 class FieldFromPutTestCase(ApiViewTestCase):
 
-    @abstractmethod
-    def test_not_provided_then_unchanged(self):
-        pass
-
-    @abstractmethod
-    def test_none_then_none(self):
-        pass
-
-    @abstractmethod
-    def test_empty_then_none(self):
-        pass
-
-    @abstractmethod
-    def test_not_none_then_update(self):
-        pass
+    def setUp(self):
+        super().setUp(methodes_names_to_implenent=['test_not_provided_then_unchanged',
+                                                   'test_none_then_none',
+                                                   'test_empty_then_none',
+                                                   'test_not_none_then_update'])
