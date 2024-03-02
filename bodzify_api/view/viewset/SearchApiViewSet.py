@@ -13,7 +13,7 @@ from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination impor
     DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
@@ -68,7 +68,7 @@ def simple_playlist_filter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
-            ).order_by(PLLAYLIST_ATTRIBUTES_LABEL.NAME)
+            ).order_by(PLAYLIST_ATTRIBUTES_LABEL.NAME)
     return queryset
 
 

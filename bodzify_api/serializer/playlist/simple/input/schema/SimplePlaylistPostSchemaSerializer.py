@@ -2,11 +2,11 @@
 
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 
 class FIELDS:
-    NAME = PLLAYLIST_ATTRIBUTES_LABEL.NAME
+    NAME = PLAYLIST_ATTRIBUTES_LABEL.NAME
 
 
 class SimplePlaylistPostSchemaSerializer(InputModelSerializer):

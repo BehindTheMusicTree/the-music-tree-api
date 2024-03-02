@@ -8,12 +8,15 @@ from rest_framework import status
 
 from bodzify_api import AudioMetadataManager
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
 from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as LIB_TRACK_POST_FIELDS
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
-from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import FIELDS as CRITERIA_GET_FIELDS
+from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithTracksSerializer \
+    import FIELDS as SIMPLE_PLAYLIST_GET_FIELDS
 
 
 logger = logging.getLogger('bodzify_api')
@@ -34,6 +37,7 @@ class ApiViewTestCase(ViewTestCase):
     saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict
     saved_genre: Criteria
+    saved_simple_playlist: SimplePlaylist
 
     def setUp(self, methodes_names_to_implement: Optional[list[str]] = None):
         super().setUp()
@@ -170,8 +174,9 @@ class ApiViewTestCase(ViewTestCase):
 
     def post_simple_playlist(self, data_json):
         response = self.api_client.post(path=reverse('simple-playlist-list'), data=data_json, format='json')
+        logger.debug(f"response: {response.json()}")
         if response.status_code == status.HTTP_201_CREATED:  # type: ignore
-            self._set_saved_genre_attribute(response)
+            self._set_saved_simple_playlist(response)
         return response
 
     def put_simple_playlist(self, simple_playlist_uuid, data_json):
@@ -187,8 +192,12 @@ class ApiViewTestCase(ViewTestCase):
     def get_albums(self):
         return self.api_client.get(path=reverse('album-list'))
 
+    def _set_saved_simple_playlist(self, response):
+        uuid = response.json()[SIMPLE_PLAYLIST_GET_FIELDS.UUID]
+        self.saved_simple_playlist = SimplePlaylist.objects.get(playlist__uuid=uuid)
+
     def _set_saved_genre_attribute(self, response):
-        uuid = response.json()[CRITERIA_GET_FIELDS.UUID]
+        uuid = response.json()[SIMPLE_PLAYLIST_GET_FIELDS.UUID]
         self.saved_genre = Criteria.objects.get(uuid=uuid)
 
     def _set_saved_lib_track_attribute(self, response):

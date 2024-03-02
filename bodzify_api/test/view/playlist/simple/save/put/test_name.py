@@ -4,7 +4,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 
 class TestCase(ApiViewTestCase):
@@ -21,7 +21,7 @@ class TestCase(ApiViewTestCase):
         simpe_playlist = G(SimplePlaylist, name="teuf")
         simple_playlist_name_new = "teuf2"
         data = {
-            PLLAYLIST_ATTRIBUTES_LABEL.NAME: simple_playlist_name_new
+            PLAYLIST_ATTRIBUTES_LABEL.NAME: simple_playlist_name_new
         }
         response = self.put_simple_playlist(simple_playlist_uuid=simpe_playlist.uuid, data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
