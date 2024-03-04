@@ -13,22 +13,21 @@ logger = logging.getLogger('bodzify_api')
 class TestCase(ApiViewTestCase):
 
     def test_not_provided_then_unchanged(self):
-        simple_playlist_name = "simple_playlist_name"
+        simple_playlist_name = "cuisine"
         simpe_playlist = G(SimplePlaylist, name=simple_playlist_name, playlist__user=self.test_user)
-        logger.debug(f"simpe_playlist: {simpe_playlist}")
-        logger.debug(f"simpe_playlist: {simpe_playlist.playlist.uuid}")
-        response = self.put_simple_playlist(simple_playlist_uuid=simpe_playlist.playlist.uuid, data_json={})
+        response = self.put_simple_playlist(
+            simple_playlist_uuid=simpe_playlist.playlist.uuid, data_json={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         updated_simpe_playlist = SimplePlaylist.objects.get(name=simple_playlist_name)
-        assert updated_simpe_playlist.name == simple_playlist_name
+        assert self.saved_simple_playlist.name == simple_playlist_name
 
     def test_ok(self):
-        simpe_playlist = G(SimplePlaylist, name="teuf")
+        simpe_playlist = G(SimplePlaylist, playlist__user=self.test_user, name="teuf")
         simple_playlist_name_new = "teuf2"
         data = {
             PLAYLIST_ATTRIBUTES_LABEL.NAME: simple_playlist_name_new
         }
-        response = self.put_simple_playlist(simple_playlist_uuid=simpe_playlist.uuid, data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        updated_simple_playlist = SimplePlaylist.objects.get(uuid=simpe_playlist.uuid)
-        assert updated_simple_playlist.name == simple_playlist_name_new
+        response = self.put_simple_playlist(
+            simple_playlist_uuid=simpe_playlist.playlist.uuid, data_json=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert self.saved_simple_playlist.name == simple_playlist_name_new

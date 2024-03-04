@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
@@ -12,4 +12,4 @@ class TestCase(ApiViewTestCase):
             'nonExistingField': 'oifjqoif'
         }
         response = self.post_simple_playlist(data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
