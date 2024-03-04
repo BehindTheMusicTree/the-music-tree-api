@@ -56,12 +56,12 @@ class CriteriaService(Service):
         save_model_data = QueryDict(mutable=True)
         save_model_data[CRITERIA_ATTRIBUTES_LABEL.USER] = user.pk
 
-        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
+        save_model_data = self._get_querydict1_updated_with_querydict2_key_if_set(
             key=CRITERIA_ATTRIBUTES_LABEL.NAME,
             querydict1=save_model_data,
             querydict2=save_schema_data)
 
-        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
+        save_model_data = self._get_querydict1_updated_with_querydict2_key_if_set(
             key=CRITERIA_ATTRIBUTES_LABEL.PARENT,
             querydict1=save_model_data,
             querydict2=save_schema_data)

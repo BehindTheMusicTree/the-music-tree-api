@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-from pathlib import Path
 import random
 import string
 from tempfile import NamedTemporaryFile
@@ -42,8 +41,16 @@ class TrackService(Service):
     def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
         file = post_schema_data[POST_FIELDS.FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
-        save_schema_data = self._get_dict1_overriden_with_dict2_when_key_is_provided(
-            dict1=save_schema_data_from_file, dict2=post_schema_data)
+        keys = [SAVE_SCHEMA_FIELDS.FILE,
+                SAVE_SCHEMA_FIELDS.TITLE,
+                SAVE_SCHEMA_FIELDS.ARTIST_NAME,
+                SAVE_SCHEMA_FIELDS.ALBUM_NAME,
+                SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING,
+                SAVE_SCHEMA_FIELDS.GENRE_NAME,
+                SAVE_SCHEMA_FIELDS.RATING,
+                SAVE_SCHEMA_FIELDS.LANGUAGE]
+        save_schema_data = self._get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(
+            dict1=save_schema_data_from_file, dict2=post_schema_data, keys=keys)
 
         if SAVE_SCHEMA_FIELDS.TITLE not in save_schema_data:
             filename = os.path.basename(file.name).split('.')[0]  # type: ignore
@@ -62,19 +69,20 @@ class TrackService(Service):
 
         return save_schema_data
 
-    def _get_save_model_data_from_save_schema_data(self, user: User, save_schema_data: QueryDict) -> QueryDict:
+    def _get_save_model_data_from_save_schema_data(
+            self, user: User, save_schema_data: QueryDict, old_instance) -> QueryDict:
         save_model_data = QueryDict(mutable=True)
         save_model_data[SAVE_MODEL_FIELDS.USER] = user.pk
 
-        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=SAVE_MODEL_FIELDS.FILE,
-            querydict1=save_model_data,
-            querydict2=save_schema_data)
-
-        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=SAVE_MODEL_FIELDS.TITLE,
-            querydict1=save_model_data,
-            querydict2=save_schema_data)
+        for key in [SAVE_MODEL_FIELDS.FILE,
+                    SAVE_MODEL_FIELDS.TITLE,
+                    SAVE_MODEL_FIELDS.DURATION,
+                    SAVE_MODEL_FIELDS.RATING,
+                    SAVE_MODEL_FIELDS.LANGUAGE]:
+            save_model_data = self._get_querydict1_updated_with_querydict2_key_if_set(
+                key=key,
+                querydict1=save_model_data,
+                querydict2=save_schema_data)
 
         save_model_data = self._get_dict1_updated_with_artist_uuid_if_artist_name_in_dict2(
             user=user,
@@ -93,21 +101,6 @@ class TrackService(Service):
 
         save_model_data = self._get_dict1_updated_with_genre_uuid_if_genre_name_in_dict2(
             user=user, dict1=save_model_data, dict2=save_schema_data)
-
-        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=SAVE_MODEL_FIELDS.DURATION,
-            querydict1=save_model_data,
-            querydict2=save_schema_data)
-
-        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=SAVE_MODEL_FIELDS.RATING,
-            querydict1=save_model_data,
-            querydict2=save_schema_data)
-
-        save_model_data = self.get_querydict1_updated_with_querydict2_key_if_set(
-            key=SAVE_MODEL_FIELDS.LANGUAGE,
-            querydict1=save_model_data,
-            querydict2=save_schema_data)
 
         return save_model_data
 
@@ -215,22 +208,6 @@ class TrackService(Service):
             if name != "" and names.count(name) == 0:
                 names.append(name)
         return names
-
-    def _get_dict1_overriden_with_dict2_when_key_is_provided(self, dict1: QueryDict, dict2: QueryDict) -> QueryDict:
-        overriden_dict1 = dict1.copy()
-        for key in [SAVE_SCHEMA_FIELDS.FILE,
-                    SAVE_SCHEMA_FIELDS.TITLE,
-                    SAVE_SCHEMA_FIELDS.ARTIST_NAME,
-                    SAVE_SCHEMA_FIELDS.ALBUM_NAME,
-                    SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING,
-                    SAVE_SCHEMA_FIELDS.GENRE_NAME,
-                    SAVE_SCHEMA_FIELDS.RATING,
-                    SAVE_SCHEMA_FIELDS.LANGUAGE]:
-            overriden_dict1 = self.get_querydict1_updated_with_querydict2_key_if_set(
-                key=key,
-                querydict1=overriden_dict1,
-                querydict2=dict2)
-        return overriden_dict1
 
     def _get_post_schema_data_from_extract_schema_data(self, requestData: QueryDict):
         save_data = requestData.copy()

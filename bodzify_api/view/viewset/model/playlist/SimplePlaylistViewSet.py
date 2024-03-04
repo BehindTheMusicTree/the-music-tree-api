@@ -7,15 +7,13 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from bodzify_api.model.Album import ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
-    CriteriaPlaylistWithTracksSerializer
-from bodzify_api.serializer.playlist.output.PlaylistSerializer import PlaylistSerializer
 from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPostSchemaSerializer import SimplePlaylistPostSchemaSerializer
 from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithTracksSerializer \
     import SimplePlaylistWithTracksSerializer
-from bodzify_api.service.playlist.PlaylistService import PlaylistService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.service.playlist.SimplePlaylistService import SimplePlaylistService
+from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPutSchemaSerializer \
+    import SimplePlaylistPutSchemaSerializer
 
 
 class GET_FILTER_FIELDS:
@@ -51,7 +49,10 @@ class SimplePlaylistViewSet(AppModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @extend_schema(request=SimplePlaylistPostSchemaSerializer,
-                   responses=SimplePlaylistWithTracksSerializer)
+    @extend_schema(request=SimplePlaylistPostSchemaSerializer, responses=SimplePlaylistWithTracksSerializer)
     def create(self, request, *args, **kwargs):
         return self._create(request, *args, **kwargs)
+
+    @extend_schema(request=SimplePlaylistPutSchemaSerializer, responses=SimplePlaylistWithTracksSerializer)
+    def update(self, request, *args, **kwargs):
+        return self._update(request, *args, **kwargs)
