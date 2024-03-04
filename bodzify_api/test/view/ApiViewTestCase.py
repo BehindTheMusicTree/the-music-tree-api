@@ -174,7 +174,6 @@ class ApiViewTestCase(ViewTestCase):
 
     def post_simple_playlist(self, data_json):
         response = self.api_client.post(path=reverse('simple-playlist-list'), data=data_json, format='json')
-        logger.debug(f"response: {response.json()}")
         if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_simple_playlist_attribute(response)
         return response
@@ -182,7 +181,6 @@ class ApiViewTestCase(ViewTestCase):
     def put_simple_playlist(self, simple_playlist_uuid: str, data_json):
         response = self.api_client.put(
             path=reverse('simple-playlist-detail', kwargs={'pk': simple_playlist_uuid}), data=data_json, format='json')
-        logger.debug(f"response: {response.json()}")
         if response.status_code == status.HTTP_200_OK:  # type: ignore
             self._set_saved_simple_playlist_attribute(response)
         return response
