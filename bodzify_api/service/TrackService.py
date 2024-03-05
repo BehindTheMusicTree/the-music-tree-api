@@ -109,6 +109,7 @@ class TrackService(Service):
 
     def extract(self, user: User, extract_schema_data: QueryDict):
         mine_track_url = extract_schema_data[MINE_TRACK_FIELDS.URL]
+        logger.debug('extract_schema_data = ' + str(extract_schema_data))
         try:
             track_in_memory_file = requests.get(mine_track_url, stream=True)
         except Exception as e:
