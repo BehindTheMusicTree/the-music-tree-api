@@ -30,8 +30,12 @@ class ApiViewTestCase(ViewTestCase):
         RESULTS = 'results'
         OVERALL_TOTAL = 'overall_total'
 
-    SAMPLE_MINE_TRACK_URL = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
-    SAMPLE_MINE_TRACK_EXTENSION = SAMPLE_MINE_TRACK_URL.split('.')[-1]
+    class SAMPLE_MINE_TRACK_URLS:
+        WAV = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
+        MP3 = "https://lasonotheque.org/UPLOAD/mp3/0001.mp3"
+
+    SAMPLE_MINE_TRACK_DEFAULT_URL = SAMPLE_MINE_TRACK_URLS.MP3
+    SAMPLE_MINE_TRACK_DEFAULT_EXTENSION = SAMPLE_MINE_TRACK_DEFAULT_URL.split('.')[-1]
 
     saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict
@@ -63,9 +67,24 @@ class ApiViewTestCase(ViewTestCase):
             self._set_saved_lib_track_attribute(response)
         return response
 
-    def extract_default_mine_track(self, data_json):
-        merged_json = self._merge_two_jsons({LIB_TRACK_EXTRACT_FIELDS.URL: self.SAMPLE_MINE_TRACK_URL}, data_json)
-        return self.extract(merged_json)
+    def extract_default_mine_track(self, extension=None, extract_data_json=None):
+        if extension is None:
+            url = self.SAMPLE_MINE_TRACK_DEFAULT_URL
+        elif extension == 'wav':
+            url = self.SAMPLE_MINE_TRACK_URLS.WAV
+        elif extension == 'mp3':
+            url = self.SAMPLE_MINE_TRACK_URLS.MP3
+        else:
+            raise ValueError(f"Unknown extension: {extension}")
+
+        extract_data_json = {LIB_TRACK_EXTRACT_FIELDS.URL: url}
+
+        logger.debug(f"Extracting default mine track with url: {url}")
+
+        if extract_data_json is not None:
+            extract_data_json = self._merge_two_jsons(extract_data_json, extract_data_json)
+
+        return self.extract(extract_data_json)
 
     def post_lib_track(self, file_abs_path=None, data_json=None):
         if file_abs_path is None:
