@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 from django.http import HttpResponse, JsonResponse
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -17,6 +18,8 @@ from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer impor
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+
+logger = logging.getLogger('bodzify_api')
 
 
 class GET_FILTER_FIELDS:
@@ -172,6 +175,7 @@ class TrackViewSet(AppModelViewSet):
             """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
+        logger.debug("request.data: " + str(request.data))
         serializer = LibTrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         track = self.service.extract(
