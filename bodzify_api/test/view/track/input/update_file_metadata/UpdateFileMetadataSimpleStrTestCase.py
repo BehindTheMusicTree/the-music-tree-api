@@ -26,7 +26,7 @@ class UpdateFileMetadataSimpleStrTestCase(UpdateFileMetadataStrTestCase):
             self.save_field: value
         }
         response = self.post_lib_track_with_generic_sample_no_tags(
-            generic_sample_extension=self.file_extension, data_json=data)
+            extension=self.file_extension, data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track_metadata[self.metadata_dict_key] == value
 
@@ -36,7 +36,7 @@ class UpdateFileMetadataSimpleStrTestCase(UpdateFileMetadataStrTestCase):
             self.save_field: value
         }
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-            generic_sample_extension=self.file_extension, data_json=data)
+            extension=self.file_extension, data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track_metadata[self.metadata_dict_key] == value
 
@@ -46,7 +46,7 @@ class UpdateFileMetadataSimpleStrTestCase(UpdateFileMetadataStrTestCase):
             self.save_field: value
         }
         response = self.post_lib_track_with_generic_sample_no_tags(
-            generic_sample_extension=self.file_extension, data_json=data)
+            extension=self.file_extension, data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track_metadata[self.metadata_dict_key] == value
 
@@ -55,6 +55,6 @@ class UpdateFileMetadataSimpleStrTestCase(UpdateFileMetadataStrTestCase):
             self.save_field: ""
         }
         response = self.post_lib_track_with_generic_sample_no_tags(
-            generic_sample_extension=self.file_extension, data_json=data)
+            extension=self.file_extension, data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track_metadata[self.metadata_dict_key] in ["", None]

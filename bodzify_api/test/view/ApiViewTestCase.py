@@ -8,7 +8,6 @@ from rest_framework import status
 
 from bodzify_api import AudioMetadataManager
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
@@ -93,36 +92,36 @@ class ApiViewTestCase(ViewTestCase):
         generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
         return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_json=data_json)
 
-    def post_lib_track_with_generic_sample_no_tags(self, generic_sample_extension='mp3', data_json=None):
+    def post_lib_track_with_generic_sample_no_tags(self, extension='mp3', data_json=None):
         filename_without_extension = ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
-            generic_sample_file_extension=generic_sample_extension,
+            generic_sample_file_extension=extension,
             data_json=data_json)
 
     def post_lib_track_with_generic_sample_tag_album_without_album_artists(self,
-                                                                           generic_sample_extension='mp3',
+                                                                           extension='mp3',
                                                                            data_json=None):
         filename_without_extension = \
             ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_WITHOUT_ALBUM_ARTISTS
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
-            generic_sample_file_extension=generic_sample_extension,
+            generic_sample_file_extension=extension,
             data_json=data_json)
 
-    def post_lib_track_with_generic_sample_tags_max_length_of_a(self, generic_sample_extension='mp3', data_json=None):
+    def post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', data_json=None):
         filename_without_extension = \
             ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
-            generic_sample_file_extension=generic_sample_extension,
+            generic_sample_file_extension=extension,
             data_json=data_json)
 
-    def post_lib_track_with_generic_sample_1_star(self, generic_sample_extension, data_json=None):
+    def post_lib_track_with_generic_sample_1_star(self, extension, data_json=None):
         filename_without_extension = ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
-            generic_sample_file_extension=generic_sample_extension,
+            generic_sample_file_extension=extension,
             data_json=data_json)
 
     def post_lib_track_with_specific_sample(self, specific_sample_filename=None, data_json=None):

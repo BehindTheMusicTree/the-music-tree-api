@@ -32,10 +32,10 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
 
         if file_has_tags:
             response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-                generic_sample_extension=self.file_extension, data_json=data)  # type: ignore
+                extension=self.file_extension, data_json=data)  # type: ignore
         else:
             response = self.post_lib_track_with_generic_sample_no_tags(
-                generic_sample_extension=self.file_extension, data_json=data)  # type: ignore
+                extension=self.file_extension, data_json=data)  # type: ignore
 
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 

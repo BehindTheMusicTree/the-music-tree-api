@@ -5,14 +5,14 @@ from rest_framework import status
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class LocationTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_inLibrary(self):
-        filename = "0001.wav"
-        data = {
-            "url": "https://lasonotheque.org/UPLOAD/wav/" + filename,
-        }
-        response = self.extract(data_json=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert Path(self.saved_lib_track.file.name) == self.test_user_lib_path_relative_to_media_dir / filename
-        assert self._does_track_filename_exist_in_test_user_lib(filename)
+        filename = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
+        file_extension = 'wav'
+        filename_with_underscores_and_extension = filename.replace(' ', '_') + '.' + file_extension
+        response = self.post_lib_track_with_generic_sample_no_tags(extension=file_extension)
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert Path(self.saved_lib_track.file.name) == \
+            self.test_user_lib_path_relative_to_media_dir / filename_with_underscores_and_extension
+        assert self._does_track_filename_exist_in_test_user_lib(filename_with_underscores_and_extension)

@@ -14,13 +14,13 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
 
     def test_none_then_none(self):
         response = self.post_lib_track_with_generic_sample_tag_album_without_album_artists(
-            generic_sample_extension=self.file_extension)  # type: ignore
+            extension=self.file_extension)  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.album.album_artists.count() == 0  # type: ignore
 
     def test_longest(self):
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-            generic_sample_extension=self.file_extension)  # type: ignore
+            extension=self.file_extension)  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
         expected_name = 'a' * settings.ARTIST_NAME_LENGTH_MAX

@@ -30,10 +30,10 @@ class UpdateFileMetadataStrTestCase(ApiViewTestCase):
 
         if file_has_tags:
             response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-                generic_sample_extension=self.file_extension, data_json=data)
+                extension=self.file_extension, data_json=data)
         else:
             response = self.post_lib_track_with_generic_sample_no_tags(
-                generic_sample_extension=self.file_extension, data_json=data) # type: ignore
+                extension=self.file_extension, data_json=data)  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
         if value_expected_in_metadata == self.VALUE_EXPECTED_IN_METADATA_NOT_PROVIDED:
@@ -56,4 +56,4 @@ class UpdateFileMetadataStrTestCase(ApiViewTestCase):
 
     def test_longest_then_ok(self, additional_data_json=None):
         self._test_value(
-            "a" * self.length_max, additional_data_json=additional_data_json, file_has_tags=False) # type: ignore
+            "a" * self.length_max, additional_data_json=additional_data_json, file_has_tags=False)  # type: ignore
