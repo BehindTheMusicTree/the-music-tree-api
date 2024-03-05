@@ -46,6 +46,7 @@ class FOREIGN_MODEL_RELATIONS_STR:
     ADDED_ON = ''
     NAME = ''
     LIBRARY_TRACKS = ''
+    LIBRARY_TRACKS_COUNT = ''
 
 
 for attr, value in vars(ATTRIBUTES_LABEL).items():

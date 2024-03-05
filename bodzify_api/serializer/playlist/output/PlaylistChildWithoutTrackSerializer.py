@@ -1,32 +1,45 @@
 #!/usr/bin/env python
 
 from typing import Optional
+import logging
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.CriteriaPlaylist import ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, Playlist
 from bodzify_api.model.playlist.Playlist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
-from bodzify_api.serializer.playlist.output.PlaylistSerializer import PlaylistSerializer
+from bodzify_api.serializer.playlist.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
+
+logger = logging.getLogger('bodzify_api')
 
 
-class PlaylistChildWithoutTrackSerializer(PlaylistSerializer):
+class FIELDS:
+    UUID = PLAYLIST_ATTRIBUTES_LABEL.UUID
+    NAME = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.NAME
+    ADDED_ON = PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON
+    PARENT = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
+    LIBRARY_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT
+
+
+class PlaylistChildWithoutTrackSerializer(PlaylistWithoutTrackSerializer):
     parent = serializers.SerializerMethodField()
     uuid = serializers.CharField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.UUID)
     added_on = serializers.DateTimeField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.ADDED_ON)
-    library_tracks_count = serializers.IntegerField(
-        source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIBRARY_TRACKS + '.count')
+    library_tracks_count = serializers.SerializerMethodField()
 
-    def get_parent(self, obj) -> Optional[PlaylistSerializer]:
+    def get_library_tracks_count(self, obj):
+        logger.info(f'obj = {obj}')
+        return obj.playlist.library_tracks.count()
+
+    def get_parent(self, obj) -> Optional[PlaylistWithoutTrackSerializer]:
         if obj.parent is not None:
-            return PlaylistSerializer(obj.parent).data
+            return PlaylistWithoutTrackSerializer(obj.parent).data
         else:
             return None
 
     class Meta:
         model = Playlist
-        fields = [PLAYLIST_ATTRIBUTES_LABEL.UUID,
-                  CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.NAME,
-                  PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON,
-                  CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT,
-                  PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT]
+        fields = [FIELDS.UUID,
+                  FIELDS.NAME,
+                  FIELDS.ADDED_ON,
+                  FIELDS.PARENT,
+                  FIELDS.LIBRARY_TRACKS_COUNT]

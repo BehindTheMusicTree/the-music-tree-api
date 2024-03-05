@@ -188,6 +188,9 @@ class ApiViewTestCase(ViewTestCase):
     def get_genre_playlist(self, playlist_uuid):
         return self.api_client.get(path=reverse('genre-playlist-detail', kwargs={'pk': playlist_uuid}))
 
+    def get_genre_playlists(self, data_json=None):
+        return self.api_client.get(path=reverse('genre-playlist-list'), data=data_json)
+
     def get_albums(self):
         return self.api_client.get(path=reverse('album-list'))
 

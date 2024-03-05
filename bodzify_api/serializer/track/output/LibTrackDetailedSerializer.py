@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
-from bodzify_api.serializer.playlist.output.PlaylistSerializer import PlaylistSerializer
+from bodzify_api.serializer.playlist.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
 
 
 class FIELDS:
@@ -30,7 +29,7 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
     genre = CriteriaDetailedSerializer()
     artist = ArtistWithOnlyNameSerializer()
     album = AlbumWithoutTracksSerializer()
-    playlists = PlaylistSerializer(many=True)
+    playlists = PlaylistWithoutTrackSerializer(many=True)
 
     class Meta:
         model = LibraryTrack
