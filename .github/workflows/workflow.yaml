@@ -47,7 +47,7 @@ jobs:
       - name: Set up filesystem
         run: |
             bash scripts/setup_filesystem_workflow.sh
-      - name: Run pytest test/view
+      - name: Run pytest
         run: |
             pytest .
 
