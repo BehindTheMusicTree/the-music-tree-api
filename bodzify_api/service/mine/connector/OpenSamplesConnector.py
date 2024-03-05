@@ -5,7 +5,7 @@ from bodzify_api.model.track.MineTrack import MineTrack
 
 class SEARCH_RESPONSE_FIELDS:
 	TITLE = "title"
-	ARTIST_NAME = "artist_name"
+	ARTIST_NAME = "artistName"
 	URL = "url"
 	RELEASED_ON = "releasedOn"
 	DURATION = "duration"

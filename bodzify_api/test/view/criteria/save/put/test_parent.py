@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, Criteria
 
@@ -12,14 +12,14 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
-        punkGenre = G(Criteria, 
+            type=CRITERIA_TYPES_ID.GENRE)
+        punk_genre = G(Criteria, 
             name="Punk", 
             user=self.test_user, 
-            type=CriteriaTypesId.GENRE, 
+            type=CRITERIA_TYPES_ID.GENRE, 
             parent=rock_genre)
         data = {}
-        response = self.put_genre(genre_uuid=punkGenre.uuid, data_json=data)
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_json=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.parent == rock_genre
 
@@ -27,17 +27,17 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
-        punkGenre = G(Criteria,
+            type=CRITERIA_TYPES_ID.GENRE)
+        punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=rock_genre)
         punkHardcoreGenre = G(Criteria,
             name="Punk hardcore",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
-            parent=punkGenre)
+            type=CRITERIA_TYPES_ID.GENRE,
+            parent=punk_genre)
 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: punkHardcoreGenre.uuid
@@ -49,7 +49,7 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid

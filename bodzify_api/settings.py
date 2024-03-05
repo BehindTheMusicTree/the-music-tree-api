@@ -8,10 +8,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import os
 import datetime
-import dotenv
+import os
 from pathlib import Path
+
+import dotenv
 
 dotenv.load_dotenv()
 
@@ -24,26 +25,26 @@ API_DESCRIPTION = "API to handle genre oriented music libraries"
 API_ROOT_BASE = 'api/' + API_VERSION + '/'
 API_ROOT = Path(BASE_DIR) / API_NAME
 CONTACT_EMAIL = "andreas.garcia@bodzify.com"
-USER_LIBRARY_DIR_NAME_PREFIXE = "user_"
-TRACK_FILE_SIZE_MIN_IN_MO = 0
-TRACK_FILE_SIZE_MAX_IN_MO = 500
-TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
-TRACK_FILE_CONTENT_TYPES = ['audio/mpeg', 'audio/flac', 'audio/wav']
-TRACK_FILENAME_MAX_CHAR = 100
-TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LEN = 20
-TRACK_TITLE_MAX_CHAR = 100
-TRACK_GENERATED_TITLE_LEN = 20
-TRACK_GENERATED_TITLE_PREFIXE = "bodzify_"
-TRACK_RATING_MAX_VALUE = 10
-TRACK_LANGUAGE_MAX_CHAR = 100
-MINE_TRACK_TITLE_MAX_CHAR = 200
-MINE_TRACK_RELEASED_ON_MAX_CHAR = 200
-MINE_TRACK_URL_MAX_CHAR = 1000
-ALBUM_NAME_MAX_CHAR = 100
-ALBUM_ARTISTS_FIELD_MAX_CHAR = 100
-ARTIST_NAME_MAX_CHAR = 100
-CRITERIA_NAME_MAX_CHAR = 50
-PLAYLIST_NAME_MAX_CHAR = 50
+USER_LIB_DIR_NAME_PREFIXE = "user_"
+LIB_TRACK_FILE_SIZE_MIN_IN_MO = 0
+LIB_TRACK_FILE_SIZE_MAX_IN_MO = 500
+LIB_TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
+LIB_TRACK_FILE_CONTENT_TYPES = ['audio/mpeg', 'audio/flac', 'audio/wav']
+LIB_TRACK_FILENAME_LENGTH_MAX = 100
+LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH = 20
+LIB_TRACK_TITLE_LENGTH_MAX = 100
+LIB_TRACK_GENERATED_TITLE_LENGTH = 20
+LIB_TRACK_GENERATED_TITLE_PREFIXE = "bodzify_"
+LIB_TRACK_RATING_VALUE_MAX = 10
+LIB_TRACK_LANGUAGE_LENGTH_MAX = 100
+MINE_TRACK_TITLE_LENGTH_MAX = 200
+MINE_TRACK_RELEASED_ON_LENGTH_MAX = 200
+MINE_TRACK_URL_LENGTH_MAX = 1000
+ALBUM_NAME_LENGTH_MAX = 100
+ALBUM_ARTISTS_FIELD_LENGTH_MAX = 100
+ARTIST_NAME_LENGTH_MAX = 100
+CRITERIA_NAME_LENGTH_MAX = 50
+SIMPLE_PLAYLIST_NAME_LENGTH_MAX = 50
 
 PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
@@ -51,8 +52,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 SECURE_SSL_REDIRECT = False
 
-# Before calling a view function, Django starts a transaction. 
-# If the response is produced without problems, Django commits the transaction. 
+# Before calling a view function, Django starts a transaction.
+# If the response is produced without problems, Django commits the transaction.
 # If the view produces an exception, Django rolls back the transaction.
 ATOMIC_REQUESTS = True
 
@@ -194,49 +195,49 @@ LOGGING = {
     'handlers': {
         'general': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'general.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'info': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'info.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'requests_with_trace': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'requests.debug.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'requests': {
             'level': 'INFO',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'requests.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'django': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'django.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
         'bodzify_api': {
             'level': 'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': LOG_PATH / 'bodzify-api.log',
-            'maxBytes': 1024*1024*15, # 15MB
+            'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
         },
@@ -267,29 +268,34 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'django' : { 
-                'handlers': ['django'], 
-                'level': 'INFO', 
-                'propagate': True
+        'django': {
+            'handlers': ['django'],
+            'level': 'INFO',
+            'propagate': True
         },
-        'bodzify_api' : { 
-                'handlers': ['bodzify_api', 'console'], 
-                'level': 'DEBUG', 
-                'propagate': True
+        'bodzify_api': {
+            'handlers': ['bodzify_api', 'console'],
+            'level': 'DEBUG',
+            'propagate': True
         },
     },
 }
 
+ALLOWED_HOSTS = []
+STATICFILES_DIRS = []
+STATIC_ROOT = ''
+MEDIA_ROOT = ''
+
 if os.getenv('ENV') == 'DEV':
-    from bodzify_api.settings_dev import *
     import bodzify_api.settings_dev as settings_dev
     MEDIA_ROOT = settings_dev.MEDIA_ROOT
 elif os.getenv('ENV') == 'TEST':
-    from bodzify_api.settings_test import *
     import bodzify_api.settings_test as settings_test
     MEDIA_ROOT = settings_test.MEDIA_ROOT
 else:
-    STATIC_ROOT =  BASE_DIR / 'staticfiles'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'
 
-from bodzify_api.settings_media import *
+MEDIA_TEMP = MEDIA_ROOT / 'temp'
+LIB_DIR_NAME = 'libraries'
+LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME

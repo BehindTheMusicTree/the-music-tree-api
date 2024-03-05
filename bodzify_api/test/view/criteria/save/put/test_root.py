@@ -3,7 +3,7 @@
 import logging
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, Criteria
 
@@ -15,11 +15,11 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid
@@ -33,11 +33,11 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=rock_genre)
 
         data = {
@@ -52,15 +52,15 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_hardcore_genre = G(Criteria,
             name="Punk hardcore",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=punk_genre)
 
         data = {
@@ -77,20 +77,20 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_hardcore_genre = G(Criteria,
             name="Punk hardcore",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=punk_genre)
         french_punk_hardcore_genre = G(Criteria,
             name="French punk hardcore",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=punk_hardcore_genre)
 
         data = {
@@ -109,16 +109,16 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=rock_genre)
         punk_hardcore_genre = G(Criteria,
             name="Punk hardcore",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=punk_genre)
 
         data = {

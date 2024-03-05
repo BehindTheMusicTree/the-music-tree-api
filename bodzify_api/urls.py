@@ -1,26 +1,23 @@
 #!/usr/bin/env python
 
-from django.urls import include
-from django.urls import path
-from django.contrib import admin
-from rest_framework import routers
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.views import TokenRefreshView
-from drf_spectacular.views import SpectacularAPIView
-from drf_spectacular.views import SpectacularRedocView
-from drf_spectacular.views import SpectacularSwaggerView
-from bodzify_api import settings
-from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet
-from bodzify_api.view.viewset.UserViewSet import UserViewSet
-from bodzify_api.view.viewset.TrackViewSet import TrackViewSet
-from bodzify_api.view.viewset.ArtistViewSet import ArtistViewSet
-from bodzify_api.view.viewset.AlbumViewSet import AlbumViewSet
-from bodzify_api.view.viewset.criteria.GenreViewSet import GenreViewSet
-from bodzify_api.view.viewset.criteria.TagViewSet import TagViewSet
-from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
-from bodzify_api.view.viewset.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
-from bodzify_api.view.viewset.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from rest_framework import routers
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from bodzify_api import settings
+from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
+from bodzify_api.view.viewset.model.AlbumViewSet import AlbumViewSet
+from bodzify_api.view.viewset.model.ArtistViewSet import ArtistViewSet
+from bodzify_api.view.viewset.model.criteria.GenreViewSet import GenreViewSet
+from bodzify_api.view.viewset.model.criteria.TagViewSet import TagViewSet
+from bodzify_api.view.viewset.model.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
+from bodzify_api.view.viewset.model.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
+from bodzify_api.view.viewset.model.TrackViewSet import TrackViewSet
+from bodzify_api.view.viewset.model.UserViewSet import UserViewSet
+from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -39,16 +36,12 @@ urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
                path(settings.API_ROOT_BASE + 'admin/', admin.site.urls),
 
                path(settings.API_ROOT_BASE + 'auth/', include('django.contrib.auth.urls')),
-               path(settings.API_ROOT_BASE + 'auth/token/', TokenObtainPairView.as_view(),
-                    name='token-obtain-pair'),
-               path(settings.API_ROOT_BASE + 'auth/token/refresh/',
-                    TokenRefreshView.as_view(), name='token-refresh'),
+               path(settings.API_ROOT_BASE + 'auth/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
+               path(settings.API_ROOT_BASE + 'auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
 
                path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-               path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(
-                   url_name='schema'), name='swagger-ui'),
-               path('api/schema/redoc/',
-                    SpectacularRedocView.as_view(url_name='schema'), name='redoc')]
+               path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+               path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc')]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

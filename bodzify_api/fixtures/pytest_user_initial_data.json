@@ -16,40 +16,5 @@
             "groups": [], 
             "user_permissions": []
         }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "LnM1arJrwLskdjSjqJJDJD",
-        "fields": {
-            "added_on": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype": ["bodzify_api", "criteriaplaylist"],
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.criteriaplaylist",
-        "fields": {
-            "playlist_ptr_id" : "LnM1arJrwLskdjSjqJJDJD",
-            "type" : 0,
-            "criteria": null,
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.playlist",
-        "pk": "LnM1arJrwLskdjSjqccccc",
-        "fields": {
-            "added_on": "1998-07-14 23:00:00.000 +0100",
-            "polymorphic_ctype_id": ["bodzify_api", "simpleplaylist"],
-            "user": 4
-        }
-    },
-    {
-        "model": "bodzify_api.simpleplaylist",
-        "fields": {
-            "playlist_ptr_id" : "LnM1arJrwLskdjSjqccccc",
-            "name" : "All",
-            "user": 4
-        }
     }
 ]

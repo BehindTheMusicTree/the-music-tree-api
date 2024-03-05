@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, Criteria
 
@@ -21,7 +21,7 @@ class TestCase(ApiViewTestCase):
         rock = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
+            type=CRITERIA_TYPES_ID.GENRE)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk",
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock.uuid
@@ -34,15 +34,15 @@ class TestCase(ApiViewTestCase):
         rock_genre = G(Criteria,
             name="Rock",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE)
-        punkGenre = G(Criteria,
+            type=CRITERIA_TYPES_ID.GENRE)
+        punk_genre = G(Criteria,
             name="Punk",
             user=self.test_user,
-            type=CriteriaTypesId.GENRE,
+            type=CRITERIA_TYPES_ID.GENRE,
             parent=rock_genre)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk hardcore",
-            CRITERIA_ATTRIBUTES_LABEL.PARENT: punkGenre.uuid
+            CRITERIA_ATTRIBUTES_LABEL.PARENT: punk_genre.uuid
         }
         response = self.post_genre(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED
