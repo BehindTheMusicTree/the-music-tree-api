@@ -112,9 +112,10 @@ class TrackService(Service):
         try:
             track_in_memory_file = requests.get(mine_track_url, stream=True)
         except Exception as e:
-            logger.error("Error while trying to get track from url: " + mine_track_url)
-            logger.error(e)
+            logger.debug("Error while trying to get track from url: " + mine_track_url)
+            logger.debug(e)
             return None
+        logger.debug('track_in_memory_file = ' + str(track_in_memory_file))
         with NamedTemporaryFile(delete=True) as track_temp_file:
             for block in track_in_memory_file.iter_content(1024 * 8):
                 if not block:
