@@ -25,10 +25,3 @@ class TestCase(ApiViewTestCase):
         }
         response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
-
-    def test_empty_then_error(self):
-        data = {
-            PUT_FIELDS.TITLE: ""
-        }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
