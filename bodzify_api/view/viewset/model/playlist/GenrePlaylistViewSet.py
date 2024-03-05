@@ -8,6 +8,8 @@ from bodzify_api.model.playlist.CriteriaPlaylist \
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
     CriteriaPlaylistWithTracksSerializer
+from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
+    CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
@@ -20,7 +22,7 @@ class GenrePlaylistViewSet(AppModelViewSet):
     queryset = CriteriaPlaylist.objects.filter(type_id=CRITERIA_TYPES_ID.GENRE)
     serializers = {
         'default': CriteriaPlaylistWithTracksSerializer,
-        'list':  CriteriaPlaylistWithTracksSerializer,
+        'list':  CriteriaPlaylistWithoutTracksSerializer,
         'retrieve':  CriteriaPlaylistWithTracksSerializer,
     }
 
@@ -32,7 +34,7 @@ class GenrePlaylistViewSet(AppModelViewSet):
 
         name = self.request.query_params.get(GET_QUERY_FIELDS.NAME)  # type: ignore
         if name is not None:
-            queryset = queryset.filter(name__icontains=name)
+            queryset = queryset.filter(criteria__name__icontains=name)
 
         parent_uuid_parameter_value = self.request.query_params.get(GET_QUERY_FIELDS.PARENT)  # type: ignore
         if parent_uuid_parameter_value is not None:
