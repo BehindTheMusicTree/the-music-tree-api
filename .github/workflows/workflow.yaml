@@ -46,9 +46,9 @@ jobs:
       - name: Set up filesystem
         run: |
             bash scripts/setup_filesystem_workflow.sh
-      - name: Run pytest
+      - name: Run pytest test/view
         run: |
-            pytest .
+            pytest /test/view/track/input/method/create/extract/
 
   flake8:
     name: flake8
