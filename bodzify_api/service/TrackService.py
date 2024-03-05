@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 import os
 import random
 import string
@@ -25,6 +26,8 @@ from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer import Track
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
 from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.service.Service import Service
+
+logger = logging.getLogger('bodzify_api')
 
 
 class TrackService(Service):
@@ -107,6 +110,7 @@ class TrackService(Service):
     def extract(self, user: User, extract_schema_data: QueryDict):
         mine_track_url_label = extract_schema_data[MINE_TRACK_FIELDS.URL]
         track_in_memory_file = requests.get(mine_track_url_label, stream=True)
+        logger.debug("track_in_memory_file: " + str(track_in_memory_file))
         with NamedTemporaryFile(delete=True) as track_temp_file:
             for block in track_in_memory_file.iter_content(1024 * 8):
                 if not block:
