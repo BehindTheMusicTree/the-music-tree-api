@@ -48,7 +48,7 @@ jobs:
             bash scripts/setup_filesystem_workflow.sh
       - name: Run pytest test/view
         run: |
-            pytest /test/view/track/input/method/create/extract/
+            pytest bodzify_api/test/view/track/input/method/create/extract/
 
   flake8:
     name: flake8
