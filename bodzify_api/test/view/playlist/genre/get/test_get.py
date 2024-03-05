@@ -48,7 +48,7 @@ class TestCase(ApiViewTestCase):
         response = self.get_genre_playlists(data_json=data_json)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         results = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
-        assert len(results) == 2
+        assert len(results) == 3
 
         results_rock_playlist = [result for result in results if result[GET_RESULT_FIELDS.UUID] == rock_playlist.uuid]
         assert results_rock_playlist
