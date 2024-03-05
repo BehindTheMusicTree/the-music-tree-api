@@ -13,7 +13,7 @@ class FilenameTestCase(ApiViewTestCase):
             EXTRACT_FIELDS.TITLE: "ImHere",
             EXTRACT_FIELDS.ARTIST_NAME: "Roméo",
         }
-        response = self.extract_default_mine_track(extract_data_json=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.filename == f"Roméo_-_ImHere.{ApiViewTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
@@ -22,7 +22,7 @@ class FilenameTestCase(ApiViewTestCase):
             EXTRACT_FIELDS.TITLE: "Im Here",
             EXTRACT_FIELDS.ARTIST_NAME: "Rom éo",
         }
-        response = self.extract_default_mine_track(extract_data_json=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.filename == f"Rom_éo_-_Im_Here.{ApiViewTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
@@ -31,7 +31,7 @@ class FilenameTestCase(ApiViewTestCase):
             EXTRACT_FIELDS.TITLE: "I'm Here",
             EXTRACT_FIELDS.ARTIST_NAME: "Rom#éo",
         }
-        response = self.extract_default_mine_track(extract_data_json=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.filename == f"Roméo_-_Im_Here.{ApiViewTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
@@ -40,7 +40,7 @@ class FilenameTestCase(ApiViewTestCase):
         data = {
             EXTRACT_FIELDS.TITLE: title,
         }
-        response = self.extract_default_mine_track(extract_data_json=data)
+        response = self.extract_default_mine_track(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.filename == f"{title}.{ApiViewTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 

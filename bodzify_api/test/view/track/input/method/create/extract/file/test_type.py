@@ -5,7 +5,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
 
 
-class FilenameTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_wav(self):
         response = self.extract_default_mine_track(extension='wav')
