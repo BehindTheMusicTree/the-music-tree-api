@@ -108,9 +108,13 @@ class TrackService(Service):
         return save_model_data
 
     def extract(self, user: User, extract_schema_data: QueryDict):
-        mine_track_url_label = extract_schema_data[MINE_TRACK_FIELDS.URL]
-        track_in_memory_file = requests.get(mine_track_url_label, stream=True)
-        logger.debug("track_in_memory_file: " + str(track_in_memory_file))
+        mine_track_url = extract_schema_data[MINE_TRACK_FIELDS.URL]
+        try:
+            track_in_memory_file = requests.get(mine_track_url, stream=True)
+        except Exception as e:
+            logger.error("Error while trying to get track from url: " + mine_track_url)
+            logger.error(e)
+            return None
         with NamedTemporaryFile(delete=True) as track_temp_file:
             for block in track_in_memory_file.iter_content(1024 * 8):
                 if not block:
@@ -123,7 +127,7 @@ class TrackService(Service):
                 extract_schema_data)
 
             track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
-                mine_track_url_label, extract_schema_data)
+                mine_track_url, extract_schema_data)
             post_schema_data[POST_FIELDS.FILE] = File(track_temp_file, name=track_filename)  # type: ignore
             force_title_generation_str = str(is_filename_randomly_generated)
             post_schema_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
