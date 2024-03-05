@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from bodzify_api.test.view.track.input.save.FieldStrTestCase import FieldStrTestCase
+from bodzify_api.test.view.track.input.save.FieldStrTestCase import FieldStrNullableTestCase
 
 
-class FieldModelStrTestCase(FieldStrTestCase):
+class FieldModelStrTestCase(FieldStrNullableTestCase):
 
     def setUp(self):
         return super().setUp(methods_names_to_implement=['test_existing',
