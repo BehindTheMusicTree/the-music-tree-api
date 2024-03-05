@@ -17,7 +17,6 @@ class FIELDS:
 
 
 class CriteriaPlaylistWithoutTracksSerializer(PlaylistChildWithoutTrackSerializer):
-    library_tracks_count = serializers.IntegerField(source='playlist.library_tracks' + '.count')
 
     class Meta:
         model = CriteriaPlaylist

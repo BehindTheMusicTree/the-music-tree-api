@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
-from rest_framework import serializers
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, \
     FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
@@ -20,12 +19,8 @@ class FIELDS:
 
 
 class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializer):
-    library_tracks_count = serializers.SerializerMethodField()
     library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(
         source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIBRARY_TRACKS, many=True)
-
-    def get_library_tracks_count(self, obj):
-        return obj.playlist.library_tracks.count()
 
     class Meta:
         model = CriteriaPlaylist

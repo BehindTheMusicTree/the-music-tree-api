@@ -27,7 +27,6 @@ class PlaylistChildWithoutTrackSerializer(PlaylistWithoutTrackSerializer):
     library_tracks_count = serializers.SerializerMethodField()
 
     def get_library_tracks_count(self, obj):
-        logger.info(f'obj = {obj}')
         return obj.playlist.library_tracks.count()
 
     def get_parent(self, obj) -> Optional[PlaylistWithoutTrackSerializer]:
@@ -37,7 +36,6 @@ class PlaylistChildWithoutTrackSerializer(PlaylistWithoutTrackSerializer):
             return None
 
     class Meta:
-        model = Playlist
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
                   FIELDS.ADDED_ON,
