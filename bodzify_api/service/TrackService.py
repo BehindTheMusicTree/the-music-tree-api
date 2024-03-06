@@ -108,16 +108,8 @@ class TrackService(Service):
         return save_model_data
 
     def extract(self, user: User, extract_schema_data: QueryDict):
-        logger.debug("extract2")
         mine_track_url = extract_schema_data[MINE_TRACK_FIELDS.URL]
-        logger.debug('extract_schema_data = ' + str(extract_schema_data))
-        try:
-            track_in_memory_file = requests.get(mine_track_url, stream=True)
-        except Exception as e:
-            logger.debug("Error while trying to get track from url: " + mine_track_url)
-            logger.debug(e)
-            return None
-        logger.debug('track_in_memory_file = ' + str(track_in_memory_file))
+        track_in_memory_file = requests.get(mine_track_url, stream=True)
         with NamedTemporaryFile(delete=True) as track_temp_file:
             for block in track_in_memory_file.iter_content(1024 * 8):
                 if not block:

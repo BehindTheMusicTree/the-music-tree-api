@@ -170,13 +170,8 @@ class TrackViewSet(AppModelViewSet):
             """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        logger.debug("request.dataaaaaa: " + str(request.data))
         serializer = LibTrackExtractSchemaSerializer(data=request.data)
-        logger.debug("extraddddddddddct1")
-        try:
-            serializer.is_valid(raise_exception=True)
-        except serializers.ValidationError as e:
-            logger.debug("exeption " + str(e.detail))
+        serializer.is_valid(raise_exception=True)
 
         track = self.service.extract(user=request.user, extract_schema_data=request.data)
         response_serializer = LibTrackDetailedSerializer(track)

@@ -6,7 +6,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
 
 
-class WringUrlTestCase(ApiViewTestCase):
+class TestCase(ApiViewTestCase):
 
     def test(self):
         data = {
