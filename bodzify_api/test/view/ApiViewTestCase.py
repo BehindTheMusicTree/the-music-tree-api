@@ -31,7 +31,7 @@ class ApiViewTestCase(ViewTestCase):
         OVERALL_TOTAL = 'overall_total'
 
     class SAMPLE_MINE_TRACK_URLS:
-        WAV = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
+        WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
         MP3 = "https://lasonotheque.org/UPLOAD/mp3/0001.mp3"
 
     SAMPLE_MINE_TRACK_DEFAULT_URL = SAMPLE_MINE_TRACK_URLS.MP3
