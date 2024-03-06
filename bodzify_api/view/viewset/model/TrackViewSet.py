@@ -67,18 +67,12 @@ class TrackViewSet(AppModelViewSet):
         return LibTrackDetailedSerializer(instance=instance)  # type: ignore
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=GET_FILTER_FIELDS.TITLE,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GET_FILTER_FIELDS.ARTIST_NAME,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=GET_FILTER_FIELDS.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=GET_FILTER_FIELDS.ARTIST_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=GET_FILTER_FIELDS.ALBUM_ARTISTS_NAME,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GET_FILTER_FIELDS.GENRE_NAME,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY)])
+        OpenApiParameter(name=GET_FILTER_FIELDS.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -178,8 +172,8 @@ class TrackViewSet(AppModelViewSet):
         logger.debug("request.data: " + str(request.data))
         serializer = LibTrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        track = self.service.extract(
-            user=request.user, extract_schema_data=request.data)
+        logger.debug("extract1")
+        track = self.service.extract(user=request.user, extract_schema_data=request.data)
         response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
         return JsonResponse(

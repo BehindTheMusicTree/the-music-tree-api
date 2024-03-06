@@ -19,10 +19,10 @@ from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer \
     import LibTrackPostSchemaSerializer, FIELDS as POST_FIELDS
-from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer import FIELDS as SAVE_MODEL_FIELDS
+from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer \
+    import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
 from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import LibTrackPutSchemaSerializer
-from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer import TrackSaveModelSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
 from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.service.Service import Service
@@ -108,6 +108,7 @@ class TrackService(Service):
         return save_model_data
 
     def extract(self, user: User, extract_schema_data: QueryDict):
+        logger.debug("extract2")
         mine_track_url = extract_schema_data[MINE_TRACK_FIELDS.URL]
         logger.debug('extract_schema_data = ' + str(extract_schema_data))
         try:
