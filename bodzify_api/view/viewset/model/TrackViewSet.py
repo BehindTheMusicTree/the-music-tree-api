@@ -18,6 +18,7 @@ from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer impor
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from rest_framework import serializers
 
 logger = logging.getLogger('bodzify_api')
 
@@ -172,8 +173,11 @@ class TrackViewSet(AppModelViewSet):
         logger.debug("request.dataaaaaa: " + str(request.data))
         serializer = LibTrackExtractSchemaSerializer(data=request.data)
         logger.debug("extraddddddddddct1")
-        serializer.is_valid(raise_exception=True)
-        logger.debug("ssssssssssssssssssss")
+        try:
+            serializer.is_valid(raise_exception=True)
+        except serializers.ValidationError as e:
+            logger.debug("exeption " + str(e.detail))
+
         track = self.service.extract(user=request.user, extract_schema_data=request.data)
         response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
