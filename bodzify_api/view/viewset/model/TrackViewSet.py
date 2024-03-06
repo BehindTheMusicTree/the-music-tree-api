@@ -171,8 +171,9 @@ class TrackViewSet(AppModelViewSet):
     def extract(self, request, *args, **kwargs):
         logger.debug("request.dataaaaaa: " + str(request.data))
         serializer = LibTrackExtractSchemaSerializer(data=request.data)
+        logger.debug("extraddddddddddct1")
         serializer.is_valid(raise_exception=True)
-        logger.debug("extract1")
+        logger.debug("ssssssssssssssssssss")
         track = self.service.extract(user=request.user, extract_schema_data=request.data)
         response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
