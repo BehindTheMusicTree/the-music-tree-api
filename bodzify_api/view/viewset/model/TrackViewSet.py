@@ -169,7 +169,7 @@ class TrackViewSet(AppModelViewSet):
             """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        logger.debug("request.data: " + str(request.data))
+        logger.debug("request.dataaaaaa: " + str(request.data))
         serializer = LibTrackExtractSchemaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         logger.debug("extract1")
