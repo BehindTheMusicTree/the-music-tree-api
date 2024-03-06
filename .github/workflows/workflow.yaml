@@ -49,7 +49,7 @@ jobs:
             bash scripts/setup_filesystem_workflow.sh
       - name: Run pytest
         run: |
-            pytest bodzify_api/test/view/track/input/method/create/extract/file/test_type.py
+            pytest .
 
   flake8:
     name: flake8
