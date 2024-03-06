@@ -14,9 +14,9 @@ class TestCase(ApiViewTestCase):
                   user=self.test_user,
                   type=CRITERIA_TYPES_ID.GENRE)
         response = self.get_genres()
-        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
+        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
         genre_json = genre_json_list[0]
-        assert genre_json[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == genre.uuid
+        assert genre_json[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == genre.uuid  # type: ignore
 
     def test_root_of_first_descandant(self):
         rock_genre = G(Criteria,
@@ -29,10 +29,10 @@ class TestCase(ApiViewTestCase):
                        type=CRITERIA_TYPES_ID.GENRE,
                        parent=rock_genre)
         response = self.get_genres()
-        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
+        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
         for json_element in genre_json_list:
-            if json_element[ATTRIBUTES_LABEL.UUID] == punk_genre.uuid:
-                assert json_element[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == rock_genre.uuid
+            if json_element[ATTRIBUTES_LABEL.UUID] == punk_genre.uuid:  # type: ignore
+                assert json_element[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == rock_genre.uuid  # type: ignore
 
     def test_root_of_second_descandant(self):
         rock_genre = G(Criteria,
@@ -50,7 +50,7 @@ class TestCase(ApiViewTestCase):
                                 type=CRITERIA_TYPES_ID.GENRE,
                                 parent=punk_genre)
         response = self.get_genres()
-        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
+        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
         for json_element in genre_json_list:
-            if json_element[ATTRIBUTES_LABEL.UUID] == punk_hardcore_genre.uuid:
-                assert json_element[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == rock_genre.uuid
+            if json_element[ATTRIBUTES_LABEL.UUID] == punk_hardcore_genre.uuid:  # type: ignore
+                assert json_element[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == rock_genre.uuid  # type: ignore
