@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import datetime
 import os
 from pathlib import Path
-from tkinter import ALL
 
 import dotenv
 
