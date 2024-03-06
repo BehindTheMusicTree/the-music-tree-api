@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import datetime
 import os
 from pathlib import Path
+from tkinter import ALL
 
 import dotenv
 
@@ -288,13 +289,17 @@ MEDIA_ROOT = ''
 
 if os.getenv('ENV') == 'DEV':
     import bodzify_api.settings_dev as settings_dev
+    ALLOWED_HOSTS = settings_dev.ALLOWED_HOSTS
     MEDIA_ROOT = settings_dev.MEDIA_ROOT
     STATIC_ROOT = settings_dev.STATIC_ROOT
 elif os.getenv('ENV') == 'TEST':
     import bodzify_api.settings_test as settings_test
+    SESSION_COOKIE_SECURE = settings_test.SESSION_COOKIE_SECURE
+    CSRF_COOKIE_SECURE = settings_test.CSRF_COOKIE_SECURE
+    CSRF_TRUSTED_ORIGINS = settings_test.CSRF_TRUSTED_ORIGINS
+    ALLOWED_HOSTS = settings_test.ALLOWED_HOSTS
     MEDIA_ROOT = settings_test.MEDIA_ROOT
     STATIC_ROOT = settings_test.STATIC_ROOT
-
 else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'
