@@ -289,9 +289,12 @@ MEDIA_ROOT = ''
 if os.getenv('ENV') == 'DEV':
     import bodzify_api.settings_dev as settings_dev
     MEDIA_ROOT = settings_dev.MEDIA_ROOT
+    STATIC_ROOT = settings_dev.STATIC_ROOT
 elif os.getenv('ENV') == 'TEST':
     import bodzify_api.settings_test as settings_test
     MEDIA_ROOT = settings_test.MEDIA_ROOT
+    STATIC_ROOT = settings_test.STATIC_ROOT
+
 else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'

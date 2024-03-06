@@ -16,6 +16,6 @@ ALLOWED_HOSTS = [
 STATICFILES_DIRS = [
     Path('/home/app/webapp/static/'),
 ]
-STATIC_ROOT =  Path('/home/app/webapp/staticfiles/')
+STATIC_ROOT = Path('/home/app/webapp/staticfiles/')
 
 MEDIA_ROOT = Path('/var/lib/bodzify-api/media/')
