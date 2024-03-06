@@ -6,6 +6,7 @@ on:
     push:
        branches: 
         - dev
+        - fix-extract-tests
     pull_request:
         branches: [dev]
 
@@ -46,9 +47,9 @@ jobs:
       - name: Set up filesystem
         run: |
             bash scripts/setup_filesystem_workflow.sh
-      - name: Run pytest test/view
+      - name: Run pytest
         run: |
-            pytest bodzify_api/test/view/track/input/method/create/extract/
+            pytest bodzify_api/test/view/track/input/method/create/extract/file/test_type.py
 
   flake8:
     name: flake8

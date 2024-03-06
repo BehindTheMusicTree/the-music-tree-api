@@ -3,7 +3,7 @@
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 
 
-class FieldStrTestCase(ApiViewTestCase):
+class FieldStrNullableTestCase(ApiViewTestCase):
 
     def setUp(self, methods_names_to_implement=None):
         class_methods_to_implement = ['test_longest_then_ok',

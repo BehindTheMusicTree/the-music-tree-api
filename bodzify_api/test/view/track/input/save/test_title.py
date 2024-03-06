@@ -3,32 +3,25 @@
 from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.test.view.track.input.save.FieldStrTestCase import FieldStrNullableTestCase
 
 
-class TestCase(FieldStrNullableTestCase):
+class TestCase(ApiViewTestCase):
 
     def test_longest_then_ok(self):
-        language = "a" * settings.LIB_TRACK_LANGUAGE_LENGTH_MAX
+        value = "a" * settings.LIB_TRACK_TITLE_LENGTH_MAX
         data = {
-            PUT_FIELDS.LANGUAGE: language
+            PUT_FIELDS.TITLE: value
         }
         response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.language == language
+        assert self.saved_lib_track.title == value
 
     def test_too_long_then_error(self):
-        language = "a" * (settings.LIB_TRACK_LANGUAGE_LENGTH_MAX + 1)
+        value = "a" * (settings.LIB_TRACK_TITLE_LENGTH_MAX + 1)
         data = {
-            PUT_FIELDS.LANGUAGE: language
+            PUT_FIELDS.TITLE: value
         }
         response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
-
-    def test_empty_then_none(self):
-        data = {
-            PUT_FIELDS.LANGUAGE: ""
-        }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.language == None

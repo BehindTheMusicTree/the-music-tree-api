@@ -31,7 +31,7 @@ class ApiViewTestCase(ViewTestCase):
         OVERALL_TOTAL = 'overall_total'
 
     class SAMPLE_MINE_TRACK_URLS:
-        WAV = "https://lasonotheque.org/UPLOAD/wav/0001.wav"
+        WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
         MP3 = "https://lasonotheque.org/UPLOAD/mp3/0001.mp3"
 
     SAMPLE_MINE_TRACK_DEFAULT_URL = SAMPLE_MINE_TRACK_URLS.MP3
@@ -67,7 +67,7 @@ class ApiViewTestCase(ViewTestCase):
             self._set_saved_lib_track_attribute(response)
         return response
 
-    def extract_default_mine_track(self, extension=None, extract_data_json=None):
+    def extract_default_mine_track(self, extension=None, data_json=None):
         if extension is None:
             url = self.SAMPLE_MINE_TRACK_DEFAULT_URL
         elif extension == 'wav':
@@ -81,8 +81,8 @@ class ApiViewTestCase(ViewTestCase):
 
         logger.debug(f"Extracting default mine track with url: {url}")
 
-        if extract_data_json is not None:
-            extract_data_json = self._merge_two_jsons(extract_data_json, extract_data_json)
+        if data_json is not None:
+            extract_data_json = self._merge_two_jsons(extract_data_json, data_json)
 
         return self.extract(extract_data_json)
 
