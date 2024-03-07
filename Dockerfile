@@ -19,7 +19,7 @@ ENV DB_PORT=$dbPort
 
 ENV DockerHome=/home/app/webapp
 
-ENV Static_filesDir=${DockerHome}/staticfiles
+ENV StaticfilesDir=${DockerHome}/staticfiles
 
 ENV MediaDir=/var/lib/bodzify-api/media
 ENV LibrariesDir=${MediaDir}/libraries
@@ -47,7 +47,7 @@ WORKDIR $DockerHome
 
 COPY . $DockerHome
 
-RUN mkdir $Static_filesDir
+RUN mkdir $StaticfilesDir
 RUN mkdir -p $LibrariesDir
 
 RUN mkdir -p $LogDir

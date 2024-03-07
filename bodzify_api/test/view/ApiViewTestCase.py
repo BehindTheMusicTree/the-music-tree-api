@@ -79,8 +79,6 @@ class ApiViewTestCase(ViewTestCase):
 
         extract_data_json = {LIB_TRACK_EXTRACT_FIELDS.URL: url}
 
-        logger.debug(f"Extracting default mine track with url: {url}")
-
         if data_json is not None:
             extract_data_json = self._merge_two_jsons(extract_data_json, data_json)
 
