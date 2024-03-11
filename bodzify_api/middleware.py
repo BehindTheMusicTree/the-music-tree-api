@@ -2,11 +2,13 @@
 
 import logging
 
+
 def _generate_log_about_headers(request):
     logMessage = "Headers: "
     for header in request.headers:
         logMessage += f"{header}: {request.headers[header]} "
     return logMessage
+
 
 class RequestLoggingMiddleware:
 
@@ -22,4 +24,5 @@ class RequestLoggingMiddleware:
         requestDebugLogger.info(_generate_log_about_headers(request))
 
         response = self.get_response(request)
+        requestLogger.info('Response status code: %s', response.status_code)
         return response
