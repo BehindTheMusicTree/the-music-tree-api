@@ -24,13 +24,10 @@ class ATTRIBUTES_LABEL:
 
 
 class Criteria(models.Model):
-    uuid = models.CharField(
-        primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
+    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    name = models.CharField(
-        max_length=settings.CRITERIA_NAME_LENGTH_MAX, default=None)
-    type = models.ForeignKey('bodzify_api.CriteriaType',
-                             on_delete=models.CASCADE)
+    name = models.CharField(max_length=settings.CRITERIA_NAME_LENGTH_MAX, default=None)
+    type = models.ForeignKey('bodzify_api.CriteriaType', on_delete=models.CASCADE)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='child_criteria')
     root = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
