@@ -7,13 +7,16 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.Playlist import Playlist
 
+
 class SPECIAL_NAMES:
     GENRELESS = 'Genreless'
     TAGLESS = 'Tagless'
 
+
 class TYPES_LABEL:
     GENRE = 'genre'
     TAG = 'tag'
+
 
 class ATTRIBUTES_LABEL:
     PLAYLIST = 'playlist'
@@ -21,9 +24,14 @@ class ATTRIBUTES_LABEL:
     CRITERIA = 'criteria'
     NAME = 'name'
 
+
 class CriteriaPlaylist(models.Model):
     playlist = models.OneToOneField(Playlist, on_delete=models.CASCADE, primary_key=True)
-    criteria = models.ForeignKey(Criteria, on_delete=models.CASCADE, blank=True, null=True)
+    criteria = models.OneToOneField(Criteria,
+                                    on_delete=models.CASCADE,
+                                    blank=True,
+                                    null=True,
+                                    related_name='criteria_playlist')
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE, blank=True, null=False)
 
     @property
@@ -35,7 +43,7 @@ class CriteriaPlaylist(models.Model):
                 return SPECIAL_NAMES.TAGLESS
         else:
             return self.criteria.name
-        
+
     @property
     def parent(self) -> Optional['CriteriaPlaylist']:
         if self.criteria is None:
@@ -46,5 +54,3 @@ class CriteriaPlaylist(models.Model):
             return CriteriaPlaylist.objects.get(
                 type=self.type,
                 criteria=self.criteria.parent)
-
-    
