@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from django.http import JsonResponse
-from rest_framework import status
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 

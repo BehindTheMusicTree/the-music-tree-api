@@ -2,7 +2,7 @@
 
 from rest_framework import status, viewsets
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from rest_framework.response import Response
 from bodzify_api.serializer.UserSerializer import UserSerializer
 from rest_framework.permissions import IsAdminUser
 
@@ -27,5 +27,5 @@ class UserViewSet(viewsets.ModelViewSet):
             email=request.data[PARAMETER_NAME.EMAIL])
         response_serializer = UserSerializer(user)
         headers = self.get_success_headers(response_serializer.data)
-        return JsonResponse(
+        return Response(
             response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)

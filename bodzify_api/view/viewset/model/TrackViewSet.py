@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import logging
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
+from rest_framework.response import Response
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
@@ -176,7 +177,7 @@ class TrackViewSet(AppModelViewSet):
         track = self.service.extract(user=request.user, extract_schema_data=request.data)
         response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
-        return JsonResponse(
+        return Response(
             data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
