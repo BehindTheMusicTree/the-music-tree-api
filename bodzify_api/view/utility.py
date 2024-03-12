@@ -7,7 +7,8 @@ from rest_framework.pagination import PageNumberPagination
 
 from django.db import IntegrityError
 import django.views.defaults
-from django.http import JsonResponse, FileResponse
+from django.http import FileResponse
+from rest_framework.response import Response
 from django.core.paginator import Paginator
 
 
@@ -40,7 +41,7 @@ def get_json_response_when_bad_request(exception=exceptions.bad_request):
         errorMessage = INTEGRITY_ERROR_MESSAGE
     else:
         errorMessage = str(exception)
-    return JsonResponse(
+    return Response(
         data={
             'success': False,
             'errors': errorMessage
@@ -54,15 +55,15 @@ def get_json_response_paginated(request, data_json_list, headers=None):
     paginator = Paginator(object_list=data_json_list, per_page=PageNumberPagination.page_size)
     page_object = paginator.get_page(page_number)
 
-    return JsonResponse(
+    return Response(
         headers=headers,
         data={
-        PAGINATED_COUNT_FIELD: len(data_json_list),
-        PAGINATED_CURRENT_FIELD: page_number,
-        PAGINATED_NEXT_FIELD: page_object.has_next(),
-        PAGINATED_PREVIOUS_FIELD: page_object.has_previous(),
-        PAGINATED_RESULTS_FIELD: data_json_list
-    })
+            PAGINATED_COUNT_FIELD: len(data_json_list),
+            PAGINATED_CURRENT_FIELD: page_number,
+            PAGINATED_NEXT_FIELD: page_object.has_next(),
+            PAGINATED_PREVIOUS_FIELD: page_object.has_previous(),
+            PAGINATED_RESULTS_FIELD: data_json_list
+        })
 
 
 def GetFileResponse(filePath, filename):

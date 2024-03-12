@@ -28,7 +28,7 @@ class ApiViewTestCase(ViewTestCase):
         NEXT = 'next'
         PREVIOUS = 'previous'
         RESULTS = 'results'
-        OVERALL_TOTAL = 'overall_total'
+        OVERALL_TOTAL = 'overallTotal'
 
     class SAMPLE_MINE_TRACK_URLS:
         WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
