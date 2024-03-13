@@ -23,12 +23,10 @@ from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer \
 from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer \
     import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
 from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
-from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer \
-    import LibTrackPutSchemaSerializer, FIELDS as PUT_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import LibTrackPutSchemaSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
 from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.service.Service import Service
-from bodzify_api.test.view.track.input import save
 
 logger = logging.getLogger('bodzify_api')
 
