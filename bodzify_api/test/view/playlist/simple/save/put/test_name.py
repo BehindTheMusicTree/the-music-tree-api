@@ -16,7 +16,7 @@ class TestCase(ApiViewTestCase):
         simple_playlist_name = "cuisine"
         simpe_playlist = G(SimplePlaylist, name=simple_playlist_name, playlist__user=self.test_user)
         response = self.put_simple_playlist(
-            simple_playlist_uuid=simpe_playlist.playlist.uuid, data_json={})  # type: ignore
+            simple_playlist_uuid=simpe_playlist.playlist.uuid, data_dict={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         updated_simpe_playlist = SimplePlaylist.objects.get(name=simple_playlist_name)
         assert self.saved_simple_playlist.name == simple_playlist_name
@@ -28,6 +28,6 @@ class TestCase(ApiViewTestCase):
             PLAYLIST_ATTRIBUTES_LABEL.NAME: simple_playlist_name_new
         }
         response = self.put_simple_playlist(
-            simple_playlist_uuid=simpe_playlist.playlist.uuid, data_json=data)  # type: ignore
+            simple_playlist_uuid=simpe_playlist.playlist.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_simple_playlist.name == simple_playlist_name_new

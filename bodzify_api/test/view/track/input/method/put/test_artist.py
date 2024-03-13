@@ -18,7 +18,7 @@ class TestCase(FieldTestCase):
                       title="Love",
                       artist=artist,
                       duration=0)
-        response = self.put_lib_track(lib_track.uuid, data_json={})  # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_dict={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.artist == artist
 
@@ -32,7 +32,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ARTIST_NAME: ''
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.artist == None
 
@@ -47,7 +47,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ARTIST_NAME: artist_new.name  # type: ignore
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.artist == artist_new
 
@@ -62,7 +62,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ARTIST_NAME: "Autre artiste"
         }
-        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert not Artist.objects.filter(user=self.test_user, name=artist_name).exists()
 
@@ -82,7 +82,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ARTIST_NAME: artist_name
         }
-        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert Artist.objects.filter(user=self.test_user, name=artist_name).exists()
 
@@ -103,6 +103,6 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ARTIST_NAME: artist_name
         }
-        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert Artist.objects.filter(user=self.test_user, name=artist_name).exists()

@@ -12,7 +12,7 @@ class FieldFromDataTestCase(ApiViewTestCase):
         data = {
             self.extract_field_key: value
         }
-        response = self.post_lib_track_with_generic_sample_no_tags(extension='mp3', data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(extension='mp3', data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
 

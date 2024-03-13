@@ -20,6 +20,6 @@ def child_instance(request, db):
 
 def test_spacing(child_instance):
     child_instance._test_value(value="Chuck Berry,  The Beatles,the Rolling Stones ",
-                               additional_data_json=child_instance.album_data_json,
+                               additional_data_dict=child_instance.album_data_dict,
                                value_expected_in_metadata="Chuck Berry,The Beatles,the Rolling Stones",
                                file_has_tags=False)

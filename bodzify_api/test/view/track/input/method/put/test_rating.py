@@ -16,8 +16,8 @@ class TestCase(ApiViewTestCase):
                       title="Korinto",
                       rating=rating,
                       duration=0)
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json={}) # type: ignore
-        assert response.status_code == status.HTTP_200_OK # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict={})  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.rating == rating
 
     def test_zero(self):
@@ -29,6 +29,6 @@ class TestCase(ApiViewTestCase):
         data = {
             PUT_FIELDS.RATING: rating
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data) # type: ignore
-        assert response.status_code == status.HTTP_200_OK # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.rating == rating

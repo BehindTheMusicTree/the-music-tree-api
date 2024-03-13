@@ -19,7 +19,7 @@ class TestCase(ApiViewTestCase):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: genre_new_name
         }
-        response = self.put_genre(genre_uuid=rock_genre.uuid, data_json=data)
+        response = self.put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(criteria=rock_genre)
         assert playlist.name == genre_new_name
@@ -42,7 +42,7 @@ class TestCase(ApiViewTestCase):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid
         }
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_json=data)
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
         assert playlist.library_tracks.first() == track
@@ -62,12 +62,12 @@ class TestCase(ApiViewTestCase):
                   genre=punk_genre,
                   title="Rock song",
                   duration=100)
-        self.post_lib_track_with_specific_sample(data_json={})
+        self.post_lib_track_with_specific_sample(data_dict={})
 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: ''
         }
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_json=data)
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
         assert playlist.library_tracks.first() != track
@@ -86,12 +86,12 @@ class TestCase(ApiViewTestCase):
                   genre=punk_genre,
                   title="Rock song",
                   duration=100)
-        self.post_lib_track_with_specific_sample(data_json={})
+        self.post_lib_track_with_specific_sample(data_dict={})
 
         data = {
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid
         }
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_json=data)
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
         assert playlist.library_tracks.first() == track

@@ -11,7 +11,7 @@ class TestCase(ApiViewTestCase):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
         }
-        response = self.post_genre(data_json=data)
+        response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.parent == None
 
@@ -20,6 +20,6 @@ class TestCase(ApiViewTestCase):
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock",
             CRITERIA_ATTRIBUTES_LABEL.PARENT: ""
         }
-        response = self.post_genre(data_json=data)
+        response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.parent == None

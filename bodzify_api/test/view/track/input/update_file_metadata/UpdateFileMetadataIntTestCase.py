@@ -21,21 +21,21 @@ class UpdateFileMetadataIntTestCase(ApiViewTestCase):
 
     def _test_value(self, value: Optional[int],
                     value_expected_in_metadata: Optional[int] = None,
-                    additional_data_json=None,
+                    additional_data_dict=None,
                     file_has_tags=False):
         value_str = str(value) if value is not None else ''
         data = {
             self.save_field: value_str
         }
-        if additional_data_json:
-            data.update(additional_data_json)
+        if additional_data_dict:
+            data.update(additional_data_dict)
 
         if file_has_tags:
             response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-                extension=self.file_extension, data_json=data)  # type: ignore
+                extension=self.file_extension, data_dict=data)  # type: ignore
         else:
             response = self.post_lib_track_with_generic_sample_no_tags(
-                extension=self.file_extension, data_json=data)  # type: ignore
+                extension=self.file_extension, data_dict=data)  # type: ignore
 
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 

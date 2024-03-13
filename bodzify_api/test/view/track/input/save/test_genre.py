@@ -16,7 +16,7 @@ class TestCase(FieldModelStrTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.genre.name == genre_name  # type: ignore
 
@@ -25,14 +25,14 @@ class TestCase(FieldModelStrTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_empty_then_none(self):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: ''
         }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.genre == None
 
@@ -42,7 +42,7 @@ class TestCase(FieldModelStrTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.genre.name == genre_name  # type: ignore
 
@@ -51,7 +51,7 @@ class TestCase(FieldModelStrTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre.name == genre_name  # type: ignore
 
@@ -60,6 +60,6 @@ class TestCase(FieldModelStrTestCase):
         data = {
             EXTRACT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_json=data)
+        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.genre.parent == None  # type: ignore

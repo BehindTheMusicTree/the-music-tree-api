@@ -21,10 +21,10 @@ class TestCase(ApiViewTestCase):
                        user=self.test_user,
                        name=rock_criteria_name,
                        type=CRITERIA_TYPES_ID.GENRE)
-        data_json = {
+        data_dict = {
             GET_QUERY_FIELDS.NAME: rock_criteria_name
         }
-        response = self.get_genre_playlists(data_json=data_json)
+        response = self.get_genre_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         results = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
         assert len(results) == 1
@@ -42,10 +42,10 @@ class TestCase(ApiViewTestCase):
                       type=CRITERIA_TYPES_ID.GENRE)
         rap_playlist = CriteriaPlaylist.objects.get(criteria=rap_genre).playlist
 
-        data_json = {
+        data_dict = {
             GET_QUERY_FIELDS.PARENT: ""
         }
-        response = self.get_genre_playlists(data_json=data_json)
+        response = self.get_genre_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         results = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
         assert len(results) == 3

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import os
 
 from rest_framework import status
@@ -32,8 +33,7 @@ REQUEST_PAGINATED_PAGE_SIZE_FIELD = "pageSize"
 
 
 def GetHttpResponseWhenPermissionDenied(request):
-    return django.views.defaults.permission_denied(
-        request=request, exception=exceptions.PermissionDenied)
+    return django.views.defaults.permission_denied(request=request, exception=exceptions.PermissionDenied)
 
 
 def get_json_response_when_bad_request(exception=exceptions.bad_request):
@@ -70,6 +70,5 @@ def GetFileResponse(filePath, filename):
     fileHandle = open(filePath, "rb")
     response = FileResponse(fileHandle, content_type=RESPONSE_FILE_CONTENT_TYPE_VALUE)
     response[RESPONSE_FILE_CONTENT_LENGTH_FIELD] = os.path.getsize(filePath)
-    response[RESPONSE_FILE_CONTENT_DISPOSITION_FIELD] = (
-        RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE % filename)
+    response[RESPONSE_FILE_CONTENT_DISPOSITION_FIELD] = (RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE % filename)
     return response

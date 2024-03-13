@@ -13,37 +13,37 @@ class TestCase(ApiViewTestCase):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
         }
-        response = self.post_genre(data_json=data)
+        response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == self.saved_genre
 
     def test_one_acendant_then_root_is_parent(self):
         rock = G(Criteria,
-            name="Rock",
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE)
+                 name="Rock",
+                 user=self.test_user,
+                 type=CRITERIA_TYPES_ID.GENRE)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk",
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock.uuid
         }
-        response = self.post_genre(data_json=data)
+        response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rock
 
     def test_two_acendant_then_root_is_parent_of_parent(self):
         rockGenre = G(Criteria,
-            name="Rock",
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE)
+                      name="Rock",
+                      user=self.test_user,
+                      type=CRITERIA_TYPES_ID.GENRE)
         punkGenre = G(Criteria,
-            name="Punk",
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE,
-            parent=rockGenre)
+                      name="Punk",
+                      user=self.test_user,
+                      type=CRITERIA_TYPES_ID.GENRE,
+                      parent=rockGenre)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk hardcore",
             CRITERIA_ATTRIBUTES_LABEL.PARENT: punkGenre.uuid
         }
-        response = self.post_genre(data_json=data)
+        response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rockGenre

@@ -18,7 +18,7 @@ class TestCase(ApiViewTestCase):
                        user=self.test_user,
                        name=rock_criteria_name,
                        type=CRITERIA_TYPES_ID.GENRE)
-        data_json = {
+        data_dict = {
 
         }
         rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist

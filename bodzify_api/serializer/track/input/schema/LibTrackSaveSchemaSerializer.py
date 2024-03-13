@@ -25,6 +25,15 @@ class FIELDS:
     FORCE_TITLE_GENERATION = "force_title_generation"
 
 
+def validate_rating(value):
+    if value is not None and value != '':
+        try:
+            value = int(value)
+        except ValueError:
+            raise serializers.ValidationError("Rating must be an integer.")
+    return value
+
+
 class LibTrackSaveSchemaSerializer(InputSerializer):
     file = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
     title = serializers.CharField(
@@ -52,10 +61,7 @@ class LibTrackSaveSchemaSerializer(InputSerializer):
         required=False,
         allow_blank=True,
         allow_null=True)
-    rating = serializers.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)],
-        required=False,
-        allow_null=True)
+    rating = serializers.CharField(required=False, allow_null=True, allow_blank=True, validators=[validate_rating])
     language = serializers.CharField(
         max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX,
         required=False,

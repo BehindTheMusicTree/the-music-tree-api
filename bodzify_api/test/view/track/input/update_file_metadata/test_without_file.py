@@ -17,5 +17,5 @@ class TestCase(ApiViewTestCase):
         data = {
             POST_FIELDS.TITLE: "Jobo"
         }
-        response = self.put_lib_track(lib_track_uuid=track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track_uuid=track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK

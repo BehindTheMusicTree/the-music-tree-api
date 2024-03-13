@@ -18,7 +18,7 @@ class TestCase(FieldTestCase):
                       title="Love",
                       genre=rap_criteria,
                       duration=0)
-        response = self.put_lib_track(lib_track.uuid, data_json={})  # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_dict={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         updated_lib_track = LibraryTrack.objects.get(uuid=lib_track.uuid)  # type: ignore
         assert updated_lib_track.genre == rap_criteria
@@ -34,7 +34,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.GENRE_NAME: rock_criteria.name  # type: ignore
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.genre == rock_criteria
 
@@ -48,7 +48,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.GENRE_NAME: ''
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.genre == None
 
@@ -61,6 +61,6 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.genre.name == genre_name  # type: ignore

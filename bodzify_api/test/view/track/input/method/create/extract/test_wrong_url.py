@@ -12,5 +12,5 @@ class TestCase(ApiViewTestCase):
         data = {
             EXTRACT_FIELDS.URL: "https://wrong-url_OIJOIEFHPOEIHFEPOFIHEOFIH.mp3"
         }
-        response = self.extract(data_json=data)
+        response = self.extract(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

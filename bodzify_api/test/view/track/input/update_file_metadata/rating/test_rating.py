@@ -19,21 +19,21 @@ def child_instance(request, db):
 def test_max_then_ok(child_instance):
     child_instance._test_value(value=child_instance.value_max,
                                value_expected_in_metadata=child_instance.value_max_expected_in_metadata,
-                               additional_data_json=None,
+                               additional_data_dict=None,
                                file_has_tags=False)
 
 
 def test_on_missing_tag_then_ok(child_instance):
     child_instance._test_value(value=child_instance.value_min,
                                value_expected_in_metadata=child_instance.value_min_expected_in_metadata,
-                               additional_data_json=None,
+                               additional_data_dict=None,
                                file_has_tags=False)
 
 
 def test_on_present_tag_then_ok(child_instance):
     child_instance._test_value(value=child_instance.value_min,
                                value_expected_in_metadata=child_instance.value_min_expected_in_metadata,
-                               additional_data_json=None,
+                               additional_data_dict=None,
                                file_has_tags=True)
 
 
@@ -44,7 +44,7 @@ def test_min_then_ok(child_instance):
 
 
 def test_none_then_none(child_instance):
-    child_instance._test_value(value=None, additional_data_json=None, file_has_tags=False)
+    child_instance._test_value(value=None, additional_data_dict=None, file_has_tags=False)
 
 
 def test_zero_then_0(child_instance):

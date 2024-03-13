@@ -18,7 +18,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: language
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == language
 
@@ -30,7 +30,7 @@ class TestCase(FieldTestCase):
                       language=language,
                       duration=0)
         data = {}
-        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == language
 
@@ -43,7 +43,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: ""
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == None
 
@@ -57,6 +57,6 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.LANGUAGE: language
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.language == language

@@ -7,8 +7,8 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class TestCase(ApiViewTestCase):
 
     def test_error(self):
-        data = {
+        data_dict = {
             "notExistingField": "Koko"
         }
-        response = self.post_genre(data_json=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST # type: ignore
+        response = self.post_genre(data_dict=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

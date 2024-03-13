@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import logging
-from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIntTestCase import UpdateFileMetadataIntTestCase
+from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIntTestCase \
+    import UpdateFileMetadataIntTestCase
 from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
 from bodzify_api import AudioMetadataManager
 

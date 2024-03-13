@@ -17,7 +17,7 @@ class TestCase(FieldTestCase):
                       title="Love",
                       album=album,
                       duration=0)
-        response = self.put_lib_track(lib_track.uuid, data_json={})  # type: ignore
+        response = self.put_lib_track(lib_track.uuid, data_dict={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == album
 
@@ -31,7 +31,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ALBUM_NAME: ''
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == None
 
@@ -46,7 +46,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ALBUM_NAME: album_new.name  # type: ignore
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.album == album_new
 
@@ -61,7 +61,7 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ALBUM_NAME: "Paul",
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert not Album.objects.filter(user=self.test_user, name=album_name).exists()
 
@@ -81,6 +81,6 @@ class TestCase(FieldTestCase):
         data = {
             PUT_FIELDS.ALBUM_NAME: "Paul",
         }
-        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_json=data)  # type: ignore
+        response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert Album.objects.filter(user=self.test_user, name=album_name).exists()

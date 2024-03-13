@@ -11,5 +11,5 @@ class TestCase(ApiViewTestCase):
         data = {
             'nonExistingField': 'oifjqoif'
         }
-        response = self.post_simple_playlist(data_json=data)
+        response = self.post_simple_playlist(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

@@ -76,26 +76,26 @@ class TrackDeleteViewTestCase(ApiViewTestCase):
         hardrock_genre_name = "Hard rock"
         emo_genre_name = "Emo"
 
-        data_json = {
+        data_dict = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: rock_genre_name
         }
-        self.post_genre(data_json)
+        self.post_genre(data_dict)
         rock_genre = self.saved_genre
         rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
 
-        data_json = {
+        data_dict = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: hardrock_genre_name,
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock_genre.uuid
         }
-        self.post_genre(data_json)
+        self.post_genre(data_dict)
         hardrock_genre = self.saved_genre
         hardrock_playlist = CriteriaPlaylist.objects.get(criteria=hardrock_genre).playlist
 
-        data_json = {
+        data_dict = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: emo_genre_name,
             CRITERIA_ATTRIBUTES_LABEL.PARENT: hardrock_genre.uuid
         }
-        self.post_genre(data_json)
+        self.post_genre(data_dict)
         emo_genre = self.saved_genre
         emo_playlist = CriteriaPlaylist.objects.get(criteria=emo_genre).playlist
 

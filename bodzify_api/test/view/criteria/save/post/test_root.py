@@ -13,37 +13,37 @@ class TestCase(ApiViewTestCase):
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
         }
-        response = self.post_genre(data_json=data)
+        response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == self.saved_genre
 
     def test_one_acendant_then_root_is_parent(self):
         rock = G(Criteria,
-            name="Rock",
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE)
+                 name="Rock",
+                 user=self.test_user,
+                 type=CRITERIA_TYPES_ID.GENRE)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk",
             CRITERIA_ATTRIBUTES_LABEL.PARENT: rock.uuid
         }
-        response = self.post_genre(data_json=data)
+        response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rock
 
     def test_two_acendant_then_root_is_parent_of_parent(self):
         rock_genre = G(Criteria,
-            name="Rock",
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE)
+                       name="Rock",
+                       user=self.test_user,
+                       type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria,
-            name="Punk",
-            user=self.test_user,
-            type=CRITERIA_TYPES_ID.GENRE,
-            parent=rock_genre)
+                       name="Punk",
+                       user=self.test_user,
+                       type=CRITERIA_TYPES_ID.GENRE,
+                       parent=rock_genre)
         data = {
             CRITERIA_ATTRIBUTES_LABEL.NAME: "Punk hardcore",
             CRITERIA_ATTRIBUTES_LABEL.PARENT: punk_genre.uuid
         }
-        response = self.post_genre(data_json=data)
+        response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rock_genre

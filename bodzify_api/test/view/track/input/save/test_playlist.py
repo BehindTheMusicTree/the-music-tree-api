@@ -26,7 +26,7 @@ class TestCase(ApiViewTestCase):
         data = {
             PUT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
 
         track_playlists = self.saved_lib_track.playlists.all()
@@ -52,7 +52,7 @@ class TestCase(ApiViewTestCase):
         data = {
             PUT_FIELDS.GENRE_NAME: new_genre_name
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
 
         old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).playlist
@@ -72,7 +72,7 @@ class TestCase(ApiViewTestCase):
         data = {
             PUT_FIELDS.GENRE_NAME: genre_name
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
 
         track_playlists = self.saved_lib_track.playlists.all()
@@ -115,7 +115,7 @@ class TestCase(ApiViewTestCase):
         data = {
             PUT_FIELDS.GENRE_NAME: emo_genre_name
         }
-        response = self.put_lib_track(lib_track.uuid, data_json=data)
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
 
         lib_track_playlists = self.saved_lib_track.playlists.all()

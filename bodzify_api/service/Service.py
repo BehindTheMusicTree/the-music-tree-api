@@ -18,6 +18,7 @@ class Service:
         put_schema_serializer = self._get_put_schema_serializer(
             old_instance=old_instance, put_schema_data=put_schema_data)
         put_schema_serializer.is_valid(raise_exception=True)
+
         return self._save(user=user, save_schema_data=put_schema_data, old_instance=old_instance)
 
     def _save(self, user: User, save_schema_data: QueryDict, old_instance):
@@ -36,6 +37,10 @@ class Service:
         save_model_data['user'] = user.pk
         return save_model_data
 
+    def _get_save_schema_data_from_put_schema_data(
+            self, user: User, put_schema_data: QueryDict, old_instance=None) -> QueryDict:
+        return put_schema_data
+
     @abstractmethod
     def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
@@ -53,14 +58,14 @@ class Service:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @staticmethod
-    def _get_querydict1_updated_with_querydict2_key_if_set(
-            key: str, querydict1: QueryDict, querydict2: QueryDict) -> QueryDict:
-        if key in querydict2:
-            value = querydict2[key]
+    def _update_data1_with_key_if_set_in_data2(
+            key: str, data1: QueryDict, data2: QueryDict) -> QueryDict:
+        if key in data2:
+            value = data2[key]
             if value == "":
                 value = None
-            querydict1[key] = value
-        return querydict1
+            data1[key] = value
+        return data1
 
     @staticmethod
     def _remove_none_or_empty_key_from_dict(dict):
@@ -74,8 +79,8 @@ class Service:
             dict1: QueryDict, dict2: QueryDict, keys: list[str]) -> QueryDict:
         overriden_dict1 = dict1.copy()
         for key in keys:
-            overriden_dict1 = Service._get_querydict1_updated_with_querydict2_key_if_set(
+            overriden_dict1 = Service._update_data1_with_key_if_set_in_data2(
                 key=key,
-                querydict1=overriden_dict1,
-                querydict2=dict2)
+                data1=overriden_dict1,
+                data2=dict2)
         return overriden_dict1
