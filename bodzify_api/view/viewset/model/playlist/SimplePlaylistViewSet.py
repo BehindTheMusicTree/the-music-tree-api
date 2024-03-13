@@ -5,13 +5,14 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from bodzify_api.model.Album import ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPostSchemaSerializer import SimplePlaylistPostSchemaSerializer
-from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithTracksSerializer \
+from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer \
+    import SimplePlaylistPostSchemaSerializer
+from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPutSchemaSerializer \
+    import SimplePlaylistPutSchemaSerializer
+from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTracksSerializer \
     import SimplePlaylistWithTracksSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.service.playlist.SimplePlaylistService import SimplePlaylistService
-from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPutSchemaSerializer \
-    import SimplePlaylistPutSchemaSerializer
 
 
 class GET_FILTER_FIELDS:

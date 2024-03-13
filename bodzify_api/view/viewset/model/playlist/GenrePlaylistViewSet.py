@@ -2,20 +2,16 @@
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
+from urllib3 import request
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.CriteriaPlaylist \
-    import CriteriaPlaylist, ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
-    CriteriaPlaylistWithTracksSerializer
-from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer import \
-    CriteriaPlaylistWithoutTracksSerializer
+from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
+    import FIELDS as QUERY_PARAM_FIELDS, CriteriaPlaylistQueryParamSerializer
+from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
+    import CriteriaPlaylistWithTracksSerializer
+from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
+    import CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
-
-
-class GET_QUERY_FIELDS:
-    NAME = PLAYLIST_ATTRIBUTES_LABEL.NAME
-    PARENT = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
 
 
 class GenrePlaylistViewSet(AppModelViewSet):
@@ -30,27 +26,31 @@ class GenrePlaylistViewSet(AppModelViewSet):
         super().__init__(None, **kwargs)
 
     def get_queryset(self):
+        serializer = CriteriaPlaylistQueryParamSerializer(data=self.request.GET)
+        serializer.is_valid(raise_exception=True)
+        validated_query_params = serializer.validated_data
+
         queryset = CriteriaPlaylist.objects.filter(playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
 
-        name = self.request.query_params.get(GET_QUERY_FIELDS.NAME)  # type: ignore
-        if name is not None:
-            queryset = queryset.filter(criteria__name__icontains=name)
+        name_query_param = validated_query_params.get(QUERY_PARAM_FIELDS.NAME)  # type: ignore
+        if name_query_param is not None:
+            queryset = queryset.filter(criteria__name__icontains=name_query_param)
 
-        parent_uuid_parameter_value = self.request.query_params.get(GET_QUERY_FIELDS.PARENT)  # type: ignore
-        if parent_uuid_parameter_value is not None:
-            if parent_uuid_parameter_value == "":
-                parent_uuid_filter = None
+        parent_uuid_query_param = validated_query_params.get(QUERY_PARAM_FIELDS.PARENT)  # type: ignore
+        if parent_uuid_query_param is not None:
+            if parent_uuid_query_param == "":
+                parent_uuid_query_param = None
             else:
-                parent_uuid_filter = parent_uuid_parameter_value
-            queryset = queryset.filter(criteria__parent__uuid=parent_uuid_filter)
+                parent_uuid_query_param = parent_uuid_query_param
+            queryset = queryset.filter(playlist__user=self.request.user, criteria__parent__uuid=parent_uuid_query_param)
 
         return queryset
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=GET_QUERY_FIELDS.NAME,
+        OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GET_QUERY_FIELDS.PARENT,
+        OpenApiParameter(name=QUERY_PARAM_FIELDS.PARENT,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):

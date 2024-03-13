@@ -7,7 +7,7 @@ from rest_framework import serializers
 from bodzify_api.model.playlist.CriteriaPlaylist import ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, Playlist
 from bodzify_api.model.playlist.Playlist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
-from bodzify_api.serializer.playlist.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
+from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
 
 logger = logging.getLogger('bodzify_api')
 

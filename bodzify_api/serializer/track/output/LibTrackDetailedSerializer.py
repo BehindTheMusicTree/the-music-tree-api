@@ -5,7 +5,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
-from bodzify_api.serializer.playlist.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
+from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
 
 
 class FIELDS:

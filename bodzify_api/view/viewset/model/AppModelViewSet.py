@@ -55,7 +55,7 @@ class AppModelViewSet(MultiSerializerViewSet):
         return Response(data=response_serializer_data, status=status.HTTP_200_OK, headers=headers)
 
     def _list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = self.get_queryset()
 
         page = self.paginate_queryset(queryset)
         if page is not None:

@@ -21,6 +21,7 @@ class ATTRIBUTES_LABEL:
     CHILDREN = "children"
     ROOT = "root"
     ADDED_ON = "added_on"
+    CRITERIA_PLAYLIST = "criteria_playlist"
 
 
 class Criteria(models.Model):

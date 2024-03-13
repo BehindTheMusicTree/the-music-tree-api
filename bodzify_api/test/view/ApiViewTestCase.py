@@ -59,6 +59,24 @@ class ApiViewTestCase(ViewTestCase):
     def _replace_none_values_by_empty_string(data_dict):
         return {k: ('' if v is None else v) for k, v in data_dict.items()}
 
+    def _set_saved_simple_playlist_attribute(self, response):
+        uuid = response.json()[SIMPLE_PLAYLIST_GET_FIELDS.UUID]
+        self.saved_simple_playlist = SimplePlaylist.objects.get(playlist__uuid=uuid)
+
+    def _set_saved_genre_attribute(self, response):
+        uuid = response.json()[SIMPLE_PLAYLIST_GET_FIELDS.UUID]
+        self.saved_genre = Criteria.objects.get(uuid=uuid)
+
+    def _set_saved_lib_track_attribute(self, response):
+        lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
+        self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
+        if self.saved_lib_track.file_exists:
+            self.saved_lib_track_metadata = AudioMetadataManager.get_metadata_data_from_file(
+                file=self.saved_lib_track.file)
+
+    def _set_results_attribute(self, response):
+        self.results = response.json()[self.RESPONSE_FIELDS.RESULTS]
+
     def search(self, query):
         return self.api_client.get(path=reverse('search-list'), data={'query': query})
 
@@ -199,6 +217,13 @@ class ApiViewTestCase(ViewTestCase):
             self._set_saved_genre_attribute(response)
         return response
 
+    def get_playlists(self, data_dict=None):
+        response = self.api_client.get(path=reverse('playlist'),
+                                       data=self._replace_none_values_by_empty_string(data_dict))
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            self._set_results_attribute(response)
+            return response
+
     def post_simple_playlist(self, data_dict):
         response = self.api_client.post(path=reverse('simple-playlist-list'),
                                         data=self._replace_none_values_by_empty_string(data_dict),
@@ -226,18 +251,3 @@ class ApiViewTestCase(ViewTestCase):
 
     def get_albums(self):
         return self.api_client.get(path=reverse('album-list'))
-
-    def _set_saved_simple_playlist_attribute(self, response):
-        uuid = response.json()[SIMPLE_PLAYLIST_GET_FIELDS.UUID]
-        self.saved_simple_playlist = SimplePlaylist.objects.get(playlist__uuid=uuid)
-
-    def _set_saved_genre_attribute(self, response):
-        uuid = response.json()[SIMPLE_PLAYLIST_GET_FIELDS.UUID]
-        self.saved_genre = Criteria.objects.get(uuid=uuid)
-
-    def _set_saved_lib_track_attribute(self, response):
-        lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
-        self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
-        if self.saved_lib_track.file_exists:
-            self.saved_lib_track_metadata = AudioMetadataManager.get_metadata_data_from_file(
-                file=self.saved_lib_track.file)

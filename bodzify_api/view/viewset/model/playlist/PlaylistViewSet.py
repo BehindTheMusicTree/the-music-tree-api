@@ -1,64 +1,64 @@
 #!/usr/bin/env python
 
-from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
+from venv import logger
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist, \
-    TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
-from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithTracksSerializer import \
-    CriteriaPlaylistWithTracksSerializer
-from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
-    DefaultMultipleModelLimitOffsetPagination
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.CriteriaPlaylist import \
-    ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
+from bodzify_api.model.playlist.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
+from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer \
+    import PlaylistQueryParamSerializer, FIELDS as QUERY_PARAM_FIELDS
+from bodzify_api.service.Service import Service
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import PlaylistWithTracksSerializer
 
 
-class PlaylistViewSet(ObjectMultipleModelAPIViewSet):
-
-    pagination_class = DefaultMultipleModelLimitOffsetPagination
+class PlaylistViewSet(AppModelViewSet):
+    queryset = Playlist.objects.all()
     serializers = {
-        'default': CriteriaPlaylistWithTracksSerializer,
-        'list':  CriteriaPlaylistWithTracksSerializer,
-        'retrieve':  CriteriaPlaylistWithTracksSerializer,
+        'default': PlaylistWithTracksSerializer,
+        'list':  PlaylistWithTracksSerializer,
+        'retrieve':  PlaylistWithTracksSerializer,
     }
 
+    def __init__(self, **kwargs):
+        super().__init__(service=Service(), **kwargs)
+
+    def _get_detailed_serializer(self, instance):
+        return PlaylistWithTracksSerializer(instance=instance)
+
     def get_queryset(self):
-        type_key = PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL.TYPE
-        if type_key in self.request.GET:
-            type_filter = self.request.GET[type_key]
-            if type_filter == SIMPLE_PLAYLIST_TYPE_LABEL:
-                queryset = SimplePlaylist.objects.filter(
-                    playlist__user=self.request.user)
-            elif type_filter == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
-                queryset = CriteriaPlaylist.objects.filter(
-                    playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
-            elif type_filter == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
-                queryset = CriteriaPlaylist.objects.filter(
-                    playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.TAG)
+        serializer = PlaylistQueryParamSerializer(data=self.request.GET)
+        serializer.is_valid(raise_exception=True)
+        query_params_validated = serializer.validated_data
+
+        type_query_param = query_params_validated.get(QUERY_PARAM_FIELDS.TYPE)  # type: ignore
+        if type_query_param is not None:
+            if type_query_param == SIMPLE_PLAYLIST_TYPE_LABEL:
+                queryset = Playlist.objects.filter(simple_playlist__isnull=False, playlist__user=self.request.user)
+            elif type_query_param == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
+                queryset = Playlist.objects.filter(
+                    criteria_playlist__isnull=False,
+                    playlist__user=self.request.user, criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
+            elif type_query_param == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
+                queryset = Playlist.objects.filter(
+                    criteria_playlist__isnull=False,
+                    playlist__user=self.request.user, criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
         else:
-            queryset = CriteriaPlaylist.objects.filter(user=self.request.user)
+            queryset = Playlist.objects.filter(user=self.request.user)
 
-            parent_uuid_param_key = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
-            if parent_uuid_param_key not in self.request.GET:
-                queryset = queryset | SimplePlaylist.objects.filter(playlist__user=self.request.user)
-            else:
-                queryset = queryset.filter(
-                    parent__uuid=self.request.GET[parent_uuid_param_key])
-
-        name_key = PLAYLIST_ATTRIBUTES_LABEL.NAME
-        if name_key in self.request.GET:
-            queryset = queryset.filter(
-                name__icontains=self.request.GET[name_key])
+        # name_key = PLAYLIST_ATTRIBUTES_LABEL.NAME
+        # if name_key in self.request.GET:
+        #     queryset = queryset.filter(
+        #         name__icontains=self.request.GET[name_key])
 
         return queryset
 
-    @extend_schema(parameters=[OpenApiParameter(name=PLAYLIST_ATTRIBUTES_LABEL.NAME,
+    @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY),
-                               OpenApiParameter(name=PLAYLIST_GET_PARAM_ATTRIBUTES_LABEL.TYPE,
+                               OpenApiParameter(name=QUERY_PARAM_FIELDS.TYPE,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+        return super()._list(request, *args, **kwargs)

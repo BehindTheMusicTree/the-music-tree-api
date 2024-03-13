@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
 from django.http import QueryDict
-from bodzify_api.serializer.playlist.input.PlaylistSaveModelSerializer import PlaylistSaveModelSerializer
-from bodzify_api.serializer.playlist.simple.input.model.SimplePlaylistSaveModelSerializer \
-    import SimplePlaylistSaveModelSerializer, FIELDS as SIMPLE_PLAYLIST_SAVE_MODEL_FIELDS
-from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPostSchemaSerializer \
-    import SimplePlaylistPostSchemaSerializer
-from bodzify_api.serializer.playlist.input.PlaylistSaveModelSerializer import FIELDS as PLAYLIST_SAVE_MODEL_FIELDS
-from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPutSchemaSerializer import SimplePlaylistPutSchemaSerializer
+from bodzify_api.serializer.playlist.children.simple.input.model.SimplePlaylistSaveModelSerializer \
+    import SimplePlaylistSaveModelSerializer, FIELDS as SAVE_MODEL_FIELDS
+from bodzify_api.serializer.playlist.mother.input.PlaylistSaveModelSerializer import PlaylistSaveModelSerializer
 from bodzify_api.service.Service import Service
 from rest_framework.serializers import Serializer
 
@@ -30,7 +26,7 @@ class SimplePlaylistService(Service):
     def _get_save_model_data_from_save_schema_data(self, user, save_schema_data: QueryDict, old_instance) -> QueryDict:
         if old_instance is None:
             playlist_save_model_data = QueryDict(mutable=True)
-            playlist_save_model_data[PLAYLIST_SAVE_MODEL_FIELDS.USER] = user.id  # type: ignore
+            playlist_save_model_data[SAVE_MODEL_FIELDS.USER] = user.id  # type: ignore
             playlist_save_model_serializer = PlaylistSaveModelSerializer(data=playlist_save_model_data)
             playlist_save_model_serializer.is_valid(raise_exception=True)
             playlist = playlist_save_model_serializer.save()
@@ -39,9 +35,9 @@ class SimplePlaylistService(Service):
             playlist_uuid = old_instance.playlist.uuid
 
         simple_playlist_model_data = QueryDict(mutable=True)
-        simple_playlist_model_data[SIMPLE_PLAYLIST_SAVE_MODEL_FIELDS.PLAYLIST] = playlist_uuid
+        simple_playlist_model_data[SAVE_MODEL_FIELDS.PLAYLIST] = playlist_uuid
 
         return Service._get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(
             dict1=simple_playlist_model_data,
             dict2=save_schema_data,
-            keys=[SIMPLE_PLAYLIST_SAVE_MODEL_FIELDS.NAME])
+            keys=[SAVE_MODEL_FIELDS.NAME])

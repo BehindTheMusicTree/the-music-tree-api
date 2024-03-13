@@ -43,7 +43,7 @@ class TrackViewSet(AppModelViewSet):
     }
 
     def __init__(self, **kwargs):
-        super().__init__(TrackService(), **kwargs)
+        super().__init__(service=TrackService(), **kwargs)
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
