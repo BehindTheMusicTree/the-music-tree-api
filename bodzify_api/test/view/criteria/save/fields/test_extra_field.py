@@ -10,5 +10,5 @@ class TestCase(ApiViewTestCase):
         data_dict = {
             "notExistingField": "Koko"
         }
-        response = self.post_genre(data_dict=data)
+        response = self.post_genre(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

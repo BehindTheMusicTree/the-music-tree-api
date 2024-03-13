@@ -51,9 +51,9 @@ class ApiViewTestCase(ViewTestCase):
                     raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")
 
     @staticmethod
-    def _merge_two_jsons(json1, json2):
-        json1.update(json2)
-        return json1
+    def _merge_two_dicts(dict1, dict2):
+        dict1.update(dict2)
+        return dict1
 
     @staticmethod
     def _replace_none_values_by_empty_string(data_dict):
@@ -85,9 +85,9 @@ class ApiViewTestCase(ViewTestCase):
         extract_data_dict = {LIB_TRACK_EXTRACT_FIELDS.URL: url}
 
         if data_dict is not None:
-            extract_data_dict = self._merge_two_jsons(extract_data_dict, data_dict)
+            extract_data_dict = self._merge_two_dicts(extract_data_dict, data_dict)
 
-        return self.extract(self._replace_none_values_by_empty_string(data_dict))
+        return self.extract(self._replace_none_values_by_empty_string(extract_data_dict))
 
     def post_lib_track(self, file_abs_path=None, data_dict=None):
         if file_abs_path is None:
@@ -98,7 +98,7 @@ class ApiViewTestCase(ViewTestCase):
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LIB_TRACK_POST_FIELDS.FILE: sample_file}
             if data_dict is not None:
-                data_dict = self._merge_two_jsons(file_field_dict, data_dict)
+                data_dict = self._merge_two_dicts(file_field_dict, data_dict)
             else:
                 data_dict = file_field_dict
             response = self.api_client.post(
