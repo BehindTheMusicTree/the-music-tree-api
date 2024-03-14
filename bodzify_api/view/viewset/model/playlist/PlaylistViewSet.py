@@ -39,11 +39,13 @@ class PlaylistViewSet(AppModelViewSet):
             elif type_query_param == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
                 queryset = Playlist.objects.filter(
                     criteria_playlist__isnull=False,
-                    playlist__user=self.request.user, criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
+                    user=self.request.user,
+                    criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
             elif type_query_param == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
                 queryset = Playlist.objects.filter(
                     criteria_playlist__isnull=False,
-                    playlist__user=self.request.user, criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
+                    user=self.request.user,
+                    criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
         else:
             queryset = Playlist.objects.filter(user=self.request.user)
 

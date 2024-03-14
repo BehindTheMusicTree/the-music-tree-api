@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import json
 import logging
 from typing import Optional
 
@@ -218,7 +217,7 @@ class ApiViewTestCase(ViewTestCase):
         return response
 
     def get_playlists(self, data_dict=None):
-        response = self.api_client.get(path=reverse('playlist'),
+        response = self.api_client.get(path=reverse('playlist-list'),
                                        data=self._replace_none_values_by_empty_string(data_dict))
         if response.status_code == status.HTTP_200_OK:  # type: ignore
             self._set_results_attribute(response)
