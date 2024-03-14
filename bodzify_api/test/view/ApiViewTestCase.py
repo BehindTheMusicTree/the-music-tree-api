@@ -223,7 +223,7 @@ class ApiViewTestCase(ViewTestCase):
                                        data=self._replace_none_values_by_empty_string(data_dict))
         if response.status_code == status.HTTP_200_OK:  # type: ignore
             self._set_results_attribute(response)
-            return response
+        return response
 
     def post_simple_playlist(self, data_dict):
         response = self.api_client.post(path=reverse('simple-playlist-list'),

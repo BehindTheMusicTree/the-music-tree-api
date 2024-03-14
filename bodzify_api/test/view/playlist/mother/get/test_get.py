@@ -61,3 +61,10 @@ class TestCase(ApiViewTestCase):
         assert len(self.results) == 1
         names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
+
+    def test_filter_type_wrong_value_then_error(self):
+        data_dict = {
+            GET_QUERY_FIELDS.TYPE: 'wrong_value'
+        }
+        response = self.get_playlists(data_dict=data_dict)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
