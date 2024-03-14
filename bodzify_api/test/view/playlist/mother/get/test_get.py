@@ -49,6 +49,15 @@ class TestCase(ApiViewTestCase):
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 2
         names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
-        logger.debug(names)
         assert rock_criteria_name in names
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
+
+    def test_filter_type_is_tag_then_tagless(self):
+        data_dict = {
+            GET_QUERY_FIELDS.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG
+        }
+        response = self.get_playlists(data_dict=data_dict)
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert len(self.results) == 1
+        names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
+        assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names

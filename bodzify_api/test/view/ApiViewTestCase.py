@@ -56,6 +56,8 @@ class ApiViewTestCase(ViewTestCase):
 
     @staticmethod
     def _replace_none_values_by_empty_string(data_dict):
+        if data_dict is None:
+            return {}
         return {k: ('' if v is None else v) for k, v in data_dict.items()}
 
     def _set_saved_simple_playlist_attribute(self, response):
