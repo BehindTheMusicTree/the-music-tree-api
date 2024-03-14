@@ -15,6 +15,7 @@ class ATTRIBUTES_LABEL:
     USER = 'user'
     ADDED_ON = 'added_on'
     NAME = 'name'
+    TYPE = 'type'
     LIBRARY_TRACKS = 'library_tracks'
     LIBRARY_TRACKS_COUNT = LIBRARY_TRACKS + '_count'
     CRITERIA_PLAYLIST = 'criteria_playlist'
@@ -29,6 +30,7 @@ class FOREIGN_MODEL_ATTRIBUTES_LABEL:
     USER = ''
     ADDED_ON = ''
     NAME = ''
+    TYPE = ''
     LIBRARY_TRACKS = ''
 
 
@@ -44,6 +46,7 @@ class FOREIGN_MODEL_RELATIONS_STR:
     USER = ''
     ADDED_ON = ''
     NAME = ''
+    TYPE = ''
     LIBRARY_TRACKS = ''
     LIBRARY_TRACKS_COUNT = ''
 
