@@ -32,19 +32,18 @@ class PlaylistViewSet(AppModelViewSet):
         serializer.is_valid(raise_exception=True)
         query_params_validated = serializer.validated_data
 
+        queryset = Playlist.objects.filter(user=self.request.user)
+
         type_query_param = query_params_validated.get(QUERY_PARAM_FIELDS.TYPE)  # type: ignore
         if type_query_param is not None:
             if type_query_param == SIMPLE_PLAYLIST_TYPE_LABEL:
-                queryset = Playlist.objects.filter(simple_playlist__isnull=False, playlist__user=self.request.user)
+                queryset = queryset.filter(simple_playlist__isnull=False)
             elif type_query_param == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
-                queryset = Playlist.objects.filter(
-                    criteria_playlist__isnull=False,
-                    user=self.request.user,
-                    criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
+                queryset = queryset.filter(
+                    criteria_playlist__isnull=False, criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
             elif type_query_param == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
                 queryset = Playlist.objects.filter(
                     criteria_playlist__isnull=False,
-                    user=self.request.user,
                     criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
         else:
             queryset = Playlist.objects.filter(user=self.request.user)
