@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.CriteriaPlaylist \
+from bodzify_api.model.playlist.children.CriteriaPlaylist \
     import ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL, CriteriaPlaylist
 from bodzify_api.serializer.playlist.children.PlaylistChildWithoutTrackSerializer \
     import PlaylistChildWithoutTrackSerializer, FIELDS as PLAYLIST_CHILD_WITHOUT_TRACK_FIELDS

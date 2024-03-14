@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 

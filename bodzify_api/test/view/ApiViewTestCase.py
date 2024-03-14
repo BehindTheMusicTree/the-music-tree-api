@@ -9,7 +9,7 @@ from rest_framework import status
 
 from bodzify_api import AudioMetadataManager
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.ViewTestCase import ViewTestCase
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS

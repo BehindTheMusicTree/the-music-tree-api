@@ -6,9 +6,9 @@ from ddf import G
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL, \
+from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL, \
     SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_FIELDS
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as GET_RESULT_FIELDS

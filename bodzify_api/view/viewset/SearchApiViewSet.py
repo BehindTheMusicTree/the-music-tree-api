@@ -4,9 +4,9 @@ import logging
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.CriteriaPlaylist \
+from bodzify_api.model.playlist.children.CriteriaPlaylist \
     import CriteriaPlaylist, SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.model.playlist.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer import CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithoutTrackSerializer import SimplePlaylistWithoutTrackSerializer
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \

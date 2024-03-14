@@ -3,8 +3,8 @@
 from venv import logger
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.model.playlist.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
+from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
+from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
 from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer \
     import PlaylistQueryParamSerializer, FIELDS as QUERY_PARAM_FIELDS
 from bodzify_api.service.Service import Service

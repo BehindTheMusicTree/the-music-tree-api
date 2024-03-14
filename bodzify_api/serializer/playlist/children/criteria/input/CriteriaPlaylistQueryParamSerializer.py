@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.playlist.CriteriaPlaylist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.children.CriteriaPlaylist import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 
 
 class FIELDS:

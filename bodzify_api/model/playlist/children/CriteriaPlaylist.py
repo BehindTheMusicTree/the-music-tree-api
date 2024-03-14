@@ -5,7 +5,7 @@ from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 
 class SPECIAL_NAMES:
@@ -26,7 +26,8 @@ class ATTRIBUTES_LABEL:
 
 
 class CriteriaPlaylist(models.Model):
-    playlist = models.OneToOneField(Playlist, on_delete=models.CASCADE, primary_key=True)
+    playlist = models.OneToOneField(
+        Playlist, on_delete=models.CASCADE, primary_key=True, related_name=PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_PLAYLIST)
     criteria = models.OneToOneField(Criteria,
                                     on_delete=models.CASCADE,
                                     blank=True,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, \
     FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \

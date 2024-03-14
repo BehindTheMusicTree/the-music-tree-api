@@ -4,7 +4,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from urllib3 import request
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
     import FIELDS as QUERY_PARAM_FIELDS, CriteriaPlaylistQueryParamSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \

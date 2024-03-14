@@ -3,9 +3,6 @@
 import shortuuid
 from django.contrib.auth.models import User
 from django.db import models
-from polymorphic.models import PolymorphicModel
-
-from bodzify_api import settings
 
 
 class SPECIAL_NAMES:
@@ -20,6 +17,8 @@ class ATTRIBUTES_LABEL:
     NAME = 'name'
     LIBRARY_TRACKS = 'library_tracks'
     LIBRARY_TRACKS_COUNT = LIBRARY_TRACKS + '_count'
+    CRITERIA_PLAYLIST = 'criteria_playlist'
+    SIMPLE_PLAYLIST = 'simple_playlist'
 
 
 FOREIGN_MODEL_ATTRIBUTES_PREFIXE = 'playlist_'
@@ -54,8 +53,7 @@ for attr, value in vars(ATTRIBUTES_LABEL).items():
         setattr(FOREIGN_MODEL_RELATIONS_STR, attr, FOREIGN_MODEL_RELATIONS_PREFIXE + value)
 
 
-class Playlist(PolymorphicModel):
+class Playlist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
-    name = models.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX, blank=True, null=True)

@@ -2,7 +2,7 @@
 
 from django.db import models
 from bodzify_api import settings
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 TYPE_LABEL = "Simple"
 
@@ -17,7 +17,10 @@ class ATTRIBUTES_LABELS:
 
 
 class SimplePlaylist(models.Model):
-    playlist = models.OneToOneField(Playlist, on_delete=models.CASCADE, primary_key=True)
+    playlist = models.OneToOneField(Playlist,
+                                    on_delete=models.CASCADE,
+                                    primary_key=True,
+                                    related_name=PLAYLIST_ATTRIBUTES_LABEL.SIMPLE_PLAYLIST)
     name = models.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX, blank=False, null=False)
 
     class Meta:
