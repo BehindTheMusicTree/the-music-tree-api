@@ -18,4 +18,4 @@ class RatingNotNoneTestCase(ApiViewTestCase):
                                             'test_5_then_10']
         if methods_names_to_implement:
             class_methods_names_to_implement += methods_names_to_implement
-        super().setUp(methodes_names_to_implement=class_methods_names_to_implement)
+        super().setUp(methods_names_to_implement=class_methods_names_to_implement)

@@ -1,16 +1,22 @@
 #!/usr/bin/env python
 
-from venv import logger
+import logging
+from re import S
+from django.db.models import Q
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
+from bodzify_api.model.playlist.children.CriteriaPlaylist \
+    import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL, SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer \
     import PlaylistQueryParamSerializer, FIELDS as QUERY_PARAM_FIELDS
 from bodzify_api.service.Service import Service
 from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.test.view import criteria
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import PlaylistWithTracksSerializer
+
+logger = logging.getLogger('bodyzify_api')
 
 
 class PlaylistViewSet(AppModelViewSet):
@@ -21,6 +27,10 @@ class PlaylistViewSet(AppModelViewSet):
         'retrieve':  PlaylistWithTracksSerializer,
     }
 
+    @staticmethod
+    def _get_queryset_str_filter_value_to_filter_nothing():
+        return ''
+
     def __init__(self, **kwargs):
         super().__init__(service=Service(), **kwargs)
 
@@ -28,32 +38,55 @@ class PlaylistViewSet(AppModelViewSet):
         return PlaylistWithTracksSerializer(instance=instance)
 
     def get_queryset(self):
-        serializer = PlaylistQueryParamSerializer(data=self.request.GET)
+        serializer = PlaylistQueryParamSerializer(data=self.request.query_params)  # type: ignore
         serializer.is_valid(raise_exception=True)
         query_params_validated = serializer.validated_data
 
         queryset = Playlist.objects.filter(user=self.request.user)
 
-        type_query_param = query_params_validated.get(QUERY_PARAM_FIELDS.TYPE)  # type: ignore
-        if type_query_param is not None:
-            if type_query_param == SIMPLE_PLAYLIST_TYPE_LABEL:
-                queryset = queryset.filter(simple_playlist__isnull=False)
-            elif type_query_param == CRITERIA_PLAYLIST_TYPES_LABEL.GENRE:
-                queryset = queryset.filter(
-                    criteria_playlist__isnull=False, criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
-            elif type_query_param == CRITERIA_PLAYLIST_TYPES_LABEL.TAG:
-                queryset = Playlist.objects.filter(
-                    criteria_playlist__isnull=False,
-                    criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
+        if QUERY_PARAM_FIELDS.NAME in query_params_validated:  # type: ignore
+            name_query_param = query_params_validated.get(QUERY_PARAM_FIELDS.NAME)  # type: ignore
+            if name_query_param == '':
+                return Playlist.objects.none()
         else:
-            queryset = Playlist.objects.filter(user=self.request.user)
+            name_query_param = self._get_queryset_str_filter_value_to_filter_nothing()
 
-        # name_key = PLAYLIST_ATTRIBUTES_LABEL.NAME
-        # if name_key in self.request.GET:
-        #     queryset = queryset.filter(
-        #         name__icontains=self.request.GET[name_key])
+        if QUERY_PARAM_FIELDS.TYPE in query_params_validated:  # type: ignore
+            type_query_param = query_params_validated.get(QUERY_PARAM_FIELDS.TYPE)  # type: ignore
+        else:
+            type_query_param = None
 
-        return queryset
+        simple_playlist_queryset = Playlist.objects.none()
+        if type_query_param is None or type_query_param is SIMPLE_PLAYLIST_TYPE_LABEL:
+            simple_playlist_queryset = queryset.filter(
+                simple_playlist__isnull=False,
+                simple_playlist__name__icontains=name_query_param)
+
+        criteria_playlist_queryset = Playlist.objects.none()
+        if type_query_param is None or type_query_param in [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,
+                                                            CRITERIA_PLAYLIST_TYPES_LABEL.TAG]:
+            criteria_playlist_queryset = queryset.filter(
+                criteria_playlist__isnull=False, criteria_playlist__type__label__icontains=type_query_param.upper()
+                if type_query_param is not None else '', criteria_playlist__criteria__name__icontains=name_query_param)
+
+        genreless_playlist = Playlist.objects.none()
+        if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS.lower() \
+                and type_query_param in [None, CRITERIA_PLAYLIST_TYPES_LABEL.GENRE]:  # type: ignore
+            genreless_playlist = queryset.filter(
+                criteria_playlist__isnull=False,
+                criteria_playlist__criteria__isnull=True,
+                criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
+
+        tagless_playlist = Playlist.objects.none()
+        if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS.lower() \
+                and type_query_param in [None, CRITERIA_PLAYLIST_TYPES_LABEL.TAG]:  # type: ignore
+            tagless_playlist = queryset.filter(
+                criteria_playlist__isnull=False,
+                criteria_playlist__criteria__isnull=True,
+                criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
+
+        return simple_playlist_queryset.union(
+            criteria_playlist_queryset).union(genreless_playlist).union(tagless_playlist)
 
     @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
                                                 type=OpenApiTypes.STR,

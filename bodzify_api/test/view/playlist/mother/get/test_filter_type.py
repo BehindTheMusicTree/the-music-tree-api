@@ -10,14 +10,22 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as 
     SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_FIELDS
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as GET_RESULT_FIELDS
+from bodzify_api.test.view.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
 
 logger = logging.getLogger('bodyzify_api')
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(GetFilterWithSpecificValuesTestCase):
+
+    def setUp(self, methods_names_to_implement=None):
+        specific_values = [
+            CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,
+            CRITERIA_PLAYLIST_TYPES_LABEL.TAG,
+            SIMPLE_PLAYLIST_SPECIAL_NAMES
+        ]
+        return super().setUp(specific_values, methods_names_to_implement)
 
     def test_filter_type_is_none_then_one_genre_playlists_and_one_simple_and_all_and_genreless_and_tagless(self):
         rock_criteria_name = "Rock"
@@ -53,6 +61,16 @@ class TestCase(ApiViewTestCase):
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
 
     def test_filter_type_is_tag_then_tagless(self):
+        data_dict = {
+            GET_QUERY_FIELDS.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG
+        }
+        response = self.get_playlists(data_dict=data_dict)
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert len(self.results) == 1
+        names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
+        assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
+
+    def test_filter_type_is_simple_then_one_and_all(self):
         data_dict = {
             GET_QUERY_FIELDS.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG
         }

@@ -9,5 +9,5 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 class FieldStrNullableFromFileMetadataTestCase(ApiViewTestCase):
 
     def setUp(self):
-        super().setUp(methodes_names_to_implement=['test_none_then_none',
-                                                   'test_longest'])
+        super().setUp(methods_names_to_implement=['test_none_then_none',
+                                                  'test_longest'])

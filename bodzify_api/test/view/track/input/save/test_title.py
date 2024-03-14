@@ -4,7 +4,7 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
-from bodzify_api.test.view.track.input.save.FieldStrTestCase import FieldStrNullableTestCase
+from bodzify_api.test.view.track.input.save.FieldStrNullableTestCase import FieldStrNullableTestCase
 
 
 class TestCase(ApiViewTestCase):

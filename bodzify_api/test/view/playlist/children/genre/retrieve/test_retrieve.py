@@ -22,7 +22,7 @@ class TestCase(ApiViewTestCase):
 
         }
         rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
-        response = self.get_genre_playlist(playlist_uuid=rock_playlist.uuid)
+        response = self.retrieve_genre_playlist(playlist_uuid=rock_playlist.uuid)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert response.json()[GET_RESULT_FIELDS.NAME] == rock_criteria_name  # type: ignore
 
@@ -32,6 +32,6 @@ class TestCase(ApiViewTestCase):
                        name="Rock",
                        type=CRITERIA_TYPES_ID.GENRE)
         rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
-        response = self.get_genre_playlist(playlist_uuid=rock_playlist.uuid)
+        response = self.retrieve_genre_playlist(playlist_uuid=rock_playlist.uuid)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert response.json()[GET_RESULT_FIELDS.UUID] == rock_playlist.uuid  # type: ignore

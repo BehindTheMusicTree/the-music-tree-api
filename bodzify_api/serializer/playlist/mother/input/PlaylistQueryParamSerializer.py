@@ -13,7 +13,7 @@ class FIELDS:
 
 class PlaylistQueryParamSerializer(serializers.Serializer):
     type = serializers.CharField(required=False)
-    name = serializers.CharField(required=False)
+    name = serializers.CharField(required=False, allow_blank=True)
 
     def validate_type(self, value):
         valid_types = [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,

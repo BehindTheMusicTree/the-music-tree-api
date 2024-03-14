@@ -42,10 +42,10 @@ class ApiViewTestCase(ViewTestCase):
     saved_genre: Criteria
     saved_simple_playlist: SimplePlaylist
 
-    def setUp(self, methodes_names_to_implement: Optional[list[str]] = None):
+    def setUp(self, methods_names_to_implement: Optional[list[str]] = None):
         super().setUp()
-        if methodes_names_to_implement is not None:
-            for method_name in methodes_names_to_implement:
+        if methods_names_to_implement is not None:
+            for method_name in methods_names_to_implement:
                 if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
                     raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")
 
@@ -79,7 +79,10 @@ class ApiViewTestCase(ViewTestCase):
         self.results = response.json()[self.RESPONSE_FIELDS.RESULTS]
 
     def search(self, query):
-        return self.api_client.get(path=reverse('search-list'), data={'query': query})
+        response = self.api_client.get(path=reverse('search-list'), data={'query': query})
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            self._set_results_attribute(response)
+        return response
 
     def extract(self, data_dict):
         response = self.api_client.post(
@@ -188,9 +191,12 @@ class ApiViewTestCase(ViewTestCase):
             'source': source,
             'query': query
         }
-        return self.api_client.get(
+        response = self.api_client.get(
             path=reverse('mine-track-list'),
             data=self._replace_none_values_by_empty_string(data_dict))
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            self._set_results_attribute(response)
+        return response
 
     def download_lib_track(self, lib_track_uuid):
         return self.api_client.get(path=reverse('librarytrack-download', kwargs={'pk': lib_track_uuid}))
@@ -199,7 +205,10 @@ class ApiViewTestCase(ViewTestCase):
         return self.api_client.delete(path=reverse('librarytrack-detail', kwargs={'pk': lib_track_uuid}))
 
     def get_genres(self):
-        return self.api_client.get(path=reverse('genre-list'))
+        response = self.api_client.get(path=reverse('genre-list'))
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            self._set_results_attribute(response)
+        return response
 
     def post_genre(self, data_dict):
         response = self.api_client.post(path=reverse('genre-list'),
@@ -242,13 +251,19 @@ class ApiViewTestCase(ViewTestCase):
             self._set_saved_simple_playlist_attribute(response)
         return response
 
-    def get_genre_playlist(self, playlist_uuid):
+    def retrieve_genre_playlist(self, playlist_uuid):
         return self.api_client.get(path=reverse('genre-playlist-detail', kwargs={'pk': playlist_uuid}))
 
     def get_genre_playlists(self, data_dict=None):
-        return self.api_client.get(
+        response = self.api_client.get(
             path=reverse('genre-playlist-list'),
             data=self._replace_none_values_by_empty_string(data_dict))
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            self._set_results_attribute(response)
+        return response
 
     def get_albums(self):
-        return self.api_client.get(path=reverse('album-list'))
+        response = self.api_client.get(path=reverse('album-list'))
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            self._set_results_attribute(response)
+        return response
