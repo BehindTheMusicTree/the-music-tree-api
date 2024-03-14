@@ -15,7 +15,7 @@ from bodzify_api.test.view.ViewTestCase import ViewTestCase
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
 from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as LIB_TRACK_POST_FIELDS
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
-from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithTracksSerializer \
+from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTracksSerializer \
     import FIELDS as SIMPLE_PLAYLIST_GET_FIELDS
 
 

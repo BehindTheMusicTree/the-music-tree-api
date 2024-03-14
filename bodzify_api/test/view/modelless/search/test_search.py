@@ -10,7 +10,7 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_FIELDS
-from bodzify_api.serializer.playlist.simple.output.SimplePlaylistWithoutTrackSerializer \
+from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithoutTrackSerializer \
     import FIELDS as SIMPLE_PLAYLIST_FIELDS
 from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
     import FIELDS as CRITERIA_PLAYLIST_FIELDS
