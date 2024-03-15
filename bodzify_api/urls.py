@@ -28,7 +28,9 @@ router.register(r'albums', AlbumViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'genres', GenreViewSet, basename='genre')
 router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
-router.register(r'playlists', PlaylistViewSet, basename='playlist')
+
+# Do not move after GenrePlaylistViewSet or SimplePlaylistViewSet or it will cause confusion resolving reverse urls
+router.register(r'playlists/', PlaylistViewSet, basename='playlist')
 router.register(r'playlists/simple', SimplePlaylistViewSet, basename='simple-playlist')
 router.register(r'playlists/genre', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'search', SearchApiViewSet, basename='search')
