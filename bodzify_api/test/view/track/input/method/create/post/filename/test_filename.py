@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_ok_when_max_length(self):
         sample_100_char_long_char_name = ("3NyKu2inI7MA3DIRa78qLuowTOppybbfKx27gzOV7aiHJNcDTIDxSJJMNNY" +

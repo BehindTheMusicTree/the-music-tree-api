@@ -10,7 +10,6 @@ logger = logging.getLogger('bodzify_api')
 
 
 class UpdateFileMetadataRatingTestCase(UpdateFileMetadataIntTestCase):
-
     save_field = SAVE_SCHEMA_FIELDS.RATING
     lib_track_metadata_dict_key = AudioMetadataManager.METADATA_DICT_KEYS.RATING
     value_min = 0

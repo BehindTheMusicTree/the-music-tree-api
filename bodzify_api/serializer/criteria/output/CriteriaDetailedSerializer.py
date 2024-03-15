@@ -3,8 +3,9 @@
 from rest_framework import serializers
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
-from bodzify_api.serializer.criteria.type.CriteriaTypeSerializer import CriteriaTypeSerializer
-from bodzify_api.serializer.playlist.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
+from bodzify_api.serializer.criteria.type.CriteriaTypeSerializer \
+    import CriteriaTypeSerializer, FIELDS as CRITERIA_TYPE_FIELDS
+from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
     import CriteriaPlaylistWithoutTracksSerializer
 
 
@@ -15,8 +16,9 @@ class FIELDS:
     ROOT = ATTRIBUTES_LABEL.ROOT
     CHILDREN = ATTRIBUTES_LABEL.CHILDREN
     TYPE = ATTRIBUTES_LABEL.TYPE
+    TYPE_LABEL = CRITERIA_TYPE_FIELDS.LABEL
     ADDED_ON = ATTRIBUTES_LABEL.ADDED_ON
-    CRITERIA_PLAYLIST = "criteria_playlist"
+    CRITERIA_PLAYLIST = ATTRIBUTES_LABEL.CRITERIA_PLAYLIST
 
 
 class CriteriaDetailedSerializer(serializers.ModelSerializer):

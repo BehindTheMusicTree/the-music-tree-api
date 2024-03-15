@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from rest_framework import status
 
 
-class FieldFromDataTestCase(ApiViewTestCase):
+class FieldFromDataTestCase(ApiTestCase):
     extract_field_key = None
 
     def _test_ok(self, value):

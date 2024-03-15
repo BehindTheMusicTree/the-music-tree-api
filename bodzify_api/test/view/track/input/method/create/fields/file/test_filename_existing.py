@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 from rest_framework import status
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_same_filename_so_suffixe_added(self):
         source_filename_without_extension = "sample"

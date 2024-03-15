@@ -2,13 +2,13 @@
 
 from typing import Optional
 from venv import logger
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from rest_framework import status
 
 
-class UpdateFileMetadataStrTestCase(ApiViewTestCase):
+class UpdateFileMetadataStrTestCase(ApiTestCase):
 
-    VALUE_EXPECTED_IN_METADATA_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
+    VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
 
     save_field = None
     lib_track_metadata_dict_key = None
@@ -19,7 +19,7 @@ class UpdateFileMetadataStrTestCase(ApiViewTestCase):
             self,
             value: Optional[str],
             additional_data_dict,
-            value_expected_in_metadata=VALUE_EXPECTED_IN_METADATA_NOT_PROVIDED,
+            value_expected_in_metadata=VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED,
             file_has_tags=False):
         data = {
             self.save_field: value
@@ -30,13 +30,13 @@ class UpdateFileMetadataStrTestCase(ApiViewTestCase):
 
         if file_has_tags:
             response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-                extension=self.file_extension, data_dict=data)
+                extension=self.file_extension, data_dict=data)  # type: ignore
         else:
             response = self.post_lib_track_with_generic_sample_no_tags(
                 extension=self.file_extension, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
-        if value_expected_in_metadata == self.VALUE_EXPECTED_IN_METADATA_NOT_PROVIDED:
+        if value_expected_in_metadata == self.VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED:
             value_expected_in_metadata = value
 
         if value_expected_in_metadata is None:

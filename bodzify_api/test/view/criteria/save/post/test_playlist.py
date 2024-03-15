@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.model.playlist.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_playlist_creation(self):
         genre_name = "Rock"

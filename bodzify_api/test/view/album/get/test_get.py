@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
-from rest_framework import status
 from ddf import G
+from rest_framework import status
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test(self):
         sum41_artist = G(Artist,
@@ -45,5 +45,4 @@ class TestCase(ApiViewTestCase):
 
         response = self.get_albums()
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        albums_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
-        assert len(albums_json_list) == 2
+        assert self.overall_total == 2

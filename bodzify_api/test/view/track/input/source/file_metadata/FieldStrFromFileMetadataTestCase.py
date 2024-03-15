@@ -2,12 +2,12 @@
 
 import pytest
 
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 @pytest.mark.django_db
-class FieldStrNullableFromFileMetadataTestCase(ApiViewTestCase):
+class FieldStrNullableFromFileMetadataTestCase(ApiTestCase):
 
     def setUp(self):
-        super().setUp(methodes_names_to_implement=['test_none_then_none',
-                                                   'test_longest'])
+        super().setUp(methods_names_to_implement=['test_none_then_none',
+                                                  'test_longest'])

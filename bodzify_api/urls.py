@@ -14,6 +14,7 @@ from bodzify_api.view.viewset.model.ArtistViewSet import ArtistViewSet
 from bodzify_api.view.viewset.model.criteria.GenreViewSet import GenreViewSet
 from bodzify_api.view.viewset.model.criteria.TagViewSet import TagViewSet
 from bodzify_api.view.viewset.model.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
+from bodzify_api.view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from bodzify_api.view.viewset.model.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
 from bodzify_api.view.viewset.model.TrackViewSet import TrackViewSet
 from bodzify_api.view.viewset.model.UserViewSet import UserViewSet
@@ -27,8 +28,11 @@ router.register(r'albums', AlbumViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'genres', GenreViewSet, basename='genre')
 router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
-router.register(r'playlists/simple', SimplePlaylistViewSet, basename='simple-playlist')
-router.register(r'playlists/genre', GenrePlaylistViewSet, basename='genre-playlist')
+
+# Do not move after GenrePlaylistViewSet or SimplePlaylistViewSet or it will cause confusion resolving reverse urls
+router.register(r'playlists', PlaylistViewSet, basename='playlist')
+router.register(r'simple-playlists', SimplePlaylistViewSet, basename='simple-playlist')
+router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'search', SearchApiViewSet, basename='search')
 
 urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),

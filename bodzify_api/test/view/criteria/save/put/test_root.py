@@ -4,13 +4,13 @@ import logging
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, Criteria
 
 logger = logging.getLogger('bodzify_api')
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_from_being_root_to_first_descendant(self):
         rock_genre = G(Criteria,

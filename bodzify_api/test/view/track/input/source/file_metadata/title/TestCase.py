@@ -2,13 +2,13 @@
 
 import logging
 from bodzify_api import settings
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from rest_framework import status
 
 logger = logging.getLogger('bodzify_api')
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
     file_extension = None
 
     def test_none_then_ok_because_generated(self):

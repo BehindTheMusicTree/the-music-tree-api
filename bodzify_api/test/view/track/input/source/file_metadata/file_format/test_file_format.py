@@ -3,11 +3,11 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 @pytest.mark.django_db
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_flac(self):
         response = self.post_lib_track_with_specific_sample("sample.flac")

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 from django.http import QueryDict
-from bodzify_api.serializer.playlist.simple.input.model.SimplePlaylistSaveModelSerializer import SimplePlaylistSaveModelSerializer
-from bodzify_api.serializer.playlist.simple.input.schema.SimplePlaylistPostSchemaSerializer \
+from bodzify_api.serializer.playlist.children.simple.input.model.SimplePlaylistSaveModelSerializer \
+    import SimplePlaylistSaveModelSerializer
+from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer \
     import SimplePlaylistPostSchemaSerializer
 from bodzify_api.service.Service import Service
 from rest_framework.serializers import Serializer

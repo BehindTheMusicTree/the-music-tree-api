@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_not_povided_then_none(self):
         response = self.post_lib_track_with_generic_sample_no_tags()

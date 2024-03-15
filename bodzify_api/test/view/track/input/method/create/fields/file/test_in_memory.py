@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 """
@@ -10,8 +10,8 @@ Thus the python file object is not available. This test case is to ensure that t
 """
 
 
-class InMemoryTestCase(ApiViewTestCase):
+class InMemoryTestCase(ApiTestCase):
 
     def test_in_memory(self):
         response = self.post_lib_track_with_specific_sample("in_memory.flac")
-        assert response.status_code == status.HTTP_201_CREATED # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore

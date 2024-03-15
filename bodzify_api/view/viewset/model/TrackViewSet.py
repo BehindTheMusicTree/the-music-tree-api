@@ -43,7 +43,7 @@ class TrackViewSet(AppModelViewSet):
     }
 
     def __init__(self, **kwargs):
-        super().__init__(TrackService(), **kwargs)
+        super().__init__(service=TrackService(), **kwargs)
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
@@ -137,7 +137,7 @@ class TrackViewSet(AppModelViewSet):
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)
         if track.file_exists:
-            return utility.GetFileResponse(filePath=track.file.path, filename=track.file.name)
+            return utility.get_file_response(filePath=track.file.path, filename=track.file.name)
         else:
             return HttpResponse(
                 content="The requested track's file is missing.",

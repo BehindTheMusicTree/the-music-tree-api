@@ -15,6 +15,13 @@ from rest_framework.permissions import IsAuthenticated
 logger = logging.getLogger('bodyzify_api')
 
 
+class PAGINATED_RESPONSE_FIELDS:
+    OVERALL_TOTAL = 'overallTotal'
+    NEXT = 'next'
+    PREVIOUS = 'previous'
+    RESULTS = 'results'
+
+
 class AppModelViewSet(MultiSerializerViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -37,7 +44,7 @@ class AppModelViewSet(MultiSerializerViewSet):
             instance = self.service.create(user=request.user, post_schema_data=request_data_snake_case)
         except IntegrityError as e:
             logger.exception(e)
-            return utility.get_json_response_when_bad_request(exception=e)
+            return utility.get_response_when_bad_request(exception=e)
 
         response_serializer = self._get_detailed_serializer(instance=instance)
         headers = self.get_success_headers(response_serializer.data)
@@ -55,7 +62,7 @@ class AppModelViewSet(MultiSerializerViewSet):
         return Response(data=response_serializer_data, status=status.HTTP_200_OK, headers=headers)
 
     def _list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = self.get_queryset()
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -68,6 +75,15 @@ class AppModelViewSet(MultiSerializerViewSet):
     def _destroy(self, request, *args, **kwargs):
         self.service.delete(user=request.user, instance=self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_paginated_response(self, data):
+        assert self.paginator is not None
+        return Response({
+            PAGINATED_RESPONSE_FIELDS.OVERALL_TOTAL: self.paginator.page.paginator.count,
+            PAGINATED_RESPONSE_FIELDS.NEXT: self.paginator.get_next_link(),
+            PAGINATED_RESPONSE_FIELDS.PREVIOUS: self.paginator.get_previous_link(),
+            PAGINATED_RESPONSE_FIELDS.RESULTS: data
+        })
 
     @abstractmethod
     def _get_detailed_serializer(self, instance) -> ModelSerializer:

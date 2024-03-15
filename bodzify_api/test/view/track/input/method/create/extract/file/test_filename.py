@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api import settings
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
 
 
-class FilenameTestCase(ApiViewTestCase):
+class FilenameTestCase(ApiTestCase):
 
     def test_title_and_artist_name_in_data_then_filename_with_artist_and_title(self):
         data_dict = {
@@ -15,7 +15,7 @@ class FilenameTestCase(ApiViewTestCase):
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.filename == f"Roméo_-_ImHere.{ApiViewTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
+        assert self.saved_lib_track.filename == f"Roméo_-_ImHere.{ApiTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_title_and_artist_with_spaces_then_filename_without_spaces(self):
         data_dict = {
@@ -24,7 +24,7 @@ class FilenameTestCase(ApiViewTestCase):
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.filename == f"Rom_éo_-_Im_Here.{ApiViewTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
+        assert self.saved_lib_track.filename == f"Rom_éo_-_Im_Here.{ApiTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_title_and_artist_with_special_characyers_then_filename_without_them(self):
         data_dict = {
@@ -33,7 +33,7 @@ class FilenameTestCase(ApiViewTestCase):
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.filename == f"Roméo_-_Im_Here.{ApiViewTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
+        assert self.saved_lib_track.filename == f"Roméo_-_Im_Here.{ApiTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_only_title_in_data_then_filename_with_title(self):
         title = "Hellö"
@@ -42,7 +42,7 @@ class FilenameTestCase(ApiViewTestCase):
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.filename == f"{title}.{ApiViewTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
+        assert self.saved_lib_track.filename == f"{title}.{ApiTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_filename(self):
         track_url = (

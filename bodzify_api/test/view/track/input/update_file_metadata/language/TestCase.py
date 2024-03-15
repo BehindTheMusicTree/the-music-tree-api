@@ -13,13 +13,13 @@ class TestCase(UpdateFileMetadataStrTestCase):
     length_max = settings.LIB_TRACK_LANGUAGE_LENGTH_MAX
 
 
-class LanguageMp3TestCase(TestCase):
+class Mp3TestCase(TestCase):
     file_extension = 'mp3'
 
 
-class LanguageFlacTestCase(TestCase):
+class FlacTestCase(TestCase):
     file_extension = 'flac'
 
 
-class LanguageWavTestCase(TestCase):
+class WavTestCase(TestCase):
     file_extension = 'wav'
