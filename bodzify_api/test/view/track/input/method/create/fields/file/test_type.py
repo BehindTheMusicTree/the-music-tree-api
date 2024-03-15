@@ -2,10 +2,10 @@
 
 from rest_framework import status
 
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class TypeTestCase(ApiViewTestCase):
+class TypeTestCase(ApiTestCase):
 
     def test_wav(self):
         response = self.post_lib_track_with_generic_sample_no_tags(extension='wav')

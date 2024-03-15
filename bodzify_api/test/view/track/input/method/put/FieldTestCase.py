@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class FieldTestCase(ApiViewTestCase):
+class FieldTestCase(ApiTestCase):
 
     def setUp(self):
         super().setUp(methods_names_to_implement=['test_not_provided_then_unchanged',

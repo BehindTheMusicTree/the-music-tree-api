@@ -15,6 +15,13 @@ from rest_framework.permissions import IsAuthenticated
 logger = logging.getLogger('bodyzify_api')
 
 
+class PAGINATED_RESPONSE_FIELDS:
+    OVERALL_TOTAL = 'overallTotal'
+    NEXT = 'next'
+    PREVIOUS = 'previous'
+    RESULTS = 'results'
+
+
 class AppModelViewSet(MultiSerializerViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -68,6 +75,15 @@ class AppModelViewSet(MultiSerializerViewSet):
     def _destroy(self, request, *args, **kwargs):
         self.service.delete(user=request.user, instance=self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_paginated_response(self, data):
+        assert self.paginator is not None
+        return Response({
+            PAGINATED_RESPONSE_FIELDS.OVERALL_TOTAL: self.paginator.page.paginator.count,
+            PAGINATED_RESPONSE_FIELDS.NEXT: self.paginator.get_next_link(),
+            PAGINATED_RESPONSE_FIELDS.PREVIOUS: self.paginator.get_previous_link(),
+            PAGINATED_RESPONSE_FIELDS.RESULTS: data
+        })
 
     @abstractmethod
     def _get_detailed_serializer(self, instance) -> ModelSerializer:

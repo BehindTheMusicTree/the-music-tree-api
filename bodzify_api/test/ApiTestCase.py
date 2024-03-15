@@ -12,6 +12,7 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
+from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
 from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as LIB_TRACK_POST_FIELDS
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
@@ -22,14 +23,7 @@ from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTr
 logger = logging.getLogger('bodzify_api')
 
 
-class ApiViewTestCase(AppTestCase):
-
-    class RESPONSE_FIELDS:
-        COUNT = 'count'
-        NEXT = 'next'
-        PREVIOUS = 'previous'
-        RESULTS = 'results'
-        OVERALL_TOTAL = 'overallTotal'
+class ApiTestCase(AppTestCase):
 
     class SAMPLE_MINE_TRACK_URLS:
         WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
@@ -45,7 +39,6 @@ class ApiViewTestCase(AppTestCase):
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None):
         super().setUp()
-        print(get_resolver(None).reverse_dict.keys())
         if methods_names_to_implement is not None:
             for method_name in methods_names_to_implement:
                 if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
@@ -77,13 +70,14 @@ class ApiViewTestCase(AppTestCase):
             self.saved_lib_track_metadata = AudioMetadataManager.get_metadata_data_from_file(
                 file=self.saved_lib_track.file)
 
-    def _set_results_attribute(self, response):
-        self.results = response.json()[self.RESPONSE_FIELDS.RESULTS]
+    def _set_results_attributes(self, response):
+        self.results = response.json()[PAGINATED_RESPONSE_FIELDS.RESULTS]
+        self.overall_total = response.json()[PAGINATED_RESPONSE_FIELDS.OVERALL_TOTAL]
 
     def search(self, query):
         response = self.api_client.get(path=reverse('search-list'), data={'query': query})
         if response.status_code == status.HTTP_200_OK:  # type: ignore
-            self._set_results_attribute(response)
+            self._set_results_attributes(response)
         return response
 
     def extract(self, data_dict):
@@ -197,7 +191,7 @@ class ApiViewTestCase(AppTestCase):
             path=reverse('mine-track-list'),
             data=self._replace_none_values_by_empty_string(data_dict))
         if response.status_code == status.HTTP_200_OK:  # type: ignore
-            self._set_results_attribute(response)
+            self._set_results_attributes(response)
         return response
 
     def download_lib_track(self, lib_track_uuid):
@@ -209,7 +203,7 @@ class ApiViewTestCase(AppTestCase):
     def get_genres(self):
         response = self.api_client.get(path=reverse('genre-list'))
         if response.status_code == status.HTTP_200_OK:  # type: ignore
-            self._set_results_attribute(response)
+            self._set_results_attributes(response)
         return response
 
     def post_genre(self, data_dict):
@@ -233,10 +227,12 @@ class ApiViewTestCase(AppTestCase):
         response = self.api_client.get(path=reverse('playlist-list'),
                                        data=self._replace_none_values_by_empty_string(data_dict))
         if response.status_code == status.HTTP_200_OK:  # type: ignore
-            self._set_results_attribute(response)
+            self._set_results_attributes(response)
         return response
 
     def post_simple_playlist(self, data_dict):
+        url = reverse('simple-playlist-list')
+        print(f"URL: {url}")
         response = self.api_client.post(path=reverse('simple-playlist-list'),
                                         data=self._replace_none_values_by_empty_string(data_dict),
                                         format='json')
@@ -261,11 +257,11 @@ class ApiViewTestCase(AppTestCase):
             path=reverse('genre-playlist-list'),
             data=self._replace_none_values_by_empty_string(data_dict))
         if response.status_code == status.HTTP_200_OK:  # type: ignore
-            self._set_results_attribute(response)
+            self._set_results_attributes(response)
         return response
 
     def get_albums(self):
         response = self.api_client.get(path=reverse('album-list'))
         if response.status_code == status.HTTP_200_OK:  # type: ignore
-            self._set_results_attribute(response)
+            self._set_results_attributes(response)
         return response

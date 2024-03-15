@@ -6,12 +6,12 @@ from ddf import G
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
     import FIELDS as GET_RESULT_FIELDS
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_ok(self):
         rock_criteria_name = "Rock"

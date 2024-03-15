@@ -4,13 +4,13 @@ import logging
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 logger = logging.getLogger('bodzify_api')
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_not_provided_then_unchanged(self):
         simple_playlist_name = "cuisine"

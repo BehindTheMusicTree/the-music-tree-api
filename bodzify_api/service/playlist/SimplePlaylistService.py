@@ -3,11 +3,12 @@
 from django.http import QueryDict
 from bodzify_api.serializer.playlist.children.simple.input.model.SimplePlaylistSaveModelSerializer \
     import SimplePlaylistSaveModelSerializer, FIELDS as SAVE_MODEL_FIELDS
-from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer import SimplePlaylistPostSchemaSerializer
-from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPutSchemaSerializer import SimplePlaylistPutSchemaSerializer
+from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer \
+    import SimplePlaylistPostSchemaSerializer
+from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPutSchemaSerializer \
+    import SimplePlaylistPutSchemaSerializer
 from bodzify_api.serializer.playlist.mother.input.PlaylistSaveModelSerializer import PlaylistSaveModelSerializer
 from bodzify_api.service.Service import Service
-from rest_framework.serializers import ModelSerializer
 
 
 class SimplePlaylistService(Service):
@@ -27,7 +28,7 @@ class SimplePlaylistService(Service):
     def _get_save_model_data_from_save_schema_data(self, user, save_schema_data: QueryDict, old_instance) -> QueryDict:
         if old_instance is None:
             playlist_save_model_data = QueryDict(mutable=True)
-            playlist_save_model_data[SAVE_MODEL_FIELDS.USER] = user.id  # type: ignore
+            playlist_save_model_data[SAVE_MODEL_FIELDS.USER] = user.id
             playlist_save_model_serializer = PlaylistSaveModelSerializer(data=playlist_save_model_data)
             playlist_save_model_serializer.is_valid(raise_exception=True)
             playlist = playlist_save_model_serializer.save()

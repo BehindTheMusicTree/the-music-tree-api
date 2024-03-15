@@ -4,10 +4,10 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_empty_then_none(self):
         data = {

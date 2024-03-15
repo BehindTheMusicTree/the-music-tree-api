@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 from ddf import G
+from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_root(self):
         genre = G(Criteria,
@@ -14,8 +15,8 @@ class TestCase(ApiViewTestCase):
                   user=self.test_user,
                   type=CRITERIA_TYPES_ID.GENRE)
         response = self.get_genres()
-        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
-        genre_json = genre_json_list[0]
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        genre_json = self.results[0]
         assert genre_json[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == genre.uuid  # type: ignore
 
     def test_root_of_first_descandant(self):
@@ -29,8 +30,8 @@ class TestCase(ApiViewTestCase):
                        type=CRITERIA_TYPES_ID.GENRE,
                        parent=rock_genre)
         response = self.get_genres()
-        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
-        for json_element in genre_json_list:
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        for json_element in self.results:
             if json_element[ATTRIBUTES_LABEL.UUID] == punk_genre.uuid:  # type: ignore
                 assert json_element[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == rock_genre.uuid  # type: ignore
 
@@ -50,7 +51,7 @@ class TestCase(ApiViewTestCase):
                                 type=CRITERIA_TYPES_ID.GENRE,
                                 parent=punk_genre)
         response = self.get_genres()
-        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
-        for json_element in genre_json_list:
+        asseert = response.status_code == status.HTTP_200_OK  # type: ignore
+        for json_element in self.results:
             if json_element[ATTRIBUTES_LABEL.UUID] == punk_hardcore_genre.uuid:  # type: ignore
                 assert json_element[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == rock_genre.uuid  # type: ignore

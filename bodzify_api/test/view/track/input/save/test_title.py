@@ -3,11 +3,11 @@
 from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.test.view.track.input.save.FieldStrNullableTestCase import FieldStrNullableTestCase
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_longest_then_ok(self):
         value = "a" * settings.LIB_TRACK_TITLE_LENGTH_MAX

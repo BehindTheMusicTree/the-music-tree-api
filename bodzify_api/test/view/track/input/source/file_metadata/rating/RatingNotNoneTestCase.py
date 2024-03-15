@@ -4,11 +4,11 @@ from abc import abstractmethod
 from typing import Optional
 import pytest
 
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 @pytest.mark.django_db
-class RatingNotNoneTestCase(ApiViewTestCase):
+class RatingNotNoneTestCase(ApiTestCase):
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None):
         class_methods_names_to_implement = ['test_1_then_2',

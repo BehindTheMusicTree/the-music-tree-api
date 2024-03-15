@@ -23,7 +23,7 @@ from rest_framework.permissions import IsAuthenticated
 logger = logging.getLogger('bodzify_api')
 
 
-class PARAMETER_NAME:
+class QUERY_PARAMS_NAME:
     QUERY = "query"
     TYPE = "type"
 
@@ -38,7 +38,7 @@ class QUERY_FILTERS_FIELDS:
     PLAYLIST_NAME = "playlist_name"
 
 
-class TYPE_PARAMETER_VALUE:
+class QUERY_PARAM_TYPE_VALUES:
     TITLE = QUERY_FILTERS_FIELDS.TITLE
     ARTIST_NAME = QUERY_FILTERS_FIELDS.ARTIST_NAME
     ALBUM_NAME = QUERY_FILTERS_FIELDS.ALBUM_NAME
@@ -47,12 +47,16 @@ class TYPE_PARAMETER_VALUE:
     PLAYLIST_NAME = QUERY_FILTERS_FIELDS.PLAYLIST_NAME
 
 
+def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) -> bool:
+    return string1.lower() in string2.lower()
+
+
 def lib_track_filter(queryset, request, *args, **kwargs):
-    if TYPE_PARAMETER_VALUE.TITLE in request.query_params:
-        request.query_params[TYPE_PARAMETER_VALUE.TITLE]
+    if QUERY_PARAM_TYPE_VALUES.TITLE in request.query_params:
+        request.query_params[QUERY_PARAM_TYPE_VALUES.TITLE]
         # TODO: handle type of query
-    if PARAMETER_NAME.QUERY in request.query_params:
-        query = request.query_params[PARAMETER_NAME.QUERY]
+    if QUERY_PARAMS_NAME.QUERY in request.query_params:
+        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(
                 title__icontains=query
@@ -61,8 +65,8 @@ def lib_track_filter(queryset, request, *args, **kwargs):
 
 
 def simple_playlist_filter(queryset, request, *args, **kwargs):
-    if PARAMETER_NAME.QUERY in request.query_params:
-        query = request.query_params[PARAMETER_NAME.QUERY]
+    if QUERY_PARAMS_NAME.QUERY in request.query_params:
+        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
@@ -70,13 +74,9 @@ def simple_playlist_filter(queryset, request, *args, **kwargs):
     return queryset
 
 
-def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) -> bool:
-    return string1.lower() in string2.lower()
-
-
 def criteria_playlist_filter(queryset, request, *args, **kwargs):
-    if PARAMETER_NAME.QUERY in request.query_params:
-        query = request.query_params[PARAMETER_NAME.QUERY]
+    if QUERY_PARAMS_NAME.QUERY in request.query_params:
+        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
         unfiltered_queryset = queryset
         if query != "":
             queryset = unfiltered_queryset.filter(criteria__name__icontains=query)
@@ -92,16 +92,16 @@ def criteria_playlist_filter(queryset, request, *args, **kwargs):
 
 
 def album_filter(queryset, request, *args, **kwargs):
-    if PARAMETER_NAME.QUERY in request.query_params:
-        query = request.query_params[PARAMETER_NAME.QUERY]
+    if QUERY_PARAMS_NAME.QUERY in request.query_params:
+        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(name__icontains=query).order_by(ALBUM_ATTRIBUTES_LABEL.NAME)
     return queryset
 
 
 def artist_filter(queryset, request, *args, **kwargs):
-    if PARAMETER_NAME.QUERY in request.query_params:
-        query = request.query_params[PARAMETER_NAME.QUERY]
+    if QUERY_PARAMS_NAME.QUERY in request.query_params:
+        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
         if query != "":
             queryset = queryset.filter(name__icontains=query).order_by(ARTIST_ATTRIBUTES_LABEL.NAME)
     return queryset

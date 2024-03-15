@@ -10,11 +10,11 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 @pytest.mark.django_db
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_new_genre_then_in_new_genre_playlist_and_all_playlist(self):
         genre_name = "Rock"

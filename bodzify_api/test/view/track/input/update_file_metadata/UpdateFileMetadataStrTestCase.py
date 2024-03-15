@@ -2,11 +2,11 @@
 
 from typing import Optional
 from venv import logger
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from rest_framework import status
 
 
-class UpdateFileMetadataStrTestCase(ApiViewTestCase):
+class UpdateFileMetadataStrTestCase(ApiTestCase):
 
     VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
 

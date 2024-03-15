@@ -2,11 +2,11 @@
 
 from rest_framework import status
 from bodzify_api import settings
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer import FIELDS
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_longest(self):
         data = {

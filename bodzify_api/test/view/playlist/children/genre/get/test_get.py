@@ -6,14 +6,14 @@ from ddf import G
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
     import FIELDS as GET_RESULT_FIELDS
 from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
     import FIELDS as GET_QUERY_PARAM
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_get_by_name_of_criteria(self):
         rock_criteria_name = "Rock"
@@ -26,9 +26,8 @@ class TestCase(ApiViewTestCase):
         }
         response = self.get_genre_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        results = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
-        assert len(results) == 1
-        assert results[0][GET_RESULT_FIELDS.NAME] == rock_criteria_name
+        assert self.overall_total == 1
+        assert self.results[0][GET_RESULT_FIELDS.NAME] == rock_criteria_name
 
     def test_get_two_by_parent_none(self):
         rock_genre = G(Criteria,
@@ -47,11 +46,12 @@ class TestCase(ApiViewTestCase):
         }
         response = self.get_genre_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        results = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]  # type: ignore
-        assert len(results) == 3
+        assert self.overall_total == 3
 
-        results_rock_playlist = [result for result in results if result[GET_RESULT_FIELDS.UUID] == rock_playlist.uuid]
+        results_rock_playlist = \
+            [result for result in self.results if result[GET_RESULT_FIELDS.UUID] == rock_playlist.uuid]
         assert results_rock_playlist
 
-        results_rap_playlist = [result for result in results if result[GET_RESULT_FIELDS.UUID] == rap_playlist.uuid]
+        results_rap_playlist = \
+            [result for result in self.results if result[GET_RESULT_FIELDS.UUID] == rap_playlist.uuid]
         assert results_rap_playlist

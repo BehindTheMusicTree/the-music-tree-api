@@ -3,14 +3,14 @@
 import logging
 from typing import Optional
 
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from rest_framework import status
 
 
 logger = logging.getLogger('bodzify_api')
 
 
-class UpdateFileMetadataIntTestCase(ApiViewTestCase):
+class UpdateFileMetadataIntTestCase(ApiTestCase):
     save_field = None
     lib_track_metadata_dict_key = None
     file_extension = None

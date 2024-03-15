@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 from ddf import G
+from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.criteria.Criteria import Criteria
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_two(self):
         G(Criteria,
@@ -18,5 +19,5 @@ class TestCase(ApiViewTestCase):
             user=self.test_user,
             type=CRITERIA_TYPES_ID.GENRE)
         response = self.get_genres()
-        genre_json_list = response.json()[ApiViewTestCase.RESPONSE_FIELDS.RESULTS]
-        assert len(genre_json_list) == 2
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert self.overall_total == 2

@@ -4,11 +4,11 @@ from ddf import G
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL, Criteria
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_renaming(self):
         rock_genre = G(Criteria,

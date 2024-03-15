@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_error(self):
         data_dict = {

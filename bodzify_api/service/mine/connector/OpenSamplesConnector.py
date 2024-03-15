@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+
 import json
 from loader import load
 from bodzify_api.model.track.MineTrack import MineTrack
+from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
 
 class SEARCH_RESPONSE_FIELDS:
 	TITLE = "title"

@@ -30,9 +30,9 @@ router.register(r'genres', GenreViewSet, basename='genre')
 router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
 
 # Do not move after GenrePlaylistViewSet or SimplePlaylistViewSet or it will cause confusion resolving reverse urls
-router.register(r'playlists/', PlaylistViewSet, basename='playlist')
-router.register(r'playlists/simple', SimplePlaylistViewSet, basename='simple-playlist')
-router.register(r'playlists/genre', GenrePlaylistViewSet, basename='genre-playlist')
+router.register(r'playlists', PlaylistViewSet, basename='playlist')
+router.register(r'simple-playlists', SimplePlaylistViewSet, basename='simple-playlist')
+router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'search', SearchApiViewSet, basename='search')
 
 urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),

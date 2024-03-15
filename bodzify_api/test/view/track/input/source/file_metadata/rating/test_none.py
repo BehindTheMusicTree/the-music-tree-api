@@ -3,11 +3,11 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 @pytest.mark.django_db
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_mp3_then_none(self):
         response = self.post_lib_track_with_generic_sample_no_tags(extension="mp3")

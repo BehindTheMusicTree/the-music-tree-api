@@ -5,9 +5,11 @@ import logging
 import os
 import shutil
 from pathlib import Path
+from rest_framework import status
 
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import AccessToken
 from django.core.management import call_command
@@ -64,8 +66,19 @@ class AppTestCase(TestCase):
 
     def __login(self, user):
         self.api_client.force_authenticate(user=user)
-        AccessToken.for_user(user)
+        accessw = AccessToken.for_user(user)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
+
+        response = self.api_client.get(path=reverse('playlist-list'), format='json')
+
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            assert True
+        elif response.status_code == status.HTTP_401_UNAUTHORIZED:  # type: ignore
+            print("Not authenticated.")
+            assert False
+        else:
+            print(f"Unexpected : {response.status_code}")  # type: ignore
+            assert False
 
     def __empty_user_library(self):
         for filename in os.listdir(self.test_user_lib_abs_path):

@@ -2,12 +2,14 @@
 
 from rest_framework import status
 from ddf import G
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
+from django.urls import get_resolver
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_error(self):
+        print(get_resolver(None).reverse_dict.keys())
         data = {
             'nonExistingField': 'oifjqoif'
         }

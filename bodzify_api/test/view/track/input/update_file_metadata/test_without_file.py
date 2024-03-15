@@ -2,12 +2,12 @@
 
 from rest_framework import status
 from ddf import G
-from bodzify_api.test.ApiTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as POST_FIELDS
 
 
-class TestCase(ApiViewTestCase):
+class TestCase(ApiTestCase):
 
     def test_without_a_file_and_a_title_then_ok(self):
         track = G(LibraryTrack,
