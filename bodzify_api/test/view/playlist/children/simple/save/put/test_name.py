@@ -18,7 +18,6 @@ class TestCase(ApiViewTestCase):
         response = self.put_simple_playlist(
             simple_playlist_uuid=simpe_playlist.playlist.uuid, data_dict={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        updated_simpe_playlist = SimplePlaylist.objects.get(name=simple_playlist_name)
         assert self.saved_simple_playlist.name == simple_playlist_name
 
     def test_ok(self):

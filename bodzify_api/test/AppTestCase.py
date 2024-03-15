@@ -18,7 +18,7 @@ TEST_USERNAME = "pytest_user"
 SAMPLE_DIR_NAME = "sample"
 LIB_SAMPLE_DIR_NAME = "library"
 INPUT_SAMPLE_DIR_NAME = "input"
-GENERIC_FILE_SAMPLE_DIR_NAME = "generic_file_sample"
+GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR = Path("utils/generic_file_sample")
 
 
 logger = logging.getLogger('bodzify_api')
@@ -50,7 +50,7 @@ class AppTestCase(TestCase):
             os.makedirs(test_user_lib_abs_path)
 
         self.generic_sample_dir_abs_path = \
-            Path(os.path.dirname(os.path.abspath(__file__))) / GENERIC_FILE_SAMPLE_DIR_NAME
+            Path(os.path.dirname(os.path.abspath(__file__))) / GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR
 
         specific_test_dir_abs_path = Path(os.path.dirname(inspect.getfile(self.__class__)))
         specific_test_sample_dir_abs_path = specific_test_dir_abs_path / SAMPLE_DIR_NAME

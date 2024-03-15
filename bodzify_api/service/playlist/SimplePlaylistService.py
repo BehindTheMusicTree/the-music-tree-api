@@ -3,22 +3,23 @@
 from django.http import QueryDict
 from bodzify_api.serializer.playlist.children.simple.input.model.SimplePlaylistSaveModelSerializer \
     import SimplePlaylistSaveModelSerializer, FIELDS as SAVE_MODEL_FIELDS
+from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer import SimplePlaylistPostSchemaSerializer
+from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPutSchemaSerializer import SimplePlaylistPutSchemaSerializer
 from bodzify_api.serializer.playlist.mother.input.PlaylistSaveModelSerializer import PlaylistSaveModelSerializer
 from bodzify_api.service.Service import Service
-from rest_framework.serializers import Serializer
+from rest_framework.serializers import ModelSerializer
 
 
 class SimplePlaylistService(Service):
 
-    def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
-        return SimplePlaylistPostSchemaSerializer(data=post_schema_data)  # type: ignore
+    def _get_post_schema_serializer(self, post_schema_data: QueryDict):
+        return SimplePlaylistPostSchemaSerializer(data=post_schema_data)
 
-    def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
-        return SimplePlaylistPutSchemaSerializer(data=put_schema_data)  # type: ignore
+    def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict):
+        return SimplePlaylistPutSchemaSerializer(data=put_schema_data)
 
-    def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
-        return SimplePlaylistSaveModelSerializer(
-            instance=old_instance, data=save_model_data, partial=True)  # type: ignore
+    def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool):
+        return SimplePlaylistSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
 
     def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
         return post_schema_data

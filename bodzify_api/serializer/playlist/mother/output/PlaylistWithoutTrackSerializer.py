@@ -5,7 +5,6 @@ from rest_framework import serializers
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL, Playlist
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 
-
 class FIELDS:
     UUID = ATTRIBUTES_LABEL.UUID
     NAME = ATTRIBUTES_LABEL.NAME

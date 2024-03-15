@@ -12,7 +12,7 @@ from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_PARAM
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as PLAYLIST_GET_FIELDS
-from bodzify_api.test.view.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
+from bodzify_api.test.get_filters.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
 
 logger = logging.getLogger('bodyzify_api')
 
