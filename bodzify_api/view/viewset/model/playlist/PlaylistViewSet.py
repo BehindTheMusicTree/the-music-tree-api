@@ -54,14 +54,14 @@ class PlaylistViewSet(AppModelViewSet):
             type_query_param = None
 
         simple_playlist_queryset = Playlist.objects.none()
-        if type_query_param is None or type_query_param is SIMPLE_PLAYLIST_TYPE_LABEL:
+        if type_query_param is None or type_query_param.lower() == SIMPLE_PLAYLIST_TYPE_LABEL.lower():
             simple_playlist_queryset = queryset.filter(
                 simple_playlist__isnull=False,
                 simple_playlist__name__icontains=name_query_param)
 
         criteria_playlist_queryset = Playlist.objects.none()
-        if type_query_param is None or type_query_param in [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,
-                                                            CRITERIA_PLAYLIST_TYPES_LABEL.TAG]:
+        if type_query_param is None or type_query_param.lower() in [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE.lower(),
+                                                                    CRITERIA_PLAYLIST_TYPES_LABEL.TAG.lower()]:
             criteria_playlist_queryset = queryset.filter(
                 criteria_playlist__isnull=False, criteria_playlist__type__label__icontains=type_query_param.upper()
                 if type_query_param is not None else '', criteria_playlist__criteria__name__icontains=name_query_param)
