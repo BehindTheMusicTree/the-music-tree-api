@@ -25,19 +25,18 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
             CRITERIA_PLAYLIST_TYPES_LABEL.TAG,
             SIMPLE_PLAYLIST_SPECIAL_NAMES
         ]
-        return super().setUp(specific_values, methods_names_to_implement)
+        return super().setUp(specific_values=specific_values,
+                             allow_empty_value=False,
+                             methods_names_to_implement=methods_names_to_implement)
 
-    def test_filter_type_is_none_then_one_genre_playlists_and_one_simple_and_all_and_genreless_and_tagless(self):
+    def test_is_not_provided_then_results(self):
         rock_criteria_name = "Rock"
         G(Criteria, user=self.test_user, name=rock_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
 
         simple_playlist_name = "Teuf"
         G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
 
-        data_dict = {
-            GET_QUERY_FIELDS.TYPE: None
-        }
-        response = self.get_playlists(data_dict=data_dict)
+        response = self.get_playlists()
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 5
         names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
@@ -47,7 +46,20 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
         assert SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL in names
 
-    def test_filter_type_is_genre_then_one_genre_playlist_and_genreless(self):
+    def test_is_empty_then_error(self):
+        rock_criteria_name = "Rock"
+        G(Criteria, user=self.test_user, name=rock_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
+
+        simple_playlist_name = "Teuf"
+        G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
+
+        data_dict = {
+            GET_QUERY_FIELDS.TYPE: ''
+        }
+        response = self.get_playlists(data_dict=data_dict)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+
+    def test_value_is_genre_then_resultst(self):
         rock_criteria_name = "Rock n roll"
         G(Criteria, user=self.test_user, name=rock_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
         data_dict = {
@@ -60,7 +72,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
         assert rock_criteria_name in names
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
 
-    def test_filter_type_is_tag_then_tagless(self):
+    def test_value_is_tag_then_results(self):
         data_dict = {
             GET_QUERY_FIELDS.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG
         }
@@ -70,7 +82,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
         names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
 
-    def test_filter_type_is_simple_then_one_and_all(self):
+    def test_value_is_simple_then_results(self):
         data_dict = {
             GET_QUERY_FIELDS.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG
         }
@@ -80,7 +92,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
         names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
 
-    def test_filter_type_wrong_value_then_error(self):
+    def test_value_is_wrong_then_error(self):
         data_dict = {
             GET_QUERY_FIELDS.TYPE: 'wrong_value'
         }

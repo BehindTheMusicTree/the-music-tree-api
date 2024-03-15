@@ -4,7 +4,7 @@ from django.db import models
 from bodzify_api import settings
 from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
-TYPE_LABEL = "Simple"
+TYPE_LABEL = "simple"
 
 
 class SPECIAL_NAMES:

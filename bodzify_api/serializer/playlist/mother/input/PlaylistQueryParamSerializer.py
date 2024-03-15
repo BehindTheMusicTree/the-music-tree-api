@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
+import logging
 from rest_framework import serializers
 from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+
+logger = logging.getLogger('bodyzify_api')
 
 
 class FIELDS:
@@ -12,13 +15,14 @@ class FIELDS:
 
 
 class PlaylistQueryParamSerializer(serializers.Serializer):
-    type = serializers.CharField(required=False)
+    TYPE_VALID_VALUES = [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,
+                         CRITERIA_PLAYLIST_TYPES_LABEL.TAG,
+                         SIMPLE_PLAYLIST_TYPE_LABEL]
+
+    type = serializers.CharField(required=False, allow_blank=True)
     name = serializers.CharField(required=False, allow_blank=True)
 
     def validate_type(self, value):
-        valid_types = [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,
-                       CRITERIA_PLAYLIST_TYPES_LABEL.TAG,
-                       SIMPLE_PLAYLIST_TYPE_LABEL]
-        if value not in valid_types:
-            raise serializers.ValidationError("Invalid type.")
+        if value not in self.TYPE_VALID_VALUES:
+            raise serializers.ValidationError("Invalid type. Valid values are: " + ", ".join(self.TYPE_VALID_VALUES))
         return value
