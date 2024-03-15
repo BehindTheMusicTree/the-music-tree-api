@@ -13,6 +13,8 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_FIELDS
 from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithoutTrackSerializer \
     import FIELDS as SIMPLE_PLAYLIST_FIELDS
+from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
+    import FIELDS as CRITERIA_PLAYLIST_FIELDS
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import FIELDS as ARTIST_FIELDS
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import FIELDS as ALBUM_FIELDS
 

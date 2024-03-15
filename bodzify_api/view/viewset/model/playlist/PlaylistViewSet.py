@@ -43,8 +43,6 @@ class PlaylistViewSet(AppModelViewSet):
 
         if QUERY_PARAM_FIELDS.NAME in query_params_validated:  # type: ignore
             name_query_param = query_params_validated.get(QUERY_PARAM_FIELDS.NAME)  # type: ignore
-            if name_query_param == '':
-                return Playlist.objects.none()
         else:
             name_query_param = self._get_queryset_str_filter_value_to_filter_nothing()
 

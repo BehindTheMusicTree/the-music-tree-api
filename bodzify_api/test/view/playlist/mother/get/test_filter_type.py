@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from importlib import simple
 import logging
 from rest_framework import status
 from ddf import G
