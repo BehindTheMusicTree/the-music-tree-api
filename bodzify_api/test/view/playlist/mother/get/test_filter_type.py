@@ -10,8 +10,8 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as 
     SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_FIELDS
-from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as GET_RESULT_FIELDS
+from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_PARAM
+from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as PLAYLIST_GET_FIELDS
 from bodzify_api.test.view.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
 
 logger = logging.getLogger('bodyzify_api')
@@ -39,7 +39,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
         response = self.get_playlists()
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 5
-        names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
+        names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
         assert rock_criteria_name in names
         assert simple_playlist_name in names
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
@@ -48,7 +48,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
 
     def test_is_empty_then_error(self):
         data_dict = {
-            GET_QUERY_FIELDS.TYPE: ''
+            GET_QUERY_PARAM.TYPE: ''
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
@@ -57,23 +57,23 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
         rock_criteria_name = "Rock n roll"
         G(Criteria, user=self.test_user, name=rock_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
         data_dict = {
-            GET_QUERY_FIELDS.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.GENRE
+            GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.GENRE
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 2
-        names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
+        names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
         assert rock_criteria_name in names
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
 
     def test_value_is_tag_then_results(self):
         data_dict = {
-            GET_QUERY_FIELDS.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG
+            GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
-        names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
+        names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
 
     def test_value_is_simple_then_results(self):
@@ -82,18 +82,18 @@ class TestCase(GetFilterWithSpecificValuesTestCase):
         G(Criteria, user=self.test_user, name='rock', type=CRITERIA_TYPES_ID.GENRE)
 
         data_dict = {
-            GET_QUERY_FIELDS.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL
+            GET_QUERY_PARAM.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 2
-        names = [result[GET_RESULT_FIELDS.NAME] for result in self.results]
+        names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
         assert SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL in names
         assert simple_playlist_name in names
 
     def test_value_is_wrong_then_error(self):
         data_dict = {
-            GET_QUERY_FIELDS.TYPE: 'wrong_value'
+            GET_QUERY_PARAM.TYPE: 'wrong_value'
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

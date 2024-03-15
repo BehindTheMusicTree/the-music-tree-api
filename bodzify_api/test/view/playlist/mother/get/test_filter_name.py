@@ -10,7 +10,7 @@ from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.CriteriaPlaylist import SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_FIELDS
+from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_PARAM
 from bodzify_api.test.view.GetFilterTestCase import GetFilterTestCase
 
 logger = logging.getLogger('bodyzify_api')
@@ -23,7 +23,7 @@ class TestCase(GetFilterTestCase):
 
     def test_is_empty_then_error(self):
         data_dict = {
-            GET_QUERY_FIELDS.NAME: ''
+            GET_QUERY_PARAM.NAME: ''
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
@@ -44,40 +44,40 @@ class TestCase(GetFilterTestCase):
         G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
 
         data_dict = {
-            GET_QUERY_FIELDS.NAME: simple_playlist_name.upper()
+            GET_QUERY_PARAM.NAME: simple_playlist_name.upper()
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
-        names_lowered = [result[GET_QUERY_FIELDS.NAME].lower() for result in self.results]
+        names_lowered = [result[GET_QUERY_PARAM.NAME].lower() for result in self.results]
         assert simple_playlist_name.lower() in names_lowered
 
     def test_genreless_special_name_then_results(self):
         data_dict = {
-            GET_QUERY_FIELDS.NAME: 'geNr'
+            GET_QUERY_PARAM.NAME: 'geNr'
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
-        assert self.results[0][GET_QUERY_FIELDS.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS
+        assert self.results[0][GET_QUERY_PARAM.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS
 
     def test_tagless_special_name_then_results(self):
         data_dict = {
-            GET_QUERY_FIELDS.NAME: 'aGl'
+            GET_QUERY_PARAM.NAME: 'aGl'
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
-        assert self.results[0][GET_QUERY_FIELDS.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS
+        assert self.results[0][GET_QUERY_PARAM.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS
 
     def test_all_special_name_then_results(self):
         data_dict = {
-            GET_QUERY_FIELDS.NAME: 'Al'
+            GET_QUERY_PARAM.NAME: 'Al'
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
-        assert self.results[0][GET_QUERY_FIELDS.NAME] == SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
+        assert self.results[0][GET_QUERY_PARAM.NAME] == SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
 
     def test_value_in_simple_criteria_and_special_names_then_results(self):
         simple_playlist_name = "lEsson"
@@ -86,12 +86,12 @@ class TestCase(GetFilterTestCase):
         G(Criteria, user=self.test_user, name=criteria_name, type=CRITERIA_TYPES_ID.GENRE)
 
         data_dict = {
-            GET_QUERY_FIELDS.NAME: 'Less'
+            GET_QUERY_PARAM.NAME: 'Less'
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 4
-        names_lowered = [result[GET_QUERY_FIELDS.NAME].lower() for result in self.results]
+        names_lowered = [result[GET_QUERY_PARAM.NAME].lower() for result in self.results]
         assert simple_playlist_name.lower() in names_lowered
         assert criteria_name.lower() in names_lowered
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS.lower() in names_lowered

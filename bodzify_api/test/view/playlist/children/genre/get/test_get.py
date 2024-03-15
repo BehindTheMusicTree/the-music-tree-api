@@ -10,7 +10,7 @@ from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
     import FIELDS as GET_RESULT_FIELDS
 from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
-    import FIELDS as GET_QUERY_FIELDS
+    import FIELDS as GET_QUERY_PARAM
 
 
 class TestCase(ApiViewTestCase):
@@ -22,7 +22,7 @@ class TestCase(ApiViewTestCase):
                        name=rock_criteria_name,
                        type=CRITERIA_TYPES_ID.GENRE)
         data_dict = {
-            GET_QUERY_FIELDS.NAME: rock_criteria_name
+            GET_QUERY_PARAM.NAME: rock_criteria_name
         }
         response = self.get_genre_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
@@ -43,7 +43,7 @@ class TestCase(ApiViewTestCase):
         rap_playlist = CriteriaPlaylist.objects.get(criteria=rap_genre).playlist
 
         data_dict = {
-            GET_QUERY_FIELDS.PARENT: ""
+            GET_QUERY_PARAM.PARENT: ""
         }
         response = self.get_genre_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
