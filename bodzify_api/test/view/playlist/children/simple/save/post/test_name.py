@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from bodzify_api import settings
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer import FIELDS
 
 

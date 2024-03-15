@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 
 
 class FieldStrNullableTestCase(ApiViewTestCase):

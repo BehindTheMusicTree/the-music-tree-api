@@ -32,11 +32,11 @@ REQUEST_PAGINATED_PAGE_FIELD = "page"
 REQUEST_PAGINATED_PAGE_SIZE_FIELD = "pageSize"
 
 
-def GetHttpResponseWhenPermissionDenied(request):
+def get_response_when_permission_denied(request):
     return django.views.defaults.permission_denied(request=request, exception=exceptions.PermissionDenied)
 
 
-def get_json_response_when_bad_request(exception=exceptions.bad_request):
+def get_response_when_bad_request(exception=exceptions.bad_request):
     if type(exception) == IntegrityError:
         errorMessage = INTEGRITY_ERROR_MESSAGE
     else:
@@ -66,7 +66,7 @@ def get_json_response_paginated(request, data_json_list, headers=None):
         })
 
 
-def GetFileResponse(filePath, filename):
+def get_file_response(filePath, filename):
     fileHandle = open(filePath, "rb")
     response = FileResponse(fileHandle, content_type=RESPONSE_FILE_CONTENT_TYPE_VALUE)
     response[RESPONSE_FILE_CONTENT_LENGTH_FIELD] = os.path.getsize(filePath)

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from lib2to3.fixes.fix_idioms import TYPE
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL, Playlist
@@ -16,12 +15,9 @@ class FIELDS:
 
 
 class PlaylistWithoutTrackSerializer(serializers.ModelSerializer):
-    library_tracks_count = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
-
-    def get_library_tracks_count(self, obj):
-        return obj.library_tracks.count()
+    library_tracks_count = serializers.IntegerField(source='f{ATTRIBUTES_LABEL.LIBRARY_TRACKS}.count', read_only=True)
 
     def get_name(self, obj):
         if hasattr(obj, ATTRIBUTES_LABEL.CRITERIA_PLAYLIST):

@@ -37,7 +37,7 @@ class AppModelViewSet(MultiSerializerViewSet):
             instance = self.service.create(user=request.user, post_schema_data=request_data_snake_case)
         except IntegrityError as e:
             logger.exception(e)
-            return utility.get_json_response_when_bad_request(exception=e)
+            return utility.get_response_when_bad_request(exception=e)
 
         response_serializer = self._get_detailed_serializer(instance=instance)
         headers = self.get_success_headers(response_serializer.data)

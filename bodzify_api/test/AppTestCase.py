@@ -24,7 +24,7 @@ GENERIC_FILE_SAMPLE_DIR_NAME = "generic_file_sample"
 logger = logging.getLogger('bodzify_api')
 
 
-class ViewTestCase(TestCase):
+class AppTestCase(TestCase):
 
     class LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION:
         ONE_STAR = "1 star"

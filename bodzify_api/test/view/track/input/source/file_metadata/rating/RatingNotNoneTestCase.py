@@ -4,7 +4,7 @@ from abc import abstractmethod
 from typing import Optional
 import pytest
 
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db

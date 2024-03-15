@@ -2,6 +2,7 @@
 
 import logging
 from typing import Optional
+from django.urls import get_resolver
 
 from django.urls import reverse
 from rest_framework import status
@@ -10,7 +11,7 @@ from bodzify_api import AudioMetadataManager
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.ViewTestCase import ViewTestCase
+from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
 from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as LIB_TRACK_POST_FIELDS
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
@@ -21,7 +22,7 @@ from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTr
 logger = logging.getLogger('bodzify_api')
 
 
-class ApiViewTestCase(ViewTestCase):
+class ApiViewTestCase(AppTestCase):
 
     class RESPONSE_FIELDS:
         COUNT = 'count'
@@ -44,6 +45,7 @@ class ApiViewTestCase(ViewTestCase):
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None):
         super().setUp()
+        print(get_resolver(None).reverse_dict.keys())
         if methods_names_to_implement is not None:
             for method_name in methods_names_to_implement:
                 if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
@@ -139,7 +141,7 @@ class ApiViewTestCase(ViewTestCase):
         return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_no_tags(self, extension='mp3', data_dict=None):
-        filename_without_extension = ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
+        filename_without_extension = AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
@@ -149,7 +151,7 @@ class ApiViewTestCase(ViewTestCase):
                                                                            extension='mp3',
                                                                            data_dict=None):
         filename_without_extension = \
-            ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_WITHOUT_ALBUM_ARTISTS
+            AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_WITHOUT_ALBUM_ARTISTS
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
@@ -157,14 +159,14 @@ class ApiViewTestCase(ViewTestCase):
 
     def post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', data_dict=None):
         filename_without_extension = \
-            ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
+            AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_1_star(self, extension, data_dict=None):
-        filename_without_extension = ViewTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
+        filename_without_extension = AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,

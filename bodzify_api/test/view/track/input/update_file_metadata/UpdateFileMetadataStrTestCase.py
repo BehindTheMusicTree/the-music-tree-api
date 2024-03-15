@@ -2,7 +2,7 @@
 
 from typing import Optional
 from venv import logger
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 from rest_framework import status
 
 
@@ -30,7 +30,7 @@ class UpdateFileMetadataStrTestCase(ApiViewTestCase):
 
         if file_has_tags:
             response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-                extension=self.file_extension, data_dict=data) # type: ignore
+                extension=self.file_extension, data_dict=data)  # type: ignore
         else:
             response = self.post_lib_track_with_generic_sample_no_tags(
                 extension=self.file_extension, data_dict=data)  # type: ignore

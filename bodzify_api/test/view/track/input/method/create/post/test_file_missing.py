@@ -2,7 +2,7 @@
 
 import pytest
 from rest_framework import status
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 
 
 @pytest.mark.django_db

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 
 
 """
@@ -14,4 +14,4 @@ class InMemoryTestCase(ApiViewTestCase):
 
     def test_in_memory(self):
         response = self.post_lib_track_with_specific_sample("in_memory.flac")
-        assert response.status_code == status.HTTP_201_CREATED # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore

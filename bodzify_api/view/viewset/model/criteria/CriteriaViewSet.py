@@ -32,11 +32,11 @@ class CriteriaViewSet(AppModelViewSet):
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
 
-        name = self.request.query_params.get(FILTER_FIELDS.NAME)
+        name = self.request.query_params.get(FILTER_FIELDS.NAME)  # type: ignore
         if name is not None:
             queryset = queryset.filter(name__contains=name)
 
-        parentParameter = self.request.query_params.get(FILTER_FIELDS.PARENT)
+        parentParameter = self.request.query_params.get(FILTER_FIELDS.PARENT)  # type: ignore
         if parentParameter is not None:
             if parentParameter == "":
                 parent = None
@@ -45,12 +45,11 @@ class CriteriaViewSet(AppModelViewSet):
             queryset = queryset.filter(parent=parent)
 
         return queryset
-    
-    def _get_detailed_serializer(self, instance) -> ModelSerializer:
-        return CriteriaDetailedSerializer(instance=instance) # type: ignore
 
-    @extend_schema(request=CriteriaPostSchemaSerializer,
-                   responses=CriteriaDetailedSerializer)
+    def _get_detailed_serializer(self, instance) -> ModelSerializer:
+        return CriteriaDetailedSerializer(instance=instance)  # type: ignore
+
+    @extend_schema(request=CriteriaPostSchemaSerializer, responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         return self._create(request, *args, **kwargs)
 
@@ -64,7 +63,7 @@ class CriteriaViewSet(AppModelViewSet):
                    responses=CriteriaDetailedSerializer)
     def list(self, request, *args, **kwargs):
         return self._list(request, *args, **kwargs)
-    
+
     @extend_schema(request=CriteriaPutSchemaSerializer,
                    responses=CriteriaDetailedSerializer,
                    description=("""Updates a criteria"""))

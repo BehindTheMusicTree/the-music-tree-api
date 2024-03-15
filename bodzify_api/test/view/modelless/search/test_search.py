@@ -9,7 +9,7 @@ from bodzify_api.model.playlist.children.SimplePlaylist \
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_FIELDS
 from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithoutTrackSerializer \
     import FIELDS as SIMPLE_PLAYLIST_FIELDS

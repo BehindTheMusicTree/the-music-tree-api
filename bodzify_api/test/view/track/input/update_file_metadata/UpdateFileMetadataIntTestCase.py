@@ -3,7 +3,7 @@
 import logging
 from typing import Optional
 
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 from rest_framework import status
 
 

@@ -2,7 +2,7 @@
 
 import logging
 from bodzify_api import settings
-from bodzify_api.test.view.ApiViewTestCase import ApiViewTestCase
+from bodzify_api.test.ApiTestCase import ApiViewTestCase
 from rest_framework import status
 
 logger = logging.getLogger('bodzify_api')
