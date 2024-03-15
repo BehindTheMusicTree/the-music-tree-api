@@ -2,7 +2,7 @@
 
 import logging
 
-from bodzify_api.test.view.GetFilterTestCase import GetFilterTestCase
+from bodzify_api.test.get_filters.GetFilterTestCase import GetFilterTestCase
 
 logger = logging.getLogger('bodyzify_api')
 
