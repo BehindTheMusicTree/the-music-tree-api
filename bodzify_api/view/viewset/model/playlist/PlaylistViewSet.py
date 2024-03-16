@@ -35,6 +35,9 @@ class PlaylistViewSet(AppModelViewSet):
         return PlaylistWithTracksSerializer(instance=instance)
 
     def get_queryset(self):
+        if self.action == 'retrieve':
+            return Playlist.objects.filter(user=self.request.user, uuid=self.kwargs[self.lookup_field])
+
         serializer = PlaylistQueryParamSerializer(data=self.request.query_params)  # type: ignore
         serializer.is_valid(raise_exception=True)
         query_params_validated = serializer.validated_data
@@ -91,3 +94,6 @@ class PlaylistViewSet(AppModelViewSet):
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super()._list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
