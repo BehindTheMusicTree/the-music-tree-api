@@ -85,6 +85,11 @@ class AppModelViewSet(MultiSerializerViewSet):
             PAGINATED_RESPONSE_FIELDS.RESULTS: data
         })
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     @abstractmethod
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         raise NotImplementedError("This method must be implemented in the subclass")
