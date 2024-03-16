@@ -37,3 +37,14 @@ class TestCase(ApiTestCase):
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.result[RETRIEVE_FIELDS.NAME] == name
+
+    def test_retrieve_tag_then_ok(self):
+        name = 'fr'
+        genre = G(Criteria, user=self.test_user, name=name, type=CRITERIA_TYPES_ID.TAG)
+        playlist_uuid = Playlist.objects.get(user=self.test_user,
+                                             criteria_playlist__criteria=genre,
+                                             criteria_playlist__type=CRITERIA_TYPES_ID.TAG).uuid  # type: ignore
+
+        response = self.retrieve_playlist(uuid=playlist_uuid)
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert self.result[RETRIEVE_FIELDS.NAME] == name
