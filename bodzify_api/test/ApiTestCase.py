@@ -74,6 +74,9 @@ class ApiTestCase(AppTestCase):
         self.results = response.json()[PAGINATED_RESPONSE_FIELDS.RESULTS]
         self.overall_total = response.json()[PAGINATED_RESPONSE_FIELDS.OVERALL_TOTAL]
 
+    def _set_result(self, response):
+        self.result = response.json()
+
     def search(self, query):
         response = self.api_client.get(path=reverse('search-list'), data={'query': query})
         if response.status_code == status.HTTP_200_OK:  # type: ignore
@@ -221,6 +224,12 @@ class ApiTestCase(AppTestCase):
             format='json')
         if response.status_code == status.HTTP_200_OK:  # type: ignore
             self._set_saved_genre_attribute(response)
+        return response
+
+    def retrieve_playlist(self, uuid: str):
+        response = self.api_client.get(path=reverse('playlist-detail', kwargs={'pk': uuid}))
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            self._set_result(response=response)
         return response
 
     def get_playlists(self, data_dict=None):
