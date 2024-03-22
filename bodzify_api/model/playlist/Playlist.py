@@ -16,8 +16,8 @@ class ATTRIBUTES_LABEL:
     ADDED_ON = 'added_on'
     NAME = 'name'
     TYPE = 'type'
-    LIBRARY_TRACKS = 'library_tracks'
-    LIBRARY_TRACKS_COUNT = LIBRARY_TRACKS + '_count'
+    LIB_TRACKS = 'library_tracks'
+    LIBRARY_TRACKS_COUNT = LIB_TRACKS + '_count'
     CRITERIA_PLAYLIST = 'criteria_playlist'
     SIMPLE_PLAYLIST = 'simple_playlist'
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 class ATTRIBUTES_LABEL:
     TITLE = "title"
     ARTIST_NAME = "artist_name"
