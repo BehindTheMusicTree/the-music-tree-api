@@ -203,6 +203,12 @@ class ApiTestCase(AppTestCase):
     def delete_lib_track(self, lib_track_uuid):
         return self.api_client.delete(path=reverse('librarytrack-detail', kwargs={'pk': lib_track_uuid}))
 
+    def retrieve_genre(self, uuid: str):
+        response = self.api_client.get(path=reverse('genre-detail', kwargs={'pk': uuid}))
+        if response.status_code == status.HTTP_200_OK:  # type: ignore
+            self._set_result(response=response)
+        return response
+
     def get_genres(self):
         response = self.api_client.get(path=reverse('genre-list'))
         if response.status_code == status.HTTP_200_OK:  # type: ignore

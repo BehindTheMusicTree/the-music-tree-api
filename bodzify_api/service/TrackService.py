@@ -2,7 +2,6 @@
 
 import logging
 import os
-from pickle import PUT
 import random
 import string
 from tempfile import NamedTemporaryFile
@@ -69,7 +68,7 @@ class TrackService(Service):
                 rating = int(data2[key])
             else:
                 rating = None
-            data1[key] = rating
+            data1[key] = rating # type: ignore
 
     def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
         return LibTrackPostSchemaSerializer(data=post_schema_data)  # type: ignore
@@ -118,7 +117,6 @@ class TrackService(Service):
 
         for key in [SAVE_MODEL_FIELDS.FILE,
                     SAVE_MODEL_FIELDS.TITLE,
-                    SAVE_MODEL_FIELDS.DURATION,
                     SAVE_MODEL_FIELDS.RATING,
                     SAVE_MODEL_FIELDS.LANGUAGE]:
             self._update_data1_with_key_if_set_in_data2(key=key, data1=save_model_data, data2=save_schema_data)

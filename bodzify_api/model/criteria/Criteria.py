@@ -21,6 +21,7 @@ class ATTRIBUTES_LABEL:
     CHILDREN = "children"
     ROOT = "root"
     ADDED_ON = "added_on"
+    LIB_TRACKS = "library_tracks"
     CRITERIA_PLAYLIST = "criteria_playlist"
 
 

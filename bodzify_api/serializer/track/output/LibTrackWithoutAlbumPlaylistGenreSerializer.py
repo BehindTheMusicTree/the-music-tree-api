@@ -2,7 +2,6 @@
 
 from rest_framework import serializers
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
-from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 
 
@@ -14,15 +13,13 @@ class FIELDS:
     FILE_EXISTS = ATTRIBUTES_LABEL.FILE_EXISTS
     TITLE = ATTRIBUTES_LABEL.TITLE
     ARTIST = ATTRIBUTES_LABEL.ARTIST
-    GENRE = ATTRIBUTES_LABEL.GENRE
     DURATION = ATTRIBUTES_LABEL.DURATION
     RATING = ATTRIBUTES_LABEL.RATING
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
     ADDED_ON = ATTRIBUTES_LABEL.ADDED_ON
 
 
-class LibTrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer):
-    genre = CriteriaDetailedSerializer()
+class LibTrackWithoutAlbumPlaylistGenreSerializer(serializers.ModelSerializer):
     artist = ArtistWithOnlyNameSerializer()
 
     class Meta:
@@ -35,7 +32,6 @@ class LibTrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer)
             FIELDS.FILE_EXISTS,
             FIELDS.TITLE,
             FIELDS.ARTIST,
-            FIELDS.GENRE,
             FIELDS.DURATION,
             FIELDS.RATING,
             FIELDS.LANGUAGE,

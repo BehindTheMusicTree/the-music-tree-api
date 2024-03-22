@@ -39,10 +39,8 @@ class ID3_TEXT_FRAMES:  # MP3 and Wave (.wav) files use ID3 tags
 
 ID3_RATING_APP_EMAIL = 'bodzify'
 
-# FLAC files use Vorbis tags
 
-
-class VORBIS_TAG_KEYS:
+class VORBIS_TAG_KEYS:  # FLAC files use Vorbis tags
     TITLE = 'title'
     ARTIST_NAME = 'artist'
     ALBUM_NAME = 'album'

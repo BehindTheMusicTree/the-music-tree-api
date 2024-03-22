@@ -14,7 +14,7 @@ import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist \
@@ -70,8 +70,12 @@ class LibraryTrack(models.Model):
                               default=None,
                               null=True,
                               related_name=ALBUM_ATTRIBUTES_LABEL.LIBRARY_TRACKS)
-    genre = models.ForeignKey('bodzify_api.Criteria', on_delete=models.DO_NOTHING, default=None, null=True)
-    duration = models.FloatField(default=None)
+    genre = models.ForeignKey('bodzify_api.Criteria',
+                              on_delete=models.DO_NOTHING,
+                              default=None,
+                              null=True,
+                              related_name=CRITERIA_ATTRIBUTES_LABEL.LIB_TRACKS)
+    duration = models.FloatField(default=None, null=True)
     rating = models.IntegerField(
         null=True,
         blank=True,
@@ -79,7 +83,7 @@ class LibraryTrack(models.Model):
             MinValueValidator(0),
             MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)
         ])
-    playlists = models.ManyToManyField('bodzify_api.Playlist', related_name=PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS)
+    playlists = models.ManyToManyField('bodzify_api.Playlist', related_name=PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS)
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX, blank=True, default=None, null=True)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
@@ -139,6 +143,11 @@ class LibraryTrack(models.Model):
             self._update_file_tags_if_file_exists()
 
         except LibraryTrack.DoesNotExist:
+            if self.file_exists:
+                self.duration = AudioMetadataManager.get_specific_metadata_from_file(
+                    self.file, AudioMetadataManager.METADATA_DICT_KEYS.DURATION)
+            else:
+                self.duration = None
             super().save(*args, **kwargs)
             all_simple_playlist = SimplePlaylist.objects.get(
                 playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)

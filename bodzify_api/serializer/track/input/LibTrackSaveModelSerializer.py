@@ -11,7 +11,6 @@ class FIELDS:
     ARTIST = ATTRIBUTES_LABEL.ARTIST
     ALBUM = ATTRIBUTES_LABEL.ALBUM
     GENRE = ATTRIBUTES_LABEL.GENRE
-    DURATION = ATTRIBUTES_LABEL.DURATION
     RATING = ATTRIBUTES_LABEL.RATING
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
 
@@ -26,6 +25,5 @@ class TrackSaveModelSerializer(InputModelSerializer):
                   FIELDS.ARTIST,
                   FIELDS.ALBUM,
                   FIELDS.GENRE,
-                  FIELDS.DURATION,
                   FIELDS.RATING,
                   FIELDS.LANGUAGE]
