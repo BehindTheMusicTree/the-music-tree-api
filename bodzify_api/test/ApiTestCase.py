@@ -37,6 +37,10 @@ class ApiTestCase(AppTestCase):
     saved_genre: Criteria
     saved_simple_playlist: SimplePlaylist
 
+    SAMPLE_LIB_TRACK_WAV_DURATION = 0.5453541666666667
+    SAMPLE_LIB_TRACK_MP3_DURATION = 0.6
+    SAMPLE_LIB_TRACK_FLAC_DURATION = 0.5453541666666667
+
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None):
         super().setUp()
         if methods_names_to_implement is not None:
