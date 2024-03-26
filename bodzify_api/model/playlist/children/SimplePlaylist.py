@@ -11,7 +11,7 @@ class SPECIAL_NAMES:
     ALL = "All"
 
 
-class ATTRIBUTES_LABELS:
+class ATTRIBUTES_LABEL:
     PLAYLIST = 'playlist'
     NAME = 'name'
 
