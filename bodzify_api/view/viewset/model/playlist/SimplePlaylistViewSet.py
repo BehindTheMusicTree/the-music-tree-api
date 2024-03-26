@@ -3,8 +3,7 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 
-from bodzify_api.model.Album import ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist, ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer \
     import SimplePlaylistPostSchemaSerializer
 from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPutSchemaSerializer \

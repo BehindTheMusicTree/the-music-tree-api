@@ -31,14 +31,18 @@ class Service:
         save_serializer.is_valid(raise_exception=True)
         return save_serializer.save()
 
-    def _get_save_model_data_from_save_schema_data(
-            self, user: User, save_schema_data: QueryDict, old_instance=None) -> QueryDict:
+    def _get_save_model_data_from_save_schema_data(self,
+                                                   user: User,
+                                                   save_schema_data: QueryDict,
+                                                   old_instance=None) -> QueryDict:
         save_model_data = save_schema_data.copy()
         save_model_data['user'] = user.pk
         return save_model_data
 
-    def _get_save_schema_data_from_put_schema_data(
-            self, user: User, put_schema_data: QueryDict, old_instance=None) -> QueryDict:
+    def _get_save_schema_data_from_put_schema_data(self,
+                                                   user: User,
+                                                   put_schema_data: QueryDict,
+                                                   old_instance=None) -> QueryDict:
         return put_schema_data
 
     @abstractmethod
