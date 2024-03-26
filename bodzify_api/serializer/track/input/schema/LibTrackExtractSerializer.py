@@ -11,13 +11,13 @@ class FIELDS:
     TITLE = SAVE_SCHEMA_FIELDS.TITLE
     ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
     ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES_STRING = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING
+    ALBUM_ARTISTS_NAMES_STRING = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
     GENRE_NAME = SAVE_SCHEMA_FIELDS.GENRE_NAME
     RATING = SAVE_SCHEMA_FIELDS.RATING
     LANGUAGE = SAVE_SCHEMA_FIELDS.LANGUAGE
 
 
-class LibTrackExtractSchemaSerializer(LibTrackSaveSchemaSerializer):
+class LibTrackExtractSerializer(LibTrackSaveSchemaSerializer):
     url = serializers.URLField(validators=[validate_url])
 
     class Meta(LibTrackSaveSchemaSerializer.Meta):

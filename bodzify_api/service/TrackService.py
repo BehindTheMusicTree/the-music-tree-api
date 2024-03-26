@@ -17,12 +17,12 @@ import bodzify_api.AudioMetadataManager as AudioMetadataManager
 import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer \
-    import LibTrackPostSchemaSerializer, FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackPostSerializer \
+    import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer \
     import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
-from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import LibTrackPutSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
 from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.service.Service import Service
@@ -68,18 +68,21 @@ class TrackService(Service):
                 rating = int(data2[key])
             else:
                 rating = None
-            data1[key] = rating # type: ignore
+            data1[key] = rating  # type: ignore
 
     def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
-        return LibTrackPostSchemaSerializer(data=post_schema_data)  # type: ignore
+        return LibTrackPostSerializer(data=post_schema_data)  # type: ignore
 
     def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
-        return LibTrackPutSchemaSerializer(instance=old_instance, data=put_schema_data)  # type: ignore
+        return LibTrackPutSerializer(instance=old_instance, data=put_schema_data)  # type: ignore
+
+    def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict):
+        return LibTrackSaveSchemaSerializer(data=save_schema_data)
 
     def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
         return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)  # type: ignore
 
-    def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
+    def _get_save_schema_data_from_post_schema_data(self, user: User, post_schema_data: QueryDict) -> QueryDict:
         file = post_schema_data[POST_FIELDS.FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
 
@@ -87,7 +90,7 @@ class TrackService(Service):
                 SAVE_SCHEMA_FIELDS.TITLE,
                 SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_NAME,
-                SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING,
+                SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR,
                 SAVE_SCHEMA_FIELDS.GENRE_NAME,
                 SAVE_SCHEMA_FIELDS.RATING,
                 SAVE_SCHEMA_FIELDS.LANGUAGE]
@@ -134,7 +137,7 @@ class TrackService(Service):
             dict2=save_schema_data,
             dict1_album_key=SAVE_MODEL_FIELDS.ALBUM,
             dict2_album_name_key=SAVE_SCHEMA_FIELDS.ALBUM_NAME,
-            dict2_artists_names_key=SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING)
+            dict2_artists_names_key=SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR)
 
         self._update_data1_with_genre_uuid_if_genre_name_in_data2(
             user=user, data1=save_model_data, data2=save_schema_data)
@@ -167,13 +170,23 @@ class TrackService(Service):
         instance.delete_with_checking_album_and_artist_potential_deletion()
 
     def _get_save_schema_data_from_file(self, file):
-        metadata_dict = AudioMetadataManager.get_metadata_data_from_file(
-            file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
+        metadata_dict = AudioMetadataManager.get_metadata_dict_from_file(
+            file=file,
+            normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
-        save_data = self._remove_none_or_empty_key_from_dict(metadata_dict)
-        save_data[SAVE_SCHEMA_FIELDS.FILE] = file
+        save_data_with_potential_none = self._get_copy_of_dict_including_only_specified_keys(
+            dict=metadata_dict,
+            keys=[SAVE_SCHEMA_FIELDS.TITLE,
+                  SAVE_SCHEMA_FIELDS.ARTIST_NAME,
+                  SAVE_SCHEMA_FIELDS.ALBUM_NAME,
+                  SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR,
+                  SAVE_SCHEMA_FIELDS.GENRE_NAME,
+                  SAVE_SCHEMA_FIELDS.RATING,
+                  SAVE_SCHEMA_FIELDS.LANGUAGE])
+        save_data_clean = self._remove_none_or_empty_key_from_dict(save_data_with_potential_none)
+        save_data_clean[SAVE_SCHEMA_FIELDS.FILE] = file
 
-        return save_data
+        return save_data_clean
 
     def update_data1_with_artist_uuid_if_artist_name_in_data2(self,
                                                               user: User,

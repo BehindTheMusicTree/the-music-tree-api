@@ -11,16 +11,17 @@ class Service:
     def create(self, user: User, post_schema_data: QueryDict):
         post_schema_serializer = self._get_post_schema_serializer(post_schema_data=post_schema_data)
         post_schema_serializer.is_valid(raise_exception=True)
-        post_schema_data = self._get_save_schema_data_from_post_schema_data(user=user,
+        save_schema_data = self._get_save_schema_data_from_post_schema_data(user=user,
                                                                             post_schema_data=post_schema_data)
-        return self._save(user=user, save_schema_data=post_schema_data, old_instance=None)
+        save_schema_data = self._get_query_dict_updated_with_user(query_dict=save_schema_data, user=user)
+        return self._save(user=user, save_schema_data=save_schema_data, old_instance=None)
 
     def update(self, user: User, put_schema_data: QueryDict, old_instance):
-        put_schema_serializer = self._get_put_schema_serializer(
-            old_instance=old_instance, put_schema_data=put_schema_data)
+        put_schema_serializer = self._get_put_schema_serializer(old_instance=old_instance,
+                                                                put_schema_data=put_schema_data)
         put_schema_serializer.is_valid(raise_exception=True)
-
-        return self._save(user=user, save_schema_data=put_schema_data, old_instance=old_instance)
+        save_schema_data = self._get_query_dict_updated_with_user(query_dict=put_schema_data, user=user)
+        return self._save(user=user, save_schema_data=save_schema_data, old_instance=old_instance)
 
     def _save(self, user: User, save_schema_data: QueryDict, old_instance):
         save_schema_serializer = self._get_save_schema_serializer(old_instance=old_instance,
@@ -37,13 +38,13 @@ class Service:
         return save_model_serializer.save()
 
     def _get_save_schema_data_from_post_schema_data(self, user: User, post_schema_data: QueryDict) -> QueryDict:
-        return self.get_query_dict_updated_with_user(query_dict=post_schema_data, user=user)
+        return self._get_query_dict_updated_with_user(query_dict=post_schema_data, user=user)
 
     def _get_save_schema_data_from_put_schema_data(self,
                                                    user: User,
                                                    put_schema_data: QueryDict,
                                                    old_instance=None) -> QueryDict:
-        return self.get_query_dict_updated_with_user(query_dict=put_schema_data, user=user)
+        return self._get_query_dict_updated_with_user(query_dict=put_schema_data, user=user)
 
     def _get_save_model_data_from_save_schema_data(self,
                                                    user: User,
@@ -67,7 +68,7 @@ class Service:
     def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
 
-    def get_query_dict_updated_with_user(self, query_dict: QueryDict, user: User) -> QueryDict:
+    def _get_query_dict_updated_with_user(self, query_dict: QueryDict, user: User) -> QueryDict:
         query_dict2 = query_dict.copy()
         query_dict2['user'] = user.pk
         return query_dict2
@@ -99,3 +100,11 @@ class Service:
                 data1=overriden_dict1,
                 data2=dict2)
         return overriden_dict1
+
+    @staticmethod
+    def _get_copy_of_dict_including_only_specified_keys(dict, keys):
+        dict2 = dict.copy()
+        for key in list(dict2.keys()):
+            if key not in keys:
+                del dict2[key]
+        return dict2

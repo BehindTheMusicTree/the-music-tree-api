@@ -13,10 +13,10 @@ from rest_framework.serializers import ModelSerializer
 import bodzify_api.view.utility as utility
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import LibTrackExtractSchemaSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import LibTrackPostSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackExtractSerializer import LibTrackExtractSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackPostSerializer import LibTrackPostSerializer
 from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
-from bodzify_api.serializer.track.input.schema.LibTrackPutSchemaSerializer import LibTrackPutSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
@@ -27,8 +27,8 @@ logger = logging.getLogger('bodzify_api')
 class GET_FILTER_FIELDS:
     TITLE = LIB_TRACK_ATTRIBUTES_LABEL.TITLE
     ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
-    ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING
-    ALBUM_ARTISTS_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STRING
+    ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
+    ALBUM_ARTISTS_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
     GENRE_NAME = SAVE_SCHEMA_FIELDS.GENRE_NAME
     LANGUAGE = LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE
 
@@ -78,7 +78,7 @@ class TrackViewSet(AppModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @extend_schema(request=LibTrackPutSchemaSerializer,
+    @extend_schema(request=LibTrackPutSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=("""
             Updates a track:\n"
@@ -112,7 +112,7 @@ class TrackViewSet(AppModelViewSet):
     def update(self, request, *args, **kwargs):
         return self._update(request, *args, **kwargs)
 
-    @extend_schema(request=LibTrackPostSchemaSerializer,
+    @extend_schema(request=LibTrackPostSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=(
                        """
@@ -143,7 +143,7 @@ class TrackViewSet(AppModelViewSet):
                 content="The requested track's file is missing.",
                 status=status.HTTP_410_GONE)
 
-    @extend_schema(request=LibTrackExtractSchemaSerializer,
+    @extend_schema(request=LibTrackExtractSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=("""
             Download a track from the given url to the app. 
@@ -172,7 +172,7 @@ class TrackViewSet(AppModelViewSet):
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
         request_data_snake_case = self.get_dict_with_snake_case_keys(request.data)
-        serializer = LibTrackExtractSchemaSerializer(data=request_data_snake_case)
+        serializer = LibTrackExtractSerializer(data=request_data_snake_case)
         serializer.is_valid(raise_exception=True)
 
         track = self.service.extract(user=request.user, extract_schema_data=request_data_snake_case)

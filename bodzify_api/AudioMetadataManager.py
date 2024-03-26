@@ -67,7 +67,7 @@ class RATING_FILE_PROFILE:
     BASE_100 = '100'
 
 
-def get_metadata_data_from_file(file, normalized_rating_max_value: Optional[int] = None):
+def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int] = None) -> dict:
     filename, file_extension = os.path.splitext(file.name)
 
     title = ""

@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from bodzify_api.test.ApiTestCase import ApiTestCase
-from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackPostSerializer import FIELDS as POST_FIELDS
 
 
 class TestCase(ApiTestCase):

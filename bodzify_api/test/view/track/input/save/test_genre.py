@@ -5,7 +5,7 @@ from ddf import G
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.schema.LibTrackExtractSerializer import FIELDS as EXTRACT_FIELDS
 from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldModelStrTestCase
 
 
