@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import extend_schema
 
 from bodzify_api.model.play.Play import Play
-from bodzify_api.serializer.play.input.PlayPostSchemaSerializer import PlayPostSerializer
+from bodzify_api.serializer.play.input.schema.PlayPostSchemaSerializer import PlayPostSerializer
 from bodzify_api.serializer.play.output.PlayDetailedSerializer import PlayDetailedSerializer
 from bodzify_api.service.PlayService import PlayService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet

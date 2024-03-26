@@ -246,8 +246,6 @@ class ApiTestCase(AppTestCase):
         return response
 
     def post_simple_playlist(self, data_dict):
-        url = reverse('simple-playlist-list')
-        print(f"URL: {url}")
         response = self.api_client.post(path=reverse('simple-playlist-list'),
                                         data=self._replace_none_values_by_empty_string(data_dict),
                                         format='json')

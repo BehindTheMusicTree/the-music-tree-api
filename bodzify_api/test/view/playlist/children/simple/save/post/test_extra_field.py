@@ -8,8 +8,7 @@ from django.urls import get_resolver
 
 class TestCase(ApiTestCase):
 
-    def test_error(self):
-        print(get_resolver(None).reverse_dict.keys())
+    def test_extra_field_then_error(self):
         data = {
             'nonExistingField': 'oifjqoif'
         }

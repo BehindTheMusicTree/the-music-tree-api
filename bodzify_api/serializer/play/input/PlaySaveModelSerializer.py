@@ -19,9 +19,3 @@ class PlaySaveModelSerializer(serializers.ModelSerializer):
         fields = [FIELDS.USER,
                   FIELDS.CONTENT_TYPE,
                   FIELDS.OBJECT_ID]
-
-    def validate_object_id(self, object_id):
-        user_id = self.initial_data[FIELDS.USER]
-        if not Playlist.objects.filter(uuid=object_id, user_id=user_id).exists():
-            raise serializers.ValidationError("Object with this ID does not exist or does not belong to the user.")
-        return object_id
