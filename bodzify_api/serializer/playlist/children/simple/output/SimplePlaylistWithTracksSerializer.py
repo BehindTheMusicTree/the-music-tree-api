@@ -4,21 +4,21 @@ from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATT
     FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist, \
     ATTRIBUTES_LABEL as SIMPLE_PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithoutTrackSerializer \
-    import SimplePlaylistWithoutTrackSerializer
+from bodzify_api.serializer.playlist.children.PlaylistChildSerializer \
+    import PlaylistChildSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer import \
     LibTrackWithoutAlbumAndPlaylistSerializer
 
 
 class FIELDS:
-    UUID = PLAYLIST_ATTRIBUTES_LABEL.UUID
-    NAME = SIMPLE_PLAYLIST_ATTRIBUTES_LABEL.NAME
-    ADDED_ON = PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON
-    LIB_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
-    LIB_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
+    UUID = PLAYLIST_CHILD_FIELDS.UUID
+    NAME = PLAYLIST_CHILD_FIELDS.NAME
+    ADDED_ON = PLAYLIST_CHILD_FIELDS.ADDED_ON
+    LIB_TRACKS = PLAYLIST_CHILD_FIELDS.LIB_TRACKS
+    LIB_TRACKS_COUNT = PLAYLIST_CHILD_FIELDS.LIB_TRACKS_COUNT
 
 
-class SimplePlaylistWithTracksSerializer(SimplePlaylistWithoutTrackSerializer):
+class SimplePlaylistWithTracksSerializer(PlaylistChildSerializer):
     library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(
         source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIB_TRACKS,
         many=True)

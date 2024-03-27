@@ -19,8 +19,6 @@ class FIELDS:
 
 
 class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializer):
-    library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIB_TRACKS,
-                                                               many=True)
 
     class Meta:
         model = CriteriaPlaylist

@@ -8,6 +8,8 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist import ATTRIBUTES_LABE
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
+from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer \
+    import LibTrackWithoutAlbumAndPlaylistSerializer
 
 logger = logging.getLogger('bodzify_api')
 
@@ -18,20 +20,23 @@ class FIELDS:
     ADDED_ON = PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON
     PARENT = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
     LIB_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
+    LIB_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
 
 
-class PlaylistChildWithoutTrackSerializer(PlaylistWithoutTrackSerializer):
+class PlaylistChildSerializer(PlaylistWithoutTrackSerializer):
     parent = serializers.SerializerMethodField()
     uuid = serializers.CharField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.UUID)
     added_on = serializers.DateTimeField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.ADDED_ON)
     library_tracks_count = serializers.SerializerMethodField()
+    library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIB_TRACKS,
+                                                               many=True)
 
     def get_library_tracks_count(self, obj):
         return obj.playlist.library_tracks.count()
 
     def get_parent(self, obj) -> Optional[PlaylistWithoutTrackSerializer]:
         if obj.parent is not None:
-            return PlaylistWithoutTrackSerializer(obj.parent).data
+            return PlaylistWithoutTrackSerializer(obj.parent).data  # type: ignore
         else:
             return None
 
@@ -40,4 +45,5 @@ class PlaylistChildWithoutTrackSerializer(PlaylistWithoutTrackSerializer):
                   FIELDS.NAME,
                   FIELDS.ADDED_ON,
                   FIELDS.PARENT,
-                  FIELDS.LIB_TRACKS_COUNT]
+                  FIELDS.LIB_TRACKS_COUNT,
+                  FIELDS.LIB_TRACKS]
