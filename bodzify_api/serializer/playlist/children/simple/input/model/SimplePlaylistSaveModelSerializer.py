@@ -3,7 +3,7 @@
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, ATTRIBUTES_LABEL as SIMPLE_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
+from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 
 
 class FIELDS:
@@ -12,7 +12,7 @@ class FIELDS:
     USER = PLAYLIST_ATTRIBUTES_LABEL.USER
 
 
-class SimplePlaylistSaveModelSerializer(InputModelSerializer):
+class SimplePlaylistSaveModelSerializer(InputEndpointSerializer):
 
     class Meta:
         model = SimplePlaylist

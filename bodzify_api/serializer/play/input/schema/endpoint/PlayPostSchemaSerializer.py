@@ -4,13 +4,14 @@ from bodzify_api.model.play.Play import Play, ATTRIBUTES_LABEL
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 
 
 class FIELDS:
     CONTENT_OBJECT_UUID = ATTRIBUTES_LABEL.CONTENT_OBJECT + '_uuid'
 
 
-class PlayPostSerializer(serializers.ModelSerializer):
+class PlayPostSerializer(InputEndpointSerializer):
     content_object_uuid = serializers.CharField(max_length=22, required=True)
 
     class Meta:

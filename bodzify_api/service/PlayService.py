@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.http import QueryDict
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.serializer.play.input.schema.PlayPostSchemaSerializer import PlayPostSerializer, FIELDS as POST_FIELDS
+from bodzify_api.serializer.play.input.schema.endpoint.PlayPostSchemaSerializer import PlayPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.play.input.schema.PlaySaveSchemaSerializer import PlaySaveSchemaSerializer
 from bodzify_api.serializer.play.input.PlaySaveModelSerializer import PlaySaveModelSerializer, FIELDS as SAVE_FIELDS
 from bodzify_api.service.Service import Service

@@ -4,7 +4,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.track.input.schema.LibTrackPutSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
 from bodzify_api.test.view.track.input.method.put.FieldTestCase import FieldTestCase
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 

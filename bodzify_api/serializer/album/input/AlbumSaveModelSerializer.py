@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.Album import ATTRIBUTES_LABEL, Album
-from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
+from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 
 
 class FIELDS:
@@ -9,7 +9,7 @@ class FIELDS:
     ALBUM_ARTISTS = ATTRIBUTES_LABEL.ALBUM_ARTISTS
 
 
-class AlbumSaveModelSerializer(InputModelSerializer):
+class AlbumSaveModelSerializer(InputEndpointSerializer):
 
     class Meta:
         model = Album

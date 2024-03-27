@@ -3,7 +3,7 @@
 from rest_framework import status
 
 from bodzify_api.test.ApiTestCase import ApiTestCase
-from bodzify_api.serializer.track.input.schema.LibTrackExtractSerializer import FIELDS as EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.schema.endpoint.LibTrackExtractSerializer import FIELDS as EXTRACT_FIELDS
 
 
 class TestCase(ApiTestCase):

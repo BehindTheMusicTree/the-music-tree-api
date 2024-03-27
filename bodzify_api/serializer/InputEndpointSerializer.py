@@ -4,12 +4,11 @@ from django.forms import ValidationError
 from rest_framework import serializers
 
 
-class InputModelSerializer(serializers.ModelSerializer):
+class InputEndpointSerializer(serializers.Serializer):
 
     def validate(self, data):
         if hasattr(self, 'initial_data'):
-            unknown_keys = set(self.initial_data.keys()) - \
-                set(self.fields.keys())
+            unknown_keys = set(self.initial_data.keys()) - set(self.fields.keys())
             if unknown_keys:
                 raise ValidationError(
                     "Unknown fields: {}".format(unknown_keys))

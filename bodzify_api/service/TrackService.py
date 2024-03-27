@@ -17,12 +17,12 @@ import bodzify_api.AudioMetadataManager as AudioMetadataManager
 import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.serializer.track.input.schema.LibTrackPostSerializer \
+from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer \
     import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
 from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackPutSerializer import LibTrackPutSerializer
+from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
 from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.service.Service import Service

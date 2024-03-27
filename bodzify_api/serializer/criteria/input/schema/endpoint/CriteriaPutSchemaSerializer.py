@@ -2,11 +2,12 @@
 
 from rest_framework import serializers
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer \
     import CriteriaSaveSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
 
 
-class CriteriaPutSchemaSerializer(CriteriaSaveSchemaSerializer):
+class CriteriaPutSchemaSerializer(CriteriaSaveSchemaSerializer, InputEndpointSerializer):
 
     class Meta:
         model = Criteria
