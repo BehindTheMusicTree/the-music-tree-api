@@ -8,11 +8,11 @@ from rest_framework.serializers import Serializer
 class Service:
 
     @abstractmethod
-    def _get_post_schema_serializer(self, post_schema_data: dict) -> Serializer:
+    def _get_post_serializer(self, post_data: dict) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
-    def _get_put_schema_serializer(self, old_instance, put_schema_data: dict) -> Serializer:
+    def _get_put_serializer(self, old_instance, put_data: dict) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
@@ -24,11 +24,11 @@ class Service:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
-    def _get_save_schema_data_from_post_schema_data(self, post_schema_data: dict) -> dict:
+    def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
-    def _get_save_schema_data_from_put_schema_data(self, put_schema_data: dict, old_instance=None) -> dict:
+    def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
@@ -74,18 +74,18 @@ class Service:
                 del dict2[key]
         return dict2
 
-    def create(self, post_schema_data: dict, request):
-        post_schema_serializer = self._get_post_schema_serializer(post_schema_data=post_schema_data)
-        post_schema_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_save_schema_data_from_post_schema_data(post_schema_data=post_schema_data)
+    def create(self, post_data: dict, request):
+        post_serializer = self._get_post_serializer(post_data=post_data)
+        post_serializer.is_valid(raise_exception=True)
+        save_schema_data = self._get_save_schema_data_from_post_data(post_data=post_data)
         return self._save(save_schema_data=save_schema_data, old_instance=None, request=request)
 
-    def update(self, put_schema_data: dict, old_instance, request):
-        put_schema_serializer = self._get_put_schema_serializer(old_instance=old_instance,
-                                                                put_schema_data=put_schema_data)
-        put_schema_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_save_schema_data_from_put_schema_data(put_schema_data=put_schema_data,
-                                                                           old_instance=old_instance)
+    def update(self, put_data: dict, old_instance, request):
+        put_serializer = self._get_put_serializer(old_instance=old_instance,
+                                                  put_data=put_data)
+        put_serializer.is_valid(raise_exception=True)
+        save_schema_data = self._get_save_schema_data_from_put_data(put_data=put_data,
+                                                                    old_instance=old_instance)
         return self._save(save_schema_data=save_schema_data, old_instance=old_instance, request=request)
 
     def _save(self, save_schema_data: dict, old_instance, request):

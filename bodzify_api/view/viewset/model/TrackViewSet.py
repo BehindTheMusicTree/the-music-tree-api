@@ -171,11 +171,11 @@ class TrackViewSet(AppModelViewSet):
             """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        request_data_snake_case = self.get_querydict_with_snake_case_keys(request.data)
+        request_data_snake_case = self.get_dict_with_snake_case_keys_from_form_data(request.data)
         serializer = LibTrackExtractSerializer(data=request_data_snake_case)
         serializer.is_valid(raise_exception=True)
 
-        track = self.service.extract(extract_schema_data=request_data_snake_case, request=request)
+        track = self.service.extract(extract_data=request_data_snake_case, request=request)
         response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
         return Response(
