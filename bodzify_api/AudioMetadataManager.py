@@ -11,6 +11,7 @@ from mutagen.id3 import ID3
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
 from mutagen.id3._util import ID3NoHeaderError
 from mutagen.wave import WAVE
+from django.db.models.fields.files import FieldFile
 
 TAG_ARTISTS_SEPARATION_CHAR = ","
 
@@ -164,8 +165,7 @@ def get_specific_metadata_from_file(file, metadata_key: str):
         file_tags = MutagenFile(file)
         return _get_specific_metadata_from_id3_file(id3_file_tags=file_tags, metadata_key=metadata_key)
     elif file_extension_lowered == ".flac":
-        flac_file_tags = _create_flac_object_dealing_with_eventual_temporary_file(
-            file)
+        flac_file_tags = _create_flac_object_dealing_with_eventual_temporary_file(file)
         return _get_specific_metadata_from_flac_file(flac_file_tags=flac_file_tags, metadata_key=metadata_key)
     else:
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
@@ -175,6 +175,9 @@ def _create_flac_object_dealing_with_eventual_temporary_file(file):
     if isinstance(file, TemporaryUploadedFile):
         with open(file.temporary_file_path(), 'rb') as f:
             return FLAC(fileobj=io.BytesIO(f.read()))
+    elif isinstance(file, FieldFile):
+        with open(file.path, 'rb') as f:
+            return FLAC(fileobj=f)
     elif isinstance(file, InMemoryUploadedFile):
         file.seek(0)
         return FLAC(io.BytesIO(file.read()))

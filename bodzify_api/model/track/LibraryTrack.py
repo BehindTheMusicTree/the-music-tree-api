@@ -102,9 +102,7 @@ class LibraryTrack(models.Model):
 
     @property
     def file_exists(self) -> bool:
-        if self.file:
-            return os.path.isfile(self.file.path)
-        return False
+        return bool(self.file)
 
     @property
     def relative_url(self) -> str:
@@ -143,17 +141,17 @@ class LibraryTrack(models.Model):
             self._update_file_tags_if_file_exists()
 
         except LibraryTrack.DoesNotExist:
-            if self.file_exists:
-                self.duration = AudioMetadataManager.get_specific_metadata_from_file(
-                    self.file, AudioMetadataManager.METADATA_DICT_KEYS.DURATION)
-            else:
-                self.duration = None
             super().save(*args, **kwargs)
             all_simple_playlist = SimplePlaylist.objects.get(
                 playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
             self.playlists.add(all_simple_playlist.playlist)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
+
+            if self.file_exists:
+                self.duration = AudioMetadataManager.get_specific_metadata_from_file(
+                    self.file, AudioMetadataManager.METADATA_DICT_KEYS.DURATION)
+                super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
     @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
     def delete_file_if_exists(sender, instance: 'LibraryTrack', using, **kwargs):
@@ -180,7 +178,7 @@ class LibraryTrack(models.Model):
             while old_genre_tree_item != genre_limit:
                 self.playlists.remove(CriteriaPlaylist.objects.get(
                     criteria=old_genre_tree_item).playlist)
-                old_genre_tree_item = old_genre_tree_item.parent
+                old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
         else:
             criteria_playlist = CriteriaPlaylist.objects.get(
                 playlist__user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None)
@@ -238,17 +236,17 @@ class LibraryTrack(models.Model):
             titleTag = ""
         metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.TITLE] = titleTag
 
-        if self.artist_id is not None:
-            artist_name_tag = self.artist.name
+        if self.artist_id is not None:  # type: ignore
+            artist_name_tag = self.artist.name  # type: ignore
         else:
             artist_name_tag = ""
         metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.ARTIST_NAME] = artist_name_tag
 
         album_artists_tag = ""
-        if self.album_id is not None:
-            album_name_tag = self.album.name
+        if self.album_id is not None:  # type: ignore
+            album_name_tag = self.album.name  # type: ignore
             album_artists_name_index = 0
-            for albumArtist in list(self.album.album_artists.all()):
+            for albumArtist in list(self.album.album_artists.all()):  # type: ignore
                 if album_artists_name_index != 0:
                     album_artists_tag = (
                         album_artists_tag + AudioMetadataManager.TAG_ARTISTS_SEPARATION_CHAR)
