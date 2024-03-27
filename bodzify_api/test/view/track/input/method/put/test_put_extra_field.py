@@ -8,7 +8,7 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 
 class TestCase(ApiTestCase):
 
-    def test_error(self):
+    def test_extra_field_then_error(self):
         track = G(LibraryTrack,
                   user=self.test_user,
                   title="Foire",

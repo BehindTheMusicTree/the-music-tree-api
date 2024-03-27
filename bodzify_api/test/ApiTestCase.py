@@ -13,8 +13,8 @@ from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
-from bodzify_api.serializer.track.input.schema.LibTrackExtractSchemaSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
-from bodzify_api.serializer.track.input.schema.LibTrackPostSchemaSerializer import FIELDS as LIB_TRACK_POST_FIELDS
+from bodzify_api.serializer.track.input.schema.endpoint.LibTrackExtractSerializer import FIELDS as LIB_TRACK_EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer import FIELDS as LIB_TRACK_POST_FIELDS
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
 from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTracksSerializer \
     import FIELDS as SIMPLE_PLAYLIST_GET_FIELDS
@@ -67,7 +67,7 @@ class ApiTestCase(AppTestCase):
         lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
         if self.saved_lib_track.file_exists:
-            self.saved_lib_track_metadata = AudioMetadataManager.get_metadata_data_from_file(
+            self.saved_lib_track_metadata = AudioMetadataManager.get_metadata_dict_from_file(
                 file=self.saved_lib_track.file)
 
     def _set_results_attributes(self, response):
@@ -246,8 +246,6 @@ class ApiTestCase(AppTestCase):
         return response
 
     def post_simple_playlist(self, data_dict):
-        url = reverse('simple-playlist-list')
-        print(f"URL: {url}")
         response = self.api_client.post(path=reverse('simple-playlist-list'),
                                         data=self._replace_none_values_by_empty_string(data_dict),
                                         format='json')

@@ -11,8 +11,8 @@ class FIELDS:
     NAME = PARENT_FIELDS.NAME
     TYPE = PARENT_FIELDS.TYPE
     ADDED_ON = PARENT_FIELDS.ADDED_ON
-    LIBRARY_TRACKS_COUNT = PARENT_FIELDS.LIBRARY_TRACKS_COUNT
-    LIBRARY_TRACKS = ATTRIBUTES_LABEL.LIB_TRACKS
+    LIB_TRACKS_COUNT = PARENT_FIELDS.LIB_TRACKS_COUNT
+    LIB_TRACKS = ATTRIBUTES_LABEL.LIB_TRACKS
 
 
 class PlaylistWithTracksSerializer(PlaylistWithoutTrackSerializer):
@@ -24,5 +24,5 @@ class PlaylistWithTracksSerializer(PlaylistWithoutTrackSerializer):
                   FIELDS.NAME,
                   FIELDS.TYPE,
                   FIELDS.ADDED_ON,
-                  FIELDS.LIBRARY_TRACKS_COUNT,
-                  FIELDS.LIBRARY_TRACKS]
+                  FIELDS.LIB_TRACKS_COUNT,
+                  FIELDS.LIB_TRACKS]

@@ -3,23 +3,23 @@
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.playlist.children.PlaylistChildWithoutTrackSerializer \
-    import PlaylistChildWithoutTrackSerializer, FIELDS as PLAYLIST_CHILD_WITHOUT_TRACK_FIELDS
+from bodzify_api.serializer.playlist.children.PlaylistChildSerializer \
+    import PlaylistChildSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
 
 
 class FIELDS:
-    UUID = PLAYLIST_CHILD_WITHOUT_TRACK_FIELDS.UUID
-    NAME = PLAYLIST_CHILD_WITHOUT_TRACK_FIELDS.NAME
-    ADDED_ON = PLAYLIST_CHILD_WITHOUT_TRACK_FIELDS.ADDED_ON
-    LIBRARY_TRACKS_COUNT = PLAYLIST_CHILD_WITHOUT_TRACK_FIELDS.LIBRARY_TRACKS_COUNT
+    UUID = PLAYLIST_CHILD_FIELDS.UUID
+    NAME = PLAYLIST_CHILD_FIELDS.NAME
+    ADDED_ON = PLAYLIST_CHILD_FIELDS.ADDED_ON
+    LIB_TRACKS_COUNT = PLAYLIST_CHILD_FIELDS.LIB_TRACKS_COUNT
 
 
-class SimplePlaylistWithoutTrackSerializer(PlaylistChildWithoutTrackSerializer):
-    name = serializers.CharField()  # only to override the mothers one
+class SimplePlaylistWithoutTrackSerializer(PlaylistChildSerializer):
+    name = serializers.CharField()  # only to override the mother's one
 
     class Meta:
         model = SimplePlaylist
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
                   FIELDS.ADDED_ON,
-                  FIELDS.LIBRARY_TRACKS_COUNT]
+                  FIELDS.LIB_TRACKS_COUNT]

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, \
+    FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
     import CriteriaPlaylistWithoutTracksSerializer, FIELDS as CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer import \
@@ -13,12 +14,11 @@ class FIELDS:
     NAME = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.NAME
     PARENT = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.PARENT
     ADDED_ON = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.ADDED_ON
-    LIBRARY_TRACKS_COUNT = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.LIBRARY_TRACKS_COUNT
-    LIBRARY_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
+    LIB_TRACKS_COUNT = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.LIB_TRACKS_COUNT
+    LIB_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
 
 
 class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializer):
-    library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(many=True)
 
     class Meta:
         model = CriteriaPlaylist
@@ -26,5 +26,5 @@ class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializ
                   FIELDS.NAME,
                   FIELDS.PARENT,
                   FIELDS.ADDED_ON,
-                  FIELDS.LIBRARY_TRACKS_COUNT,
-                  FIELDS.LIBRARY_TRACKS]
+                  FIELDS.LIB_TRACKS_COUNT,
+                  FIELDS.LIB_TRACKS]

@@ -12,8 +12,8 @@ class ATTRIBUTES_LABEL:
     USER = 'user'
     NAME = 'name'
     ALBUMS = 'albums'
-    LIBRARY_TRACKS = 'library_tracks'
-    LIBRARY_TRACKS_COUNT = LIBRARY_TRACKS + '_count'
+    LIB_TRACKS = 'library_tracks'
+    LIB_TRACKS_COUNT = LIB_TRACKS + '_count'
     DURATION = 'duration'
 
 

@@ -17,7 +17,7 @@ class ATTRIBUTES_LABEL:
     NAME = 'name'
     TYPE = 'type'
     LIB_TRACKS = 'library_tracks'
-    LIBRARY_TRACKS_COUNT = LIB_TRACKS + '_count'
+    LIB_TRACKS_COUNT = LIB_TRACKS + '_count'
     CRITERIA_PLAYLIST = 'criteria_playlist'
     SIMPLE_PLAYLIST = 'simple_playlist'
 
@@ -31,7 +31,7 @@ class FOREIGN_MODEL_ATTRIBUTES_LABEL:
     ADDED_ON = ''
     NAME = ''
     TYPE = ''
-    LIBRARY_TRACKS = ''
+    LIB_TRACKS = ''
 
 
 for attr, value in vars(ATTRIBUTES_LABEL).items():
@@ -47,8 +47,8 @@ class FOREIGN_MODEL_RELATIONS_STR:
     ADDED_ON = ''
     NAME = ''
     TYPE = ''
-    LIBRARY_TRACKS = ''
-    LIBRARY_TRACKS_COUNT = ''
+    LIB_TRACKS = ''
+    LIB_TRACKS_COUNT = ''
 
 
 for attr, value in vars(ATTRIBUTES_LABEL).items():

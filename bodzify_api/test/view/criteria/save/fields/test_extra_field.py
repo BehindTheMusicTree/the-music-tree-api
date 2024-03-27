@@ -6,7 +6,7 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 
 class TestCase(ApiTestCase):
 
-    def test_error(self):
+    def test_extra_field_then_error(self):
         data_dict = {
             "notExistingField": "Koko"
         }

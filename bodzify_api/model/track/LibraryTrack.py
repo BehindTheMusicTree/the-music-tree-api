@@ -64,12 +64,12 @@ class LibraryTrack(models.Model):
                                on_delete=models.CASCADE,
                                default=None,
                                null=True,
-                               related_name=ARTIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS)
+                               related_name=ARTIST_ATTRIBUTES_LABEL.LIB_TRACKS)
     album = models.ForeignKey('bodzify_api.Album',
                               on_delete=models.CASCADE,
                               default=None,
                               null=True,
-                              related_name=ALBUM_ATTRIBUTES_LABEL.LIBRARY_TRACKS)
+                              related_name=ALBUM_ATTRIBUTES_LABEL.LIB_TRACKS)
     genre = models.ForeignKey('bodzify_api.Criteria',
                               on_delete=models.DO_NOTHING,
                               default=None,

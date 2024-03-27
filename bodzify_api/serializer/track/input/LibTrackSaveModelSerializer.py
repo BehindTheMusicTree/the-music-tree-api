@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
-from bodzify_api.serializer.InputModelSerializer import InputModelSerializer
+from rest_framework import serializers
 
 
 class FIELDS:
@@ -15,7 +15,7 @@ class FIELDS:
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
 
 
-class TrackSaveModelSerializer(InputModelSerializer):
+class TrackSaveModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LibraryTrack
