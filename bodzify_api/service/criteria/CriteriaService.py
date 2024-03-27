@@ -2,7 +2,6 @@
 
 import logging
 from django.contrib.auth.models import User
-from django.http import QueryDict
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.input.CriteriaSaveModelSerializer import CriteriaSaveModelSerializer
 from bodzify_api.serializer.criteria.input.schema.endpoint.CriteriaPutSchemaSerializer import CriteriaPutSchemaSerializer
@@ -28,24 +27,24 @@ class CriteriaService(Service):
             criteria = Criteria.objects.create(user=user, type_id=self.criteria_type_id, name=criteria_name)
         return criteria
 
-    def _get_post_schema_serializer(self, post_schema_data: QueryDict):
-        return CriteriaSaveSchemaSerializer(data=post_schema_data)
+    def _get_post_serializer(self, post_data: dict):
+        return CriteriaSaveSchemaSerializer(data=post_data)
 
-    def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict):
-        return CriteriaPutSchemaSerializer(instance=old_instance, data=put_schema_data)
+    def _get_put_serializer(self, old_instance, put_data: dict):
+        return CriteriaPutSchemaSerializer(instance=old_instance, data=put_data)
 
-    def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict, request):
+    def _get_save_schema_serializer(self, old_instance, save_schema_data: dict, request):
         return CriteriaSaveSchemaSerializer(data=save_schema_data, context={'request': request})
 
-    def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool):
+    def _get_save_model_serializer(self, old_instance, save_model_data: dict, partial: bool):
         return CriteriaSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
 
-    def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
-        save_schema_data = post_schema_data.copy()
+    def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
+        save_schema_data = post_data.copy()
 
         parent_key = CRITERIA_ATTRIBUTES_LABEL.PARENT
-        if parent_key in post_schema_data:
-            parent_uuid = post_schema_data[parent_key]
+        if parent_key in post_data:
+            parent_uuid = post_data[parent_key]
             if parent_uuid in ["", None]:
                 parent_uuid = ""
         else:
@@ -53,13 +52,12 @@ class CriteriaService(Service):
         save_schema_data[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent_uuid
         return save_schema_data
 
-    def _get_save_schema_data_from_put_schema_data(self, put_schema_data: QueryDict, old_instance) -> QueryDict:
-        return put_schema_data
+    def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance) -> dict:
+        return put_data
 
     def _get_save_model_data_from_save_schema_data_not_including_user_field(
-            self, user: User, save_schema_data: QueryDict, old_instance) -> QueryDict:
-        save_model_data = QueryDict(mutable=True)
-        save_model_data[CRITERIA_ATTRIBUTES_LABEL.USER] = user.pk
+            self, user: User, save_schema_data: dict, old_instance) -> dict:
+        save_model_data = dict()
 
         save_model_data = self._update_data1_with_key_if_set_in_data2(
             key=CRITERIA_ATTRIBUTES_LABEL.NAME,

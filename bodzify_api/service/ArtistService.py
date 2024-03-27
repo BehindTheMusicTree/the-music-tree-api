@@ -8,22 +8,22 @@ from bodzify_api.service.Service import Service
 
 class ArtistService(Service):
 
-    # def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
-    #     return TrackPutSchemaSerializer(instance=old_instance, data=put_schema_data) # type: ignore
+    # def _get_put_serializer(self, old_instance, put_data: QueryDict) -> Serializer:
+    #     return TrackPutSchemaSerializer(instance=old_instance, data=put_data) # type: ignore
 
     # def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
     #     return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True) # type: ignore
 
-    # def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
-    #     file = post_schema_data[TRACK_ATTRIBUTES_LABEL.FILE]
+    # def _get_save_schema_data_from_post_data(self, post_data: QueryDict) -> QueryDict:
+    #     file = post_data[TRACK_ATTRIBUTES_LABEL.FILE]
     #     save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
     #     save_schema_data = self._get_dict1_overriden_with_dict2_when_key_is_provided(
-    #         dict1=save_schema_data_from_file, dict2=post_schema_data)
+    #         dict1=save_schema_data_from_file, dict2=post_data)
 
     #     if TRACK_ATTRIBUTES_LABEL.TITLE not in save_schema_data:
     #         filename = os.path.basename(file.name).split('.')[0]
-    #         if TRACK_SCHEMA_ATTRIBUTES_LABEL.FORCE_TITLE_GENERATION in post_schema_data:
-    #             force_title_generation = post_schema_data[TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.FORCE_TITLE_GENERATION]
+    #         if TRACK_SCHEMA_ATTRIBUTES_LABEL.FORCE_TITLE_GENERATION in post_data:
+    #             force_title_generation = post_data[TRACK_SAVE_SCHEMA_ATTRIBUTES_LABEL.FORCE_TITLE_GENERATION]
     #         else:
     #             force_title_generation = False
 

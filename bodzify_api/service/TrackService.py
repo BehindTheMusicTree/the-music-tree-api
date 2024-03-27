@@ -9,9 +9,6 @@ from tempfile import NamedTemporaryFile
 import requests
 from django.contrib.auth.models import User
 from django.core.files.base import File
-from django.http import QueryDict
-from django.http.request import QueryDict
-from rest_framework.serializers import Serializer
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 import bodzify_api.settings as settings
@@ -45,8 +42,8 @@ class TrackService(Service):
         return url.split(".")[-1]
 
     @staticmethod
-    def _get_generated_title(file: File, data: QueryDict):
-        filename = os.path.basename(file.name).split('.')[0]  # type: ignore
+    def _get_generated_title_from_data(file: File, data: dict):
+        filename = os.path.basename(file.name).split('.')[0]
         if SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION in data:
             force_title_generation = data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION]
         else:
@@ -62,28 +59,28 @@ class TrackService(Service):
 
     @staticmethod
     def _update_data1_updated_with_key_string_converted_to_int_if_set_in_data2(
-            key: str, data2: QueryDict, data1: QueryDict):
+            key: str, data2: dict, data1: dict):
         if key in data2:
             if data2[key] is not None and data2[key] != '':
                 rating = int(data2[key])
             else:
                 rating = None
-            data1[key] = rating  # type: ignore
+            data1[key] = rating
 
-    def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
-        return LibTrackPostSerializer(data=post_schema_data)  # type: ignore
+    def _get_post_serializer(self, post_data: dict):
+        return LibTrackPostSerializer(data=post_data)
 
-    def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
-        return LibTrackPutSerializer(instance=old_instance, data=put_schema_data)  # type: ignore
+    def _get_put_serializer(self, old_instance, put_data: dict):
+        return LibTrackPutSerializer(instance=old_instance, data=put_data)
 
-    def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict, request):
+    def _get_save_schema_serializer(self, old_instance, save_schema_data: dict, request):
         return LibTrackSaveSchemaSerializer(data=save_schema_data)
 
-    def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
-        return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)  # type: ignore
+    def _get_save_model_serializer(self, old_instance, save_model_data: dict, partial: bool):
+        return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
 
-    def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
-        file = post_schema_data[POST_FIELDS.FILE]
+    def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
+        file = post_data[POST_FIELDS.FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
 
         keys = [SAVE_SCHEMA_FIELDS.FILE,
@@ -95,26 +92,28 @@ class TrackService(Service):
                 SAVE_SCHEMA_FIELDS.RATING,
                 SAVE_SCHEMA_FIELDS.LANGUAGE]
         save_schema_data = self._get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(
-            dict1=save_schema_data_from_file, dict2=post_schema_data, keys=keys)
+            dict1=save_schema_data_from_file, dict2=post_data, keys=keys)
 
         if SAVE_SCHEMA_FIELDS.TITLE not in save_schema_data:
-            save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title(
-                file=file, data=post_schema_data)  # type: ignore
+            save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file,
+                                                                                             data=post_data)
 
-        self._update_data1_updated_with_key_string_converted_to_int_if_set_in_data2(
-            key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data, data2=post_schema_data)
+        self._update_data1_updated_with_key_string_converted_to_int_if_set_in_data2(key=SAVE_SCHEMA_FIELDS.RATING,
+                                                                                    data1=save_schema_data,
+                                                                                    data2=post_data)
 
         return save_schema_data
 
-    def _get_save_schema_data_from_put_schema_data(self, put_schema_data: QueryDict, old_instance=None) -> QueryDict:
-        save_schema_data = put_schema_data.copy()
+    def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
+        save_schema_data = put_data.copy()
         self._update_data1_updated_with_key_string_converted_to_int_if_set_in_data2(
-            key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data, data2=put_schema_data)
+            key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data, data2=put_data)
         return save_schema_data
 
-    def _get_save_model_data_from_save_schema_data_not_including_user_field(
-            self, user: User, save_schema_data: QueryDict, old_instance) -> QueryDict:
-        save_model_data = QueryDict(mutable=True)
+    def _get_save_model_data_from_save_schema_data_not_including_user_field(self, user: User,
+                                                                            save_schema_data: dict,
+                                                                            old_instance) -> dict:
+        save_model_data = dict()
 
         for key in [SAVE_MODEL_FIELDS.FILE,
                     SAVE_MODEL_FIELDS.TITLE,
@@ -131,19 +130,19 @@ class TrackService(Service):
 
         self._update_data1_with_album_uuid_if_album_name_in_data2(
             user=user,
-            dict1=save_model_data,
-            dict2=save_schema_data,
-            dict1_album_key=SAVE_MODEL_FIELDS.ALBUM,
-            dict2_album_name_key=SAVE_SCHEMA_FIELDS.ALBUM_NAME,
-            dict2_artists_names_key=SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR)
+            data1=save_model_data,
+            data2=save_schema_data,
+            data1_album_key=SAVE_MODEL_FIELDS.ALBUM,
+            data2_album_name_key=SAVE_SCHEMA_FIELDS.ALBUM_NAME,
+            data2_artists_names_key=SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR)
 
         self._update_data1_with_genre_uuid_if_genre_name_in_data2(
             user=user, data1=save_model_data, data2=save_schema_data)
 
         return save_model_data
 
-    def extract(self, extract_schema_data: QueryDict, request):
-        mine_track_url = extract_schema_data[MINE_TRACK_FIELDS.URL]
+    def extract(self, extract_data: dict, request):
+        mine_track_url = extract_data[MINE_TRACK_FIELDS.URL]
         track_in_memory_file = requests.get(mine_track_url, stream=True)
         with NamedTemporaryFile(delete=True) as track_temp_file:
             for block in track_in_memory_file.iter_content(1024 * 8):
@@ -153,14 +152,14 @@ class TrackService(Service):
             track_temp_file.flush()
             track_temp_file.seek(0)
 
-            post_schema_data = self._get_post_schema_data_from_extract_schema_data(extract_schema_data)
+            post_data = self._get_post_data_from_extract_data(extract_data)
 
             track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
-                mine_track_url, extract_schema_data)
-            post_schema_data[POST_FIELDS.FILE] = File(track_temp_file, name=track_filename)  # type: ignore
+                mine_track_url, extract_data)
+            post_data[POST_FIELDS.FILE] = File(track_temp_file, name=track_filename)  # type: ignore
             force_title_generation_str = str(is_filename_randomly_generated)
-            post_schema_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
-            library_track = self.create(post_schema_data=post_schema_data, request=request)
+            post_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
+            library_track = self.create(post_data=post_data, request=request)
 
         return library_track
 
@@ -188,8 +187,8 @@ class TrackService(Service):
 
     def update_data1_with_artist_uuid_if_artist_name_in_data2(self,
                                                               user: User,
-                                                              dict1: QueryDict,
-                                                              dict2: QueryDict,
+                                                              dict1: dict,
+                                                              dict2: dict,
                                                               dict2_artist_name_key: str,
                                                               dict1_artist_key: str):
         if dict2_artist_name_key in dict2:
@@ -203,16 +202,16 @@ class TrackService(Service):
 
     def _update_data1_with_album_uuid_if_album_name_in_data2(self,
                                                              user: User,
-                                                             dict1: QueryDict,
-                                                             dict2: QueryDict,
-                                                             dict1_album_key: str,
-                                                             dict2_album_name_key: str,
-                                                             dict2_artists_names_key: str):
-        if dict2_album_name_key in dict2:
-            album_name = dict2[dict2_album_name_key]
+                                                             data1: dict,
+                                                             data2: dict,
+                                                             data1_album_key: str,
+                                                             data2_album_name_key: str,
+                                                             data2_artists_names_key: str):
+        if data2_album_name_key in data2:
+            album_name = data2[data2_album_name_key]
 
-            if dict2_artists_names_key in dict2:
-                album_artists_name_string = dict2[dict2_artists_names_key]
+            if data2_artists_names_key in data2:
+                album_artists_name_string = data2[data2_artists_names_key]
                 if album_artists_name_string is not None:
                     album_artists_name_list = self._get_artists_name_list_from_string(album_artists_name_string)
                 else:
@@ -223,15 +222,15 @@ class TrackService(Service):
                 user=user, album_name=album_name, album_artists_name_list=album_artists_name_list)
 
             if album is not None:
-                dict1[dict1_album_key] = album.uuid
+                data1[data1_album_key] = album.uuid
             else:
-                dict1[dict1_album_key] = None  # type: ignore
-        return dict1
+                data1[data1_album_key] = None  # type: ignore
+        return data1
 
     def _update_data1_with_genre_uuid_if_genre_name_in_data2(self,
                                                              user: User,
-                                                             data1: QueryDict,
-                                                             data2: QueryDict):
+                                                             data1: dict,
+                                                             data2: dict):
         genre_name_key = SAVE_SCHEMA_FIELDS.GENRE_NAME
         if genre_name_key in data2:
             genre_name = data2[genre_name_key]
@@ -242,7 +241,7 @@ class TrackService(Service):
                 genreService = GenreService()
                 genre_uuid = genreService.get_criteria_from_name_after_having_eventually_created_it(
                     user=user, criteria_name=genre_name).uuid
-            data1[SAVE_MODEL_FIELDS.GENRE] = genre_uuid  # type: ignore
+            data1[SAVE_MODEL_FIELDS.GENRE] = genre_uuid
         return data1
 
     def _get_artists_name_list_from_string(self, names_string: str) -> list:
@@ -255,20 +254,20 @@ class TrackService(Service):
                 names.append(name)
         return names
 
-    def _get_post_schema_data_from_extract_schema_data(self, requestData: QueryDict):
-        save_data = requestData.copy()
+    def _get_post_data_from_extract_data(self, extract_data: dict):
+        save_data = extract_data.copy()
         del save_data[MINE_TRACK_FIELDS.URL]
         return save_data
 
-    def _get_track_filename_with_extension(self, mine_track_url: str, requestData: QueryDict):
+    def _get_track_filename_with_extension(self, mine_track_url: str, data: dict):
         file_extension = self.get_file_extension_from_url(mine_track_url)
         is_filename_randomly_generated = False
         title_key = SAVE_SCHEMA_FIELDS.TITLE
-        if title_key in requestData:
-            title = requestData[title_key]
+        if title_key in data:
+            title = data[title_key]
             artist_name_key = SAVE_SCHEMA_FIELDS.ARTIST_NAME
-            if artist_name_key in requestData:
-                artist_name = requestData[artist_name_key]
+            if artist_name_key in data:
+                artist_name = data[artist_name_key]
                 if artist_name is None or artist_name == "":
                     filename_without_extension = title
                 else:
