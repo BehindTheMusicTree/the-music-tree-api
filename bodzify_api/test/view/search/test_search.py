@@ -11,7 +11,6 @@ from bodzify_api.model.playlist.children.SimplePlaylist \
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_FIELDS
 from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithoutTrackSerializer \
     import FIELDS as SIMPLE_PLAYLIST_FIELDS
@@ -19,21 +18,18 @@ from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWi
     import FIELDS as CRITERIA_PLAYLIST_FIELDS
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import FIELDS as ARTIST_FIELDS
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import FIELDS as ALBUM_FIELDS
+from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(SearchTestCase):
 
     def test_query_in_track_artist_and_album(self):
-        summerlove_track = G(LibraryTrack,
-                             user=self.test_user,
-                             title="Summer Love",
-                             duration=0)
+        summerlove_track = G(LibraryTrack, user=self.test_user, title="Summer Love")
         sum41_artist = G(Artist, user=self.test_user, name="Sum 41")
         jailesum_album = G(Album, user=self.test_user, name="J'ai le Sum")
 
         response = self.search("Sum")
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        response_json = response.json()  # type: ignore
         assert self.overall_total == 3
         title_key = LIB_TRACK_FIELDS.TITLE
         assert self.results[LibraryTrack.__name__][0][title_key] == summerlove_track.title  # type: ignore
@@ -41,10 +37,7 @@ class TestCase(ApiTestCase):
         assert self.results[Album.__name__][0][ALBUM_FIELDS.NAME] == jailesum_album.name  # type: ignore
 
     def test_the_all_string_including_a_track(self):
-        werealltoblame_track = G(LibraryTrack,
-                                 user=self.test_user,
-                                 title="We're All To Blame",
-                                 duration=0)
+        werealltoblame_track = G(LibraryTrack, user=self.test_user, title="We're All To Blame")
         response = self.search("All")
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.overall_total == 2
@@ -54,15 +47,9 @@ class TestCase(ApiTestCase):
 
     def test_non_sensitiveness(self):
         rap_criteria_name = "Rap"
-        G(Criteria,
-          user=self.test_user,
-          name=rap_criteria_name,
-          type=CRITERIA_TYPES_ID.GENRE)
+        G(Criteria, user=self.test_user, name=rap_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
         us_rap_criteria_name = "US rap"
-        G(Criteria,
-          user=self.test_user,
-          name=us_rap_criteria_name,
-          type=CRITERIA_TYPES_ID.GENRE)
+        G(Criteria, user=self.test_user, name=us_rap_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
 
         response = self.search("Rap")
         assert response.status_code == status.HTTP_200_OK  # type: ignore

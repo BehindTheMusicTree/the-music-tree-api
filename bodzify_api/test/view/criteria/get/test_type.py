@@ -3,12 +3,12 @@
 from ddf import G
 from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID, CRITERIA_TYPES_LABEL
-from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import FIELDS as GET_FIELDS
+from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(CriteriaTestCase):
 
     def test(self):
         genre_name = "Rock"
