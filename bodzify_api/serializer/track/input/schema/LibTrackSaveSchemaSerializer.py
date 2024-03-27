@@ -33,7 +33,6 @@ def validate_rating(value):
 
 
 class LibTrackSaveSchemaSerializer(serializers.Serializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
     file = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
     title = serializers.CharField(
         max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX,
@@ -69,8 +68,7 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
     force_title_generation = serializers.BooleanField(required=False)
 
     class Meta:
-        fields = [FIELDS.USER,
-                  FIELDS.FILE,
+        fields = [FIELDS.FILE,
                   FIELDS.TITLE,
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,

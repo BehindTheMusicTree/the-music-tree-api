@@ -52,7 +52,7 @@ class CriteriaService(Service):
         save_schema_data[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent_uuid
         return save_schema_data
 
-    def _get_save_model_data_from_save_schema_data(
+    def _get_save_model_data_from_save_schema_data_not_including_user_field(
             self, user: User, save_schema_data: QueryDict, old_instance) -> QueryDict:
         save_model_data = QueryDict(mutable=True)
         save_model_data[CRITERIA_ATTRIBUTES_LABEL.USER] = user.pk

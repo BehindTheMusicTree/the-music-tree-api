@@ -76,7 +76,7 @@ class TrackService(Service):
     def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
         return LibTrackPutSerializer(instance=old_instance, data=put_schema_data)  # type: ignore
 
-    def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict):
+    def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict, request):
         return LibTrackSaveSchemaSerializer(data=save_schema_data)
 
     def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
@@ -113,7 +113,7 @@ class TrackService(Service):
             key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data, data2=put_schema_data)
         return save_schema_data
 
-    def _get_save_model_data_from_save_schema_data(
+    def _get_save_model_data_from_save_schema_data_not_including_user_field(
             self, user: User, save_schema_data: QueryDict, old_instance) -> QueryDict:
         save_model_data = QueryDict(mutable=True)
         save_model_data[SAVE_MODEL_FIELDS.USER] = user.pk

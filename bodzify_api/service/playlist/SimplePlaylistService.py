@@ -25,7 +25,8 @@ class SimplePlaylistService(Service):
     def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
         return post_schema_data
 
-    def _get_save_model_data_from_save_schema_data(self, user, save_schema_data: QueryDict, old_instance) -> QueryDict:
+    def _get_save_model_data_from_save_schema_data_not_including_user_field(
+            self, user, save_schema_data: QueryDict, old_instance) -> QueryDict:
         if old_instance is None:
             playlist_save_model_data = QueryDict(mutable=True)
             playlist_save_model_data[SAVE_MODEL_FIELDS.USER] = user.id

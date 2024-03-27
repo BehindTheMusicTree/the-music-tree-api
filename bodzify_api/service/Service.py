@@ -8,28 +8,30 @@ from rest_framework.serializers import Serializer
 
 class Service:
 
-    def create(self, user: User, post_schema_data: QueryDict):
+    def create(self, user: User, post_schema_data: QueryDict, request):
         post_schema_serializer = self._get_post_schema_serializer(post_schema_data=post_schema_data)
         post_schema_serializer.is_valid(raise_exception=True)
         save_schema_data = self._get_save_schema_data_from_post_schema_data(user=user,
                                                                             post_schema_data=post_schema_data)
         save_schema_data = self._get_query_dict_updated_with_user(query_dict=save_schema_data, user=user)
-        return self._save(user=user, save_schema_data=save_schema_data, old_instance=None)
+        return self._save(user=user, save_schema_data=save_schema_data, old_instance=None, request=request)
 
-    def update(self, user: User, put_schema_data: QueryDict, old_instance):
+    def update(self, user: User, put_schema_data: QueryDict, old_instance, request):
         put_schema_serializer = self._get_put_schema_serializer(old_instance=old_instance,
                                                                 put_schema_data=put_schema_data)
         put_schema_serializer.is_valid(raise_exception=True)
         save_schema_data = self._get_query_dict_updated_with_user(query_dict=put_schema_data, user=user)
-        return self._save(user=user, save_schema_data=save_schema_data, old_instance=old_instance)
+        return self._save(user=user, save_schema_data=save_schema_data, old_instance=old_instance, request=request)
 
-    def _save(self, user: User, save_schema_data: QueryDict, old_instance):
+    def _save(self, user: User, save_schema_data: QueryDict, old_instance, request):
         save_schema_serializer = self._get_save_schema_serializer(old_instance=old_instance,
-                                                                  save_schema_data=save_schema_data)
+                                                                  save_schema_data=save_schema_data,
+                                                                  request=request)
         save_schema_serializer.is_valid(raise_exception=True)
 
-        save_model_data = self._get_save_model_data_from_save_schema_data(
+        save_model_data = self._get_save_model_data_from_save_schema_data_not_including_user_field(
             user=user, save_schema_data=save_schema_data, old_instance=old_instance)
+        save_model_data['user'] = user.pk
         save_model_serializer = self._get_save_model_serializer(
             old_instance=old_instance,
             save_model_data=save_model_data,
@@ -46,10 +48,10 @@ class Service:
                                                    old_instance=None) -> QueryDict:
         return self._get_query_dict_updated_with_user(query_dict=put_schema_data, user=user)
 
-    def _get_save_model_data_from_save_schema_data(self,
-                                                   user: User,
-                                                   save_schema_data: QueryDict,
-                                                   old_instance=None) -> QueryDict:
+    def _get_save_model_data_from_save_schema_data_not_including_user_field(self,
+                                                                            user: User,
+                                                                            save_schema_data: QueryDict,
+                                                                            old_instance=None) -> QueryDict:
         return save_schema_data
 
     @abstractmethod
@@ -61,7 +63,7 @@ class Service:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
-    def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict) -> Serializer:
+    def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict, request) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
