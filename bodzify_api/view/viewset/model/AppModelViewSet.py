@@ -41,7 +41,7 @@ class AppModelViewSet(MultiSerializerViewSet):
     def _create(self, request, *args, **kwargs):
         request_data_snake_case = self.get_dict_with_snake_case_keys(request.data)
         try:
-            instance = self.service.create(user=request.user, post_schema_data=request_data_snake_case, request=request)
+            instance = self.service.create(post_schema_data=request_data_snake_case, request=request)
         except IntegrityError as e:
             logger.exception(e)
             return utility.get_response_when_bad_request(exception=e)
@@ -54,7 +54,6 @@ class AppModelViewSet(MultiSerializerViewSet):
     def _update(self, request, *args, **kwargs):
         request_data_snake_case = self.get_dict_with_snake_case_keys(request.data)
         updated_instance = self.service.update(
-            user=request.user,
             put_schema_data=request_data_snake_case,
             old_instance=self.get_object(),
             request=request)

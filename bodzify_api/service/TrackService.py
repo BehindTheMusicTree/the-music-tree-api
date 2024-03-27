@@ -106,8 +106,7 @@ class TrackService(Service):
 
         return save_schema_data
 
-    def _get_save_schema_data_from_put_schema_data(
-            self, user: User, put_schema_data: QueryDict, old_instance=None) -> QueryDict:
+    def _get_save_schema_data_from_put_schema_data(self, put_schema_data: QueryDict, old_instance=None) -> QueryDict:
         save_schema_data = put_schema_data.copy()
         self._update_data1_updated_with_key_string_converted_to_int_if_set_in_data2(
             key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data, data2=put_schema_data)

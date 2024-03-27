@@ -2,8 +2,7 @@
 
 import logging
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
-from bodzify_api.serializer.criteria.input.schema.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
-from bodzify_api.serializer.criteria.input.schema.CriteriaUpdateSchemaSerializer import CriteriaPutSchemaSerializer
+from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer import CriteriaSaveSchemaSerializer
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
@@ -26,7 +25,8 @@ class CriteriaViewSet(AppModelViewSet):
         'default': CriteriaDetailedSerializer,
         'list':  CriteriaDetailedSerializer,
         'retrieve':  CriteriaDetailedSerializer,
-        'create':  CriteriaPostSchemaSerializer,
+        'create':  CriteriaSaveSchemaSerializer,
+        'update':  CriteriaSaveSchemaSerializer,
     }
 
     def get_queryset(self):
@@ -49,7 +49,7 @@ class CriteriaViewSet(AppModelViewSet):
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return CriteriaDetailedSerializer(instance=instance)  # type: ignore
 
-    @extend_schema(request=CriteriaPostSchemaSerializer, responses=CriteriaDetailedSerializer)
+    @extend_schema(request=CriteriaSaveSchemaSerializer, responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         return self._create(request, *args, **kwargs)
 
@@ -64,7 +64,7 @@ class CriteriaViewSet(AppModelViewSet):
     def list(self, request, *args, **kwargs):
         return self._list(request, *args, **kwargs)
 
-    @extend_schema(request=CriteriaPutSchemaSerializer,
+    @extend_schema(request=CriteriaSaveSchemaSerializer,
                    responses=CriteriaDetailedSerializer,
                    description=("""Updates a criteria"""))
     def update(self, request, *args, **kwargs):

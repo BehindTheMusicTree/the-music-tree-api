@@ -3,14 +3,11 @@
 import logging
 from django.contrib.auth.models import User
 from django.http import QueryDict
-from bodzify_api.model.criteria.Criteria import Criteria, \
-    ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
-from bodzify_api.serializer.criteria.input.schema.CriteriaPostSchemaSerializer import CriteriaPostSchemaSerializer
+from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.input.CriteriaSaveModelSerializer import CriteriaSaveModelSerializer
-from bodzify_api.serializer.criteria.input.schema.CriteriaUpdateSchemaSerializer import CriteriaPutSchemaSerializer
+from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer import CriteriaSaveSchemaSerializer
 
 from bodzify_api.service.Service import Service
-from rest_framework.serializers import Serializer
 
 logger = logging.getLogger('bodzify_api')
 
@@ -31,13 +28,16 @@ class CriteriaService(Service):
         return criteria
 
     def _get_post_schema_serializer(self, post_schema_data: QueryDict):
-        return CriteriaPostSchemaSerializer(data=post_schema_data)  # type: ignore
+        return CriteriaSaveSchemaSerializer(data=post_schema_data)
 
-    def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict) -> Serializer:
-        return CriteriaPutSchemaSerializer(instance=old_instance, data=put_schema_data)  # type: ignore
+    def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict):
+        return CriteriaSaveSchemaSerializer(instance=old_instance, data=put_schema_data)
 
-    def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
-        return CriteriaSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)  # type: ignore
+    def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool):
+        return CriteriaSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
+
+    def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict, request):
+        return CriteriaSaveSchemaSerializer(data=save_schema_data, context={'request': request})
 
     def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
         save_schema_data = post_schema_data.copy()
@@ -70,9 +70,3 @@ class CriteriaService(Service):
         save_model_data[CRITERIA_ATTRIBUTES_LABEL.TYPE] = self.criteria_type_id
 
         return save_model_data
-
-    def get_criteria_playlist_class(self):
-        raise NotImplementedError("You should implement this method in a subclass")
-
-    def get_criteria_type_id(self):
-        raise NotImplementedError("You should implement this method in a subclass")

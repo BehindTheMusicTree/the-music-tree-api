@@ -15,14 +15,14 @@ class PlayService(Service):
     def _get_post_schema_serializer(self, post_schema_data: QueryDict):
         return PlayPostSerializer(data=post_schema_data)
 
-    def _get_put_schema_serializer(self, user: User, old_instance, put_schema_data: QueryDict):
-        raise NotImplementedError("You should implement this method in a subclass")
-
     def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict, request):
         return PlaySaveSchemaSerializer(data=save_schema_data, context={'request': request})
 
     def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool):
         return PlaySaveModelSerializer(data=save_model_data)
+
+    def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
+        return post_schema_data
 
     def _get_save_model_data_from_save_schema_data_not_including_user_field(self,
                                                                             user,

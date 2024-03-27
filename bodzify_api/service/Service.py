@@ -8,52 +8,6 @@ from rest_framework.serializers import Serializer
 
 class Service:
 
-    def create(self, user: User, post_schema_data: QueryDict, request):
-        post_schema_serializer = self._get_post_schema_serializer(post_schema_data=post_schema_data)
-        post_schema_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_save_schema_data_from_post_schema_data(user=user,
-                                                                            post_schema_data=post_schema_data)
-        save_schema_data = self._get_query_dict_updated_with_user(query_dict=save_schema_data, user=user)
-        return self._save(user=user, save_schema_data=save_schema_data, old_instance=None, request=request)
-
-    def update(self, user: User, put_schema_data: QueryDict, old_instance, request):
-        put_schema_serializer = self._get_put_schema_serializer(old_instance=old_instance,
-                                                                put_schema_data=put_schema_data)
-        put_schema_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_query_dict_updated_with_user(query_dict=put_schema_data, user=user)
-        return self._save(user=user, save_schema_data=save_schema_data, old_instance=old_instance, request=request)
-
-    def _save(self, user: User, save_schema_data: QueryDict, old_instance, request):
-        save_schema_serializer = self._get_save_schema_serializer(old_instance=old_instance,
-                                                                  save_schema_data=save_schema_data,
-                                                                  request=request)
-        save_schema_serializer.is_valid(raise_exception=True)
-
-        save_model_data = self._get_save_model_data_from_save_schema_data_not_including_user_field(
-            user=user, save_schema_data=save_schema_data, old_instance=old_instance)
-        save_model_data['user'] = user.pk
-        save_model_serializer = self._get_save_model_serializer(
-            old_instance=old_instance,
-            save_model_data=save_model_data,
-            partial=True)
-        save_model_serializer.is_valid(raise_exception=True)
-        return save_model_serializer.save()
-
-    def _get_save_schema_data_from_post_schema_data(self, user: User, post_schema_data: QueryDict) -> QueryDict:
-        return self._get_query_dict_updated_with_user(query_dict=post_schema_data, user=user)
-
-    def _get_save_schema_data_from_put_schema_data(self,
-                                                   user: User,
-                                                   put_schema_data: QueryDict,
-                                                   old_instance=None) -> QueryDict:
-        return self._get_query_dict_updated_with_user(query_dict=put_schema_data, user=user)
-
-    def _get_save_model_data_from_save_schema_data_not_including_user_field(self,
-                                                                            user: User,
-                                                                            save_schema_data: QueryDict,
-                                                                            old_instance=None) -> QueryDict:
-        return save_schema_data
-
     @abstractmethod
     def _get_post_schema_serializer(self, post_schema_data: QueryDict) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
@@ -70,10 +24,20 @@ class Service:
     def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
 
-    def _get_query_dict_updated_with_user(self, query_dict: QueryDict, user: User) -> QueryDict:
-        query_dict2 = query_dict.copy()
-        query_dict2['user'] = user.pk
-        return query_dict2
+    @abstractmethod
+    def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
+        raise NotImplementedError("You should implement this method in a subclass")
+
+    @abstractmethod
+    def _get_save_schema_data_from_put_schema_data(self, put_schema_data: QueryDict, old_instance=None) -> QueryDict:
+        raise NotImplementedError("You should implement this method in a subclass")
+
+    @abstractmethod
+    def _get_save_model_data_from_save_schema_data_not_including_user_field(self,
+                                                                            user: User,
+                                                                            save_schema_data: QueryDict,
+                                                                            old_instance=None) -> QueryDict:
+        raise NotImplementedError("You should implement this method in a subclass")
 
     @staticmethod
     def _update_data1_with_key_if_set_in_data2(
@@ -110,3 +74,32 @@ class Service:
             if key not in keys:
                 del dict2[key]
         return dict2
+
+    def create(self, post_schema_data: QueryDict, request):
+        post_schema_serializer = self._get_post_schema_serializer(post_schema_data=post_schema_data)
+        post_schema_serializer.is_valid(raise_exception=True)
+        save_schema_data = self._get_save_schema_data_from_post_schema_data(post_schema_data=post_schema_data)
+        return self._save(save_schema_data=save_schema_data, old_instance=None, request=request)
+
+    def update(self, put_schema_data: QueryDict, old_instance, request):
+        put_schema_serializer = self._get_put_schema_serializer(old_instance=old_instance,
+                                                                put_schema_data=put_schema_data)
+        put_schema_serializer.is_valid(raise_exception=True)
+        save_schema_data = self._get_save_schema_data_from_put_schema_data(put_schema_data=put_schema_data)
+        return self._save(save_schema_data=save_schema_data, old_instance=old_instance, request=request)
+
+    def _save(self, save_schema_data: QueryDict, old_instance, request):
+        save_schema_serializer = self._get_save_schema_serializer(old_instance=old_instance,
+                                                                  save_schema_data=save_schema_data,
+                                                                  request=request)
+        save_schema_serializer.is_valid(raise_exception=True)
+
+        save_model_data = self._get_save_model_data_from_save_schema_data_not_including_user_field(
+            user=request.user, save_schema_data=save_schema_data, old_instance=old_instance)
+        save_model_data['user'] = request.user.pk
+        save_model_serializer = self._get_save_model_serializer(
+            old_instance=old_instance,
+            save_model_data=save_model_data,
+            partial=True)
+        save_model_serializer.is_valid(raise_exception=True)
+        return save_model_serializer.save()
