@@ -17,7 +17,7 @@ class FIELDS:
     NAME = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.NAME
     ADDED_ON = PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON
     PARENT = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
-    LIBRARY_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT
+    LIB_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
 
 
 class PlaylistChildWithoutTrackSerializer(PlaylistWithoutTrackSerializer):
@@ -40,4 +40,4 @@ class PlaylistChildWithoutTrackSerializer(PlaylistWithoutTrackSerializer):
                   FIELDS.NAME,
                   FIELDS.ADDED_ON,
                   FIELDS.PARENT,
-                  FIELDS.LIBRARY_TRACKS_COUNT]
+                  FIELDS.LIB_TRACKS_COUNT]

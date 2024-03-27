@@ -2,7 +2,6 @@
 
 from bodzify_api import settings
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from rest_framework import serializers
 
@@ -11,7 +10,7 @@ class FIELDS:
     NAME = PLAYLIST_ATTRIBUTES_LABEL.NAME
 
 
-class SimplePlaylistPutSchemaSerializer(InputEndpointSerializer):
+class SimplePlaylistSaveSchemaSerializer(serializers.Serializer):
     name = serializers.CharField(
         max_length=settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX,
         required=False,

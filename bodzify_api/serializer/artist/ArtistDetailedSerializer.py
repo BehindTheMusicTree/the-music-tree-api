@@ -9,7 +9,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 class ArtistDetailedSerializer(serializers.ModelSerializer):
     albums = AlbumWithoutTracksSerializer(many=True)
-    library_tracks_count = serializers.IntegerField(source=ATTRIBUTES_LABEL.LIBRARY_TRACKS + '.count')
+    library_tracks_count = serializers.IntegerField(source=ATTRIBUTES_LABEL.LIB_TRACKS + '.count')
     duration = serializers.SerializerMethodField()
 
     def get_duration(self, obj) -> float:
@@ -21,6 +21,6 @@ class ArtistDetailedSerializer(serializers.ModelSerializer):
         fields = [ATTRIBUTES_LABEL.UUID,
                   ATTRIBUTES_LABEL.NAME,
                   ATTRIBUTES_LABEL.ALBUMS,
-                  ATTRIBUTES_LABEL.LIBRARY_TRACKS,
-                  ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT,
+                  ATTRIBUTES_LABEL.LIB_TRACKS,
+                  ATTRIBUTES_LABEL.LIB_TRACKS_COUNT,
                   ATTRIBUTES_LABEL.DURATION]

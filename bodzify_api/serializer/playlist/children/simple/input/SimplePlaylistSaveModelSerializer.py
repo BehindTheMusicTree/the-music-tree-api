@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
+from yaml import serialize
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, ATTRIBUTES_LABEL as SIMPLE_PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
+from rest_framework import serializers
 
 
 class FIELDS:
@@ -12,7 +13,7 @@ class FIELDS:
     USER = PLAYLIST_ATTRIBUTES_LABEL.USER
 
 
-class SimplePlaylistSaveModelSerializer(InputEndpointSerializer):
+class SimplePlaylistSaveModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SimplePlaylist

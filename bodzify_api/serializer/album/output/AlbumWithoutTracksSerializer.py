@@ -11,13 +11,13 @@ class FIELDS:
     NAME = ALBUM_ATTRIBUTES_LABEL.NAME
     YEAR = ALBUM_ATTRIBUTES_LABEL.YEAR
     ALBUM_ARTISTS = ALBUM_ATTRIBUTES_LABEL.ALBUM_ARTISTS
-    LIBRARY_TRACKS_COUNT = ALBUM_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT
+    LIB_TRACKS_COUNT = ALBUM_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
     DURATION = ALBUM_ATTRIBUTES_LABEL.DURATION
 
 
 class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
     album_artists = ArtistWithOnlyNameSerializer(many=True)
-    library_tracks_count = serializers.IntegerField(source=ALBUM_ATTRIBUTES_LABEL.LIBRARY_TRACKS + '.count')
+    library_tracks_count = serializers.IntegerField(source=ALBUM_ATTRIBUTES_LABEL.LIB_TRACKS + '.count')
     duration = serializers.SerializerMethodField()
 
     def get_duration(self, obj) -> float:
@@ -31,6 +31,6 @@ class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
             FIELDS.NAME,
             FIELDS.YEAR,
             FIELDS.ALBUM_ARTISTS,
-            FIELDS.LIBRARY_TRACKS_COUNT,
+            FIELDS.LIB_TRACKS_COUNT,
             FIELDS.DURATION,
         ]

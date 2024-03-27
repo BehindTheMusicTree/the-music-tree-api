@@ -20,6 +20,6 @@ class AlbumWithoutTracksAndArtistsSerializer(serializers.ModelSerializer):
             ALBUM_ATTRIBUTES_LABEL.UUID,
             ALBUM_ATTRIBUTES_LABEL.NAME,
             ALBUM_ATTRIBUTES_LABEL.YEAR,
-            ALBUM_ATTRIBUTES_LABEL.LIBRARY_TRACKS_COUNT,
+            ALBUM_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT,
             ALBUM_ATTRIBUTES_LABEL.DURATION,
         ]

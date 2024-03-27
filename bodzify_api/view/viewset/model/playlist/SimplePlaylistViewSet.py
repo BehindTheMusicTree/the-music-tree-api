@@ -4,10 +4,8 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist, ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPostSchemaSerializer \
-    import SimplePlaylistPostSchemaSerializer
-from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistPutSchemaSerializer \
-    import SimplePlaylistPutSchemaSerializer
+from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistInputEndpointSerializer \
+    import SimplePlaylistInputEndpointSerializer
 from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTracksSerializer \
     import SimplePlaylistWithTracksSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
@@ -41,16 +39,14 @@ class SimplePlaylistViewSet(AppModelViewSet):
         return SimplePlaylistWithTracksSerializer(instance=instance)
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=GET_FILTER_FIELDS.NAME,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY)])
+        OpenApiParameter(name=GET_FILTER_FIELDS.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @extend_schema(request=SimplePlaylistPostSchemaSerializer, responses=SimplePlaylistWithTracksSerializer)
+    @extend_schema(request=SimplePlaylistInputEndpointSerializer, responses=SimplePlaylistWithTracksSerializer)
     def create(self, request, *args, **kwargs):
         return self._create(request, *args, **kwargs)
 
-    @extend_schema(request=SimplePlaylistPutSchemaSerializer, responses=SimplePlaylistWithTracksSerializer)
+    @extend_schema(request=SimplePlaylistInputEndpointSerializer, responses=SimplePlaylistWithTracksSerializer)
     def update(self, request, *args, **kwargs):
         return self._update(request, *args, **kwargs)
