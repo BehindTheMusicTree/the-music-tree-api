@@ -33,11 +33,11 @@ class CriteriaService(Service):
     def _get_put_schema_serializer(self, old_instance, put_schema_data: QueryDict):
         return CriteriaSaveSchemaSerializer(instance=old_instance, data=put_schema_data)
 
-    def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool):
-        return CriteriaSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
-
     def _get_save_schema_serializer(self, old_instance, save_schema_data: QueryDict, request):
         return CriteriaSaveSchemaSerializer(data=save_schema_data, context={'request': request})
+
+    def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool):
+        return CriteriaSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
 
     def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
         save_schema_data = post_schema_data.copy()
@@ -51,6 +51,9 @@ class CriteriaService(Service):
             parent_uuid = ""
         save_schema_data[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent_uuid
         return save_schema_data
+
+    def _get_save_schema_data_from_put_schema_data(self, put_schema_data: QueryDict, old_instance) -> QueryDict:
+        return put_schema_data
 
     def _get_save_model_data_from_save_schema_data_not_including_user_field(
             self, user: User, save_schema_data: QueryDict, old_instance) -> QueryDict:

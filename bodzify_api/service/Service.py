@@ -85,7 +85,8 @@ class Service:
         put_schema_serializer = self._get_put_schema_serializer(old_instance=old_instance,
                                                                 put_schema_data=put_schema_data)
         put_schema_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_save_schema_data_from_put_schema_data(put_schema_data=put_schema_data)
+        save_schema_data = self._get_save_schema_data_from_put_schema_data(put_schema_data=put_schema_data,
+                                                                           old_instance=old_instance)
         return self._save(save_schema_data=save_schema_data, old_instance=old_instance, request=request)
 
     def _save(self, save_schema_data: QueryDict, old_instance, request):

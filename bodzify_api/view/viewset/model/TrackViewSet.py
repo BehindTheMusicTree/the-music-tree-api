@@ -175,7 +175,7 @@ class TrackViewSet(AppModelViewSet):
         serializer = LibTrackExtractSerializer(data=request_data_snake_case)
         serializer.is_valid(raise_exception=True)
 
-        track = self.service.extract(user=request.user, extract_schema_data=request_data_snake_case)
+        track = self.service.extract(extract_schema_data=request_data_snake_case)
         response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
         return Response(

@@ -82,7 +82,7 @@ class TrackService(Service):
     def _get_save_model_serializer(self, old_instance, save_model_data: QueryDict, partial: bool) -> Serializer:
         return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)  # type: ignore
 
-    def _get_save_schema_data_from_post_schema_data(self, user: User, post_schema_data: QueryDict) -> QueryDict:
+    def _get_save_schema_data_from_post_schema_data(self, post_schema_data: QueryDict) -> QueryDict:
         file = post_schema_data[POST_FIELDS.FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
 
@@ -115,7 +115,6 @@ class TrackService(Service):
     def _get_save_model_data_from_save_schema_data_not_including_user_field(
             self, user: User, save_schema_data: QueryDict, old_instance) -> QueryDict:
         save_model_data = QueryDict(mutable=True)
-        save_model_data[SAVE_MODEL_FIELDS.USER] = user.pk
 
         for key in [SAVE_MODEL_FIELDS.FILE,
                     SAVE_MODEL_FIELDS.TITLE,
@@ -143,7 +142,7 @@ class TrackService(Service):
 
         return save_model_data
 
-    def extract(self, user: User, extract_schema_data: QueryDict):
+    def extract(self, extract_schema_data: QueryDict, request):
         mine_track_url = extract_schema_data[MINE_TRACK_FIELDS.URL]
         track_in_memory_file = requests.get(mine_track_url, stream=True)
         with NamedTemporaryFile(delete=True) as track_temp_file:
@@ -161,7 +160,7 @@ class TrackService(Service):
             post_schema_data[POST_FIELDS.FILE] = File(track_temp_file, name=track_filename)  # type: ignore
             force_title_generation_str = str(is_filename_randomly_generated)
             post_schema_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
-            library_track = self.create(user=user, post_schema_data=post_schema_data)
+            library_track = self.create(post_schema_data=post_schema_data, request=request)
 
         return library_track
 
