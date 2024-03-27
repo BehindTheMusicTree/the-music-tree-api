@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import logging
+from urllib.parse import urlencode
 
 from django.urls import reverse
 from rest_framework import status
@@ -21,8 +22,8 @@ class PlayTestCase(ApiTestCase):
 
     def post_play(self, data_dict):
         response = self.api_client.post(path=reverse('play-list'),
-                                        data=self._replace_none_values_by_empty_string(data_dict),
-                                        format='json')
+                                        data=urlencode(self._replace_none_values_by_empty_string(data_dict)),
+                                        content_type='application/x-www-form-urlencoded')
         if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_play_attribute(response)
         return response

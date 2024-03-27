@@ -4,6 +4,7 @@ from abc import abstractmethod
 import logging
 import re
 from django.db import IntegrityError
+from django.http import QueryDict
 from rest_framework.response import Response
 from rest_framework import status
 from bodzify_api.service.Service import Service
@@ -31,15 +32,29 @@ class AppModelViewSet(MultiSerializerViewSet):
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
 
     @staticmethod
-    def get_dict_with_snake_case_keys(dictionary: dict):
-        return {AppModelViewSet.camel_to_snake(key): value for key, value in dictionary.items()}
+    def get_dict_with_snake_case_keys_from_form_data(form_data):
+        snake_case_dict = {}
+        if isinstance(form_data, QueryDict):
+            for key, values in form_data.lists():
+                snake_case_key = AppModelViewSet.camel_to_snake(key)
+                if len(values) > 1:
+                    snake_case_dict[snake_case_key] = values
+                else:
+                    snake_case_dict[snake_case_key] = values[0]
+        elif isinstance(form_data, dict):
+            for key, value in form_data.items():
+                snake_case_key = AppModelViewSet.camel_to_snake(key)
+                snake_case_dict[snake_case_key] = value
+        return snake_case_dict
 
     def __init__(self, service, **kwargs):
         super().__init__(**kwargs)
         self.service = service
 
     def _create(self, request, *args, **kwargs):
-        request_data_snake_case = self.get_dict_with_snake_case_keys(request.data)
+        print(request.data)
+        request_data_snake_case = self.get_dict_with_snake_case_keys_from_form_data(request.data)
+        print(request_data_snake_case)
         try:
             instance = self.service.create(post_schema_data=request_data_snake_case, request=request)
         except IntegrityError as e:
@@ -52,7 +67,7 @@ class AppModelViewSet(MultiSerializerViewSet):
         return Response(data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def _update(self, request, *args, **kwargs):
-        request_data_snake_case = self.get_dict_with_snake_case_keys(request.data)
+        request_data_snake_case = self.get_querydict_with_snake_case_keys_for_form_data(request.data)
         updated_instance = self.service.update(
             put_schema_data=request_data_snake_case,
             old_instance=self.get_object(),
