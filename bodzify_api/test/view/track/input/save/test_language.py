@@ -10,25 +10,19 @@ class TestCase(FieldStrNullableTestCase):
 
     def test_longest_then_ok(self):
         language = "a" * settings.LIB_TRACK_LANGUAGE_LENGTH_MAX
-        data = {
-            PUT_FIELDS.LANGUAGE: language
-        }
+        data = {PUT_FIELDS.LANGUAGE: language}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.language == language
 
     def test_too_long_then_error(self):
         language = "a" * (settings.LIB_TRACK_LANGUAGE_LENGTH_MAX + 1)
-        data = {
-            PUT_FIELDS.LANGUAGE: language
-        }
+        data = {PUT_FIELDS.LANGUAGE: language}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_empty_then_none(self):
-        data = {
-            PUT_FIELDS.LANGUAGE: ""
-        }
+        data = {PUT_FIELDS.LANGUAGE: ""}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.language == None

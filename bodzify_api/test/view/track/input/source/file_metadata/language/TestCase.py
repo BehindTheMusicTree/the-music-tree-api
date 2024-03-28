@@ -20,7 +20,7 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
 
     def test_longest(self):
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-            extension=self.file_extension)
+            extension=self.file_extension)  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.language == 'a' * settings.LIB_TRACK_LANGUAGE_LENGTH_MAX
 

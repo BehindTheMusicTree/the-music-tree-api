@@ -6,11 +6,13 @@ from typing import Optional
 from bodzify_api.test.ApiTestCase import ApiTestCase
 from rest_framework import status
 
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+
 
 logger = logging.getLogger('bodzify_api')
 
 
-class UpdateFileMetadataIntTestCase(ApiTestCase):
+class UpdateFileMetadataIntTestCase(TrackTestCase):
     save_field = None
     lib_track_metadata_dict_key = None
     file_extension = None
@@ -24,9 +26,7 @@ class UpdateFileMetadataIntTestCase(ApiTestCase):
                     additional_data_dict=None,
                     file_has_tags=False):
         value_str = str(value) if value is not None else ''
-        data = {
-            self.save_field: value_str
-        }
+        data = {self.save_field: value_str}
         if additional_data_dict:
             data.update(additional_data_dict)
 
