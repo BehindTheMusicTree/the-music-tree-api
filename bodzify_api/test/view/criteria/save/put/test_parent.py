@@ -13,8 +13,7 @@ class TestCase(CriteriaTestCase):
     def test_not_provided_then_unchanged(self):
         rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, parent=rock_genre)
-        data = {}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data) # type: ignore
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict={}) # type: ignore
         assert response.status_code == status.HTTP_200_OK # type: ignore
         assert self.saved_genre.parent == rock_genre
 
