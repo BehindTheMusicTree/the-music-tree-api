@@ -6,10 +6,10 @@ from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.view.track.input.method.put.FieldTestCase import FieldTestCase
+from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import NullableFieldTestCase
 
 
-class TestCase(FieldTestCase):
+class TestCase(NullableFieldTestCase):
 
     def test_not_provided_then_unchanged(self):
         artist = G(Artist, user=self.test_user, name="a-ha")

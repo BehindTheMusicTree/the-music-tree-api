@@ -4,41 +4,29 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
-from bodzify_api.test.view.track.input.method.put.FieldTestCase import FieldTestCase
+from bodzify_api.test.view.track.input.method.put.NotNullableFieldTestCase import NotNullableFieldTestCase
 
 
-class TestCase(FieldTestCase):
+class TestCase(NotNullableFieldTestCase):
 
     def test_not_empty_then_ok(self):
-        title = "a"
-        lib_track = G(LibraryTrack,
-                      user=self.test_user,
-                      title="Love",
-                      duration=0)
-        data = {
-            PUT_FIELDS.TITLE: title
-        }
+        lib_track = G(LibraryTrack, user=self.test_user, title="Love")
+        title_new = "a"
+        data = {PUT_FIELDS.TITLE: title_new}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        assert self.saved_lib_track.title == title
+        assert self.saved_lib_track.title == title_new
 
     def test_not_provided_then_unchanged(self):
-        lib_track = G(LibraryTrack,
-                      user=self.test_user,
-                      duration=0)
-        data = {}
-        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
+        old_title = "Love"
+        lib_track = G(LibraryTrack, user=self.test_user, title=old_title)
+        response = self.put_lib_track(lib_track.uuid, data_dict={})  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        assert self.saved_lib_track.title == None
+        assert self.saved_lib_track.title == old_title
 
     def test_empty_then_none(self):
-        lib_track = G(LibraryTrack,
-                      user=self.test_user,
-                      title="Love",
-                      duration=0)
-        data = {
-            PUT_FIELDS.TITLE: ""
-        }
+        lib_track = G(LibraryTrack, user=self.test_user, title="Love")
+        data = {PUT_FIELDS.TITLE: ""}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.title == None
