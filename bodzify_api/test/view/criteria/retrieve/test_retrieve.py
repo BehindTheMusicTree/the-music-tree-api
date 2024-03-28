@@ -34,7 +34,6 @@ class TestCase(CriteriaTestCase):
 
         response = self.retrieve_genre(uuid=criteriaUuid)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        print(self.result)
         lib_tracks = self.result[to_camel_case(RETRIEVE_FIELDS.LIB_TRACKS)]
         assert len(lib_tracks) == 2
         titles = [track[RETRIEVE_FIELDS.LIB_TRACKS_TITLE] for track in lib_tracks]

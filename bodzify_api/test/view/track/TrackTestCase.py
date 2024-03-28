@@ -72,7 +72,6 @@ class TrackTestCase(ApiTestCase):
         return self.extract(self._replace_none_values_by_empty_string(extract_data_dict))
 
     def post_lib_track(self, file_abs_path=None, data_dict=None):
-        print('data_dict', data_dict)
         if file_abs_path is None:
             return self.api_client.post(path=reverse('librarytrack-list'),
                                         data=urlencode({LIB_TRACK_POST_FIELDS.FILE: ''}),
