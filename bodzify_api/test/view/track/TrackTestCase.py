@@ -121,7 +121,7 @@ class TrackTestCase(ApiTestCase):
             generic_sample_file_extension=extension,
             data_dict=data_dict)
 
-    def post_lib_track_with_generic_sample_1_star(self, extension, data_dict=None):
+    def post_lib_track_with_generic_sample_1_star(self, extension='mp3', data_dict=None):
         filename_without_extension = AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
         return self.post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
