@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import logging
+from urllib.parse import urlencode
 from django.urls import get_resolver
 
 from django.urls import reverse
@@ -45,10 +46,10 @@ class TrackTestCase(ApiTestCase):
                 file=self.saved_lib_track.file)
 
     def extract(self, data_dict):
-        response = self.api_client.post(
-            path=reverse('librarytrack-extract'),
-            data=self._replace_none_values_by_empty_string(data_dict),
-            format='json')
+        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
+        response = self.api_client.post(path=reverse('librarytrack-extract'),
+                                        data=data_url_encoded,
+                                        content_type='application/x-www-form-urlencoded')
 
         if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_lib_track_attribute(response)
@@ -73,19 +74,16 @@ class TrackTestCase(ApiTestCase):
 
     def post_lib_track(self, file_abs_path=None, data_dict=None):
         if file_abs_path is None:
-            return self.api_client.post(
-                path=reverse('librarytrack-list'),
-                data={LIB_TRACK_POST_FIELDS.FILE: ''},
-                format='json',)
+            return self.api_client.post(path=reverse('librarytrack-list'),
+                                        data=urlencode({LIB_TRACK_POST_FIELDS.FILE: ''}),
+                                        content_type='application/x-www-form-urlencoded')
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LIB_TRACK_POST_FIELDS.FILE: sample_file}
             if data_dict is not None:
-                data_dict = self._merge_two_dicts(file_field_dict, data_dict)
+                data_dict = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(data_dict))
             else:
                 data_dict = file_field_dict
-            response = self.api_client.post(
-                path=reverse('librarytrack-list'),
-                data=self._replace_none_values_by_empty_string(data_dict))
+            response = self.api_client.post(path=reverse('librarytrack-list'), data=data_dict, format='multipart')
             if response.status_code == status.HTTP_201_CREATED:  # type: ignore
                 self._set_saved_lib_track_attribute(response)
             return response

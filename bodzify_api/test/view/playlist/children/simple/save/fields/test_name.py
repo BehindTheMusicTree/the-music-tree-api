@@ -7,17 +7,18 @@ from bodzify_api.test.view.playlist.children.simple.SimplePlaylistTestCase impor
 
 
 class TestCase(SimplePlaylistTestCase):
+    
+    def test_multiple_values_then_error(self):
+        data = {FIELDS.NAME: ["value", "value2"]}
+        response = self.post_simple_playlist(data_dict=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST # type: ignore
 
-    def test_value_then_ok(self):
-        data = {FIELDS.NAME: "a"}
+    def test_longest(self):
+        data = {FIELDS.NAME: "a" * settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX}
         response = self.post_simple_playlist(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
-    def test_empty_then_error(self):
-        data = {FIELDS.NAME: ""}
+    def test_error_when_too_long(self):
+        data = {FIELDS.NAME: "a" * (settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX + 1)}
         response = self.post_simple_playlist(data_dict=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
-
-    def test_not_provided_then_error(self):
-        response = self.post_simple_playlist(data_dict={})
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

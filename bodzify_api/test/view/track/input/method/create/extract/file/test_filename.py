@@ -37,9 +37,7 @@ class FilenameTestCase(TrackTestCase):
 
     def test_only_title_in_data_then_filename_with_title(self):
         title = "Hellö"
-        data_dict = {
-            EXTRACT_FIELDS.TITLE: title
-        }
+        data_dict = {EXTRACT_FIELDS.TITLE: title}
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.filename == f"{title}.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
@@ -49,9 +47,7 @@ class FilenameTestCase(TrackTestCase):
             "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"
             + "_KN414JidBikY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
-        data_dict = {
-            EXTRACT_FIELDS.URL: track_url
-        }
+        data_dict = {EXTRACT_FIELDS.URL: track_url}
         response = self.extract(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert len(self.saved_lib_track.filename) == settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH

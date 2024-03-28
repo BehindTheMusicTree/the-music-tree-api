@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import logging
+from urllib.parse import urlencode
 from django.urls import get_resolver
 
 from django.urls import reverse
@@ -23,18 +24,19 @@ class SimplePlaylistTestCase(ApiTestCase):
         self.saved_simple_playlist = SimplePlaylist.objects.get(playlist__uuid=uuid)
 
     def post_simple_playlist(self, data_dict):
+        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
         response = self.api_client.post(path=reverse('simple-playlist-list'),
-                                        data=self._replace_none_values_by_empty_string(data_dict),
-                                        format='json')
+                                        data=data_url_encoded,
+                                        content_type='application/x-www-form-urlencoded')
         if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_simple_playlist_attribute(response)
         return response
 
     def put_simple_playlist(self, simple_playlist_uuid: str, data_dict):
-        response = self.api_client.put(
-            path=reverse('simple-playlist-detail', kwargs={'pk': simple_playlist_uuid}),
-            data=self._replace_none_values_by_empty_string(data_dict),
-            format='json')
+        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
+        response = self.api_client.put(path=reverse('simple-playlist-detail', kwargs={'pk': simple_playlist_uuid}),
+                                       data=data_url_encoded,
+                                       content_type='application/x-www-form-urlencoded')
         if response.status_code == status.HTTP_200_OK:  # type: ignore
             self._set_saved_simple_playlist_attribute(response)
         return response
