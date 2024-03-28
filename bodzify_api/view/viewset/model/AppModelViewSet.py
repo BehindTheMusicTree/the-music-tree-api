@@ -52,7 +52,6 @@ class AppModelViewSet(MultiSerializerViewSet):
         self.service = service
 
     def _create(self, request, *args, **kwargs):
-        print(request.data)
         request_data_snake_case = self.get_dict_with_snake_case_keys_from_form_data(request.data)
         try:
             instance = self.service.create(post_data=request_data_snake_case, request=request)

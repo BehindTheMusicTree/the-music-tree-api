@@ -21,9 +21,9 @@ class PlayTestCase(ApiTestCase):
         self.saved_play = Play.objects.get(uuid=uuid)
 
     def post_play(self, data_dict):
-        logger.debug(f"Posting play with data: {data_dict}")
+        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
         response = self.api_client.post(path=reverse('play-list'),
-                                        data=urlencode(self._replace_none_values_by_empty_string(data_dict)),
+                                        data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
         if response.status_code == status.HTTP_201_CREATED:  # type: ignore
             self._set_saved_play_attribute(response)

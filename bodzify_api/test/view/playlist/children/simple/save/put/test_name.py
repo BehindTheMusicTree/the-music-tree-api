@@ -30,7 +30,7 @@ class TestCase(SimplePlaylistTestCase):
         assert self.saved_simple_playlist.name == simple_playlist_name
 
     def test_empty_then_error(self):
-        simple_playlist_uuid = G(SimplePlaylist, name='foero', playlist__user=self.test_user).uuid  # type: ignore
+        uuid = G(SimplePlaylist, name='foero', playlist__user=self.test_user).playlist.uuid  # type: ignore
         data = {PLAYLIST_ATTRIBUTES_LABEL.NAME: ""}
-        response = self.put_simple_playlist(simple_playlist_uuid=simple_playlist_uuid.uuid, data_dict=data)
+        response = self.put_simple_playlist(simple_playlist_uuid=uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

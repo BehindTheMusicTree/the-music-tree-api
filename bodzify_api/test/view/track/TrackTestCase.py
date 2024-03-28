@@ -46,8 +46,9 @@ class TrackTestCase(ApiTestCase):
                 file=self.saved_lib_track.file)
 
     def extract(self, data_dict):
+        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
         response = self.api_client.post(path=reverse('librarytrack-extract'),
-                                        data=urlencode(self._replace_none_values_by_empty_string(data_dict)),
+                                        data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
 
         if response.status_code == status.HTTP_201_CREATED:  # type: ignore
