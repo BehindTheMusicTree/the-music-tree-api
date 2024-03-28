@@ -24,8 +24,7 @@ from bodzify_api.validator.TrackFileValidator import validate_size
 
 
 def _get_user_directory_path(instance, filename):
-    return '{0}{1}/{2}'.format(settings.LIB_DIR_NAME + '/' +
-                               settings.USER_LIB_DIR_NAME_PREFIXE,
+    return '{0}{1}/{2}'.format(settings.LIB_DIR_NAME + '/' + settings.USER_LIB_DIR_NAME_PREFIXE,
                                instance.user.id,
                                filename)
 

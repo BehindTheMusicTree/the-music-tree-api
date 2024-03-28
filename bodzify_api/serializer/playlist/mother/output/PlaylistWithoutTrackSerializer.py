@@ -12,6 +12,7 @@ class FIELDS:
     TYPE = ATTRIBUTES_LABEL.TYPE
     ADDED_ON = ATTRIBUTES_LABEL.ADDED_ON
     LIB_TRACKS_COUNT = ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
+    PLAY_COUNT = ATTRIBUTES_LABEL.PLAY_COUNT
 
 
 class PlaylistWithoutTrackSerializer(serializers.ModelSerializer):
@@ -41,4 +42,5 @@ class PlaylistWithoutTrackSerializer(serializers.ModelSerializer):
                   FIELDS.NAME,
                   FIELDS.TYPE,
                   FIELDS.ADDED_ON,
-                  FIELDS.LIB_TRACKS_COUNT]
+                  FIELDS.LIB_TRACKS_COUNT,
+                  FIELDS.PLAY_COUNT]
