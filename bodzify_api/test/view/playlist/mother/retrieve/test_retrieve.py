@@ -5,6 +5,7 @@ from rest_framework import status
 from ddf import G
 
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as RETRIEVE_FIELDS
