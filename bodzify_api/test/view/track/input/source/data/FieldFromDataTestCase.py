@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackExtractSerializer import FIELDS as EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
 class FieldFromDataTestCase(TrackTestCase):
-    extract_field_key = None
+    post_field_key = None
 
     def _test_ok(self, value):
-        data = {
-            self.extract_field_key: value
-        }
+        data = {self.post_field_key: value}
         response = self.post_lib_track_with_generic_sample_no_tags(extension='mp3', data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
 
@@ -33,20 +31,20 @@ class FieldIntFromDataTestCase(FieldFromDataTestCase):
 
 
 class ArtistTestCase(FieldStrFromDataTestCase):
-    extract_field_key = EXTRACT_FIELDS.ARTIST_NAME
+    post_field_key = POST_FIELDS.ARTIST_NAME
 
 
 class GenreTestCase(FieldStrFromDataTestCase):
-    extract_field_key = EXTRACT_FIELDS.GENRE_NAME
+    post_field_key = POST_FIELDS.GENRE_NAME
 
 
 class LanguageTestCase(FieldStrFromDataTestCase):
-    extract_field_key = EXTRACT_FIELDS.LANGUAGE
+    post_field_key = POST_FIELDS.LANGUAGE
 
 
 class TitleTestCase(FieldStrFromDataTestCase):
-    extract_field_key = EXTRACT_FIELDS.TITLE
+    post_field_key = POST_FIELDS.TITLE
 
 
 class RatingTestCase(FieldIntFromDataTestCase):
-    extract_field_key = EXTRACT_FIELDS.RATING
+    post_field_key = POST_FIELDS.RATING
