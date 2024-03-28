@@ -2,7 +2,7 @@
 
 from drf_spectacular.utils import extend_schema
 
-from bodzify_api.model.play.Play import Play
+from bodzify_api.model.Play import Play
 from bodzify_api.serializer.play.input.schema.endpoint.PlayPostSchemaSerializer import PlayPostSerializer
 from bodzify_api.serializer.play.output.PlayDetailedSerializer import PlayDetailedSerializer
 from bodzify_api.service.PlayService import PlayService

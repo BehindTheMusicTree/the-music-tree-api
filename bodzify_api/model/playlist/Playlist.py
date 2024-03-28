@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 
-from bodzify_api.model.play.Play import Play
+from bodzify_api.model.Play import Play
 
 
 class SPECIAL_NAMES:

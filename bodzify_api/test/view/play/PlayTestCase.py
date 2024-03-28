@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.model.play.Play import Play
+from bodzify_api.model.Play import Play
 from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.serializer.play.output.PlayDetailedSerializer import FIELDS as GET_FIELDS
 

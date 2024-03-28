@@ -153,7 +153,7 @@ class Migration(migrations.Migration):
                         serialize=False,
                     ),
                 ),
-                ("object_id", models.CharField(max_length=22)),
+                ("object_uuid", models.CharField(max_length=22)),
                 ("time", models.DateTimeField(auto_now_add=True)),
                 (
                     "content_type",
