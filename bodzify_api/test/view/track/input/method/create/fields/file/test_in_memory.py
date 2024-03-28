@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
 """
@@ -10,7 +10,7 @@ Thus the python file object is not available. This test case is to ensure that t
 """
 
 
-class InMemoryTestCase(ApiTestCase):
+class InMemoryTestCase(TrackTestCase):
 
     def test_in_memory(self):
         response = self.post_lib_track_with_specific_sample("in_memory.flac")
