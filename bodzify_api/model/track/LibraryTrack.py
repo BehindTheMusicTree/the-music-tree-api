@@ -8,10 +8,12 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api.model.Play import Play
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
@@ -46,6 +48,7 @@ class ATTRIBUTES_LABEL:
     FILE_EXTENSION = "file_extension"
     FILE_EXISTS = "file_exists"
     RELATIVE_URL = "relative_url"
+    PLAY_COUNT = 'play_count'
 
 
 class LibraryTrack(models.Model):
@@ -77,13 +80,11 @@ class LibraryTrack(models.Model):
     rating = models.IntegerField(
         null=True,
         blank=True,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)
-        ])
+        validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
     playlists = models.ManyToManyField('bodzify_api.Playlist', related_name=PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS)
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX, blank=True, default=None, null=True)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
+    play_count = models.IntegerField(default=0)
 
     @property
     def filename(self) -> str:
@@ -151,22 +152,15 @@ class LibraryTrack(models.Model):
                     self.file, AudioMetadataManager.METADATA_DICT_KEYS.DURATION)
                 super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
-    @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
-    def delete_file_if_exists(sender, instance: 'LibraryTrack', using, **kwargs):
-        if instance.file_exists:
-            instance.file.delete()
-
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:
             common_genre = self.genre.get_common_criteria(old_genre)
         else:
             common_genre = None
 
-        self._add_track_to_genre_playlists_until_genre_limit(
-            genre_limit=common_genre)
-        self._remove_track_from_old_genre_ascendants_playlists_until_genre_limit(
-            old_genre=old_genre,
-            genre_limit=common_genre)
+        self._add_track_to_genre_playlists_until_genre_limit(genre_limit=common_genre)
+        self._remove_track_from_old_genre_ascendants_playlists_until_genre_limit(old_genre=old_genre,
+                                                                                 genre_limit=common_genre)
 
     def _remove_track_from_old_genre_ascendants_playlists_until_genre_limit(self,
                                                                             old_genre: Optional[Criteria],

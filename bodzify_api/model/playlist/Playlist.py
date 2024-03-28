@@ -68,9 +68,3 @@ class Playlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
-
-    @receiver(post_save, sender=Play)
-    def update_play_count(sender, instance, created, **kwargs):
-        if created and isinstance(instance.content_object, Playlist):
-            Playlist.objects.filter(uuid=instance.object_uuid).update(
-                play_count=models.F(ATTRIBUTES_LABEL.PLAY_COUNT) + 1)

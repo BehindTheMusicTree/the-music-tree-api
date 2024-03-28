@@ -35,6 +35,8 @@ class PlayService(Service):
         content_object = Playlist.objects.filter(user=user, uuid=content_object_uuid).first()
         if not content_object:
             content_object = LibraryTrack.objects.get(user=user, uuid=content_object_uuid)
+        content_object.play_count += 1
+        content_object.save()
 
         save_model_data[SAVE_FIELDS.OBJECT_UUID] = content_object.uuid
 

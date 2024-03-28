@@ -42,8 +42,13 @@ class TestCase(PlayTestCase):
         assert self.saved_play.content_object.play_count == current_play_count + 1  # type: ignore
 
     def test_lib_track_play(self):
-        lib_track_uuid = G(LibraryTrack, user=self.test_user, title='test').uuid  # type: ignore
+        current_play_count = 455
+        lib_track_uuid = G(LibraryTrack,
+                           user=self.test_user,
+                           title='test',
+                           play_count=current_play_count).uuid  # type: ignore
         data = {to_camel_case(FIELDS.CONTENT_OBJECT_UUID): lib_track_uuid}
         response = self.post_play(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_play.content_object.uuid == lib_track_uuid  # type: ignore
+        assert self.saved_play.content_object.play_count == current_play_count + 1  # type: ignore

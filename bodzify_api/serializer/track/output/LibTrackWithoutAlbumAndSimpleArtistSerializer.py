@@ -19,6 +19,7 @@ class FIELDS:
     RATING = ATTRIBUTES_LABEL.RATING
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
     ADDED_ON = ATTRIBUTES_LABEL.ADDED_ON
+    PLAY_COUNT = ATTRIBUTES_LABEL.PLAY_COUNT
 
 
 class LibTrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer):
@@ -39,4 +40,5 @@ class LibTrackWithoutAlbumAndSimpleArtistSerializer(serializers.ModelSerializer)
             FIELDS.DURATION,
             FIELDS.RATING,
             FIELDS.LANGUAGE,
-            FIELDS.ADDED_ON]
+            FIELDS.ADDED_ON,
+            FIELDS.PLAY_COUNT]
