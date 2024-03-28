@@ -141,8 +141,7 @@ class LibraryTrack(models.Model):
 
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
-            all_simple_playlist = SimplePlaylist.objects.get(
-                playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
+            all_simple_playlist = SimplePlaylist.objects.get(playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
             self.playlists.add(all_simple_playlist.playlist)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
