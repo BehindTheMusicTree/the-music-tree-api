@@ -50,6 +50,9 @@ COPY . $DockerHome
 RUN mkdir $StaticfilesDir
 RUN mkdir -p $LibrariesDir
 
+RUN chmod -R 755 $MediaDir
+RUN chown -R 100000:100000 $MediaDir
+
 RUN mkdir -p $LogDir
 
 RUN mkdir $DjangoLogDir
