@@ -30,11 +30,16 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_playlist_play(self):
-        playlist_uuid = G(SimplePlaylist, playlist__user=self.test_user, name='test').playlist.uuid  # type: ignore
+        current_play_count = 42
+        playlist_uuid = G(SimplePlaylist,
+                          playlist__user=self.test_user,
+                          name='test',
+                          playlist__play_count=current_play_count).playlist.uuid  # type: ignore
         data = {to_camel_case(FIELDS.CONTENT_OBJECT_UUID): playlist_uuid}
         response = self.post_play(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_play.content_object.uuid == playlist_uuid  # type: ignore
+        assert self.saved_play.content_object.play_count == current_play_count + 1  # type: ignore
 
     def test_lib_track_play(self):
         lib_track_uuid = G(LibraryTrack, user=self.test_user, title='test').uuid  # type: ignore
