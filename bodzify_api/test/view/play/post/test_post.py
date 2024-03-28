@@ -4,6 +4,7 @@ from rest_framework import status
 from ddf import G
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils import to_camel_case
 from bodzify_api.serializer.play.input.schema.endpoint.PlayPostSchemaSerializer import FIELDS
@@ -12,9 +13,7 @@ from bodzify_api.serializer.play.input.schema.endpoint.PlayPostSchemaSerializer 
 class TestCase(PlayTestCase):
 
     def test_extra_field_then_error(self):
-        data = {
-            'nonExistingField': 'oifjqoif'
-        }
+        data = {'nonExistingField': 'oifjqoif'}
         response = self.post_play(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
@@ -36,3 +35,10 @@ class TestCase(PlayTestCase):
         response = self.post_play(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_play.content_object.uuid == playlist_uuid  # type: ignore
+
+    def test_lib_track_play(self):
+        lib_track_uuid = G(LibraryTrack, user=self.test_user, title='test').uuid  # type: ignore
+        data = {to_camel_case(FIELDS.CONTENT_OBJECT_UUID): lib_track_uuid}
+        response = self.post_play(data_dict=data)
+        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert self.saved_play.content_object.uuid == lib_track_uuid  # type: ignore
