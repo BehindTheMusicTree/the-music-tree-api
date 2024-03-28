@@ -13,6 +13,7 @@ class FIELDS:
     ADDED_ON = PARENT_FIELDS.ADDED_ON
     LIB_TRACKS_COUNT = PARENT_FIELDS.LIB_TRACKS_COUNT
     LIB_TRACKS = ATTRIBUTES_LABEL.LIB_TRACKS
+    PLAY_COUNT = ATTRIBUTES_LABEL.PLAY_COUNT
 
 
 class PlaylistWithTracksSerializer(PlaylistWithoutTrackSerializer):
@@ -25,4 +26,5 @@ class PlaylistWithTracksSerializer(PlaylistWithoutTrackSerializer):
                   FIELDS.TYPE,
                   FIELDS.ADDED_ON,
                   FIELDS.LIB_TRACKS_COUNT,
-                  FIELDS.LIB_TRACKS]
+                  FIELDS.LIB_TRACKS,
+                  FIELDS.PLAY_COUNT]

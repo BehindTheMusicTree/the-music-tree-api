@@ -55,21 +55,19 @@ class AppModelViewSet(MultiSerializerViewSet):
         request_data_snake_case = self.get_dict_with_snake_case_keys_from_form_data(request.data)
         try:
             instance = self.service.create(post_data=request_data_snake_case, request=request)
+            response_serializer = self._get_detailed_serializer(instance=instance)
+            headers = self.get_success_headers(response_serializer.data)
+            return Response(data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
         except IntegrityError as e:
             logger.exception(e)
             return utility.get_response_when_bad_request(exception=e)
 
-        response_serializer = self._get_detailed_serializer(instance=instance)
-        headers = self.get_success_headers(response_serializer.data)
-
-        return Response(data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
     def _update(self, request, *args, **kwargs):
         request_data_snake_case = self.get_dict_with_snake_case_keys_from_form_data(request.data)
-        updated_instance = self.service.update(
-            put_data=request_data_snake_case,
-            old_instance=self.get_object(),
-            request=request)
+        updated_instance = self.service.update(put_data=request_data_snake_case,
+                                               old_instance=self.get_object(),
+                                               request=request)
         response_serializer_data = self._get_detailed_serializer(updated_instance).data
         headers = self.get_success_headers(response_serializer_data)
         return Response(data=response_serializer_data, status=status.HTTP_200_OK, headers=headers)
