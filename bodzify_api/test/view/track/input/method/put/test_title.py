@@ -24,12 +24,11 @@ class TestCase(NotNullableFieldTestCase):
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert self.saved_lib_track.title == old_title
 
-    def test_empty_then_none(self):
+    def test_empty_then_error(self):
         lib_track = G(LibraryTrack, user=self.test_user, title="Love")
         data = {PUT_FIELDS.TITLE: ""}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        assert self.saved_lib_track.title == None
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_not_none_then_update(self):
         title = "a"
