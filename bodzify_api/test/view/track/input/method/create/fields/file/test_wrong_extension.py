@@ -2,11 +2,11 @@
 
 import pytest
 from rest_framework import status
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
 @pytest.mark.django_db
-class ExtensionTestCase(ApiTestCase):
+class ExtensionTestCase(TrackTestCase):
 
     def test_jpeg(self):
         response = self.post_lib_track_with_specific_sample("image.jpeg")

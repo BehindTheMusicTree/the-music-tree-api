@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from typing import Optional
-from venv import logger
-from bodzify_api.test.ApiTestCase import ApiTestCase
 from rest_framework import status
 
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
-class UpdateFileMetadataStrTestCase(ApiTestCase):
+
+class UpdateFileMetadataStrTestCase(TrackTestCase):
 
     VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
 
@@ -21,9 +21,7 @@ class UpdateFileMetadataStrTestCase(ApiTestCase):
             additional_data_dict,
             value_expected_in_metadata=VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED,
             file_has_tags=False):
-        data = {
-            self.save_field: value
-        }
+        data = {self.save_field: value}
 
         if additional_data_dict:
             data.update(additional_data_dict)

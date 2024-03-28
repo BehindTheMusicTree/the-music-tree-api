@@ -36,8 +36,7 @@ class MineTrackViewSet(MultiSerializerViewSet):
         query = request.GET.get(GET_PARAMETER_NAME.QUERY, False)
         page_number = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
 
-        mine_tracks = MineService.List(
-            baseurl=mine_source, query=query, page_number=page_number)
+        mine_tracks = MineService.List(baseurl=mine_source, query=query, page_number=page_number)
         response_serializer = MineTrackSerializer(mine_tracks, many=True)
         headers = self.get_success_headers(response_serializer.data)
 

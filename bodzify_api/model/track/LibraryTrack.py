@@ -24,11 +24,10 @@ from bodzify_api.validator.TrackFileValidator import validate_size
 
 
 def _get_user_directory_path(instance, filename):
-    return '{0}{1}/{2}'.format(
-        settings.LIB_DIR_NAME + '/' +
-        settings.USER_LIB_DIR_NAME_PREFIXE,
-        instance.user.id,
-        filename)
+    return '{0}{1}/{2}'.format(settings.LIB_DIR_NAME + '/' +
+                               settings.USER_LIB_DIR_NAME_PREFIXE,
+                               instance.user.id,
+                               filename)
 
 
 class ATTRIBUTES_LABEL:
@@ -59,7 +58,7 @@ class LibraryTrack(models.Model):
                             help_text="Only audio formats accepted.",
                             validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS), validate_size],
                             null=True)
-    title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX, default=None, null=True)
+    title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,

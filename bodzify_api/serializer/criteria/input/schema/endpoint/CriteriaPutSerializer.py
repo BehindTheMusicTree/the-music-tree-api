@@ -7,14 +7,16 @@ from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer \
     import CriteriaSaveSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
 
 
-class CriteriaPutSchemaSerializer(CriteriaSaveSchemaSerializer, InputEndpointSerializer):
+class FIELDS:
+    NAME = SAVE_SCHEMA_FIELDS.NAME
+    PARENT = SAVE_SCHEMA_FIELDS.PARENT
+
+
+class CriteriaPutSerializer(CriteriaSaveSchemaSerializer, InputEndpointSerializer):
 
     class Meta:
         model = Criteria
-        fields = [
-            SAVE_SCHEMA_FIELDS.NAME,
-            SAVE_SCHEMA_FIELDS.PARENT,
-        ]
+        fields = [FIELDS.NAME, FIELDS.PARENT]
 
     def validate_parent(self, value):
         instance = self.instance

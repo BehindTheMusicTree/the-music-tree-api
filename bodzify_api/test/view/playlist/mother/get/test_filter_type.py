@@ -13,11 +13,12 @@ from bodzify_api.model.playlist.children.SimplePlaylist \
 from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_PARAM
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as PLAYLIST_GET_FIELDS
 from bodzify_api.test.get_filters.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
+from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
 
 logger = logging.getLogger('bodyzify_api')
 
 
-class TestCase(GetFilterWithSpecificValuesTestCase):
+class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
 
     def setUp(self, methods_names_to_implement=None):
         specific_values = [

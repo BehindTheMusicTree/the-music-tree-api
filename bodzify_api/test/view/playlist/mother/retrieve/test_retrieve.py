@@ -5,19 +5,16 @@ from rest_framework import status
 from ddf import G
 
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.children.SimplePlaylist \
-    import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.model.playlist.children.CriteriaPlaylist import SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES, CriteriaPlaylist
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as RETRIEVE_FIELDS
-from bodzify_api.test.ApiTestCase import ApiTestCase
-from bodzify_api.test.get_filters.GetFilterWithFreeValuesTestCase import GetFilterWithFreeValuesTestCase
+from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
 
 logger = logging.getLogger('bodyzify_api')
 
 
-class TestCase(ApiTestCase):
+class TestCase(PlaylistTestCase):
 
     def test_retrieve_simple_then_ok(self):
         name = 'cuisine'

@@ -1,24 +1,21 @@
 #!/usr/bin/env python
+
 from rest_framework import status
-from bodzify_api.test.ApiTestCase import ApiTestCase
-from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer import FIELDS as POST_FIELD
 from bodzify_api import settings
+from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(CriteriaTestCase):
 
     def test_longest(self):
         genre_name = "a" * settings.CRITERIA_NAME_LENGTH_MAX
-        data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: genre_name
-        }
+        data = {POST_FIELD.NAME: genre_name}
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED # type: ignore
         assert self.saved_genre.name == genre_name
 
     def test_error_too_long(self):
-        data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: "a" * (settings.CRITERIA_NAME_LENGTH_MAX + 1)
-        }
+        data = {POST_FIELD.NAME: "a" * (settings.CRITERIA_NAME_LENGTH_MAX + 1)}
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_400_BAD_REQUEST # type: ignore

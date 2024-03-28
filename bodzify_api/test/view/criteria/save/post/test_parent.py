@@ -1,25 +1,23 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.ApiTestCase import ApiTestCase
-from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
+from bodzify_api.serializer.criteria.input.schema.endpoint.CriteriaPostSerializer import FIELDS as POST_FIELDS
 
 
-class TestCase(ApiTestCase):
+class TestCase(CriteriaTestCase):
 
     def test_not_provided_then_none(self):
-        data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock"
-        }
+        data = {POST_FIELDS.NAME: "Rock"}
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED # type: ignore
         assert self.saved_genre.parent == None
 
     def test_empty_then_none(self):
         data = {
-            CRITERIA_ATTRIBUTES_LABEL.NAME: "Rock",
-            CRITERIA_ATTRIBUTES_LABEL.PARENT: ""
+            POST_FIELDS.NAME: "Rock",
+            POST_FIELDS.PARENT: ""
         }
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status.HTTP_201_CREATED # type: ignore
         assert self.saved_genre.parent == None

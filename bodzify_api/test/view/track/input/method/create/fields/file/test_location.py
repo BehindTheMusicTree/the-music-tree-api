@@ -2,10 +2,10 @@
 
 from pathlib import Path
 from rest_framework import status
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(TrackTestCase):
 
     def test_inLibrary(self):
         filename = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE

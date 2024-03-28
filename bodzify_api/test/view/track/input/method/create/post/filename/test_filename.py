@@ -2,9 +2,10 @@
 
 from rest_framework import status
 from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(TrackTestCase):
 
     def test_ok_when_max_length(self):
         sample_100_char_long_char_name = ("3NyKu2inI7MA3DIRa78qLuowTOppybbfKx27gzOV7aiHJNcDTIDxSJJMNNY" +

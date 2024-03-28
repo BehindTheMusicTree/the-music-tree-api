@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import logging
-import os
-
 from ddf import G
 from rest_framework import status
 
@@ -23,44 +21,30 @@ class TestCase(AlbumViewTestCase):
     """
 
     def test_2_tracks_linked(self):
-        black_holes_album = G(Album, user=self.test_user,
-                              name="Black Holes And Revelations")
+        black_holes_album = G(Album, user=self.test_user, name="Black Holes And Revelations")
         assassin_track_filename = "Assassin.mp3"
-        assassin_track = G(
-            LibraryTrack,
-            user=self.test_user,
-            file=str(self.test_user_lib_abs_path /
-                     assassin_track_filename),
-            title="Assassin",
-            album=black_holes_album,
-            duration=0)
+        assassin_track = G(LibraryTrack,
+                           user=self.test_user,
+                           file=str(self.test_user_lib_abs_path /assassin_track_filename),
+                           title="Assassin",
+                           album=black_holes_album)
         starlight_track_filename = "Starlight.mp3"
-        starlightTrack = G(
-            LibraryTrack,
-            user=self.test_user,
-            file=str(self.test_user_lib_abs_path /
-                     starlight_track_filename),
-            title="Starlight",
-            album=black_holes_album,
-            duration=0)
-        assert self._does_track_filename_exist_in_test_user_lib(
-            assassin_track_filename) == True
-        assert self._does_track_filename_exist_in_test_user_lib(
-            starlight_track_filename) == True
+        starlightTrack = G(LibraryTrack, 
+                           user=self.test_user, 
+                           file=str(self.test_user_lib_abs_path / starlight_track_filename), 
+                           title="Starlight",
+                           album=black_holes_album)
+        assert self._does_track_filename_exist_in_test_user_lib(assassin_track_filename) == True
+        assert self._does_track_filename_exist_in_test_user_lib(starlight_track_filename) == True
 
-        response = self.delete(album_uuid=black_holes_album.uuid)
+        response = self.delete(album_uuid=black_holes_album.uuid) # type: ignore
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert Album.objects.filter(
-            uuid=black_holes_album.uuid).exists() == False
-        assert LibraryTrack.objects.filter(
-            user=self.test_user, title=assassin_track.title).exists() == False
-        assert LibraryTrack.objects.filter(
-            user=self.test_user, title=starlightTrack.title).exists() == False
-        assert self._does_track_filename_exist_in_test_user_lib(
-            assassin_track_filename) == False
-        assert self._does_track_filename_exist_in_test_user_lib(
-            starlight_track_filename) == False
+        assert response.status_code == status.HTTP_204_NO_CONTENT # type: ignore
+        assert Album.objects.filter(uuid=black_holes_album.uuid).exists() == False
+        assert LibraryTrack.objects.filter(user=self.test_user, title=assassin_track.title).exists() == False # type: ignore
+        assert LibraryTrack.objects.filter(user=self.test_user, title=starlightTrack.title).exists() == False # type: ignore
+        assert self._does_track_filename_exist_in_test_user_lib(assassin_track_filename) == False
+        assert self._does_track_filename_exist_in_test_user_lib(starlight_track_filename) == False
 
     """
     The album "Black Holes And Revelations" has:
@@ -79,33 +63,15 @@ class TestCase(AlbumViewTestCase):
         matthew_artist = G(Artist, user=self.test_user, name="Matthew Bellamy")
         muse_artist = G(Artist, user=self.test_user, name="Muse")
         pol_artist = G(Artist, user=self.test_user, name="Pol")
-        black_holes_album = G(
-            Album,
-            user=self.test_user,
-            name="Black Holes And Revelations",
-            album_artists=[matthew_artist, muse_artist]
-        )
-        G(
-            LibraryTrack,
-            user=self.test_user,
-            title="Assassin",
-            artist=matthew_artist,
-            album=black_holes_album,
-            duration=0
-        )
-        G(
-            LibraryTrack,
-            user=self.test_user,
-            title="Blue",
-            artist=pol_artist,
-            duration=0
-        )
+        black_holes_album = G(Album,
+                              user=self.test_user,
+                              name="Black Holes And Revelations",
+                              album_artists=[matthew_artist, muse_artist])
+        G(LibraryTrack, user=self.test_user, title="Assassin", artist=matthew_artist, album=black_holes_album)
+        G(LibraryTrack, user=self.test_user, title="Blue", artist=pol_artist)
 
-        response = self.delete(album_uuid=black_holes_album.uuid)
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert Album.objects.filter(
-            user=self.test_user, name=matthew_artist.name).exists() == False
-        assert Artist.objects.filter(
-            user=self.test_user, name=muse_artist.name).exists() == False
-        assert Artist.objects.filter(
-            user=self.test_user, name=pol_artist.name).exists() == True
+        response = self.delete(album_uuid=black_holes_album.uuid) # type: ignore
+        assert response.status_code == status.HTTP_204_NO_CONTENT # type: ignore
+        assert Album.objects.filter(user=self.test_user, name=matthew_artist.name).exists() == False # type: ignore
+        assert Artist.objects.filter(user=self.test_user, name=muse_artist.name).exists() == False # type: ignore
+        assert Artist.objects.filter(user=self.test_user, name=pol_artist.name).exists() == True # type: ignore
