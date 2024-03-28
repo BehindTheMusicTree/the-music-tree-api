@@ -72,5 +72,5 @@ class Playlist(models.Model):
     @receiver(post_save, sender=Play)
     def update_play_count(sender, instance, created, **kwargs):
         if created and isinstance(instance.content_object, Playlist):
-            Playlist.objects.filter(id=instance.object_uuid).update(
+            Playlist.objects.filter(uuid=instance.object_uuid).update(
                 play_count=models.F(ATTRIBUTES_LABEL.PLAY_COUNT) + 1)
