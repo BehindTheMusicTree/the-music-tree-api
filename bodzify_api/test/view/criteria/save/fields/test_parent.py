@@ -10,6 +10,14 @@ from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 class TestCase(CriteriaTestCase):
 
+    def test_multiple_values_then_error(self):
+        data = {
+            POST_FIELDS.NAME: "Punk",
+            POST_FIELDS.PARENT: ["value", "value2"]
+        }
+        response = self.post_genre(data_dict=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+
     def test_empty_then_none(self):
         data = {
             POST_FIELDS.NAME: "Punk",
