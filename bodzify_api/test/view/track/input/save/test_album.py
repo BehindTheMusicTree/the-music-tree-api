@@ -12,25 +12,19 @@ class TestCase(FieldModelStrTestCase):
 
     def test_longest_then_ok(self):
         album_name = "a" * settings.ALBUM_NAME_LENGTH_MAX
-        data = {
-            EXTRACT_FIELDS.ALBUM_NAME: album_name
-        }
+        data = {EXTRACT_FIELDS.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.album.name == album_name  # type: ignore
 
     def test_too_long_then_error(self):
         album_name = "a" * (settings.ALBUM_NAME_LENGTH_MAX + 1)
-        data = {
-            EXTRACT_FIELDS.ALBUM_NAME: album_name
-        }
+        data = {EXTRACT_FIELDS.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_empty_then_none(self):
-        data = {
-            EXTRACT_FIELDS.ALBUM_NAME: ''
-        }
+        data = {EXTRACT_FIELDS.ALBUM_NAME: ''}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.album == None
@@ -38,18 +32,14 @@ class TestCase(FieldModelStrTestCase):
     def test_existing(self):
         album_name = "Kopoe"
         G(Album, user=self.test_user, name=album_name)
-        data = {
-            EXTRACT_FIELDS.ALBUM_NAME: album_name
-        }
+        data = {EXTRACT_FIELDS.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.album.name == album_name  # type: ignore
 
     def test_not_existing(self):
         album_name = "hoho"
-        data = {
-            EXTRACT_FIELDS.ALBUM_NAME: album_name
-        }
+        data = {EXTRACT_FIELDS.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.album.name == album_name  # type: ignore
