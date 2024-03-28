@@ -21,6 +21,7 @@ class PlayTestCase(ApiTestCase):
         self.saved_play = Play.objects.get(uuid=uuid)
 
     def post_play(self, data_dict):
+        logger.debug(f"Posting play with data: {data_dict}")
         response = self.api_client.post(path=reverse('play-list'),
                                         data=urlencode(self._replace_none_values_by_empty_string(data_dict)),
                                         content_type='application/x-www-form-urlencoded')
