@@ -152,6 +152,11 @@ class LibraryTrack(models.Model):
                     self.file, AudioMetadataManager.METADATA_DICT_KEYS.DURATION)
                 super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
+    @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
+    def delete_file_if_exists(sender, instance: 'LibraryTrack', using, **kwargs):
+        if instance.file_exists:
+            instance.file.delete()
+
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:
             common_genre = self.genre.get_common_criteria(old_genre)
