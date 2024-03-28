@@ -11,9 +11,10 @@ from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWi
     import FIELDS as GET_RESULT_FIELDS
 from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
     import FIELDS as GET_QUERY_PARAM
+from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(GenrePlaylistTestCase):
 
     def test_get_by_name_of_criteria(self):
         rock_criteria_name = "Rock"

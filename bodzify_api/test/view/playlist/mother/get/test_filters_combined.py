@@ -12,13 +12,12 @@ from bodzify_api.model.playlist.children.SimplePlaylist \
     import SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL, SimplePlaylist
 from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_PARAM
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as PLAYLIST_GET_FIELDS
-from bodzify_api.test.ApiTestCase import ApiTestCase
-from bodzify_api.test.view.playlist.children import genre
+from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
 
 logger = logging.getLogger('bodyzify_api')
 
 
-class TestCase(ApiTestCase):
+class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {

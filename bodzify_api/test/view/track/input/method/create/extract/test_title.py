@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api import settings
 from bodzify_api.serializer.track.input.schema.endpoint.LibTrackExtractSerializer import FIELDS as EXTRACT_FIELDS
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(TrackTestCase):
 
     def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_with_app_prefixe(self):
         track_url = (

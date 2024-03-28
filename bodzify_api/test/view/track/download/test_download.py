@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(TrackTestCase):
 
     def test_error_when_file_not_existing(self):
         track = G(LibraryTrack,

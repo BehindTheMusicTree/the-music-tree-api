@@ -4,12 +4,12 @@ import pytest
 from rest_framework import status
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
 @pytest.mark.django_db
-class TestCase(ApiTestCase):
+class TestCase(TrackTestCase):
 
     def test_no_genre_then_in_the_all_and_genreless_playlists(self):
         response = self.post_lib_track_with_generic_sample_no_tags()

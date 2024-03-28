@@ -10,9 +10,7 @@ class TestCase(FieldStrFromDataTestCase):
     save_field = POST_FIELDS.ALBUM_ARTISTS_NAMES_STRING
     lib_track_metadata_dict_key = AudioMetadataManager.METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES
     length_max = settings.ALBUM_ARTISTS_FIELD_LENGTH_MAX
-    album_data_dict = {
-        POST_FIELDS.ALBUM_NAME: "The Great Twenty-Eight",
-    }
+    album_data_dict = {POST_FIELDS.ALBUM_NAME: "The Great Twenty-Eight"}
 
     def test_on_missing_tag_then_ok(self):
         self._test_value("a", additional_data_dict=self.album_data_dict, file_has_tags=False)

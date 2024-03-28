@@ -6,11 +6,11 @@ from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 from bodzify_api.serializer.criteria.input.schema.endpoint.CriteriaPutSerializer import FIELDS as PUT_FIELD
+from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 
 
-class TestCase(CriteriaTestCase):
+class TestCase(GenrePlaylistTestCase):
 
     def test_renaming(self):
         rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
@@ -36,7 +36,6 @@ class TestCase(CriteriaTestCase):
         rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, parent=rock_genre)
         track = G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Rock song")
-        self.post_lib_track_with_specific_sample(data_dict={})
 
         data = {PUT_FIELD.PARENT: ''}
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
@@ -48,7 +47,6 @@ class TestCase(CriteriaTestCase):
         rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
         punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
         track = G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Rock song")
-        self.post_lib_track_with_specific_sample(data_dict={})
 
         data = {PUT_FIELD.PARENT: rock_genre.uuid}  # type: ignore
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
