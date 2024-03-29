@@ -61,6 +61,7 @@ RUN mkdir ${DockerHome}/staticfiles && \
     touch ${GunicornLogDir}access.log && \
     chmod -R 777 $GunicornLogDir && \
     chown -R bodzify:bodzify $GunicornLogDir && \
+    ls -l ${GunicornLogDir} && \
     pip install --upgrade pip && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     chown -R www-data:www-data /opt/bodzify-api && \
