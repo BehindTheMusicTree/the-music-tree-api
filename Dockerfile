@@ -53,7 +53,7 @@ RUN mkdir ${DockerHome}/staticfiles && \
     touch ${DjangoLogDir}info.log && \
     touch ${DjangoLogDir}django.log && \
     touch ${DjangoLogDir}bodzify-api.log && \
-    chmod -R 755 $DjangoLogDir && \
+    chmod -R 777 $DjangoLogDir && \
     chown -R bodzify:bodzify $DjangoLogDir && \
     ls -l ${DjangoLogDir}bodzify-api.log && \
     mkdir -p $GunicornLogDir && \
