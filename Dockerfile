@@ -66,4 +66,4 @@ RUN mkdir ${DockerHome}/staticfiles && \
     chown -R www-data:www-data /opt/bodzify-api && \
     python manage.py collectstatic --noinput
 
-USER bodzify
+# USER bodzify
