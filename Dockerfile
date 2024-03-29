@@ -55,12 +55,12 @@ RUN mkdir ${DockerHome}/staticfiles && \
     touch ${DjangoLogDir}bodzify-api.log && \
     chmod -R 755 $DjangoLogDir && \
     chown -R bodzify:bodzify $DjangoLogDir && \
+    ls -l ${DjangoLogDir}bodzify-api.log && \
     mkdir -p $GunicornLogDir && \
     touch ${GunicornLogDir}error.log && \
     touch ${GunicornLogDir}access.log && \
     chmod -R 777 $GunicornLogDir && \
     chown -R bodzify:bodzify $GunicornLogDir && \
-    ls -l ${GunicornLogDir}error.log && \
     pip install --upgrade pip && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     chown -R www-data:www-data /opt/bodzify-api && \
