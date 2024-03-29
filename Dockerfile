@@ -17,7 +17,7 @@ ENV DB_DATABASE=$dbDatabase
 ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
-RUN groupadd -g 1002 bodzify && useradd -u 1002 -g bodzify bodzify
+RUN groupadd -g 1003 bodzify && useradd -u 1002 -g bodzify bodzify
 
 # Prevents Python from writing pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1 
