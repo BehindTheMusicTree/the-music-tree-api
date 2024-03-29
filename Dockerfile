@@ -20,6 +20,9 @@ ENV DB_PORT=$dbPort
 
 RUN groupadd -g 1003 bodzify && useradd -u 1002 -g bodzify bodzify
 
+# To run gunicorn as a non-root user without password prompt
+RUN apt-get update && apt-get install -y gosu
+
 # Prevents Python from writing pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1 
 # Prevents Python from buffering stdout and stderr
