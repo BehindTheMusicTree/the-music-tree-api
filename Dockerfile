@@ -58,7 +58,7 @@ RUN mkdir ${DockerHome}/staticfiles && \
     mkdir -p $GunicornLogDir && \
     touch ${GunicornLogDir}error.log && \
     touch ${GunicornLogDir}access.log && \
-    chmod -R 755 $GunicornLogDir && \
+    chmod -R 777 $GunicornLogDir && \
     chown -R bodzify:bodzify $GunicornLogDir && \
     ls -l ${GunicornLogDir}error.log && \
     pip install --upgrade pip && \
