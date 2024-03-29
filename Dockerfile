@@ -39,7 +39,7 @@ ENV MediaDir=/var/lib/bodzify-api/media
 ENV LibrariesDir=${MediaDir}/libraries
 ENV LogDir=/var/log/
 ENV DjangoLogDir=${LogDir}django/
-ENV GunicornLogDir=/home/app/logs/gunicorn/
+ENV GunicornLogDir=${LogDir}gunicorn/
 
 RUN mkdir ${DockerHome}/staticfiles && \
     mkdir -p $LibrariesDir && \
