@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1
+
 FROM python:3.11-buster 
 
 ARG secretKey
@@ -41,7 +42,6 @@ RUN chown -R bodzify:bodzify $MediaDir
 ENV LogDir=/var/log/
 RUN mkdir -p $LogDir
 
-
 ENV DjangoLogDir=${LogDir}django/
 
 RUN mkdir $DjangoLogDir
@@ -63,3 +63,5 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
 RUN chown -R www-data:www-data /opt/bodzify-api
 RUN python manage.py collectstatic --noinput
+
+USER bodzify
