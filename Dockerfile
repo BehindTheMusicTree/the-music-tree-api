@@ -57,6 +57,7 @@ RUN mkdir ${DockerHome}/staticfiles && \
     chown -R bodzify:bodzify $DjangoLogDir && \
     mkdir -p $GunicornLogDir && \
     touch ${GunicornLogDir}error.log && \
+    ls -l ${GunicornLogDir}error.log && \
     touch ${GunicornLogDir}access.log && \
     chmod -R 755 $GunicornLogDir && \
     chown -R bodzify:bodzify $GunicornLogDir && \
