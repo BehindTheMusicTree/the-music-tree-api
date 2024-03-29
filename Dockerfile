@@ -18,11 +18,6 @@ ENV DB_DATABASE=$dbDatabase
 ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
 
-ENV UID=1002
-ENV GID=1003
-
-RUN groupadd -g $GID bodzify && useradd -u $UID -g bodzify bodzify
-
 # To run gunicorn as a non-root user without password prompt
 RUN apt-get update && apt-get install -y gosu
 
@@ -46,8 +41,6 @@ ENV GunicornLogDir=${LogDir}gunicorn/
 
 RUN mkdir ${DockerHome}/staticfiles && \
     mkdir -p $LibrariesDir && \
-    chmod -R 755 $MediaDir && \
-    chown -R $UID:$GID $MediaDir && \
     mkdir -p $LogDir && \
     mkdir $DjangoLogDir && \
     touch ${DjangoLogDir}requests.log && \
@@ -56,17 +49,10 @@ RUN mkdir ${DockerHome}/staticfiles && \
     touch ${DjangoLogDir}info.log && \
     touch ${DjangoLogDir}django.log && \
     touch ${DjangoLogDir}bodzify-api.log && \
-    chmod -R 777 $DjangoLogDir && \
-    chown -R $UID:$GID $DjangoLogDir && \
     mkdir -p $GunicornLogDir && \
     touch ${GunicornLogDir}error.log && \
     touch ${GunicornLogDir}access.log && \
-    chmod -R 777 $GunicornLogDir && \
-    chown -R $UID:$GID $GunicornLogDir && \
-    ls -l ${LogDir} && \
     pip install --upgrade pip && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     chown -R www-data:www-data /opt/bodzify-api && \
     python manage.py collectstatic --noinput
-
-# USER bodzify
