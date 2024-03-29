@@ -51,13 +51,14 @@ RUN touch ${DjangoLogDir}general.log
 RUN touch ${DjangoLogDir}info.log
 RUN touch ${DjangoLogDir}django.log
 RUN touch ${DjangoLogDir}bodzify-api.log
+RUN chmod -R 755 $DjangoLogDir
+RUN chown -R bodzify:bodzify $DjangoLogDir
 
 ENV GunicornLogDir=${LogDir}gunicorn/
 RUN mkdir $GunicornLogDir
 RUN touch ${GunicornLogDir}error.log
-
-RUN chmod -R 755 $LogDir
-RUN chown -R bodzify:bodzify $LogDir
+RUN chmod -R 777 $GunicornLogDir
+RUN chown -R bodzify:bodzify $GunicornLogDir
 
 RUN pip install --upgrade pip  
 RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
