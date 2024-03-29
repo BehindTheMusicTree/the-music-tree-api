@@ -34,38 +34,35 @@ WORKDIR $DockerHome
 
 COPY . $DockerHome
 
-RUN mkdir ${DockerHome}/staticfiles
 
 ENV MediaDir=/var/lib/bodzify-api/media
 ENV LibrariesDir=${MediaDir}/libraries
-RUN mkdir -p $LibrariesDir
-RUN chmod -R 755 $MediaDir
-RUN chown -R bodzify:bodzify $MediaDir
-
 ENV LogDir=/var/log/
-RUN mkdir -p $LogDir
-
 ENV DjangoLogDir=${LogDir}django/
-
-RUN mkdir $DjangoLogDir
-RUN touch ${DjangoLogDir}requests.log
-RUN touch ${DjangoLogDir}requests.debug.log
-RUN touch ${DjangoLogDir}general.log
-RUN touch ${DjangoLogDir}info.log
-RUN touch ${DjangoLogDir}django.log
-RUN touch ${DjangoLogDir}bodzify-api.log
-RUN chmod -R 755 $DjangoLogDir
-RUN chown -R bodzify:bodzify $DjangoLogDir
-
 ENV GunicornLogDir=/home/app/logs/gunicorn/
-RUN mkdir -p $GunicornLogDir
-RUN touch ${GunicornLogDir}error.log
-RUN chmod -R 777 $GunicornLogDir
-RUN chown -R bodzify:bodzify $GunicornLogDir
 
-RUN pip install --upgrade pip  
-RUN pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
-RUN chown -R www-data:www-data /opt/bodzify-api
-RUN python manage.py collectstatic --noinput
+RUN mkdir ${DockerHome}/staticfiles && \
+    mkdir -p $LibrariesDir && \
+    chmod -R 755 $MediaDir && \
+    chown -R bodzify:bodzify $MediaDir && \
+    mkdir -p $LogDir && \
+    mkdir $DjangoLogDir && \
+    touch ${DjangoLogDir}requests.log && \
+    touch ${DjangoLogDir}requests.debug.log && \
+    touch ${DjangoLogDir}general.log && \
+    touch ${DjangoLogDir}info.log && \
+    touch ${DjangoLogDir}django.log && \
+    touch ${DjangoLogDir}bodzify-api.log && \
+    chmod -R 755 $DjangoLogDir && \
+    chown -R bodzify:bodzify $DjangoLogDir && \
+    mkdir -p $GunicornLogDir && \
+    touch ${GunicornLogDir}error.log && \
+    touch ${GunicornLogDir}access.log && \
+    chmod -R 755 $GunicornLogDir && \
+    chown -R bodzify:bodzify $GunicornLogDir && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
+    chown -R www-data:www-data /opt/bodzify-api && \
+    python manage.py collectstatic --noinput
 
 USER bodzify
