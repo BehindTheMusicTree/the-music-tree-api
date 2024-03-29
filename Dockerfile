@@ -57,7 +57,7 @@ RUN touch ${DjangoLogDir}bodzify-api.log
 RUN chmod -R 755 $DjangoLogDir
 RUN chown -R bodzify:bodzify $DjangoLogDir
 
-ENV GunicornLogDir=${LogDir}gunicorn/
+ENV GunicornLogDir=/home/app/logs/gunicorn/
 RUN mkdir $GunicornLogDir
 RUN touch ${GunicornLogDir}error.log
 RUN chmod -R 777 $GunicornLogDir
