@@ -35,7 +35,7 @@ COPY . $DockerHome
 
 ENV MediaDir=/home/app/webapp/lib/bodzify-api/media
 ENV LibrariesDir=${MediaDir}/libraries
-ENV LogDir=/home/app/webapp/
+ENV LogDir=/home/app/webapp/log/
 ENV DjangoLogDir=${LogDir}django/
 ENV GunicornLogDir=${LogDir}gunicorn/
 

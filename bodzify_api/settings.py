@@ -176,7 +176,36 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-LOG_PATH = Path('/var/log/django/')
+STATIC_URL = 'static/'
+
+ALLOWED_HOSTS = []
+STATICFILES_DIRS = []
+STATIC_ROOT = ''
+MEDIA_ROOT = ''
+
+if os.getenv('ENV') == 'DEV':
+    import bodzify_api.settings_dev as settings_dev
+    ALLOWED_HOSTS = settings_dev.ALLOWED_HOSTS
+    MEDIA_ROOT = settings_dev.MEDIA_ROOT
+    STATIC_ROOT = settings_dev.STATIC_ROOT
+    LOG_PATH = settings_dev.LOG_PATH
+elif os.getenv('ENV') == 'TEST':
+    import bodzify_api.settings_test as settings_test
+    SESSION_COOKIE_SECURE = settings_test.SESSION_COOKIE_SECURE
+    CSRF_COOKIE_SECURE = settings_test.CSRF_COOKIE_SECURE
+    CSRF_TRUSTED_ORIGINS = settings_test.CSRF_TRUSTED_ORIGINS
+    ALLOWED_HOSTS = settings_test.ALLOWED_HOSTS
+    MEDIA_ROOT = settings_test.MEDIA_ROOT
+    STATIC_ROOT = settings_test.STATIC_ROOT
+    LOG_PATH = settings_test.LOG_PATH
+else:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    MEDIA_ROOT = BASE_DIR / 'media'
+
+MEDIA_TEMP = MEDIA_ROOT / 'temp'
+LIB_DIR_NAME = 'libraries'
+LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -273,31 +302,3 @@ LOGGING = {
         },
     },
 }
-
-STATIC_URL = 'static/'
-
-ALLOWED_HOSTS = []
-STATICFILES_DIRS = []
-STATIC_ROOT = ''
-MEDIA_ROOT = ''
-
-if os.getenv('ENV') == 'DEV':
-    import bodzify_api.settings_dev as settings_dev
-    ALLOWED_HOSTS = settings_dev.ALLOWED_HOSTS
-    MEDIA_ROOT = settings_dev.MEDIA_ROOT
-    STATIC_ROOT = settings_dev.STATIC_ROOT
-elif os.getenv('ENV') == 'TEST':
-    import bodzify_api.settings_test as settings_test
-    SESSION_COOKIE_SECURE = settings_test.SESSION_COOKIE_SECURE
-    CSRF_COOKIE_SECURE = settings_test.CSRF_COOKIE_SECURE
-    CSRF_TRUSTED_ORIGINS = settings_test.CSRF_TRUSTED_ORIGINS
-    ALLOWED_HOSTS = settings_test.ALLOWED_HOSTS
-    MEDIA_ROOT = settings_test.MEDIA_ROOT
-    STATIC_ROOT = settings_test.STATIC_ROOT
-else:
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
-    MEDIA_ROOT = BASE_DIR / 'media'
-
-MEDIA_TEMP = MEDIA_ROOT / 'temp'
-LIB_DIR_NAME = 'libraries'
-LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME
