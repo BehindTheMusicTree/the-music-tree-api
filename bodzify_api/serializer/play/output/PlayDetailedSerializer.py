@@ -4,8 +4,7 @@ from bodzify_api.model.Play import Play, ATTRIBUTES_LABEL
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer \
-    import PlaylistWithoutTrackSerializer
+from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import PlaylistWithTracksSerializer
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumPlaylistGenreSerializer \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
 
@@ -30,6 +29,6 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
 
     def get_content_object(self, obj):
         if isinstance(obj.content_object, Playlist):
-            return PlaylistWithoutTrackSerializer(obj.content_object).data
+            return PlaylistWithTracksSerializer(obj.content_object).data
         else:
             return LibTrackWithoutAlbumPlaylistGenreSerializer(obj.content_object).data
