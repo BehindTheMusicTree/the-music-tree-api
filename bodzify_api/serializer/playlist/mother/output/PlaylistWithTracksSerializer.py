@@ -4,6 +4,7 @@ from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL, Playlist
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer \
     import PlaylistWithoutTrackSerializer, FIELDS as PARENT_FIELDS
 from bodzify_api.serializer.track.output.LibTrackWithoutPlaylistsSerializer import LibTrackWithoutPlaylistsSerializer
+from rest_framework import serializers
 
 
 class FIELDS:
@@ -18,6 +19,7 @@ class FIELDS:
 
 class PlaylistWithTracksSerializer(PlaylistWithoutTrackSerializer):
     library_tracks = LibTrackWithoutPlaylistsSerializer(many=True)
+    library_tracks_count = serializers.IntegerField(source=f'{FIELDS.LIB_TRACKS}.count', read_only=True)
 
     class Meta:
         model = Playlist
