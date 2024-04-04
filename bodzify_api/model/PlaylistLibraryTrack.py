@@ -15,7 +15,7 @@ class ATTRIBUTES_LABEL:
     ADDED_ON = 'added_on'
 
 
-class PlaylistLibraryTrack(models.Model):
+class PlaylistLibraryTrackRelation(models.Model):
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
     library_track = models.ForeignKey(LibraryTrack, on_delete=models.CASCADE)
     position = models.PositiveIntegerField()
@@ -23,12 +23,12 @@ class PlaylistLibraryTrack(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            max_position = PlaylistLibraryTrack.objects.filter(playlist=self.playlist).aggregate(
+            max_position = PlaylistLibraryTrackRelation.objects.filter(playlist=self.playlist).aggregate(
                 Max(ATTRIBUTES_LABEL.POSITION))[f'{ATTRIBUTES_LABEL.POSITION}__max']
             self.position = (max_position or 0) + 1
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        PlaylistLibraryTrack.objects.filter(playlist=self.playlist, position__gt=self.position).update(
+        PlaylistLibraryTrackRelation.objects.filter(playlist=self.playlist, position__gt=self.position).update(
             position=F(ATTRIBUTES_LABEL.POSITION) - 1)
         super().delete(*args, **kwargs)

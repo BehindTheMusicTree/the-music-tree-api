@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer \
     import LibTrackWithoutAlbumAndPlaylistSerializer
-from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrack, ATTRIBUTES_LABEL
+from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrackRelation, ATTRIBUTES_LABEL
 
 
 class FIELDS:
@@ -12,11 +12,11 @@ class FIELDS:
     POSITION = ATTRIBUTES_LABEL.POSITION
 
 
-class PlaylistLibraryTrackWithoutPlaylist(serializers.ModelSerializer):
+class PlaylistLibTrackRelationWithoutPlaylist(serializers.ModelSerializer):
     library_track = LibTrackWithoutAlbumAndPlaylistSerializer()
 
     class Meta:
-        model = PlaylistLibraryTrack
+        model = PlaylistLibraryTrackRelation
         fields = [FIELDS.LIB_TRACK,
                   FIELDS.ADDED_ON,
                   FIELDS.POSITION]

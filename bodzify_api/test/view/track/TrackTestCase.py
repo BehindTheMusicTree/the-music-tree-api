@@ -72,11 +72,7 @@ class TrackTestCase(ApiTestCase):
 
         return self.extract(self._replace_none_values_by_empty_string(extract_data_dict))
 
-    def post_lib_track(self, file_abs_path=None, data_dict=None):
-        if file_abs_path is None:
-            return self.api_client.post(path=reverse('librarytrack-list'),
-                                        data=urlencode({LIB_TRACK_POST_FIELDS.FILE: ''}),
-                                        content_type='application/x-www-form-urlencoded')
+    def post_lib_track(self, file_abs_path, data_dict=None):
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LIB_TRACK_POST_FIELDS.FILE: sample_file}
             if data_dict is not None:
@@ -88,17 +84,17 @@ class TrackTestCase(ApiTestCase):
                 self._set_saved_lib_track_attribute(response)
             return response
 
-    def post_lib_track_with_generic_sample(self,
-                                           generic_sample_filename_without_extension,
-                                           generic_sample_file_extension,
-                                           data_dict=None):
+    def _post_lib_track_with_generic_sample(self,
+                                            generic_sample_filename_without_extension,
+                                            generic_sample_file_extension,
+                                            data_dict=None):
         filename_with_extension = generic_sample_filename_without_extension + '.' + generic_sample_file_extension
         generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
         return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_no_tags(self, extension='mp3', data_dict=None):
         filename_without_extension = AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
-        return self.post_lib_track_with_generic_sample(
+        return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
@@ -106,7 +102,7 @@ class TrackTestCase(ApiTestCase):
     def post_lib_track_with_generic_sample_tag_album_without_album_artists(self, extension='mp3', data_dict=None):
         filename_without_extension = \
             AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_WITHOUT_ALBUM_ARTISTS
-        return self.post_lib_track_with_generic_sample(
+        return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
@@ -114,14 +110,14 @@ class TrackTestCase(ApiTestCase):
     def post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', data_dict=None):
         filename_without_extension = \
             AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
-        return self.post_lib_track_with_generic_sample(
+        return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_1_star(self, extension='mp3', data_dict=None):
         filename_without_extension = AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
-        return self.post_lib_track_with_generic_sample(
+        return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)

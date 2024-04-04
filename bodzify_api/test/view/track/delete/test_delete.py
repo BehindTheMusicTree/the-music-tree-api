@@ -5,7 +5,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrack
+from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrackRelation
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -98,5 +98,5 @@ class TrackDeleteViewTestCase(TrackTestCase):
 
         response = self.delete_lib_track(lib_track_uuid=track1.uuid)  # type: ignore
         assert response.status_code == status.HTTP_204_NO_CONTENT  # type: ignore
-        assert PlaylistLibraryTrack.objects.get(playlist=playlist, library_track=track2).position == 1
-        assert PlaylistLibraryTrack.objects.get(playlist=playlist, library_track=track3).position == 2
+        assert PlaylistLibraryTrackRelation.objects.get(playlist=playlist, library_track=track2).position == 1
+        assert PlaylistLibraryTrackRelation.objects.get(playlist=playlist, library_track=track3).position == 2
