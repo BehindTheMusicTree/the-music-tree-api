@@ -11,6 +11,7 @@ class SPECIAL_NAMES:
 
 
 class ATTRIBUTES_LABEL:
+    MODEL = 'playlist'
     UUID = 'uuid'
     USER = 'user'
     ADDED_ON = 'added_on'
@@ -21,6 +22,7 @@ class ATTRIBUTES_LABEL:
     CRITERIA_PLAYLIST = 'criteria_playlist'
     SIMPLE_PLAYLIST = 'simple_playlist'
     PLAY_COUNT = 'play_count'
+    PLAYLIST_LIB_TRACK_RELATIONS = 'playlist_lib_track_relations'
 
 
 FOREIGN_MODEL_ATTRIBUTES_PREFIXE = 'playlist_'

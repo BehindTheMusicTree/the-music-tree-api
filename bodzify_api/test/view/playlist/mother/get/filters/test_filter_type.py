@@ -48,18 +48,14 @@ class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
         assert SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL in names
 
     def test_is_empty_then_error(self):
-        data_dict = {
-            GET_QUERY_PARAM.TYPE: ''
-        }
+        data_dict = {GET_QUERY_PARAM.TYPE: ''}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
     def test_value_is_genre_then_resultst(self):
         rock_criteria_name = "Rock n roll"
         G(Criteria, user=self.test_user, name=rock_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
-        data_dict = {
-            GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.GENRE
-        }
+        data_dict = {GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.GENRE}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 2
@@ -68,9 +64,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
 
     def test_value_is_tag_then_results(self):
-        data_dict = {
-            GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG
-        }
+        data_dict = {GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
@@ -82,9 +76,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
         G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
         G(Criteria, user=self.test_user, name='rock', type=CRITERIA_TYPES_ID.GENRE)
 
-        data_dict = {
-            GET_QUERY_PARAM.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL
-        }
+        data_dict = {GET_QUERY_PARAM.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 2
@@ -93,8 +85,6 @@ class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
         assert simple_playlist_name in names
 
     def test_value_is_wrong_then_error(self):
-        data_dict = {
-            GET_QUERY_PARAM.TYPE: 'wrong_value'
-        }
+        data_dict = {GET_QUERY_PARAM.TYPE: 'wrong_value'}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore

@@ -3,14 +3,14 @@
 from django.db import models
 from django.db.models import F
 
-from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 
 
 class ATTRIBUTES_LABEL:
     MODEL = 'playlist_lib_track_relation'
-    PLAYLIST = 'playlist'
-    LIB_TRACK = 'library_track'
+    PLAYLIST = PLAYLIST_ATTRIBUTES_LABEL.MODEL
+    LIB_TRACK = LIB_TRACK_ATTRIBUTES_LABEL.MODEL
     POSITION = 'position'
     ADDED_ON = 'added_on'
 

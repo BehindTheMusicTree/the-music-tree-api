@@ -18,7 +18,8 @@ class FIELDS:
 
 
 class PlaylistWithTracksSerializer(PlaylistWithoutTrackSerializer):
-    library_tracks = PlaylistLibTrackRelationWithoutPlaylist(many=True)
+    library_tracks = PlaylistLibTrackRelationWithoutPlaylist(source=ATTRIBUTES_LABEL.PLAYLIST_LIB_TRACK_RELATIONS,
+                                                             many=True)
     library_tracks_count = serializers.IntegerField(source=f'{FIELDS.LIB_TRACKS}.count', read_only=True)
 
     class Meta:
