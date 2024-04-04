@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod
-import logging
 import re
 from django.db import IntegrityError
 from django.http import QueryDict
@@ -12,8 +11,6 @@ from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 from rest_framework.serializers import ModelSerializer
 from rest_framework.permissions import IsAuthenticated
-
-logger = logging.getLogger('bodyzify_api')
 
 
 class PAGINATED_RESPONSE_FIELDS:

@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
-import logging
-
+from django.db import transaction
 from django.http import HttpResponse
-from rest_framework.response import Response
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.serializers import ModelSerializer
@@ -20,8 +19,6 @@ from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer im
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
-
-logger = logging.getLogger('bodzify_api')
 
 
 class GET_FILTER_FIELDS:
@@ -78,6 +75,7 @@ class TrackViewSet(AppModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
+    @transaction.atomic
     @extend_schema(request=LibTrackPutSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=("""
@@ -112,6 +110,7 @@ class TrackViewSet(AppModelViewSet):
     def update(self, request, *args, **kwargs):
         return self._update(request, *args, **kwargs)
 
+    @transaction.atomic
     @extend_schema(request=LibTrackPostSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=(
@@ -143,6 +142,7 @@ class TrackViewSet(AppModelViewSet):
                 content="The requested track's file is missing.",
                 status=status.HTTP_410_GONE)
 
+    @transaction.atomic
     @extend_schema(request=LibTrackExtractSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=("""
@@ -181,5 +181,6 @@ class TrackViewSet(AppModelViewSet):
         return Response(
             data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         return self._destroy(request, *args, **kwargs)

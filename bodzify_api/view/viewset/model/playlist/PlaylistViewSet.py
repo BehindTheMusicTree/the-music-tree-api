@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import logging
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
@@ -12,8 +11,6 @@ from bodzify_api.service.Service import Service
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import PlaylistWithTracksSerializer
-
-logger = logging.getLogger('bodyzify_api')
 
 
 class PlaylistViewSet(AppModelViewSet):

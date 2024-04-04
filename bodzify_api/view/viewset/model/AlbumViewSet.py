@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from django.db import transaction
+
 from bodzify_api.model.Album import Album
 from bodzify_api.serializer.album.output.AlbumDetailedSerializer import AlbumDetailedSerializer
 from bodzify_api.service.AlbumService import AlbumService
@@ -24,5 +26,6 @@ class AlbumViewSet(AppModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         return self._destroy(request, *args, **kwargs)

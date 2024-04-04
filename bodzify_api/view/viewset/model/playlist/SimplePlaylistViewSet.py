@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from django.db import transaction
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 
@@ -44,10 +45,12 @@ class SimplePlaylistViewSet(AppModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
+    @transaction.atomic
     @extend_schema(request=SimplePlaylistInputEndpointSerializer, responses=SimplePlaylistWithTracksSerializer)
     def create(self, request, *args, **kwargs):
         return self._create(request, *args, **kwargs)
 
+    @transaction.atomic
     @extend_schema(request=SimplePlaylistInputEndpointSerializer, responses=SimplePlaylistWithTracksSerializer)
     def update(self, request, *args, **kwargs):
         return self._update(request, *args, **kwargs)
