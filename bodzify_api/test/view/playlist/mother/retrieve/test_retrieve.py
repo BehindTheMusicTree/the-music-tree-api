@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import logging
-from django.template import Library
 from rest_framework import status
 from ddf import G
 
@@ -12,6 +11,10 @@ from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as RETRIEVE_FIELDS
 from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
+from bodzify_api.utils import to_camel_case
+from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer import FIELDS as LIB_TRACK_FIELDS
+from bodzify_api.serializer.playlist_library_track.output.PlaylistLibTrackRelationWithoutPlaylist \
+    import FIELDS as PLAYLIST_LIB_TRACK_RELATION_FIELDS
 
 logger = logging.getLogger('bodyzify_api')
 
@@ -58,4 +61,13 @@ class TestCase(PlaylistTestCase):
 
         response = self.retrieve_playlist(uuid=genre.criteria_playlist.playlist.uuid)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        assert self.result[RETRIEVE_FIELDS.LIB_TRACKS] == name
+        result_tracks = self.result[to_camel_case(RETRIEVE_FIELDS.LIB_TRACKS)]
+        assert result_tracks[0][
+            to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
+            LIB_TRACK_FIELDS.TITLE] == lib_track1.title  # type: ignore
+        assert result_tracks[1][
+            to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
+            LIB_TRACK_FIELDS.TITLE] == lib_track2.title  # type: ignore
+        assert result_tracks[2][
+            to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
+            LIB_TRACK_FIELDS.TITLE] == lib_track3.title  # type: ignore
