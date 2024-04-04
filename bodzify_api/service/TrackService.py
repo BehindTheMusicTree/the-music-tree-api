@@ -12,8 +12,8 @@ from django.core.files.base import File
 from django.db.models import F
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
-from bodzify_api.model.PlaylistLibraryTrack \
-    import PlaylistLibraryTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.PlaylistLibTrackRelation \
+    import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
@@ -171,7 +171,7 @@ class TrackService(Service):
     @staticmethod
     def _decrease_position_of_next_tracks_in_old_track_playlists(playlists_with_old_position: list):
         for playlist_uuid, old_position in playlists_with_old_position:
-            playlist_lib_track_relations_to_update = PlaylistLibraryTrackRelation.objects.filter(
+            playlist_lib_track_relations_to_update = PlaylistLibTrackRelation.objects.filter(
                 playlist__uuid=playlist_uuid, position__gt=old_position)
             playlist_lib_track_relations_to_update.update(position=F(PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.POSITION) - 1)
 

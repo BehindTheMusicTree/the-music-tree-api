@@ -17,12 +17,13 @@ class FIELDS:
 
 class SimplePlaylistWithTracksSerializer(PlaylistChildSerializer):
     name = serializers.CharField()  # Overriding the name field of the parent class
-    library_tracks = PlaylistLibTrackRelationWithoutPlaylist(source='playlist.playlistlibrarytrack_set', many=True)
+    library_tracks = PlaylistLibTrackRelationWithoutPlaylist(source='playlist.playlist_lib_track_relations',
+                                                             many=True)
 
     class Meta:
         model = SimplePlaylist
         fields = [FIELDS.UUID,
-                  'name',
+                  FIELDS.NAME,
                   FIELDS.ADDED_ON,
                   FIELDS.LIB_TRACKS_COUNT,
                   FIELDS.LIB_TRACKS]

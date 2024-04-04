@@ -3,7 +3,7 @@
 import pytest
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrackRelation
+from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -19,5 +19,5 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_generic_sample_no_tags()  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
-        assert PlaylistLibraryTrackRelation.objects.get(playlist=all_playlist,
-                                                        library_track=self.saved_lib_track).position == 3
+        assert PlaylistLibTrackRelation.objects.get(playlist=all_playlist,
+                                                    library_track=self.saved_lib_track).position == 3

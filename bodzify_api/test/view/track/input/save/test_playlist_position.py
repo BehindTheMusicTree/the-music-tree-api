@@ -3,7 +3,7 @@
 import pytest
 from rest_framework import status
 from ddf import G
-from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrackRelation
+from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
@@ -24,8 +24,14 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).playlist
-        assert PlaylistLibraryTrackRelation.objects.get(playlist=genre_playlist,
-                                                        library_track=self.saved_lib_track).position == 1
+        assert PlaylistLibTrackRelation.objects.get(playlist=genre_playlist,
+                                                    library_track=self.saved_lib_track).position == 1
+
+    def test_existing_genre_then_first_position(self):
+        genre_name = "Rock"
+        genre = G(Criteria, name=genre_name, user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
+        data = {POST_FIELDS.GENRE_NAME: genre_name}
+        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
 
     # def test_new_criteria_then_not_in_old_criteria_playlist_anymore(self):
     #     old_genre = G(Criteria, name="Metal", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)

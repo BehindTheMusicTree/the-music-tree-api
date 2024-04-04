@@ -29,6 +29,7 @@ def _get_user_directory_path(instance, filename):
 
 
 class ATTRIBUTES_LABEL:
+    MODEL = 'library_track'
     UUID = "uuid"
     USER = "user"
     FILE = "file"
@@ -81,7 +82,9 @@ class LibraryTrack(models.Model):
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX, blank=True, default=None, null=True)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
-    playlists = models.ManyToManyField(Playlist, through='PlaylistLibraryTrackRelation', related_name='library_tracks')
+    playlists = models.ManyToManyField(Playlist,
+                                       through='PlaylistLibTrackRelation',
+                                       related_name=ATTRIBUTES_LABEL.MODEL + 's')
 
     @property
     def filename(self) -> str:
@@ -139,9 +142,9 @@ class LibraryTrack(models.Model):
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
             from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
-            from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrackRelation
+            from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
             all_simple_playlist = SimplePlaylist.objects.get(playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
-            PlaylistLibraryTrackRelation.objects.create(playlist=all_simple_playlist.playlist, library_track=self)
+            PlaylistLibTrackRelation.objects.create(playlist=all_simple_playlist.playlist, library_track=self)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
 
@@ -168,41 +171,41 @@ class LibraryTrack(models.Model):
     def _remove_track_from_old_genre_ascendants_playlists_until_genre_limit(self,
                                                                             old_genre: Optional[Criteria],
                                                                             genre_limit=None):
-        from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrackRelation
+        from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
         if old_genre is not None:
             old_genre_tree_item = old_genre
             while old_genre_tree_item != genre_limit:
                 genreless_criteria_playlist = CriteriaPlaylist.objects.get(criteria=old_genre_tree_item)
-                PlaylistLibraryTrackRelation.objects.get(playlist=genreless_criteria_playlist.playlist,
-                                                         library_track=self).delete()
+                PlaylistLibTrackRelation.objects.get(playlist=genreless_criteria_playlist.playlist,
+                                                     library_track=self).delete()
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            PlaylistLibraryTrackRelation.objects.get(
+            PlaylistLibTrackRelation.objects.get(
                 playlist=genreless_criteria_playlist.playlist, library_track=self).delete()
 
     def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
-        from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrackRelation
+        from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
         if self.genre is not None:
             new_genre_tree_item = self.genre
             while new_genre_tree_item != genre_limit:
                 criteria_playlist = CriteriaPlaylist.objects.get(criteria=new_genre_tree_item)
-                PlaylistLibraryTrackRelation.objects.create(playlist=criteria_playlist.playlist, library_track=self)
+                PlaylistLibTrackRelation.objects.create(playlist=criteria_playlist.playlist, library_track=self)
 
                 new_genre_tree_item = new_genre_tree_item.parent
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            PlaylistLibraryTrackRelation.objects.create(
+            PlaylistLibTrackRelation.objects.create(
                 playlist=genreless_criteria_playlist.playlist, library_track=self)
 
     def _get_lib_track_playlists_with_positions(self) -> list:
-        from bodzify_api.model.PlaylistLibraryTrack \
-            import PlaylistLibraryTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL
-        playlist_lib_track_relations = PlaylistLibraryTrackRelation.objects.filter(library_track=self)
+        from bodzify_api.model.PlaylistLibTrackRelation \
+            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL
+        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
         return list(playlist_lib_track_relations.values_list(PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.PLAYLIST + '__uuid',
                                                              PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.POSITION))
 
