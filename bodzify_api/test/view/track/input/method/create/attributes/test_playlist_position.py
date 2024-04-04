@@ -13,11 +13,15 @@ from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 @pytest.mark.django_db
 class TestCase(TrackTestCase):
 
-    def test_create_then_in_last_position_of_all_playlist(self):
-        G(LibraryTrack, user=self.test_user, title="We're All To Blame")
-        G(LibraryTrack, user=self.test_user, title="We're All To lol")
+    def test_create_then_in_first_position_of_all_playlist_and_others_after(self):
+        lib_track1 = G(LibraryTrack, user=self.test_user, title="We're All To Blame")
+        lib_track2 = G(LibraryTrack, user=self.test_user, title="We're All To lol")
         response = self.post_lib_track_with_generic_sample_no_tags()  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
         assert PlaylistLibTrackRelation.objects.get(playlist=all_playlist,
-                                                    library_track=self.saved_lib_track).position == 3
+                                                    library_track=self.saved_lib_track).position == 1
+        assert PlaylistLibTrackRelation.objects.get(playlist=all_playlist,
+                                                    library_track=lib_track1).position == 3
+        assert PlaylistLibTrackRelation.objects.get(playlist=all_playlist,
+                                                    library_track=lib_track2).position == 2
