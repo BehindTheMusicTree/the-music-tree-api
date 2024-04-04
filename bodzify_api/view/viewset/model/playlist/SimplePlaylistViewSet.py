@@ -38,8 +38,9 @@ class SimplePlaylistViewSet(AppModelViewSet):
     def _get_detailed_serializer(self, instance):
         return SimplePlaylistWithTracksSerializer(instance=instance)
 
-    @extend_schema(parameters=[
-        OpenApiParameter(name=GET_FILTER_FIELDS.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY)])
+    @extend_schema(parameters=[OpenApiParameter(name=GET_FILTER_FIELDS.NAME,
+                                                type=OpenApiTypes.STR,
+                                                location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 

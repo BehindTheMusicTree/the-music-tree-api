@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, \
-    FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
-from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist, \
-    ATTRIBUTES_LABEL as SIMPLE_PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.PlaylistChildSerializer \
     import PlaylistChildSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
-from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer import \
-    LibTrackWithoutAlbumAndPlaylistSerializer
+from bodzify_api.serializer.playlist_library_track.output.PlaylistLibraryTrackWithoutPlaylist import PlaylistLibraryTrackWithoutPlaylist
 
 
 class FIELDS:
@@ -19,9 +15,7 @@ class FIELDS:
 
 
 class SimplePlaylistWithTracksSerializer(PlaylistChildSerializer):
-    library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(
-        source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIB_TRACKS,
-        many=True)
+    library_tracks = PlaylistLibraryTrackWithoutPlaylist(source='playlist.playlistlibrarytrack_set', many=True)
 
     class Meta:
         model = SimplePlaylist

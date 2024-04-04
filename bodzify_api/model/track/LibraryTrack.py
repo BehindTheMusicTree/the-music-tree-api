@@ -8,19 +8,16 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_delete
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
-from bodzify_api.model.Play import Play
+from bodzify_api.model.playlist.Playlist import Playlist
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.Playlist \
-    import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.validator.TrackFileValidator import validate_size
 
@@ -81,10 +78,10 @@ class LibraryTrack(models.Model):
         null=True,
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
-    playlists = models.ManyToManyField('bodzify_api.Playlist', related_name=PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS)
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX, blank=True, default=None, null=True)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
+    playlists = models.ManyToManyField(Playlist, through='PlaylistLibraryTrack', related_name='library_tracks')
 
     @property
     def filename(self) -> str:
@@ -141,8 +138,10 @@ class LibraryTrack(models.Model):
 
         except LibraryTrack.DoesNotExist:
             super().save(*args, **kwargs)
+            from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+            from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrack
             all_simple_playlist = SimplePlaylist.objects.get(playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
-            self.playlists.add(all_simple_playlist.playlist)
+            PlaylistLibraryTrack.objects.create(playlist=all_simple_playlist.playlist, library_track=self)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
 
@@ -169,28 +168,34 @@ class LibraryTrack(models.Model):
     def _remove_track_from_old_genre_ascendants_playlists_until_genre_limit(self,
                                                                             old_genre: Optional[Criteria],
                                                                             genre_limit=None):
+        from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrack
         if old_genre is not None:
             old_genre_tree_item = old_genre
             while old_genre_tree_item != genre_limit:
-                self.playlists.remove(CriteriaPlaylist.objects.get(
-                    criteria=old_genre_tree_item).playlist)
+                genreless_criteria_playlist = CriteriaPlaylist.objects.get(criteria=old_genre_tree_item)
+                PlaylistLibraryTrack.objects.get(playlist=genreless_criteria_playlist.playlist,
+                                                 library_track=self).delete()
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
         else:
-            criteria_playlist = CriteriaPlaylist.objects.get(
-                playlist__user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None)
-            self.playlists.remove(criteria_playlist.playlist)
+            genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
+                                                                       type_id=CRITERIA_TYPES_ID.GENRE,
+                                                                       criteria=None)
+            PlaylistLibraryTrack.objects.get(playlist=genreless_criteria_playlist.playlist, library_track=self).delete()
 
     def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
+        from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrack
         if self.genre is not None:
             new_genre_tree_item = self.genre
             while new_genre_tree_item != genre_limit:
-                self.playlists.add(CriteriaPlaylist.objects.get(
-                    criteria=new_genre_tree_item).playlist)
+                criteria_playlist = CriteriaPlaylist.objects.get(criteria=new_genre_tree_item)
+                PlaylistLibraryTrack.objects.create(playlist=criteria_playlist.playlist, library_track=self)
+
                 new_genre_tree_item = new_genre_tree_item.parent
         else:
-            genreless_criteria_playlist = CriteriaPlaylist.objects.get(
-                playlist__user=self.user, type_id=CRITERIA_TYPES_ID.GENRE, criteria=None)
-            self.playlists.add(genreless_criteria_playlist.playlist)
+            genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
+                                                                       type_id=CRITERIA_TYPES_ID.GENRE,
+                                                                       criteria=None)
+            PlaylistLibraryTrack.objects.create(playlist=genreless_criteria_playlist.playlist, library_track=self)
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
         track_artist_uuid = self.artist.uuid if self.artist else None
