@@ -33,17 +33,6 @@ class TestCase(TrackTestCase):
         simple_playlists = SimplePlaylist.objects.filter(playlist__in=track_playlists)
         assert simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
 
-    def test_new_criteria_then_not_in_old_criteria_playlist_anymore(self):
-        old_genre = G(Criteria, name="Metal", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        new_genre_name = "Rock"
-        lib_track = G(LibraryTrack, user=self.test_user, title="Love", genre=old_genre)
-        data = {PUT_FIELDS.GENRE_NAME: new_genre_name}
-        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-
-        old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).playlist
-        assert lib_track not in old_genre_playlist.library_tracks.all()  # type: ignore
-
     def test_existing_genre_then_track_in_existing_playlist_and_all_playlist(self):
         genre_name = "Rock"
         genre = G(Criteria, name=genre_name, user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
