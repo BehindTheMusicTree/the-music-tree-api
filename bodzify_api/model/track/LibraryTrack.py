@@ -4,6 +4,7 @@ import os
 from typing import Optional
 
 import shortuuid
+from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from django.db import models
@@ -196,6 +197,13 @@ class LibraryTrack(models.Model):
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
             PlaylistLibraryTrack.objects.create(playlist=genreless_criteria_playlist.playlist, library_track=self)
+
+    def _get_lib_track_playlists_with_positions(self) -> list:
+        from bodzify_api.model.PlaylistLibraryTrack \
+            import PlaylistLibraryTrack, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL
+        playlist_lib_track_relations = PlaylistLibraryTrack.objects.filter(library_track=self)
+        return list(playlist_lib_track_relations.values_list(PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.PLAYLIST + '__uuid',
+                                                             PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.POSITION))
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
         track_artist_uuid = self.artist.uuid if self.artist else None

@@ -4,6 +4,7 @@ from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.PlaylistChildSerializer \
     import PlaylistChildSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
 from bodzify_api.serializer.playlist_library_track.output.PlaylistLibraryTrackWithoutPlaylist import PlaylistLibraryTrackWithoutPlaylist
+from rest_framework import serializers
 
 
 class FIELDS:
@@ -15,12 +16,13 @@ class FIELDS:
 
 
 class SimplePlaylistWithTracksSerializer(PlaylistChildSerializer):
+    name = serializers.CharField()  # Overriding the name field of the parent class
     library_tracks = PlaylistLibraryTrackWithoutPlaylist(source='playlist.playlistlibrarytrack_set', many=True)
 
     class Meta:
         model = SimplePlaylist
         fields = [FIELDS.UUID,
-                  FIELDS.NAME,
+                  'name',
                   FIELDS.ADDED_ON,
                   FIELDS.LIB_TRACKS_COUNT,
                   FIELDS.LIB_TRACKS]

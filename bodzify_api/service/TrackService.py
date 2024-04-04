@@ -9,8 +9,12 @@ from tempfile import NamedTemporaryFile
 import requests
 from django.contrib.auth.models import User
 from django.core.files.base import File
+from django.db.models import F
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
+from bodzify_api.model.PlaylistLibraryTrack \
+    import PlaylistLibraryTrack, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
 import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
@@ -18,7 +22,8 @@ from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer \
     import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
+from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer \
+    import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
 from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
 from bodzify_api.service.criteria.GenreService import GenreService
@@ -163,8 +168,17 @@ class TrackService(Service):
 
         return library_track
 
+    @staticmethod
+    def _decrease_position_of_next_tracks_in_old_track_playlists(playlists_with_old_position: list):
+        for playlist_uuid, old_position in playlists_with_old_position:
+            playlist_lib_track_relations_to_update = PlaylistLibraryTrack.objects.filter(playlist__uuid=playlist_uuid,
+                                                                                         position__gt=old_position)
+            playlist_lib_track_relations_to_update.update(position=F(PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.POSITION) - 1)
+
     def delete(self, user: User, instance):
+        old_lib_tracks_playlists_with_positions = instance._get_lib_track_playlists_with_positions()
         instance.delete_with_checking_album_and_artist_potential_deletion()
+        TrackService._decrease_position_of_next_tracks_in_old_track_playlists(old_lib_tracks_playlists_with_positions)
 
     def _get_save_schema_data_from_file(self, file):
         metadata_dict = AudioMetadataManager.get_metadata_dict_from_file(

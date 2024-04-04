@@ -5,6 +5,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.PlaylistLibraryTrack import PlaylistLibraryTrack
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -87,3 +88,15 @@ class TrackDeleteViewTestCase(TrackTestCase):
         assert track not in genre1.criteria_playlist.playlist.library_tracks.all()  # type: ignore
         assert track not in genre2.criteria_playlist.playlist.library_tracks.all()  # type: ignore
         assert track not in genre3.criteria_playlist.playlist.library_tracks.all()  # type: ignore
+
+    def test_removal_then_next_tracks_in_playlist_decrease_position(self):
+        track1 = G(LibraryTrack, user=self.test_user, title="We're All To Blame")
+        track2 = G(LibraryTrack, user=self.test_user, title="Still Waiting")
+        track3 = G(LibraryTrack, user=self.test_user, title="The Hell Song")
+
+        playlist = SimplePlaylist.objects.get(playlist__user=self.test_user, name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
+
+        response = self.delete_lib_track(lib_track_uuid=track1.uuid)  # type: ignore
+        assert response.status_code == status.HTTP_204_NO_CONTENT  # type: ignore
+        assert PlaylistLibraryTrack.objects.get(playlist=playlist, library_track=track2).position == 1
+        assert PlaylistLibraryTrack.objects.get(playlist=playlist, library_track=track3).position == 2
