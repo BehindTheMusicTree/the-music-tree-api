@@ -42,5 +42,4 @@ class LibTrackWithoutAlbumAndPlaylistSerializer(serializers.ModelSerializer):
             FIELDS.LANGUAGE,
             FIELDS.ADDED_ON,
             FIELDS.PLAY_COUNT,
-            FIELDS.PLAY_COUNT
         ]

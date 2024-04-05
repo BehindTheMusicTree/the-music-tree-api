@@ -43,13 +43,21 @@ class TestCase(CriteriaTestCase):
         playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
         assert playlist.library_tracks.first() != track  # type: ignore
 
-    def test_new_parent_ascendant_of_old_parent_then_remove_criteria_playlist_tracks_from_playlists_of_criterias_in_between(self):
+    def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self):
         rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        track = G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Rock song")
+        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, parent=rock_genre)
+        punk_playlist = punk_genre.criteria_playlist.playlist  # type: ignore
+        punk_fr_genre = G(Criteria,
+                          name="Punk FR",
+                          user=self.test_user,
+                          type=CRITERIA_TYPES_ID.GENRE,
+                          parent=punk_genre)
+
+        track_punk = G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Punk song")
+        G(LibraryTrack, user=self.test_user, genre=punk_fr_genre, title="punk fr song")
 
         data = {PUT_FIELD.PARENT: rock_genre.uuid}  # type: ignore
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
+        response = self.put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
-        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
-        assert playlist.library_tracks.first() == track  # type: ignore
+        assert punk_playlist.library_tracks.count() == 1
+        assert punk_playlist.library_tracks.first() == track_punk

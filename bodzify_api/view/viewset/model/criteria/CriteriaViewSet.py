@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 
-import logging
+from django.db import transaction
+from rest_framework.serializers import ModelSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
+
 from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer import CriteriaSaveSchemaSerializer
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
-
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
-from rest_framework.serializers import ModelSerializer
-from bodzify_api.model.criteria.Criteria import Criteria, \
-    ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
-
-logger = logging.getLogger('bodzify_api')
+from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 
 
 class FILTER_FIELDS:
@@ -49,6 +46,7 @@ class CriteriaViewSet(AppModelViewSet):
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return CriteriaDetailedSerializer(instance=instance)  # type: ignore
 
+    @transaction.atomic
     @extend_schema(request=CriteriaSaveSchemaSerializer, responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         return self._create(request, *args, **kwargs)
@@ -64,6 +62,7 @@ class CriteriaViewSet(AppModelViewSet):
     def list(self, request, *args, **kwargs):
         return self._list(request, *args, **kwargs)
 
+    @transaction.atomic
     @extend_schema(request=CriteriaSaveSchemaSerializer,
                    responses=CriteriaDetailedSerializer,
                    description=("""Updates a criteria"""))

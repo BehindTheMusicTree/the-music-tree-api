@@ -23,9 +23,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         return super().setUp(allow_empty_value=False, methods_names_to_implement=methods_names_to_implement)
 
     def test_is_empty_then_error(self):
-        data_dict = {
-            GET_QUERY_PARAM.NAME: ''
-        }
+        data_dict = {GET_QUERY_PARAM.NAME: ''}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
 
@@ -44,9 +42,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         simple_playlist_name = "Teuf"
         G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
 
-        data_dict = {
-            GET_QUERY_PARAM.NAME: simple_playlist_name.upper()
-        }
+        data_dict = {GET_QUERY_PARAM.NAME: simple_playlist_name.upper()}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
@@ -54,27 +50,21 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         assert simple_playlist_name.lower() in names_lowered
 
     def test_genreless_special_name_then_results(self):
-        data_dict = {
-            GET_QUERY_PARAM.NAME: 'geNr'
-        }
+        data_dict = {GET_QUERY_PARAM.NAME: 'geNr'}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
         assert self.results[0][GET_QUERY_PARAM.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS
 
     def test_tagless_special_name_then_results(self):
-        data_dict = {
-            GET_QUERY_PARAM.NAME: 'aGl'
-        }
+        data_dict = {GET_QUERY_PARAM.NAME: 'aGl'}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
         assert self.results[0][GET_QUERY_PARAM.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS
 
     def test_all_special_name_then_results(self):
-        data_dict = {
-            GET_QUERY_PARAM.NAME: 'Al'
-        }
+        data_dict = {GET_QUERY_PARAM.NAME: 'Al'}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 1
@@ -86,9 +76,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         criteria_name = "leSsa"
         G(Criteria, user=self.test_user, name=criteria_name, type=CRITERIA_TYPES_ID.GENRE)
 
-        data_dict = {
-            GET_QUERY_PARAM.NAME: 'Less'
-        }
+        data_dict = {GET_QUERY_PARAM.NAME: 'Less'}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         assert len(self.results) == 4
