@@ -21,6 +21,9 @@ class PlaylistLibTrackRelation(models.Model):
     position = models.PositiveIntegerField()
     added_on = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'Playlist {self.playlist.uuid} - Track title {self.library_track.title}'
+
     def save(self, *args, **kwargs):
         if not self.pk:
             playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(playlist=self.playlist)

@@ -159,6 +159,7 @@ class LibraryTrack(models.Model):
             instance.file.delete()
 
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
+        print("update genre playlists")
         if old_genre is not None and self.genre is not None:
             common_genre = self.genre.get_common_criteria(old_genre)
         else:
@@ -188,13 +189,16 @@ class LibraryTrack(models.Model):
 
     def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
         from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
+        print("add track to genre playlists")
         if self.genre is not None:
+            # print("genre is not none")
             new_genre_tree_item = self.genre
             while new_genre_tree_item != genre_limit:
                 criteria_playlist = CriteriaPlaylist.objects.get(criteria=new_genre_tree_item)
                 PlaylistLibTrackRelation.objects.create(playlist=criteria_playlist.playlist, library_track=self)
-
                 new_genre_tree_item = new_genre_tree_item.parent
+            relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
+            # print(relations)
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
