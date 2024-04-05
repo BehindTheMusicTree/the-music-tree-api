@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from dbm.ndbm import library
 from pickle import FALSE
 from rest_framework import status
 from ddf import G
@@ -68,24 +69,41 @@ class TestCase(CriteriaTestCase):
         assert tracks_positions[lib_track_previously_first_in_guitare.uuid] == 5  # type: ignore
         assert tracks_positions[lib_track_previously_second_in_guitare.uuid] == 6  # type: ignore
 
-    # def test_new_parent_not_acendant_of_old_parent_then_remove_criteria_playlist_tracks_from_old_criteria_ascendants_playlist(self):
-    #     rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-    #     punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, parent=rock_genre)
-    #     track = G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Rock song")
+    def test_new_parent_not_acendant_of_old_parent_then_update_positions_in_old_parent(self):
+        rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
+        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
 
-    #     data = {PUT_FIELD.PARENT: ''}
-    #     response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
-    #     assert response.status_code == status.HTTP_200_OK  # type: ignore
-    #     playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
-    #     assert playlist.library_tracks.first() != track  # type: ignore
+        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, parent=rock_genre)
 
-    # def test_new_parent_ascendant_of_old_parent_then_remove_criteria_playlist_tracks_from_playlists_of_criterias_in_between(self):
-    #     rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-    #     punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-    #     track = G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Rock song")
+        track_fourth_in_rock = G(LibraryTrack, user=self.test_user, genre=rock_genre, title="Rock song 2")
+        G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Punk song 2")
+        track_second_in_rock = G(LibraryTrack, user=self.test_user, genre=rock_genre, title="Rock song")
+        G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Punk song")
 
-    #     data = {PUT_FIELD.PARENT: rock_genre.uuid}  # type: ignore
-    #     response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
-    #     assert response.status_code == status.HTTP_200_OK  # type: ignore
-    #     playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
-    #     assert playlist.library_tracks.first() == track  # type: ignore
+        data = {PUT_FIELD.PARENT: ''}
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+
+        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(playlist=rock_playlist)
+        tracks_positions = {relation.library_track.uuid: relation.position for relation in playlist_lib_track_relations}
+        assert tracks_positions[track_second_in_rock.uuid] == 1  # type: ignore
+        assert tracks_positions[track_fourth_in_rock.uuid] == 2  # type: ignore
+
+    def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self):
+        rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
+        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, parent=rock_genre)
+        punk_playlist = punk_genre.criteria_playlist.playlist  # type: ignore
+        punk_fr_genre = G(Criteria,
+                          name="Punk FR",
+                          user=self.test_user,
+                          type=CRITERIA_TYPES_ID.GENRE,
+                          parent=punk_genre)
+
+        track_second_in_punk = G(LibraryTrack, user=self.test_user, genre=punk_genre, title="Punk song")
+        G(LibraryTrack, user=self.test_user, genre=punk_fr_genre, title="punk fr song")
+
+        data = {PUT_FIELD.PARENT: rock_genre.uuid}  # type: ignore
+        response = self.put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert PlaylistLibTrackRelation.objects.get(playlist=punk_playlist,
+                                                    library_track=track_second_in_punk).position == 1
