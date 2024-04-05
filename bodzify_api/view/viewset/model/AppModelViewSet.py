@@ -57,7 +57,6 @@ class AppModelViewSet(MultiSerializerViewSet):
             return Response(data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
         except IntegrityError as e:
-            logger.exception(e)
             return utility.get_response_when_bad_request(exception=e)
 
     def _update(self, request, *args, **kwargs):

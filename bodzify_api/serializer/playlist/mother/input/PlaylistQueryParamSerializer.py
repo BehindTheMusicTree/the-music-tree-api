@@ -6,8 +6,6 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as 
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
-logger = logging.getLogger('bodyzify_api')
-
 
 class FIELDS:
     TYPE = 'type'

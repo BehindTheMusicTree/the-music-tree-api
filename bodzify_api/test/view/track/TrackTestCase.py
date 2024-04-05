@@ -72,6 +72,11 @@ class TrackTestCase(ApiTestCase):
 
         return self.extract(self._replace_none_values_by_empty_string(extract_data_dict))
 
+    def post_lib_track_without_file(self, data_dict=None):
+        return self.api_client.post(path=reverse('librarytrack-list'),
+                                    data=self._replace_none_values_by_empty_string(data_dict),
+                                    format='json')
+
     def post_lib_track(self, file_abs_path, data_dict=None):
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LIB_TRACK_POST_FIELDS.FILE: sample_file}

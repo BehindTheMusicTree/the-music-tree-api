@@ -3,13 +3,13 @@
 import logging
 from typing import Optional
 import shortuuid
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import QuerySet
+
 from bodzify_api.model.playlist.Playlist import Playlist
 import bodzify_api.settings as settings
-
-
-logger = logging.getLogger('bodzify_api')
 
 
 class ATTRIBUTES_LABEL:
@@ -72,49 +72,45 @@ class Criteria(models.Model):
     def _update_playlists(self, old_parent: Optional['Criteria']):
         common_criteria = self.get_common_criteria(old_parent)
 
-        from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
-        criteria_tracks = list(
-            PlaylistLibTrackRelation.objects
-            .filter(playlist=self.criteria_playlist.playlist)  # type: ignore
-            .values_list(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.LIB_TRACK, flat=True)
-        )
+        from bodzify_api.model.track.LibraryTrack import LibraryTrack
+        lib_tracks = LibraryTrack.objects.filter(
+            playlist_lib_track_relations__playlist=self.criteria_playlist.playlist)  # type: ignore
 
         if self.parent is not None:
             self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
-                tracks=criteria_tracks,
+                lib_tracks=lib_tracks,
                 criteria_limit=common_criteria)
 
         if old_parent is not None:
             old_parent._remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
-                tracks=criteria_tracks,
+                lib_tracks=lib_tracks,
                 criteria_limit=common_criteria)
 
     def _add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
-            self, lib_tracks: list, criteria_limit: Optional['Criteria'] = None):
+            self, lib_tracks: QuerySet, criteria_limit: Optional['Criteria'] = None):
         if self != criteria_limit:
             playlist = self.criteria_playlist.playlist  # type: ignore
 
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
-            PlaylistLibTrackRelation.objects.bulk_create(
-                [PlaylistLibTrackRelation(playlist=playlist, library_track=track) for track in lib_tracks])
+            for lib_track in lib_tracks:
+                PlaylistLibTrackRelation.objects.create(playlist=playlist, library_track=lib_track)
             if self.parent is not None:
                 self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
-                    tracks=lib_tracks,
+                    lib_tracks=lib_tracks,
                     criteria_limit=criteria_limit)
 
     def _remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
-            self, tracks: list, criteria_limit: Optional['Criteria'] = None):
+            self, lib_tracks: QuerySet, criteria_limit: Optional['Criteria'] = None):
         if self != criteria_limit:
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
             (
                 PlaylistLibTrackRelation.objects
-                .filter(playlist=self.criteria_playlist.playlist, library_track__in=tracks)  # type: ignore
+                .filter(playlist=self.criteria_playlist.playlist, library_track__in=lib_tracks)  # type: ignore
                 .delete()
             )
             if self.parent is not None:
                 self.parent._remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
-                    tracks=tracks,
+                    lib_tracks=lib_tracks,
                     criteria_limit=criteria_limit)
 
     def get_common_criteria(self, criteriaB):
