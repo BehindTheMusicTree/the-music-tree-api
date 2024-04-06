@@ -13,7 +13,7 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
     file_extension = None
 
     def test_none_then_none(self):
-        response = self.post_lib_track_with_generic_sample_tag_album_without_album_artists(
+        response = self.post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(
             extension=self.file_extension)  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore
         assert self.saved_lib_track.album.album_artists.count() == 0  # type: ignore

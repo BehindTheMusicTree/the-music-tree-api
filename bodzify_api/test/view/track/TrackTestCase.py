@@ -24,6 +24,13 @@ logger = logging.getLogger('bodzify_api')
 
 class TrackTestCase(ApiTestCase):
 
+    class LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION:
+        ONE_STAR = "1 star"
+        TAGS_NONE = "tags none"
+        TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS = "tags album koko without album artists"
+        TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM = "tags album artists koko without album"
+        TAGS_MAX_LENGTH_WITH_LETTER_A = "tags max length with letter a"
+
     class SAMPLE_MINE_TRACK_URLS:
         WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
         MP3 = "https://lasonotheque.org/UPLOAD/mp3/0001.mp3"
@@ -98,30 +105,38 @@ class TrackTestCase(ApiTestCase):
         return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_no_tags(self, extension='mp3', data_dict=None):
-        filename_without_extension = AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
+        filename_without_extension = TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
 
-    def post_lib_track_with_generic_sample_tag_album_without_album_artists(self, extension='mp3', data_dict=None):
+    def post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(self, extension='mp3', data_dict=None):
         filename_without_extension = \
-            AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_WITHOUT_ALBUM_ARTISTS
+            TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
+            data_dict=data_dict)
+
+    def post_lib_track_with_generic_sample_tag_album_artists_koko_without_album(self, data_dict=None):
+        filename_without_extension = \
+            TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM
+        return self._post_lib_track_with_generic_sample(
+            generic_sample_filename_without_extension=filename_without_extension,
+            generic_sample_file_extension='mp3',
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', data_dict=None):
         filename_without_extension = \
-            AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
+            TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_1_star(self, extension='mp3', data_dict=None):
-        filename_without_extension = AppTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
+        filename_without_extension = TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
