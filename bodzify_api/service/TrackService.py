@@ -133,7 +133,7 @@ class TrackService(Service):
 
         Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
 
-        return post_data
+        return save_schema_data
 
     def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
         save_schema_data = put_data.copy()

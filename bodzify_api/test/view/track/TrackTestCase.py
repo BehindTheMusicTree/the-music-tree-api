@@ -105,7 +105,7 @@ class TrackTestCase(ApiTestCase):
         return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_no_tags(self, extension='mp3', data_dict=None):
-        filename_without_extension = TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
+        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
@@ -113,7 +113,7 @@ class TrackTestCase(ApiTestCase):
 
     def post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(self, extension='mp3', data_dict=None):
         filename_without_extension = \
-            TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS
+            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
@@ -121,7 +121,7 @@ class TrackTestCase(ApiTestCase):
 
     def post_lib_track_with_generic_sample_tag_album_artists_koko_without_album(self, data_dict=None):
         filename_without_extension = \
-            TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM
+            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension='mp3',
@@ -129,14 +129,14 @@ class TrackTestCase(ApiTestCase):
 
     def post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', data_dict=None):
         filename_without_extension = \
-            TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
+            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_1_star(self, extension='mp3', data_dict=None):
-        filename_without_extension = TrackTestCase.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
+        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.ONE_STAR
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
