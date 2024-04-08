@@ -11,7 +11,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 from bodzify_api.utils import to_camel_case
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
 
 
 class TestCase(TrackTestCase):

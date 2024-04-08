@@ -2,12 +2,9 @@
 
 from rest_framework import serializers
 from bodzify_api import settings
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer import FIELDS as SAVE_MODEL_FIELDS
 from bodzify_api.serializer.album.input.AlbumSaveModelSerializer import FIELDS as ALBUM_SAVE_MODEL_FIELDS
-from django.contrib.auth.models import User
-
-
-ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
 
 
 class FIELDS:
@@ -17,19 +14,11 @@ class FIELDS:
     ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
     ALBUM_NAME = SAVE_MODEL_FIELDS.ALBUM + "_name"
     ALBUM_ARTISTS_NAMES_STR = ALBUM_SAVE_MODEL_FIELDS.ALBUM_ARTISTS + "_names_string"
+    GENRE_UUID = SAVE_MODEL_FIELDS.GENRE + "_uuid"
     GENRE_NAME = SAVE_MODEL_FIELDS.GENRE + "_name"
     RATING = SAVE_MODEL_FIELDS.RATING
     LANGUAGE = SAVE_MODEL_FIELDS.LANGUAGE
     FORCE_TITLE_GENERATION = "force_title_generation"
-
-
-def validate_rating(value):
-    if value is not None and value != '':
-        try:
-            value = int(value)
-        except ValueError:
-            raise serializers.ValidationError("Rating must be an integer.")
-    return value
 
 
 class LibTrackSaveSchemaSerializer(serializers.Serializer):
@@ -54,12 +43,17 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True)
+    genre_uuid = serializers.CharField(
+        max_length=22,
+        required=False,
+        allow_blank=True,
+        allow_null=True)
     genre_name = serializers.CharField(
         max_length=settings.CRITERIA_NAME_LENGTH_MAX,
         required=False,
         allow_blank=True,
         allow_null=True)
-    rating = serializers.CharField(required=False, allow_null=True, allow_blank=True, validators=[validate_rating])
+    rating = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     language = serializers.CharField(
         max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX,
         required=False,
@@ -79,11 +73,17 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
                   FIELDS.FORCE_TITLE_GENERATION,]
 
     def validate(self, data):
-        if FIELDS.ALBUM_ARTISTS_NAMES_STR in data:
-            if FIELDS.ALBUM_NAME not in data:
-                raise serializers.ValidationError(
-                    ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
-            elif data[FIELDS.ALBUM_NAME] in [None, ""]:
-                raise serializers.ValidationError(
-                    ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
+        if FIELDS.RATING in data:
+            value = data[FIELDS.RATING]
+            if value is not None and value != '':
+                try:
+                    value = int(value)
+                except ValueError:
+                    raise serializers.ValidationError("Rating must be an integer.")
+
+        if FIELDS.GENRE_UUID in data and data[FIELDS.GENRE_UUID] not in ['', None] and not Criteria.objects.filter(
+                uuid=data[FIELDS.GENRE_UUID],
+                user=self.context['request'].user).exists():
+            raise serializers.ValidationError("The genre UUID does not exist.")
+
         return super().validate(data)

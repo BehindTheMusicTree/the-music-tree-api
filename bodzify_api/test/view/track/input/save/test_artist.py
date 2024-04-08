@@ -4,7 +4,7 @@ from rest_framework import status
 from ddf import G
 from bodzify_api import settings
 from bodzify_api.model.Artist import Artist
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackExtractSerializer import FIELDS as EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer import FIELDS as EXTRACT_FIELDS
 from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldModelStrTestCase
 
 

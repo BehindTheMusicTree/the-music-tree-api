@@ -28,12 +28,6 @@ logger = logging.getLogger('bodzify_api')
 
 class AppTestCase(TestCase):
 
-    class LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION:
-        ONE_STAR = "1 star"
-        TAGS_NONE = "tags none"
-        TAGS_ALBUM_WITHOUT_ALBUM_ARTISTS = "tags album without album artists"
-        TAGS_MAX_LENGTH_WITH_LETTER_A = "tags max length with letter a"
-
     test_user_lib_path_relative_to_media_dir = Path()
 
     def setUp(self) -> None:

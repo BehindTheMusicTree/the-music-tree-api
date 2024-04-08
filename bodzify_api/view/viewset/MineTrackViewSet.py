@@ -3,7 +3,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from bodzify_api.serializer.mine.track.MineTrackSerializer import MineTrackSerializer
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackExtractSerializer import LibTrackExtractSerializer
+from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer import LibTrackExtractSerializer
 from bodzify_api.service.mine import MineService
 import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
@@ -22,15 +22,9 @@ class MineTrackViewSet(MultiSerializerViewSet):
     }
 
     @extend_schema(parameters=[
-        OpenApiParameter(GET_PARAMETER_NAME.SOURCE,
-                         OpenApiTypes.STR,
-                         OpenApiParameter.PATH),
-        OpenApiParameter(GET_PARAMETER_NAME.QUERY,
-                         OpenApiTypes.STR,
-                         OpenApiParameter.PATH),
-        OpenApiParameter(utility.REQUEST_PAGINATED_PAGE_FIELD,
-                         OpenApiTypes.INT,
-                         OpenApiParameter.PATH)])
+        OpenApiParameter(GET_PARAMETER_NAME.SOURCE, OpenApiTypes.STR, OpenApiParameter.PATH),
+        OpenApiParameter(GET_PARAMETER_NAME.QUERY, OpenApiTypes.STR, OpenApiParameter.PATH),
+        OpenApiParameter(utility.REQUEST_PAGINATED_PAGE_FIELD, OpenApiTypes.INT, OpenApiParameter.PATH)])
     def list(self, request):
         mine_source = request.GET.get(GET_PARAMETER_NAME.SOURCE, False)
         query = request.GET.get(GET_PARAMETER_NAME.QUERY, False)

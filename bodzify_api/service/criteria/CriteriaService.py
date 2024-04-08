@@ -18,15 +18,6 @@ class CriteriaService(Service):
         self.criteria_type_id = criteria_type_id
         super().__init__()
 
-    def get_criteria_from_name_after_having_eventually_created_it(
-            self, user: User, criteria_name: str) -> Criteria:
-
-        if Criteria.objects.filter(user=user, type_id=self.criteria_type_id, name=criteria_name).exists():
-            criteria = Criteria.objects.get(user=user, type_id=self.criteria_type_id, name=criteria_name)
-        else:
-            criteria = Criteria.objects.create(user=user, type_id=self.criteria_type_id, name=criteria_name)
-        return criteria
-
     def _get_post_serializer(self, post_data: dict):
         return CriteriaSaveSchemaSerializer(data=post_data)
 

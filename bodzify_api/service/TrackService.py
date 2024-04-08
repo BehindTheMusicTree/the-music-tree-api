@@ -14,19 +14,19 @@ from django.db.models import F
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.model.PlaylistLibTrackRelation \
     import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer \
+from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer \
     import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer \
+from bodzify_api.serializer.track.input.LibTrackSaveSchemaSerializer \
     import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
+from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
-from bodzify_api.service.criteria.GenreService import GenreService
 from bodzify_api.service.Service import Service
 
 logger = logging.getLogger('bodzify_api')
@@ -72,6 +72,40 @@ class TrackService(Service):
                 rating = None
             data1[key] = rating
 
+    @staticmethod
+    def _decrease_position_of_next_tracks_in_old_track_playlists(playlists_with_old_position: list):
+        for playlist_uuid, old_position in playlists_with_old_position:
+            playlist_lib_track_relations_to_update = PlaylistLibTrackRelation.objects.filter(
+                playlist__uuid=playlist_uuid, position__gt=old_position)
+            playlist_lib_track_relations_to_update.update(position=F(PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.POSITION) - 1)
+
+    @staticmethod
+    def _update_data1_with_genre_uuid_if_genre_in_data2(user: User, data1: dict, data2: dict):
+        genre_uuid_key = SAVE_SCHEMA_FIELDS.GENRE_UUID
+        if genre_uuid_key in data2:
+            genre_uuid = data2[genre_uuid_key]
+
+            if genre_uuid in ["", None]:
+                genre_uuid = None
+        else:
+            genre_name_key = SAVE_SCHEMA_FIELDS.GENRE_NAME
+            genre_uuid = None
+            if genre_name_key in data2:
+                genre_name = data2[genre_name_key]
+
+                if genre_name in ["", None]:
+                    genre_uuid = None
+                else:
+                    criteria, created = Criteria.objects.get_or_create(user=user,
+                                                                       type_id=CRITERIA_TYPES_ID.GENRE,
+                                                                       name=genre_name)
+                    genre_uuid = criteria.uuid
+
+        if genre_uuid is not None:
+            data1[SAVE_MODEL_FIELDS.GENRE] = genre_uuid
+
+        return data1
+
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
 
@@ -79,7 +113,7 @@ class TrackService(Service):
         return LibTrackPutSerializer(instance=old_instance, data=put_data)
 
     def _get_save_schema_serializer(self, old_instance, save_schema_data: dict, request):
-        return LibTrackSaveSchemaSerializer(data=save_schema_data)
+        return LibTrackSaveSchemaSerializer(data=save_schema_data, context={'request': request})
 
     def _get_save_model_serializer(self, old_instance, save_model_data: dict, partial: bool):
         return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
@@ -93,11 +127,14 @@ class TrackService(Service):
                 SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR,
-                SAVE_SCHEMA_FIELDS.GENRE_NAME,
                 SAVE_SCHEMA_FIELDS.RATING,
                 SAVE_SCHEMA_FIELDS.LANGUAGE]
         save_schema_data = self._get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(
-            dict1=save_schema_data_from_file, dict2=post_data, keys=keys)
+            dict1=post_data, dict2=save_schema_data_from_file, keys=keys)
+
+        if SAVE_SCHEMA_FIELDS.GENRE_UUID not in post_data:
+            save_schema_data = self._get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(
+                dict1=save_schema_data_from_file, dict2=post_data, keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
 
         if SAVE_SCHEMA_FIELDS.TITLE not in save_schema_data:
             save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file,
@@ -141,8 +178,7 @@ class TrackService(Service):
             data2_album_name_key=SAVE_SCHEMA_FIELDS.ALBUM_NAME,
             data2_artists_names_key=SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR)
 
-        self._update_data1_with_genre_uuid_if_genre_name_in_data2(
-            user=user, data1=save_model_data, data2=save_schema_data)
+        self._update_data1_with_genre_uuid_if_genre_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
 
         return save_model_data
 
@@ -167,13 +203,6 @@ class TrackService(Service):
             library_track = self.create(post_data=post_data, request=request)
 
         return library_track
-
-    @staticmethod
-    def _decrease_position_of_next_tracks_in_old_track_playlists(playlists_with_old_position: list):
-        for playlist_uuid, old_position in playlists_with_old_position:
-            playlist_lib_track_relations_to_update = PlaylistLibTrackRelation.objects.filter(
-                playlist__uuid=playlist_uuid, position__gt=old_position)
-            playlist_lib_track_relations_to_update.update(position=F(PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.POSITION) - 1)
 
     def delete(self, user: User, instance):
         old_lib_tracks_playlists_with_positions = instance._get_lib_track_playlists_with_positions()
@@ -239,23 +268,6 @@ class TrackService(Service):
                 data1[data1_album_key] = album.uuid
             else:
                 data1[data1_album_key] = None  # type: ignore
-        return data1
-
-    def _update_data1_with_genre_uuid_if_genre_name_in_data2(self,
-                                                             user: User,
-                                                             data1: dict,
-                                                             data2: dict):
-        genre_name_key = SAVE_SCHEMA_FIELDS.GENRE_NAME
-        if genre_name_key in data2:
-            genre_name = data2[genre_name_key]
-
-            if genre_name in ["", None]:
-                genre_uuid = None
-            else:
-                genreService = GenreService()
-                genre_uuid = genreService.get_criteria_from_name_after_having_eventually_created_it(
-                    user=user, criteria_name=genre_name).uuid
-            data1[SAVE_MODEL_FIELDS.GENRE] = genre_uuid
         return data1
 
     def _get_artists_name_list_from_string(self, names_string: str) -> list:

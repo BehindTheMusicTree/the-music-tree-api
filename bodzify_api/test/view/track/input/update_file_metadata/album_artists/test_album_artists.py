@@ -8,7 +8,7 @@ import pytest
 from bodzify_api.test import conftest
 from bodzify_api.test.view.track.input.update_file_metadata.album_artists.TestCase \
     import Mp3TestCase, WavTestCase, FlacTestCase
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
 
 logger = logging.getLogger('bodzify_api')
 
