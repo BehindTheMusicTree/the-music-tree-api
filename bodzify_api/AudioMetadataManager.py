@@ -115,14 +115,14 @@ def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int]
     metadata_dict[METADATA_DICT_KEYS.GENRE_NAME] = genre_name
     duration = _get_duration_from_file_tags(file_tags=file_tags)
     if duration is None:
-        duration = _get_duration_from_file(file)
+        duration = _get_duration_from_file_using_TinyTag(file)
     metadata_dict[METADATA_DICT_KEYS.DURATION] = duration
     metadata_dict[METADATA_DICT_KEYS.RATING] = rating
     metadata_dict[METADATA_DICT_KEYS.LANGUAGE] = language
     return metadata_dict
 
 
-def _get_duration_from_file(file):
+def _get_duration_from_file_using_TinyTag(file):
     if isinstance(file, TemporaryUploadedFile):
         with open(file.temporary_file_path(), 'rb') as f:
             return TinyTag.get(f.name).duration
@@ -317,8 +317,7 @@ def _get_album_name_tagFrom_flac_file_tags(flac_file_tags: FLAC):
 
 def _get_album_artists_nametring_tagFrom_flac_file_tags(flac_file_tags: FLAC):
     album_artists_name_stringRaw = (
-        _get_first_value_if_exists_or_none(
-            flac_file_tags, VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES))
+        _get_first_value_if_exists_or_none(flac_file_tags, VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES))
     if album_artists_name_stringRaw is not None:
         return album_artists_name_stringRaw.strip()
     return None
