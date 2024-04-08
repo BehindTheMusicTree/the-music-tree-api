@@ -126,7 +126,7 @@ class TrackService(Service):
 
         if SAVE_SCHEMA_FIELDS.TITLE not in save_schema_data:
             save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file,
-                                                                                             data=save_schema_data)
+                                                                                             data=post_data)
         if SAVE_SCHEMA_FIELDS.GENRE_UUID not in save_schema_data:
             Service._override_data1_with_data2_values_for_each_key_in_data2(
                 data1=save_schema_data, data2=save_schema_data_from_file, keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
