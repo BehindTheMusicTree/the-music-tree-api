@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import pytest
-from bodzify_api.test import conftest
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS

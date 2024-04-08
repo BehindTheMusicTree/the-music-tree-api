@@ -3,6 +3,8 @@
 import io
 import os
 from typing import Optional
+from tinytag import TinyTag
+
 
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from mutagen._file import File as MutagenFile
@@ -81,7 +83,10 @@ def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int]
 
     file_extension_lowered = file_extension.lower()
     if file_extension_lowered in [".wav", ".mp3"]:
-        file_tags = MutagenFile(file)
+        if file_extension_lowered == ".mp3":
+            file_tags = _get_tags_from_mp3_file(file)
+        else:
+            file_tags = MutagenFile(file)
         title = _get_title_tag_from_id3_file_tags(file_tags)
         artist_name = _get_artist_name_tag_from_id3_file_tags(file_tags)
         album_name = _get_album_name_tag_from_id3_file_tags(file_tags)
@@ -108,10 +113,34 @@ def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int]
     metadata_dict[METADATA_DICT_KEYS.ALBUM_NAME] = album_name
     metadata_dict[METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] = album_artists_name_string
     metadata_dict[METADATA_DICT_KEYS.GENRE_NAME] = genre_name
-    metadata_dict[METADATA_DICT_KEYS.DURATION] = _get_duration_from_file_tags(file_tags=file_tags)
+    duration = _get_duration_from_file_tags(file_tags=file_tags)
+    if duration is None:
+        duration = _get_duration_from_file(file)
+    metadata_dict[METADATA_DICT_KEYS.DURATION] = duration
     metadata_dict[METADATA_DICT_KEYS.RATING] = rating
     metadata_dict[METADATA_DICT_KEYS.LANGUAGE] = language
     return metadata_dict
+
+
+def _get_duration_from_file(file):
+    if isinstance(file, TemporaryUploadedFile):
+        with open(file.temporary_file_path(), 'rb') as f:
+            return TinyTag.get(f.name).duration
+    elif isinstance(file, FieldFile):
+        with open(file.path, 'rb') as f:
+            return TinyTag.get(f.name).duration
+    elif isinstance(file, InMemoryUploadedFile):
+        file.seek(0)
+        return TinyTag.get(file).duration
+    return TinyTag.get(file.name).duration
+
+
+def _get_tags_from_mp3_file(file):
+    try:
+        file_tags = ID3(file)
+    except ID3NoHeaderError:
+        file_tags = ID3()
+    return file_tags
 
 
 def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
@@ -120,10 +149,7 @@ def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
 
     if file_extension_lowered in [".wav", ".mp3"]:
         if file_extension_lowered == ".mp3":
-            try:
-                file_tags = ID3(file)
-            except ID3NoHeaderError:
-                file_tags = ID3()
+            file_tags = _get_tags_from_mp3_file(file)
         if file_extension_lowered == ".wav":
             mutagen_wave_file = WAVE()
             mutagen_wave_file.add_tags()
@@ -185,7 +211,9 @@ def _create_flac_object_dealing_with_eventual_temporary_file(file):
 
 
 def _get_duration_from_file_tags(file_tags):
-    return file_tags.info.length
+    if hasattr(file_tags, 'info'):
+        return file_tags.info.length
+    return None
 
 
 def _get_title_tag_from_id3_file_tags(id3_file_tags: MutagenFile):
