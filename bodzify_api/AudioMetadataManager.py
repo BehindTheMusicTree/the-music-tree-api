@@ -15,6 +15,7 @@ from mutagen.id3._util import ID3NoHeaderError
 from mutagen.wave import WAVE
 from django.db.models.fields.files import FieldFile
 from mutagen.mp3 import MP3
+from django.core.files import File
 
 TAG_ARTISTS_SEPARATION_CHAR = ","
 
@@ -134,18 +135,23 @@ def _get_duration_from_file_using_TinyTag(file):
         with tempfile.NamedTemporaryFile(delete=False) as tmp:
             for chunk in file.chunks():
                 tmp.write(chunk)
+            tmp.close()
             return TinyTag.get(tmp.name).duration
     return TinyTag.get(file.name).duration
 
 
 def _get_tags_from_mp3_file(file):
-    if isinstance(file, InMemoryUploadedFile):
-        try:
-            return MutagenFile(file)
-        except ID3NoHeaderError:
-            return ID3()
+    if isinstance(file, FieldFile):
+        tags = MP3(file).tags
     else:
-        return MP3(file).tags
+        try:
+            tags = MutagenFile(file)
+        except ID3NoHeaderError:
+            tags = None
+
+    if tags is None:
+        return ID3()
+    return tags
 
 
 def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
