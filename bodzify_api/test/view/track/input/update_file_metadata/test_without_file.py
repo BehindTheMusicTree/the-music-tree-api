@@ -3,7 +3,7 @@
 from rest_framework import status
 from ddf import G
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 

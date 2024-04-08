@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from bodzify_api import settings
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
 from bodzify_api.test.view.track.input.save.FieldStrNullableTestCase import FieldStrNullableTestCase
 
 

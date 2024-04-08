@@ -12,10 +12,10 @@ from rest_framework.serializers import ModelSerializer
 import bodzify_api.view.utility as utility
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackExtractSerializer import LibTrackExtractSerializer
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPostSerializer import LibTrackPostSerializer
-from bodzify_api.serializer.track.input.schema.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
-from bodzify_api.serializer.track.input.schema.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
+from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer import LibTrackExtractSerializer
+from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import LibTrackPostSerializer
+from bodzify_api.serializer.track.input.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
