@@ -2,9 +2,9 @@
 
 from rest_framework import serializers
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
-from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
+from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
 
 
@@ -27,7 +27,7 @@ class FIELDS:
 
 
 class LibTrackDetailedSerializer(serializers.ModelSerializer):
-    genre = CriteriaDetailedSerializer()
+    genre = CriteriaSimpleSerializer()
     artist = ArtistWithOnlyNameSerializer()
     album = AlbumWithoutTracksSerializer()
     playlists = PlaylistWithoutTrackSerializer(many=True)
