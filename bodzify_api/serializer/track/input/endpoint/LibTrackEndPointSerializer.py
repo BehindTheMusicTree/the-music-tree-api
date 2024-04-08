@@ -88,4 +88,12 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
                 raise serializers.ValidationError(
                     ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
 
+        if FIELDS.RATING in data:
+            value = data[FIELDS.RATING]
+            if value is not None and value != '':
+                try:
+                    value = int(value)
+                except ValueError:
+                    raise serializers.ValidationError("Rating must be an integer.")
+
         return super().validate(data)

@@ -21,7 +21,8 @@ class GenreUuidTestCase(NullableUuidFieldFromDataTestCase):
 
     def test_value_then_ok(self):
         genre_name = "Rock"
-        genre_uuid = G(Criteria, user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, name=genre_name)
+        genre_uuid = G(Criteria, user=self.test_user, type=CRITERIA_TYPES_ID.GENRE,
+                       name=genre_name).uuid  # type: ignore
         data = {POST_FIELDS.GENRE_UUID: genre_uuid}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED  # type: ignore

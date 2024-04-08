@@ -73,14 +73,6 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
                   FIELDS.FORCE_TITLE_GENERATION,]
 
     def validate(self, data):
-        if FIELDS.RATING in data:
-            value = data[FIELDS.RATING]
-            if value is not None and value != '':
-                try:
-                    value = int(value)
-                except ValueError:
-                    raise serializers.ValidationError("Rating must be an integer.")
-
         if FIELDS.GENRE_UUID in data and data[FIELDS.GENRE_UUID] not in ['', None] and not Criteria.objects.filter(
                 uuid=data[FIELDS.GENRE_UUID],
                 user=self.context['request'].user).exists():
