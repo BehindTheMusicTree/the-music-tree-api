@@ -67,6 +67,7 @@ class Service:
     def _override_data1_with_data2_values_for_each_key_in_data2(data1: dict, data2: dict, keys: list[str]):
         for key in keys:
             Service._update_data1_with_key_if_set_in_data2(key=key, data1=data1, data2=data2)
+        return data1
 
     @staticmethod
     def _get_copy_of_dict_including_only_specified_keys(dict, keys):

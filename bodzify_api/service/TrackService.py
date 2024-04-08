@@ -113,23 +113,23 @@ class TrackService(Service):
         file = post_data[POST_FIELDS.FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
 
-        save_schema_data = dict()
+        save_schema_data = save_schema_data_from_file.copy()
         keys = [SAVE_SCHEMA_FIELDS.FILE,
                 SAVE_SCHEMA_FIELDS.TITLE,
                 SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR,
+                SAVE_SCHEMA_FIELDS.GENRE_UUID,
                 SAVE_SCHEMA_FIELDS.RATING,
                 SAVE_SCHEMA_FIELDS.LANGUAGE]
-        self._override_data1_with_data2_values_for_each_key_in_data2(
-            data1=save_schema_data, data2=save_schema_data_from_file, keys=keys)
+        self._override_data1_with_data2_values_for_each_key_in_data2(data1=save_schema_data, data2=post_data, keys=keys)
 
         if SAVE_SCHEMA_FIELDS.TITLE not in save_schema_data:
             save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file,
                                                                                              data=post_data)
-        if SAVE_SCHEMA_FIELDS.GENRE_UUID not in save_schema_data:
-            Service._override_data1_with_data2_values_for_each_key_in_data2(
-                data1=save_schema_data, data2=save_schema_data_from_file, keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
+        if SAVE_SCHEMA_FIELDS.GENRE_UUID not in post_data:
+            self._override_data1_with_data2_values_for_each_key_in_data2(
+                data1=save_schema_data, data2=post_data, keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
 
         Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
 
