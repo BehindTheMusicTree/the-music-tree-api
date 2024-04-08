@@ -4,7 +4,7 @@ import io
 import os
 from typing import Optional
 from tinytag import TinyTag
-
+import tempfile
 
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from mutagen._file import File as MutagenFile
@@ -14,6 +14,7 @@ from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
 from mutagen.id3._util import ID3NoHeaderError
 from mutagen.wave import WAVE
 from django.db.models.fields.files import FieldFile
+from mutagen.mp3 import MP3
 
 TAG_ARTISTS_SEPARATION_CHAR = ","
 
@@ -24,9 +25,9 @@ BASE_100_RATING_STAR_VALUES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 TRAKTOR_RATING_TAG_MAIL = 'traktor@native-instruments.de'
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
-METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE = """The duration key has a value in the 
+METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE = """The duration key has a value in the
 metadata dict. The duration cannot be updated. It is therefore ignored."""
-METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE = """The specified audio metadata key is not 
+METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE = """The specified audio metadata key is not
 handled by the service."""
 
 
@@ -130,17 +131,21 @@ def _get_duration_from_file_using_TinyTag(file):
         with open(file.path, 'rb') as f:
             return TinyTag.get(f.name).duration
     elif isinstance(file, InMemoryUploadedFile):
-        file.seek(0)
-        return TinyTag.get(file).duration
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            for chunk in file.chunks():
+                tmp.write(chunk)
+            return TinyTag.get(tmp.name).duration
     return TinyTag.get(file.name).duration
 
 
 def _get_tags_from_mp3_file(file):
-    try:
-        file_tags = ID3(file)
-    except ID3NoHeaderError:
-        file_tags = ID3()
-    return file_tags
+    if isinstance(file, InMemoryUploadedFile):
+        try:
+            return MutagenFile(file)
+        except ID3NoHeaderError:
+            return ID3()
+    else:
+        return MP3(file).tags
 
 
 def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
@@ -154,7 +159,6 @@ def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
             mutagen_wave_file = WAVE()
             mutagen_wave_file.add_tags()
             file_tags = mutagen_wave_file.tags
-
         for metadata_dict_key in list(metadata_update_dict.keys()):
             if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
                 raise ValueError(
@@ -165,7 +169,6 @@ def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
                     update_metadata_dict=metadata_update_dict,
                     update_metadata_key=metadata_dict_key,
                     normalized_rating_max_value=normalized_rating_max_value)
-
     elif file_extension_lowered == ".flac":
         file_tags = _create_flac_object_dealing_with_eventual_temporary_file(
             file)
