@@ -48,6 +48,15 @@ class Service:
         return data1
 
     @staticmethod
+    def _update_data1_converting_str_to_int_value_if_set(key: str, data1: dict):
+        if key in data1:
+            if data1[key] is not None and data1[key] != '':
+                rating = int(data1[key])
+            else:
+                rating = None
+            data1[key] = rating
+
+    @staticmethod
     def _remove_none_or_empty_key_from_dict(dict):
         for key in list(dict.keys()):
             if dict[key] is None or dict[key] == "":
@@ -55,16 +64,9 @@ class Service:
         return dict
 
     @staticmethod
-    def _get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(dict1: dict,
-                                                                       dict2: dict,
-                                                                       keys: list[str]) -> dict:
-        overriden_dict1 = dict1.copy()
+    def _override_data1_with_data2_values_for_each_key_in_data2(data1: dict, data2: dict, keys: list[str]):
         for key in keys:
-            overriden_dict1 = Service._update_data1_with_key_if_set_in_data2(
-                key=key,
-                data1=overriden_dict1,
-                data2=dict2)
-        return overriden_dict1
+            Service._update_data1_with_key_if_set_in_data2(key=key, data1=data1, data2=data2)
 
     @staticmethod
     def _get_copy_of_dict_including_only_specified_keys(dict, keys):

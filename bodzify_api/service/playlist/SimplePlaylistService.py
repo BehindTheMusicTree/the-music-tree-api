@@ -41,7 +41,7 @@ class SimplePlaylistService(Service):
         simple_playlist_model_data = dict()
         simple_playlist_model_data[SAVE_MODEL_FIELDS.PLAYLIST] = playlist_uuid
 
-        return Service._get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(
-            dict1=simple_playlist_model_data,
-            dict2=save_schema_data,
+        return Service._override_data1_with_data2_values_for_each_key_in_data2(
+            data1=simple_playlist_model_data,
+            data2=save_schema_data,
             keys=[SAVE_MODEL_FIELDS.NAME])

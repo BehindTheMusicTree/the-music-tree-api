@@ -63,16 +63,6 @@ class TrackService(Service):
         return title
 
     @staticmethod
-    def _update_data1_updated_with_key_string_converted_to_int_if_set_in_data2(
-            key: str, data2: dict, data1: dict):
-        if key in data2:
-            if data2[key] is not None and data2[key] != '':
-                rating = int(data2[key])
-            else:
-                rating = None
-            data1[key] = rating
-
-    @staticmethod
     def _decrease_position_of_next_tracks_in_old_track_playlists(playlists_with_old_position: list):
         for playlist_uuid, old_position in playlists_with_old_position:
             playlist_lib_track_relations_to_update = PlaylistLibTrackRelation.objects.filter(
@@ -100,11 +90,12 @@ class TrackService(Service):
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        name=genre_name)
                     genre_uuid = criteria.uuid
+            else:
+                return
 
-        if genre_uuid is not None:
-            data1[SAVE_MODEL_FIELDS.GENRE] = genre_uuid
+        data1[SAVE_MODEL_FIELDS.GENRE] = genre_uuid
 
-        return data1
+        return
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
@@ -122,6 +113,7 @@ class TrackService(Service):
         file = post_data[POST_FIELDS.FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
 
+        save_schema_data = dict()
         keys = [SAVE_SCHEMA_FIELDS.FILE,
                 SAVE_SCHEMA_FIELDS.TITLE,
                 SAVE_SCHEMA_FIELDS.ARTIST_NAME,
@@ -129,27 +121,23 @@ class TrackService(Service):
                 SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR,
                 SAVE_SCHEMA_FIELDS.RATING,
                 SAVE_SCHEMA_FIELDS.LANGUAGE]
-        save_schema_data = self._get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(
-            dict1=post_data, dict2=save_schema_data_from_file, keys=keys)
-
-        if SAVE_SCHEMA_FIELDS.GENRE_UUID not in post_data:
-            save_schema_data = self._get_dict1_overriden_with_dict2_for_each_key_provided_in_dict2(
-                dict1=save_schema_data_from_file, dict2=post_data, keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
+        self._override_data1_with_data2_values_for_each_key_in_data2(
+            data1=save_schema_data, data2=save_schema_data_from_file, keys=keys)
 
         if SAVE_SCHEMA_FIELDS.TITLE not in save_schema_data:
             save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file,
-                                                                                             data=post_data)
+                                                                                             data=save_schema_data)
+        if SAVE_SCHEMA_FIELDS.GENRE_UUID not in save_schema_data:
+            Service._override_data1_with_data2_values_for_each_key_in_data2(
+                data1=save_schema_data, data2=save_schema_data_from_file, keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
 
-        self._update_data1_updated_with_key_string_converted_to_int_if_set_in_data2(key=SAVE_SCHEMA_FIELDS.RATING,
-                                                                                    data1=save_schema_data,
-                                                                                    data2=post_data)
+        Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
 
-        return save_schema_data
+        return post_data
 
     def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
         save_schema_data = put_data.copy()
-        self._update_data1_updated_with_key_string_converted_to_int_if_set_in_data2(
-            key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data, data2=put_data)
+        Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
         return save_schema_data
 
     def _get_save_model_data_from_save_schema_data_not_including_user_field(self, user: User,
@@ -165,10 +153,10 @@ class TrackService(Service):
 
         self.update_data1_with_artist_uuid_if_artist_name_in_data2(
             user=user,
-            dict1=save_model_data,
-            dict2=save_schema_data,
-            dict2_artist_name_key=SAVE_SCHEMA_FIELDS.ARTIST_NAME,
-            dict1_artist_key=SAVE_MODEL_FIELDS.ARTIST)
+            data1=save_model_data,
+            data2=save_schema_data,
+            data2_artist_name_key=SAVE_SCHEMA_FIELDS.ARTIST_NAME,
+            data1_artist_key=SAVE_MODEL_FIELDS.ARTIST)
 
         self._update_data1_with_album_uuid_if_album_name_in_data2(
             user=user,
@@ -230,18 +218,18 @@ class TrackService(Service):
 
     def update_data1_with_artist_uuid_if_artist_name_in_data2(self,
                                                               user: User,
-                                                              dict1: dict,
-                                                              dict2: dict,
-                                                              dict2_artist_name_key: str,
-                                                              dict1_artist_key: str):
-        if dict2_artist_name_key in dict2:
-            artist_name = dict2[dict2_artist_name_key]
+                                                              data1: dict,
+                                                              data2: dict,
+                                                              data2_artist_name_key: str,
+                                                              data1_artist_key: str):
+        if data2_artist_name_key in data2:
+            artist_name = data2[data2_artist_name_key]
             artist = Artist.get_artist_from_name_after_eventual_creation(user=user, artist_name=artist_name)
             if artist is not None:
-                dict1[dict1_artist_key] = artist.uuid
+                data1[data1_artist_key] = artist.uuid
             else:
-                dict1[dict1_artist_key] = None  # type: ignore
-        return dict1
+                data1[data1_artist_key] = None  # type: ignore
+        return data1
 
     def _update_data1_with_album_uuid_if_album_name_in_data2(self,
                                                              user: User,
