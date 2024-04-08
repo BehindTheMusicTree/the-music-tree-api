@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import re
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.playlist.children.simple.input.SimplePlaylistSaveModelSerializer \
     import SimplePlaylistSaveModelSerializer, FIELDS as SAVE_MODEL_FIELDS
@@ -41,7 +42,9 @@ class SimplePlaylistService(Service):
         simple_playlist_model_data = dict()
         simple_playlist_model_data[SAVE_MODEL_FIELDS.PLAYLIST] = playlist_uuid
 
-        return Service._override_data1_with_data2_values_for_each_key_in_data2(
+        Service._override_data1_with_data2_values_for_each_key_in_data2(
             data1=simple_playlist_model_data,
             data2=save_schema_data,
             keys=[SAVE_MODEL_FIELDS.NAME])
+
+        return simple_playlist_model_data
