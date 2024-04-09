@@ -102,44 +102,6 @@ def _get_tags_from_mp3_file(file):
     return tags
 
 
-def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
-    filename, file_extension = os.path.splitext(file.name)
-    file_extension_lowered = file_extension.lower()
-
-    if file_extension_lowered in [".wav", ".mp3"]:
-        if file_extension_lowered == ".mp3":
-            file_tags = _get_tags_from_mp3_file(file)
-        if file_extension_lowered == ".wav":
-            mutagen_wave_file = WAVE()
-            mutagen_wave_file.add_tags()
-            file_tags = mutagen_wave_file.tags
-        for metadata_dict_key in list(metadata_update_dict.keys()):
-            if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
-                raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
-            else:
-                file_tags = _get_id3_file_tags_updated_with_metadata_value(
-                    id3_file_tags=file_tags,
-                    update_metadata_dict=metadata_update_dict,
-                    update_metadata_key=metadata_dict_key,
-                    normalized_rating_max_value=normalized_rating_max_value)
-    elif file_extension_lowered == ".flac":
-        file_tags = _create_flac_object_according_to_file_object(
-            file)
-        for metadata_dict_key in list(metadata_update_dict.keys()):
-            if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
-                raise ValueError(
-                    METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
-            else:
-                file_tags = _get_flac_file_tags_updated_if_value_specified(
-                    flac_file_tags=file_tags,
-                    metadata_update_dict=metadata_update_dict,
-                    metadata_dictKey=metadata_dict_key,
-                    normalized_rating_max_value=normalized_rating_max_value)
-    else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-    file_tags.save(file.path)
-
-
 def _create_flac_object_according_to_file_object(file):
     if isinstance(file, TemporaryUploadedFile):
         with open(file.temporary_file_path(), 'rb') as f:
@@ -488,3 +450,41 @@ def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int]
     metadata_dict[METADATA_DICT_KEYS.RATING] = rating
     metadata_dict[METADATA_DICT_KEYS.LANGUAGE] = language
     return metadata_dict
+
+
+def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
+    filename, file_extension = os.path.splitext(file.name)
+    file_extension_lowered = file_extension.lower()
+
+    if file_extension_lowered in [".wav", ".mp3"]:
+        if file_extension_lowered == ".mp3":
+            file_tags = _get_tags_from_mp3_file(file)
+        if file_extension_lowered == ".wav":
+            mutagen_wave_file = WAVE()
+            mutagen_wave_file.add_tags()
+            file_tags = mutagen_wave_file.tags
+        for metadata_dict_key in list(metadata_update_dict.keys()):
+            if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
+                raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
+            else:
+                file_tags = _get_id3_file_tags_updated_with_metadata_value(
+                    id3_file_tags=file_tags,
+                    update_metadata_dict=metadata_update_dict,
+                    update_metadata_key=metadata_dict_key,
+                    normalized_rating_max_value=normalized_rating_max_value)
+    elif file_extension_lowered == ".flac":
+        file_tags = _create_flac_object_according_to_file_object(
+            file)
+        for metadata_dict_key in list(metadata_update_dict.keys()):
+            if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
+                raise ValueError(
+                    METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
+            else:
+                file_tags = _get_flac_file_tags_updated_if_value_specified(
+                    flac_file_tags=file_tags,
+                    metadata_update_dict=metadata_update_dict,
+                    metadata_dictKey=metadata_dict_key,
+                    normalized_rating_max_value=normalized_rating_max_value)
+    else:
+        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+    file_tags.save(file.path)
