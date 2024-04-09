@@ -6,6 +6,7 @@ from typing import Optional
 from tinytag import TinyTag
 import tempfile
 
+from mutagen.mp4 import MP4StreamInfoError
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from mutagen._file import File as MutagenFile
 from mutagen.flac import FLAC
@@ -15,7 +16,6 @@ from mutagen.id3._util import ID3NoHeaderError
 from mutagen.wave import WAVE
 from django.db.models.fields.files import FieldFile
 from mutagen.mp3 import MP3
-from django.core.files import File
 
 TAG_ARTISTS_SEPARATION_CHAR = ","
 
@@ -72,58 +72,6 @@ class RATING_FILE_PROFILE:
     BASE_100 = '100'
 
 
-def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int] = None) -> dict:
-    filename, file_extension = os.path.splitext(file.name)
-
-    title = ""
-    artist_name = ""
-    album_name = ""
-    album_artists_name_string = ""
-    genre_name = ""
-    rating = None
-    language = ""
-
-    file_extension_lowered = file_extension.lower()
-    if file_extension_lowered in [".wav", ".mp3"]:
-        if file_extension_lowered == ".mp3":
-            file_tags = _get_tags_from_mp3_file(file)
-        else:
-            file_tags = MutagenFile(file)
-        title = _get_title_tag_from_id3_file_tags(file_tags)
-        artist_name = _get_artist_name_tag_from_id3_file_tags(file_tags)
-        album_name = _get_album_name_tag_from_id3_file_tags(file_tags)
-        album_artists_name_string = _get_album_artists_name_str_tag_from_id3_file_tags(file_tags)
-        genre_name = _get_genre_name_tag_from_id3_file_tags(file_tags)
-        rating = _get_eventually_normalized_rating_value_from_id3_file_tags(file_tags, normalized_rating_max_value)
-        language = _get_language_tag_from_id3_file_tags(file_tags)
-
-    elif file_extension.lower() == ".flac":
-        file_tags = _create_flac_object_dealing_with_eventual_temporary_file(file)
-        title = _get_title_tag_from_flac_file_tags(file_tags)
-        artist_name = _get_artist_name_tagFrom_flac_file_tags(file_tags)
-        album_name = _get_album_name_tagFrom_flac_file_tags(file_tags)
-        album_artists_name_string = _get_album_artists_nametring_tagFrom_flac_file_tags(file_tags)
-        genre_name = _get_genre_name_tag_from_flac_file_tags(file_tags)
-        rating = _get_eventually_normalized_rating_value_from_flac_file_tags(file_tags, normalized_rating_max_value)
-        language = _get_language_tag_from_flac_file_tags(file_tags)
-    else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-
-    metadata_dict = dict()
-    metadata_dict[METADATA_DICT_KEYS.TITLE] = title
-    metadata_dict[METADATA_DICT_KEYS.ARTIST_NAME] = artist_name
-    metadata_dict[METADATA_DICT_KEYS.ALBUM_NAME] = album_name
-    metadata_dict[METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] = album_artists_name_string
-    metadata_dict[METADATA_DICT_KEYS.GENRE_NAME] = genre_name
-    duration = _get_duration_from_file_tags(file_tags=file_tags)
-    if duration is None:
-        duration = _get_duration_from_file_using_TinyTag(file)
-    metadata_dict[METADATA_DICT_KEYS.DURATION] = duration
-    metadata_dict[METADATA_DICT_KEYS.RATING] = rating
-    metadata_dict[METADATA_DICT_KEYS.LANGUAGE] = language
-    return metadata_dict
-
-
 def _get_duration_from_file_using_TinyTag(file):
     if isinstance(file, TemporaryUploadedFile):
         with open(file.temporary_file_path(), 'rb') as f:
@@ -146,7 +94,7 @@ def _get_tags_from_mp3_file(file):
     else:
         try:
             tags = MutagenFile(file)
-        except ID3NoHeaderError:
+        except (ID3NoHeaderError, MP4StreamInfoError) as e:
             tags = None
 
     if tags is None:
@@ -154,59 +102,7 @@ def _get_tags_from_mp3_file(file):
     return tags
 
 
-def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
-    filename, file_extension = os.path.splitext(file.name)
-    file_extension_lowered = file_extension.lower()
-
-    if file_extension_lowered in [".wav", ".mp3"]:
-        if file_extension_lowered == ".mp3":
-            file_tags = _get_tags_from_mp3_file(file)
-        if file_extension_lowered == ".wav":
-            mutagen_wave_file = WAVE()
-            mutagen_wave_file.add_tags()
-            file_tags = mutagen_wave_file.tags
-        for metadata_dict_key in list(metadata_update_dict.keys()):
-            if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
-                raise ValueError(
-                    METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
-            else:
-                file_tags = _get_id3_file_tags_updated_with_metadata_value(
-                    id3_file_tags=file_tags,
-                    update_metadata_dict=metadata_update_dict,
-                    update_metadata_key=metadata_dict_key,
-                    normalized_rating_max_value=normalized_rating_max_value)
-    elif file_extension_lowered == ".flac":
-        file_tags = _create_flac_object_dealing_with_eventual_temporary_file(
-            file)
-        for metadata_dict_key in list(metadata_update_dict.keys()):
-            if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
-                raise ValueError(
-                    METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
-            else:
-                file_tags = _get_flac_file_tags_updated_if_value_specified(
-                    flac_file_tags=file_tags,
-                    metadata_update_dict=metadata_update_dict,
-                    metadata_dictKey=metadata_dict_key,
-                    normalized_rating_max_value=normalized_rating_max_value)
-    else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-    file_tags.save(file.path)
-
-
-def get_specific_metadata_from_file(file, metadata_key: str):
-    filename, file_extension = os.path.splitext(file.name)
-    file_extension_lowered = file_extension.lower()
-    if file_extension_lowered in [".wav", ".mp3"]:
-        file_tags = MutagenFile(file)
-        return _get_specific_metadata_from_id3_file(id3_file_tags=file_tags, metadata_key=metadata_key)
-    elif file_extension_lowered == ".flac":
-        flac_file_tags = _create_flac_object_dealing_with_eventual_temporary_file(file)
-        return _get_specific_metadata_from_flac_file(flac_file_tags=flac_file_tags, metadata_key=metadata_key)
-    else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-
-
-def _create_flac_object_dealing_with_eventual_temporary_file(file):
+def _create_flac_object_according_to_file_object(file):
     if isinstance(file, TemporaryUploadedFile):
         with open(file.temporary_file_path(), 'rb') as f:
             return FLAC(fileobj=io.BytesIO(f.read()))
@@ -252,10 +148,9 @@ def _get_genre_name_tag_from_id3_file_tags(id3_file_tags: MutagenFile):
         return ""
 
 
-def _get_eventually_normalized_rating_from_file_value(
-        file_rating_value: int,
-        normalized_rating_max_value: Optional[int] = None,
-        is_rating_from_traktor: bool = False):
+def _get_eventually_normalized_rating_from_file_value(file_rating_value: int,
+                                                      normalized_rating_max_value: Optional[int] = None,
+                                                      is_rating_from_traktor: bool = False):
     if file_rating_value is not None:
         if normalized_rating_max_value is not None:
             if file_rating_value == 0 and is_rating_from_traktor:
@@ -273,8 +168,8 @@ def _get_eventually_normalized_rating_from_file_value(
         return None
 
 
-def _get_eventually_normalized_rating_value_from_id3_file_tags(
-        id3_file_tags: MutagenFile, normalized_rating_max_value: Optional[int] = None):
+def _get_eventually_normalized_rating_value_from_id3_file_tags(id3_file_tags: MutagenFile,
+                                                               normalized_rating_max_value: Optional[int] = None):
     file_rating_value = None
     for key in id3_file_tags:
         if ID3_TEXT_FRAMES.RATING in key:
@@ -290,8 +185,8 @@ def _get_eventually_normalized_rating_value_from_id3_file_tags(
             normalized_rating_max_value=normalized_rating_max_value)
 
 
-def _get_eventually_normalized_rating_value_from_flac_file_tags(
-        flac_file_tags: FLAC, normalized_rating_max_value: Optional[int] = None):
+def _get_eventually_normalized_rating_value_from_flac_file_tags(flac_file_tags: FLAC,
+                                                                normalized_rating_max_value: Optional[int] = None):
     file_rating = _get_first_value_int_if_exists_or_none(dict=flac_file_tags, key=VORBIS_TAG_KEYS.RATING)
     is_rating_from_traktor = False
     if file_rating is None:
@@ -490,3 +385,106 @@ def _get_first_value_int_if_exists_or_none(dict: dict, key: str):
         if value_str != "":
             return int(value_str)
     return None
+
+
+def get_specific_metadata_from_file(file, metadata_key: str):
+    filename, file_extension = os.path.splitext(file.name)
+    file_extension_lowered = file_extension.lower()
+    if file_extension_lowered in [".wav", ".mp3"]:
+        file_tags = MutagenFile(file)
+        return _get_specific_metadata_from_id3_file(id3_file_tags=file_tags, metadata_key=metadata_key)
+    elif file_extension_lowered == ".flac":
+        flac_file_tags = _create_flac_object_according_to_file_object(file)
+        return _get_specific_metadata_from_flac_file(flac_file_tags=flac_file_tags, metadata_key=metadata_key)
+    else:
+        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+
+
+def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int] = None) -> dict:
+    filename, file_extension = os.path.splitext(file.name)
+
+    title = ""
+    artist_name = ""
+    album_name = ""
+    album_artists_name_string = ""
+    genre_name = ""
+    rating = None
+    language = ""
+
+    file_extension_lowered = file_extension.lower()
+    if file_extension_lowered in [".wav", ".mp3"]:
+        if file_extension_lowered == ".mp3":
+            file_tags = _get_tags_from_mp3_file(file)
+        else:
+            file_tags = MutagenFile(file)
+        title = _get_title_tag_from_id3_file_tags(file_tags)
+        artist_name = _get_artist_name_tag_from_id3_file_tags(file_tags)
+        album_name = _get_album_name_tag_from_id3_file_tags(file_tags)
+        album_artists_name_string = _get_album_artists_name_str_tag_from_id3_file_tags(file_tags)
+        genre_name = _get_genre_name_tag_from_id3_file_tags(file_tags)
+        rating = _get_eventually_normalized_rating_value_from_id3_file_tags(file_tags, normalized_rating_max_value)
+        language = _get_language_tag_from_id3_file_tags(file_tags)
+
+    elif file_extension.lower() == ".flac":
+        file_tags = _create_flac_object_according_to_file_object(file)
+        title = _get_title_tag_from_flac_file_tags(file_tags)
+        artist_name = _get_artist_name_tagFrom_flac_file_tags(file_tags)
+        album_name = _get_album_name_tagFrom_flac_file_tags(file_tags)
+        album_artists_name_string = _get_album_artists_nametring_tagFrom_flac_file_tags(file_tags)
+        genre_name = _get_genre_name_tag_from_flac_file_tags(file_tags)
+        rating = _get_eventually_normalized_rating_value_from_flac_file_tags(file_tags, normalized_rating_max_value)
+        language = _get_language_tag_from_flac_file_tags(file_tags)
+    else:
+        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+
+    metadata_dict = dict()
+    metadata_dict[METADATA_DICT_KEYS.TITLE] = title
+    metadata_dict[METADATA_DICT_KEYS.ARTIST_NAME] = artist_name
+    metadata_dict[METADATA_DICT_KEYS.ALBUM_NAME] = album_name
+    metadata_dict[METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES] = album_artists_name_string
+    metadata_dict[METADATA_DICT_KEYS.GENRE_NAME] = genre_name
+    duration = _get_duration_from_file_tags(file_tags=file_tags)
+    if duration is None:
+        duration = _get_duration_from_file_using_TinyTag(file)
+    metadata_dict[METADATA_DICT_KEYS.DURATION] = duration
+    metadata_dict[METADATA_DICT_KEYS.RATING] = rating
+    metadata_dict[METADATA_DICT_KEYS.LANGUAGE] = language
+    return metadata_dict
+
+
+def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
+    filename, file_extension = os.path.splitext(file.name)
+    file_extension_lowered = file_extension.lower()
+
+    if file_extension_lowered in [".wav", ".mp3"]:
+        if file_extension_lowered == ".mp3":
+            file_tags = _get_tags_from_mp3_file(file)
+        if file_extension_lowered == ".wav":
+            mutagen_wave_file = WAVE()
+            mutagen_wave_file.add_tags()
+            file_tags = mutagen_wave_file.tags
+        for metadata_dict_key in list(metadata_update_dict.keys()):
+            if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
+                raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
+            else:
+                file_tags = _get_id3_file_tags_updated_with_metadata_value(
+                    id3_file_tags=file_tags,
+                    update_metadata_dict=metadata_update_dict,
+                    update_metadata_key=metadata_dict_key,
+                    normalized_rating_max_value=normalized_rating_max_value)
+    elif file_extension_lowered == ".flac":
+        file_tags = _create_flac_object_according_to_file_object(
+            file)
+        for metadata_dict_key in list(metadata_update_dict.keys()):
+            if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
+                raise ValueError(
+                    METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
+            else:
+                file_tags = _get_flac_file_tags_updated_if_value_specified(
+                    flac_file_tags=file_tags,
+                    metadata_update_dict=metadata_update_dict,
+                    metadata_dictKey=metadata_dict_key,
+                    normalized_rating_max_value=normalized_rating_max_value)
+    else:
+        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+    file_tags.save(file.path)
