@@ -31,7 +31,7 @@ class AppTestCase(TestCase):
     test_user_lib_path_relative_to_media_dir = Path()
 
     def setUp(self) -> None:
-        call_command('loaddata', 'app_initial_data', 'pytest_user_initial_data')
+        call_command('loaddata', 'app', 'pytest_user')
         self.api_client = APIClient()
         self.test_user = User.objects.get(username=TEST_USERNAME)
         self.__set_up_test_user_directories()
