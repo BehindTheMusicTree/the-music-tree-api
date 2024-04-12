@@ -30,14 +30,14 @@ class TestCase(CriteriaTestCase):
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
 
-        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(playlist=rock_playlist)
-        assert playlist_lib_track_relations.get(
+        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(playlist=rock_playlist)
+        assert playlist_lib_track_relation_relations.get(
             library_track=lib_track_previously_first_in_punk).position == 1  # type: ignore
-        assert playlist_lib_track_relations.get(
+        assert playlist_lib_track_relation_relations.get(
             library_track=lib_track_previously_second_in_punk).position == 2  # type: ignore
-        assert playlist_lib_track_relations.get(
+        assert playlist_lib_track_relation_relations.get(
             library_track=lib_track_previously_first_in_rock).position == 3  # type: ignore
-        assert playlist_lib_track_relations.get(
+        assert playlist_lib_track_relation_relations.get(
             library_track=lib_track_previously_second_in_rock).position == 4  # type: ignore
 
     def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning_of_parent_of_parent(self):
@@ -60,8 +60,9 @@ class TestCase(CriteriaTestCase):
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
 
-        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(playlist=guitare_playlist)
-        tracks_positions = {relation.library_track.uuid: relation.position for relation in playlist_lib_track_relations}
+        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(playlist=guitare_playlist)
+        tracks_positions = {relation.library_track.uuid: relation.position
+                            for relation in playlist_lib_track_relation_relations}
         assert tracks_positions[lib_track_previously_first_in_punk.uuid] == 1  # type: ignore
         assert tracks_positions[lib_track_previously_second_in_punk.uuid] == 2  # type: ignore
         assert tracks_positions[lib_track_previously_first_in_rock.uuid] == 3  # type: ignore
@@ -84,8 +85,9 @@ class TestCase(CriteriaTestCase):
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
         assert response.status_code == status.HTTP_200_OK  # type: ignore
 
-        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(playlist=rock_playlist)
-        tracks_positions = {relation.library_track.uuid: relation.position for relation in playlist_lib_track_relations}
+        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(playlist=rock_playlist)
+        tracks_positions = {relation.library_track.uuid: relation.position
+                            for relation in playlist_lib_track_relation_relations}
         assert tracks_positions[track_second_in_rock.uuid] == 1  # type: ignore
         assert tracks_positions[track_fourth_in_rock.uuid] == 2  # type: ignore
 

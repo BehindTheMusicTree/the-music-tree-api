@@ -158,6 +158,11 @@ class LibraryTrack(models.Model):
         if instance.file_exists:
             instance.file.delete()
 
+    @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
+    def update_old_playlists_last_track_list_update_date(sender, instance: 'LibraryTrack', using, **kwargs):
+        for playlist in instance.playlists.all():
+            playlist.update_last_track_list_update_date()
+
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:
             common_genre = self.genre.get_common_criteria(old_genre)
@@ -204,10 +209,11 @@ class LibraryTrack(models.Model):
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL
-        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
-        return list(playlist_lib_track_relations.values_list(PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.PLAYLIST + '__uuid',
-                                                             PLAYLIST_LIB_TRACK_ATTRIBUTES_LABEL.POSITION))
+            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_ATTRIBUTES_LABEL
+        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
+        return list(playlist_lib_track_relation_relations.values_list(
+            playlist_lib_track_relation_ATTRIBUTES_LABEL.PLAYLIST + '__uuid',
+            playlist_lib_track_relation_ATTRIBUTES_LABEL.POSITION))
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
         track_artist_uuid = self.artist.uuid if self.artist else None

@@ -3,6 +3,7 @@
 import shortuuid
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class SPECIAL_NAMES:
@@ -22,7 +23,8 @@ class ATTRIBUTES_LABEL:
     CRITERIA_PLAYLIST = 'criteria_playlist'
     SIMPLE_PLAYLIST = 'simple_playlist'
     PLAY_COUNT = 'play_count'
-    PLAYLIST_LIB_TRACK_RELATIONS = 'playlist_lib_track_relations'
+    playlist_lib_track_relation_RELATIONS = 'playlist_lib_track_relation_relations'
+    LAST_TRACK_LIST_UPDATE_DATE = 'last_track_list_update_date'
 
 
 FOREIGN_MODEL_ATTRIBUTES_PREFIXE = 'playlist_'
@@ -66,3 +68,9 @@ class Playlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
+    last_track_list_update_date = models.DateTimeField(auto_now_add=True)
+
+    def update_last_track_list_update_date(self):
+        self.last_track_list_update_date = timezone.now()
+        self.save()
+        return self.last_track_list_update_date
