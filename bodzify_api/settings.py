@@ -189,6 +189,7 @@ if os.getenv('ENV') == 'DEV':
     MEDIA_ROOT = settings_dev.MEDIA_ROOT
     STATIC_ROOT = settings_dev.STATIC_ROOT
     LOG_PATH = settings_dev.LOG_PATH
+    JWT_AUTH = settings_dev.JWT_AUTH
 elif os.getenv('ENV') == 'TEST':
     import bodzify_api.settings_test as settings_test
     SESSION_COOKIE_SECURE = settings_test.SESSION_COOKIE_SECURE

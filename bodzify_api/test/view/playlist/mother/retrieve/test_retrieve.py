@@ -13,8 +13,8 @@ from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer 
 from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.utils import to_camel_case
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer import FIELDS as LIB_TRACK_FIELDS
-from bodzify_api.serializer.playlist_library_track.output.PlaylistLibTrackRelationWithoutPlaylist \
-    import FIELDS as PLAYLIST_LIB_TRACK_RELATION_FIELDS
+from bodzify_api.serializer.playlist_lib_track_relation.output.PlaylistLibTrackRelationWithoutPlaylist \
+    import FIELDS as playlist_lib_track_relation_RELATION_FIELDS
 
 logger = logging.getLogger('bodyzify_api')
 
@@ -63,11 +63,11 @@ class TestCase(PlaylistTestCase):
         assert response.status_code == status.HTTP_200_OK  # type: ignore
         result_tracks = self.result[to_camel_case(RETRIEVE_FIELDS.LIB_TRACKS)]
         assert result_tracks[0][
-            to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
+            to_camel_case(playlist_lib_track_relation_RELATION_FIELDS.LIB_TRACK)][
             LIB_TRACK_FIELDS.TITLE] == lib_track1.title  # type: ignore
         assert result_tracks[1][
-            to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
+            to_camel_case(playlist_lib_track_relation_RELATION_FIELDS.LIB_TRACK)][
             LIB_TRACK_FIELDS.TITLE] == lib_track2.title  # type: ignore
         assert result_tracks[2][
-            to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
+            to_camel_case(playlist_lib_track_relation_RELATION_FIELDS.LIB_TRACK)][
             LIB_TRACK_FIELDS.TITLE] == lib_track3.title  # type: ignore

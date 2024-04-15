@@ -16,24 +16,24 @@ from django.core.management import call_command
 
 import bodzify_api.settings as settings
 
-TEST_USERNAME = "pytest_user"
-SAMPLE_DIR_NAME = "sample"
-LIB_SAMPLE_DIR_NAME = "library"
-INPUT_SAMPLE_DIR_NAME = "input"
-GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR = Path("utils/generic_file_sample")
-
 
 logger = logging.getLogger('bodzify_api')
 
 
 class AppTestCase(TestCase):
 
+    TEST_USERNAME = "pytest_user"
+    SAMPLE_DIR_NAME = "sample"
+    LIB_SAMPLE_DIR_NAME = "library"
+    INPUT_SAMPLE_DIR_NAME = "input"
+    GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR = Path("utils/generic_file_sample")
+
     test_user_lib_path_relative_to_media_dir = Path()
 
     def setUp(self) -> None:
-        call_command('loaddata', 'app_initial_data', 'pytest_user_initial_data')
+        call_command('loaddata', 'app', 'pytest_user')
         self.api_client = APIClient()
-        self.test_user = User.objects.get(username=TEST_USERNAME)
+        self.test_user = User.objects.get(username=self.TEST_USERNAME)
         self.__set_up_test_user_directories()
         if os.path.isdir(self.lib_sample_dir_abs_path):
             self.__copy_lib_samples_to_test_user_lib()
@@ -46,12 +46,12 @@ class AppTestCase(TestCase):
             os.makedirs(test_user_lib_abs_path)
 
         self.generic_sample_dir_abs_path = \
-            Path(os.path.dirname(os.path.abspath(__file__))) / GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR
+            Path(os.path.dirname(os.path.abspath(__file__))) / self.GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR
 
         specific_test_dir_abs_path = Path(os.path.dirname(inspect.getfile(self.__class__)))
-        specific_test_sample_dir_abs_path = specific_test_dir_abs_path / SAMPLE_DIR_NAME
-        self.lib_sample_dir_abs_path = specific_test_sample_dir_abs_path / LIB_SAMPLE_DIR_NAME
-        self.specific_sample_dir_abs_path = specific_test_sample_dir_abs_path / INPUT_SAMPLE_DIR_NAME
+        specific_test_sample_dir_abs_path = specific_test_dir_abs_path / self.SAMPLE_DIR_NAME
+        self.lib_sample_dir_abs_path = specific_test_sample_dir_abs_path / self.LIB_SAMPLE_DIR_NAME
+        self.specific_sample_dir_abs_path = specific_test_sample_dir_abs_path / self.INPUT_SAMPLE_DIR_NAME
 
         self.test_user_lib_path_relative_to_media_dir = \
             Path(settings.LIB_DIR_NAME) / (settings.USER_LIB_DIR_NAME_PREFIXE + str(self.test_user.pk))

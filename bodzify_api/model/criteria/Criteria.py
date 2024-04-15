@@ -74,7 +74,7 @@ class Criteria(models.Model):
 
         from bodzify_api.model.track.LibraryTrack import LibraryTrack
         lib_tracks = LibraryTrack.objects.filter(
-            playlist_lib_track_relations__playlist=self.criteria_playlist.playlist)  # type: ignore
+            playlist_lib_track_relation_relations__playlist=self.criteria_playlist.playlist)  # type: ignore
 
         if self.parent is not None:
             self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
@@ -111,11 +111,11 @@ class Criteria(models.Model):
     @staticmethod
     def _update_playlist_positions_to_fill_deleted_positions(playlist: Playlist):
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
+            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_RELATION_ATTRIBUTES_LABEL
         tracks_positions_ordered_asc = (
             PlaylistLibTrackRelation.objects
             .filter(playlist=playlist)
-            .order_by(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.POSITION)
+            .order_by(playlist_lib_track_relation_RELATION_ATTRIBUTES_LABEL.POSITION)
         )
         i = 1
         for relation in tracks_positions_ordered_asc:

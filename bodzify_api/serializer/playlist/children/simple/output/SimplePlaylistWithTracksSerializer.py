@@ -3,7 +3,7 @@
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.PlaylistChildSerializer \
     import PlaylistChildSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
-from bodzify_api.serializer.playlist_library_track.output.PlaylistLibTrackRelationWithoutPlaylist import PlaylistLibTrackRelationWithoutPlaylist
+from bodzify_api.serializer.playlist_lib_track_relation.output.PlaylistLibTrackRelationWithoutPlaylist import PlaylistLibTrackRelationWithoutPlaylist
 from rest_framework import serializers
 
 
@@ -17,7 +17,7 @@ class FIELDS:
 
 class SimplePlaylistWithTracksSerializer(PlaylistChildSerializer):
     name = serializers.CharField()  # Overriding the name field of the parent class
-    library_tracks = PlaylistLibTrackRelationWithoutPlaylist(source='playlist.playlist_lib_track_relations',
+    library_tracks = PlaylistLibTrackRelationWithoutPlaylist(source='playlist.playlist_lib_track_relation_relations',
                                                              many=True)
 
     class Meta:
