@@ -20,7 +20,6 @@ from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CR
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.test.view.playlist.children import genre
 from bodzify_api.validator.TrackFileValidator import validate_size
 
 
