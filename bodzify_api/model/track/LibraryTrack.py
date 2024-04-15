@@ -5,6 +5,7 @@ from typing import Optional
 
 import shortuuid
 from django.contrib.auth.models import User
+from django.utils import timezone
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -154,14 +155,14 @@ class LibraryTrack(models.Model):
                 super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
     @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
-    def delete_file_if_exists(sender, instance: 'LibraryTrack', using, **kwargs):
+    def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
         if instance.file_exists:
             instance.file.delete()
 
-    @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
-    def update_old_playlists_last_track_list_update_date(sender, instance: 'LibraryTrack', using, **kwargs):
+        now = timezone.now()
         for playlist in instance.playlists.all():
-            playlist.update_last_track_list_update_date()
+            playlist.last_track_list_update_date = now
+            playlist.save()
 
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:
