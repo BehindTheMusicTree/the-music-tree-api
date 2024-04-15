@@ -20,6 +20,7 @@ from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CR
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
+from bodzify_api.test.view.playlist.children import genre
 from bodzify_api.validator.TrackFileValidator import validate_size
 
 
@@ -178,35 +179,47 @@ class LibraryTrack(models.Model):
                                                                             old_genre: Optional[Criteria],
                                                                             genre_limit=None):
         from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
+
+        update_date = timezone.now()
         if old_genre is not None:
             old_genre_tree_item = old_genre
             while old_genre_tree_item != genre_limit:
                 genreless_criteria_playlist = CriteriaPlaylist.objects.get(criteria=old_genre_tree_item)
-                PlaylistLibTrackRelation.objects.get(playlist=genreless_criteria_playlist.playlist,
-                                                     library_track=self).delete()
+                base_playlist = genreless_criteria_playlist.playlist
+                PlaylistLibTrackRelation.objects.get(playlist=base_playlist, library_track=self).delete()
+                base_playlist.last_track_list_update_date = update_date
+                base_playlist.save()
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            PlaylistLibTrackRelation.objects.get(
-                playlist=genreless_criteria_playlist.playlist, library_track=self).delete()
+            base_playlist = genreless_criteria_playlist.playlist
+            base_playlist.last_track_list_update_date = update_date
+            base_playlist.save()
+            PlaylistLibTrackRelation.objects.get(playlist=base_playlist, library_track=self).delete()
 
     def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
         from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
+
+        update_date = timezone.now()
         if self.genre is not None:
             new_genre_tree_item = self.genre
             while new_genre_tree_item != genre_limit:
                 criteria_playlist = CriteriaPlaylist.objects.get(criteria=new_genre_tree_item)
+                playlist = criteria_playlist.playlist
                 PlaylistLibTrackRelation.objects.create(playlist=criteria_playlist.playlist, library_track=self)
+                playlist.last_track_list_update_date = update_date
+                playlist.save()
                 new_genre_tree_item = new_genre_tree_item.parent
-            relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            PlaylistLibTrackRelation.objects.create(
-                playlist=genreless_criteria_playlist.playlist, library_track=self)
+            genreless_base_playlist = genreless_criteria_playlist.playlist
+            PlaylistLibTrackRelation.objects.create(playlist=genreless_base_playlist, library_track=self)
+            genreless_base_playlist.last_track_list_update_date = update_date
+            genreless_base_playlist.save()
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \
