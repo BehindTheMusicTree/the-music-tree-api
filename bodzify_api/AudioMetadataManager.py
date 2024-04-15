@@ -94,7 +94,7 @@ def _get_tags_from_mp3_file(file):
     else:
         try:
             tags = MutagenFile(file)
-        except (ID3NoHeaderError, MP4StreamInfoError) as e:
+        except (ID3NoHeaderError, MP4StreamInfoError):
             tags = None
 
     if tags is None:

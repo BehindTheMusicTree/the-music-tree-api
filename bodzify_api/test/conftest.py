@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import logging
-import pytest
 
 logger = logging.getLogger('bodzify_api')
 

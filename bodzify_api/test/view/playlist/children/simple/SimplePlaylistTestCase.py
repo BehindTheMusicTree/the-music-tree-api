@@ -2,7 +2,6 @@
 
 import logging
 from urllib.parse import urlencode
-from django.urls import get_resolver
 
 from django.urls import reverse
 from rest_framework import status

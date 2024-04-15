@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from abc import abstractmethod
 import pytest
 
 from bodzify_api.test.view.track.input.source.file_metadata.rating.RatingNotNoneTestCase \

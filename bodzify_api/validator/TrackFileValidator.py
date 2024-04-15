@@ -23,7 +23,7 @@ def validate_size(file):
 def is_audio(file_path):
     try:
         audio = File(file_path)
-    except Exception as e:
+    except Exception:
         return False
 
     return audio is not None

@@ -60,7 +60,7 @@ class AppTestCase(TestCase):
 
     def __login(self, user):
         self.api_client.force_authenticate(user=user)
-        accessw = AccessToken.for_user(user)
+        AccessToken.for_user(user)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
         response = self.api_client.get(path=reverse('playlist-list'), format='json')
