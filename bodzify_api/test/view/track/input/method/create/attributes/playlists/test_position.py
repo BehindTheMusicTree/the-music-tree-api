@@ -13,7 +13,7 @@ from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 @pytest.mark.django_db
 class TestCase(TrackTestCase):
 
-    def test_create_then_in_first_position_of_all_playlist_and_others_after(self):
+    def test_create_then_in_first_position_of_all_playlist_and_other_tracks_after(self):
         lib_track1 = G(LibraryTrack, user=self.test_user, title="We're All To Blame")
         lib_track2 = G(LibraryTrack, user=self.test_user, title="We're All To lol")
         response = self.post_lib_track_with_generic_sample_no_tags()  # type: ignore
