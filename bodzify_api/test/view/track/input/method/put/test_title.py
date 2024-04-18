@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+from rest_framework import status
+from ddf import G
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.test.view.track.input.method.put.NotNullableFieldTestCase import NotNullableFieldTestCase
+
+
+class TestCase(NotNullableFieldTestCase):
+
+    def test_not_empty_then_ok(self):
+        lib_track = G(LibraryTrack, user=self.test_user, title="Love")
+        title_new = "a"
+        data = {PUT_FIELDS.TITLE: title_new}
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert self.saved_lib_track.title == title_new
+
+    def test_not_provided_then_unchanged(self):
+        old_title = "Love"
+        lib_track = G(LibraryTrack, user=self.test_user, title=old_title)
+        response = self.put_lib_track(lib_track.uuid, data_dict={})  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert self.saved_lib_track.title == old_title
+
+    def test_empty_then_error(self):
+        lib_track = G(LibraryTrack, user=self.test_user, title="Love")
+        data = {PUT_FIELDS.TITLE: ""}
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+
+    def test_not_none_then_update(self):
+        title = "a"
+        lib_track = G(LibraryTrack,
+                      user=self.test_user,
+                      title=title,
+                      duration=0)
+        data = {
+            PUT_FIELDS.TITLE: title
+        }
+        response = self.put_lib_track(lib_track.uuid, data_dict=data)  # type: ignore
+        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert self.saved_lib_track.title == title
