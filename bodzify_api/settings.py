@@ -48,8 +48,6 @@ SIMPLE_PLAYLIST_NAME_LENGTH_MAX = 50
 
 PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
-CORS_ALLOW_ALL_ORIGINS = True
-
 SECURE_SSL_REDIRECT = False
 
 # Before calling a view function, Django starts a transaction.
@@ -82,7 +80,6 @@ INSTALLED_APPS = [
     'coverage',
     'drf_multiple_model',
     'bodzify_api',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -90,7 +87,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
