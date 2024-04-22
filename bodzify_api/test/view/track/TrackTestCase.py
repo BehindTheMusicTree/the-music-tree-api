@@ -30,6 +30,11 @@ class TrackTestCase(ApiTestCase):
         TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS = "tags album koko without album artists"
         TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM = "tags album artists koko without album"
         TAGS_MAX_LENGTH_WITH_LETTER_A = "tags max length with letter a"
+        
+    class LIB_TRACK_GENERIC_SAMPLES_TAGS_NONE_SIZE_IN_MO:
+        WAV = 81 / 1024
+        MP3 = 14 / 1024
+        FLAC = 53 / 1024
 
     class SAMPLE_MINE_TRACK_URLS:
         WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
