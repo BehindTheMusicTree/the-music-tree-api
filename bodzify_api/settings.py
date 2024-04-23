@@ -1,13 +1,5 @@
 #!/usr/bin/env python
 
-"""
-For more information on this file, see
-https://docs.djangoproject.com/en/4.1/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/4.1/ref/settings/
-"""
-
 import datetime
 import os
 from pathlib import Path

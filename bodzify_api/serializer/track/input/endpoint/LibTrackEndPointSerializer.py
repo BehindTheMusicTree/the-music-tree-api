@@ -1,31 +1,41 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
+from django.core.validators import FileExtensionValidator
+
 from bodzify_api import settings
 from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
-from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer import FIELDS as SAVE_MODEL_FIELDS
-from bodzify_api.serializer.album.input.AlbumSaveModelSerializer import FIELDS as ALBUM_SAVE_MODEL_FIELDS
+from bodzify_api.serializer.track.input.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.album.input.AlbumSaveSchemaSerializer import FIELDS as ALBUM_SAVE_SCHEMA_FIELDS
+from bodzify_api.validator.track_file_validator \
+    import validate_filename_length, validate_size, validate_is_audio, validate_content_type_is_audio
 
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
 
 
 class FIELDS:
-    USER = SAVE_MODEL_FIELDS.USER
-    FILE = SAVE_MODEL_FIELDS.FILE
-    TITLE = SAVE_MODEL_FIELDS.TITLE
-    ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
-    ALBUM_NAME = SAVE_MODEL_FIELDS.ALBUM + "_name"
-    ALBUM_ARTISTS_NAMES_STR = ALBUM_SAVE_MODEL_FIELDS.ALBUM_ARTISTS + "_names_string"
-    GENRE_UUID = SAVE_MODEL_FIELDS.GENRE + "_uuid"
-    GENRE_NAME = SAVE_MODEL_FIELDS.GENRE + "_name"
-    RATING = SAVE_MODEL_FIELDS.RATING
-    LANGUAGE = SAVE_MODEL_FIELDS.LANGUAGE
+    USER = SAVE_SCHEMA_FIELDS.USER
+    FILE_OBJ = SAVE_SCHEMA_FIELDS.FILE_OBJ
+    TITLE = SAVE_SCHEMA_FIELDS.TITLE
+    ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
+    ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_NAME
+    ALBUM_ARTISTS_NAMES_STR = ALBUM_SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_STR
+    GENRE_UUID = SAVE_SCHEMA_FIELDS.GENRE_UUID
+    GENRE_NAME = SAVE_SCHEMA_FIELDS.GENRE_NAME
+    RATING = SAVE_SCHEMA_FIELDS.RATING
+    LANGUAGE = SAVE_SCHEMA_FIELDS.LANGUAGE
     FORCE_TITLE_GENERATION = "force_title_generation"
 
 
 class LibTrackEndPointSerializer(InputEndpointSerializer):
-    file = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
+    file = serializers.FileField(
+        help_text="Only audio formats accepted.",
+        validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
+                    validate_filename_length,
+                    validate_size,
+                    validate_is_audio,
+                    validate_content_type_is_audio])
     title = serializers.CharField(
         max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX,
         required=False,
@@ -65,7 +75,7 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
     force_title_generation = serializers.BooleanField(required=False)
 
     class Meta:
-        fields = [FIELDS.FILE,
+        fields = [FIELDS.FILE_OBJ,
                   FIELDS.TITLE,
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,
