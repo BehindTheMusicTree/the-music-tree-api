@@ -272,7 +272,7 @@ LOGGING = {
         'django.request': {
             'handlers': ['requests_with_trace'],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': False,
         },
         'request': {
             'handlers': ['requests', 'console'],
