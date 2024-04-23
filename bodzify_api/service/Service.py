@@ -45,7 +45,6 @@ class Service:
             if value == "":
                 value = None
             data1[key] = value
-        return data1
 
     @staticmethod
     def _update_data1_converting_str_to_int_value_if_set(key: str, data1: dict):
@@ -67,7 +66,6 @@ class Service:
     def _override_data1_with_data2_values_for_each_key_in_data2(data1: dict, data2: dict, keys: list[str]):
         for key in keys:
             Service._update_data1_with_key_if_set_in_data2(key=key, data1=data1, data2=data2)
-        return data1
 
     @staticmethod
     def _get_copy_of_dict_including_only_specified_keys(dict, keys):
@@ -78,6 +76,7 @@ class Service:
         return dict2
 
     def create(self, post_data: dict, request):
+        print("Service.create")
         post_serializer = self._get_post_serializer(post_data=post_data)
         post_serializer.is_valid(raise_exception=True)
         save_schema_data = self._get_save_schema_data_from_post_data(post_data=post_data)
