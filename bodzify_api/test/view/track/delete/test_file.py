@@ -19,7 +19,7 @@ class TrackDeleteViewTestCase(TrackTestCase):
                   title="We're All To Blame",
                   duration=0)
         assert self._does_track_filename_exist_in_test_user_lib(filename) == True
-        assert track.file_exists  # type: ignore
+        assert track.file  # type: ignore
         response = self.delete_lib_track(lib_track_uuid=track.uuid)  # type: ignore
         assert response.status_code == status.HTTP_204_NO_CONTENT  # type: ignore
         assert LibraryTrack.objects.filter(uuid=track.uuid).exists() == False  # type: ignore

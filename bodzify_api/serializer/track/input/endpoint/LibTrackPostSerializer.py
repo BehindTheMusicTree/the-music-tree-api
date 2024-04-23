@@ -11,7 +11,7 @@ from bodzify_api import settings
 
 
 class FIELDS:
-    FILE = ENDPOINT_FIELDS.FILE
+    FILE_OBJ = ENDPOINT_FIELDS.FILE_OBJ
     TITLE = SAVE_SCHEMA_FIELDS.TITLE
     ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
     ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_NAME
@@ -32,7 +32,7 @@ class LibTrackPostSerializer(LibTrackEndPointSerializer):
         required=True)
 
     class Meta(LibTrackSaveSchemaSerializer.Meta):
-        fields = [FIELDS.FILE,
+        fields = [FIELDS.FILE_OBJ,
                   FIELDS.TITLE,
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,

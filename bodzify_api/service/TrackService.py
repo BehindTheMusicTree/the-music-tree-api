@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 
 import requests
 from django.contrib.auth.models import User
-from django.core.files.base import File
+from django.core.files.base import File as DjangoFile
 from django.db.models import F
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
@@ -19,6 +19,7 @@ from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.File import File as ModelFile
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer \
@@ -47,7 +48,7 @@ class TrackService(Service):
         return url.split(".")[-1]
 
     @staticmethod
-    def _get_generated_title_from_data(file: File, data: dict):
+    def _get_generated_title_from_data(file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).split('.')[0]
         if SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION in data:
             force_title_generation = data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION]
@@ -71,6 +72,14 @@ class TrackService(Service):
                 position=F(playlist_lib_track_relation_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @staticmethod
+    def _update_data1_with_file_obj_id_if_file_in_data2(user: User, data1: dict, data2: dict):
+        file_key = SAVE_SCHEMA_FIELDS.FILE_OBJ
+        if file_key in data2:
+            file = data2[file_key]
+            file_obj = ModelFile.objects.create(file=file)
+            data1[SAVE_MODEL_FIELDS.FILE_OBJ] = file_obj.pk
+
+    @staticmethod
     def _update_data1_with_genre_uuid_if_genre_in_data2(user: User, data1: dict, data2: dict):
         genre_uuid_key = SAVE_SCHEMA_FIELDS.GENRE_UUID
         if genre_uuid_key in data2:
@@ -87,9 +96,9 @@ class TrackService(Service):
                 if genre_name in ["", None]:
                     genre_uuid = None
                 else:
-                    criteria, created = Criteria.objects.get_or_create(user=user,
-                                                                       type_id=CRITERIA_TYPES_ID.GENRE,
-                                                                       name=genre_name)
+                    criteria, _ = Criteria.objects.get_or_create(user=user,
+                                                                 type_id=CRITERIA_TYPES_ID.GENRE,
+                                                                 name=genre_name)
                     genre_uuid = criteria.uuid
             else:
                 return
@@ -111,11 +120,11 @@ class TrackService(Service):
         return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
 
     def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
-        file = post_data[POST_FIELDS.FILE]
+        file = post_data[POST_FIELDS.FILE_OBJ]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
 
         save_schema_data = save_schema_data_from_file.copy()
-        keys = [SAVE_SCHEMA_FIELDS.FILE,
+        keys = [SAVE_SCHEMA_FIELDS.FILE_OBJ,
                 SAVE_SCHEMA_FIELDS.TITLE,
                 SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_NAME,
@@ -146,28 +155,21 @@ class TrackService(Service):
                                                                             old_instance) -> dict:
         save_model_data = dict()
 
-        for key in [SAVE_MODEL_FIELDS.FILE,
-                    SAVE_MODEL_FIELDS.TITLE,
-                    SAVE_MODEL_FIELDS.RATING,
-                    SAVE_MODEL_FIELDS.LANGUAGE]:
+        for key in [SAVE_MODEL_FIELDS.TITLE, SAVE_MODEL_FIELDS.RATING, SAVE_MODEL_FIELDS.LANGUAGE]:
             self._update_data1_with_key_if_set_in_data2(key=key, data1=save_model_data, data2=save_schema_data)
 
         self.update_data1_with_artist_uuid_if_artist_name_in_data2(
             user=user,
             data1=save_model_data,
-            data2=save_schema_data,
-            data2_artist_name_key=SAVE_SCHEMA_FIELDS.ARTIST_NAME,
-            data1_artist_key=SAVE_MODEL_FIELDS.ARTIST)
+            data2=save_schema_data)
 
         self._update_data1_with_album_uuid_if_album_name_in_data2(
             user=user,
             data1=save_model_data,
-            data2=save_schema_data,
-            data1_album_key=SAVE_MODEL_FIELDS.ALBUM,
-            data2_album_name_key=SAVE_SCHEMA_FIELDS.ALBUM_NAME,
-            data2_artists_names_key=SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR)
+            data2=save_schema_data)
 
         self._update_data1_with_genre_uuid_if_genre_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
+        self._update_data1_with_file_obj_id_if_file_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
 
         return save_model_data
 
@@ -186,7 +188,7 @@ class TrackService(Service):
 
             track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
                 mine_track_url, extract_data)
-            post_data[POST_FIELDS.FILE] = File(track_temp_file, name=track_filename)  # type: ignore
+            post_data[POST_FIELDS.FILE_OBJ] = File(track_temp_file, name=track_filename)  # type: ignore
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
             library_track = self.create(post_data=post_data, request=request)
@@ -213,16 +215,13 @@ class TrackService(Service):
                   SAVE_SCHEMA_FIELDS.RATING,
                   SAVE_SCHEMA_FIELDS.LANGUAGE])
         save_data_clean = self._remove_none_or_empty_key_from_dict(save_data_with_potential_none)
-        save_data_clean[SAVE_SCHEMA_FIELDS.FILE] = file
+        save_data_clean[SAVE_SCHEMA_FIELDS.FILE_OBJ] = file
 
         return save_data_clean
 
-    def update_data1_with_artist_uuid_if_artist_name_in_data2(self,
-                                                              user: User,
-                                                              data1: dict,
-                                                              data2: dict,
-                                                              data2_artist_name_key: str,
-                                                              data1_artist_key: str):
+    def update_data1_with_artist_uuid_if_artist_name_in_data2(self, user: User, data1: dict, data2: dict):
+        data2_artist_name_key = SAVE_SCHEMA_FIELDS.ARTIST_NAME,
+        data1_artist_key = SAVE_MODEL_FIELDS.ARTIST
         if data2_artist_name_key in data2:
             artist_name = data2[data2_artist_name_key]
             artist = Artist.get_artist_from_name_after_eventual_creation(user=user, artist_name=artist_name)
@@ -232,13 +231,11 @@ class TrackService(Service):
                 data1[data1_artist_key] = None  # type: ignore
         return data1
 
-    def _update_data1_with_album_uuid_if_album_name_in_data2(self,
-                                                             user: User,
-                                                             data1: dict,
-                                                             data2: dict,
-                                                             data1_album_key: str,
-                                                             data2_album_name_key: str,
-                                                             data2_artists_names_key: str):
+    def _update_data1_with_album_uuid_if_album_name_in_data2(self, user: User, data1: dict, data2: dict):
+        data1_album_key = SAVE_MODEL_FIELDS.ALBUM,
+        data2_album_name_key = SAVE_SCHEMA_FIELDS.ALBUM_NAME,
+        data2_artists_names_key = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
+
         if data2_album_name_key in data2:
             album_name = data2[data2_album_name_key]
 

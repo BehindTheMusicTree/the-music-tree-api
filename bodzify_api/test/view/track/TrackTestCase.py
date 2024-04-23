@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-import logging
 from urllib.parse import urlencode
-from django.urls import get_resolver
 
 from django.urls import reverse
 from rest_framework import status
@@ -10,16 +8,10 @@ from rest_framework import status
 from bodzify_api import AudioMetadataManager
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.ApiTestCase import ApiTestCase
-from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer \
     import FIELDS as LIB_TRACK_EXTRACT_FIELDS
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as LIB_TRACK_POST_FIELDS
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
-from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTracksSerializer \
-    import FIELDS as SIMPLE_PLAYLIST_GET_FIELDS
-
-
-logger = logging.getLogger('bodzify_api')
 
 
 class TrackTestCase(ApiTestCase):
@@ -30,7 +22,7 @@ class TrackTestCase(ApiTestCase):
         TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS = "tags album koko without album artists"
         TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM = "tags album artists koko without album"
         TAGS_MAX_LENGTH_WITH_LETTER_A = "tags max length with letter a"
-        
+
     class LIB_TRACK_GENERIC_SAMPLES_TAGS_NONE_SIZE_IN_MO:
         WAV = 81 / 1024
         MP3 = 14 / 1024
@@ -53,9 +45,9 @@ class TrackTestCase(ApiTestCase):
     def _set_saved_lib_track_attribute(self, response):
         lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
-        if self.saved_lib_track.file_exists:
+        if self.saved_lib_track.file_obj:
             self.saved_lib_track_metadata = AudioMetadataManager.get_metadata_dict_from_file(
-                file=self.saved_lib_track.file)
+                file=self.saved_lib_track.file_obj)
 
     def extract(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
@@ -91,7 +83,7 @@ class TrackTestCase(ApiTestCase):
 
     def post_lib_track(self, file_abs_path, data_dict=None):
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LIB_TRACK_POST_FIELDS.FILE: sample_file}
+            file_field_dict = {LIB_TRACK_POST_FIELDS.FILE_OBJ: sample_file}
             if data_dict is not None:
                 data_dict = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(data_dict))
             else:

@@ -6,14 +6,13 @@ from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWit
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
+from bodzify_api.serializer.file.FileDetailedSerializer import FileDetailedSerializer
 
 
 class FIELDS:
     UUID = ATTRIBUTES_LABEL.UUID
     RELATIVE_URL = ATTRIBUTES_LABEL.RELATIVE_URL
-    FILENAME = ATTRIBUTES_LABEL.FILENAME
-    FILE_EXTENSION = ATTRIBUTES_LABEL.FILE_EXTENSION
-    FILE_EXISTS = ATTRIBUTES_LABEL.FILE_EXISTS
+    FILE_OBJ = 'file'
     TITLE = ATTRIBUTES_LABEL.TITLE
     ARTIST = ATTRIBUTES_LABEL.ARTIST
     ALBUM = ATTRIBUTES_LABEL.ALBUM
@@ -31,14 +30,13 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
     artist = ArtistWithOnlyNameSerializer()
     album = AlbumWithoutTracksSerializer()
     playlists = PlaylistWithoutTrackSerializer(many=True)
+    file = FileDetailedSerializer(source=ATTRIBUTES_LABEL.FILE_OBJ)
 
     class Meta:
         model = LibraryTrack
         fields = [FIELDS.UUID,
                   FIELDS.RELATIVE_URL,
-                  FIELDS.FILENAME,
-                  FIELDS.FILE_EXTENSION,
-                  FIELDS.FILE_EXISTS,
+                  FIELDS.FILE_OBJ,
                   FIELDS.TITLE,
                   FIELDS.ARTIST,
                   FIELDS.ALBUM,
