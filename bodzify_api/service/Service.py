@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod
+import logging
 from django.contrib.auth.models import User
 from rest_framework.serializers import Serializer
 
@@ -76,7 +77,8 @@ class Service:
         return dict2
 
     def create(self, post_data: dict, request):
-        print("Service.create")
+        logger = logging.getLogger(__name__)
+        logger.debug("Service.create")
         post_serializer = self._get_post_serializer(post_data=post_data)
         post_serializer.is_valid(raise_exception=True)
         save_schema_data = self._get_save_schema_data_from_post_data(post_data=post_data)
