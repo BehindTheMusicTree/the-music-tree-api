@@ -26,7 +26,7 @@ class TestCase(TrackTestCase):
                      size_in_mo=None)
         track = G(LibraryTrack,
                   user=self.test_user,
-                  file=file_obj,
+                  file_obj=file_obj,
                   title="We're All To Blame",
                   duration=0)
         response = self.download_lib_track(lib_track_uuid=track.uuid)  # type: ignore
