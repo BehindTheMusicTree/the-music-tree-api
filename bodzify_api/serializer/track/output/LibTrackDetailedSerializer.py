@@ -12,7 +12,7 @@ from bodzify_api.serializer.file.FileDetailedSerializer import FileDetailedSeria
 class FIELDS:
     UUID = ATTRIBUTES_LABEL.UUID
     RELATIVE_URL = ATTRIBUTES_LABEL.RELATIVE_URL
-    FILE_OBJ = 'file'
+    FILE = 'file'
     TITLE = ATTRIBUTES_LABEL.TITLE
     ARTIST = ATTRIBUTES_LABEL.ARTIST
     ALBUM = ATTRIBUTES_LABEL.ALBUM
@@ -36,7 +36,7 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
         model = LibraryTrack
         fields = [FIELDS.UUID,
                   FIELDS.RELATIVE_URL,
-                  FIELDS.FILE_OBJ,
+                  FIELDS.FILE,
                   FIELDS.TITLE,
                   FIELDS.ARTIST,
                   FIELDS.ALBUM,

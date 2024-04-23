@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
-from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.track.output.LibTrackDetailedSerializer \
+    import LibTrackDetailedSerializer, FIELDS as LIB_TRACK_DETAILED_FIELDS
 
 
 class FIELDS:
-    UUID = ATTRIBUTES_LABEL.UUID
-    RELATIVE_URL = ATTRIBUTES_LABEL.RELATIVE_URL
-    FILENAME = ATTRIBUTES_LABEL.FILENAME
-    FILE_EXTENSION = ATTRIBUTES_LABEL.FILE_EXTENSION
-    TITLE = ATTRIBUTES_LABEL.TITLE
-    ARTIST = ATTRIBUTES_LABEL.ARTIST
-    ALBUM = ATTRIBUTES_LABEL.ALBUM
-    DURATION = ATTRIBUTES_LABEL.DURATION
-    RATING = ATTRIBUTES_LABEL.RATING
-    LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
-    ADDED_ON = ATTRIBUTES_LABEL.ADDED_ON
-    PLAY_COUNT = ATTRIBUTES_LABEL.PLAY_COUNT
+    UUID = LIB_TRACK_DETAILED_FIELDS.UUID
+    RELATIVE_URL = LIB_TRACK_DETAILED_FIELDS.RELATIVE_URL
+    FILE = LIB_TRACK_DETAILED_FIELDS.FILE
+    TITLE = LIB_TRACK_DETAILED_FIELDS.TITLE
+    ARTIST = LIB_TRACK_DETAILED_FIELDS.ARTIST
+    ALBUM = LIB_TRACK_DETAILED_FIELDS.ALBUM
+    DURATION = LIB_TRACK_DETAILED_FIELDS.DURATION
+    RATING = LIB_TRACK_DETAILED_FIELDS.RATING
+    LANGUAGE = LIB_TRACK_DETAILED_FIELDS.LANGUAGE
+    ADDED_ON = LIB_TRACK_DETAILED_FIELDS.ADDED_ON
+    PLAY_COUNT = LIB_TRACK_DETAILED_FIELDS.PLAY_COUNT
 
 
 class LibTrackWithoutPlaylistsAndGenreSerializer(LibTrackDetailedSerializer):
@@ -26,8 +26,7 @@ class LibTrackWithoutPlaylistsAndGenreSerializer(LibTrackDetailedSerializer):
         fields = [
             FIELDS.UUID,
             FIELDS.RELATIVE_URL,
-            FIELDS.FILENAME,
-            FIELDS.FILE_EXTENSION,
+            FIELDS.FILE,
             FIELDS.TITLE,
             FIELDS.ARTIST,
             FIELDS.ALBUM,

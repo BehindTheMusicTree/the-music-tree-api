@@ -41,9 +41,6 @@ class ATTRIBUTES_LABEL:
     PLAYLISTS = "playlists"
     LANGUAGE = "language"
     ADDED_ON = "added_on"
-    FILENAME = "filename"
-    FILE_EXTENSION = "file_extension"
-    FILE_EXISTS = "file_exists"
     RELATIVE_URL = "relative_url"
     PLAY_COUNT = 'play_count'
 
@@ -52,7 +49,7 @@ class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    file_obj = models.OneToOneField('bodzify_api.File', on_delete=models.CASCADE)
+    file_obj = models.OneToOneField('bodzify_api.File', on_delete=models.CASCADE, default=None, null=True)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
@@ -134,7 +131,7 @@ class LibraryTrack(models.Model):
     @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
     def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
         if instance.file_obj:
-            instance.file_obj.delete()
+            instance.file_obj.file.delete()
 
         now = timezone.now()
         for playlist in instance.playlists.all():
@@ -235,7 +232,7 @@ class LibraryTrack(models.Model):
                 uuid=track_album_uuid).delete_if_no_track_linked()
 
     def _update_file_tags_if_file_exists(self):
-        if self.file_obj == False:
+        if self.file_obj is None:
             return
 
         metadata_update_dict = dict()

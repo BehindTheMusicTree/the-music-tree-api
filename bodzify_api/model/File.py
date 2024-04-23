@@ -45,7 +45,8 @@ class File(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        self.filename = os.path.basename(self.file.name)
-        self.extension = os.path.splitext(self.file.name)[1]
-        self.size_in_bytes = self.file.size
+        if self.file and self.file.name:
+            self.filename = os.path.basename(self.file.name)
+            self.extension = os.path.splitext(self.file.name)[1]
+            self.size_in_bytes = self.file.size
         super().save(*args, **kwargs)

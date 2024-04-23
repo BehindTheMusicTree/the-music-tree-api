@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from django.db.models import Sum
 from rest_framework import serializers
 from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
