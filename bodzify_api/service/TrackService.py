@@ -220,7 +220,7 @@ class TrackService(Service):
         return save_data_clean
 
     def update_data1_with_artist_uuid_if_artist_name_in_data2(self, user: User, data1: dict, data2: dict):
-        data2_artist_name_key = SAVE_SCHEMA_FIELDS.ARTIST_NAME,
+        data2_artist_name_key = SAVE_SCHEMA_FIELDS.ARTIST_NAME
         data1_artist_key = SAVE_MODEL_FIELDS.ARTIST
         if data2_artist_name_key in data2:
             artist_name = data2[data2_artist_name_key]
@@ -229,11 +229,10 @@ class TrackService(Service):
                 data1[data1_artist_key] = artist.uuid
             else:
                 data1[data1_artist_key] = None  # type: ignore
-        return data1
 
     def _update_data1_with_album_uuid_if_album_name_in_data2(self, user: User, data1: dict, data2: dict):
-        data1_album_key = SAVE_MODEL_FIELDS.ALBUM,
-        data2_album_name_key = SAVE_SCHEMA_FIELDS.ALBUM_NAME,
+        data1_album_key = SAVE_MODEL_FIELDS.ALBUM
+        data2_album_name_key = SAVE_SCHEMA_FIELDS.ALBUM_NAME
         data2_artists_names_key = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
 
         if data2_album_name_key in data2:
@@ -254,7 +253,6 @@ class TrackService(Service):
                 data1[data1_album_key] = album.uuid
             else:
                 data1[data1_album_key] = None  # type: ignore
-        return data1
 
     def _get_artists_name_list_from_string(self, names_string: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_string.split(
