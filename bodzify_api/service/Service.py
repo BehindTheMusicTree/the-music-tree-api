@@ -84,11 +84,9 @@ class Service:
         return self._save(save_schema_data=save_schema_data, old_instance=None, request=request)
 
     def update(self, put_data: dict, old_instance, request):
-        put_serializer = self._get_put_serializer(old_instance=old_instance,
-                                                  put_data=put_data)
+        put_serializer = self._get_put_serializer(old_instance=old_instance, put_data=put_data)
         put_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_save_schema_data_from_put_data(put_data=put_data,
-                                                                    old_instance=old_instance)
+        save_schema_data = self._get_save_schema_data_from_put_data(put_data=put_data, old_instance=old_instance)
         return self._save(save_schema_data=save_schema_data, old_instance=old_instance, request=request)
 
     def _save(self, save_schema_data: dict, old_instance, request):
@@ -100,9 +98,8 @@ class Service:
         save_model_data = self._get_save_model_data_from_save_schema_data_not_including_user_field(
             user=request.user, save_schema_data=save_schema_data, old_instance=old_instance)
         save_model_data['user'] = request.user.pk
-        save_model_serializer = self._get_save_model_serializer(
-            old_instance=old_instance,
-            save_model_data=save_model_data,
-            partial=True)
+        save_model_serializer = self._get_save_model_serializer(old_instance=old_instance,
+                                                                save_model_data=save_model_data,
+                                                                partial=True)
         save_model_serializer.is_valid(raise_exception=True)
         return save_model_serializer.save()
