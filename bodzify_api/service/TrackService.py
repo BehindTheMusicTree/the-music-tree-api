@@ -188,7 +188,7 @@ class TrackService(Service):
 
             track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
                 mine_track_url, extract_data)
-            post_data[POST_FIELDS.FILE_OBJ] = File(track_temp_file, name=track_filename)  # type: ignore
+            post_data[POST_FIELDS.FILE_OBJ] = DjangoFile(file=track_temp_file, name=track_filename)  # type: ignore
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
             library_track = self.create(post_data=post_data, request=request)
