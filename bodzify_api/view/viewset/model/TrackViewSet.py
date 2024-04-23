@@ -136,7 +136,7 @@ class TrackViewSet(AppModelViewSet):
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)
         if track.file_obj:
-            return utility.get_file_response(filePath=track.file_obj.path, filename=track.file_obj.name)
+            return utility.get_file_response(filePath=track.file_obj.file.path, filename=track.file_obj.file.name)
         else:
             return HttpResponse(
                 content="The requested track's file is missing.",
