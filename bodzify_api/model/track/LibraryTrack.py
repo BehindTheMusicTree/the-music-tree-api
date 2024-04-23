@@ -88,7 +88,7 @@ class LibraryTrack(models.Model):
         duration_str = f"{ATTRIBUTES_LABEL.DURATION}: {str(self.duration)} " if self.duration else ""
         rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
         language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
-        file_str = f"{ATTRIBUTES_LABEL.FILE_OBJ}: {str(self.file_obj.name)} " if self.file_obj else ""
+        file_str = f"{ATTRIBUTES_LABEL.FILE_OBJ}: {str(self.file_obj)} " if self.file_obj else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
                 f"{genre_str}{duration_str}{rating_str}{language_str}"
                 f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
