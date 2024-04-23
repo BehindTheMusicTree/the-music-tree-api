@@ -24,9 +24,9 @@ class TrackTestCase(ApiTestCase):
         TAGS_MAX_LENGTH_WITH_LETTER_A = "tags max length with letter a"
 
     class LIB_TRACK_GENERIC_SAMPLES_TAGS_NONE_SIZE_IN_MO:
-        WAV = 81 / 1024
+        WAV = 79 / 1024
         MP3 = 14 / 1024
-        FLAC = 53 / 1024
+        FLAC = 51 / 1024
 
     class SAMPLE_MINE_TRACK_URLS:
         WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
@@ -47,7 +47,7 @@ class TrackTestCase(ApiTestCase):
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
         if self.saved_lib_track.file_obj:
             self.saved_lib_track_metadata = AudioMetadataManager.get_metadata_dict_from_file(
-                file=self.saved_lib_track.file_obj)
+                file=self.saved_lib_track.file_obj.file)
 
     def extract(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)

@@ -1,11 +1,11 @@
+import os
+
 from django.db import models
 from django.db.models import F
 from django.contrib.auth.models import User
-import os
 from django.core.validators import FileExtensionValidator
+
 from bodzify_api.validator.TrackFileValidator import validate_size
-
-
 from bodzify_api import settings
 
 
@@ -14,7 +14,7 @@ class ATTRIBUTES_LABEL:
     FILENAME = 'filename'
     EXTENSION = 'extension'
     SIZE_IN_BYTES = 'size_in_bytes'
-    SIZE_IN_KB = 'size_in_kb'
+    SIZE_IN_KO = 'size_in_ko'
     SIZE_IN_MO = 'size_in_mo'
 
 
@@ -32,14 +32,20 @@ class File(models.Model):
                             null=True)
     filename = models.CharField(max_length=255, blank=True)
     extension = models.CharField(max_length=5, blank=True)
-    size_in_bytes = models.IntegerField(blank=True, null=True)
-    size_in_kb = models.FloatField(blank=True, null=True)
-    size_in_mo = models.FloatField(blank=True, null=True)
+    size_in_bytes = models.FloatField(null=True, blank=True)
+    size_in_ko = models.GeneratedField(
+        expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,
+        output_field=models.FloatField(),
+        db_persist=True,
+    )
+    size_in_mo = models.GeneratedField(
+        expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / (1024 * 1024),
+        output_field=models.FloatField(),
+        db_persist=True,
+    )
 
     def save(self, *args, **kwargs):
         self.filename = os.path.basename(self.file.name)
         self.extension = os.path.splitext(self.file.name)[1]
         self.size_in_bytes = self.file.size
-        self.size_in_kb = self.file.size / 1024
-        self.size_in_mo = self.file.size / (1024 * 1024)
         super().save(*args, **kwargs)
