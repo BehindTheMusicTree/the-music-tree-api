@@ -76,7 +76,7 @@ class TrackService(Service):
         file_key = SAVE_SCHEMA_FIELDS.FILE_OBJ
         if file_key in data2:
             file = data2[file_key]
-            file_obj = ModelFile.objects.create(file=file)
+            file_obj = ModelFile.objects.create(user=user, file=file)
             data1[SAVE_MODEL_FIELDS.FILE_OBJ] = file_obj.pk
 
     @staticmethod

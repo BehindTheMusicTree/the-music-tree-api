@@ -5,13 +5,12 @@ from typing import Optional
 import shortuuid
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
-from bodzify_api.model.File import File
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import Playlist
 import bodzify_api.settings as settings
@@ -20,7 +19,6 @@ from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CR
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.validator.TrackFileValidator import validate_size
 
 
 def _get_user_directory_path(instance, filename):
