@@ -9,7 +9,7 @@ from bodzify_api.serializer.album.input.AlbumSaveModelSerializer import FIELDS a
 
 class FIELDS:
     USER = SAVE_MODEL_FIELDS.USER
-    FILE = SAVE_MODEL_FIELDS.FILE
+    FILE_OBJ = "file"
     TITLE = SAVE_MODEL_FIELDS.TITLE
     ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
     ALBUM_NAME = SAVE_MODEL_FIELDS.ALBUM + "_name"
@@ -62,7 +62,7 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
     force_title_generation = serializers.BooleanField(required=False)
 
     class Meta:
-        fields = [FIELDS.FILE,
+        fields = [FIELDS.FILE_OBJ,
                   FIELDS.TITLE,
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,

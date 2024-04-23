@@ -10,7 +10,7 @@ from bodzify_api.test.view.album.AlbumViewTestCase import AlbumViewTestCase
 
 class TestCase(AlbumViewTestCase):
 
-    def test(self):
+    def test_get(self):
         sum41_artist = G(Artist, name="Sum 41", user=self.test_user)
         G(Album, user=self.test_user, name="All Killer No Filler", year=2001, album_artists=[sum41_artist],)
         chuck_album = G(Album, user=self.test_user, name="Chuck", year=2004, album_artists=[sum41_artist])

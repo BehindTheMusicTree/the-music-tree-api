@@ -388,7 +388,7 @@ def _get_first_value_int_if_exists_or_none(dict: dict, key: str):
 
 
 def get_specific_metadata_from_file(file, metadata_key: str):
-    filename, file_extension = os.path.splitext(file.name)
+    _, file_extension = os.path.splitext(file.name)
     file_extension_lowered = file_extension.lower()
     if file_extension_lowered in [".wav", ".mp3"]:
         file_tags = MutagenFile(file)

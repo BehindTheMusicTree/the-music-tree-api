@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 class FIELDS:
     USER = ATTRIBUTES_LABEL.USER
-    FILE = ATTRIBUTES_LABEL.FILE
+    FILE_OBJ = ATTRIBUTES_LABEL.FILE_OBJ
     TITLE = ATTRIBUTES_LABEL.TITLE
     ARTIST = ATTRIBUTES_LABEL.ARTIST
     ALBUM = ATTRIBUTES_LABEL.ALBUM
@@ -20,7 +20,7 @@ class TrackSaveModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = LibraryTrack
         fields = [FIELDS.USER,
-                  FIELDS.FILE,
+                  FIELDS.FILE_OBJ,
                   FIELDS.TITLE,
                   FIELDS.ARTIST,
                   FIELDS.ALBUM,

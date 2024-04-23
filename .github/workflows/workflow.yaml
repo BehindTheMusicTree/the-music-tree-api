@@ -6,7 +6,6 @@ on:
     push:
        branches: 
         - dev
-        - handle-genre-uuid-when-posting-track
     pull_request:
         branches: [dev]
 

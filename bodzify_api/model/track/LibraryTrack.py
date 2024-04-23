@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
-import os
 from typing import Optional
 
 import shortuuid
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -20,7 +19,6 @@ from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CR
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.validator.TrackFileValidator import validate_size
 
 
 def _get_user_directory_path(instance, filename):
@@ -33,7 +31,7 @@ class ATTRIBUTES_LABEL:
     MODEL = 'library_track'
     UUID = "uuid"
     USER = "user"
-    FILE = "file"
+    FILE_OBJ = "file_obj"
     TITLE = "title"
     ARTIST = "artist"
     ALBUM = "album"
@@ -43,22 +41,15 @@ class ATTRIBUTES_LABEL:
     PLAYLISTS = "playlists"
     LANGUAGE = "language"
     ADDED_ON = "added_on"
-    FILENAME = "filename"
-    FILE_EXTENSION = "file_extension"
-    FILE_EXISTS = "file_exists"
     RELATIVE_URL = "relative_url"
     PLAY_COUNT = 'play_count'
 
 
 class LibraryTrack(models.Model):
-
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    file = models.FileField(upload_to=_get_user_directory_path,
-                            help_text="Only audio formats accepted.",
-                            validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS), validate_size],
-                            null=True)
+    file_obj = models.OneToOneField('bodzify_api.File', on_delete=models.CASCADE, default=None, null=True)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
@@ -88,23 +79,6 @@ class LibraryTrack(models.Model):
                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
 
     @property
-    def filename(self) -> str:
-        if self.file_exists:
-            return os.path.basename(self.file.path)
-        return ""
-
-    @property
-    def file_extension(self) -> str:
-        if self.file_exists:
-            filename, file_extension = os.path.splitext(self.file.name)
-            return file_extension
-        return ""
-
-    @property
-    def file_exists(self) -> bool:
-        return bool(self.file)
-
-    @property
     def relative_url(self) -> str:
         return "tracks/" + self.uuid + "/"
 
@@ -114,7 +88,7 @@ class LibraryTrack(models.Model):
         duration_str = f"{ATTRIBUTES_LABEL.DURATION}: {str(self.duration)} " if self.duration else ""
         rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
         language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
-        file_str = f"{ATTRIBUTES_LABEL.FILE}: {str(self.file.name)} " if self.file else ""
+        file_str = f"{ATTRIBUTES_LABEL.FILE_OBJ}: {str(self.file_obj)} " if self.file_obj else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
                 f"{genre_str}{duration_str}{rating_str}{language_str}"
                 f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
@@ -149,15 +123,15 @@ class LibraryTrack(models.Model):
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
 
-            if self.file_exists:
+            if self.file_obj:
                 self.duration = AudioMetadataManager.get_specific_metadata_from_file(
-                    self.file, AudioMetadataManager.METADATA_DICT_KEYS.DURATION)
+                    self.file_obj.file, AudioMetadataManager.METADATA_DICT_KEYS.DURATION)
                 super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
     @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
     def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
-        if instance.file_exists:
-            instance.file.delete()
+        if instance.file_obj:
+            instance.file_obj.file.delete()
 
         now = timezone.now()
         for playlist in instance.playlists.all():
@@ -258,15 +232,15 @@ class LibraryTrack(models.Model):
                 uuid=track_album_uuid).delete_if_no_track_linked()
 
     def _update_file_tags_if_file_exists(self):
-        if self.file_exists == False:
+        if self.file_obj is None:
             return
 
         metadata_update_dict = dict()
 
-        titleTag = self.title
-        if titleTag is None:
-            titleTag = ""
-        metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.TITLE] = titleTag
+        title_tag = self.title
+        if title_tag is None:
+            title_tag = ""
+        metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.TITLE] = title_tag
 
         if self.artist_id is not None:  # type: ignore
             artist_name_tag = self.artist.name  # type: ignore
@@ -307,6 +281,6 @@ class LibraryTrack(models.Model):
         metadata_update_dict[AudioMetadataManager.METADATA_DICT_KEYS.LANGUAGE] = language_tag
 
         AudioMetadataManager.update(
-            file=self.file,
+            file=self.file_obj.file,
             metadata_update_dict=metadata_update_dict,
             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)

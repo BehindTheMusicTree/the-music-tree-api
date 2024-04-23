@@ -20,7 +20,7 @@ def validate_size(file):
             trackSizeErrorTooSmallMessage.format(size=track_size_min))
 
 
-def is_audio(file_path):
+def validate_is_audio(file_path):
     try:
         audio = File(file_path)
     except Exception:
@@ -44,7 +44,17 @@ def validate_content_type_is_audio(file):
         if first_few_bytes.startswith(magic_bytes):
             return
 
-    if is_audio(file):
+    if validate_is_audio(file):
         return
 
     raise ValidationError('Invalid file format. Only audio files are allowed.')
+
+
+def validate_filename_length(value):
+    try:
+        filename = value.file.name
+    except AttributeError:
+        filename = value.name
+    if len(filename) > settings.LIB_TRACK_FILENAME_LENGTH_MAX:
+        raise ValidationError(
+            f'Ensure this filename has at most {settings.LIB_TRACK_FILENAME_LENGTH_MAX} characters (it has {len(filename)}).')

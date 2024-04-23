@@ -27,10 +27,10 @@ class TestCase(CriteriaTestCase):
         criteriaUuid = G(Criteria, user=self.test_user, name='rock', type=CRITERIA_TYPES_ID.GENRE).uuid  # type: ignore
 
         title1 = 'stylax'
-        track1Uuid = G(LibraryTrack, user=self.test_user, title=title1, genre=criteriaUuid).uuid  # type: ignore
+        track1_uuid = G(LibraryTrack, user=self.test_user, title=title1, genre=criteriaUuid).uuid  # type: ignore
 
         title2 = 'bien'
-        track2Uuid = G(LibraryTrack, user=self.test_user, title=title2, genre=criteriaUuid).uuid  # type: ignore
+        track2_uuid = G(LibraryTrack, user=self.test_user, title=title2, genre=criteriaUuid).uuid  # type: ignore
 
         response = self.retrieve_genre(uuid=criteriaUuid)
         assert response.status_code == status.HTTP_200_OK  # type: ignore
@@ -40,5 +40,5 @@ class TestCase(CriteriaTestCase):
         assert title1 in titles
         assert title2 in titles
         uuids = [track[RETRIEVE_FIELDS.UUID] for track in lib_tracks]
-        assert track1Uuid in uuids
-        assert track2Uuid in uuids
+        assert track1_uuid in uuids
+        assert track2_uuid in uuids
