@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod
+import logging
 from django.contrib.auth.models import User
 from rest_framework.serializers import Serializer
 
@@ -45,7 +46,6 @@ class Service:
             if value == "":
                 value = None
             data1[key] = value
-        return data1
 
     @staticmethod
     def _update_data1_converting_str_to_int_value_if_set(key: str, data1: dict):
@@ -67,7 +67,6 @@ class Service:
     def _override_data1_with_data2_values_for_each_key_in_data2(data1: dict, data2: dict, keys: list[str]):
         for key in keys:
             Service._update_data1_with_key_if_set_in_data2(key=key, data1=data1, data2=data2)
-        return data1
 
     @staticmethod
     def _get_copy_of_dict_including_only_specified_keys(dict, keys):
@@ -78,17 +77,17 @@ class Service:
         return dict2
 
     def create(self, post_data: dict, request):
+        logger = logging.getLogger(__name__)
+        logger.debug("Service.create")
         post_serializer = self._get_post_serializer(post_data=post_data)
         post_serializer.is_valid(raise_exception=True)
         save_schema_data = self._get_save_schema_data_from_post_data(post_data=post_data)
         return self._save(save_schema_data=save_schema_data, old_instance=None, request=request)
 
     def update(self, put_data: dict, old_instance, request):
-        put_serializer = self._get_put_serializer(old_instance=old_instance,
-                                                  put_data=put_data)
+        put_serializer = self._get_put_serializer(old_instance=old_instance, put_data=put_data)
         put_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_save_schema_data_from_put_data(put_data=put_data,
-                                                                    old_instance=old_instance)
+        save_schema_data = self._get_save_schema_data_from_put_data(put_data=put_data, old_instance=old_instance)
         return self._save(save_schema_data=save_schema_data, old_instance=old_instance, request=request)
 
     def _save(self, save_schema_data: dict, old_instance, request):
@@ -100,9 +99,8 @@ class Service:
         save_model_data = self._get_save_model_data_from_save_schema_data_not_including_user_field(
             user=request.user, save_schema_data=save_schema_data, old_instance=old_instance)
         save_model_data['user'] = request.user.pk
-        save_model_serializer = self._get_save_model_serializer(
-            old_instance=old_instance,
-            save_model_data=save_model_data,
-            partial=True)
+        save_model_serializer = self._get_save_model_serializer(old_instance=old_instance,
+                                                                save_model_data=save_model_data,
+                                                                partial=True)
         save_model_serializer.is_valid(raise_exception=True)
         return save_model_serializer.save()
