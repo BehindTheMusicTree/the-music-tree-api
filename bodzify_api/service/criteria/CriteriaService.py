@@ -50,15 +50,13 @@ class CriteriaService(Service):
             self, user: User, save_schema_data: dict, old_instance) -> dict:
         save_model_data = dict()
 
-        save_model_data = self._update_data1_with_key_if_set_in_data2(
-            key=CRITERIA_ATTRIBUTES_LABEL.NAME,
-            data1=save_model_data,
-            data2=save_schema_data)
+        self._update_data1_with_key_if_set_in_data2(key=CRITERIA_ATTRIBUTES_LABEL.NAME,
+                                                    data1=save_model_data,
+                                                    data2=save_schema_data)
 
-        save_model_data = self._update_data1_with_key_if_set_in_data2(
-            key=CRITERIA_ATTRIBUTES_LABEL.PARENT,
-            data1=save_model_data,
-            data2=save_schema_data)
+        self._update_data1_with_key_if_set_in_data2(key=CRITERIA_ATTRIBUTES_LABEL.PARENT,
+                                                    data1=save_model_data,
+                                                    data2=save_schema_data)
 
         save_model_data[CRITERIA_ATTRIBUTES_LABEL.TYPE] = self.criteria_type_id
 
