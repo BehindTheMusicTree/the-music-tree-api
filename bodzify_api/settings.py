@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'corsheaders',
     'drf_spectacular',
     'rest_framework',
     'rest_framework.authtoken',
@@ -77,6 +78,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'bodzify_api.middleware.RequestLoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -173,6 +175,7 @@ MEDIA_ROOT = ''
 
 if os.getenv('ENV') == 'DEV':
     import bodzify_api.settings_dev as settings_dev
+    CORS_ALLOW_ALL_ORIGINS = settings_dev.CORS_ALLOW_ALL_ORIGINS
     ALLOWED_HOSTS = settings_dev.ALLOWED_HOSTS
     MEDIA_ROOT = settings_dev.MEDIA_ROOT
     STATIC_ROOT = settings_dev.STATIC_ROOT
@@ -180,6 +183,7 @@ if os.getenv('ENV') == 'DEV':
     JWT_AUTH = settings_dev.JWT_AUTH
 elif os.getenv('ENV') == 'TEST':
     import bodzify_api.settings_test as settings_test
+    CORS_ALLOWED_ORIGINS = settings_test.CORS_ALLOWED_ORIGINS
     SESSION_COOKIE_SECURE = settings_test.SESSION_COOKIE_SECURE
     CSRF_COOKIE_SECURE = settings_test.CSRF_COOKIE_SECURE
     CSRF_TRUSTED_ORIGINS = settings_test.CSRF_TRUSTED_ORIGINS
