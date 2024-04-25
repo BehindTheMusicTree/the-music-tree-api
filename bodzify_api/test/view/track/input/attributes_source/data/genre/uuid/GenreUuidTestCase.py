@@ -6,7 +6,7 @@ from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import F
 from rest_framework import status
 from ddf import G
 
-from bodzify_api.test.view.track.input.source.data.FieldFromDataTestCase import NullableUuidFieldFromDataTestCase
+from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import NullableUuidFieldFromDataTestCase
 
 
 class GenreUuidTestCase(NullableUuidFieldFromDataTestCase):

@@ -2,7 +2,7 @@
 
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
 from rest_framework import status
-from bodzify_api.test.view.track.input.source.data.FieldFromDataTestCase import NullableStrFieldFromDataTestCase
+from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import NullableStrFieldFromDataTestCase
 
 
 class ArtistTestCase(NullableStrFieldFromDataTestCase):

@@ -77,8 +77,6 @@ class Service:
         return dict2
 
     def create(self, post_data: dict, request):
-        logger = logging.getLogger(__name__)
-        logger.debug("Service.create")
         post_serializer = self._get_post_serializer(post_data=post_data)
         post_serializer.is_valid(raise_exception=True)
         save_schema_data = self._get_save_schema_data_from_post_data(post_data=post_data)
@@ -104,3 +102,12 @@ class Service:
                                                                 partial=True)
         save_model_serializer.is_valid(raise_exception=True)
         return save_model_serializer.save()
+
+        # if save_model_serializer.is_valid(raise_exception=True):
+        #     try:
+        #         # Remplacer par votre logique de création de modèle
+        #         save_model_serializer.save()
+        #         return Response(save_model_serializer.data, status=status.HTTP_201_CREATED)
+        #     except ValidationError as e:
+        #         return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
+        # return Response(save_model_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

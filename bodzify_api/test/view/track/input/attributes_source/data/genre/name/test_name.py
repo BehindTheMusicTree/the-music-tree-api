@@ -2,8 +2,7 @@
 
 import pytest
 from bodzify_api.test import conftest
-from bodzify_api.test.view.track.input.source.data.genre.name.GenreNameTestCase import GenreNameTestCase
-
+from bodzify_api.test.view.track.input.attributes_source.data.genre.name.GenreNameTestCase import GenreNameTestCase
 
 
 @pytest.fixture(params=[GenreNameTestCase])

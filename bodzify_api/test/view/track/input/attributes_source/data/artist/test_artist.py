@@ -2,7 +2,7 @@
 
 import pytest
 from bodzify_api.test import conftest
-from bodzify_api.test.view.track.input.source.data.artist.ArtistTestCase import ArtistTestCase
+from bodzify_api.test.view.track.input.attributes_source.data.artist.ArtistTestCase import ArtistTestCase
 
 
 @pytest.fixture(params=[ArtistTestCase])

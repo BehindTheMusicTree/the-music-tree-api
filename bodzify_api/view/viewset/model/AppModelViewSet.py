@@ -3,6 +3,7 @@
 from abc import abstractmethod
 import re
 from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from django.http import QueryDict
 from rest_framework.response import Response
 from rest_framework import status
@@ -56,8 +57,8 @@ class AppModelViewSet(MultiSerializerViewSet):
             headers = self.get_success_headers(response_serializer.data)
             return Response(data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-        except IntegrityError as e:
-            return utility.get_response_when_bad_request(exception=e)
+        except (IntegrityError, ValidationError) as exception:
+            return utility.get_response_when_bad_request(exception=exception)
 
     def _update(self, request, *args, **kwargs):
         request_data_snake_case = self.get_dict_with_snake_case_keys_from_form_data(request.data)

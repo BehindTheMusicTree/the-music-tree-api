@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+
 from django.core.exceptions import ValidationError
 from mutagen import File
 
@@ -9,52 +11,44 @@ import bodzify_api.settings as settings
 def validate_size(file):
     track_size_max = settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1000000
     if file.size > track_size_max:
-        trackSizeErrorTooLargeMessage = 'File too large. Size should not exceed {size:.3f} Mo.'
-        raise ValidationError(
-            trackSizeErrorTooLargeMessage.format(size=track_size_max))
+        track_size_error_too_small_message = 'File too large. Size should not exceed {size:.3f} Mo.'
+        raise ValidationError(track_size_error_too_small_message.format(size=track_size_max))
 
     track_size_min = settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
     if file.size < track_size_min:
-        trackSizeErrorTooSmallMessage = 'File too small. Size should be at least {size:.3f} Mo.'
-        raise ValidationError(
-            trackSizeErrorTooSmallMessage.format(size=track_size_min))
-
-
-def validate_is_audio(file_path):
-    try:
-        audio = File(file_path)
-    except Exception:
-        return False
-
-    return audio is not None
+        track_size_error_too_small_message = 'File too small. Size should be at least {size:.3f} Mo.'
+        raise ValidationError(track_size_error_too_small_message.format(size=track_size_min))
 
 
 def validate_content_type_is_audio(file):
 
-    AUDIO_MAGIC_BYTES = {
-        b'ID3': 'audio/mpeg',
-        b'\x4F\x67\x67\x53': 'audio/ogg',
-        b'RIFF': 'audio/wav',
-        b'fLaC': 'audio/flac',
-    }
-
+    AUDIO_MAGIC_BYTES = {b'ID3': 'audio/mpeg',
+                         b'\x4F\x67\x67\x53': 'audio/ogg',
+                         b'RIFF': 'audio/wav',
+                         b'fLaC': 'audio/flac', }
     first_few_bytes = file.read(4)
 
     for magic_bytes, content_type in AUDIO_MAGIC_BYTES.items():
         if first_few_bytes.startswith(magic_bytes):
             return
 
-    if validate_is_audio(file):
-        return
+    audio = None
+    try:
+        audio = File(file)
+    except Exception:
+        pass
 
-    raise ValidationError('Invalid file format. Only audio files are allowed.')
+    error = audio is None
+    if error:
+        raise ValidationError('Invalid file format. Only audio files are allowed.')
 
 
 def validate_filename_length(value):
     try:
-        filename = value.file.name
+        filename = os.path.basename(value.file.name)
     except AttributeError:
-        filename = value.name
+        filename = os.path.basename(value.name)
+
     if len(filename) > settings.LIB_TRACK_FILENAME_LENGTH_MAX:
-        raise ValidationError(
-            f'Ensure this filename has at most {settings.LIB_TRACK_FILENAME_LENGTH_MAX} characters (it has {len(filename)}).')
+        raise ValidationError(f"Ensure this filename has at most {settings.LIB_TRACK_FILENAME_LENGTH_MAX} characters" +
+                              f"it has {len(filename)}).")

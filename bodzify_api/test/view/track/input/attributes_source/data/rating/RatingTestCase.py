@@ -6,7 +6,7 @@ from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import F
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
-from bodzify_api.test.view.track.input.source.data.FieldFromDataTestCase import FieldIntFromDataTestCase
+from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import FieldIntFromDataTestCase
 
 
 class RatingTestCase(FieldIntFromDataTestCase):

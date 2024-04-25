@@ -3,7 +3,7 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.view.track.input.source.file_metadata.rating.RatingNotNoneTestCase \
+from bodzify_api.test.view.track.input.attributes_source.file_metadata.rating.RatingNotNoneTestCase \
     import RatingNotNoneTestCase
 
 
