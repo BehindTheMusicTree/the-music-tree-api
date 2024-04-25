@@ -22,7 +22,7 @@ class FIELDS:
 
 
 class LibTrackSaveSchemaSerializer(serializers.Serializer):
-    file = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
+    file = serializers.FileField()
     title = serializers.CharField(
         max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX,
         required=False,
