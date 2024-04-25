@@ -1,3 +1,4 @@
+from bodzify_api import settings
 import os
 
 from django.db import models
@@ -6,8 +7,7 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 
 from bodzify_api.validator.track_file_validator \
-    import validate_size, validate_is_audio, validate_content_type_is_audio, validate_filename_length, validate_is_audio
-from bodzify_api import settings
+    import validate_size, validate_content_type_is_audio, validate_filename_length
 
 
 class ATTRIBUTES_LABEL:
@@ -32,22 +32,17 @@ class File(models.Model):
                             validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
                                         validate_filename_length,
                                         validate_size,
-                                        validate_content_type_is_audio,
-                                        validate_is_audio],
+                                        validate_content_type_is_audio],
                             null=True)
-    filename = models.CharField(max_length=255, blank=True)
+    filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LENGTH_MAX, blank=True)
     extension = models.CharField(max_length=5, blank=True)
     size_in_bytes = models.FloatField(null=True, blank=True)
-    size_in_ko = models.GeneratedField(
-        expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,
-        output_field=models.FloatField(),
-        db_persist=True,
-    )
-    size_in_mo = models.GeneratedField(
-        expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / (1024 * 1024),
-        output_field=models.FloatField(),
-        db_persist=True,
-    )
+    size_in_ko = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,
+                                       output_field=models.FloatField(),
+                                       db_persist=True)
+    size_in_mo = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / (1024 * 1024),
+                                       output_field=models.FloatField(),
+                                       db_persist=True)
 
     def __str__(self) -> str:
         if self.file and self.file.name:

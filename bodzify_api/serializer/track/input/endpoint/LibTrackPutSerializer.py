@@ -24,13 +24,7 @@ class FIELDS:
 
 class LibTrackPutSerializer(LibTrackSaveSchemaSerializer, InputEndpointSerializer):
 
-    file = serializers.FileField(
-        help_text="Only audio formats accepted.",
-        validators=[
-            FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
-            validate_content_type_is_audio,
-            validate_size],
-        required=False)
+    file = serializers.FileField(required=False)
 
     class Meta(LibTrackSaveSchemaSerializer.Meta):
         fields = [FIELDS.FILE_OBJ,

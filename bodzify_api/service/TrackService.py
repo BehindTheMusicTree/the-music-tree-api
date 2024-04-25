@@ -5,11 +5,12 @@ import os
 import random
 import string
 from tempfile import NamedTemporaryFile
-
 import requests
+
 from django.contrib.auth.models import User
 from django.core.files.base import File as DjangoFile
 from django.db.models import F
+from django.core.exceptions import ValidationError
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.model.PlaylistLibTrackRelation \
@@ -77,6 +78,8 @@ class TrackService(Service):
         if file_key in data2:
             file = data2[file_key]
             file_obj = ModelFile.objects.create(user=user, file=file)
+            file_obj.full_clean()
+            file_obj.save()
             data1[SAVE_MODEL_FIELDS.FILE_OBJ] = file_obj.pk
 
     @staticmethod
@@ -135,11 +138,11 @@ class TrackService(Service):
         self._override_data1_with_data2_values_for_each_key_in_data2(data1=save_schema_data, data2=post_data, keys=keys)
 
         if SAVE_SCHEMA_FIELDS.TITLE not in save_schema_data:
-            save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file,
-                                                                                             data=post_data)
+            save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
         if SAVE_SCHEMA_FIELDS.GENRE_UUID not in post_data:
-            self._override_data1_with_data2_values_for_each_key_in_data2(
-                data1=save_schema_data, data2=post_data, keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
+            self._override_data1_with_data2_values_for_each_key_in_data2(data1=save_schema_data,
+                                                                         data2=post_data,
+                                                                         keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
 
         Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
 
@@ -158,15 +161,13 @@ class TrackService(Service):
         for key in [SAVE_MODEL_FIELDS.TITLE, SAVE_MODEL_FIELDS.RATING, SAVE_MODEL_FIELDS.LANGUAGE]:
             self._update_data1_with_key_if_set_in_data2(key=key, data1=save_model_data, data2=save_schema_data)
 
-        self.update_data1_with_artist_uuid_if_artist_name_in_data2(
-            user=user,
-            data1=save_model_data,
-            data2=save_schema_data)
+        self.update_data1_with_artist_uuid_if_artist_name_in_data2(user=user,
+                                                                   data1=save_model_data,
+                                                                   data2=save_schema_data)
 
-        self._update_data1_with_album_uuid_if_album_name_in_data2(
-            user=user,
-            data1=save_model_data,
-            data2=save_schema_data)
+        self._update_data1_with_album_uuid_if_album_name_in_data2(user=user,
+                                                                  data1=save_model_data,
+                                                                  data2=save_schema_data)
 
         self._update_data1_with_genre_uuid_if_genre_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
         self._update_data1_with_file_obj_id_if_file_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
@@ -186,8 +187,8 @@ class TrackService(Service):
 
             post_data = self._get_post_data_from_extract_data(extract_data)
 
-            track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
-                mine_track_url, extract_data)
+            track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(mine_track_url,
+                                                                                                     extract_data)
             post_data[POST_FIELDS.FILE_OBJ] = DjangoFile(file=track_temp_file, name=track_filename)  # type: ignore
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
@@ -201,9 +202,12 @@ class TrackService(Service):
         TrackService._decrease_position_of_next_tracks_in_old_track_playlists(old_lib_tracks_playlists_with_positions)
 
     def _get_save_schema_data_from_file(self, file):
-        metadata_dict = AudioMetadataManager.get_metadata_dict_from_file(
-            file=file,
-            normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
+        try:
+            metadata_dict = AudioMetadataManager.get_metadata_dict_from_file(
+                file=file,
+                normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
+        except Exception as error:
+            raise ValidationError(f"Error while extracting metadata from file: {error}")
 
         save_data_with_potential_none = self._get_copy_of_dict_including_only_specified_keys(
             dict=metadata_dict,

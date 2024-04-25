@@ -7,8 +7,6 @@ from bodzify_api import settings
 from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 from bodzify_api.serializer.track.input.LibTrackSaveSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
 from bodzify_api.serializer.album.input.AlbumSaveSchemaSerializer import FIELDS as ALBUM_SAVE_SCHEMA_FIELDS
-from bodzify_api.validator.track_file_validator \
-    import validate_filename_length, validate_size, validate_is_audio, validate_content_type_is_audio
 
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
