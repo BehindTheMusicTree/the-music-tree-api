@@ -29,13 +29,7 @@ class FIELDS:
 
 
 class LibTrackEndPointSerializer(InputEndpointSerializer):
-    file = serializers.FileField(
-        help_text="Only audio formats accepted.",
-        validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
-                    validate_filename_length,
-                    validate_size,
-                    validate_is_audio,
-                    validate_content_type_is_audio])
+    file = serializers.FileField()
     title = serializers.CharField(
         max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX,
         required=False,
