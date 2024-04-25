@@ -1,11 +1,12 @@
-from bodzify_api import settings
 import os
 
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.db.models import F
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 
+from bodzify_api import settings
 from bodzify_api.validator.track_file_validator \
     import validate_size, validate_content_type_is_audio, validate_filename_length
 
@@ -25,9 +26,15 @@ def _get_user_directory_path(instance, filename):
                                filename)
 
 
+class PreserveSpacesStorage(FileSystemStorage):
+    def get_valid_name(self, name):
+        return name
+
+
 class File(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     file = models.FileField(upload_to=_get_user_directory_path,
+                            storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
                             validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
                                         validate_filename_length,
