@@ -102,12 +102,3 @@ class Service:
                                                                 partial=True)
         save_model_serializer.is_valid(raise_exception=True)
         return save_model_serializer.save()
-
-        # if save_model_serializer.is_valid(raise_exception=True):
-        #     try:
-        #         # Remplacer par votre logique de création de modèle
-        #         save_model_serializer.save()
-        #         return Response(save_model_serializer.data, status=status.HTTP_201_CREATED)
-        #     except ValidationError as e:
-        #         return Response(e.message_dict, status=status.HTTP_400_BAD_REQUEST)
-        # return Response(save_model_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
