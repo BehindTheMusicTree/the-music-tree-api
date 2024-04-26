@@ -15,6 +15,7 @@ from bodzify_api.validator.track_file_validator \
 
 
 class ATTRIBUTES_LABEL:
+    USER = 'user'
     FILE = 'file'
     FILENAME = 'filename'
     EXTENSION = 'extension'
