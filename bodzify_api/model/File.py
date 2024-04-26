@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+from sys import stderr
 
 from django.core.files.storage import FileSystemStorage
 from django.db import models
@@ -60,6 +61,7 @@ class File(models.Model):
     @staticmethod
     def is_flac_file_md5_valid(file_path):
         result = subprocess.run(['flac', '-t', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stderr = result.stderr.decode()
         return 'ok' in result.stderr.decode()
 
     def __str__(self) -> str:
@@ -73,7 +75,8 @@ class File(models.Model):
             self.extension = os.path.splitext(self.file.name)[1]
             self.size_in_bytes = self.file.size
 
-            if self.extension == '.flac':
-                self.original_flac_file_md5_check_is_valid = self.is_flac_file_md5_valid(self.file.path)
+        super().save(*args, **kwargs)  # So that the file is saved before the eventual md5 check
 
-        super().save(*args, **kwargs)
+        if self.file and self.extension == '.flac':
+            self.original_flac_file_md5_check_is_valid = self.is_flac_file_md5_valid(self.file.path)
+            super().save(update_fields=[ATTRIBUTES_LABEL.ORIGINAL_FLAC_FILE_MD5_CHECK_IS_VALID])
