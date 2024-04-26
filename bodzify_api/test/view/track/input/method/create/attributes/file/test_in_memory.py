@@ -10,7 +10,7 @@ Thus the python file object is not available. This test case is to ensure that t
 """
 
 
-class InMemoryTestCase(TrackTestCase):
+class TestCase(TrackTestCase):
 
     def test_in_memory(self):
         response = self.post_lib_track_with_specific_sample("in_memory.flac")

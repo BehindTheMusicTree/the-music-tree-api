@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod
-import logging
 from django.contrib.auth.models import User
 from rest_framework.serializers import Serializer
 

@@ -23,9 +23,10 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.File import File as ModelFile
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
-from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer \
+from bodzify_api.serializer.track.input.LibTrackModelSerializer \
     import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
-from bodzify_api.serializer.track.input.LibTrackSaveSchemaSerializer \
+from bodzify_api.serializer.file.input.FileModelSerializer import FileModelSerializer, FIELDS as FILE_SAVE_MODEL_FIELDS
+from bodzify_api.serializer.track.input.LibTrackSchemaSerializer \
     import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
 from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
@@ -76,10 +77,12 @@ class TrackService(Service):
     def _update_data1_with_file_obj_id_if_file_in_data2(user: User, data1: dict, data2: dict):
         file_key = SAVE_SCHEMA_FIELDS.FILE_OBJ
         if file_key in data2:
-            file = data2[file_key]
-            file_obj = ModelFile.objects.create(user=user, file=file)
-            file_obj.full_clean()
-            file_obj.save()
+            file_model_data = dict()
+            file_model_data[FILE_SAVE_MODEL_FIELDS.USER] = user.pk
+            file_model_data[FILE_SAVE_MODEL_FIELDS.FILE] = data2[file_key]
+            file_model_serializer = FileModelSerializer(data=file_model_data)
+            file_model_serializer.is_valid(raise_exception=True)
+            file_obj = file_model_serializer.save(user=user)
             data1[SAVE_MODEL_FIELDS.FILE_OBJ] = file_obj.pk
 
     @staticmethod

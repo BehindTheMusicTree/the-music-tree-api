@@ -2,7 +2,7 @@
 
 from bodzify_api.model.Album import Album
 from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
-from bodzify_api.serializer.album.input.AlbumSaveModelSerializer import ATTRIBUTES_LABEL as SAVE_MODEL_ATTRIBUTES_LABEL
+from bodzify_api.serializer.album.input.AlbumModelSerializer import ATTRIBUTES_LABEL as SAVE_MODEL_ATTRIBUTES_LABEL
 
 
 class FIELDS:
