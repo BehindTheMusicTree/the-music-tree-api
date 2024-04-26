@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import subprocess
-from sys import stderr
 
 from django.core.files.storage import FileSystemStorage
 from django.db import models
@@ -14,6 +12,7 @@ from django.core.exceptions import ValidationError
 from bodzify_api import settings
 from bodzify_api.validator.track_file_validator \
     import validate_size, validate_content_type_is_audio, validate_filename_length
+import bodzify_api.AudioMetadataManager as AudioMetadataManager
 
 
 class ATTRIBUTES_LABEL:
@@ -59,19 +58,6 @@ class File(models.Model):
                                        output_field=models.FloatField(),
                                        db_persist=True)
 
-    @staticmethod
-    def is_flac_file_md5_valid(file_path):
-        result = subprocess.run(['flac', '-t', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return 'ok' in result.stderr.decode()
-
-    @staticmethod
-    def replace_flac_file_with_corrected_md5(file_path):
-        result = subprocess.run(['flac', '-f', '--best', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stderr = result.stderr.decode()
-        if 'ok' not in stderr:
-            raise ValidationError("The Flac file md5 check failed and could not be corrected. The file is probably " +
-                                  "corrupted.")
-
     def __str__(self) -> str:
         if self.file and self.file.name:
             return self.file.name + " (" + str(self.size_in_bytes) + " bytes)"
@@ -86,9 +72,13 @@ class File(models.Model):
         super().save(*args, **kwargs)  # So that the file is saved before the eventual md5 check
 
         if self.file and self.extension == '.flac':
-            if not self.is_flac_file_md5_valid(self.file.path):
-                self.replace_flac_file_with_corrected_md5(self.file.path)
-                self.had_flac_md5_been_corrected = True
+            if not AudioMetadataManager.is_flac_file_md5_valid(self.file.path):
+                try:
+                    AudioMetadataManager.replace_flac_file_with_corrected_md5(self.file.path)
+                    self.had_flac_md5_been_corrected = True
+                except Exception as exception:
+                    raise ValidationError("The Flac file md5 check failed and could not be corrected. The file is " +
+                                          "probably corrupted.")
             else:
                 self.had_flac_md5_been_corrected = False
             super().save(update_fields=[ATTRIBUTES_LABEL.HAD_FLAC_MD5_BEEN_CORRECTED])
