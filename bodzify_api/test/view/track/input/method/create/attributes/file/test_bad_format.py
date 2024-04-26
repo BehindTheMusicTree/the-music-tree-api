@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
 @pytest.mark.django_db
-class FormatTextCase(TrackTestCase):
+class TextCase(TrackTestCase):
 
     def test_bad_format_then_error(self):
         response = self.post_lib_track_with_specific_sample("bad_format.wav")
