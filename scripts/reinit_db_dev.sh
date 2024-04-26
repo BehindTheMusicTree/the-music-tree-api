@@ -1,12 +1,12 @@
 #!/bin/bash
 
-projectDir=~/Git/bodzify-api
-managePath=~/Git/bodzify-api/manage.py
+projectDir=~/git/bodzify-api
+managePath=~/git/bodzify-api/manage.py
 dropdb -e bodzify_api -f
 createdb bodzify_api
 createdb -O django bodzify_api
 sudo rm -r $projectDir/bodzify_api/migrations/*
-sudo rm -r /var/lib/bodzify-api/*
+sudo rm -r $projectDir/media/libraries/*
 python3 $managePath migrate
 python3 $managePath migrate --fake
 python3 $managePath makemigrations 

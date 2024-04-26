@@ -75,7 +75,6 @@ class TrackTestCase(ApiTestCase):
             extract_data_dict = self._merge_two_dicts(extract_data_dict, data_dict)
 
         response = self.extract(self._replace_none_values_by_empty_string(extract_data_dict))
-        print(response.json())
         return response
 
     def post_lib_track_without_file(self, data_dict=None):
