@@ -8,7 +8,7 @@ from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylist
     import SimplePlaylistInputEndpointSerializer
 from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistSaveSchemaSerializer \
     import SimplePlaylistSaveSchemaSerializer
-from bodzify_api.serializer.playlist.mother.input.PlaylistSaveModelSerializer import PlaylistSaveModelSerializer
+from bodzify_api.serializer.playlist.mother.input.PlaylistModelSerializer import PlaylistSaveModelSerializer
 from bodzify_api.service.Service import Service
 
 

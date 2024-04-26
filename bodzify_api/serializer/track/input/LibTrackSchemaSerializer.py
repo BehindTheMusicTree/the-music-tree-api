@@ -3,8 +3,8 @@
 from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.track.input.LibTrackSaveModelSerializer import FIELDS as SAVE_MODEL_FIELDS
-from bodzify_api.serializer.album.input.AlbumSaveModelSerializer import FIELDS as ALBUM_SAVE_MODEL_FIELDS
+from bodzify_api.serializer.track.input.LibTrackModelSerializer import FIELDS as SAVE_MODEL_FIELDS
+from bodzify_api.serializer.album.input.AlbumModelSerializer import FIELDS as ALBUM_SAVE_MODEL_FIELDS
 
 
 class FIELDS:
