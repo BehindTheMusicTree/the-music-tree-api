@@ -5,6 +5,8 @@ import os
 from typing import Optional
 from tinytag import TinyTag
 import tempfile
+import subprocess
+from sys import stderr
 
 from mutagen.mp4 import MP4StreamInfoError
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
@@ -488,3 +490,16 @@ def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
     else:
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
     file_tags.save(file.path)
+
+
+def is_flac_file_md5_valid(file_path):
+    result = subprocess.run(['flac', '-t', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return 'ok' in result.stderr.decode()
+
+
+def replace_flac_file_with_corrected_md5(file_path):
+    result = subprocess.run(['flac', '-f', '--best', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stderr = result.stderr.decode()
+    if 'wrote' not in stderr:
+        raise ValidationError("The Flac file md5 check failed and could not be corrected. The file is probably " +
+                              "corrupted.")

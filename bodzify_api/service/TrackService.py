@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import logging
 import os
 import random
 import string
@@ -20,7 +19,6 @@ from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.File import File as ModelFile
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackModelSerializer \
@@ -31,8 +29,6 @@ from bodzify_api.serializer.track.input.LibTrackSchemaSerializer \
 from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
 from bodzify_api.service.Service import Service
-
-logger = logging.getLogger('bodzify_api')
 
 
 class TrackService(Service):
@@ -167,11 +163,9 @@ class TrackService(Service):
         self._update_data1_with_artist_uuid_if_artist_name_in_data2(user=user,
                                                                     data1=save_model_data,
                                                                     data2=save_schema_data)
-
         self._update_data1_with_album_uuid_if_album_name_in_data2(user=user,
                                                                   data1=save_model_data,
                                                                   data2=save_schema_data)
-
         self._update_data1_with_genre_uuid_if_genre_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
         self._update_data1_with_file_obj_id_if_file_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
 
