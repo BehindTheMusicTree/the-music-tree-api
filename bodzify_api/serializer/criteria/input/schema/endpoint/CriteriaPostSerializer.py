@@ -2,7 +2,7 @@
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
-from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer \
+from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer \
     import CriteriaSaveSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
 
 

@@ -5,7 +5,7 @@ from ddf import G
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
-from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer import FIELDS as POST_FIELDS
 
 
 class TestCase(CriteriaTestCase):

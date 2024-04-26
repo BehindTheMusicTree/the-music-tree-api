@@ -3,9 +3,9 @@
 import logging
 from django.contrib.auth.models import User
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
-from bodzify_api.serializer.criteria.input.CriteriaSaveModelSerializer import CriteriaSaveModelSerializer
+from bodzify_api.serializer.criteria.input.CriteriaModelSerializer import CriteriaSaveModelSerializer
 from bodzify_api.serializer.criteria.input.schema.endpoint.CriteriaPutSerializer import CriteriaPutSerializer
-from bodzify_api.serializer.criteria.input.schema.CriteriaSaveSchemaSerializer import CriteriaSaveSchemaSerializer
+from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer import CriteriaSaveSchemaSerializer
 
 from bodzify_api.service.Service import Service
 
@@ -50,15 +50,13 @@ class CriteriaService(Service):
             self, user: User, save_schema_data: dict, old_instance) -> dict:
         save_model_data = dict()
 
-        save_model_data = self._update_data1_with_key_if_set_in_data2(
-            key=CRITERIA_ATTRIBUTES_LABEL.NAME,
-            data1=save_model_data,
-            data2=save_schema_data)
+        self._update_data1_with_key_if_set_in_data2(key=CRITERIA_ATTRIBUTES_LABEL.NAME,
+                                                    data1=save_model_data,
+                                                    data2=save_schema_data)
 
-        save_model_data = self._update_data1_with_key_if_set_in_data2(
-            key=CRITERIA_ATTRIBUTES_LABEL.PARENT,
-            data1=save_model_data,
-            data2=save_schema_data)
+        self._update_data1_with_key_if_set_in_data2(key=CRITERIA_ATTRIBUTES_LABEL.PARENT,
+                                                    data1=save_model_data,
+                                                    data2=save_schema_data)
 
         save_model_data[CRITERIA_ATTRIBUTES_LABEL.TYPE] = self.criteria_type_id
 

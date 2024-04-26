@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.core.validators import FileExtensionValidator
 from bodzify_api import settings
 from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
-from bodzify_api.serializer.track.input.LibTrackSaveSchemaSerializer import \
+from bodzify_api.serializer.track.input.LibTrackSchemaSerializer import \
     LibTrackSaveSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL
 from bodzify_api.validator.track_file_validator import validate_content_type_is_audio, validate_size
@@ -24,13 +24,7 @@ class FIELDS:
 
 class LibTrackPutSerializer(LibTrackSaveSchemaSerializer, InputEndpointSerializer):
 
-    file = serializers.FileField(
-        help_text="Only audio formats accepted.",
-        validators=[
-            FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
-            validate_content_type_is_audio,
-            validate_size],
-        required=False)
+    file = serializers.FileField(required=False)
 
     class Meta(LibTrackSaveSchemaSerializer.Meta):
         fields = [FIELDS.FILE_OBJ,

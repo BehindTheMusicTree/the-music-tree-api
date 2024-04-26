@@ -4,7 +4,7 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 @pytest.mark.django_db
-class TrackPostViewTestCase9(ApiTestCase):
+class TestCase(ApiTestCase):
 
     """
     As the file is too big to be uploaded on Github, the pytest won't work during Github's

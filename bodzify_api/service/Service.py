@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod
-import logging
 from django.contrib.auth.models import User
 from rest_framework.serializers import Serializer
 
@@ -40,7 +39,7 @@ class Service:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @staticmethod
-    def _update_data1_with_key_if_set_in_data2(key: str, data1: dict, data2: dict) -> dict:
+    def _update_data1_with_key_if_set_in_data2(key: str, data1: dict, data2: dict):
         if key in data2:
             value = data2[key]
             if value == "":
@@ -77,8 +76,6 @@ class Service:
         return dict2
 
     def create(self, post_data: dict, request):
-        logger = logging.getLogger(__name__)
-        logger.debug("Service.create")
         post_serializer = self._get_post_serializer(post_data=post_data)
         post_serializer.is_valid(raise_exception=True)
         save_schema_data = self._get_save_schema_data_from_post_data(post_data=post_data)

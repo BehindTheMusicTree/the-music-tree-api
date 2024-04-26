@@ -21,12 +21,6 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylis
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 
 
-def _get_user_directory_path(instance, filename):
-    return '{0}{1}/{2}'.format(settings.LIB_DIR_NAME + '/' + settings.USER_LIB_DIR_NAME_PREFIXE,
-                               instance.user.id,
-                               filename)
-
-
 class ATTRIBUTES_LABEL:
     MODEL = 'library_track'
     UUID = "uuid"
