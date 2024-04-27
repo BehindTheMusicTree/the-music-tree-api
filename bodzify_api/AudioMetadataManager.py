@@ -501,5 +501,4 @@ def replace_flac_file_with_corrected_md5(file_path):
     result = subprocess.run(['flac', '-f', '--best', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stderr = result.stderr.decode()
     if 'wrote' not in stderr:
-        raise ValidationError("The Flac file md5 check failed and could not be corrected. The file is probably " +
-                              "corrupted.")
+        raise Exception("The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")
