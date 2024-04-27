@@ -85,7 +85,7 @@ class AppTestCase(TestCase):
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
         call_command('loaddata', 'app', 'pytest_user')
         self.api_client = AppApiClient()
-        self.test_user = TestUser.objects.get(username=self.TEST_USERNAME)
+        self.test_user = TestUser(self.TEST_USERNAME)
 
         self.model_fixture_factory = ModelFixtureFactory(test_user=self.test_user,
                                                          lib_track_default_file_path=self.generic_sample_dir_abs_path /
