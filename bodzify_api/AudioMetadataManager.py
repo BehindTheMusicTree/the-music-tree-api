@@ -223,7 +223,7 @@ def _get_album_name_tag_from_flac_metadata(flac_metadata: FLAC) -> Optional[str]
 
 def _get_album_artists_name_str_tag_from_flac_metadata(flac_metadata: FLAC) -> Optional[str]:
     album_artists_name_stringRaw = _get_first_value_if_exists_or_none(dict=flac_metadata,
-                                                                      key=VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES))
+                                                                      key=VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES)
     if album_artists_name_stringRaw is not None:
         return album_artists_name_stringRaw.strip()
     return None
@@ -308,9 +308,9 @@ def _get_id3_metadata_updated_with_metadata_value(
         id3_metadata.delall(ID3_TEXT_FRAMES.RATING)
         if normalized_rating is not None:
             id3_rating = _get_file_rating_from_normalized_value(
-                normalized_rating = normalized_rating,
-                normalized_rating_max_value = normalized_rating_max_value,
-                rating_file_profile = RATING_FILE_PROFILE.BASE_255)
+                normalized_rating=normalized_rating,
+                normalized_rating_max_value=normalized_rating_max_value,
+                rating_file_profile=RATING_FILE_PROFILE.BASE_255)
             id3_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))
         return id3_metadata
     elif update_metadata_key == METADATA_DICT_KEYS.LANGUAGE:
@@ -355,9 +355,9 @@ def _get_flac_metadata_updated_if_value_specified(
             vorbis_tag_key = VORBIS_TAG_KEYS.RATING
             if app_rating is not None:
                 vorbis_rating = _get_file_rating_from_normalized_value(
-                    normalized_rating = app_rating,
-                    normalized_rating_max_value = normalized_rating_max_value,
-                    rating_file_profile = RATING_FILE_PROFILE.BASE_100)
+                    normalized_rating=app_rating,
+                    normalized_rating_max_value=normalized_rating_max_value,
+                    rating_file_profile=RATING_FILE_PROFILE.BASE_100)
                 metadata_update_dict[metadata_dictKey] = str(vorbis_rating)
         elif metadata_dictKey == METADATA_DICT_KEYS.LANGUAGE:
             vorbis_tag_key = VORBIS_TAG_KEYS.LANGUAGE
@@ -471,10 +471,10 @@ def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
                 raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
                 file_tags = _get_id3_metadata_updated_with_metadata_value(
-                    id3_metadata = file_tags,
-                    update_metadata_dict = metadata_update_dict,
-                    update_metadata_key = metadata_dict_key,
-                    normalized_rating_max_value = normalized_rating_max_value)
+                    id3_metadata=file_tags,
+                    update_metadata_dict=metadata_update_dict,
+                    update_metadata_key=metadata_dict_key,
+                    normalized_rating_max_value=normalized_rating_max_value)
     elif file_extension_lowered == ".flac":
         file_tags = _create_flac_object_according_to_file_object(
             file)
