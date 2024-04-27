@@ -20,8 +20,7 @@ class ATTRIBUTES_LABEL:
 class Artist(models.Model):
 
     # Django's UUIDField won't validate a shortuuid
-    uuid = models.CharField(
-        primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
+    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=200, default=None)
 
