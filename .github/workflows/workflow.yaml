@@ -6,7 +6,7 @@ on:
     push:
        branches: 
         - dev
-        - fix-long-track-upload
+        - install-flac-during-workflow
     pull_request:
         branches: [dev]
 
