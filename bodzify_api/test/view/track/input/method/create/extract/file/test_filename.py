@@ -14,7 +14,7 @@ class FilenameTestCase(TrackTestCase):
             EXTRACT_FIELDS.ARTIST_NAME: "Roméo",
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.file_obj.filename == \
             f"Roméo - ImHere.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
@@ -26,7 +26,7 @@ class FilenameTestCase(TrackTestCase):
             EXTRACT_FIELDS.ARTIST_NAME: artist_name,
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.file_obj.filename == \
             f"{artist_name} - {title}.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
@@ -38,7 +38,7 @@ class FilenameTestCase(TrackTestCase):
             EXTRACT_FIELDS.ARTIST_NAME: artist_name,
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.file_obj.filename == \
             f"{artist_name} - {title}.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
@@ -46,7 +46,7 @@ class FilenameTestCase(TrackTestCase):
         title = "Hellö"
         data_dict = {EXTRACT_FIELDS.TITLE: title}
         response = self.extract_default_mine_track(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.file_obj.filename == f"{title}.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_filename(self):
@@ -56,6 +56,6 @@ class FilenameTestCase(TrackTestCase):
             + "_KN414JidBikY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
         data_dict = {EXTRACT_FIELDS.URL: track_url}
         response = self.extract(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert len(self.saved_lib_track.file_obj.filename) == \
             settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH

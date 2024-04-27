@@ -3,19 +3,16 @@
 import logging
 from typing import Optional
 
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.AppTestCase import AppTestCase
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
-logger = logging.getLogger('bodzify_api')
-
-
 class UpdateFileMetadataIntTestCase(TrackTestCase):
     save_field = None
     lib_track_metadata_dict_key = None
-    file_extension = None
+    file_extension: str
     value_min = None
     value_max = None
     value_min_expected_in_metadata = None
@@ -32,12 +29,12 @@ class UpdateFileMetadataIntTestCase(TrackTestCase):
 
         if file_has_tags:
             response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-                extension=self.file_extension, data_dict=data)  # type: ignore
+                extension=self.file_extension, data_dict=data)
         else:
             response = self.post_lib_track_with_generic_sample_no_tags(
-                extension=self.file_extension, data_dict=data)  # type: ignore
+                extension=self.file_extension, data_dict=data)
 
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
 
         value_expected_in_metadata = value_expected_in_metadata if value_expected_in_metadata is not None else value
 

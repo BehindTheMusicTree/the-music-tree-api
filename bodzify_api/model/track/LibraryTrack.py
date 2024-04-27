@@ -12,6 +12,7 @@ from django.dispatch import receiver
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api.model.File import File
 from bodzify_api.model.playlist.Playlist import Playlist
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
@@ -43,8 +44,8 @@ class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    file_obj = models.OneToOneField('bodzify_api.File', on_delete=models.CASCADE, default=None, null=True)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX)
+    file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,

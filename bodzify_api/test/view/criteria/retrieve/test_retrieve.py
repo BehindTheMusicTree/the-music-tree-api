@@ -2,7 +2,6 @@
 
 import logging
 from rest_framework import status
-from ddf import G
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
@@ -11,29 +10,27 @@ from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import FI
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 from bodzify_api.utils import to_camel_case
 
-logger = logging.getLogger('bodyzify_api')
-
 
 class TestCase(CriteriaTestCase):
 
     def test_name(self):
         name = 'rock'
-        uuid = G(Criteria, user=self.test_user, name=name, type=CRITERIA_TYPES_ID.GENRE).uuid  # type: ignore
+        uuid = self.model_fixture_factory.create_genre(name=name).uuid
         response = self.retrieve_genre(uuid=uuid)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert self.result[RETRIEVE_FIELDS.NAME] == name
 
     def test_lib_tracks(self):
-        criteriaUuid = G(Criteria, user=self.test_user, name='rock', type=CRITERIA_TYPES_ID.GENRE).uuid  # type: ignore
+        criteria = self.model_fixture_factory.create_genre(name='rock')
 
         title1 = 'stylax'
-        track1_uuid = G(LibraryTrack, user=self.test_user, title=title1, genre=criteriaUuid).uuid  # type: ignore
+        track1_uuid = self.model_fixture_factory.create_lib_track(title=title1, genre=criteria).uuid
 
         title2 = 'bien'
-        track2_uuid = G(LibraryTrack, user=self.test_user, title=title2, genre=criteriaUuid).uuid  # type: ignore
+        track2_uuid = self.model_fixture_factory.create_lib_track(title=title2, genre=criteria).uuid
 
-        response = self.retrieve_genre(uuid=criteriaUuid)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        response = self.retrieve_genre(uuid=criteria.uuid)
+        assert response.status_code == status.HTTP_200_OK
         lib_tracks = self.result[to_camel_case(RETRIEVE_FIELDS.LIB_TRACKS)]
         assert len(lib_tracks) == 2
         titles = [track[RETRIEVE_FIELDS.LIB_TRACKS_TITLE] for track in lib_tracks]

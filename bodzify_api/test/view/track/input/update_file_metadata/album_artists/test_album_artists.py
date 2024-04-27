@@ -10,8 +10,6 @@ from bodzify_api.test.view.track.input.update_file_metadata.album_artists.TestCa
     import Mp3TestCase, WavTestCase, FlacTestCase
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
 
-logger = logging.getLogger('bodzify_api')
-
 
 @pytest.fixture(params=[Mp3TestCase, WavTestCase, FlacTestCase])
 def child_instance(request, db):

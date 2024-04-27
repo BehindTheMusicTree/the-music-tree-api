@@ -2,19 +2,20 @@
 
 from urllib.parse import urlencode
 
+from django.http import JsonResponse
 from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api import AudioMetadataManager
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer \
     import FIELDS as LIB_TRACK_EXTRACT_FIELDS
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as LIB_TRACK_POST_FIELDS
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
 
 
-class TrackTestCase(ApiTestCase):
+class TrackTestCase(AppTestCase):
 
     class LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION:
         ONE_STAR = "1 star"
@@ -55,7 +56,7 @@ class TrackTestCase(ApiTestCase):
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
 
-        if response.status_code == status.HTTP_201_CREATED:  # type: ignore
+        if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_lib_track_attribute(response)
         return response
 
@@ -82,7 +83,7 @@ class TrackTestCase(ApiTestCase):
                                     data=self._replace_none_values_by_empty_string(data_dict),
                                     format='json')
 
-    def post_lib_track(self, file_abs_path, data_dict=None):
+    def post_lib_track(self, file_abs_path, data_dict=None) -> JsonResponse:
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LIB_TRACK_POST_FIELDS.FILE_OBJ: sample_file}
             if data_dict is not None:
@@ -90,9 +91,9 @@ class TrackTestCase(ApiTestCase):
             else:
                 data_dict = file_field_dict
             response = self.api_client.post(path=reverse('librarytrack-list'), data=data_dict, format='multipart')
-            if response.status_code == status.HTTP_201_CREATED:  # type: ignore
+            if response.status_code == status.HTTP_201_CREATED:
                 self._set_saved_lib_track_attribute(response)
-            return response
+            return response  # type: ignore
 
     def _post_lib_track_with_generic_sample(self,
                                             generic_sample_filename_without_extension,
@@ -152,7 +153,7 @@ class TrackTestCase(ApiTestCase):
             path=reverse('librarytrack-detail', kwargs={'pk': lib_track_uuid}),
             data=self._replace_none_values_by_empty_string(data_dict),
             format='json')
-        if response.status_code == status.HTTP_200_OK:  # type: ignore
+        if response.status_code == status.HTTP_200_OK:
             self._set_saved_lib_track_attribute(response)
         return response
 

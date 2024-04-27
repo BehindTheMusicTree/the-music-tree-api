@@ -12,5 +12,5 @@ class TestCase(CriteriaTestCase):
         genre_name = "Rock"
         data = {POST_FIELDS.NAME: genre_name}
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert CriteriaPlaylist.objects.filter(criteria__name=genre_name).exists()

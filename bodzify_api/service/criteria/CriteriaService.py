@@ -9,8 +9,6 @@ from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer impor
 
 from bodzify_api.service.Service import Service
 
-logger = logging.getLogger('bodzify_api')
-
 
 class CriteriaService(Service):
 

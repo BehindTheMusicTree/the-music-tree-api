@@ -10,4 +10,4 @@ class TestCase(TrackTestCase):
 
     def test_missing_then_error(self):
         response = self.post_lib_track_without_file()
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

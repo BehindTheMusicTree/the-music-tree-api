@@ -11,8 +11,6 @@ from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerialize
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer \
     import LibTrackWithoutAlbumAndPlaylistSerializer
 
-logger = logging.getLogger('bodzify_api')
-
 
 class FIELDS:
     UUID = PLAYLIST_ATTRIBUTES_LABEL.UUID

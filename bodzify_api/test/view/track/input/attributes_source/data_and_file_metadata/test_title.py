@@ -12,5 +12,5 @@ class TestCase(TrackTestCase):
         data_title = "Rock"
         data_dict = {POST_FIELDS.TITLE: data_title}
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.title == data_title  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track.title == data_title

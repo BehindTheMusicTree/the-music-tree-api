@@ -13,7 +13,7 @@ class TestCase(TrackTestCase):
 
     def test_no_genre_then_in_the_all_and_genreless_playlists(self):
         response = self.post_lib_track_with_generic_sample_no_tags()
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
 
         track_playlists = self.saved_lib_track.playlists.all()
         assert len(track_playlists) == 2

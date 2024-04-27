@@ -15,5 +15,5 @@ class TestCase(TrackTestCase):
             + "_KN414JidBikY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
         data = {EXTRACT_FIELDS.URL: track_url}
         response = self.extract(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.title.startswith(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE)  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track.title.startswith(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE)
