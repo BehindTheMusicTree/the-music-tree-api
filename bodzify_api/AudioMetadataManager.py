@@ -74,7 +74,7 @@ class RATING_FILE_PROFILE:
     BASE_100 = '100'
 
 
-def _get_duration_from_file_using_TinyTag(file):
+def _get_duration_from_file_using_tinytag(file):
     if isinstance(file, TemporaryUploadedFile):
         with open(file.temporary_file_path(), 'rb') as f:
             return TinyTag.get(f.name).duration
@@ -117,42 +117,42 @@ def _create_flac_object_according_to_file_object(file):
     return FLAC(fileobj=file)
 
 
-def _get_duration_from_file_tags(file_tags):
+def _get_duration_from_file_tags(file_tags) -> Optional[float]:
     if hasattr(file_tags, 'info'):
         return file_tags.info.length
     return None
 
 
-def _get_title_tag_from_id3_file_tags(id3_file_tags: MutagenFile):
-    return _get_first_value_if_exists_or_none(id3_file_tags, ID3_TEXT_FRAMES.TITLE)
+def _get_title_tag_from_id3_metadata(id3_metadata: MutagenFile):
+    return _get_first_value_if_exists_or_none(id3_metadata, ID3_TEXT_FRAMES.TITLE)
 
 
-def _get_artist_name_tag_from_id3_file_tags(id3_file_tags: MutagenFile):
-    return _get_first_value_if_exists_or_none(id3_file_tags, ID3_TEXT_FRAMES.ARTIST_NAME)
+def _get_artist_name_tag_from_id3_metadata(id3_metadata: MutagenFile):
+    return _get_first_value_if_exists_or_none(id3_metadata, ID3_TEXT_FRAMES.ARTIST_NAME)
 
 
-def _get_album_name_tag_from_id3_file_tags(id3_file_tags: MutagenFile):
-    return _get_first_value_if_exists_or_none(id3_file_tags, ID3_TEXT_FRAMES.ALBUM_NAME)
+def _get_album_name_tag_from_id3_metadata(id3_metadata: MutagenFile):
+    return _get_first_value_if_exists_or_none(id3_metadata, ID3_TEXT_FRAMES.ALBUM_NAME)
 
 
-def _get_album_artists_name_str_tag_from_id3_file_tags(id3_file_tags: MutagenFile):
+def _get_album_artists_name_str_tag_from_id3_metadata(id3_metadata: MutagenFile):
     album_artists_name_stringRaw = (
-        _get_first_value_if_exists_or_none(id3_file_tags, ID3_TEXT_FRAMES.ALBUM_ARTISTS_NAMES))
+        _get_first_value_if_exists_or_none(id3_metadata, ID3_TEXT_FRAMES.ALBUM_ARTISTS_NAMES))
     if album_artists_name_stringRaw is not None:
         return album_artists_name_stringRaw.strip()
     return None
 
 
-def _get_genre_name_tag_from_id3_file_tags(id3_file_tags: MutagenFile):
-    if ID3_TEXT_FRAMES.GENRE_NAME in id3_file_tags:
-        return id3_file_tags[ID3_TEXT_FRAMES.GENRE_NAME][0]
+def _get_genre_name_tag_from_id3_metadata(id3_metadata: MutagenFile):
+    if ID3_TEXT_FRAMES.GENRE_NAME in id3_metadata:
+        return id3_metadata[ID3_TEXT_FRAMES.GENRE_NAME][0]
     else:
         return ""
 
 
-def _get_eventually_normalized_rating_from_file_value(file_rating_value: int,
-                                                      normalized_rating_max_value: Optional[int] = None,
-                                                      is_rating_from_traktor: bool = False):
+def _get_eventually_normalized_rating_from_file_metadata_value(file_rating_value: int,
+                                                               normalized_rating_max_value: Optional[int] = None,
+                                                               is_rating_from_traktor: bool = False):
     if file_rating_value is not None:
         if normalized_rating_max_value is not None:
             if file_rating_value == 0 and is_rating_from_traktor:
@@ -170,120 +170,121 @@ def _get_eventually_normalized_rating_from_file_value(file_rating_value: int,
         return None
 
 
-def _get_eventually_normalized_rating_value_from_id3_file_tags(id3_file_tags: MutagenFile,
-                                                               normalized_rating_max_value: Optional[int] = None):
+def _get_eventually_normalized_rating_value_from_id3_metadata(id3_metadata: MutagenFile,
+                                                              normalized_rating_max_value: Optional[int] = None):
     file_rating_value = None
-    for key in id3_file_tags:
+    for key in id3_metadata:
         if ID3_TEXT_FRAMES.RATING in key:
-            file_rating_tag = id3_file_tags[key]
+            file_rating_tag = id3_metadata[key]
             file_rating_email = file_rating_tag.email
             file_rating_value = file_rating_tag.rating
     if file_rating_value is None:
         return None
     else:
-        return _get_eventually_normalized_rating_from_file_value(
+        return _get_eventually_normalized_rating_from_file_metadata_value(
             file_rating_value=file_rating_value,
             is_rating_from_traktor=(file_rating_email == TRAKTOR_RATING_TAG_MAIL),
             normalized_rating_max_value=normalized_rating_max_value)
 
 
-def _get_eventually_normalized_rating_value_from_flac_file_tags(flac_file_tags: FLAC,
-                                                                normalized_rating_max_value: Optional[int] = None):
-    file_rating = _get_first_value_int_if_exists_or_none(dict=flac_file_tags, key=VORBIS_TAG_KEYS.RATING)
+def _get_eventually_normalized_rating_value_from_flac_metadata(flac_metadata: FLAC,
+                                                               normalized_rating_max_value: Optional[int] = None):
+    file_rating = _get_first_value_int_if_exists_or_none(dict=flac_metadata, key=VORBIS_TAG_KEYS.RATING)
     is_rating_from_traktor = False
     if file_rating is None:
-        file_rating = _get_first_value_int_if_exists_or_none(dict=flac_file_tags, key=VORBIS_TAG_KEYS.RATING_TRAKTOR)
+        file_rating = _get_first_value_int_if_exists_or_none(dict=flac_metadata, key=VORBIS_TAG_KEYS.RATING_TRAKTOR)
         if file_rating is not None:
             is_rating_from_traktor = True
 
     if file_rating is None or file_rating == "":
         return None
     else:
-        return _get_eventually_normalized_rating_from_file_value(
+        return _get_eventually_normalized_rating_from_file_metadata_value(
             file_rating_value=file_rating,
             is_rating_from_traktor=is_rating_from_traktor,
             normalized_rating_max_value=normalized_rating_max_value)
 
 
-def _get_language_tag_from_id3_file_tags(id3_file_tags: MutagenFile):
-    return _get_first_value_if_exists_or_none(id3_file_tags, ID3_TEXT_FRAMES.LANGUAGE)
+def _get_language_tag_from_id3_metadata(id3_metadata: MutagenFile) -> Optional[str]:
+    return _get_first_value_if_exists_or_none(dict=id3_metadata, key=ID3_TEXT_FRAMES.LANGUAGE)
 
 
-def _get_title_tag_from_flac_file_tags(flac_file_tags: FLAC):
-    return _get_first_value_if_exists_or_none(flac_file_tags, VORBIS_TAG_KEYS.TITLE)
+def _get_title_tag_from_flac_metadata(flac_metadata: FLAC) -> Optional[str]:
+    return _get_first_value_if_exists_or_none(dict=flac_metadata, key=VORBIS_TAG_KEYS.TITLE)
 
 
-def _get_artist_name_tagFrom_flac_file_tags(flac_file_tags: FLAC):
-    return _get_first_value_if_exists_or_none(flac_file_tags, VORBIS_TAG_KEYS.ARTIST_NAME)
+def _get_artist_name_tag_from_flac_metadata(flac_metadata: FLAC) -> Optional[str]:
+    return _get_first_value_if_exists_or_none(dict=flac_metadata, key=VORBIS_TAG_KEYS.ARTIST_NAME)
 
 
-def _get_album_name_tagFrom_flac_file_tags(flac_file_tags: FLAC):
-    return _get_first_value_if_exists_or_none(flac_file_tags, VORBIS_TAG_KEYS.ALBUM_NAME)
+def _get_album_name_tag_from_flac_metadata(flac_metadata: FLAC) -> Optional[str]:
+    return _get_first_value_if_exists_or_none(dict=flac_metadata, key=VORBIS_TAG_KEYS.ALBUM_NAME)
 
 
-def _get_album_artists_nametring_tagFrom_flac_file_tags(flac_file_tags: FLAC):
-    album_artists_name_stringRaw = (
-        _get_first_value_if_exists_or_none(flac_file_tags, VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES))
+def _get_album_artists_name_str_tag_from_flac_metadata(flac_metadata: FLAC) -> Optional[str]:
+    album_artists_name_stringRaw = _get_first_value_if_exists_or_none(dict=flac_metadata,
+                                                                      key=VORBIS_TAG_KEYS.ALBUM_ARTISTS_NAMES))
     if album_artists_name_stringRaw is not None:
         return album_artists_name_stringRaw.strip()
     return None
 
 
-def _get_genre_name_tag_from_flac_file_tags(flac_file_tags: FLAC):
-    if VORBIS_TAG_KEYS.GENRE_NAME in flac_file_tags:
-        return flac_file_tags[VORBIS_TAG_KEYS.GENRE_NAME][0]
+def _get_genre_name_tag_from_flac_metadata(flac_metadata: FLAC) -> Optional[str]:
+    if VORBIS_TAG_KEYS.GENRE_NAME in flac_metadata:
+        return flac_metadata[VORBIS_TAG_KEYS.GENRE_NAME][0]
     else:
         return ""
 
 
-def _get_language_tag_from_flac_file_tags(flac_file: FLAC):
+def _get_language_tag_from_flac_metadata(flac_file: FLAC) -> Optional[str]:
     return _get_first_value_if_exists_or_none(flac_file, VORBIS_TAG_KEYS.LANGUAGE)
 
 
-def _get_specific_metadata_from_id3_file(
-        id3_file_tags: MutagenFile, metadata_key: str, normalized_rating_max_value: int = None):
+def _get_specific_metadata_from_id3_file(id3_metadata: MutagenFile,
+                                         metadata_key: str,
+                                         normalized_rating_max_value: int = None):
     if metadata_key == METADATA_DICT_KEYS.TITLE:
-        return _get_title_tag_from_id3_file_tags(id3_file_tags)
+        return _get_title_tag_from_id3_metadata(id3_metadata)
     elif metadata_key == METADATA_DICT_KEYS.ARTIST_NAME:
-        return _get_artist_name_tag_from_id3_file_tags(id3_file_tags)
+        return _get_artist_name_tag_from_id3_metadata(id3_metadata)
     elif metadata_key == METADATA_DICT_KEYS.ALBUM_NAME:
-        return _get_album_name_tag_from_id3_file_tags(id3_file_tags)
+        return _get_album_name_tag_from_id3_metadata(id3_metadata)
     elif metadata_key == METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES:
-        return _get_album_artists_name_str_tag_from_id3_file_tags(id3_file_tags)
+        return _get_album_artists_name_str_tag_from_id3_metadata(id3_metadata)
     elif metadata_key == METADATA_DICT_KEYS.GENRE_NAME:
-        return _get_genre_name_tag_from_id3_file_tags(id3_file_tags)
+        return _get_genre_name_tag_from_id3_metadata(id3_metadata)
     elif metadata_key == METADATA_DICT_KEYS.DURATION:
-        return _get_duration_from_file_tags(id3_file_tags)
+        return _get_duration_from_file_tags(id3_metadata)
     elif metadata_key == METADATA_DICT_KEYS.RATING:
-        return _get_eventually_normalized_rating_value_from_id3_file_tags(
-            id3_file_tags, normalized_rating_max_value)
+        return _get_eventually_normalized_rating_value_from_id3_metadata(
+            id3_metadata, normalized_rating_max_value)
     elif metadata_key == METADATA_DICT_KEYS.LANGUAGE:
-        return _get_language_tag_from_id3_file_tags(id3_file_tags)
+        return _get_language_tag_from_id3_metadata(id3_metadata)
 
 
 def _get_specific_metadata_from_flac_file(
-        flac_file_tags: FLAC, metadata_key: str, normalized_rating_max_value: Optional[int] = None):
+        flac_metadata: FLAC, metadata_key: str, normalized_rating_max_value: Optional[int] = None):
     if metadata_key == METADATA_DICT_KEYS.TITLE:
-        return _get_title_tag_from_flac_file_tags(flac_file_tags)
+        return _get_title_tag_from_flac_metadata(flac_metadata)
     elif metadata_key == METADATA_DICT_KEYS.ARTIST_NAME:
-        return _get_artist_name_tagFrom_flac_file_tags(flac_file_tags)
+        return _get_artist_name_tag_from_flac_metadata(flac_metadata)
     elif metadata_key == METADATA_DICT_KEYS.ALBUM_NAME:
-        return _get_album_name_tagFrom_flac_file_tags(flac_file_tags)
+        return _get_album_name_tag_from_flac_metadata(flac_metadata)
     elif metadata_key == METADATA_DICT_KEYS.ALBUM_ARTISTS_NAMES:
-        return _get_album_artists_nametring_tagFrom_flac_file_tags(flac_file_tags)
+        return _get_album_artists_name_str_tag_from_flac_metadata(flac_metadata)
     elif metadata_key == METADATA_DICT_KEYS.GENRE_NAME:
-        return _get_genre_name_tag_from_flac_file_tags(flac_file_tags)
+        return _get_genre_name_tag_from_flac_metadata(flac_metadata)
     elif metadata_key == METADATA_DICT_KEYS.DURATION:
-        return _get_duration_from_file_tags(flac_file_tags)
+        return _get_duration_from_file_tags(flac_metadata)
     elif metadata_key == METADATA_DICT_KEYS.RATING:
-        return _get_eventually_normalized_rating_value_from_flac_file_tags(
-            flac_file_tags, normalized_rating_max_value)
+        return _get_eventually_normalized_rating_value_from_flac_metadata(
+            flac_metadata, normalized_rating_max_value)
     elif metadata_key == METADATA_DICT_KEYS.LANGUAGE:
-        return _get_language_tag_from_flac_file_tags(flac_file_tags)
+        return _get_language_tag_from_flac_metadata(flac_metadata)
 
 
-def _get_id3_file_tags_updated_with_metadata_value(
-        id3_file_tags: ID3,
+def _get_id3_metadata_updated_with_metadata_value(
+        id3_metadata: ID3,
         update_metadata_dict: dict,
         update_metadata_key: str,
         normalized_rating_max_value: int):
@@ -304,24 +305,24 @@ def _get_id3_file_tags_updated_with_metadata_value(
         text_frame_class = TCON
     elif update_metadata_key == METADATA_DICT_KEYS.RATING:
         normalized_rating = update_metadata_dict[METADATA_DICT_KEYS.RATING]
-        id3_file_tags.delall(ID3_TEXT_FRAMES.RATING)
+        id3_metadata.delall(ID3_TEXT_FRAMES.RATING)
         if normalized_rating is not None:
             id3_rating = _get_file_rating_from_normalized_value(
-                normalized_rating=normalized_rating,
-                normalized_rating_max_value=normalized_rating_max_value,
-                rating_file_profile=RATING_FILE_PROFILE.BASE_255)
-            id3_file_tags.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))
-        return id3_file_tags
+                normalized_rating = normalized_rating,
+                normalized_rating_max_value = normalized_rating_max_value,
+                rating_file_profile = RATING_FILE_PROFILE.BASE_255)
+            id3_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))
+        return id3_metadata
     elif update_metadata_key == METADATA_DICT_KEYS.LANGUAGE:
         id3_key = ID3_TEXT_FRAMES.LANGUAGE
         text_frame_class = TLAN
     else:
         raise KeyError(METADATA_DICT_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
-    id3_file_tags.delall(id3_key)
-    id3_file_tags.add(text_frame_class(encoding=3, text=update_metadata_dict[update_metadata_key]))
+    id3_metadata.delall(id3_key)
+    id3_metadata.add(text_frame_class(encoding=3, text=update_metadata_dict[update_metadata_key]))
 
-    return id3_file_tags
+    return id3_metadata
 
 
 def _get_file_rating_from_normalized_value(
@@ -333,8 +334,8 @@ def _get_file_rating_from_normalized_value(
         return BASE_100_RATING_STAR_VALUES[star_rating_base_10]
 
 
-def _get_flac_file_tags_updated_if_value_specified(
-        flac_file_tags: FLAC,
+def _get_flac_metadata_updated_if_value_specified(
+        flac_metadata: FLAC,
         metadata_update_dict: dict,
         metadata_dictKey: str,
         normalized_rating_max_value: int):
@@ -354,9 +355,9 @@ def _get_flac_file_tags_updated_if_value_specified(
             vorbis_tag_key = VORBIS_TAG_KEYS.RATING
             if app_rating is not None:
                 vorbis_rating = _get_file_rating_from_normalized_value(
-                    normalized_rating=app_rating,
-                    normalized_rating_max_value=normalized_rating_max_value,
-                    rating_file_profile=RATING_FILE_PROFILE.BASE_100)
+                    normalized_rating = app_rating,
+                    normalized_rating_max_value = normalized_rating_max_value,
+                    rating_file_profile = RATING_FILE_PROFILE.BASE_100)
                 metadata_update_dict[metadata_dictKey] = str(vorbis_rating)
         elif metadata_dictKey == METADATA_DICT_KEYS.LANGUAGE:
             vorbis_tag_key = VORBIS_TAG_KEYS.LANGUAGE
@@ -365,13 +366,13 @@ def _get_flac_file_tags_updated_if_value_specified(
 
         value = metadata_update_dict[metadata_dictKey]
         if value is not None:
-            if vorbis_tag_key not in flac_file_tags:
-                flac_file_tags[vorbis_tag_key] = [1]
-            flac_file_tags[vorbis_tag_key] = metadata_update_dict[metadata_dictKey]
-        elif vorbis_tag_key in flac_file_tags:
-            del flac_file_tags[vorbis_tag_key]
+            if vorbis_tag_key not in flac_metadata:
+                flac_metadata[vorbis_tag_key] = [1]
+            flac_metadata[vorbis_tag_key] = metadata_update_dict[metadata_dictKey]
+        elif vorbis_tag_key in flac_metadata:
+            del flac_metadata[vorbis_tag_key]
 
-    return flac_file_tags
+    return flac_metadata
 
 
 def _get_first_value_if_exists_or_none(dict: dict, key: str):
@@ -394,10 +395,10 @@ def get_specific_metadata_from_file(file, metadata_key: str):
     file_extension_lowered = file_extension.lower()
     if file_extension_lowered in [".wav", ".mp3"]:
         file_tags = MutagenFile(file)
-        return _get_specific_metadata_from_id3_file(id3_file_tags=file_tags, metadata_key=metadata_key)
+        return _get_specific_metadata_from_id3_file(id3_metadata=file_tags, metadata_key=metadata_key)
     elif file_extension_lowered == ".flac":
-        flac_file_tags = _create_flac_object_according_to_file_object(file)
-        return _get_specific_metadata_from_flac_file(flac_file_tags=flac_file_tags, metadata_key=metadata_key)
+        flac_metadata = _create_flac_object_according_to_file_object(file)
+        return _get_specific_metadata_from_flac_file(flac_metadata=flac_metadata, metadata_key=metadata_key)
     else:
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
@@ -419,23 +420,23 @@ def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int]
             file_tags = _get_tags_from_mp3_file(file)
         else:
             file_tags = MutagenFile(file)
-        title = _get_title_tag_from_id3_file_tags(file_tags)
-        artist_name = _get_artist_name_tag_from_id3_file_tags(file_tags)
-        album_name = _get_album_name_tag_from_id3_file_tags(file_tags)
-        album_artists_name_string = _get_album_artists_name_str_tag_from_id3_file_tags(file_tags)
-        genre_name = _get_genre_name_tag_from_id3_file_tags(file_tags)
-        rating = _get_eventually_normalized_rating_value_from_id3_file_tags(file_tags, normalized_rating_max_value)
-        language = _get_language_tag_from_id3_file_tags(file_tags)
+        title = _get_title_tag_from_id3_metadata(file_tags)
+        artist_name = _get_artist_name_tag_from_id3_metadata(file_tags)
+        album_name = _get_album_name_tag_from_id3_metadata(file_tags)
+        album_artists_name_string = _get_album_artists_name_str_tag_from_id3_metadata(file_tags)
+        genre_name = _get_genre_name_tag_from_id3_metadata(file_tags)
+        rating = _get_eventually_normalized_rating_value_from_id3_metadata(file_tags, normalized_rating_max_value)
+        language = _get_language_tag_from_id3_metadata(file_tags)
 
     elif file_extension.lower() == ".flac":
         file_tags = _create_flac_object_according_to_file_object(file)
-        title = _get_title_tag_from_flac_file_tags(file_tags)
-        artist_name = _get_artist_name_tagFrom_flac_file_tags(file_tags)
-        album_name = _get_album_name_tagFrom_flac_file_tags(file_tags)
-        album_artists_name_string = _get_album_artists_nametring_tagFrom_flac_file_tags(file_tags)
-        genre_name = _get_genre_name_tag_from_flac_file_tags(file_tags)
-        rating = _get_eventually_normalized_rating_value_from_flac_file_tags(file_tags, normalized_rating_max_value)
-        language = _get_language_tag_from_flac_file_tags(file_tags)
+        title = _get_title_tag_from_flac_metadata(file_tags)
+        artist_name = _get_artist_name_tag_from_flac_metadata(file_tags)
+        album_name = _get_album_name_tag_from_flac_metadata(file_tags)
+        album_artists_name_string = _get_album_artists_name_str_tag_from_flac_metadata(file_tags)
+        genre_name = _get_genre_name_tag_from_flac_metadata(file_tags)
+        rating = _get_eventually_normalized_rating_value_from_flac_metadata(file_tags, normalized_rating_max_value)
+        language = _get_language_tag_from_flac_metadata(file_tags)
     else:
         raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
@@ -447,7 +448,7 @@ def get_metadata_dict_from_file(file, normalized_rating_max_value: Optional[int]
     metadata_dict[METADATA_DICT_KEYS.GENRE_NAME] = genre_name
     duration = _get_duration_from_file_tags(file_tags=file_tags)
     if duration is None:
-        duration = _get_duration_from_file_using_TinyTag(file)
+        duration = _get_duration_from_file_using_tinytag(file)
     metadata_dict[METADATA_DICT_KEYS.DURATION] = duration
     metadata_dict[METADATA_DICT_KEYS.RATING] = rating
     metadata_dict[METADATA_DICT_KEYS.LANGUAGE] = language
@@ -469,11 +470,11 @@ def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
             if metadata_dict_key == METADATA_DICT_KEYS.DURATION:
                 raise ValueError(METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
-                file_tags = _get_id3_file_tags_updated_with_metadata_value(
-                    id3_file_tags=file_tags,
-                    update_metadata_dict=metadata_update_dict,
-                    update_metadata_key=metadata_dict_key,
-                    normalized_rating_max_value=normalized_rating_max_value)
+                file_tags = _get_id3_metadata_updated_with_metadata_value(
+                    id3_metadata = file_tags,
+                    update_metadata_dict = metadata_update_dict,
+                    update_metadata_key = metadata_dict_key,
+                    normalized_rating_max_value = normalized_rating_max_value)
     elif file_extension_lowered == ".flac":
         file_tags = _create_flac_object_according_to_file_object(
             file)
@@ -482,8 +483,8 @@ def update(file, metadata_update_dict: dict, normalized_rating_max_value: int):
                 raise ValueError(
                     METADATA_DICT_UPDATE_DURATION_SHOULDNT_BE_SET_MESSAGE)
             else:
-                file_tags = _get_flac_file_tags_updated_if_value_specified(
-                    flac_file_tags=file_tags,
+                file_tags = _get_flac_metadata_updated_if_value_specified(
+                    flac_metadata=file_tags,
                     metadata_update_dict=metadata_update_dict,
                     metadata_dictKey=metadata_dict_key,
                     normalized_rating_max_value=normalized_rating_max_value)
