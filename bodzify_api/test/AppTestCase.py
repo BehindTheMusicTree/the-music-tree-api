@@ -66,7 +66,7 @@ class AppTestCase(TestCase):
     def _set_result(self, response):
         self.result = response.json()
 
-    def __login(self, user):
+    def __login(self, user: User):
         self.api_client.force_authenticate(user=user)
         AccessToken.for_user(user)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
@@ -86,14 +86,14 @@ class AppTestCase(TestCase):
         call_command('loaddata', 'app', 'pytest_user')
         self.api_client = AppApiClient()
         self.test_user = TestUser(self.TEST_USERNAME)
-
-        self.model_fixture_factory = ModelFixtureFactory(test_user=self.test_user.django_user,
+        self._set_up_test_directories_and_variables()
+        self.model_fixture_factory = ModelFixtureFactory(user=self.test_user.django_user,
                                                          lib_track_default_file_path=self.generic_sample_dir_abs_path /
                                                          '.mp3')
         if os.path.isdir(self.lib_sample_dir_abs_path):
             for file_relative_path in os.listdir(self.lib_sample_dir_abs_path):
                 self.test_user.copy_file_to_lib(self.lib_sample_dir_abs_path / file_relative_path)
-        self.__login(self.test_user)
+        self.__login(self.test_user.django_user)
 
         super().setUp()
 
