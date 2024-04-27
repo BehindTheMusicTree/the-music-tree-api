@@ -2,7 +2,6 @@
 
 import logging
 from rest_framework import status
-from ddf import G
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
@@ -14,8 +13,6 @@ from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer i
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as PLAYLIST_GET_FIELDS
 from bodzify_api.test.get_filters.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
 from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
-
-logger = logging.getLogger('bodyzify_api')
 
 
 class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
@@ -32,13 +29,13 @@ class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
 
     def test_is_not_provided_then_results(self):
         rock_criteria_name = "Rock"
-        G(Criteria, user=self.test_user, name=rock_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_genre(name=rock_criteria_name)
 
         simple_playlist_name = "Teuf"
-        G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
+        self.model_fixture_factory.create_simple_playlist(name=simple_playlist_name)
 
         response = self.get_playlists()
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 5
         names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
         assert rock_criteria_name in names
@@ -50,14 +47,14 @@ class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
     def test_is_empty_then_error(self):
         data_dict = {GET_QUERY_PARAM.TYPE: ''}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_value_is_genre_then_resultst(self):
         rock_criteria_name = "Rock n roll"
-        G(Criteria, user=self.test_user, name=rock_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_genre(name=rock_criteria_name)
         data_dict = {GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.GENRE}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
         assert rock_criteria_name in names
@@ -66,19 +63,19 @@ class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
     def test_value_is_tag_then_results(self):
         data_dict = {GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
 
     def test_value_is_simple_then_results(self):
         simple_playlist_name = "Teuf"
-        G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
-        G(Criteria, user=self.test_user, name='rock', type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_simple_playlist(name=simple_playlist_name)
+        self.model_fixture_factory.create_genre(name='rock')
 
         data_dict = {GET_QUERY_PARAM.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
         assert SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL in names
@@ -87,4 +84,4 @@ class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
     def test_value_is_wrong_then_error(self):
         data_dict = {GET_QUERY_PARAM.TYPE: 'wrong_value'}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

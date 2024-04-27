@@ -12,6 +12,7 @@ from django.dispatch import receiver
 
 import bodzify_api.AudioMetadataManager as AudioMetadataManager
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api.model.File import File
 from bodzify_api.model.playlist.Playlist import Playlist
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
@@ -43,8 +44,8 @@ class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    file_obj = models.OneToOneField('bodzify_api.File', on_delete=models.CASCADE, default=None, null=True)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX)
+    file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,
@@ -183,10 +184,10 @@ class LibraryTrack(models.Model):
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            genreless_base_playlist = genreless_criteria_playlist.playlist
-            PlaylistLibTrackRelation.objects.create(playlist=genreless_base_playlist, library_track=self)
-            genreless_base_playlist.last_track_list_update_date = update_date
-            genreless_base_playlist.save()
+            genreless_parent_playlist = genreless_criteria_playlist.playlist
+            PlaylistLibTrackRelation.objects.create(playlist=genreless_parent_playlist, library_track=self)
+            genreless_parent_playlist.last_track_list_update_date = update_date
+            genreless_parent_playlist.save()
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \

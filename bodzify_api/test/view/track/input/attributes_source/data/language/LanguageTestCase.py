@@ -13,11 +13,11 @@ class LanguageTestCase(NullableStrFieldFromDataTestCase):
         value = 'fr'
         data = {POST_FIELDS.LANGUAGE: value}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.language == value
 
     def test_empty_then_none(self):
         data = {POST_FIELDS.LANGUAGE: ""}
         response = self.post_lib_track_with_generic_sample_1_star(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.language == None

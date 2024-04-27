@@ -2,12 +2,10 @@
 
 import logging
 
-from bodzify_api.test.ApiTestCase import ApiTestCase
-
-logger = logging.getLogger('bodyzify_api')
+from bodzify_api.test.AppTestCase import AppTestCase
 
 
-class GetFilterTestCase(ApiTestCase):
+class GetFilterTestCase(AppTestCase):
     filter_field = None
 
     def setUp(self, allow_empty_value, methods_names_to_implement=None):

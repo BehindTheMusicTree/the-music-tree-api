@@ -6,23 +6,20 @@ from bodzify_api.test.view.track.input.attributes_source.file_metadata.FieldStrF
     import FieldStrNullableFromFileMetadataTestCase
 from rest_framework import status
 
-logger = logging.getLogger('bodzify_api')
-
 
 class TestCase(FieldStrNullableFromFileMetadataTestCase):
-    file_extension = None
+    file_extension: str
 
     def test_none_then_none(self):
-        response = self.post_lib_track_with_generic_sample_no_tags(
-            extension=self.file_extension)  # type: ignore
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        response = self.post_lib_track_with_generic_sample_no_tags(extension=self.file_extension)
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.album == None
 
     def test_longest(self):
-        response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
-            extension=self.file_extension)  # type: ignore
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
-        assert self.saved_lib_track.album.name == 'a' * settings.LIB_TRACK_TITLE_LENGTH_MAX  # type: ignore
+        response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension)
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track.album is not None
+        assert self.saved_lib_track.album.name == 'a' * settings.LIB_TRACK_TITLE_LENGTH_MAX
 
 
 class Mp3TestCase(TestCase):

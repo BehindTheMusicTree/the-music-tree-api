@@ -2,7 +2,6 @@
 
 import logging
 from rest_framework import status
-from ddf import G
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
@@ -14,8 +13,6 @@ from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer i
 from bodzify_api.test.get_filters.GetFilterWithFreeValuesTestCase import GetFilterWithFreeValuesTestCase
 from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
 
-logger = logging.getLogger('bodyzify_api')
-
 
 class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
 
@@ -25,26 +22,26 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
     def test_is_empty_then_error(self):
         data_dict = {GET_QUERY_PARAM.NAME: ''}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_is_not_provided_then_results(self):
         rock_criteria_name = "Rock"
-        G(Criteria, user=self.test_user, name=rock_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_genre(name=rock_criteria_name)
 
         simple_playlist_name = "Teuf"
-        G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
+        self.model_fixture_factory.create_simple_playlist(name=simple_playlist_name)
 
         response = self.get_playlists()
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        assert len(self.results) == Playlist.objects.filter(user=self.test_user).count()
+        assert response.status_code == status.HTTP_200_OK
+        assert len(self.results) == Playlist.objects.filter(user=self.test_user.django_user).count()
 
     def test_different_case_then_results(self):
         simple_playlist_name = "Teuf"
-        G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
+        self.model_fixture_factory.create_simple_playlist(name=simple_playlist_name)
 
         data_dict = {GET_QUERY_PARAM.NAME: simple_playlist_name.upper()}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         names_lowered = [result[GET_QUERY_PARAM.NAME].lower() for result in self.results]
         assert simple_playlist_name.lower() in names_lowered
@@ -52,33 +49,33 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
     def test_genreless_special_name_then_results(self):
         data_dict = {GET_QUERY_PARAM.NAME: 'geNr'}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][GET_QUERY_PARAM.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS
 
     def test_tagless_special_name_then_results(self):
         data_dict = {GET_QUERY_PARAM.NAME: 'aGl'}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][GET_QUERY_PARAM.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS
 
     def test_all_special_name_then_results(self):
         data_dict = {GET_QUERY_PARAM.NAME: 'Al'}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][GET_QUERY_PARAM.NAME] == SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
 
     def test_value_in_simple_criteria_and_special_names_then_results(self):
         simple_playlist_name = "lEsson"
-        G(SimplePlaylist, playlist__user=self.test_user, name=simple_playlist_name)
+        self.model_fixture_factory.create_simple_playlist(name=simple_playlist_name)
         criteria_name = "leSsa"
-        G(Criteria, user=self.test_user, name=criteria_name, type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_genre(name=criteria_name)
 
         data_dict = {GET_QUERY_PARAM.NAME: 'Less'}
         response = self.get_playlists(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 4
         names_lowered = [result[GET_QUERY_PARAM.NAME].lower() for result in self.results]
         assert simple_playlist_name.lower() in names_lowered

@@ -7,15 +7,12 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTracksSerializer \
     import FIELDS as SIMPLE_PLAYLIST_GET_FIELDS
 
 
-logger = logging.getLogger('bodzify_api')
-
-
-class SimplePlaylistTestCase(ApiTestCase):
+class SimplePlaylistTestCase(AppTestCase):
     saved_simple_playlist: SimplePlaylist
 
     def _set_saved_simple_playlist_attribute(self, response):
@@ -27,15 +24,15 @@ class SimplePlaylistTestCase(ApiTestCase):
         response = self.api_client.post(path=reverse('simple-playlist-list'),
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
-        if response.status_code == status.HTTP_201_CREATED:  # type: ignore
+        if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_simple_playlist_attribute(response)
         return response
 
     def put_simple_playlist(self, simple_playlist_uuid: str, data_dict):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
+        data_url_encoded = urlencode(query=self._replace_none_values_by_empty_string(data_dict), doseq=True)
         response = self.api_client.put(path=reverse('simple-playlist-detail', kwargs={'pk': simple_playlist_uuid}),
                                        data=data_url_encoded,
                                        content_type='application/x-www-form-urlencoded')
-        if response.status_code == status.HTTP_200_OK:  # type: ignore
+        if response.status_code == status.HTTP_200_OK:
             self._set_saved_simple_playlist_attribute(response)
         return response

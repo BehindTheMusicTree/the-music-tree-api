@@ -13,7 +13,7 @@ class TestCase(TrackTestCase):
             POST_FIELDS.GENRE_UUID: None,
         }
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre == None
 
     def test_uuid_and_name_fields_not_both_nullthen_error(self):
@@ -22,4 +22,4 @@ class TestCase(TrackTestCase):
             POST_FIELDS.GENRE_UUID: 'k' * 22,
         }
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

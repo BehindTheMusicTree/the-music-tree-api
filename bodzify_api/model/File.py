@@ -51,10 +51,10 @@ class File(models.Model):
     extension = models.CharField(max_length=5, blank=True)
     had_flac_md5_been_corrected = models.BooleanField(null=True, default=None, blank=True)
     size_in_bytes = models.FloatField(null=True, blank=True)
-    size_in_ko = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,
+    size_in_ko = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,  # type: ignore
                                        output_field=models.FloatField(),
                                        db_persist=True)
-    size_in_mo = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / (1024 * 1024),
+    size_in_mo = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / (1024 * 1024),  # type: ignore
                                        output_field=models.FloatField(),
                                        db_persist=True)
 

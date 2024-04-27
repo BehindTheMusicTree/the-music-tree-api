@@ -20,8 +20,6 @@ from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetaile
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
 from rest_framework.permissions import IsAuthenticated
 
-logger = logging.getLogger('bodzify_api')
-
 
 class QUERY_PARAMS_NAME:
     QUERY = "query"

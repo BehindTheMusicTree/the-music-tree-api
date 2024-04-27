@@ -12,15 +12,15 @@ class TestCase(CriteriaTestCase):
         genre_name = "a" * settings.CRITERIA_NAME_LENGTH_MAX
         data = {POST_FIELDS.NAME: genre_name}
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.name == genre_name
 
     def test_error_too_long(self):
         data = {POST_FIELDS.NAME: "a" * (settings.CRITERIA_NAME_LENGTH_MAX + 1)}
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_multiple_values_then_error(self):
         data = {POST_FIELDS.NAME: ["value", "value2"]}
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

@@ -17,7 +17,7 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_specific_sample(specific_sample_filename=source_filename_with_extension)
         track2 = self.saved_lib_track
 
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert track1.file_obj
         assert track1.file_obj.filename == source_filename_with_extension
         assert track2.file_obj.filename.startswith(source_filename_without_extension)

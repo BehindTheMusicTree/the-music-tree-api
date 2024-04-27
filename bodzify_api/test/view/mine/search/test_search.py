@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.AppTestCase import AppTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(AppTestCase):
 
     def test_ok(self):
         assert True == True

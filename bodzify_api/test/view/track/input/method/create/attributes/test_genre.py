@@ -8,5 +8,5 @@ class TestCase(TrackTestCase):
 
     def test_not_povided_then_none(self):
         response = self.post_lib_track_with_generic_sample_no_tags()
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre == None
