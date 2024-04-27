@@ -37,6 +37,7 @@ class AppTestCase(TestCase):
     LIB_SAMPLE_DIR_NAME = "library"
     INPUT_SAMPLE_DIR_NAME = "input"
     GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR = Path("utils/generic_file_sample")
+    LIB_TRACK_DEFAULT_FILENAME_WITH_EXTENSION = "default.mp3"
 
     api_client: AppApiClient
 
@@ -58,6 +59,8 @@ class AppTestCase(TestCase):
         self.specific_sample_dir_abs_path = specific_test_sample_dir_abs_path / self.INPUT_SAMPLE_DIR_NAME
         self.generic_sample_dir_abs_path = Path(os.path.dirname(os.path.abspath(__file__))) \
             / self.GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR
+        self.lib_track_default_file_abs_path = \
+            self.generic_sample_dir_abs_path / self.LIB_TRACK_DEFAULT_FILENAME_WITH_EXTENSION
 
     def _set_results_attributes(self, response):
         self.results = response.json()[PAGINATED_RESPONSE_FIELDS.RESULTS]
@@ -85,11 +88,10 @@ class AppTestCase(TestCase):
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
         call_command('loaddata', 'app', 'pytest_user')
         self.api_client = AppApiClient()
-        self.test_user = TestUser(self.TEST_USERNAME)
         self._set_up_test_directories_and_variables()
-        self.model_fixture_factory = ModelFixtureFactory(user=self.test_user.django_user,
-                                                         lib_track_default_file_path=self.generic_sample_dir_abs_path /
-                                                         '.mp3')
+        self.test_user = TestUser(username=self.TEST_USERNAME,
+                                  lib_track_default_file_abs_path=self.lib_track_default_file_abs_path)
+        self.model_fixture_factory = ModelFixtureFactory(test_user=self.test_user)
         if os.path.isdir(self.lib_sample_dir_abs_path):
             for file_relative_path in os.listdir(self.lib_sample_dir_abs_path):
                 self.test_user.copy_file_to_lib(self.lib_sample_dir_abs_path / file_relative_path)

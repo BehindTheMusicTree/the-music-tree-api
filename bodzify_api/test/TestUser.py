@@ -13,6 +13,7 @@ class TestUser():
     lib_abs_path: Path
     lib_path_relative_to_media_dir: Path
     django_user: User
+    lib_track_default_file_abs_path_in_lib: Path
 
     def __empty_user_library(self):
         for filename in os.listdir(self.lib_abs_path):
@@ -35,9 +36,11 @@ class TestUser():
         self.lib_abs_path = settings.MEDIA_ROOT / self.lib_path_relative_to_media_dir
         self.__empty_user_library()
 
-    def __init__(self, username: str) -> None:
+    def __init__(self, username: str, lib_track_default_file_abs_path: Path) -> None:
         self.django_user = User.objects.get(username=username)
         self.__set_up_dirs()
+        self.copy_file_to_lib(lib_track_default_file_abs_path)
+        self.lib_track_default_file_abs_path_in_lib = self.lib_abs_path / lib_track_default_file_abs_path.name
 
     def copy_file_to_lib(self, files_abs_path: Path):
         shutil.copy(files_abs_path, self.lib_abs_path)

@@ -11,25 +11,25 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.test.TestUser import TestUser
 
 
 # Primarily used to obtain correct type hinting, as opposed to unknown return types in DDF.
 class ModelFixtureFactory:
-    user: User
-    lib_track_default_file_path: Path
+    test_user: TestUser
 
-    def __init__(self, user: User, lib_track_default_file_path: Path) -> None:
-        self.user = user
-        self.lib_track_default_file_path = lib_track_default_file_path
+    def __init__(self, test_user: TestUser) -> None:
+        self.test_user = test_user
 
     def create_artist(self, name: str) -> Artist:
-        return G(Artist, user=self.user, name=name)  # type: ignore
+        return G(Artist, user=self.test_user.django_user, name=name)  # type: ignore
 
     def create_album(self, name: str, album_artists: List[Artist] = [], year: Optional[int] = None) -> Album:
-        return G(Album, user=self.user, name=name, album_artists=album_artists, year=year)  # type: ignore
+        return G(Album, user=self.test_user.django_user, name=name, album_artists=album_artists, year=year)  # type: ignore
 
     def create_file(self, file_path: Path) -> AppFile:
-        return G(AppFile, user=self.user, file=file_path, size_in_ko=None, size_in_mo=None)  # type: ignore
+        return G(AppFile, user=self.test_user.django_user, file=str(file_path),
+                 size_in_ko=None, size_in_mo=None)  # type: ignore
 
     def create_lib_track(self,
                          title: str,
@@ -41,9 +41,9 @@ class ModelFixtureFactory:
                          language: Optional[str] = None,
                          play_count: Optional[int] = 0) -> LibraryTrack:
         if file_obj is None:
-            file_obj = self.create_file(file_path=self.lib_track_default_file_path)
+            file_obj = self.create_file(file_path=self.test_user.lib_track_default_file_abs_path_in_lib)
         return G(LibraryTrack,
-                 user=self.user,
+                 user=self.test_user.django_user,
                  title=title,
                  file_obj=file_obj,
                  artist=artist,
@@ -54,7 +54,7 @@ class ModelFixtureFactory:
                  play_count=play_count)  # type: ignore
 
     def create_criteria(self, name: str, type: int, parent: Optional[Criteria] = None) -> Criteria:
-        return G(Criteria, user=self.user, name=name, type=type, parent=parent)  # type: ignore
+        return G(Criteria, user=self.test_user.django_user, name=name, type=type, parent=parent)  # type: ignore
 
     def create_genre(self, name: str, parent: Optional[Criteria] = None) -> Criteria:
         return self.create_criteria(name=name, type=CRITERIA_TYPES_ID.GENRE, parent=parent)
@@ -63,4 +63,4 @@ class ModelFixtureFactory:
         return self.create_criteria(name=name, type=CRITERIA_TYPES_ID.TAG, parent=parent)
 
     def create_simple_playlist(self, name, play_count: Optional[int] = 0) -> SimplePlaylist:
-        return G(SimplePlaylist, playlist__user=self.user, name=name, playlist__play_count=play_count)  # type: ignore
+        return G(SimplePlaylist, playlist__user=self.test_user.django_user, name=name, playlist__play_count=play_count)  # type: ignore
