@@ -87,7 +87,7 @@ class AppTestCase(TestCase):
         self.api_client = AppApiClient()
         self.test_user = TestUser(self.TEST_USERNAME)
 
-        self.model_fixture_factory = ModelFixtureFactory(test_user=self.test_user,
+        self.model_fixture_factory = ModelFixtureFactory(test_user=self.test_user.django_user,
                                                          lib_track_default_file_path=self.generic_sample_dir_abs_path /
                                                          '.mp3')
         if os.path.isdir(self.lib_sample_dir_abs_path):
