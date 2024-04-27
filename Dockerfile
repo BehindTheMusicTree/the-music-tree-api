@@ -54,7 +54,7 @@ RUN mkdir ${DockerHome}/staticfiles && \
     touch ${GunicornLogDir}access.log && \
     chmod 777 -R $LibrariesDir ${GunicornLogDir} && \
     apt update && \
-    apt install flac && \
+    apt install -y flac && \
     pip install --upgrade pip && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     chown -R www-data:www-data /opt/bodzify-api && \
