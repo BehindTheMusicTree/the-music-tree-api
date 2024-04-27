@@ -17,7 +17,7 @@ class TrackDeleteViewTestCase(TrackTestCase):
         track_old_position_2 = self.model_fixture_factory.create_lib_track(title="Still Waiting")
         track_old_position_1 = self.model_fixture_factory.create_lib_track(title="The Hell Song")
 
-        playlist = SimplePlaylist.objects.get(playlist__name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
+        playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
 
         response = self.delete_lib_track(lib_track_uuid=track_old_position_1.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT

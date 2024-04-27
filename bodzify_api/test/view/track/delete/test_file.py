@@ -13,8 +13,7 @@ class TrackDeleteViewTestCase(TrackTestCase):
 
     def test_file_deletion(self):
         filename = "sample.mp3"
-        file_path_relative_to_media_dir = self.test_user.lib_path_relative_to_media_dir / filename
-        file_obj = self.model_fixture_factory.create_file(file_path=Path(file_path_relative_to_media_dir))
+        file_obj = self.model_fixture_factory.create_file(filename=filename)
         track = self.model_fixture_factory.create_lib_track(file_obj=file_obj, title="We're All To Blame")
         assert self.test_user.does_track_filename_exist_in_lib(filename) == True
         assert track.file_obj.file

@@ -39,7 +39,7 @@ class TestCase(PlaylistTestCase):
 
     def test_retrieve_tag_then_ok(self):
         name = 'fr'
-        genre = self.model_fixture_factory.create_criteria(name=name, type=CRITERIA_TYPES_ID.TAG)
+        genre = self.model_fixture_factory.create_tag(name=name)
         playlist_uuid = Playlist.objects.get(
             criteria_playlist__criteria=genre,
             criteria_playlist__type=CRITERIA_TYPES_ID.TAG).uuid
@@ -50,7 +50,7 @@ class TestCase(PlaylistTestCase):
 
     def test_retrieve_then_lib_track_ordered_by_position(self):
         genre_name = 'rock'
-        genre = self.model_fixture_factory.create_criteria(name=genre_name, type=CRITERIA_TYPES_ID.TAG)
+        genre = self.model_fixture_factory.create_tag(name=genre_name)
 
         lib_track3 = self.model_fixture_factory.create_lib_track(title="Love", genre=genre)
         lib_track2 = self.model_fixture_factory.create_lib_track(title="Loves", genre=genre)

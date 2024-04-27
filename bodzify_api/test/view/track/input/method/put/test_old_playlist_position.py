@@ -13,7 +13,7 @@ from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import FI
 class TestCase(TrackTestCase):
 
     def test_new_criteria_then_decrease_positions_of_following_tracks_in_old_criteria(self):
-        old_genre = self.model_fixture_factory.create_criteria(name="Metal", type=CRITERIA_TYPES_ID.GENRE)
+        old_genre = self.model_fixture_factory.create_genre(name="Metal")
         lib_track_following2 = self.model_fixture_factory.create_lib_track(title="Lodwdw", genre=old_genre)
         lib_track_following1 = self.model_fixture_factory.create_lib_track(title="cdss", genre=old_genre)
         lib_track = self.model_fixture_factory.create_lib_track(title="Love", genre=old_genre)

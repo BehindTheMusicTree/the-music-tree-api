@@ -20,13 +20,15 @@ class TestCase(AlbumViewTestCase):
     def test_2_tracks_linked(self):
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
         assassin_track_filename = "Assassin.mp3"
-        file_obj1 = self.create_file(file=str(self.self.lib_abs_path / assassin_track_filename))
-        assassin_track = self.model_fixture_factory.create_lib_track(
-            file_obj=file_obj1, title="Assassin", album=black_holes_album)
+        file_obj1 = self.model_fixture_factory.create_file(filename=assassin_track_filename)
+        assassin_track = self.model_fixture_factory.create_lib_track(file_obj=file_obj1,
+                                                                     title="Assassin",
+                                                                     album=black_holes_album)
         starlight_track_filename = "Starlight.mp3"
-        file_obj2 = self.create_file(file=str(self.self.lib_abs_path / starlight_track_filename))
-        starlight_track = self.model_fixture_factory.create_lib_track(
-            file_obj=file_obj2, title="Starlight", album=black_holes_album)
+        file_obj2 = self.model_fixture_factory.create_file(filename=starlight_track_filename)
+        starlight_track = self.model_fixture_factory.create_lib_track(file_obj=file_obj2,
+                                                                      title="Starlight",
+                                                                      album=black_holes_album)
         assert self.test_user.does_track_filename_exist_in_lib(assassin_track_filename) == True
         assert self.test_user.does_track_filename_exist_in_lib(starlight_track_filename) == True
 

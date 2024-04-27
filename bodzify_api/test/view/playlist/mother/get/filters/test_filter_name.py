@@ -33,7 +33,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
 
         response = self.get_playlists()
         assert response.status_code == status.HTTP_200_OK
-        assert len(self.results) == Playlist.objects.filter(user=self.test_user).count()
+        assert len(self.results) == Playlist.objects.filter(user=self.test_user.django_user).count()
 
     def test_different_case_then_results(self):
         simple_playlist_name = "Teuf"
@@ -71,7 +71,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         simple_playlist_name = "lEsson"
         self.model_fixture_factory.create_simple_playlist(name=simple_playlist_name)
         criteria_name = "leSsa"
-        self.model_fixture_factory.create_criteria(name=criteria_name, type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_genre(name=criteria_name)
 
         data_dict = {GET_QUERY_PARAM.NAME: 'Less'}
         response = self.get_playlists(data_dict=data_dict)

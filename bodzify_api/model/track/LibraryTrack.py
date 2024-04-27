@@ -184,10 +184,10 @@ class LibraryTrack(models.Model):
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            genreless_base_playlist = genreless_criteria_playlist.playlist
-            PlaylistLibTrackRelation.objects.create(playlist=genreless_base_playlist, library_track=self)
-            genreless_base_playlist.last_track_list_update_date = update_date
-            genreless_base_playlist.save()
+            genreless_parent_playlist = genreless_criteria_playlist.playlist
+            PlaylistLibTrackRelation.objects.create(playlist=genreless_parent_playlist, library_track=self)
+            genreless_parent_playlist.last_track_list_update_date = update_date
+            genreless_parent_playlist.save()
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \

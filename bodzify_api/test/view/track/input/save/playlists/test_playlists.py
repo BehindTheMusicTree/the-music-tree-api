@@ -47,7 +47,7 @@ class TestCase(TrackTestCase):
         genre_playlist = CriteriaPlaylist.objects.get(criteria=genre).playlist
         assert lib_track in genre_playlist.library_tracks.all()  # type: ignore
 
-        all_playlist = SimplePlaylist.objects.get(playlist__name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
+        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
         assert lib_track in all_playlist.library_tracks.all()  # type: ignore
 
     def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
@@ -55,7 +55,7 @@ class TestCase(TrackTestCase):
         hardrock_genre_name = "Hard rock"
         emo_genre_name = "Emo"
 
-        rock_genre = self.model_fixture_factory.create_criteria(name=rock_genre_name, type=CRITERIA_TYPES_ID.GENRE)
+        rock_genre = self.model_fixture_factory.create_genre(name=rock_genre_name)
 
         hardrock_genre = self.model_fixture_factory.create_genre(name=hardrock_genre_name, parent=rock_genre)
 

@@ -12,7 +12,7 @@ from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import FI
 class TestCase(TrackTestCase):
 
     def test_new_criteria_then_not_in_old_criteria_playlist_anymore(self):
-        old_genre = self.model_fixture_factory.create_criteria(name="Metal", type=CRITERIA_TYPES_ID.GENRE)
+        old_genre = self.model_fixture_factory.create_genre(name="Metal")
         new_genre_name = "Rock"
         lib_track = self.model_fixture_factory.create_lib_track(title="Love", genre=old_genre)
         data = {PUT_FIELDS.GENRE_NAME: new_genre_name}

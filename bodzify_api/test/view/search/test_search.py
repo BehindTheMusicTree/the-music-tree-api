@@ -46,9 +46,9 @@ class TestCase(SearchTestCase):
 
     def test_non_sensitiveness(self):
         rap_criteria_name = "Rap"
-        self.model_fixture_factory.create_criteria(name=rap_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_genre(name=rap_criteria_name)
         us_rap_criteria_name = "US rap"
-        self.model_fixture_factory.create_criteria(name=us_rap_criteria_name, type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_genre(name=us_rap_criteria_name)
 
         response = self.search("Rap")
         assert response.status_code == status.HTTP_200_OK

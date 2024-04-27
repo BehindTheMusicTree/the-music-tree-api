@@ -49,7 +49,7 @@ class TestCase(PlaylistTestCase):
         genre1_name = "Rock"
         self.model_fixture_factory.create_genre(name=genre1_name)
         genre2_name = "Punk rock"
-        self.model_fixture_factory.create_criteria(name=genre2_name, type=CRITERIA_TYPES_ID.GENRE)
+        self.model_fixture_factory.create_genre(name=genre2_name)
 
         data_dict = {
             GET_QUERY_PARAM.TYPE: CRITERIA_TYPES_LABEL.GENRE,

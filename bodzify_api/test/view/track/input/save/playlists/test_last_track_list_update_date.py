@@ -31,26 +31,22 @@ class TestCase(TrackTestCase):
 
     def test_track_newly_linked_to_genre_then_update_genre_parent_playlist_last_track_list_update_date(self):
         genre_parent = self.model_fixture_factory.create_genre(name='rock')
-        genre = self.model_fixture_factory.create_criteria(
-            name='rock hard', type=CRITERIA_TYPES_ID.GENRE, parent=genre_parent)
-        genre_parent_playlist_last_track_list_update_date_before_update = (
+        genre = self.model_fixture_factory.create_genre(name='rock hard', parent=genre_parent)
+        genre_parent_playlist_last_track_list_update_date_before_update = \
             genre_parent.criteria_playlist.playlist.last_track_list_update_date  # type: ignore
-        )
         lib_track = self.model_fixture_factory.create_lib_track(title="Love")
 
         data = {PUT_FIELDS.GENRE_NAME: genre.name}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         genre_parent.refresh_from_db()
-        assert genre_parent.criteria_playlist.playlist.last_track_list_update_date > (  # type: ignore
-            genre_parent_playlist_last_track_list_update_date_before_update
-        )
+        assert genre_parent_playlist_last_track_list_update_date_before_update < \
+            genre_parent.criteria_playlist.playlist.last_track_list_update_date  # type: ignore
 
     def test_track_newly_linked_to_no_genre_then_update_genreless_playlist_last_track_list_update_date(self):
-        genreless_base_playlist = CriteriaPlaylist.objects.get(playlist__type=CRITERIA_TYPES_ID.GENRE,
-                                                               criteria=None).playlist
-        genreless_base_playlist_last_track_list_update_date_before_update = \
-            genreless_base_playlist.last_track_list_update_date
+        genreless_parent_playlist = CriteriaPlaylist.objects.get(type=CRITERIA_TYPES_ID.GENRE, criteria=None).playlist
+        genreless_parent_playlist_last_track_list_update_date_before_update = \
+            genreless_parent_playlist.last_track_list_update_date
 
         genre = self.model_fixture_factory.create_genre(name='rock')
         lib_track = self.model_fixture_factory.create_lib_track(title="Love", genre=genre)
@@ -58,7 +54,6 @@ class TestCase(TrackTestCase):
         data = {PUT_FIELDS.GENRE_NAME: ''}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
-        genreless_base_playlist.refresh_from_db()
-        assert genreless_base_playlist.last_track_list_update_date > (  # type: ignore
-            genreless_base_playlist_last_track_list_update_date_before_update
-        )
+        genreless_parent_playlist.refresh_from_db()
+        assert genreless_parent_playlist.last_track_list_update_date > \
+            genreless_parent_playlist_last_track_list_update_date_before_update

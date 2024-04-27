@@ -15,7 +15,7 @@ class TrackDeleteViewTestCase(TrackTestCase):
 
     def test_delete_then_remove_from_the_all_playlist(self):
         track = self.model_fixture_factory.create_lib_track(title="We're All To Blame")
-        all_playlist = SimplePlaylist.objects.get(playlist__name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
+        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
         response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert track not in all_playlist.library_tracks.all()  # type: ignore

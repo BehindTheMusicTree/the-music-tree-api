@@ -19,10 +19,7 @@ class TestCase(TrackTestCase):
 
     def test_genre_uuid_in_data_and_genre_name_in_matadata_then_take_data(self):
         data_genre_name = "Rock"
-        genre_uuid = G(Criteria,
-                       name=data_genre_name,
-
-                       type=CRITERIA_TYPES_ID.GENRE).uuid
+        genre_uuid = self.model_fixture_factory.create_genre(name=data_genre_name).uuid
         data_dict = {POST_FIELDS.GENRE_UUID: genre_uuid}
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED

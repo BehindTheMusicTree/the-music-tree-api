@@ -12,20 +12,17 @@ class TestCase(CriteriaTestCase):
     def test_parent_none_then_root_itself(self):
         data = {PUT_FIELD.NAME: "Rock"}
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == self.saved_genre
 
     def test_one_acendant_then_root_is_parent(self):
-        rock = G(Criteria,
-                 name="Rock",
-
-                 type=CRITERIA_TYPES_ID.GENRE)
+        rock = self.model_fixture_factory.create_genre(name="Rock")
         data = {
             PUT_FIELD.NAME: "Punk",
             PUT_FIELD.PARENT: rock.uuid
         }
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rock
 
     def test_two_acendant_then_root_is_parent_of_parent(self):
@@ -36,5 +33,5 @@ class TestCase(CriteriaTestCase):
             PUT_FIELD.PARENT: punkGenre.uuid
         }
         response = self.post_genre(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rockGenre
