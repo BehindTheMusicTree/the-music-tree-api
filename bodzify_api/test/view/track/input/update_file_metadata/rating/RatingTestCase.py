@@ -9,7 +9,7 @@ from bodzify_api.serializer.track.input.LibTrackSchemaSerializer import FIELDS a
 
 class UpdateFileMetadataRatingTestCase(UpdateFileMetadataIntTestCase):
     save_field = SAVE_SCHEMA_FIELDS.RATING
-    lib_track_metadata_dict_key = audiometadata.METADATA_DICT_KEYS.RATING
+    lib_track_metadata_dict_key = audiometadata.MetadataDictKeys.RATING
     value_min = 0
     value_max = 10
     value_min_expected_in_metadata = 0
