@@ -3,7 +3,6 @@
 import os
 from pathlib import Path
 import shutil
-from typing import Any, List
 from django.contrib.auth.models import User
 
 from bodzify_api import settings

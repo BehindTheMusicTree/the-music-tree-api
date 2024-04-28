@@ -1,13 +1,8 @@
 #!/usr/bin/env python
 
 import inspect
-import logging
 import os
-import shutil
 from pathlib import Path
-from typing import List
-from django.http import HttpResponse, JsonResponse
-from ddf import G
 from rest_framework import status
 from typing import Optional
 
@@ -18,13 +13,6 @@ from django.urls import reverse
 from rest_framework_simplejwt.tokens import AccessToken
 from django.core.management import call_command
 
-from bodzify_api.model.Album import Album
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.File import File
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-import bodzify_api.settings as settings
 from bodzify_api.test.AppApiClient import AppApiClient
 from bodzify_api.test.ModelFixtureFactory import ModelFixtureFactory
 from bodzify_api.test.TestUser import TestUser

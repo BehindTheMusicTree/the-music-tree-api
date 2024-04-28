@@ -1,0 +1,138 @@
+#!/usr/bin/env python
+
+import io
+from typing import Optional
+
+from mutagen.flac import FLAC
+
+from django.core.files.uploadedfile import TemporaryUploadedFile
+from django.db.models.fields.files import FieldFile
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+
+from bodzify_api.audiometadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
+
+
+# Flac files
+class VorbisManager(MetadataManager):
+
+    class VorbisTagKeys:
+        TITLE = 'title'
+        ARTIST_NAME = 'artist'
+        ALBUM_NAME = 'album'
+        ALBUM_ARTISTS_NAMES = 'albumartist'
+        GENRE_NAME = 'genre'
+        RATING = 'rating'
+        RATING_TRAKTOR = 'rating wmp'
+        LANGUAGE = 'language'
+
+    def __init__(self, file):
+        super().__init__(file)
+
+    def _get_file_metadata(self):
+        if isinstance(self.file, TemporaryUploadedFile):
+            with open(self.file.temporary_file_path(), 'rb') as f:
+                return FLAC(fileobj=io.BytesIO(f.read()))
+        elif isinstance(self.file, FieldFile):
+            with open(self.file.path, 'rb') as f:
+                return FLAC(fileobj=f)
+        elif isinstance(self.file, InMemoryUploadedFile):
+            self.file.seek(0)
+            return FLAC(io.BytesIO(self.file.read()))
+        return FLAC(fileobj=self.file)
+
+    def get_eventually_normalized_rating_value_from_file_metadata(self,
+                                                                  normalized_rating_max_value: Optional[int] = None):
+        file_rating = self._get_first_value_int_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.RATING)
+        is_rating_from_traktor = False
+        if file_rating is None:
+            file_rating = self._get_first_value_int_if_exists_in_file_metadata_or_none(
+                key=self.VorbisTagKeys.RATING_TRAKTOR)
+            if file_rating is not None:
+                is_rating_from_traktor = True
+
+        if file_rating is None or file_rating == "":
+            return None
+        else:
+            return self._get_eventually_normalized_rating_from_file_metadata_value(
+                file_rating_value=file_rating,
+                is_rating_from_traktor=is_rating_from_traktor,
+                normalized_rating_max_value=normalized_rating_max_value)
+
+    def _get_eventually_normalized_rating_value(self, normalized_rating_max_value: Optional[int] = None):
+        file_rating = self._get_first_value_int_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.RATING)
+        is_rating_from_traktor = False
+        if file_rating is None:
+            file_rating = self._get_first_value_int_if_exists_in_file_metadata_or_none(
+                key=self.VorbisTagKeys.RATING_TRAKTOR)
+            if file_rating is not None:
+                is_rating_from_traktor = True
+
+        if file_rating is None or file_rating == "":
+            return None
+        else:
+            return self._get_eventually_normalized_rating_from_file_metadata_value(
+                file_rating_value=file_rating,
+                is_rating_from_traktor=is_rating_from_traktor,
+                normalized_rating_max_value=normalized_rating_max_value)
+
+    def get_title(self, file_metadata: FLAC) -> Optional[str]:
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.TITLE)
+
+    def get_artist_name(self, file_metadata: FLAC) -> Optional[str]:
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.ARTIST_NAME)
+
+    def get_album_name(self, file_metadata: FLAC) -> Optional[str]:
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.ALBUM_NAME)
+
+    def get_album_artists_name_str(self, file_metadata: FLAC) -> Optional[str]:
+        album_artists_name_str_raw = self._get_first_value_str_if_exists_in_file_metadata_or_none(
+            key=self.VorbisTagKeys.ALBUM_ARTISTS_NAMES)
+        if album_artists_name_str_raw is not None:
+            return album_artists_name_str_raw.strip()
+        return None
+
+    def get_genre_name(self) -> Optional[str]:
+        if self.VorbisTagKeys.GENRE_NAME in self.file_metadata:
+            return self.file_metadata[self.VorbisTagKeys.GENRE_NAME][0]
+        else:
+            return ""
+
+    def get_language(self, flac_file: FLAC) -> Optional[str]:
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.LANGUAGE)
+
+    def update_specific_file_metadata(self,
+                                      normalized_metadata: dict,
+                                      normalized_metadata_key: str,
+                                      normalized_rating_max_value: int):
+        if normalized_metadata_key in normalized_metadata:
+            if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
+                vorbis_tag_key = self.VorbisTagKeys.TITLE
+            elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
+                vorbis_tag_key = self.VorbisTagKeys.ARTIST_NAME
+            elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
+                vorbis_tag_key = self.VorbisTagKeys.ALBUM_NAME
+            elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:
+                vorbis_tag_key = self.VorbisTagKeys.ALBUM_ARTISTS_NAMES
+            elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
+                vorbis_tag_key = self.VorbisTagKeys.GENRE_NAME
+            elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
+                app_rating = normalized_metadata[normalized_metadata_key]
+                vorbis_tag_key = self.VorbisTagKeys.RATING
+                if app_rating is not None:
+                    vorbis_rating = self._get_file_rating_from_normalized_value(
+                        normalized_rating=app_rating,
+                        normalized_rating_max_value=normalized_rating_max_value,
+                        rating_file_profile=self.RatingFileProfile.BASE_100)
+                    normalized_metadata[normalized_metadata_key] = str(vorbis_rating)
+            elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
+                vorbis_tag_key = self.VorbisTagKeys.LANGUAGE
+            else:
+                raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
+
+            value = normalized_metadata[normalized_metadata_key]
+            if value is not None:
+                if vorbis_tag_key not in self.file_metadata:
+                    self.file_metadata[vorbis_tag_key] = [1]
+                self.file_metadata[vorbis_tag_key] = normalized_metadata[normalized_metadata_key]
+            elif vorbis_tag_key in self.file_metadata:
+                del self.file_metadata[vorbis_tag_key]

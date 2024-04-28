@@ -120,7 +120,7 @@ class LibraryTrack(models.Model):
 
             if self.file_obj:
                 self.duration = audiometadata.get_specific_metadata_from_file(
-                    self.file_obj.file, audiometadata.MetadataDictKeys.DURATION)
+                    self.file_obj.file, audiometadata.NormalizedMetadataKeys.DURATION)
                 super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
     @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
@@ -230,18 +230,18 @@ class LibraryTrack(models.Model):
         if self.file_obj is None:
             return
 
-        metadata_update_dict = dict()
+        normalized_metadata = dict()
 
         title_tag = self.title
         if title_tag is None:
             title_tag = ""
-        metadata_update_dict[audiometadata.MetadataDictKeys.TITLE] = title_tag
+        normalized_metadata[audiometadata.NormalizedMetadataKeys.TITLE] = title_tag
 
         if self.artist_id is not None:  # type: ignore
             artist_name_tag = self.artist.name  # type: ignore
         else:
             artist_name_tag = ""
-        metadata_update_dict[audiometadata.MetadataDictKeys.ARTIST_NAME] = artist_name_tag
+        normalized_metadata[audiometadata.NormalizedMetadataKeys.ARTIST_NAME] = artist_name_tag
 
         album_artists_tag = ""
         if self.album_id is not None:  # type: ignore
@@ -250,7 +250,7 @@ class LibraryTrack(models.Model):
             for albumArtist in list(self.album.album_artists.all()):  # type: ignore
                 if album_artists_name_index != 0:
                     album_artists_tag = (
-                        album_artists_tag + audiometadata.TAG_ARTISTS_SEPARATION_CHAR)
+                        album_artists_tag + audiometadata.METADATA_ARTISTS_SEPARATION_CHAR)
                 album_artists_tag = album_artists_tag + albumArtist.name
                 album_artists_name_index = album_artists_name_index + 1
         else:
@@ -258,24 +258,24 @@ class LibraryTrack(models.Model):
 
         if album_name_tag is None:
             album_name_tag = ""
-        metadata_update_dict[audiometadata.MetadataDictKeys.ALBUM_NAME] = album_name_tag
-        album_artists_name_key = audiometadata.MetadataDictKeys.ALBUM_ARTISTS_NAMES
-        metadata_update_dict[album_artists_name_key] = album_artists_tag
+        normalized_metadata[audiometadata.NormalizedMetadataKeys.ALBUM_NAME] = album_name_tag
+        album_artists_name_key = audiometadata.NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES
+        normalized_metadata[album_artists_name_key] = album_artists_tag
 
         if self.genre == None:
             genre_name_tag = ""
         else:
             genre_name_tag = self.genre.name
-        metadata_update_dict[audiometadata.MetadataDictKeys.GENRE_NAME] = genre_name_tag
+        normalized_metadata[audiometadata.NormalizedMetadataKeys.GENRE_NAME] = genre_name_tag
 
-        metadata_update_dict[audiometadata.MetadataDictKeys.RATING] = self.rating
+        normalized_metadata[audiometadata.NormalizedMetadataKeys.RATING] = self.rating
 
         language_tag = self.language
         if language_tag is None:
             language_tag = ""
-        metadata_update_dict[audiometadata.MetadataDictKeys.LANGUAGE] = language_tag
+        normalized_metadata[audiometadata.NormalizedMetadataKeys.LANGUAGE] = language_tag
 
-        audiometadata.update(
+        audiometadata.update_file_metadata(
             file=self.file_obj.file,
-            metadata_update_dict=metadata_update_dict,
+            normalized_metadata=normalized_metadata,
             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)

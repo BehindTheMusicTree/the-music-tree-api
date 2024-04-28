@@ -1,0 +1,144 @@
+#!/usr/bin/env python
+
+from typing import Optional
+from mutagen.mp4 import MP4StreamInfoError
+from mutagen.mp3 import MP3
+from mutagen._file import File as MutagenFile
+from mutagen.id3 import ID3
+from mutagen.id3._util import ID3NoHeaderError
+from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
+
+from django.core.files.uploadedfile import TemporaryUploadedFile
+from django.db.models.fields.files import FieldFile
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+
+from bodzify_api.audiometadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
+
+
+ID3_RATING_APP_EMAIL = 'bodzify'
+
+
+class Id3Manager(MetadataManager):
+
+    class Id3TextFrames:  # MP3 and Wave (.wav) files use ID3 tags
+        TITLE = 'TIT2'
+        ARTIST_NAME = 'TPE1'
+        ALBUM_NAME = 'TALB'
+        ALBUM_ARTISTS_NAMES = 'TPE2'
+        GENRE_NAME = 'TCON'
+        RATING = 'POPM'
+        LANGUAGE = 'TLAN'
+
+    def __init__(self, file):
+        super().__init__(file)
+
+    def _get_file_metadata(self):
+        if isinstance(self.file, FieldFile):
+            tags = MP3(self.file).tags
+        else:
+            try:
+                tags = MutagenFile(self.file)
+            except (ID3NoHeaderError, MP4StreamInfoError):
+                tags = None
+
+        if tags is None:
+            return ID3()
+        return tags
+
+    def get_title(self):
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
+
+    def get_artist_name(self):
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.ARTIST_NAME)
+
+    def get_album_name(self):
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.ALBUM_NAME)
+
+    def get_album_artists_name_str(self):
+        album_artists_name_str_raw = (self._get_first_value_str_if_exists_in_file_metadata_or_none(
+            self.Id3TextFrames.ALBUM_ARTISTS_NAMES))
+        if album_artists_name_str_raw is not None:
+            return album_artists_name_str_raw.strip()
+        return None
+
+    def get_genre_name(self):
+        if self.Id3TextFrames.GENRE_NAME in self.file_metadata:
+            return self.file_metadata[self.Id3TextFrames.GENRE_NAME][0]
+        else:
+            return ""
+
+    def _get_eventually_normalized_rating_value(self, normalized_rating_max_value: Optional[int] = None):
+        file_rating_value = None
+        for key in self.file_metadata:
+            if self.Id3TextFrames.RATING in key:
+                file_rating_tag = self.file_metadata[key]
+                file_rating_email = file_rating_tag.email
+                file_rating_value = file_rating_tag.rating
+        if file_rating_value is None:
+            return None
+        else:
+            return self._get_eventually_normalized_rating_from_file_metadata_value(
+                file_rating_value=file_rating_value,
+                is_rating_from_traktor=(file_rating_email == self.TRAKTOR_RATING_TAG_MAIL),
+                normalized_rating_max_value=normalized_rating_max_value)
+
+    def get_language(self) -> Optional[str]:
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.LANGUAGE)
+
+    def get_specific_file_metadata(
+            self, normalized_metadata_key: str, normalized_rating_max_value: Optional[int] = None):
+        if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
+            return self.get_title()
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
+            return self.get_artist_name()
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
+            return self.get_album_name()
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:
+            return self.get_album_artists_name_str()
+        elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
+            return self.get_genre_name()
+        elif normalized_metadata_key == NormalizedMetadataKeys.DURATION:
+            return self._get_duration_from_file_matadata()
+        elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
+            return self._get_eventually_normalized_rating_value(normalized_rating_max_value)
+        elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
+            return self.get_language()
+
+    def update_specific_file_metadata(self,
+                                      file_metadata: ID3,
+                                      mormalized_matedata: dict,
+                                      normalized_metadata_key: str,
+                                      normalized_rating_max_value: int):
+        if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
+            id3_key = self.Id3TextFrames.TITLE
+            text_frame_class = TIT2
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
+            id3_key = self.Id3TextFrames.ARTIST_NAME
+            text_frame_class = TPE1
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
+            id3_key = self.Id3TextFrames.ALBUM_NAME
+            text_frame_class = TALB
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:
+            id3_key = self.Id3TextFrames.ALBUM_ARTISTS_NAMES
+            text_frame_class = TPE2
+        elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
+            id3_key = self.Id3TextFrames.GENRE_NAME
+            text_frame_class = TCON
+        elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
+            normalized_rating = mormalized_matedata[NormalizedMetadataKeys.RATING]
+            file_metadata.delall(self.Id3TextFrames.RATING)
+            if normalized_rating is not None:
+                id3_rating = self._get_file_rating_from_normalized_value(
+                    normalized_rating=normalized_rating,
+                    normalized_rating_max_value=normalized_rating_max_value,
+                    rating_file_profile=self.RatingFileProfile.BASE_255)
+                file_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))
+            return file_metadata
+        elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
+            id3_key = self.Id3TextFrames.LANGUAGE
+            text_frame_class = TLAN
+        else:
+            raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
+
+        file_metadata.delall(id3_key)
+        file_metadata.add(text_frame_class(encoding=3, text=mormalized_matedata[normalized_metadata_key]))
