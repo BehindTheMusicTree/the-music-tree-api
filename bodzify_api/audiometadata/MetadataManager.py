@@ -30,7 +30,7 @@ class MetadataManager:
 
     TRAKTOR_RATING_TAG_MAIL = 'traktor@native-instruments.de'
 
-    METADATA_CANNOT_BE_SET_MESSAGE = "This metadata cannot be updated. It is therefore ignored."
+    METADATA_CANT_BE_UPDATED_MESSAGE = "This metadata cannot be updated. It is therefore ignored."
     METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE = """The specified metadata key is not handled by the service."""
 
     class RatingFileProfile:
@@ -42,56 +42,49 @@ class MetadataManager:
 
     def __init__(self, file):
         self.file = file
-        self.file_metadata = self._get_file_metadata(file)
+        self.file_metadata = self._get_file_metadata()
 
     @abstractmethod
-    def _get_file_metadata(self, file) -> dict:
-        raise NotImplementedError("This method must be implemented.")
+    def _get_file_metadata(self) -> dict:
+        raise NotImplementedError(f"{self._get_file_metadata.__name__} method must be implemented.")
 
     @abstractmethod
     def get_title(self):
-        raise NotImplementedError("This method must be implemented.")
+        raise NotImplementedError(f"{self.get_title.__name__} method must be implemented.")
 
     @abstractmethod
     def get_artist_name(self):
-        raise NotImplementedError("This method must be implemented.")
+        raise NotImplementedError(f"{self.get_artist_name.__name__} method must be implemented.")
 
     @abstractmethod
     def get_album_name(self):
-        raise NotImplementedError("This method must be implemented.")
+        raise NotImplementedError(f"{self.get_album_name.__name__} method must be implemented.")
 
     @abstractmethod
     def get_album_artists_name_str(self):
-        raise NotImplementedError("This method must be implemented.")
+        raise NotImplementedError(f"{self.get_album_artists_name_str.__name__} method must be implemented.")
 
     @abstractmethod
     def get_genre_name(self):
-        raise NotImplementedError("This method must be implemented.")
+        raise NotImplementedError(f"{self.get_genre_name.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_eventually_normalized_rating_value_from_file_metadata(
+    def get_eventually_normalized_rating_value(
             self, normalized_rating_max_value: Optional[int] = None):
-        raise NotImplementedError("This method must be implemented.")
+        raise NotImplementedError(
+            f"{self.get_eventually_normalized_rating_value.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_language() -> Optional[str]:
-        raise NotImplementedError("This method must be implemented.")
+    def get_language(self) -> Optional[str]:
+        raise NotImplementedError(f"{self.get_language.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_specific_file_metadata(
-            self, normalized_metadata_key: str, normalized_rating_max_value: Optional[int] = None):
-        raise NotImplementedError("This method must be implemented.")
-
-    @abstractmethod
-    def update_specific_file_metadata(self,
-                                      normalized_metadata_value,
-                                      normalized_metadata_key: str,
-                                      normalized_rating_max_value: int):
-        raise NotImplementedError("This method must be implemented.")
-
-    @abstractmethod
-    def update_file_metadata(self, normalized_metadata, normalized_rating_max_value: int):
-        raise NotImplementedError("This method must be implemented.")
+    def update_specific_file_metadata_without_saving(self,
+                                                     normalized_metadata_value,
+                                                     normalized_metadata_key: str,
+                                                     normalized_rating_max_value: int):
+        raise NotImplementedError(
+            f"{self.update_specific_file_metadata_without_saving.__name__} method must be implemented.")
 
     def _get_first_value_str_if_exists_in_file_metadata_or_none(self, key: str):
         if key in self.file_metadata:
@@ -106,29 +99,29 @@ class MetadataManager:
                 return int(value_str)
         return None
 
-    def _get_eventually_normalized_rating_from_file_metadata_value(self,
-                                                                   file_rating_value: int,
-                                                                   normalized_rating_max_value: Optional[int] = None,
-                                                                   is_rating_from_traktor: bool = False):
-        if file_rating_value is not None:
+    def _get_eventually_normalized_rating_from_file_rating(self,
+                                                           file_rating: int,
+                                                           normalized_rating_max_value: Optional[int] = None,
+                                                           is_rating_from_traktor: bool = False):
+        if file_rating is not None:
             if normalized_rating_max_value is not None:
-                if file_rating_value == 0 and is_rating_from_traktor:
+                if file_rating == 0 and is_rating_from_traktor:
                     return None
                 for star_rating_base_10 in range(11):
-                    if file_rating_value in [self.BASE_255_RATING_STAR_VALUES[star_rating_base_10],
-                                             self.BASE_255_PROPORTIONAL_RATING_STAR_VALUES[star_rating_base_10],
-                                             self.BASE_100_RATING_STAR_VALUES[star_rating_base_10]]:
+                    if file_rating in [self.BASE_255_RATING_STAR_VALUES[star_rating_base_10],
+                                       self.BASE_255_PROPORTIONAL_RATING_STAR_VALUES[star_rating_base_10],
+                                       self.BASE_100_RATING_STAR_VALUES[star_rating_base_10]]:
                         return int(star_rating_base_10 * normalized_rating_max_value / 10)
-                raise ValueError("Rating value not handled: " + str(file_rating_value))
+                raise ValueError("Rating value not handled: " + str(file_rating))
             else:
-                return file_rating_value
+                return file_rating
         else:
             return None
 
-    def _get_file_rating_from_normalized_value(self,
-                                               normalized_rating: int,
-                                               normalized_rating_max_value: int,
-                                               rating_file_profile: str):
+    def _get_file_rating_from_normalized_rating(self,
+                                                normalized_rating: int,
+                                                normalized_rating_max_value: int,
+                                                rating_file_profile: str):
         star_rating_base_10 = (int)((normalized_rating * 10)/normalized_rating_max_value)
         if rating_file_profile == self.RatingFileProfile.BASE_255:
             return self.BASE_255_RATING_STAR_VALUES[star_rating_base_10]
@@ -160,3 +153,34 @@ class MetadataManager:
         if duration is None:
             duration = self._get_duration_using_tinytag()
         return duration
+
+    def get_specific_file_metadata(self, normalized_metadata_key: str,
+                                   normalized_rating_max_value: Optional[int] = None):
+        if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
+            return self.get_title()
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
+            return self.get_artist_name()
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
+            return self.get_album_name()
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:
+            return self.get_album_artists_name_str()
+        elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
+            return self.get_genre_name()
+        elif normalized_metadata_key == NormalizedMetadataKeys.DURATION:
+            return self.get_duration()
+        elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
+            return self.get_eventually_normalized_rating_value(normalized_rating_max_value)
+        elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
+            return self.get_language()
+
+    def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: int):
+        for key in list(normalized_metadata.keys()):
+            if key == NormalizedMetadataKeys.DURATION:
+                raise ValueError(self.METADATA_CANT_BE_UPDATED_MESSAGE)
+            else:
+                value = normalized_metadata[key]
+                self.update_specific_file_metadata_without_saving(
+                    normalized_metadata_value=value,
+                    normalized_metadata_key=key,
+                    normalized_rating_max_value=normalized_rating_max_value)
+        self.file_metadata.save(self.file.path)

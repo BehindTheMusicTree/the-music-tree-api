@@ -1,16 +1,8 @@
 #!/usr/bin/env python
 
 from typing import Optional
-from mutagen.mp4 import MP4StreamInfoError
-from mutagen.mp3 import MP3
-from mutagen._file import File as MutagenFile
 from mutagen.id3 import ID3
-from mutagen.id3._util import ID3NoHeaderError
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
-
-from django.core.files.uploadedfile import TemporaryUploadedFile
-from django.db.models.fields.files import FieldFile
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 
 from bodzify_api.audiometadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
@@ -31,19 +23,6 @@ class Id3Manager(MetadataManager):
 
     def __init__(self, file):
         super().__init__(file)
-
-    def _get_file_metadata(self):
-        if isinstance(self.file, FieldFile):
-            tags = MP3(self.file).tags
-        else:
-            try:
-                tags = MutagenFile(self.file)
-            except (ID3NoHeaderError, MP4StreamInfoError):
-                tags = None
-
-        if tags is None:
-            return ID3()
-        return tags
 
     def get_title(self):
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
@@ -67,7 +46,7 @@ class Id3Manager(MetadataManager):
         else:
             return ""
 
-    def _get_eventually_normalized_rating_value(self, normalized_rating_max_value: Optional[int] = None):
+    def get_eventually_normalized_rating_value(self, normalized_rating_max_value: Optional[int] = None):
         file_rating_value = None
         for key in self.file_metadata:
             if self.Id3TextFrames.RATING in key:
@@ -77,38 +56,19 @@ class Id3Manager(MetadataManager):
         if file_rating_value is None:
             return None
         else:
-            return self._get_eventually_normalized_rating_from_file_metadata_value(
-                file_rating_value=file_rating_value,
+            return self._get_eventually_normalized_rating_from_file_rating(
+                file_rating=file_rating_value,
                 is_rating_from_traktor=(file_rating_email == self.TRAKTOR_RATING_TAG_MAIL),
                 normalized_rating_max_value=normalized_rating_max_value)
 
     def get_language(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.LANGUAGE)
 
-    def get_specific_file_metadata(
-            self, normalized_metadata_key: str, normalized_rating_max_value: Optional[int] = None):
-        if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
-            return self.get_title()
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
-            return self.get_artist_name()
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
-            return self.get_album_name()
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:
-            return self.get_album_artists_name_str()
-        elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
-            return self.get_genre_name()
-        elif normalized_metadata_key == NormalizedMetadataKeys.DURATION:
-            return self._get_duration_from_file_matadata()
-        elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
-            return self._get_eventually_normalized_rating_value(normalized_rating_max_value)
-        elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
-            return self.get_language()
-
-    def update_specific_file_metadata(self,
-                                      file_metadata: ID3,
-                                      mormalized_matedata: dict,
-                                      normalized_metadata_key: str,
-                                      normalized_rating_max_value: int):
+    def update_specific_file_metadata_without_saving(self,
+                                                     file_metadata: ID3,
+                                                     mormalized_matedata: dict,
+                                                     normalized_metadata_key: str,
+                                                     normalized_rating_max_value: int):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             id3_key = self.Id3TextFrames.TITLE
             text_frame_class = TIT2
@@ -128,7 +88,7 @@ class Id3Manager(MetadataManager):
             normalized_rating = mormalized_matedata[NormalizedMetadataKeys.RATING]
             file_metadata.delall(self.Id3TextFrames.RATING)
             if normalized_rating is not None:
-                id3_rating = self._get_file_rating_from_normalized_value(
+                id3_rating = self._get_file_rating_from_normalized_rating(
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
                     rating_file_profile=self.RatingFileProfile.BASE_255)

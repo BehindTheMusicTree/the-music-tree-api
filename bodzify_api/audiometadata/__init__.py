@@ -8,7 +8,7 @@ from .id3.Id3Manager import Id3Manager
 from .id3.Mp3MetadataManager import Mp3MetadataManager
 from .id3.WavMetadataManager import WavMetadataManager
 from .vorbis.VorbisManager import VorbisManager
-from .MetadataManager import NormalizedMetadataKeys, MetadataManager
+from .MetadataManager import NormalizedMetadataKeys, MetadataManager, METADATA_ARTISTS_SEPARATION_CHAR
 
 
 # def get_specific_metadata_from_file(file, metadata_key: str):
@@ -50,7 +50,7 @@ def get_normalized_metadata_from_file(file, normalized_rating_max_value: Optiona
     metadata_dict[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES] = metadata_manager.get_album_artists_name_str()
     metadata_dict[NormalizedMetadataKeys.GENRE_NAME] = metadata_manager.get_genre_name()
     metadata_dict[NormalizedMetadataKeys.DURATION] = metadata_manager.get_duration()
-    metadata_dict[NormalizedMetadataKeys.RATING] = metadata_manager.get_eventually_normalized_rating_value_from_file_metadata(
+    metadata_dict[NormalizedMetadataKeys.RATING] = metadata_manager.get_eventually_normalized_rating_value(
         normalized_rating_max_value=normalized_rating_max_value)
     metadata_dict[NormalizedMetadataKeys.LANGUAGE] = metadata_manager.get_language()
     return metadata_dict
