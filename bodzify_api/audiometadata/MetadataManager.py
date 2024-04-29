@@ -49,28 +49,28 @@ class MetadataManager:
         raise NotImplementedError(f"{self._get_file_metadata.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_title(self):
+    def get_title(self) -> Optional[str]:
         raise NotImplementedError(f"{self.get_title.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_artist_name(self):
+    def get_artist_name(self) -> Optional[str]:
         raise NotImplementedError(f"{self.get_artist_name.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_album_name(self):
+    def get_album_name(self) -> Optional[str]:
         raise NotImplementedError(f"{self.get_album_name.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_album_artists_name_str(self):
+    def get_album_artists_name_str(self) -> Optional[str]:
         raise NotImplementedError(f"{self.get_album_artists_name_str.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_genre_name(self):
+    def get_genre_name(self) -> Optional[str]:
         raise NotImplementedError(f"{self.get_genre_name.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_eventually_normalized_rating_value(
-            self, normalized_rating_max_value: Optional[int] = None):
+    def get_eventually_normalized_rating_value(self,
+                                               normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
         raise NotImplementedError(
             f"{self.get_eventually_normalized_rating_value.__name__} method must be implemented.")
 

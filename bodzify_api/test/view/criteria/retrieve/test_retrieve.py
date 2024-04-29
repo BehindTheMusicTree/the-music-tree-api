@@ -13,7 +13,7 @@ from bodzify_api.utils import to_camel_case
 
 class TestCase(CriteriaTestCase):
 
-    def test_name(self):
+    def test_name(self) -> Optional[str]:
         name = 'rock'
         uuid = self.model_fixture_factory.create_genre(name=name).uuid
         response = self.retrieve_genre(uuid=uuid)

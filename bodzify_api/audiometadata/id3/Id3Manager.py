@@ -24,23 +24,23 @@ class Id3Manager(MetadataManager):
     def __init__(self, file):
         super().__init__(file)
 
-    def get_title(self):
+    def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
 
-    def get_artist_name(self):
+    def get_artist_name(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.ARTIST_NAME)
 
-    def get_album_name(self):
+    def get_album_name(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.ALBUM_NAME)
 
-    def get_album_artists_name_str(self):
+    def get_album_artists_name_str(self) -> Optional[str]:
         album_artists_name_str_raw = (self._get_first_value_str_if_exists_in_file_metadata_or_none(
             self.Id3TextFrames.ALBUM_ARTISTS_NAMES))
         if album_artists_name_str_raw is not None:
             return album_artists_name_str_raw.strip()
         return None
 
-    def get_genre_name(self):
+    def get_genre_name(self) -> Optional[str]:
         if self.Id3TextFrames.GENRE_NAME in self.file_metadata:
             return self.file_metadata[self.Id3TextFrames.GENRE_NAME][0]
         else:
