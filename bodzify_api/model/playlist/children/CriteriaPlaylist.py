@@ -2,9 +2,8 @@
 
 from typing import Optional
 from django.db import models
-from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.CriteriaType import CriteriaType
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.CriteriaType import CriteriaType, CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 
@@ -32,7 +31,7 @@ class CriteriaPlaylist(models.Model):
                                     on_delete=models.CASCADE,
                                     blank=True,
                                     null=True,
-                                    related_name=CRITERIA_ATTRIBUTES_LABEL.CRITERIA_PLAYLIST)
+                                    related_name=PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_PLAYLIST)
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE, blank=True, null=False)
 
     @property

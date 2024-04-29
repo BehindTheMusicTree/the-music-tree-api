@@ -34,7 +34,6 @@ class MineTrackViewSet(MultiSerializerViewSet):
         response_serializer = MineTrackSerializer(mine_tracks, many=True)
         headers = self.get_success_headers(response_serializer.data)
 
-        return utility.get_json_response_paginated(
-            request=request,
-            data_json_list=response_serializer.data,
-            headers=headers)
+        return utility.get_json_response_paginated(request=request,
+                                                   data_json_list=response_serializer.data,
+                                                   headers=headers)

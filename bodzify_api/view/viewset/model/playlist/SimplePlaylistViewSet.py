@@ -34,7 +34,7 @@ class SimplePlaylistViewSet(AppModelViewSet):
 
         if name_filter is not None:
             queryset = queryset.filter(name__icontains=name_filter)
-        return queryset
+        return queryset.order_by(ATTRIBUTES_LABEL.NAME)
 
     def _get_detailed_serializer(self, instance):
         return SimplePlaylistWithTracksSerializer(instance=instance)

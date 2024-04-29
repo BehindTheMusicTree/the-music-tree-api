@@ -50,16 +50,15 @@ def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) ->
 
 
 def lib_track_filter(queryset, request, *args, **kwargs):
+    queryset = queryset.filter(user=request.user.id)
     if QUERY_PARAM_TYPE_VALUES.TITLE in request.query_params:
         request.query_params[QUERY_PARAM_TYPE_VALUES.TITLE]
         # TODO: handle type of query
     if QUERY_PARAMS_NAME.QUERY in request.query_params:
         query = request.query_params[QUERY_PARAMS_NAME.QUERY]
         if query != "":
-            queryset = queryset.filter(
-                title__icontains=query
-            ).order_by(LIB_TRACK_ATTRIBUTES_LABEL.TITLE)
-    return queryset.filter(user=request.user.id)
+            queryset = queryset.filter(title__icontains=query)
+    return queryset.order_by(LIB_TRACK_ATTRIBUTES_LABEL.TITLE)
 
 
 def simple_playlist_filter(queryset, request, *args, **kwargs):

@@ -60,7 +60,7 @@ class TrackViewSet(AppModelViewSet):
             queryset = queryset.filter(genre__name__icontain=genre_name_filter)
         if language_filter is not None:
             queryset = queryset.filter(language__icontains=language_filter)
-        return queryset
+        return queryset.order_by(f"-{LIB_TRACK_ATTRIBUTES_LABEL.ADDED_ON}")
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return LibTrackDetailedSerializer(instance=instance)  # type: ignore
