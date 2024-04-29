@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from django.core.validators import FileExtensionValidator
 
 from bodzify_api import settings
 from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer

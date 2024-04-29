@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import logging
 
 from bodzify_api.test.AppTestCase import AppTestCase
 

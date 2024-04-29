@@ -7,7 +7,7 @@ from django.urls import get_resolver
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api import AudioMetadataManager
+import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack

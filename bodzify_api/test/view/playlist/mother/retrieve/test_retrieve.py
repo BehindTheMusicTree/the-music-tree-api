@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
-import logging
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as RETRIEVE_FIELDS
 from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.utils import to_camel_case

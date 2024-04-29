@@ -11,7 +11,7 @@ from django.core.files.base import File as DjangoFile
 from django.db.models import F
 from django.core.exceptions import ValidationError
 
-import bodzify_api.AudioMetadataManager as AudioMetadataManager
+import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.PlaylistLibTrackRelation \
     import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria
@@ -197,7 +197,7 @@ class TrackService(Service):
 
     def _get_artists_name_list_from_string(self, names_string: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_string.split(
-            AudioMetadataManager.TAG_ARTISTS_SEPARATION_CHAR)
+            audiometadata.METADATA_ARTISTS_SEPARATION_CHAR)
         names = list()
         for name_with_eventual_spaces_around in names_with_eventual_spaces_around_and_duplicates:
             name = name_with_eventual_spaces_around.strip()
@@ -238,14 +238,14 @@ class TrackService(Service):
 
     def _get_save_schema_data_from_file(self, file):
         try:
-            metadata_dict = AudioMetadataManager.get_metadata_dict_from_file(
+            normalized_metadata = audiometadata.get_normalized_metadata_from_file(
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
             raise ValidationError(f"Error while extracting metadata from file: {error}")
 
         save_data_with_potential_none = self._get_copy_of_dict_including_only_specified_keys(
-            dict=metadata_dict,
+            dict=normalized_metadata,
             keys=[SAVE_SCHEMA_FIELDS.TITLE,
                   SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                   SAVE_SCHEMA_FIELDS.ALBUM_NAME,

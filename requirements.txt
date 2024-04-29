@@ -45,3 +45,4 @@ isort==5.13.2
 djangorestframework-camel-case==1.4.2
 tinytag==1.10.1
 django-cors-headers==4.3.1
+autoflake==2.3.1

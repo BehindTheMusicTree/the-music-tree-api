@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import List, Optional
-from django.contrib.auth.models import User
 from ddf import G
-from django.core.files import File as DjangoFile
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist

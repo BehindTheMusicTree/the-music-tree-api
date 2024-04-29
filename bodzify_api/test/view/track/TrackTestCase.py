@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api import AudioMetadataManager
+import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer \
@@ -36,8 +36,8 @@ class TrackTestCase(AppTestCase):
     SAMPLE_MINE_TRACK_DEFAULT_URL = SAMPLE_MINE_TRACK_URLS.MP3
     SAMPLE_MINE_TRACK_DEFAULT_EXTENSION = SAMPLE_MINE_TRACK_DEFAULT_URL.split('.')[-1]
 
-    SAMPLE_LIB_TRACK_WAV_DURATION = 0.5453541666666667
-    SAMPLE_LIB_TRACK_MP3_DURATION = 0.6
+    SAMPLE_LIB_TRACK_WAV_DURATION = 0.5453611111111111
+    SAMPLE_LIB_TRACK_MP3_DURATION = 0.5946666666666667
     SAMPLE_LIB_TRACK_FLAC_DURATION = 0.5453541666666667
 
     saved_lib_track: LibraryTrack
@@ -47,7 +47,7 @@ class TrackTestCase(AppTestCase):
         lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
         if self.saved_lib_track.file_obj:
-            self.saved_lib_track_metadata = AudioMetadataManager.get_metadata_dict_from_file(
+            self.saved_lib_track_metadata = audiometadata.get_normalized_metadata_from_file(
                 file=self.saved_lib_track.file_obj.file)
 
     def extract(self, data_dict):

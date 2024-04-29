@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 from bodzify_api import settings
 from bodzify_api.validator.track_file_validator \
     import validate_size, validate_content_type_is_audio, validate_filename_length
-import bodzify_api.AudioMetadataManager as AudioMetadataManager
+import bodzify_api.audiometadata as audiometadata
 
 
 class ATTRIBUTES_LABEL:
@@ -72,9 +72,9 @@ class File(models.Model):
         super().save(*args, **kwargs)  # So that the file is saved before the eventual md5 check
 
         if self.file and self.extension == '.flac':
-            if not AudioMetadataManager.is_flac_file_md5_valid(self.file.path):
+            if not audiometadata.is_flac_file_md5_valid(self.file.path):
                 try:
-                    AudioMetadataManager.replace_flac_file_with_corrected_md5(self.file.path)
+                    audiometadata.replace_flac_file_with_corrected_md5(self.file.path)
                     self.had_flac_md5_been_corrected = True
                 except Exception as exception:
                     raise ValidationError("The Flac file md5 check failed and could not be corrected. The file is " +

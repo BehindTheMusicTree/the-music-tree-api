@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import logging
 from urllib.parse import urlencode
 
 from django.urls import reverse

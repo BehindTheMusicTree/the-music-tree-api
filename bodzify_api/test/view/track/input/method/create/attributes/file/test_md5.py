@@ -3,7 +3,7 @@
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
-import bodzify_api.AudioMetadataManager as AudioMetadataManager
+import bodzify_api.audiometadata as audiometadata
 
 
 class TestCase(TrackTestCase):
@@ -12,7 +12,7 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_specific_sample("md5_not_valid.flac")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.file_obj.had_flac_md5_been_corrected is True
-        assert AudioMetadataManager.is_flac_file_md5_valid(
+        assert audiometadata.is_flac_file_md5_valid(
             self.saved_lib_track.file_obj.file.path) is True
 
     def test_flac_md5_not_valid_and_corrupted_then_error(self):
