@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from importlib import metadata
 import os
 import subprocess
 from typing import Optional
@@ -27,16 +28,7 @@ FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the se
 
 
 def get_specific_metadata_from_file(file, normalized_metadata_key: str):
-    _, file_extension = os.path.splitext(file.name)
-    file_extension_lowered = file_extension.lower()
-    if file_extension_lowered in [".wav", ".mp3"]:
-        metadata_manager = Id3Manager(file)
-    elif file_extension_lowered == ".flac":
-        metadata_manager = VorbisManager(file)
-    else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-
-    return metadata_manager.get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
+    return _get_metadata_manager(file).get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
 
 
 def get_normalized_metadata_from_file(file, normalized_rating_max_value: Optional[int] = None) -> dict:

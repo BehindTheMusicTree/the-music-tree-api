@@ -65,10 +65,9 @@ class Id3Manager(MetadataManager):
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.LANGUAGE)
 
     def update_specific_file_metadata_without_saving(self,
-                                                     file_metadata: ID3,
-                                                     mormalized_matedata: dict,
+                                                     normalized_metadata_value,
                                                      normalized_metadata_key: str,
-                                                     normalized_rating_max_value: int):
+                                                     normalized_rating_max_value: Optional[int] = None):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             id3_key = self.Id3TextFrames.TITLE
             text_frame_class = TIT2
@@ -85,20 +84,20 @@ class Id3Manager(MetadataManager):
             id3_key = self.Id3TextFrames.GENRE_NAME
             text_frame_class = TCON
         elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
-            normalized_rating = mormalized_matedata[NormalizedMetadataKeys.RATING]
-            file_metadata.delall(self.Id3TextFrames.RATING)
+            normalized_rating = normalized_metadata_value
+            self.file_metadata.delall(self.Id3TextFrames.RATING)
             if normalized_rating is not None:
                 id3_rating = self._get_file_rating_from_normalized_rating(
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
                     rating_file_profile=self.RatingFileProfile.BASE_255)
-                file_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))
-            return file_metadata
+                self.file_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))
+            return
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             id3_key = self.Id3TextFrames.LANGUAGE
             text_frame_class = TLAN
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
-        file_metadata.delall(id3_key)
-        file_metadata.add(text_frame_class(encoding=3, text=mormalized_matedata[normalized_metadata_key]))
+        self.file_metadata.delall(id3_key)
+        self.file_metadata.add(text_frame_class(encoding=3, text=normalized_metadata_value))

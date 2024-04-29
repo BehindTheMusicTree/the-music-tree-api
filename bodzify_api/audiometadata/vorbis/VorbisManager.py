@@ -28,7 +28,7 @@ class VorbisManager(MetadataManager):
     def __init__(self, file):
         super().__init__(file)
 
-    def _get_file_metadata(self):
+    def _get_file_metadata(self) -> dict:
         if isinstance(self.file, TemporaryUploadedFile):
             with open(self.file.temporary_file_path(), 'rb') as f:
                 return FLAC(fileobj=io.BytesIO(f.read()))
@@ -101,10 +101,10 @@ class VorbisManager(MetadataManager):
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.LANGUAGE)
 
     def update_specific_file_metadata_without_saving(self,
-                                                     normalized_metadata: dict,
+                                                     normalized_metadata_value,
                                                      normalized_metadata_key: str,
-                                                     normalized_rating_max_value: int):
-        if normalized_metadata_key in normalized_metadata:
+                                                     normalized_rating_max_value: Optional[int] = None):
+        if normalized_metadata_key in normalized_metadata_value:
             if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
                 vorbis_tag_key = self.VorbisTagKeys.TITLE
             elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
@@ -116,23 +116,23 @@ class VorbisManager(MetadataManager):
             elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
                 vorbis_tag_key = self.VorbisTagKeys.GENRE_NAME
             elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
-                app_rating = normalized_metadata[normalized_metadata_key]
+                app_rating = normalized_metadata_value[normalized_metadata_key]
                 vorbis_tag_key = self.VorbisTagKeys.RATING
                 if app_rating is not None:
                     vorbis_rating = self._get_file_rating_from_normalized_rating(
                         normalized_rating=app_rating,
                         normalized_rating_max_value=normalized_rating_max_value,
                         rating_file_profile=self.RatingFileProfile.BASE_100)
-                    normalized_metadata[normalized_metadata_key] = str(vorbis_rating)
+                    normalized_metadata_value[normalized_metadata_key] = str(vorbis_rating)
             elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
                 vorbis_tag_key = self.VorbisTagKeys.LANGUAGE
             else:
                 raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
-            value = normalized_metadata[normalized_metadata_key]
+            value = normalized_metadata_value[normalized_metadata_key]
             if value is not None:
                 if vorbis_tag_key not in self.file_metadata:
                     self.file_metadata[vorbis_tag_key] = [1]
-                self.file_metadata[vorbis_tag_key] = normalized_metadata[normalized_metadata_key]
+                self.file_metadata[vorbis_tag_key] = normalized_metadata_value[normalized_metadata_key]
             elif vorbis_tag_key in self.file_metadata:
                 del self.file_metadata[vorbis_tag_key]

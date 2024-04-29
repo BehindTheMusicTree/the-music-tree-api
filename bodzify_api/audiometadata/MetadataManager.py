@@ -82,7 +82,7 @@ class MetadataManager:
     def update_specific_file_metadata_without_saving(self,
                                                      normalized_metadata_value,
                                                      normalized_metadata_key: str,
-                                                     normalized_rating_max_value: int):
+                                                     normalized_rating_max_value: Optional[int] = None):
         raise NotImplementedError(
             f"{self.update_specific_file_metadata_without_saving.__name__} method must be implemented.")
 
@@ -179,8 +179,13 @@ class MetadataManager:
                 raise ValueError(self.METADATA_CANT_BE_UPDATED_MESSAGE)
             else:
                 value = normalized_metadata[key]
-                self.update_specific_file_metadata_without_saving(
-                    normalized_metadata_value=value,
-                    normalized_metadata_key=key,
-                    normalized_rating_max_value=normalized_rating_max_value)
+                if key == NormalizedMetadataKeys.RATING:
+                    self.update_specific_file_metadata_without_saving(
+                        normalized_metadata_value=value,
+                        normalized_metadata_key=key,
+                        normalized_rating_max_value=normalized_rating_max_value)
+                else:
+                    self.update_specific_file_metadata_without_saving(normalized_metadata_value=value,
+                                                                      normalized_metadata_key=key)
+
         self.file_metadata.save(self.file.path)
