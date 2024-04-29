@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist \
 from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer \
     import PlaylistQueryParamSerializer, FIELDS as QUERY_PARAM_FIELDS
 from bodzify_api.service.Service import Service
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import PlaylistWithTracksSerializer
 
@@ -74,14 +74,14 @@ class PlaylistViewSet(AppModelViewSet):
 
         tagless_playlist = Playlist.objects.none()
         if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS.lower() \
-                and type_query_param in [None, CRITERIA_PLAYLIST_TYPES_LABEL.TAG]:  # type: ignore
+                and type_query_param in [None, CRITERIA_PLAYLIST_TYPES_LABEL.TAG]:
             tagless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__criteria__isnull=True,
                 criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
 
-        return simple_playlist_queryset.union(
-            criteria_playlist_queryset).union(genreless_playlist).union(tagless_playlist)
+        return simple_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
+            tagless_playlist).order_by(ATTRIBUTES_LABEL.ADDED_ON)
 
     @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
                                                 type=OpenApiTypes.STR,

@@ -2,8 +2,9 @@
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
+from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist, ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
     import FIELDS as QUERY_PARAM_FIELDS, CriteriaPlaylistQueryParamSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
@@ -43,14 +44,13 @@ class GenrePlaylistViewSet(AppModelViewSet):
                 parent_uuid_query_param = parent_uuid_query_param
             queryset = queryset.filter(playlist__user=self.request.user, criteria__parent__uuid=parent_uuid_query_param)
 
-        return queryset
+        return queryset.order_by(f"{ATTRIBUTES_LABEL.CRITERIA}__{CRITERIA_ATTRIBUTES_LABEL.NAME}")
 
-    @extend_schema(parameters=[
-        OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=QUERY_PARAM_FIELDS.PARENT,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY)])
+    @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
+                                                type=OpenApiTypes.STR,
+                                                location=OpenApiParameter.QUERY),
+                               OpenApiParameter(name=QUERY_PARAM_FIELDS.PARENT,
+                                                type=OpenApiTypes.STR,
+                                                location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)

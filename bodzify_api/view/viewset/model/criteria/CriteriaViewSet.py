@@ -7,12 +7,12 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer import CriteriaSaveSchemaSerializer
 from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
-from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
 
 
 class FILTER_FIELDS:
-    NAME = CRITERIA_ATTRIBUTES_LABEL.NAME
-    PARENT = CRITERIA_ATTRIBUTES_LABEL.PARENT
+    NAME = ATTRIBUTES_LABEL.NAME
+    PARENT = ATTRIBUTES_LABEL.PARENT
 
 
 class CriteriaViewSet(AppModelViewSet):
@@ -41,7 +41,7 @@ class CriteriaViewSet(AppModelViewSet):
                 parent = parentParameter
             queryset = queryset.filter(parent=parent)
 
-        return queryset
+        return queryset.order_by(ATTRIBUTES_LABEL.NAME)
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return CriteriaDetailedSerializer(instance=instance)  # type: ignore

@@ -2,7 +2,7 @@
 
 import logging
 from django.contrib.auth.models import User
-from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.input.CriteriaModelSerializer import CriteriaSaveModelSerializer
 from bodzify_api.serializer.criteria.input.schema.endpoint.CriteriaPutSerializer import CriteriaPutSerializer
 from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer import CriteriaSaveSchemaSerializer
@@ -31,14 +31,14 @@ class CriteriaService(Service):
     def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
         save_schema_data = post_data.copy()
 
-        parent_key = CRITERIA_ATTRIBUTES_LABEL.PARENT
+        parent_key = ATTRIBUTES_LABEL.PARENT
         if parent_key in post_data:
             parent_uuid = post_data[parent_key]
             if parent_uuid in ["", None]:
                 parent_uuid = ""
         else:
             parent_uuid = ""
-        save_schema_data[CRITERIA_ATTRIBUTES_LABEL.PARENT] = parent_uuid
+        save_schema_data[ATTRIBUTES_LABEL.PARENT] = parent_uuid
         return save_schema_data
 
     def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance) -> dict:
@@ -48,14 +48,14 @@ class CriteriaService(Service):
             self, user: User, save_schema_data: dict, old_instance) -> dict:
         save_model_data = dict()
 
-        self._update_data1_with_key_if_set_in_data2(key=CRITERIA_ATTRIBUTES_LABEL.NAME,
+        self._update_data1_with_key_if_set_in_data2(key=ATTRIBUTES_LABEL.NAME,
                                                     data1=save_model_data,
                                                     data2=save_schema_data)
 
-        self._update_data1_with_key_if_set_in_data2(key=CRITERIA_ATTRIBUTES_LABEL.PARENT,
+        self._update_data1_with_key_if_set_in_data2(key=ATTRIBUTES_LABEL.PARENT,
                                                     data1=save_model_data,
                                                     data2=save_schema_data)
 
-        save_model_data[CRITERIA_ATTRIBUTES_LABEL.TYPE] = self.criteria_type_id
+        save_model_data[ATTRIBUTES_LABEL.TYPE] = self.criteria_type_id
 
         return save_model_data
