@@ -238,14 +238,14 @@ class TrackService(Service):
 
     def _get_save_schema_data_from_file(self, file):
         try:
-            metadata_dict = audiometadata.get_normalized_metadata_from_file(
+            normalized_metadata = audiometadata.get_normalized_metadata_from_file(
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
             raise ValidationError(f"Error while extracting metadata from file: {error}")
 
         save_data_with_potential_none = self._get_copy_of_dict_including_only_specified_keys(
-            dict=metadata_dict,
+            dict=normalized_metadata,
             keys=[SAVE_SCHEMA_FIELDS.TITLE,
                   SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                   SAVE_SCHEMA_FIELDS.ALBUM_NAME,

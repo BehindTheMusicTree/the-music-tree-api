@@ -9,7 +9,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataSt
 
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = SAVE_SCHEMA_FIELDS.GENRE_NAME
-    lib_track_metadata_dict_key = audiometadata.NormalizedMetadataKeys.GENRE_NAME
+    lib_track_normalized_metadata_key = audiometadata.NormalizedMetadataKeys.GENRE_NAME
     length_max = settings.CRITERIA_NAME_LENGTH_MAX
 
 

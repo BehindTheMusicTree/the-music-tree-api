@@ -146,13 +146,30 @@ class MetadataManager:
                     tmp.write(chunk)
                 tmp.close()
                 return TinyTag.get(tmp.name).duration
-        return TinyTag.get(self.file.name).duration
+        if self.file.file:
+            filename = self.file.file.name
+        else:
+            filename = self.file.name
+        return TinyTag.get(filename).duration
 
     def get_duration(self):
         duration = self._get_duration_from_file_matadata()
         if duration is None:
             duration = self._get_duration_using_tinytag()
         return duration
+
+    def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> dict:
+        normalized_metadata = dict()
+        normalized_metadata[NormalizedMetadataKeys.TITLE] = self.get_title()
+        normalized_metadata[NormalizedMetadataKeys.ARTIST_NAME] = self.get_artist_name()
+        normalized_metadata[NormalizedMetadataKeys.ALBUM_NAME] = self.get_album_name()
+        normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES] = self.get_album_artists_name_str()
+        normalized_metadata[NormalizedMetadataKeys.GENRE_NAME] = self.get_genre_name()
+        normalized_metadata[NormalizedMetadataKeys.DURATION] = self.get_duration()
+        normalized_metadata[NormalizedMetadataKeys.RATING] = self.get_eventually_normalized_rating_value(
+            normalized_rating_max_value=normalized_rating_max_value)
+        normalized_metadata[NormalizedMetadataKeys.LANGUAGE] = self.get_language()
+        return normalized_metadata
 
     def get_specific_file_metadata(self, normalized_metadata_key: str,
                                    normalized_rating_max_value: Optional[int] = None):
