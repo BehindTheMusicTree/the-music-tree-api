@@ -4,6 +4,7 @@ import io
 from typing import Optional
 
 from mutagen.flac import FLAC
+from mutagen._file import FileType as MutagenFileMetadata
 
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
@@ -28,7 +29,7 @@ class VorbisManager(MetadataManager):
     def __init__(self, file):
         super().__init__(file)
 
-    def _get_file_metadata(self) -> dict:
+    def _get_file_metadata(self) -> MutagenFileMetadata:
         if isinstance(self.file, TemporaryUploadedFile):
             with open(self.file.temporary_file_path(), 'rb') as f:
                 return FLAC(fileobj=io.BytesIO(f.read()))
@@ -83,10 +84,11 @@ class VorbisManager(MetadataManager):
     def get_language(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.LANGUAGE)
 
-    def update_specific_file_metadata_without_saving(self,
-                                                     normalized_metadata_value,
-                                                     normalized_metadata_key: str,
-                                                     normalized_rating_max_value: Optional[int] = None):
+    def update_specific_file_metadata_without_saving(
+            self,
+            normalized_metadata_value,
+            normalized_metadata_key: str,
+            normalized_rating_max_value: Optional[int] = None):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             vorbis_tag_key = self.VorbisTagKeys.TITLE
         elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
@@ -103,7 +105,7 @@ class VorbisManager(MetadataManager):
             if app_rating is not None:
                 vorbis_rating = self._get_file_rating_from_normalized_rating(
                     normalized_rating=app_rating,
-                    normalized_rating_max_value=normalized_rating_max_value,
+                    normalized_rating_max_value=normalized_rating_max_value,  # type: ignore
                     rating_file_profile=self.RatingFileProfile.BASE_100)
                 normalized_metadata_value = str(vorbis_rating)
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:

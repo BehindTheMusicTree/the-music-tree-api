@@ -4,6 +4,7 @@ from abc import abstractmethod
 from typing import Optional
 from tinytag import TinyTag
 import tempfile
+from mutagen._file import FileType as MutagenFileMetadata
 
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.db.models.fields.files import FieldFile
@@ -38,14 +39,14 @@ class MetadataManager:
         BASE_100 = '100'
 
     file: object
-    file_metadata: dict
+    file_metadata: MutagenFileMetadata
 
     def __init__(self, file):
         self.file = file
         self.file_metadata = self._get_file_metadata()
 
     @abstractmethod
-    def _get_file_metadata(self) -> dict:
+    def _get_file_metadata(self) -> MutagenFileMetadata:
         raise NotImplementedError(f"{self._get_file_metadata.__name__} method must be implemented.")
 
     @abstractmethod
@@ -130,7 +131,7 @@ class MetadataManager:
 
     def _get_duration_from_file_matadata(self) -> Optional[float]:
         if hasattr(self.file_metadata, 'info'):
-            return self.file_metadata.info.length
+            return self.file_metadata.info.length  # type: ignore
         return None
 
     def _get_duration_using_tinytag(self) -> Optional[float]:
@@ -146,10 +147,10 @@ class MetadataManager:
                     tmp.write(chunk)
                 tmp.close()
                 return TinyTag.get(tmp.name).duration
-        if self.file.file:
-            filename = self.file.file.name
+        if self.file.file:  # type: ignore
+            filename = self.file.file.name  # type: ignore
         else:
-            filename = self.file.name
+            filename = self.file.name  # type: ignore
         return TinyTag.get(filename).duration
 
     def get_duration(self):
@@ -190,13 +191,15 @@ class MetadataManager:
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             return self.get_language()
 
-    def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: int):
+    def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: Optional[int]):
         for key in list(normalized_metadata.keys()):
             if key == NormalizedMetadataKeys.DURATION:
                 raise ValueError(self.METADATA_CANT_BE_UPDATED_MESSAGE)
             else:
                 value = normalized_metadata[key]
                 if key == NormalizedMetadataKeys.RATING:
+                    if normalized_rating_max_value is None:
+                        raise Exception("If updating the rating, the max value of the normalized rating must be set.")
                     self.update_specific_file_metadata_without_saving(
                         normalized_metadata_value=value,
                         normalized_metadata_key=key,
@@ -205,4 +208,4 @@ class MetadataManager:
                     self.update_specific_file_metadata_without_saving(normalized_metadata_value=value,
                                                                       normalized_metadata_key=key)
 
-        self.file_metadata.save(self.file.path)
+        self.file_metadata.save(self.file.path)  # type: ignore

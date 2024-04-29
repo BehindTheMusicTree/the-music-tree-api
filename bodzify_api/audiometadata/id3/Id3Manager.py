@@ -48,6 +48,7 @@ class Id3Manager(MetadataManager):
 
     def get_eventually_normalized_rating_value(self, normalized_rating_max_value: Optional[int] = None):
         file_rating_value = None
+        file_rating_email = None
         for key in self.file_metadata:
             if self.Id3TextFrames.RATING in key:
                 file_rating_tag = self.file_metadata[key]
@@ -64,10 +65,11 @@ class Id3Manager(MetadataManager):
     def get_language(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.LANGUAGE)
 
-    def update_specific_file_metadata_without_saving(self,
-                                                     normalized_metadata_value,
-                                                     normalized_metadata_key: str,
-                                                     normalized_rating_max_value: Optional[int] = None):
+    def update_specific_file_metadata_without_saving(
+            self,
+            normalized_metadata_value,
+            normalized_metadata_key: str,
+            normalized_rating_max_value: Optional[int] = None):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             id3_key = self.Id3TextFrames.TITLE
             text_frame_class = TIT2
@@ -85,13 +87,13 @@ class Id3Manager(MetadataManager):
             text_frame_class = TCON
         elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
             normalized_rating = normalized_metadata_value
-            self.file_metadata.delall(self.Id3TextFrames.RATING)
+            self.file_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
             if normalized_rating is not None:
                 id3_rating = self._get_file_rating_from_normalized_rating(
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
                     rating_file_profile=self.RatingFileProfile.BASE_255)
-                self.file_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))
+                self.file_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
             return
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             id3_key = self.Id3TextFrames.LANGUAGE
@@ -99,5 +101,5 @@ class Id3Manager(MetadataManager):
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
-        self.file_metadata.delall(id3_key)
-        self.file_metadata.add(text_frame_class(encoding=3, text=normalized_metadata_value))
+        self.file_metadata.delall(id3_key)  # type: ignore
+        self.file_metadata.add(text_frame_class(encoding=3, text=normalized_metadata_value))  # type: ignore
