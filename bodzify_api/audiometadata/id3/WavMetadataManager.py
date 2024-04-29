@@ -23,6 +23,7 @@ class WavMetadataManager(Id3Manager):
         super().__init__(file)
 
     def _get_file_metadata(self) -> dict:
-        mutagen_wave_file = WAVE()
-        mutagen_wave_file.add_tags()
-        return mutagen_wave_file.tags
+        file_metadata = MutagenFile(self.file)
+        if file_metadata.tags is None:
+            file_metadata.add_tags()
+        return file_metadata.tags
