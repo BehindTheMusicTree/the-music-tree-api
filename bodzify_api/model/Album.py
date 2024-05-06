@@ -26,7 +26,7 @@ class Album(models.Model):
     uuid = models.CharField(
         primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
-    name = models.CharField(max_length=settings.ALBUM_NAME_LENGTH_MAX, default=None)
+    name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
     album_artists = models.ManyToManyField('bodzify_api.Artist', related_name=ARTIST_ATTRIBUTES_LABEL.ALBUMS)
 

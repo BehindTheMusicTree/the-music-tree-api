@@ -23,32 +23,32 @@ class FIELDS:
 
 class LibTrackSaveSchemaSerializer(serializers.Serializer):
     file = serializers.FileField(required=False)
-    title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX,
+    title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                                   required=False,
                                   allow_blank=True,
                                   allow_null=True)
-    artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_LENGTH_MAX,
+    artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_LEN_MAX,
                                         required=False,
                                         allow_blank=True,
                                         allow_null=True)
-    album_name = serializers.CharField(max_length=settings.ALBUM_NAME_LENGTH_MAX,
+    album_name = serializers.CharField(max_length=settings.ALBUM_NAME_LEN_MAX,
                                        required=False,
                                        allow_blank=True,
                                        allow_null=True)
-    album_artists_names_string = serializers.CharField(max_length=settings.ALBUM_ARTISTS_FIELD_LENGTH_MAX,
+    album_artists_names_string = serializers.CharField(max_length=settings.ALBUM_ARTISTS_FIELD_LEN_MAX,
                                                        required=False,
                                                        allow_blank=True,
                                                        allow_null=True)
-    genre_uuid = serializers.CharField(max_length=settings.CRITERIA_NAME_LENGTH_MAX,
+    genre_uuid = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
                                        required=False,
                                        allow_blank=True,
                                        allow_null=True)
-    genre_name = serializers.CharField(max_length=settings.CRITERIA_NAME_LENGTH_MAX,
+    genre_name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
                                        required=False,
                                        allow_blank=True,
                                        allow_null=True)
     rating = serializers.CharField(required=False, allow_null=True, allow_blank=True)
-    language = serializers.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX,
+    language = serializers.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX,
                                      required=False,
                                      allow_blank=True,
                                      allow_null=True)

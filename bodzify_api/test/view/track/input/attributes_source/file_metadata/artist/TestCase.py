@@ -20,7 +20,7 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.artist is not None
-        assert self.saved_lib_track.artist.name == 'a' * settings.ARTIST_NAME_LENGTH_MAX
+        assert self.saved_lib_track.artist.name == 'a' * settings.ARTIST_NAME_LEN_MAX
 
 
 class Mp3TestCase(TestCase):

@@ -20,7 +20,7 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
             extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.name == 'a' * settings.CRITERIA_NAME_LENGTH_MAX
+        assert self.saved_lib_track.genre.name == 'a' * settings.CRITERIA_NAME_LEN_MAX
 
 
 class Mp3TestCase(TestCase):

@@ -34,7 +34,7 @@ def _get_user_lib_path(instance, filename):
 
 LIB_PATH_MAX_LENGTH = len(
     settings.LIB_DIR_NAME) + len(settings.USER_LIB_DIR_NAME_PREFIXE) + len(settings.USER_MAX_NUMBER)
-FILE_PATH_MAX_LENGTH = settings.LIB_TRACK_FILENAME_LENGTH_MAX + LIB_PATH_MAX_LENGTH
+FILE_PATH_MAX_LENGTH = settings.LIB_TRACK_FILENAME_LEN_MAX + LIB_PATH_MAX_LENGTH
 
 
 class PreserveSpacesStorage(FileSystemStorage):
@@ -53,7 +53,7 @@ class File(models.Model):
                                         validate_content_type_is_audio],
                             max_length=FILE_PATH_MAX_LENGTH,
                             null=True)
-    filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LENGTH_MAX, blank=True)
+    filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LEN_MAX, blank=True)
     extension = models.CharField(max_length=5, blank=True)
     has_flac_md5_been_corrected = models.BooleanField(null=True, default=None, blank=True)
     size_in_bytes = models.FloatField(null=True, blank=True)

@@ -22,7 +22,7 @@ class TrackTestCase(AppTestCase):
         TAGS_NONE = "tags none"
         TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS = "tags album koko without album artists"
         TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM = "tags album artists koko without album"
-        TAGS_MAX_LENGTH_WITH_LETTER_A = "tags max length with letter a"
+        TAGS_MAX_LEN_WITH_LETTER_A = "tags max length with letter a"
 
     class LIB_TRACK_GENERIC_SAMPLES_TAGS_NONE_SIZE_IN_MO:
         WAV = 79 / 1024
@@ -128,7 +128,7 @@ class TrackTestCase(AppTestCase):
 
     def post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', data_dict=None):
         filename_without_extension = \
-            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LENGTH_WITH_LETTER_A
+            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LEN_WITH_LETTER_A
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,

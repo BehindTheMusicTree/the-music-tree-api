@@ -10,7 +10,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataSt
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = SAVE_SCHEMA_FIELDS.ARTIST_NAME
     lib_track_normalized_metadata_key = audiometadata.NormalizedMetadataKeys.ARTIST_NAME
-    length_max = settings.ARTIST_NAME_LENGTH_MAX
+    length_max = settings.ARTIST_NAME_LEN_MAX
 
 
 class Mp3TestCase(TestCase):

@@ -10,7 +10,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataSt
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = POST_FIELDS.ALBUM_ARTISTS_NAMES_STR
     lib_track_normalized_metadata_key = audiometadata.NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES
-    length_max = settings.ALBUM_ARTISTS_FIELD_LENGTH_MAX
+    length_max = settings.ALBUM_ARTISTS_FIELD_LEN_MAX
     album_data_dict = {
         POST_FIELDS.ALBUM_NAME: "The Great Twenty-Eight",
     }

@@ -14,11 +14,11 @@ class FIELDS:
 
 
 class MineTrackSerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=settings.MINE_TRACK_TITLE_LENGTH_MAX)
-    artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_LENGTH_MAX)
+    title = serializers.CharField(max_length=settings.MINE_TRACK_TITLE_LEN_MAX)
+    artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_LEN_MAX)
     duration = serializers.IntegerField()
-    released_on = serializers.CharField(max_length=settings.MINE_TRACK_RELEASED_ON_LENGTH_MAX)
-    url = serializers.CharField(max_length=settings.MINE_TRACK_URL_LENGTH_MAX)
+    released_on = serializers.CharField(max_length=settings.MINE_TRACK_RELEASED_ON_LEN_MAX)
+    url = serializers.CharField(max_length=settings.MINE_TRACK_URL_LEN_MAX)
 
     class Meta:
         fields = [FIELDS.TITLE,
