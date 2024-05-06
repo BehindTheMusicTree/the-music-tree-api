@@ -42,7 +42,7 @@ class ATTRIBUTES_LABEL:
 
 class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
+    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     file_obj = models.OneToOneField(File, on_delete=models.CASCADE)

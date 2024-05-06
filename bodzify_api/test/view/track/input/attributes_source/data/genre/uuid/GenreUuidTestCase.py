@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
 from rest_framework import status
 
+from bodzify_api import settings
+from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
 from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import NullableUuidFieldFromDataTestCase
 
 
@@ -12,7 +11,7 @@ class GenreUuidTestCase(NullableUuidFieldFromDataTestCase):
     post_field_key = POST_FIELDS.GENRE_NAME
 
     def test_non_existing_uuid_then_error(self):
-        data = {POST_FIELDS.GENRE_UUID: 'a' * 22}
+        data = {POST_FIELDS.GENRE_UUID: 'a' * settings.UUID_LEN}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 

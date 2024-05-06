@@ -43,7 +43,7 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
                                                        required=False,
                                                        allow_blank=True,
                                                        allow_null=True)
-    genre_uuid = serializers.CharField(max_length=22,
+    genre_uuid = serializers.CharField(max_length=settings.UUID_LEN,
                                        required=False,
                                        allow_blank=True,
                                        allow_null=True)

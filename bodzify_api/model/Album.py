@@ -23,8 +23,7 @@ class ATTRIBUTES_LABEL:
 class Album(models.Model):
 
     # Django's UUIDField won't validate a shortuuid
-    uuid = models.CharField(
-        primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
+    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
     name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)
     year = models.CharField(max_length=4, default=None, null=True)

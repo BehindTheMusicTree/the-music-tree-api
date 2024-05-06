@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
+from bodzify_api import settings
+
 
 class SPECIAL_NAMES:
     ALL = 'All'
@@ -64,7 +66,7 @@ for attr, value in vars(ATTRIBUTES_LABEL).items():
 
 
 class Playlist(models.Model):
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
+    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)

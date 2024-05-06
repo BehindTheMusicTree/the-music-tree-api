@@ -27,7 +27,7 @@ class ATTRIBUTES_LABEL:
 
 
 class Criteria(models.Model):
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
+    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
     type = models.ForeignKey('bodzify_api.CriteriaType', on_delete=models.CASCADE)

@@ -17,6 +17,7 @@ API_DESCRIPTION = "API to handle genre oriented music libraries"
 API_ROOT_BASE = 'api/' + API_VERSION + '/'
 API_ROOT = Path(BASE_DIR) / API_NAME
 CONTACT_EMAIL = "andreas.garcia@bodzify.com"
+UUID_LEN = 22
 USER_LIB_DIR_NAME_PREFIXE = "user_"
 USER_MAX_NUMBER = "10000000"  # hehe
 LIB_TRACK_FILE_SIZE_MIN_IN_MO = 0

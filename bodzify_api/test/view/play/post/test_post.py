@@ -55,5 +55,5 @@ class TestCase(PlayTestCase):
         data = {to_camel_case(FIELDS.CONTENT_OBJECT_UUID): lib_track_uuid}
         response = self.post_play(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_play.content_object.uuid == lib_track_uuid
+        assert self.saved_play.content_object.uuid == lib_track_uuid  # type: ignore
         assert self.saved_play.content_object.play_count == current_play_count + 1  # type: ignore

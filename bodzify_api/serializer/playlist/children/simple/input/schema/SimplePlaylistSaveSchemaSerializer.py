@@ -11,11 +11,10 @@ class FIELDS:
 
 
 class SimplePlaylistSaveSchemaSerializer(serializers.Serializer):
-    name = serializers.CharField(
-        max_length=settings.SIMPLE_PLAYLIST_NAME_LEN_MAX,
-        required=False,
-        allow_blank=True,
-        allow_null=True)
+    name = serializers.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LEN_MAX,
+                                 required=False,
+                                 allow_blank=True,
+                                 allow_null=True)
 
     class Meta:
         model = SimplePlaylist
