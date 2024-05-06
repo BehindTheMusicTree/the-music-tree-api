@@ -9,7 +9,7 @@ class FIELDS:
     FILE = ATTRIBUTES_LABEL.FILE
     FILENAME = ATTRIBUTES_LABEL.FILENAME
     EXTENSION = ATTRIBUTES_LABEL.EXTENSION
-    HAD_FLAC_MD5_BEEN_CORRECTED = ATTRIBUTES_LABEL.HAD_FLAC_MD5_BEEN_CORRECTED
+    has_flac_md5_been_corrected = ATTRIBUTES_LABEL.has_flac_md5_been_corrected
     SIZE_IN_BYTES = ATTRIBUTES_LABEL.SIZE_IN_BYTES
     SIZE_IN_KO = ATTRIBUTES_LABEL.SIZE_IN_KO
     SIZE_IN_MO = ATTRIBUTES_LABEL.SIZE_IN_MO
@@ -22,7 +22,7 @@ class FileDetailedSerializer(serializers.ModelSerializer):
         fields = [FIELDS.FILE,
                   FIELDS.FILENAME,
                   FIELDS.EXTENSION,
-                  FIELDS.HAD_FLAC_MD5_BEEN_CORRECTED,
+                  FIELDS.has_flac_md5_been_corrected,
                   FIELDS.SIZE_IN_BYTES,
                   FIELDS.SIZE_IN_KO,
                   FIELDS.SIZE_IN_MO]
