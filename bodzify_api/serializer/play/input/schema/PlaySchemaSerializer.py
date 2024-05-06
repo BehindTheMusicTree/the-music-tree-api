@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.Play import Play, ATTRIBUTES_LABEL
 from rest_framework import serializers
 
+from bodzify_api import settings
+from bodzify_api.model.Play import Play, ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
@@ -12,7 +13,7 @@ class FIELDS:
 
 
 class PlaySaveSchemaSerializer(serializers.ModelSerializer):
-    content_object_uuid = serializers.CharField(max_length=22, required=True)
+    content_object_uuid = serializers.CharField(max_length=settings.UUID_LEN, required=True)
 
     class Meta:
         model = Play
