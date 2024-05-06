@@ -20,16 +20,21 @@ class ATTRIBUTES_LABEL:
     FILE = 'file'
     FILENAME = 'filename'
     EXTENSION = 'extension'
-    HAD_FLAC_MD5_BEEN_CORRECTED = 'had_flac_md5_been_corrected'
+    has_flac_md5_been_corrected = 'has_flac_md5_been_corrected'
     SIZE_IN_BYTES = 'size_in_bytes'
     SIZE_IN_KO = 'size_in_ko'
     SIZE_IN_MO = 'size_in_mo'
 
 
-def _get_user_directory_path(instance, filename):
+def _get_user_lib_path(instance, filename):
     return '{0}{1}/{2}'.format(settings.LIB_DIR_NAME + '/' + settings.USER_LIB_DIR_NAME_PREFIXE,
                                instance.user.id,
                                filename)
+
+
+LIB_PATH_MAX_LENGTH = len(
+    settings.LIB_DIR_NAME) + len(settings.USER_LIB_DIR_NAME_PREFIXE) + len(settings.USER_MAX_NUMBER)
+FILE_PATH_MAX_LENGTH = settings.LIB_TRACK_FILENAME_LEN_MAX + LIB_PATH_MAX_LENGTH
 
 
 class PreserveSpacesStorage(FileSystemStorage):
@@ -39,17 +44,18 @@ class PreserveSpacesStorage(FileSystemStorage):
 
 class File(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    file = models.FileField(upload_to=_get_user_directory_path,
+    file = models.FileField(upload_to=_get_user_lib_path,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
                             validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
                                         validate_filename_length,
                                         validate_size,
                                         validate_content_type_is_audio],
+                            max_length=FILE_PATH_MAX_LENGTH,
                             null=True)
-    filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LENGTH_MAX, blank=True)
+    filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LEN_MAX, blank=True)
     extension = models.CharField(max_length=5, blank=True)
-    had_flac_md5_been_corrected = models.BooleanField(null=True, default=None, blank=True)
+    has_flac_md5_been_corrected = models.BooleanField(null=True, default=None, blank=True)
     size_in_bytes = models.FloatField(null=True, blank=True)
     size_in_ko = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,  # type: ignore
                                        output_field=models.FloatField(),
@@ -75,10 +81,10 @@ class File(models.Model):
             if not audiometadata.is_flac_file_md5_valid(self.file.path):
                 try:
                     audiometadata.replace_flac_file_with_corrected_md5(self.file.path)
-                    self.had_flac_md5_been_corrected = True
-                except Exception as exception:
+                    self.has_flac_md5_been_corrected = True
+                except Exception:
                     raise ValidationError("The Flac file md5 check failed and could not be corrected. The file is " +
                                           "probably corrupted.")
             else:
-                self.had_flac_md5_been_corrected = False
-            super().save(update_fields=[ATTRIBUTES_LABEL.HAD_FLAC_MD5_BEEN_CORRECTED])
+                self.has_flac_md5_been_corrected = False
+            super().save(update_fields=[ATTRIBUTES_LABEL.has_flac_md5_been_corrected])

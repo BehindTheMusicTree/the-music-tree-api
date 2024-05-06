@@ -22,7 +22,7 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
             extension=self.file_extension)  # type: ignore
         assert response.status_code == status.HTTP_201_CREATED
 
-        expected_name = 'a' * settings.ARTIST_NAME_LENGTH_MAX
+        expected_name = 'a' * settings.ARTIST_NAME_LEN_MAX
         assert self.saved_lib_track.album is not None
         assert self.saved_lib_track.album.album_artists.all().first().name == expected_name
 

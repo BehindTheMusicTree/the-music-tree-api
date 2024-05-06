@@ -16,10 +16,10 @@ from django.core.paginator import Paginator
 INTEGRITY_ERROR_MESSAGE = "There is an issue with the object sent"
 
 RESPONSE_FILE_CONTENT_TYPE_VALUE = 'file'
-RESPONSE_FILE_CONTENT_LENGTH_FIELD = 'Content-Length'
+RESPONSE_FILE_CONTENT_LEN_FIELD = 'Content-Length'
 RESPONSE_FILE_CONTENT_DISPOSITION_FIELD = 'Content-Disposition'
 RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE = 'attachment; filename="%s"'
-RESPONSE_FILE_CONTENT_LENGTH_FIELD = 'Content-Length'
+RESPONSE_FILE_CONTENT_LEN_FIELD = 'Content-Length'
 
 PAGINATED_COUNT_FIELD = "count"
 PAGINATED_CURRENT_FIELD = "current"
@@ -69,6 +69,6 @@ def get_json_response_paginated(request, data_json_list, headers=None):
 def get_file_response(filePath, filename):
     fileHandle = open(filePath, "rb")
     response = FileResponse(fileHandle, content_type=RESPONSE_FILE_CONTENT_TYPE_VALUE)
-    response[RESPONSE_FILE_CONTENT_LENGTH_FIELD] = os.path.getsize(filePath)
+    response[RESPONSE_FILE_CONTENT_LEN_FIELD] = os.path.getsize(filePath)
     response[RESPONSE_FILE_CONTENT_DISPOSITION_FIELD] = (RESPONSE_FILE_CONTENT_DISPOSITION_FILE_VALUE % filename)
     return response

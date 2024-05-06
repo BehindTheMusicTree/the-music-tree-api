@@ -9,15 +9,15 @@ import bodzify_api.settings as settings
 
 
 def validate_size(file):
-    track_size_max = settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1000000
-    if file.size > track_size_max:
+    track_size_max_in_ko = settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1000000
+    if file.size > track_size_max_in_ko:
         track_size_error_too_small_message = 'File too large. Size should not exceed {size:.3f} Mo.'
-        raise ValidationError(track_size_error_too_small_message.format(size=track_size_max))
+        raise ValidationError(track_size_error_too_small_message.format(size=settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO))
 
     track_size_min = settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
     if file.size < track_size_min:
         track_size_error_too_small_message = 'File too small. Size should be at least {size:.3f} Mo.'
-        raise ValidationError(track_size_error_too_small_message.format(size=track_size_min))
+        raise ValidationError(track_size_error_too_small_message.format(size=settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO))
 
 
 def validate_content_type_is_audio(file):
@@ -28,7 +28,7 @@ def validate_content_type_is_audio(file):
                          b'fLaC': 'audio/flac', }
     first_few_bytes = file.read(4)
 
-    for magic_bytes, content_type in AUDIO_MAGIC_BYTES.items():
+    for magic_bytes, _ in AUDIO_MAGIC_BYTES.items():
         if first_few_bytes.startswith(magic_bytes):
             return
 
@@ -49,6 +49,6 @@ def validate_filename_length(value):
     except AttributeError:
         filename = os.path.basename(value.name)
 
-    if len(filename) > settings.LIB_TRACK_FILENAME_LENGTH_MAX:
-        raise ValidationError(f"Ensure this filename has at most {settings.LIB_TRACK_FILENAME_LENGTH_MAX} characters" +
+    if len(filename) > settings.LIB_TRACK_FILENAME_LEN_MAX:
+        raise ValidationError(f"Ensure this filename has at most {settings.LIB_TRACK_FILENAME_LEN_MAX} characters" +
                               f"it has {len(filename)}).")

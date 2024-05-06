@@ -10,7 +10,7 @@ from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldMo
 class TestCase(FieldModelStrTestCase):
 
     def test_longest_then_ok(self):
-        album_name = "a" * settings.ALBUM_NAME_LENGTH_MAX
+        album_name = "a" * settings.ALBUM_NAME_LEN_MAX
         data = {EXTRACT_FIELDS.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
@@ -18,7 +18,7 @@ class TestCase(FieldModelStrTestCase):
         assert self.saved_lib_track.album.name == album_name
 
     def test_too_long_then_error(self):
-        album_name = "a" * (settings.ALBUM_NAME_LENGTH_MAX + 1)
+        album_name = "a" * (settings.ALBUM_NAME_LEN_MAX + 1)
         data = {EXTRACT_FIELDS.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

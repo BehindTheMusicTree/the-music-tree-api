@@ -10,7 +10,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataSt
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = SAVE_SCHEMA_FIELDS.LANGUAGE
     lib_track_normalized_metadata_key = audiometadata.NormalizedMetadataKeys.LANGUAGE
-    length_max = settings.LIB_TRACK_LANGUAGE_LENGTH_MAX
+    length_max = settings.LIB_TRACK_LANGUAGE_LEN_MAX
 
 
 class Mp3TestCase(TestCase):

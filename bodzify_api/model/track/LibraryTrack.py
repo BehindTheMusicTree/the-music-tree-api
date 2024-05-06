@@ -44,7 +44,7 @@ class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=22, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LENGTH_MAX)
+    title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
@@ -66,7 +66,7 @@ class LibraryTrack(models.Model):
         null=True,
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
-    language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LENGTH_MAX, blank=True, default=None, null=True)
+    language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
     playlists = models.ManyToManyField(Playlist,

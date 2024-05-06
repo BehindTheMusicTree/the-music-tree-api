@@ -27,7 +27,7 @@ class ArtistService(Service):
     #         else:
     #             force_title_generation = False
 
-    #         if len(filename) > settings.TRACK_FILENAME_LENGTH_MAX or force_title_generation:
+    #         if len(filename) > settings.TRACK_FILENAME_LEN_MAX or force_title_generation:
     #             title = settings.TRACK_GENERATED_TITLE_PREFIXE + \
     #                 self.generate_short_uu(settings.TRACK_GENERATED_TITLE_LEN -
     #                                 len(settings.TRACK_GENERATED_TITLE_PREFIXE))

@@ -53,7 +53,7 @@ class TrackService(Service):
         else:
             force_title_generation = False
 
-        if len(filename) > settings.LIB_TRACK_FILENAME_LENGTH_MAX or force_title_generation:
+        if len(filename) > settings.LIB_TRACK_FILENAME_LEN_MAX or force_title_generation:
             title = settings.LIB_TRACK_GENERATED_TITLE_PREFIXE + \
                 TrackService.generate_short_uu(settings.LIB_TRACK_GENERATED_TITLE_LENGTH -
                                                len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
@@ -229,7 +229,7 @@ class TrackService(Service):
         else:
             filename_with_extension = self.get_substring_after_last_slash(
                 mine_track_url)
-            if len(filename_with_extension) > settings.LIB_TRACK_FILENAME_LENGTH_MAX:
+            if len(filename_with_extension) > settings.LIB_TRACK_FILENAME_LEN_MAX:
                 filename_without_extension = self.generate_short_uu(
                     settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH - len(file_extension) - 1)
                 filename_with_extension = filename_without_extension + "." + file_extension

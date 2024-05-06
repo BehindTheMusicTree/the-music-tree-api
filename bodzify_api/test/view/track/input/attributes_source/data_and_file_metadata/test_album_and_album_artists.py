@@ -33,7 +33,7 @@ class TestCase(TrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.album is not None
         assert self.saved_lib_track.album.name == data_album_name
-        assert self.saved_lib_track.album.album_artists.first().name == 'a' * settings.ARTIST_NAME_LENGTH_MAX
+        assert self.saved_lib_track.album.album_artists.first().name == 'a' * settings.ARTIST_NAME_LEN_MAX
 
     def test_album_and_album_artists_in_data_and_only_album_in_metadata_then_take_from_data(self):
         data_album_name = "non"

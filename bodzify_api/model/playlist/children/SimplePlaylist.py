@@ -21,7 +21,7 @@ class SimplePlaylist(models.Model):
                                     on_delete=models.CASCADE,
                                     primary_key=True,
                                     related_name=PLAYLIST_ATTRIBUTES_LABEL.SIMPLE_PLAYLIST)
-    name = models.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX, blank=False, null=False)
+    name = models.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LEN_MAX, blank=False, null=False)
 
     class Meta:
         constraints = [
