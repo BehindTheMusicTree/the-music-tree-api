@@ -47,7 +47,7 @@ class TrackService(Service):
 
     @staticmethod
     def _get_generated_title_from_data(file: DjangoFile, data: dict):
-        filename = os.path.basename(file.name).split('.')[0]
+        filename = os.path.basename(file.name).rsplit('.', 1)[0]
         if SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION in data:
             force_title_generation = data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION]
         else:
@@ -79,7 +79,7 @@ class TrackService(Service):
             file_model_serializer = FileModelSerializer(data=file_model_data)
             file_model_serializer.is_valid(raise_exception=True)
             file_obj = file_model_serializer.save(user=user)
-            data1[SAVE_MODEL_FIELDS.FILE_OBJ] = file_obj.pk
+            data1[SAVE_MODEL_FIELDS.FILE_OBJ] = file_obj.pk  # type: ignore
 
     @staticmethod
     def _update_data1_with_genre_uuid_if_genre_in_data2(user: User, data1: dict, data2: dict):
