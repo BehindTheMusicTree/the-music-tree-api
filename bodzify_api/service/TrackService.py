@@ -2,6 +2,7 @@
 
 import os
 import random
+from re import sub
 import string
 from tempfile import NamedTemporaryFile
 import requests
@@ -46,19 +47,27 @@ class TrackService(Service):
         return url.split(".")[-1]
 
     @staticmethod
+    def remove_substrings_from_string(string_a: str, substrings: list) -> str:
+        for substring in substrings:
+            string_a = string_a.replace(substring, '')
+        return string_a
+
+    @staticmethod
     def _get_generated_title_from_data(file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
+        filename_without_expressions_to_exclude = TrackService.remove_substrings_from_string(
+            string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
         if SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION in data:
             force_title_generation = data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION]
         else:
             force_title_generation = False
 
-        if len(filename) > settings.LIB_TRACK_FILENAME_LEN_MAX or force_title_generation:
+        if len(filename_without_expressions_to_exclude) > settings.LIB_TRACK_FILENAME_LEN_MAX or force_title_generation:
             title = settings.LIB_TRACK_GENERATED_TITLE_PREFIXE + \
                 TrackService.generate_short_uu(settings.LIB_TRACK_GENERATED_TITLE_LENGTH -
                                                len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
         else:
-            title = filename
+            title = filename_without_expressions_to_exclude
         return title
 
     @staticmethod
