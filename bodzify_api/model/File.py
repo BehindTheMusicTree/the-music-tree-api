@@ -59,12 +59,12 @@ class File(models.Model):
     filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LEN_MAX, blank=True)
     extension = models.CharField(max_length=5, blank=True)
     has_flac_md5_been_corrected = models.BooleanField(null=True, default=None, blank=True)
-    size_in_bytes = models.FloatField(null=True, blank=True)
+    size_in_bytes = models.DecimalField(null=True, blank=True, max_digits=11, decimal_places=2)
     size_in_ko = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,  # type: ignore
-                                       output_field=models.FloatField(),
+                                       output_field=models.DecimalField(max_digits=8, decimal_places=2),
                                        db_persist=True)
     size_in_mo = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / (1024 * 1024),  # type: ignore
-                                       output_field=models.FloatField(),
+                                       output_field=models.DecimalField(max_digits=5, decimal_places=2),
                                        db_persist=True)
     bitrate_in_kbps = models.IntegerField(null=True, blank=True)
 
