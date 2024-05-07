@@ -13,6 +13,10 @@ from .MetadataManager import NormalizedMetadataKeys, MetadataManager, METADATA_A
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
+def get_bitrate_from_file(file):
+    return _get_metadata_manager(file).get_bitrate()
+
+
 def get_specific_metadata_from_file(file, normalized_metadata_key: str):
     return _get_metadata_manager(file).get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
 
@@ -22,7 +26,10 @@ def get_normalized_metadata_from_file(file, normalized_rating_max_value: Optiona
 
 
 def _get_metadata_manager(file) -> MetadataManager:
-    _, file_extension = os.path.splitext(file.name)
+    if hasattr(file, 'name'):
+        _, file_extension = os.path.splitext(file.name)
+    else:
+        _, file_extension = os.path.splitext(file)
     file_extension_lowered = file_extension.lower()
     if file_extension_lowered == ".mp3":
         return Mp3MetadataManager(file)

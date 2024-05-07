@@ -209,3 +209,6 @@ class MetadataManager:
                                                                       normalized_metadata_key=key)
 
         self.file_metadata.save(self.file.path)  # type: ignore
+
+    def get_bitrate(self):
+        return self.file_metadata.info.bitrate / 1000  # type: ignore
