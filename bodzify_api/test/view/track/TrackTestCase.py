@@ -25,9 +25,9 @@ class TrackTestCase(AppTestCase):
         TAGS_MAX_LEN_WITH_LETTER_A = "tags max length with letter a"
 
     class LIB_TRACK_GENERIC_SAMPLES_TAGS_NONE_SIZE_IN_MO:
-        WAV = 79 / 1024
-        MP3 = 14 / 1024
-        FLAC = 51 / 1024
+        WAV = round(79 / 1000, 2)
+        MP3 = round(14 / 1000, 2)
+        FLAC = round(51 / 1000, 2)
 
     class SAMPLE_MINE_TRACK_URLS:
         WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
