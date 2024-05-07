@@ -2,14 +2,14 @@ from django.contrib import admin
 
 from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.playlist.Playlist import Playlist
-from .model.playlist.children.SimplePlaylist import SimplePlaylist
-from .model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from .model.track.LibraryTrack import LibraryTrack
-from .model.criteria.Criteria import Criteria
-from .model.criteria.CriteriaType import CriteriaType
-from .model.Album import Album
-from .model.Artist import Artist
-from .model.File import File
+from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
+from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.CriteriaType import CriteriaType
+from bodzify_api.model.Album import Album
+from bodzify_api.model.Artist import Artist
+from bodzify_api.model.File import File
 
 admin.site.register(Criteria)
 admin.site.register(CriteriaType)

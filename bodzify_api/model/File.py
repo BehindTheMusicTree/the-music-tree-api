@@ -8,6 +8,8 @@ from django.db.models import F
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 from bodzify_api import settings
 from bodzify_api.validator.track_file_validator \
