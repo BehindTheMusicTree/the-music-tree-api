@@ -29,3 +29,6 @@ class Mp3MetadataManager(Id3Manager):
         if tags is None:
             return ID3()  # type: ignore
         return tags
+
+    def get_bitrate(self):
+        return self.file_metadata.info.bitrate / 1000  # type: ignore

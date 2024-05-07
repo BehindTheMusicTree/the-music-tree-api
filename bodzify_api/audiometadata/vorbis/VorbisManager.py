@@ -39,7 +39,8 @@ class VorbisManager(MetadataManager):
         elif isinstance(self.file, InMemoryUploadedFile):
             self.file.seek(0)
             return FLAC(io.BytesIO(self.file.read()))
-        return FLAC(fileobj=self.file)
+        with open(self.file, 'rb') as f:  # type: ignore
+            return FLAC(fileobj=f)
 
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
@@ -83,6 +84,9 @@ class VorbisManager(MetadataManager):
 
     def get_language(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.LANGUAGE)
+
+    def get_bitrate(self):
+        return self.file_metadata.info.bitrate / 1000  # type: ignore
 
     def update_specific_file_metadata_without_saving(
             self,

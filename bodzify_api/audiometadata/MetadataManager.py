@@ -80,6 +80,10 @@ class MetadataManager:
         raise NotImplementedError(f"{self.get_language.__name__} method must be implemented.")
 
     @abstractmethod
+    def get_bitrate(self) -> int:
+        raise NotImplementedError(f"{self.get_bitrate.__name__} method must be implemented.")
+
+    @abstractmethod
     def update_specific_file_metadata_without_saving(self,
                                                      normalized_metadata_value,
                                                      normalized_metadata_key: str,
@@ -209,6 +213,3 @@ class MetadataManager:
                                                                       normalized_metadata_key=key)
 
         self.file_metadata.save(self.file.path)  # type: ignore
-
-    def get_bitrate(self):
-        return self.file_metadata.info.bitrate / 1000  # type: ignore
