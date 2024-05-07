@@ -123,16 +123,6 @@ class LibraryTrack(models.Model):
                     self.file_obj.file, audiometadata.NormalizedMetadataKeys.DURATION)
                 super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
-    @receiver(pre_delete, sender='bodzify_api.LibraryTrack')
-    def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
-        if instance.file_obj:
-            instance.file_obj.file.delete()
-
-        now = timezone.now()
-        for playlist in instance.playlists.all():
-            playlist.last_track_list_update_date = now
-            playlist.save()
-
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:
             common_genre = self.genre.get_common_criteria(old_genre)
@@ -279,3 +269,14 @@ class LibraryTrack(models.Model):
             file=self.file_obj.file,
             normalized_metadata=normalized_metadata,
             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
+
+
+@receiver(pre_delete, sender=LibraryTrack)
+def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
+    if instance.file_obj:
+        instance.file_obj.file.delete(False)
+
+    now = timezone.now()
+    for playlist in instance.playlists.all():
+        playlist.last_track_list_update_date = now
+        playlist.save()

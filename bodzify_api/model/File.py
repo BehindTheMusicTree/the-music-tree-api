@@ -8,6 +8,8 @@ from django.db.models import F
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 from bodzify_api import settings
 from bodzify_api.validator.track_file_validator \
@@ -20,10 +22,11 @@ class ATTRIBUTES_LABEL:
     FILE = 'file'
     FILENAME = 'filename'
     EXTENSION = 'extension'
-    has_flac_md5_been_corrected = 'has_flac_md5_been_corrected'
+    HAS_FLAC_MD5_BEEN_CORRECTED = 'has_flac_md5_been_corrected'
     SIZE_IN_BYTES = 'size_in_bytes'
     SIZE_IN_KO = 'size_in_ko'
     SIZE_IN_MO = 'size_in_mo'
+    BITRATE_IN_KBPS = 'bitrate_in_kbps'
 
 
 def _get_user_lib_path(instance, filename):
@@ -63,6 +66,7 @@ class File(models.Model):
     size_in_mo = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / (1024 * 1024),  # type: ignore
                                        output_field=models.FloatField(),
                                        db_persist=True)
+    bitrate_in_kbps = models.IntegerField(null=True, blank=True)
 
     def __str__(self) -> str:
         if self.file and self.file.name:
@@ -75,7 +79,10 @@ class File(models.Model):
             self.extension = os.path.splitext(self.file.name)[1]
             self.size_in_bytes = self.file.size
 
-        super().save(*args, **kwargs)  # So that the file is saved before the eventual md5 check
+        super().save(*args, **kwargs)  # So that the file is saved before eventual modifications
+
+        self.bitrate_in_kbps = audiometadata.get_bitrate_from_file(self.file.path)
+        super().save(update_fields=[ATTRIBUTES_LABEL.BITRATE_IN_KBPS])
 
         if self.file and self.extension == '.flac':
             if not audiometadata.is_flac_file_md5_valid(self.file.path):
@@ -87,4 +94,4 @@ class File(models.Model):
                                           "probably corrupted.")
             else:
                 self.has_flac_md5_been_corrected = False
-            super().save(update_fields=[ATTRIBUTES_LABEL.has_flac_md5_been_corrected])
+            super().save(update_fields=[ATTRIBUTES_LABEL.HAS_FLAC_MD5_BEEN_CORRECTED])
