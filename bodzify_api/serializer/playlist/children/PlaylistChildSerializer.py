@@ -15,13 +15,11 @@ class FIELDS:
     UUID = PLAYLIST_ATTRIBUTES_LABEL.UUID
     NAME = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.NAME
     ADDED_ON = PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON
-    PARENT = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.PARENT
     LIB_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
     LIB_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
 
 
 class PlaylistChildSerializer(PlaylistWithoutTrackSerializer):
-    parent = serializers.SerializerMethodField()
     uuid = serializers.CharField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.UUID)
     added_on = serializers.DateTimeField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.ADDED_ON)
     library_tracks_count = serializers.SerializerMethodField()
@@ -31,16 +29,9 @@ class PlaylistChildSerializer(PlaylistWithoutTrackSerializer):
     def get_library_tracks_count(self, obj):
         return obj.playlist.library_tracks.count()
 
-    def get_parent(self, obj) -> Optional[PlaylistWithoutTrackSerializer]:
-        if obj.parent is not None:
-            return PlaylistWithoutTrackSerializer(obj.parent).data  # type: ignore
-        else:
-            return None
-
     class Meta:
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
                   FIELDS.ADDED_ON,
-                  FIELDS.PARENT,
                   FIELDS.LIB_TRACKS_COUNT,
                   FIELDS.LIB_TRACKS]
