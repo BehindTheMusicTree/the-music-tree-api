@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import logging
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType, CRITERIA_TYPES_ID
@@ -65,7 +66,7 @@ class CriteriaPlaylist(models.Model):
 
     def _set_root(self):
         if self.criteria:
-            self.root = self.criteria.root.criteria_playlist
+            self.root = self.criteria.root.criteria_playlist  # type: ignore
         else:
             self.root = self
 
@@ -78,7 +79,6 @@ class CriteriaPlaylist(models.Model):
         super().save(*args, **kwargs)
 
         if self.criteria:
-            print('isrootdifferent ' + str(self.root.criteria != self.criteria.root))
             if self.root.criteria != self.criteria.root:  # type: ignore
                 self._set_root()
                 super().save(update_fields=[ATTRIBUTES_LABEL.ROOT])
@@ -96,7 +96,6 @@ class CriteriaPlaylist(models.Model):
         return CriteriaPlaylist.objects.filter(parent=self)
 
     def save(self, *args, **kwargs):
-        print('save playlist ' + str(self))
         self._set_parent()
         try:
             old_criteria_playlist = CriteriaPlaylist.objects.get(playlist__uuid=self.playlist.uuid)

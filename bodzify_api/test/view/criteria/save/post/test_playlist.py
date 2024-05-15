@@ -23,4 +23,4 @@ class TestCase(CriteriaTestCase):
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         punkhardcore_playlist = CriteriaPlaylist.objects.get(criteria__name=punkhardcore_genre_name)
-        assert punkhardcore_playlist.root == rock_genre.criteria_playlist.playlist  # type: ignore
+        assert punkhardcore_playlist.root == rock_genre.criteria_playlist  # type: ignore

@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import logging
-import stat
 from typing import Optional
 import shortuuid
 
@@ -137,7 +135,6 @@ class Criteria(models.Model):
             for child in children:
                 child.root = new_root
                 child.save()
-                child.criteria_playlist.save()  # type: ignore
 
     def get_common_criteria(self, criteriaB):
         visited = set()
@@ -170,7 +167,6 @@ class Criteria(models.Model):
         return Criteria.objects.filter(parent=self)
 
     def save(self, *args, **kwargs):
-        print('save criteria ' + str(self))
         self.root = self.parent.root if self.parent else self
         try:
             old_criteria = Criteria.objects.get(uuid=self.uuid)
