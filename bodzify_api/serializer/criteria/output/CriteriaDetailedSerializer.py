@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
+
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIBRARY_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
 from bodzify_api.serializer.criteria.type.CriteriaTypeSerializer \
     import CriteriaTypeSerializer, FIELDS as CRITERIA_TYPE_FIELDS
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
-    import CriteriaPlaylistWithoutTracksSerializer
+from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer import CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer
+
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumPlaylistGenreSerializer \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
 
@@ -31,7 +32,7 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
     parent = CriteriaSimpleSerializer()
     root = CriteriaSimpleSerializer()  # type: ignore
     children = serializers.SerializerMethodField()
-    criteria_playlist = CriteriaPlaylistWithoutTracksSerializer()
+    criteria_playlist = CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer()
     library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(many=True)
 
     class Meta:
