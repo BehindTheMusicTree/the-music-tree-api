@@ -11,6 +11,7 @@ from django.core.files.base import File as DjangoFile
 from django.db.models import F
 from rest_framework.exceptions import ValidationError
 
+from bodzify_api.model.Artist import Artist
 import bodzify_api.settings as settings
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.service.Service import Service
