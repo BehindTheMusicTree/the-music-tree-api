@@ -250,9 +250,8 @@ class TrackService(Service):
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
-            raise ValidationError(
-                {LIB_TRACK_ATTRIBUTE_LABEL.FILE_OBJ: [f"Error while extracting metadata from file: {error}"]}
-            )
+            raise ValidationError({LIB_TRACK_ATTRIBUTE_LABEL.FILE_OBJ_USER_FRIENDLY: [
+                f"Error while extracting metadata from file: {error}"]})
 
         save_data_with_potential_none = self._get_copy_of_dict_including_only_specified_keys(
             dict=normalized_metadata,
