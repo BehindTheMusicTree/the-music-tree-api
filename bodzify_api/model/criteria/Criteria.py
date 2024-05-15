@@ -30,40 +30,36 @@ class Criteria(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
-    type = models.ForeignKey('bodzify_api.CriteriaType', on_delete=models.CASCADE)
+    type = models.ForeignKey('CriteriaType', on_delete=models.CASCADE)
     parent: models.ForeignKey = models.ForeignKey(
         'Criteria', on_delete=models.CASCADE, null=True, related_name='child_criteria')
+
+    # null must be True because when the root is the criteria itself, we must create it first with a null root
+    # and then set the root to itself
     root = models.ForeignKey('Criteria', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
         unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)
         constraints = [
-            models.CheckConstraint(check=~models.Q(
-                name=""), name="criteria_non_empty_name")
+            models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")
         ]
 
     def __str__(self) -> str:
         return str(self.uuid) + " " + self.name
 
-    def save(self, *args, **kwargs):
-        self.root = self.parent.root if self.parent else self
-        try:
-            old_criteria = Criteria.objects.get(uuid=self.uuid)
-            self._update(old_criteria, *args, **kwargs)
-
-        except Criteria.DoesNotExist:
-            self._create(*args, **kwargs)
-
     def _create(self, *args, **kwargs):
         super().save(*args, **kwargs)
         from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-        CriteriaPlaylist(playlist=Playlist.objects.create(user=self.user), type=self.type, criteria=self).save()
+        CriteriaPlaylist.objects.create(playlist=Playlist.objects.create(user=self.user),
+                                        type=self.type,
+                                        criteria=self)
 
     def _update(self, old_criteria: 'Criteria', *args, **kwargs):
         super().save(*args, **kwargs)
 
         if old_criteria.root != self.root:
+            self.criteria_playlist.save()  # type: ignore
             self._update_root_of_children(criteria=self, new_root=self.root)  # type: ignore
 
         if old_criteria.parent != self.parent:
@@ -99,7 +95,7 @@ class Criteria(models.Model):
                     lib_tracks=lib_tracks,
                     criteria_limit=criteria_limit)
 
-    @staticmethod
+    @ staticmethod
     def _remove_tracks_from_playlist(playlist: Playlist, lib_tracks: QuerySet):
         from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
         (
@@ -108,14 +104,14 @@ class Criteria(models.Model):
             .delete()
         )
 
-    @staticmethod
+    @ staticmethod
     def _update_playlist_positions_to_fill_deleted_positions(playlist: Playlist):
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_RELATION_ATTRIBUTES_LABEL
+            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
         tracks_positions_ordered_asc = (
             PlaylistLibTrackRelation.objects
             .filter(playlist=playlist)
-            .order_by(playlist_lib_track_relation_RELATION_ATTRIBUTES_LABEL.POSITION)
+            .order_by(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.POSITION)
         )
         i = 1
         for relation in tracks_positions_ordered_asc:
@@ -128,11 +124,20 @@ class Criteria(models.Model):
         if self != criteria_limit:
             Criteria._remove_tracks_from_playlist(
                 playlist=self.criteria_playlist.playlist, lib_tracks=lib_tracks)  # type: ignore
-            Criteria._update_playlist_positions_to_fill_deleted_positions(self.criteria_playlist.playlist)
+            Criteria._update_playlist_positions_to_fill_deleted_positions(
+                self.criteria_playlist.playlist)  # type: ignore
             if self.parent is not None:
                 self.parent._remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
                     lib_tracks=lib_tracks,
                     criteria_limit=criteria_limit)
+
+    def _update_root_of_children(self, criteria: 'Criteria', new_root: 'Criteria'):
+        children = criteria.get_children()
+        if children.exists():
+            for child in children:
+                child.root = new_root
+                child.save()
+                child.criteria_playlist.save()  # type: ignore
 
     def get_common_criteria(self, criteriaB):
         visited = set()
@@ -161,13 +166,14 @@ class Criteria(models.Model):
         else:
             return False
 
-    def get_children(self):
+    def get_children(self) -> QuerySet['Criteria']:
         return Criteria.objects.filter(parent=self)
 
-    def _update_root_of_children(self, criteria: 'Criteria', new_root: 'Criteria'):
-        criteria.root = new_root  # type: ignore
-        children = criteria.get_children()
-        if children.exists():
-            for child in children:
-                child.root = new_root
-                child.save()
+    def save(self, *args, **kwargs):
+        print('save criteria ' + str(self))
+        self.root = self.parent.root if self.parent else self
+        try:
+            old_criteria = Criteria.objects.get(uuid=self.uuid)
+            self._update(old_criteria, *args, **kwargs)
+        except Criteria.DoesNotExist:
+            self._create(*args, **kwargs)

@@ -46,19 +46,23 @@ class TestCase(CriteriaTestCase):
     def test_new_ascendant_then_update_root_of_self_and_descendants(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk")
-        punk_hardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
-        french_punk_hardcore_genre = self.model_fixture_factory.create_genre(name="French punk hardcore",
-                                                                             parent=punk_hardcore_genre)
+        punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
+        frenchpunkhardcore_genre = self.model_fixture_factory.create_genre(name="French punk hardcore",
+                                                                           parent=punkhardcore_genre)
+        bretonpunkhardcore_genre = self.model_fixture_factory.create_genre(name="Breton punk hardcore",
+                                                                           parent=frenchpunkhardcore_genre)
 
         data = {PUT_FIELD.PARENT: rock_genre.uuid}
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)
         assert updated_punk_genre.root == rock_genre
-        updated_punk_hardcore_genre = Criteria.objects.get(uuid=punk_hardcore_genre.uuid)
-        assert updated_punk_hardcore_genre.root == rock_genre
-        updated_french_punk_hardcore_genre = Criteria.objects.get(uuid=french_punk_hardcore_genre.uuid)
-        assert updated_french_punk_hardcore_genre.root == rock_genre
+        updated_punkhardcore_genre = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
+        assert updated_punkhardcore_genre.root == rock_genre
+        updated_frenchpunkhardcore_genre = Criteria.objects.get(uuid=frenchpunkhardcore_genre.uuid)
+        assert updated_frenchpunkhardcore_genre.root == rock_genre
+        updated_bretonpunkhardcore_genre = Criteria.objects.get(uuid=bretonpunkhardcore_genre.uuid)
+        assert updated_bretonpunkhardcore_genre.root == rock_genre
 
     def test_newly_root_then_update_root_of_descendants(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")

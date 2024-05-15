@@ -14,3 +14,13 @@ class TestCase(CriteriaTestCase):
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert CriteriaPlaylist.objects.filter(criteria__name=genre_name).exists()
+
+    def test_playlist_root(self):
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
+        punkhardcore_genre_name = "Punk Hardcore"
+        data = {POST_FIELDS.NAME: punkhardcore_genre_name, POST_FIELDS.PARENT: punk_genre.uuid}
+        response = self.post_genre(data_dict=data)
+        assert response.status_code == status.HTTP_201_CREATED
+        punkhardcore_playlist = CriteriaPlaylist.objects.get(criteria__name=punkhardcore_genre_name)
+        assert punkhardcore_playlist.root == rock_genre.criteria_playlist.playlist  # type: ignore

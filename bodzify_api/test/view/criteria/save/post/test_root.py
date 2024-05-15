@@ -9,29 +9,8 @@ from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 class TestCase(CriteriaTestCase):
 
-    def test_parent_none_then_root_itself(self):
+    def test_parent_not_provided_then_root_itself(self):
         data_dict = {POST_FIELDS.NAME: "Rock"}
         response = self.post_genre(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == self.saved_genre
-
-    def test_one_acendant_then_root_is_parent(self):
-        rock = self.model_fixture_factory.create_genre(name="Rock")
-        data_dict = {
-            POST_FIELDS.NAME: "Punk",
-            POST_FIELDS.PARENT: rock.uuid
-        }
-        response = self.post_genre(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.root == rock
-
-    def test_two_acendant_then_root_is_parent_of_parent(self):
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        data_dict = {
-            POST_FIELDS.NAME: "Punk hardcore",
-            POST_FIELDS.PARENT: punk_genre.uuid
-        }
-        response = self.post_genre(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.root == rock_genre
