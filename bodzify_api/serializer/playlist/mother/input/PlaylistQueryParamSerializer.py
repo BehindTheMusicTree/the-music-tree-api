@@ -21,10 +21,11 @@ class PlaylistQueryParamSerializer(serializers.Serializer):
 
     def validate_type(self, value):
         if value not in self.TYPE_VALID_VALUES:
-            raise serializers.ValidationError("Invalid type. Valid values are: " + ", ".join(self.TYPE_VALID_VALUES))
+            raise serializers.ValidationError(
+                {FIELDS.TYPE: ["Invalid type. Valid values are: " + ", ".join(self.TYPE_VALID_VALUES)]})
         return value
 
     def validate_name(self, value):
         if value == '':
-            raise serializers.ValidationError("Name cannot be empty")
+            raise serializers.ValidationError({FIELDS.NAME: "Name cannot be empty"})
         return value

@@ -60,6 +60,7 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,
                   FIELDS.ALBUM_ARTISTS_NAMES_STR,
+                  FIELDS.GENRE_UUID,
                   FIELDS.GENRE_NAME,
                   FIELDS.RATING,
                   FIELDS.LANGUAGE,
@@ -69,6 +70,6 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
         if FIELDS.GENRE_UUID in data and data[FIELDS.GENRE_UUID] not in ['', None] and not Criteria.objects.filter(
                 uuid=data[FIELDS.GENRE_UUID],
                 user=self.context['request'].user).exists():
-            raise serializers.ValidationError("The genre UUID does not exist.")
+            raise serializers.ValidationError({FIELDS.GENRE_UUID: "The genre UUID does not exist."})
 
         return super().validate(data)

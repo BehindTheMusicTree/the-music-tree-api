@@ -40,9 +40,16 @@ def get_response_when_bad_request(exception=exceptions.bad_request):
     if type(exception) == IntegrityError:
         errorMessage = INTEGRITY_ERROR_MESSAGE
     else:
-        errorMessage = str(exception)
+        errorMessage = {}
+        if isinstance(exception.detail, dict):
+            for field, errors in exception.detail.items():
+                errorMessage[field] = [str(error) for error in errors]
+        else:
+            errorMessage = {'error': str(exception.detail)}
     return Response(
         data={
+            'status': '400',
+            'message': 'Bad Request',
             'success': False,
             'errors': errorMessage
         },
