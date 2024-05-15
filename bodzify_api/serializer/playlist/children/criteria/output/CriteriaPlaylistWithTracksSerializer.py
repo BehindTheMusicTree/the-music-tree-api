@@ -9,6 +9,7 @@ from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWi
 class FIELDS:
     UUID = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.UUID
     NAME = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.NAME
+    CRITERIA = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.CRITERIA
     PARENT = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.PARENT
     ROOT = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.ROOT
     ADDED_ON = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.ADDED_ON
@@ -22,6 +23,7 @@ class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializ
         model = CriteriaPlaylist
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
+                  FIELDS.CRITERIA,
                   FIELDS.PARENT,
                   FIELDS.ROOT,
                   FIELDS.ADDED_ON,

@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.model.playlist.children.CriteriaPlaylist import ATTRIBUTES_LABEL, CriteriaPlaylist
+from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
 from bodzify_api.serializer.playlist.children.PlaylistChildSerializer \
     import PlaylistChildSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
 
@@ -15,7 +16,7 @@ class FIELDS:
     LIB_TRACKS_COUNT = PLAYLIST_CHILD_FIELDS.LIB_TRACKS_COUNT
 
 
-class CriteriaPlaylistWithoutTracksAndParentAndRootSerializer(PlaylistChildSerializer):
+class CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer(PlaylistChildSerializer):
 
     def get_name(self, obj):
         return obj.name
