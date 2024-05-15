@@ -23,5 +23,6 @@ class PlaySaveSchemaSerializer(serializers.ModelSerializer):
         user_id = self.context['request'].user.id
         if not Playlist.objects.filter(uuid=object_id, user_id=user_id).exists() \
                 and not LibraryTrack.objects.filter(uuid=object_id, user_id=user_id).exists():
-            raise serializers.ValidationError("Object with this ID does not exist or does not belong to the user.")
+            raise serializers.ValidationError(
+                {FIELDS.CONTENT_OBJECT_UUID: "Object with this ID does not exist or does not belong to the user."})
         return object_id

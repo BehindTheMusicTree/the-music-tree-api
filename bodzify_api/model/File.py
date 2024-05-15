@@ -7,9 +7,7 @@ from django.db import models
 from django.db.models import F
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ValidationError
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
+from rest_framework.exceptions import ValidationError
 
 from bodzify_api import settings
 from bodzify_api.validator.track_file_validator \
@@ -90,8 +88,10 @@ class File(models.Model):
                     audiometadata.replace_flac_file_with_corrected_md5(self.file.path)
                     self.has_flac_md5_been_corrected = True
                 except Exception:
-                    raise ValidationError("The Flac file md5 check failed and could not be corrected. The file is " +
-                                          "probably corrupted.")
+                    raise ValidationError(
+                        {ATTRIBUTES_LABEL.FILE: ["The Flac file md5 check failed and could not be corrected. The " +
+                                                 "file is probably corrupted."]}
+                    )
             else:
                 self.has_flac_md5_been_corrected = False
             super().save(update_fields=[ATTRIBUTES_LABEL.HAS_FLAC_MD5_BEEN_CORRECTED])

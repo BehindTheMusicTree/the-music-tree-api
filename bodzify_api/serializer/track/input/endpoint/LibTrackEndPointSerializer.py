@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from os import error
 from rest_framework import serializers
 
 from bodzify_api import settings
@@ -72,15 +73,19 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
     def validate(self, data):
         if FIELDS.GENRE_UUID in data and FIELDS.GENRE_NAME in data:
             if data[FIELDS.GENRE_UUID] not in ['', None] and data[FIELDS.GENRE_NAME] not in ['', None]:
-                raise serializers.ValidationError("Genre name and genre cannot be specified at the same time.")
+                raise serializers.ValidationError(
+                    {FIELDS.GENRE_NAME: "Genre name and genre cannot be specified at the same time."}
+                )
 
         if FIELDS.ALBUM_ARTISTS_NAMES_STR in data:
+            error_message = None
             if FIELDS.ALBUM_NAME not in data:
-                raise serializers.ValidationError(
-                    ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
+                error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
             elif data[FIELDS.ALBUM_NAME] in [None, ""]:
-                raise serializers.ValidationError(
-                    ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE)
+                error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+
+            if error_message:
+                raise serializers.ValidationError({FIELDS.ALBUM_ARTISTS_NAMES_STR: error_message})
 
         if FIELDS.RATING in data:
             value = data[FIELDS.RATING]
@@ -88,6 +93,6 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
                 try:
                     value = int(value)
                 except ValueError:
-                    raise serializers.ValidationError("Rating must be an integer.")
+                    raise serializers.ValidationError({FIELDS.RATING: "Rating must be an integer."})
 
         return super().validate(data)

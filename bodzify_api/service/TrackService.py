@@ -2,7 +2,6 @@
 
 import os
 import random
-from re import sub
 import string
 from tempfile import NamedTemporaryFile
 import requests
@@ -10,16 +9,17 @@ import requests
 from django.contrib.auth.models import User
 from django.core.files.base import File as DjangoFile
 from django.db.models import F
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 
+import bodzify_api.settings as settings
 import bodzify_api.audiometadata as audiometadata
+from bodzify_api.service.Service import Service
 from bodzify_api.model.PlaylistLibTrackRelation \
     import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-import bodzify_api.settings as settings
 from bodzify_api.model.Album import Album
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTE_LABEL
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackModelSerializer \
@@ -29,7 +29,6 @@ from bodzify_api.serializer.track.input.LibTrackSchemaSerializer \
     import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
 from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
-from bodzify_api.service.Service import Service
 
 
 class TrackService(Service):
@@ -251,7 +250,8 @@ class TrackService(Service):
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
-            raise ValidationError(f"Error while extracting metadata from file: {error}")
+            raise ValidationError({LIB_TRACK_ATTRIBUTE_LABEL.FILE_OBJ_USER_FRIENDLY: [
+                f"Error while extracting metadata from file: {error}"]})
 
         save_data_with_potential_none = self._get_copy_of_dict_including_only_specified_keys(
             dict=normalized_metadata,

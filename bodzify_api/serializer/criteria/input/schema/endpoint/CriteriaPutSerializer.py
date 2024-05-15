@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer \
@@ -22,8 +23,12 @@ class CriteriaPutSerializer(CriteriaSaveSchemaSerializer, InputEndpointSerialize
         instance = self.instance
 
         if instance and value:
+            error_message = None
             if instance == value:
-                raise serializers.ValidationError("Cannot set the new parent as the criteria itself.")
+                error_message = "Cannot set the new parent as the criteria itself."
             elif value.is_descendant_of(instance):
-                raise serializers.ValidationError("Cannot set the new parent as one of the criteria's descendants.")
+                error_message = "Cannot set the new parent as one of the criteria's descendants."
+
+            if error_message:
+                raise ValidationError({SAVE_SCHEMA_FIELDS.PARENT: error_message})
         return value

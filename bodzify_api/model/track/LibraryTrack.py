@@ -27,6 +27,7 @@ class ATTRIBUTES_LABEL:
     UUID = "uuid"
     USER = "user"
     FILE_OBJ = "file_obj"
+    FILE_OBJ_USER_FRIENDLY = "file"
     TITLE = "title"
     ARTIST = "artist"
     ALBUM = "album"
