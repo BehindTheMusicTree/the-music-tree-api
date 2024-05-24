@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
+import requests
+import json
+
 from rest_framework import serializers
+
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.track.input.LibTrackModelSerializer import FIELDS as SAVE_MODEL_FIELDS
@@ -71,5 +75,24 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
                 uuid=data[FIELDS.GENRE_UUID],
                 user=self.context['request'].user).exists():
             raise serializers.ValidationError({FIELDS.GENRE_UUID: "The genre UUID does not exist."})
+
+        # if FIELDS.ACOUSTIC_FINGERPRINT in data:
+        #     fingerprint = data[FIELDS.ACOUSTIC_FINGERPRINT]
+        #     matches = list(acoustid.match(apikey="o3YcEtT16X", fingerprint=fingerprint, duration))
+        #     matches.sort(key=lambda match: match[0], reverse=True)
+        #     matches = [match for match in matches if None not in match]
+        #     if matches:
+        #         best_match = max(matches, key=lambda match: len(
+        #             match[2]) + len(match[3]) if match[2] and match[3] else 0)
+
+        #         # If there are multiple matches with the same score and information length, select the one with accented characters
+        #         best_matches = [match for match in matches if match[0] == best_match[0] and len(
+        #             match[2]) + len(match[3]) == len(best_match[2]) + len(best_match[3])]
+        #         if len(best_matches) > 1:
+        #             best_match = max(best_matches, key=lambda match: bool(
+        #                 re.search(r'[àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸ]', match[2] + match[3])))
+        #             print(
+        #                 f"Best match: Recording ID: {best_match[1]}, Score: {best_match[0]}, Title: {best_match[2]}" +
+        #                 ", Artist: {best_match[3]}")
 
         return super().validate(data)

@@ -30,6 +30,7 @@ class ATTRIBUTES_LABEL:
     USER = "user"
     FILE_OBJ = "file_obj"
     FILE_OBJ_USER_FRIENDLY = "file"
+    ACOUSTIC_FINGERPRINT = "acoustic_fingerprint"
     TITLE = "title"
     ARTIST = "artist"
     ALBUM = "album"
@@ -47,9 +48,10 @@ class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    acoustic_fingerprint = models.BinaryField()
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
+    acoustic_fingerprint = models.BinaryField()
+    duration = models.FloatField(default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,
@@ -65,7 +67,6 @@ class LibraryTrack(models.Model):
                               default=None,
                               null=True,
                               related_name=CRITERIA_ATTRIBUTES_LABEL.LIB_TRACKS)
-    duration = models.FloatField(default=None, null=True)
     rating = models.IntegerField(
         null=True,
         blank=True,
