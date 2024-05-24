@@ -23,7 +23,6 @@ sudo chmod -R 775 $djangoLogDir
 sudo chown -R $USER $djangoLogDir
 
 staticDir=/var/www/bodzify-api/static/
-
 sudo mkdir -p $staticDir
 sudo chmod 775 $staticDir
 sudo chown -R $USER $staticDir

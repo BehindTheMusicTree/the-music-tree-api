@@ -145,12 +145,11 @@ class TrackService(Service):
             if len(recordings_grouped_by_score) > 0:
                 best_recording = TrackService.get_best_recording(
                     recordings_grouped_by_score=recordings_grouped_by_score, duration=duration)
-                print(best_recording)
             else:
                 return None
         except Exception as error:
-            recording_id = None
-        return recording_id
+            best_recording = None
+        return best_recording
 
     @staticmethod
     def _update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(data1: dict, data2: dict):
@@ -158,14 +157,14 @@ class TrackService(Service):
         if file_obj_key in data2:
             file_obj = data2[file_obj_key]
             if file_obj:
-                file_path = file_obj.temporary_file_path()
-                duration, fingerprint = acoustid.fingerprint_file(
-                    path="/Users/mignot/Documents/Music/Library/Lorie - Je serai (ta meilleure amie) myfreemp3.vip .mp3")
-                musicbrainz_recording_id = TrackService._get_musicbrainz_recording_id_from_fingerprint_and_duration(
-                    fingerprint=fingerprint,
-                    duration=duration)
+                file_path = file_obj.file.name
+                duration, fingerprint = acoustid.fingerprint_file(path=file_path)
                 data1[SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT] = fingerprint
                 data1[SAVE_MODEL_FIELDS.DURATION] = duration
+                musicbrainz_best_matching_recording = TrackService._get_musicbrainz_recording_id_from_fingerprint_and_duration(
+                    fingerprint=fingerprint, duration=duration)
+                if musicbrainz_best_matching_recording:
+                    data1[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_ID] = musicbrainz_best_matching_recording['id']
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
@@ -225,9 +224,9 @@ class TrackService(Service):
                                                                   data1=save_model_data,
                                                                   data2=save_schema_data)
         self._update_data1_with_genre_uuid_if_genre_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
-        self._update_data1_with_file_obj_id_if_file_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
         self._update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(
             data1=save_model_data, data2=save_schema_data)
+        self._update_data1_with_file_obj_id_if_file_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
 
         return save_model_data
 

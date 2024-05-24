@@ -10,8 +10,6 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-import acoustid
-
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.File import File
@@ -31,11 +29,12 @@ class ATTRIBUTES_LABEL:
     FILE_OBJ = "file_obj"
     FILE_OBJ_USER_FRIENDLY = "file"
     ACOUSTIC_FINGERPRINT = "acoustic_fingerprint"
+    DURATION = "duration"
+    MUSICBRAINZ_RECORDING_ID = "musicbrainz_recording_id"
     TITLE = "title"
     ARTIST = "artist"
     ALBUM = "album"
     GENRE = "genre"
-    DURATION = "duration"
     RATING = "rating"
     PLAYLISTS = "playlists"
     LANGUAGE = "language"
@@ -52,6 +51,7 @@ class LibraryTrack(models.Model):
     file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
     acoustic_fingerprint = models.BinaryField()
     duration = models.FloatField(default=None, null=True)
+    musicbrainz_recording_id = models.UUIDField(default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,
@@ -78,7 +78,7 @@ class LibraryTrack(models.Model):
                                        through='PlaylistLibTrackRelation',
                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
 
-    @property
+    @ property
     def relative_url(self) -> str:
         return "tracks/" + self.uuid + "/"
 
@@ -276,7 +276,7 @@ class LibraryTrack(models.Model):
             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
 
-@receiver(pre_delete, sender=LibraryTrack)
+@ receiver(pre_delete, sender=LibraryTrack)
 def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
     if instance.file_obj:
         instance.file_obj.file.delete(False)
