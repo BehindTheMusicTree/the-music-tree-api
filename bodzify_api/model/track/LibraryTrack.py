@@ -78,7 +78,7 @@ class LibraryTrack(models.Model):
                                        through='PlaylistLibTrackRelation',
                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
 
-    @ property
+    @property
     def relative_url(self) -> str:
         return "tracks/" + self.uuid + "/"
 
