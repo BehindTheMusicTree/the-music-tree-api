@@ -2,6 +2,8 @@
 
 from rest_framework import serializers
 
+import acoustid
+
 from bodzify_api.serializer.track.input.LibTrackSchemaSerializer import \
     LibTrackSaveSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
 from bodzify_api.serializer.track.input.endpoint.LibTrackEndPointSerializer \
@@ -33,3 +35,12 @@ class LibTrackPostSerializer(LibTrackEndPointSerializer):
                   FIELDS.GENRE_NAME,
                   FIELDS.RATING,
                   FIELDS.LANGUAGE]
+
+    def get_path_fromTemporaryUploadedFile(self, file):
+        return file.temporary_file_path()
+
+    def validate(self, data):
+        for score, recording_id, title, artist in acoustid.match(
+                apikey="o3YcEtT16X", path=data[FIELDS.FILE_OBJ].temporary_file_path()):
+            print(f"Recording ID: {recording_id}, Score: {score}, Title: {title}, Artist: {artist}")
+        return super().validate(data)

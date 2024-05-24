@@ -10,6 +10,8 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+import acoustid
+
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.File import File
@@ -45,6 +47,7 @@ class LibraryTrack(models.Model):
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    acoustic_fingerprint = models.BinaryField()
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
     artist = models.ForeignKey('bodzify_api.Artist',
@@ -121,7 +124,7 @@ class LibraryTrack(models.Model):
 
             if self.file_obj:
                 self.duration = audiometadata.get_specific_metadata_from_file(
-                    self.file_obj.file, audiometadata.NormalizedMetadataKeys.DURATION)
+                    file=self.file_obj.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION)
                 super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
