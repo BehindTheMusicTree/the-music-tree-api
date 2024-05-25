@@ -5,6 +5,7 @@ from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializ
 from bodzify_api.serializer.track.input.LibTrackSchemaSerializer import \
     LibTrackSaveSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL
+from bodzify_api.serializer.track.input.endpoint.LibTrackEndPointSerializer import LibTrackEndPointSerializer
 
 
 class FIELDS:
@@ -20,18 +21,5 @@ class FIELDS:
     LANGUAGE = SAVE_SCHEMA_FIELDS.LANGUAGE
 
 
-class LibTrackPutSerializer(LibTrackSaveSchemaSerializer, InputEndpointSerializer):
-
+class LibTrackPutSerializer(LibTrackEndPointSerializer):
     file = serializers.FileField(required=False)
-
-    class Meta(LibTrackSaveSchemaSerializer.Meta):
-        fields = [FIELDS.FILE_OBJ,
-                  FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST_NAME,
-                  FIELDS.ALBUM_NAME,
-                  FIELDS.ALBUM_ARTISTS_NAMES_STR,
-                  FIELDS.GENRE_UUID,
-                  FIELDS.GENRE_NAME,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE]

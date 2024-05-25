@@ -36,6 +36,7 @@ class TrackViewSet(AppModelViewSet):
         'default': LibTrackDetailedSerializer,
         'list':  LibTrackDetailedSerializer,
         'retrieve':  LibTrackDetailedSerializer,
+        'create': LibTrackPostSerializer,
         'update':  LibTrackDetailedSerializer,
     }
 

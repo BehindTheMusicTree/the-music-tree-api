@@ -25,6 +25,6 @@ class FileDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.EXTENSION,
                   FIELDS.HAS_FLAC_MD5_BEEN_CORRECTED,
                   FIELDS.SIZE_IN_BYTES,
-                  #   FIELDS.SIZE_IN_KO,
-                  #   FIELDS.SIZE_IN_MO,
+                  FIELDS.SIZE_IN_KO,
+                  FIELDS.SIZE_IN_MO,
                   FIELDS.BITRATE_IN_KBPS]

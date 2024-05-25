@@ -29,6 +29,7 @@ class FIELDS:
 
 class LibTrackEndPointSerializer(InputEndpointSerializer):
     file = serializers.FileField()
+    should_check_if_acoustic_fingerprint_exists = serializers.BooleanField(required=False)
     title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                                   required=False,
                                   allow_blank=True,
@@ -59,18 +60,6 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
                                      allow_blank=True,
                                      allow_null=True)
     force_title_generation = serializers.BooleanField(required=False)
-
-    class Meta:
-        fields = [FIELDS.FILE_OBJ,
-                  FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST_NAME,
-                  FIELDS.ALBUM_NAME,
-                  FIELDS.ALBUM_ARTISTS_NAMES_STR,
-                  FIELDS.GENRE_NAME,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE,
-                  FIELDS.FORCE_TITLE_GENERATION,]
 
     def validate(self, data):
         if FIELDS.GENRE_UUID in data and FIELDS.GENRE_NAME in data:

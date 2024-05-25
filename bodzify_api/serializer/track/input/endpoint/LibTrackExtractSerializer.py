@@ -4,6 +4,7 @@ from rest_framework import serializers
 from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 from bodzify_api.serializer.track.input.LibTrackSchemaSerializer import \
     LibTrackSaveSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.endpoint.LibTrackEndPointSerializer import LibTrackEndPointSerializer
 from bodzify_api.validator.mine_track_validators import validate_url
 
 
@@ -20,17 +21,5 @@ class FIELDS:
     LANGUAGE = SAVE_SCHEMA_FIELDS.LANGUAGE
 
 
-class LibTrackExtractSerializer(LibTrackSaveSchemaSerializer, InputEndpointSerializer):
+class LibTrackExtractSerializer(LibTrackEndPointSerializer):
     url = serializers.URLField(validators=[validate_url])
-
-    class Meta(LibTrackSaveSchemaSerializer.Meta):
-        fields = [FIELDS.URL,
-                  FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST_NAME,
-                  FIELDS.ALBUM_NAME,
-                  FIELDS.ALBUM_ARTISTS_NAMES_STRING,
-                  FIELDS.GENRE_UUID,
-                  FIELDS.GENRE_NAME,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE]
