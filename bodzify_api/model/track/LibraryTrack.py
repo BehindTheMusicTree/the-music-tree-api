@@ -49,7 +49,7 @@ class LibraryTrack(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
-    acoustic_fingerprint = models.BinaryField()
+    acoustic_fingerprint = models.BinaryField(editable=True)  # default non editable
     duration = models.FloatField(default=None, null=True)
     musicbrainz_recording_id = models.UUIDField(default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
@@ -127,6 +127,8 @@ class LibraryTrack(models.Model):
                 self.duration = audiometadata.get_specific_metadata_from_file(
                     file=self.file_obj.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION)
                 super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
+
+            super().save(update_fields=[ATTRIBUTES_LABEL.ACOUSTIC_FINGERPRINT])
 
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:

@@ -22,7 +22,7 @@ from bodzify_api.model.PlaylistLibTrackRelation \
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.Album import Album
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTE_LABEL
+from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTE_LABEL, LibraryTrack
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackModelSerializer \
@@ -160,6 +160,7 @@ class TrackService(Service):
                 file_path = file_obj.file.name
                 duration, fingerprint = acoustid.fingerprint_file(path=file_path)
                 data1[SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT] = fingerprint
+                isByte = isinstance(data1[SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT], bytes)
                 data1[SAVE_MODEL_FIELDS.DURATION] = duration
                 musicbrainz_best_matching_recording = TrackService._get_musicbrainz_recording_id_from_fingerprint_and_duration(
                     fingerprint=fingerprint, duration=duration)
@@ -227,7 +228,6 @@ class TrackService(Service):
         self._update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(
             data1=save_model_data, data2=save_schema_data)
         self._update_data1_with_file_obj_id_if_file_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
-
         return save_model_data
 
     def _update_data1_with_album_uuid_if_album_name_in_data2(self, user: User, data1: dict, data2: dict):
