@@ -9,6 +9,7 @@ from bodzify_api.validator.mine_track_validators import validate_url
 
 class FIELDS:
     URL = "url"
+    SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS
     TITLE = SAVE_SCHEMA_FIELDS.TITLE
     ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
     ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_NAME
@@ -24,6 +25,7 @@ class LibTrackExtractSerializer(LibTrackSaveSchemaSerializer, InputEndpointSeria
 
     class Meta(LibTrackSaveSchemaSerializer.Meta):
         fields = [FIELDS.URL,
+                  FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
                   FIELDS.TITLE,
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,

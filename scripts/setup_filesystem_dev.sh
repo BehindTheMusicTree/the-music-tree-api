@@ -14,6 +14,7 @@ sudo mkdir $djangoLogDir
 
 sudo touch ${djangoLogDir}requests.log
 sudo touch ${djangoLogDir}requests.debug.log
+sudo touch ${djangoLogDir}exceptions.log
 sudo touch ${djangoLogDir}general.log
 sudo touch ${djangoLogDir}info.log
 sudo touch ${djangoLogDir}django.log

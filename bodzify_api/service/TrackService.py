@@ -152,8 +152,8 @@ class TrackService(Service):
         return best_recording
 
     @staticmethod
-    def _update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(data1: dict, data2: dict):
-        file_obj_key = SAVE_SCHEMA_FIELDS.FILE_OBJ
+    def _update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(
+            data1: dict, data2: dict, file_obj_key: str = SAVE_SCHEMA_FIELDS.FILE_OBJ):
         if file_obj_key in data2:
             file_obj = data2[file_obj_key]
             if file_obj:
@@ -162,10 +162,11 @@ class TrackService(Service):
                 data1[SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT] = fingerprint
                 isByte = isinstance(data1[SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT], bytes)
                 data1[SAVE_MODEL_FIELDS.DURATION] = duration
-                musicbrainz_best_matching_recording = TrackService._get_musicbrainz_recording_id_from_fingerprint_and_duration(
-                    fingerprint=fingerprint, duration=duration)
+                musicbrainz_best_matching_recording = \
+                    TrackService._get_musicbrainz_recording_id_from_fingerprint_and_duration(
+                        fingerprint=fingerprint, duration=duration)  # type: ignore
                 if musicbrainz_best_matching_recording:
-                    data1[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_ID] = musicbrainz_best_matching_recording['id']
+                    data1[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_ID] = musicbrainz_best_matching_recording['id']  # type: ignore
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
@@ -185,6 +186,7 @@ class TrackService(Service):
 
         save_schema_data = save_schema_data_from_file.copy()
         keys = [SAVE_SCHEMA_FIELDS.FILE_OBJ,
+                SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
                 SAVE_SCHEMA_FIELDS.TITLE,
                 SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_NAME,
@@ -202,7 +204,8 @@ class TrackService(Service):
                                                                          keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
 
         Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
-
+        self._update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(
+            data1=save_schema_data, data2=post_data, file_obj_key=POST_FIELDS.FILE_OBJ)
         return save_schema_data
 
     def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
@@ -215,7 +218,10 @@ class TrackService(Service):
                                                                             old_instance) -> dict:
         save_model_data = dict()
 
-        for key in [SAVE_MODEL_FIELDS.TITLE, SAVE_MODEL_FIELDS.RATING, SAVE_MODEL_FIELDS.LANGUAGE]:
+        for key in [SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
+                    SAVE_MODEL_FIELDS.TITLE,
+                    SAVE_MODEL_FIELDS.RATING,
+                    SAVE_MODEL_FIELDS.LANGUAGE]:
             self._update_data1_with_key_if_set_in_data2(key=key, data1=save_model_data, data2=save_schema_data)
 
         self._update_data1_with_artist_uuid_if_artist_name_in_data2(user=user,
@@ -225,8 +231,6 @@ class TrackService(Service):
                                                                   data1=save_model_data,
                                                                   data2=save_schema_data)
         self._update_data1_with_genre_uuid_if_genre_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
-        self._update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(
-            data1=save_model_data, data2=save_schema_data)
         self._update_data1_with_file_obj_id_if_file_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
         return save_model_data
 

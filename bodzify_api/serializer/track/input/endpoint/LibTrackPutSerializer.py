@@ -9,6 +9,7 @@ from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL
 
 class FIELDS:
     FILE_OBJ = ATTRIBUTES_LABEL.FILE_OBJ
+    SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS
     TITLE = SAVE_SCHEMA_FIELDS.TITLE
     ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
     ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_NAME
@@ -25,6 +26,7 @@ class LibTrackPutSerializer(LibTrackSaveSchemaSerializer, InputEndpointSerialize
 
     class Meta(LibTrackSaveSchemaSerializer.Meta):
         fields = [FIELDS.FILE_OBJ,
+                  FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
                   FIELDS.TITLE,
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,

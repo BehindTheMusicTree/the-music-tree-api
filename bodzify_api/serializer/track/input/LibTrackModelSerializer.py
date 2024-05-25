@@ -34,11 +34,3 @@ class TrackSaveModelSerializer(serializers.ModelSerializer):
                   FIELDS.GENRE,
                   FIELDS.RATING,
                   FIELDS.LANGUAGE]
-
-    def validate(self, attrs):
-        if FIELDS.ACOUSTIC_FINGERPRINT in attrs:
-            acoustic_fingerprint = attrs[FIELDS.ACOUSTIC_FINGERPRINT]
-            if LibraryTrack.objects.filter(acoustic_fingerprint=acoustic_fingerprint).exists():
-                raise serializers.ValidationError("Track with this acoustic fingerprint already exists")
-
-        return super().validate(attrs)

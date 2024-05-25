@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
-import requests
-import json
-
 from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.LibTrackModelSerializer import FIELDS as SAVE_MODEL_FIELDS
 from bodzify_api.serializer.album.input.AlbumModelSerializer import FIELDS as ALBUM_SAVE_MODEL_FIELDS
 
@@ -14,6 +12,9 @@ from bodzify_api.serializer.album.input.AlbumModelSerializer import FIELDS as AL
 class FIELDS:
     USER = SAVE_MODEL_FIELDS.USER
     FILE_OBJ = "file"
+    SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS = "should_check_if_acoustic_fingerprint_exists"
+    ACOUSTIC_FINGERPRINT = SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT
+    DURATION = SAVE_MODEL_FIELDS.DURATION
     TITLE = SAVE_MODEL_FIELDS.TITLE
     ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
     ALBUM_NAME = SAVE_MODEL_FIELDS.ALBUM + "_name"
@@ -27,6 +28,7 @@ class FIELDS:
 
 class LibTrackSaveSchemaSerializer(serializers.Serializer):
     file = serializers.FileField(required=False)
+    should_check_if_acoustic_fingerprint_exists = serializers.BooleanField(required=False)
     title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                                   required=False,
                                   allow_blank=True,
@@ -70,9 +72,17 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
                   FIELDS.LANGUAGE,
                   FIELDS.FORCE_TITLE_GENERATION,]
 
-    def validate(self, data):
-        if FIELDS.GENRE_UUID in data and data[FIELDS.GENRE_UUID] not in ['', None] and not Criteria.objects.filter(
-                uuid=data[FIELDS.GENRE_UUID],
+    def validate(self, attrs):
+        if FIELDS.GENRE_UUID in attrs and attrs[FIELDS.GENRE_UUID] not in ['', None] and not Criteria.objects.filter(
+                uuid=attrs[FIELDS.GENRE_UUID],
                 user=self.context['request'].user).exists():
             raise serializers.ValidationError({FIELDS.GENRE_UUID: "The genre UUID does not exist."})
-        return super().validate(data)
+
+        if FIELDS.ACOUSTIC_FINGERPRINT in attrs:
+            if FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS in attrs and attrs[
+                    FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS]:
+                acoustic_fingerprint = attrs[FIELDS.ACOUSTIC_FINGERPRINT]
+                if LibraryTrack.objects.filter(acoustic_fingerprint=acoustic_fingerprint).exists():
+                    raise serializers.ValidationError("This track already exists in the library.")
+
+        return super().validate(attrs)

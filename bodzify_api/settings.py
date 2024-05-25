@@ -81,7 +81,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'bodzify_api.middleware.RequestLoggingMiddleware',
+    'bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
+    'bodzify_api.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -237,6 +238,14 @@ LOGGING = {
             'backupCount': 10,
             'formatter': 'standard'
         },
+        'exceptions': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_PATH / 'exceptions.log',
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
         'requests': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -280,6 +289,11 @@ LOGGING = {
         },
         'django.request': {
             'handlers': ['requests_with_trace'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'exceptions': {
+            'handlers': ['exceptions', 'console'],
             'level': 'DEBUG',
             'propagate': False,
         },
