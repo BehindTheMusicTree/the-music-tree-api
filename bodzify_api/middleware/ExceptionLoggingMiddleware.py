@@ -14,13 +14,8 @@ class ExceptionLoggingMiddleware:
         logger = logging.getLogger('exceptions')
         logger.error(type(exception))
         logger.error(exception)
-        # logger.error(type(exception) + " - " + exception)
         if exception.__traceback__ is not None:
             logger.error('\n'.join(
-                traceback.format_exception(
-                    etype=type(exception),
-                    value=exception, tb=exception.__traceback__)))  # type: ignore
-            print('\n'.join(
                 traceback.format_exception(
                     etype=type(exception),
                     value=exception, tb=exception.__traceback__)))  # type: ignore
