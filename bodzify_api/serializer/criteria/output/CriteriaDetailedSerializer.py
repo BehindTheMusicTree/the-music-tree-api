@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from typing import Any, Dict, List
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
@@ -47,5 +48,5 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.LIB_TRACKS,
                   FIELDS.CRITERIA_PLAYLIST]
 
-    def get_children(self, obj):
-        return CriteriaSimpleSerializer(obj.get_children(), many=True).data
+    def get_children(self, obj) -> List[Dict[str, Any]]:
+        return CriteriaSimpleSerializer(obj.get_children(), many=True).data  # type: ignore

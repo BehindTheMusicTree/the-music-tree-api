@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from typing import Any, Dict
 from bodzify_api.model.Play import Play, ATTRIBUTES_LABEL
 from rest_framework import serializers
 
@@ -27,7 +28,7 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.CONTENT_OBJECT,
                   FIELDS.TIME]
 
-    def get_content_object(self, obj):
+    def get_content_object(self, obj) -> Dict[str, Any]:
         if isinstance(obj.content_object, Playlist):
             return PlaylistWithTracksSerializer(obj.content_object).data
         else:

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import logging
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
@@ -107,6 +106,10 @@ def artist_filter(queryset, request, *args, **kwargs):
 class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = DefaultMultipleModelLimitOffsetPagination
+
+    # Only used by drf spectacular to generate the schema
+    def get_serializer_class(self):
+        return LibTrackDetailedSerializer
 
     @extend_schema(description=("""
                                 Search within tracks, albums, artists and playlists.

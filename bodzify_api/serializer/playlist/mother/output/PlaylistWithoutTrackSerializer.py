@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from typing import Optional
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL, Playlist
@@ -21,7 +22,7 @@ class PlaylistWithoutTrackSerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     library_tracks_count = serializers.IntegerField(source='f{ATTRIBUTES_LABEL.LIB_TRACKS}.count', read_only=True)
 
-    def get_name(self, obj):
+    def get_name(self, obj) -> str:
         if hasattr(obj, ATTRIBUTES_LABEL.CRITERIA_PLAYLIST):
             return obj.criteria_playlist.name
         elif hasattr(obj, ATTRIBUTES_LABEL.SIMPLE_PLAYLIST):
@@ -29,7 +30,7 @@ class PlaylistWithoutTrackSerializer(serializers.ModelSerializer):
         else:
             return None
 
-    def get_type(self, obj):
+    def get_type(self, obj) -> Optional[str]:
         if hasattr(obj, ATTRIBUTES_LABEL.CRITERIA_PLAYLIST):
             return obj.criteria_playlist.type.label
         elif hasattr(obj, ATTRIBUTES_LABEL.SIMPLE_PLAYLIST):

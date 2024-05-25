@@ -23,7 +23,7 @@ class CriteriaPlaylistWithoutTracksSerializer(CriteriaPlaylistWithoutCriteriaTra
     parent = CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer()
     root = CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer()
 
-    def get_name(self, obj):
+    def get_name(self, obj) -> str:
         return obj.name
 
     def to_representation(self, instance):

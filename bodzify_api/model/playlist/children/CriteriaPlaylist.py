@@ -92,7 +92,7 @@ class CriteriaPlaylist(models.Model):
                 child.root = new_root
                 child.save()
 
-    def get_children(self):
+    def get_children(self) -> models.QuerySet['CriteriaPlaylist']:
         return CriteriaPlaylist.objects.filter(parent=self)
 
     def save(self, *args, **kwargs):

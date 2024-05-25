@@ -21,6 +21,9 @@ class MineTrackViewSet(MultiSerializerViewSet):
         'extract':  LibTrackExtractSerializer,
     }
 
+    def get_serializer_class(self):
+        return self.serializers.get(self.action, MineTrackSerializer)
+
     @extend_schema(parameters=[
         OpenApiParameter(GET_PARAMETER_NAME.SOURCE, OpenApiTypes.STR, OpenApiParameter.PATH),
         OpenApiParameter(GET_PARAMETER_NAME.QUERY, OpenApiTypes.STR, OpenApiParameter.PATH),

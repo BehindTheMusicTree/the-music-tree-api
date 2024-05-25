@@ -18,7 +18,7 @@ class FIELDS:
 
 class CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer(PlaylistChildSerializer):
 
-    def get_name(self, obj):
+    def get_name(self, obj) -> str:
         return obj.name
 
     class Meta:

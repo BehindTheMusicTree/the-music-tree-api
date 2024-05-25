@@ -26,7 +26,7 @@ class PlaylistChildSerializer(PlaylistWithoutTrackSerializer):
     library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIB_TRACKS,
                                                                many=True)
 
-    def get_library_tracks_count(self, obj):
+    def get_library_tracks_count(self, obj) -> int:
         return obj.playlist.library_tracks.count()
 
     class Meta:
