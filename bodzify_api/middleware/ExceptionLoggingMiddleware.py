@@ -17,8 +17,7 @@ class ExceptionLoggingMiddleware:
         if exception.__traceback__ is not None:
             logger.error('\n'.join(
                 traceback.format_exception(
-                    etype=type(exception),
-                    value=exception, tb=exception.__traceback__)))  # type: ignore
+                    type(exception), exception, exception.__traceback__)))  # type: ignore
         else:
             logger.error('No traceback available for this exception')
         return None
