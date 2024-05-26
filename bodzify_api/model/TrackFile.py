@@ -20,6 +20,7 @@ class ATTRIBUTES_LABEL:
     FILE = 'file'
     FILENAME = 'filename'
     EXTENSION = 'extension'
+    FINGERPRINT = "fingerprint"
     HAS_FLAC_MD5_BEEN_CORRECTED = 'has_flac_md5_been_corrected'
     SIZE_IN_BYTES = 'size_in_bytes'
     SIZE_IN_KO = 'size_in_ko'
@@ -43,7 +44,7 @@ class PreserveSpacesStorage(FileSystemStorage):
         return name
 
 
-class File(models.Model):
+class TrackFile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     file = models.FileField(upload_to=_get_user_lib_path,
                             storage=PreserveSpacesStorage(),
@@ -56,6 +57,7 @@ class File(models.Model):
                             null=True)
     filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LEN_MAX, blank=True)
     extension = models.CharField(max_length=5, blank=True)
+    fingerprint = models.BinaryField(null=True, blank=True, default=None, editable=True)
     has_flac_md5_been_corrected = models.BooleanField(null=True, default=None, blank=True)
     size_in_bytes = models.DecimalField(null=True, blank=True, max_digits=11, decimal_places=2)
     size_in_ko = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,  # type: ignore

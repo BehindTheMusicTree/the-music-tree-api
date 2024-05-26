@@ -7,8 +7,7 @@ from rest_framework import serializers
 
 class FIELDS:
     USER = ATTRIBUTES_LABEL.USER
-    FILE_OBJ = ATTRIBUTES_LABEL.FILE_OBJ
-    ACOUSTIC_FINGERPRINT = ATTRIBUTES_LABEL.ACOUSTIC_FINGERPRINT
+    TRACK_FILE = ATTRIBUTES_LABEL.TRACK_FILE
     DURATION = ATTRIBUTES_LABEL.DURATION
     MUSICBRAINZ_RECORDING_ID = ATTRIBUTES_LABEL.MUSICBRAINZ_RECORDING_ID
     TITLE = ATTRIBUTES_LABEL.TITLE
@@ -24,8 +23,7 @@ class TrackSaveModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = LibraryTrack
         fields = [FIELDS.USER,
-                  FIELDS.FILE_OBJ,
-                  FIELDS.ACOUSTIC_FINGERPRINT,
+                  FIELDS.TRACK_FILE,
                   FIELDS.DURATION,
                   FIELDS.MUSICBRAINZ_RECORDING_ID,
                   FIELDS.TITLE,

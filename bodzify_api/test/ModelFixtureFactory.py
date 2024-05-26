@@ -4,7 +4,7 @@ from ddf import G
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.File import File as AppFile
+from bodzify_api.model.TrackFile import TrackFile as TrackFile
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
@@ -28,27 +28,27 @@ class ModelFixtureFactory:
     def create_album(self, name: str, album_artists: List[Artist] = [], year: Optional[int] = None) -> Album:
         return G(Album, user=self.test_user.django_user, name=name, album_artists=album_artists, year=year)  # type: ignore
 
-    def create_file(self, filename: str) -> AppFile:
-        return G(AppFile,
+    def create_file(self, filename: str) -> TrackFile:
+        return G(TrackFile,
                  user=self.test_user.django_user,
                  file=str(Path(self.test_user.lib_abs_path) / filename),
                  size_in_ko=None, size_in_mo=None)  # type: ignore
 
     def create_lib_track(self,
                          title: str,
-                         file_obj: Optional[AppFile] = None,
+                         track_file: Optional[TrackFile] = None,
                          artist: Optional[Artist] = None,
                          album: Optional[Album] = None,
                          genre: Optional[Criteria] = None,
                          rating: Optional[int] = None,
                          language: Optional[str] = None,
                          play_count: Optional[int] = 0) -> LibraryTrack:
-        if file_obj is None:
-            file_obj = self.create_file(filename=self.test_user.lib_track_default_filename)
+        if track_file is None:
+            track_file = self.create_file(filename=self.test_user.lib_track_default_filename)
         return G(LibraryTrack,
                  user=self.test_user.django_user,
                  title=title,
-                 file_obj=file_obj,
+                 track_file=track_file,
                  artist=artist,
                  album=album,
                  genre=genre,

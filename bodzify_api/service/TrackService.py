@@ -7,10 +7,13 @@ import acoustid
 import string
 from tempfile import NamedTemporaryFile
 import requests
+import tempfile
 
 from django.contrib.auth.models import User
-from django.core.files.base import File as DjangoFile
 from django.db.models import F
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.uploadedfile import TemporaryUploadedFile
+from django.core.files.base import File as DjangoFile
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api.model.Artist import Artist
@@ -18,16 +21,17 @@ import bodzify_api.settings as settings
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.service.Service import Service
 from bodzify_api.model.PlaylistLibTrackRelation \
-    import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_ATTRIBUTES_LABEL
+    import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.Album import Album
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTE_LABEL, LibraryTrack
+from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTE_LABEL
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackModelSerializer \
     import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
-from bodzify_api.serializer.file.input.FileModelSerializer import FileModelSerializer, FIELDS as FILE_SAVE_MODEL_FIELDS
+from bodzify_api.serializer.track_file.input.FileModelSerializer \
+    import FileModelSerializer, FIELDS as TRACK_FILE_SAVE_MODEL_FIELDS
 from bodzify_api.serializer.track.input.LibTrackSchemaSerializer \
     import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
 from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
@@ -78,19 +82,54 @@ class TrackService(Service):
             playlist_lib_track_relation_relations_to_update = PlaylistLibTrackRelation.objects.filter(
                 playlist__uuid=playlist_uuid, position__gt=old_position)
             playlist_lib_track_relation_relations_to_update.update(
-                position=F(playlist_lib_track_relation_ATTRIBUTES_LABEL.POSITION) - 1)
+                position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @staticmethod
-    def _update_data1_with_file_obj_id_if_file_in_data2(user: User, data1: dict, data2: dict):
-        file_key = SAVE_SCHEMA_FIELDS.FILE_OBJ
-        if file_key in data2:
+    def get_fingerprint_and_duration_from_file(file):
+        fingerprint = None
+        duration = None
+
+        if isinstance(file, InMemoryUploadedFile):
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                for chunk in file.chunks():
+                    tmp.write(chunk)
+                duration, fingerprint = acoustid.fingerprint_file(path=tmp.name)
+        elif isinstance(file, TemporaryUploadedFile):
+            file_path = file.file.name
+            duration, fingerprint = acoustid.fingerprint_file(path=file_path)
+
+        return fingerprint, duration
+
+    @staticmethod
+    def _update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
+            user: User, save_data: dict, schema_data: dict):
+        schema_file_key = SAVE_SCHEMA_FIELDS.FILE
+        if schema_file_key in schema_data:
+            file = schema_data[schema_file_key]
             file_model_data = dict()
-            file_model_data[FILE_SAVE_MODEL_FIELDS.USER] = user.pk
-            file_model_data[FILE_SAVE_MODEL_FIELDS.FILE] = data2[file_key]
+            file_model_data[TRACK_FILE_SAVE_MODEL_FIELDS.USER] = user.pk
+            file_model_data[TRACK_FILE_SAVE_MODEL_FIELDS.FILE] = file
+
+            # It could have been done in the TrackFile model but as duration is a fields from the LibraryTrack model,
+            # doing it here enables to calculate it only once.
+            fingerprint, duration = TrackService.get_fingerprint_and_duration_from_file(file=file)
+
+            if fingerprint is not None and duration is not None:
+                save_data[SAVE_MODEL_FIELDS.DURATION] = duration
+                file_model_data[TRACK_FILE_SAVE_MODEL_FIELDS.FINGERPRINT] = fingerprint
+
+                schema_should_check_if_fingerprint_exists_key = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS
+                if schema_should_check_if_fingerprint_exists_key in schema_data:
+                    file_model_data[TRACK_FILE_SAVE_MODEL_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = \
+                        schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
+
+                TrackService._update_data_with_musicbrainz_recording_id_from_fingerprint_and_duration(
+                    data=file_model_data, fingerprint=fingerprint, duration=duration)
+
             file_model_serializer = FileModelSerializer(data=file_model_data)
             file_model_serializer.is_valid(raise_exception=True)
-            file_obj = file_model_serializer.save(user=user)
-            data1[SAVE_MODEL_FIELDS.FILE_OBJ] = file_obj.pk  # type: ignore
+            file = file_model_serializer.save(user=user)
+            save_data[SAVE_MODEL_FIELDS.TRACK_FILE] = file.pk  # type: ignore
 
     @staticmethod
     def _update_data1_with_genre_uuid_if_genre_in_data2(user: User, data1: dict, data2: dict):
@@ -152,21 +191,14 @@ class TrackService(Service):
         return best_recording
 
     @staticmethod
-    def _update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(
-            data1: dict, data2: dict, file_obj_key: str = SAVE_SCHEMA_FIELDS.FILE_OBJ):
-        if file_obj_key in data2:
-            file_obj = data2[file_obj_key]
-            if file_obj:
-                file_path = file_obj.file.name
-                duration, fingerprint = acoustid.fingerprint_file(path=file_path)
-                data1[SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT] = fingerprint
-                isByte = isinstance(data1[SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT], bytes)
-                data1[SAVE_MODEL_FIELDS.DURATION] = duration
-                musicbrainz_best_matching_recording = \
-                    TrackService._get_musicbrainz_recording_id_from_fingerprint_and_duration(
-                        fingerprint=fingerprint, duration=duration)  # type: ignore
-                if musicbrainz_best_matching_recording:
-                    data1[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_ID] = musicbrainz_best_matching_recording['id']  # type: ignore
+    def _update_data_with_musicbrainz_recording_id_from_fingerprint_and_duration(data: dict,
+                                                                                 fingerprint: bytes,
+                                                                                 duration: float):
+        musicbrainz_best_matching_recording = \
+            TrackService._get_musicbrainz_recording_id_from_fingerprint_and_duration(
+                fingerprint=fingerprint, duration=duration)  # type: ignore
+        if musicbrainz_best_matching_recording:
+            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_ID] = musicbrainz_best_matching_recording['id']  # type: ignore
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
@@ -181,12 +213,12 @@ class TrackService(Service):
         return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
 
     def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
-        file = post_data[POST_FIELDS.FILE_OBJ]
+        file = post_data[POST_FIELDS.TRACK_FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
 
         save_schema_data = save_schema_data_from_file.copy()
-        keys = [SAVE_SCHEMA_FIELDS.FILE_OBJ,
-                SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
+        keys = [SAVE_SCHEMA_FIELDS.FILE,
+                SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS,
                 SAVE_SCHEMA_FIELDS.TITLE,
                 SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_NAME,
@@ -204,8 +236,6 @@ class TrackService(Service):
                                                                          keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
 
         Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
-        self._update_data1_with_acoustic_fingerprint_and_duration_if_file_obj_set_in_data2(
-            data1=save_schema_data, data2=post_data, file_obj_key=POST_FIELDS.FILE_OBJ)
         return save_schema_data
 
     def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
@@ -218,7 +248,7 @@ class TrackService(Service):
                                                                             old_instance) -> dict:
         save_model_data = dict()
 
-        for key in [SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS,
+        for key in [SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS,
                     SAVE_MODEL_FIELDS.TITLE,
                     SAVE_MODEL_FIELDS.RATING,
                     SAVE_MODEL_FIELDS.LANGUAGE]:
@@ -231,7 +261,8 @@ class TrackService(Service):
                                                                   data1=save_model_data,
                                                                   data2=save_schema_data)
         self._update_data1_with_genre_uuid_if_genre_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
-        self._update_data1_with_file_obj_id_if_file_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
+        self._update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
+            user=user, save_data=save_model_data, schema_data=save_schema_data)
         return save_model_data
 
     def _update_data1_with_album_uuid_if_album_name_in_data2(self, user: User, data1: dict, data2: dict):
@@ -305,7 +336,7 @@ class TrackService(Service):
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
-            raise ValidationError({LIB_TRACK_ATTRIBUTE_LABEL.FILE_OBJ_USER_FRIENDLY: [
+            raise ValidationError({LIB_TRACK_ATTRIBUTE_LABEL.TRACK_FILE_USER_FRIENDLY: [
                 f"Error while extracting metadata from file: {error}"]})
 
         save_data_with_potential_none = self._get_copy_of_dict_including_only_specified_keys(
@@ -318,7 +349,7 @@ class TrackService(Service):
                   SAVE_SCHEMA_FIELDS.RATING,
                   SAVE_SCHEMA_FIELDS.LANGUAGE])
         save_data_clean = self._remove_none_or_empty_key_from_dict(save_data_with_potential_none)
-        save_data_clean[SAVE_SCHEMA_FIELDS.FILE_OBJ] = file
+        save_data_clean[SAVE_SCHEMA_FIELDS.FILE] = file
 
         return save_data_clean
 
@@ -348,7 +379,7 @@ class TrackService(Service):
 
             track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
                 mine_track_url=mine_track_url, data=extract_data)
-            post_data[POST_FIELDS.FILE_OBJ] = DjangoFile(file=track_temp_file, name=track_filename)
+            post_data[POST_FIELDS.TRACK_FILE] = DjangoFile(file=track_temp_file, name=track_filename)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
             library_track = self.create(post_data=post_data, request=request)

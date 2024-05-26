@@ -15,7 +15,7 @@ def validate_size(file):
         track_size_error_too_small_message = 'File too large. Size should not exceed {size:.3f} Mo.'
         raise ValidationError(
             {
-                ATTRIBUTES_LABEL.FILE_OBJ:
+                ATTRIBUTES_LABEL.TRACK_FILE:
                 track_size_error_too_small_message.format(size=settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO)
             })
 
@@ -24,7 +24,7 @@ def validate_size(file):
         track_size_error_too_small_message = 'File too small. Size should be at least {size:.3f} Mo.'
         raise ValidationError(
             {
-                ATTRIBUTES_LABEL.FILE_OBJ:
+                ATTRIBUTES_LABEL.TRACK_FILE:
                 track_size_error_too_small_message.format(size=settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO)
             })
 
@@ -50,7 +50,7 @@ def validate_content_type_is_audio(file):
 
     error = audio is None
     if error:
-        raise ValidationError({ATTRIBUTES_LABEL.FILE_OBJ: 'Invalid file format. Only audio files are allowed.'})
+        raise ValidationError({ATTRIBUTES_LABEL.TRACK_FILE: 'Invalid file format. Only audio files are allowed.'})
 
 
 def validate_filename_length(value):
@@ -63,7 +63,7 @@ def validate_filename_length(value):
     if len(filename) > settings.LIB_TRACK_FILENAME_LEN_MAX:
         raise ValidationError(
             {
-                ATTRIBUTES_LABEL.FILE_OBJ:
+                ATTRIBUTES_LABEL.TRACK_FILE:
                 f"Ensure this filename has at most {settings.LIB_TRACK_FILENAME_LEN_MAX} characters" +
                 f"it has {len(filename)})."
             })

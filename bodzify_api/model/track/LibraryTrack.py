@@ -12,7 +12,7 @@ from django.dispatch import receiver
 
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
-from bodzify_api.model.File import File
+from bodzify_api.model.TrackFile import TrackFile
 from bodzify_api.model.playlist.Playlist import Playlist
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
@@ -26,9 +26,8 @@ class ATTRIBUTES_LABEL:
     MODEL = 'library_track'
     UUID = "uuid"
     USER = "user"
-    FILE_OBJ = "file_obj"
-    FILE_OBJ_USER_FRIENDLY = "file"
-    ACOUSTIC_FINGERPRINT = "acoustic_fingerprint"
+    TRACK_FILE = "track_file"
+    TRACK_FILE_USER_FRIENDLY = "file"
     DURATION = "duration"
     MUSICBRAINZ_RECORDING_ID = "musicbrainz_recording_id"
     TITLE = "title"
@@ -48,8 +47,7 @@ class LibraryTrack(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
-    file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
-    acoustic_fingerprint = models.BinaryField(editable=True)  # default non editable
+    track_file = models.OneToOneField(TrackFile, on_delete=models.CASCADE)
     duration = models.FloatField(default=None, null=True)
     musicbrainz_recording_id = models.UUIDField(default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
@@ -88,7 +86,7 @@ class LibraryTrack(models.Model):
         duration_str = f"{ATTRIBUTES_LABEL.DURATION}: {str(self.duration)} " if self.duration else ""
         rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
         language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
-        file_str = f"{ATTRIBUTES_LABEL.FILE_OBJ}: {str(self.file_obj)} " if self.file_obj else ""
+        file_str = f"{ATTRIBUTES_LABEL.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
                 f"{genre_str}{duration_str}{rating_str}{language_str}"
                 f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
@@ -123,12 +121,11 @@ class LibraryTrack(models.Model):
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
 
-            if self.file_obj:
-                self.duration = audiometadata.get_specific_metadata_from_file(
-                    file=self.file_obj.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION)
-                super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
-
-            super().save(update_fields=[ATTRIBUTES_LABEL.ACOUSTIC_FINGERPRINT])
+            if self.track_file:
+                if not self.duration:
+                    self.duration = audiometadata.get_specific_metadata_from_file(
+                        file=self.track_file.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION)
+                    super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:
@@ -188,11 +185,11 @@ class LibraryTrack(models.Model):
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_ATTRIBUTES_LABEL
+            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
         playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
         return list(playlist_lib_track_relation_relations.values_list(
-            playlist_lib_track_relation_ATTRIBUTES_LABEL.PLAYLIST + '__uuid',
-            playlist_lib_track_relation_ATTRIBUTES_LABEL.POSITION))
+            PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.PLAYLIST + '__uuid',
+            PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION))
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
         track_artist_uuid = self.artist.uuid if self.artist else None
@@ -224,7 +221,7 @@ class LibraryTrack(models.Model):
                 uuid=track_album_uuid).delete_if_no_track_linked()
 
     def _update_file_tags_if_file_exists(self):
-        if self.file_obj is None:
+        if self.track_file is None:
             return
 
         normalized_metadata = dict()
@@ -273,15 +270,15 @@ class LibraryTrack(models.Model):
         normalized_metadata[audiometadata.NormalizedMetadataKeys.LANGUAGE] = language_tag
 
         audiometadata.update_file_metadata(
-            file=self.file_obj.file,
+            file=self.track_file.file,
             normalized_metadata=normalized_metadata,
             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
 
 @ receiver(pre_delete, sender=LibraryTrack)
 def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
-    if instance.file_obj:
-        instance.file_obj.file.delete(False)
+    if instance.track_file:
+        instance.track_file.file.delete(False)
 
     now = timezone.now()
     for playlist in instance.playlists.all():

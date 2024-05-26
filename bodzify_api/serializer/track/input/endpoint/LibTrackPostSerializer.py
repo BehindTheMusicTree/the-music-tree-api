@@ -2,14 +2,13 @@
 
 from rest_framework import serializers
 
-from bodzify_api.serializer.InputEndpointSerializer import InputEndpointSerializer
 from bodzify_api.serializer.track.input.endpoint.LibTrackEndPointSerializer \
     import LibTrackEndPointSerializer, FIELDS as ENDPOINT_FIELDS
 
 
 class FIELDS:
-    FILE_OBJ = ENDPOINT_FIELDS.FILE_OBJ
-    SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS = ENDPOINT_FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS
+    TRACK_FILE = ENDPOINT_FIELDS.TRACK_FILE
+    SHOULD_CHECK_IF_FINGERPRINT_EXISTS = ENDPOINT_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS
     TITLE = ENDPOINT_FIELDS.TITLE
     ARTIST_NAME = ENDPOINT_FIELDS.ARTIST_NAME
     ALBUM_NAME = ENDPOINT_FIELDS.ALBUM_NAME

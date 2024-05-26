@@ -13,6 +13,6 @@ class TestCase(TrackTestCase):
         filename_with_extension = f'{filename_without_extension}.{file_extension}'
         response = self.post_lib_track_with_generic_sample_no_tags(extension=file_extension)
         assert response.status_code == status.HTTP_201_CREATED
-        assert Path(self.saved_lib_track.file_obj.file.name) == \
+        assert Path(self.saved_lib_track.track_file.file.name) == \
             self.test_user.lib_path_relative_to_media_dir / filename_with_extension
         assert self.test_user.does_track_filename_exist_in_lib(filename_with_extension)

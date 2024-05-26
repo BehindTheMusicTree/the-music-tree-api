@@ -14,8 +14,8 @@ ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be 
 
 class FIELDS:
     USER = SAVE_SCHEMA_FIELDS.USER
-    FILE_OBJ = SAVE_SCHEMA_FIELDS.FILE_OBJ
-    SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS
+    TRACK_FILE = SAVE_SCHEMA_FIELDS.FILE
+    SHOULD_CHECK_IF_FINGERPRINT_EXISTS = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS
     TITLE = SAVE_SCHEMA_FIELDS.TITLE
     ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
     ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_NAME
@@ -29,7 +29,7 @@ class FIELDS:
 
 class LibTrackEndPointSerializer(InputEndpointSerializer):
     file = serializers.FileField()
-    should_check_if_acoustic_fingerprint_exists = serializers.BooleanField(required=False)
+    should_check_if_fingerprint_exists = serializers.BooleanField(required=False)
     title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                                   required=False,
                                   allow_blank=True,

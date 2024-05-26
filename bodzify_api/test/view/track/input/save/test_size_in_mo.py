@@ -9,17 +9,17 @@ class TestCase(TrackTestCase):
     def test_wav(self):
         response = self.post_lib_track_with_generic_sample_no_tags(extension='wav')
         assert response.status_code == status.HTTP_201_CREATED
-        assert str(round(self.saved_lib_track.file_obj.size_in_mo, 2)) == str(
+        assert str(round(self.saved_lib_track.track_file.size_in_mo, 2)) == str(
             self.LIB_TRACK_GENERIC_SAMPLES_TAGS_NONE_SIZE_IN_MO.WAV)
 
     def test_mp3(self):
         response = self.post_lib_track_with_generic_sample_no_tags(extension='mp3')
         assert response.status_code == status.HTTP_201_CREATED
-        assert str(round(self.saved_lib_track.file_obj.size_in_mo, 2)) == str(
+        assert str(round(self.saved_lib_track.track_file.size_in_mo, 2)) == str(
             self.LIB_TRACK_GENERIC_SAMPLES_TAGS_NONE_SIZE_IN_MO.MP3)
 
     def test_flac(self):
         response = self.post_lib_track_with_generic_sample_no_tags(extension='flac')
         assert response.status_code == status.HTTP_201_CREATED
-        assert str(round(self.saved_lib_track.file_obj.size_in_mo, 2)) == str(
+        assert str(round(self.saved_lib_track.track_file.size_in_mo, 2)) == str(
             self.LIB_TRACK_GENERIC_SAMPLES_TAGS_NONE_SIZE_IN_MO.FLAC)

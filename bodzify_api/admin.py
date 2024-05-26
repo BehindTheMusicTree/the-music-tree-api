@@ -9,7 +9,7 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.File import File
+from bodzify_api.model.TrackFile import TrackFile
 
 admin.site.register(Criteria)
 admin.site.register(CriteriaType)
@@ -20,4 +20,4 @@ admin.site.register(CriteriaPlaylist)
 admin.site.register(LibraryTrack)
 admin.site.register(Album)
 admin.site.register(Artist)
-admin.site.register(File)
+admin.site.register(TrackFile)

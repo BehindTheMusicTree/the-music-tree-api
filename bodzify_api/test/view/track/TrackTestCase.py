@@ -46,9 +46,9 @@ class TrackTestCase(AppTestCase):
     def _set_saved_lib_track_attribute(self, response):
         lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
-        if self.saved_lib_track.file_obj:
+        if self.saved_lib_track.track_file:
             self.saved_lib_track_metadata = audiometadata.get_normalized_metadata_from_file(
-                file=self.saved_lib_track.file_obj.file)
+                file=self.saved_lib_track.track_file.file)
 
     def extract(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
@@ -85,7 +85,7 @@ class TrackTestCase(AppTestCase):
 
     def post_lib_track(self, file_abs_path, data_dict=None) -> JsonResponse:
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LIB_TRACK_POST_FIELDS.FILE_OBJ: sample_file}
+            file_field_dict = {LIB_TRACK_POST_FIELDS.TRACK_FILE: sample_file}
             if data_dict is not None:
                 data_dict = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(data_dict))
             else:

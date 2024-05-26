@@ -11,9 +11,8 @@ from bodzify_api.serializer.album.input.AlbumModelSerializer import FIELDS as AL
 
 class FIELDS:
     USER = SAVE_MODEL_FIELDS.USER
-    FILE_OBJ = "file"
-    SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS = "should_check_if_acoustic_fingerprint_exists"
-    ACOUSTIC_FINGERPRINT = SAVE_MODEL_FIELDS.ACOUSTIC_FINGERPRINT
+    FILE = "file"
+    SHOULD_CHECK_IF_FINGERPRINT_EXISTS = "should_check_if_fingerprint_exists"
     DURATION = SAVE_MODEL_FIELDS.DURATION
     TITLE = SAVE_MODEL_FIELDS.TITLE
     ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
@@ -28,7 +27,7 @@ class FIELDS:
 
 class LibTrackSaveSchemaSerializer(serializers.Serializer):
     file = serializers.FileField(required=False)
-    should_check_if_acoustic_fingerprint_exists = serializers.BooleanField(required=False)
+    should_check_if_fingerprint_exists = serializers.BooleanField(required=False)
     title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                                   required=False,
                                   allow_blank=True,
@@ -61,7 +60,7 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
     force_title_generation = serializers.BooleanField(required=False)
 
     class Meta:
-        fields = [FIELDS.FILE_OBJ,
+        fields = [FIELDS.FILE,
                   FIELDS.TITLE,
                   FIELDS.ARTIST_NAME,
                   FIELDS.ALBUM_NAME,
@@ -77,12 +76,5 @@ class LibTrackSaveSchemaSerializer(serializers.Serializer):
                 uuid=attrs[FIELDS.GENRE_UUID],
                 user=self.context['request'].user).exists():
             raise serializers.ValidationError({FIELDS.GENRE_UUID: "The genre UUID does not exist."})
-
-        if FIELDS.ACOUSTIC_FINGERPRINT in attrs:
-            if FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS in attrs and attrs[
-                    FIELDS.SHOULD_CHECK_IF_ACOUSTIC_FINGERPRINT_EXISTS]:
-                acoustic_fingerprint = attrs[FIELDS.ACOUSTIC_FINGERPRINT]
-                if LibraryTrack.objects.filter(acoustic_fingerprint=acoustic_fingerprint).exists():
-                    raise serializers.ValidationError("This track already exists in the library.")
 
         return super().validate(attrs)
