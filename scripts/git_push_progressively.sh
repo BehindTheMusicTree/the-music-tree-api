@@ -35,10 +35,9 @@ while true; do
             else
                 git add "$file_path"
             fi
+            # Commit and push
+            git commit -m "$commit_message"
+            git push
         fi
     done
-
-    # Commit and push
-    git commit -m "$commit_message"
-    git push
 done
