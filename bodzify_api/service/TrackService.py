@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import binascii
 import os
 import random
 from typing import Optional
@@ -30,8 +31,10 @@ from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackModelSerializer \
     import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
-from bodzify_api.serializer.track_file.input.FileModelSerializer \
-    import FileModelSerializer, FIELDS as TRACK_FILE_SAVE_MODEL_FIELDS
+from bodzify_api.serializer.track_file.input.TrackFileSchemaSerializer \
+    import TrackFileSchemaSerialazer, FIELDS as TRACK_FILE_SCHEMA_FIELDS
+from bodzify_api.serializer.track_file.input.TrackFileModelSerializer \
+    import TrackFileModelSerializer, FIELDS as TRACK_FILE_MODEL_FIELDS
 from bodzify_api.serializer.track.input.LibTrackSchemaSerializer \
     import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
 from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
@@ -106,9 +109,8 @@ class TrackService(Service):
         schema_file_key = SAVE_SCHEMA_FIELDS.FILE
         if schema_file_key in schema_data:
             file = schema_data[schema_file_key]
-            file_model_data = dict()
-            file_model_data[TRACK_FILE_SAVE_MODEL_FIELDS.USER] = user.pk
-            file_model_data[TRACK_FILE_SAVE_MODEL_FIELDS.FILE] = file
+            file_schema_data = dict()
+            file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE] = file
 
             # It could have been done in the TrackFile model but as duration is a fields from the LibraryTrack model,
             # doing it here enables to calculate it only once.
@@ -116,17 +118,26 @@ class TrackService(Service):
 
             if fingerprint is not None and duration is not None:
                 save_data[SAVE_MODEL_FIELDS.DURATION] = duration
-                file_model_data[TRACK_FILE_SAVE_MODEL_FIELDS.FINGERPRINT] = fingerprint
+
+                file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINT_CHAR] = binascii.hexlify(fingerprint).decode()
 
                 schema_should_check_if_fingerprint_exists_key = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS
                 if schema_should_check_if_fingerprint_exists_key in schema_data:
-                    file_model_data[TRACK_FILE_SAVE_MODEL_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = \
+                    file_schema_data[TRACK_FILE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = \
                         schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
 
                 TrackService._update_data_with_musicbrainz_recording_id_from_fingerprint_and_duration(
-                    data=file_model_data, fingerprint=fingerprint, duration=duration)
+                    data=file_schema_data, fingerprint=fingerprint, duration=duration)
 
-            file_model_serializer = FileModelSerializer(data=file_model_data)
+            file_schema_serializer = TrackFileSchemaSerialazer(data=file_schema_data)
+            file_schema_serializer.is_valid(raise_exception=True)
+
+            file_model_data = dict()
+            file_model_data[TRACK_FILE_MODEL_FIELDS.USER] = user.pk
+            file_model_data[TRACK_FILE_MODEL_FIELDS.FILE] = file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE]
+            file_model_data[TRACK_FILE_MODEL_FIELDS.FINGERPRINT] = fingerprint
+
+            file_model_serializer = TrackFileModelSerializer(data=file_model_data)
             file_model_serializer.is_valid(raise_exception=True)
             file = file_model_serializer.save(user=user)
             save_data[SAVE_MODEL_FIELDS.TRACK_FILE] = file.pk  # type: ignore
