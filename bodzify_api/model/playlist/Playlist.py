@@ -71,6 +71,8 @@ class Playlist(models.Model):
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
     last_track_list_update_date = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     def update_last_track_list_update_date(self):
         self.last_track_list_update_date = timezone.now()

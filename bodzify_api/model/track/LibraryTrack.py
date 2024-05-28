@@ -70,11 +70,17 @@ class LibraryTrack(models.Model):
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
-    added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
     playlists = models.ManyToManyField(Playlist,
                                        through='PlaylistLibTrackRelation',
                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
+    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
+
+    class Meta:
+        db_table = 'library_track'
+        verbose_name = 'Library Track'
+        verbose_name_plural = 'Library Tracks'
 
     @property
     def relative_url(self) -> str:

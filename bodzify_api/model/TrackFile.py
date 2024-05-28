@@ -68,6 +68,11 @@ class TrackFile(models.Model):
                                        db_persist=True)
     bitrate_in_kbps = models.IntegerField(null=True, blank=True)
 
+    class Meta:
+        db_table = 'track_file'
+        verbose_name = 'Track File'
+        verbose_name_plural = 'Track Files'
+
     def __str__(self) -> str:
         if self.file and self.file.name:
             return self.file.name + " (" + str(self.size_in_bytes) + " bytes)"
