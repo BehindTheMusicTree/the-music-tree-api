@@ -13,6 +13,7 @@ from django.dispatch import receiver
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.TrackFile import TrackFile
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.Playlist import Playlist
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
@@ -29,7 +30,7 @@ class ATTRIBUTES_LABEL:
     TRACK_FILE = "track_file"
     TRACK_FILE_USER_FRIENDLY = "file"
     DURATION = "duration"
-    MUSICBRAINZ_RECORDING_ID = "musicbrainz_recording_id"
+    MUSICBRAINZ_RECORDING = "musicbrainz_recording"
     TITLE = "title"
     ARTIST = "artist"
     ALBUM = "album"
@@ -37,7 +38,7 @@ class ATTRIBUTES_LABEL:
     RATING = "rating"
     PLAYLISTS = "playlists"
     LANGUAGE = "language"
-    ADDED_ON = "added_on"
+    CREATED_ON = "created_on"
     RELATIVE_URL = "relative_url"
     PLAY_COUNT = 'play_count'
 
@@ -49,7 +50,8 @@ class LibraryTrack(models.Model):
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file = models.OneToOneField(TrackFile, on_delete=models.CASCADE)
     duration = models.FloatField(default=None, null=True)
-    musicbrainz_recording_id = models.UUIDField(default=None, null=True)
+    musicbrainz_recording = models.ForeignKey(
+        MusicbrainzRecording, on_delete=models.DO_NOTHING, default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,
@@ -95,7 +97,7 @@ class LibraryTrack(models.Model):
         file_str = f"{ATTRIBUTES_LABEL.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
                 f"{genre_str}{duration_str}{rating_str}{language_str}"
-                f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
+                f"{ATTRIBUTES_LABEL.CREATED_ON}: {str(self.created_on)} {file_str}")
 
     def save(self, *args, **kwargs):
         try:
