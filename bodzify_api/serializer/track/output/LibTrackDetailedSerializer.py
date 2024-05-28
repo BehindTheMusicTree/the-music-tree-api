@@ -5,8 +5,10 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
+from bodzify_api.serializer.musicbrainz.recording.MusicbrainzRecordingSerializer import MusicbrainzRecordingDetailedSerializer
 from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
 from bodzify_api.serializer.track_file.output.FileDetailedSerializer import FileDetailedSerializer
+from bodzify_api.test.view.track.input.method.create.attributes import musicbrainz_recording
 
 
 class FIELDS:
@@ -14,7 +16,7 @@ class FIELDS:
     RELATIVE_URL = ATTRIBUTES_LABEL.RELATIVE_URL
     FILE = ATTRIBUTES_LABEL.TRACK_FILE_USER_FRIENDLY
     DURATION = ATTRIBUTES_LABEL.DURATION
-    MUSICBRAINZ_RECORDING_ID = ATTRIBUTES_LABEL.MUSICBRAINZ_RECORDING_ID
+    MUSICBRAINZ_RECORDING = ATTRIBUTES_LABEL.MUSICBRAINZ_RECORDING
     TITLE = ATTRIBUTES_LABEL.TITLE
     ARTIST = ATTRIBUTES_LABEL.ARTIST
     ALBUM = ATTRIBUTES_LABEL.ALBUM
@@ -22,16 +24,17 @@ class FIELDS:
     RATING = ATTRIBUTES_LABEL.RATING
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
     PLAYLISTS = ATTRIBUTES_LABEL.PLAYLISTS
-    ADDED_ON = ATTRIBUTES_LABEL.ADDED_ON
+    CREATED_ON = ATTRIBUTES_LABEL.CREATED_ON
     PLAY_COUNT = ATTRIBUTES_LABEL.PLAY_COUNT
 
 
 class LibTrackDetailedSerializer(serializers.ModelSerializer):
-    genre = CriteriaSimpleSerializer()
+    musicbrainz_recording = MusicbrainzRecordingDetailedSerializer()
+    file = FileDetailedSerializer(source=ATTRIBUTES_LABEL.TRACK_FILE)
     artist = ArtistWithOnlyNameSerializer()
     album = AlbumWithoutTracksSerializer()
+    genre = CriteriaSimpleSerializer()
     playlists = PlaylistWithoutTrackSerializer(many=True)
-    file = FileDetailedSerializer(source=ATTRIBUTES_LABEL.TRACK_FILE)
 
     class Meta:
         model = LibraryTrack
@@ -39,7 +42,7 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.RELATIVE_URL,
                   FIELDS.FILE,
                   FIELDS.DURATION,
-                  FIELDS.MUSICBRAINZ_RECORDING_ID,
+                  FIELDS.MUSICBRAINZ_RECORDING,
                   FIELDS.TITLE,
                   FIELDS.ARTIST,
                   FIELDS.ALBUM,
@@ -47,5 +50,5 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.RATING,
                   FIELDS.LANGUAGE,
                   FIELDS.PLAYLISTS,
-                  FIELDS.ADDED_ON,
+                  FIELDS.CREATED_ON,
                   FIELDS.PLAY_COUNT]
