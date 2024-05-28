@@ -36,6 +36,7 @@ class Criteria(models.Model):
     # and then set the root to itself
     root = models.ForeignKey('Criteria', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
         unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)

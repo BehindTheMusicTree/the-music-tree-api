@@ -28,6 +28,8 @@ class Album(models.Model):
     name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
     album_artists = models.ManyToManyField('bodzify_api.Artist', related_name=ARTIST_ATTRIBUTES_LABEL.ALBUMS)
+    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
         constraints = [

@@ -42,6 +42,12 @@ class CriteriaPlaylist(models.Model):
     parent = models.ForeignKey('CriteriaPlaylist', on_delete=models.CASCADE, null=True, related_name='child_playlist')
     root = models.ForeignKey('CriteriaPlaylist', on_delete=models.CASCADE,
                              null=True, related_name='descendant_playlist')
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
+
+    class Meta:
+        db_table = 'criteria_playlist'
+        verbose_name = 'Criteria Playlist'
+        verbose_name_plural = 'Criteria Playlists'
 
     @property
     def name(self):
