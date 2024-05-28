@@ -12,7 +12,7 @@ class FIELDS:
     UUID = PARENT_FIELDS.UUID
     NAME = PARENT_FIELDS.NAME
     TYPE = PARENT_FIELDS.TYPE
-    ADDED_ON = PARENT_FIELDS.ADDED_ON
+    CREATED_ON = PARENT_FIELDS.CREATED_ON
     LIB_TRACKS_COUNT = PARENT_FIELDS.LIB_TRACKS_COUNT
     LIB_TRACKS = ATTRIBUTES_LABEL.LIB_TRACKS
     PLAY_COUNT = ATTRIBUTES_LABEL.PLAY_COUNT
@@ -29,7 +29,7 @@ class PlaylistWithTracksSerializer(PlaylistWithoutTrackSerializer):
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
                   FIELDS.TYPE,
-                  FIELDS.ADDED_ON,
+                  FIELDS.CREATED_ON,
                   FIELDS.LIB_TRACKS_COUNT,
                   FIELDS.LIB_TRACKS,
                   FIELDS.PLAY_COUNT,
