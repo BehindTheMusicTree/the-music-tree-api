@@ -17,7 +17,7 @@ class ATTRIBUTES_LABEL:
     MODEL = 'playlist'
     UUID = 'uuid'
     USER = 'user'
-    ADDED_ON = 'added_on'
+    CREATED_ON = 'created_on'
     NAME = 'name'
     TYPE = 'type'
     LIB_TRACKS = 'library_tracks'
@@ -35,7 +35,7 @@ FOREIGN_MODEL_ATTRIBUTES_PREFIXE = 'playlist_'
 class FOREIGN_MODEL_ATTRIBUTES_LABEL:
     UUID = ''
     USER = ''
-    ADDED_ON = ''
+    CREATED_ON = ''
     NAME = ''
     TYPE = ''
     LIB_TRACKS = ''
@@ -52,7 +52,7 @@ FOREIGN_MODEL_RELATIONS_PREFIXE = 'playlist.'
 class FOREIGN_MODEL_RELATIONS_STR:
     UUID = ''
     USER = ''
-    ADDED_ON = ''
+    CREATED_ON = ''
     NAME = ''
     TYPE = ''
     LIB_TRACKS = ''
@@ -68,7 +68,7 @@ for attr, value in vars(ATTRIBUTES_LABEL).items():
 class Playlist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    added_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
     last_track_list_update_date = models.DateTimeField(auto_now_add=True)
     created_on = models.DateTimeField(auto_now_add=True, editable=False)

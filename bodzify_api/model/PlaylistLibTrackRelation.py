@@ -12,14 +12,14 @@ class ATTRIBUTES_LABEL:
     PLAYLIST = PLAYLIST_ATTRIBUTES_LABEL.MODEL
     LIB_TRACK = LIB_TRACK_ATTRIBUTES_LABEL.MODEL
     POSITION = 'position'
-    ADDED_ON = 'added_on'
+    CREATED_ON = 'created_on'
 
 
 class PlaylistLibTrackRelation(models.Model):
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
     library_track = models.ForeignKey(LibraryTrack, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
     position = models.PositiveIntegerField()
-    added_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
         db_table = 'playlist_lib_track_relation'

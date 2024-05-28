@@ -19,7 +19,7 @@ class ATTRIBUTES_LABEL:
     PARENT = "parent"
     CHILDREN = "children"
     ROOT = "root"
-    ADDED_ON = "added_on"
+    CREATED_ON = "created_on"
     LIB_TRACKS = "library_tracks"
     CRITERIA_PLAYLIST = "criteria_playlist"
 
@@ -35,7 +35,7 @@ class Criteria(models.Model):
     # null must be True because when the root is the criteria itself, we must create it first with a null root
     # and then set the root to itself
     root = models.ForeignKey('Criteria', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
-    added_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(auto_now_add=True, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
