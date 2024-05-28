@@ -81,7 +81,7 @@ class PlaylistViewSet(AppModelViewSet):
                 criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
 
         return simple_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
-            tagless_playlist).order_by(ATTRIBUTES_LABEL.ADDED_ON)
+            tagless_playlist).order_by(ATTRIBUTES_LABEL.CREATED_ON)
 
     @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
                                                 type=OpenApiTypes.STR,
