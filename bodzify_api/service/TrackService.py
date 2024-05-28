@@ -127,7 +127,7 @@ class TrackService(Service):
                         schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
 
                 TrackService._update_data_with_musicbrainz_recording_id_from_fingerprint_and_duration(
-                    data=file_schema_data, fingerprint=fingerprint, duration=duration)
+                    data=save_data, fingerprint=fingerprint, duration=duration)
 
             file_schema_serializer = TrackFileSchemaSerialazer(data=file_schema_data)
             file_schema_serializer.is_valid(raise_exception=True)
