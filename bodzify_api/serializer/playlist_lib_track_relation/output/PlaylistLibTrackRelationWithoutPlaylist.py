@@ -8,7 +8,7 @@ from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation,
 
 class FIELDS:
     LIB_TRACK = ATTRIBUTES_LABEL.LIB_TRACK
-    ADDED_ON = ATTRIBUTES_LABEL.ADDED_ON
+    CREATED_ON = ATTRIBUTES_LABEL.CREATED_ON
     POSITION = ATTRIBUTES_LABEL.POSITION
 
 
@@ -18,5 +18,5 @@ class PlaylistLibTrackRelationWithoutPlaylist(serializers.ModelSerializer):
     class Meta:
         model = PlaylistLibTrackRelation
         fields = [FIELDS.LIB_TRACK,
-                  FIELDS.ADDED_ON,
+                  FIELDS.CREATED_ON,
                   FIELDS.POSITION]
