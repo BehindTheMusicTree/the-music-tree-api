@@ -14,14 +14,14 @@ from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializ
 class FIELDS:
     UUID = PLAYLIST_ATTRIBUTES_LABEL.UUID
     NAME = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.NAME
-    ADDED_ON = PLAYLIST_ATTRIBUTES_LABEL.ADDED_ON
+    CREATED_ON = PLAYLIST_ATTRIBUTES_LABEL.CREATED_ON
     LIB_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
     LIB_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
 
 
 class PlaylistChildSerializer(PlaylistWithoutTrackSerializer):
     uuid = serializers.CharField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.UUID)
-    added_on = serializers.DateTimeField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.ADDED_ON)
+    created_on = serializers.DateTimeField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.CREATED_ON)
     library_tracks_count = serializers.SerializerMethodField()
     library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.LIB_TRACKS,
                                                                many=True)
@@ -32,6 +32,6 @@ class PlaylistChildSerializer(PlaylistWithoutTrackSerializer):
     class Meta:
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
-                  FIELDS.ADDED_ON,
+                  FIELDS.CREATED_ON,
                   FIELDS.LIB_TRACKS_COUNT,
                   FIELDS.LIB_TRACKS]
