@@ -1,6 +1,8 @@
 from django.contrib import admin
 
 from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
+from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
@@ -21,3 +23,5 @@ admin.site.register(LibraryTrack)
 admin.site.register(Album)
 admin.site.register(Artist)
 admin.site.register(TrackFile)
+admin.site.register(MusicbrainzArtist)
+admin.site.register(MusicbrainzRecording)
