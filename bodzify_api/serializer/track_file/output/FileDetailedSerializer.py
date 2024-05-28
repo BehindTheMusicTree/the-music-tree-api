@@ -6,10 +6,8 @@ from bodzify_api.model.TrackFile import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL, Tr
 
 
 class FIELDS:
-    FILE = ATTRIBUTES_LABEL.FILE
     FILENAME = ATTRIBUTES_LABEL.FILENAME
     EXTENSION = ATTRIBUTES_LABEL.EXTENSION
-    FINGERPRINT = ATTRIBUTES_LABEL.FINGERPRINT
     HAS_FLAC_MD5_BEEN_CORRECTED = ATTRIBUTES_LABEL.HAS_FLAC_MD5_BEEN_CORRECTED
     SIZE_IN_BYTES = ATTRIBUTES_LABEL.SIZE_IN_BYTES
     SIZE_IN_KO = ATTRIBUTES_LABEL.SIZE_IN_KO
@@ -21,10 +19,8 @@ class FileDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TrackFile
-        fields = [FIELDS.FILE,
-                  FIELDS.FILENAME,
+        fields = [FIELDS.FILENAME,
                   FIELDS.EXTENSION,
-                  FIELDS.FINGERPRINT,
                   FIELDS.HAS_FLAC_MD5_BEEN_CORRECTED,
                   FIELDS.SIZE_IN_BYTES,
                   FIELDS.SIZE_IN_KO,
