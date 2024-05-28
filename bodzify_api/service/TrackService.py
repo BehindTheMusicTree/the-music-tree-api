@@ -15,9 +15,12 @@ from django.db.models import F
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.core.files.base import File as DjangoFile
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api.model.Artist import Artist
+from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 import bodzify_api.settings as settings
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.service.Service import Service
@@ -126,7 +129,7 @@ class TrackService(Service):
                     file_schema_data[TRACK_FILE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = \
                         schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
 
-                TrackService._update_data_with_musicbrainz_recording_id_from_fingerprint_and_duration(
+                TrackService._update_data_with_musicbrainz_recording_id_from_fingerprint_and_duration_if_found(
                     data=save_data, fingerprint=fingerprint, duration=duration)
 
             file_schema_serializer = TrackFileSchemaSerialazer(data=file_schema_data)
@@ -185,7 +188,7 @@ class TrackService(Service):
         return min((recording for recording in best_recordings), key=score_recording)
 
     @staticmethod
-    def _get_musicbrainz_recording_id_from_fingerprint_and_duration(fingerprint: str, duration: float) -> Optional[str]:
+    def _get_musicbrainz_recording_from_fingerprint_and_duration(fingerprint: str, duration: float) -> Optional[dict]:
         try:
             lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
                                      fingerprint=fingerprint,
@@ -202,14 +205,22 @@ class TrackService(Service):
         return best_recording
 
     @staticmethod
-    def _update_data_with_musicbrainz_recording_id_from_fingerprint_and_duration(data: dict,
-                                                                                 fingerprint: bytes,
-                                                                                 duration: float):
+    def _update_data_with_musicbrainz_recording_id_from_fingerprint_and_duration_if_found(data: dict,
+                                                                                          fingerprint: bytes,
+                                                                                          duration: float):
         musicbrainz_best_matching_recording = \
-            TrackService._get_musicbrainz_recording_id_from_fingerprint_and_duration(
-                fingerprint=fingerprint, duration=duration)  # type: ignore
+            TrackService._get_musicbrainz_recording_from_fingerprint_and_duration(fingerprint=fingerprint,  # type: ignore
+                                                                                  duration=duration)
         if musicbrainz_best_matching_recording:
-            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_ID] = musicbrainz_best_matching_recording['id']  # type: ignore
+            recording_id = musicbrainz_best_matching_recording['id']
+            try:
+                recording = MusicbrainzRecording.objects.get(recording_id=recording_id)
+            except ObjectDoesNotExist:
+                artists_dict = musicbrainz_best_matching_recording['artists']
+                for artist_dict in artists_dict:
+                    artist, created = MusicbrainzArtist.objects.get_or_create(artist_id=artist_dict['id'],
+                                                                              defaults={'name': artist_dict['name'], })
+            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_ID] = recording_id
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
