@@ -1,20 +1,28 @@
 #!/usr/bin/env python
 
-import shortuuid
+import uuid
 
 from django.db import models
 
-from bodzify_api import settings
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 
 
+class ATTRIBUTES_LABEL:
+    UUID = 'uuid'
+    TITLE = 'title'
+    MUSICBRAINZ_ARTISTS = 'musicbrainz_artists'
+    DURATION = 'duration'
+    RELEASE_DATE = 'release_date'
+    CREATED_ON = 'created_on'
+    UPDATED_ON = 'updated_on'
+
+
 class MusicbrainzRecording(models.Model):
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
-    recording_id = models.CharField(max_length=255, unique=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
-    artist = models.ForeignKey(MusicbrainzArtist, on_delete=models.CASCADE)
+    musicbrainz_artists = models.ManyToManyField(MusicbrainzArtist)
     duration = models.IntegerField()
-    release_date = models.DateField()
+    release_date = models.DateField(null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True, editable=True)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
