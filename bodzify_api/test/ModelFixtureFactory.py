@@ -96,10 +96,11 @@ class ModelFixtureFactory:
                                      created_on: Optional[datetime.date] = datetime.date.today(),
                                      updated_on: Optional[datetime.date] = datetime.date.today()) -> MusicbrainzRecording:
         return G(MusicbrainzRecording,
-                 uuid=uuid, title=title,
+                 uuid=uuid,
+                 title=title,
                  duration=duration,
-                 musicbrainz_artists=musicbrainz_artists,
                  release_date=release_date,
+                 musicbrainz_artists=musicbrainz_artists,
                  created_on=created_on,
                  updated_on=updated_on)  # type: ignore
 
