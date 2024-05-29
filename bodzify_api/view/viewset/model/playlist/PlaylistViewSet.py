@@ -54,33 +54,33 @@ class PlaylistViewSet(AppModelViewSet):
         simple_playlist_queryset = BasePlaylist.objects.none()
         if type_query_param is None or type_query_param.lower() == SIMPLE_PLAYLIST_TYPE_LABEL.lower():
             simple_playlist_queryset = queryset.filter(
-                simple_base_playlist__isnull=False,
-                simple_base_playlist__name__icontains=name_query_param)
+                simple_playlist__isnull=False,
+                simple_playlist__name__icontains=name_query_param)
 
         criteria_playlist_queryset = BasePlaylist.objects.none()
         if type_query_param is None or type_query_param.lower() in [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE.lower(),
                                                                     CRITERIA_PLAYLIST_TYPES_LABEL.TAG.lower()]:
             criteria_playlist_queryset = queryset.filter(
-                criteria_base_playlist__isnull=False,
-                criteria_base_playlist__type__label__icontains=type_query_param.upper()
+                criteria_playlist__isnull=False,
+                criteria_playlist__type__label__icontains=type_query_param.upper()
                 if type_query_param is not None else '',
-                criteria_base_playlist__criteria__name__icontains=name_query_param)
+                criteria_playlist__criteria__name__icontains=name_query_param)
 
         genreless_playlist = BasePlaylist.objects.none()
         if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS.lower() \
                 and type_query_param in [None, CRITERIA_PLAYLIST_TYPES_LABEL.GENRE]:  # type: ignore
             genreless_playlist = queryset.filter(
-                criteria_base_playlist__isnull=False,
-                criteria_base_playlist__criteria__isnull=True,
-                criteria_base_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
+                criteria_playlist__isnull=False,
+                criteria_playlist__criteria__isnull=True,
+                criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
 
         tagless_playlist = BasePlaylist.objects.none()
         if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS.lower() \
                 and type_query_param in [None, CRITERIA_PLAYLIST_TYPES_LABEL.TAG]:
             tagless_playlist = queryset.filter(
-                criteria_base_playlist__isnull=False,
-                criteria_base_playlist__criteria__isnull=True,
-                criteria_base_playlist__type_id=CRITERIA_TYPES_ID.TAG)
+                criteria_playlist__isnull=False,
+                criteria_playlist__criteria__isnull=True,
+                criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
 
         return simple_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
             tagless_playlist).order_by(ATTRIBUTES_LABEL.CREATED_ON)
