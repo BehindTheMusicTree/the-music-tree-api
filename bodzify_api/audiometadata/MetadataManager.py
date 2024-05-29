@@ -141,21 +141,21 @@ class MetadataManager:
     def _get_duration_using_tinytag(self) -> Optional[float]:
         if isinstance(self.file, TemporaryUploadedFile):
             with open(self.file.temporary_file_path(), 'rb') as f:
-                return TinyTag.get(f.name).duration_in_sec
+                return TinyTag.get(f.name).duration
         elif isinstance(self.file, FieldFile):
             with open(self.file.path, 'rb') as f:
-                return TinyTag.get(f.name).duration_in_sec
+                return TinyTag.get(f.name).duration
         elif isinstance(self.file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 for chunk in self.file.chunks():
                     tmp.write(chunk)
                 tmp.close()
-                return TinyTag.get(tmp.name).duration_in_sec
+                return TinyTag.get(tmp.name).duration
         if self.file.file:  # type: ignore
             filename = self.file.file.name  # type: ignore
         else:
             filename = self.file.name  # type: ignore
-        return TinyTag.get(filename).duration_in_sec
+        return TinyTag.get(filename).duration
 
     def get_duration_in_sec(self):
         duration_in_sec = self._get_duration_from_file_matadata()
