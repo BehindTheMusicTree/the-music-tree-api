@@ -160,18 +160,18 @@ class TrackService(Service):
             save_data[SAVE_MODEL_FIELDS.TRACK_FILE] = file.pk  # type: ignore
 
     @staticmethod
-    def _update_data1_with_genre_uuid_if_genre_in_data2(user: User, data1: dict, data2: dict):
+    def _update_model_data_with_genre_uuid_if_genre_in_schema_data(user: User, model_data: dict, schema_data: dict):
         genre_uuid_key = SAVE_SCHEMA_FIELDS.GENRE_UUID
-        if genre_uuid_key in data2:
-            genre_uuid = data2[genre_uuid_key]
+        if genre_uuid_key in schema_data:
+            genre_uuid = schema_data[genre_uuid_key]
 
             if genre_uuid in ["", None]:
                 genre_uuid = None
         else:
             genre_name_key = SAVE_SCHEMA_FIELDS.GENRE_NAME
             genre_uuid = None
-            if genre_name_key in data2:
-                genre_name = data2[genre_name_key]
+            if genre_name_key in schema_data:
+                genre_name = schema_data[genre_name_key]
 
                 if genre_name in ["", None]:
                     genre_uuid = None
@@ -183,7 +183,7 @@ class TrackService(Service):
             else:
                 return
 
-        data1[SAVE_MODEL_FIELDS.GENRE] = genre_uuid
+        model_data[SAVE_MODEL_FIELDS.GENRE] = genre_uuid
 
         return
 
@@ -202,7 +202,7 @@ class TrackService(Service):
         return min((recording for recording in best_recordings), key=score_recording)
 
     @staticmethod
-    def _get_musicbrainz_recording_dict_from_fingerprint_and_duration(
+    def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
             fingerprint: str, duration_in_sec: float) -> Optional[dict]:
         try:
             lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
@@ -224,8 +224,8 @@ class TrackService(Service):
                                                                                           fingerprint: bytes,
                                                                                           duration_in_sec: float):
         musicbrainz_recording_dict = \
-            TrackService._get_musicbrainz_recording_dict_from_fingerprint_and_duration(fingerprint=fingerprint,  # type: ignore
-                                                                                       duration_in_sec=duration_in_sec)
+            TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint=fingerprint,  # type: ignore
+                                                                                            duration_in_sec=duration_in_sec)
         if musicbrainz_recording_dict:
             musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.ID]
             try:
@@ -263,17 +263,17 @@ class TrackService(Service):
     def _get_put_serializer(self, old_instance, put_data: dict):
         return LibTrackPutSerializer(instance=old_instance, data=put_data)
 
-    def _get_save_schema_serializer(self, old_instance, save_schema_data: dict, request):
-        return LibTrackSaveSchemaSerializer(data=save_schema_data, context={'request': request})
+    def _get_save_schema_serializer(self, old_instance, schema_data: dict, request):
+        return LibTrackSaveSchemaSerializer(data=schema_data, context={'request': request})
 
-    def _get_save_model_serializer(self, old_instance, save_model_data: dict, partial: bool):
-        return TrackModelSerializer(instance=old_instance, data=save_model_data, partial=True)
+    def _get_save_model_serializer(self, old_instance, model_data: dict, partial: bool):
+        return TrackModelSerializer(instance=old_instance, data=model_data, partial=True)
 
     def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
         file = post_data[POST_FIELDS.TRACK_FILE]
         save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
 
-        save_schema_data = save_schema_data_from_file.copy()
+        schema_data = save_schema_data_from_file.copy()
         keys = [SAVE_SCHEMA_FIELDS.FILE,
                 SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS,
                 SAVE_SCHEMA_FIELDS.TITLE,
@@ -283,55 +283,60 @@ class TrackService(Service):
                 SAVE_SCHEMA_FIELDS.GENRE_UUID,
                 SAVE_SCHEMA_FIELDS.RATING,
                 SAVE_SCHEMA_FIELDS.LANGUAGE]
-        self._override_data1_with_data2_values_for_each_key_in_data2(data1=save_schema_data, data2=post_data, keys=keys)
+        self._override_data1_with_data2_values_for_each_key_in_data2(data1=schema_data, data2=post_data, keys=keys)
 
-        if SAVE_SCHEMA_FIELDS.TITLE not in save_schema_data:
-            save_schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
+        if SAVE_SCHEMA_FIELDS.TITLE not in schema_data:
+            schema_data[SAVE_SCHEMA_FIELDS.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
         if SAVE_SCHEMA_FIELDS.GENRE_UUID not in post_data:
-            self._override_data1_with_data2_values_for_each_key_in_data2(data1=save_schema_data,
+            self._override_data1_with_data2_values_for_each_key_in_data2(data1=schema_data,
                                                                          data2=post_data,
                                                                          keys=[SAVE_SCHEMA_FIELDS.GENRE_NAME])
 
-        Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
-        return save_schema_data
+        Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=schema_data)
+        return schema_data
 
     def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
-        save_schema_data = put_data.copy()
-        Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=save_schema_data)
-        return save_schema_data
+        schema_data = put_data.copy()
+        Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=schema_data)
+        return schema_data
 
     def _get_save_model_data_from_save_schema_data_not_including_user_field(self, user: User,
-                                                                            save_schema_data: dict,
+                                                                            schema_data: dict,
                                                                             old_instance) -> dict:
-        save_model_data = dict()
+        model_data = dict()
 
         for key in [SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS,
                     SAVE_MODEL_FIELDS.TITLE,
                     SAVE_MODEL_FIELDS.RATING,
                     SAVE_MODEL_FIELDS.LANGUAGE]:
-            self._update_data1_with_key_if_set_in_data2(key=key, data1=save_model_data, data2=save_schema_data)
+            self._update_data1_with_key_if_set_in_data2(key=key, data1=model_data, data2=schema_data)
 
-        self._update_data1_with_artist_uuid_if_artist_name_in_data2(user=user,
-                                                                    data1=save_model_data,
-                                                                    data2=save_schema_data)
-        self._update_data1_with_album_uuid_if_album_name_in_data2(user=user,
-                                                                  data1=save_model_data,
-                                                                  data2=save_schema_data)
-        self._update_data1_with_genre_uuid_if_genre_in_data2(user=user, data1=save_model_data, data2=save_schema_data)
+        self._update_model_data_with_artist_uuid_if_artist_name_in_schema_data(user=user,
+                                                                               model_data=model_data,
+                                                                               schema_data=schema_data)
+        self._update_model_data_with_album_uuid_if_album_name_in_schema_data(user=user,
+                                                                             model_data=model_data,
+                                                                             schema_data=schema_data)
+        self._update_model_data_with_genre_uuid_if_genre_in_schema_data(user=user,
+                                                                        model_data=model_data,
+                                                                        schema_data=schema_data)
         self._update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
-            user=user, save_data=save_model_data, schema_data=save_schema_data)
-        return save_model_data
+            user=user, save_data=model_data, schema_data=schema_data)
+        return model_data
 
-    def _update_data1_with_album_uuid_if_album_name_in_data2(self, user: User, data1: dict, data2: dict):
-        data1_album_key = SAVE_MODEL_FIELDS.ALBUM
-        data2_album_name_key = SAVE_SCHEMA_FIELDS.ALBUM_NAME
-        data2_artists_names_key = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
+    def _update_model_data_with_album_uuid_if_album_name_in_schema_data(self,
+                                                                        user: User,
+                                                                        model_data: dict,
+                                                                        schema_data: dict):
+        model_data_album_key = SAVE_MODEL_FIELDS.ALBUM
+        schema_data_album_name_key = SAVE_SCHEMA_FIELDS.ALBUM_NAME
+        model_data_artists_names_key = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
 
-        if data2_album_name_key in data2:
-            album_name = data2[data2_album_name_key]
+        if schema_data_album_name_key in schema_data:
+            album_name = schema_data[schema_data_album_name_key]
 
-            if data2_artists_names_key in data2:
-                album_artists_name_string = data2[data2_artists_names_key]
+            if model_data_artists_names_key in schema_data:
+                album_artists_name_string = schema_data[model_data_artists_names_key]
                 if album_artists_name_string is not None:
                     album_artists_name_list = self._get_artists_name_list_from_string(album_artists_name_string)
                 else:
@@ -342,9 +347,9 @@ class TrackService(Service):
                 user=user, album_name=album_name, album_artists_name_list=album_artists_name_list)
 
             if album is not None:
-                data1[data1_album_key] = album.uuid
+                model_data[model_data_album_key] = album.uuid
             else:
-                data1[data1_album_key] = None
+                model_data[model_data_album_key] = None
 
     def _get_artists_name_list_from_string(self, names_string: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_string.split(
@@ -410,16 +415,17 @@ class TrackService(Service):
 
         return save_data_clean
 
-    def _update_data1_with_artist_uuid_if_artist_name_in_data2(self, user: User, data1: dict, data2: dict):
+    def _update_model_data_with_artist_uuid_if_artist_name_in_schema_data(
+            self, user: User, model_data: dict, schema_data: dict):
         data2_artist_name_key = SAVE_SCHEMA_FIELDS.ARTIST_NAME
         data1_artist_key = SAVE_MODEL_FIELDS.ARTIST
-        if data2_artist_name_key in data2:
-            artist_name = data2[data2_artist_name_key]
+        if data2_artist_name_key in schema_data:
+            artist_name = schema_data[data2_artist_name_key]
             artist = Artist.get_artist_from_name_after_eventual_creation(user=user, artist_name=artist_name)
             if artist is not None:
-                data1[data1_artist_key] = artist.uuid
+                model_data[data1_artist_key] = artist.uuid
             else:
-                data1[data1_artist_key] = None
+                model_data[data1_artist_key] = None
 
     def extract(self, extract_data: dict, request):
         mine_track_url = extract_data[MINE_TRACK_FIELDS.URL]

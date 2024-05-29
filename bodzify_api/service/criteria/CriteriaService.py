@@ -22,14 +22,14 @@ class CriteriaService(Service):
     def _get_put_serializer(self, old_instance, put_data: dict):
         return CriteriaPutSerializer(instance=old_instance, data=put_data)
 
-    def _get_save_schema_serializer(self, old_instance, save_schema_data: dict, request):
-        return CriteriaSaveSchemaSerializer(data=save_schema_data, context={'request': request})
+    def _get_save_schema_serializer(self, old_instance, schema_data: dict, request):
+        return CriteriaSaveSchemaSerializer(data=schema_data, context={'request': request})
 
-    def _get_save_model_serializer(self, old_instance, save_model_data: dict, partial: bool):
-        return CriteriaModelSerializer(instance=old_instance, data=save_model_data, partial=True)
+    def _get_save_model_serializer(self, old_instance, model_data: dict, partial: bool):
+        return CriteriaModelSerializer(instance=old_instance, data=model_data, partial=True)
 
     def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
-        save_schema_data = post_data.copy()
+        schema_data = post_data.copy()
 
         parent_key = ATTRIBUTES_LABEL.PARENT
         if parent_key in post_data:
@@ -38,24 +38,24 @@ class CriteriaService(Service):
                 parent_uuid = ""
         else:
             parent_uuid = ""
-        save_schema_data[ATTRIBUTES_LABEL.PARENT] = parent_uuid
-        return save_schema_data
+        schema_data[ATTRIBUTES_LABEL.PARENT] = parent_uuid
+        return schema_data
 
     def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance) -> dict:
         return put_data
 
     def _get_save_model_data_from_save_schema_data_not_including_user_field(
-            self, user: User, save_schema_data: dict, old_instance) -> dict:
-        save_model_data = dict()
+            self, user: User, schema_data: dict, old_instance) -> dict:
+        model_data = dict()
 
         self._update_data1_with_key_if_set_in_data2(key=ATTRIBUTES_LABEL.NAME,
-                                                    data1=save_model_data,
-                                                    data2=save_schema_data)
+                                                    data1=model_data,
+                                                    data2=schema_data)
 
         self._update_data1_with_key_if_set_in_data2(key=ATTRIBUTES_LABEL.PARENT,
-                                                    data1=save_model_data,
-                                                    data2=save_schema_data)
+                                                    data1=model_data,
+                                                    data2=schema_data)
 
-        save_model_data[ATTRIBUTES_LABEL.TYPE] = self.criteria_type_id
+        model_data[ATTRIBUTES_LABEL.TYPE] = self.criteria_type_id
 
-        return save_model_data
+        return model_data

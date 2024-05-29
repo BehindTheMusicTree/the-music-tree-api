@@ -16,11 +16,11 @@ class Service:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
-    def _get_save_schema_serializer(self, old_instance, save_schema_data: dict, request) -> Serializer:
+    def _get_save_schema_serializer(self, old_instance, schema_data: dict, request) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
-    def _get_save_model_serializer(self, old_instance, save_model_data: dict, partial: bool) -> Serializer:
+    def _get_save_model_serializer(self, old_instance, model_data: dict, partial: bool) -> Serializer:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
@@ -34,7 +34,7 @@ class Service:
     @abstractmethod
     def _get_save_model_data_from_save_schema_data_not_including_user_field(self,
                                                                             user: User,
-                                                                            save_schema_data: dict,
+                                                                            schema_data: dict,
                                                                             old_instance=None) -> dict:
         raise NotImplementedError("You should implement this method in a subclass")
 
@@ -78,26 +78,26 @@ class Service:
     def create(self, post_data: dict, request):
         post_serializer = self._get_post_serializer(post_data=post_data)
         post_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_save_schema_data_from_post_data(post_data=post_data)
-        return self._save(save_schema_data=save_schema_data, old_instance=None, request=request)
+        schema_data = self._get_save_schema_data_from_post_data(post_data=post_data)
+        return self._save(schema_data=schema_data, old_instance=None, request=request)
 
     def update(self, put_data: dict, old_instance, request):
         put_serializer = self._get_put_serializer(old_instance=old_instance, put_data=put_data)
         put_serializer.is_valid(raise_exception=True)
-        save_schema_data = self._get_save_schema_data_from_put_data(put_data=put_data, old_instance=old_instance)
-        return self._save(save_schema_data=save_schema_data, old_instance=old_instance, request=request)
+        schema_data = self._get_save_schema_data_from_put_data(put_data=put_data, old_instance=old_instance)
+        return self._save(schema_data=schema_data, old_instance=old_instance, request=request)
 
-    def _save(self, save_schema_data: dict, old_instance, request):
+    def _save(self, schema_data: dict, old_instance, request):
         save_schema_serializer = self._get_save_schema_serializer(old_instance=old_instance,
-                                                                  save_schema_data=save_schema_data,
+                                                                  schema_data=schema_data,
                                                                   request=request)
         save_schema_serializer.is_valid(raise_exception=True)
 
-        save_model_data = self._get_save_model_data_from_save_schema_data_not_including_user_field(
-            user=request.user, save_schema_data=save_schema_data, old_instance=old_instance)
-        save_model_data['user'] = request.user.pk
+        model_data = self._get_save_model_data_from_save_schema_data_not_including_user_field(
+            user=request.user, schema_data=schema_data, old_instance=old_instance)
+        model_data['user'] = request.user.pk
         save_model_serializer = self._get_save_model_serializer(old_instance=old_instance,
-                                                                save_model_data=save_model_data,
+                                                                model_data=model_data,
                                                                 partial=True)
         save_model_serializer.is_valid(raise_exception=True)
         return save_model_serializer.save()
