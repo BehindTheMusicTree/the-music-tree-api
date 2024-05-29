@@ -10,6 +10,7 @@ from bodzify_api import settings
 class ATTRIBUTES_LABEL:
     UUID = 'uuid'
     NAME = 'name'
+    MUSICBRAINZ_LINK = 'musicbrainz_link'
     CREATED_ON = 'created_on'
     UPDATED_ON = 'updated_on'
 

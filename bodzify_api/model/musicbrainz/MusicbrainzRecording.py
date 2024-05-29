@@ -11,9 +11,10 @@ from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 class ATTRIBUTES_LABEL:
     UUID = 'uuid'
     TITLE = 'title'
-    MUSICBRAINZ_ARTISTS = 'musicbrainz_artists'
     DURATION = 'duration'
     RELEASE_DATE = 'release_date'
+    MUSICBRAINZ_ARTISTS = 'musicbrainz_artists'
+    MUSICBRAINZ_LINK = 'musicbrainz_link'
     CREATED_ON = 'created_on'
     UPDATED_ON = 'updated_on'
 
