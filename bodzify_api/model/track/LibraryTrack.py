@@ -49,7 +49,7 @@ class LibraryTrack(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file = models.OneToOneField(TrackFile, on_delete=models.CASCADE)
-    duration = models.IntegerField(default=None, null=True)
+    duration = models.IntegerField()
     musicbrainz_recording = models.ForeignKey(
         MusicbrainzRecording, on_delete=models.DO_NOTHING, default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
@@ -121,6 +121,12 @@ class LibraryTrack(models.Model):
             self._update_file_tags_if_file_exists()
 
         except LibraryTrack.DoesNotExist:
+            if self.track_file:
+                if not self.duration:
+                    self.duration = audiometadata.get_specific_metadata_from_file(
+                        file=self.track_file.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION)
+                    super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
+
             super().save(*args, **kwargs)
             from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
@@ -128,12 +134,6 @@ class LibraryTrack(models.Model):
             PlaylistLibTrackRelation.objects.create(playlist=all_simple_playlist.playlist, library_track=self)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
-
-            if self.track_file:
-                if not self.duration:
-                    self.duration = audiometadata.get_specific_metadata_from_file(
-                        file=self.track_file.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION)
-                    super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:
