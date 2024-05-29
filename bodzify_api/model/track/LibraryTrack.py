@@ -49,7 +49,7 @@ class LibraryTrack(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file = models.OneToOneField(TrackFile, on_delete=models.CASCADE)
-    duration = models.FloatField(default=None, null=True)
+    duration = models.IntegerField(default=None, null=True)
     musicbrainz_recording = models.ForeignKey(
         MusicbrainzRecording, on_delete=models.DO_NOTHING, default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
@@ -76,7 +76,7 @@ class LibraryTrack(models.Model):
     playlists = models.ManyToManyField(Playlist,
                                        through='PlaylistLibTrackRelation',
                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
-    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:

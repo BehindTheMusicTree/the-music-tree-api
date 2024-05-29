@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import shortuuid
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -68,10 +69,10 @@ for attr, value in vars(ATTRIBUTES_LABEL).items():
 class Playlist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
     play_count = models.IntegerField(default=0)
     last_track_list_update_date = models.DateTimeField(auto_now_add=True)
-    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     def update_last_track_list_update_date(self):

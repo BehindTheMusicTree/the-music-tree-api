@@ -3,9 +3,10 @@
 from typing import Optional
 import shortuuid
 
+from django.utils import timezone
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models import QuerySet
+from django.contrib.auth.models import User
 
 from bodzify_api.model.playlist.Playlist import Playlist
 import bodzify_api.settings as settings
@@ -35,7 +36,7 @@ class Criteria(models.Model):
     # null must be True because when the root is the criteria itself, we must create it first with a null root
     # and then set the root to itself
     root = models.ForeignKey('Criteria', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
-    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:

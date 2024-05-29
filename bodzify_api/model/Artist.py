@@ -5,6 +5,7 @@ import shortuuid
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 from bodzify_api import settings
 
@@ -25,7 +26,7 @@ class Artist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=200, default=None)
-    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:

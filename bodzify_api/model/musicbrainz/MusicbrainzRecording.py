@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-import uuid
-
+from django.utils import timezone
 from django.db import models
 
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
@@ -18,12 +17,12 @@ class ATTRIBUTES_LABEL:
 
 
 class MusicbrainzRecording(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, editable=False)
     title = models.CharField(max_length=255)
     musicbrainz_artists = models.ManyToManyField(MusicbrainzArtist)
     duration = models.IntegerField()
     release_date = models.DateField(null=True, blank=True)
-    created_on = models.DateTimeField(auto_now_add=True, editable=True)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     def __str__(self):

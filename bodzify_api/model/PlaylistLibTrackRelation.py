@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.db.models import F
+from django.utils import timezone
 
 from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
@@ -19,7 +20,7 @@ class PlaylistLibTrackRelation(models.Model):
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
     library_track = models.ForeignKey(LibraryTrack, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
     position = models.PositiveIntegerField()
-    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
 
     class Meta:
         db_table = 'playlist_lib_track_relation'
