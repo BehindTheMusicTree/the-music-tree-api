@@ -36,7 +36,7 @@ from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_A
 from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.LibTrackModelSerializer \
-    import FIELDS as SAVE_MODEL_FIELDS, TrackSaveModelSerializer
+    import FIELDS as SAVE_MODEL_FIELDS, TrackModelSerializer
 from bodzify_api.serializer.track_file.input.TrackFileSchemaSerializer \
     import TrackFileSchemaSerialazer, FIELDS as TRACK_FILE_SCHEMA_FIELDS
 from bodzify_api.serializer.track_file.input.TrackFileModelSerializer \
@@ -100,7 +100,7 @@ class TrackService(Service):
     def _decrease_position_of_next_tracks_in_old_track_playlists(playlists_with_old_position: list):
         for playlist_uuid, old_position in playlists_with_old_position:
             playlist_lib_track_relation_relations_to_update = PlaylistLibTrackRelation.objects.filter(
-                playlist__uuid=playlist_uuid, position__gt=old_position)
+                base_playlist__uuid=playlist_uuid, position__gt=old_position)
             playlist_lib_track_relation_relations_to_update.update(
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
@@ -267,7 +267,7 @@ class TrackService(Service):
         return LibTrackSaveSchemaSerializer(data=save_schema_data, context={'request': request})
 
     def _get_save_model_serializer(self, old_instance, save_model_data: dict, partial: bool):
-        return TrackSaveModelSerializer(instance=old_instance, data=save_model_data, partial=True)
+        return TrackModelSerializer(instance=old_instance, data=save_model_data, partial=True)
 
     def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
         file = post_data[POST_FIELDS.TRACK_FILE]

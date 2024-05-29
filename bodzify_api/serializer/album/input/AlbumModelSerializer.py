@@ -9,7 +9,7 @@ class FIELDS:
     ALBUM_ARTISTS = ATTRIBUTES_LABEL.ALBUM_ARTISTS
 
 
-class AlbumSaveModelSerializer(InputEndpointSerializer):
+class AlbumModelSerializer(InputEndpointSerializer):
 
     class Meta:
         model = Album
