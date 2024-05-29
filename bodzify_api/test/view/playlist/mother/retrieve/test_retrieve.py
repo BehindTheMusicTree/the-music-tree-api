@@ -26,8 +26,8 @@ class TestCase(PlaylistTestCase):
         name = 'rock'
         genre = self.model_fixture_factory.create_genre(name=name)
         playlist_uuid = BasePlaylist.objects.get(
-            criteria_base_playlist__criteria=genre,
-            criteria_base_playlist__type=CRITERIA_TYPES_ID.GENRE).uuid
+            criteria_playlist__criteria=genre,
+            criteria_playlist__type=CRITERIA_TYPES_ID.GENRE).uuid
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
@@ -37,8 +37,8 @@ class TestCase(PlaylistTestCase):
         name = 'fr'
         genre = self.model_fixture_factory.create_tag(name=name)
         playlist_uuid = BasePlaylist.objects.get(
-            criteria_base_playlist__criteria=genre,
-            criteria_base_playlist__type=CRITERIA_TYPES_ID.TAG).uuid
+            criteria_playlist__criteria=genre,
+            criteria_playlist__type=CRITERIA_TYPES_ID.TAG).uuid
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
