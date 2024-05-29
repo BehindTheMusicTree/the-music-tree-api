@@ -5,7 +5,7 @@ from rest_framework import status
 from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -23,7 +23,7 @@ class TestCase(TrackTestCase):
         data = {POST_FIELDS.GENRE_NAME: genre_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).playlist
+        genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).base_playlist
         assert PlaylistLibTrackRelation.objects.get(playlist=genre_playlist,
                                                     library_track=self.saved_lib_track).position == 1
 
@@ -35,7 +35,7 @@ class TestCase(TrackTestCase):
         data = {POST_FIELDS.GENRE_NAME: genre_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).playlist
+        genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).base_playlist
         assert PlaylistLibTrackRelation.objects.get(playlist=genre_playlist,
                                                     library_track=self.saved_lib_track).position == 1
         assert PlaylistLibTrackRelation.objects.get(playlist=genre_playlist, library_track=lib_track1).position == 3

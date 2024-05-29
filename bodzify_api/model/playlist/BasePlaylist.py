@@ -66,14 +66,18 @@ for attr, value in vars(ATTRIBUTES_LABEL).items():
         setattr(FOREIGN_MODEL_RELATIONS_STR, attr, FOREIGN_MODEL_RELATIONS_PREFIXE + value)
 
 
-class Playlist(models.Model):
+class BasePlaylist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    created_on = models.DateTimeField(default=timezone.now, editable=False)
     play_count = models.IntegerField(default=0)
     last_track_list_update_date = models.DateTimeField(auto_now_add=True)
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
+
+    class Meta:
+        db_table = 'base_playlist'
+        verbose_name = 'Base Playlist'
+        verbose_name_plural = 'Base Playlists'
 
     def update_last_track_list_update_date(self):
         self.last_track_list_update_date = timezone.now()

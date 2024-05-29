@@ -3,7 +3,7 @@
 from typing import Optional
 from rest_framework import serializers
 
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL, Playlist
+from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL, BasePlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 
 
@@ -17,7 +17,7 @@ class FIELDS:
     LAST_TRACK_LIST_UPDATE_DATE = ATTRIBUTES_LABEL.LAST_TRACK_LIST_UPDATE_DATE
 
 
-class PlaylistWithoutTrackSerializer(serializers.ModelSerializer):
+class BasePlaylistWithoutTrackSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     library_tracks_count = serializers.IntegerField(source='f{ATTRIBUTES_LABEL.LIB_TRACKS}.count', read_only=True)
@@ -39,7 +39,7 @@ class PlaylistWithoutTrackSerializer(serializers.ModelSerializer):
             return None
 
     class Meta:
-        model = Playlist
+        model = BasePlaylist
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
                   FIELDS.TYPE,

@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import F
 from django.utils import timezone
 
-from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 
 
@@ -17,7 +17,7 @@ class ATTRIBUTES_LABEL:
 
 
 class PlaylistLibTrackRelation(models.Model):
-    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
+    playlist = models.ForeignKey(BasePlaylist, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
     library_track = models.ForeignKey(LibraryTrack, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
     position = models.PositiveIntegerField()
     created_on = models.DateTimeField(default=timezone.now, editable=False)
@@ -28,7 +28,7 @@ class PlaylistLibTrackRelation(models.Model):
         verbose_name_plural = 'Playlist Library Track Relations'
 
     def __str__(self):
-        return f'Playlist {self.playlist.uuid} - Track title {self.library_track.title}'
+        return f'Playlist {self.base_playlist.uuid} - Track title {self.library_track.title}'
 
     def save(self, *args, **kwargs):
         if not self.pk:

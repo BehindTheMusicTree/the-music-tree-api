@@ -9,10 +9,10 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as 
     SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_PARAM
-from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as PLAYLIST_GET_FIELDS
+from bodzify_api.serializer.playlist.base.input.query_param import FIELDS as GET_QUERY_PARAM
+from bodzify_api.serializer.playlist.base.output.with_tracks import FIELDS as PLAYLIST_GET_FIELDS
 from bodzify_api.test.get_filters.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
-from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 
 
 class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):

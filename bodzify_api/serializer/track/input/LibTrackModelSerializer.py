@@ -18,7 +18,7 @@ class FIELDS:
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
 
 
-class TrackSaveModelSerializer(serializers.ModelSerializer):
+class TrackModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LibraryTrack

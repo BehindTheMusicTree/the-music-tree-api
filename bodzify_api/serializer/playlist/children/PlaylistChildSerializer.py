@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-from typing import Optional
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.children.CriteriaPlaylist import ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
-from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
+from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
+from bodzify_api.serializer.playlist.base.output.without_track \
+    import BasePlaylistWithoutTrackSerializer
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer \
     import LibTrackWithoutAlbumAndPlaylistSerializer
 
@@ -19,7 +19,7 @@ class FIELDS:
     LIB_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
 
 
-class PlaylistChildSerializer(PlaylistWithoutTrackSerializer):
+class PlaylistChildSerializer(BasePlaylistWithoutTrackSerializer):
     uuid = serializers.CharField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.UUID)
     created_on = serializers.DateTimeField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.CREATED_ON)
     library_tracks_count = serializers.SerializerMethodField()

@@ -3,7 +3,7 @@
 from rest_framework import status
 from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
@@ -15,7 +15,7 @@ class TestCase(CriteriaTestCase):
 
     def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
+        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).base_playlist
         lib_track_previously_second_in_rock = self.model_fixture_factory.create_lib_track(genre=rock_genre, title="kok")
         lib_track_previously_first_in_rock = self.model_fixture_factory.create_lib_track(genre=rock_genre, title="lkdw")
 
@@ -40,7 +40,7 @@ class TestCase(CriteriaTestCase):
 
     def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning_of_parent_of_parent(self):
         guitare_genre = self.model_fixture_factory.create_genre(name="Guitare")
-        guitare_playlist = CriteriaPlaylist.objects.get(criteria=guitare_genre).playlist
+        guitare_playlist = CriteriaPlaylist.objects.get(criteria=guitare_genre).base_playlist
         lib_track_previously_second_in_guitare = self.model_fixture_factory.create_lib_track(
             genre=guitare_genre, title="guitare2")
         lib_track_previously_first_in_guitare = self.model_fixture_factory.create_lib_track(
@@ -73,7 +73,7 @@ class TestCase(CriteriaTestCase):
 
     def test_new_parent_not_acendant_of_old_parent_then_update_positions_in_old_parent(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
+        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).base_playlist
 
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
 

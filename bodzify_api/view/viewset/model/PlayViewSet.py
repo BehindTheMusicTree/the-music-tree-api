@@ -22,7 +22,7 @@ class PlayViewSet(AppModelViewSet):
         super().__init__(PlayService(), **kwargs)
 
     def get_queryset(self):
-        return Play.objects.filter(playlist__user=self.request.user).order_by(f"-{ATTRIBUTES_LABEL.TIME}")
+        return Play.objects.filter(base_playlist__user=self.request.user).order_by(f"-{ATTRIBUTES_LABEL.TIME}")
 
     def _get_detailed_serializer(self, instance):
         return PlayDetailedSerializer(instance=instance)

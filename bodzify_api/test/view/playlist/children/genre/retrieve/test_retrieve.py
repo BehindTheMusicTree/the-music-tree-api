@@ -15,7 +15,7 @@ class TestCase(GenrePlaylistTestCase):
     def test_ok(self):
         rock_criteria_name = "Rock"
         rock_genre = self.model_fixture_factory.create_genre(name=rock_criteria_name)
-        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
+        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).base_playlist
         response = self.retrieve_genre_playlist(playlist_uuid=rock_playlist.uuid)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()[GET_RESULT_FIELDS.NAME] == rock_criteria_name  # type: ignore

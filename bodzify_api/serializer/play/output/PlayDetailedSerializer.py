@@ -4,8 +4,9 @@ from typing import Any, Dict
 from bodzify_api.model.Play import Play, ATTRIBUTES_LABEL
 from rest_framework import serializers
 
-from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import PlaylistWithTracksSerializer
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.serializer.playlist.base.output.with_tracks \
+    import BasePlaylistWithTracksSerializer
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumPlaylistGenreSerializer \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
 
@@ -29,7 +30,7 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.TIME]
 
     def get_content_object(self, obj) -> Dict[str, Any]:
-        if isinstance(obj.content_object, Playlist):
-            return PlaylistWithTracksSerializer(obj.content_object).data
+        if isinstance(obj.content_object, BasePlaylist):
+            return BasePlaylistWithTracksSerializer(obj.content_object).data  # type: ignore
         else:
-            return LibTrackWithoutAlbumPlaylistGenreSerializer(obj.content_object).data
+            return LibTrackWithoutAlbumPlaylistGenreSerializer(obj.content_object).data  # type: ignore

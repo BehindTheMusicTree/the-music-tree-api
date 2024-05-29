@@ -19,8 +19,8 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_multiple_values_for_content_object_uuid_then_error(self):
-        playlist1_uuid = self.model_fixture_factory.create_simple_playlist(name='test').playlist.uuid
-        playlist2_uuid = self.model_fixture_factory.create_simple_playlist(name='test').playlist.uuid
+        playlist1_uuid = self.model_fixture_factory.create_simple_playlist(name='test').base_playlist.uuid
+        playlist2_uuid = self.model_fixture_factory.create_simple_playlist(name='test').base_playlist.uuid
         data = {to_camel_case(FIELDS.CONTENT_OBJECT_UUID): [playlist1_uuid, playlist2_uuid]}
         response = self.post_play(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -32,8 +32,8 @@ class TestCase(PlayTestCase):
 
     def test_playlist_play(self):
         current_play_count = 42
-        playlist_uuid = self.model_fixture_factory.create_simple_playlist(name='test',
-                                                                          play_count=current_play_count).playlist.uuid
+        playlist_uuid = self.model_fixture_factory.create_simple_playlist(
+            name='test', play_count=current_play_count).base_playlist.uuid
         data = {to_camel_case(FIELDS.CONTENT_OBJECT_UUID): playlist_uuid}
         response = self.post_play(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED

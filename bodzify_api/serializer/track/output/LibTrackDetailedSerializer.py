@@ -6,7 +6,7 @@ from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWit
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
 from bodzify_api.serializer.musicbrainz.recording.MusicbrainzRecordingSerializer import MusicbrainzRecordingDetailedSerializer
-from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerializer import PlaylistWithoutTrackSerializer
+from bodzify_api.serializer.playlist.base.output.without_track import BasePlaylistWithoutTrackSerializer
 from bodzify_api.serializer.track_file.output.FileDetailedSerializer import FileDetailedSerializer
 from bodzify_api.test.view.track.input.method.create.attributes import musicbrainz_recording
 
@@ -34,7 +34,7 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
     artist = ArtistWithOnlyNameSerializer()
     album = AlbumWithoutTracksSerializer()
     genre = CriteriaSimpleSerializer()
-    playlists = PlaylistWithoutTrackSerializer(many=True)
+    playlists = BasePlaylistWithoutTrackSerializer(many=True)
 
     class Meta:
         model = LibraryTrack

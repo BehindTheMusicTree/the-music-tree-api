@@ -29,7 +29,7 @@ class SimplePlaylistViewSet(AppModelViewSet):
         super().__init__(SimplePlaylistService(), **kwargs)
 
     def get_queryset(self):
-        queryset = SimplePlaylist.objects.filter(playlist__user=self.request.user)
+        queryset = SimplePlaylist.objects.filter(base_playlist__user=self.request.user)
         name_filter = self.request.GET.get(GET_FILTER_FIELDS.NAME)
 
         if name_filter is not None:

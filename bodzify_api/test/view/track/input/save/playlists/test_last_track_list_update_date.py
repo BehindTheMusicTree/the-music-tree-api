@@ -4,7 +4,7 @@ import pytest
 from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
@@ -44,7 +44,8 @@ class TestCase(TrackTestCase):
             genre_parent.criteria_playlist.playlist.last_track_list_update_date  # type: ignore
 
     def test_track_newly_linked_to_no_genre_then_update_genreless_playlist_last_track_list_update_date(self):
-        genreless_parent_playlist = CriteriaPlaylist.objects.get(type=CRITERIA_TYPES_ID.GENRE, criteria=None).playlist
+        genreless_parent_playlist = CriteriaPlaylist.objects.get(
+            type=CRITERIA_TYPES_ID.GENRE, criteria=None).base_playlist
         genreless_parent_playlist_last_track_list_update_date_before_update = \
             genreless_parent_playlist.last_track_list_update_date
 

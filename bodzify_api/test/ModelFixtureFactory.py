@@ -133,8 +133,8 @@ class ModelFixtureFactory:
                                created_on: Optional[datetime.date] = datetime.date.today(),
                                updated_on: Optional[datetime.date] = datetime.date.today()) -> SimplePlaylist:
         return G(SimplePlaylist,
-                 playlist__user=self.test_user.django_user,
+                 base_playlist__user=self.test_user.django_user,
                  name=name,
-                 playlist__play_count=play_count,
-                 playlist__created_on=created_on,
+                 base_playlist__play_count=play_count,
+                 base_playlist__created_on=created_on,
                  updated_on=updated_on)  # type: ignore

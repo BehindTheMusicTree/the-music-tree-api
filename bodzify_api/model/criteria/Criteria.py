@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import QuerySet
 from django.contrib.auth.models import User
 
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 import bodzify_api.settings as settings
 
 
@@ -51,7 +51,7 @@ class Criteria(models.Model):
     def _create(self, *args, **kwargs):
         super().save(*args, **kwargs)
         from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-        CriteriaPlaylist.objects.create(playlist=Playlist.objects.create(user=self.user),
+        CriteriaPlaylist.objects.create(playlist=BasePlaylist.objects.create(user=self.user),
                                         type=self.type,
                                         criteria=self)
 
@@ -96,7 +96,7 @@ class Criteria(models.Model):
                     criteria_limit=criteria_limit)
 
     @ staticmethod
-    def _remove_tracks_from_playlist(playlist: Playlist, lib_tracks: QuerySet):
+    def _remove_tracks_from_playlist(playlist: BasePlaylist, lib_tracks: QuerySet):
         from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
         (
             PlaylistLibTrackRelation.objects
@@ -105,7 +105,7 @@ class Criteria(models.Model):
         )
 
     @ staticmethod
-    def _update_playlist_positions_to_fill_deleted_positions(playlist: Playlist):
+    def _update_playlist_positions_to_fill_deleted_positions(playlist: BasePlaylist):
         from bodzify_api.model.PlaylistLibTrackRelation \
             import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
         tracks_positions_ordered_asc = (

@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 
 class FIELDS:
@@ -11,7 +11,7 @@ class FIELDS:
     NAME = PLAYLIST_ATTRIBUTES_LABEL.NAME
 
 
-class PlaylistQueryParamSerializer(serializers.Serializer):
+class BasePlaylistQueryParamSerializer(serializers.Serializer):
     TYPE_VALID_VALUES = [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,
                          CRITERIA_PLAYLIST_TYPES_LABEL.TAG,
                          SIMPLE_PLAYLIST_TYPE_LABEL]

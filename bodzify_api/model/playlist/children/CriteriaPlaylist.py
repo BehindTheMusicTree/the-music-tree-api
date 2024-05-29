@@ -4,7 +4,7 @@ import logging
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType, CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 
 class SPECIAL_NAMES:
@@ -18,7 +18,7 @@ class TYPES_LABEL:
 
 
 class ATTRIBUTES_LABEL:
-    PLAYLIST = 'playlist'
+    BASE_PLAYLIST = 'base_playlist'
     PARENT = 'parent'
     CRITERIA = 'criteria'
     NAME = 'name'
@@ -26,10 +26,10 @@ class ATTRIBUTES_LABEL:
 
 
 class CriteriaPlaylist(models.Model):
-    playlist = models.OneToOneField(Playlist,
-                                    on_delete=models.CASCADE,
-                                    primary_key=True,
-                                    related_name=PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_PLAYLIST)
+    base_playlist = models.OneToOneField(BasePlaylist,
+                                         on_delete=models.CASCADE,
+                                         primary_key=True,
+                                         related_name=PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_PLAYLIST)
     criteria = models.OneToOneField(Criteria,
                                     on_delete=models.CASCADE,
                                     blank=True,
@@ -60,7 +60,7 @@ class CriteriaPlaylist(models.Model):
             return self.criteria.name
 
     def __str__(self) -> str:
-        return f'{str(self.playlist.uuid)} {self.name}'
+        return f'{str(self.base_playlist.uuid)} {self.name}'
 
     def _set_parent(self):
         if self.criteria is None:
@@ -104,7 +104,7 @@ class CriteriaPlaylist(models.Model):
     def save(self, *args, **kwargs):
         self._set_parent()
         try:
-            old_criteria_playlist = CriteriaPlaylist.objects.get(playlist__uuid=self.playlist.uuid)
+            old_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__uuid=self.base_playlist.uuid)
             self._update(old_criteria_playlist, *args, **kwargs)  # type: ignore
         except CriteriaPlaylist.DoesNotExist:
             self._create(*args, **kwargs)

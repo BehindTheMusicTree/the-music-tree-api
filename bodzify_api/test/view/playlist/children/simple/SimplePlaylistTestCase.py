@@ -16,7 +16,7 @@ class SimplePlaylistTestCase(AppTestCase):
 
     def _set_saved_simple_playlist_attribute(self, response):
         uuid = response.json()[SIMPLE_PLAYLIST_GET_FIELDS.UUID]
-        self.saved_simple_playlist = SimplePlaylist.objects.get(playlist__uuid=uuid)
+        self.saved_simple_playlist = SimplePlaylist.objects.get(base_playlist__uuid=uuid)
 
     def post_simple_playlist(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)

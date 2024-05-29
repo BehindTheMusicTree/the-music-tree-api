@@ -12,7 +12,7 @@ from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination impor
     DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.Playlist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
@@ -127,11 +127,11 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
                 'serializer_class': LibTrackDetailedSerializer,
                 'filter_fn': lib_track_filter},
             {
-                'queryset': SimplePlaylist.objects.filter(playlist__user=user),
+                'queryset': SimplePlaylist.objects.filter(base_playlist__user=user),
                 'serializer_class': SimplePlaylistWithoutTrackSerializer,
                 'filter_fn': simple_playlist_filter},
             {
-                'queryset': CriteriaPlaylist.objects.filter(playlist__user=user),
+                'queryset': CriteriaPlaylist.objects.filter(base_playlist__user=user),
                 'serializer_class': CriteriaPlaylistWithoutTracksSerializer,
                 'filter_fn': criteria_playlist_filter},
             {

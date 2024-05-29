@@ -28,7 +28,7 @@ class TestCase(CriteriaTestCase):
         data = {PUT_FIELD.PARENT: rock_genre.uuid}
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
-        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
+        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).base_playlist
         assert playlist.library_tracks.first() == track  # type: ignore
 
     def test_new_parent_not_acendant_of_old_parent_then_remove_criteria_playlist_tracks_from_old_criteria_ascendants_playlist(self):
@@ -39,7 +39,7 @@ class TestCase(CriteriaTestCase):
         data = {PUT_FIELD.PARENT: ''}
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
-        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
+        playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).base_playlist
         assert playlist.library_tracks.first() != track  # type: ignore
 
     def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self):

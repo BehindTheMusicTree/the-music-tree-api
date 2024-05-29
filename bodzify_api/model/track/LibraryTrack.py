@@ -14,7 +14,7 @@ import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.TrackFile import TrackFile
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
@@ -73,7 +73,7 @@ class LibraryTrack(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     play_count = models.IntegerField(default=0)
-    playlists = models.ManyToManyField(Playlist,
+    playlists = models.ManyToManyField(BasePlaylist,
                                        through='PlaylistLibTrackRelation',
                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
     created_on = models.DateTimeField(default=timezone.now, editable=False)
@@ -128,10 +128,11 @@ class LibraryTrack(models.Model):
                     super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
             super().save(*args, **kwargs)
-            from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+            from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
-            all_simple_playlist = SimplePlaylist.objects.get(playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
-            PlaylistLibTrackRelation.objects.create(playlist=all_simple_playlist.playlist, library_track=self)
+            all_simple_playlist = SimplePlaylist.objects.get(
+                base_playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
+            PlaylistLibTrackRelation.objects.create(playlist=all_simple_playlist.base_playlist, library_track=self)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
 
@@ -155,16 +156,16 @@ class LibraryTrack(models.Model):
             old_genre_tree_item = old_genre
             while old_genre_tree_item != genre_limit:
                 genreless_criteria_playlist = CriteriaPlaylist.objects.get(criteria=old_genre_tree_item)
-                base_playlist = genreless_criteria_playlist.playlist
+                base_playlist = genreless_criteria_playlist.base_playlist
                 PlaylistLibTrackRelation.objects.get(playlist=base_playlist, library_track=self).delete()
                 base_playlist.last_track_list_update_date = update_date
                 base_playlist.save()
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
         else:
-            genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
+            genreless_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            base_playlist = genreless_criteria_playlist.playlist
+            base_playlist = genreless_criteria_playlist.base_playlist
             base_playlist.last_track_list_update_date = update_date
             base_playlist.save()
             PlaylistLibTrackRelation.objects.get(playlist=base_playlist, library_track=self).delete()
@@ -177,16 +178,16 @@ class LibraryTrack(models.Model):
             new_genre_tree_item = self.genre
             while new_genre_tree_item != genre_limit:
                 criteria_playlist = CriteriaPlaylist.objects.get(criteria=new_genre_tree_item)
-                playlist = criteria_playlist.playlist
-                PlaylistLibTrackRelation.objects.create(playlist=criteria_playlist.playlist, library_track=self)
+                playlist = criteria_playlist.base_playlist
+                PlaylistLibTrackRelation.objects.create(playlist=criteria_playlist.base_playlist, library_track=self)
                 playlist.last_track_list_update_date = update_date
                 playlist.save()
                 new_genre_tree_item = new_genre_tree_item.parent
         else:
-            genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
+            genreless_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            genreless_parent_playlist = genreless_criteria_playlist.playlist
+            genreless_parent_playlist = genreless_criteria_playlist.base_playlist
             PlaylistLibTrackRelation.objects.create(playlist=genreless_parent_playlist, library_track=self)
             genreless_parent_playlist.last_track_list_update_date = update_date
             genreless_parent_playlist.save()

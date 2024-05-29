@@ -5,13 +5,13 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.CriteriaPlaylist import SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.serializer.playlist.mother.input.PlaylistQueryParamSerializer import FIELDS as GET_QUERY_PARAM
+from bodzify_api.serializer.playlist.base.input.query_param import FIELDS as GET_QUERY_PARAM
 from bodzify_api.test.get_filters.GetFilterWithFreeValuesTestCase import GetFilterWithFreeValuesTestCase
-from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 
 
 class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
@@ -33,7 +33,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
 
         response = self.get_playlists()
         assert response.status_code == status.HTTP_200_OK
-        assert len(self.results) == Playlist.objects.filter(user=self.test_user.django_user).count()
+        assert len(self.results) == BasePlaylist.objects.filter(user=self.test_user.django_user).count()
 
     def test_different_case_then_results(self):
         simple_playlist_name = "Teuf"

@@ -3,9 +3,9 @@
 from rest_framework import status
 
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.serializer.playlist.mother.output.PlaylistWithTracksSerializer import FIELDS as RETRIEVE_FIELDS
-from bodzify_api.test.view.playlist.mother.PlaylistTestCase import PlaylistTestCase
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.serializer.playlist.base.output.with_tracks import FIELDS as RETRIEVE_FIELDS
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.utils import to_camel_case
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumAndPlaylistSerializer import FIELDS as LIB_TRACK_FIELDS
 from bodzify_api.serializer.playlist_lib_track_relation.output.PlaylistLibTrackRelationWithoutPlaylist \
@@ -16,7 +16,7 @@ class TestCase(PlaylistTestCase):
 
     def test_retrieve_simple_then_ok(self):
         name = 'cuisine'
-        playlist_uuid = self.model_fixture_factory.create_simple_playlist(name=name).playlist.uuid
+        playlist_uuid = self.model_fixture_factory.create_simple_playlist(name=name).base_playlist.uuid
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
@@ -25,9 +25,9 @@ class TestCase(PlaylistTestCase):
     def test_retrieve_genre_then_ok(self):
         name = 'rock'
         genre = self.model_fixture_factory.create_genre(name=name)
-        playlist_uuid = Playlist.objects.get(
-            criteria_playlist__criteria=genre,
-            criteria_playlist__type=CRITERIA_TYPES_ID.GENRE).uuid
+        playlist_uuid = BasePlaylist.objects.get(
+            criteria_base_playlist__criteria=genre,
+            criteria_base_playlist__type=CRITERIA_TYPES_ID.GENRE).uuid
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
@@ -36,9 +36,9 @@ class TestCase(PlaylistTestCase):
     def test_retrieve_tag_then_ok(self):
         name = 'fr'
         genre = self.model_fixture_factory.create_tag(name=name)
-        playlist_uuid = Playlist.objects.get(
-            criteria_playlist__criteria=genre,
-            criteria_playlist__type=CRITERIA_TYPES_ID.TAG).uuid
+        playlist_uuid = BasePlaylist.objects.get(
+            criteria_base_playlist__criteria=genre,
+            criteria_base_playlist__type=CRITERIA_TYPES_ID.TAG).uuid
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
@@ -52,7 +52,7 @@ class TestCase(PlaylistTestCase):
         lib_track2 = self.model_fixture_factory.create_lib_track(title="Loves", genre=genre)
         lib_track1 = self.model_fixture_factory.create_lib_track(title="Lovdddde", genre=genre)
 
-        response = self.retrieve_playlist(uuid=genre.criteria_playlist.playlist.uuid)  # type: ignore
+        response = self.retrieve_playlist(uuid=genre.criteria_playlist.base_playlist.uuid)  # type: ignore
         assert response.status_code == status.HTTP_200_OK
         result_tracks = self.result[to_camel_case(RETRIEVE_FIELDS.LIB_TRACKS)]
         assert result_tracks[0][to_camel_case(playlist_lib_track_relation_RELATION_FIELDS.LIB_TRACK)][
