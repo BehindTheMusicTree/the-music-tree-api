@@ -202,13 +202,13 @@ class TrackService(Service):
         return min((recording for recording in best_recordings), key=score_recording)
 
     @staticmethod
-    def _get_musicbrainz_recording_from_fingerprint_and_duration(fingerprint: str, duration: float) -> Optional[dict]:
+    def _get_musicbrainz_recording_dict_from_fingerprint_and_duration(
+            fingerprint: str, duration: float) -> Optional[dict]:
         try:
             lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
                                      fingerprint=fingerprint,
                                      duration=duration,
                                      meta=['recordings', 'releasegroups', 'compress', 'tracks'])
-            print(lookup)
             recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_FIELDS.RESULTS]
             if len(recordings_grouped_by_score) > 0:
                 best_recording = TrackService.get_best_recording(
@@ -224,8 +224,8 @@ class TrackService(Service):
                                                                                           fingerprint: bytes,
                                                                                           duration: float):
         musicbrainz_recording_dict = \
-            TrackService._get_musicbrainz_recording_from_fingerprint_and_duration(fingerprint=fingerprint,  # type: ignore
-                                                                                  duration=duration)
+            TrackService._get_musicbrainz_recording_dict_from_fingerprint_and_duration(fingerprint=fingerprint,  # type: ignore
+                                                                                       duration=duration)
         if musicbrainz_recording_dict:
             musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.ID]
             try:
@@ -255,7 +255,7 @@ class TrackService(Service):
                 musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
                 musicbrainz_recording_pk = musicbrainz_recording.pk
 
-        data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
+            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
