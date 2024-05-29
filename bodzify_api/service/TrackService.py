@@ -51,7 +51,9 @@ class TrackService(Service):
 
     class MUSICBRAINZ_FIELDS:
         RESULTS = 'results'
+        RECORDINGS = 'recordings'
         ID = 'id'
+        SCORE = 'score'
         ARTISTS = 'artists'
         NAME = 'name'
         TITLE = 'title'
@@ -188,18 +190,22 @@ class TrackService(Service):
         return
 
     @staticmethod
-    def get_best_recording(recordings_grouped_by_score, duration_in_sec):
-        def score_group_of_recordings(recording_group):
-            return recording_group['score']
+    def get_best_recording_dict_with_score(recordings_grouped_by_score, duration_in_sec):
+        def score_group_of_recordings(group_of_recordings):
+            return group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.SCORE]
 
         def score_recording(recording):
-            duration_difference = abs(recording.get('duration_in_sec', 0) - duration_in_sec)
+            duration_difference = abs(recording.get(
+                TrackService.MUSICBRAINZ_FIELDS.DURATION_IN_SEC, 0) - duration_in_sec)
             null_count = sum(1 for value in recording.values() if value is None)
             return duration_difference, -null_count
 
         best_group_of_recordings = max(recordings_grouped_by_score, key=score_group_of_recordings)
-        best_recordings = best_group_of_recordings['recordings']
-        return min((recording for recording in best_recordings), key=score_recording)
+        best_recordings = best_group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.RECORDINGS]
+        best_recording = min((recording for recording in best_recordings), key=score_recording)
+        best_recording[TrackService.MUSICBRAINZ_FIELDS.SCORE] = \
+            best_group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.SCORE]
+        return best_recording
 
     @staticmethod
     def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
@@ -211,21 +217,21 @@ class TrackService(Service):
                                      meta=['recordings', 'releasegroups', 'compress', 'tracks'])
             recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_FIELDS.RESULTS]
             if len(recordings_grouped_by_score) > 0:
-                best_recording = TrackService.get_best_recording(
+                best_recording_dict_with_score = TrackService.get_best_recording_dict_with_score(
                     recordings_grouped_by_score=recordings_grouped_by_score, duration_in_sec=duration_in_sec)
             else:
                 return None
         except Exception:
-            best_recording = None
-        return best_recording
+            best_recording_dict_with_score = None
+        return best_recording_dict_with_score
 
     @staticmethod
     def _update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(data: dict,
                                                                                           fingerprint: bytes,
                                                                                           duration_in_sec: float):
         musicbrainz_recording_dict = \
-            TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint=fingerprint,  # type: ignore
-                                                                                            duration_in_sec=duration_in_sec)
+            TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
+                fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
         if musicbrainz_recording_dict:
             musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.ID]
             try:
@@ -249,6 +255,7 @@ class TrackService(Service):
 
                 musicbrainz_recording = MusicbrainzRecording.objects.create(
                     uuid=musicbrainz_recording_uuid,
+                    score=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.SCORE],
                     title=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.TITLE],
                     duration_in_sec=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.DURATION_IN_SEC],
                     release_date=release_date)
