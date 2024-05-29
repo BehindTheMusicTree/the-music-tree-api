@@ -6,17 +6,17 @@ from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist \
     import CriteriaPlaylist, SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer import CriteriaPlaylistWithoutTracksSerializer
-from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithoutTrackSerializer import SimplePlaylistWithoutTrackSerializer
+from bodzify_api.serializer.playlist.children.criteria.output.without_tracks import CriteriaPlaylistWithoutTracksSerializer
+from bodzify_api.serializer.playlist.children.simple.output.without_tracks import SimplePlaylistWithoutTracksSerializer
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import AlbumWithoutTracksSerializer
-from bodzify_api.serializer.artist.ArtistDetailedSerializer import ArtistDetailedSerializer
-from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
+from bodzify_api.serializer.album.output.without_track import AlbumWithoutTracksSerializer
+from bodzify_api.serializer.artist.detailed import ArtistDetailedSerializer
+from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -128,7 +128,7 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
                 'filter_fn': lib_track_filter},
             {
                 'queryset': SimplePlaylist.objects.filter(base_playlist__user=user),
-                'serializer_class': SimplePlaylistWithoutTrackSerializer,
+                'serializer_class': SimplePlaylistWithoutTracksSerializer,
                 'filter_fn': simple_playlist_filter},
             {
                 'queryset': CriteriaPlaylist.objects.filter(base_playlist__user=user),

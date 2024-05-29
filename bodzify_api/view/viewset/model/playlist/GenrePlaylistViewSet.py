@@ -5,11 +5,11 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist, ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
+from bodzify_api.serializer.playlist.children.criteria.input.query_param \
     import FIELDS as QUERY_PARAM_FIELDS, CriteriaPlaylistQueryParamSerializer
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
+from bodzify_api.serializer.playlist.children.criteria.output.with_tracks \
     import CriteriaPlaylistWithTracksSerializer
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
+from bodzify_api.serializer.playlist.children.criteria.output.without_tracks \
     import CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 

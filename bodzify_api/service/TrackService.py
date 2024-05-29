@@ -33,18 +33,18 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTE_LABEL
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer \
+from bodzify_api.serializer.track.input.endpoint.post \
     import LibTrackPostSerializer, FIELDS as POST_FIELDS
-from bodzify_api.serializer.track.input.LibTrackModelSerializer \
+from bodzify_api.serializer.track.input.model \
     import FIELDS as SAVE_MODEL_FIELDS, TrackModelSerializer
-from bodzify_api.serializer.track_file.input.TrackFileSchemaSerializer \
+from bodzify_api.serializer.track_file.input.schema \
     import TrackFileSchemaSerialazer, FIELDS as TRACK_FILE_SCHEMA_FIELDS
-from bodzify_api.serializer.track_file.input.TrackFileModelSerializer \
+from bodzify_api.serializer.track_file.input.model \
     import TrackFileModelSerializer, FIELDS as TRACK_FILE_MODEL_FIELDS
-from bodzify_api.serializer.track.input.LibTrackSchemaSerializer \
+from bodzify_api.serializer.track.input.schema \
     import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
-from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
-from bodzify_api.serializer.mine.track.MineTrackSerializer import FIELDS as MINE_TRACK_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import LibTrackPutSerializer
+from bodzify_api.serializer.mine.track.detailed import FIELDS as MINE_TRACK_FIELDS
 
 
 class TrackService(Service):

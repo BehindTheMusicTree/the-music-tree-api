@@ -3,7 +3,7 @@
 from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.model.Album import Album
-from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer import FIELDS as EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.extract import FIELDS as EXTRACT_FIELDS
 from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldModelStrTestCase
 
 

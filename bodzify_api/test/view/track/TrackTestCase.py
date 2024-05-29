@@ -9,10 +9,10 @@ from rest_framework import status
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer \
+from bodzify_api.serializer.track.input.endpoint.extract \
     import FIELDS as LIB_TRACK_EXTRACT_FIELDS
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as LIB_TRACK_POST_FIELDS
-from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
+from bodzify_api.serializer.track.input.endpoint.post import FIELDS as LIB_TRACK_POST_FIELDS
+from bodzify_api.serializer.track.output.detailed import FIELDS as LIB_TRACK_GET_FIELDS
 
 
 class TrackTestCase(AppTestCase):

@@ -2,7 +2,7 @@
 
 from bodzify_api import settings
 import bodzify_api.audiometadata as audiometadata
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.endpoint.post import FIELDS as POST_FIELDS
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import \
     UpdateFileMetadataStrTestCase
 

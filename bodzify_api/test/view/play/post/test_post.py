@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils import to_camel_case
-from bodzify_api.serializer.play.input.schema.endpoint.PlayPostSchemaSerializer import FIELDS
+from bodzify_api.serializer.play.input.schema.endpoint.post import FIELDS
 
 
 class TestCase(PlayTestCase):

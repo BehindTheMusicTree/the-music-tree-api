@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL, BasePlaylist
-from bodzify_api.serializer.playlist.base.output.without_track \
-    import BasePlaylistWithoutTrackSerializer, FIELDS as PARENT_FIELDS
-from bodzify_api.serializer.playlist_lib_track_relation.output.PlaylistLibTrackRelationWithoutPlaylist \
+from bodzify_api.serializer.playlist.base.output.without_tracks \
+    import BasePlaylistWithoutTracksSerializer, FIELDS as PARENT_FIELDS
+from bodzify_api.serializer.playlist_lib_track_relation.output.without_playlist \
     import PlaylistLibTrackRelationWithoutPlaylist, FIELDS as playlist_lib_track_relation_RELATION_FIELDS
 from rest_framework import serializers
 
@@ -19,7 +19,7 @@ class FIELDS:
     LAST_TRACK_LIST_UPDATE_DATE = ATTRIBUTES_LABEL.LAST_TRACK_LIST_UPDATE_DATE
 
 
-class BasePlaylistWithTracksSerializer(BasePlaylistWithoutTrackSerializer):
+class BasePlaylistWithTracksSerializer(BasePlaylistWithoutTracksSerializer):
     library_tracks = PlaylistLibTrackRelationWithoutPlaylist(
         source=ATTRIBUTES_LABEL.playlist_lib_track_relation_RELATIONS, many=True)
     library_tracks_count = serializers.IntegerField(source=f'{FIELDS.LIB_TRACKS}.count', read_only=True)

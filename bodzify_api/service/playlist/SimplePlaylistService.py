@@ -2,11 +2,11 @@
 
 import re
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.serializer.playlist.children.simple.input.SimplePlaylistModelSerializer \
+from bodzify_api.serializer.playlist.children.simple.input.model \
     import SimplePlaylistModelSerializer, FIELDS as SAVE_MODEL_FIELDS
-from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistInputEndpointSerializer \
+from bodzify_api.serializer.playlist.children.simple.input.endpoint \
     import SimplePlaylistInputEndpointSerializer
-from bodzify_api.serializer.playlist.children.simple.input.schema.SimplePlaylistSaveSchemaSerializer \
+from bodzify_api.serializer.playlist.children.simple.input.schema \
     import SimplePlaylistSaveSchemaSerializer
 from bodzify_api.service.Service import Service
 

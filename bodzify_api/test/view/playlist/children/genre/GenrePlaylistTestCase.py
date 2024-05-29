@@ -14,8 +14,8 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
-from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
-from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTracksSerializer \
+from bodzify_api.serializer.track.output.detailed import FIELDS as LIB_TRACK_GET_FIELDS
+from bodzify_api.serializer.playlist.children.simple.output.with_tracks \
     import FIELDS as SIMPLE_PLAYLIST_GET_FIELDS
 
 

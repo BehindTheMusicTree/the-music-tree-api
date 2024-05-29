@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.serializer.playlist.children.simple.input.SimplePlaylistModelSerializer \
+from bodzify_api.serializer.playlist.children.simple.input.model \
     import SimplePlaylistModelSerializer
 from bodzify_api.service.Service import Service
 

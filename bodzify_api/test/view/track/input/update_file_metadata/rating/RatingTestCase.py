@@ -4,7 +4,7 @@ import logging
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIntTestCase \
     import UpdateFileMetadataIntTestCase
-from bodzify_api.serializer.track.input.LibTrackSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import FIELDS as SAVE_SCHEMA_FIELDS
 
 
 class UpdateFileMetadataRatingTestCase(UpdateFileMetadataIntTestCase):

@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.endpoint.post import FIELDS as POST_FIELDS
 
 
 class TestCase(TrackTestCase):

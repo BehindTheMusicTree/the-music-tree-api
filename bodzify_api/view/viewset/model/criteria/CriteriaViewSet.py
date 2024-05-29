@@ -4,8 +4,8 @@ from django.db import transaction
 from rest_framework.serializers import ModelSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer import CriteriaSaveSchemaSerializer
-from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
+from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSaveSchemaSerializer
+from bodzify_api.serializer.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
 

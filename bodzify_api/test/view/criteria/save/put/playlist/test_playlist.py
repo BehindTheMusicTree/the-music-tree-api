@@ -5,7 +5,7 @@ from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.criteria.input.schema.endpoint.CriteriaPutSerializer import FIELDS as PUT_FIELD
+from bodzify_api.serializer.criteria.input.schema.endpoint.put import FIELDS as PUT_FIELD
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 

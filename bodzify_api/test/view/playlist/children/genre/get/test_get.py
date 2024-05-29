@@ -3,9 +3,9 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
+from bodzify_api.serializer.playlist.children.criteria.output.with_tracks \
     import FIELDS as GET_RESULT_FIELDS
-from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
+from bodzify_api.serializer.playlist.children.criteria.input.query_param \
     import FIELDS as GET_QUERY_PARAM
 from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 

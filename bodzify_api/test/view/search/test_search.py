@@ -10,13 +10,13 @@ from bodzify_api.model.playlist.children.SimplePlaylist \
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_FIELDS
-from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithoutTrackSerializer \
+from bodzify_api.serializer.track.output.detailed import FIELDS as LIB_TRACK_FIELDS
+from bodzify_api.serializer.playlist.children.simple.output.without_tracks \
     import FIELDS as SIMPLE_PLAYLIST_FIELDS
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
+from bodzify_api.serializer.playlist.children.criteria.output.without_tracks \
     import FIELDS as CRITERIA_PLAYLIST_FIELDS
-from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import FIELDS as ARTIST_FIELDS
-from bodzify_api.serializer.album.output.AlbumWithoutTracksSerializer import FIELDS as ALBUM_FIELDS
+from bodzify_api.serializer.artist.with_only_name import FIELDS as ARTIST_FIELDS
+from bodzify_api.serializer.album.output.without_track import FIELDS as ALBUM_FIELDS
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
 

@@ -3,9 +3,9 @@
 import logging
 from django.contrib.auth.models import User
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
-from bodzify_api.serializer.criteria.input.CriteriaModelSerializer import CriteriaModelSerializer
-from bodzify_api.serializer.criteria.input.schema.endpoint.CriteriaPutSerializer import CriteriaPutSerializer
-from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer import CriteriaSaveSchemaSerializer
+from bodzify_api.serializer.criteria.input.model import CriteriaModelSerializer
+from bodzify_api.serializer.criteria.input.schema.endpoint.put import CriteriaPutSerializer
+from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSaveSchemaSerializer
 
 from bodzify_api.service.Service import Service
 
