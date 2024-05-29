@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 
+import datetime
 from django.utils import timezone
 from django.db import models
 from django.db.models import F, Value
-from django.db.models.functions import Cast, Concat
 from django.db.models.expressions import Value
 
-from bodzify_api import settings, utils
+from bodzify_api import settings
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 
 
 class ATTRIBUTES_LABEL:
     UUID = 'uuid'
     TITLE = 'title'
+    SCORE = 'score'
     DURATION_IN_SEC = 'duration_in_sec'
     DURATION_STR_IN_HOUR_MIN_SEC = "duration_str_in_hour_min_sec"
     RELEASE_DATE = 'release_date'
@@ -31,9 +32,10 @@ class ConcatOp(models.Func):
 
 class MusicbrainzRecording(models.Model):
     uuid = models.UUIDField(primary_key=True, editable=False)
-    title = models.CharField(max_length=settings.MUSICBRAINZ_RECORDING_TITLE_LEN_MAX)
-    duration_in_sec = models.IntegerField()
-    release_date = models.DateField(null=True, blank=True)
+    title = models.CharField(max_length=settings.MUSICBRAINZ_RECORDING_TITLE_LEN_MAX, editable=False)
+    score = models.DecimalField(max_digits=9, decimal_places=8, editable=False)
+    duration_in_sec = models.IntegerField(editable=False)
+    release_date = models.DateField(null=True, blank=True, editable=False)
     musicbrainz_artists = models.ManyToManyField(MusicbrainzArtist)
     musicbrainz_link = models.GeneratedField(  # type: ignore
         expression=ConcatOp(Value(settings.MUSICBRAINZ_RECORDING_URL), F(ATTRIBUTES_LABEL.UUID)),
@@ -44,7 +46,7 @@ class MusicbrainzRecording(models.Model):
 
     @property
     def duration_str_in_hour_min_sec(self):
-        return utils.get_duration_str_in_hour_min_sec(self.duration_in_sec)
+        return str(datetime.timedelta(seconds=self.duration_in_sec))
 
     def __str__(self):
         return self.title

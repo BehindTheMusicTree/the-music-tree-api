@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import uuid
-
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
