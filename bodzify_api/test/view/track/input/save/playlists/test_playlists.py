@@ -23,7 +23,7 @@ class TestCase(TrackTestCase):
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        track_playlists = self.saved_lib_track.playlists.all()
+        track_playlists = self.saved_lib_track.base_playlists.all()
         assert len(track_playlists) == 2
 
         criteria_playlists = CriteriaPlaylist.objects.filter(base_playlist__in=track_playlists)
@@ -41,7 +41,7 @@ class TestCase(TrackTestCase):
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        track_playlists = self.saved_lib_track.playlists.all()
+        track_playlists = self.saved_lib_track.base_playlists.all()
         assert len(track_playlists) == 2
 
         genre_playlist = CriteriaPlaylist.objects.get(criteria=genre).base_playlist
@@ -66,7 +66,7 @@ class TestCase(TrackTestCase):
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        lib_track_playlists = self.saved_lib_track.playlists.all()
+        lib_track_playlists = self.saved_lib_track.base_playlists.all()
         assert len(lib_track_playlists) == 4
 
         lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(base_playlist__in=lib_track_playlists)

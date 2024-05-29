@@ -45,7 +45,7 @@ class TestCase(CriteriaTestCase):
     def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        punk_playlist = punk_genre.criteria_playlist.playlist  # type: ignore
+        punk_playlist = punk_genre.criteria_playlist.base_playlist  # type: ignore
         punk_fr_genre = self.model_fixture_factory.create_genre(name="Punk FR", parent=punk_genre)
 
         track_punk = self.model_fixture_factory.create_lib_track(genre=punk_genre, title="Punk song")

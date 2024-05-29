@@ -43,7 +43,7 @@ class TestCase(PlayTestCase):
     def test_playlist_play_then_returns_lib_tracks(self):
         criteria = self.model_fixture_factory.create_genre(name='criteria1')
         lib_track = self.model_fixture_factory.create_lib_track(title='track', genre=criteria)
-        criteria_playlist = criteria.criteria_playlist.playlist  # type: ignore
+        criteria_playlist = criteria.criteria_playlist.base_playlist  # type: ignore
         data = {to_camel_case(FIELDS.CONTENT_OBJECT_UUID): criteria_playlist.uuid}
         response = self.post_play(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED

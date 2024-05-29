@@ -33,6 +33,6 @@ class TrackDeleteViewTestCase(TrackTestCase):
         response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
-        assert track not in genre1.criteria_playlist.playlist.library_tracks.all()  # type: ignore
-        assert track not in genre2.criteria_playlist.playlist.library_tracks.all()  # type: ignore
-        assert track not in genre3.criteria_playlist.playlist.library_tracks.all()  # type: ignore
+        assert track not in genre1.criteria_playlist.base_playlist.library_tracks.all()  # type: ignore
+        assert track not in genre2.criteria_playlist.base_playlist.library_tracks.all()  # type: ignore
+        assert track not in genre3.criteria_playlist.base_playlist.library_tracks.all()  # type: ignore

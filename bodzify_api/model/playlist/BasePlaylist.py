@@ -15,7 +15,7 @@ class SPECIAL_NAMES:
 
 
 class ATTRIBUTES_LABEL:
-    MODEL = 'playlist'
+    MODEL = 'base_playlist'
     UUID = 'uuid'
     USER = 'user'
     CREATED_ON = 'created_on'

@@ -23,7 +23,7 @@ class FIELDS:
     GENRE = ATTRIBUTES_LABEL.GENRE
     RATING = ATTRIBUTES_LABEL.RATING
     LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
-    PLAYLISTS = ATTRIBUTES_LABEL.PLAYLISTS
+    BASE_PLAYLISTS_USER_FRIENDLY = ATTRIBUTES_LABEL.BASE_PLAYLISTS_USER_FRIENDLY
     CREATED_ON = ATTRIBUTES_LABEL.CREATED_ON
     PLAY_COUNT = ATTRIBUTES_LABEL.PLAY_COUNT
 
@@ -34,7 +34,7 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
     artist = ArtistWithOnlyNameSerializer()
     album = AlbumWithoutTracksSerializer()
     genre = CriteriaSimpleSerializer()
-    playlists = BasePlaylistWithoutTrackSerializer(many=True)
+    playlists = BasePlaylistWithoutTrackSerializer(source=ATTRIBUTES_LABEL.BASE_PLAYLISTS, many=True)
 
     class Meta:
         model = LibraryTrack
@@ -49,6 +49,6 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.GENRE,
                   FIELDS.RATING,
                   FIELDS.LANGUAGE,
-                  FIELDS.PLAYLISTS,
+                  FIELDS.BASE_PLAYLISTS_USER_FRIENDLY,
                   FIELDS.CREATED_ON,
                   FIELDS.PLAY_COUNT]

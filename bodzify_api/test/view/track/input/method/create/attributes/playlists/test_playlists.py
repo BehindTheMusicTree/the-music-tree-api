@@ -15,7 +15,7 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_generic_sample_no_tags()
         assert response.status_code == status.HTTP_201_CREATED
 
-        track_playlists = self.saved_lib_track.playlists.all()
+        track_playlists = self.saved_lib_track.base_playlists.all()
         assert len(track_playlists) == 2
 
         track_simple_playlists = SimplePlaylist.objects.filter(base_playlist__in=track_playlists)

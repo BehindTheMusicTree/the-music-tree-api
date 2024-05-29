@@ -10,14 +10,14 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL 
 
 class ATTRIBUTES_LABEL:
     MODEL = 'playlist_lib_track_relation_relation'
-    PLAYLIST = PLAYLIST_ATTRIBUTES_LABEL.MODEL
+    BASE_PLAYLIST = PLAYLIST_ATTRIBUTES_LABEL.MODEL
     LIB_TRACK = LIB_TRACK_ATTRIBUTES_LABEL.MODEL
     POSITION = 'position'
     CREATED_ON = 'created_on'
 
 
 class PlaylistLibTrackRelation(models.Model):
-    playlist = models.ForeignKey(BasePlaylist, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
+    base_playlist = models.ForeignKey(BasePlaylist, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
     library_track = models.ForeignKey(LibraryTrack, on_delete=models.CASCADE, related_name=ATTRIBUTES_LABEL.MODEL + 's')
     position = models.PositiveIntegerField()
     created_on = models.DateTimeField(default=timezone.now, editable=False)
@@ -32,13 +32,14 @@ class PlaylistLibTrackRelation(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(playlist=self.playlist)
+            playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(
+                base_playlist=self.base_playlist)
             playlist_lib_track_relation_relations.update(position=models.F(ATTRIBUTES_LABEL.POSITION) + 1)
             self.position = 1
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(playlist=self.playlist,
-                                                                                        position__gt=self.position)
+        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(
+            base_playlist=self.base_playlist, position__gt=self.position)
         playlist_lib_track_relation_relations.update(position=F(ATTRIBUTES_LABEL.POSITION) - 1)
         super().delete(*args, **kwargs)

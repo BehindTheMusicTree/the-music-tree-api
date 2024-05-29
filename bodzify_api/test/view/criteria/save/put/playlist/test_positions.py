@@ -28,7 +28,7 @@ class TestCase(CriteriaTestCase):
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(playlist=rock_playlist)
+        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(base_playlist=rock_playlist)
         assert playlist_lib_track_relation_relations.get(
             library_track=lib_track_previously_first_in_punk).position == 1
         assert playlist_lib_track_relation_relations.get(
@@ -62,7 +62,7 @@ class TestCase(CriteriaTestCase):
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(playlist=guitare_playlist)
+        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(base_playlist=guitare_playlist)
         tracks_positions = {relation.library_track.uuid: relation.position for relation in playlist_lib_track_relations}
         assert tracks_positions[lib_track_previously_first_in_punk.uuid] == 1
         assert tracks_positions[lib_track_previously_second_in_punk.uuid] == 2
@@ -86,7 +86,7 @@ class TestCase(CriteriaTestCase):
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(playlist=rock_playlist)
+        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(base_playlist=rock_playlist)
         tracks_positions = {relation.library_track.uuid: relation.position
                             for relation in playlist_lib_track_relation_relations}
         assert tracks_positions[track_second_in_rock.uuid] == 1
@@ -95,7 +95,7 @@ class TestCase(CriteriaTestCase):
     def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        punk_playlist = punk_genre.criteria_playlist.playlist  # type: ignore
+        punk_playlist = punk_genre.criteria_playlist.base_playlist  # type: ignore
         punk_fr_genre = self.model_fixture_factory.create_genre(name="Punk FR", parent=punk_genre)
 
         track_second_in_punk = self.model_fixture_factory.create_lib_track(genre=punk_genre, title="Punk song")
