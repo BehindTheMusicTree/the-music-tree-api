@@ -104,6 +104,13 @@ class ModelFixtureFactory:
                  created_on=created_on,
                  updated_on=updated_on)  # type: ignore
 
+    def create_musicbrainz_artist(self,
+                                  uuid: uuid.UUID,
+                                  name: str,
+                                  created_on: Optional[datetime.date] = datetime.date.today(),
+                                  updated_on: Optional[datetime.date] = datetime.date.today()) -> MusicbrainzArtist:
+        return G(MusicbrainzArtist, uuid=uuid, name=name, created_om=created_on, updated_on=updated_on)  # type: ignore
+
     def create_genre(self,
                      name: str,
                      parent: Optional[Criteria] = None,
