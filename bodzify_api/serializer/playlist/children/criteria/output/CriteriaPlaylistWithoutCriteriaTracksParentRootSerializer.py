@@ -12,7 +12,7 @@ from bodzify_api.serializer.playlist.children.PlaylistChildSerializer \
 class FIELDS:
     UUID = PLAYLIST_CHILD_FIELDS.UUID
     NAME = PLAYLIST_CHILD_FIELDS.NAME
-    ADDED_ON = PLAYLIST_CHILD_FIELDS.ADDED_ON
+    CREATED_ON = PLAYLIST_CHILD_FIELDS.CREATED_ON
     LIB_TRACKS_COUNT = PLAYLIST_CHILD_FIELDS.LIB_TRACKS_COUNT
 
 
@@ -25,5 +25,5 @@ class CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer(PlaylistChildSer
         model = CriteriaPlaylist
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
-                  FIELDS.ADDED_ON,
+                  FIELDS.CREATED_ON,
                   FIELDS.LIB_TRACKS_COUNT]
