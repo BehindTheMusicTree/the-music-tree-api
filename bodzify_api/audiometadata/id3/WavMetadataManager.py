@@ -23,7 +23,7 @@ class WavMetadataManager(Id3Manager):
         wave_file = wave.open(self.file, 'r')  # type: ignore
         frames = wave_file.getnframes()
         rate = wave_file.getframerate()
-        duration = frames / float(rate)
-        bitrate = os.path.getsize(self.file) * 8 / duration / 1000  # type: ignore
+        duration_in_sec = frames / float(rate)
+        bitrate = os.path.getsize(self.file) * 8 / duration_in_sec / 1000  # type: ignore
         wave_file.close()
         return bitrate

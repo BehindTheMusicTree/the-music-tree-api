@@ -16,7 +16,7 @@ class NormalizedMetadataKeys:
     ALBUM_NAME = 'album_name'
     ALBUM_ARTISTS_NAMES = 'album_artists_names_string'
     GENRE_NAME = 'genre_name'
-    DURATION = 'duration'
+    DURATION_IN_SEC = 'duration_in_sec'
     RATING = 'rating'
     LANGUAGE = 'language'
 
@@ -141,27 +141,27 @@ class MetadataManager:
     def _get_duration_using_tinytag(self) -> Optional[float]:
         if isinstance(self.file, TemporaryUploadedFile):
             with open(self.file.temporary_file_path(), 'rb') as f:
-                return TinyTag.get(f.name).duration
+                return TinyTag.get(f.name).duration_in_sec
         elif isinstance(self.file, FieldFile):
             with open(self.file.path, 'rb') as f:
-                return TinyTag.get(f.name).duration
+                return TinyTag.get(f.name).duration_in_sec
         elif isinstance(self.file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 for chunk in self.file.chunks():
                     tmp.write(chunk)
                 tmp.close()
-                return TinyTag.get(tmp.name).duration
+                return TinyTag.get(tmp.name).duration_in_sec
         if self.file.file:  # type: ignore
             filename = self.file.file.name  # type: ignore
         else:
             filename = self.file.name  # type: ignore
-        return TinyTag.get(filename).duration
+        return TinyTag.get(filename).duration_in_sec
 
-    def get_duration(self):
-        duration = self._get_duration_from_file_matadata()
-        if duration is None:
-            duration = self._get_duration_using_tinytag()
-        return duration
+    def get_duration_in_sec(self):
+        duration_in_sec = self._get_duration_from_file_matadata()
+        if duration_in_sec is None:
+            duration_in_sec = self._get_duration_using_tinytag()
+        return duration_in_sec
 
     def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> dict:
         normalized_metadata = dict()
@@ -170,7 +170,7 @@ class MetadataManager:
         normalized_metadata[NormalizedMetadataKeys.ALBUM_NAME] = self.get_album_name()
         normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES] = self.get_album_artists_name_str()
         normalized_metadata[NormalizedMetadataKeys.GENRE_NAME] = self.get_genre_name()
-        normalized_metadata[NormalizedMetadataKeys.DURATION] = self.get_duration()
+        normalized_metadata[NormalizedMetadataKeys.DURATION_IN_SEC] = self.get_duration_in_sec()
         normalized_metadata[NormalizedMetadataKeys.RATING] = self.get_eventually_normalized_rating_value(
             normalized_rating_max_value=normalized_rating_max_value)
         normalized_metadata[NormalizedMetadataKeys.LANGUAGE] = self.get_language()
@@ -188,8 +188,8 @@ class MetadataManager:
             return self.get_album_artists_name_str()
         elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
             return self.get_genre_name()
-        elif normalized_metadata_key == NormalizedMetadataKeys.DURATION:
-            return self.get_duration()
+        elif normalized_metadata_key == NormalizedMetadataKeys.DURATION_IN_SEC:
+            return self.get_duration_in_sec()
         elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
             return self.get_eventually_normalized_rating_value(normalized_rating_max_value)
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
@@ -197,7 +197,7 @@ class MetadataManager:
 
     def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: Optional[int]):
         for key in list(normalized_metadata.keys()):
-            if key == NormalizedMetadataKeys.DURATION:
+            if key == NormalizedMetadataKeys.DURATION_IN_SEC:
                 raise ValueError(self.METADATA_CANT_BE_UPDATED_MESSAGE)
             else:
                 value = normalized_metadata[key]

@@ -14,7 +14,8 @@ class FIELDS:
     TITLE = LIB_TRACK_DETAILED_FIELDS.TITLE
     ARTIST = LIB_TRACK_DETAILED_FIELDS.ARTIST
     GENRE = LIB_TRACK_DETAILED_FIELDS.GENRE
-    DURATION = LIB_TRACK_DETAILED_FIELDS.DURATION
+    DURATION_IN_SEC = LIB_TRACK_DETAILED_FIELDS.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = LIB_TRACK_DETAILED_FIELDS.DURATION_STR_IN_HOUR_MIN_SEC
     RATING = LIB_TRACK_DETAILED_FIELDS.RATING
     LANGUAGE = LIB_TRACK_DETAILED_FIELDS.LANGUAGE
     CREATED_ON = LIB_TRACK_DETAILED_FIELDS.CREATED_ON
@@ -27,16 +28,15 @@ class LibTrackWithoutAlbumAndPlaylistSerializer(LibTrackDetailedSerializer):
 
     class Meta:
         model = LibraryTrack
-        fields = [
-            FIELDS.UUID,
-            FIELDS.RELATIVE_URL,
-            FIELDS.FILE,
-            FIELDS.TITLE,
-            FIELDS.ARTIST,
-            FIELDS.GENRE,
-            FIELDS.DURATION,
-            FIELDS.RATING,
-            FIELDS.LANGUAGE,
-            FIELDS.CREATED_ON,
-            FIELDS.PLAY_COUNT,
-        ]
+        fields = [FIELDS.UUID,
+                  FIELDS.RELATIVE_URL,
+                  FIELDS.FILE,
+                  FIELDS.TITLE,
+                  FIELDS.ARTIST,
+                  FIELDS.GENRE,
+                  FIELDS.DURATION_IN_SEC,
+                  FIELDS.DURATION_STR_IN_HOUR_MIN_SEC,
+                  FIELDS.RATING,
+                  FIELDS.LANGUAGE,
+                  FIELDS.CREATED_ON,
+                  FIELDS.PLAY_COUNT]

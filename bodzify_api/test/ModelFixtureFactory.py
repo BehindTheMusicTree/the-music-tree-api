@@ -90,15 +90,15 @@ class ModelFixtureFactory:
                  created_on=created_on,
                  updated_on=updated_on)  # type: ignore
 
-    def create_musicbrainz_recording(self, uuid: uuid.UUID, title: str, duration: int,
-                                     musicbrainz_artists: Optional[list[MusicbrainzArtist]] = None,
-                                     release_date: Optional[datetime.date] = None,
-                                     created_on: Optional[datetime.date] = datetime.date.today(),
-                                     updated_on: Optional[datetime.date] = datetime.date.today()) -> MusicbrainzRecording:
+    def create_musicbrainz_recording(
+            self, uuid: uuid.UUID, title: str, duration_in_sec: int,
+            musicbrainz_artists: Optional[list[MusicbrainzArtist]] = None, release_date: Optional[datetime.date] = None,
+            created_on: Optional[datetime.date] = datetime.date.today(),
+            updated_on: Optional[datetime.date] = datetime.date.today()) -> MusicbrainzRecording:
         return G(MusicbrainzRecording,
                  uuid=uuid,
                  title=title,
-                 duration=duration,
+                 duration_in_sec=duration_in_sec,
                  release_date=release_date,
                  musicbrainz_artists=musicbrainz_artists,
                  created_on=created_on,

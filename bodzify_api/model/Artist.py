@@ -17,7 +17,8 @@ class ATTRIBUTES_LABEL:
     ALBUMS = 'albums'
     LIB_TRACKS = 'library_tracks'
     LIB_TRACKS_COUNT = LIB_TRACKS + '_count'
-    DURATION = 'duration'
+    DURATION_IN_SEC = 'duration_in_sec'
+    DURATION_STR_IN_HOUR_MIN_SEC = 'duration_str_in_hour_min_sec'
 
 
 class Artist(models.Model):

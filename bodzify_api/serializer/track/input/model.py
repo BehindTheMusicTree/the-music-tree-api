@@ -8,7 +8,7 @@ from rest_framework import serializers
 class FIELDS:
     USER = ATTRIBUTES_LABEL.USER
     TRACK_FILE = ATTRIBUTES_LABEL.TRACK_FILE
-    DURATION = ATTRIBUTES_LABEL.DURATION
+    DURATION_IN_SEC = ATTRIBUTES_LABEL.DURATION_IN_SEC
     MUSICBRAINZ_RECORDING = ATTRIBUTES_LABEL.MUSICBRAINZ_RECORDING
     TITLE = ATTRIBUTES_LABEL.TITLE
     ARTIST = ATTRIBUTES_LABEL.ARTIST
@@ -24,7 +24,7 @@ class TrackModelSerializer(serializers.ModelSerializer):
         model = LibraryTrack
         fields = [FIELDS.USER,
                   FIELDS.TRACK_FILE,
-                  FIELDS.DURATION,
+                  FIELDS.DURATION_IN_SEC,
                   FIELDS.MUSICBRAINZ_RECORDING,
                   FIELDS.TITLE,
                   FIELDS.ARTIST,

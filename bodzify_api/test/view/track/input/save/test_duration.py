@@ -9,14 +9,14 @@ class TestCase(TrackTestCase):
     def test_wav(self):
         response = self.post_lib_track_with_generic_sample_no_tags(extension='wav')
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.duration == self.SAMPLE_LIB_TRACK_WAV_DURATION
+        assert self.saved_lib_track.duration_in_sec == self.SAMPLE_LIB_TRACK_WAV_DURATION
 
     def test_mp3(self):
         response = self.post_lib_track_with_generic_sample_no_tags(extension='mp3')
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.duration == self.SAMPLE_LIB_TRACK_MP3_DURATION
+        assert self.saved_lib_track.duration_in_sec == self.SAMPLE_LIB_TRACK_MP3_DURATION
 
     def test_flac(self):
         response = self.post_lib_track_with_generic_sample_no_tags(extension='flac')
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.duration == self.SAMPLE_LIB_TRACK_FLAC_DURATION
+        assert self.saved_lib_track.duration_in_sec == self.SAMPLE_LIB_TRACK_FLAC_DURATION

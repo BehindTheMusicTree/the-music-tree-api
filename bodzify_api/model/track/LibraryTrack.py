@@ -7,9 +7,11 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from bodzify_api import utils
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.TrackFile import TrackFile
@@ -29,7 +31,8 @@ class ATTRIBUTES_LABEL:
     USER = "user"
     TRACK_FILE = "track_file"
     TRACK_FILE_USER_FRIENDLY = "file"
-    DURATION = "duration"
+    DURATION_IN_SEC = "duration_in_sec"
+    DURATION_STR_IN_HOUR_MIN_SEC = "duration_str_in_hour_min_sec"
     MUSICBRAINZ_RECORDING = "musicbrainz_recording"
     TITLE = "title"
     ARTIST = "artist"
@@ -50,7 +53,7 @@ class LibraryTrack(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file = models.OneToOneField(TrackFile, on_delete=models.CASCADE)
-    duration = models.IntegerField()
+    duration_in_sec = models.IntegerField()
     musicbrainz_recording = models.ForeignKey(
         MusicbrainzRecording, on_delete=models.DO_NOTHING, default=None, null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
@@ -80,6 +83,11 @@ class LibraryTrack(models.Model):
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
+    @property
+    def duration_str_in_hour_min_sec(self):
+        duration_in_sec = int(self.duration_in_sec or 0)
+        return utils.get_duration_str_in_hour_min_sec_from_duration_in_sec(duration_in_sec)
+
     class Meta:
         db_table = 'library_track'
         verbose_name = 'Library Track'
@@ -92,12 +100,12 @@ class LibraryTrack(models.Model):
     def __str__(self):
         album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
         genre_str = f"{ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
-        duration_str = f"{ATTRIBUTES_LABEL.DURATION}: {str(self.duration)} " if self.duration else ""
+        duration_str_in_hour_min_sec = f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else ""
         rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
         language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
         file_str = f"{ATTRIBUTES_LABEL.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
-                f"{genre_str}{duration_str}{rating_str}{language_str}"
+                f"{genre_str}{duration_str_in_hour_min_sec}{rating_str}{language_str}"
                 f"{ATTRIBUTES_LABEL.CREATED_ON}: {str(self.created_on)} {file_str}")
 
     def save(self, *args, **kwargs):
@@ -123,10 +131,10 @@ class LibraryTrack(models.Model):
 
         except LibraryTrack.DoesNotExist:
             if self.track_file:
-                if not self.duration:
-                    self.duration = audiometadata.get_specific_metadata_from_file(
-                        file=self.track_file.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION)
-                    super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
+                if not self.duration_in_sec:
+                    self.duration_in_sec = audiometadata.get_specific_metadata_from_file(
+                        file=self.track_file.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION_IN_SEC)
+                    super().save(update_fields=[ATTRIBUTES_LABEL.DURATION_IN_SEC])
 
             super().save(*args, **kwargs)
             from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES

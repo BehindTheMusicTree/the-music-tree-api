@@ -56,7 +56,7 @@ class TrackService(Service):
         NAME = 'name'
         TITLE = 'title'
         DATE = 'date'
-        DURATION = 'duration'
+        DURATION_IN_SEC = 'duration'
         RELEASEGROUPS = 'releasegroups'
         FIRST_RELEASE_DATE = 'first-release-date'
 
@@ -107,18 +107,18 @@ class TrackService(Service):
     @staticmethod
     def get_fingerprint_and_duration_from_file(file):
         fingerprint = None
-        duration = None
+        duration_in_sec = None
 
         if isinstance(file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 for chunk in file.chunks():
                     tmp.write(chunk)
-                duration, fingerprint = acoustid.fingerprint_file(path=tmp.name)
+                duration_in_sec, fingerprint = acoustid.fingerprint_file(path=tmp.name)
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
-            duration, fingerprint = acoustid.fingerprint_file(path=file_path)
+            duration_in_sec, fingerprint = acoustid.fingerprint_file(path=file_path)
 
-        return fingerprint, duration
+        return fingerprint, duration_in_sec
 
     @staticmethod
     def _update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
@@ -129,12 +129,12 @@ class TrackService(Service):
             file_schema_data = dict()
             file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE] = file
 
-            # It could have been done in the TrackFile model but as duration is a fields from the LibraryTrack model,
+            # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack model,
             # doing it here enables to calculate it only once.
-            fingerprint, duration = TrackService.get_fingerprint_and_duration_from_file(file=file)
+            fingerprint, duration_in_sec = TrackService.get_fingerprint_and_duration_from_file(file=file)
 
-            if fingerprint is not None and duration is not None:
-                save_data[SAVE_MODEL_FIELDS.DURATION] = duration
+            if fingerprint is not None and duration_in_sec is not None:
+                save_data[SAVE_MODEL_FIELDS.DURATION_IN_SEC] = duration_in_sec
 
                 file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINT_CHAR] = binascii.hexlify(fingerprint).decode()
 
@@ -144,7 +144,7 @@ class TrackService(Service):
                         schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
 
                 TrackService._update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(
-                    data=save_data, fingerprint=fingerprint, duration=duration)
+                    data=save_data, fingerprint=fingerprint, duration_in_sec=duration_in_sec)
 
             file_schema_serializer = TrackFileSchemaSerialazer(data=file_schema_data)
             file_schema_serializer.is_valid(raise_exception=True)
@@ -188,12 +188,12 @@ class TrackService(Service):
         return
 
     @staticmethod
-    def get_best_recording(recordings_grouped_by_score, duration):
+    def get_best_recording(recordings_grouped_by_score, duration_in_sec):
         def score_group_of_recordings(recording_group):
             return recording_group['score']
 
         def score_recording(recording):
-            duration_difference = abs(recording.get('duration', 0) - duration)
+            duration_difference = abs(recording.get('duration_in_sec', 0) - duration_in_sec)
             null_count = sum(1 for value in recording.values() if value is None)
             return duration_difference, -null_count
 
@@ -203,16 +203,16 @@ class TrackService(Service):
 
     @staticmethod
     def _get_musicbrainz_recording_dict_from_fingerprint_and_duration(
-            fingerprint: str, duration: float) -> Optional[dict]:
+            fingerprint: str, duration_in_sec: float) -> Optional[dict]:
         try:
             lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
                                      fingerprint=fingerprint,
-                                     duration=duration,
+                                     duration=duration_in_sec,
                                      meta=['recordings', 'releasegroups', 'compress', 'tracks'])
             recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_FIELDS.RESULTS]
             if len(recordings_grouped_by_score) > 0:
                 best_recording = TrackService.get_best_recording(
-                    recordings_grouped_by_score=recordings_grouped_by_score, duration=duration)
+                    recordings_grouped_by_score=recordings_grouped_by_score, duration_in_sec=duration_in_sec)
             else:
                 return None
         except Exception:
@@ -222,10 +222,10 @@ class TrackService(Service):
     @staticmethod
     def _update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(data: dict,
                                                                                           fingerprint: bytes,
-                                                                                          duration: float):
+                                                                                          duration_in_sec: float):
         musicbrainz_recording_dict = \
             TrackService._get_musicbrainz_recording_dict_from_fingerprint_and_duration(fingerprint=fingerprint,  # type: ignore
-                                                                                       duration=duration)
+                                                                                       duration_in_sec=duration_in_sec)
         if musicbrainz_recording_dict:
             musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.ID]
             try:
@@ -250,7 +250,7 @@ class TrackService(Service):
                 musicbrainz_recording = MusicbrainzRecording.objects.create(
                     uuid=musicbrainz_recording_uuid,
                     title=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.TITLE],
-                    duration=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.DURATION],
+                    duration_in_sec=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.DURATION_IN_SEC],
                     release_date=release_date)
                 musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
                 musicbrainz_recording_pk = musicbrainz_recording.pk

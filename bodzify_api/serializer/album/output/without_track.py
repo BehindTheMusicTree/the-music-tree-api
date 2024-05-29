@@ -1,28 +1,36 @@
 #!/usr/bin/env python
+import datetime
 from django.db.models import Sum
 from rest_framework import serializers
-from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api import utils
+from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.artist.with_only_name import ArtistWithOnlyNameSerializer
 
 
 class FIELDS:
-    UUID = ALBUM_ATTRIBUTES_LABEL.UUID
-    NAME = ALBUM_ATTRIBUTES_LABEL.NAME
-    YEAR = ALBUM_ATTRIBUTES_LABEL.YEAR
-    ALBUM_ARTISTS = ALBUM_ATTRIBUTES_LABEL.ALBUM_ARTISTS
-    LIB_TRACKS_COUNT = ALBUM_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
-    DURATION = ALBUM_ATTRIBUTES_LABEL.DURATION
+    UUID = ATTRIBUTES_LABEL.UUID
+    NAME = ATTRIBUTES_LABEL.NAME
+    YEAR = ATTRIBUTES_LABEL.YEAR
+    ALBUM_ARTISTS = ATTRIBUTES_LABEL.ALBUM_ARTISTS
+    LIB_TRACKS_COUNT = ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
+    DURATION_IN_SEC = ATTRIBUTES_LABEL.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = ATTRIBUTES_LABEL.DURATION_STR_IN_HOUR_MIN_SEC
 
 
 class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
     album_artists = ArtistWithOnlyNameSerializer(many=True)
-    library_tracks_count = serializers.IntegerField(source=ALBUM_ATTRIBUTES_LABEL.LIB_TRACKS + '.count')
-    duration = serializers.SerializerMethodField()
+    library_tracks_count = serializers.IntegerField(source=ATTRIBUTES_LABEL.LIB_TRACKS + '.count')
+    duration_in_sec = serializers.SerializerMethodField()
+    duration_str_in_hour_min_sec_from_duration_in_sec = serializers.SerializerMethodField()
 
-    def get_duration(self, obj) -> float:
-        value = LibraryTrack.objects.filter(album=obj).aggregate(duration=Sum(ALBUM_ATTRIBUTES_LABEL.DURATION))
-        return value[ALBUM_ATTRIBUTES_LABEL.DURATION]
+    def get_duration_in_sec(self, obj) -> float:
+        value = LibraryTrack.objects.filter(album=obj).aggregate(
+            duration_in_sec=Sum(ATTRIBUTES_LABEL.DURATION_IN_SEC))
+        return value[ATTRIBUTES_LABEL.DURATION_IN_SEC]
+
+    def get_duration_str_in_hour_min_sec_from_duration_in_sec(self, obj):
+        return str(datetime.timedelta(seconds=obj.duration_in_sec))
 
     class Meta:
         model = Album
@@ -32,5 +40,5 @@ class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
             FIELDS.YEAR,
             FIELDS.ALBUM_ARTISTS,
             FIELDS.LIB_TRACKS_COUNT,
-            FIELDS.DURATION,
+            FIELDS.DURATION_IN_SEC,
         ]
