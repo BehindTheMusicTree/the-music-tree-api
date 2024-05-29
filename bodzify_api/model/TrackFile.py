@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import F
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api import settings
@@ -67,6 +68,7 @@ class TrackFile(models.Model):
                                        output_field=models.DecimalField(max_digits=5, decimal_places=2),
                                        db_persist=True)
     bitrate_in_kbps = models.IntegerField(null=True, blank=True)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
 
     class Meta:
         db_table = 'track_file'
