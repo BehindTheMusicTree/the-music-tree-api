@@ -86,7 +86,7 @@ class LibraryTrack(models.Model):
     @property
     def duration_str_in_hour_min_sec(self):
         duration_in_sec = int(self.duration_in_sec or 0)
-        return utils.get_duration_str_in_hour_min_sec_from_duration_in_sec(duration_in_sec)
+        return utils.get_duration_str_in_hour_min_sec(duration_in_sec)
 
     class Meta:
         db_table = 'library_track'

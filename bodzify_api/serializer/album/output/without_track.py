@@ -22,23 +22,22 @@ class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
     album_artists = ArtistWithOnlyNameSerializer(many=True)
     library_tracks_count = serializers.IntegerField(source=ATTRIBUTES_LABEL.LIB_TRACKS + '.count')
     duration_in_sec = serializers.SerializerMethodField()
-    duration_str_in_hour_min_sec_from_duration_in_sec = serializers.SerializerMethodField()
+    duration_str_in_hour_min_sec = serializers.SerializerMethodField()
 
     def get_duration_in_sec(self, obj) -> float:
         value = LibraryTrack.objects.filter(album=obj).aggregate(
             duration_in_sec=Sum(ATTRIBUTES_LABEL.DURATION_IN_SEC))
         return value[ATTRIBUTES_LABEL.DURATION_IN_SEC]
 
-    def get_duration_str_in_hour_min_sec_from_duration_in_sec(self, obj):
-        return str(datetime.timedelta(seconds=obj.duration_in_sec))
+    def get_duration_str_in_hour_min_sec(self, obj):
+        return str(datetime.timedelta(seconds=self.get_duration_in_sec(obj)))
 
     class Meta:
         model = Album
-        fields = [
-            FIELDS.UUID,
-            FIELDS.NAME,
-            FIELDS.YEAR,
-            FIELDS.ALBUM_ARTISTS,
-            FIELDS.LIB_TRACKS_COUNT,
-            FIELDS.DURATION_IN_SEC,
-        ]
+        fields = [FIELDS.UUID,
+                  FIELDS.NAME,
+                  FIELDS.YEAR,
+                  FIELDS.ALBUM_ARTISTS,
+                  FIELDS.LIB_TRACKS_COUNT,
+                  FIELDS.DURATION_IN_SEC,
+                  FIELDS.DURATION_STR_IN_HOUR_MIN_SEC]

@@ -44,7 +44,7 @@ class MusicbrainzRecording(models.Model):
 
     @property
     def duration_str_in_hour_min_sec(self):
-        return utils.get_duration_str_in_hour_min_sec_from_duration_in_sec(self.duration_in_sec)
+        return utils.get_duration_str_in_hour_min_sec(self.duration_in_sec)
 
     def __str__(self):
         return self.title

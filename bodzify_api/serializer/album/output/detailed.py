@@ -27,15 +27,15 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
     library_tracks = LibTrackWithoutAlbumAndPlaylistSerializer(many=True)
     album_artists = ArtistWithOnlyNameSerializer(many=True)
     duration_in_sec = serializers.SerializerMethodField()
-    duration_str_in_hour_min_sec_from_duration_in_sec = serializers.SerializerMethodField()
+    duration_str_in_hour_min_sec = serializers.SerializerMethodField()
 
     def get_duration_in_sec(self, obj) -> float:
         value = LibraryTrack.objects.filter(album=obj).aggregate(
             duration_in_sec=Sum(ATTRIBUTES_LABEL.DURATION_IN_SEC))
         return value[LIB_TRACK_ATTRIBUTES_LABEL.DURATION_IN_SEC]
 
-    def get_duration_str_in_hour_min_sec_from_duration_in_sec(self, obj):
-        return str(datetime.timedelta(seconds=obj.duration_in_sec))
+    def get_duration_str_in_hour_min_sec(self, obj):
+        return str(datetime.timedelta(seconds=self.get_duration_in_sec(obj)))
 
     class Meta:
         model = Album
