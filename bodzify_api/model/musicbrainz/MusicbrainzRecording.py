@@ -19,9 +19,9 @@ class ATTRIBUTES_LABEL:
 class MusicbrainzRecording(models.Model):
     uuid = models.UUIDField(primary_key=True, editable=False)
     title = models.CharField(max_length=255)
-    musicbrainz_artists = models.ManyToManyField(MusicbrainzArtist)
     duration = models.IntegerField()
     release_date = models.DateField(null=True, blank=True)
+    musicbrainz_artists = models.ManyToManyField(MusicbrainzArtist)
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
