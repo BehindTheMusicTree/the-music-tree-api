@@ -3,8 +3,9 @@
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.children.CriteriaPlaylist import ATTRIBUTES_LABEL as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.BasePlaylist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
+from bodzify_api.model.playlist.BasePlaylist \
+    import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, \
+    FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.serializer.playlist.base.output.without_tracks \
     import BasePlaylistWithoutTracksSerializer
 from bodzify_api.serializer.track.output.without_playlists_and_album \
