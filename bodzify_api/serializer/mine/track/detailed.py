@@ -31,5 +31,5 @@ class MineTrackSerializer(serializers.Serializer):
                   FIELDS.RELEASED_ON,
                   FIELDS.URL]
 
-    def get_duration_str_in_hour_min_sec(self, obj):
+    def get_duration_str_in_hour_min_sec(self, obj) -> str:
         return str(datetime.timedelta(seconds=obj.duration_in_sec))
