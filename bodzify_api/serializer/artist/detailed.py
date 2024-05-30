@@ -34,9 +34,10 @@ class ArtistDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Artist
-        fields = [ATTRIBUTES_LABEL.UUID,
-                  ATTRIBUTES_LABEL.NAME,
-                  ATTRIBUTES_LABEL.ALBUMS,
-                  ATTRIBUTES_LABEL.LIB_TRACKS,
-                  ATTRIBUTES_LABEL.LIB_TRACKS_COUNT,
-                  ATTRIBUTES_LABEL.DURATION_IN_SEC]
+        fields = [FIELDS.UUID,
+                  FIELDS.NAME,
+                  FIELDS.ALBUMS,
+                  FIELDS.LIB_TRACKS,
+                  FIELDS.LIB_TRACKS_COUNT,
+                  FIELDS.DURATION_IN_SEC,
+                  FIELDS.DURATION_STR_IN_HOUR_MIN_SEC]
