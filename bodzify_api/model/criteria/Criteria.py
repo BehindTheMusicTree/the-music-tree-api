@@ -70,7 +70,7 @@ class Criteria(models.Model):
 
         from bodzify_api.model.track.LibraryTrack import LibraryTrack
         lib_tracks = LibraryTrack.objects.filter(
-            playlist_lib_track_relation_relations__playlist=self.criteria_playlist.base_playlist)  # type: ignore
+            playlist_lib_track_relations__playlist=self.criteria_playlist.base_playlist)  # type: ignore
 
         if self.parent is not None:
             self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(

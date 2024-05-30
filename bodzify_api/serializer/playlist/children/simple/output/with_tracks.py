@@ -17,7 +17,7 @@ class FIELDS:
 
 class SimplePlaylistWithTracksSerializer(ChildPlaylistSerializer):
     name = serializers.CharField()  # Overriding the name field of the parent class
-    library_tracks = PlaylistLibTrackRelationWithoutPlaylist(source='playlist.playlist_lib_track_relation_relations',
+    library_tracks = PlaylistLibTrackRelationWithoutPlaylist(source='playlist.playlist_lib_track_relations',
                                                              many=True)
 
     class Meta:

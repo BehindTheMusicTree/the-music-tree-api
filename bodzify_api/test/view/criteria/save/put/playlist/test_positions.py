@@ -28,14 +28,14 @@ class TestCase(CriteriaTestCase):
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(base_playlist=rock_playlist)
-        assert playlist_lib_track_relation_relations.get(
+        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(base_playlist=rock_playlist)
+        assert playlist_lib_track_relations.get(
             library_track=lib_track_previously_first_in_punk).position == 1
-        assert playlist_lib_track_relation_relations.get(
+        assert playlist_lib_track_relations.get(
             library_track=lib_track_previously_second_in_punk).position == 2
-        assert playlist_lib_track_relation_relations.get(
+        assert playlist_lib_track_relations.get(
             library_track=lib_track_previously_first_in_rock).position == 3
-        assert playlist_lib_track_relation_relations.get(
+        assert playlist_lib_track_relations.get(
             library_track=lib_track_previously_second_in_rock).position == 4
 
     def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning_of_parent_of_parent(self):
@@ -86,9 +86,9 @@ class TestCase(CriteriaTestCase):
         response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(base_playlist=rock_playlist)
+        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(base_playlist=rock_playlist)
         tracks_positions = {relation.library_track.uuid: relation.position
-                            for relation in playlist_lib_track_relation_relations}
+                            for relation in playlist_lib_track_relations}
         assert tracks_positions[track_second_in_rock.uuid] == 1
         assert tracks_positions[track_fourth_in_rock.uuid] == 2
 
