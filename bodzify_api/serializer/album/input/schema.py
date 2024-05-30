@@ -7,7 +7,7 @@ from bodzify_api.serializer.album.input.model import ATTRIBUTES_LABEL as SAVE_MO
 
 class FIELDS:
     NAME = SAVE_MODEL_ATTRIBUTES_LABEL.NAME
-    ALBUM_ARTISTS_STR = SAVE_MODEL_ATTRIBUTES_LABEL.ALBUM_ARTISTS + "_string"
+    ALBUM_ARTISTS_NAMES_STR = SAVE_MODEL_ATTRIBUTES_LABEL.ALBUM_ARTISTS + "_names_string"
 
 
 class AlbumSchemaSerializer(InputEndpointSerializer):
@@ -15,4 +15,4 @@ class AlbumSchemaSerializer(InputEndpointSerializer):
     class Meta:
         model = Album
         fields = [FIELDS.NAME,
-                  FIELDS.ALBUM_ARTISTS_STR]
+                  FIELDS.ALBUM_ARTISTS_NAMES_STR]
