@@ -113,7 +113,7 @@ class TrackService(Service):
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @staticmethod
-    def get_fingerprint_and_duration_from_file(file):
+    def get_fingerprint_and_duration_from_file(file) -> tuple[Optional[bytes], Optional[int]]:
         fingerprint = None
         duration_in_sec = None
 
@@ -121,12 +121,18 @@ class TrackService(Service):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 for chunk in file.chunks():
                     tmp.write(chunk)
-                duration_in_sec, fingerprint = acoustid.fingerprint_file(path=tmp.name)
+                try:
+                    duration_in_sec, fingerprint = acoustid.fingerprint_file(path=tmp.name)
+                except acoustid.FingerprintGenerationError as error:
+                    if error.args[0] == 'fpcalc exited with status 2':
+                        pass
+                    else:
+                        raise error
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
             duration_in_sec, fingerprint = acoustid.fingerprint_file(path=file_path)
 
-        return fingerprint, duration_in_sec
+        return fingerprint, int(duration_in_sec) if duration_in_sec is not None else None
 
     @staticmethod
     def _update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
@@ -299,17 +305,17 @@ class TrackService(Service):
     def _get_put_serializer(self, old_instance, put_data: dict):
         return LibTrackPutSerializer(instance=old_instance, data=put_data)
 
-    def _get_save_schema_serializer(self, old_instance, schema_data: dict, request):
+    def _get_schema_serializer(self, old_instance, schema_data: dict, request):
         return LibTrackSaveSchemaSerializer(data=schema_data, context={'request': request})
 
-    def _get_save_model_serializer(self, old_instance, model_data: dict, partial: bool):
+    def _get_model_serializer(self, old_instance, model_data: dict, partial: bool):
         return TrackModelSerializer(instance=old_instance, data=model_data, partial=True)
 
-    def _get_save_schema_data_from_post_data(self, post_data: dict) -> dict:
+    def _get_schema_data_from_post_data(self, post_data: dict) -> dict:
         file = post_data[POST_FIELDS.TRACK_FILE]
-        save_schema_data_from_file = self._get_save_schema_data_from_file(file=file)
+        schema_data_from_file = self._get_schema_data_from_file(file=file)
 
-        schema_data = save_schema_data_from_file.copy()
+        schema_data = schema_data_from_file.copy()
         keys = [SAVE_SCHEMA_FIELDS.FILE,
                 SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS,
                 SAVE_SCHEMA_FIELDS.TITLE,
@@ -331,14 +337,14 @@ class TrackService(Service):
         Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=schema_data)
         return schema_data
 
-    def _get_save_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
+    def _get_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
         schema_data = put_data.copy()
         Service._update_data1_converting_str_to_int_value_if_set(key=SAVE_SCHEMA_FIELDS.RATING, data1=schema_data)
         return schema_data
 
-    def _get_save_model_data_from_save_schema_data_not_including_user_field(self, user: User,
-                                                                            schema_data: dict,
-                                                                            old_instance) -> dict:
+    def _get_model_data_from_schema_data_not_including_user_field(self, user: User,
+                                                                  schema_data: dict,
+                                                                  old_instance) -> dict:
         model_data = dict()
 
         for key in [SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS,
@@ -428,7 +434,7 @@ class TrackService(Service):
                 is_filename_randomly_generated = True
         return filename_with_extension, is_filename_randomly_generated
 
-    def _get_save_schema_data_from_file(self, file):
+    def _get_schema_data_from_file(self, file):
         try:
             normalized_metadata = audiometadata.get_normalized_metadata_from_file(
                 file=file,
