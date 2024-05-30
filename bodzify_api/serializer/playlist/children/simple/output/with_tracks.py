@@ -2,7 +2,7 @@
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.child \
-    import PlaylistChildSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
+    import ChildPlaylistSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
 from bodzify_api.serializer.playlist_lib_track_relation.output.without_playlist import PlaylistLibTrackRelationWithoutPlaylist
 from rest_framework import serializers
 
@@ -15,7 +15,7 @@ class FIELDS:
     LIB_TRACKS_COUNT = PLAYLIST_CHILD_FIELDS.LIB_TRACKS_COUNT
 
 
-class SimplePlaylistWithTracksSerializer(PlaylistChildSerializer):
+class SimplePlaylistWithTracksSerializer(ChildPlaylistSerializer):
     name = serializers.CharField()  # Overriding the name field of the parent class
     library_tracks = PlaylistLibTrackRelationWithoutPlaylist(source='playlist.playlist_lib_track_relation_relations',
                                                              many=True)

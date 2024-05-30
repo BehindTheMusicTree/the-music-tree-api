@@ -2,7 +2,7 @@
 
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.playlist.children.child \
-    import PlaylistChildSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
+    import ChildPlaylistSerializer, FIELDS as PLAYLIST_CHILD_FIELDS
 
 
 class FIELDS:
@@ -12,7 +12,7 @@ class FIELDS:
     LIB_TRACKS_COUNT = PLAYLIST_CHILD_FIELDS.LIB_TRACKS_COUNT
 
 
-class CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer(PlaylistChildSerializer):
+class CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer(ChildPlaylistSerializer):
 
     def get_name(self, obj) -> str:
         return obj.name

@@ -19,7 +19,7 @@ class FIELDS:
     LIB_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
 
 
-class PlaylistChildSerializer(BasePlaylistWithoutTracksSerializer):
+class ChildPlaylistSerializer(BasePlaylistWithoutTracksSerializer):
     uuid = serializers.CharField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.UUID)
     created_on = serializers.DateTimeField(source=PLAYLIST_FOREIGN_MODEL_RELATIONS_STR.CREATED_ON)
     library_tracks_count = serializers.SerializerMethodField()
