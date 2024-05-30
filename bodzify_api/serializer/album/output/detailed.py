@@ -29,12 +29,11 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
     duration_in_sec = serializers.SerializerMethodField()
     duration_str_in_hour_min_sec = serializers.SerializerMethodField()
 
-    def get_duration_in_sec(self, obj) -> float:
-        value = LibraryTrack.objects.filter(album=obj).aggregate(
-            duration_in_sec=Sum(ATTRIBUTES_LABEL.DURATION_IN_SEC))
+    def get_duration_in_sec(self, obj) -> int:
+        value = LibraryTrack.objects.filter(album=obj).aggregate(duration_in_sec=Sum(ATTRIBUTES_LABEL.DURATION_IN_SEC))
         return value[LIB_TRACK_ATTRIBUTES_LABEL.DURATION_IN_SEC]
 
-    def get_duration_str_in_hour_min_sec(self, obj):
+    def get_duration_str_in_hour_min_sec(self, obj) -> str:
         return str(datetime.timedelta(seconds=self.get_duration_in_sec(obj)))
 
     class Meta:
