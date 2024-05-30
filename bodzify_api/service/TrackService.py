@@ -191,18 +191,23 @@ class TrackService(Service):
 
     @staticmethod
     def get_best_recording_dict_with_score(recordings_grouped_by_score, duration_in_sec):
-        def score_group_of_recordings(group_of_recordings):
+        def rate_groupe_of_recordings_by_score(group_of_recordings):
             return group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.SCORE]
 
-        def score_recording(recording):
-            duration_difference = abs(recording.get(
-                TrackService.MUSICBRAINZ_FIELDS.DURATION_IN_SEC, 0) - duration_in_sec)
-            null_count = sum(1 for value in recording.values() if value is None)
-            return duration_difference, -null_count
+        def rate_recording_by_similar_duration_and_by_number_of_fields(recording):
+            DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST = 1000000000
+            duration_difference = abs(
+                recording.get(
+                    TrackService.MUSICBRAINZ_FIELDS.DURATION_IN_SEC,
+                    DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST) - duration_in_sec)
+            fields_count = len(recording)
+            release_groups_count = len(recording.get(TrackService.MUSICBRAINZ_FIELDS.RELEASEGROUPS, []))
+            return duration_difference, -fields_count, -release_groups_count
 
-        best_group_of_recordings = max(recordings_grouped_by_score, key=score_group_of_recordings)
+        best_group_of_recordings = max(recordings_grouped_by_score, key=rate_groupe_of_recordings_by_score)
         best_recordings = best_group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.RECORDINGS]
-        best_recording = min((recording for recording in best_recordings), key=score_recording)
+        best_recording = min((recording for recording in best_recordings),
+                             key=rate_recording_by_similar_duration_and_by_number_of_fields)
         best_recording[TrackService.MUSICBRAINZ_FIELDS.SCORE] = \
             best_group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.SCORE]
         return best_recording
