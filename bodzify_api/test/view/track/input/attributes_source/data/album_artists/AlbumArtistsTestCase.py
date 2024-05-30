@@ -2,7 +2,8 @@
 
 from bodzify_api.serializer.track.input.endpoint.post import FIELDS as POST_FIELDS
 from rest_framework import status
-from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import NullableStrFieldFromDataTestCase
+from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase \
+    import NullableStrFieldFromDataTestCase
 
 
 class AlbumArtistsTestCase(NullableStrFieldFromDataTestCase):
@@ -20,7 +21,7 @@ class AlbumArtistsTestCase(NullableStrFieldFromDataTestCase):
 
     def test_empty_then_none(self):
         data = {
-            POST_FIELDS.ALBUM_NAME: "alnumito",
+            POST_FIELDS.ALBUM_NAME: "albumito",
             POST_FIELDS.ALBUM_ARTISTS_NAMES_STR: ""
         }
         response = self.post_lib_track_with_generic_sample_1_star(data_dict=data)

@@ -10,7 +10,7 @@ class FIELDS:
     ALBUM_ARTISTS_STR = SAVE_MODEL_ATTRIBUTES_LABEL.ALBUM_ARTISTS + "_string"
 
 
-class AlbumSaveSchemaSerializer(InputEndpointSerializer):
+class AlbumSchemaSerializer(InputEndpointSerializer):
 
     class Meta:
         model = Album

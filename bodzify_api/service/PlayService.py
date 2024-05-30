@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.play.input.schema.endpoint.post import PlayPostSerializer, FIELDS as POST_FIELDS
-from bodzify_api.serializer.play.input.schema.schema import PlaySaveSchemaSerializer
+from bodzify_api.serializer.play.input.schema.schema import PlaySchemaSerializer
 from bodzify_api.serializer.play.input.model import PlayModelSerializer, FIELDS as SAVE_FIELDS
 from bodzify_api.service.Service import Service
 
@@ -16,7 +16,7 @@ class PlayService(Service):
         return PlayPostSerializer(data=post_data)
 
     def _get_schema_serializer(self, old_instance, schema_data: dict, request):
-        return PlaySaveSchemaSerializer(data=schema_data, context={'request': request})
+        return PlaySchemaSerializer(data=schema_data, context={'request': request})
 
     def _get_model_serializer(self, old_instance, model_data: dict, partial: bool):
         return PlayModelSerializer(data=model_data)

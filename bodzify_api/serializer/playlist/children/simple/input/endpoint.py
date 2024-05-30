@@ -4,10 +4,10 @@
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
 from bodzify_api.serializer.playlist.children.simple.input.schema \
-    import SimplePlaylistSaveSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
+    import SimplePlaylistSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
 
 
-class SimplePlaylistInputEndpointSerializer(SimplePlaylistSaveSchemaSerializer, InputEndpointSerializer):
+class SimplePlaylistInputEndpointSerializer(SimplePlaylistSchemaSerializer, InputEndpointSerializer):
 
     class Meta:
         model = SimplePlaylist
