@@ -165,7 +165,7 @@ class LibraryTrack(models.Model):
             while old_genre_tree_item != genre_limit:
                 genreless_criteria_playlist = CriteriaPlaylist.objects.get(criteria=old_genre_tree_item)
                 base_playlist = genreless_criteria_playlist.base_playlist
-                PlaylistLibTrackRelation.objects.get(playlist=base_playlist, library_track=self).delete()
+                PlaylistLibTrackRelation.objects.get(base_playlist=base_playlist, library_track=self).delete()
                 base_playlist.last_track_list_update_date = update_date
                 base_playlist.save()
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
@@ -176,7 +176,7 @@ class LibraryTrack(models.Model):
             base_playlist = genreless_criteria_playlist.base_playlist
             base_playlist.last_track_list_update_date = update_date
             base_playlist.save()
-            PlaylistLibTrackRelation.objects.get(playlist=base_playlist, library_track=self).delete()
+            PlaylistLibTrackRelation.objects.get(base_playlist=base_playlist, library_track=self).delete()
 
     def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
         from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation

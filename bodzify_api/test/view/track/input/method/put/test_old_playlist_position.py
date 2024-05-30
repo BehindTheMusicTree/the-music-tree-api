@@ -22,7 +22,7 @@ class TestCase(TrackTestCase):
         assert response.status_code == status.HTTP_200_OK
 
         old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).base_playlist
-        assert PlaylistLibTrackRelation.objects.get(playlist=old_genre_playlist,
+        assert PlaylistLibTrackRelation.objects.get(base_playlist=old_genre_playlist,
                                                     library_track=lib_track_following1).position == 1
-        assert PlaylistLibTrackRelation.objects.get(playlist=old_genre_playlist,
+        assert PlaylistLibTrackRelation.objects.get(base_playlist=old_genre_playlist,
                                                     library_track=lib_track_following2).position == 2

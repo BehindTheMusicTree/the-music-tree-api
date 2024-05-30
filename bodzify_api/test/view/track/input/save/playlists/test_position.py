@@ -24,7 +24,7 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).base_playlist
-        assert PlaylistLibTrackRelation.objects.get(playlist=genre_playlist,
+        assert PlaylistLibTrackRelation.objects.get(base_playlist=genre_playlist,
                                                     library_track=self.saved_lib_track).position == 1
 
     def test_existing_genre_then_first_position_and_other_tracks_after(self):
@@ -36,7 +36,9 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).base_playlist
-        assert PlaylistLibTrackRelation.objects.get(playlist=genre_playlist,
+        assert PlaylistLibTrackRelation.objects.get(base_playlist=genre_playlist,
                                                     library_track=self.saved_lib_track).position == 1
-        assert PlaylistLibTrackRelation.objects.get(playlist=genre_playlist, library_track=lib_track1).position == 3
-        assert PlaylistLibTrackRelation.objects.get(playlist=genre_playlist, library_track=lib_track2).position == 2
+        assert PlaylistLibTrackRelation.objects.get(
+            base_playlist=genre_playlist, library_track=lib_track1).position == 3
+        assert PlaylistLibTrackRelation.objects.get(
+            base_playlist=genre_playlist, library_track=lib_track2).position == 2

@@ -18,7 +18,7 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_generic_sample_no_tags()
         assert response.status_code == status.HTTP_201_CREATED
         all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
-        assert PlaylistLibTrackRelation.objects.get(playlist=all_playlist,
+        assert PlaylistLibTrackRelation.objects.get(base_playlist=all_playlist,
                                                     library_track=self.saved_lib_track).position == 1
-        assert PlaylistLibTrackRelation.objects.get(playlist=all_playlist, library_track=lib_track1).position == 3
-        assert PlaylistLibTrackRelation.objects.get(playlist=all_playlist, library_track=lib_track2).position == 2
+        assert PlaylistLibTrackRelation.objects.get(base_playlist=all_playlist, library_track=lib_track1).position == 3
+        assert PlaylistLibTrackRelation.objects.get(base_playlist=all_playlist, library_track=lib_track2).position == 2
