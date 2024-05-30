@@ -11,10 +11,10 @@ from bodzify_api.model.playlist.children.SimplePlaylist \
     import SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL, SimplePlaylist
 from bodzify_api.serializer.playlist.base.input.query_param import FIELDS as GET_QUERY_PARAM
 from bodzify_api.serializer.playlist.base.output.with_tracks import FIELDS as PLAYLIST_GET_FIELDS
-from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
+from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 
 
-class TestCase(PlaylistTestCase):
+class TestCase(BasePlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {

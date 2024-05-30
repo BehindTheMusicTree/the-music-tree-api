@@ -5,14 +5,14 @@ from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.serializer.playlist.base.output.with_tracks import FIELDS as RETRIEVE_FIELDS
-from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
+from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 from bodzify_api.utils import to_camel_case
 from bodzify_api.serializer.track.output.without_playlists_and_album import FIELDS as LIB_TRACK_FIELDS
 from bodzify_api.serializer.playlist_lib_track_relation.output.without_playlist \
     import FIELDS as playlist_lib_track_relation_RELATION_FIELDS
 
 
-class TestCase(PlaylistTestCase):
+class TestCase(BasePlaylistTestCase):
 
     def test_retrieve_simple_then_ok(self):
         name = 'cuisine'
