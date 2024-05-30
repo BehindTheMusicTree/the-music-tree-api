@@ -26,7 +26,7 @@ class ATTRIBUTES_LABEL:
     CRITERIA_PLAYLIST = 'criteria_playlist'
     SIMPLE_PLAYLIST = 'simple_playlist'
     PLAY_COUNT = 'play_count'
-    playlist_lib_track_relation_RELATIONS = 'playlist_lib_track_relations'
+    PLAYLIST_LIB_TRACK_RELATIONS = 'playlist_lib_track_relations'
     LAST_TRACK_LIST_UPDATE_DATE = 'last_track_list_update_date'
 
 
@@ -41,6 +41,7 @@ class FOREIGN_MODEL_ATTRIBUTES_LABEL:
     TYPE = ''
     LIB_TRACKS = ''
     PLAY_COUNT = ''
+    PLAYLIST_LIB_TRACK_RELATIONS = ''
 
 
 for attr, value in vars(ATTRIBUTES_LABEL).items():
@@ -59,6 +60,7 @@ class FOREIGN_MODEL_RELATIONS_STR:
     LIB_TRACKS = ''
     LIB_TRACKS_COUNT = ''
     PLAY_COUNT = ''
+    PLAYLIST_LIB_TRACK_RELATIONS = ''
 
 
 for attr, value in vars(ATTRIBUTES_LABEL).items():
