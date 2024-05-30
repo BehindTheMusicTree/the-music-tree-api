@@ -27,7 +27,7 @@ class ChildPlaylistSerializer(BasePlaylistWithoutTracksSerializer):
                                                                many=True)
 
     def get_library_tracks_count(self, obj) -> int:
-        return obj.playlist.library_tracks.count()
+        return obj.base_playlist.library_tracks.count()
 
     class Meta:
         fields = [FIELDS.UUID,

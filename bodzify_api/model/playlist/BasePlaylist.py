@@ -30,7 +30,7 @@ class ATTRIBUTES_LABEL:
     LAST_TRACK_LIST_UPDATE_DATE = 'last_track_list_update_date'
 
 
-FOREIGN_MODEL_ATTRIBUTES_PREFIXE = 'playlist_'
+FOREIGN_MODEL_ATTRIBUTES_PREFIXE = 'base_playlist_'
 
 
 class FOREIGN_MODEL_ATTRIBUTES_LABEL:
@@ -47,7 +47,7 @@ for attr, value in vars(ATTRIBUTES_LABEL).items():
     if not attr.startswith("__"):
         setattr(FOREIGN_MODEL_ATTRIBUTES_LABEL, attr, FOREIGN_MODEL_ATTRIBUTES_PREFIXE + value)
 
-FOREIGN_MODEL_RELATIONS_PREFIXE = 'playlist.'
+FOREIGN_MODEL_RELATIONS_PREFIXE = 'base_playlist.'
 
 
 class FOREIGN_MODEL_RELATIONS_STR:
