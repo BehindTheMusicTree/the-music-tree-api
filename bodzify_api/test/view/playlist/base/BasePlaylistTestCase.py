@@ -7,7 +7,7 @@ from rest_framework import status
 from bodzify_api.test.AppTestCase import AppTestCase
 
 
-class PlaylistTestCase(AppTestCase):
+class BasePlaylistTestCase(AppTestCase):
 
     def retrieve_playlist(self, uuid: str):
         response = self.api_client.get(path=reverse('playlist-detail', kwargs={'pk': uuid}))
