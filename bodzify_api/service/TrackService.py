@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import binascii
+from calendar import monthrange
 import os
 import random
 from token import NAME
@@ -10,6 +11,7 @@ import string
 from tempfile import NamedTemporaryFile
 import requests
 import tempfile
+import datetime
 
 from django.contrib.auth.models import User
 from django.db.models import F
@@ -60,7 +62,11 @@ class TrackService(Service):
         DATE = 'date'
         DURATION_IN_SEC = 'duration'
         RELEASEGROUPS = 'releasegroups'
-        FIRST_RELEASE_DATE = 'first-release-date'
+        RELEASES = 'releases'
+        DATE = 'date'
+        DAY = 'day'
+        MONTH = 'month'
+        YEAR = 'year'
 
     @staticmethod
     def generate_short_uu(length: int):
@@ -219,7 +225,7 @@ class TrackService(Service):
             lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
                                      fingerprint=fingerprint,
                                      duration=duration_in_sec,
-                                     meta=['recordings', 'releasegroups', 'compress', 'tracks'])
+                                     meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
             recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_FIELDS.RESULTS]
             if len(recordings_grouped_by_score) > 0:
                 best_recording_dict_with_score = TrackService.get_best_recording_dict_with_score(
@@ -229,6 +235,29 @@ class TrackService(Service):
         except Exception:
             best_recording_dict_with_score = None
         return best_recording_dict_with_score
+
+    @staticmethod
+    def __get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict):
+        earliest_comparison_date = None
+        earliest_release_date = None
+        for releasegroup in musicbrainz_recording_dict.get(TrackService.MUSICBRAINZ_FIELDS.RELEASEGROUPS, []):
+            for release in releasegroup.get(TrackService.MUSICBRAINZ_FIELDS.RELEASES, []):
+                current_release_date = release.get(TrackService.MUSICBRAINZ_FIELDS.DATE, None)
+                if current_release_date:
+                    year = current_release_date.get(TrackService.MUSICBRAINZ_FIELDS.YEAR)
+                    month_or_12 = current_release_date.get(TrackService.MUSICBRAINZ_FIELDS.MONTH, 12)
+                    month_or_1 = current_release_date.get(TrackService.MUSICBRAINZ_FIELDS.MONTH, 1)
+                    _, last_day = monthrange(year, month_or_12)
+                    day_or_last_of_month = current_release_date.get(
+                        TrackService.MUSICBRAINZ_FIELDS.DAY, last_day)
+                    day_or_first = current_release_date.get(TrackService.MUSICBRAINZ_FIELDS.DAY, 1)
+
+                    comparison_date_obj = datetime.date(year=year, month=month_or_12, day=day_or_last_of_month)
+
+                    if not earliest_comparison_date or comparison_date_obj < earliest_comparison_date:
+                        earliest_comparison_date = comparison_date_obj
+                        earliest_release_date = datetime.date(year=year, month=month_or_1, day=day_or_first)
+        return earliest_release_date
 
     @staticmethod
     def _update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(data: dict,
@@ -252,18 +281,13 @@ class TrackService(Service):
                         })
                     musicbrainz_artists.append(artist)
 
-                release_date = None
-                for releasegroup in musicbrainz_recording_dict.get(TrackService.MUSICBRAINZ_FIELDS.RELEASEGROUPS, []):
-                    if TrackService.MUSICBRAINZ_FIELDS.FIRST_RELEASE_DATE in releasegroup:
-                        release_date = releasegroup[TrackService.MUSICBRAINZ_FIELDS.FIRST_RELEASE_DATE]
-                        break
-
                 musicbrainz_recording = MusicbrainzRecording.objects.create(
                     uuid=musicbrainz_recording_uuid,
                     score=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.SCORE],
                     title=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.TITLE],
                     duration_in_sec=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.DURATION_IN_SEC],
-                    release_date=release_date)
+                    release_date=TrackService.__get_earliest_release_date_from_musicbrainz_recording_dict(
+                        musicbrainz_recording_dict))
                 musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
                 musicbrainz_recording_pk = musicbrainz_recording.pk
 

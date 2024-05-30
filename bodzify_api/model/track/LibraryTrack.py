@@ -7,17 +7,16 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api import utils
+import bodzify_api.settings as settings
 import bodzify_api.audiometadata as audiometadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.TrackFile import TrackFile
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-import bodzify_api.settings as settings
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
