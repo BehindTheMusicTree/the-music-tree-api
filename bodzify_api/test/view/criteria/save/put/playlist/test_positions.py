@@ -104,5 +104,5 @@ class TestCase(CriteriaTestCase):
         data = {PUT_FIELD.PARENT: rock_genre.uuid}
         response = self.put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
-        assert PlaylistLibTrackRelation.objects.get(playlist=punk_playlist,
+        assert PlaylistLibTrackRelation.objects.get(base_playlist=punk_playlist,
                                                     library_track=track_second_in_punk).position == 1

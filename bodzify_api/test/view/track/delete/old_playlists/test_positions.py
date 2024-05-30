@@ -21,5 +21,7 @@ class TrackDeleteViewTestCase(TrackTestCase):
 
         response = self.delete_lib_track(lib_track_uuid=track_old_position_1.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert PlaylistLibTrackRelation.objects.get(playlist=playlist, library_track=track_old_position_2).position == 1
-        assert PlaylistLibTrackRelation.objects.get(playlist=playlist, library_track=track_old_position_3).position == 2
+        assert PlaylistLibTrackRelation.objects.get(
+            base_playlist=playlist, library_track=track_old_position_2).position == 1
+        assert PlaylistLibTrackRelation.objects.get(
+            base_playlist=playlist, library_track=track_old_position_3).position == 2
