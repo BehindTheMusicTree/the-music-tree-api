@@ -105,30 +105,29 @@ class TrackTestCase(AppTestCase):
 
     def post_lib_track_with_generic_sample_no_tags(self, extension='mp3', data_dict=None):
         filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
-        return self._post_lib_track_with_generic_sample(
+        response = self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
+        print(response.json())
+        return response
 
     def post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(self, extension='mp3', data_dict=None):
-        filename_without_extension = \
-            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS
+        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_tag_album_artists_koko_without_album(self, data_dict=None):
-        filename_without_extension = \
-            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM
+        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension='mp3',
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', data_dict=None):
-        filename_without_extension = \
-            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LEN_WITH_LETTER_A
+        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LEN_WITH_LETTER_A
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
