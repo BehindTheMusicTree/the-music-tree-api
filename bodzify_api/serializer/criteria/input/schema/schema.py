@@ -9,7 +9,7 @@ class FIELDS:
     PARENT = ATTRIBUTES_LABEL.PARENT
 
 
-class CriteriaSaveSchemaSerializer(serializers.ModelSerializer):
+class CriteriaSchemaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Criteria
