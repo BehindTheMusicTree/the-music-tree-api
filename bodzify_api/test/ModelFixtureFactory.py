@@ -58,8 +58,8 @@ class ModelFixtureFactory:
                  created_on=created_on,
                  updated_on=updated_on)  # type: ignore
 
-    def create_file(self, filename: str, created_on: Optional[datetime] = timezone.make_aware(
-            datetime.date.today())) -> TrackFile:
+    def create_file(
+            self, filename: str, created_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> TrackFile:
         return G(TrackFile,
                  user=self.test_user.django_user,
                  file=str(Path(self.test_user.lib_abs_path) / filename),
@@ -103,8 +103,7 @@ class ModelFixtureFactory:
                  updated_on=updated_on)  # type: ignore
 
     def create_musicbrainz_artist(
-            self, uuid: uuid.UUID, name: str, created_on: Optional[datetime] = timezone.make_aware(
-                datetime.date.today()),
+            self, uuid: uuid.UUID, name: str, created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
             updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> MusicbrainzArtist:
         return G(MusicbrainzArtist, uuid=uuid, name=name, created_om=created_on, updated_on=updated_on)  # type: ignore
 
@@ -124,10 +123,11 @@ class ModelFixtureFactory:
         return self.__create_criteria(
             name=name, type=CRITERIA_TYPES_ID.TAG, parent=parent, created_on=created_on, updated_on=updated_on)
 
-    def create_simple_playlist(
-            self, name, play_count: Optional[int] = 0, created_on: Optional[datetime] = timezone.make_aware(
-                datetime.date.today()),
-            updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> SimplePlaylist:
+    def create_simple_playlist(self,
+                               name,
+                               play_count: Optional[int] = 0,
+                               created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
+                               updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> SimplePlaylist:
         return G(SimplePlaylist,
                  base_playlist__user=self.test_user.django_user,
                  name=name,
