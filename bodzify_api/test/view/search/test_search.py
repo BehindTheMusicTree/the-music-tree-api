@@ -23,9 +23,9 @@ from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 class TestCase(SearchTestCase):
 
     def test_query_in_track_artist_and_album(self):
-        summerlove_track = self.model_fixture_factory.create_lib_track(title="Summer Love")
         sum41_artist = self.model_fixture_factory.create_artist(name="Sum 41")
         jailesum_album = self.model_fixture_factory.create_album(name="J'ai le Sum")
+        summerlove_track = self.model_fixture_factory.create_lib_track(title="Summer Love", album=jailesum_album)
 
         response = self.search("Sum")
         assert response.status_code == status.HTTP_200_OK
