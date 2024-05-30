@@ -12,7 +12,7 @@ class FIELDS:
     CONTENT_OBJECT_UUID = ATTRIBUTES_LABEL.CONTENT_OBJECT + '_uuid'
 
 
-class PlaySaveSchemaSerializer(serializers.ModelSerializer):
+class PlaySchemaSerializer(serializers.ModelSerializer):
     content_object_uuid = serializers.CharField(max_length=settings.UUID_LEN, required=True)
 
     class Meta:

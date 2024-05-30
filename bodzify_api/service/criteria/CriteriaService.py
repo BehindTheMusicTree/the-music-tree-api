@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.input.model import CriteriaModelSerializer
 from bodzify_api.serializer.criteria.input.schema.endpoint.put import CriteriaPutSerializer
-from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSaveSchemaSerializer
+from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSchemaSerializer
 
 from bodzify_api.service.Service import Service
 
@@ -17,13 +17,13 @@ class CriteriaService(Service):
         super().__init__()
 
     def _get_post_serializer(self, post_data: dict):
-        return CriteriaSaveSchemaSerializer(data=post_data)
+        return CriteriaSchemaSerializer(data=post_data)
 
     def _get_put_serializer(self, old_instance, put_data: dict):
         return CriteriaPutSerializer(instance=old_instance, data=put_data)
 
     def _get_schema_serializer(self, old_instance, schema_data: dict, request):
-        return CriteriaSaveSchemaSerializer(data=schema_data, context={'request': request})
+        return CriteriaSchemaSerializer(data=schema_data, context={'request': request})
 
     def _get_model_serializer(self, old_instance, model_data: dict, partial: bool):
         return CriteriaModelSerializer(instance=old_instance, data=model_data, partial=True)

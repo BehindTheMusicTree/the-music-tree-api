@@ -25,7 +25,7 @@ class FIELDS:
     FORCE_TITLE_GENERATION = "force_title_generation"
 
 
-class LibTrackSaveSchemaSerializer(serializers.Serializer):
+class LibTrackSchemaSerializer(serializers.Serializer):
     file = serializers.FileField(required=False)
     should_check_if_fingerprint_exists = serializers.BooleanField(required=False)
     title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,

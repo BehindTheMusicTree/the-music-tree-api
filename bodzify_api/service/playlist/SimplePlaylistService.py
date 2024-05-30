@@ -7,7 +7,7 @@ from bodzify_api.serializer.playlist.children.simple.input.model \
 from bodzify_api.serializer.playlist.children.simple.input.endpoint \
     import SimplePlaylistInputEndpointSerializer
 from bodzify_api.serializer.playlist.children.simple.input.schema \
-    import SimplePlaylistSaveSchemaSerializer
+    import SimplePlaylistSchemaSerializer
 from bodzify_api.service.Service import Service
 
 
@@ -20,7 +20,7 @@ class SimplePlaylistService(Service):
         return SimplePlaylistInputEndpointSerializer(data=put_data)
 
     def _get_schema_serializer(self, old_instance, schema_data: dict, request):
-        return SimplePlaylistSaveSchemaSerializer(data=schema_data)
+        return SimplePlaylistSchemaSerializer(data=schema_data)
 
     def _get_model_serializer(self, old_instance, model_data: dict, partial: bool):
         return SimplePlaylistModelSerializer(instance=old_instance, data=model_data, partial=True)

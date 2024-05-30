@@ -10,7 +10,7 @@ class FIELDS:
     NAME = PLAYLIST_ATTRIBUTES_LABEL.NAME
 
 
-class SimplePlaylistSaveSchemaSerializer(serializers.Serializer):
+class SimplePlaylistSchemaSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LEN_MAX,
                                  required=False,
                                  allow_blank=True,

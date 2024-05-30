@@ -44,7 +44,7 @@ from bodzify_api.serializer.track_file.input.schema \
 from bodzify_api.serializer.track_file.input.model \
     import TrackFileModelSerializer, FIELDS as TRACK_FILE_MODEL_FIELDS
 from bodzify_api.serializer.track.input.schema \
-    import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSaveSchemaSerializer
+    import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSchemaSerializer
 from bodzify_api.serializer.track.input.endpoint.put import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.detailed import FIELDS as MINE_TRACK_FIELDS
 
@@ -306,7 +306,7 @@ class TrackService(Service):
         return LibTrackPutSerializer(instance=old_instance, data=put_data)
 
     def _get_schema_serializer(self, old_instance, schema_data: dict, request):
-        return LibTrackSaveSchemaSerializer(data=schema_data, context={'request': request})
+        return LibTrackSchemaSerializer(data=schema_data, context={'request': request})
 
     def _get_model_serializer(self, old_instance, model_data: dict, partial: bool):
         return TrackModelSerializer(instance=old_instance, data=model_data, partial=True)
