@@ -109,7 +109,6 @@ class TrackTestCase(AppTestCase):
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
-        print(response.json())
         return response
 
     def post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(self, extension='mp3', data_dict=None):
