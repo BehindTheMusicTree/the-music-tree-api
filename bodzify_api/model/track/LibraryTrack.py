@@ -133,14 +133,15 @@ class LibraryTrack(models.Model):
             if self.track_file:
                 if not self.duration_in_sec:
                     self.duration_in_sec = audiometadata.get_specific_metadata_from_file(
-                        file=self.track_file.file, normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION_IN_SEC)
-                    super().save(update_fields=[ATTRIBUTES_LABEL.DURATION_IN_SEC])
+                        file=self.track_file.file,
+                        normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION_IN_SEC)
 
             super().save(*args, **kwargs)
+
             from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
-            all_simple_playlist = SimplePlaylist.objects.get(
-                base_playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
+            all_simple_playlist = SimplePlaylist.objects.get(base_playlist__user=self.user,
+                                                             name=PLAYLIST_SPECIAL_NAMES.ALL)
             PlaylistLibTrackRelation.objects.create(base_playlist=all_simple_playlist.base_playlist, library_track=self)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
