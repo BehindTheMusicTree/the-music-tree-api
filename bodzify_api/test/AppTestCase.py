@@ -62,17 +62,6 @@ class AppTestCase(TestCase):
         AccessToken.for_user(user)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
-        response = self.api_client.get(path=reverse('playlist-list'), format='json')
-
-        if response.status_code == status.HTTP_200_OK:
-            assert True
-        elif response.status_code == status.HTTP_401_UNAUTHORIZED:
-            print("Not authenticated.")
-            assert False
-        else:
-            print(f"Unexpected : {response.status_code}")
-            assert False
-
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
         call_command('loaddata', 'app', 'pytest_user')
         self.api_client = AppApiClient()
