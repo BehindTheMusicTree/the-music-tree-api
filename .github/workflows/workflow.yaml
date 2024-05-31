@@ -20,6 +20,7 @@ jobs:
       DB_HOST: ${{ secrets.DEV_UNDOCKERIZED_DB_HOST }}
       DB_DATABASE: ${{ secrets.DEV_DB_DATABASE }}
       DB_PORT: ${{ secrets.DEV_DB_PORT }}
+      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
     services:
       postgres_main:
         image: postgres:14.12
@@ -27,7 +28,6 @@ jobs:
           POSTGRES_USER: ${{ env.DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
           POSTGRES_DB: ${{ env.DB_DATABASE }}
-          ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
         ports:
           - 5432:5432
         options: >-
