@@ -253,8 +253,8 @@ class TrackService(Service):
             elif lookup[TrackService.MUSICBRAINZ_API.FIELDS.STATUS] == TrackService.MUSICBRAINZ_API.VALUES.STATUS.ERROR:
                 error_dict = lookup[TrackService.MUSICBRAINZ_API.FIELDS.ERROR]
                 error_code = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.CODE]
-                error_message = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.MESSAGE])
-                exception_message= f"Error while getting musicbrainz recording ID: {error_code} - {error_message}"
+                error_message = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.MESSAGE]
+                exception_message = f"Error while getting musicbrainz recording ID: {error_code} - {error_message}"
                 print(exception_message)
                 raise MusicbrainzException(exception_message)
             else:
@@ -264,25 +264,25 @@ class TrackService(Service):
 
     @ staticmethod
     def __get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict):
-        earliest_comparison_date= None
-        earliest_release_date= None
+        earliest_comparison_date = None
+        earliest_release_date = None
         for releasegroup in musicbrainz_recording_dict.get(TrackService.MUSICBRAINZ_API.FIELDS.RELEASEGROUPS, []):
             for release in releasegroup.get(TrackService.MUSICBRAINZ_API.FIELDS.RELEASES, []):
-                current_release_date= release.get(TrackService.MUSICBRAINZ_API.FIELDS.DATE, None)
+                current_release_date = release.get(TrackService.MUSICBRAINZ_API.FIELDS.DATE, None)
                 if current_release_date:
-                    year= current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.YEAR)
-                    month_or_12= current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.MONTH, 12)
-                    month_or_1= current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.MONTH, 1)
-                    _, last_day= monthrange(year, month_or_12)
-                    day_or_last_of_month= current_release_date.get(
+                    year = current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.YEAR)
+                    month_or_12 = current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.MONTH, 12)
+                    month_or_1 = current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.MONTH, 1)
+                    _, last_day = monthrange(year, month_or_12)
+                    day_or_last_of_month = current_release_date.get(
                         TrackService.MUSICBRAINZ_API.FIELDS.DAY, last_day)
-                    day_or_first= current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.DAY, 1)
+                    day_or_first = current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.DAY, 1)
 
-                    comparison_date_obj= datetime.date(year=year, month=month_or_12, day=day_or_last_of_month)
+                    comparison_date_obj = datetime.date(year=year, month=month_or_12, day=day_or_last_of_month)
 
                     if not earliest_comparison_date or comparison_date_obj < earliest_comparison_date:
-                        earliest_comparison_date= comparison_date_obj
-                        earliest_release_date= datetime.date(year=year, month=month_or_1, day=day_or_first)
+                        earliest_comparison_date = comparison_date_obj
+                        earliest_release_date = datetime.date(year=year, month=month_or_1, day=day_or_first)
         return earliest_release_date
 
     @ staticmethod
@@ -290,7 +290,7 @@ class TrackService(Service):
                                                                                           fingerprint: bytes,
                                                                                           duration_in_sec: float):
         try:
-            musicbrainz_recording_dict =
+            musicbrainz_recording_dict = \
                 TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
                     fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
             if musicbrainz_recording_dict:
