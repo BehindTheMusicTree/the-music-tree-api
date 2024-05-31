@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
+from pydub.utils import mediainfo
 from abc import abstractmethod
 from typing import Optional
-from tinytag import TinyTag
+from tinytag import TinyTag, TinyTagException
 import tempfile
 from mutagen._file import FileType as MutagenFileMetadata
 
@@ -133,34 +134,66 @@ class MetadataManager:
         else:
             return self.BASE_100_RATING_STAR_VALUES[star_rating_base_10]
 
-    def _get_duration_from_file_matadata(self) -> Optional[float]:
+    def _get_duration_from_file_matadata_using_mutagen(self) -> Optional[float]:
         if hasattr(self.file_metadata, 'info'):
             return self.file_metadata.info.length  # type: ignore
         return None
 
     def _get_duration_using_tinytag(self) -> Optional[float]:
-        if isinstance(self.file, TemporaryUploadedFile):
-            with open(self.file.temporary_file_path(), 'rb') as f:
-                return TinyTag.get(f.name).duration
-        elif isinstance(self.file, FieldFile):
-            with open(self.file.path, 'rb') as f:
-                return TinyTag.get(f.name).duration
-        elif isinstance(self.file, InMemoryUploadedFile):
-            with tempfile.NamedTemporaryFile(delete=False) as tmp:
-                for chunk in self.file.chunks():
-                    tmp.write(chunk)
-                tmp.close()
-                return TinyTag.get(tmp.name).duration
+        try:
+            if isinstance(self.file, TemporaryUploadedFile):
+                with open(self.file.temporary_file_path(), 'rb') as f:
+                    return TinyTag.get(f.name).duration
+            elif isinstance(self.file, FieldFile):
+                with open(self.file.path, 'rb') as f:
+                    return TinyTag.get(f.name).duration
+            elif isinstance(self.file, InMemoryUploadedFile):
+                with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                    for chunk in self.file.chunks():
+                        tmp.write(chunk)
+                    tmp.close()
+                    return TinyTag.get(tmp.name).duration
+        except TinyTagException as exception:
+            if exception.args[0] == 'No tag reader found to support filetype! ':
+                return None
+            else:
+                raise exception
+
         if self.file.file:  # type: ignore
             filename = self.file.file.name  # type: ignore
         else:
             filename = self.file.name  # type: ignore
         return TinyTag.get(filename).duration
 
+    def _get_duration_using_pydub(self) -> Optional[float]:
+        if isinstance(self.file, TemporaryUploadedFile):
+            with open(self.file.temporary_file_path(), 'rb') as f:
+                audio_info = mediainfo(f.name)
+                return float(audio_info['duration'])
+        elif isinstance(self.file, FieldFile):
+            with open(self.file.path, 'rb') as f:
+                audio_info = mediainfo(f.name)
+                return float(audio_info['duration'])
+        elif isinstance(self.file, InMemoryUploadedFile):
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                for chunk in self.file.chunks():
+                    tmp.write(chunk)
+                tmp.close()
+                audio_info = mediainfo(tmp.name)
+                return float(audio_info['duration'])
+        if self.file.file:  # type: ignore
+            filename = self.file.file.name  # type: ignore
+        else:
+            filename = self.file.name  # type: ignore
+        audio_info = mediainfo(filename)
+        return float(audio_info['duration'])
+
     def get_duration_in_sec(self):
-        duration_in_sec = self._get_duration_from_file_matadata()
+        duration_in_sec = self._get_duration_from_file_matadata_using_mutagen()
         if duration_in_sec is None:
             duration_in_sec = self._get_duration_using_tinytag()
+        if duration_in_sec is None:
+            duration_in_sec = self._get_duration_using_pydub()
         return duration_in_sec
 
     def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> dict:
