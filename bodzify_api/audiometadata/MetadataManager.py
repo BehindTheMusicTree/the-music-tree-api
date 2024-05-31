@@ -139,7 +139,7 @@ class MetadataManager:
             return self.file_metadata.info.length  # type: ignore
         return None
 
-    def _get_duration_using_tinytag(self) -> Optional[float]:
+    def _get_duration_using_tinytag(self) -> Optional[int]:
         try:
             if isinstance(self.file, TemporaryUploadedFile):
                 with open(self.file.temporary_file_path(), 'rb') as f:
@@ -165,35 +165,43 @@ class MetadataManager:
             filename = self.file.name  # type: ignore
         return TinyTag.get(filename).duration
 
-    def _get_duration_using_pydub(self) -> Optional[float]:
+    def _get_duration_using_pydub(self) -> str:
         if isinstance(self.file, TemporaryUploadedFile):
             with open(self.file.temporary_file_path(), 'rb') as f:
                 audio_info = mediainfo(f.name)
-                return float(audio_info['duration'])
+                return audio_info['duration']
         elif isinstance(self.file, FieldFile):
             with open(self.file.path, 'rb') as f:
                 audio_info = mediainfo(f.name)
-                return float(audio_info['duration'])
+                return audio_info['duration']
         elif isinstance(self.file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 for chunk in self.file.chunks():
                     tmp.write(chunk)
                 tmp.close()
                 audio_info = mediainfo(tmp.name)
-                return float(audio_info['duration'])
+                return audio_info['duration']
         if self.file.file:  # type: ignore
             filename = self.file.file.name  # type: ignore
         else:
             filename = self.file.name  # type: ignore
         audio_info = mediainfo(filename)
-        return float(audio_info['duration'])
+        return audio_info['duration']
 
-    def get_duration_in_sec(self):
-        duration_in_sec = self._get_duration_from_file_matadata_using_mutagen()
+    def get_duration_in_sec(self) -> int:
+        duration_in_sec_float = self._get_duration_from_file_matadata_using_mutagen()
+        duration_in_sec = int(duration_in_sec_float) if duration_in_sec_float else None
         if duration_in_sec is None:
-            duration_in_sec = self._get_duration_using_tinytag()
+            duration_in_sec_float = self._get_duration_using_tinytag()
+            duration_in_sec = int(duration_in_sec_float) if duration_in_sec_float else None
         if duration_in_sec is None:
-            duration_in_sec = self._get_duration_using_pydub()
+            duration_in_sec_float = self._get_duration_using_pydub()
+            duration_in_sec = int(float(duration_in_sec_float))
+
+        if duration_in_sec == 0:
+            duration_in_sec = 1
+        elif duration_in_sec is None:
+            raise Exception("Duration not found in metadata.")
         return duration_in_sec
 
     def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> dict:
