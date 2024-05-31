@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import attr
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
 from rest_framework import serializers
 

@@ -5,7 +5,7 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.track.input.model import FIELDS as SAVE_MODEL_FIELDS
-from bodzify_api.serializer.album.input.model import FIELDS as ALBUM_SAVE_MODEL_FIELDS
+from bodzify_api.model.Album import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 
 
 class FIELDS:
@@ -16,7 +16,7 @@ class FIELDS:
     TITLE = SAVE_MODEL_FIELDS.TITLE
     ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
     ALBUM_NAME = SAVE_MODEL_FIELDS.ALBUM + "_name"
-    ALBUM_ARTISTS_NAMES_STR = ALBUM_SAVE_MODEL_FIELDS.ALBUM_ARTISTS + "_names_string"
+    ALBUM_ARTISTS_NAMES_STR = ATTRIBUTES_LABEL.ALBUM_ARTISTS + "_names_string"
     GENRE_UUID = SAVE_MODEL_FIELDS.GENRE + "_uuid"
     GENRE_NAME = SAVE_MODEL_FIELDS.GENRE + "_name"
     RATING = SAVE_MODEL_FIELDS.RATING

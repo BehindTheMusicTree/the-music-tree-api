@@ -6,7 +6,7 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
 from bodzify_api.serializer.track.input.schema import FIELDS as SAVE_SCHEMA_FIELDS
-from bodzify_api.serializer.album.input.schema import FIELDS as ALBUM_SAVE_SCHEMA_FIELDS
+from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_SAVE_SCHEMA_FIELDS
 
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
@@ -18,7 +18,7 @@ class FIELDS:
     TITLE = SAVE_SCHEMA_FIELDS.TITLE
     ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
     ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES_STR = ALBUM_SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
+    ALBUM_ARTISTS_NAMES_STR = ALBUM_SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS + "_names_string"
     GENRE_UUID = SAVE_SCHEMA_FIELDS.GENRE_UUID
     GENRE_NAME = SAVE_SCHEMA_FIELDS.GENRE_NAME
     RATING = SAVE_SCHEMA_FIELDS.RATING
