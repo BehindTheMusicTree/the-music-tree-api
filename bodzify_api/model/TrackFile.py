@@ -71,7 +71,7 @@ class TrackFile(models.Model):
     created_on = models.DateTimeField(default=timezone.now, editable=False)
 
     class Meta:
-        db_table = 'track_file'
+        db_table = 'bodzify_api_track_file'
         verbose_name = 'Track File'
         verbose_name_plural = 'Track Files'
 

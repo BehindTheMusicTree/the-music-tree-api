@@ -52,6 +52,6 @@ class MusicbrainzRecording(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'musicbrainz_recording'
+        db_table = 'bodzify_api_musicbrainz_recording'
         verbose_name = 'Musicbrainz Recording'
         verbose_name_plural = 'Musicbrainz Recordings'

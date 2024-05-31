@@ -23,7 +23,7 @@ class PlaylistLibTrackRelation(models.Model):
     created_on = models.DateTimeField(default=timezone.now, editable=False)
 
     class Meta:
-        db_table = 'playlist_lib_track_relation'
+        db_table = 'bodzify_api_lib_track_relation'
         verbose_name = 'Playlist Library Track Relation'
         verbose_name_plural = 'Playlist Library Track Relations'
 

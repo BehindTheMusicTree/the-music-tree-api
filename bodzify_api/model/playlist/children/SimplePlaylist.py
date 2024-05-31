@@ -31,6 +31,6 @@ class SimplePlaylist(models.Model):
                 check=~models.Q(name=""), name="simple_playlist_non_empty_name"
             )
         ]
-        db_table = 'simple_playlist'
+        db_table = 'bodzify_api_simple_playlist'
         verbose_name = 'Simple Playlist'
         verbose_name_plural = 'Simple Playlists'

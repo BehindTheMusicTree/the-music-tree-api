@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-import logging
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaType, CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID, CriteriaType
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 
@@ -45,7 +44,7 @@ class CriteriaPlaylist(models.Model):
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
-        db_table = 'criteria_playlist'
+        db_table = 'bodzify_api_criteria_playlist'
         verbose_name = 'Criteria Playlist'
         verbose_name_plural = 'Criteria Playlists'
 

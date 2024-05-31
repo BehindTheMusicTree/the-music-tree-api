@@ -93,7 +93,7 @@ class LibraryTrack(models.Model):
         return str(datetime.timedelta(seconds=duration_in_sec))
 
     class Meta:
-        db_table = 'library_track'
+        db_table = 'bodzify_api_library_track'
         verbose_name = 'Library Track'
         verbose_name_plural = 'Library Tracks'
 

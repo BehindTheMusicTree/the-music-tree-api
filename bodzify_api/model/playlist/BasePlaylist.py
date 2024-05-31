@@ -77,7 +77,7 @@ class BasePlaylist(models.Model):
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
-        db_table = 'base_playlist'
+        db_table = 'bodzify_api_base_playlist'
         verbose_name = 'Base Playlist'
         verbose_name_plural = 'Base Playlists'
 
