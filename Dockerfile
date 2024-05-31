@@ -57,6 +57,7 @@ RUN mkdir ${DockerHome}/staticfiles && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     apt update && \
     apt install -y flac && \
+    apt install -y ffpmeg && \
     apt install -y libchromaprint-tools && \
     chown -R www-data:www-data /opt/bodzify-api && \
     python manage.py collectstatic --noinput
