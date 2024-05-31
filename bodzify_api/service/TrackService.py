@@ -235,10 +235,10 @@ class TrackService(Service):
         if len(recordings_grouped_by_score) > 0:
             best_recording_dict_with_score = TrackService.get_best_recording_dict_with_score(
                 recordings_grouped_by_score=recordings_grouped_by_score, duration_in_sec=duration_in_sec)
-        # else:
-        #     return None
-        except Exception:
-            best_recording_dict_with_score = None
+        else:
+            return None
+        # except Exception:
+        #     best_recording_dict_with_score = None
         return best_recording_dict_with_score
 
     @staticmethod
