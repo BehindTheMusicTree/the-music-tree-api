@@ -71,8 +71,6 @@ jobs:
         run:
           docker-compose -f docker-compose.build.yml build
           --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
-          --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
-          --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
           --build-arg env=TEST 
           --build-arg dbUsername=${{ secrets.PROD_DB_USERNAME }}
           --build-arg dbPassword='${{ secrets.PROD_DB_PASSWORD }}'
