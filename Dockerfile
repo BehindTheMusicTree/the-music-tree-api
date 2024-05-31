@@ -17,6 +17,8 @@ ENV DB_PASSWORD=$dbPassword
 ENV DB_DATABASE=$dbDatabase
 ENV DB_HOST=$dbHost
 ENV DB_PORT=$dbPort
+ENV ACOUSTID_API_KEY=$acoustidApiKey
+
 
 # To run gunicorn as a non-root user without password prompt
 RUN apt-get update && apt-get install -y gosu

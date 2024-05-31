@@ -79,6 +79,7 @@ jobs:
           --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }}
           --build-arg dbHost=${{ secrets.PROD_DOCKERIZED_DB_HOST }}
           --build-arg dbPort=${{ secrets.PROD_DB_PORT }}
+          --build-arg acoustidApiKey=${{ secrets.ACOUSTID_API_KEY }}
       - name: Publish Docker image
         run: docker-compose -f docker-compose.build.yml push
 
