@@ -22,7 +22,7 @@ jobs:
       DB_PORT: ${{ secrets.DEV_DB_PORT }}
     services:
       postgres_main:
-        image: postgres:14.5
+        image: postgres:14.12
         env:
           POSTGRES_USER: ${{ env.DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
