@@ -231,6 +231,7 @@ class TrackService(Service):
                                  fingerprint=fingerprint,
                                  duration=duration_in_sec,
                                  meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
+        print(lookup)
         recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_FIELDS.RESULTS]
         if len(recordings_grouped_by_score) > 0:
             best_recording_dict_with_score = TrackService.get_best_recording_dict_with_score(
