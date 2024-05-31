@@ -49,9 +49,12 @@ jobs:
         run: bash scripts/setup_filesystem_workflow.sh
       - name: Install flac
         run: sudo apt install flac
+      - name: Install ffmpeg
+        run: sudo apt install ffmpeg
+      - name: Add fpcalc to PATH
+        run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
       - name: Run pytest
-        run: |
-            pytest .
+        run: pytest .
 
   Docker-webapp:
     name: Build and Publish on Docker Hub
