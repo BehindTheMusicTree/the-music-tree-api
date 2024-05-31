@@ -33,6 +33,7 @@ class ATTRIBUTES_LABEL:
     TRACK_FILE_USER_FRIENDLY = "file"
     DURATION_IN_SEC = "duration_in_sec"
     DURATION_STR_IN_HOUR_MIN_SEC = "duration_str_in_hour_min_sec"
+    MUSICBRAINZ_RECORDING_LOOKUP_HAS_FAILED_WITH_ERRORS = "musicbrainz_recording_lookup_has_failed_with_errors"
     MUSICBRAINZ_RECORDING = "musicbrainz_recording"
     TITLE = "title"
     ARTIST = "artist"
@@ -54,8 +55,11 @@ class LibraryTrack(models.Model):
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file = models.OneToOneField(TrackFile, on_delete=models.CASCADE)
     duration_in_sec = models.IntegerField()
-    musicbrainz_recording = models.ForeignKey(
-        MusicbrainzRecording, on_delete=models.DO_NOTHING, default=None, null=True)
+    musicbrainz_recording_lookup_has_failed_with_errors = models.BooleanField(null=True)
+    musicbrainz_recording = models.ForeignKey(MusicbrainzRecording,
+                                              on_delete=models.DO_NOTHING,
+                                              default=None,
+                                              null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,

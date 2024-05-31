@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.output.detailed \
-    import LibTrackDetailedSerializer, FIELDS as LIB_TRACK_DETAILED_FIELDS
+from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer, FIELDS as LIB_TRACK_DETAILED_FIELDS
 
 
 class FIELDS:
@@ -14,6 +13,8 @@ class FIELDS:
     ALBUM = LIB_TRACK_DETAILED_FIELDS.ALBUM
     DURATION_IN_SEC = LIB_TRACK_DETAILED_FIELDS.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = LIB_TRACK_DETAILED_FIELDS.DURATION_STR_IN_HOUR_MIN_SEC
+    MUSICBRAINZ_RECORDING_LOOKUP_HAS_FAILED_WITH_ERRORS = LIB_TRACK_DETAILED_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_HAS_FAILED_WITH_ERRORS
+    MUSICBRAINZ_RECORDING = LIB_TRACK_DETAILED_FIELDS.MUSICBRAINZ_RECORDING
     RATING = LIB_TRACK_DETAILED_FIELDS.RATING
     LANGUAGE = LIB_TRACK_DETAILED_FIELDS.LANGUAGE
     CREATED_ON = LIB_TRACK_DETAILED_FIELDS.CREATED_ON
@@ -32,6 +33,8 @@ class LibTrackWithoutPlaylistsAndGenreSerializer(LibTrackDetailedSerializer):
                   FIELDS.ALBUM,
                   FIELDS.DURATION_IN_SEC,
                   FIELDS.DURATION_STR_IN_HOUR_MIN_SEC,
+                  FIELDS.MUSICBRAINZ_RECORDING,
+                  FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_HAS_FAILED_WITH_ERRORS,
                   FIELDS.RATING,
                   FIELDS.LANGUAGE,
                   FIELDS.CREATED_ON,

@@ -4,7 +4,7 @@ import binascii
 from calendar import monthrange
 import os
 import random
-from token import NAME
+from sys import exception
 from typing import Optional
 import acoustid
 import string
@@ -21,6 +21,7 @@ from django.core.files.base import File as DjangoFile
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import ValidationError
 
+from bodzify_api.exception.musicbrainz import MusicbrainzException
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.musicbrainz.MusicbrainzArtist \
     import MusicbrainzArtist, ATTRIBUTES_LABEL as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
@@ -51,22 +52,32 @@ from bodzify_api.serializer.mine.track.detailed import FIELDS as MINE_TRACK_FIEL
 
 class TrackService(Service):
 
-    class MUSICBRAINZ_FIELDS:
-        RESULTS = 'results'
-        RECORDINGS = 'recordings'
-        ID = 'id'
-        SCORE = 'score'
-        ARTISTS = 'artists'
-        NAME = 'name'
-        TITLE = 'title'
-        DATE = 'date'
-        DURATION_IN_SEC = 'duration'
-        RELEASEGROUPS = 'releasegroups'
-        RELEASES = 'releases'
-        DATE = 'date'
-        DAY = 'day'
-        MONTH = 'month'
-        YEAR = 'year'
+    class MUSICBRAINZ_API:
+        class FIELDS:
+            RESULTS = 'results'
+            RECORDINGS = 'recordings'
+            ID = 'id'
+            SCORE = 'score'
+            ARTISTS = 'artists'
+            NAME = 'name'
+            TITLE = 'title'
+            DATE = 'date'
+            DURATION_IN_SEC = 'duration'
+            RELEASEGROUPS = 'releasegroups'
+            RELEASES = 'releases'
+            DATE = 'date'
+            DAY = 'day'
+            MONTH = 'month'
+            YEAR = 'year'
+            ERROR = 'error'
+            STATUS = 'status'
+            CODE = 'code'
+            MESSAGE = 'message'
+
+        class VALUES:
+            class STATUS:
+                OK = 'ok'
+                ERROR = 'error'
 
     @staticmethod
     def generate_short_uu(length: int):
@@ -143,8 +154,8 @@ class TrackService(Service):
             file_schema_data = dict()
             file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE] = file
 
-            # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack model,
-            # doing it here enables to calculate it only once.
+            # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack
+            # #model, doing it here enables to calculate it only once.
             fingerprint, duration_in_sec = TrackService.get_fingerprint_and_duration_from_file(file=file)
 
             if fingerprint is not None and duration_in_sec is not None:
@@ -204,59 +215,66 @@ class TrackService(Service):
     @staticmethod
     def get_best_recording_dict_with_score(recordings_grouped_by_score, duration_in_sec):
         def rate_groupe_of_recordings_by_score(group_of_recordings):
-            return group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.SCORE]
+            return group_of_recordings[TrackService.MUSICBRAINZ_API.FIELDS.SCORE]
 
         def rate_recording_by_similar_duration_and_by_number_of_fields(recording):
             DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST = 1000000000
             duration_difference = abs(
                 recording.get(
-                    TrackService.MUSICBRAINZ_FIELDS.DURATION_IN_SEC,
+                    TrackService.MUSICBRAINZ_API.FIELDS.DURATION_IN_SEC,
                     DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST) - duration_in_sec)
             fields_count = len(recording)
-            release_groups_count = len(recording.get(TrackService.MUSICBRAINZ_FIELDS.RELEASEGROUPS, []))
+            release_groups_count = len(recording.get(TrackService.MUSICBRAINZ_API.FIELDS.RELEASEGROUPS, []))
             return duration_difference, -fields_count, -release_groups_count
 
         best_group_of_recordings = max(recordings_grouped_by_score, key=rate_groupe_of_recordings_by_score)
-        best_recordings = best_group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.RECORDINGS]
+        best_recordings = best_group_of_recordings[TrackService.MUSICBRAINZ_API.FIELDS.RECORDINGS]
         best_recording = min((recording for recording in best_recordings),
                              key=rate_recording_by_similar_duration_and_by_number_of_fields)
-        best_recording[TrackService.MUSICBRAINZ_FIELDS.SCORE] = \
-            best_group_of_recordings[TrackService.MUSICBRAINZ_FIELDS.SCORE]
+        best_recording[TrackService.MUSICBRAINZ_API.FIELDS.SCORE] = \
+            best_group_of_recordings[TrackService.MUSICBRAINZ_API.FIELDS.SCORE]
         return best_recording
 
     @staticmethod
-    def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
-            fingerprint: str, duration_in_sec: float) -> Optional[dict]:
-        lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
-                                 fingerprint=fingerprint,
-                                 duration=duration_in_sec,
-                                 meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
-        print(lookup)
-        recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_FIELDS.RESULTS]
-        if len(recordings_grouped_by_score) > 0:
-            best_recording_dict_with_score = TrackService.get_best_recording_dict_with_score(
-                recordings_grouped_by_score=recordings_grouped_by_score, duration_in_sec=duration_in_sec)
-        else:
-            return None
-        # except Exception:
-        #     best_recording_dict_with_score = None
-        return best_recording_dict_with_score
+    def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: str,
+                                                                           duration_in_sec: float) -> Optional[dict]:
+        try:
+            lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
+                                     fingerprint=fingerprint,
+                                     duration=duration_in_sec,
+                                     meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
+            print(lookup)
+            if lookup[TrackService.MUSICBRAINZ_API.FIELDS.STATUS] == TrackService.MUSICBRAINZ_API.VALUES.STATUS.OK:
+                recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_API.FIELDS.RESULTS]
+                if len(recordings_grouped_by_score) > 0:
+                    return TrackService.get_best_recording_dict_with_score(
+                        recordings_grouped_by_score=recordings_grouped_by_score, duration_in_sec=duration_in_sec)
+                else:
+                    return None
+            elif lookup[TrackService.MUSICBRAINZ_API.FIELDS.STATUS] == TrackService.MUSICBRAINZ_API.VALUES.STATUS.ERROR:
+                error_dict = lookup[TrackService.MUSICBRAINZ_API.FIELDS.ERROR]
+                error_code = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.CODE]
+                error_message = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.MESSAGE]
+                exception_message = f"Error while getting musicbrainz recording ID: {error_code} - {error_message}"
+                raise MusicbrainzException(exception_message)
+        except Exception as exception:
+            raise MusicbrainzException(str(exception))
 
     @staticmethod
     def __get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict):
         earliest_comparison_date = None
         earliest_release_date = None
-        for releasegroup in musicbrainz_recording_dict.get(TrackService.MUSICBRAINZ_FIELDS.RELEASEGROUPS, []):
-            for release in releasegroup.get(TrackService.MUSICBRAINZ_FIELDS.RELEASES, []):
-                current_release_date = release.get(TrackService.MUSICBRAINZ_FIELDS.DATE, None)
+        for releasegroup in musicbrainz_recording_dict.get(TrackService.MUSICBRAINZ_API.FIELDS.RELEASEGROUPS, []):
+            for release in releasegroup.get(TrackService.MUSICBRAINZ_API.FIELDS.RELEASES, []):
+                current_release_date = release.get(TrackService.MUSICBRAINZ_API.FIELDS.DATE, None)
                 if current_release_date:
-                    year = current_release_date.get(TrackService.MUSICBRAINZ_FIELDS.YEAR)
-                    month_or_12 = current_release_date.get(TrackService.MUSICBRAINZ_FIELDS.MONTH, 12)
-                    month_or_1 = current_release_date.get(TrackService.MUSICBRAINZ_FIELDS.MONTH, 1)
+                    year = current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.YEAR)
+                    month_or_12 = current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.MONTH, 12)
+                    month_or_1 = current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.MONTH, 1)
                     _, last_day = monthrange(year, month_or_12)
                     day_or_last_of_month = current_release_date.get(
-                        TrackService.MUSICBRAINZ_FIELDS.DAY, last_day)
-                    day_or_first = current_release_date.get(TrackService.MUSICBRAINZ_FIELDS.DAY, 1)
+                        TrackService.MUSICBRAINZ_API.FIELDS.DAY, last_day)
+                    day_or_first = current_release_date.get(TrackService.MUSICBRAINZ_API.FIELDS.DAY, 1)
 
                     comparison_date_obj = datetime.date(year=year, month=month_or_12, day=day_or_last_of_month)
 
@@ -269,35 +287,40 @@ class TrackService(Service):
     def _update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(data: dict,
                                                                                           fingerprint: bytes,
                                                                                           duration_in_sec: float):
-        musicbrainz_recording_dict = \
-            TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
-                fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
-        if musicbrainz_recording_dict:
-            musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.ID]
-            try:
-                musicbrainz_recording_pk = MusicbrainzRecording.objects.get(uuid=musicbrainz_recording_uuid).pk
-            except ObjectDoesNotExist:
-                musicbrainz_artists_dict = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.ARTISTS]
-                musicbrainz_artists = list()
-                for artist_dict in musicbrainz_artists_dict:
-                    artist, _ = MusicbrainzArtist.objects.get_or_create(
-                        uuid=artist_dict[TrackService.MUSICBRAINZ_FIELDS.ID],
-                        defaults={
-                            MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL.NAME: artist_dict[TrackService.MUSICBRAINZ_FIELDS.NAME],
-                        })
-                    musicbrainz_artists.append(artist)
+        try:
+            musicbrainz_recording_dict = \
+                TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
+                    fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
+            if musicbrainz_recording_dict:
+                musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID]
+                try:
+                    musicbrainz_recording_pk = MusicbrainzRecording.objects.get(uuid=musicbrainz_recording_uuid).pk
+                except ObjectDoesNotExist:
+                    musicbrainz_artists_dict = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ARTISTS]
+                    musicbrainz_artists = list()
+                    for artist_dict in musicbrainz_artists_dict:
+                        artist, _ = MusicbrainzArtist.objects.get_or_create(
+                            uuid=artist_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID],
+                            defaults={
+                                MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL.NAME: artist_dict[TrackService.MUSICBRAINZ_API.FIELDS.NAME],
+                            })
+                        musicbrainz_artists.append(artist)
 
-                musicbrainz_recording = MusicbrainzRecording.objects.create(
-                    uuid=musicbrainz_recording_uuid,
-                    score=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.SCORE],
-                    title=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.TITLE],
-                    duration_in_sec=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_FIELDS.DURATION_IN_SEC],
-                    release_date=TrackService.__get_earliest_release_date_from_musicbrainz_recording_dict(
-                        musicbrainz_recording_dict))
-                musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
-                musicbrainz_recording_pk = musicbrainz_recording.pk
+                    musicbrainz_recording = MusicbrainzRecording.objects.create(
+                        uuid=musicbrainz_recording_uuid,
+                        score=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.SCORE],
+                        title=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.TITLE],
+                        duration_in_sec=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.DURATION_IN_SEC],
+                        release_date=TrackService.__get_earliest_release_date_from_musicbrainz_recording_dict(
+                            musicbrainz_recording_dict))
+                    musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
+                    musicbrainz_recording_pk = musicbrainz_recording.pk
 
-            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
+                data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
+            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_HAS_FAILED_WITH_ERRORS] = False
+
+        except MusicbrainzException:
+            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_HAS_FAILED_WITH_ERRORS] = True
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
