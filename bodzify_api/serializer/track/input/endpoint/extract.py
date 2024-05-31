@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.serializer.track.input.schema import \
-    LibTrackSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import FIELDS as SAVE_SCHEMA_FIELDS
 from bodzify_api.serializer.track.input.endpoint.endpoint import LibTrackEndPointSerializer
 from bodzify_api.validator.mine_track_validators import validate_url
 

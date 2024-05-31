@@ -27,7 +27,6 @@ class FIELDS:
 
 
 class LibTrackEndPointSerializer(InputEndpointSerializer):
-    file = serializers.FileField()
     should_check_if_fingerprint_exists = serializers.BooleanField(required=False)
     title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                                   required=False,
