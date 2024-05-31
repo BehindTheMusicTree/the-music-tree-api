@@ -4,7 +4,6 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.model import FIELDS as SAVE_MODEL_FIELDS
 from bodzify_api.serializer.album.input.model import FIELDS as ALBUM_SAVE_MODEL_FIELDS
 
