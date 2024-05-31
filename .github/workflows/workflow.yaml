@@ -87,6 +87,4 @@ jobs:
     needs: [Docker-webapp]
     steps:
       - name: Deploy docker container webhook
-        uses: joelwmale/webhook-action@master
-        with:
-          url: ${{ secrets.BODZIFY_REDEPLOY_WEBHOOK_URL  }}
+        run: curl -X POST ${{ secrets.BODZIFY_REDEPLOY_WEBHOOK_URL }}
