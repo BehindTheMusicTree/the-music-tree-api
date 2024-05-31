@@ -8,9 +8,7 @@ class CriteriaModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Criteria
-        fields = [
-            ATTRIBUTES_LABEL.USER,
-            ATTRIBUTES_LABEL.NAME,
-            ATTRIBUTES_LABEL.PARENT,
-            ATTRIBUTES_LABEL.TYPE
-        ]
+        fields = [ATTRIBUTES_LABEL.USER,
+                  ATTRIBUTES_LABEL.NAME,
+                  ATTRIBUTES_LABEL.PARENT,
+                  ATTRIBUTES_LABEL.TYPE]

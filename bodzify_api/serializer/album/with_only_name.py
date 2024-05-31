@@ -7,7 +7,4 @@ class AlbumWithOnlyNameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = [
-            ATTRIBUTES_LABEL.UUID,
-            ATTRIBUTES_LABEL.NAME
-        ]
+        fields = [ATTRIBUTES_LABEL.UUID, ATTRIBUTES_LABEL.NAME]
