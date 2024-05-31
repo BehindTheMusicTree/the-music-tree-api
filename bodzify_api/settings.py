@@ -62,6 +62,8 @@ ATOMIC_REQUESTS = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
+print('ACOUSTID_API_KEY')
+print(len(ACOUSTID_API_KEY))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
