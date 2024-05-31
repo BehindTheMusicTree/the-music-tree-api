@@ -12,6 +12,7 @@ from tempfile import NamedTemporaryFile
 import requests
 import tempfile
 import datetime
+import pydub
 
 from django.contrib.auth.models import User
 from django.db.models import F
@@ -124,6 +125,22 @@ class TrackService(Service):
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @staticmethod
+    def copy_audio_in_standart_format_to_make_fingerprint_generation_independant_from_env(file_path: str):
+        audio = pydub.AudioSegment.from_file(file_path)
+        audio = audio.set_frame_rate(44100)
+        temp_file_path = tempfile.mktemp(".wav")
+        audio.export(temp_file_path, format="wav")
+        return temp_file_path
+
+    @ staticmethod
+    def get_fingerprint_from_file_path(file_path: str):
+        temp_file_path = TrackService.copy_audio_in_standart_format_to_make_fingerprint_generation_independant_from_env(
+            file_path)
+        fingerprint, duration = acoustid.fingerprint_file(temp_file_path)
+        os.remove(temp_file_path)
+        return fingerprint, duration
+
+    @ staticmethod
     def get_fingerprint_and_duration_from_file(file) -> tuple[Optional[bytes], Optional[int]]:
         fingerprint = None
         duration_in_sec = None
@@ -133,7 +150,7 @@ class TrackService(Service):
                 for chunk in file.chunks():
                     tmp.write(chunk)
                 try:
-                    duration_in_sec, fingerprint = acoustid.fingerprint_file(path=tmp.name)
+                    duration_in_sec, fingerprint = TrackService.get_fingerprint_from_file_path(file_path=tmp.name)
                 except acoustid.FingerprintGenerationError as error:
                     if error.args[0] == 'fpcalc exited with status 2':
                         pass
@@ -141,11 +158,11 @@ class TrackService(Service):
                         raise error
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
-            duration_in_sec, fingerprint = acoustid.fingerprint_file(path=file_path)
+            duration_in_sec, fingerprint = TrackService.get_fingerprint_from_file_path(file_path=file_path)
 
         return fingerprint, int(duration_in_sec) if duration_in_sec is not None else None
 
-    @staticmethod
+    @ staticmethod
     def _update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
             user: User, save_data: dict, schema_data: dict):
         schema_file_key = SAVE_SCHEMA_FIELDS.FILE
@@ -165,8 +182,7 @@ class TrackService(Service):
 
                 schema_should_check_if_fingerprint_exists_key = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS
                 if schema_should_check_if_fingerprint_exists_key in schema_data:
-                    file_schema_data[TRACK_FILE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = \
-                        schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
+                    file_schema_data[TRACK_FILE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
 
                 TrackService._update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(
                     data=save_data, fingerprint=fingerprint, duration_in_sec=duration_in_sec)
@@ -184,7 +200,7 @@ class TrackService(Service):
             file = file_model_serializer.save(user=user)
             save_data[SAVE_MODEL_FIELDS.TRACK_FILE] = file.pk  # type: ignore
 
-    @staticmethod
+    @ staticmethod
     def _update_model_data_with_genre_uuid_if_genre_in_schema_data(user: User, model_data: dict, schema_data: dict):
         genre_uuid_key = SAVE_SCHEMA_FIELDS.GENRE_UUID
         if genre_uuid_key in schema_data:
@@ -212,7 +228,7 @@ class TrackService(Service):
 
         return
 
-    @staticmethod
+    @ staticmethod
     def get_best_recording_dict_with_score(recordings_grouped_by_score, duration_in_sec):
         def rate_groupe_of_recordings_by_score(group_of_recordings):
             return group_of_recordings[TrackService.MUSICBRAINZ_API.FIELDS.SCORE]
@@ -231,11 +247,10 @@ class TrackService(Service):
         best_recordings = best_group_of_recordings[TrackService.MUSICBRAINZ_API.FIELDS.RECORDINGS]
         best_recording = min((recording for recording in best_recordings),
                              key=rate_recording_by_similar_duration_and_by_number_of_fields)
-        best_recording[TrackService.MUSICBRAINZ_API.FIELDS.SCORE] = \
-            best_group_of_recordings[TrackService.MUSICBRAINZ_API.FIELDS.SCORE]
+        best_recording[TrackService.MUSICBRAINZ_API.FIELDS.SCORE] = best_group_of_recordings[TrackService.MUSICBRAINZ_API.FIELDS.SCORE]
         return best_recording
 
-    @staticmethod
+    @ staticmethod
     def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: str,
                                                                            duration_in_sec: float) -> Optional[dict]:
         try:
@@ -290,9 +305,8 @@ class TrackService(Service):
                                                                                           fingerprint: bytes,
                                                                                           duration_in_sec: float):
         try:
-            musicbrainz_recording_dict = \
-                TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
-                    fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
+            musicbrainz_recording_dict = TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
+                fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
             if musicbrainz_recording_dict:
                 musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID]
                 try:
