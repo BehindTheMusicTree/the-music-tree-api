@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
 from bodzify_api.serializer.artist.with_only_name import ArtistWithOnlyNameSerializer
-from bodzify_api.serializer.album.output.without_track import AlbumWithoutTracksSerializer
+from bodzify_api.serializer.album.without_track import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.musicbrainz.recording.detailed import MusicbrainzRecordingDetailedSerializer
 from bodzify_api.serializer.playlist.base.output.without_tracks import BasePlaylistWithoutTracksSerializer

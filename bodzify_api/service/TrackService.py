@@ -227,17 +227,16 @@ class TrackService(Service):
     @staticmethod
     def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
             fingerprint: str, duration_in_sec: float) -> Optional[dict]:
-        try:
-            lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
-                                     fingerprint=fingerprint,
-                                     duration=duration_in_sec,
-                                     meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
-            recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_FIELDS.RESULTS]
-            if len(recordings_grouped_by_score) > 0:
-                best_recording_dict_with_score = TrackService.get_best_recording_dict_with_score(
-                    recordings_grouped_by_score=recordings_grouped_by_score, duration_in_sec=duration_in_sec)
-            else:
-                return None
+        lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
+                                 fingerprint=fingerprint,
+                                 duration=duration_in_sec,
+                                 meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
+        recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_FIELDS.RESULTS]
+        if len(recordings_grouped_by_score) > 0:
+            best_recording_dict_with_score = TrackService.get_best_recording_dict_with_score(
+                recordings_grouped_by_score=recordings_grouped_by_score, duration_in_sec=duration_in_sec)
+        # else:
+        #     return None
         except Exception:
             best_recording_dict_with_score = None
         return best_recording_dict_with_score

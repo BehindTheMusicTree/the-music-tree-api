@@ -14,7 +14,7 @@ from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.serializer.album.output.without_track import AlbumWithoutTracksSerializer
+from bodzify_api.serializer.album.without_track import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.detailed import ArtistDetailedSerializer
 from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
 from rest_framework.permissions import IsAuthenticated
