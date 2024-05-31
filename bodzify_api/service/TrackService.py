@@ -300,7 +300,32 @@ class TrackService(Service):
                         earliest_release_date = datetime.date(year=year, month=month_or_1, day=day_or_first)
         return earliest_release_date
 
-    @ staticmethod
+    @staticmethod
+    def __create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_uuid: str,
+                                                          musicbrainz_recording_dict: dict) -> MusicbrainzRecording:
+        musicbrainz_artists_dict = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ARTISTS]
+        musicbrainz_artists = list()
+        for artist_dict in musicbrainz_artists_dict:
+            artist, _ = MusicbrainzArtist.objects.get_or_create(
+                uuid=artist_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID],
+                defaults={
+                    MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL.NAME: artist_dict[TrackService.MUSICBRAINZ_API.FIELDS.NAME],
+                })
+            musicbrainz_artists.append(artist)
+
+        earliest_release_date = \
+            TrackService.__get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict)
+
+        musicbrainz_recording = MusicbrainzRecording.objects.create(
+            uuid=musicbrainz_recording_uuid,
+            score=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.SCORE],
+            title=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.TITLE],
+            duration_in_sec=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.DURATION_IN_SEC],
+            release_date=earliest_release_date)
+        musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
+        return musicbrainz_recording
+
+    @staticmethod
     def _update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(data: dict,
                                                                                           fingerprint: bytes,
                                                                                           duration_in_sec: float):
@@ -312,24 +337,9 @@ class TrackService(Service):
                 try:
                     musicbrainz_recording_pk = MusicbrainzRecording.objects.get(uuid=musicbrainz_recording_uuid).pk
                 except ObjectDoesNotExist:
-                    musicbrainz_artists_dict = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ARTISTS]
-                    musicbrainz_artists = list()
-                    for artist_dict in musicbrainz_artists_dict:
-                        artist, _ = MusicbrainzArtist.objects.get_or_create(
-                            uuid=artist_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID],
-                            defaults={
-                                MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL.NAME: artist_dict[TrackService.MUSICBRAINZ_API.FIELDS.NAME],
-                            })
-                        musicbrainz_artists.append(artist)
-
-                    musicbrainz_recording = MusicbrainzRecording.objects.create(
-                        uuid=musicbrainz_recording_uuid,
-                        score=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.SCORE],
-                        title=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.TITLE],
-                        duration_in_sec=musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.DURATION_IN_SEC],
-                        release_date=TrackService.__get_earliest_release_date_from_musicbrainz_recording_dict(
-                            musicbrainz_recording_dict))
-                    musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
+                    musicbrainz_recording = TrackService.__create_musicbrainz_recording_instance_from_dict(
+                        musicbrainz_recording_uuid=musicbrainz_recording_uuid,
+                        musicbrainz_recording_dict=musicbrainz_recording_dict)
                     musicbrainz_recording_pk = musicbrainz_recording.pk
 
                 data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
