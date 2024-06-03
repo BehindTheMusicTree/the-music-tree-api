@@ -124,20 +124,9 @@ class TrackService(Service):
             playlist_lib_track_relations_to_update.update(
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
-    @staticmethod
-    def copy_audio_in_standart_format_to_make_fingerprint_generation_independant_from_env(file_path: str):
-        audio = pydub.AudioSegment.from_file(file_path)
-        audio = audio.set_frame_rate(44100)
-        temp_file_path = tempfile.mktemp(".wav")
-        audio.export(temp_file_path, format="wav")
-        return temp_file_path
-
     @ staticmethod
     def get_fingerprint_from_file_path(file_path: str):
-        temp_file_path = TrackService.copy_audio_in_standart_format_to_make_fingerprint_generation_independant_from_env(
-            file_path)
-        fingerprint, duration = acoustid.fingerprint_file(temp_file_path)
-        os.remove(temp_file_path)
+
         return fingerprint, duration
 
     @ staticmethod
