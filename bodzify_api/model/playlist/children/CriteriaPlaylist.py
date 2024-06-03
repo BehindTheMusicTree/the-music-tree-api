@@ -18,6 +18,7 @@ class TYPES_LABEL:
 
 
 class ATTRIBUTES_LABEL:
+    MODEL = 'CriteriaPlaylist'
     PLAYLIST = 'playlist'
     PARENT = 'parent'
     CRITERIA = 'criteria'
@@ -39,9 +40,14 @@ class CriteriaPlaylist(models.Model):
 
     # null must be True because when the root is the criteria playlist itself, we must create it first with a null root
     # and then set the root to itself
-    parent = models.ForeignKey('CriteriaPlaylist', on_delete=models.CASCADE, null=True, related_name='child_playlist')
-    root = models.ForeignKey('CriteriaPlaylist', on_delete=models.CASCADE,
-                             null=True, related_name='descendant_playlist')
+    parent = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+                               on_delete=models.CASCADE,
+                               null=True,
+                               related_name='child_playlist')
+    root = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+                             on_delete=models.CASCADE,
+                             null=True,
+                             related_name='descendant_playlist')
 
     @property
     def name(self):

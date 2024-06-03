@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.playlist.children.CriteriaPlaylist import ATTRIBUTES_LABEL, CriteriaPlaylist
-from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
+from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer \
     import FIELDS as CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer \
