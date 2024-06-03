@@ -183,8 +183,8 @@ class LibraryTrack(models.Model):
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \
             import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_ATTRIBUTES_LABEL
-        playlist_lib_track_relation_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
-        return list(playlist_lib_track_relation_relations.values_list(
+        playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
+        return list(playlist_lib_track_relations.values_list(
             playlist_lib_track_relation_ATTRIBUTES_LABEL.PLAYLIST + '__uuid',
             playlist_lib_track_relation_ATTRIBUTES_LABEL.POSITION))
 

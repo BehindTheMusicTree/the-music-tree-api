@@ -73,9 +73,9 @@ class TrackService(Service):
     @staticmethod
     def _decrease_position_of_next_tracks_in_old_track_playlists(playlists_with_old_position: list):
         for playlist_uuid, old_position in playlists_with_old_position:
-            playlist_lib_track_relation_relations_to_update = PlaylistLibTrackRelation.objects.filter(
+            playlist_lib_track_relations_to_update = PlaylistLibTrackRelation.objects.filter(
                 playlist__uuid=playlist_uuid, position__gt=old_position)
-            playlist_lib_track_relation_relations_to_update.update(
+            playlist_lib_track_relations_to_update.update(
                 position=F(playlist_lib_track_relation_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @staticmethod

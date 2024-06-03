@@ -25,7 +25,7 @@ class ATTRIBUTES_LABEL:
     CRITERIA_PLAYLIST = 'criteria_playlist'
     SIMPLE_PLAYLIST = 'simple_playlist'
     PLAY_COUNT = 'play_count'
-    playlist_lib_track_relation_RELATIONS = 'playlist_lib_track_relation_relations'
+    PLAYLIST_LIB_TRACK_RELATIONS = 'playlist_lib_track_relations'
     LAST_TRACK_LIST_UPDATE_DATE = 'last_track_list_update_date'
 
 

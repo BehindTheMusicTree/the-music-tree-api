@@ -12,11 +12,15 @@ import bodzify_api.settings as settings
 
 
 class ATTRIBUTES_LABEL:
+    MODEL = 'Criteria'
     UUID = "uuid"
     USER = "user"
     NAME = "name"
     TYPE = "type"
     PARENT = "parent"
+    ASCENDANTS = "ascendants"
+    CRITERIA_ASCENDANT_RELATION_ASCENDANTS = 'criteria_ascendant_relation_ascendants'
+    CRITERIA_ASCENDANT_RELATION_CHILDREN = 'criteria_ascendant_relation_children'
     CHILDREN = "children"
     ROOT = "root"
     ADDED_ON = "added_on"
@@ -29,12 +33,19 @@ class Criteria(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
     type = models.ForeignKey('CriteriaType', on_delete=models.CASCADE)
-    parent: models.ForeignKey = models.ForeignKey(
-        'Criteria', on_delete=models.CASCADE, null=True, related_name='child_criteria')
+    parent = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+                               on_delete=models.CASCADE, null=True,
+                               related_name='child_criteria')
+    ascendants = models.ManyToManyField(ATTRIBUTES_LABEL.MODEL,
+                                        through='CriteriaAscendantRelation',
+                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
 
     # null must be True because when the root is the criteria itself, we must create it first with a null root
     # and then set the root to itself
-    root = models.ForeignKey('Criteria', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
+    root = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+                             on_delete=models.CASCADE,
+                             null=True,
+                             related_name='descendant_criteria')
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
@@ -42,6 +53,46 @@ class Criteria(models.Model):
         constraints = [
             models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")
         ]
+
+    @staticmethod
+    def _remove_tracks_from_playlist(playlist: Playlist, lib_tracks: QuerySet):
+        from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
+        (
+            PlaylistLibTrackRelation.objects
+            .filter(playlist=playlist, library_track__in=lib_tracks)  # type: ignore
+            .delete()
+        )
+
+    @staticmethod
+    def _update_playlist_positions_to_fill_deleted_positions(playlist: Playlist):
+        from bodzify_api.model.PlaylistLibTrackRelation \
+            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
+        tracks_positions_ordered_asc = (
+            PlaylistLibTrackRelation.objects
+            .filter(playlist=playlist)
+            .order_by(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.POSITION)
+        )
+        i = 1
+        for relation in tracks_positions_ordered_asc:
+            relation.position = i
+            relation.save()
+            i += 1
+
+    @staticmethod
+    def _update_ascendants_of_criteria_and_children(criteria: 'Criteria'):
+        criteria.ascendants.clear()
+        current_degree = 1
+        current_parent = criteria.parent
+        while current_parent:
+            from bodzify_api.model.criteria.CriteriaAscendantRelation import CriteriaAscendantRelation
+            CriteriaAscendantRelation.objects.create(child=criteria,
+                                                     ascendant=current_parent,
+                                                     degree=current_degree)
+            current_parent = current_parent.parent
+            current_degree = current_degree + 1
+
+        for child in criteria.get_children():
+            Criteria._update_ascendants_of_criteria_and_children(child)
 
     def __str__(self) -> str:
         return str(self.uuid) + " " + self.name
@@ -52,6 +103,7 @@ class Criteria(models.Model):
         CriteriaPlaylist.objects.create(playlist=Playlist.objects.create(user=self.user),
                                         type=self.type,
                                         criteria=self)
+        Criteria._update_ascendants_of_criteria_and_children(self)
 
     def _update(self, old_criteria: 'Criteria', *args, **kwargs):
         super().save(*args, **kwargs)
@@ -62,13 +114,14 @@ class Criteria(models.Model):
 
         if old_criteria.parent != self.parent:
             self._update_playlists(old_criteria.parent)
+            Criteria._update_ascendants_of_criteria_and_children(self)
 
     def _update_playlists(self, old_parent: Optional['Criteria']):
         common_criteria = self.get_common_criteria(old_parent)
 
         from bodzify_api.model.track.LibraryTrack import LibraryTrack
         lib_tracks = LibraryTrack.objects.filter(
-            playlist_lib_track_relation_relations__playlist=self.criteria_playlist.playlist)  # type: ignore
+            playlist_lib_track_relations__playlist=self.criteria_playlist.playlist)  # type: ignore
 
         if self.parent is not None:
             self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
@@ -93,29 +146,14 @@ class Criteria(models.Model):
                     lib_tracks=lib_tracks,
                     criteria_limit=criteria_limit)
 
-    @ staticmethod
-    def _remove_tracks_from_playlist(playlist: Playlist, lib_tracks: QuerySet):
-        from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
-        (
-            PlaylistLibTrackRelation.objects
-            .filter(playlist=playlist, library_track__in=lib_tracks)  # type: ignore
-            .delete()
-        )
-
-    @ staticmethod
-    def _update_playlist_positions_to_fill_deleted_positions(playlist: Playlist):
-        from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
-        tracks_positions_ordered_asc = (
-            PlaylistLibTrackRelation.objects
-            .filter(playlist=playlist)
-            .order_by(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.POSITION)
-        )
-        i = 1
-        for relation in tracks_positions_ordered_asc:
-            relation.position = i
-            relation.save()
-            i += 1
+    @staticmethod
+    def is_criteria1_descendant_of_criteria2(criteria1: 'Criteria', criteria2: 'Criteria'):
+        if criteria1.parent == criteria2:
+            return True
+        elif criteria1.parent:
+            return Criteria.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
+        else:
+            return False
 
     def _remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
             self, lib_tracks: QuerySet, criteria_limit: Optional['Criteria'] = None):
@@ -153,15 +191,7 @@ class Criteria(models.Model):
         return None
 
     def is_descendant_of(self, other_criteria):
-        return self.is_criteria1_descendant_of_criteria2(self, other_criteria)
-
-    def is_criteria1_descendant_of_criteria2(self, criteria1: 'Criteria', criteria2: 'Criteria'):
-        if criteria1.parent == criteria2:
-            return True
-        elif criteria1.parent:
-            return self.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
-        else:
-            return False
+        return Criteria.is_criteria1_descendant_of_criteria2(self, other_criteria)
 
     def get_children(self) -> QuerySet['Criteria']:
         return Criteria.objects.filter(parent=self)

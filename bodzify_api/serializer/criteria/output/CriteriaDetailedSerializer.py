@@ -7,6 +7,7 @@ from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIBRARY_TRA
 from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
 from bodzify_api.serializer.criteria.type.CriteriaTypeSerializer \
     import CriteriaTypeSerializer, FIELDS as CRITERIA_TYPE_FIELDS
+from bodzify_api.serializer.criteria_ascendant_relation.detailed import CriteriaAscendantRelationDetailedSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer import CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer
 
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumPlaylistGenreSerializer \
@@ -17,6 +18,7 @@ class FIELDS:
     UUID = ATTRIBUTES_LABEL.UUID
     NAME = ATTRIBUTES_LABEL.NAME
     PARENT = ATTRIBUTES_LABEL.PARENT
+    ASCENDANTS = ATTRIBUTES_LABEL.ASCENDANTS
     ROOT = ATTRIBUTES_LABEL.ROOT
     CHILDREN = ATTRIBUTES_LABEL.CHILDREN
     TYPE = ATTRIBUTES_LABEL.TYPE
@@ -30,6 +32,8 @@ class FIELDS:
 class CriteriaDetailedSerializer(serializers.ModelSerializer):
     type = CriteriaTypeSerializer()
     parent = CriteriaSimpleSerializer()
+    ascendants = CriteriaAscendantRelationDetailedSerializer(source='criteria_ascendant_relation_ascendants',
+                                                             many=True)
     root = CriteriaSimpleSerializer()  # type: ignore
     children = serializers.SerializerMethodField()
     criteria_playlist = CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer()
@@ -40,6 +44,7 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
         fields = [FIELDS.UUID,
                   FIELDS.NAME,
                   FIELDS.PARENT,
+                  FIELDS.ASCENDANTS,
                   FIELDS.ROOT,
                   FIELDS.CHILDREN,
                   FIELDS.TYPE,
