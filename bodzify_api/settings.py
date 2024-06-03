@@ -63,40 +63,46 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
 
+
+class ENV_VALUES:
+    DEV = 'DEV'
+    GITHUB_CI_TEST = 'GITHUB_CI_TEST'
+    TEST = 'TEST'
+    PROD = 'PROD'
+
+
+ENV = os.getenv('ENV')
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'polymorphic',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django_extensions',
-    'corsheaders',
-    'drf_spectacular',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'rest_framework_simplejwt',
-    'coverage',
-    'drf_multiple_model',
-    'bodzify_api',
-]
+INSTALLED_APPS = ['django.contrib.admin',
+                  'django.contrib.auth',
+                  'polymorphic',
+                  'django.contrib.contenttypes',
+                  'django.contrib.sessions',
+                  'django.contrib.messages',
+                  'django.contrib.staticfiles',
+                  'django_extensions',
+                  'corsheaders',
+                  'drf_spectacular',
+                  'rest_framework',
+                  'rest_framework.authtoken',
+                  'rest_framework_simplejwt',
+                  'coverage',
+                  'drf_multiple_model',
+                  'bodzify_api']
 
-MIDDLEWARE = [
-    'bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
-    'bodzify_api.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
+              'bodzify_api.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
+              'django.middleware.security.SecurityMiddleware',
+              'corsheaders.middleware.CorsMiddleware',
+              'django.contrib.sessions.middleware.SessionMiddleware',
+              'django.middleware.common.CommonMiddleware',
+              'django.middleware.csrf.CsrfViewMiddleware',
+              'django.contrib.auth.middleware.AuthenticationMiddleware',
+              'django.contrib.messages.middleware.MessageMiddleware',
+              'django.middleware.clickjacking.XFrameOptionsMiddleware']
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
@@ -118,24 +124,20 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
+            'context_processors': ['django.template.context_processors.debug',
+                                   'django.template.context_processors.request',
+                                   'django.contrib.auth.context_processors.auth',
+                                   'django.contrib.messages.context_processors.messages'],
         },
     },
 ]
 
 WSGI_APPLICATION = 'bodzify_api.wsgi.application'
 
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
-]
+AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+                            {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+                            {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+                            {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', }]
 
 LANGUAGE_CODE = 'en-us'
 
@@ -184,7 +186,7 @@ STATICFILES_DIRS = []
 STATIC_ROOT = ''
 MEDIA_ROOT = ''
 
-if os.getenv('ENV') == 'DEV':
+if ENV in [ENV_VALUES.DEV, ENV_VALUES.GITHUB_CI_TEST]:
     import bodzify_api.settings_dev as settings_dev
     CORS_ALLOW_ALL_ORIGINS = settings_dev.CORS_ALLOW_ALL_ORIGINS
     ALLOWED_HOSTS = settings_dev.ALLOWED_HOSTS
@@ -192,7 +194,7 @@ if os.getenv('ENV') == 'DEV':
     STATIC_ROOT = settings_dev.STATIC_ROOT
     LOG_PATH = settings_dev.LOG_PATH
     JWT_AUTH = settings_dev.JWT_AUTH
-elif os.getenv('ENV') == 'TEST':
+elif ENV == ENV_VALUES.TEST:
     import bodzify_api.settings_test as settings_test
     CORS_ALLOWED_ORIGINS = settings_test.CORS_ALLOWED_ORIGINS
     SESSION_COOKIE_SECURE = settings_test.SESSION_COOKIE_SECURE
