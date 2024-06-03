@@ -3,15 +3,15 @@
 FROM python:3.11-buster 
 
 ARG secretKey
-ARG env
 ARG dbUsername
 ARG dbPassword
 ARG dbDatabase
 ARG dbHost
 ARG dbPort
 
+ENV ENV=TEST
+ENV DEBUG=True
 ENV SECRET_KEY=$secretKey
-ENV ENV=$env
 ENV DB_USERNAME=$dbUsername
 ENV DB_PASSWORD=$dbPassword
 ENV DB_DATABASE=$dbDatabase
