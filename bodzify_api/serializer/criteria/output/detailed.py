@@ -4,10 +4,12 @@ from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIBRARY_TRACK_ATTRIBUTES_LABEL
-from bodzify_api.serializer.criteria.output.CriteriaSimpleSerializer import CriteriaSimpleSerializer
+from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.criteria.type.CriteriaTypeSerializer \
     import CriteriaTypeSerializer, FIELDS as CRITERIA_TYPE_FIELDS
 from bodzify_api.serializer.criteria_ascendant_relation.detailed import CriteriaAscendantRelationDetailedSerializer
+from bodzify_api.serializer.criteria_ascendant_relation.without_ascendant import CriteriaAscendantRelationWithoutAscendantSerializer
+from bodzify_api.serializer.criteria_ascendant_relation.without_descendant import CriteriaAscendantRelationWithoutDescendantSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer import CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer
 
 from bodzify_api.serializer.track.output.LibTrackWithoutAlbumPlaylistGenreSerializer \
@@ -19,6 +21,7 @@ class FIELDS:
     NAME = ATTRIBUTES_LABEL.NAME
     PARENT = ATTRIBUTES_LABEL.PARENT
     ASCENDANTS = ATTRIBUTES_LABEL.ASCENDANTS
+    DESCENDANTS = ATTRIBUTES_LABEL.DESCENDANTS
     ROOT = ATTRIBUTES_LABEL.ROOT
     CHILDREN = ATTRIBUTES_LABEL.CHILDREN
     TYPE = ATTRIBUTES_LABEL.TYPE
@@ -32,10 +35,10 @@ class FIELDS:
 class CriteriaDetailedSerializer(serializers.ModelSerializer):
     type = CriteriaTypeSerializer()
     parent = CriteriaSimpleSerializer()
-    ascendants = CriteriaAscendantRelationDetailedSerializer(
+    ascendants = CriteriaAscendantRelationWithoutDescendantSerializer(
         source=ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_ASCENDANTS,
         many=True)
-    ascendants = CriteriaAscendantRelationDetailedSerializer(
+    descendants = CriteriaAscendantRelationWithoutAscendantSerializer(
         source=ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
         many=True)
     root = CriteriaSimpleSerializer()  # type: ignore
@@ -49,6 +52,7 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.NAME,
                   FIELDS.PARENT,
                   FIELDS.ASCENDANTS,
+                  FIELDS.DESCENDANTS,
                   FIELDS.ROOT,
                   FIELDS.CHILDREN,
                   FIELDS.TYPE,

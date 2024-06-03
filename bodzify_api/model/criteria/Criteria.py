@@ -18,8 +18,10 @@ class ATTRIBUTES_LABEL:
     NAME = "name"
     TYPE = "type"
     PARENT = "parent"
-    ASCENDANTS = "ascendants"
+    ASCENDANT = "ascendant"
+    ASCENDANTS = ASCENDANT + "s"
     DESCENDANT = "descendant"
+    DESCENDANTS = DESCENDANT + "s"
     CRITERIA_ASCENDANT_RELATION_ASCENDANTS = 'criteria_ascendant_relation_ascendants'
     CRITERIA_ASCENDANT_RELATION_DESCENDANTS = 'criteria_ascendant_relation_descendants'
     CHILDREN = "children"
@@ -84,7 +86,7 @@ class Criteria(models.Model):
         current_parent = criteria.parent
         while current_parent:
             from bodzify_api.model.criteria.CriteriaAscendantRelation import CriteriaAscendantRelation
-            CriteriaAscendantRelation.objects.create(child=criteria,
+            CriteriaAscendantRelation.objects.create(descendant=criteria,
                                                      ascendant=current_parent,
                                                      degree=current_degree)
             current_parent = current_parent.parent

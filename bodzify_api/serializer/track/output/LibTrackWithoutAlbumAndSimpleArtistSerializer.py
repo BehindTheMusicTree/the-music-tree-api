@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
+from bodzify_api.serializer.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.serializer.artist.ArtistWithOnlyNameSerializer import ArtistWithOnlyNameSerializer
 from bodzify_api.serializer.track.output.LibTrackDetailedSerializer \
     import LibTrackDetailedSerializer, FIELDS as LIB_TRACK_DETAILED_FIELDS
