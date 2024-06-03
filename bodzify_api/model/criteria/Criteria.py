@@ -20,7 +20,7 @@ class ATTRIBUTES_LABEL:
     PARENT = "parent"
     ASCENDANTS = "ascendants"
     CRITERIA_ASCENDANT_RELATION_ASCENDANTS = 'criteria_ascendant_relation_ascendants'
-    CRITERIA_ASCENDANT_RELATION_CHILDREN = 'criteria_ascendant_relation_children'
+    CRITERIA_ASCENDANT_RELATION_DESCENDANTS = 'criteria_ascendant_relation_descendants'
     CHILDREN = "children"
     ROOT = "root"
     ADDED_ON = "added_on"
@@ -35,7 +35,7 @@ class Criteria(models.Model):
     type = models.ForeignKey('CriteriaType', on_delete=models.CASCADE)
     parent = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
                                on_delete=models.CASCADE, null=True,
-                               related_name='child_criteria')
+                               related_name='child')
     ascendants = models.ManyToManyField(ATTRIBUTES_LABEL.MODEL,
                                         through='CriteriaAscendantRelation',
                                         related_name=ATTRIBUTES_LABEL.MODEL + 's')
@@ -45,7 +45,7 @@ class Criteria(models.Model):
     root = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
                              on_delete=models.CASCADE,
                              null=True,
-                             related_name='descendant_criteria')
+                             related_name='descendant')
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:

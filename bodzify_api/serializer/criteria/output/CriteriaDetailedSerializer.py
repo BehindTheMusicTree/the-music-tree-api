@@ -32,8 +32,12 @@ class FIELDS:
 class CriteriaDetailedSerializer(serializers.ModelSerializer):
     type = CriteriaTypeSerializer()
     parent = CriteriaSimpleSerializer()
-    ascendants = CriteriaAscendantRelationDetailedSerializer(source='criteria_ascendant_relation_ascendants',
-                                                             many=True)
+    ascendants = CriteriaAscendantRelationDetailedSerializer(
+        source=ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_ASCENDANTS,
+        many=True)
+    ascendants = CriteriaAscendantRelationDetailedSerializer(
+        source=ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
+        many=True)
     root = CriteriaSimpleSerializer()  # type: ignore
     children = serializers.SerializerMethodField()
     criteria_playlist = CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer()

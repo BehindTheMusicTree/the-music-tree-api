@@ -19,7 +19,7 @@ class CriteriaAscendantRelation(models.Model):
                               related_name=CRITERIA_ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_ASCENDANTS)
     ascendant = models.ForeignKey(Criteria,
                                   on_delete=models.CASCADE,
-                                  related_name=CRITERIA_ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_CHILDREN)
+                                  related_name=CRITERIA_ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_DESCENDANTS)
     degree = models.PositiveIntegerField()
     added_on = models.DateTimeField(auto_now_add=True)
 

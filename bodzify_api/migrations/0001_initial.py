@@ -123,10 +123,10 @@ class Migration(migrations.Migration):
             ('added_on', models.DateTimeField(auto_now_add=True)),
             ('parent', models.ForeignKey(
                 null=True, on_delete=django.db.models.deletion.CASCADE,
-                related_name='child_criteria', to='bodzify_api.criteria')),
+                related_name='child', to='bodzify_api.criteria')),
             ('root', models.ForeignKey(
                 null=True, on_delete=django.db.models.deletion.CASCADE,
-                related_name='descendant_criteria', to='bodzify_api.criteria')),
+                related_name='descendant', to='bodzify_api.criteria')),
             ('user', models.ForeignKey(
                 default=None, on_delete=django.db.models.deletion.CASCADE,
                 to=settings.AUTH_USER_MODEL)),],),
