@@ -19,6 +19,7 @@ class ATTRIBUTES_LABEL:
     TYPE = "type"
     PARENT = "parent"
     ASCENDANTS = "ascendants"
+    DESCENDANT = "descendant"
     CRITERIA_ASCENDANT_RELATION_ASCENDANTS = 'criteria_ascendant_relation_ascendants'
     CRITERIA_ASCENDANT_RELATION_DESCENDANTS = 'criteria_ascendant_relation_descendants'
     CHILDREN = "children"
@@ -45,14 +46,12 @@ class Criteria(models.Model):
     root = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
                              on_delete=models.CASCADE,
                              null=True,
-                             related_name='descendant')
+                             related_name=ATTRIBUTES_LABEL.DESCENDANT)
     added_on = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
         unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)
-        constraints = [
-            models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")
-        ]
+        constraints = [models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")]
 
     @staticmethod
     def _remove_tracks_from_playlist(playlist: Playlist, lib_tracks: QuerySet):
