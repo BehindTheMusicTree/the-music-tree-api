@@ -27,9 +27,9 @@ class TestCase(CriteriaTestCase):
     def test_root_of_second_descandant(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        punk_hardcore_genre = self.model_fixture_factory.create_genre(name="Punk Hardcore", parent=punk_genre)
+        punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk Hardcore", parent=punk_genre)
         response = self.get_genres()
         assert response.status_code == status.HTTP_200_OK
         for json_element in self.results:
-            if json_element[ATTRIBUTES_LABEL.UUID] == punk_hardcore_genre.uuid:
+            if json_element[ATTRIBUTES_LABEL.UUID] == punkhardcore_genre.uuid:
                 assert json_element[ATTRIBUTES_LABEL.ROOT][ATTRIBUTES_LABEL.UUID] == rock_genre.uuid
