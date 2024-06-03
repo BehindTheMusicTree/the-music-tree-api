@@ -4,6 +4,7 @@ from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.model.criteria.CriteriaAscendantRelation import CriteriaAscendantRelation
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -14,6 +15,7 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.TrackFile import TrackFile
 
 admin.site.register(Criteria)
+admin.site.register(CriteriaAscendantRelation)
 admin.site.register(CriteriaType)
 admin.site.register(BasePlaylist)
 admin.site.register(PlaylistLibTrackRelation)

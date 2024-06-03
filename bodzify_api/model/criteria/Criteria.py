@@ -13,11 +13,18 @@ import bodzify_api.settings as settings
 
 
 class ATTRIBUTES_LABEL:
+    MODEL = 'Criteria'
     UUID = "uuid"
     USER = "user"
     NAME = "name"
     TYPE = "type"
     PARENT = "parent"
+    ASCENDANT = "ascendant"
+    ASCENDANTS = ASCENDANT + "s"
+    DESCENDANT = "descendant"
+    DESCENDANTS = DESCENDANT + "s"
+    CRITERIA_ASCENDANT_RELATION_ASCENDANTS = 'criteria_ascendant_relation_ascendants'
+    CRITERIA_ASCENDANT_RELATION_DESCENDANTS = 'criteria_ascendant_relation_descendants'
     CHILDREN = "children"
     ROOT = "root"
     CREATED_ON = "created_on"
@@ -30,20 +37,65 @@ class Criteria(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
     type = models.ForeignKey('CriteriaType', on_delete=models.CASCADE)
-    parent: models.ForeignKey = models.ForeignKey(
-        'Criteria', on_delete=models.CASCADE, null=True, related_name='child_criteria')
+    parent = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+                               on_delete=models.CASCADE, null=True,
+                               related_name='child')
+    ascendants = models.ManyToManyField(ATTRIBUTES_LABEL.MODEL,
+                                        through='CriteriaAscendantRelation',
+                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
 
     # null must be True because when the root is the criteria itself, we must create it first with a null root
     # and then set the root to itself
-    root = models.ForeignKey('Criteria', on_delete=models.CASCADE, null=True, related_name='descendant_criteria')
+    root = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+                             on_delete=models.CASCADE,
+                             null=True,
+                             related_name=ATTRIBUTES_LABEL.DESCENDANT)
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
         unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)
-        constraints = [
-            models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")
-        ]
+        constraints = [models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")]
+
+    @staticmethod
+    def _remove_tracks_from_playlist(playlist: Playlist, lib_tracks: QuerySet):
+        from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
+        (
+            PlaylistLibTrackRelation.objects
+            .filter(playlist=playlist, library_track__in=lib_tracks)  # type: ignore
+            .delete()
+        )
+
+    @staticmethod
+    def _update_playlist_positions_to_fill_deleted_positions(playlist: Playlist):
+        from bodzify_api.model.PlaylistLibTrackRelation \
+            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
+        tracks_positions_ordered_asc = (
+            PlaylistLibTrackRelation.objects
+            .filter(playlist=playlist)
+            .order_by(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.POSITION)
+        )
+        i = 1
+        for relation in tracks_positions_ordered_asc:
+            relation.position = i
+            relation.save()
+            i += 1
+
+    @staticmethod
+    def _update_ascendants_of_criteria_and_children(criteria: 'Criteria'):
+        criteria.ascendants.clear()
+        current_degree = 1
+        current_parent = criteria.parent
+        while current_parent:
+            from bodzify_api.model.criteria.CriteriaAscendantRelation import CriteriaAscendantRelation
+            CriteriaAscendantRelation.objects.create(descendant=criteria,
+                                                     ascendant=current_parent,
+                                                     degree=current_degree)
+            current_parent = current_parent.parent
+            current_degree = current_degree + 1
+
+        for child in criteria.get_children():
+            Criteria._update_ascendants_of_criteria_and_children(child)
 
     def __str__(self) -> str:
         return str(self.uuid) + " " + self.name
@@ -54,6 +106,7 @@ class Criteria(models.Model):
         CriteriaPlaylist.objects.create(base_playlist=BasePlaylist.objects.create(user=self.user),
                                         type=self.type,
                                         criteria=self)
+        Criteria._update_ascendants_of_criteria_and_children(self)
 
     def _update(self, old_criteria: 'Criteria', *args, **kwargs):
         super().save(*args, **kwargs)
@@ -64,6 +117,7 @@ class Criteria(models.Model):
 
         if old_criteria.parent != self.parent:
             self._update_playlists(old_criteria.parent)
+            Criteria._update_ascendants_of_criteria_and_children(self)
 
     def _update_playlists(self, old_parent: Optional['Criteria']):
         common_criteria = self.get_common_criteria(old_parent)
@@ -103,6 +157,15 @@ class Criteria(models.Model):
             .filter(base_playlist=playlist, library_track__in=lib_tracks)  # type: ignore
             .delete()
         )
+        
+    @staticmethod
+    def is_criteria1_descendant_of_criteria2(criteria1: 'Criteria', criteria2: 'Criteria'):
+        if criteria1.parent == criteria2:
+            return True
+        elif criteria1.parent:
+            return Criteria.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
+        else:
+            return False
 
     @ staticmethod
     def _update_playlist_positions_to_fill_deleted_positions(base_playlist: BasePlaylist):
@@ -155,15 +218,7 @@ class Criteria(models.Model):
         return None
 
     def is_descendant_of(self, other_criteria):
-        return self.is_criteria1_descendant_of_criteria2(self, other_criteria)
-
-    def is_criteria1_descendant_of_criteria2(self, criteria1: 'Criteria', criteria2: 'Criteria'):
-        if criteria1.parent == criteria2:
-            return True
-        elif criteria1.parent:
-            return self.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
-        else:
-            return False
+        return Criteria.is_criteria1_descendant_of_criteria2(self, other_criteria)
 
     def get_children(self) -> QuerySet['Criteria']:
         return Criteria.objects.filter(parent=self)
