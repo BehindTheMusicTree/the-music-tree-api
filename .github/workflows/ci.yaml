@@ -48,7 +48,7 @@ jobs:
       - name: Install chromaprint
         run: sudo apt install libchromaprint-tools
       - name: Set up filesystem
-        run: bash scripts/setup_filesystem_workflow.sh
+        run: bash scripts/setup_filesystem_github_ci_test.sh
       - name: Install flac
         run: sudo apt install flac
       - name: Install ffmpeg
