@@ -1,4 +1,4 @@
-name: Validation and Deployment
+name: CI
 
 on:
     workflow_call:
@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENV: DEV
+      DEBUG: True
       DB_USERNAME: ${{ secrets.DEV_DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
       DB_HOST: ${{ secrets.DEV_UNDOCKERIZED_DB_HOST }}
@@ -72,7 +73,6 @@ jobs:
         run:
           docker-compose -f docker-compose.build.yml build
           --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
-          --build-arg env=TEST 
           --build-arg dbUsername=${{ secrets.PROD_DB_USERNAME }}
           --build-arg dbPassword='${{ secrets.PROD_DB_PASSWORD }}'
           --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }}
