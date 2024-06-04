@@ -6,7 +6,7 @@ ARG secretKey
 ARG dbUsername
 ARG dbPassword
 ARG dbDatabase
-ARG dbHost
+ARG dbUrl
 ARG dbPort
 
 ENV ENV=TEST
@@ -15,7 +15,7 @@ ENV SECRET_KEY=$secretKey
 ENV DB_USERNAME=$dbUsername
 ENV DB_PASSWORD=$dbPassword
 ENV DB_DATABASE=$dbDatabase
-ENV DB_HOST=$dbHost
+ENV DB_URL=$dbUrl
 ENV DB_PORT=$dbPort
 ENV ACOUSTID_API_KEY=$acoustidApiKey
 

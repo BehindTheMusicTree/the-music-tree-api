@@ -14,14 +14,16 @@ jobs:
   Pytest:
     runs-on: ubuntu-latest
     env:
-      ENV: DEV
+      ENV: GITHUB_CI_TEST
       DEBUG: True
-      DB_USERNAME: ${{ secrets.DEV_DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
-      DB_HOST: ${{ secrets.DEV_UNDOCKERIZED_DB_HOST }}
-      DB_DATABASE: ${{ secrets.DEV_DB_DATABASE }}
-      DB_PORT: ${{ secrets.DEV_DB_PORT }}
-      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
+      SECRET_KEY: ${{ secrets.CI_TEST_SECRET_KEY }}
+      DB_DATABASE: ${{ secrets.CI_TEST_DB_DATABASE }}
+      DB_USERNAME: ${{ secrets.CI_TEST_DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.CI_TEST_DB_PASSWORD }}
+      DB_URL: ${{ secrets.CI_TEST_DB_URL }}
+      DB_PORT: ${{ secrets.CI_TEST_DB_PORT }}
+      AUDIO_FINGERPRINT_GENERATOR_PORT: ${{ secrets.CI_TEST_AUDIO_FINGERPRINT_GENERATOR_PORT }}
+      ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
     services:
       postgres_main:
         image: postgres:14.12
@@ -72,12 +74,12 @@ jobs:
       - name: Build Docker image
         run:
           docker-compose -f docker-compose.build.yml build
-          --build-arg secretKey='${{ secrets.PROD_DJANGO_SECRET_KEY }}' 
-          --build-arg dbUsername=${{ secrets.PROD_DB_USERNAME }}
-          --build-arg dbPassword='${{ secrets.PROD_DB_PASSWORD }}'
-          --build-arg dbDatabase=${{ secrets.PROD_DB_DATABASE }}
-          --build-arg dbHost=${{ secrets.PROD_DOCKERIZED_DB_HOST }}
-          --build-arg dbPort=${{ secrets.PROD_DB_PORT }}
+          --build-arg secretKey='${{ secrets.TEST_DJANGO_SECRET_KEY }}' 
+          --build-arg dbUsername=${{ secrets.TEST_DB_USERNAME }}
+          --build-arg dbPassword='${{ secrets.TEST_DB_PASSWORD }}'
+          --build-arg dbDatabase=${{ secrets.TEST_DB_DATABASE }}
+          --build-arg dbUrl=${{ secrets.TEST_DB_URL }}
+          --build-arg dbPort=${{ secrets.TEST_DB_PORT }}
           --build-arg acoustidApiKey=${{ secrets.ACOUSTID_API_KEY }}
       - name: Publish Docker image
         run: docker-compose -f docker-compose.build.yml push
