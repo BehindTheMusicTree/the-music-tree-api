@@ -58,21 +58,21 @@ class Criteria(models.Model):
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")]
 
     @staticmethod
-    def _remove_tracks_from_playlist(playlist: Playlist, lib_tracks: QuerySet):
-        from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
-        (
-            PlaylistLibTrackRelation.objects
-            .filter(playlist=playlist, library_track__in=lib_tracks)  # type: ignore
-            .delete()
-        )
+    def is_criteria1_descendant_of_criteria2(criteria1: 'Criteria', criteria2: 'Criteria'):
+        if criteria1.parent == criteria2:
+            return True
+        elif criteria1.parent:
+            return Criteria.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
+        else:
+            return False
 
-    @staticmethod
-    def _update_playlist_positions_to_fill_deleted_positions(playlist: Playlist):
+    @ staticmethod
+    def _update_playlist_positions_to_fill_deleted_positions(base_playlist: BasePlaylist):
         from bodzify_api.model.PlaylistLibTrackRelation \
             import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
         tracks_positions_ordered_asc = (
             PlaylistLibTrackRelation.objects
-            .filter(playlist=playlist)
+            .filter(base_playlist=base_playlist)
             .order_by(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.POSITION)
         )
         i = 1
@@ -157,30 +157,6 @@ class Criteria(models.Model):
             .filter(base_playlist=playlist, library_track__in=lib_tracks)  # type: ignore
             .delete()
         )
-        
-    @staticmethod
-    def is_criteria1_descendant_of_criteria2(criteria1: 'Criteria', criteria2: 'Criteria'):
-        if criteria1.parent == criteria2:
-            return True
-        elif criteria1.parent:
-            return Criteria.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
-        else:
-            return False
-
-    @ staticmethod
-    def _update_playlist_positions_to_fill_deleted_positions(base_playlist: BasePlaylist):
-        from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
-        tracks_positions_ordered_asc = (
-            PlaylistLibTrackRelation.objects
-            .filter(base_playlist=base_playlist)
-            .order_by(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.POSITION)
-        )
-        i = 1
-        for relation in tracks_positions_ordered_asc:
-            relation.position = i
-            relation.save()
-            i += 1
 
     def _remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
             self, lib_tracks: QuerySet, criteria_limit: Optional['Criteria'] = None):
