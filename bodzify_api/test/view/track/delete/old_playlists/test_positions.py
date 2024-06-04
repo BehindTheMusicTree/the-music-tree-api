@@ -17,11 +17,11 @@ class TrackDeleteViewTestCase(TrackTestCase):
         track_old_position_2 = self.model_fixture_factory.create_lib_track(title="Still Waiting")
         track_old_position_1 = self.model_fixture_factory.create_lib_track(title="The Hell Song")
 
-        playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
+        base_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
 
         response = self.delete_lib_track(lib_track_uuid=track_old_position_1.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert PlaylistLibTrackRelation.objects.get(
-            base_playlist=playlist, library_track=track_old_position_2).position == 1
+            base_playlist=base_playlist, library_track=track_old_position_2).position == 1
         assert PlaylistLibTrackRelation.objects.get(
-            base_playlist=playlist, library_track=track_old_position_3).position == 2
+            base_playlist=base_playlist, library_track=track_old_position_3).position == 2

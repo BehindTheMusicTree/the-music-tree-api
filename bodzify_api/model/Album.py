@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
-import bodzify_api.settings as settings
+from bodzify_api.settings import settings
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 
 

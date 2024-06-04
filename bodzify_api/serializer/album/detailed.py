@@ -3,7 +3,7 @@
 import datetime
 from django.db.models import Sum
 from rest_framework import serializers
-from bodzify_api import utils
+from bodzify_api.utils import utils
 from bodzify_api.model.Album import Album, ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.track.output.without_playlists_and_album import (

@@ -9,7 +9,7 @@ import dotenv
 dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 API_VERSION = 'v1'
 API_NAME = "bodzify_api"
@@ -199,7 +199,7 @@ STATIC_ROOT = ''
 MEDIA_ROOT = ''
 
 if ENV in [ENV_VALUES.DEV, ENV_VALUES.GITHUB_CI_TEST]:
-    import bodzify_api.settings_dev as settings_dev
+    import bodzify_api.settings.settings_dev as settings_dev
     CORS_ALLOW_ALL_ORIGINS = settings_dev.CORS_ALLOW_ALL_ORIGINS
     ALLOWED_HOSTS = settings_dev.ALLOWED_HOSTS
     MEDIA_ROOT = settings_dev.MEDIA_ROOT
@@ -207,7 +207,7 @@ if ENV in [ENV_VALUES.DEV, ENV_VALUES.GITHUB_CI_TEST]:
     LOG_PATH = settings_dev.LOG_PATH
     JWT_AUTH = settings_dev.JWT_AUTH
 elif ENV == ENV_VALUES.TEST:
-    import bodzify_api.settings_test as settings_test
+    import bodzify_api.settings.settings_test as settings_test
     CORS_ALLOWED_ORIGINS = settings_test.CORS_ALLOWED_ORIGINS
     SESSION_COOKIE_SECURE = settings_test.SESSION_COOKIE_SECURE
     CSRF_COOKIE_SECURE = settings_test.CSRF_COOKIE_SECURE
@@ -220,7 +220,6 @@ else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'
 
-MEDIA_TEMP = MEDIA_ROOT / 'temp'
 LIB_DIR_NAME = 'libraries'
 LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME
 

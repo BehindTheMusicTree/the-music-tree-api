@@ -9,7 +9,7 @@ from mutagen.id3._util import ID3NoHeaderError
 
 from django.db.models.fields.files import FieldFile
 
-from bodzify_api.audiometadata.id3.Id3Manager import Id3Manager
+from bodzify_api.utils.audiometadata.id3.Id3Manager import Id3Manager
 
 
 class Mp3MetadataManager(Id3Manager):

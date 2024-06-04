@@ -11,9 +11,9 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from bodzify_api import utils
-import bodzify_api.settings as settings
-import bodzify_api.audiometadata as audiometadata
+from bodzify_api.utils import utils
+from bodzify_api.settings import settings
+import bodzify_api.utils.audiometadata as audiometadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.TrackFile import TrackFile
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
@@ -305,6 +305,6 @@ def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
         instance.track_file.file.delete(False)
 
     now = timezone.now()
-    for playlist in instance.base_playlists.all():
-        playlist.last_track_list_update_date = now
-        playlist.save()
+    for base_playlist in instance.base_playlists.all():
+        base_playlist.last_track_list_update_date = now
+        base_playlist.save()

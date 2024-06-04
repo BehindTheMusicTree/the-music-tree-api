@@ -4,7 +4,7 @@ from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL, BasePlayli
 from bodzify_api.serializer.playlist.base.output.without_tracks \
     import BasePlaylistWithoutTracksSerializer, FIELDS as PARENT_FIELDS
 from bodzify_api.serializer.playlist_lib_track_relation.output.without_playlist \
-    import PlaylistLibTrackRelationWithoutPlaylist, FIELDS as playlist_lib_track_relation_RELATION_FIELDS
+    import PlaylistLibTrackRelationWithoutPlaylist, FIELDS as PLAYLIST_LIB_TRACK_RELATION_FIELDS
 from rest_framework import serializers
 
 
@@ -38,5 +38,5 @@ class BasePlaylistWithTracksSerializer(BasePlaylistWithoutTracksSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation[FIELDS.LIB_TRACKS] = sorted(
-            representation[FIELDS.LIB_TRACKS], key=lambda x: x[playlist_lib_track_relation_RELATION_FIELDS.POSITION])
+            representation[FIELDS.LIB_TRACKS], key=lambda x: x[PLAYLIST_LIB_TRACK_RELATION_FIELDS.POSITION])
         return representation

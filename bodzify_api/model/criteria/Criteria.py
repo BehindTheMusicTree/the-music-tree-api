@@ -9,7 +9,7 @@ from django.db.models import QuerySet
 from django.contrib.auth.models import User
 
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-import bodzify_api.settings as settings
+from bodzify_api.settings import settings
 
 
 class ATTRIBUTES_LABEL:
@@ -139,22 +139,22 @@ class Criteria(models.Model):
     def _add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
             self, lib_tracks: QuerySet, criteria_limit: Optional['Criteria'] = None):
         if self != criteria_limit:
-            playlist = self.criteria_playlist.base_playlist  # type: ignore
+            base_playlist = self.criteria_playlist.base_playlist  # type: ignore
 
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
             for lib_track in lib_tracks:
-                PlaylistLibTrackRelation.objects.create(base_playlist=playlist, library_track=lib_track)
+                PlaylistLibTrackRelation.objects.create(base_playlist=base_playlist, library_track=lib_track)
             if self.parent is not None:
                 self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
                     lib_tracks=lib_tracks,
                     criteria_limit=criteria_limit)
 
     @ staticmethod
-    def _remove_tracks_from_playlist(playlist: BasePlaylist, lib_tracks: QuerySet):
+    def _remove_tracks_from_playlist(base_playlist: BasePlaylist, lib_tracks: QuerySet):
         from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
         (
             PlaylistLibTrackRelation.objects
-            .filter(base_playlist=playlist, library_track__in=lib_tracks)  # type: ignore
+            .filter(base_playlist=base_playlist, library_track__in=lib_tracks)  # type: ignore
             .delete()
         )
 
@@ -162,7 +162,7 @@ class Criteria(models.Model):
             self, lib_tracks: QuerySet, criteria_limit: Optional['Criteria'] = None):
         if self != criteria_limit:
             Criteria._remove_tracks_from_playlist(
-                playlist=self.criteria_playlist.base_playlist, lib_tracks=lib_tracks)  # type: ignore
+                base_playlist=self.criteria_playlist.base_playlist, lib_tracks=lib_tracks)  # type: ignore
             Criteria._update_playlist_positions_to_fill_deleted_positions(
                 self.criteria_playlist.base_playlist)  # type: ignore
             if self.parent is not None:

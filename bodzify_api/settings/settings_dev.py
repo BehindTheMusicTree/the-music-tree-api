@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-import bodzify_api.settings as settings
+from bodzify_api.settings import settings
 
 ALLOWED_HOSTS = ['127.0.0.1']
 STATIC_ROOT = settings.BASE_DIR / 'staticfiles'

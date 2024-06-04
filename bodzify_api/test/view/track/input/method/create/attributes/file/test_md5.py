@@ -3,7 +3,7 @@
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
-import bodzify_api.audiometadata as audiometadata
+import bodzify_api.utils.audiometadata as audiometadata
 
 
 class TestCase(TrackTestCase):

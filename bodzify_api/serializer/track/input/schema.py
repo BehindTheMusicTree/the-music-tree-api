@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from bodzify_api import settings
+from bodzify_api.settings import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.track.input.model import FIELDS as SAVE_MODEL_FIELDS
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL

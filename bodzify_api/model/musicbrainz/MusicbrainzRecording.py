@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import F, Value
 from django.db.models.expressions import Value
 
-from bodzify_api import settings
+from bodzify_api.settings import settings
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 
 

@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from rest_framework import status
 
-import bodzify_api.audiometadata as audiometadata
+import bodzify_api.utils.audiometadata as audiometadata
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.track.input.endpoint.extract \

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import os
+from django.utils._os import safe_join
+from django.utils.text import get_valid_filename
 
 from django.core.files.storage import FileSystemStorage
 from django.db import models
@@ -10,10 +12,10 @@ from django.core.validators import FileExtensionValidator
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api import settings
+from bodzify_api.settings import settings
 from bodzify_api.validator.track_file_validator \
     import validate_size, validate_content_type_is_audio, validate_filename_length
-import bodzify_api.audiometadata as audiometadata
+import bodzify_api.utils.audiometadata as audiometadata
 
 
 class ATTRIBUTES_LABEL:
@@ -22,6 +24,7 @@ class ATTRIBUTES_LABEL:
     FILENAME = 'filename'
     EXTENSION = 'extension'
     FINGERPRINT = "fingerprint"
+    HAS_FINGERPRINT_GENERATION_FAILED = 'has_fingerprint_generation_failed'
     HAS_FLAC_MD5_BEEN_CORRECTED = 'has_flac_md5_been_corrected'
     SIZE_IN_BYTES = 'size_in_bytes'
     SIZE_IN_KO = 'size_in_ko'
@@ -69,6 +72,10 @@ class TrackFile(models.Model):
                                        db_persist=True)
     bitrate_in_kbps = models.IntegerField(null=True, blank=True)
     created_on = models.DateTimeField(default=timezone.now, editable=False)
+
+    @property
+    def has_fingerprint_generation_failed(self):
+        return self.fingerprint is None
 
     class Meta:
         db_table = 'bodzify_api_track_file'

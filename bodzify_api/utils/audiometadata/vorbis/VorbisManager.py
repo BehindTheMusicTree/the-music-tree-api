@@ -10,7 +10,7 @@ from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 
-from bodzify_api.audiometadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
+from bodzify_api.utils.audiometadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
 
 # Flac files

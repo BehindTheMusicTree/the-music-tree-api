@@ -5,7 +5,6 @@ import binascii
 from calendar import monthrange
 import os
 import random
-from sys import exception
 from typing import Optional
 import acoustid
 import string
@@ -13,7 +12,6 @@ from tempfile import NamedTemporaryFile
 import requests
 import tempfile
 import datetime
-import pydub
 
 from django.contrib.auth.models import User
 from django.db.models import F
@@ -27,10 +25,10 @@ from bodzify_api.exception.musicbrainz import MusicbrainzException
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.musicbrainz.MusicbrainzArtist \
     import MusicbrainzArtist, ATTRIBUTES_LABEL as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.musicbrainz.MusicbrainzRecording \
-    import MusicbrainzRecording, ATTRIBUTES_LABEL as MUSICBRAINZ_RECORDING_ATTRIBUTES_LABEL
-import bodzify_api.settings as settings
-import bodzify_api.audiometadata as audiometadata
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.settings import settings
+from bodzify_api.utils.audio_fingerprint_generator_api_client import AudioFingerprintGeneratorApiClient, AudioFingerprintGeneratorError
+import bodzify_api.utils.audiometadata as audiometadata
 from bodzify_api.service.Service import Service
 from bodzify_api.model.PlaylistLibTrackRelation \
     import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
@@ -125,45 +123,21 @@ class TrackService(Service):
             playlist_lib_track_relations_to_update.update(
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
-    @ staticmethod
-    def get_fingerprint_and_duration_from_audio_fingerprint_generator_api(
-            file_path: str) -> tuple[Optional[bytes], Optional[float]]:
-        print(f"file_path: {file_path}")
-        response = requests.post(settings.AUDIO_FINGERPRINT_GENERATOR_POST_FULL_URL,
-                                 json={'filepath': file_path},
-                                 headers={'Content-Type': 'application/json'})
-        if response.status_code == 200:
-            response_json = response.json()
-            return base64.b64decode(response_json['fingerprint']), response_json['duration']
-        else:
-            return None
-
-    @ staticmethod
-    def get_fingerprint_and_duration_from_file(file) -> tuple[Optional[bytes], Optional[int]]:
-        fingerprint = None
-        duration_in_sec = None
-
+    @staticmethod
+    def get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 for chunk in file.chunks():
                     tmp.write(chunk)
-                try:
                     fingerprint, duration_in_sec = \
-                        TrackService.get_fingerprint_and_duration_from_audio_fingerprint_generator_api(
-                            file_path=tmp.name)
-                except acoustid.FingerprintGenerationError as error:
-                    if error.args[0] == 'fpcalc exited with status 2':
-                        pass
-                    else:
-                        raise error
+                        AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(file_path=tmp.name)
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
             fingerprint, duration_in_sec = \
-                TrackService.get_fingerprint_and_duration_from_audio_fingerprint_generator_api(file_path=file_path)
+                AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(file_path=file_path)
+        return fingerprint, int(duration_in_sec)
 
-        return fingerprint, int(duration_in_sec) if duration_in_sec is not None else None
-
-    @ staticmethod
+    @staticmethod
     def _update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
             user: User, save_data: dict, schema_data: dict):
         schema_file_key = SAVE_SCHEMA_FIELDS.FILE
@@ -172,21 +146,24 @@ class TrackService(Service):
             file_schema_data = dict()
             file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE] = file
 
-            # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack
-            # model, doing it here enables to calculate it only once.
-            fingerprint, duration_in_sec = TrackService.get_fingerprint_and_duration_from_file(file=file)
-
-            if fingerprint is not None and duration_in_sec is not None:
+            duration_in_sec = None
+            try:
+                # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack
+                # model, doing it here enables to calculate it only once.
+                fingerprint, duration_in_sec = TrackService.get_fingerprint_and_duration_from_file(file=file)
                 save_data[SAVE_MODEL_FIELDS.DURATION_IN_SEC] = duration_in_sec
 
                 file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINT_CHAR] = binascii.hexlify(fingerprint).decode()
 
                 schema_should_check_if_fingerprint_exists_key = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS
                 if schema_should_check_if_fingerprint_exists_key in schema_data:
-                    file_schema_data[TRACK_FILE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
+                    file_schema_data[TRACK_FILE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = \
+                        schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
 
                 TrackService._update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(
                     data=save_data, fingerprint=fingerprint, duration_in_sec=duration_in_sec)
+            except AudioFingerprintGeneratorError as audio_fingerprint_generation_error:
+                fingerprint = None
 
             file_schema_serializer = TrackFileSchemaSerialazer(data=file_schema_data)
             file_schema_serializer.is_valid(raise_exception=True)
@@ -200,6 +177,9 @@ class TrackService(Service):
             file_model_serializer.is_valid(raise_exception=True)
             file = file_model_serializer.save(user=user)
             save_data[SAVE_MODEL_FIELDS.TRACK_FILE] = file.pk  # type: ignore
+
+            if duration_in_sec:
+                save_data[SAVE_MODEL_FIELDS.DURATION_IN_SEC] = duration_in_sec
 
     @ staticmethod
     def _update_model_data_with_genre_uuid_if_genre_in_schema_data(user: User, model_data: dict, schema_data: dict):

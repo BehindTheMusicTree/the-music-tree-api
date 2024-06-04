@@ -5,7 +5,7 @@ import os
 from mutagen._file import File as MutagenFile
 from mutagen._file import FileType as MutagenFileMetadata
 
-from bodzify_api.audiometadata.id3.Id3Manager import Id3Manager
+from bodzify_api.utils.audiometadata.id3.Id3Manager import Id3Manager
 
 
 class WavMetadataManager(Id3Manager):
