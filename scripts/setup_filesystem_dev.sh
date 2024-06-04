@@ -9,6 +9,11 @@ sudo chown -R $USER $mediaDir
 logDir=/var/log/
 sudo mkdir $logDir
 
+sharedDjangoTempUploadedFilesDir=/var/django_temp_uploaded_files/
+sudo mkdir $sharedDjangoTempUploadedFilesDir
+sudo chmod 775 $sharedDjangoTempUploadedFilesDir
+sudo chown -R $USER $sharedDjangoTempUploadedFilesDir
+
 djangoLogDir=${logDir}django/
 sudo mkdir $djangoLogDir
 

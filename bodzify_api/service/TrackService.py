@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import base64
 import binascii
 from calendar import monthrange
 import os
@@ -125,9 +126,17 @@ class TrackService(Service):
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @ staticmethod
-    def get_fingerprint_from_file_path(file_path: str):
-
-        return fingerprint, duration
+    def get_fingerprint_and_duration_from_audio_fingerprint_generator_api(
+            file_path: str) -> tuple[Optional[bytes], Optional[float]]:
+        print(f"file_path: {file_path}")
+        response = requests.post(settings.AUDIO_FINGERPRINT_GENERATOR_POST_FULL_URL,
+                                 json={'filepath': file_path},
+                                 headers={'Content-Type': 'application/json'})
+        if response.status_code == 200:
+            response_json = response.json()
+            return base64.b64decode(response_json['fingerprint']), response_json['duration']
+        else:
+            return None
 
     @ staticmethod
     def get_fingerprint_and_duration_from_file(file) -> tuple[Optional[bytes], Optional[int]]:
@@ -139,7 +148,9 @@ class TrackService(Service):
                 for chunk in file.chunks():
                     tmp.write(chunk)
                 try:
-                    duration_in_sec, fingerprint = TrackService.get_fingerprint_from_file_path(file_path=tmp.name)
+                    fingerprint, duration_in_sec = \
+                        TrackService.get_fingerprint_and_duration_from_audio_fingerprint_generator_api(
+                            file_path=tmp.name)
                 except acoustid.FingerprintGenerationError as error:
                     if error.args[0] == 'fpcalc exited with status 2':
                         pass
@@ -147,7 +158,8 @@ class TrackService(Service):
                         raise error
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
-            duration_in_sec, fingerprint = TrackService.get_fingerprint_from_file_path(file_path=file_path)
+            fingerprint, duration_in_sec = \
+                TrackService.get_fingerprint_and_duration_from_audio_fingerprint_generator_api(file_path=file_path)
 
         return fingerprint, int(duration_in_sec) if duration_in_sec is not None else None
 
