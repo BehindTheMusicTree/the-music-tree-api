@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import base64
 import binascii
 from calendar import monthrange
 import os
@@ -27,7 +26,8 @@ from bodzify_api.model.musicbrainz.MusicbrainzArtist \
     import MusicbrainzArtist, ATTRIBUTES_LABEL as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.settings import settings
-from bodzify_api.utils.audio_fingerprint_generator_api_client import AudioFingerprintGeneratorApiClient, AudioFingerprintGeneratorError
+from bodzify_api.utils.audio_fingerprint_generator_api_client \
+    import AudioFingerprintGeneratorApiClient, AudioFingerprintGeneratorError
 import bodzify_api.utils.audiometadata as audiometadata
 from bodzify_api.service.Service import Service
 from bodzify_api.model.PlaylistLibTrackRelation \
@@ -124,17 +124,23 @@ class TrackService(Service):
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @staticmethod
+    def get_filename_from_path(path: str) -> str:
+        return os.path.basename(path)
+
+    @staticmethod
     def get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 for chunk in file.chunks():
                     tmp.write(chunk)
+                    filename = os.path.basename(tmp.name)
                     fingerprint, duration_in_sec = \
-                        AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(file_path=tmp.name)
+                        AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(filename=filename)
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
+            filename = os.path.basename(file_path)
             fingerprint, duration_in_sec = \
-                AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(file_path=file_path)
+                AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(filename=filename)
         return fingerprint, int(duration_in_sec)
 
     @staticmethod

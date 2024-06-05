@@ -37,7 +37,7 @@ class ConnectionError(AudioFingerprintGeneratorError):
 
 
 class POST_FIELDS:
-    FILEPATH = 'filepath'
+    FILE_NAME = 'filename'
 
 
 class RESPONSE_FIELDS:
@@ -49,10 +49,10 @@ class RESPONSE_FIELDS:
 class AudioFingerprintGeneratorApiClient:
 
     @staticmethod
-    def post_generate_audio_fingerprint(file_path: str) -> tuple[bytes, float]:
+    def post_generate_audio_fingerprint(filename: str) -> tuple[bytes, float]:
         try:
             response = requests.post(settings.AUDIO_FINGERPRINT_GENERATOR_POST_FULL_URL,
-                                     json={POST_FIELDS.FILEPATH: file_path},
+                                     json={POST_FIELDS.FILE_NAME: filename},
                                      headers={'Content-Type': 'application/json'})
             response_json = response.json()
             if response.status_code == 200:
