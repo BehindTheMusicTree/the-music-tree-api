@@ -13,6 +13,8 @@ on:
 jobs:
   Pytest:
     runs-on: ubuntu-latest
+    container:
+      image: mignot/audio-fingerprinter:latest
     env:
       ENV: GITHUB_CI_TEST
       DEBUG: True
@@ -22,7 +24,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.CI_TEST_DB_PASSWORD }}
       DB_URL: ${{ secrets.CI_TEST_DB_URL }}
       DB_PORT: ${{ secrets.CI_TEST_DB_PORT }}
-      AUDIO_FINGERPRINT_GENERATOR_PORT: ${{ secrets.CI_TEST_AUDIO_FINGERPRINT_GENERATOR_PORT }}
+      AUDIO_FINGERPRINTER: ${{ secrets.CI_TEST_AUDIO_FINGERPRINTER_PORT }}
       ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
     services:
       postgres_main:

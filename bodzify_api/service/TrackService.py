@@ -27,7 +27,7 @@ from bodzify_api.model.musicbrainz.MusicbrainzArtist \
     import MusicbrainzArtist, ATTRIBUTES_LABEL as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.settings import settings
-from bodzify_api.utils.audio_fingerprint_generator_api_client \
+from bodzify_api.utils.audio_fingerprinter_api_client \
     import AudioFingerprintGeneratorApiClient, AudioFingerprintGeneratorError
 import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.service.Service import Service
@@ -134,16 +134,16 @@ class TrackService(Service):
                 file_path = tmp_file.name
                 filename = os.path.basename(file_path)
                 fingerprint, duration_in_sec = \
-                    AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(filename=filename)
+                    AudioFingerprintGeneratorApiClient.post_fingerprint_audio(filename=filename)
                 os.remove(file_path)
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
             filename = os.path.basename(file_path)
             fingerprint, duration_in_sec = \
-                AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(filename=filename)
+                AudioFingerprintGeneratorApiClient.post_fingerprint_audio(filename=filename)
         elif isinstance(file, AppDjangoFile):
             filename = os.path.basename(file.file_abs_path)
-            fingerprint, duration_in_sec = AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(
+            fingerprint, duration_in_sec = AudioFingerprintGeneratorApiClient.post_fingerprint_audio(
                 filename=filename)
 
         return fingerprint, int(duration_in_sec)

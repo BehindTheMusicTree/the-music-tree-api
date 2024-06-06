@@ -49,9 +49,9 @@ class RESPONSE_FIELDS:
 class AudioFingerprintGeneratorApiClient:
 
     @staticmethod
-    def post_generate_audio_fingerprint(filename: str) -> tuple[bytes, float]:
+    def post_fingerprint_audio(filename: str) -> tuple[bytes, float]:
         try:
-            response = requests.post(settings.AUDIO_FINGERPRINT_GENERATOR_POST_FULL_URL,
+            response = requests.post(settings.AUDIO_FINGERPRINTER_POST_FULL_URL,
                                      json={POST_FIELDS.FILE_NAME: filename},
                                      headers={'Content-Type': 'application/json'})
             response_json = response.json()
