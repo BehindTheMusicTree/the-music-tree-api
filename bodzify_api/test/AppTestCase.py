@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from django.core.management import call_command
 
 from bodzify_api.test.AppApiClient import AppApiClient
-from bodzify_api.test.ModelFixtureFactory import ModelFixtureFactory
+from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
 from bodzify_api.test.TestUser import TestUser
 from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
 
