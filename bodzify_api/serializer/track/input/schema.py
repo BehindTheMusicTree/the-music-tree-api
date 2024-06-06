@@ -11,7 +11,7 @@ from bodzify_api.model.Album import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL
 class FIELDS:
     USER = SAVE_MODEL_FIELDS.USER
     FILE = "file"
-    SHOULD_CHECK_IF_FINGERPRINT_EXISTS = "should_check_if_fingerprint_exists"
+    SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = "should_cancel_if_duplicate_fingerprint"
     DURATION_IN_SEC = SAVE_MODEL_FIELDS.DURATION_IN_SEC
     TITLE = SAVE_MODEL_FIELDS.TITLE
     ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
@@ -26,7 +26,7 @@ class FIELDS:
 
 class LibTrackSchemaSerializer(serializers.Serializer):
     file = serializers.FileField(required=False)
-    should_check_if_fingerprint_exists = serializers.BooleanField(required=False)
+    should_cancel_if_duplicate_fingerprint = serializers.BooleanField(required=False)
     title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                                   required=False,
                                   allow_blank=True,

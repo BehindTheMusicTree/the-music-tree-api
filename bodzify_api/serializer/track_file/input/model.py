@@ -9,7 +9,7 @@ class FIELDS:
     USER = ATTRIBUTES_LABEL.USER
     FILE = ATTRIBUTES_LABEL.FILE
     FINGERPRINT = ATTRIBUTES_LABEL.FINGERPRINT
-    SHOULD_CHECK_IF_FINGERPRINT_EXISTS = "should_check_if_fingerprint_exists"
+    SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = "should_cancel_if_duplicate_fingerprint"
 
 
 class TrackFileModelSerializer(serializers.ModelSerializer):
@@ -22,8 +22,8 @@ class TrackFileModelSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if FIELDS.FINGERPRINT in attrs:
-            if FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS in attrs and attrs[
-                    FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]:
+            if FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT in attrs and attrs[
+                    FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT]:
                 fingerprint = attrs[FIELDS.FINGERPRINT]
                 if TrackFile.objects.filter(fingerprint=fingerprint).exists():
                     raise serializers.ValidationError(

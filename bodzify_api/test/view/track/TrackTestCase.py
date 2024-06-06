@@ -17,6 +17,8 @@ from bodzify_api.serializer.track.output.detailed import FIELDS as LIB_TRACK_GET
 
 class TrackTestCase(AppTestCase):
 
+    LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION = "queen_showmustgoon.mp3"
+
     class LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION:
         ONE_STAR = "1 star"
         TAGS_NONE = "tags none"
@@ -100,6 +102,11 @@ class TrackTestCase(AppTestCase):
                                             generic_sample_file_extension,
                                             data_dict=None):
         filename_with_extension = generic_sample_filename_without_extension + '.' + generic_sample_file_extension
+        generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
+        return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
+
+    def post_lib_track_with_queenshowmustgoon(self, data_dict=None):
+        filename_with_extension = self.LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION
         generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
         return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
 

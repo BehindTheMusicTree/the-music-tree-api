@@ -166,10 +166,10 @@ class TrackService(Service):
 
                 file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINT_CHAR] = binascii.hexlify(fingerprint).decode()
 
-                schema_should_check_if_fingerprint_exists_key = SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS
-                if schema_should_check_if_fingerprint_exists_key in schema_data:
-                    file_schema_data[TRACK_FILE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS] = \
-                        schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS]
+                schema_should_cancel_if_duplicate_fingerprint_key = SAVE_SCHEMA_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT
+                if schema_should_cancel_if_duplicate_fingerprint_key in schema_data:
+                    file_schema_data[TRACK_FILE_SCHEMA_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT] = \
+                        schema_data[SAVE_SCHEMA_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT]
 
                 TrackService._update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(
                     data=save_data, fingerprint=fingerprint, duration_in_sec=duration_in_sec)
@@ -358,7 +358,7 @@ class TrackService(Service):
 
         schema_data = schema_data_from_file.copy()
         keys = [SAVE_SCHEMA_FIELDS.FILE,
-                SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS,
+                SAVE_SCHEMA_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT,
                 SAVE_SCHEMA_FIELDS.TITLE,
                 SAVE_SCHEMA_FIELDS.ARTIST_NAME,
                 SAVE_SCHEMA_FIELDS.ALBUM_NAME,
@@ -388,7 +388,7 @@ class TrackService(Service):
                                                                   old_instance) -> dict:
         model_data = dict()
 
-        for key in [SAVE_SCHEMA_FIELDS.SHOULD_CHECK_IF_FINGERPRINT_EXISTS,
+        for key in [SAVE_SCHEMA_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT,
                     SAVE_MODEL_FIELDS.TITLE,
                     SAVE_MODEL_FIELDS.RATING,
                     SAVE_MODEL_FIELDS.LANGUAGE]:
