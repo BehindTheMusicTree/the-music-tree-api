@@ -43,14 +43,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Set permissions for pip cache directory
-        run: sudo chown -R $(whoami) /github/home/.cache/pip
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
            python-version: 3.11
       - name: Install requirements
-        run: pip install -r requirements.txt
+        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
       - name: Install chromaprint
         run: sudo apt install libchromaprint-tools
       - name: Set up filesystem
