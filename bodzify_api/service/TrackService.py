@@ -130,10 +130,11 @@ class TrackService(Service):
     @staticmethod
     def get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
-            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            with tempfile.NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR) as tmp:
                 for chunk in file.chunks():
                     tmp.write(chunk)
                     file_path = tmp.name
+                    filename = os.path.basename(file_path)
                     fingerprint, duration_in_sec = \
                         AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(filename=filename)
         elif isinstance(file, TemporaryUploadedFile):
