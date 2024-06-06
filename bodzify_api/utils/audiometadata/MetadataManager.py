@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from contextlib import redirect_stderr, redirect_stdout
+import os
 from pydub.utils import mediainfo
 from abc import abstractmethod
 from typing import Optional
@@ -146,13 +148,15 @@ class MetadataManager:
                     return TinyTag.get(f.name).duration
             elif isinstance(self.file, FieldFile):
                 with open(self.file.path, 'rb') as f:
-                    return TinyTag.get(f.name).duration
+                    with open(os.devnull, 'w') as devnull, redirect_stdout(devnull), redirect_stderr(devnull):
+                        return TinyTag.get(f.name).duration
             elif isinstance(self.file, InMemoryUploadedFile):
                 with tempfile.NamedTemporaryFile(delete=False) as tmp:
                     for chunk in self.file.chunks():
                         tmp.write(chunk)
                     tmp.close()
-                    return TinyTag.get(tmp.name).duration
+                    tinytag = TinyTag.get(tmp.name)
+                    return tinytag.duration
         except TinyTagException as exception:
             if exception.args[0] == 'No tag reader found to support filetype! ':
                 return None
@@ -194,6 +198,7 @@ class MetadataManager:
         if duration_in_sec is None:
             duration_in_sec_float = self._get_duration_using_tinytag()
             duration_in_sec = int(duration_in_sec_float) if duration_in_sec_float else None
+
         if duration_in_sec is None:
             duration_in_sec_float = self._get_duration_using_pydub()
             duration_in_sec = int(float(duration_in_sec_float))
