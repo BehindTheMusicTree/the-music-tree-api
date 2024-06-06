@@ -43,6 +43,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Set permissions for pip cache directory
+        run: sudo chown -R $(whoami) /github/home/.cache/pip
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
