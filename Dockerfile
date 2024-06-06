@@ -40,6 +40,7 @@ ENV LibrariesDir=${MediaDir}/libraries
 ENV LogDir=/home/app/webapp/log/
 ENV DjangoLogDir=${LogDir}django/
 ENV GunicornLogDir=${LogDir}gunicorn/
+ENV TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
 
 RUN mkdir ${DockerHome}/staticfiles && \
     mkdir -p $LibrariesDir && \
@@ -54,7 +55,8 @@ RUN mkdir ${DockerHome}/staticfiles && \
     mkdir -p $GunicornLogDir && \
     touch ${GunicornLogDir}error.log && \
     touch ${GunicornLogDir}access.log && \
-    chmod 777 -R $LibrariesDir ${GunicornLogDir} && \
+    mkdir -p $TempUploadedFilesDir && \
+    chmod 777 -R $LibrariesDir ${GunicornLogDir} ${TempUploadedFilesDir} && \
     pip install --upgrade pip && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     apt update && \

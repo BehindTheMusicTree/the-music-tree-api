@@ -9,10 +9,10 @@ sudo chown -R $USER $mediaDir
 logDir=/var/log/
 sudo mkdir $logDir
 
-sharedDjangoTempUploadedFilesDir=/var/django_temp_uploaded_files/
-sudo mkdir $sharedDjangoTempUploadedFilesDir
-sudo chmod 775 $sharedDjangoTempUploadedFilesDir
-sudo chown -R $USER $sharedDjangoTempUploadedFilesDir
+tempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
+sudo mkdir -p $tempUploadedFilesDir
+sudo chmod 775 $tempUploadedFilesDir
+sudo chown -R $USER $tempUploadedFilesDir
 
 djangoLogDir=${logDir}django/
 sudo mkdir $djangoLogDir
