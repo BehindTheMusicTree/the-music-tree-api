@@ -3,6 +3,7 @@
 import binascii
 from calendar import monthrange
 import os
+import stat
 import random
 from typing import Optional
 import acoustid
@@ -28,7 +29,7 @@ from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecord
 from bodzify_api.settings import settings
 from bodzify_api.utils.audio_fingerprint_generator_api_client \
     import AudioFingerprintGeneratorApiClient, AudioFingerprintGeneratorError
-import bodzify_api.utils.audiometadata as audiometadata
+import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.service.Service import Service
 from bodzify_api.model.PlaylistLibTrackRelation \
     import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
@@ -48,6 +49,7 @@ from bodzify_api.serializer.track.input.schema \
     import FIELDS as SAVE_SCHEMA_FIELDS, LibTrackSchemaSerializer
 from bodzify_api.serializer.track.input.endpoint.put import LibTrackPutSerializer
 from bodzify_api.serializer.mine.track.detailed import FIELDS as MINE_TRACK_FIELDS
+from bodzify_api.utils.utils import AppDjangoFile
 
 
 class TrackService(Service):
@@ -80,15 +82,15 @@ class TrackService(Service):
                 ERROR = 'error'
 
     @staticmethod
-    def generate_short_uu(length: int):
+    def _generate_short_uu(length: int):
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
 
     @staticmethod
-    def get_substring_after_last_slash(string: str):
+    def _get_substring_after_last_slash(string: str):
         return string.split("/")[-1]
 
     @staticmethod
-    def get_file_extension_from_url(url: str):
+    def _get_file_extension_from_url(url: str):
         return url.split(".")[-1]
 
     @staticmethod
@@ -109,8 +111,8 @@ class TrackService(Service):
 
         if len(filename_without_expressions_to_exclude) > settings.LIB_TRACK_FILENAME_LEN_MAX or force_title_generation:
             title = settings.LIB_TRACK_GENERATED_TITLE_PREFIXE + \
-                TrackService.generate_short_uu(settings.LIB_TRACK_GENERATED_TITLE_LENGTH -
-                                               len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
+                TrackService._generate_short_uu(settings.LIB_TRACK_GENERATED_TITLE_LENGTH -
+                                                len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
         else:
             title = filename_without_expressions_to_exclude
         return title
@@ -124,11 +126,7 @@ class TrackService(Service):
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @staticmethod
-    def get_filename_from_path(path: str) -> str:
-        return os.path.basename(path)
-
-    @staticmethod
-    def get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
+    def _get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR) as tmp_file:
                 for chunk in file.chunks():
@@ -143,7 +141,11 @@ class TrackService(Service):
             filename = os.path.basename(file_path)
             fingerprint, duration_in_sec = \
                 AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(filename=filename)
-            os.path.getsize(file_path)
+        elif isinstance(file, AppDjangoFile):
+            filename = os.path.basename(file.file_abs_path)
+            fingerprint, duration_in_sec = AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(
+                filename=filename)
+
         return fingerprint, int(duration_in_sec)
 
     @staticmethod
@@ -159,7 +161,7 @@ class TrackService(Service):
             try:
                 # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack
                 # model, doing it here enables to calculate it only once.
-                fingerprint, duration_in_sec = TrackService.get_fingerprint_and_duration_from_file(file=file)
+                fingerprint, duration_in_sec = TrackService._get_fingerprint_and_duration_from_file(file=file)
                 save_data[SAVE_MODEL_FIELDS.DURATION_IN_SEC] = duration_in_sec
 
                 file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINT_CHAR] = binascii.hexlify(fingerprint).decode()
@@ -434,7 +436,7 @@ class TrackService(Service):
 
     def _get_artists_name_list_from_string(self, names_string: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_string.split(
-            audiometadata.METADATA_ARTISTS_SEPARATION_CHAR)
+            audio_metadata.METADATA_ARTISTS_SEPARATION_CHAR)
         names = list()
         for name_with_eventual_spaces_around in names_with_eventual_spaces_around_and_duplicates:
             name = name_with_eventual_spaces_around.strip()
@@ -448,7 +450,7 @@ class TrackService(Service):
         return save_data
 
     def _get_track_filename_with_extension(self, mine_track_url: str, data: dict):
-        file_extension = self.get_file_extension_from_url(mine_track_url)
+        file_extension = self._get_file_extension_from_url(mine_track_url)
         is_filename_randomly_generated = False
         title_key = SAVE_SCHEMA_FIELDS.TITLE
         if title_key in data:
@@ -464,10 +466,10 @@ class TrackService(Service):
                 filename_without_extension = title
             filename_with_extension = filename_without_extension + "." + file_extension
         else:
-            filename_with_extension = self.get_substring_after_last_slash(
+            filename_with_extension = self._get_substring_after_last_slash(
                 mine_track_url)
             if len(filename_with_extension) > settings.LIB_TRACK_FILENAME_LEN_MAX:
-                filename_without_extension = self.generate_short_uu(
+                filename_without_extension = self._generate_short_uu(
                     settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH - len(file_extension) - 1)
                 filename_with_extension = filename_without_extension + "." + file_extension
                 is_filename_randomly_generated = True
@@ -475,7 +477,7 @@ class TrackService(Service):
 
     def _get_schema_data_from_file(self, file):
         try:
-            normalized_metadata = audiometadata.get_normalized_metadata_from_file(
+            normalized_metadata = audio_metadata.get_normalized_metadata_from_file(
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
@@ -510,20 +512,26 @@ class TrackService(Service):
 
     def extract(self, extract_data: dict, request):
         mine_track_url = extract_data[MINE_TRACK_FIELDS.URL]
-        track_in_memory_file = requests.get(mine_track_url, stream=True)
-        with NamedTemporaryFile(delete=True) as track_temp_file:
-            for block in track_in_memory_file.iter_content(1024 * 8):
+        track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
+            mine_track_url=mine_track_url, data=extract_data)
+
+        # stream=True more effective for large files
+        track_file_streamed = requests.get(mine_track_url, stream=True)
+
+        with tempfile.NamedTemporaryFile(delete=True, dir=settings.FILE_UPLOAD_TEMP_DIR) as track_temp_file:
+            for block in track_file_streamed.iter_content(1024 * 8):
                 if not block:
                     break
                 track_temp_file.write(block)
             track_temp_file.flush()
             track_temp_file.seek(0)
 
-            post_data = self._get_post_data_from_extract_data(extract_data)
+            os.chmod(track_temp_file.name, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
-            track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
-                mine_track_url=mine_track_url, data=extract_data)
-            post_data[POST_FIELDS.TRACK_FILE] = DjangoFile(file=track_temp_file, name=track_filename)
+            post_data = self._get_post_data_from_extract_data(extract_data)
+            post_data[POST_FIELDS.TRACK_FILE] = AppDjangoFile(file=track_temp_file,
+                                                              name=track_filename,
+                                                              file_abs_path=track_temp_file.name)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[SAVE_SCHEMA_FIELDS.FORCE_TITLE_GENERATION] = force_title_generation_str
             library_track = self.create(post_data=post_data, request=request)
