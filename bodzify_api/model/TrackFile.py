@@ -15,7 +15,7 @@ from rest_framework.exceptions import ValidationError
 from bodzify_api.settings import settings
 from bodzify_api.validator.track_file_validator \
     import validate_size, validate_content_type_is_audio, validate_filename_length
-import bodzify_api.utils.audiometadata as audiometadata
+import bodzify_api.utils.audio_metadata as audio_metadata
 
 
 class ATTRIBUTES_LABEL:
@@ -95,13 +95,13 @@ class TrackFile(models.Model):
 
         super().save(*args, **kwargs)  # So that the file is saved before eventual modifications
 
-        self.bitrate_in_kbps = audiometadata.get_bitrate_from_file(self.file.path)
+        self.bitrate_in_kbps = audio_metadata.get_bitrate_from_file(self.file.path)
         super().save(update_fields=[ATTRIBUTES_LABEL.BITRATE_IN_KBPS])
 
         if self.file and self.extension == '.flac':
-            if not audiometadata.is_flac_file_md5_valid(self.file.path):
+            if not audio_metadata.is_flac_file_md5_valid(self.file.path):
                 try:
-                    audiometadata.replace_flac_file_with_corrected_md5(self.file.path)
+                    audio_metadata.replace_flac_file_with_corrected_md5(self.file.path)
                     self.has_flac_md5_been_corrected = True
                 except Exception:
                     raise ValidationError(

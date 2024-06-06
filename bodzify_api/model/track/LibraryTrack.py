@@ -13,7 +13,7 @@ from django.dispatch import receiver
 
 from bodzify_api.utils import utils
 from bodzify_api.settings import settings
-import bodzify_api.utils.audiometadata as audiometadata
+import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.TrackFile import TrackFile
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
@@ -136,9 +136,9 @@ class LibraryTrack(models.Model):
         except LibraryTrack.DoesNotExist:
             if self.track_file:
                 if not self.duration_in_sec:
-                    self.duration_in_sec = audiometadata.get_specific_metadata_from_file(
+                    self.duration_in_sec = audio_metadata.get_specific_metadata_from_file(
                         file=self.track_file.file,
-                        normalized_metadata_key=audiometadata.NormalizedMetadataKeys.DURATION_IN_SEC)
+                        normalized_metadata_key=audio_metadata.NormalizedMetadataKeys.DURATION_IN_SEC)
 
             super().save(*args, **kwargs)
 
@@ -253,13 +253,13 @@ class LibraryTrack(models.Model):
         title_tag = self.title
         if title_tag is None:
             title_tag = ""
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.TITLE] = title_tag
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.TITLE] = title_tag
 
         if self.artist_id is not None:  # type: ignore
             artist_name_tag = self.artist.name  # type: ignore
         else:
             artist_name_tag = ""
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.ARTIST_NAME] = artist_name_tag
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.ARTIST_NAME] = artist_name_tag
 
         album_artists_tag = ""
         if self.album_id is not None:  # type: ignore
@@ -268,7 +268,7 @@ class LibraryTrack(models.Model):
             for albumArtist in list(self.album.album_artists.all()):  # type: ignore
                 if album_artists_name_index != 0:
                     album_artists_tag = (
-                        album_artists_tag + audiometadata.METADATA_ARTISTS_SEPARATION_CHAR)
+                        album_artists_tag + audio_metadata.METADATA_ARTISTS_SEPARATION_CHAR)
                 album_artists_tag = album_artists_tag + albumArtist.name
                 album_artists_name_index = album_artists_name_index + 1
         else:
@@ -276,24 +276,24 @@ class LibraryTrack(models.Model):
 
         if album_name_tag is None:
             album_name_tag = ""
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.ALBUM_NAME] = album_name_tag
-        album_artists_name_key = audiometadata.NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.ALBUM_NAME] = album_name_tag
+        album_artists_name_key = audio_metadata.NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES
         normalized_metadata[album_artists_name_key] = album_artists_tag
 
         if self.genre == None:
             genre_name_tag = ""
         else:
             genre_name_tag = self.genre.name
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.GENRE_NAME] = genre_name_tag
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.GENRE_NAME] = genre_name_tag
 
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.RATING] = self.rating
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.RATING] = self.rating
 
         language_tag = self.language
         if language_tag is None:
             language_tag = ""
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.LANGUAGE] = language_tag
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.LANGUAGE] = language_tag
 
-        audiometadata.update_file_metadata(
+        audio_metadata.update_file_metadata(
             file=self.track_file.file,
             normalized_metadata=normalized_metadata,
             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)

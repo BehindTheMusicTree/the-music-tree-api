@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from rest_framework import status
 
-import bodzify_api.utils.audiometadata as audiometadata
+import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.track.input.endpoint.extract \
@@ -47,7 +47,7 @@ class TrackTestCase(AppTestCase):
         lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
         if self.saved_lib_track.track_file:
-            self.saved_lib_track_metadata = audiometadata.get_normalized_metadata_from_file(
+            self.saved_lib_track_metadata = audio_metadata.get_normalized_metadata_from_file(
                 file=self.saved_lib_track.track_file.file)
 
     def extract(self, data_dict):
