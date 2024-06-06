@@ -133,7 +133,7 @@ class TrackService(Service):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 for chunk in file.chunks():
                     tmp.write(chunk)
-                    filename = os.path.basename(tmp.name)
+                    file_path = tmp.name
                     fingerprint, duration_in_sec = \
                         AudioFingerprintGeneratorApiClient.post_generate_audio_fingerprint(filename=filename)
         elif isinstance(file, TemporaryUploadedFile):
