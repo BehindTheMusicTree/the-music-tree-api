@@ -14,7 +14,8 @@ jobs:
   Pytest:
     runs-on: ubuntu-latest
     container:
-      image: mignot/audio-fingerprinter:latest
+      image: python:3.11-slim-buster
+
     env:
       ENV: GITHUB_CI_TEST
       DEBUG: True
@@ -26,7 +27,15 @@ jobs:
       DB_PORT: ${{ secrets.CI_TEST_DB_PORT }}
       AUDIO_FINGERPRINTER: ${{ secrets.CI_TEST_AUDIO_FINGERPRINTER_PORT }}
       ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
+
     services:
+      audio-fingerprinter:
+        image: mignot/audio-fingerprinter:latest
+        ports:
+          - 3000:5000
+        volumes:
+          - /tmp/bodzify-api/uploaded-files/:/tmp/audio-fingerprinter/pool/
+
       postgres_main:
         image: postgres:14.12
         env:
