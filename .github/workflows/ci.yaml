@@ -66,7 +66,7 @@ jobs:
       - name: Add fpcalc to PATH
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
       - name: Run pytest
-        run: pytest bodzify_api/test/view/track/input/method/create/test_should_cancel_if_duplicate_fingerprint.py    
+        run: pytest   
 
   Docker-webapp:
     name: Build and Publish on Docker Hub
