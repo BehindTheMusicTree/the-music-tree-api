@@ -42,8 +42,7 @@ ENV DjangoLogDir=${LogDir}django/
 ENV GunicornLogDir=${LogDir}gunicorn/
 ENV TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
 
-RUN mkdir ${DockerHome}/staticfiles && \
-    mkdir -p ${LibrariesDir} ${LogDir} ${DjangoLogDir} ${GunicornLogDir} $TempUploadedFilesDir && \
+RUN mkdir -p ${DockerHome}/staticfiles && $LibrariesDir $LogDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir && \
     touch ${DjangoLogDir}requests.log && \
         ${DjangoLogDir}requests.debug.log &&\
         ${DjangoLogDir}general.log && \
@@ -52,10 +51,10 @@ RUN mkdir ${DockerHome}/staticfiles && \
         ${DjangoLogDir}bodzify-api.log && \
         ${GunicornLogDir}error.log && \
         ${GunicornLogDir}access.log && \
-    chmod 777 -R $LibrariesDir ${GunicornLogDir} ${TempUploadedFilesDir} && \
+    chmod 777 -R $LibrariesDir $GunicornLogDir $TempUploadedFilesDir && \
     pip install --upgrade pip && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     apt update && \
-    apt install -y flac ffpmeg libchromaprint-tools && \
+    apt install -y flac ffmpeg libchromaprint-tools && \
     chown -R www-data:www-data /opt/bodzify-api && \
     python manage.py collectstatic --noinput
