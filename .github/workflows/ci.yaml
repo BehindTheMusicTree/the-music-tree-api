@@ -22,14 +22,14 @@ jobs:
       DB_PASSWORD: ${{ secrets.CI_TEST_DB_PASSWORD }}
       DB_URL: ${{ secrets.CI_TEST_DB_URL }}
       DB_PORT: ${{ secrets.CI_TEST_DB_PORT }}
-      AUDIO_FINGERPRINTER: ${{ secrets.CI_TEST_AUDIO_FINGERPRINTER_PORT }}
+      AUDIO_FINGERPRINTER_PORT: ${{ secrets.CI_TEST_AUDIO_FINGERPRINTER_PORT }}
       ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
 
     services:
       audio-fingerprinter:
         image: mignot/audio-fingerprinter:latest
         ports:
-          - 3000:5000
+          - 3000:${{ secrets.CI_TEST_AUDIO_FINGERPRINTER_PORT }}
         volumes:
           - /tmp/bodzify-api/uploaded-files/:/tmp/audio-fingerprinter/pool/
 
