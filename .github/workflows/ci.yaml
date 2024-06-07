@@ -13,9 +13,6 @@ on:
 jobs:
   Pytest:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.11-slim-bullseye
-
     env:
       ENV: GITHUB_CI_TEST
       DEBUG: True
