@@ -11,17 +11,18 @@ ARG dbPort
 ARG acoustidApiKey
 ARG audioFingerprinterPort
 
-ENV ENV=TEST
-ENV DEBUG=True
-ENV SECRET_KEY=$secretKey
-ENV DB_USERNAME=$dbUsername
-ENV DB_PASSWORD=$dbPassword
-ENV DB_DATABASE=$dbDatabase
-ENV DB_URL=$dbUrl
-ENV DB_PORT=$dbPort
-ENV ACOUSTID_API_KEY=$acoustidApiKey
-ENV AUDIO_FINGERPRINTER_PORT=$audioFingerprinterPort
-
+ENV ENV=TEST \
+    DEBUG=True \
+    SECRET_KEY=$secretKey \
+    DB_USERNAME=$dbUsername \
+    DB_PASSWORD=$dbPassword \
+    DB_DATABASE=$dbDatabase \
+    DB_URL=$dbUrl \
+    DB_PORT=$dbPort \
+    ACOUSTID_API_KEY=$acoustidApiKey \
+    AUDIO_FINGERPRINTER_PORT=$audioFingerprinterPort \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 # To run gunicorn as a non-root user without password prompt
 RUN apt-get update && apt-get install -y gosu
@@ -36,7 +37,6 @@ RUN mkdir -p $DockerHome
 WORKDIR $DockerHome
 
 COPY . $DockerHome
-
 
 ENV MediaDir=/home/app/webapp/lib/bodzify-api/media
 ENV LibrariesDir=${MediaDir}/libraries
