@@ -8,6 +8,7 @@ ARG dbPassword
 ARG dbDatabase
 ARG dbUrl
 ARG dbPort
+ARG acoustidApiKey
 
 ENV ENV=TEST
 ENV DEBUG=True
@@ -42,15 +43,15 @@ ENV DjangoLogDir=${LogDir}django/
 ENV GunicornLogDir=${LogDir}gunicorn/
 ENV TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
 
-RUN mkdir -p ${DockerHome}/staticfiles && $LibrariesDir $LogDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir && \
-    touch ${DjangoLogDir}requests.log && \
-        ${DjangoLogDir}requests.debug.log &&\
-        ${DjangoLogDir}general.log && \
-        ${DjangoLogDir}info.log && \
-        ${DjangoLogDir}django.log && \
-        ${DjangoLogDir}bodzify-api.log && \
-        ${GunicornLogDir}error.log && \
-        ${GunicornLogDir}access.log && \
+RUN mkdir -p ${DockerHome}/staticfiles $LibrariesDir $LogDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir && \
+    touch ${DjangoLogDir}requests.log \
+    ${DjangoLogDir}requests.debug.log \
+    ${DjangoLogDir}general.log \
+    ${DjangoLogDir}info.log \
+    ${DjangoLogDir}django.log \
+    ${DjangoLogDir}bodzify-api.log \
+    ${GunicornLogDir}error.log \
+    ${GunicornLogDir}access.log && \
     chmod 777 -R $LibrariesDir $GunicornLogDir $TempUploadedFilesDir && \
     pip install --upgrade pip && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
