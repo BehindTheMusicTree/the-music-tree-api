@@ -9,6 +9,7 @@ ARG dbDatabase
 ARG dbUrl
 ARG dbPort
 ARG acoustidApiKey
+ARG audioFingerprinterPort
 
 ENV ENV=TEST
 ENV DEBUG=True
@@ -19,6 +20,7 @@ ENV DB_DATABASE=$dbDatabase
 ENV DB_URL=$dbUrl
 ENV DB_PORT=$dbPort
 ENV ACOUSTID_API_KEY=$acoustidApiKey
+ENV AUDIO_FINGERPRINTER_PORT=$audioFingerprinterPort
 
 
 # To run gunicorn as a non-root user without password prompt

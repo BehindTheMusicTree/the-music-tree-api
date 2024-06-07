@@ -56,13 +56,13 @@ jobs:
       - name: Install requirements
         run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
       - name: Install chromaprint
-        run: sudo apt install libchromaprint-tools
+        run: sudo apt-get install libchromaprint-tools
       - name: Set up filesystem
         run: bash scripts/setup_filesystem_github_ci_test.sh
       - name: Install flac
-        run: sudo apt install flac
+        run: sudo apt-get install flac # apt not stable for CLI interface
       - name: Install ffmpeg
-        run: sudo apt install ffmpeg
+        run: sudo apt-get install ffmpeg
       - name: Add fpcalc to PATH
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
       - name: Run pytest
@@ -89,6 +89,7 @@ jobs:
           --build-arg dbUrl=${{ secrets.TEST_DB_URL }}
           --build-arg dbPort=${{ secrets.TEST_DB_PORT }}
           --build-arg acoustidApiKey=${{ secrets.ACOUSTID_API_KEY }}
+          --build-arg audioFingerprinterPort=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
       - name: Publish Docker image
         run: docker-compose -f docker-compose.build.yml push
 
