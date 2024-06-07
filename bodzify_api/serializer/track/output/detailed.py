@@ -8,7 +8,6 @@ from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializ
 from bodzify_api.serializer.musicbrainz.recording.detailed import MusicbrainzRecordingDetailedSerializer
 from bodzify_api.serializer.playlist.base.output.without_tracks import BasePlaylistWithoutTracksSerializer
 from bodzify_api.serializer.track_file.output.detailed import FileDetailedSerializer
-from bodzify_api.test.view.track.input.method.create.attributes import musicbrainz_recording
 
 
 class FIELDS:
