@@ -2,26 +2,8 @@
 
 FROM python:3.11-buster 
 
-ARG secretKey
-ARG dbUsername
-ARG dbPassword
-ARG dbDatabase
-ARG dbUrl
-ARG dbPort
-ARG acoustidApiKey
-ARG audioFingerprinterPort
 
-ENV ENV=TEST \
-    DEBUG=True \
-    SECRET_KEY=$secretKey \
-    DB_USERNAME=$dbUsername \
-    DB_PASSWORD=$dbPassword \
-    DB_DATABASE=$dbDatabase \
-    DB_URL=$dbUrl \
-    DB_PORT=$dbPort \
-    ACOUSTID_API_KEY=$acoustidApiKey \
-    AUDIO_FINGERPRINTER_PORT=$audioFingerprinterPort \
-    PYTHONDONTWRITEBYTECODE=1 \
+ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 # To run gunicorn as a non-root user without password prompt

@@ -12,7 +12,8 @@ on:
         branches: [main, dev]
 
 jobs:
-  Pytest:
+  pytest:
+    name: Pytest
     runs-on: ubuntu-latest
     env:
       ENV: GITHUB_CI_TEST
@@ -69,35 +70,59 @@ jobs:
       - name: Run pytest
         run: pytest
 
-  Docker-webapp:
-    name: Build and Publish on Docker Hub
+  build-and-push-to-dockerhub:
+    name: Build / Push to Dockerhub
     runs-on: ubuntu-latest
-    needs: Pytest
     env:
-      DOCKER_REPO: ${{ secrets.DOCKER_WEBAPP_REPO }}
-      DOCKER_IMAGE_TAG: ${{ secrets.DOCKER_WEBAPP_IMAGE_TAG }}
+      IMAGE_FULL_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.API_IMAGE_REPO }}:${{ vars.API_IMAGE_TAG }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USER }} -p '${{ secrets.DOCKER_PASSWORD }}'
-      - name: Build Docker image
-        run:
-          docker-compose -f docker-compose.build.yml build
-          --build-arg secretKey='${{ secrets.TEST_DJANGO_SECRET_KEY }}' 
-          --build-arg dbUsername=${{ secrets.TEST_DB_USERNAME }}
-          --build-arg dbPassword='${{ secrets.TEST_DB_PASSWORD }}'
-          --build-arg dbDatabase=${{ secrets.TEST_DB_DATABASE }}
-          --build-arg dbUrl=${{ secrets.TEST_DB_URL }}
-          --build-arg dbPort=${{ secrets.TEST_DB_PORT }}
-          --build-arg acoustidApiKey=${{ secrets.ACOUSTID_API_KEY }}
-          --build-arg audioFingerprinterPort=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
-      - name: Publish Docker image
-        run: docker-compose -f docker-compose.build.yml push
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  Redeploy:
-    name: Redeploy webhook call
+      - name: Login to Dockerhub
+        run: echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build
+        run: docker build -t $IMAGE_FULL_NAME .
+
+      - name: Push
+        run: docker push $IMAGE_FULL_NAME
+
+  set-env-variables-on-server:
+    name: Set environment variables on server
     runs-on: ubuntu-latest
-    needs: [Docker-webapp]
+    needs: [build-and-push-to-dockerhub]
     steps:
-      - name: Deploy docker container webhook
-        run: curl -X POST ${{ secrets.BODZIFY_REDEPLOY_WEBHOOK_URL }}
+      - uses: actions/checkout@v4
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.TEST_SERVER_CI_SSH_BODZIFY_PRIVATE_KEY }}
+
+      - name: Add host to known_hosts
+        run: |
+          mkdir -p ~/.ssh &&
+          ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts
+
+      - name: Set environment variables on server
+        run: |
+          ENV_FILE_PATH="${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.API_ENV_VARIABLES_FILENAME }}"
+          ssh ${{ secrets.TEST_SERVER_SSH_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }} "
+            rm -f $ENV_FILE_PATH &&
+            echo 'ENV=TEST' >> $ENV_FILE_PATH &&
+            echo 'DJANGO_SECRET_KEY=${{ secrets.TEST_DJANGO_SECRET_KEY }}' >> $ENV_FILE_PATH &&
+            echo 'DB_USERNAME=${{ secrets.TEST_DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH && 
+            echo 'DB_PASSWORD=${{ secrets.TEST_DB_BODZIFY_API_USER_PASSWORD }}' >> $ENV_FILE_PATH &&
+            echo 'DB_DATABASE=${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
+            echo 'DB_URL=${{ secrets.TEST_DB_URL }}' >> $ENV_FILE_PATH &&
+            echo 'DB_PORT=${{ secrets.TEST_DB_PORT }}' >> $ENV_FILE_PATH &&
+            echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> $ENV_FILE_PATH &&
+            echo 'TEST_AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> $ENV_FILE_PATH &&
+          "
+
+  redeploy-webhook-call:
+    name: Redeploy webhook call
+    needs: [set-env-variables-on-server]
+    uses: Bodzify/bodzify-redeploy-webhook-action/.github/workflows/workflow.yml@main
+    with:
+      env: TEST
+    secrets: inherit
