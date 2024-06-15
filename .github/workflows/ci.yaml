@@ -44,6 +44,8 @@ jobs:
           POSTGRES_DB: ${{ env.DB_DATABASE }}
           POSTGRES_USER: ${{ env.DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_HOST: ${{ env.DB_URL }}
+          POSTGRES_PORT: ${{ env.DB_PORT }}
         ports:
           - 5432:5432
         options: >-
