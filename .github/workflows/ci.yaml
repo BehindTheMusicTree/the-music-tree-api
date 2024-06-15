@@ -87,6 +87,8 @@ jobs:
         run: echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Build
+        env:
+          ENV: BUILD
         run: docker build -t $IMAGE_FULL_NAME .
 
       - name: Push

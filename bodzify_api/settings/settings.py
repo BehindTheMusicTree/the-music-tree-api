@@ -8,6 +8,17 @@ import dotenv
 
 dotenv.load_dotenv()
 
+
+class ENV_VALUES:
+    DEV = 'DEV'
+    GITHUB_CI_TEST = 'GITHUB_CI_TEST'
+    BUILD = 'BUILD'
+    TEST = 'TEST'
+    PROD = 'PROD'
+
+
+ENV = os.getenv('ENV')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -48,7 +59,7 @@ MUSICBRAINZ_ARTIST_NAME_LEN_MAX = 200
 
 AUDIO_FINGERPRINTER_BASE_URL = "http://127.0.0.1"
 AUDIO_FINGERPRINTER_PORT = os.getenv('AUDIO_FINGERPRINTER_PORT')
-if AUDIO_FINGERPRINTER_PORT is None:
+if AUDIO_FINGERPRINTER_PORT is None and ENV != ENV_VALUES.BUILD:
     raise Exception("AUDIO_FINGERPRINTER_PORT env variable is not set")
 AUDIO_FINGERPRINTER_POST_ENDPOINT = "/fingerprint-audio"
 AUDIO_FINGERPRINTER_POST_FULL_URL = AUDIO_FINGERPRINTER_BASE_URL + \
@@ -73,16 +84,6 @@ ATOMIC_REQUESTS = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
-
-
-class ENV_VALUES:
-    DEV = 'DEV'
-    GITHUB_CI_TEST = 'GITHUB_CI_TEST'
-    TEST = 'TEST'
-    PROD = 'PROD'
-
-
-ENV = os.getenv('ENV')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
