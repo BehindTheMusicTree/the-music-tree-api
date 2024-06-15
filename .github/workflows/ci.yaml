@@ -22,9 +22,9 @@ jobs:
       DB_DATABASE: ${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}
       DB_USERNAME: ${{ secrets.TEST_DB_BODZIFY_API_USERNAME }}
       DB_PASSWORD: ${{ secrets.TEST_DB_BODZIFY_API_USER_PASSWORD }}
-      DB_URL: ${{ secrets.CI_TEST_DB_URL }}
-      DB_PORT: ${{ secrets.CI_TEST_DB_PORT }}
-      AUDIO_FINGERPRINTER_PORT: ${{ secrets.CI_TEST_AUDIO_FINGERPRINTER_PORT }}
+      DB_URL: ${{ secrets.TEST_DB_URL }}
+      DB_PORT: ${{ secrets.TEST_DB_PORT }}
+      AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
       ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
 
     services:
