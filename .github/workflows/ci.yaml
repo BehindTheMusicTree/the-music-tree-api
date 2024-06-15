@@ -33,7 +33,7 @@ jobs:
         ports:
           - 3000:3000
         volumes:
-          - /tmp/bodzify-api/uploaded-files/:/tmp/audio-fingerprinter/pool/
+          - /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/
 
       postgres_main:
         image: postgres:14.12
