@@ -77,8 +77,6 @@ jobs:
     name: Build / Push to Dockerhub
     runs-on: ubuntu-latest
     needs: [pytest]
-    env:
-      IMAGE_FULL_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.API_IMAGE_REPO }}:${{ vars.API_IMAGE_TAG }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -86,13 +84,12 @@ jobs:
       - name: Login to Dockerhub
         run: echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build
-        env:
-          ENV: BUILD
-        run: docker build -t $IMAGE_FULL_NAME .
-
-      - name: Push
-        run: docker push $IMAGE_FULL_NAME
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
