@@ -19,9 +19,9 @@ jobs:
       ENV: GITHUB_CI_TEST
       DEBUG: True
       SECRET_KEY: ${{ secrets.CI_TEST_SECRET_KEY }}
-      DB_DATABASE: ${{ secrets.CI_TEST_DB_DATABASE }}
-      DB_USERNAME: ${{ secrets.CI_TEST_DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.CI_TEST_DB_PASSWORD }}
+      DB_DATABASE: ${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}
+      DB_USERNAME: ${{ secrets.TEST_DB_BODZIFY_API_USERNAME }}
+      DB_PASSWORD: ${{ secrets.TEST_DB_BODZIFY_API_USER_PASSWORD }}
       DB_URL: ${{ secrets.CI_TEST_DB_URL }}
       DB_PORT: ${{ secrets.CI_TEST_DB_PORT }}
       AUDIO_FINGERPRINTER_PORT: ${{ secrets.CI_TEST_AUDIO_FINGERPRINTER_PORT }}
@@ -38,12 +38,12 @@ jobs:
           ENV: TEST
           APP_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
 
-      postgres_main:
-        image: postgres:14.12
+      db:
+        image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
         env:
+          POSTGRES_DB: ${{ env.DB_DATABASE }}
           POSTGRES_USER: ${{ env.DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
         ports:
           - 5432:5432
         options: >-
