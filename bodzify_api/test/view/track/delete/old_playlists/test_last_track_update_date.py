@@ -5,7 +5,7 @@ from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
@@ -15,7 +15,7 @@ class TrackDeleteViewTestCase(TrackTestCase):
 
     def test_delete_then_update_the_all_playlist_last_track_update_date(self):
         track = self.model_fixture_factory.create_lib_track(title="We're All To Blame")
-        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).playlist
+        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
         last_track_list_update_date_before_deletion = all_playlist.last_track_list_update_date
         response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -24,7 +24,7 @@ class TrackDeleteViewTestCase(TrackTestCase):
 
     def test_delete_then_update_genre_playlist_last_track_update_date(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
-        genre_playlist = genre.criteria_playlist.playlist  # type: ignore
+        genre_playlist = genre.criteria_playlist.base_playlist  # type: ignore
         track = self.model_fixture_factory.create_lib_track(title="We're All To Blame", genre=genre)
         genre_playlist_last_track_list_update_date_before_deletion = (genre_playlist.last_track_list_update_date)
         response = self.delete_lib_track(lib_track_uuid=track.uuid)
@@ -37,7 +37,7 @@ class TrackDeleteViewTestCase(TrackTestCase):
         genre2 = self.model_fixture_factory.create_genre(name='punk', parent=genre1)
         genre3 = self.model_fixture_factory.create_genre(name='punk hardcore', parent=genre2)
 
-        genre1_playlist = genre1.criteria_playlist.playlist  # type: ignore
+        genre1_playlist = genre1.criteria_playlist.base_playlist  # type: ignore
         track = self.model_fixture_factory.create_lib_track(title="We're All To Blame", genre=genre3)
         genre1_playlist_last_track_list_update_date_before_deletion = genre1_playlist.last_track_list_update_date
         response = self.delete_lib_track(lib_track_uuid=track.uuid)

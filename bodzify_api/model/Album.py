@@ -5,8 +5,9 @@ from typing import Optional
 import shortuuid
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
-import bodzify_api.settings as settings
+from bodzify_api.settings import settings
 from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 
 
@@ -17,17 +18,19 @@ class ATTRIBUTES_LABEL:
     ALBUM_ARTISTS = 'album_artists'
     LIB_TRACKS = 'library_tracks'
     LIB_TRACKS_COUNT = LIB_TRACKS + '_count'
-    DURATION = 'duration'
+    DURATION_IN_SEC = 'duration_in_sec'
+    DURATION_STR_IN_HOUR_MIN_SEC = 'duration_str_in_hour_min_sec'
 
 
 class Album(models.Model):
-
     # Django's UUIDField won't validate a shortuuid
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
     name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
     album_artists = models.ManyToManyField('bodzify_api.Artist', related_name=ARTIST_ATTRIBUTES_LABEL.ALBUMS)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
         constraints = [

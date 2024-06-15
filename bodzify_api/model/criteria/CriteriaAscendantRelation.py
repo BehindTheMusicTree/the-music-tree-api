@@ -27,4 +27,4 @@ class CriteriaAscendantRelation(models.Model):
         return f'Descendant {self.descendant.uuid} - Degree {self.degree} Ascendant {self.ascendant.uuid}'
 
     class Meta:
-        db_table = 'criteria_ascendant_relation'
+        db_table = 'bodzify_api_criteria_ascendant_relation'

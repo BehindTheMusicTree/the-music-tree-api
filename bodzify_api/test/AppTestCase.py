@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from django.core.management import call_command
 
 from bodzify_api.test.AppApiClient import AppApiClient
-from bodzify_api.test.ModelFixtureFactory import ModelFixtureFactory
+from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
 from bodzify_api.test.TestUser import TestUser
 from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
 
@@ -61,17 +61,6 @@ class AppTestCase(TestCase):
         self.api_client.force_authenticate(user=user)
         AccessToken.for_user(user)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
-
-        response = self.api_client.get(path=reverse('playlist-list'), format='json')
-
-        if response.status_code == status.HTTP_200_OK:
-            assert True
-        elif response.status_code == status.HTTP_401_UNAUTHORIZED:
-            print("Not authenticated.")
-            assert False
-        else:
-            print(f"Unexpected : {response.status_code}")
-            assert False
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
         call_command('loaddata', 'app', 'pytest_user')

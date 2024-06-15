@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.File import File
+from bodzify_api.model.TrackFile import TrackFile
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.album.AlbumViewTestCase import AlbumViewTestCase
 
@@ -20,13 +20,13 @@ class TestCase(AlbumViewTestCase):
     def test_2_tracks_linked(self):
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
         assassin_track_filename = "Assassin.mp3"
-        file_obj1 = self.model_fixture_factory.create_file(filename=assassin_track_filename)
-        assassin_track = self.model_fixture_factory.create_lib_track(file_obj=file_obj1,
+        track_file1 = self.model_fixture_factory.create_file(filename=assassin_track_filename)
+        assassin_track = self.model_fixture_factory.create_lib_track(track_file=track_file1,
                                                                      title="Assassin",
                                                                      album=black_holes_album)
         starlight_track_filename = "Starlight.mp3"
-        file_obj2 = self.model_fixture_factory.create_file(filename=starlight_track_filename)
-        starlight_track = self.model_fixture_factory.create_lib_track(file_obj=file_obj2,
+        track_file2 = self.model_fixture_factory.create_file(filename=starlight_track_filename)
+        starlight_track = self.model_fixture_factory.create_lib_track(track_file=track_file2,
                                                                       title="Starlight",
                                                                       album=black_holes_album)
         assert self.test_user.does_track_filename_exist_in_lib(assassin_track_filename) == True

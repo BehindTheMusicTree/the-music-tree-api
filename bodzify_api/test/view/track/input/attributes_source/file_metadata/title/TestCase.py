@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import logging
-from bodzify_api import settings
+from bodzify_api.settings import settings
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase

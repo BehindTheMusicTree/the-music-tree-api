@@ -2,12 +2,10 @@
 
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
+from bodzify_api.serializer.playlist.children.criteria.output.with_tracks \
     import FIELDS as GET_RESULT_FIELDS
-from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
+from bodzify_api.serializer.playlist.children.criteria.input.query_param \
     import FIELDS as GET_QUERY_PARAM
 from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 
@@ -25,9 +23,9 @@ class TestCase(GenrePlaylistTestCase):
 
     def test_get_two_by_parent_none(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).playlist
+        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).base_playlist
         rap_genre = self.model_fixture_factory.create_genre(name="Rap")
-        rap_playlist = CriteriaPlaylist.objects.get(criteria=rap_genre).playlist
+        rap_playlist = CriteriaPlaylist.objects.get(criteria=rap_genre).base_playlist
         data_dict = {GET_QUERY_PARAM.PARENT: ""}
         response = self.get_genre_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK

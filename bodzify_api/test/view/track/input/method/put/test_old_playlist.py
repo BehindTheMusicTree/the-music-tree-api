@@ -6,7 +6,7 @@ from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
-from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import FIELDS as PUT_FIELDS
 
 
 class TestCase(TrackTestCase):
@@ -19,5 +19,5 @@ class TestCase(TrackTestCase):
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).playlist
+        old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).base_playlist
         assert lib_track not in old_genre_playlist.library_tracks.all()  # type: ignore

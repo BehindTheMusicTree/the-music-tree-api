@@ -5,11 +5,11 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist, ATTRIBUTES_LABEL
-from bodzify_api.serializer.playlist.children.criteria.input.CriteriaPlaylistQueryParamSerializer \
+from bodzify_api.serializer.playlist.children.criteria.input.query_param \
     import FIELDS as QUERY_PARAM_FIELDS, CriteriaPlaylistQueryParamSerializer
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithTracksSerializer \
+from bodzify_api.serializer.playlist.children.criteria.output.with_tracks \
     import CriteriaPlaylistWithTracksSerializer
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutTracksSerializer \
+from bodzify_api.serializer.playlist.children.criteria.output.without_tracks \
     import CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
@@ -30,7 +30,8 @@ class GenrePlaylistViewSet(AppModelViewSet):
         serializer.is_valid(raise_exception=True)
         validated_query_params = serializer.validated_data
 
-        queryset = CriteriaPlaylist.objects.filter(playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
+        queryset = CriteriaPlaylist.objects.filter(
+            base_playlist__user=self.request.user, type_id=CRITERIA_TYPES_ID.GENRE)
 
         name_query_param = validated_query_params.get(QUERY_PARAM_FIELDS.NAME)  # type: ignore
         if name_query_param is not None:
@@ -42,7 +43,8 @@ class GenrePlaylistViewSet(AppModelViewSet):
                 parent_uuid_query_param = None
             else:
                 parent_uuid_query_param = parent_uuid_query_param
-            queryset = queryset.filter(playlist__user=self.request.user, criteria__parent__uuid=parent_uuid_query_param)
+            queryset = queryset.filter(base_playlist__user=self.request.user,
+                                       criteria__parent__uuid=parent_uuid_query_param)
 
         return queryset.order_by(f"{ATTRIBUTES_LABEL.CRITERIA}__{CRITERIA_ATTRIBUTES_LABEL.NAME}")
 

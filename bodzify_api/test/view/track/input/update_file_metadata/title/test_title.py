@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import logging
-
 import pytest
 
 from bodzify_api.test import conftest

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import datetime
 from typing import Optional
 
 import shortuuid
@@ -10,11 +11,13 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-import bodzify_api.audiometadata as audiometadata
+from bodzify_api.utils import utils
+from bodzify_api.settings import settings
+import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
-from bodzify_api.model.File import File
-from bodzify_api.model.playlist.Playlist import Playlist
-import bodzify_api.settings as settings
+from bodzify_api.model.TrackFile import TrackFile
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
@@ -26,17 +29,21 @@ class ATTRIBUTES_LABEL:
     MODEL = 'library_track'
     UUID = "uuid"
     USER = "user"
-    FILE_OBJ = "file_obj"
-    FILE_OBJ_USER_FRIENDLY = "file"
+    TRACK_FILE = "track_file"
+    TRACK_FILE_USER_FRIENDLY = "file"
+    DURATION_IN_SEC = "duration_in_sec"
+    DURATION_STR_IN_HOUR_MIN_SEC = "duration_str_in_hour_min_sec"
+    MUSICBRAINZ_RECORDING_LOOKUP_HAS_FAILED_WITH_ERRORS = "musicbrainz_recording_lookup_has_failed_with_errors"
+    MUSICBRAINZ_RECORDING = "musicbrainz_recording"
     TITLE = "title"
     ARTIST = "artist"
     ALBUM = "album"
     GENRE = "genre"
-    DURATION = "duration"
     RATING = "rating"
-    PLAYLISTS = "playlists"
+    BASE_PLAYLISTS = "base_playlists"
+    BASE_PLAYLISTS_USER_FRIENDLY = "playlists"
     LANGUAGE = "language"
-    ADDED_ON = "added_on"
+    CREATED_ON = "created_on"
     RELATIVE_URL = "relative_url"
     PLAY_COUNT = 'play_count'
 
@@ -46,7 +53,13 @@ class LibraryTrack(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
-    file_obj = models.OneToOneField(File, on_delete=models.CASCADE)
+    track_file = models.OneToOneField(TrackFile, on_delete=models.CASCADE)
+    duration_in_sec = models.IntegerField()
+    musicbrainz_recording_lookup_has_failed_with_errors = models.BooleanField(null=True)
+    musicbrainz_recording = models.ForeignKey(MusicbrainzRecording,
+                                              on_delete=models.DO_NOTHING,
+                                              default=None,
+                                              null=True)
     artist = models.ForeignKey('bodzify_api.Artist',
                                on_delete=models.CASCADE,
                                default=None,
@@ -62,17 +75,27 @@ class LibraryTrack(models.Model):
                               default=None,
                               null=True,
                               related_name=CRITERIA_ATTRIBUTES_LABEL.LIB_TRACKS)
-    duration = models.FloatField(default=None, null=True)
     rating = models.IntegerField(
         null=True,
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
-    added_on = models.DateTimeField(auto_now_add=True, editable=False)
     play_count = models.IntegerField(default=0)
-    playlists = models.ManyToManyField(Playlist,
-                                       through='PlaylistLibTrackRelation',
-                                       related_name=ATTRIBUTES_LABEL.MODEL + 's')
+    base_playlists = models.ManyToManyField(BasePlaylist,
+                                            through='PlaylistLibTrackRelation',
+                                            related_name=ATTRIBUTES_LABEL.MODEL + 's')
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
+
+    @property
+    def duration_str_in_hour_min_sec(self):
+        duration_in_sec = int(self.duration_in_sec or 0)
+        return str(datetime.timedelta(seconds=duration_in_sec))
+
+    class Meta:
+        db_table = 'bodzify_api_library_track'
+        verbose_name = 'Library Track'
+        verbose_name_plural = 'Library Tracks'
 
     @property
     def relative_url(self) -> str:
@@ -81,13 +104,13 @@ class LibraryTrack(models.Model):
     def __str__(self):
         album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
         genre_str = f"{ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
-        duration_str = f"{ATTRIBUTES_LABEL.DURATION}: {str(self.duration)} " if self.duration else ""
+        duration_str_in_hour_min_sec = f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else ""
         rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
         language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
-        file_str = f"{ATTRIBUTES_LABEL.FILE_OBJ}: {str(self.file_obj)} " if self.file_obj else ""
+        file_str = f"{ATTRIBUTES_LABEL.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
-                f"{genre_str}{duration_str}{rating_str}{language_str}"
-                f"{ATTRIBUTES_LABEL.ADDED_ON}: {str(self.added_on)} {file_str}")
+                f"{genre_str}{duration_str_in_hour_min_sec}{rating_str}{language_str}"
+                f"{ATTRIBUTES_LABEL.CREATED_ON}: {str(self.created_on)} {file_str}")
 
     def save(self, *args, **kwargs):
         try:
@@ -111,18 +134,21 @@ class LibraryTrack(models.Model):
             self._update_file_tags_if_file_exists()
 
         except LibraryTrack.DoesNotExist:
+            if self.track_file:
+                if not self.duration_in_sec:
+                    self.duration_in_sec = audio_metadata.get_specific_metadata_from_file(
+                        file=self.track_file.file,
+                        normalized_metadata_key=audio_metadata.NormalizedMetadataKeys.DURATION_IN_SEC)
+
             super().save(*args, **kwargs)
-            from bodzify_api.model.playlist.Playlist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+
+            from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
-            all_simple_playlist = SimplePlaylist.objects.get(playlist__user=self.user, name=PLAYLIST_SPECIAL_NAMES.ALL)
-            PlaylistLibTrackRelation.objects.create(playlist=all_simple_playlist.playlist, library_track=self)
+            all_simple_playlist = SimplePlaylist.objects.get(base_playlist__user=self.user,
+                                                             name=PLAYLIST_SPECIAL_NAMES.ALL)
+            PlaylistLibTrackRelation.objects.create(base_playlist=all_simple_playlist.base_playlist, library_track=self)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
-
-            if self.file_obj:
-                self.duration = audiometadata.get_specific_metadata_from_file(
-                    self.file_obj.file, audiometadata.NormalizedMetadataKeys.DURATION)
-                super().save(update_fields=[ATTRIBUTES_LABEL.DURATION])
 
     def _update_genre_playlists(self, old_genre: Optional[Criteria]):
         if old_genre is not None and self.genre is not None:
@@ -144,19 +170,19 @@ class LibraryTrack(models.Model):
             old_genre_tree_item = old_genre
             while old_genre_tree_item != genre_limit:
                 genreless_criteria_playlist = CriteriaPlaylist.objects.get(criteria=old_genre_tree_item)
-                base_playlist = genreless_criteria_playlist.playlist
-                PlaylistLibTrackRelation.objects.get(playlist=base_playlist, library_track=self).delete()
+                base_playlist = genreless_criteria_playlist.base_playlist
+                PlaylistLibTrackRelation.objects.get(base_playlist=base_playlist, library_track=self).delete()
                 base_playlist.last_track_list_update_date = update_date
                 base_playlist.save()
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
         else:
-            genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
+            genreless_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            base_playlist = genreless_criteria_playlist.playlist
+            base_playlist = genreless_criteria_playlist.base_playlist
             base_playlist.last_track_list_update_date = update_date
             base_playlist.save()
-            PlaylistLibTrackRelation.objects.get(playlist=base_playlist, library_track=self).delete()
+            PlaylistLibTrackRelation.objects.get(base_playlist=base_playlist, library_track=self).delete()
 
     def _add_track_to_genre_playlists_until_genre_limit(self, genre_limit=None):
         from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
@@ -166,27 +192,28 @@ class LibraryTrack(models.Model):
             new_genre_tree_item = self.genre
             while new_genre_tree_item != genre_limit:
                 criteria_playlist = CriteriaPlaylist.objects.get(criteria=new_genre_tree_item)
-                playlist = criteria_playlist.playlist
-                PlaylistLibTrackRelation.objects.create(playlist=criteria_playlist.playlist, library_track=self)
-                playlist.last_track_list_update_date = update_date
-                playlist.save()
+                base_playlist = criteria_playlist.base_playlist
+                PlaylistLibTrackRelation.objects.create(
+                    base_playlist=criteria_playlist.base_playlist, library_track=self)
+                base_playlist.last_track_list_update_date = update_date
+                base_playlist.save()
                 new_genre_tree_item = new_genre_tree_item.parent
         else:
-            genreless_criteria_playlist = CriteriaPlaylist.objects.get(playlist__user=self.user,
+            genreless_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__user=self.user,
                                                                        type_id=CRITERIA_TYPES_ID.GENRE,
                                                                        criteria=None)
-            genreless_parent_playlist = genreless_criteria_playlist.playlist
-            PlaylistLibTrackRelation.objects.create(playlist=genreless_parent_playlist, library_track=self)
+            genreless_parent_playlist = genreless_criteria_playlist.base_playlist
+            PlaylistLibTrackRelation.objects.create(base_playlist=genreless_parent_playlist, library_track=self)
             genreless_parent_playlist.last_track_list_update_date = update_date
             genreless_parent_playlist.save()
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as playlist_lib_track_relation_ATTRIBUTES_LABEL
+            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
         playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
         return list(playlist_lib_track_relations.values_list(
-            playlist_lib_track_relation_ATTRIBUTES_LABEL.PLAYLIST + '__uuid',
-            playlist_lib_track_relation_ATTRIBUTES_LABEL.POSITION))
+            PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.BASE_PLAYLIST + '__uuid',
+            PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION))
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
         track_artist_uuid = self.artist.uuid if self.artist else None
@@ -218,7 +245,7 @@ class LibraryTrack(models.Model):
                 uuid=track_album_uuid).delete_if_no_track_linked()
 
     def _update_file_tags_if_file_exists(self):
-        if self.file_obj is None:
+        if self.track_file is None:
             return
 
         normalized_metadata = dict()
@@ -226,13 +253,13 @@ class LibraryTrack(models.Model):
         title_tag = self.title
         if title_tag is None:
             title_tag = ""
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.TITLE] = title_tag
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.TITLE] = title_tag
 
         if self.artist_id is not None:  # type: ignore
             artist_name_tag = self.artist.name  # type: ignore
         else:
             artist_name_tag = ""
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.ARTIST_NAME] = artist_name_tag
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.ARTIST_NAME] = artist_name_tag
 
         album_artists_tag = ""
         if self.album_id is not None:  # type: ignore
@@ -241,7 +268,7 @@ class LibraryTrack(models.Model):
             for albumArtist in list(self.album.album_artists.all()):  # type: ignore
                 if album_artists_name_index != 0:
                     album_artists_tag = (
-                        album_artists_tag + audiometadata.METADATA_ARTISTS_SEPARATION_CHAR)
+                        album_artists_tag + audio_metadata.METADATA_ARTISTS_SEPARATION_CHAR)
                 album_artists_tag = album_artists_tag + albumArtist.name
                 album_artists_name_index = album_artists_name_index + 1
         else:
@@ -249,35 +276,35 @@ class LibraryTrack(models.Model):
 
         if album_name_tag is None:
             album_name_tag = ""
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.ALBUM_NAME] = album_name_tag
-        album_artists_name_key = audiometadata.NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.ALBUM_NAME] = album_name_tag
+        album_artists_name_key = audio_metadata.NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES
         normalized_metadata[album_artists_name_key] = album_artists_tag
 
         if self.genre == None:
             genre_name_tag = ""
         else:
             genre_name_tag = self.genre.name
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.GENRE_NAME] = genre_name_tag
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.GENRE_NAME] = genre_name_tag
 
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.RATING] = self.rating
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.RATING] = self.rating
 
         language_tag = self.language
         if language_tag is None:
             language_tag = ""
-        normalized_metadata[audiometadata.NormalizedMetadataKeys.LANGUAGE] = language_tag
+        normalized_metadata[audio_metadata.NormalizedMetadataKeys.LANGUAGE] = language_tag
 
-        audiometadata.update_file_metadata(
-            file=self.file_obj.file,
+        audio_metadata.update_file_metadata(
+            file=self.track_file.file,
             normalized_metadata=normalized_metadata,
             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
 
-@receiver(pre_delete, sender=LibraryTrack)
+@ receiver(pre_delete, sender=LibraryTrack)
 def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
-    if instance.file_obj:
-        instance.file_obj.file.delete(False)
+    if instance.track_file:
+        instance.track_file.file.delete(False)
 
     now = timezone.now()
-    for playlist in instance.playlists.all():
-        playlist.last_track_list_update_date = now
-        playlist.save()
+    for base_playlist in instance.base_playlists.all():
+        base_playlist.last_track_list_update_date = now
+        base_playlist.save()

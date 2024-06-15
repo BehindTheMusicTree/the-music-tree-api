@@ -7,7 +7,7 @@ from rest_framework import status
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.playlist.children.simple.output.SimplePlaylistWithTracksSerializer \
+from bodzify_api.serializer.playlist.children.simple.output.with_tracks \
     import FIELDS as SIMPLE_PLAYLIST_GET_FIELDS
 
 
@@ -16,7 +16,7 @@ class SimplePlaylistTestCase(AppTestCase):
 
     def _set_saved_simple_playlist_attribute(self, response):
         uuid = response.json()[SIMPLE_PLAYLIST_GET_FIELDS.UUID]
-        self.saved_simple_playlist = SimplePlaylist.objects.get(playlist__uuid=uuid)
+        self.saved_simple_playlist = SimplePlaylist.objects.get(base_playlist__uuid=uuid)
 
     def post_simple_playlist(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)

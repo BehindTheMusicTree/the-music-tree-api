@@ -5,8 +5,9 @@ import shortuuid
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
-from bodzify_api import settings
+from bodzify_api.settings import settings
 
 
 class ATTRIBUTES_LABEL:
@@ -16,7 +17,8 @@ class ATTRIBUTES_LABEL:
     ALBUMS = 'albums'
     LIB_TRACKS = 'library_tracks'
     LIB_TRACKS_COUNT = LIB_TRACKS + '_count'
-    DURATION = 'duration'
+    DURATION_IN_SEC = 'duration_in_sec'
+    DURATION_STR_IN_HOUR_MIN_SEC = 'duration_str_in_hour_min_sec'
 
 
 class Artist(models.Model):
@@ -25,6 +27,8 @@ class Artist(models.Model):
     uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=200, default=None)
+    created_on = models.DateTimeField(default=timezone.now, editable=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
         constraints = [

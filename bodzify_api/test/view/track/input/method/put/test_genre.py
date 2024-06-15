@@ -3,7 +3,7 @@
 from rest_framework import status
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import FIELDS as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import FIELDS as PUT_FIELDS
 from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import NullableFieldTestCase
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 

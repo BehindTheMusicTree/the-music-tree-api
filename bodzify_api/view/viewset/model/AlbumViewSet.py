@@ -3,7 +3,7 @@
 from django.db import transaction
 
 from bodzify_api.model.Album import ATTRIBUTES_LABEL, Album
-from bodzify_api.serializer.album.output.AlbumDetailedSerializer import AlbumDetailedSerializer
+from bodzify_api.serializer.album.detailed import AlbumDetailedSerializer
 from bodzify_api.service.AlbumService import AlbumService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 

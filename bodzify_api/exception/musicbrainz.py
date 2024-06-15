@@ -1,0 +1,2 @@
+class MusicbrainzException(Exception):
+    pass

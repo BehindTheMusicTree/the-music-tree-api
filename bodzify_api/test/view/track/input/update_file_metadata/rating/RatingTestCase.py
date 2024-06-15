@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 import logging
-import bodzify_api.audiometadata as audiometadata
+import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIntTestCase \
     import UpdateFileMetadataIntTestCase
-from bodzify_api.serializer.track.input.LibTrackSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import FIELDS as SAVE_SCHEMA_FIELDS
 
 
 class UpdateFileMetadataRatingTestCase(UpdateFileMetadataIntTestCase):
     save_field = SAVE_SCHEMA_FIELDS.RATING
-    lib_track_normalized_metadata_key = audiometadata.NormalizedMetadataKeys.RATING
+    lib_track_normalized_metadata_key = audio_metadata.NormalizedMetadataKeys.RATING
     value_min = 0
     value_max = 10
     value_min_expected_in_metadata = 0

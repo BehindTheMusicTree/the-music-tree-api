@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 import shortuuid
+
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from bodzify_api import settings
+from bodzify_api.settings import settings
 
 
 class ATTRIBUTES_LABEL:

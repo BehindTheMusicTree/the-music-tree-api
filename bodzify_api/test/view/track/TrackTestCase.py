@@ -6,16 +6,18 @@ from django.http import JsonResponse
 from django.urls import reverse
 from rest_framework import status
 
-import bodzify_api.audiometadata as audiometadata
+import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer \
+from bodzify_api.serializer.track.input.endpoint.extract \
     import FIELDS as LIB_TRACK_EXTRACT_FIELDS
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as LIB_TRACK_POST_FIELDS
-from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import FIELDS as LIB_TRACK_GET_FIELDS
+from bodzify_api.serializer.track.input.endpoint.post import FIELDS as LIB_TRACK_POST_FIELDS
+from bodzify_api.serializer.track.output.detailed import FIELDS as LIB_TRACK_GET_FIELDS
 
 
 class TrackTestCase(AppTestCase):
+
+    LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION = "queen_showmustgoon.mp3"
 
     class LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION:
         ONE_STAR = "1 star"
@@ -36,9 +38,9 @@ class TrackTestCase(AppTestCase):
     SAMPLE_MINE_TRACK_DEFAULT_URL = SAMPLE_MINE_TRACK_URLS.MP3
     SAMPLE_MINE_TRACK_DEFAULT_EXTENSION = SAMPLE_MINE_TRACK_DEFAULT_URL.split('.')[-1]
 
-    SAMPLE_LIB_TRACK_WAV_DURATION = 0.5453611111111111
-    SAMPLE_LIB_TRACK_MP3_DURATION = 0.5946666666666667
-    SAMPLE_LIB_TRACK_FLAC_DURATION = 0.5453541666666667
+    SAMPLE_LIB_TRACK_WAV_DURATION = 1
+    SAMPLE_LIB_TRACK_MP3_DURATION = 1
+    SAMPLE_LIB_TRACK_FLAC_DURATION = 1
 
     saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict
@@ -46,9 +48,9 @@ class TrackTestCase(AppTestCase):
     def _set_saved_lib_track_attribute(self, response):
         lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
-        if self.saved_lib_track.file_obj:
-            self.saved_lib_track_metadata = audiometadata.get_normalized_metadata_from_file(
-                file=self.saved_lib_track.file_obj.file)
+        if self.saved_lib_track.track_file:
+            self.saved_lib_track_metadata = audio_metadata.get_normalized_metadata_from_file(
+                file=self.saved_lib_track.track_file.file)
 
     def extract(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
@@ -85,7 +87,7 @@ class TrackTestCase(AppTestCase):
 
     def post_lib_track(self, file_abs_path, data_dict=None) -> JsonResponse:
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LIB_TRACK_POST_FIELDS.FILE_OBJ: sample_file}
+            file_field_dict = {LIB_TRACK_POST_FIELDS.TRACK_FILE: sample_file}
             if data_dict is not None:
                 data_dict = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(data_dict))
             else:
@@ -103,32 +105,35 @@ class TrackTestCase(AppTestCase):
         generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
         return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
 
+    def post_lib_track_with_queenshowmustgoon(self, data_dict=None):
+        filename_with_extension = self.LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION
+        generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
+        return self.post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
+
     def post_lib_track_with_generic_sample_no_tags(self, extension='mp3', data_dict=None):
         filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
-        return self._post_lib_track_with_generic_sample(
+        response = self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
+        return response
 
     def post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(self, extension='mp3', data_dict=None):
-        filename_without_extension = \
-            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS
+        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_tag_album_artists_koko_without_album(self, data_dict=None):
-        filename_without_extension = \
-            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM
+        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension='mp3',
             data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', data_dict=None):
-        filename_without_extension = \
-            self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LEN_WITH_LETTER_A
+        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_MAX_LEN_WITH_LETTER_A
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,

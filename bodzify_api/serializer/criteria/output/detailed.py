@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 
+from typing import Any, Dict, List
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIBRARY_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
-from bodzify_api.serializer.criteria.type.CriteriaTypeSerializer \
+from bodzify_api.serializer.criteria.type.detailed \
     import CriteriaTypeSerializer, FIELDS as CRITERIA_TYPE_FIELDS
 from bodzify_api.serializer.criteria_ascendant_relation.detailed import CriteriaAscendantRelationDetailedSerializer
 from bodzify_api.serializer.criteria_ascendant_relation.without_ascendant import CriteriaAscendantRelationWithoutAscendantSerializer
 from bodzify_api.serializer.criteria_ascendant_relation.without_descendant import CriteriaAscendantRelationWithoutDescendantSerializer
-from bodzify_api.serializer.playlist.children.criteria.output.CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer import CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer
+from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root import CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer
 
-from bodzify_api.serializer.track.output.LibTrackWithoutAlbumPlaylistGenreSerializer \
+from bodzify_api.serializer.track.output.without_playlists_and_album_and_genre \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
 
 
@@ -26,7 +27,7 @@ class FIELDS:
     CHILDREN = ATTRIBUTES_LABEL.CHILDREN
     TYPE = ATTRIBUTES_LABEL.TYPE
     TYPE_LABEL = CRITERIA_TYPE_FIELDS.LABEL
-    ADDED_ON = ATTRIBUTES_LABEL.ADDED_ON
+    CREATED_ON = ATTRIBUTES_LABEL.CREATED_ON
     LIB_TRACKS = ATTRIBUTES_LABEL.LIB_TRACKS
     LIB_TRACKS_TITLE = LIBRARY_TRACK_ATTRIBUTES_LABEL.TITLE
     CRITERIA_PLAYLIST = ATTRIBUTES_LABEL.CRITERIA_PLAYLIST
@@ -43,7 +44,7 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
         many=True)
     root = CriteriaSimpleSerializer()  # type: ignore
     children = serializers.SerializerMethodField()
-    criteria_playlist = CriteriaPlaylistWithoutCriteriaTracksParentRootSerializer()
+    criteria_playlist = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer()
     library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(many=True)
 
     class Meta:
@@ -56,9 +57,9 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
                   FIELDS.ROOT,
                   FIELDS.CHILDREN,
                   FIELDS.TYPE,
-                  FIELDS.ADDED_ON,
+                  FIELDS.CREATED_ON,
                   FIELDS.LIB_TRACKS,
                   FIELDS.CRITERIA_PLAYLIST]
 
-    def get_children(self, obj):
-        return CriteriaSimpleSerializer(obj.get_children(), many=True).data
+    def get_children(self, obj) -> List[Dict[str, Any]]:
+        return CriteriaSimpleSerializer(obj.get_children(), many=True).data  # type: ignore
