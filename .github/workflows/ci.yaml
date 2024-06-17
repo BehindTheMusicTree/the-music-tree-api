@@ -54,7 +54,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --name ${{ vars.DB_CONTAINER_NAME }}
+          --name=${{ vars.DB_CONTAINER_NAME }}
           --health-cmd pg_isready 
           --health-interval 10s 
           --health-timeout 5s 
