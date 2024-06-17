@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sudo -u postgres dropdb -e bodzify_api -f
-sudo -u postgres -H -- psql -c "create database bodzify_api with owner django;"
+docker exec DB -u postgres dropdb -e bodzify_api -f
+docker exec DB -H -- psql -c "create database bodzify_api with owner django;"
 
 docker exec BODZIFY_API python manage.py migrate
 docker exec BODZIFY_API python manage.py migrate --fake

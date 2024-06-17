@@ -121,9 +121,9 @@ ROOT_URLCONF = 'bodzify_api.urls'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_DATABASE'),
-        'USER': os.getenv('DB_USERNAME'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'NAME': os.getenv('DB_BODZIFY_API_DB_NAME'),
+        'USER': os.getenv('DB_BODZIFY_API_USERNAME'),
+        'PASSWORD': os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
         'HOST': os.getenv('DB_URL'),
         'PORT': os.getenv('DB_PORT'),
         'DISABLE_SERVER_SIDE_CURSORS': True
