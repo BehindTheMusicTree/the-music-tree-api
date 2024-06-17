@@ -32,8 +32,8 @@ jobs:
       POSTGRES_DB: ${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}
       POSTGRES_USER: ${{ secrets.TEST_DB_SUPERUSER_NAME }}
       POSTGRES_PASSWORD: ${{ secrets.TEST_DB_SUPERUSER_PASSWORD }}
-      POSTGRES_HOST: ${{ secrets.DB_URL }}
-      POSTGRES_PORT: ${{ secrets.DB_PORT }}
+      POSTGRES_HOST: ${{ secrets.TEST_DB_URL }}
+      POSTGRES_PORT: ${{ secrets.TEST_DB_PORT }}
 
       AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
       ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
@@ -54,10 +54,11 @@ jobs:
         ports:
           - 5432:5432
         options: >-
+          --name ${{ vars.DB_CONTAINER_NAME }}
           --health-cmd pg_isready 
           --health-interval 10s 
           --health-timeout 5s 
-          --health-retries 5
+          --health-retries 3
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
