@@ -19,11 +19,22 @@ jobs:
       ENV: GITHUB_CI_TEST
       DEBUG: True
       SECRET_KEY: ${{ secrets.CI_TEST_SECRET_KEY }}
-      DB_DATABASE: ${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}
-      DB_USERNAME: ${{ secrets.TEST_DB_BODZIFY_API_USERNAME }}
-      DB_PASSWORD: ${{ secrets.TEST_DB_BODZIFY_API_USER_PASSWORD }}
+      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+      DB_SUPERUSER_NAME: ${{ secrets.TEST_DB_SUPERUSER_NAME }}
+      DB_SUPERUSER_PASSWORD: ${{ secrets.TEST_DB_SUPERUSER_PASSWORD }}
+      DB_BODZIFY_API_DB_NAME: ${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}
+      DB_BODZIFY_API_USERNAME: ${{ secrets.TEST_DB_BODZIFY_API_USERNAME }}
+      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.TEST_DB_BODZIFY_API_USER_PASSWORD }}
       DB_URL: ${{ secrets.TEST_DB_URL }}
       DB_PORT: ${{ secrets.TEST_DB_PORT }}
+
+      # standard env variables used by postrgres
+      POSTGRES_DB: ${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}
+      POSTGRES_USER: ${{ secrets.TEST_DB_SUPERUSER_NAME }}
+      POSTGRES_PASSWORD: ${{ secrets.TEST_DB_SUPERUSER_PASSWORD }}
+      POSTGRES_HOST: ${{ secrets.DB_URL }}
+      POSTGRES_PORT: ${{ secrets.DB_PORT }}
+
       AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
       ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
 
@@ -40,12 +51,6 @@ jobs:
 
       db:
         image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
-        env:
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
-          POSTGRES_USER: ${{ env.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_HOST: ${{ env.DB_URL }}
-          POSTGRES_PORT: ${{ env.DB_PORT }}
         ports:
           - 5432:5432
         options: >-
@@ -72,6 +77,8 @@ jobs:
         run: sudo apt-get install ffmpeg
       - name: Add fpcalc to PATH
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
+      - name: Init data
+        run: ${{ github.workspace }}/scripts/data/data_init.github_ci_test.sh
       - name: Run pytest
         run: pytest
 
