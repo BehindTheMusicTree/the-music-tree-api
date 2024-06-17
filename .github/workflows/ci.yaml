@@ -42,7 +42,7 @@ jobs:
       audio-fingerprinter:
         image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
         ports:
-          - 3000:3000
+          - 3000
         volumes:
           - /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/
         env:
@@ -52,7 +52,7 @@ jobs:
       db:
         image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
         ports:
-          - 5432:5432
+          - 5432
         options: >-
           --name=${{ vars.CI_TEST_DB_CONTAINER_NAME }}
           --health-cmd pg_isready 
@@ -60,6 +60,8 @@ jobs:
           --health-timeout 5s 
           --health-retries 3
     steps:
+      - name: Debug
+        run: lsof -i :5000
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup Python ${{ matrix.python-version }}
