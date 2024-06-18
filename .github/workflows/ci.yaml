@@ -43,6 +43,22 @@ jobs:
           ENV: TEST
           APP_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
 
+      # db:
+      #   image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
+      #   ports:
+      #     - 5432:5432
+      #   env:
+      #     POSTGRES_DB: ${{ env.DB_BODZIFY_API_DB_NAME }}
+      #     POSTGRES_USER: ${{ env.DB_SUPERUSER_NAME }}
+      #     POSTGRES_PASSWORD: ${{ env.DB_SUPERUSER_PASSWORD }}
+      #     POSTGRES_PORT: ${{ env.DB_PORT }}
+      #   options: >-
+      #     --name=${{ vars.CI_TEST_DB_CONTAINER_NAME }}
+      #     --health-cmd pg_isready 
+      #     --health-interval 10s 
+      #     --health-timeout 5s 
+      #     --health-retries 3
+
       db:
         image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
         ports:
@@ -53,7 +69,7 @@ jobs:
           POSTGRES_PASSWORD: ${{ env.DB_SUPERUSER_PASSWORD }}
           POSTGRES_PORT: ${{ env.DB_PORT }}
         options: >-
-          --name=${{ vars.CI_TEST_DB_CONTAINER_NAME }}
+          --name=DB
           --health-cmd pg_isready 
           --health-interval 10s 
           --health-timeout 5s 
