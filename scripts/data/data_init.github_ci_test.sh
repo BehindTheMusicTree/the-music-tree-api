@@ -6,8 +6,15 @@ psql -c "CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_A
 
 echo "List of databases:"
 docker exec -u postgres $DB_CONTAINER_NAME psql -c "\l"
+
 echo "List of roles:"
 docker exec -u postgres $DB_CONTAINER_NAME psql -c "\du"
+
+echo "Testing database connection..."
+export PGPASSWORD=$DB_BODZIFY_API_USER_PASSWORD
+docker exec -u $DB_BODZIFY_API_USERNAME $DB_CONTAINER_NAME \
+psql -c "\q"
+unset PGPASSWORD
 
 projectDir=./
 managePath=$projectDir/manage.py
