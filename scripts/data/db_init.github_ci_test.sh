@@ -33,6 +33,8 @@ fi
 # fi
 
 ROLE=$(docker exec -u postgres DB psql -t -c "SELECT rolname FROM pg_roles WHERE rolname='django';")
+echo "Output of role check: $ROLE"
+
 if [ "$ROLE" = "django" ]; then
     echo "Role django created successfully"
 else
