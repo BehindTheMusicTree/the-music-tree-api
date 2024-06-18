@@ -10,6 +10,16 @@
 # ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 # EOF
 
+docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql" <<EOF
+CREATE DATABASE $DB_BODZIFY_API_DB_NAME;
+EOF
+
+if [ $? -ne 0 ]; then
+  echo "Database creation failed."
+else
+  echo "Database created successfully."
+fi
+
 docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD \
 psql -v ON_ERROR_STOP=1 -d $DB_BODZIFY_API_DB_NAME" <<EOF
 CREATE ROLE django WITH LOGIN PASSWORD 'hehe';
