@@ -19,6 +19,7 @@ jobs:
       ENV: GITHUB_CI_TEST
       DEBUG: True
       SECRET_KEY: ${{ secrets.CI_TEST_SECRET_KEY }}
+
       DB_CONTAINER_NAME: ${{ vars.CI_TEST_DB_CONTAINER_NAME }}
       DB_SUPERUSER_NAME: ${{ secrets.CI_TEST_DB_SUPERUSER_NAME }}
       DB_SUPERUSER_PASSWORD: ${{ secrets.CI_TEST_DB_SUPERUSER_PASSWORD }}
@@ -60,24 +61,40 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
            python-version: 3.11
+
       - name: Install requirements
         run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
+
       - name: Install chromaprint
         run: sudo apt-get install libchromaprint-tools
+
       - name: Install flac
         run: sudo apt-get install flac # apt not stable for CLI interface
+
       - name: Install ffmpeg
         run: sudo apt-get install ffmpeg
+
       - name: Add fpcalc to PATH
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
+
       - name: Set up filesystem
         run: bash scripts/filesystem/filesystem_setup.github_ci_test.sh
+
       - name: Init data
         run: ${{ github.workspace }}/scripts/data/data_init.github_ci_test.sh
+
+      - name: Check database and role
+        run: |
+          echo "List of databases:"
+          docker exec -u postgres $DB_CONTAINER_NAME psql -c "\l"
+          echo "List of roles:"
+          docker exec -u postgres $DB_CONTAINER_NAME psql -c "\du"
+
       - name: Run pytest
         run: pytest
 
