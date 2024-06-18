@@ -93,6 +93,11 @@ jobs:
         env:
           PGPASSWORD: ${{ env.DB_SUPERUSER_PASSWORD }}
 
+      - name: Test db api user existance
+        run: psql -h localhost -U ${{ env.DB_SUPERUSER_NAME }} -d ${{ env.DB_BODZIFY_API_DB_NAME }} -c "SELECT 1 FROM pg_roles WHERE rolname='${{ env.DB_BODZIFY_API_USERNAME }}'"
+        env:
+          PGPASSWORD: hehe
+
       - name: Test db connection with api user
         run: psql -h localhost -U ${{ env.DB_BODZIFY_API_USERNAME }} -d ${{ env.DB_BODZIFY_API_DB_NAME }} -c 'SELECT 1'
         env:
