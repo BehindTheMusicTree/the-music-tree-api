@@ -12,8 +12,8 @@ docker exec -u postgres $DB_CONTAINER_NAME psql -c "\du"
 
 echo "Testing database connection..."
 export PGPASSWORD=$DB_BODZIFY_API_USER_PASSWORD
-docker exec -u $DB_BODZIFY_API_USERNAME $DB_CONTAINER_NAME \
-psql -c "\q"
+docker exec -u postgres $DB_CONTAINER_NAME \
+psql -U $DB_BODZIFY_API_USERNAME -c "\q"
 unset PGPASSWORD
 
 projectDir=./
