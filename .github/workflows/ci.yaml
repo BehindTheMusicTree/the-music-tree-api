@@ -59,6 +59,8 @@ jobs:
           --health-timeout 5s 
           --health-retries 3
     steps:
+      - name: debug
+        run: ping db
       - name: Checkout code
         uses: actions/checkout@v3
 
