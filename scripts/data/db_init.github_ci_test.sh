@@ -10,24 +10,19 @@
 # ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 # EOF
 
-DB_CREATION_OUTPUT=$(docker exec -u postgres DB psql -c 'CREATE DATABASE bod_table;' 2>&1)
+DB_CREATION_OUTPUT=$(docker exec -u postgres $DB_CONTAINER_NAME psql -c 'CREATE DATABASE bod_table;' 2>&1)
 
 # Display all databases
-DATABASES=$(docker exec -u postgres DB psql -t -c "SELECT datname FROM pg_database;")
+DATABASES=$(docker exec -u postgres $DB_CONTAINER_NAME psql -t -c "SELECT datname FROM pg_database;")
 echo "All databases: $DATABASES"
 
-docker exec -u postgres DB psql -d bod_table <<EOF
-CREATE USER django WITH PASSWORD 'hehe';
-EOF
-
-docker exec -u postgres DB psql -d bod_table -c "CREATE USER django WITH PASSWORD 'hehe';"
-
+docker exec -u postgres $DB_CONTAINER_NAME psql -d bod_table -c "CREATE USER django WITH PASSWORD 'hehe';"
 
 # Display all users
-USERS=$(docker exec -u postgres DB psql -t -c "SELECT rolname FROM pg_roles WHERE rolcanlogin = true;")
+USERS=$(docker exec -u postgres $DB_CONTAINER_NAME psql -t -c "SELECT rolname FROM pg_roles WHERE rolcanlogin = true;")
 echo "All users: $USERS"
 
-docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -v ON_ERROR_STOP=1" <<EOF
+docker exec -u postgres $DB_CONTAINER_NAME bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -v ON_ERROR_STOP=1" <<EOF
 GRANT ALL PRIVILEGES ON DATABASE bod_table TO django;
 ALTER ROLE django SET client_encoding TO 'utf8';
 ALTER ROLE django SET default_transaction_isolation TO 'read committed';
@@ -43,7 +38,7 @@ EOF
 #     echo "Role $DB_BODZIFY_API_USERNAME creation failed"
 # fi
 
-ROLE=$(docker exec -u postgres DB psql -t -c "SELECT rolname FROM pg_roles WHERE rolname='django';")
+ROLE=$(docker exec -u postgres $DB_CONTAINER_NAME psql -t -c "SELECT rolname FROM pg_roles WHERE rolname='django';")
 echo "Output of role check: $ROLE"
 
 if [ "$ROLE" = "django" ]; then
