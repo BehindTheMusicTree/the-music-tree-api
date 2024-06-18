@@ -1,7 +1,9 @@
 #!/bin/bash
 
-docker exec $DB_CONTAINER_NAME sudo -u $DB_SUPERUSER_NAME -H -- \
-psql -c "create database $DB_BODZIFY_API_DB_NAME with owner $DB_BODZIFY_API_USERNAME;"
+docker exec -u postgres \
+psql -c "CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
+docker exec -u postgres $DB_CONTAINER_NAME -H -- \
+psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME WITH OWNER $DB_BODZIFY_API_USERNAME;"
 
 projectDir=./
 managePath=$projectDir/manage.py
