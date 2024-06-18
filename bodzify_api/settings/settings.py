@@ -131,7 +131,7 @@ try:
     cursor.execute('SELECT 1')
     print('Database connection successful')
 except Exception as e:
-    print('Failed to connect to database:', e)
+    print('Faaaaaaaaaaaailed to connect to database:', e)
 
 DATABASES = {
     'default': {
