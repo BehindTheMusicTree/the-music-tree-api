@@ -10,9 +10,14 @@
 # ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 # EOF
 
-docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql" <<EOF
-CREATE DATABASE bod_table;
-EOF
+DB_CREATION_OUTPUT=$(docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD \
+psql -c 'CREATE DATABASE bod_table;' 2>&1")
+
+if [[ $DB_CREATION_OUTPUT == *"ERROR"* ]]; then
+  echo "Database creation failed with error: $DB_CREATION_OUTPUT"
+# Display all databases
+DATABASES=$(docker exec -u postgres DB psql -t -c "SELECT datname FROM pg_database;")
+echo "All databases: $DATABASES"
 
 # Check if the database was created successfully
 DB_EXISTS=$(docker exec -u postgres DB psql -t -c "SELECT 1 FROM pg_database WHERE datname='bod_table';")
@@ -30,6 +35,7 @@ EOF
 
 if [ $? -ne 0 ]; then
   echo "Role django creation failed."
+  exit 1
 else
   echo "Role django created successfully."
 fi
