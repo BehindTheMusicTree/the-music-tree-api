@@ -4,6 +4,11 @@
 docker exec -u postgres $DB_CONTAINER_NAME \
 psql -c "CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
 
+echo "List of databases:"
+docker exec -u postgres $DB_CONTAINER_NAME psql -c "\l"
+echo "List of roles:"
+docker exec -u postgres $DB_CONTAINER_NAME psql -c "\du"
+
 projectDir=./
 managePath=$projectDir/manage.py
 python3 $managePath migrate

@@ -88,13 +88,6 @@ jobs:
       - name: Init data
         run: ${{ github.workspace }}/scripts/data/data_init.github_ci_test.sh
 
-      - name: Check database and role
-        run: |
-          echo "List of databases:"
-          docker exec -u postgres $DB_CONTAINER_NAME psql -c "\l"
-          echo "List of roles:"
-          docker exec -u postgres $DB_CONTAINER_NAME psql -c "\du"
-
       - name: Run pytest
         run: pytest
 
