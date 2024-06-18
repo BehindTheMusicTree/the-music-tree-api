@@ -18,6 +18,10 @@ ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';
 ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 EOF
 
+if [ $? -ne 0 ]; then
+  echo "An error occurred while initializing the database."
+fi
+
 # test if the role was created
 # ROLE=$(docker exec -u postgres $DB_CONTAINER_NAME psql -c "SELECT rolname FROM pg_roles WHERE rolname='$DB_BODZIFY_API_DB_NAME';")
 # if [ $? -eq 0 ]; then
