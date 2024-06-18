@@ -117,16 +117,21 @@ MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggin
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
-
 username = os.getenv('DB_BODZIFY_API_USERNAME')
-hashed_username = hashlib.sha256(username.encode()).hexdigest()
-print('hashed_username')
-print(hashed_username)
+if username is None:
+    print('DB_BODZIFY_API_USERNAME is not set')
+else:
+    hashed_username = hashlib.sha256(username.encode()).hexdigest()
+    print('hashed_username')
+    print(hashed_username)
 
 password = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
-hashed_password = hashlib.sha256(password.encode()).hexdigest()
-print('hashed_password')
-print(hashed_password)
+if password is None:
+    print('DB_BODZIFY_API_USER_PASSWORD is not set')
+else:
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    print('hashed_password')
+    print(hashed_password)
 
 DATABASES = {
     'default': {
