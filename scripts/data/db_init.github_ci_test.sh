@@ -10,8 +10,7 @@
 # ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 # EOF
 
-DB_CREATION_OUTPUT=$(docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD \
-psql -c 'CREATE DATABASE bod_table;' 2>&1")
+DB_CREATION_OUTPUT=$(docker exec -u postgres DB psql -c 'CREATE DATABASE bod_table;' 2>&1)
 
 # Display all databases
 DATABASES=$(docker exec -u postgres DB psql -t -c "SELECT datname FROM pg_database;")
@@ -26,7 +25,7 @@ fi
 
 # Check if the database was created successfully
 DB_EXISTS=$(docker exec -u postgres DB psql -t -c "SELECT 1 FROM pg_database WHERE datname='bod_table';")
-
+echo "DB_EXISTS: $DB_EXISTS"
 if [ "$DB_EXISTS" != "1" ]; then
   echo "Database creation failed."
   exit 1
