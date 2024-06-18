@@ -19,9 +19,16 @@ ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 EOF
 
 # test if the role was created
-docker exec -u postgres $DB_CONTAINER_NAME psql -c "SELECT * FROM pg_roles;" $DB_BODZIFY_API_DB_NAME
-if [ $? -eq 0 ]; then
-    echo "Role $DB_BODZIFY_API_USERNAME created successfully"
+# ROLE=$(docker exec -u postgres $DB_CONTAINER_NAME psql -c "SELECT rolname FROM pg_roles WHERE rolname='$DB_BODZIFY_API_DB_NAME';")
+# if [ $? -eq 0 ]; then
+#     echo "Role $DB_BODZIFY_API_USERNAME created successfully"
+# else
+#     echo "Role $DB_BODZIFY_API_USERNAME creation failed"
+# fi
+
+ROLE=$(docker exec -u postgres $DB_CONTAINER_NAME psql -t -c "SELECT rolname FROM pg_roles WHERE rolname='django';")
+if [ "$ROLE" = "django" ]; then
+    echo "Role django created successfully"
 else
-    echo "Role $DB_BODZIFY_API_USERNAME creation failed"
+    echo "Role django creation failed"
 fi
