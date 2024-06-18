@@ -124,7 +124,7 @@ try:
         dbname=os.getenv('DB_BODZIFY_API_DB_NAME'),
         user=os.getenv('DB_BODZIFY_API_USERNAME'),
         password=os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
-        host=os.getenv('DB_URL'),
+        host=os.getenv('DB_HOST'),
         port=os.getenv('DB_PORT')
     )
     cursor = connection.cursor()
@@ -139,7 +139,7 @@ DATABASES = {
         'NAME': os.getenv('DB_BODZIFY_API_DB_NAME'),
         'USER': os.getenv('DB_BODZIFY_API_USERNAME'),
         'PASSWORD': os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
-        'HOST': os.getenv('DB_URL'),
+        'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
         'DISABLE_SERVER_SIDE_CURSORS': True
     }

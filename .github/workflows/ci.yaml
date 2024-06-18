@@ -26,7 +26,7 @@ jobs:
       DB_BODZIFY_API_DB_NAME: ${{ secrets.CI_TEST_DB_BODZIFY_API_DB_NAME }}
       DB_BODZIFY_API_USERNAME: ${{ secrets.CI_TEST_DB_BODZIFY_API_USERNAME }}
       DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.CI_TEST_DB_BODZIFY_API_USER_PASSWORD }}
-      DB_URL: ${{ secrets.CI_TEST_DB_URL }}
+      DB_HOST: ${{ secrets.CI_TEST_DB_HOST }}
       DB_PORT: ${{ secrets.CI_TEST_DB_PORT }}
 
       AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
@@ -134,7 +134,7 @@ jobs:
             echo 'DB_USERNAME=${{ secrets.TEST_DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH && 
             echo 'DB_PASSWORD=${{ secrets.TEST_DB_BODZIFY_API_USER_PASSWORD }}' >> $ENV_FILE_PATH &&
             echo 'DB_DATABASE=${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_URL=${{ secrets.TEST_DB_URL }}' >> $ENV_FILE_PATH &&
+            echo 'DB_HOST=${{ secrets.TEST_DB_HOST }}' >> $ENV_FILE_PATH &&
             echo 'DB_PORT=${{ secrets.TEST_DB_PORT }}' >> $ENV_FILE_PATH &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> $ENV_FILE_PATH &&
             echo 'TEST_AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> $ENV_FILE_PATH &&
