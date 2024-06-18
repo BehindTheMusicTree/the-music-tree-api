@@ -9,7 +9,7 @@
 # ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';
 # ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 # EOF
-docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql" <<EOF
+docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -v ON_ERROR_STOP=1" <<EOF
 CREATE ROLE django WITH LOGIN PASSWORD 'hehe';
 GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;
 ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8';
@@ -20,6 +20,9 @@ EOF
 
 if [ $? -ne 0 ]; then
   echo "An error occurred while initializing the database."
+fi
+else
+  echo "Database initialized successfully."
 fi
 
 # test if the role was created
