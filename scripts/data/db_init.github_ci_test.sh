@@ -23,32 +23,13 @@ else
   echo "Database created successfully."
 fi
 
-# Check if the database was created successfully
-DB_EXISTS=$(docker exec -u postgres DB psql -t -c "SELECT 1 FROM pg_database WHERE datname='bod_table';")
-echo "DB_EXISTS: $DB_EXISTS"
-if [ "$DB_EXISTS" != "1" ]; then
-  echo "Database creation failed."
-  exit 1
-else
-  echo "Database created successfully."
-fi
-
 docker exec -u postgres DB psql -d bod_table <<EOF
 CREATE USER django WITH PASSWORD 'hehe';
 EOF
 
-if [ $? -ne 0 ]; then
-  echo "User django creation failed."
-  exit 1
-else
-  echo "User django created successfully."
-fi
-
-# Wait for a few seconds to ensure that the role creation is complete
-sleep 5
-
-ROLES=$(docker exec -u postgres DB psql -t -d bod_table -c "SELECT rolname FROM pg_roles;")
-echo "All roles: $ROLES"
+# Display all users
+USERS=$(docker exec -u postgres DB psql -t -c "SELECT rolname FROM pg_roles WHERE rolcanlogin = true;")
+echo "All users: $USERS"
 
 docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -v ON_ERROR_STOP=1" <<EOF
 GRANT ALL PRIVILEGES ON DATABASE bod_table TO django;
@@ -57,12 +38,6 @@ ALTER ROLE django SET default_transaction_isolation TO 'read committed';
 ALTER ROLE django SET timezone TO 'UTC';
 ALTER USER django CREATEDB;
 EOF
-
-if [ $? -ne 0 ]; then
-  echo "An error occurred while initializing the database."
-else
-  echo "Database initialized successfully."
-fi
 
 # test if the role was created
 # ROLE=$(docker exec -u postgres $DB_CONTAINER_NAME psql -c "SELECT rolname FROM pg_roles WHERE rolname='$DB_BODZIFY_API_DB_NAME';")
