@@ -34,6 +34,9 @@ else
   echo "Database initialized successfully."
 fi
 
+# Wait for a few seconds to ensure that the role creation is complete
+sleep 5
+
 # test if the role was created
 # ROLE=$(docker exec -u postgres $DB_CONTAINER_NAME psql -c "SELECT rolname FROM pg_roles WHERE rolname='$DB_BODZIFY_API_DB_NAME';")
 # if [ $? -eq 0 ]; then
