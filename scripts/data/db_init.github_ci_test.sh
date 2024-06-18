@@ -9,8 +9,18 @@
 # ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';
 # ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 # EOF
+
 docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -v ON_ERROR_STOP=1" <<EOF
 CREATE ROLE django WITH LOGIN PASSWORD 'hehe';
+EOF
+
+if [ $? -ne 0 ]; then
+  echo "Role django creation failed."
+else
+  echo "Role django created successfully."
+fi
+
+docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -v ON_ERROR_STOP=1" <<EOF
 GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;
 ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8';
 ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed';
@@ -36,7 +46,7 @@ ROLE=$(docker exec -u postgres DB psql -t -c "SELECT rolname FROM pg_roles WHERE
 echo "Output of role check: $ROLE"
 
 if [ "$ROLE" = "django" ]; then
-    echo "Role django created successfully"
+    echo "Role django exists"
 else
-    echo "Role django creation failed"
+    echo "Role django does not exist"
 fi
