@@ -59,10 +59,6 @@ jobs:
           --health-timeout 5s 
           --health-retries 3
     steps:
-      - name: Wait for db service to start
-        run: sleep 30
-      - name: Ping db
-        run: ping db
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -89,8 +85,16 @@ jobs:
       - name: Set up filesystem
         run: bash scripts/filesystem/filesystem_setup.github_ci_test.sh
 
-      - name: Init data
-        run: ${{ github.workspace }}/scripts/data/data_init.github_ci_test.sh
+      - name: Init db
+        run: ${{ github.workspace }}/scripts/data/db_init.github_ci_test.sh
+
+      - name: Test db connection
+        run: psql -h localhost -U ${{ env.DB_BODZIFY_API_USERNAME }} -d ${{ env.DB_BODZIFY_API_DB_NAME }} -c 'SELECT 1'
+        env:
+          PGPASSWORD: ${{ secrets.DB_BODZIFY_API_PASSWORD }}
+        
+      - name: Init django data
+        run: ${{ github.workspace }}/scripts/data/django_data_init.github_ci_test.sh
 
       - name: Run pytest
         run: pytest
