@@ -119,20 +119,6 @@ MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggin
 ROOT_URLCONF = 'bodzify_api.urls'
 
 
-try:
-    connection = psycopg2.connect(
-        dbname=os.getenv('DB_BODZIFY_API_DB_NAME'),
-        user=os.getenv('DB_BODZIFY_API_USERNAME'),
-        password=os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
-        host=os.getenv('DB_HOST'),
-        port=os.getenv('DB_PORT')
-    )
-    cursor = connection.cursor()
-    cursor.execute('SELECT 1')
-    print('Database connection successful')
-except Exception as e:
-    print('Faaaaaaaaaaaailed to connect to database:', e)
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
