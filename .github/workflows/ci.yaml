@@ -68,16 +68,16 @@ jobs:
         run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
       - name: Install chromaprint
         run: sudo apt-get install libchromaprint-tools
-      - name: Set up filesystem
-        run: bash scripts/filesystem/filesystem_setup.github_ci_test.sh
-      - name: Init data
-        run: ${{ github.workspace }}/scripts/data/data_init.github_ci_test.sh
       - name: Install flac
         run: sudo apt-get install flac # apt not stable for CLI interface
       - name: Install ffmpeg
         run: sudo apt-get install ffmpeg
       - name: Add fpcalc to PATH
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
+      - name: Set up filesystem
+        run: bash scripts/filesystem/filesystem_setup.github_ci_test.sh
+      - name: Init data
+        run: ${{ github.workspace }}/scripts/data/data_init.github_ci_test.sh
       - name: Run pytest
         run: pytest
 
