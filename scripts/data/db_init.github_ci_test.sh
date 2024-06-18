@@ -16,16 +16,16 @@ psql -t -c "SELECT rolname FROM pg_roles WHERE rolcanlogin = true;")
 echo "All users: $USERS"
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME bash -c \
-"psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;\""
+"psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;\""
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME bash -c \
-"psql -c "ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8';\""
+"psql -c \"ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8';\""
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME bash -c \
-"psql -c "ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed';\""
+"psql -c \"ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed';\""
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME bash -c \
-"psql -c "ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';\""
+"psql -c \"ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';\""
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME bash -c \
-"psql -c "ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;\""
+"psql -c \"ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;\""
