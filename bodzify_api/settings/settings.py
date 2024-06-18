@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import psycopg2
 import hashlib
 import datetime
 import os
@@ -117,45 +118,20 @@ MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggin
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
-username = os.getenv('DB_BODZIFY_API_USERNAME')
-if username is None:
-    print('DB_BODZIFY_API_USERNAME is not set')
-else:
-    hashed_username = hashlib.sha256(username.encode()).hexdigest()
-    print('hashed_username')
-    print(hashed_username)
 
-password = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
-if password is None:
-    print('DB_BODZIFY_API_USER_PASSWORD is not set')
-else:
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-    print('hashed_password')
-    print(hashed_password)
-
-password = os.getenv('DB_BODZIFY_API_DB_NAME')
-if password is None:
-    print('DB_BODZIFY_API_DB_NAME is not set')
-else:
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-    print('hashed_dbname')
-    print(hashed_password)
-
-password = os.getenv('DB_URL')
-if password is None:
-    print('DB_URL is not set')
-else:
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-    print('hashed_dburl')
-    print(hashed_password)
-
-password = os.getenv('DB_PORT')
-if password is None:
-    print('DB_PORT is not set')
-else:
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-    print('hashed_dbport')
-    print(hashed_password)
+try:
+    connection = psycopg2.connect(
+        dbname=os.getenv('DB_BODZIFY_API_DB_NAME'),
+        user=os.getenv('DB_BODZIFY_API_USERNAME'),
+        password=os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
+        host=os.getenv('DB_URL'),
+        port=os.getenv('DB_PORT')
+    )
+    cursor = connection.cursor()
+    cursor.execute('SELECT 1')
+    print('Database connection successful')
+except Exception as e:
+    print('Failed to connect to database:', e)
 
 DATABASES = {
     'default': {
