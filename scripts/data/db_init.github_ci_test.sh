@@ -20,6 +20,9 @@ docker exec -u postgres DB psql -d bod_table <<EOF
 CREATE USER django WITH PASSWORD 'hehe';
 EOF
 
+docker exec -u postgres DB psql -d bod_table -c "CREATE USER django WITH PASSWORD 'hehe';"
+
+
 # Display all users
 USERS=$(docker exec -u postgres DB psql -t -c "SELECT rolname FROM pg_roles WHERE rolcanlogin = true;")
 echo "All users: $USERS"

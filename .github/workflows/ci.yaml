@@ -125,6 +125,8 @@ jobs:
       #     PGPASSWORD: ${{ env.DB_BODZIFY_API_USER_PASSWORD }}
         
       - name: Init django data
+        env:
+          MANAGE_PATH: ${{ github.workspace }}/bodzify_api/manage.py
         run: ${{ github.workspace }}/scripts/data/django_data_init.github_ci_test.sh
 
       - name: Run pytest
