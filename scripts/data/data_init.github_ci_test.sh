@@ -12,8 +12,7 @@ docker exec -u postgres $DB_CONTAINER_NAME psql -c "\du"
 
 echo "Testing database connection..."
 export PGPASSWORD=$DB_BODZIFY_API_USER_PASSWORD
-docker exec -u postgres $DB_CONTAINER_NAME \
-psql -U $DB_BODZIFY_API_USERNAME -c "\q"
+psql -h localhost -p $DB_PORT -U $DB_BODZIFY_API_USERNAME -d $DB_BODZIFY_API_DB_NAME -c "\q"
 if [ $? -eq 0 ]
 then
   echo "Database connection test passed."
