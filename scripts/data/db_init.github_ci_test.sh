@@ -16,15 +16,9 @@ DB_CREATION_OUTPUT=$(docker exec -u postgres DB psql -c 'CREATE DATABASE bod_tab
 DATABASES=$(docker exec -u postgres DB psql -t -c "SELECT datname FROM pg_database;")
 echo "All databases: $DATABASES"
 
-# Create the user and log any errors
-USER_CREATION_OUTPUT=$(docker exec -u postgres DB psql -d bod_table -c "CREATE USER django WITH PASSWORD 'hehe';" 2>&1)
-
-if [[ $USER_CREATION_OUTPUT == *"ERROR"* ]]; then
-  echo "User creation failed with error: $USER_CREATION_OUTPUT"
-  exit 1
-else
-  echo "User created successfully."
-fi
+docker exec -u postgres DB psql -d bod_table <<EOF
+CREATE USER django WITH PASSWORD 'hehe';
+EOF
 
 # Display all users
 USERS=$(docker exec -u postgres DB psql -t -c "SELECT rolname FROM pg_roles WHERE rolcanlogin = true;")
