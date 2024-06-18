@@ -11,7 +11,7 @@
 # EOF
 
 docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql" <<EOF
-CREATE DATABASE $DB_BODZIFY_API_DB_NAME;
+CREATE DATABASE bod_table;
 EOF
 
 if [ $? -ne 0 ]; then
@@ -20,8 +20,7 @@ else
   echo "Database created successfully."
 fi
 
-docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD \
-psql -v ON_ERROR_STOP=1 -d $DB_BODZIFY_API_DB_NAME" <<EOF
+docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -d bod_table" <<EOF
 CREATE ROLE django WITH LOGIN PASSWORD 'hehe';
 EOF
 
@@ -31,15 +30,15 @@ else
   echo "Role django created successfully."
 fi
 
-ROLES=$(docker exec -u postgres DB psql -t -d $DB_BODZIFY_API_DB_NAME -c "SELECT rolname FROM pg_roles;")
+ROLES=$(docker exec -u postgres DB psql -t -d bod_table -c "SELECT rolname FROM pg_roles;")
 echo "All roles: $ROLES"
 
 docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -v ON_ERROR_STOP=1" <<EOF
-GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;
-ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8';
-ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed';
-ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';
-ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
+GRANT ALL PRIVILEGES ON DATABASE bod_table TO django;
+ALTER ROLE django SET client_encoding TO 'utf8';
+ALTER ROLE django SET default_transaction_isolation TO 'read committed';
+ALTER ROLE django SET timezone TO 'UTC';
+ALTER USER django CREATEDB;
 EOF
 
 if [ $? -ne 0 ]; then
