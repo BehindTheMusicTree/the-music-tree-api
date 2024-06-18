@@ -91,7 +91,7 @@ jobs:
       - name: Test db connection
         run: psql -h localhost -U ${{ env.DB_BODZIFY_API_USERNAME }} -d ${{ env.DB_BODZIFY_API_DB_NAME }} -c 'SELECT 1'
         env:
-          PGPASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+          PGPASSWORD: ${{ env.DB_BODZIFY_API_USER_PASSWORD }}
         
       - name: Init django data
         run: ${{ github.workspace }}/scripts/data/django_data_init.github_ci_test.sh
