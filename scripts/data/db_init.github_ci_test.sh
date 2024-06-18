@@ -11,7 +11,7 @@
 # EOF
 
 docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD \
-psql -v ON_ERROR_STOP=1" -d $DB_BODZIFY_API_DB_NAME" <<EOF
+psql -v ON_ERROR_STOP=1 -d $DB_BODZIFY_API_DB_NAME" <<EOF
 CREATE ROLE django WITH LOGIN PASSWORD 'hehe';
 EOF
 
