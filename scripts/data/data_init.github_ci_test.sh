@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # creating the role automatically creates a database with the same name
-docker exec -u postgres $DB_CONTAINER_NAME \
-psql -c "CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
-
-echo "List of databases:"
-docker exec -u postgres $DB_CONTAINER_NAME psql -c "\l"
-
-echo "List of roles:"
-docker exec -u postgres $DB_CONTAINER_NAME psql -c "\du"
+docker exec -u postgres $DB_CONTAINER_NAME psql <<EOF
+CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';
+GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;
+ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8';
+ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed';
+ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';
+ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
+EOF
 
 echo "Testing database connection..."
 export PGPASSWORD=$DB_BODZIFY_API_USER_PASSWORD
