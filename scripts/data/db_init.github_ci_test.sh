@@ -20,7 +20,6 @@ EOF
 
 if [ $? -ne 0 ]; then
   echo "An error occurred while initializing the database."
-fi
 else
   echo "Database initialized successfully."
 fi
