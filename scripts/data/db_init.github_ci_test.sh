@@ -21,6 +21,9 @@ else
   echo "Role django created successfully."
 fi
 
+ROLES=$(docker exec -u postgres DB psql -t -d $DB_BODZIFY_API_DB_NAME -c "SELECT rolname FROM pg_roles;")
+echo "All roles: $ROLES"
+
 docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -v ON_ERROR_STOP=1" <<EOF
 GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;
 ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8';
