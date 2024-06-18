@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# creating the role automatically creates a database with the same name
+# Creating the role automatically creates a database with the same name
 # docker exec -u postgres $DB_CONTAINER_NAME psql <<EOF
 # CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';
 # GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;
@@ -13,11 +13,16 @@
 DB_CREATION_OUTPUT=$(docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD \
 psql -c 'CREATE DATABASE bod_table;' 2>&1")
 
-if [[ $DB_CREATION_OUTPUT == *"ERROR"* ]]; then
-  echo "Database creation failed with error: $DB_CREATION_OUTPUT"
 # Display all databases
 DATABASES=$(docker exec -u postgres DB psql -t -c "SELECT datname FROM pg_database;")
 echo "All databases: $DATABASES"
+
+if [[ $DB_CREATION_OUTPUT == *"ERROR"* ]]; then
+  echo "Database creation failed with error: $DB_CREATION_OUTPUT"
+  exit 1
+else
+  echo "Database created successfully."
+fi
 
 # Check if the database was created successfully
 DB_EXISTS=$(docker exec -u postgres DB psql -t -c "SELECT 1 FROM pg_database WHERE datname='bod_table';")
