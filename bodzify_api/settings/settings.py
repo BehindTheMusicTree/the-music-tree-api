@@ -133,6 +133,30 @@ else:
     print('hashed_password')
     print(hashed_password)
 
+password = os.getenv('DB_BODZIFY_API_DB_NAME')
+if password is None:
+    print('DB_BODZIFY_API_DB_NAME is not set')
+else:
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    print('hashed_dbname')
+    print(hashed_password)
+
+password = os.getenv('DB_URL')
+if password is None:
+    print('DB_URL is not set')
+else:
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    print('hashed_dburl')
+    print(hashed_password)
+
+password = os.getenv('DB_PORT')
+if password is None:
+    print('DB_PORT is not set')
+else:
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    print('hashed_dbport')
+    print(hashed_password)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
