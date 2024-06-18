@@ -17,3 +17,11 @@ ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read c
 ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';
 ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;
 EOF
+
+# test if the role was created
+docker exec -u postgres $DB_CONTAINER_NAME psql -c "SELECT * FROM pg_roles;" $DB_BODZIFY_API_DB_NAME
+if [ $? -eq 0 ]; then
+    echo "Role $DB_BODZIFY_API_USERNAME created successfully"
+else
+    echo "Role $DB_BODZIFY_API_USERNAME creation failed"
+fi
