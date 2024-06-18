@@ -54,7 +54,11 @@ jobs:
         ports:
           - 5432
         env:
-          POSTGRES_PASSWORD: ${{ secrets.CI_DB_SUPERUSER_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_HOST: ${{ env.POSTGRES_HOST }}
+          POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
         options: >-
           --name=${{ vars.CI_TEST_DB_CONTAINER_NAME }}
           --health-cmd pg_isready 
