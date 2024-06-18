@@ -99,7 +99,7 @@ jobs:
           PGPASSWORD: ${{ env.DB_SUPERUSER_PASSWORD }}
 
       - name: Test db connection with api user
-        run: psql -h localhost -U ${{ env.DB_BODZIFY_API_USERNAME }} -d ${{ env.DB_BODZIFY_API_DB_NAME }} -c 'SELECT 1'
+        run: psql -h localhost -U django -d ${{ env.DB_BODZIFY_API_DB_NAME }} -c 'SELECT 1'
         env:
           PGPASSWORD: hehe
 
