@@ -66,8 +66,6 @@ AUDIO_FINGERPRINTER_POST_FULL_URL = AUDIO_FINGERPRINTER_BASE_URL + \
     ":" + AUDIO_FINGERPRINTER_PORT + \
     AUDIO_FINGERPRINTER_POST_ENDPOINT
 
-FILE_UPLOAD_TEMP_DIR = '/tmp/bodzify-api/uploaded-files/'
-
 PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
 SECURE_SSL_REDIRECT = False
@@ -120,7 +118,7 @@ ROOT_URLCONF = 'bodzify_api.urls'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('DB_BODZIFY_API_DB_NAME'),
         'USER': os.getenv('DB_BODZIFY_API_USERNAME'),
         'PASSWORD': os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
@@ -197,15 +195,17 @@ ALLOWED_HOSTS = []
 STATICFILES_DIRS = []
 STATIC_ROOT = ''
 MEDIA_ROOT = ''
+FILE_UPLOAD_TEMP_DIR = ''
 
 if ENV in [ENV_VALUES.DEV, ENV_VALUES.GITHUB_CI_TEST]:
-    import bodzify_api.settings.settings_dev as settings_dev
-    CORS_ALLOW_ALL_ORIGINS = settings_dev.CORS_ALLOW_ALL_ORIGINS
-    ALLOWED_HOSTS = settings_dev.ALLOWED_HOSTS
-    MEDIA_ROOT = settings_dev.MEDIA_ROOT
-    STATIC_ROOT = settings_dev.STATIC_ROOT
-    LOG_PATH = settings_dev.LOG_PATH
-    JWT_AUTH = settings_dev.JWT_AUTH
+    import bodzify_api.settings.settings_dev_or_github_ci_test as settings_dev_or_github_ci_test
+    CORS_ALLOW_ALL_ORIGINS = settings_dev_or_github_ci_test.CORS_ALLOW_ALL_ORIGINS
+    ALLOWED_HOSTS = settings_dev_or_github_ci_test.ALLOWED_HOSTS
+    MEDIA_ROOT = settings_dev_or_github_ci_test.MEDIA_ROOT
+    STATIC_ROOT = settings_dev_or_github_ci_test.STATIC_ROOT
+    LOG_PATH = settings_dev_or_github_ci_test.LOG_PATH
+    JWT_AUTH = settings_dev_or_github_ci_test.JWT_AUTH
+    FILE_UPLOAD_TEMP_DIR = settings_dev_or_github_ci_test.FILE_UPLOAD_TEMP_DIR
 elif ENV == ENV_VALUES.TEST:
     import bodzify_api.settings.settings_test as settings_test
     CORS_ALLOWED_ORIGINS = settings_test.CORS_ALLOWED_ORIGINS
@@ -216,6 +216,7 @@ elif ENV == ENV_VALUES.TEST:
     MEDIA_ROOT = settings_test.MEDIA_ROOT
     STATIC_ROOT = settings_test.STATIC_ROOT
     LOG_PATH = settings_test.LOG_PATH
+    FILE_UPLOAD_TEMP_DIR = settings_test.FILE_UPLOAD_TEMP_DIR
 else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'
