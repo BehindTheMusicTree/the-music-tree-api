@@ -50,7 +50,6 @@ jobs:
           POSTGRES_DB: ${{ env.DB_BODZIFY_API_DB_NAME }}
           POSTGRES_USER: ${{ env.DB_SUPERUSER_NAME }}
           POSTGRES_PASSWORD: ${{ env.DB_SUPERUSER_PASSWORD }}
-          POSTGRES_HOST: ${{ env.DB_URL }}
           POSTGRES_PORT: ${{ env.DB_PORT }}
         options: >-
           --name=${{ vars.CI_TEST_DB_CONTAINER_NAME }}
@@ -70,15 +69,15 @@ jobs:
       - name: Install chromaprint
         run: sudo apt-get install libchromaprint-tools
       - name: Set up filesystem
-        run: bash scripts/setup_filesystem.github_ci_test.sh
+        run: bash scripts/filesystem/filesystem_setup.github_ci_test.sh
+      - name: Init data
+        run: ${{ github.workspace }}/scripts/data/data_init.github_ci_test.sh
       - name: Install flac
         run: sudo apt-get install flac # apt not stable for CLI interface
       - name: Install ffmpeg
         run: sudo apt-get install ffmpeg
       - name: Add fpcalc to PATH
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
-      - name: Init data
-        run: ${{ github.workspace }}/scripts/data/data_init.github_ci_test.sh
       - name: Run pytest
         run: pytest
 
