@@ -14,6 +14,13 @@ echo "Testing database connection..."
 export PGPASSWORD=$DB_BODZIFY_API_USER_PASSWORD
 docker exec -u postgres $DB_CONTAINER_NAME \
 psql -U $DB_BODZIFY_API_USERNAME -c "\q"
+if [ $? -eq 0 ]
+then
+  echo "Database connection test passed."
+else
+  echo "Database connection test failed."
+  exit 1
+fi
 unset PGPASSWORD
 
 projectDir=./
