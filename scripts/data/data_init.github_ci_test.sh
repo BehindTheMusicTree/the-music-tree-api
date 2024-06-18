@@ -1,8 +1,8 @@
 #!/bin/bash
 
-docker exec -u postgres \
+docker exec -u postgres $DB_CONTAINER_NAME \
 psql -c "CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
-docker exec -u postgres $DB_CONTAINER_NAME -H -- \
+docker exec -u postgres $DB_CONTAINER_NAME \
 psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME WITH OWNER $DB_BODZIFY_API_USERNAME;"
 
 projectDir=./
