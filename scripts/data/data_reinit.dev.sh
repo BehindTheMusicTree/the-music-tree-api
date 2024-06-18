@@ -6,12 +6,14 @@ managePath=${projectDir}manage.py
 # Load env variables from file
 export $(grep -v '^#' ${projectDir}.env | xargs)
 
-docker exec -u postgres DB psql -c "CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD $DB_BODZIFY_API_USER_PASSWORD;"
+docker exec -u postgres DB \
+psql -c "CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
 docker exec -u postgres DB psql -c "DROP DATABASE IF EXISTS $DB_BODZIFY_API_DB_NAME;"
 docker exec -u postgres DB psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME WITH OWNER $DB_BODZIFY_API_USERNAME;"
 
 sudo rm -r $projectDir/bodzify_api/migrations/*
 sudo rm -r $projectDir/media/libraries/*
+source $projectDir.venv/bin/activate
 python3 $managePath migrate
 python3 $managePath migrate --fake
 python3 $managePath makemigrations 
