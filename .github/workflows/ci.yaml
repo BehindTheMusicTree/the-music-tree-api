@@ -47,11 +47,11 @@ jobs:
         ports:
           - 5432
         env:
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-          POSTGRES_HOST: ${{ env.POSTGRES_HOST }}
-          POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
+          POSTGRES_DB: ${{ env.DB_BODZIFY_API_DB_NAME }}
+          POSTGRES_USER: ${{ env.DB_SUPERUSER_NAME }}
+          POSTGRES_PASSWORD: ${{ env.DB_SUPERUSER_PASSWORD }}
+          POSTGRES_HOST: ${{ env.DB_URL }}
+          POSTGRES_PORT: ${{ env.DB_PORT }}
         options: >-
           --name=${{ vars.CI_TEST_DB_CONTAINER_NAME }}
           --health-cmd pg_isready 
