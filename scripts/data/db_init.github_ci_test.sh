@@ -33,15 +33,15 @@ else
   echo "Database created successfully."
 fi
 
-docker exec -u postgres DB bash -c "PGPASSWORD=$DB_SUPERUSER_PASSWORD psql -d bod_table" <<EOF
-CREATE ROLE django WITH LOGIN PASSWORD 'hehe';
+docker exec -u postgres DB psql -d bod_table <<EOF
+CREATE USER django WITH PASSWORD 'hehe';
 EOF
 
 if [ $? -ne 0 ]; then
-  echo "Role django creation failed."
+  echo "User django creation failed."
   exit 1
 else
-  echo "Role django created successfully."
+  echo "User django created successfully."
 fi
 
 # Wait for a few seconds to ensure that the role creation is complete
