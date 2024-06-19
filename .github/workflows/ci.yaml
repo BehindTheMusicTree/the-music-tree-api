@@ -84,13 +84,25 @@ jobs:
             --health-timeout=5s \
             --health-retries=3 \
             ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
+        
+      - name: Wait for db service to start
+        run: |
+          attempts=0
+          max_attempts=5
+          while ! pg_isready -h localhost -p ${{ env.DB_PORT }}; do
+            if [ $attempts -eq $max_attempts ]; then
+              echo "DB service did not start within the expected time."
+              exit 1
+            fi
+            echo "Waiting for DB service to start..."
+            sleep 15
+            attempts=$((attempts+1))
+          done
 
       - name: Init db
         run: ${{ github.workspace }}/scripts/data/db_init.sh
         
       - name: Init django data
-        env:
-          MANAGE_PATH: ${{ github.workspace }}/manage.py
         run: ${{ github.workspace }}/scripts/data/django_data_init.sh
 
       - name: Run pytest
