@@ -19,6 +19,9 @@ class ENV_VALUES:
 
 ENV = os.getenv('ENV')
 
+if ENV is None:
+    raise EnvironmentError("The ENV variable is not set")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -85,6 +88,8 @@ ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
+if DEBUG is None:
+    raise EnvironmentError("The DEBUG variable is not set")
 
 INSTALLED_APPS = ['django.contrib.admin',
                   'django.contrib.auth',
@@ -116,16 +121,31 @@ MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggin
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
+DB_BODZIFY_API_DB_NAME = os.getenv('DB_BODZIFY_API_DB_NAME')
+if DB_BODZIFY_API_DB_NAME is None:
+    raise EnvironmentError("The DB_BODZIFY_API_DB_NAME variable is not set")
+DB_BODZIFY_API_USERNAME = os.getenv('DB_BODZIFY_API_USERNAME')
+if DB_BODZIFY_API_USERNAME is None:
+    raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable is not set")
+DB_BODZIFY_API_USER_PASSWORD = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
+if DB_BODZIFY_API_USER_PASSWORD is None:
+    raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable is not set")
+DB_HOST = os.getenv('DB_HOST')
+if DB_HOST is None:
+    raise EnvironmentError("The DB_HOST variable is not set")
+DB_PORT = os.getenv('DB_PORT')
+if DB_PORT is None:
+    raise EnvironmentError("The DB_PORT variable is not set")
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         # 'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_BODZIFY_API_DB_NAME'),
-        'USER': os.getenv('DB_BODZIFY_API_USERNAME'),
-        'PASSWORD': os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': DB_BODZIFY_API_DB_NAME,
+        'USER': DB_BODZIFY_API_USERNAME,
+        'PASSWORD': DB_BODZIFY_API_USER_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         'DISABLE_SERVER_SIDE_CURSORS': True
     }
 }
