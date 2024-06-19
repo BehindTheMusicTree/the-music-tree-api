@@ -106,7 +106,7 @@ jobs:
         run: ${{ github.workspace }}/scripts/data/django_data_init.sh
 
       - name: Run pytest
-        run: pytest test/view/track/input/method/create/attributes/musicbrainz_recording/test_title.py
+        run: pytest bodzify_api/test/view/track/input/method/create/attributes/musicbrainz_recording/test_title.py
 
   build-and-push-to-dockerhub:
     name: Build / Push to Dockerhub
