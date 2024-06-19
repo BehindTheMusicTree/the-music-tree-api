@@ -221,8 +221,6 @@ else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'
 
-print('FILE_UPLOAD_TEMP_DIR', FILE_UPLOAD_TEMP_DIR)
-
 LIB_DIR_NAME = 'libraries'
 LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME
 
