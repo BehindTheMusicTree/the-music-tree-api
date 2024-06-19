@@ -20,7 +20,7 @@ jobs:
     env:
       ENV: CI_TEST
       DEBUG: True
-      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
       DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
       DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
