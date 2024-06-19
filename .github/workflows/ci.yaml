@@ -36,7 +36,7 @@ jobs:
       audio-fingerprinter:
         image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
         ports:
-          - 3000
+          - 3000:3000
         volumes:
           - /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/
         env:
