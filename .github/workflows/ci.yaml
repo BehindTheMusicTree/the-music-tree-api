@@ -38,25 +38,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # - name: Setup Python ${{ matrix.python-version }}
-      #   uses: actions/setup-python@v3
-      #   with:
-      #      python-version: 3.11
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+           python-version: 3.11
 
-      # - name: Install requirements
-      #   run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
+      - name: Install requirements
+        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
 
-      # - name: Install chromaprint
-      #   run: sudo apt-get install libchromaprint-tools
+      - name: Install chromaprint
+        run: sudo apt-get install libchromaprint-tools
 
-      # - name: Install flac
-      #   run: sudo apt-get install flac # apt not stable for CLI interface
+      - name: Install flac
+        run: sudo apt-get install flac # apt not stable for CLI interface
 
-      # - name: Install ffmpeg
-      #   run: sudo apt-get install ffmpeg
+      - name: Install ffmpeg
+        run: sudo apt-get install ffmpeg
 
-      # - name: Add fpcalc to PATH
-      #   run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
+      - name: Add fpcalc to PATH
+        run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
 
       - name: Set up filesystem
         run: bash scripts/filesystem/filesystem_setup.ci_test.sh
