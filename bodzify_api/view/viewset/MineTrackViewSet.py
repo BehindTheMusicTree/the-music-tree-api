@@ -2,8 +2,8 @@
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
-from bodzify_api.serializer.mine.track.MineTrackSerializer import MineTrackSerializer
-from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer import LibTrackExtractSerializer
+from bodzify_api.serializer.mine.track.detailed import MineTrackSerializer
+from bodzify_api.serializer.track.input.endpoint.extract import LibTrackExtractSerializer
 from bodzify_api.service.mine import MineService
 import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
@@ -21,6 +21,9 @@ class MineTrackViewSet(MultiSerializerViewSet):
         'extract':  LibTrackExtractSerializer,
     }
 
+    def get_serializer_class(self):
+        return self.serializers.get(self.action, MineTrackSerializer)
+
     @extend_schema(parameters=[
         OpenApiParameter(GET_PARAMETER_NAME.SOURCE, OpenApiTypes.STR, OpenApiParameter.PATH),
         OpenApiParameter(GET_PARAMETER_NAME.QUERY, OpenApiTypes.STR, OpenApiParameter.PATH),
@@ -34,7 +37,6 @@ class MineTrackViewSet(MultiSerializerViewSet):
         response_serializer = MineTrackSerializer(mine_tracks, many=True)
         headers = self.get_success_headers(response_serializer.data)
 
-        return utility.get_json_response_paginated(
-            request=request,
-            data_json_list=response_serializer.data,
-            headers=headers)
+        return utility.get_json_response_paginated(request=request,
+                                                   data_json_list=response_serializer.data,
+                                                   headers=headers)

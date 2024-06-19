@@ -27,3 +27,6 @@ class CriteriaType(models.Model):
         constraints = [
             models.CheckConstraint(check=~models.Q(label=""), name="criteria_non_empty_label")
         ]
+        db_table = 'bodzify_api_criteria_type'
+        verbose_name = 'Criteria Type'
+        verbose_name_plural = 'Criteria Types'

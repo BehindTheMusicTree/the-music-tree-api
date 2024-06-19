@@ -2,90 +2,76 @@
 
 import logging
 from rest_framework import status
-from ddf import G
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.criteria.input.schema.endpoint.CriteriaPutSerializer import FIELDS as PUT_FIELD
+from bodzify_api.serializer.criteria.input.schema.endpoint.put import FIELDS as PUT_FIELD
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
-
-logger = logging.getLogger('bodzify_api')
 
 
 class TestCase(CriteriaTestCase):
 
     def test_from_being_root_to_first_descendant(self):
-        rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk")
 
-        data = {PUT_FIELD.PARENT: rock_genre.uuid}  # type: ignore
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)  # type: ignore
+        data = {PUT_FIELD.PARENT: rock_genre.uuid}
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        assert response.status_code == status.HTTP_200_OK
+        updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)
         assert updated_punk_genre.root == rock_genre
 
     def test_from_being_first_descendant_to_root(self):
-        rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, parent=rock_genre)
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
 
         data = {PUT_FIELD.PARENT: ""}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)  # type: ignore
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        assert response.status_code == status.HTTP_200_OK
+        updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)
         assert updated_punk_genre.root == punk_genre
 
     def test_new_root_then_update_root_of_descendants(self):
-        rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        punk_hardcore_genre = G(Criteria,
-                                name="Punk hardcore",
-                                user=self.test_user,
-                                type=CRITERIA_TYPES_ID.GENRE,
-                                parent=punk_genre)
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk")
+        punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
 
-        data = {PUT_FIELD.PARENT: rock_genre.uuid}  # type: ignore
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)  # type: ignore
+        data = {PUT_FIELD.PARENT: rock_genre.uuid}
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        assert response.status_code == status.HTTP_200_OK
+        updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)
         assert updated_punk_genre.root == rock_genre
-        updated_punk_hardcore_genre = Criteria.objects.get(uuid=punk_hardcore_genre.uuid)  # type: ignore
-        assert updated_punk_hardcore_genre.root == rock_genre
+        updated_punkhardcore_genre = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
+        assert updated_punkhardcore_genre.root == rock_genre
 
     def test_new_ascendant_then_update_root_of_self_and_descendants(self):
-        rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        punk_hardcore_genre = G(Criteria,
-                                name="Punk hardcore",
-                                user=self.test_user,
-                                type=CRITERIA_TYPES_ID.GENRE,
-                                parent=punk_genre)
-        french_punk_hardcore_genre = G(Criteria,
-                                       name="French punk hardcore",
-                                       user=self.test_user,
-                                       type=CRITERIA_TYPES_ID.GENRE,
-                                       parent=punk_hardcore_genre)
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk")
+        punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
+        frenchpunkhardcore_genre = self.model_fixture_factory.create_genre(name="French punk hardcore",
+                                                                           parent=punkhardcore_genre)
+        bretonpunkhardcore_genre = self.model_fixture_factory.create_genre(name="Breton punk hardcore",
+                                                                           parent=frenchpunkhardcore_genre)
 
-        data = {PUT_FIELD.PARENT: rock_genre.uuid}  # type: ignore
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
-        updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)  # type: ignore
+        data = {PUT_FIELD.PARENT: rock_genre.uuid}
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        assert response.status_code == status.HTTP_200_OK
+        updated_punk_genre = Criteria.objects.get(uuid=punk_genre.uuid)
         assert updated_punk_genre.root == rock_genre
-        updated_punk_hardcore_genre = Criteria.objects.get(uuid=punk_hardcore_genre.uuid)  # type: ignore
-        assert updated_punk_hardcore_genre.root == rock_genre
-        updated_french_punk_hardcore_genre = Criteria.objects.get(uuid=french_punk_hardcore_genre.uuid)  # type: ignore
-        assert updated_french_punk_hardcore_genre.root == rock_genre
+        updated_punkhardcore_genre = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
+        assert updated_punkhardcore_genre.root == rock_genre
+        updated_frenchpunkhardcore_genre = Criteria.objects.get(uuid=frenchpunkhardcore_genre.uuid)
+        assert updated_frenchpunkhardcore_genre.root == rock_genre
+        updated_bretonpunkhardcore_genre = Criteria.objects.get(uuid=bretonpunkhardcore_genre.uuid)
+        assert updated_bretonpunkhardcore_genre.root == rock_genre
 
     def test_newly_root_then_update_root_of_descendants(self):
-        rock_genre = G(Criteria, name="Rock", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE)
-        punk_genre = G(Criteria, name="Punk", user=self.test_user, type=CRITERIA_TYPES_ID.GENRE, parent=rock_genre)
-        punk_hardcore_genre = G(Criteria,
-                                name="Punk hardcore",
-                                user=self.test_user,
-                                type=CRITERIA_TYPES_ID.GENRE,
-                                parent=punk_genre)
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
+        punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
 
         data = {PUT_FIELD.PARENT: ""}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)  # type: ignore
-        assert response.status_code == status.HTTP_200_OK  # type: ignore
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.root == punk_genre
-        updated_punk_hardcore_genre = Criteria.objects.get(uuid=punk_hardcore_genre.uuid)  # type: ignore
-        assert updated_punk_hardcore_genre.root == punk_genre
+        updated_punkhardcore_genre = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
+        assert updated_punkhardcore_genre.root == punk_genre

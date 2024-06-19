@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 
-import logging
 from typing import Optional
 
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
-
-
-logger = logging.getLogger('bodzify_api')
 
 
 class ApiTestCase(AppTestCase):

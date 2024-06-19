@@ -3,7 +3,7 @@
 from rest_framework import status, viewsets
 from django.contrib.auth.models import User
 from rest_framework.response import Response
-from bodzify_api.serializer.UserSerializer import UserSerializer
+from bodzify_api.serializer.user.detailed import UserSerializer
 from rest_framework.permissions import IsAdminUser
 
 

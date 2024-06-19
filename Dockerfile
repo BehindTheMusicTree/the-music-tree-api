@@ -2,58 +2,53 @@
 
 FROM python:3.11-buster 
 
-ARG secretKey
-ARG env
-ARG dbUsername
-ARG dbPassword
-ARG dbDatabase
-ARG dbHost
-ARG dbPort
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DockerHome=/home/app/webapp \
+    MediaDir=/home/app/webapp/lib/bodzify-api/media \
+    LibrariesDir=${MediaDir}/libraries \
+    LogDir=/home/app/webapp/log/ \
+    DjangoLogDir=${LogDir}django/ \
+    GunicornLogDir=${LogDir}gunicorn/ \
+    TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
 
-ENV SECRET_KEY=$secretKey
-ENV ENV=$env
-ENV DB_USERNAME=$dbUsername
-ENV DB_PASSWORD=$dbPassword
-ENV DB_DATABASE=$dbDatabase
-ENV DB_HOST=$dbHost
-ENV DB_PORT=$dbPort
+RUN apt-get update && \
+    apt-get install -y gosu && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# To run gunicorn as a non-root user without password prompt
-RUN apt-get update && apt-get install -y gosu
-
-# Prevents Python from writing pyc files to disc
-ENV PYTHONDONTWRITEBYTECODE 1 
-# Prevents Python from buffering stdout and stderr
-ENV PYTHONUNBUFFERED 1
-
-ENV DockerHome=/home/app/webapp
-RUN mkdir -p $DockerHome
-WORKDIR $DockerHome
+RUN mkdir -p $DockerHome \
+    ${DockerHome}/staticfiles \
+    $LibrariesDir \
+    $LogDir \
+    $DjangoLogDir \
+    $GunicornLogDir \
+    $TempUploadedFilesDir && \
+    touch ${DjangoLogDir}requests.log \
+    ${DjangoLogDir}requests.debug.log \
+    ${DjangoLogDir}general.log \
+    ${DjangoLogDir}info.log \
+    ${DjangoLogDir}django.log \
+    ${DjangoLogDir}bodzify-api.log \
+    ${GunicornLogDir}error.log \
+    ${GunicornLogDir}access.log && \
+    chmod 777 -R $LibrariesDir $GunicornLogDir $TempUploadedFilesDir
 
 COPY . $DockerHome
 
+RUN ls -la $DockerHome
 
-ENV MediaDir=/home/app/webapp/lib/bodzify-api/media
-ENV LibrariesDir=${MediaDir}/libraries
-ENV LogDir=/home/app/webapp/log/
-ENV DjangoLogDir=${LogDir}django/
-ENV GunicornLogDir=${LogDir}gunicorn/
-
-RUN mkdir ${DockerHome}/staticfiles && \
-    mkdir -p $LibrariesDir && \
-    mkdir -p $LogDir && \
-    mkdir $DjangoLogDir && \
-    touch ${DjangoLogDir}requests.log && \
-    touch ${DjangoLogDir}requests.debug.log && \
-    touch ${DjangoLogDir}general.log && \
-    touch ${DjangoLogDir}info.log && \
-    touch ${DjangoLogDir}django.log && \
-    touch ${DjangoLogDir}bodzify-api.log && \
-    mkdir -p $GunicornLogDir && \
-    touch ${GunicornLogDir}error.log && \
-    touch ${GunicornLogDir}access.log && \
-    chmod 777 -R $LibrariesDir ${GunicornLogDir} && \
-    pip install --upgrade pip && \
+RUN pip install --upgrade pip && \
     pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
-    chown -R www-data:www-data /opt/bodzify-api && \
-    python manage.py collectstatic --noinput
+    rm -rf /root/.cache/pip/*
+
+RUN apt update && \
+    apt install -y flac ffmpeg libchromaprint-tools && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN chown -R www-data:www-data /opt/bodzify-api
+
+RUN python manage.py collectstatic --noinput
+
+WORKDIR $DockerHome

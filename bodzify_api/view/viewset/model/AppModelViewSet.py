@@ -2,16 +2,18 @@
 
 from abc import abstractmethod
 import re
+
 from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from django.http import QueryDict
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.serializers import ModelSerializer
+from rest_framework.permissions import IsAuthenticated
+
 from bodzify_api.service.Service import Service
 from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
-from rest_framework.serializers import ModelSerializer
-from rest_framework.permissions import IsAuthenticated
 
 
 class PAGINATED_RESPONSE_FIELDS:

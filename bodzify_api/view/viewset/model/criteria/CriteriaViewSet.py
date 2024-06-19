@@ -4,15 +4,15 @@ from django.db import transaction
 from rest_framework.serializers import ModelSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from bodzify_api.serializer.criteria.input.schema.CriteriaSchemaSerializer import CriteriaSaveSchemaSerializer
-from bodzify_api.serializer.criteria.output.CriteriaDetailedSerializer import CriteriaDetailedSerializer
+from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSchemaSerializer
+from bodzify_api.serializer.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
-from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
 
 
 class FILTER_FIELDS:
-    NAME = CRITERIA_ATTRIBUTES_LABEL.NAME
-    PARENT = CRITERIA_ATTRIBUTES_LABEL.PARENT
+    NAME = ATTRIBUTES_LABEL.NAME
+    PARENT = ATTRIBUTES_LABEL.PARENT
 
 
 class CriteriaViewSet(AppModelViewSet):
@@ -22,8 +22,8 @@ class CriteriaViewSet(AppModelViewSet):
         'default': CriteriaDetailedSerializer,
         'list':  CriteriaDetailedSerializer,
         'retrieve':  CriteriaDetailedSerializer,
-        'create':  CriteriaSaveSchemaSerializer,
-        'update':  CriteriaSaveSchemaSerializer,
+        'create':  CriteriaSchemaSerializer,
+        'update':  CriteriaSchemaSerializer,
     }
 
     def get_queryset(self):
@@ -41,13 +41,13 @@ class CriteriaViewSet(AppModelViewSet):
                 parent = parentParameter
             queryset = queryset.filter(parent=parent)
 
-        return queryset
+        return queryset.order_by(ATTRIBUTES_LABEL.NAME)
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return CriteriaDetailedSerializer(instance=instance)  # type: ignore
 
     @transaction.atomic
-    @extend_schema(request=CriteriaSaveSchemaSerializer, responses=CriteriaDetailedSerializer)
+    @extend_schema(request=CriteriaSchemaSerializer, responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         return self._create(request, *args, **kwargs)
 
@@ -63,7 +63,7 @@ class CriteriaViewSet(AppModelViewSet):
         return self._list(request, *args, **kwargs)
 
     @transaction.atomic
-    @extend_schema(request=CriteriaSaveSchemaSerializer,
+    @extend_schema(request=CriteriaSchemaSerializer,
                    responses=CriteriaDetailedSerializer,
                    description=("""Updates a criteria"""))
     def update(self, request, *args, **kwargs):

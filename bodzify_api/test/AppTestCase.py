@@ -1,95 +1,82 @@
 #!/usr/bin/env python
 
 import inspect
-import logging
 import os
-import shutil
 from pathlib import Path
 from rest_framework import status
+from typing import Optional
+
 
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import AccessToken
 from django.core.management import call_command
 
-import bodzify_api.settings as settings
-
-
-logger = logging.getLogger('bodzify_api')
+from bodzify_api.test.AppApiClient import AppApiClient
+from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
+from bodzify_api.test.TestUser import TestUser
+from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
 
 
 class AppTestCase(TestCase):
-
     TEST_USERNAME = "pytest_user"
     SAMPLE_DIR_NAME = "sample"
     LIB_SAMPLE_DIR_NAME = "library"
     INPUT_SAMPLE_DIR_NAME = "input"
     GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR = Path("utils/generic_file_sample")
+    LIB_TRACK_DEFAULT_FILENAME_WITH_EXTENSION = "default.mp3"
 
-    test_user_lib_path_relative_to_media_dir = Path()
+    api_client: AppApiClient
 
-    def setUp(self) -> None:
-        call_command('loaddata', 'app', 'pytest_user')
-        self.api_client = APIClient()
-        self.test_user = User.objects.get(username=self.TEST_USERNAME)
-        self.__set_up_test_user_directories()
-        if os.path.isdir(self.lib_sample_dir_abs_path):
-            self.__copy_lib_samples_to_test_user_lib()
-        self.__login(self.test_user)
-        return super().setUp()
+    @staticmethod
+    def _merge_two_dicts(dict1, dict2):
+        dict1.update(dict2)
+        return dict1
 
-    def __set_up_test_user_directories(self):
-        test_user_lib_abs_path = settings.LIB_PATH / Path(settings.USER_LIB_DIR_NAME_PREFIXE + str(self.test_user.pk))
-        if not test_user_lib_abs_path.exists():
-            os.makedirs(test_user_lib_abs_path)
+    @staticmethod
+    def _replace_none_values_by_empty_string(data_dict):
+        if data_dict is None:
+            return {}
+        return {k: ('' if v is None else v) for k, v in data_dict.items()}
 
-        self.generic_sample_dir_abs_path = \
-            Path(os.path.dirname(os.path.abspath(__file__))) / self.GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR
-
+    def _set_up_test_directories_and_variables(self):
         specific_test_dir_abs_path = Path(os.path.dirname(inspect.getfile(self.__class__)))
         specific_test_sample_dir_abs_path = specific_test_dir_abs_path / self.SAMPLE_DIR_NAME
         self.lib_sample_dir_abs_path = specific_test_sample_dir_abs_path / self.LIB_SAMPLE_DIR_NAME
         self.specific_sample_dir_abs_path = specific_test_sample_dir_abs_path / self.INPUT_SAMPLE_DIR_NAME
+        self.generic_sample_dir_abs_path = Path(os.path.dirname(os.path.abspath(__file__))) \
+            / self.GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR
+        self.lib_track_default_file_abs_path = \
+            self.generic_sample_dir_abs_path / self.LIB_TRACK_DEFAULT_FILENAME_WITH_EXTENSION
 
-        self.test_user_lib_path_relative_to_media_dir = \
-            Path(settings.LIB_DIR_NAME) / (settings.USER_LIB_DIR_NAME_PREFIXE + str(self.test_user.pk))
-        self.test_user_lib_abs_path = settings.MEDIA_ROOT / self.test_user_lib_path_relative_to_media_dir
-        self.__empty_user_library()
+    def _set_results_attributes(self, response):
+        self.results = response.json()[PAGINATED_RESPONSE_FIELDS.RESULTS]
+        self.overall_total = response.json()[PAGINATED_RESPONSE_FIELDS.OVERALL_TOTAL]
 
-    def __login(self, user):
+    def _set_result(self, response):
+        self.result = response.json()
+
+    def __login(self, user: User):
         self.api_client.force_authenticate(user=user)
         AccessToken.for_user(user)
         self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
-        response = self.api_client.get(path=reverse('playlist-list'), format='json')
+    def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
+        call_command('loaddata', 'app', 'pytest_user')
+        self.api_client = AppApiClient()
+        self._set_up_test_directories_and_variables()
+        self.test_user = TestUser(username=self.TEST_USERNAME,
+                                  lib_track_default_file_abs_path=self.lib_track_default_file_abs_path)
+        self.model_fixture_factory = ModelFixtureFactory(test_user=self.test_user)
+        if os.path.isdir(self.lib_sample_dir_abs_path):
+            for file_relative_path in os.listdir(self.lib_sample_dir_abs_path):
+                self.test_user.copy_file_to_lib(self.lib_sample_dir_abs_path / file_relative_path)
+        self.__login(self.test_user.django_user)
 
-        if response.status_code == status.HTTP_200_OK:  # type: ignore
-            assert True
-        elif response.status_code == status.HTTP_401_UNAUTHORIZED:  # type: ignore
-            print("Not authenticated.")
-            assert False
-        else:
-            print(f"Unexpected : {response.status_code}")  # type: ignore
-            assert False
+        super().setUp()
 
-    def __empty_user_library(self):
-        for filename in os.listdir(self.test_user_lib_abs_path):
-            filePath = os.path.join(self.test_user_lib_abs_path, filename)
-            try:
-                if os.path.isfile(filePath) or os.path.islink(filePath):
-                    os.unlink(filePath)
-                elif os.path.isdir(filePath):
-                    shutil.rmtree(filePath)
-            except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (filePath, e))
-
-    def __copy_lib_samples_to_test_user_lib(self):
-        filenames = os.listdir(self.lib_sample_dir_abs_path)
-        for filename in filenames:
-            shutil.copy(self.lib_sample_dir_abs_path / filename,
-                        self.test_user_lib_abs_path)
-
-    def _does_track_filename_exist_in_test_user_lib(self, filename: str):
-        return os.path.isfile(self.test_user_lib_abs_path / filename)
+        if methods_names_to_implement is not None:
+            for method_name in methods_names_to_implement:
+                if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
+                    raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")

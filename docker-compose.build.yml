@@ -4,7 +4,7 @@ services:
   web:
     working_dir: /home/app/webapp
     environment:
-      - DOCKER_REPO=${DOCKER_REPO}
-      - DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}
-    image: $DOCKER_REPO:$DOCKER_IMAGE_TAG
+      - IMAGE_REPO=${IMAGE_REPO}
+      - IMAGE_TAG=${IMAGE_TAG}
+    image: $IMAGE_REPO:IMAGE_TAG
     build: .

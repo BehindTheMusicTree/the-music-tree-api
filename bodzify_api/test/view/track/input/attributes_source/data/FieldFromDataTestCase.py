@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from requests import post
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.endpoint.post import FIELDS as POST_FIELDS
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
@@ -24,7 +24,7 @@ class FieldStrFromDataTestCase(FieldFromDataTestCase):
             raise NotImplementedError("post_field_key is not set")
         data = {self.post_field_key: ["value", "value2"], }
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 class FieldIntFromDataTestCase(FieldFromDataTestCase):
@@ -34,7 +34,7 @@ class FieldIntFromDataTestCase(FieldFromDataTestCase):
             raise NotImplementedError("post_field_key is not set")
         data = {self.post_field_key: [1, 2]}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 class NullableStrFieldFromDataTestCase(FieldStrFromDataTestCase):
@@ -60,4 +60,4 @@ class NonNullableStrFieldFromDataTestCase(FieldStrFromDataTestCase):
     def test_empty_then_error(self):
         data = {self.post_field_key: ""}
         response = self.post_lib_track_with_generic_sample_no_tags(extension='mp3', data_dict=data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST  # type: ignore
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

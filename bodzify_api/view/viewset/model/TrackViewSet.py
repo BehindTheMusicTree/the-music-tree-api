@@ -12,11 +12,11 @@ from rest_framework.serializers import ModelSerializer
 import bodzify_api.view.utility as utility
 from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.LibTrackExtractSerializer import LibTrackExtractSerializer
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import LibTrackPostSerializer
-from bodzify_api.serializer.track.input.LibTrackSchemaSerializer import FIELDS as SAVE_SCHEMA_FIELDS
-from bodzify_api.serializer.track.input.endpoint.LibTrackPutSerializer import LibTrackPutSerializer
-from bodzify_api.serializer.track.output.LibTrackDetailedSerializer import LibTrackDetailedSerializer
+from bodzify_api.serializer.track.input.endpoint.extract import LibTrackExtractSerializer
+from bodzify_api.serializer.track.input.endpoint.post import LibTrackPostSerializer
+from bodzify_api.serializer.track.input.schema import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import LibTrackPutSerializer
+from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
@@ -36,6 +36,7 @@ class TrackViewSet(AppModelViewSet):
         'default': LibTrackDetailedSerializer,
         'list':  LibTrackDetailedSerializer,
         'retrieve':  LibTrackDetailedSerializer,
+        'create': LibTrackPostSerializer,
         'update':  LibTrackDetailedSerializer,
     }
 
@@ -60,7 +61,7 @@ class TrackViewSet(AppModelViewSet):
             queryset = queryset.filter(genre__name__icontain=genre_name_filter)
         if language_filter is not None:
             queryset = queryset.filter(language__icontains=language_filter)
-        return queryset
+        return queryset.order_by(f"-{LIB_TRACK_ATTRIBUTES_LABEL.CREATED_ON}")
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return LibTrackDetailedSerializer(instance=instance)  # type: ignore
@@ -135,8 +136,8 @@ class TrackViewSet(AppModelViewSet):
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
         track = LibraryTrack.objects.get(uuid=pk)
-        if track.file_obj:
-            return utility.get_file_response(filePath=track.file_obj.file.path, filename=track.file_obj.file.name)
+        if track.track_file:
+            return utility.get_file_response(filePath=track.track_file.file.path, filename=track.track_file.file.name)
         else:
             return HttpResponse(
                 content="The requested track's file is missing.",

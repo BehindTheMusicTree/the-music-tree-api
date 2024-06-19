@@ -2,7 +2,7 @@
 
 import pytest
 from bodzify_api.test import conftest
-from bodzify_api.serializer.track.input.endpoint.LibTrackPostSerializer import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.endpoint.post import FIELDS as POST_FIELDS
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
@@ -16,11 +16,11 @@ class RatingTestCase(FieldIntFromDataTestCase):
         value = 1
         data = {POST_FIELDS.RATING: value}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.rating == value
 
     def test_empty_then_none(self):
         data = {POST_FIELDS.RATING: ""}
         response = self.post_lib_track_with_generic_sample_1_star(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED  # type: ignore
+        assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.rating == None

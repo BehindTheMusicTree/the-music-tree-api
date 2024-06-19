@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 from django.db import models
-from bodzify_api import settings
-from bodzify_api.model.playlist.Playlist import Playlist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+
+from bodzify_api.settings import settings
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 TYPE_LABEL = "simple"
 
@@ -12,16 +13,17 @@ class SPECIAL_NAMES:
 
 
 class ATTRIBUTES_LABEL:
-    PLAYLIST = 'playlist'
+    BASE_PLAYLIST = 'base_playlist'
     NAME = 'name'
 
 
 class SimplePlaylist(models.Model):
-    playlist = models.OneToOneField(Playlist,
-                                    on_delete=models.CASCADE,
-                                    primary_key=True,
-                                    related_name=PLAYLIST_ATTRIBUTES_LABEL.SIMPLE_PLAYLIST)
-    name = models.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LENGTH_MAX, blank=False, null=False)
+    base_playlist = models.OneToOneField(BasePlaylist,
+                                         on_delete=models.CASCADE,
+                                         primary_key=True,
+                                         related_name=PLAYLIST_ATTRIBUTES_LABEL.SIMPLE_PLAYLIST)
+    name = models.CharField(max_length=settings.SIMPLE_PLAYLIST_NAME_LEN_MAX, blank=False, null=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
         constraints = [
@@ -29,3 +31,6 @@ class SimplePlaylist(models.Model):
                 check=~models.Q(name=""), name="simple_playlist_non_empty_name"
             )
         ]
+        db_table = 'bodzify_api_simple_playlist'
+        verbose_name = 'Simple Playlist'
+        verbose_name_plural = 'Simple Playlists'
