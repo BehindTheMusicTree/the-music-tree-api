@@ -68,7 +68,7 @@ jobs:
             -v /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/ \
             -e ENV=TEST \
             -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ secrets.AUDIO_FINGERPRINTER_IMAGE_TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
 
       - name: Run db service
         run: |
@@ -83,7 +83,7 @@ jobs:
             --health-interval=10s \
             --health-timeout=5s \
             --health-retries=3 \
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DB_IMAGE_REPO }}:${{ secrets.DB_IMAGE_TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
 
       - name: Init db
         run: ${{ github.workspace }}/scripts/data/db_init.sh
