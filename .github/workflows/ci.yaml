@@ -61,6 +61,15 @@ jobs:
       - name: Set up filesystem
         run: bash scripts/filesystem/filesystem_setup.ci_test.sh
 
+      # - name: Run audio-fingerprinter service
+      #   run: |
+      #     docker run -d \
+      #       -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
+      #       -v /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/ \
+      #       -e ENV=TEST \
+      #       -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
+      #       ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
+
       - name: Run audio-fingerprinter service
         run: |
           docker run -d \
@@ -68,7 +77,7 @@ jobs:
             -v /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/ \
             -e ENV=TEST \
             -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/bodzify-audio-fingerprinter-flask:latest
 
       - name: Run db service
         run: |
