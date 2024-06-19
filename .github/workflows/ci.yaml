@@ -64,21 +64,21 @@ jobs:
       - name: Run audio-fingerprinter service
         run: |
           docker run -d \
-            -p 3000:3000 \
+            -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
             -v /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/ \
             -e ENV=TEST \
-            -e APP_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }} \
+            -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ secrets.AUDIO_FINGERPRINTER_IMAGE_TAG }}
 
       - name: Run db service
         run: |
           docker run -d \
-            -p 5432:5432 \
-            -e POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }} \
-            -e POSTGRES_USER=${{ secrets.DB_SUPERUSER_NAME }} \
-            -e POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }} \
-            -e POSTGRES_PORT=${{ secrets.DB_PORT }} \
-            --name=${{ secrets.CI_TEST_DB_CONTAINER_NAME }} \
+            -p ${{ env.DB_PORT}}:${{ env.DB_PORT}} \
+            -e POSTGRES_DB=${{ env.DB_BODZIFY_API_DB_NAME }} \
+            -e POSTGRES_USER=${{ env.DB_SUPERUSER_NAME }} \
+            -e POSTGRES_PASSWORD=${{ env.DB_SUPERUSER_PASSWORD }} \
+            -e POSTGRES_PORT=${{ env.DB_PORT }} \
+            --name=${{ env.DB_CONTAINER_NAME }} \
             --health-cmd="pg_isready" \
             --health-interval=10s \
             --health-timeout=5s \
