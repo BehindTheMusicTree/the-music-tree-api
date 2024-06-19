@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import psycopg2
-import hashlib
 import datetime
 import os
 from pathlib import Path
@@ -81,7 +79,7 @@ ATOMIC_REQUESTS = True
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
 
@@ -199,7 +197,7 @@ ALLOWED_HOSTS = []
 STATICFILES_DIRS = []
 STATIC_ROOT = ''
 MEDIA_ROOT = ''
-FILE_UPLOAD_TEMP_DIR = ''
+FILE_UPLOAD_TEMP_DIR = '/tmp/bodzify-api/uploaded-files/'
 
 if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST]:
     import bodzify_api.settings.settings_dev_or_github_ci_test as settings_dev_or_github_ci_test
@@ -209,7 +207,6 @@ if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST]:
     STATIC_ROOT = settings_dev_or_github_ci_test.STATIC_ROOT
     LOG_PATH = settings_dev_or_github_ci_test.LOG_PATH
     JWT_AUTH = settings_dev_or_github_ci_test.JWT_AUTH
-    FILE_UPLOAD_TEMP_DIR = settings_dev_or_github_ci_test.FILE_UPLOAD_TEMP_DIR
 elif ENV == ENV_VALUES.TEST:
     import bodzify_api.settings.settings_test as settings_test
     CORS_ALLOWED_ORIGINS = settings_test.CORS_ALLOWED_ORIGINS
@@ -220,10 +217,11 @@ elif ENV == ENV_VALUES.TEST:
     MEDIA_ROOT = settings_test.MEDIA_ROOT
     STATIC_ROOT = settings_test.STATIC_ROOT
     LOG_PATH = settings_test.LOG_PATH
-    FILE_UPLOAD_TEMP_DIR = settings_test.FILE_UPLOAD_TEMP_DIR
 else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = BASE_DIR / 'media'
+
+print('FILE_UPLOAD_TEMP_DIR', FILE_UPLOAD_TEMP_DIR)
 
 LIB_DIR_NAME = 'libraries'
 LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME
