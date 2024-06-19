@@ -8,7 +8,6 @@ import random
 from typing import Optional
 import acoustid
 import string
-from tempfile import NamedTemporaryFile
 import requests
 import tempfile
 import datetime
