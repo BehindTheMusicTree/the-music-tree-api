@@ -34,33 +34,6 @@ jobs:
       AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
       ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
 
-    services:
-      audio-fingerprinter:
-        image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
-        ports:
-          - 3000:3000
-        volumes:
-          - /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/
-        env:
-          ENV: TEST
-          APP_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
-
-      db:
-        image: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: ${{ env.DB_BODZIFY_API_DB_NAME }}
-          POSTGRES_USER: ${{ env.DB_SUPERUSER_NAME }}
-          POSTGRES_PASSWORD: ${{ env.DB_SUPERUSER_PASSWORD }}
-          POSTGRES_PORT: ${{ env.DB_PORT }}
-        options: >-
-          --name=${{ vars.CI_TEST_DB_CONTAINER_NAME }}
-          --health-cmd pg_isready 
-          --health-interval 10s 
-          --health-timeout 5s 
-          --health-retries 3
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -86,7 +59,31 @@ jobs:
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
 
       - name: Set up filesystem
-        run: bash scripts/filesystem/filesystem_setup.github_ci_test.sh
+        run: bash scripts/filesystem/filesystem_setup.ci_test.sh
+
+      - name: Run audio-fingerprinter service
+        run: |
+          docker run -d \
+            -p 3000:3000 \
+            -v /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/ \
+            -e ENV=TEST \
+            -e APP_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }} \
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ secrets.AUDIO_FINGERPRINTER_IMAGE_TAG }}
+
+      - name: Run db service
+        run: |
+          docker run -d \
+            -p 5432:5432 \
+            -e POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }} \
+            -e POSTGRES_USER=${{ secrets.DB_SUPERUSER_NAME }} \
+            -e POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }} \
+            -e POSTGRES_PORT=${{ secrets.DB_PORT }} \
+            --name=${{ secrets.CI_TEST_DB_CONTAINER_NAME }} \
+            --health-cmd="pg_isready" \
+            --health-interval=10s \
+            --health-timeout=5s \
+            --health-retries=3 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DB_IMAGE_REPO }}:${{ secrets.DB_IMAGE_TAG }}
 
       - name: Init db
         run: ${{ github.workspace }}/scripts/data/db_init.sh
