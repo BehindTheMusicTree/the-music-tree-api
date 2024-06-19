@@ -3,13 +3,21 @@
 projectDir=~/git/bodzify-api-django/
 managePath=${projectDir}manage.py
 
-# Load env variables from file
+# Load env variables from .env file
 export $(grep -v '^#' ${projectDir}.env | xargs)
 
-docker exec -u postgres DB \
-psql -c "CREATE ROLE $DB_BODZIFY_API_USERNAME WITH LOGIN PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
+echo $DB_BODZIFY_API_DB_NAME
+echo $DB_BODZIFY_API_USERNAME
+echo $DB_BODZIFY_API_USER_PASSWORD
+echo $DB_BODZIFY_API_PORT
 docker exec -u postgres DB psql -c "DROP DATABASE IF EXISTS $DB_BODZIFY_API_DB_NAME;"
-docker exec -u postgres DB psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME WITH OWNER $DB_BODZIFY_API_USERNAME;"
+docker exec -u postgres DB psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;"
+docker exec -u postgres DB \
+psql -c "DROP ROLE IF EXISTS $DB_BODZIFY_API_USERNAME;"
+docker exec -u postgres DB \
+psql -c "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
+docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME \
+psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;"
 
 sudo rm -r $projectDir/bodzify_api/migrations/*
 sudo rm -r $projectDir/media/libraries/*

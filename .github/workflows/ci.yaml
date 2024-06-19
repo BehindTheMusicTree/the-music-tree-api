@@ -15,19 +15,21 @@ jobs:
   pytest:
     name: Pytest
     runs-on: ubuntu-latest
+    environment: 
+      name: CI_TEST
     env:
-      ENV: GITHUB_CI_TEST
+      ENV: CI_TEST
       DEBUG: True
-      SECRET_KEY: ${{ secrets.CI_TEST_SECRET_KEY }}
+      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
-      DB_CONTAINER_NAME: ${{ vars.CI_TEST_DB_CONTAINER_NAME }}
-      DB_SUPERUSER_NAME: ${{ secrets.CI_TEST_DB_SUPERUSER_NAME }}
-      DB_SUPERUSER_PASSWORD: ${{ secrets.CI_TEST_DB_SUPERUSER_PASSWORD }}
-      DB_BODZIFY_API_DB_NAME: ${{ secrets.CI_TEST_DB_BODZIFY_API_DB_NAME }}
-      DB_BODZIFY_API_USERNAME: ${{ secrets.CI_TEST_DB_BODZIFY_API_USERNAME }}
-      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.CI_TEST_DB_BODZIFY_API_USER_PASSWORD }}
-      DB_HOST: ${{ secrets.CI_TEST_DB_HOST }}
-      DB_PORT: ${{ secrets.CI_TEST_DB_PORT }}
+      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+      DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
+      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
+      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
+      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
+      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
 
       AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
       ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
@@ -100,6 +102,8 @@ jobs:
   build-and-push-to-dockerhub:
     name: Build / Push to Dockerhub
     runs-on: ubuntu-latest
+    environment: 
+      name: TEST
     needs: [pytest]
     steps:
       - name: Checkout code
@@ -119,6 +123,8 @@ jobs:
     name: Set environment variables on server
     runs-on: ubuntu-latest
     needs: [build-and-push-to-dockerhub]
+    environment: 
+      name: TEST
     steps:
       - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.9.0
@@ -136,12 +142,13 @@ jobs:
           ssh ${{ secrets.TEST_SERVER_SSH_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }} "
             rm -f $ENV_FILE_PATH &&
             echo 'ENV=TEST' >> $ENV_FILE_PATH &&
-            echo 'DJANGO_SECRET_KEY=${{ secrets.TEST_DJANGO_SECRET_KEY }}' >> $ENV_FILE_PATH &&
-            echo 'DB_USERNAME=${{ secrets.TEST_DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH && 
-            echo 'DB_PASSWORD=${{ secrets.TEST_DB_BODZIFY_API_USER_PASSWORD }}' >> $ENV_FILE_PATH &&
-            echo 'DB_DATABASE=${{ secrets.TEST_DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_HOST=${{ secrets.TEST_DB_HOST }}' >> $ENV_FILE_PATH &&
-            echo 'DB_PORT=${{ secrets.TEST_DB_PORT }}' >> $ENV_FILE_PATH &&
+            echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> $ENV_FILE_PATH &&
+            echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> $ENV_FILE_PATH &&
+            echo 'DB_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH && 
+            echo 'DB_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> $ENV_FILE_PATH &&
+            echo 'DB_DATABASE=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
+            echo 'DB_HOST=${{ secrets.DB_HOST }}' >> $ENV_FILE_PATH &&
+            echo 'DB_PORT=${{ secrets.DB_PORT }}' >> $ENV_FILE_PATH &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> $ENV_FILE_PATH &&
             echo 'TEST_AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> $ENV_FILE_PATH &&
           "

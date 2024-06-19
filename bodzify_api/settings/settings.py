@@ -13,7 +13,7 @@ dotenv.load_dotenv()
 
 class ENV_VALUES:
     DEV = 'DEV'
-    GITHUB_CI_TEST = 'GITHUB_CI_TEST'
+    CI_TEST = 'CI_TEST'
     BUILD = 'BUILD'
     TEST = 'TEST'
     PROD = 'PROD'
@@ -122,6 +122,7 @@ ROOT_URLCONF = 'bodzify_api.urls'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_BODZIFY_API_DB_NAME'),
         'USER': os.getenv('DB_BODZIFY_API_USERNAME'),
         'PASSWORD': os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
@@ -200,7 +201,7 @@ STATIC_ROOT = ''
 MEDIA_ROOT = ''
 FILE_UPLOAD_TEMP_DIR = ''
 
-if ENV in [ENV_VALUES.DEV, ENV_VALUES.GITHUB_CI_TEST]:
+if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST]:
     import bodzify_api.settings.settings_dev_or_github_ci_test as settings_dev_or_github_ci_test
     CORS_ALLOW_ALL_ORIGINS = settings_dev_or_github_ci_test.CORS_ALLOW_ALL_ORIGINS
     ALLOWED_HOSTS = settings_dev_or_github_ci_test.ALLOWED_HOSTS
