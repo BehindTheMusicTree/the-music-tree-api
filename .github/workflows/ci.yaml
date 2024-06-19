@@ -38,46 +38,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # - name: Setup Python ${{ matrix.python-version }}
-      #   uses: actions/setup-python@v3
-      #   with:
-      #      python-version: 3.11
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+           python-version: 3.11
 
-      # - name: Install requirements
-      #   run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
+      - name: Install requirements
+        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
 
-      # - name: Install chromaprint
-      #   run: sudo apt-get install libchromaprint-tools
+      - name: Install chromaprint
+        run: sudo apt-get install libchromaprint-tools
 
-      # - name: Install flac
-      #   run: sudo apt-get install flac # apt not stable for CLI interface
+      - name: Install flac
+        run: sudo apt-get install flac # apt not stable for CLI interface
 
-      # - name: Install ffmpeg
-      #   run: sudo apt-get install ffmpeg
+      - name: Install ffmpeg
+        run: sudo apt-get install ffmpeg
 
-      # - name: Add fpcalc to PATH
-      #   run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
+      - name: Add fpcalc to PATH
+        run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
 
       - name: Set up filesystem
         run: bash scripts/filesystem/filesystem_setup.ci_test.sh
-
-      # - name: Run audio-fingerprinter service
-      #   run: |
-      #     docker run -d \
-      #       -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
-      #       -v /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/ \
-      #       -e ENV=TEST \
-      #       -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
-      #       ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
 
       - name: Run audio-fingerprinter service
         run: |
           docker run -d \
             -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
-            -v /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/ \
+            -v /tmp/bodzify-api/uploaded-files/:${{ vars.AUDIO_FINGERPRINTER_POOL_DIR }} \
             -e ENV=TEST \
             -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
-            jiji/bodzify-audio-fingerprinter-flask:latest
+            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
 
       - name: Run db service
         run: |
