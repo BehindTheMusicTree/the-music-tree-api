@@ -83,7 +83,7 @@ jobs:
             --health-interval=10s \
             --health-timeout=5s \
             --health-retries=3 \
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
+            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
 
       - name: Init db
         run: ${{ github.workspace }}/scripts/data/db_init.sh
