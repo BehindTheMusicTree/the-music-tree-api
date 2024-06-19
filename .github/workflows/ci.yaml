@@ -89,12 +89,12 @@ jobs:
         run: bash scripts/filesystem/filesystem_setup.github_ci_test.sh
 
       - name: Init db
-        run: ${{ github.workspace }}/scripts/data/db_init.github_ci_test.sh
+        run: ${{ github.workspace }}/scripts/data/db_init.sh
         
       - name: Init django data
         env:
           MANAGE_PATH: ${{ github.workspace }}/manage.py
-        run: ${{ github.workspace }}/scripts/data/django_data_init.github_ci_test.sh
+        run: ${{ github.workspace }}/scripts/data/django_data_init.sh
 
       - name: Run pytest
         run: pytest
