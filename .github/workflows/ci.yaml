@@ -77,7 +77,7 @@ jobs:
             -v /tmp/bodzify-api/uploaded-files/:/tmp/bodzify-audio-fingerprinter/pool/ \
             -e ENV=TEST \
             -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
-            ${{ secrets.DOCKERHUB_USERNAME }}/bodzify-audio-fingerprinter-flask:latest
+            jiji/bodzify-audio-fingerprinter-flask:latest
 
       - name: Run db service
         run: |
