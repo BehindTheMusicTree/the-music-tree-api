@@ -119,8 +119,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to Dockerhub
+        run: |
+          echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
+          docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # Requirements installation is not in the dockerfile because it is needed by the static files collecting
+      - name: Install requirements
+        run: |
+          pip install --upgrade pip && \
+          pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
+
+      # As collecting static files use manage.py which is part of the app, the app's env variables are needed. As 
+      # passing env variables to a dockerfile poses risks, we do that in the CI.
+      - name: Collect static files
         env:
-          # manage.py collecstatic needs all the env variables
+          # manage.py collecstatic needs all the app's env variables
           ENV: TEST
           DEBUG: False
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
@@ -135,19 +148,6 @@ jobs:
 
           AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
           ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
-        run: |
-          echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
-          docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
-
-      # Requirements installation is not in the dockerfile because it is needed by the static files collecting
-      - name: Install requirements
-        run: |
-          pip install --upgrade pip && \
-          pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
-
-      # As collecting static files use manage.py which is part of the app, the app's env variables are needed. As 
-      # passing env variables to a dockerfile poses risks, we do that in the CI.
-      - name: Collect static files
         run: python ${{ github.workspace }}/manage.py collectstatic --noinput
 
       - name: Build and push
