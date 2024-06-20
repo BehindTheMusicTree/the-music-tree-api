@@ -32,7 +32,7 @@ jobs:
       DB_PORT: ${{ secrets.DB_PORT }}
 
       AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
-      ACOUSTID_API_KEY: ${{ secrets.CI_TEST_ACOUSTID_API_KEY }}
+      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
 
     steps:
       - name: Checkout code
