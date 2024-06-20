@@ -12,161 +12,161 @@ on:
         branches: [main, dev]
 
 jobs:
-  # pytest:
-  #   name: Pytest
-  #   runs-on: ubuntu-latest
-  #   environment: 
-  #     name: CI_TEST
-  #   env:
-  #     ENV: CI_TEST
-  #     DEBUG: True
-  #     DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-  #     LOG_DIR: ${{ vars.LOG_DIR }}
+  pytest:
+    name: Pytest
+    runs-on: ubuntu-latest
+    environment: 
+      name: CI_TEST
+    env:
+      ENV: CI_TEST
+      DEBUG: True
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      LOG_DIR: ${{ vars.LOG_DIR }}
 
-  #     DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
-  #     DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
-  #     DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
-  #     DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
-  #     DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
-  #     DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
-  #     DB_HOST: ${{ secrets.DB_HOST }}
-  #     DB_PORT: ${{ secrets.DB_PORT }}
+      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+      DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
+      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
+      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
+      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
+      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
 
-  #     AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
-  #     ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
+      AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
+      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  #     - name: Setup Python ${{ matrix.python-version }}
-  #       uses: actions/setup-python@v3
-  #       with:
-  #          python-version: 3.11
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+           python-version: 3.11
 
-  #     - name: Install requirements
-  #       run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
+      - name: Install requirements
+        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
 
-  #     - name: Install chromaprint
-  #       run: sudo apt-get install libchromaprint-tools
+      - name: Install chromaprint
+        run: sudo apt-get install libchromaprint-tools
 
-  #     - name: Install flac
-  #       run: sudo apt-get install flac # apt not stable for CLI interface
+      - name: Install flac
+        run: sudo apt-get install flac # apt not stable for CLI interface
 
-  #     - name: Install ffmpeg
-  #       run: sudo apt-get install ffmpeg
+      - name: Install ffmpeg
+        run: sudo apt-get install ffmpeg
 
-  #     - name: Add fpcalc to PATH
-  #       run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
+      - name: Add fpcalc to PATH
+        run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
 
-  #     - name: Set up filesystem
-  #       run: bash scripts/filesystem_setup.sh
+      - name: Set up filesystem
+        run: bash scripts/filesystem_setup.sh
 
-  #     - name: Run audio-fingerprinter service
-  #       run: |
-  #         docker run -d \
-  #           -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
-  #           -v /tmp/bodzify-api/uploaded-files/:${{ vars.AUDIO_FINGERPRINTER_POOL_DIR }} \
-  #           -e ENV=TEST \
-  #           -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
-  #           ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
+      - name: Run audio-fingerprinter service
+        run: |
+          docker run -d \
+            -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
+            -v /tmp/bodzify-api/uploaded-files/:${{ vars.AUDIO_FINGERPRINTER_POOL_DIR }} \
+            -e ENV=TEST \
+            -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
+            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
 
-  #     - name: Run db service
-  #       run: |
-  #         docker run -d \
-  #           -p ${{ env.DB_PORT}}:${{ env.DB_PORT}} \
-  #           -e POSTGRES_DB=${{ env.DB_BODZIFY_API_DB_NAME }} \
-  #           -e POSTGRES_USER=${{ env.DB_SUPERUSER_NAME }} \
-  #           -e POSTGRES_PASSWORD=${{ env.DB_SUPERUSER_PASSWORD }} \
-  #           -e POSTGRES_PORT=${{ env.DB_PORT }} \
-  #           --name=${{ env.DB_CONTAINER_NAME }} \
-  #           --health-cmd="pg_isready" \
-  #           --health-interval=10s \
-  #           --health-timeout=5s \
-  #           --health-retries=3 \
-  #           ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
+      - name: Run db service
+        run: |
+          docker run -d \
+            -p ${{ env.DB_PORT}}:${{ env.DB_PORT}} \
+            -e POSTGRES_DB=${{ env.DB_BODZIFY_API_DB_NAME }} \
+            -e POSTGRES_USER=${{ env.DB_SUPERUSER_NAME }} \
+            -e POSTGRES_PASSWORD=${{ env.DB_SUPERUSER_PASSWORD }} \
+            -e POSTGRES_PORT=${{ env.DB_PORT }} \
+            --name=${{ env.DB_CONTAINER_NAME }} \
+            --health-cmd="pg_isready" \
+            --health-interval=10s \
+            --health-timeout=5s \
+            --health-retries=3 \
+            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
         
-  #     - name: Wait for db service to start
-  #       run: |
-  #         attempts=0
-  #         max_attempts=5
-  #         while ! pg_isready -h localhost -p ${{ env.DB_PORT }}; do
-  #           if [ $attempts -eq $max_attempts ]; then
-  #             echo "DB service did not start within the expected time."
-  #             exit 1
-  #           fi
-  #           echo "Waiting for DB service to start..."
-  #           sleep 15
-  #           attempts=$((attempts+1))
-  #         done
+      - name: Wait for db service to start
+        run: |
+          attempts=0
+          max_attempts=5
+          while ! pg_isready -h localhost -p ${{ env.DB_PORT }}; do
+            if [ $attempts -eq $max_attempts ]; then
+              echo "DB service did not start within the expected time."
+              exit 1
+            fi
+            echo "Waiting for DB service to start..."
+            sleep 15
+            attempts=$((attempts+1))
+          done
 
-  #     - name: Init db
-  #       run: ${{ github.workspace }}/scripts/data/db_init.sh
+      - name: Init db
+        run: ${{ github.workspace }}/scripts/data/db_init.sh
         
-  #     - name: Init django data
-  #       run: ${{ github.workspace }}/scripts/data/django_data_init.sh
+      - name: Init django data
+        run: ${{ github.workspace }}/scripts/data/django_data_init.sh
 
-  #     - name: Run pytest
-  #       run: pytest
+      - name: Run pytest
+        run: pytest
 
-  # build-and-push-to-dockerhub:
-  #   name: Build / Push to Dockerhub
-  #   runs-on: ubuntu-latest
-  #   # needs: [pytest]
-  #   environment: 
-  #     name: TEST
-  #   env:
-  #     # manage.py collectstatic needs all the app's env variables
-  #     ENV: COLLECT_STATIC
-  #     DEBUG: False
-  #     DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-  #     LOG_DIR: ${{ vars.LOG_DIR }}
+  build-and-push-to-dockerhub:
+    name: Build / Push to Dockerhub
+    runs-on: ubuntu-latest
+    # needs: [pytest]
+    environment: 
+      name: TEST
+    env:
+      # manage.py collectstatic needs all the app's env variables
+      ENV: COLLECT_STATIC
+      DEBUG: False
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      LOG_DIR: ${{ vars.LOG_DIR }}
 
-  #     DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
-  #     DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
-  #     DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
-  #     DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
-  #     DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
-  #     DB_HOST: ${{ secrets.DB_HOST }}
-  #     DB_PORT: ${{ secrets.DB_PORT }}
+      DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
+      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
+      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
+      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
+      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
 
-  #     AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
-  #     ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+      AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
+      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Login to Dockerhub
-  #       run: |
-  #         echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
-  #         docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Login to Dockerhub
+        run: |
+          echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
+          docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
 
-  #     # Needed for collectstatic
-  #     - name: Set up filesystem
-  #       run: bash scripts/filesystem_setup.sh
+      # Needed for collectstatic
+      - name: Set up filesystem
+        run: bash scripts/filesystem_setup.sh
 
-  #     # Requirements installation is not in the dockerfile because it is needed by the static files collecting
-  #     - name: Install requirements
-  #       run: |
-  #         pip install --upgrade pip && \
-  #         pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
+      # Requirements installation is not in the dockerfile because it is needed by the static files collecting
+      - name: Install requirements
+        run: |
+          pip install --upgrade pip && \
+          pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache
 
-  #     # As collecting static files uses manage.py which is part of the app, the app's env variables are needed. As 
-  #     # passing env variables to a dockerfile poses risks, we do that in the CI.
-  #     - name: Collect static files
-  #       run: python ${{ github.workspace }}/manage.py collectstatic --noinput
+      # As collecting static files uses manage.py which is part of the app, the app's env variables are needed. As 
+      # passing env variables to a dockerfile poses risks, we do that in the CI.
+      - name: Collect static files
+        run: python ${{ github.workspace }}/manage.py collectstatic --noinput
 
-  #     - name: Build and push
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: .
-  #         push: true
-  #         tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.API_IMAGE_REPO }}:${{ vars.API_IMAGE_TAG }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.API_IMAGE_REPO }}:${{ vars.API_IMAGE_TAG }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
     runs-on: ubuntu-latest
-    # needs: [build-and-push-to-dockerhub]
+    needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
     steps:
