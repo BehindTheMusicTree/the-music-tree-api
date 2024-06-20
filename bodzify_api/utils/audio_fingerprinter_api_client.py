@@ -55,6 +55,7 @@ class AudioFingerprintGeneratorApiClient:
                                      json={POST_FIELDS.FILE_NAME: filename},
                                      headers={'Content-Type': 'application/json'})
             response_json = response.json()
+            print(response_json)
             if response.status_code == 200:
                 fingerprint_bytes = base64.b64decode(response_json[RESPONSE_FIELDS.OK.FINGERPRINT])
                 duration = response_json[RESPONSE_FIELDS.OK.DURATION]
