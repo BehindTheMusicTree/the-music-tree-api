@@ -36,10 +36,10 @@ RUN mkdir -p $DockerHome \
 
 COPY . $DockerHome
 
-RUN ls -la $DockerHome
+WORKDIR $DockerHome
 
 RUN pip install --upgrade pip && \
-    pip install -r $DockerHome/requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
+    pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     rm -rf /root/.cache/pip/*
 
 RUN apt update && \
@@ -50,5 +50,3 @@ RUN apt update && \
 RUN chown -R www-data:www-data /opt/bodzify-api
 
 RUN python manage.py collectstatic --noinput
-
-WORKDIR $DockerHome
