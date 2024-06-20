@@ -40,5 +40,3 @@ RUN apt update && \
     apt install -y flac ffmpeg libchromaprint-tools && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-RUN chown -R www-data:www-data /opt/bodzify-api
