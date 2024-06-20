@@ -5,6 +5,7 @@ bodzify_api/test/
 bodzify_api/settings_dev.py
 uploaded-files/
 media/
+log/
 __pycache__
 *.pyc
 *.pyo
