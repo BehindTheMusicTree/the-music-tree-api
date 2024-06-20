@@ -39,7 +39,7 @@ COPY . $DockerHome
 RUN ls -la $DockerHome
 
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
+    pip install -r $DockerHome/requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
     rm -rf /root/.cache/pip/*
 
 RUN apt update && \
