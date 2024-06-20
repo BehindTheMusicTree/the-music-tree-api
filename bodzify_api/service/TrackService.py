@@ -249,7 +249,6 @@ class TrackService(Service):
                                      fingerprint=fingerprint,
                                      duration=duration_in_sec,
                                      meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
-            print(str(lookup))
             if lookup[TrackService.MUSICBRAINZ_API.FIELDS.STATUS] == TrackService.MUSICBRAINZ_API.VALUES.STATUS.OK:
                 recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_API.FIELDS.RESULTS]
                 if len(recordings_grouped_by_score) > 0:
@@ -262,7 +261,6 @@ class TrackService(Service):
                 error_code = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.CODE]
                 error_message = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.MESSAGE]
                 exception_message = f"Error while getting musicbrainz recording ID: {error_code} - {error_message}"
-                print(exception_message)
                 raise MusicbrainzException(exception_message)
             else:
                 raise MusicbrainzException("Unknown error while getting musicbrainz recording ID")
