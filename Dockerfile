@@ -36,12 +36,6 @@ RUN mkdir -p $DockerHome \
 
 COPY . $DockerHome
 
-WORKDIR $DockerHome
-
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
-    rm -rf /root/.cache/pip/*
-
 RUN apt update && \
     apt install -y flac ffmpeg libchromaprint-tools && \
     apt-get clean && \
