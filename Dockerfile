@@ -48,5 +48,3 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN chown -R www-data:www-data /opt/bodzify-api
-
-RUN python manage.py collectstatic --noinput
