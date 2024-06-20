@@ -1,21 +1,28 @@
 #!/bin/bash
 
+SCRIPTS_DIR=$(dirname "$0")/
+
+# Load environment variables in the current shell
+source "${SCRIPTS_DIR}load_env_variables.sh"
+
 mediaDir=/var/lib/bodzify-api/media/
 sudo mkdir -p $mediaDir
 sudo chmod 775 $mediaDir
 sudo chown -R $USER $mediaDir
-
-logDir=/var/log/
-sudo mkdir $logDir
 
 tempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
 sudo mkdir -p $tempUploadedFilesDir
 sudo chmod 775 $tempUploadedFilesDir
 sudo chown -R $USER $tempUploadedFilesDir
 
-djangoLogDir=${logDir}django/
-sudo mkdir $djangoLogDir
+if [ -z "$ENV" ]
+then
+    djangoLogDir=$SCRIPTS_DIR../
+else
+    djangoLogDir=$LOG_DIR
+fi
 
+sudo mkdir -p $djangoLogDir
 sudo touch ${djangoLogDir}requests.log
 sudo touch ${djangoLogDir}requests.debug.log
 sudo touch ${djangoLogDir}exceptions.log
