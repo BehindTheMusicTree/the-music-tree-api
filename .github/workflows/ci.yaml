@@ -184,17 +184,19 @@ jobs:
         run: |
           ENV_FILE_PATH="${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.API_ENV_VARIABLES_FILENAME }}"
           ssh ${{ secrets.TEST_SERVER_SSH_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }} "
-            rm -f $ENV_FILE_PATH &&
-            echo 'ENV=TEST' >> $ENV_FILE_PATH &&
-            echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> $ENV_FILE_PATH &&
-            echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH && 
-            echo 'DB_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> $ENV_FILE_PATH &&
-            echo 'DB_DATABASE=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_HOST=${{ secrets.DB_HOST }}' >> $ENV_FILE_PATH &&
-            echo 'DB_PORT=${{ secrets.DB_PORT }}' >> $ENV_FILE_PATH &&
-            echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> $ENV_FILE_PATH &&
-            echo 'TEST_AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> $ENV_FILE_PATH &&
+              rm -f $ENV_FILE_PATH &&
+              echo '
+              ENV=TEST
+              DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+              DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}
+              DB_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}
+              DB_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+              DB_DATABASE=${{ secrets.DB_BODZIFY_API_DB_NAME }}
+              DB_HOST=${{ secrets.DB_HOST }}
+              DB_PORT=${{ secrets.DB_PORT }}
+              ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}
+              TEST_AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
+              ' >> $ENV_FILE_PATH
           "
 
   redeploy-webhook-call:
