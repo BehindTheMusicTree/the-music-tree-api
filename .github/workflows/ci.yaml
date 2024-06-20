@@ -189,9 +189,9 @@ jobs:
             echo 'DEBUG=True' >> $ENV_FILE_PATH &&
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> $ENV_FILE_PATH &&
             echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> $ENV_FILE_PATH &&
-            echo 'DB_DATABASE=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
+            echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
+            echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH &&
+            echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> $ENV_FILE_PATH &&
             echo 'DB_HOST=${{ secrets.DB_HOST }}' >> $ENV_FILE_PATH &&
             echo 'DB_PORT=${{ secrets.DB_PORT }}' >> $ENV_FILE_PATH &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> $ENV_FILE_PATH &&
