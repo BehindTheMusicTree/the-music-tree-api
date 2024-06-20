@@ -112,7 +112,7 @@ jobs:
   build-and-push-to-dockerhub:
     name: Build / Push to Dockerhub
     runs-on: ubuntu-latest
-    # needs: [pytest]
+    needs: [pytest]
     environment: 
       name: TEST
     env:
