@@ -12,6 +12,7 @@ dotenv.load_dotenv()
 class ENV_VALUES:
     DEV = 'DEV'
     CI_TEST = 'CI_TEST'
+    COLLECT_STATIC = 'COLLECT_STATIC'
     BUILD = 'BUILD'
     TEST = 'TEST'
     PROD = 'PROD'
@@ -219,14 +220,14 @@ STATIC_ROOT = ''
 MEDIA_ROOT = ''
 FILE_UPLOAD_TEMP_DIR = '/tmp/bodzify-api/uploaded-files/'
 
-if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST]:
-    import bodzify_api.settings.settings_dev_or_github_ci_test as settings_dev_or_github_ci_test
-    CORS_ALLOW_ALL_ORIGINS = settings_dev_or_github_ci_test.CORS_ALLOW_ALL_ORIGINS
-    ALLOWED_HOSTS = settings_dev_or_github_ci_test.ALLOWED_HOSTS
-    MEDIA_ROOT = settings_dev_or_github_ci_test.MEDIA_ROOT
-    STATIC_ROOT = settings_dev_or_github_ci_test.STATIC_ROOT
-    LOG_PATH = settings_dev_or_github_ci_test.LOG_PATH
-    JWT_AUTH = settings_dev_or_github_ci_test.JWT_AUTH
+if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST, ENV_VALUES.COLLECT_STATIC]:
+    import bodzify_api.settings.settings_dev_or_ci_test as settings_dev_or_ci_test
+    CORS_ALLOW_ALL_ORIGINS = settings_dev_or_ci_test.CORS_ALLOW_ALL_ORIGINS
+    ALLOWED_HOSTS = settings_dev_or_ci_test.ALLOWED_HOSTS
+    MEDIA_ROOT = settings_dev_or_ci_test.MEDIA_ROOT
+    STATIC_ROOT = settings_dev_or_ci_test.STATIC_ROOT
+    LOG_PATH = settings_dev_or_ci_test.LOG_PATH
+    JWT_AUTH = settings_dev_or_ci_test.JWT_AUTH
 elif ENV == ENV_VALUES.TEST:
     import bodzify_api.settings.settings_test as settings_test
     CORS_ALLOWED_ORIGINS = settings_test.CORS_ALLOWED_ORIGINS

@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-import bodzify_api
 from bodzify_api.settings import settings
 
 ALLOWED_HOSTS = ['127.0.0.1']

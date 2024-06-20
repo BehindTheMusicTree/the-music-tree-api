@@ -134,7 +134,7 @@ jobs:
       - name: Collect static files
         env:
           # manage.py collecstatic needs all the app's env variables
-          ENV: TEST
+          ENV: COLLECT_STATIC
           DEBUG: False
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
