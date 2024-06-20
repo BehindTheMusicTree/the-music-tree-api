@@ -194,7 +194,7 @@ jobs:
             echo 'DB_HOST=${{ secrets.DB_HOST }}' >> $ENV_FILE_PATH &&
             echo 'DB_PORT=${{ secrets.DB_PORT }}' >> $ENV_FILE_PATH &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> $ENV_FILE_PATH &&
-            echo 'TEST_AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> $ENV_FILE_PATH
+            echo 'AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> $ENV_FILE_PATH
           "
 
   redeploy-webhook-call:
