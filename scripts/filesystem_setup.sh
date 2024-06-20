@@ -15,7 +15,7 @@ sudo mkdir -p $tempUploadedFilesDir
 sudo chmod 775 $tempUploadedFilesDir
 sudo chown -R $USER $tempUploadedFilesDir
 
-if [ -z "$ENV" ]
+if [ -z "$LOG_DIR" ]
 then
     djangoLogDir=$SCRIPTS_DIR../
 else
