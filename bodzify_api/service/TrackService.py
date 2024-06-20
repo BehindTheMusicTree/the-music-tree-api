@@ -249,6 +249,7 @@ class TrackService(Service):
                                      fingerprint=fingerprint,
                                      duration=duration_in_sec,
                                      meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
+            print(str(lookup))
             if lookup[TrackService.MUSICBRAINZ_API.FIELDS.STATUS] == TrackService.MUSICBRAINZ_API.VALUES.STATUS.OK:
                 recordings_grouped_by_score = lookup[TrackService.MUSICBRAINZ_API.FIELDS.RESULTS]
                 if len(recordings_grouped_by_score) > 0:
