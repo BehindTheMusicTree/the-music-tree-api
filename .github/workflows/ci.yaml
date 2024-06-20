@@ -123,6 +123,22 @@ jobs:
 
       - name: Build and push
         uses: docker/build-push-action@v5
+        env:
+          # The build runs manage.py collecstatic so we need all the env variables the app needs
+          ENV: CI_TEST
+          DEBUG: True
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+
+          DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
+          DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
+          DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
+          DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
+          DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+
+          AUDIO_FINGERPRINTER_PORT: ${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}
+          ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
         with:
           context: .
           push: true
