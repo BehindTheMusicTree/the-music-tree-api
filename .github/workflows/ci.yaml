@@ -164,7 +164,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.API_IMAGE_REPO }}:${{ vars.API_IMAGE_TAG }}
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.IMAGE_REPO }}:${{ vars.IMAGE_TAG }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
