@@ -7,7 +7,7 @@ cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
     container_name: $CONTAINER_NAME
     command: >
       gunicorn bodzify_api.wsgi:application
-      --bind 0.0.0.0:8000
+      --bind 0.0.0.0:$APP_PORT
       --error-logfile=/home/app/webapp/log/gunicorn/error.log
       --log-level=info
     volumes:
@@ -17,7 +17,7 @@ cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-static-files:/home/app/webapp/staticfiles/
       - api-upload-temp-files:/tmp/bodzify-api/uploaded-files/
     expose:
-      - 8000
+      - $APP_PORT
     networks:
       - bodzify-network
     depends_on:
