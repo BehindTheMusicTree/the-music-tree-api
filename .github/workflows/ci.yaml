@@ -13,6 +13,8 @@ on:
 
 env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_SSH_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
+  DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+  IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
 
 jobs:
   pytest:
@@ -87,7 +89,7 @@ jobs:
             --health-interval=10s \
             --health-timeout=5s \
             --health-retries=3 \
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
+            ${{ env.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
         
       - name: Wait for db service to start
         run: |
@@ -142,7 +144,7 @@ jobs:
       - name: Login to Dockerhub
         run: |
           echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
-          docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
+          docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
 
       # Needed for collectstatic
       - name: Set up filesystem
@@ -164,7 +166,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.IMAGE_REPO }}:${{ vars.IMAGE_TAG }}
+          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ vars.IMAGE_TAG }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
