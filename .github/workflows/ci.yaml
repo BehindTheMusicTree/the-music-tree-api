@@ -188,6 +188,7 @@ jobs:
             echo 'ENV=TEST' >> $ENV_FILE_PATH &&
             echo 'DEBUG=True' >> $ENV_FILE_PATH &&
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> $ENV_FILE_PATH &&
+            echo 'LOG_DIR=${{ vars.LOG_DIR }}' >> $ENV_FILE_PATH &&
             echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> $ENV_FILE_PATH &&
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH &&
