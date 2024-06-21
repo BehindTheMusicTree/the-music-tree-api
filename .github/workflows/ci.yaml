@@ -233,7 +233,10 @@ jobs:
           API_CONTAINER_NAME: ${{ vars.API_CONTAINER_NAME }}
           API_ENV_VARIABLES_FILENAME: ${{ vars.API_ENV_VARIABLES_FILENAME }}
         run: |
-          bash ${{ github.workspace }}/scripts/generate_partial_docker_compose.sh
+          bash ${{ github.workspace }}/scripts/generate_docker_compose_part.sh
+
+      - name: Echo generated docker-compose part
+        run: cat ${{ github.workspace }}/scripts/${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
 
       - name: Transfer partial docker-compose on server
         run: |
