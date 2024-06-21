@@ -3,8 +3,8 @@ SCRPIT_DIR=$(dirname $0)/
 cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
   api:
     working_dir: /home/app/webapp/
-    image: $DOCKERHUB_USERNAME/$API_IMAGE_REPO:$API_IMAGE_TAG
-    container_name: $API_CONTAINER_NAME
+    image: $DOCKERHUB_USERNAME/$IMAGE_REPO:$IMAGE_TAG
+    container_name: $CONTAINER_NAME
     command: >
       gunicorn bodzify_api.wsgi:application
       --bind 0.0.0.0:8000
@@ -23,5 +23,5 @@ cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
     depends_on:
       - audio_fingerprinter
       - db
-    env_file: $API_ENV_VARIABLES_FILENAME
+    env_file: $ENV_VARIABLES_FILENAME
 EOF

@@ -209,11 +209,7 @@ jobs:
     environment: 
       name: TEST
     env:
-      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
       DOCKER_COMPOSE_PART_FILENAME: ${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
-      API_IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
-      API_IMAGE_TAG: ${{ vars.API_IMAGE_TAG }}
-      API_CONTAINER_NAME: ${{ vars.API_CONTAINER_NAME }}
 
     steps:
       - uses: actions/checkout@v4
@@ -228,15 +224,13 @@ jobs:
 
       - name: Generate partial docker compose file
         env:
-          API_IMAGE_REPO: ${{ vars.IMAGE_REPO }}
-          API_IMAGE_TAG: ${{ vars.IMAGE_TAG }}
-          API_CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
-          API_ENV_VARIABLES_FILENAME: ${{ vars.ENV_VARIABLES_FILENAME }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+          IMAGE_REPO: ${{ vars.IMAGE_REPO }}
+          IMAGE_TAG: ${{ vars.IMAGE_TAG }}
+          CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
+          ENV_VARIABLES_FILENAME: ${{ vars.ENV_VARIABLES_FILENAME }}
         run: |
           bash ${{ github.workspace }}/scripts/generate_docker_compose_part.sh
-
-      - name: Echo generated docker-compose part
-        run: cat ${{ github.workspace }}/scripts/${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
 
       - name: Transfer partial docker-compose on server
         run: |
