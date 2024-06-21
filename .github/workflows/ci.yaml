@@ -242,7 +242,8 @@ jobs:
 
   redeploy-webhook-call:
     name: Redeploy webhook call
-    needs: [set-env-variables-on-server]
+    needs: [set-partial-docker-compose-on-server]
+    # needs: [set-env-variables-on-server, set-partial-docker-compose-on-server]
     uses: Bodzify/bodzify-redeploy-webhook-action/.github/workflows/workflow.yml@main
     with:
       env: TEST
