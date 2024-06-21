@@ -12,7 +12,7 @@ on:
         branches: [main, dev]
 
 env:
-  SSH_DESTINATION=${{ secrets.TEST_SERVER_SSH_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
+  SSH_DESTINATION: ${{ secrets.TEST_SERVER_SSH_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
 
 jobs:
   # pytest:
