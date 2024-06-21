@@ -227,7 +227,6 @@ jobs:
       - name: Generate partial docker compose file
         env:
           DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
-          IMAGE_REPO: ${{ vars.IMAGE_REPO }}
           IMAGE_TAG: ${{ vars.IMAGE_TAG }}
           CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
           ENV_VARIABLES_FILENAME: ${{ vars.ENV_VARIABLES_FILENAME }}
