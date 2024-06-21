@@ -209,7 +209,11 @@ jobs:
     environment: 
       name: TEST
     env:
-      DOCKER_COMPOSE_PARTIAL_FILENAME: ${{ vars.DOCKER_COMPOSE_PARTIAL_FILENAME }}
+      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+      DOCKER_COMPOSE_PART_FILENAME: ${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
+      API_IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
+      API_IMAGE_TAG: ${{ vars.API_IMAGE_TAG }}
+      API_CONTAINER_NAME: ${{ vars.API_CONTAINER_NAME }}
 
     steps:
       - uses: actions/checkout@v4

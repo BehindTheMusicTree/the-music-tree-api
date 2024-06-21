@@ -1,4 +1,4 @@
-cat << EOF > $DOCKER_COMPOSE_PARTIAL_FILENAME
+cat << EOF > $DOCKER_COMPOSE_PART_FILENAME
   api:
     working_dir: /home/app/webapp/
     image: $DOCKERHUB_USERNAME/$API_IMAGE_REPO:$API_IMAGE_TAG
