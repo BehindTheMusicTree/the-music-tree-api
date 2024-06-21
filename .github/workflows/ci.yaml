@@ -15,6 +15,7 @@ env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_SSH_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
   IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
+  IMAGE_TAG: ${{ vars.IMAGE_TAG }}
 
 jobs:
   pytest:
@@ -166,7 +167,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ vars.IMAGE_TAG }}
+          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
