@@ -237,8 +237,8 @@ jobs:
 
       - name: Transfer partial docker-compose on server
         run: |
-          scp ${{ vars.DOCKER_COMPOSE_PART_FILENAME }} \
-          ${{ env.SSH_DESTINATION }}:${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}/
+          scp ${{ vars.DOCKER_COMPOSE_PART_FILENAME }} ${{ env.SSH_DESTINATION }}:\
+          ${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
 
   redeploy-webhook-call:
     name: Redeploy webhook call
