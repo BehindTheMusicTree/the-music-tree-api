@@ -32,15 +32,15 @@ class ATTRIBUTES_LABEL:
     BITRATE_IN_KBPS = 'bitrate_in_kbps'
 
 
-def _get_user_LIBRARIES_PATH(instance, filename):
+def _get_user_LIBRARIES_DIR(instance, filename):
     return '{0}{1}/{2}'.format(settings.LIBRARIES_DIR_NAME + '/' + settings.USER_LIBRARIES_DIR_NAME_PREFIXE,
                                instance.user.id,
                                filename)
 
 
-LIBRARIES_PATH_MAX_LENGTH = len(
+LIBRARIES_DIR_MAX_LENGTH = len(
     settings.LIBRARIES_DIR_NAME) + len(settings.USER_LIBRARIES_DIR_NAME_PREFIXE) + len(settings.USER_MAX_NUMBER)
-FILE_PATH_MAX_LENGTH = settings.LIB_TRACK_FILENAME_LEN_MAX + LIBRARIES_PATH_MAX_LENGTH
+FILE_PATH_MAX_LENGTH = settings.LIB_TRACK_FILENAME_LEN_MAX + LIBRARIES_DIR_MAX_LENGTH
 
 
 class PreserveSpacesStorage(FileSystemStorage):
@@ -50,7 +50,7 @@ class PreserveSpacesStorage(FileSystemStorage):
 
 class TrackFile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    file = models.FileField(upload_to=_get_user_LIBRARIES_PATH,
+    file = models.FileField(upload_to=_get_user_LIBRARIES_DIR,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
                             validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
