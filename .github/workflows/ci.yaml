@@ -249,9 +249,9 @@ jobs:
           AUDIO_FINGERPRINTER_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
-            rm -f ${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }} &&
-            echo 'ENV=TEST' >> ${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }} &&
-            echo 'APP_PORT=${{ secrets.APP_PORT }}' >> ${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }}
+            rm -f ${{ env.AUDIO_FINGERPRINTER_ENV_FILE_PATH }} &&
+            echo 'ENV=TEST' >> ${{ env.AUDIO_FINGERPRINTER_ENV_FILE_PATH }} &&
+            echo 'APP_PORT=${{ secrets.APP_PORT }}' >> ${{ env.AUDIO_FINGERPRINTER_ENV_FILE_PATH }}
           "
 
   set-partial-docker-compose-on-server:
