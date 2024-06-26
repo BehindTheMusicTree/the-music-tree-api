@@ -17,14 +17,6 @@ env:
   IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
   IMAGE_TAG: ${{ vars.IMAGE_TAG }}
   ENV_VARIABLES_FILENAME: ${{ vars.ENV_VARIABLES_FILENAME }}
-  APP_LOG_DIR: ${{ vars.APP_LOG_DIR }}
-  DJANGO_LOG_DIR: ${{ vars.APP_LOG_DIR }}django/
-  GUNICORN_LOG_DIR: ${{ vars.APP_LOG_DIR }}gunicorn/
-  MEDIA_DIR: ${{ vars.MEDIA_DIR }}
-  LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
-  LIBRARIES_DIR: ${{ vars.MEDIA_DIR }}${{ vars.LIBRARIES_DIR_NAME }}
-  TEMP_UPLOADED_FILES_DIR: ${{ vars.TEMP_UPLOADED_FILES_DIR }}
-  STATIC_FILES_DIR: ${{ vars.STATIC_FILES_DIR }}
 
 jobs:
   # pytest:
@@ -172,6 +164,15 @@ jobs:
 
       - name: Build and push
         uses: docker/build-push-action@v5
+        env:
+          APP_LOG_DIR: ${{ vars.APP_LOG_DIR }}
+          DJANGO_LOG_DIR: ${{ vars.APP_LOG_DIR }}django/
+          GUNICORN_LOG_DIR: ${{ vars.APP_LOG_DIR }}gunicorn/
+          MEDIA_DIR: ${{ vars.MEDIA_DIR }}
+          LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
+          LIBRARIES_DIR: ${{ vars.MEDIA_DIR }}${{ vars.LIBRARIES_DIR_NAME }}
+          TEMP_UPLOADED_FILES_DIR: ${{ vars.TEMP_UPLOADED_FILES_DIR }}
+          STATIC_FILES_DIR: ${{ vars.STATIC_FILES_DIR }}
         with:
           context: .
           push: true
