@@ -6,11 +6,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DockerHome=/home/app/webapp \
     MediaDir=/home/app/webapp/lib/bodzify-api/media \
-    LibrariesDir=${MediaDir}/libraries \
     LogDir=/home/app/webapp/log/ \
-    DjangoLogDir=${LogDir}django/ \
-    GunicornLogDir=${LogDir}gunicorn/ \
     TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
+
+RUN echo "export LibrariesDir=${MediaDir}/libraries" >> /etc/profile && \
+    echo "export DjangoLogDir=${LogDir}django/" >> /etc/profile && \
+    echo "export GunicornLogDir=${LogDir}gunicorn/" >> /etc/profile
 
 RUN apt-get update && \
     apt-get install -y gosu && \
