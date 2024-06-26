@@ -2,15 +2,15 @@
 
 FROM python:3.11-buster
 
-ARG LOG_DIR
+ARG APP_LOG_DIR
 
-RUN if [ -z "$LOG_DIR" ]; then echo "The LOG_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$APP_LOG_DIR" ]; then echo "The APP_LOG_DIR argument is not provided" >&2; exit 1; fi
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DockerHome=/home/app/webapp \
     MediaDir=/home/app/webapp/lib/bodzify-api/media/ \
-    LogDir=$LOG_DIR \
+    LogDir=$APP_LOG_DIR \
     TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
 
 RUN echo "export LibrariesDir=${MediaDir}libraries/" >> /etc/profile && \

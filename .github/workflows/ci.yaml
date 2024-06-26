@@ -127,7 +127,7 @@ jobs:
       ENV: COLLECT_STATIC
       DEBUG: False
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-      LOG_DIR: ${{ vars.LOG_DIR }}
+      DJANGO_LOG_DIR: ${{ vars.APP_LOG_DIR }}
 
       DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
       DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
@@ -171,7 +171,7 @@ jobs:
           push: true
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
           build-args: |
-            LOG_DIR=${{ env.LOG_DIR }}
+            APP_LOG_DIR=${{ env.APP_LOG_DIR }}
 
   set-env-variables-on-server:
     name: Set environment variables on server

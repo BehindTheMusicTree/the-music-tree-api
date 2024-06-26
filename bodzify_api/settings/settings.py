@@ -243,11 +243,11 @@ else:
 LIB_DIR_NAME = 'libraries'
 LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME
 
-LOG_DIR_ENV = os.getenv('LOG_DIR')
-if LOG_DIR_ENV is None:
-    LOG_DIR = BASE_DIR / 'log'
+DJANGO_LOG_DIR_ENV = os.getenv('DJANGO_LOG_DIR')
+if DJANGO_LOG_DIR_ENV is None:
+    DJANGO_LOG_DIR = BASE_DIR / 'log'
 else:
-    LOG_DIR = Path(LOG_DIR_ENV)
+    DJANGO_LOG_DIR = Path(DJANGO_LOG_DIR_ENV)
 
 LOGGING = {
     'version': 1,
@@ -261,7 +261,7 @@ LOGGING = {
         'general': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'general.log',
+            'filename': DJANGO_LOG_DIR / 'general.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -269,7 +269,7 @@ LOGGING = {
         'info': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'info.log',
+            'filename': DJANGO_LOG_DIR / 'info.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -277,7 +277,7 @@ LOGGING = {
         'requests_with_trace': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'requests.debug.log',
+            'filename': DJANGO_LOG_DIR / 'requests.debug.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -285,7 +285,7 @@ LOGGING = {
         'exceptions': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'exceptions.log',
+            'filename': DJANGO_LOG_DIR / 'exceptions.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -293,7 +293,7 @@ LOGGING = {
         'requests': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'requests.log',
+            'filename': DJANGO_LOG_DIR / 'requests.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -301,7 +301,7 @@ LOGGING = {
         'django': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'django.log',
+            'filename': DJANGO_LOG_DIR / 'django.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -309,7 +309,7 @@ LOGGING = {
         'bodzify_api': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'bodzify-api.log',
+            'filename': DJANGO_LOG_DIR / 'bodzify-api.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
