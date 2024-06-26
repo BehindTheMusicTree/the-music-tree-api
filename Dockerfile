@@ -2,20 +2,23 @@
 
 FROM python:3.11-buster
 
-ARG APP_LOG_DIR
+ARG DJANGO_LOG_DIR
+ARG GUNICORN_LOG_DIR
+ARG LIBRARIES_DIR
+ARG TEMP_UPLOADED_FILES_DIR
 
-RUN if [ -z "$APP_LOG_DIR" ]; then echo "The APP_LOG_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_DIR" ]; then echo "The DJANGO_LOG_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$GUNICORN_LOG_DIR" ]; then echo "The GUNICORN_LOG_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$LIBRARIES_DIR" ]; then echo "The LIBRARIES_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$TEMP_UPLOADED_FILES_DIR" ]; then echo "The TEMP_UPLOADED_FILES_DIR argument is not provided" >&2; exit 1; fi
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DockerHome=/home/app/webapp \
-    MediaDir=/home/app/webapp/lib/bodzify-api/media/ \
-    LogDir=$APP_LOG_DIR \
-    TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
-
-RUN echo "export LibrariesDir=${MediaDir}libraries/" >> /etc/profile && \
-    echo "export DjangoLogDir=${LogDir}django/" >> /etc/profile && \
-    echo "export GunicornLogDir=${LogDir}gunicorn/" >> /etc/profile
+    LibrariesDir=$LIBRARIES_DIR \
+    DjangoLogDir=$DJANGO_LOG_DIR \
+    GunicornLogDir=$GUNICORN_LOG_DIR \
+    TempUploadedFilesDir=$TEMP_UPLOADED_FILES_DIR
 
 RUN apt-get update && \
     apt-get install -y gosu && \

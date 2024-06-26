@@ -125,15 +125,19 @@ ROOT_URLCONF = 'bodzify_api.urls'
 DB_BODZIFY_API_DB_NAME = os.getenv('DB_BODZIFY_API_DB_NAME')
 if DB_BODZIFY_API_DB_NAME is None:
     raise EnvironmentError("The DB_BODZIFY_API_DB_NAME variable is not set")
+
 DB_BODZIFY_API_USERNAME = os.getenv('DB_BODZIFY_API_USERNAME')
 if DB_BODZIFY_API_USERNAME is None:
     raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable is not set")
+
 DB_BODZIFY_API_USER_PASSWORD = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
 if DB_BODZIFY_API_USER_PASSWORD is None:
     raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable is not set")
+
 DB_HOST = os.getenv('DB_HOST')
 if DB_HOST is None:
     raise EnvironmentError("The DB_HOST variable is not set")
+
 DB_PORT = os.getenv('DB_PORT')
 if DB_PORT is None:
     raise EnvironmentError("The DB_PORT variable is not set")
@@ -218,13 +222,17 @@ ALLOWED_HOSTS = []
 STATICFILES_DIRS = []
 STATIC_ROOT = ''
 MEDIA_ROOT = ''
-FILE_UPLOAD_TEMP_DIR = '/tmp/bodzify-api/uploaded-files/'
+
+TEMP_UPLOADED_FILES_DIR_ENV = os.getenv('TEMP_UPLOADED_FILES_DIR')
+if TEMP_UPLOADED_FILES_DIR_ENV is None:
+    raise EnvironmentError("The TEMP_UPLOADED_FILES_DIR variable is not set")
+else:
+    TEMP_UPLOADED_FILES_DIR = Path(TEMP_UPLOADED_FILES_DIR_ENV)
 
 if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST, ENV_VALUES.COLLECT_STATIC]:
     import bodzify_api.settings.settings_dev_or_ci_test as settings_dev_or_ci_test
     CORS_ALLOW_ALL_ORIGINS = settings_dev_or_ci_test.CORS_ALLOW_ALL_ORIGINS
     ALLOWED_HOSTS = settings_dev_or_ci_test.ALLOWED_HOSTS
-    MEDIA_ROOT = settings_dev_or_ci_test.MEDIA_ROOT
     STATIC_ROOT = settings_dev_or_ci_test.STATIC_ROOT
     JWT_AUTH = settings_dev_or_ci_test.JWT_AUTH
 elif ENV == ENV_VALUES.TEST:
@@ -234,14 +242,23 @@ elif ENV == ENV_VALUES.TEST:
     CSRF_COOKIE_SECURE = settings_test.CSRF_COOKIE_SECURE
     CSRF_TRUSTED_ORIGINS = settings_test.CSRF_TRUSTED_ORIGINS
     ALLOWED_HOSTS = settings_test.ALLOWED_HOSTS
-    MEDIA_ROOT = settings_test.MEDIA_ROOT
     STATIC_ROOT = settings_test.STATIC_ROOT
 else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
-    MEDIA_ROOT = BASE_DIR / 'media'
 
-LIB_DIR_NAME = 'libraries'
-LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME
+MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
+if MEDIA_DIR_ENV is None:
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    MEDIA_ROOT = Path(MEDIA_DIR_ENV)
+
+LIBRARIES_DIR_NAME_ENV = os.getenv('LIBRARIES_DIR_NAME')
+if LIBRARIES_DIR_NAME_ENV is None:
+    LIBRARIES_DIR_NAME = 'libraries'
+else:
+    LIBRARIES_DIR_NAME = Path(LIBRARIES_DIR_NAME_ENV)
+
+LIBRARIES_DIR_NAME_ENV = MEDIA_ROOT / LIBRARIES_DIR_NAME
 
 DJANGO_LOG_DIR_ENV = os.getenv('DJANGO_LOG_DIR')
 if DJANGO_LOG_DIR_ENV is None:

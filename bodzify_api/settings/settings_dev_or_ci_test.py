@@ -4,7 +4,6 @@ from bodzify_api.settings import settings
 
 ALLOWED_HOSTS = ['127.0.0.1']
 STATIC_ROOT = settings.BASE_DIR / 'staticfiles'
-MEDIA_ROOT = settings.BASE_DIR / 'media'
 JWT_AUTH = {
     'JWT_SECRET_KEY': 'new_secret_key',  # Change this to reset all tokens. For tests only.
 }

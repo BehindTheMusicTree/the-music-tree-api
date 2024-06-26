@@ -17,6 +17,13 @@ env:
   IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
   IMAGE_TAG: ${{ vars.IMAGE_TAG }}
   ENV_VARIABLES_FILENAME: ${{ vars.ENV_VARIABLES_FILENAME }}
+  APP_LOG_DIR: ${{ vars.APP_LOG_DIR }}
+  DJANGO_LOG_DIR: ${{ vars.APP_LOG_DIR }}django/
+  GUNICORN_LOG_DIR: ${{ vars.APP_LOG_DIR }}gunicorn/
+  MEDIA_DIR: ${{ vars.MEDIA_DIR }}
+  LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
+  LIBRARIES_DIR: ${{ vars.MEDIA_DIR }}${{ vars.LIBRARIES_DIR_NAME }}
+  TEMP_UPLOADED_FILES_DIR: ${{ vars.TEMP_UPLOADED_FILES_DIR }}
 
 jobs:
   # pytest:
@@ -28,7 +35,6 @@ jobs:
   #     ENV: CI_TEST
   #     DEBUG: True
   #     DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-  #     LOG_DIR: ${{ vars.LOG_DIR }}
 
   #     DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
   #     DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
@@ -73,7 +79,7 @@ jobs:
   #       run: |
   #         docker run -d \
   #           -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
-  #           -v /tmp/bodzify-api/uploaded-files/:${{ vars.AUDIO_FINGERPRINTER_POOL_DIR }} \
+  #           -v ${{ env.TEMP_UPLOADED_FILES_DIR }}:${{ vars.AUDIO_FINGERPRINTER_POOL_DIR }} \
   #           -e ENV=TEST \
   #           -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
   #           ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
@@ -127,7 +133,6 @@ jobs:
       ENV: COLLECT_STATIC
       DEBUG: False
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-      DJANGO_LOG_DIR: ${{ vars.APP_LOG_DIR }}
 
       DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
       DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
@@ -171,7 +176,10 @@ jobs:
           push: true
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
           build-args: |
-            APP_LOG_DIR=${{ env.APP_LOG_DIR }}
+            DJANGO_LOG_DIR=${{ env.DJANGO_LOG_DIR }}
+            GUNICORN_LOG_DIR=${{ env.GUNICORN_LOG_DIR }}
+            LIBRARIES_DIR=${{ env.LIBRARIES_DIR }}
+            TEMP_UPLOADED_FILES_DIR=${{ env.TEMP_UPLOADED_FILES_DIR }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
@@ -198,7 +206,9 @@ jobs:
             echo 'ENV=TEST' >> $ENV_FILE_PATH &&
             echo 'DEBUG=True' >> $ENV_FILE_PATH &&
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> $ENV_FILE_PATH &&
-            echo 'LOG_DIR=${{ vars.LOG_DIR }}' >> $ENV_FILE_PATH &&
+            echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> $ENV_FILE_PATH &&
+            echo 'LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}' >> $ENV_FILE_PATH &&
+            echo 'DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}' >> $ENV_FILE_PATH &&
             echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> $ENV_FILE_PATH &&
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH &&

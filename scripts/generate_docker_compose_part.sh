@@ -8,14 +8,14 @@ cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
     command: >
       gunicorn bodzify_api.wsgi:application
       --bind 0.0.0.0:$APP_PORT
-      --error-logfile=/home/app/webapp/log/gunicorn/error.log
+      --error-logfile=${GUNICORN_LOG_DIR}error.log
       --log-level=info
     volumes:
-      - api-django-log-dir:/home/app/webapp/log/django/
-      - api-gunicorn-log-dir:/home/app/webapp/log/gunicorn/
-      - api-media-dir:/home/app/webapp/lib/bodzify-api/media/
-      - api-static-files:/home/app/webapp/staticfiles/
-      - api-upload-temp-files:/tmp/bodzify-api/uploaded-files/
+      - api-django-log-dir:${DJANGO_LOG_DIR}
+      - api-gunicorn-log-dir:${GUNICORN_LOG_DIR}
+      - api-media-dir:${MEDIA_DIR}
+      - api-static-files:${STATIC_FILES_DIR}
+      - api-upload-temp-files:${TEMP_UPLOADED_FILES_DIR}
     expose:
       - $APP_PORT
     networks:
