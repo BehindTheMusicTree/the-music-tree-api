@@ -16,7 +16,8 @@ env:
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
   IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
   IMAGE_TAG: ${{ vars.IMAGE_TAG }}
-  ENV_VARIABLES_FILENAME: ${{ vars.ENV_VARIABLES_FILENAME }}
+  API_ENV_FILENAME: ${{ vars.API_ENV_FILENAME }}
+  DB_ENV_FILENAME: ${{ vars.DB_ENV_FILENAME }}
 
 jobs:
   # pytest:
@@ -200,25 +201,46 @@ jobs:
           mkdir -p ~/.ssh &&
           ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts
 
-      - name: Set environment variables on server
+      - name: Set api environment variables on server
+        env: 
+          API_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ env.API_ENV_FILENAME }}"
         run: |
-          ENV_FILE_PATH="${{ vars.DOCKER_COMPOSE_DIR }}${{ env.ENV_VARIABLES_FILENAME }}"
           ssh ${{ env.SSH_DESTINATION }} "
-            rm -f $ENV_FILE_PATH &&
-            echo 'ENV=TEST' >> $ENV_FILE_PATH &&
-            echo 'DEBUG=True' >> $ENV_FILE_PATH &&
-            echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> $ENV_FILE_PATH &&
-            echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> $ENV_FILE_PATH &&
-            echo 'LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}' >> $ENV_FILE_PATH &&
-            echo 'DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}' >> $ENV_FILE_PATH &&
-            echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> $ENV_FILE_PATH &&
-            echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> $ENV_FILE_PATH &&
-            echo 'DB_HOST=${{ secrets.DB_HOST }}' >> $ENV_FILE_PATH &&
-            echo 'DB_PORT=${{ secrets.DB_PORT }}' >> $ENV_FILE_PATH &&
-            echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> $ENV_FILE_PATH &&
-            echo 'AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> $ENV_FILE_PATH
+            rm -f ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'ENV=TEST' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DEBUG=True' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DB_HOST=${{ secrets.DB_HOST }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.API_ENV_FILE_PATH }}
+          "
+
+      # POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB and POSTGRES_PORT env variables are required by the postgres image
+      - name: Set db environment variables on server
+        env:
+          DB_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ env.DB_ENV_FILENAME }}"
+        run: |
+          ssh ${{ env.SSH_DESTINATION }} "
+            rm -f ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'DB_HOST=localhost' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'DB_SUPERUSER_NAME=${{ secrets.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'POSTGRES_USER=${{ secrets.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'DB_SUPERUSER_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
+            echo 'POSTGRES_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE_PATH }}
           "
 
   set-partial-docker-compose-on-server:
