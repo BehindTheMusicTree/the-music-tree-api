@@ -44,3 +44,6 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/* && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
     pip install -r requirements.txt
+
+RUN pip list | grep gunicorn
+RUN echo $PATH && which gunicorn
