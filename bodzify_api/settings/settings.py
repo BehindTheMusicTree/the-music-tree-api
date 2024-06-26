@@ -233,7 +233,6 @@ if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST, ENV_VALUES.COLLECT_STATIC]:
     import bodzify_api.settings.settings_dev_or_ci_test as settings_dev_or_ci_test
     CORS_ALLOW_ALL_ORIGINS = settings_dev_or_ci_test.CORS_ALLOW_ALL_ORIGINS
     ALLOWED_HOSTS = settings_dev_or_ci_test.ALLOWED_HOSTS
-    STATIC_ROOT = settings_dev_or_ci_test.STATIC_ROOT
     JWT_AUTH = settings_dev_or_ci_test.JWT_AUTH
 elif ENV == ENV_VALUES.TEST:
     import bodzify_api.settings.settings_test as settings_test
@@ -242,9 +241,6 @@ elif ENV == ENV_VALUES.TEST:
     CSRF_COOKIE_SECURE = settings_test.CSRF_COOKIE_SECURE
     CSRF_TRUSTED_ORIGINS = settings_test.CSRF_TRUSTED_ORIGINS
     ALLOWED_HOSTS = settings_test.ALLOWED_HOSTS
-    STATIC_ROOT = settings_test.STATIC_ROOT
-else:
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
