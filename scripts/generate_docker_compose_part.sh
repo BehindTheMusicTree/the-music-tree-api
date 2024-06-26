@@ -23,5 +23,5 @@ cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
     depends_on:
       - audio_fingerprinter
       - db
-    env_file: $ENV_VARIABLES_FILENAME
+    env_file: $API_ENV_FILENAME
 EOF
