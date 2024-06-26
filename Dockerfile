@@ -43,6 +43,7 @@ RUN apt update && \
     apt install -y flac ffmpeg libchromaprint-tools && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
+    pip install --upgrade pip && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
     pip install -r requirements.txt
 
