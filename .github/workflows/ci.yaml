@@ -174,7 +174,7 @@ jobs:
             GUNICORN_LOG_DIR=${{ vars.APP_LOG_DIR }}${{ vars.GUNICORN_LOG_DIR_NAME }}
             LIBRARIES_DIR=${{ vars.MEDIA_DIR }}${{ vars.LIBRARIES_DIR_NAME }}
             TEMP_UPLOADED_FILES_DIR=${{ vars.TEMP_UPLOADED_FILES_DIR }}
-            STATIC_FILES_DIR: ${{ vars.STATIC_FILES_DIR }}
+            STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
