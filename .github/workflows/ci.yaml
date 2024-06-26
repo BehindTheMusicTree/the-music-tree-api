@@ -17,8 +17,6 @@ env:
   IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
   IMAGE_TAG: ${{ vars.IMAGE_TAG }}
   API_ENV_FILENAME: ${{ vars.API_ENV_FILENAME }}
-  DB_ENV_FILENAME: ${{ vars.DB_ENV_FILENAME }}
-  AUDIO_FINGERPRINTER_ENV_FILENAME: ${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}
 
 jobs:
   # pytest:
@@ -227,7 +225,7 @@ jobs:
       # POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB and POSTGRES_PORT env variables are required by the postgres image
       - name: Set db environment variables on server
         env:
-          DB_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ env.DB_ENV_FILENAME }}"
+          DB_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.DB_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.DB_ENV_FILE_PATH }} &&
@@ -246,7 +244,7 @@ jobs:
 
       - name: Set audio fingerprinter environment variables on server
         env:
-          AUDIO_FINGERPRINTER_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }}"
+          AUDIO_FINGERPRINTER_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.AUDIO_FINGERPRINTER_ENV_FILE_PATH }} &&
