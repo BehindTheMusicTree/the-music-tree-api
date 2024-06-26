@@ -1,12 +1,16 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.11-buster 
+FROM python:3.11-buster
+
+ARG LOG_DIR
+
+RUN if [ -z "$LOG_DIR" ]; then echo "The LOG_DIR argument is not provided" >&2; exit 1; fi
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DockerHome=/home/app/webapp \
     MediaDir=/home/app/webapp/lib/bodzify-api/media/ \
-    LogDir=/home/app/webapp/log/ \
+    LogDir=$LOG_DIR \
     TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
 
 RUN echo "export LibrariesDir=${MediaDir}libraries/" >> /etc/profile && \
