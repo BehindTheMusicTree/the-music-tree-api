@@ -5,11 +5,11 @@ FROM python:3.11-buster
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DockerHome=/home/app/webapp \
-    MediaDir=/home/app/webapp/lib/bodzify-api/media \
+    MediaDir=/home/app/webapp/lib/bodzify-api/media/ \
     LogDir=/home/app/webapp/log/ \
     TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
 
-RUN echo "export LibrariesDir=${MediaDir}/libraries" >> /etc/profile && \
+RUN echo "export LibrariesDir=${MediaDir}libraries/" >> /etc/profile && \
     echo "export DjangoLogDir=${LogDir}django/" >> /etc/profile && \
     echo "export GunicornLogDir=${LogDir}gunicorn/" >> /etc/profile
 
@@ -18,13 +18,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p $DockerHome \
-    ${DockerHome}/staticfiles \
-    $LibrariesDir \
-    $LogDir \
-    $DjangoLogDir \
-    $GunicornLogDir \
-    $TempUploadedFilesDir && \
+RUN mkdir -p $DockerHome ${DockerHome}/staticfiles $LibrariesDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir && \
     touch ${DjangoLogDir}requests.log \
     ${DjangoLogDir}requests.debug.log \
     ${DjangoLogDir}general.log \
@@ -33,7 +27,7 @@ RUN mkdir -p $DockerHome \
     ${DjangoLogDir}bodzify-api.log \
     ${GunicornLogDir}error.log \
     ${GunicornLogDir}access.log && \
-    chmod 777 -R $LibrariesDir $GunicornLogDir $TempUploadedFilesDir
+    chmod 777 -R $LibrariesDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir
 
 COPY . $DockerHome
 
