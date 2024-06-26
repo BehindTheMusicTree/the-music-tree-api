@@ -10,6 +10,4 @@ ALLOWED_HOSTS = [
     'bodzify.com',
     'www.bodzify.com',
 ]
-STATIC_ROOT = Path('/home/app/webapp/staticfiles/')
-LOG_PATH = Path('/home/app/webapp/log/django/')
 CORS_ALLOWED_ORIGINS = []

@@ -246,6 +246,13 @@ elif ENV == ENV_VALUES.TEST:
 else:
     STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+
+STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
+if STATIC_FILES_DIR_ENV is None:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+else:
+    STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
+
 MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
 if MEDIA_DIR_ENV is None:
     MEDIA_ROOT = BASE_DIR / 'media'
