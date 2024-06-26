@@ -20,7 +20,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     LibrariesDir=$LIBRARIES_DIR \
     DjangoLogDir=$DJANGO_LOG_DIR \
     GunicornLogDir=$GUNICORN_LOG_DIR \
-    TempUploadedFilesDir=$TEMP_UPLOADED_FILES_DIR
+    TempUploadedFilesDir=$TEMP_UPLOADED_FILES_DIR \
     StaticFilesDir=$STATIC_FILES_DIR
 
 RUN apt-get update && \
