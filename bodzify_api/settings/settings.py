@@ -320,6 +320,7 @@ if DJANGO_LOG_DIR_ENV is None:
         raise EnvironmentError("The DJANGO_LOG_DIR variable is not set")
     else:
         DJANGO_LOG_DIR = BASE_DIR / 'log'
+        os.makedirs(DJANGO_LOG_DIR)
 
 else:
     DJANGO_LOG_DIR = Path(DJANGO_LOG_DIR_ENV)
