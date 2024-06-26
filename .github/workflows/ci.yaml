@@ -255,7 +255,7 @@ jobs:
   set-partial-docker-compose-on-server:
     name: Set partial docker-compose on server
     runs-on: ubuntu-latest
-    needs: [build-and-push-to-dockerhub]
+    # needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
     env:
