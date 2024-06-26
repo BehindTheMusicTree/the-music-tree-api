@@ -33,13 +33,13 @@ class ATTRIBUTES_LABEL:
 
 
 def _get_user_lib_path(instance, filename):
-    return '{0}{1}/{2}'.format(settings.LIB_DIR_NAME + '/' + settings.USER_LIB_DIR_NAME_PREFIXE,
+    return '{0}{1}/{2}'.format(settings.LIBRARIES_DIR_NAME + '/' + settings.USER_LIBRARIES_DIR_NAME_PREFIXE,
                                instance.user.id,
                                filename)
 
 
 LIB_PATH_MAX_LENGTH = len(
-    settings.LIB_DIR_NAME) + len(settings.USER_LIB_DIR_NAME_PREFIXE) + len(settings.USER_MAX_NUMBER)
+    settings.LIBRARIES_DIR_NAME) + len(settings.USER_LIBRARIES_DIR_NAME_PREFIXE) + len(settings.USER_MAX_NUMBER)
 FILE_PATH_MAX_LENGTH = settings.LIB_TRACK_FILENAME_LEN_MAX + LIB_PATH_MAX_LENGTH
 
 

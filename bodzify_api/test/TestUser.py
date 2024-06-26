@@ -26,12 +26,13 @@ class TestUser():
                 print('Failed to delete %s. Reason: %s' % (filePath, e))
 
     def __set_up_dirs(self):
-        self.lib_abs_path = settings.LIB_PATH / Path(settings.USER_LIB_DIR_NAME_PREFIXE + str(self.django_user.pk))
+        self.lib_abs_path = settings.LIB_PATH / Path(settings.USER_LIBRARIES_DIR_NAME_PREFIXE +
+                                                     str(self.django_user.pk))
         if not self.lib_abs_path.exists():
             os.makedirs(self.lib_abs_path)
 
         self.lib_path_relative_to_media_dir = \
-            Path(settings.LIB_DIR_NAME) / (settings.USER_LIB_DIR_NAME_PREFIXE + str(self.django_user.pk))
+            Path(settings.LIBRARIES_DIR_NAME) / (settings.USER_LIBRARIES_DIR_NAME_PREFIXE + str(self.django_user.pk))
         self.lib_abs_path = settings.MEDIA_ROOT / self.lib_path_relative_to_media_dir
         self.__empty_user_library()
 

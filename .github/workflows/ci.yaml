@@ -243,6 +243,16 @@ jobs:
             echo 'POSTGRES_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE_PATH }}
           "
 
+      - name: Set audio fingerprinter environment variables on server
+        env:
+          AUDIO_FINGERPRINTER_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }}"
+        run: |
+          ssh ${{ env.SSH_DESTINATION }} "
+            rm -f ${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }} &&
+            echo 'ENV=TEST' >> ${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }} &&
+            echo 'APP_PORT=${{ secrets.APP_PORT }}' >> ${{ env.AUDIO_FINGERPRINTER_ENV_FILENAME }}
+          "
+
   set-partial-docker-compose-on-server:
     name: Set partial docker-compose on server
     runs-on: ubuntu-latest
