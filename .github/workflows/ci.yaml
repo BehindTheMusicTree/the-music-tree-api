@@ -28,6 +28,7 @@ jobs:
       ENV: CI_TEST
       DEBUG: True
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      TEMP_UPLOADED_FILES_DIR: ${{ vars.TEMP_UPLOADED_FILES_DIR }}
 
       DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
       DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
