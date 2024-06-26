@@ -13,4 +13,5 @@ if [ -f "$ENV_PATH" ]; then
     done < "$ENV_PATH"
 else
     echo "$ENV_PATH does not exist"
+    exit 1
 fi
