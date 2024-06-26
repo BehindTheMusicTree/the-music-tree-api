@@ -3,10 +3,7 @@
 SCRIPTS_DIR=$(dirname "$0")/../
 
 # Load environment variables in the current shell
-if ! source "${SCRIPTS_DIR}load_env_variables.sh"; then
-  echo "Failed to load environment variables."
-  exit 1
-fi
+source "${SCRIPTS_DIR}load_env_variables.sh"
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;"
 
