@@ -18,10 +18,46 @@ class ENV_VALUES:
     PROD = 'PROD'
 
 
+class ENV_CONFIG_KEYS:
+    DEBUG = 'DEBUG'
+    LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED = 'LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED'
+    TMP_UPLOAD_FILE_DIR_REQUIRED = 'TMP_UPLOAD_FILE_DIR_REQUIRED'
+
+
 ENV = os.getenv('ENV')
+
+ENV_SETTINGS = {
+    ENV_VALUES.DEV: {
+        ENV_CONFIG_KEYS.DEBUG: True,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: False,
+        ENV_CONFIG_KEYS.TMP_UPLOAD_FILE_DIR_REQUIRED: True,
+    },
+    ENV_VALUES.CI_TEST: {
+        ENV_CONFIG_KEYS.DEBUG: True,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: False,
+        ENV_CONFIG_KEYS.TMP_UPLOAD_FILE_DIR_REQUIRED: True,
+    },
+    ENV_VALUES.COLLECT_STATIC: {
+        ENV_CONFIG_KEYS.DEBUG: False,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: False,
+        ENV_CONFIG_KEYS.TMP_UPLOAD_FILE_DIR_REQUIRED: False,
+    },
+    ENV_VALUES.TEST: {
+        ENV_CONFIG_KEYS.DEBUG: True,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: True,
+        ENV_CONFIG_KEYS.TMP_UPLOAD_FILE_DIR_REQUIRED: True,
+    },
+    ENV_VALUES.PROD: {
+        ENV_CONFIG_KEYS.DEBUG: False,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: True,
+        ENV_CONFIG_KEYS.TMP_UPLOAD_FILE_DIR_REQUIRED: True,
+    },
+}
 
 if ENV is None:
     raise EnvironmentError("The ENV variable is not set")
+else:
+    current_env_settings = ENV_SETTINGS.get(ENV, {})
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -225,7 +261,11 @@ MEDIA_ROOT = ''
 
 TEMP_UPLOADED_FILES_DIR_ENV = os.getenv('TEMP_UPLOADED_FILES_DIR')
 if TEMP_UPLOADED_FILES_DIR_ENV is None:
-    raise EnvironmentError("The TEMP_UPLOADED_FILES_DIR variable is not set")
+    if current_env_settings.get(ENV_CONFIG_KEYS.TMP_UPLOAD_FILE_DIR_REQUIRED):
+        raise EnvironmentError("The TEMP_UPLOADED_FILES_DIR variable is not set")
+    else:
+        TEMP_UPLOADED_FILES_DIR = BASE_DIR / 'tmp-upload-files'
+
 else:
     TEMP_UPLOADED_FILES_DIR = Path(TEMP_UPLOADED_FILES_DIR_ENV)
 
@@ -242,30 +282,45 @@ elif ENV == ENV_VALUES.TEST:
     CSRF_TRUSTED_ORIGINS = settings_test.CSRF_TRUSTED_ORIGINS
     ALLOWED_HOSTS = settings_test.ALLOWED_HOSTS
 
-
 STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
 if STATIC_FILES_DIR_ENV is None:
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    if current_env_settings.get(ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED):
+        raise EnvironmentError("The STATIC_FILES_DIR variable is not set")
+    else:
+        STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 else:
     STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
 
 MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
 if MEDIA_DIR_ENV is None:
-    MEDIA_ROOT = BASE_DIR / 'media'
+    if current_env_settings.get(ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED):
+        raise EnvironmentError("The MEDIA_DIR variable is not set")
+    else:
+        MEDIA_ROOT = BASE_DIR / 'media'
+
 else:
     MEDIA_ROOT = Path(MEDIA_DIR_ENV)
 
 LIBRARIES_DIR_NAME_ENV = os.getenv('LIBRARIES_DIR_NAME')
 if LIBRARIES_DIR_NAME_ENV is None:
-    LIBRARIES_DIR_NAME = 'libraries'
-else:
-    LIBRARIES_DIR_NAME = Path(LIBRARIES_DIR_NAME_ENV)
+    if current_env_settings.get(ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED):
+        raise EnvironmentError("The LIBRARIES_DIR_NAME variable is not set")
+    else:
+        LIBRARIES_DIR_NAME = 'libraries'
 
-LIBRARIES_DIR_NAME_ENV = MEDIA_ROOT / LIBRARIES_DIR_NAME
+else:
+    LIBRARIES_DIR_NAME = LIBRARIES_DIR_NAME_ENV
+
+LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
 
 DJANGO_LOG_DIR_ENV = os.getenv('DJANGO_LOG_DIR')
 if DJANGO_LOG_DIR_ENV is None:
-    DJANGO_LOG_DIR = BASE_DIR / 'log'
+    if current_env_settings.get(ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED):
+        raise EnvironmentError("The DJANGO_LOG_DIR variable is not set")
+    else:
+        DJANGO_LOG_DIR = BASE_DIR / 'log'
+
 else:
     DJANGO_LOG_DIR = Path(DJANGO_LOG_DIR_ENV)
 
