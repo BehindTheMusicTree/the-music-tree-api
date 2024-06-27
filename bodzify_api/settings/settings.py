@@ -133,9 +133,7 @@ if not ACOUSTID_API_KEY and current_env_settings.get(ENV_CONFIG_KEYS.AUDIO_META_
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
-if DEBUG is None:
-    raise EnvironmentError("The DEBUG variable is not set")
+DEBUG = current_env_settings.get(ENV_CONFIG_KEYS.DEBUG)
 
 INSTALLED_APPS = ['django.contrib.admin',
                   'django.contrib.auth',
