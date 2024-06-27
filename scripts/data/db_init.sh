@@ -1,13 +1,10 @@
 #!/bin/bash
 
-SCRIPT_DIR=$(dirname "$0")
+SCRIPTS_DIR=$(dirname "$0")/../
 
 # Load environment variables in the current shell
-source "$SCRIPT_DIR/load_env_variables.sh"
+source "${SCRIPTS_DIR}load_env_variables.sh"
 
-echo $DB_BODZIFY_API_USER_PASSWORD
-echo $DB_SUPERUSER_NAME
-echo $DB_CONTAINER_NAME
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;"
 
 # Display all databases

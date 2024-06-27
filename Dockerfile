@@ -1,29 +1,34 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.11-buster 
+FROM python:3.11-buster
+
+ARG DJANGO_LOG_DIR
+ARG GUNICORN_LOG_DIR
+ARG LIBRARIES_DIR
+ARG TEMP_UPLOADED_FILES_DIR
+ARG STATIC_FILES_DIR
+
+RUN if [ -z "$DJANGO_LOG_DIR" ]; then echo "The DJANGO_LOG_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$GUNICORN_LOG_DIR" ]; then echo "The GUNICORN_LOG_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$LIBRARIES_DIR" ]; then echo "The LIBRARIES_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$TEMP_UPLOADED_FILES_DIR" ]; then echo "The TEMP_UPLOADED_FILES_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$STATIC_FILES_DIR" ]; then echo "The STATIC_FILES_DIR argument is not provided" >&2; exit 1; fi
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DockerHome=/home/app/webapp \
-    MediaDir=/home/app/webapp/lib/bodzify-api/media \
-    LibrariesDir=${MediaDir}/libraries \
-    LogDir=/home/app/webapp/log/ \
-    DjangoLogDir=${LogDir}django/ \
-    GunicornLogDir=${LogDir}gunicorn/ \
-    TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
+    LibrariesDir=$LIBRARIES_DIR \
+    DjangoLogDir=$DJANGO_LOG_DIR \
+    GunicornLogDir=$GUNICORN_LOG_DIR \
+    TempUploadedFilesDir=$TEMP_UPLOADED_FILES_DIR \
+    StaticFilesDir=$STATIC_FILES_DIR
 
 RUN apt-get update && \
     apt-get install -y gosu && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p $DockerHome \
-    ${DockerHome}/staticfiles \
-    $LibrariesDir \
-    $LogDir \
-    $DjangoLogDir \
-    $GunicornLogDir \
-    $TempUploadedFilesDir && \
+RUN mkdir -p $DockerHome $LibrariesDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir $StaticFilesDir && \
     touch ${DjangoLogDir}requests.log \
     ${DjangoLogDir}requests.debug.log \
     ${DjangoLogDir}general.log \
@@ -32,23 +37,19 @@ RUN mkdir -p $DockerHome \
     ${DjangoLogDir}bodzify-api.log \
     ${GunicornLogDir}error.log \
     ${GunicornLogDir}access.log && \
-    chmod 777 -R $LibrariesDir $GunicornLogDir $TempUploadedFilesDir
+    chmod 777 -R $LibrariesDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir
 
 COPY . $DockerHome
 
-RUN ls -la $DockerHome
-
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
-    rm -rf /root/.cache/pip/*
+WORKDIR $DockerHome
 
 RUN apt update && \
     apt install -y flac ffmpeg libchromaprint-tools && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    pip install --upgrade pip && \
+    # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
+    pip install -r requirements.txt
 
-RUN chown -R www-data:www-data /opt/bodzify-api
-
-RUN python manage.py collectstatic --noinput
-
-WORKDIR $DockerHome
+RUN pip list | grep gunicorn
+RUN echo $PATH && which gunicorn

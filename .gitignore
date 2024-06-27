@@ -1,18 +1,9 @@
-
 *.pyc
-
 media/libraries/*
-
 media/temp/
-
 venv/
-
 share/
-
-bodzify_api/test/view/track/post/sample/post_Big_File 1-01 - Shine On You Crazy Diamond, Parts I–V.flac
-
 .DS_Store
-
-.env.dev
-
 .env
+*/migrations/*.py
+!*/migrations/__init__.py

@@ -12,12 +12,52 @@ dotenv.load_dotenv()
 class ENV_VALUES:
     DEV = 'DEV'
     CI_TEST = 'CI_TEST'
+    COLLECT_STATIC = 'COLLECT_STATIC'
     BUILD = 'BUILD'
     TEST = 'TEST'
     PROD = 'PROD'
 
 
+class ENV_CONFIG_KEYS:
+    DEBUG = 'DEBUG'
+    LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED = 'LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED'
+    AUDIO_META_ANALYSE_NEEDED = 'AUDIO_FINGERPRINTER_NEEDED'
+
+
 ENV = os.getenv('ENV')
+
+ENV_SETTINGS = {
+    ENV_VALUES.DEV: {
+        ENV_CONFIG_KEYS.DEBUG: True,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: False,
+        ENV_CONFIG_KEYS.AUDIO_META_ANALYSE_NEEDED: True,
+    },
+    ENV_VALUES.CI_TEST: {
+        ENV_CONFIG_KEYS.DEBUG: True,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: False,
+        ENV_CONFIG_KEYS.AUDIO_META_ANALYSE_NEEDED: True,
+    },
+    ENV_VALUES.COLLECT_STATIC: {
+        ENV_CONFIG_KEYS.DEBUG: False,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: False,
+        ENV_CONFIG_KEYS.AUDIO_META_ANALYSE_NEEDED: False,
+    },
+    ENV_VALUES.TEST: {
+        ENV_CONFIG_KEYS.DEBUG: True,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: True,
+        ENV_CONFIG_KEYS.AUDIO_META_ANALYSE_NEEDED: True,
+    },
+    ENV_VALUES.PROD: {
+        ENV_CONFIG_KEYS.DEBUG: False,
+        ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED: True,
+        ENV_CONFIG_KEYS.AUDIO_META_ANALYSE_NEEDED: True,
+    },
+}
+
+if ENV is None:
+    raise EnvironmentError("The ENV variable is not set")
+else:
+    current_env_settings = ENV_SETTINGS.get(ENV, {})
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -29,7 +69,7 @@ API_ROOT_BASE = 'api/' + API_VERSION + '/'
 API_ROOT = Path(BASE_DIR) / API_NAME
 CONTACT_EMAIL = "andreas.garcia@bodzify.com"
 UUID_LEN = 22
-USER_LIB_DIR_NAME_PREFIXE = "user_"
+USER_LIBRARIES_DIR_NAME_PREFIXE = "user_"
 USER_MAX_NUMBER = "10000000"  # hehe
 LIB_TRACK_FILE_SIZE_MIN_IN_MO = 0
 LIB_TRACK_FILE_SIZE_MAX_IN_MO = 300
@@ -58,13 +98,17 @@ MUSICBRAINZ_ARTIST_URL = MUSICBRAINZ_BASE_URL + "artist/"
 MUSICBRAINZ_ARTIST_NAME_LEN_MAX = 200
 
 AUDIO_FINGERPRINTER_BASE_URL = "http://127.0.0.1"
+
 AUDIO_FINGERPRINTER_PORT = os.getenv('AUDIO_FINGERPRINTER_PORT')
-if AUDIO_FINGERPRINTER_PORT is None and ENV is not ENV_VALUES.BUILD:
+if AUDIO_FINGERPRINTER_PORT is None and current_env_settings.get(ENV_CONFIG_KEYS.AUDIO_META_ANALYSE_NEEDED):
     raise Exception("AUDIO_FINGERPRINTER_PORT env variable is not set")
+
 AUDIO_FINGERPRINTER_POST_ENDPOINT = "/fingerprint-audio"
-AUDIO_FINGERPRINTER_POST_FULL_URL = AUDIO_FINGERPRINTER_BASE_URL + \
-    ":" + AUDIO_FINGERPRINTER_PORT + \
-    AUDIO_FINGERPRINTER_POST_ENDPOINT
+
+if AUDIO_FINGERPRINTER_PORT is not None:
+    AUDIO_FINGERPRINTER_POST_FULL_URL = AUDIO_FINGERPRINTER_BASE_URL + \
+        ":" + AUDIO_FINGERPRINTER_PORT + \
+        AUDIO_FINGERPRINTER_POST_ENDPOINT
 
 PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
@@ -80,11 +124,16 @@ ATOMIC_REQUESTS = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise EnvironmentError("The DJANGO_SECRET_KEY variable is not set")
 
 ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
+if not ACOUSTID_API_KEY and current_env_settings.get(ENV_CONFIG_KEYS.AUDIO_META_ANALYSE_NEEDED):
+    raise EnvironmentError("The ACOUSTID_API_KEY variable is not set")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = current_env_settings.get(ENV_CONFIG_KEYS.DEBUG)
 
 INSTALLED_APPS = ['django.contrib.admin',
                   'django.contrib.auth',
@@ -116,16 +165,35 @@ MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggin
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
+DB_BODZIFY_API_DB_NAME = os.getenv('DB_BODZIFY_API_DB_NAME')
+if DB_BODZIFY_API_DB_NAME is None:
+    raise EnvironmentError("The DB_BODZIFY_API_DB_NAME variable is not set")
+
+DB_BODZIFY_API_USERNAME = os.getenv('DB_BODZIFY_API_USERNAME')
+if DB_BODZIFY_API_USERNAME is None:
+    raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable is not set")
+
+DB_BODZIFY_API_USER_PASSWORD = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
+if DB_BODZIFY_API_USER_PASSWORD is None:
+    raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable is not set")
+
+DB_HOST = os.getenv('DB_HOST')
+if DB_HOST is None:
+    raise EnvironmentError("The DB_HOST variable is not set")
+
+DB_PORT = os.getenv('DB_PORT')
+if DB_PORT is None:
+    raise EnvironmentError("The DB_PORT variable is not set")
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         # 'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_BODZIFY_API_DB_NAME'),
-        'USER': os.getenv('DB_BODZIFY_API_USERNAME'),
-        'PASSWORD': os.getenv('DB_BODZIFY_API_USER_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': DB_BODZIFY_API_DB_NAME,
+        'USER': DB_BODZIFY_API_USERNAME,
+        'PASSWORD': DB_BODZIFY_API_USER_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         'DISABLE_SERVER_SIDE_CURSORS': True
     }
 }
@@ -197,16 +265,21 @@ ALLOWED_HOSTS = []
 STATICFILES_DIRS = []
 STATIC_ROOT = ''
 MEDIA_ROOT = ''
-FILE_UPLOAD_TEMP_DIR = '/tmp/bodzify-api/uploaded-files/'
 
-if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST]:
-    import bodzify_api.settings.settings_dev_or_github_ci_test as settings_dev_or_github_ci_test
-    CORS_ALLOW_ALL_ORIGINS = settings_dev_or_github_ci_test.CORS_ALLOW_ALL_ORIGINS
-    ALLOWED_HOSTS = settings_dev_or_github_ci_test.ALLOWED_HOSTS
-    MEDIA_ROOT = settings_dev_or_github_ci_test.MEDIA_ROOT
-    STATIC_ROOT = settings_dev_or_github_ci_test.STATIC_ROOT
-    LOG_PATH = settings_dev_or_github_ci_test.LOG_PATH
-    JWT_AUTH = settings_dev_or_github_ci_test.JWT_AUTH
+TEMP_UPLOADED_FILES_DIR_ENV = os.getenv('TEMP_UPLOADED_FILES_DIR')
+if TEMP_UPLOADED_FILES_DIR_ENV is None:
+    if current_env_settings.get(ENV_CONFIG_KEYS.AUDIO_META_ANALYSE_NEEDED):
+        raise EnvironmentError("The TEMP_UPLOADED_FILES_DIR variable is not set")
+    else:
+        TEMP_UPLOADED_FILES_DIR = BASE_DIR / 'tmp-upload-files'
+else:
+    TEMP_UPLOADED_FILES_DIR = Path(TEMP_UPLOADED_FILES_DIR_ENV)
+
+if ENV in [ENV_VALUES.DEV, ENV_VALUES.CI_TEST, ENV_VALUES.COLLECT_STATIC]:
+    import bodzify_api.settings.settings_dev_or_ci_test as settings_dev_or_ci_test
+    CORS_ALLOW_ALL_ORIGINS = settings_dev_or_ci_test.CORS_ALLOW_ALL_ORIGINS
+    ALLOWED_HOSTS = settings_dev_or_ci_test.ALLOWED_HOSTS
+    JWT_AUTH = settings_dev_or_ci_test.JWT_AUTH
 elif ENV == ENV_VALUES.TEST:
     import bodzify_api.settings.settings_test as settings_test
     CORS_ALLOWED_ORIGINS = settings_test.CORS_ALLOWED_ORIGINS
@@ -214,15 +287,50 @@ elif ENV == ENV_VALUES.TEST:
     CSRF_COOKIE_SECURE = settings_test.CSRF_COOKIE_SECURE
     CSRF_TRUSTED_ORIGINS = settings_test.CSRF_TRUSTED_ORIGINS
     ALLOWED_HOSTS = settings_test.ALLOWED_HOSTS
-    MEDIA_ROOT = settings_test.MEDIA_ROOT
-    STATIC_ROOT = settings_test.STATIC_ROOT
-    LOG_PATH = settings_test.LOG_PATH
-else:
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
-    MEDIA_ROOT = BASE_DIR / 'media'
 
-LIB_DIR_NAME = 'libraries'
-LIB_PATH = MEDIA_ROOT / LIB_DIR_NAME
+STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
+if STATIC_FILES_DIR_ENV is None:
+    if current_env_settings.get(ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED):
+        raise EnvironmentError("The STATIC_FILES_DIR variable is not set")
+    else:
+        STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+else:
+    STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
+
+MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
+if MEDIA_DIR_ENV is None:
+    if current_env_settings.get(ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED):
+        raise EnvironmentError("The MEDIA_DIR variable is not set")
+    else:
+        MEDIA_ROOT = BASE_DIR / 'media'
+
+else:
+    MEDIA_ROOT = Path(MEDIA_DIR_ENV)
+
+LIBRARIES_DIR_NAME_ENV = os.getenv('LIBRARIES_DIR_NAME')
+if LIBRARIES_DIR_NAME_ENV is None:
+    if current_env_settings.get(ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED):
+        raise EnvironmentError("The LIBRARIES_DIR_NAME variable is not set")
+    else:
+        LIBRARIES_DIR_NAME = 'libraries'
+
+else:
+    LIBRARIES_DIR_NAME = LIBRARIES_DIR_NAME_ENV
+
+LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
+
+DJANGO_LOG_DIR_ENV = os.getenv('DJANGO_LOG_DIR')
+if DJANGO_LOG_DIR_ENV is None:
+    if current_env_settings.get(ENV_CONFIG_KEYS.LOG_AND_MEDIA_AND_STATIC_DIRS_REQUIRED):
+        raise EnvironmentError("The DJANGO_LOG_DIR variable is not set")
+    else:
+        DJANGO_LOG_DIR = BASE_DIR / 'log'
+        if not os.path.exists(DJANGO_LOG_DIR):
+            os.makedirs(DJANGO_LOG_DIR)
+
+else:
+    DJANGO_LOG_DIR = Path(DJANGO_LOG_DIR_ENV)
 
 LOGGING = {
     'version': 1,
@@ -236,7 +344,7 @@ LOGGING = {
         'general': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH / 'general.log',
+            'filename': DJANGO_LOG_DIR / 'general.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -244,7 +352,7 @@ LOGGING = {
         'info': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH / 'info.log',
+            'filename': DJANGO_LOG_DIR / 'info.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -252,7 +360,7 @@ LOGGING = {
         'requests_with_trace': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH / 'requests.debug.log',
+            'filename': DJANGO_LOG_DIR / 'requests.debug.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -260,7 +368,7 @@ LOGGING = {
         'exceptions': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH / 'exceptions.log',
+            'filename': DJANGO_LOG_DIR / 'exceptions.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -268,7 +376,7 @@ LOGGING = {
         'requests': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH / 'requests.log',
+            'filename': DJANGO_LOG_DIR / 'requests.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -276,7 +384,7 @@ LOGGING = {
         'django': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH / 'django.log',
+            'filename': DJANGO_LOG_DIR / 'django.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -284,7 +392,7 @@ LOGGING = {
         'bodzify_api': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_PATH / 'bodzify-api.log',
+            'filename': DJANGO_LOG_DIR / 'bodzify-api.log',
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'

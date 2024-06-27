@@ -127,7 +127,7 @@ class TrackService(Service):
     @staticmethod
     def _get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
-            with tempfile.NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR) as tmp_file:
+            with tempfile.NamedTemporaryFile(delete=False, dir=settings.TEMP_UPLOADED_FILES_DIR) as tmp_file:
                 for chunk in file.chunks():
                     tmp_file.write(chunk)
                 file_path = tmp_file.name
@@ -261,7 +261,6 @@ class TrackService(Service):
                 error_code = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.CODE]
                 error_message = error_dict[TrackService.MUSICBRAINZ_API.FIELDS.MESSAGE]
                 exception_message = f"Error while getting musicbrainz recording ID: {error_code} - {error_message}"
-                print(exception_message)
                 raise MusicbrainzException(exception_message)
             else:
                 raise MusicbrainzException("Unknown error while getting musicbrainz recording ID")
@@ -517,7 +516,7 @@ class TrackService(Service):
         # stream=True more effective for large files
         track_file_streamed = requests.get(mine_track_url, stream=True)
 
-        with tempfile.NamedTemporaryFile(delete=True, dir=settings.FILE_UPLOAD_TEMP_DIR) as track_temp_file:
+        with tempfile.NamedTemporaryFile(delete=True, dir=settings.TEMP_UPLOADED_FILES_DIR) as track_temp_file:
             for block in track_file_streamed.iter_content(1024 * 8):
                 if not block:
                     break
