@@ -12,7 +12,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api.utils import utils
-from bodzify_api.settings import settings
+from bodzify_api import settings
 import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.TrackFile import TrackFile

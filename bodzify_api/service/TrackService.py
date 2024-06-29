@@ -25,7 +25,7 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.musicbrainz.MusicbrainzArtist \
     import MusicbrainzArtist, ATTRIBUTES_LABEL as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.settings import settings
+from bodzify_api import settings
 from bodzify_api.utils.audio_fingerprinter_api_client \
     import AudioFingerprintGeneratorApiClient, AudioFingerprintGeneratorError
 import bodzify_api.utils.audio_metadata as audio_metadata
