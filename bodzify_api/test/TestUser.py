@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 from django.contrib.auth.models import User
 
-from bodzify_api.settings import settings
+from bodzify_api import settings
 
 
 class TestUser():

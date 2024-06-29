@@ -12,7 +12,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api.utils import utils
-from bodzify_api.settings import settings
+from bodzify_api import settings
 import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.TrackFile import TrackFile
@@ -104,7 +104,8 @@ class LibraryTrack(models.Model):
     def __str__(self):
         album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
         genre_str = f"{ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
-        duration_str_in_hour_min_sec = f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else ""
+        duration_str_in_hour_min_sec = f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {
+            str(self.duration_in_sec)} " if self.duration_in_sec else ""
         rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
         language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
         file_str = f"{ATTRIBUTES_LABEL.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""

@@ -25,7 +25,7 @@ from bodzify_api.model.Artist import Artist
 from bodzify_api.model.musicbrainz.MusicbrainzArtist \
     import MusicbrainzArtist, ATTRIBUTES_LABEL as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.settings import settings
+from bodzify_api import settings
 from bodzify_api.utils.audio_fingerprinter_api_client \
     import AudioFingerprintGeneratorApiClient, AudioFingerprintGeneratorError
 import bodzify_api.utils.audio_metadata as audio_metadata
@@ -127,7 +127,7 @@ class TrackService(Service):
     @staticmethod
     def _get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
-            with tempfile.NamedTemporaryFile(delete=False, dir=settings.TEMP_UPLOADED_FILES_DIR) as tmp_file:
+            with tempfile.NamedTemporaryFile(delete=False, dir=settings.TMP_UPLOADED_FILES_DIR) as tmp_file:
                 for chunk in file.chunks():
                     tmp_file.write(chunk)
                 file_path = tmp_file.name
@@ -516,7 +516,7 @@ class TrackService(Service):
         # stream=True more effective for large files
         track_file_streamed = requests.get(mine_track_url, stream=True)
 
-        with tempfile.NamedTemporaryFile(delete=True, dir=settings.TEMP_UPLOADED_FILES_DIR) as track_temp_file:
+        with tempfile.NamedTemporaryFile(delete=True, dir=settings.TMP_UPLOADED_FILES_DIR) as track_temp_file:
             for block in track_file_streamed.iter_content(1024 * 8):
                 if not block:
                     break

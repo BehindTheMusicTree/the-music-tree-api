@@ -9,7 +9,7 @@ from django.db.models import QuerySet
 from django.contrib.auth.models import User
 
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.settings import settings
+from bodzify_api import settings
 
 
 class ATTRIBUTES_LABEL:

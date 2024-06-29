@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.db import models
 from django.db.models import Value, F
 
-from bodzify_api.settings import settings
+from bodzify_api import settings
 
 
 class ATTRIBUTES_LABEL:

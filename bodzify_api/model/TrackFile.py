@@ -12,7 +12,7 @@ from django.core.validators import FileExtensionValidator
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api.settings import settings
+from bodzify_api import settings
 from bodzify_api.validator.track_file_validator \
     import validate_size, validate_content_type_is_audio, validate_filename_length
 import bodzify_api.utils.audio_metadata as audio_metadata

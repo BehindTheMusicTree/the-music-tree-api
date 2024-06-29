@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from bodzify_api.settings import settings
+from bodzify_api import settings
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
 
 TYPE_LABEL = "simple"
