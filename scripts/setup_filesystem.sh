@@ -2,10 +2,22 @@
 
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-echo "SCRIPT_DIR $SCRIPTS_DIR"
 PROJECT_PATH=$(dirname "$SCRIPTS_DIR")/
 
-source "${SCRIPTS_DIR}set_paths_env_vars_from_env_and_config.sh"
+GENERATED_PATHS_ENV_FILE="$SCRIPTS_DIR../env/.env_generated_paths"
+bash "${SCRIPTS_DIR}generate_paths_env_file.sh" "$GENERATED_PATHS_ENV_FILE"
+
+if [ $? -ne 0 ]; then
+    echo "Failed to generate paths env file"
+    exit 1
+fi
+
+echo "Loading calculated paths from ${GENERATED_PATHS_ENV_FILE}"
+while IFS='=' read -r key value
+do
+    export "$key=$value"
+    echo "$key=$value"
+done < "$GENERATED_PATHS_ENV_FILE"
 
 if [ ! -d "$LIBRARIES_DIR" ]; then
     echo "Creating libraries directory..."
