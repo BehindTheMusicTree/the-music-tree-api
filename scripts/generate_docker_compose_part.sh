@@ -2,9 +2,34 @@
 
 # Get the directory of the script even when it's called from another script
 SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-ENV_PATH="$SCRIPT_DIR../.env"
+ENV_PATH="$SCRIPT_DIR../.env_api"
 
 cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
+  db:
+    image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
+    container_name: $DB_CONTAINER_NAME
+    volumes:
+      - db-data:$DB_DATA_DIR
+      - ./db_init_roles.sql:/db/init_roles.sql
+    ports:
+      - "$DB_PORT:$DB_PORT"
+    networks:
+      - bodzify-network
+    env_file: $DB_ENV_VARIABLES_FILENAME
+
+  audio_fingerprinter:
+    working_dir: /app/
+    image: $DOCKERHUB_USERNAME/$AUDIO_FINGERPRINTER_IMAGE_REPO:$AUDIO_FINGERPRINTER_IMAGE_TAG
+    container_name: $AUDIO_FINGERPRINTER_CONTAINER_NAME
+    volumes:
+      - api-upload-temp-files:$AUDIO_FINGERPRINTER
+      - afg-log-dir:/var/log/bodzify-audio-fingerprinter/
+    ports:
+      - "$AUDIO_FINGERPRINTER_PORT:$AUDIO_FINGERPRINTER_PORT"
+    networks:
+      - bodzify-network
+    env_file: $AUDIO_FINGERPRINTER_ENV_VARIABLES_FILENAME
+
   api:
     working_dir: /home/app/webapp/
     image: $DOCKERHUB_USERNAME/$IMAGE_REPO:$IMAGE_TAG
