@@ -4,6 +4,7 @@ import datetime
 import json
 import os
 from pathlib import Path
+import subprocess
 import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -11,9 +12,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv.load_dotenv(BASE_DIR / 'env/.env')
 
-CALCULATED_INTERNAL_PATHS_ENV_FILE = BASE_DIR / 'env/.env_calculated_internal_paths'
+CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
+generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
+try:
+    result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path),
+                             str(BASE_DIR) + '/',
+                             CALCULATED_PATHS_ENV_FILE],
+                            check=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True)
+    print("Paths env file generated.")
+    print("Output:", result.stdout)
+except subprocess.CalledProcessError as e:
+    print("Error while generating the paths env file:", e.stderr)
+    raise EnvironmentError("Error while generating the paths env file: " + str(e)) from e
 
-dotenv.load_dotenv(BASE_DIR / 'env/.env')
+dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
 
 IS_APP_EXPOSED = os.getenv('IS_APP_EXPOSED')
 if not IS_APP_EXPOSED or IS_APP_EXPOSED not in ['true', 'false']:
@@ -275,15 +290,7 @@ EXTERNAL_DIRS_NEEDED = True if EXTERNAL_DIRS_NEEDED_STR == 'true' else False
 print("EXTERNAL_DIRS_NEEDED: " + str(EXTERNAL_DIRS_NEEDED))
 
 if AUDIO_META_ANALYSE_NEEDED:
-    TMP_UPLOADED_FILES_DIR_ENV = os.getenv('TMP_UPLOADED_FILES_DIR')
-    if TMP_UPLOADED_FILES_DIR_ENV is None:
-        if EXTERNAL_DIRS_NEEDED:
-            raise EnvironmentError("The TMP_UPLOADED_FILES_DIR variable is not set while external dirs are needed.")
-        else:
-            TMP_UPLOADED_FILES_DIR = BASE_DIR / DEFAULT_INTERNAL_PATHS[DEFAULT_INTERNAL_PATHS_KEYS.TMP_UPLOADED_FILES]
-    else:
-        TMP_UPLOADED_FILES_DIR = Path(TMP_UPLOADED_FILES_DIR_ENV)
-
+    TMP_UPLOADED_FILES_DIR = os.getenv('TMP_UPLOADED_FILES_DIR')
     AUDIO_FINGERPRINTER_PORT = os.getenv('AUDIO_FINGERPRINTER_PORT')
     if AUDIO_FINGERPRINTER_PORT is None:
         raise Exception("AUDIO_FINGERPRINTER_PORT env variable is not set")
@@ -299,47 +306,11 @@ if AUDIO_META_ANALYSE_NEEDED:
     if not ACOUSTID_API_KEY and AUDIO_META_ANALYSE_NEEDED:
         raise EnvironmentError("The ACOUSTID_API_KEY variable is not set")
 
-if EXTERNAL_DIRS_NEEDED:
-    MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
-    if MEDIA_DIR_ENV is None:
-        raise EnvironmentError("The MEDIA_DIR variable is not set")
-    else:
-        MEDIA_ROOT = Path(MEDIA_DIR_ENV)
-        print("Setting media root to: " + str(MEDIA_ROOT))
-
-    LOG_DIR_ENV = os.getenv('DJANGO_LOG_DIR')
-    if LOG_DIR_ENV is None:
-        raise EnvironmentError("The DJANGO_LOG_DIR variable is not set")
-    else:
-        LOG_DIR = Path(LOG_DIR_ENV)
-        print("Setting log dir to: " + str(LOG_DIR))
-
-    STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
-    if STATIC_FILES_DIR_ENV is None:
-        raise EnvironmentError("The STATIC_FILES_DIR variable is not set")
-    else:
-        STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
-        print("Setting static files dir to: " + str(STATIC_ROOT))
-else:
-    MEDIA_ROOT = BASE_DIR / DEFAULT_INTERNAL_PATHS[DEFAULT_INTERNAL_PATHS_KEYS.MEDIA]
-    print("Setting media dir to default: " + str(MEDIA_ROOT))
-
-    LOG_DIR = BASE_DIR / DEFAULT_INTERNAL_PATHS[DEFAULT_INTERNAL_PATHS_KEYS.LOG]
-    print("Setting log dir to default: " + str(LOG_DIR))
-
-    STATIC_ROOT = BASE_DIR / DEFAULT_INTERNAL_PATHS[DEFAULT_INTERNAL_PATHS_KEYS.STATIC_FILES]
-    print("Setting static files dir to default: " + str(STATIC_ROOT))
-
-LIBRARIES_DIR_NAME_ENV = os.getenv('LIBRARIES_DIR_NAME')
-if LIBRARIES_DIR_NAME_ENV is None:
-    if EXTERNAL_DIRS_NEEDED:
-        raise EnvironmentError("The LIBRARIES_DIR_NAME variable is not set while external dirs are needed.")
-    else:
-        LIBRARIES_DIR_NAME = DEFAULT_INTERNAL_PATHS[DEFAULT_INTERNAL_PATHS_KEYS.LIBRARIES_DIR_NAME]
-else:
-    LIBRARIES_DIR_NAME = LIBRARIES_DIR_NAME_ENV
-
-LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
+MEDIA_ROOT = Path(os.getenv('MEDIA_DIR'))
+LOG_DIR = Path(os.getenv('LOG_DIR'))
+STATIC_ROOT = Path(os.getenv('STATIC_FILES_DIR'))
+LIBRARIES_DIR_NAME = os.getenv('LIBRARIES_DIR_NAME')
+LIBRARIES_DIR = Path(os.getenv('LIBRARIES_DIR'))
 
 LOGGING = {
     'version': 1,

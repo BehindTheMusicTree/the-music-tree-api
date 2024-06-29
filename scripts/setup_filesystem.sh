@@ -3,9 +3,10 @@
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_PATH=$(dirname "$SCRIPTS_DIR")/
+PROJECT_PATH=$(realpath "$PROJECT_PATH")/
 
-CALCULATED_PATHS_ENV_FILE="$SCRIPTS_DIR../env/calculated_paths/.env"
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$CALCULATED_PATHS_ENV_FILE"
+CALCULATED_PATHS_ENV_FILE=$(realpath "$SCRIPTS_DIR../env/calculated_paths/.env")
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_PATH" "$CALCULATED_PATHS_ENV_FILE"
 
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file"
