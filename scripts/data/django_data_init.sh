@@ -3,7 +3,7 @@
 SCRIPTS_DIR=$(dirname "$0")/../
 
 # Load environment variables in the current shell
-source "${SCRIPTS_DIR}load_env_variables.sh"
+source "${SCRIPTS_DIR}load_config.sh"
 
 MANAGE_PATH=$SCRIPTS_DIR../manage.py
 python3 $MANAGE_PATH migrate

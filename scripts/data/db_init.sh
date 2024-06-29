@@ -3,7 +3,7 @@
 SCRIPTS_DIR=$(dirname "$0")/../
 
 # Load environment variables in the current shell
-source "${SCRIPTS_DIR}load_env_variables.sh"
+source "${SCRIPTS_DIR}load_config.sh"
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;"
 

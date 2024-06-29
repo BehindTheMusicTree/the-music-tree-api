@@ -1,4 +1,8 @@
-SCRPIT_DIR=$(dirname $0)/
+#!/bin/bash
+
+# Get the directory of the script even when it's called from another script
+SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+ENV_PATH="$SCRIPT_DIR../.env"
 
 cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
   api:
@@ -15,7 +19,7 @@ cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-gunicorn-log-dir:${GUNICORN_LOG_DIR}
       - api-media-dir:${MEDIA_DIR}
       - api-static-files:${STATIC_FILES_DIR}
-      - api-upload-temp-files:${TEMP_UPLOADED_FILES_DIR}
+      - api-upload-temp-files:${TMP_UPLOADED_FILES_DIR}
     expose:
       - $APP_PORT
     networks:
