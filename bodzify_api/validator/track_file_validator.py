@@ -5,7 +5,7 @@ import os
 from rest_framework.exceptions import ValidationError
 from mutagen import File
 
-from bodzify_api import settings
+from bodzify_api.settings import settings
 
 
 def validate_size(file):

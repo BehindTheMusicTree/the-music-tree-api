@@ -5,7 +5,7 @@ import base64
 from typing import Optional
 import requests
 
-from bodzify_api import settings
+from bodzify_api.settings import settings
 
 
 class AudioFingerprintGeneratorError(Exception):
