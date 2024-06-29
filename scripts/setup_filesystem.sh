@@ -4,20 +4,20 @@
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_PATH=$(dirname "$SCRIPTS_DIR")/
 
-GENERATED_PATHS_ENV_FILE="$SCRIPTS_DIR../env/.env_generated_paths"
-bash "${SCRIPTS_DIR}generate_paths_env_file.sh" "$GENERATED_PATHS_ENV_FILE"
+CALCULATED_PATHS_ENV_FILE="$SCRIPTS_DIR../env/calculated_paths/.env"
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$CALCULATED_PATHS_ENV_FILE"
 
 if [ $? -ne 0 ]; then
-    echo "Failed to generate paths env file"
+    echo "Failed to generate calculated paths env file"
     exit 1
 fi
 
-echo "Loading calculated paths from ${GENERATED_PATHS_ENV_FILE}"
+echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
 while IFS='=' read -r key value
 do
     export "$key=$value"
     echo "$key=$value"
-done < "$GENERATED_PATHS_ENV_FILE"
+done < "$CALCULATED_PATHS_ENV_FILE"
 
 if [ ! -d "$LIBRARIES_DIR" ]; then
     echo "Creating libraries directory..."

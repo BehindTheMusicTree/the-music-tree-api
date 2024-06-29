@@ -6,15 +6,14 @@ import os
 from pathlib import Path
 import dotenv
 
-from bodzify_api.settings import default_internal_paths_loader as default_internal_paths_loader
-from bodzify_api.settings.default_internal_paths_loader import CONFIG_KEYS as DEFAULT_INTERNAL_PATHS_KEYS
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv.load_dotenv(BASE_DIR / 'env/.env')
 
-DEFAULT_INTERNAL_PATHS = default_internal_paths_loader.load()
+CALCULATED_INTERNAL_PATHS_ENV_FILE = BASE_DIR / 'env/.env_calculated_internal_paths'
+
+dotenv.load_dotenv(BASE_DIR / 'env/.env')
 
 IS_APP_EXPOSED = os.getenv('IS_APP_EXPOSED')
 if not IS_APP_EXPOSED or IS_APP_EXPOSED not in ['true', 'false']:
