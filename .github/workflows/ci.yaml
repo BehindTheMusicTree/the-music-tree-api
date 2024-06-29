@@ -27,7 +27,7 @@ jobs:
     env:
       ENV: CI_TEST
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-      TEMP_UPLOADED_FILES_DIR: ${{ vars.TEMP_UPLOADED_FILES_DIR }}
+      TMP_UPLOADED_FILES_DIR: ${{ vars.TMP_UPLOADED_FILES_DIR }}
 
       DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
       DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
@@ -62,6 +62,9 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get install ffmpeg
 
+      - name: Install jq
+        run: sudo apt-get install jq
+
       - name: Add fpcalc to PATH
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
 
@@ -72,7 +75,7 @@ jobs:
         run: |
           docker run -d \
             -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
-            -v ${{ env.TEMP_UPLOADED_FILES_DIR }}:${{ vars.AUDIO_FINGERPRINTER_POOL_DIR }} \
+            -v ${{ env.TMP_UPLOADED_FILES_DIR }}:${{ vars.AUDIO_FINGERPRINTER_POOL_DIR }} \
             -e ENV=TEST \
             -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
             ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
@@ -172,7 +175,7 @@ jobs:
             DJANGO_LOG_DIR=${{ vars.APP_LOG_DIR }}${{ vars.DJANGO_LOG_DIR_NAME }}
             GUNICORN_LOG_DIR=${{ vars.APP_LOG_DIR }}${{ vars.GUNICORN_LOG_DIR_NAME }}
             LIBRARIES_DIR=${{ vars.MEDIA_DIR }}${{ vars.LIBRARIES_DIR_NAME }}
-            TEMP_UPLOADED_FILES_DIR=${{ vars.TEMP_UPLOADED_FILES_DIR }}
+            TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
             STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}
 
   set-env-variables-on-server:
