@@ -104,13 +104,13 @@ class LibraryTrack(models.Model):
     def __str__(self):
         album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
         genre_str = f"{ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
-        duration_str_in_hour_min_sec = f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {
-            str(self.duration_in_sec)} " if self.duration_in_sec else ""
+        duration_str_in_sec = \
+            f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else ""
         rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
         language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
         file_str = f"{ATTRIBUTES_LABEL.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
-                f"{genre_str}{duration_str_in_hour_min_sec}{rating_str}{language_str}"
+                f"{genre_str}{duration_str_in_sec}{rating_str}{language_str}"
                 f"{ATTRIBUTES_LABEL.CREATED_ON}: {str(self.created_on)} {file_str}")
 
     def save(self, *args, **kwargs):
