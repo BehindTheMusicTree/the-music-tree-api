@@ -55,10 +55,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
            python-version: 3.11
 
@@ -143,13 +143,14 @@ jobs:
       APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
       DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
       STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
-      STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
+      STATIC_FILES_DIR: ${{ github.workspace }}/${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
       DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
@@ -159,7 +160,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Remove previously collected static files
-        run: rm -rf ${{ vars.STATIC_FILES_DIR }}*
+        run: rm -rf ${{ env.STATIC_FILES_DEFAULT_DIR }}*
 
       - name: Collect static files
         run: python ${{ github.workspace }}/manage.py collectstatic --noinput
@@ -171,7 +172,7 @@ jobs:
 
       - name: Commit and push static files
         run: |
-          git add -f ${{ vars.STATIC_FILES_DIR }} 
+          git add -f ${{ env.STATIC_FILES_DEFAULT_DIR }} 
           git commit -m 'Collect static files'
           git push
 
