@@ -14,7 +14,7 @@ if [ -f "$APP_ENV_FILE" ]; then
         export "$key=$value"
     done < "$APP_ENV_FILE"
 else
-    echo "$APP_ENV_FILE env file does not exist"
+    echo "$APP_ENV_FILE no app env file"
 fi
 
 check_bool_var() {
