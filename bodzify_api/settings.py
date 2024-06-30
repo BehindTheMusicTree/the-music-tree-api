@@ -331,34 +331,34 @@ LOGS_ARE_NEEDED = True if LOGS_ARE_NEEDED_STR == 'true' else False
 
 if LOGS_ARE_NEEDED:
     print("DJANGO_LOGS_ARE_NEEDED is true. Setting up logs.")
-    LOG_DIR = Path(os.getenv('LOG_DIR'))
+    LOG_DIR = Path(os.getenv('DJANGO_LOG_DIR'))
 
-    DJANGO_LOG_GENERAL_FILENAME = os.getenv('DJANGO_LOG_GENERAL_FILENAME')
-    if not DJANGO_LOG_GENERAL_FILENAME:
+    LOG_GENERAL_FILENAME = os.getenv('DJANGO_LOG_GENERAL_FILENAME')
+    if not LOG_GENERAL_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_GENERAL_FILENAME variable is not set")
 
-    DJANGO_LOG_INFO_FILENAME = os.getenv('DJANGO_LOG_INFO_FILENAME')
-    if not DJANGO_LOG_INFO_FILENAME:
+    LOG_INFO_FILENAME = os.getenv('DJANGO_LOG_INFO_FILENAME')
+    if not LOG_INFO_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_INFO_FILENAME variable is not set")
 
-    DJANGO_LOG_REQUESTS_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_FILENAME')
-    if not DJANGO_LOG_REQUESTS_FILENAME:
+    LOG_REQUESTS_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_FILENAME')
+    if not LOG_REQUESTS_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_REQUESTS_FILENAME variable is not set")
 
-    DJANGO_LOG_REQUESTS_DEBUG_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_DEBUG_FILENAME')
-    if not DJANGO_LOG_REQUESTS_DEBUG_FILENAME:
+    LOG_REQUESTS_DEBUG_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_DEBUG_FILENAME')
+    if not LOG_REQUESTS_DEBUG_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_REQUESTS_DEBUG_FILENAME variable is not set")
 
-    DJANGO_LOG_EXCEPTIONS_FILENAME = os.getenv('DJANGO_LOG_EXCEPTIONS_FILENAME')
-    if not DJANGO_LOG_EXCEPTIONS_FILENAME:
+    LOG_EXCEPTIONS_FILENAME = os.getenv('DJANGO_LOG_EXCEPTIONS_FILENAME')
+    if not LOG_EXCEPTIONS_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_EXCEPTIONS_FILENAME variable is not set")
 
-    DJANGO_LOG_DJANGO_FILENAME = os.getenv('DJANGO_LOG_DJANGO_FILENAME')
-    if not DJANGO_LOG_DJANGO_FILENAME:
+    LOG_DJANGO_FILENAME = os.getenv('DJANGO_LOG_DJANGO_FILENAME')
+    if not LOG_DJANGO_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_DJANGO_FILENAME variable is not set")
 
-    DJANGO_LOG_APP_FILENAME = os.getenv('DJANGO_LOG_APP_FILENAME')
-    if not DJANGO_LOG_APP_FILENAME:
+    LOG_APP_FILENAME = os.getenv('DJANGO_LOG_APP_FILENAME')
+    if not LOG_APP_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_APP_FILENAME variable is not set")
 
     LOGGING = {
@@ -373,7 +373,7 @@ if LOGS_ARE_NEEDED:
             'general': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / DJANGO_LOG_GENERAL_FILENAME,
+                'filename': LOG_DIR / LOG_GENERAL_FILENAME,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -381,7 +381,7 @@ if LOGS_ARE_NEEDED:
             'info': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / DJANGO_LOG_INFO_FILENAME,
+                'filename': LOG_DIR / LOG_INFO_FILENAME,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -389,7 +389,7 @@ if LOGS_ARE_NEEDED:
             'requests': {
                 'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / DJANGO_LOG_REQUESTS_FILENAME,
+                'filename': LOG_DIR / LOG_REQUESTS_FILENAME,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -397,7 +397,7 @@ if LOGS_ARE_NEEDED:
             'requests_with_trace': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / DJANGO_LOG_REQUESTS_DEBUG_FILENAME,
+                'filename': LOG_DIR / LOG_REQUESTS_DEBUG_FILENAME,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -405,7 +405,7 @@ if LOGS_ARE_NEEDED:
             'exceptions': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / DJANGO_LOG_EXCEPTIONS_FILENAME,
+                'filename': LOG_DIR / LOG_EXCEPTIONS_FILENAME,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -413,7 +413,7 @@ if LOGS_ARE_NEEDED:
             'django': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / DJANGO_LOG_DJANGO_FILENAME,
+                'filename': LOG_DIR / LOG_DJANGO_FILENAME,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -421,7 +421,7 @@ if LOGS_ARE_NEEDED:
             APP_NAME: {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / DJANGO_LOG_APP_FILENAME,
+                'filename': LOG_DIR / LOG_APP_FILENAME,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
