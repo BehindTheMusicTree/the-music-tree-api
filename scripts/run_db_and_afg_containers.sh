@@ -1,8 +1,35 @@
 #!/bin/bash
 
 # Get the directory of the script even when it's called from another script
-SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-source "$SCRIPT_DIR../env/.env"
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
+APP_ENV_FILE="${PROJECT_DIR}env/.env"
+
+if [ -f "$APP_ENV_FILE" ]; then
+    echo "Loading environment variables from ${APP_ENV_FILE}"
+    while IFS='=' read -r key value
+    do
+        # Skip comments and empty lines
+        if [ -z "$key" ]; then continue; fi
+        export "$key=$value"
+    done < "$APP_ENV_FILE"
+else
+    echo "$APP_ENV_FILE env file does not exist"
+fi
+
+CALCULATED_PATHS_ENV_FILE=$(cd "${PROJECT_DIR}env/calculated_paths/" && pwd)/.env
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$APP_ENV_FILE" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
+
+if [ $? -ne 0 ]; then
+    echo "Failed to generate calculated paths env file"
+    exit 1
+fi
+
+echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
+while IFS='=' read -r key value
+do
+    export "$key=$value"
+done < "$CALCULATED_PATHS_ENV_FILE"
 
 required_vars=(
   ENV
@@ -44,20 +71,16 @@ else
     echo "No container to remove."
 fi
 
-echo $DOCKERHUB_USERNAME
-echo $DB_IMAGE_REPO
 docker run \
 --name=$DB_CONTAINER_NAME \
 --volume=db-data:$DB_DATA_DIR \
 -p $DB_PORT:$DB_PORT \
 -e ENV=$ENV \
 -e POSTGRES_DB=$DB_BODZIFY_API_DB_NAME \
--e POSTGRES_USER=$DB_SUPERUSER_NAME\
+-e POSTGRES_USER=$DB_SUPERUSER_NAME \
 -e POSTGRES_PASSWORD=$DB_SUPERUSER_PASSWORD \
--e POSTGRES_PORT=$DB_PORT \
--d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
+-e POSTGRES_PORT=$DB_PORT -d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
 
-echo $AUDIO_FINGERPRINTER_IMAGE_REPO
 docker run \
 --name=$AUDIO_FINGERPRINTER_CONTAINER_NAME \
 --volume=$TMP_UPLOADED_FILES_DIR:$AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET \

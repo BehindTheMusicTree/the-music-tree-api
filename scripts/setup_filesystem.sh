@@ -17,41 +17,26 @@ else
     echo "$APP_ENV_FILE env file does not exist"
 fi
 
-if [ -z $APP_IS_EXPOSED ]; then
-    echo "APP_IS_EXPOSED is not set." >&2
+check_bool_var() {
+  local var_name="$1"
+  local var_value="${!1}"
+  if [ -z "$var_value" ]; then
+    echo "$var_name is not set." >&2
     exit 1
-elif [ "$APP_IS_EXPOSED" != "true" ] && [ "$APP_IS_EXPOSED" != "false" ]; then
-    echo "APP_IS_EXPOSED must be 'true' or 'false'." >&2
+  elif [ "$var_value" != "true" ] && [ "$var_value" != "false" ]; then
+    echo "$var_name must be 'true' or 'false'." >&2
     exit 1
-fi
+  fi
+}
 
-if [ -z $DJANGO_LOGS_ARE_NEEDED ]; then
-    echo "DJANGO_LOGS_ARE_NEEDED is not set." >&2
-    exit 1
-elif [ "$DJANGO_LOGS_ARE_NEEDED" != "true" ] && [ "$DJANGO_LOGS_ARE_NEEDED" != "false" ]; then
-    echo "DJANGO_LOGS_ARE_NEEDED must be 'true' or 'false'." >&2
-    exit 1
-fi
+check_bool_var "APP_IS_EXPOSED"
+check_bool_var "DJANGO_LOGS_ARE_NEEDED"
+check_bool_var "STATIC_FILES_ARE_NEEDED"
+check_bool_var "AUDIO_META_ANALYSE_IS_NEEDED"
 
 if [ -z $LIBRARIES_DIR_NAME ]; then
-    echo "LIBRARIES_DIR_NAME is not set" >&2
-    exit 1
-fi
-
-if [ -z $STATIC_FILES_ARE_NEEDED ]; then
-    echo "STATIC_FILES_ARE_NEEDED is not set." >&2
-    exit 1
-elif [ "$STATIC_FILES_ARE_NEEDED" != "true" ] && [ "$STATIC_FILES_ARE_NEEDED" != "false" ]; then
-    echo "STATIC_FILES_ARE_NEEDED must be 'true' or 'false'." >&2
-    exit 1
-fi
-
-if [ -z $AUDIO_META_ANALYSE_IS_NEEDED ]; then
-    echo "AUDIO_META_ANALYSE_IS_NEEDED is not set." >&2
-    exit 1
-elif [ "$AUDIO_META_ANALYSE_IS_NEEDED" != "true" ] && [ "$AUDIO_META_ANALYSE_IS_NEEDED" != "false" ]; then
-    echo "AUDIO_META_ANALYSE_IS_NEEDED must be 'true' or 'false'." >&2
-    exit 1
+  echo "LIBRARIES_DIR_NAME is not set" >&2
+  exit 1
 fi
 
 CALCULATED_PATHS_ENV_FILE=$(cd "${PROJECT_DIR}env/calculated_paths/" && pwd)/.env
