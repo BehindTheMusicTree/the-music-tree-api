@@ -8,6 +8,7 @@ required_vars=(
   ENV
   DOCKERHUB_USERNAME
   TMP_UPLOADED_FILES_DIR
+
   DB_CONTAINER_NAME
   DB_IMAGE_REPO
   DB_IMAGE_TAG
@@ -16,6 +17,7 @@ required_vars=(
   DB_BODZIFY_API_DB_NAME
   DB_SUPERUSER_NAME
   DB_SUPERUSER_PASSWORD
+
   AUDIO_FINGERPRINTER_CONTAINER_NAME
   AUDIO_FINGERPRINTER_IMAGE_REPO
   AUDIO_FINGERPRINTER_IMAGE_TAG
@@ -25,20 +27,27 @@ required_vars=(
 
 for var in "${required_vars[@]}"; do
   if [ -z "${!var}" ]; then
-    echo "$var is not set. Please set it in the .env file."
+    echo "$var must be set."
     exit 1
   fi
 done
 
 echo "Running the database and audio fingerprinter containers..."
 
-docker pull $DOCKERHUB_USERNAME/$AUDIO_FINGERPRINTER_IMAGE_REPO:$AUDIO_FINGERPRINTER_IMAGE_TAG
 docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
+docker pull $DOCKERHUB_USERNAME/$AUDIO_FINGERPRINTER_IMAGE_REPO:$AUDIO_FINGERPRINTER_IMAGE_TAG
 
-docker rm $(docker ps -a -q) -f
+container_ids=$(docker ps -a -q)
+if [ -n "$container_ids" ]; then
+    docker rm -f $container_ids
+else
+    echo "No container to remove."
+fi
 
+echo $DOCKERHUB_USERNAME
+echo $DB_IMAGE_REPO
 docker run \
-ty--name=$DB_CONTAINER_NAME \
+--name=$DB_CONTAINER_NAME \
 --volume=db-data:$DB_DATA_DIR \
 -p $DB_PORT:$DB_PORT \
 -e ENV=$ENV \
@@ -46,9 +55,11 @@ ty--name=$DB_CONTAINER_NAME \
 -e POSTGRES_USER=$DB_SUPERUSER_NAME\
 -e POSTGRES_PASSWORD=$DB_SUPERUSER_PASSWORD \
 -e POSTGRES_PORT=$DB_PORT \
+-d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
 
-docker run -p $AUDIO_FINGERPRINTER_PORT:$AUDIO_FINGERPRINTER_PORT \
-ty--name=$AUDIO_FINGERPRINTER_CONTAINER_NAME \
+echo $AUDIO_FINGERPRINTER_IMAGE_REPO
+docker run \
+--name=$AUDIO_FINGERPRINTER_CONTAINER_NAME \
 --volume=$TMP_UPLOADED_FILES_DIR:$AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET \
 -p $AUDIO_FINGERPRINTER_PORT:$AUDIO_FINGERPRINTER_PORT \
 -e ENV=$ENV \

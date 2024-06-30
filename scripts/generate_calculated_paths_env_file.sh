@@ -35,25 +35,20 @@ fi
 
 if $APP_IS_EXPOSED; then
     echo "APP_IS_EXPOSED is set to true"
-    if [ -z $MEDIA_DIR ]; then
-        echo "MEDIA_DIR is not set" >&2
-        exit 1
+    required_vars=("MEDIA_DIR" "TMP_UPLOADED_FILES_DIR")
+    if $STATIC_FILES_ARE_NEEDED; then
+        required_vars+=("STATIC_FILES_DIR")
+    fi
+    if $DJANGO_LOGS_ARE_NEEDED; then
+        required_vars+=("DJANGO_LOG_DIR")
     fi
 
-    if [ -z $STATIC_FILES_DIR ] && [$STATIC_FILES_ARE_NEEDED] ; then
-        echo "STATIC_FILES_DIR is not set while static files are needed" >&2
-        exit 1
-    fi
-
-    if [ -z $DJANGO_LOG_DIR && [$DJANGO_LOGS_ARE_NEEDED] ]; then
-        echo "DJANGO_LOG_DIR is not set while Django logs are needed" >&2
-        exit 1
-    fi
-
-    if [ -z $TMP_UPLOADED_FILES_DIR ]; then
-        echo "TMP_UPLOADED_FILES_DIR is not set" >&2
-        exit 1
-    fi
+    for var in "${required_vars[@]}"; do
+        if [ -z "${!var}" ]; then
+            echo "$var is not set" >&2
+            exit 1
+        fi
+    done
 else
     echo "APP_IS_EXPOSED is set to false"
     MEDIA_DIR=${BASE_DIR}$MEDIA_DEFAULT_INTERNAL_DIR
