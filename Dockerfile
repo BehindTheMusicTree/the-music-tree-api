@@ -78,7 +78,7 @@ RUN apt update && \
     pip install --upgrade pip && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
     pip install -r requirements.txt && \
-    scripts/setup_filesystem.sh
+    bash scripts/setup_filesystem.sh
 
 RUN pip list | grep gunicorn
 RUN echo $PATH && which gunicorn
