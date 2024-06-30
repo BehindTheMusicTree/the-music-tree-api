@@ -44,13 +44,18 @@ if [ -z $STATIC_FILES_DEFAULT_INTERNAL_DIR ]; then
     exit 1
 fi
 
-if [$STATIC_FILES_DIR != ${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR]; then
+DEFAULT_STATIC_FILES_DIR="${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR"
+if [ "$STATIC_FILES_DIR" != "$DEFAULT_STATIC_FILES_DIR" ]; then
     echo "STATIC_FILES_DIR is not the default internal directory. Moving static files to $STATIC_FILES_DIR"
-    mv ${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR/* $STATIC_FILES_DIR
-    echo "Deleting default internal static files directory"
-    rm -r ${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR
+    if [ ! -d $DEFAULT_STATIC_FILES_DIR ] or [ find "$DEFAULT_STATIC_FILES_DIR" -mindepth 1 -print -quit | grep -q ]; then
+        echo "No static files found in default internal directory $STATIC_FILES_DEFAULT_INTERNAL_DIR"
+    else
+        mv $DEFAULT_STATIC_FILES_DIR/* $STATIC_FILES_DIR
+        echo "Deleting default internal static files directory"
+        rm -r $DEFAULT_STATIC_FILES_DIR
+    fi
 else
-    echo "STATIC_FILES_DIR is the default internal directory $STATIC_FILES_DEFAULT_INTERNAL_DIR"
+    echo "STATIC_FILES_DIR is the default internal directory $DEFAULT_STATIC_FILES_DIR"
 fi
 
 if [ ! -d "$LOG_DIR" ]; then
