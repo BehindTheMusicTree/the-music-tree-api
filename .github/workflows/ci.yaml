@@ -41,6 +41,7 @@ jobs:
       DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
       DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
       DB_IMAGE_TAG: ${{ vars.DB_IMAGE_TAG }}
+      DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
       DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
       DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
       DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
