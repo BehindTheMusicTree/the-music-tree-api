@@ -14,9 +14,9 @@ on:
 env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
-  IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
-  IMAGE_TAG: ${{ vars.IMAGE_TAG }}
-  API_ENV_FILENAME: ${{ vars.API_ENV_FILENAME }}
+  IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
+  IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
+  APP_ENV_FILENAME: ${{ vars.APP_ENV_FILENAME }}
 
 jobs:
   pytest:
@@ -235,7 +235,7 @@ jobs:
 
       - name: Set api environment variables on server
         env: 
-          API_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ env.API_ENV_FILENAME }}"
+          API_ENV_FILE_PATH: "${{ vars.DOCKER_COMPOSE_DIR }}${{ env.APP_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.API_ENV_FILE_PATH }} &&
