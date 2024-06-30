@@ -22,22 +22,23 @@ cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
     image: $DOCKERHUB_USERNAME/$AUDIO_FINGERPRINTER_IMAGE_REPO:$AUDIO_FINGERPRINTER_IMAGE_TAG
     container_name: $AUDIO_FINGERPRINTER_CONTAINER_NAME
     volumes:
-      - api-upload-temp-files:$AUDIO_FINGERPRINTER
-      - afg-log-dir:/var/log/bodzify-audio-fingerprinter/
+      - api-upload-temp-files:$AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET
+      - afg-log-dir:$AUDIO_FINGERPRINTER_LOG_DIR_SYMLINK_TARGET
     ports:
       - "$AUDIO_FINGERPRINTER_PORT:$AUDIO_FINGERPRINTER_PORT"
     networks:
       - bodzify-network
-    env_file: $AUDIO_FINGERPRINTER_ENV_VARIABLES_FILENAME
+    env_file: $AUDIO_FINGERPRINTER_ENV_FILENAME
 
   api:
     working_dir: /home/app/webapp/
-    image: $DOCKERHUB_USERNAME/$IMAGE_REPO:$IMAGE_TAG
-    container_name: $CONTAINER_NAME
+    image: $DOCKERHUB_USERNAME/$APP_IMAGE_REPO:$APP_IMAGE_TAG
+    container_name: $APP_CONTAINER_NAME
     command: >
       gunicorn bodzify_api.wsgi:application
       --bind 0.0.0.0:$APP_PORT
-      --error-logfile=${GUNICORN_LOG_DIR}error.log
+      --error-logfile=${GUNICORN_LOG_DIR}$GUNICORN_LOG_ERROR_FILENAME
+      --access-logfile=${GUNICORN_LOG_DIR}$GUNICORN_LOG_ACCESS_FILENAME
       --log-level=info
     volumes:
       - api-django-log-dir:${DJANGO_LOG_DIR}

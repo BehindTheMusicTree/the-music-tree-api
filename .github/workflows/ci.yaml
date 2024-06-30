@@ -309,6 +309,27 @@ jobs:
       DOCKER_COMPOSE_PART_FILENAME: ${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
       APP_PORT: ${{ secrets.APP_PORT }}
 
+      GUNICORN_LOG_DIR: ${{ vars.GUNICORN_LOG_DIR }}
+      GUNICORN_LOG_ERROR_FILENAME: ${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
+      GUNICORN_LOG_ACCESS_FILENAME: ${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
+
+      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+      DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
+      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
+      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
+      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
+      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_ENV_FILENAME: ${{ vars.DB_ENV_FILENAME }}
+
+      AUDIO_FINGERPRINTER_IMAGE_REPO: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}
+      AUDIO_FINGERPRINTER_IMAGE_TAG: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
+      AUDIO_FINGERPRINTER_PORT: ${{ secrets.AUDIO_FINGERPRINTER_PORT }}
+      AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET: ${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}
+      AUDIO_FINGERPRINTER_POST_ENDPOINT: ${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}
+      AUDIO_FINGERPRINTER_ENV_FILENAME: ${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.9.0
@@ -322,7 +343,7 @@ jobs:
 
       - name: Generate partial docker compose file
         env: 
-          CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
+          APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
         run: |
           bash ${{ github.workspace }}/scripts/generate_docker_compose_part.sh
 
