@@ -47,8 +47,8 @@ class FilenameTestCase(TrackTestCase):
         data_dict = {EXTRACT_FIELDS.TITLE: title}
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.track_file.filename == f"{title}.{
-            TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION} "
+        assert self.saved_lib_track.track_file.filename == \
+            f"{title}.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION} "
 
     def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_filename(self):
         track_url = (
