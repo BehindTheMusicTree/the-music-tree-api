@@ -162,7 +162,7 @@ jobs:
         run: rm -rf ${{ vars.STATIC_FILES_DIR }}*
 
       - name: Collect static files
-        run: python manage.py collectstatic --noinput
+        run: python ${{ github.workspace }}/manage.py collectstatic --noinput
 
       - name: Configure Git
         run: |
