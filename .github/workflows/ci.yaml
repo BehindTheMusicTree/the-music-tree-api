@@ -160,7 +160,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Remove previously collected static files
-        run: rm -rf ${{ env.STATIC_FILES_DEFAULT_DIR }}*
+        run: rm -rf ${{ env.STATIC_FILES_DIR }}*
 
       - name: LS
         run: ls -all ${{ github.workspace }}
@@ -175,7 +175,7 @@ jobs:
 
       - name: Commit and push static files
         run: |
-          git add -f ${{ env.STATIC_FILES_DEFAULT_DIR }} 
+          git add -f ${{ env.STATIC_FILES_DIR }} 
           git commit -m 'Collect static files'
           git push
 
