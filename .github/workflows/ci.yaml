@@ -240,19 +240,46 @@ jobs:
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.API_ENV_FILE_PATH }} &&
             echo 'ENV=TEST' >> ${{ env.API_ENV_FILE_PATH }} &&
-            echo 'DEBUG=True' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'APP_IS_EXPOSED=${{ secrets.APP_IS_EXPOSED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+
+            echo 'AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+
+            echo 'DB_IS_NEEDED=${{ secrets.DB_IS_NEEDED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
-            echo 'LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'LIBRARIES_DIR_NAME=${{ secrets.LIBRARIES_DIR_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            
+            echo 'STATIC_FILES_ARE_NEEDED=${{ secrets.STATIC_FILES_ARE_NEEDED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'STATIC_FILES_DIR=${{ secrets.STATIC_FILES_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+
+            echo 'DJANGO_LOGS_ARE_NEEDED=${{ secrets.DJANGO_LOGS_ARE_NEEDED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+
+            echo 'GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+
             echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'DB_HOST=${{ secrets.DB_HOST }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ${{ env.API_ENV_FILE_PATH }} &&
-            echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            
+            echo 'AUDIO_FINGERPRINTER_IMAGE_REPO=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_REPO }}' >> ${{ env.API_ENV_FILE_PATH }}
+            echo 'AUDIO_FINGERPRINTER_IMAGE_TAG=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_TAG }}' >> ${{ env.API_ENV_FILE_PATH }}
             echo 'AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.API_ENV_FILE_PATH }}
+            echo 'AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET=${{ secrets.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}' >> ${{ env.API_ENV_FILE_PATH }}
+            echo 'AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ secrets.AUDIO_FINGERPRINTER_POST_ENDPOINT }}' >> ${{ env.API_ENV_FILE_PATH }}
           "
 
       # POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB and POSTGRES_PORT env variables are required by the postgres image
@@ -262,16 +289,9 @@ jobs:
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.DB_ENV_FILE_PATH }} &&
-            echo 'DB_HOST=localhost' >> ${{ env.DB_ENV_FILE_PATH }} &&
-            echo 'DB_SUPERUSER_NAME=${{ secrets.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
             echo 'POSTGRES_USER=${{ secrets.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
-            echo 'DB_SUPERUSER_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
             echo 'POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
-            echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
             echo 'POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
-            echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
-            echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
-            echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE_PATH }} &&
             echo 'POSTGRES_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE_PATH }}
           "
 
