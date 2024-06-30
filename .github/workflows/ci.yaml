@@ -83,29 +83,8 @@ jobs:
       - name: Set up filesystem
         run: bash scripts/setup_filesystem.sh
 
-      - name: Run audio-fingerprinter service
-        run: |
-          docker run -d \
-            -p ${{ env.AUDIO_FINGERPRINTER_PORT}}:${{ env.AUDIO_FINGERPRINTER_PORT}} \
-            -v ${{ env.TMP_UPLOADED_FILES_DIR }}:${{ vars.AUDIO_FINGERPRINTER_POOL_DIR }} \
-            -e ENV=TEST \
-            -e APP_PORT=${{ env.AUDIO_FINGERPRINTER_PORT }} \
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}:${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
-
-      - name: Run db service
-        run: |
-          docker run -d \
-            -p ${{ env.DB_PORT}}:${{ env.DB_PORT}} \
-            -e POSTGRES_DB=${{ env.DB_BODZIFY_API_DB_NAME }} \
-            -e POSTGRES_USER=${{ env.DB_SUPERUSER_NAME }} \
-            -e POSTGRES_PASSWORD=${{ env.DB_SUPERUSER_PASSWORD }} \
-            -e POSTGRES_PORT=${{ env.DB_PORT }} \
-            --name=${{ env.DB_CONTAINER_NAME }} \
-            --health-cmd="pg_isready" \
-            --health-interval=10s \
-            --health-timeout=5s \
-            --health-retries=3 \
-            ${{ env.DOCKERHUB_USERNAME }}/${{ vars.DB_IMAGE_REPO }}:${{ vars.DB_IMAGE_TAG }}
+      - name: Run db and afg containers
+        run: bash run_db_and_afg_containers.sh
         
       - name: Wait for db service to start
         run: |
