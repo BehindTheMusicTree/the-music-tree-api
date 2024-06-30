@@ -27,7 +27,7 @@ jobs:
     env:
       ENV: CI_TEST
       DEBUG: ${{ vars.DEBUG }}
-      DB_IS_NEEDED: ${{ secrets.DB_IS_NEEDED }}
+      DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
       APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
       AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
       TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}
@@ -251,7 +251,7 @@ jobs:
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.API_ENV_FILE_PATH }} &&
 
             echo 'DB_IS_NEEDED=${{ secrets.DB_IS_NEEDED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
-            
+
             echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'LIBRARIES_DIR_NAME=${{ secrets.LIBRARIES_DIR_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             
