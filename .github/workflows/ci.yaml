@@ -178,6 +178,8 @@ jobs:
           git add -f ${{ env.STATIC_FILES_DIR }} 
           git commit -m 'Collect static files'
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-push-to-dockerhub:
     name: Build / Push to Dockerhub
