@@ -33,11 +33,11 @@ else
     echo "$APP_ENV_FILE env file does not exist" >&2
 fi
 
-if [ -z $EXTERNAL_DIRS_ARE_NEEDED ]; then
-    echo "EXTERNAL_DIRS_ARE_NEEDED is not set." >&2
+if [ -z $APP_IS_EXPOSED ]; then
+    echo "APP_IS_EXPOSED is not set." >&2
     exit 1
-elif [ "$EXTERNAL_DIRS_ARE_NEEDED" != "true" ] && [ "$EXTERNAL_DIRS_ARE_NEEDED" != "false" ]; then
-    echo "EXTERNAL_DIRS_ARE_NEEDED must be 'true' or 'false'." >&2
+elif [ "$APP_IS_EXPOSED" != "true" ] && [ "$APP_IS_EXPOSED" != "false" ]; then
+    echo "APP_IS_EXPOSED must be 'true' or 'false'." >&2
     exit 1
 fi
 
@@ -45,7 +45,7 @@ if [ -z $DJANGO_LOGS_ARE_NEEDED ]; then
     echo "DJANGO_LOGS_ARE_NEEDED is not set." >&2
     exit 1
 elif [ "$DJANGO_LOGS_ARE_NEEDED" != "true" ] && [ "$DJANGO_LOGS_ARE_NEEDED" != "false" ]; then
-    echo "EXTERNAL_DIRS_ARE_NEEDED must be 'true' or 'false'." >&2
+    echo "APP_IS_EXPOSED must be 'true' or 'false'." >&2
     exit 1
 fi
 
@@ -62,8 +62,8 @@ elif [ "$STATIC_FILES_ARE_NEEDED" != "true" ] && [ "$STATIC_FILES_ARE_NEEDED" !=
     exit 1
 fi
 
-if $EXTERNAL_DIRS_ARE_NEEDED; then
-    echo "EXTERNAL_DIRS_ARE_NEEDED is set to true"
+if $APP_IS_EXPOSED; then
+    echo "APP_IS_EXPOSED is set to true"
     if [ -z $MEDIA_DIR ]; then
         echo "MEDIA_DIR is not set" >&2
         exit 1
@@ -84,7 +84,7 @@ if $EXTERNAL_DIRS_ARE_NEEDED; then
         exit 1
     fi
 else
-    echo "EXTERNAL_DIRS_ARE_NEEDED is set to false"
+    echo "APP_IS_EXPOSED is set to false"
     MEDIA_DIR=${BASE_DIR}$MEDIA_DEFAULT_INTERNAL_DIR
     if $STATIC_FILES_ARE_NEEDED; then
         STATIC_FILES_DIR=${BASE_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR

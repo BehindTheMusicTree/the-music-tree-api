@@ -2,42 +2,70 @@
 
 FROM python:3.11-buster
 
-ARG DJANGO_LOG_DIR
-ARG GUNICORN_LOG_DIR
-ARG LIBRARIES_DIR
+ARG APP_IS_EXPOSED
+ARG MEDIA_DIR
 ARG TMP_UPLOADED_FILES_DIR
+ARG STATIC_FILES_ARE_NEEDED
 ARG STATIC_FILES_DIR
+ARG STATIC_FILES_DEFAULT_INTERNAL_DIR
+ARG DJANGO_LOGS_ARE_NEEDED
+ARG DJANGO_LOG_DIR
+ARG DJANGO_LOG_GENERAL_FILENAME
+ARG DJANGO_LOG_INFO_FILENAME
+ARG DJANGO_LOG_REQUESTS_FILENAME
+ARG DJANGO_LOG_REQUESTS_DEBUG_FILENAME
+ARG DJANGO_LOG_EXCEPTIONS_FILENAME
+ARG DJANGO_LOG_DJANGO_FILENAME
+ARG DJANGO_LOG_APP_FILENAME
+ARG GUNICORN_LOG_DIR
+ARG GUNICORN_LOG_ERROR_FILENAME
+ARG GUNICORN_LOG_ACCESS_FILENAME
 
-RUN if [ -z "$DJANGO_LOG_DIR" ]; then echo "The DJANGO_LOG_DIR argument is not provided" >&2; exit 1; fi
-RUN if [ -z "$GUNICORN_LOG_DIR" ]; then echo "The GUNICORN_LOG_DIR argument is not provided" >&2; exit 1; fi
-RUN if [ -z "$LIBRARIES_DIR" ]; then echo "The LIBRARIES_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$APP_IS_EXPOSED" ]; then echo "The APP_IS_EXPOSED argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$MEDIA_DIR" ]; then echo "The MEDIA_DIR argument is not provided" >&2; exit 1; fi
 RUN if [ -z "$TMP_UPLOADED_FILES_DIR" ]; then echo "The TMP_UPLOADED_FILES_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$STATIC_FILES_ARE_NEEDED" ]; then echo "The STATIC_FILES_ARE_NEEDED argument is not provided" >&2; exit 1; fi
 RUN if [ -z "$STATIC_FILES_DIR" ]; then echo "The STATIC_FILES_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$STATIC_FILES_DEFAULT_INTERNAL_DIR" ]; then echo "The STATIC_FILES_DEFAULT_INTERNAL_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOGS_ARE_NEEDED" ]; then echo "The DJANGO_LOGS_ARE_NEEDED argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_DIR" ]; then echo "The DJANGO_LOG_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_GENERAL_FILENAME" ]; then echo "The DJANGO_LOG_GENERAL_FILENAME argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_INFO_FILENAME" ]; then echo "The DJANGO_LOG_INFO_FILENAME argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_REQUESTS_FILENAME" ]; then echo "The DJANGO_LOG_REQUESTS_FILENAME argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_REQUESTS_DEBUG_FILENAME" ]; then echo "The DJANGO_LOG_REQUESTS_DEBUG_FILENAME argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_EXCEPTIONS_FILENAME" ]; then echo "The DJANGO_LOG_EXCEPTIONS_FILENAME argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_DJANGO_FILENAME" ]; then echo "The DJANGO_LOG_DJANGO_FILENAME argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$DJANGO_LOG_APP_FILENAME" ]; then echo "The DJANGO_LOG_APP_FILENAME argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$GUNICORN_LOG_DIR" ]; then echo "The GUNICORN_LOG_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$GUNICORN_LOG_ERROR_FILENAME" ]; then echo "The GUNICORN_LOG_ERROR_FILENAME argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$GUNICORN_LOG_ACCESS_FILENAME" ]; then echo "The GUNICORN_LOG_ACCESS_FILENAME argument is not provided" >&2; exit 1; fi
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DOCKER_HOME=/home/app/webapp \
-    LOBRARIES_DIR=$LIBRARIES_DIR \
-    DJANGO_LOG_DIR=$DJANGO_LOG_DIR \
-    GUNICORN_LOG_DIR=$GUNICORN_LOG_DIR \
+    APP_IS_EXPOSED=$APP_IS_EXPOSED \
+    MEDIA_DIR=$MEDIA_DIR \
     TMP_UPLOADED_FILES_DIR=$TMP_UPLOADED_FILES_DIR \
-    STATIC_FILES_DIR=$STATIC_FILES_DIR
+    STATIC_FILES_ARE_NEEDED=$STATIC_FILES_ARE_NEEDED \
+    STATIC_FILES_DIR=$STATIC_FILES_DIR \
+    STATIC_FILES_DEFAULT_INTERNAL_DIR=$STATIC_FILES_DEFAULT_INTERNAL_DIR \
+    DJANGO_LOGS_ARE_NEEDED=$DJANGO_LOGS_ARE_NEEDED \
+    DJANGO_LOG_DIR=$DJANGO_LOG_DIR \
+    DJANGO_LOG_GENERAL_FILENAME=$DJANGO_LOG_GENERAL_FILENAME \
+    DJANGO_LOG_INFO_FILENAME=$DJANGO_LOG_INFO_FILENAME \
+    DJANGO_LOG_REQUESTS_FILENAME=$DJANGO_LOG_REQUESTS_FILENAME \
+    DJANGO_LOG_REQUESTS_DEBUG_FILENAME=$DJANGO_LOG_REQUESTS_DEBUG_FILENAME \
+    DJANGO_LOG_EXCEPTIONS_FILENAME=$DJANGO_LOG_EXCEPTIONS_FILENAME \
+    DJANGO_LOG_DJANGO_FILENAME=$DJANGO_LOG_DJANGO_FILENAME \
+    DJANGO_LOG_APP_FILENAME=$DJANGO_LOG_APP_FILENAME \
+    GUNICORN_LOG_DIR=$GUNICORN_LOG_DIR \
+    GUNICORN_LOG_ERROR_FILENAME=$GUNICORN_LOG_ERROR_FILENAME \
+    GUNICORN_LOG_ACCESS_FILENAME=$GUNICORN_LOG_ACCESS_FILENAME
 
 RUN apt-get update && \
     apt-get install -y gosu && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-RUN mkdir -p $DOCKER_HOME $LOBRARIES_DIR $DJANGO_LOG_DIR $GUNICORN_LOG_DIR $TMP_UPLOADED_FILES_DIR $STATIC_FILES_DIR && \
-    touch ${DJANGO_LOG_DIR}requests.log \
-    ${DJANGO_LOG_DIR}requests.debug.log \
-    ${DJANGO_LOG_DIR}general.log \
-    ${DJANGO_LOG_DIR}info.log \
-    ${DJANGO_LOG_DIR}django.log \
-    ${DJANGO_LOG_DIR}bodzify-api.log \
-    ${GUNICORN_LOG_DIR}error.log \
-    ${GUNICORN_LOG_DIR}access.log && \
-    chmod 777 -R $LOBRARIES_DIR $DJANGO_LOG_DIR $GUNICORN_LOG_DIR $TMP_UPLOADED_FILES_DIR
 
 COPY . $DOCKER_HOME
 
@@ -49,7 +77,8 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
-    pip install -r requirements.txt
+    pip install -r requirements.txt && \
+    scripts/setup_filesystem.sh
 
 RUN pip list | grep gunicorn
 RUN echo $PATH && which gunicorn

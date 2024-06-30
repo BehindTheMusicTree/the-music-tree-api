@@ -31,7 +31,6 @@ jobs:
       APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
       ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
       DB_IS_NEEDED: ${{ secrets.DB_IS_NEEDED }}
-      EXTERNAL_DIRS_ARE_NEEDED: ${{ vars.EXTERNAL_DIRS_ARE_NEEDED }}
       MEDIA_DEFAULT_INTERNAL_DIR: ${{ vars.MEDIA_DEFAULT_INTERNAL_DIR }}
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
       STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
@@ -143,7 +142,6 @@ jobs:
       AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
       APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
       DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
-      EXTERNAL_DIRS_ARE_NEEDED: ${{ vars.EXTERNAL_DIRS_ARE_NEEDED }}
       STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
       STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
       DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
@@ -183,9 +181,6 @@ jobs:
     # needs: [collect-and-push-static-files]
     environment: 
       name: TEST
-    env:
-      ENV: TEST
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -202,11 +197,24 @@ jobs:
           push: true
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
           build-args: |
-            DJANGO_LOG_DIR=${{ vars.APP_LOG_DIR }}${{ vars.DJANGO_LOG_DIR_NAME }}
-            GUNICORN_LOG_DIR=${{ vars.APP_LOG_DIR }}${{ vars.GUNICORN_LOG_DIR_NAME }}
-            LIBRARIES_DIR=${{ vars.MEDIA_DIR }}${{ vars.LIBRARIES_DIR_NAME }}
+            APP_IS_EXPOSED=${{ vars.APP_IS_EXPOSED }}
+            MEDIA_DIR=${{ vars.MEDIA_DIR }}
             TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
+            STATIC_FILES_ARE_NEEDED=${{ vars.STATIC_FILES_ARE_NEEDED }}
             STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}
+            STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
+            DJANGO_LOGS_ARE_NEEDED=${{ vars.DJANGO_LOGS_ARE_NEEDED }}
+            DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}
+            DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
+            DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
+            DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
+            DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}
+            DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
+            DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
+            DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}
+            GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
+            GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
+            GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
