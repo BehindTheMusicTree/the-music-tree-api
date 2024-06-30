@@ -81,7 +81,7 @@ jobs:
         run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
 
       - name: Set up filesystem
-        run: bash scripts/filesystem_setup.sh
+        run: bash scripts/setup_filesystem.sh
 
       - name: Run audio-fingerprinter service
         run: |
