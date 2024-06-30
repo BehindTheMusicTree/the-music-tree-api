@@ -4,7 +4,7 @@
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
 APP_ENV_FILE="${PROJECT_DIR}env/.env"
-CALCULATED_PATHS_ENV_FILE=$(realpath "$PROJECT_DIR/env/calculated_paths/.env")
+CALCULATED_PATHS_ENV_FILE=$(realpath "${PROJECT_DIR}env/calculated_paths/.env")
 bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$APP_ENV_FILE" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
 
 if [ $? -ne 0 ]; then
