@@ -2,10 +2,34 @@
 
 # Get the directory of the script even when it's called from another script
 SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-source "$SCRIPT_DIR../../env/.env"
+source "$SCRIPT_DIR../env/.env"
 
-echo "run_db_and_afg_containers.sh: Running the database and audio fingerprinter containers..."
-printenv | grep "AUDIO_FINGERPRINTER"
+required_vars=(
+  DOCKERHUB_USERNAME
+  DB_IMAGE_REPO
+  AUDIO_FINGERPRINTER_IMAGE_REPO
+  AUDIO_FINGERPRINTER_IMAGE_TAG
+  DB_IMAGE_TAG
+  AUDIO_FINGERPRINTER_PORT
+  TMP_UPLOADED_FILES_DIR
+  AUDIO_FINGERPRINTER_POOL_SYMLINK_TARGET
+  ENV
+  DB_CONTAINER_NAME
+  DB_DATA_DIR
+  DB_PORT
+  DB_BODZIFY_API_DB_NAME
+  DB_SUPERUSER_NAME
+  DB_SUPERUSER_PASSWORD
+)
+
+for var in "${required_vars[@]}"; do
+  if [ -z "${!var}" ]; then
+    echo "$var is not set. Please set it in the .env file."
+    exit 1
+  fi
+done
+
+echo "Running the database and audio fingerprinter containers..."
 
 docker pull $DOCKERHUB_USERNAME/$AUDIO_FINGERPRINTER_IMAGE_REPO:$AUDIO_FINGERPRINTER_IMAGE_TAG
 docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
