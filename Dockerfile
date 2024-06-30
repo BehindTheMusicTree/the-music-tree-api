@@ -16,32 +16,32 @@ RUN if [ -z "$STATIC_FILES_DIR" ]; then echo "The STATIC_FILES_DIR argument is n
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DockerHome=/home/app/webapp \
-    LibrariesDir=$LIBRARIES_DIR \
-    DjangoLogDir=$DJANGO_LOG_DIR \
-    GunicornLogDir=$GUNICORN_LOG_DIR \
-    TmpUploadedFilesDir=$TMP_UPLOADED_FILES_DIR \
-    StaticFilesDir=$STATIC_FILES_DIR
+    DOCKER_HOME=/home/app/webapp \
+    LOBRARIES_DIR=$LIBRARIES_DIR \
+    DJANGO_LOG_DIR=$DJANGO_LOG_DIR \
+    GUNICORN_LOG_DIR=$GUNICORN_LOG_DIR \
+    TMP_UPLOADED_FILES_DIR=$TMP_UPLOADED_FILES_DIR \
+    STATIC_FILES_DIR=$STATIC_FILES_DIR
 
 RUN apt-get update && \
     apt-get install -y gosu && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p $DockerHome $LibrariesDir $DjangoLogDir $GunicornLogDir $TmpUploadedFilesDir $StaticFilesDir && \
-    touch ${DjangoLogDir}requests.log \
-    ${DjangoLogDir}requests.debug.log \
-    ${DjangoLogDir}general.log \
-    ${DjangoLogDir}info.log \
-    ${DjangoLogDir}django.log \
-    ${DjangoLogDir}bodzify-api.log \
-    ${GunicornLogDir}error.log \
-    ${GunicornLogDir}access.log && \
-    chmod 777 -R $LibrariesDir $DjangoLogDir $GunicornLogDir $TmpUploadedFilesDir
+RUN mkdir -p $DOCKER_HOME $LOBRARIES_DIR $DJANGO_LOG_DIR $GUNICORN_LOG_DIR $TMP_UPLOADED_FILES_DIR $STATIC_FILES_DIR && \
+    touch ${DJANGO_LOG_DIR}requests.log \
+    ${DJANGO_LOG_DIR}requests.debug.log \
+    ${DJANGO_LOG_DIR}general.log \
+    ${DJANGO_LOG_DIR}info.log \
+    ${DJANGO_LOG_DIR}django.log \
+    ${DJANGO_LOG_DIR}bodzify-api.log \
+    ${GUNICORN_LOG_DIR}error.log \
+    ${GUNICORN_LOG_DIR}access.log && \
+    chmod 777 -R $LOBRARIES_DIR $DJANGO_LOG_DIR $GUNICORN_LOG_DIR $TMP_UPLOADED_FILES_DIR
 
-COPY . $DockerHome
+COPY . $DOCKER_HOME
 
-WORKDIR $DockerHome
+WORKDIR $DOCKER_HOME
 
 RUN apt update && \
     apt install -y flac ffmpeg libchromaprint-tools jq && \

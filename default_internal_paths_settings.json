@@ -1,7 +1,0 @@
-{
-  "media": "media/",
-  "librariesDirName": "libraries",
-  "staticFiles": "staticfiles/",
-  "log": "log/",
-  "tmpUploadedFiles": "tmp-uploaded-files/"
-}

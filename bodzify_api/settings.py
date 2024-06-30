@@ -10,12 +10,14 @@ import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-dotenv.load_dotenv(BASE_DIR / 'env/.env')
+APP_ENV_FILE = BASE_DIR / 'env/.env'
+dotenv.load_dotenv(APP_ENV_FILE)
 
 CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
 generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
 try:
     result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path),
+                             APP_ENV_FILE,
                              str(BASE_DIR) + '/',
                              CALCULATED_PATHS_ENV_FILE],
                             check=True,
@@ -30,11 +32,11 @@ except subprocess.CalledProcessError as e:
 
 dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
 
-IS_APP_EXPOSED = os.getenv('IS_APP_EXPOSED')
-if not IS_APP_EXPOSED or IS_APP_EXPOSED not in ['true', 'false']:
-    raise EnvironmentError("The IS_APP_EXPOSED variable is not set or is not a boolean")
+APP_IS_EXPOSED = os.getenv('APP_IS_EXPOSED')
+if not APP_IS_EXPOSED or APP_IS_EXPOSED not in ['true', 'false']:
+    raise EnvironmentError("The APP_IS_EXPOSED variable is not set or is not a boolean")
 
-if IS_APP_EXPOSED == 'true':
+if APP_IS_EXPOSED == 'true':
     print("The app is exposed.")
 
     SESSION_COOKIE_SECURE = True
@@ -176,38 +178,46 @@ MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggin
 
 ROOT_URLCONF = 'bodzify_api.urls'
 
-DB_BODZIFY_API_DB_NAME = os.getenv('DB_BODZIFY_API_DB_NAME')
-if DB_BODZIFY_API_DB_NAME is None:
-    raise EnvironmentError("The DB_BODZIFY_API_DB_NAME variable is not set")
+# DB may not be necessary (running collectstati for instance)
+DB_IS_NEEDED_STR = os.getenv('DB_IS_NEEDED')
+if not DB_IS_NEEDED_STR or DB_IS_NEEDED_STR not in ['true', 'false']:
+    raise EnvironmentError("The DB_IS_NEEDED variable is not set or is not a boolean")
+DB_IS_NEEDED = True if DB_IS_NEEDED_STR == 'true' else False
 
-DB_BODZIFY_API_USERNAME = os.getenv('DB_BODZIFY_API_USERNAME')
-if DB_BODZIFY_API_USERNAME is None:
-    raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable is not set")
+if DB_IS_NEEDED:
+    DB_BODZIFY_API_DB_NAME = os.getenv('DB_BODZIFY_API_DB_NAME')
+    if DB_BODZIFY_API_DB_NAME is None:
+        raise EnvironmentError("The DB_BODZIFY_API_DB_NAME variable is not set")
 
-DB_BODZIFY_API_USER_PASSWORD = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
-if DB_BODZIFY_API_USER_PASSWORD is None:
-    raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable is not set")
+    DB_BODZIFY_API_USERNAME = os.getenv('DB_BODZIFY_API_USERNAME')
+    if DB_BODZIFY_API_USERNAME is None:
+        raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable is not set")
 
-DB_HOST = os.getenv('DB_HOST')
-if DB_HOST is None:
-    raise EnvironmentError("The DB_HOST variable is not set")
+    DB_BODZIFY_API_USER_PASSWORD = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
+    if DB_BODZIFY_API_USER_PASSWORD is None:
+        raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable is not set")
 
-DB_PORT = os.getenv('DB_PORT')
-if DB_PORT is None:
-    raise EnvironmentError("The DB_PORT variable is not set")
+    DB_HOST = os.getenv('DB_HOST')
+    if DB_HOST is None:
+        raise EnvironmentError("The DB_HOST variable is not set")
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DB_BODZIFY_API_DB_NAME,
-        'USER': DB_BODZIFY_API_USERNAME,
-        'PASSWORD': DB_BODZIFY_API_USER_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-        'DISABLE_SERVER_SIDE_CURSORS': True
+    DB_PORT = os.getenv('DB_PORT')
+    if DB_PORT is None:
+        raise EnvironmentError("The DB_PORT variable is not set")
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            # 'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_BODZIFY_API_DB_NAME,
+            'USER': DB_BODZIFY_API_USERNAME,
+            'PASSWORD': DB_BODZIFY_API_USER_PASSWORD,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'DISABLE_SERVER_SIDE_CURSORS': True
+        }
     }
-}
+
 
 TEMPLATES = [
     {
@@ -277,19 +287,13 @@ STATICFILES_DIRS = []
 STATIC_ROOT = ''
 MEDIA_ROOT = ''
 
-AUDIO_META_ANALYSE_NEEDED_STR = os.getenv('AUDIO_META_ANALYSE_NEEDED')
-if not AUDIO_META_ANALYSE_NEEDED_STR or AUDIO_META_ANALYSE_NEEDED_STR not in ['true', 'false']:
-    raise EnvironmentError("The AUDIO_META_ANALYSE_NEEDED variable is not set or is not a boolean")
-AUDIO_META_ANALYSE_NEEDED = True if AUDIO_META_ANALYSE_NEEDED_STR == 'true' else False
-print("AUDIO_META_ANALYSE_NEEDED: " + str(AUDIO_META_ANALYSE_NEEDED))
+AUDIO_META_ANALYSE_IS_NEEDED_STR = os.getenv('AUDIO_META_ANALYSE_IS_NEEDED')
+if not AUDIO_META_ANALYSE_IS_NEEDED_STR or AUDIO_META_ANALYSE_IS_NEEDED_STR not in ['true', 'false']:
+    raise EnvironmentError("The AUDIO_META_ANALYSE_IS_NEEDED variable is not set or is not a boolean")
+AUDIO_META_ANALYSE_IS_NEEDED = True if AUDIO_META_ANALYSE_IS_NEEDED_STR == 'true' else False
+print("AUDIO_META_ANALYSE_IS_NEEDED: " + str(AUDIO_META_ANALYSE_IS_NEEDED))
 
-EXTERNAL_DIRS_NEEDED_STR = os.getenv('EXTERNAL_DIRS_NEEDED')
-if not EXTERNAL_DIRS_NEEDED_STR or EXTERNAL_DIRS_NEEDED_STR not in ['true', 'false']:
-    raise EnvironmentError("The AUDIO_META_ANALYSE_NEEDED variable is not set or is not a boolean")
-EXTERNAL_DIRS_NEEDED = True if EXTERNAL_DIRS_NEEDED_STR == 'true' else False
-print("EXTERNAL_DIRS_NEEDED: " + str(EXTERNAL_DIRS_NEEDED))
-
-if AUDIO_META_ANALYSE_NEEDED:
+if AUDIO_META_ANALYSE_IS_NEEDED:
     TMP_UPLOADED_FILES_DIR = os.getenv('TMP_UPLOADED_FILES_DIR')
     AUDIO_FINGERPRINTER_PORT = os.getenv('AUDIO_FINGERPRINTER_PORT')
     if AUDIO_FINGERPRINTER_PORT is None:
@@ -303,14 +307,43 @@ if AUDIO_META_ANALYSE_NEEDED:
         ":" + AUDIO_FINGERPRINTER_PORT + '/' + AUDIO_FINGERPRINTER_POST_ENDPOINT
 
     ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
-    if not ACOUSTID_API_KEY and AUDIO_META_ANALYSE_NEEDED:
+    if not ACOUSTID_API_KEY and AUDIO_META_ANALYSE_IS_NEEDED:
         raise EnvironmentError("The ACOUSTID_API_KEY variable is not set")
 
-MEDIA_ROOT = Path(os.getenv('MEDIA_DIR'))
-LOG_DIR = Path(os.getenv('LOG_DIR'))
 STATIC_ROOT = Path(os.getenv('STATIC_FILES_DIR'))
+MEDIA_ROOT = Path(os.getenv('MEDIA_DIR'))
 LIBRARIES_DIR_NAME = os.getenv('LIBRARIES_DIR_NAME')
 LIBRARIES_DIR = Path(os.getenv('LIBRARIES_DIR'))
+LOG_DIR = Path(os.getenv('LOG_DIR'))
+
+DJANGO_LOG_GENERAL_FILENAME = os.getenv('DJANGO_LOG_GENERAL_FILENAME')
+if not DJANGO_LOG_GENERAL_FILENAME:
+    raise EnvironmentError("The DJANGO_LOG_GENERAL_FILENAME variable is not set")
+
+DJANGO_LOG_INFO_FILENAME = os.getenv('DJANGO_LOG_INFO_FILENAME')
+if not DJANGO_LOG_INFO_FILENAME:
+    raise EnvironmentError("The DJANGO_LOG_INFO_FILENAME variable is not set")
+
+DJANGO_LOG_REQUESTS_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_FILENAME')
+if not DJANGO_LOG_REQUESTS_FILENAME:
+    raise EnvironmentError("The DJANGO_LOG_REQUESTS_FILENAME variable is not set")
+
+DJANGO_LOG_REQUESTS_DEBUG_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_DEBUG_FILENAME')
+if not DJANGO_LOG_REQUESTS_DEBUG_FILENAME:
+    raise EnvironmentError("The DJANGO_LOG_REQUESTS_DEBUG_FILENAME variable is not set")
+
+DJANGO_LOG_EXCEPTIONS_FILENAME = os.getenv('DJANGO_LOG_EXCEPTIONS_FILENAME')
+if not DJANGO_LOG_EXCEPTIONS_FILENAME:
+    raise EnvironmentError("The DJANGO_LOG_EXCEPTIONS_FILENAME variable is not set")
+
+DJANGO_LOG_DJANGO_FILENAME = os.getenv('DJANGO_LOG_DJANGO_FILENAME')
+if not DJANGO_LOG_DJANGO_FILENAME:
+    raise EnvironmentError("The DJANGO_LOG_DJANGO_FILENAME variable is not set")
+
+DJANGO_LOG_APP_FILENAME = os.getenv('DJANGO_LOG_APP_FILENAME')
+if not DJANGO_LOG_APP_FILENAME:
+    raise EnvironmentError("The DJANGO_LOG_APP_FILENAME variable is not set")
+
 
 LOGGING = {
     'version': 1,
@@ -324,7 +357,7 @@ LOGGING = {
         'general': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'general.log',
+            'filename': LOG_DIR / DJANGO_LOG_GENERAL_FILENAME,
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -332,23 +365,7 @@ LOGGING = {
         'info': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'info.log',
-            'maxBytes': 1024*1024*15,  # 15MB
-            'backupCount': 10,
-            'formatter': 'standard'
-        },
-        'requests_with_trace': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'requests.debug.log',
-            'maxBytes': 1024*1024*15,  # 15MB
-            'backupCount': 10,
-            'formatter': 'standard'
-        },
-        'exceptions': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'exceptions.log',
+            'filename': LOG_DIR / DJANGO_LOG_INFO_FILENAME,
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -356,7 +373,23 @@ LOGGING = {
         'requests': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'requests.log',
+            'filename': LOG_DIR / DJANGO_LOG_REQUESTS_FILENAME,
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
+        'requests_with_trace': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_DIR / DJANGO_LOG_REQUESTS_DEBUG_FILENAME,
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
+        'exceptions': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_DIR / DJANGO_LOG_EXCEPTIONS_FILENAME,
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -364,7 +397,7 @@ LOGGING = {
         'django': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'django.log',
+            'filename': LOG_DIR / DJANGO_LOG_DJANGO_FILENAME,
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
@@ -372,7 +405,7 @@ LOGGING = {
         APP_NAME: {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_DIR / 'bodzify-api.log',
+            'filename': LOG_DIR / DJANGO_LOG_APP_FILENAME,
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
             'formatter': 'standard'
