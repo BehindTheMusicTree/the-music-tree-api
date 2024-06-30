@@ -3,8 +3,9 @@
 FROM python:3.11-buster
 
 ARG APP_IS_EXPOSED
-ARG MEDIA_DIR
+ARG AUDIO_META_ANALYSE_IS_NEEDED
 ARG TMP_UPLOADED_FILES_DIR
+ARG MEDIA_DIR
 ARG STATIC_FILES_ARE_NEEDED
 ARG STATIC_FILES_DIR
 ARG STATIC_FILES_DEFAULT_INTERNAL_DIR
@@ -22,8 +23,9 @@ ARG GUNICORN_LOG_ERROR_FILENAME
 ARG GUNICORN_LOG_ACCESS_FILENAME
 
 RUN if [ -z "$APP_IS_EXPOSED" ]; then echo "The APP_IS_EXPOSED argument is not provided" >&2; exit 1; fi
-RUN if [ -z "$MEDIA_DIR" ]; then echo "The MEDIA_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$AUDIO_META_ANALYSE_IS_NEEDED" ]; then echo "The AUDIO_META_ANALYSE_IS_NEEDED argument is not provided" >&2; exit 1; fi
 RUN if [ -z "$TMP_UPLOADED_FILES_DIR" ]; then echo "The TMP_UPLOADED_FILES_DIR argument is not provided" >&2; exit 1; fi
+RUN if [ -z "$MEDIA_DIR" ]; then echo "The MEDIA_DIR argument is not provided" >&2; exit 1; fi
 RUN if [ -z "$STATIC_FILES_ARE_NEEDED" ]; then echo "The STATIC_FILES_ARE_NEEDED argument is not provided" >&2; exit 1; fi
 RUN if [ -z "$STATIC_FILES_DIR" ]; then echo "The STATIC_FILES_DIR argument is not provided" >&2; exit 1; fi
 RUN if [ -z "$STATIC_FILES_DEFAULT_INTERNAL_DIR" ]; then echo "The STATIC_FILES_DEFAULT_INTERNAL_DIR argument is not provided" >&2; exit 1; fi
@@ -44,8 +46,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DOCKER_HOME=/home/app/webapp \
     APP_IS_EXPOSED=$APP_IS_EXPOSED \
-    MEDIA_DIR=$MEDIA_DIR \
+    AUDIO_META_ANALYSE_IS_NEEDED=$AUDIO_META_ANALYSE_IS_NEEDED \
     TMP_UPLOADED_FILES_DIR=$TMP_UPLOADED_FILES_DIR \
+    MEDIA_DIR=$MEDIA_DIR \
     STATIC_FILES_ARE_NEEDED=$STATIC_FILES_ARE_NEEDED \
     STATIC_FILES_DIR=$STATIC_FILES_DIR \
     STATIC_FILES_DEFAULT_INTERNAL_DIR=$STATIC_FILES_DEFAULT_INTERNAL_DIR \

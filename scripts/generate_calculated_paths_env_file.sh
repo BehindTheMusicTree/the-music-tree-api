@@ -33,35 +33,6 @@ else
     echo "$APP_ENV_FILE env file does not exist" >&2
 fi
 
-if [ -z $APP_IS_EXPOSED ]; then
-    echo "APP_IS_EXPOSED is not set." >&2
-    exit 1
-elif [ "$APP_IS_EXPOSED" != "true" ] && [ "$APP_IS_EXPOSED" != "false" ]; then
-    echo "APP_IS_EXPOSED must be 'true' or 'false'." >&2
-    exit 1
-fi
-
-if [ -z $DJANGO_LOGS_ARE_NEEDED ]; then
-    echo "DJANGO_LOGS_ARE_NEEDED is not set." >&2
-    exit 1
-elif [ "$DJANGO_LOGS_ARE_NEEDED" != "true" ] && [ "$DJANGO_LOGS_ARE_NEEDED" != "false" ]; then
-    echo "APP_IS_EXPOSED must be 'true' or 'false'." >&2
-    exit 1
-fi
-
-if [ -z $LIBRARIES_DIR_NAME ]; then
-    echo "LIBRARIES_DIR_NAME is not set" >&2
-    exit 1
-fi
-
-if [ -z $STATIC_FILES_ARE_NEEDED ]; then
-    echo "STATIC_FILES_ARE_NEEDED is not set." >&2
-    exit 1
-elif [ "$STATIC_FILES_ARE_NEEDED" != "true" ] && [ "$STATIC_FILES_ARE_NEEDED" != "false" ]; then
-    echo "STATIC_FILES_ARE_NEEDED must be 'true' or 'false'." >&2
-    exit 1
-fi
-
 if $APP_IS_EXPOSED; then
     echo "APP_IS_EXPOSED is set to true"
     if [ -z $MEDIA_DIR ]; then
@@ -90,7 +61,7 @@ else
         STATIC_FILES_DIR=${BASE_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR
     fi
     if $DJANGO_LOGS_ARE_NEEDED; then
-        LOG_DIR=${BASE_DIR}$DJANGO_LOG_DEFAULT_INTERNAL_DIR
+        DJANGO_LOG_DIR=${BASE_DIR}$DJANGO_LOG_DEFAULT_INTERNAL_DIR
     fi
     TMP_UPLOADED_FILES_DIR=${BASE_DIR}$TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR
 fi
@@ -118,10 +89,10 @@ else
 fi
 
 if $DJANGO_LOGS_ARE_NEEDED; then
-    echo "LOG_DIR: $LOG_DIR"
-    echo "LOG_DIR=$LOG_DIR" >> $GENERATED_PATHS_ENV_FILE
+    echo "DJANGO_LOG_DIR: $DJANGO_LOG_DIR"
+    echo "DJANGO_LOG_DIR=$DJANGO_LOG_DIR" >> $GENERATED_PATHS_ENV_FILE
 else
-    echo "DJANGO_LOGS_ARE_NEEDED is set to false so LOG_DIR is not set"
+    echo "DJANGO_LOGS_ARE_NEEDED is set to false so DJANGO_LOG_DIR is not set"
 fi
 
 echo "TMP_UPLOADED_FILES_DIR: $TMP_UPLOADED_FILES_DIR"

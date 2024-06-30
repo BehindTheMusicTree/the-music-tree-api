@@ -27,15 +27,15 @@ jobs:
     env:
       ENV: CI_TEST
       DEBUG: ${{ vars.DEBUG }}
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
-      APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
-      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
       DB_IS_NEEDED: ${{ secrets.DB_IS_NEEDED }}
+      APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
+      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
+      TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}
+      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
       MEDIA_DEFAULT_INTERNAL_DIR: ${{ vars.MEDIA_DEFAULT_INTERNAL_DIR }}
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
       STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
       STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-      TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}
       DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
 
       DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
@@ -139,9 +139,9 @@ jobs:
     env:
       ENV: COLLECT_STATIC
       DEBUG: ${{ vars.DEBUG }}
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
-      APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
       DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
+      APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
+      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
       STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
       STATIC_FILES_DIR: ${{ github.workspace }}/${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
       DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
@@ -199,8 +199,9 @@ jobs:
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
           build-args: |
             APP_IS_EXPOSED=${{ vars.APP_IS_EXPOSED }}
-            MEDIA_DIR=${{ vars.MEDIA_DIR }}
+            AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
             TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
+            MEDIA_DIR=${{ vars.MEDIA_DIR }}
             STATIC_FILES_ARE_NEEDED=${{ vars.STATIC_FILES_ARE_NEEDED }}
             STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}
             STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
@@ -246,9 +247,11 @@ jobs:
             echo 'APP_IS_EXPOSED=${{ secrets.APP_IS_EXPOSED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
 
             echo 'AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            echo 'TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.API_ENV_FILE_PATH }} &&
 
             echo 'DB_IS_NEEDED=${{ secrets.DB_IS_NEEDED }}' >> ${{ env.API_ENV_FILE_PATH }} &&
+            
             echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             echo 'LIBRARIES_DIR_NAME=${{ secrets.LIBRARIES_DIR_NAME }}' >> ${{ env.API_ENV_FILE_PATH }} &&
             
