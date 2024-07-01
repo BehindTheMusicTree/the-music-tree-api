@@ -143,6 +143,9 @@ jobs:
       - name: Remove previously collected static files
         run: rm -rf ${{ env.STATIC_FILES_DIR }}*
 
+      - name: Set up filesystem
+        run: bash scripts/setup_filesystem.sh
+
       - name: Collect static files
         run: python manage.py collectstatic --noinput
 
