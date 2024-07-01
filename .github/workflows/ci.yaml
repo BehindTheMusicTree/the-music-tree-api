@@ -142,7 +142,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Remove previously collected static files
-        run: rm -rf ${{ env.STATIC_FILES_DIR }}*
+        run: rm -rf ${{ env.STATIC_FILES_DEFAULT_INTERNAL_DIR }}*
 
       - name: Set up filesystem
         run: bash scripts/setup_filesystem.sh
