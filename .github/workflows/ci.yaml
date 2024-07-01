@@ -86,10 +86,10 @@ jobs:
         run: echo "bin/fpcalc" >> $GITHUB_PATH
 
       - name: Set up filesystem
-        run: bash scripts/setup_filesystem.sh "${{ env.ENV_FILE }}"
+        run: bash scripts/setup_filesystem.sh
 
       - name: Run db and afg containers
-        run: bash scripts/run_db_and_afg_containers.sh "${{ env.ENV_FILE }}"
+        run: bash scripts/run_db_and_afg_containers.sh
         
       - name: Wait for db service to start
         run: |
@@ -251,12 +251,12 @@ jobs:
 
       - name: Set environment variables on server
         env: 
-          ENV_FILE: "${{ vars.ENV_FILE }}"
+          ENV_FILE: "${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.DOCKERIZED_APP_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.ENV_FILE }} &&
             touch ${{ env.ENV_FILE }} &&
-            
+
             echo 'ENV=TEST' >> ${{ env.ENV_FILE }} &&
             echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.ENV_FILE }} &&
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.ENV_FILE }} &&
@@ -354,7 +354,7 @@ jobs:
         env: 
           APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
         run: |
-          bash scripts/generate_docker_compose_part.sh "${{ env.ENV_FILE }}"
+          bash scripts/generate_docker_compose_part.sh
 
       - name: Transfer partial docker-compose on server
         env: 
