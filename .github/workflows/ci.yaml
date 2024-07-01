@@ -86,7 +86,7 @@ jobs:
         run: sudo apt-get install jq
 
       - name: Add fpcalc to PATH
-        run: echo bin/fpcalc" >> $GITHUB_PATH
+        run: echo "bin/fpcalc" >> $GITHUB_PATH
 
       - name: Set up filesystem
         run: bash scripts/setup_filesystem.sh
