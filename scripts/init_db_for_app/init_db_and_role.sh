@@ -1,19 +1,21 @@
 #!/bin/bash
 
-SCRIPTS_DIR=$(realpath $(dirname "$0")/../)
-PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR../"))/
-APP_ENV_FILE="${PROJECT_DIR}env/.env"
-
-if [ -f "$APP_ENV_FILE" ]; then
+if [ -z "$1" ]; then
+    echo "No env file specified"
+else
+    APP_ENV_FILE="$1"
     echo "Loading environment variables from ${APP_ENV_FILE}"
+    if [ ! -f "$APP_ENV_FILE" ]; then
+        echo "$APP_ENV_FILE env file does not exist" >&2
+        exit 1
+    fi
+
     while IFS='=' read -r key value
     do
         # Skip comments and empty lines
         if [ -z "$key" ]; then continue; fi
         export "$key=$value"
     done < "$APP_ENV_FILE"
-else
-    echo "$APP_ENV_FILE no app env file"
 fi
 
 required_vars=(
