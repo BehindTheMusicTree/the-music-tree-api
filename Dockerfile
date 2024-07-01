@@ -78,7 +78,7 @@ COPY . $DOCKER_HOME
 WORKDIR $DOCKER_HOME
 
 RUN apt update && \
-    apt install -y flac ffmpeg libchromaprint-tools jq && \
+    bash bash scripts/install_dependencies.sh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \

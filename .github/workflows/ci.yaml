@@ -67,23 +67,14 @@ jobs:
         with:
            python-version: 3.11
 
-      - name: Install requirements
-        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
-
-      - name: Install chromaprint
-        run: sudo apt-get install libchromaprint-tools
-
-      - name: Install flac
-        run: sudo apt-get install flac # apt not stable for CLI interface
-
-      - name: Install ffmpeg
-        run: sudo apt-get install ffmpeg
-
-      - name: Install jq
-        run: sudo apt-get install jq
+      - name: Install dependencies
+        run: bash scripts/install_dependencies.sh
 
       - name: Add fpcalc to PATH
         run: echo "bin/fpcalc" >> $GITHUB_PATH
+
+      - name: Install requirements
+        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
 
       - name: Set up filesystem
         run: bash scripts/setup_filesystem.sh
@@ -92,7 +83,7 @@ jobs:
         run: bash scripts/run_db_and_afg_containers.sh
 
       - name: Echo db container logs
-        run: docker logs ${{ vars.DB_CONTAINER_NAME }}
+        run: docker logs ${{ env.DB_CONTAINER_NAME }}
         
       - name: Wait for db service to start
         run: |
