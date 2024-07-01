@@ -81,12 +81,6 @@ jobs:
 
       - name: Run db and afg containers
         run: bash scripts/run_db_and_afg_containers.sh
-
-      - name: Wait 45s for db and afg containers to start
-        run: sleep 45
-
-      - name: Echo db container logs
-        run: docker logs ${{ env.DB_CONTAINER_NAME }}
         
       - name: Wait for db service to start
         run: |
@@ -98,9 +92,17 @@ jobs:
               exit 1
             fi
             echo "Waiting for DB service to start..."
-            sleep 15
+            sleep 5
             attempts=$((attempts+1))
           done
+
+      - name: Echo db container logs
+        run: docker logs ${{ env.DB_CONTAINER_NAME }}
+
+      - name: Init db data
+        run: |
+          bash scripts/init_db_for_app/init_db_and_role.sh
+          bash scripts/init_db_for_app/init_django_data.sh
 
       - name: Run pytest
         run: pytest
