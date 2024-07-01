@@ -9,7 +9,7 @@ else
         echo "$APP_ENV_FILE env file does not exist" >&2
         exit 1
     fi
-    
+
     while IFS='=' read -r key value
     do
         # Skip comments and empty lines
@@ -82,7 +82,6 @@ docker run \
 --volume=$SCRIPTS_DIR/init_db_for_app/init_db_and_role.sh:/docker-entrypoint-initdb.d/init_bodzify_api_db_and_role.sh \
 --volume=$SCRIPTS_DIR/init_db_for_app/init_django_data.sh:/docker-entrypoint-initdb.d/init_bodzify_api_django_data.sh \
 -p $DB_PORT:$DB_PORT \
---env-file=$APP_ENV_FILE \
 -e ENV=$ENV \
 -e POSTGRES_DB=$DB_BODZIFY_API_DB_NAME \
 -e POSTGRES_USER=$DB_SUPERUSER_NAME \
