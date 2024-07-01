@@ -26,6 +26,7 @@ jobs:
       name: CI_TEST
     env:
       ENV_FILE: ${{ vars.ENV_FILE }}
+      DB_PORT: ${{ secrets.DB_PORT }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -61,7 +62,7 @@ jobs:
           echo "DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}" >> ${{ env.ENV_FILE }}
           echo "DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}" >> ${{ env.ENV_FILE }}
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> ${{ env.ENV_FILE }}
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ${{ env.ENV_FILE }}
+          echo "DB_PORT=${{ env.DB_PORT }}" >> ${{ env.ENV_FILE }}
 
           echo "AUDIO_FINGERPRINTER_CONTAINER_NAME=${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}" >> ${{ env.ENV_FILE }}
           echo "AUDIO_FINGERPRINTER_IMAGE_REPO=${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}" >> ${{ env.ENV_FILE }}
@@ -98,7 +99,7 @@ jobs:
         run: |
           attempts=0
           max_attempts=5
-          while ! pg_isready -h localhost -p ${{ vars.DB_PORT }}; do
+          while ! pg_isready -h localhost -p ${{ env.DB_PORT }}; do
             if [ $attempts -eq $max_attempts ]; then
               echo "DB service did not start within the expected time."
               exit 1
