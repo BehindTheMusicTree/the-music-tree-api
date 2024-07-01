@@ -38,23 +38,23 @@ jobs:
       - name: Create .env file
         run: |
           echo "ENV=${{ vars.ENV }}" >> ${{ env.ENV_FILE }}
-          echo "DEBUG=${{ secrets.DEBUG }}" >> ${{ env.ENV_FILE }}
-          echo "DB_IS_NEEDED=${{ secrets.DB_IS_NEEDED }}" >> ${{ env.ENV_FILE }}
-          echo "APP_IS_EXPOSED=${{ secrets.APP_IS_EXPOSED }}" >> ${{ env.ENV_FILE }}
-          echo "AUDIO_META_ANALYSE_IS_NEEDED=${{ secrets.AUDIO_META_ANALYSE_IS_NEEDED }}" >> ${{ env.ENV_FILE }}
-          echo "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR=${{ secrets.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}" \
+          echo "DEBUG=${{ vars.DEBUG }}" >> ${{ env.ENV_FILE }}
+          echo "DB_IS_NEEDED=${{ vars.DB_IS_NEEDED }}" >> ${{ env.ENV_FILE }}
+          echo "APP_IS_EXPOSED=${{ vars.APP_IS_EXPOSED }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}" >> ${{ env.ENV_FILE }}
+          echo "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR=${{ vars.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}" \
           >> ${{ env.ENV_FILE }}
           echo "ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}" >> ${{ env.ENV_FILE }}
-          echo "MEDIA_DEFAULT_INTERNAL_DIR=${{ secrets.MEDIA_DEFAULT_INTERNAL_DIR }}" >> ${{ env.ENV_FILE }}
-          echo "LIBRARIES_DIR_NAME=${{ secrets.LIBRARIES_DIR_NAME }}" >> ${{ env.ENV_FILE }}
-          echo "STATIC_FILES_ARE_NEEDED=${{ secrets.STATIC_FILES_ARE_NEEDED }}" >> ${{ env.ENV_FILE }}
-          echo "STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ secrets.STATIC_FILES_DEFAULT_INTERNAL_DIR }}" >> ${{ env.ENV_FILE }}
-          echo "DJANGO_LOGS_ARE_NEEDED=${{ secrets.DJANGO_LOGS_ARE_NEEDED }}" >> ${{ env.ENV_FILE }}
+          echo "MEDIA_DEFAULT_INTERNAL_DIR=${{ vars.MEDIA_DEFAULT_INTERNAL_DIR }}" >> ${{ env.ENV_FILE }}
+          echo "LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}" >> ${{ env.ENV_FILE }}
+          echo "STATIC_FILES_ARE_NEEDED=${{ vars.STATIC_FILES_ARE_NEEDED }}" >> ${{ env.ENV_FILE }}
+          echo "STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}" >> ${{ env.ENV_FILE }}
+          echo "DJANGO_LOGS_ARE_NEEDED=${{ vars.DJANGO_LOGS_ARE_NEEDED }}" >> ${{ env.ENV_FILE }}
 
-          echo "DB_CONTAINER_NAME=${{ secrets.DB_CONTAINER_NAME }}" >> ${{ env.ENV_FILE }}
-          echo "DB_IMAGE_REPO=${{ secrets.DB_IMAGE_REPO }}" >> ${{ env.ENV_FILE }}
-          echo "DB_IMAGE_TAG=${{ secrets.DB_IMAGE_TAG }}" >> ${{ env.ENV_FILE }}
-          echo "DB_DATA_DIR=${{ secrets.DB_DATA_DIR }}" >> ${{ env.ENV_FILE }}
+          echo "DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}" >> ${{ env.ENV_FILE }}
+          echo "DB_IMAGE_REPO=${{ vars.DB_IMAGE_REPO }}" >> ${{ env.ENV_FILE }}
+          echo "DB_IMAGE_TAG=${{ vars.DB_IMAGE_TAG }}" >> ${{ env.ENV_FILE }}
+          echo "DB_DATA_DIR=${{ vars.DB_DATA_DIR }}" >> ${{ env.ENV_FILE }}
           echo "DB_SUPERUSER_NAME=${{ secrets.DB_SUPERUSER_NAME }}" >> ${{ env.ENV_FILE }}
           echo "DB_SUPERUSER_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}" >> ${{ env.ENV_FILE }}
           echo "DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}" >> ${{ env.ENV_FILE }}
@@ -63,12 +63,12 @@ jobs:
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> ${{ env.ENV_FILE }}
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> ${{ env.ENV_FILE }}
 
-          echo "AUDIO_FINGERPRINTER_CONTAINER_NAME=${{ secrets.AUDIO_FINGERPRINTER_CONTAINER_NAME }}" >> ${{ env.ENV_FILE }}
-          echo "AUDIO_FINGERPRINTER_IMAGE_REPO=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_REPO }}" >> ${{ env.ENV_FILE }}
-          echo "AUDIO_FINGERPRINTER_IMAGE_TAG=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_TAG }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_CONTAINER_NAME=${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_IMAGE_REPO=${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_IMAGE_TAG=${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}" >> ${{ env.ENV_FILE }}
           echo "AUDIO_FINGERPRINTER_PORT=${{ secrets.AUDIO_FINGERPRINTER_PORT }}" >> ${{ env.ENV_FILE }}
-          echo "AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET=${{ secrets.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}" >> ${{ env.ENV_FILE }}
-          echo "AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ secrets.AUDIO_FINGERPRINTER_POST_ENDPOINT }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET=${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}" >> ${{ env.ENV_FILE }}
 
       - name: Install requirements
         run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
