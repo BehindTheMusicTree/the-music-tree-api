@@ -255,6 +255,8 @@ jobs:
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.ENV_FILE }} &&
+            touch ${{ env.ENV_FILE }} &&
+            
             echo 'ENV=TEST' >> ${{ env.ENV_FILE }} &&
             echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.ENV_FILE }} &&
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.ENV_FILE }} &&
