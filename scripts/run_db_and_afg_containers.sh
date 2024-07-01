@@ -7,8 +7,9 @@ else
     echo "Loading environment variables from ${APP_ENV_FILE}"
     if [ ! -f "$APP_ENV_FILE" ]; then
         echo "$APP_ENV_FILE env file does not exist" >&2
-        ecit 1
-
+        exit 1
+    fi
+    
     while IFS='=' read -r key value
     do
         # Skip comments and empty lines
