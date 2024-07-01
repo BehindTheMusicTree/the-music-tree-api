@@ -68,7 +68,7 @@ jobs:
            python-version: 3.11
 
       - name: Install dependencies
-        run: bash scripts/install_dependencies.sh
+        run: sudo bash scripts/install_dependencies.sh
 
       - name: Add fpcalc to PATH
         run: echo "bin/fpcalc" >> $GITHUB_PATH
