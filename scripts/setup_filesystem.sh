@@ -1,22 +1,26 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-    echo "Error: no env file specified"
-    exit 1
+    echo "No env file specified"
+else
+    APP_ENV_FILE="$1"
+    if [ ! -f "APP_ENV_FILE" ]; then
+        echo "env file $APP_ENV_FILE does not exist" >&2
+        exit 1
+    fi
+        
+    echo "Loading environment variables from ${APP_ENV_FILE}"
+    while IFS='=' read -r key value
+    do
+        # Skip comments and empty lines
+        if [ -z "$key" ]; then continue; fi
+        export "$key=$value"
+    done < "$APP_ENV_FILE"
 fi
-APP_ENV_FILE="$1"
 
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
-
-echo "Loading environment variables from ${APP_ENV_FILE}"
-while IFS='=' read -r key value
-do
-    # Skip comments and empty lines
-    if [ -z "$key" ]; then continue; fi
-    export "$key=$value"
-done < "$APP_ENV_FILE"
 
 check_bool_var() {
   local var_name="$1"
