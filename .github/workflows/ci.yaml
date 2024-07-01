@@ -82,6 +82,9 @@ jobs:
       - name: Run db and afg containers
         run: bash scripts/run_db_and_afg_containers.sh
 
+      - name: Wait 60s for db and afg containers to start
+        run: sleep 60
+
       - name: Echo db container logs
         run: docker logs ${{ env.DB_CONTAINER_NAME }}
         
