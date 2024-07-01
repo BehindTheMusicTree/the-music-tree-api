@@ -4,7 +4,7 @@ if [ -z "$1" ]; then
     echo "No env file specified"
 else
     APP_ENV_FILE="$1"
-    if [ ! -f "APP_ENV_FILE" ]; then
+    if [ ! -f "$APP_ENV_FILE" ]; then
         echo "env file $APP_ENV_FILE does not exist" >&2
         exit 1
     fi
@@ -44,8 +44,8 @@ if [ -z $LIBRARIES_DIR_NAME ]; then
   exit 1
 fi
 
-CALCULATED_PATHS_ENV_FILE=$(cd "${PROJECT_DIR}env/calculated_paths/" && pwd)/.env
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$APP_ENV_FILE" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
+CALCULATED_PATHS_ENV_FILE=${PROJECT_DIR}env/calculated_paths/.env
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE" "$APP_ENV_FILE"
 
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file"
