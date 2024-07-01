@@ -12,20 +12,17 @@ import dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
+APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
 
-APP_ENV_FILE = None
-if APP_ENV_FILE_RELATIVE_PATH:
-    APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
-    if not APP_ENV_FILE.exists():
-        print("No env file at {APP_ENV_FILE}")
-
-    dotenv.load_dotenv(APP_ENV_FILE)
+if not APP_ENV_FILE.exists():
+    print("No env file at {APP_ENV_FILE}")
+    APP_ENV_FILE = None
 else:
-    print("No env file provided.")
+    print("Env file provided. Loading.")
+    dotenv.load_dotenv(APP_ENV_FILE)
 
 CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
 generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
-print(os.environ.copy())
 try:
     result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path),
                              str(BASE_DIR) + '/',
