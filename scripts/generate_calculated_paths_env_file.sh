@@ -1,27 +1,26 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-    echo "Error: No app env file provided." >&2
-    exit 1
-fi
-APP_ENV_FILE=$1
-
-if [ -z "$2" ]; then
     echo "Error: No base dir provided." >&2
     exit 1
 fi
-BASE_DIR=$2
+BASE_DIR=$1
 
-if [ -z "$3" ]; then
+if [ -z "$2" ]; then
     echo "Error: No calculated paths env file path provided." >&2
     exit 1
 fi
-GENERATED_PATHS_ENV_FILE=$3
+GENERATED_PATHS_ENV_FILE=$2
 
-# Get the directory of the script even when it's called from another script
-SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/ 2>&1
+if [ -z "$3" ]; then
+    echo "Error: No app env file provided." >&2
+else
+    APP_ENV_FILE=$3
+    if [ ! -f "$APP_ENV_FILE" ]; then
+        echo "$APP_ENV_FILE app env file does not exist" >&2
+        exit 1
+    fi
 
-if [ -f "$APP_ENV_FILE" ]; then
     echo "Loading environment variables from ${APP_ENV_FILE}"
     while IFS='=' read -r key value
     do
@@ -29,8 +28,6 @@ if [ -f "$APP_ENV_FILE" ]; then
         if [ -z "$key" ]; then continue; fi
         export "$key=$value"
     done < "$APP_ENV_FILE"
-else
-    echo "$APP_ENV_FILE env file does not exist" >&2
 fi
 
 if $APP_IS_EXPOSED; then

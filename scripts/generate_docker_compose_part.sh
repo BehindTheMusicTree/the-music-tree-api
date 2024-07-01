@@ -1,10 +1,27 @@
 #!/bin/bash
 
-# Get the directory of the script even when it's called from another script
-SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-ENV_PATH="$SCRIPT_DIR../.env_api"
+if [ -z "$1" ]; then
+    echo "Error: no env file specified"
+else
+  ENV_FILE="$1"
+  if [ ! -f "$ENV_FILE" ]; then
+      echo "$ENV_FILE env file does not exist" >&2
+      exit 1
+  fi
 
-cat << EOF > ${SCRPIT_DIR}$DOCKER_COMPOSE_PART_FILENAME
+  echo "Loading environment variables from ${ENV_FILE}"
+  while IFS='=' read -r key value
+  do
+      # Skip comments and empty lines
+      if [ -z "$key" ]; then continue; fi
+      export "$key=$value"
+  done < "$ENV_FILE"
+fi
+
+# Get the directory of the script even when it's called from another script
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+
+cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
   db:
     image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
     container_name: $DB_CONTAINER_NAME

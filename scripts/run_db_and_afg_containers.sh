@@ -1,24 +1,28 @@
 #!/bin/bash
 
-# Get the directory of the script even when it's called from another script
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
-APP_ENV_FILE="${PROJECT_DIR}env/.env"
-
-if [ -f "$APP_ENV_FILE" ]; then
+if [ -z "$1" ]; then
+    echo "Error: no env file specified"
+else
+    APP_ENV_FILE="$1"
     echo "Loading environment variables from ${APP_ENV_FILE}"
+    if [ ! -f "$APP_ENV_FILE" ]; then
+        echo "$APP_ENV_FILE env file does not exist" >&2
+        ecit 1
+
     while IFS='=' read -r key value
     do
         # Skip comments and empty lines
         if [ -z "$key" ]; then continue; fi
         export "$key=$value"
     done < "$APP_ENV_FILE"
-else
-    echo "$APP_ENV_FILE env file does not exist"
 fi
 
+# Get the directory of the script even when it's called from another script
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
+
 CALCULATED_PATHS_ENV_FILE=$(cd "${PROJECT_DIR}env/calculated_paths/" && pwd)/.env
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$APP_ENV_FILE" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE" "$APP_ENV_FILE"
 
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file"

@@ -1,0 +1,49 @@
+  db:
+    image: mignot/bodzify-db-postgres:latest
+    container_name: DB
+    volumes:
+      - db-data:/var/lib/postgresql/data/
+      - ./db_init_roles.sql:/db/init_roles.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - bodzify-network
+    env_file: 
+
+  audio_fingerprinter:
+    working_dir: /app/
+    image: mignot/bodzify-audio-fingerprinter-flask:latest
+    container_name: AFG
+    volumes:
+      - api-upload-temp-files:/app/pool/
+      - afg-log-dir:
+    ports:
+      - "6000:6000"
+    networks:
+      - bodzify-network
+    env_file: 
+
+  api:
+    working_dir: /home/app/webapp/
+    image: mignot/:
+    container_name: 
+    command: >
+      gunicorn bodzify_api.wsgi:application
+      --bind 0.0.0.0:
+      --error-logfile=
+      --access-logfile=
+      --log-level=info
+    volumes:
+      - api-django-log-dir:
+      - api-gunicorn-log-dir:
+      - api-media-dir:
+      - api-static-files:
+      - api-upload-temp-files:tmp-uploaded-files/
+    expose:
+      - 
+    networks:
+      - bodzify-network
+    depends_on:
+      - audio_fingerprinter
+      - db
+    env_file: 
