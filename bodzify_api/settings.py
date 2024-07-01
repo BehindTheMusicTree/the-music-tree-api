@@ -11,7 +11,8 @@ import dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE')
+APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
+
 
 APP_ENV_FILE = None
 if APP_ENV_FILE_RELATIVE_PATH:
@@ -21,10 +22,11 @@ if APP_ENV_FILE_RELATIVE_PATH:
 
     dotenv.load_dotenv(APP_ENV_FILE)
 else:
-    print("No env file set.")
+    print("No env file provided.")
 
 CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
 generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
+print(os.environ.copy())
 try:
     result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path),
                              str(BASE_DIR) + '/',
@@ -33,7 +35,8 @@ try:
                             check=True,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
-                            text=True)
+                            text=True,
+                            env=os.environ.copy())
     print("Paths env file generated.")
     print("Output:", result.stdout)
 except subprocess.CalledProcessError as e:
@@ -43,6 +46,7 @@ except subprocess.CalledProcessError as e:
 dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
 
 APP_IS_EXPOSED = os.getenv('APP_IS_EXPOSED')
+print("APP_IS_EXPOSED: " + str(APP_IS_EXPOSED))
 if not APP_IS_EXPOSED or APP_IS_EXPOSED not in ['true', 'false']:
     raise EnvironmentError("The APP_IS_EXPOSED variable is not set or is not a boolean")
 

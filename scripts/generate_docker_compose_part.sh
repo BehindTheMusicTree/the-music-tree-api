@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-    echo "Error: no env file specified"
+    echo "No env file specified"
 else
   ENV_FILE="$1"
   if [ ! -f "$ENV_FILE" ]; then
@@ -9,7 +9,7 @@ else
       exit 1
   fi
 
-  echo "Loading environment variables from ${ENV_FILE}"
+  echo "Loading environment variables from ${ENV_FILE}" >&2
   while IFS='=' read -r key value
   do
       # Skip comments and empty lines

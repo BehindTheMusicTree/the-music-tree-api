@@ -1,7 +1,9 @@
 #!/bin/bash
 
+echo "Running the database and audio fingerprinter containers."
+
 if [ -z "$1" ]; then
-    echo "Error: no env file specified"
+    echo "No env file specified"
 else
     APP_ENV_FILE="$1"
     echo "Loading environment variables from ${APP_ENV_FILE}"

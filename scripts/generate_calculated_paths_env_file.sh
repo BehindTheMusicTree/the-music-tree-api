@@ -1,23 +1,24 @@
 #!/bin/bash
 
+echo "Generating calculated paths env file"
 if [ -z "$1" ]; then
-    echo "Error: No base dir provided." >&2
+    echo "Error: no base dir provided." >&2
     exit 1
 fi
 BASE_DIR=$1
 
 if [ -z "$2" ]; then
-    echo "Error: No calculated paths env file path provided." >&2
+    echo "Error: no calculated paths env file path provided." >&2
     exit 1
 fi
 GENERATED_PATHS_ENV_FILE=$2
 
 if [ -z "$3" ]; then
-    echo "Error: No app env file provided." >&2
+    echo "No env file provided."
 else
     APP_ENV_FILE=$3
     if [ ! -f "$APP_ENV_FILE" ]; then
-        echo "$APP_ENV_FILE app env file does not exist" >&2
+        echo "$APP_ENV_FILE env file does not exist" >&2
         exit 1
     fi
 
@@ -30,13 +31,22 @@ else
     done < "$APP_ENV_FILE"
 fi
 
-if $APP_IS_EXPOSED; then
+required_vars=("APP_IS_EXPOSED" "LIBRARIES_DIR_NAME")
+for var in "${required_vars[@]}"; do
+    if [ -z "${!var}" ]; then
+        echo "$var is not set" >&2
+        exit 1
+    fi
+done
+
+if [ $APP_IS_EXPOSED = "true" ]; then
     echo "APP_IS_EXPOSED is set to true"
     required_vars=("MEDIA_DIR" "TMP_UPLOADED_FILES_DIR")
-    if $STATIC_FILES_ARE_NEEDED; then
+    if [ $STATIC_FILES_ARE_NEEDED = "true" ]; then
         required_vars+=("STATIC_FILES_DIR")
     fi
-    if $DJANGO_LOGS_ARE_NEEDED; then
+
+    if [ $DJANGO_LOGS_ARE_NEEDED = "true" ]; then
         required_vars+=("DJANGO_LOG_DIR")
     fi
 
@@ -49,10 +59,10 @@ if $APP_IS_EXPOSED; then
 else
     echo "APP_IS_EXPOSED is set to false"
     MEDIA_DIR=${BASE_DIR}$MEDIA_DEFAULT_INTERNAL_DIR
-    if $STATIC_FILES_ARE_NEEDED; then
+    if [ $STATIC_FILES_ARE_NEEDED = "true" ]; then
         STATIC_FILES_DIR=${BASE_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR
     fi
-    if $DJANGO_LOGS_ARE_NEEDED; then
+    if [ $DJANGO_LOGS_ARE_NEEDED = "true" ]; then
         DJANGO_LOG_DIR=${BASE_DIR}$DJANGO_LOG_DEFAULT_INTERNAL_DIR
     fi
     TMP_UPLOADED_FILES_DIR=${BASE_DIR}$TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR
@@ -61,9 +71,9 @@ fi
 LIBRARIES_DIR=${MEDIA_DIR}${LIBRARIES_DIR_NAME}/
 
 if [ -f $GENERATED_PATHS_ENV_FILE ]; then
-    rm -f $GENERATED_PATHS_ENV_FILE 2>&1
+    rm -f $GENERATED_PATHS_ENV_FILE
 fi
-touch $GENERATED_PATHS_ENV_FILE 2>&1
+touch $GENERATED_PATHS_ENV_FILE
 
 echo "MEDIA_DIR: $MEDIA_DIR"
 echo "LIBRARIES_DIR_NAME: $LIBRARIES_DIR_NAME"
