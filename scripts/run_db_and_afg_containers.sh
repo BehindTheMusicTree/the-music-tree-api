@@ -59,7 +59,7 @@ for var in "${required_vars[@]}"; do
   fi
 done
 
-echo "Running the database and audio fingerprinter containers..."
+echo "Running the database and audio fingerprinter containers."
 
 docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
 docker pull $DOCKERHUB_USERNAME/$AUDIO_FINGERPRINTER_IMAGE_REPO:$AUDIO_FINGERPRINTER_IMAGE_TAG
@@ -74,7 +74,10 @@ fi
 docker run \
 --name=$DB_CONTAINER_NAME \
 --volume=db-data:$DB_DATA_DIR \
+--volume=$SCRIPTS_DIR/init_db_for_app/init_db_and_role.sh:/docker-entrypoint-initdb.d/init_bodzify_api_db_and_role.sh \
+--volume=$SCRIPTS_DIR/init_db_for_app/init_django_data.sh:/docker-entrypoint-initdb.d/init_bodzify_api_django_data.sh \
 -p $DB_PORT:$DB_PORT \
+--env-file=$APP_ENV_FILE \
 -e ENV=$ENV \
 -e POSTGRES_DB=$DB_BODZIFY_API_DB_NAME \
 -e POSTGRES_USER=$DB_SUPERUSER_NAME \

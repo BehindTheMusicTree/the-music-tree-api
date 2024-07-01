@@ -25,38 +25,7 @@ jobs:
     environment: 
       name: CI_TEST
     env:
-      ENV: CI_TEST
-      DEBUG: ${{ vars.DEBUG }}
-      DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
-      APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
-      TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}
-      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
-      MEDIA_DEFAULT_INTERNAL_DIR: ${{ vars.MEDIA_DEFAULT_INTERNAL_DIR }}
-      LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
-      STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
-      STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-      DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
-
-      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
-      DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
-      DB_IMAGE_TAG: ${{ vars.DB_IMAGE_TAG }}
-      DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
-      DB_SUPERUSER_NAME: ${{ secrets.DB_SUPERUSER_NAME }}
-      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
-      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
-      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
-      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-
-      AUDIO_FINGERPRINTER_CONTAINER_NAME: ${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
-      AUDIO_FINGERPRINTER_IMAGE_REPO: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}
-      AUDIO_FINGERPRINTER_IMAGE_TAG: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
-      AUDIO_FINGERPRINTER_PORT: ${{ secrets.AUDIO_FINGERPRINTER_PORT }}
-      AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET: ${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}
-      AUDIO_FINGERPRINTER_POST_ENDPOINT: ${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}
-
+      ENV_FILE: ${{ vars.ENV_FILE }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -65,6 +34,41 @@ jobs:
         uses: actions/setup-python@v5
         with:
            python-version: 3.11
+
+      - name: Create .env file
+        run: |
+          echo "ENV=${{ vars.ENV }}" >> ${{ env.ENV_FILE }}
+          echo "DEBUG=${{ secrets.DEBUG }}" >> ${{ env.ENV_FILE }}
+          echo "DB_IS_NEEDED=${{ secrets.DB_IS_NEEDED }}" >> ${{ env.ENV_FILE }}
+          echo "APP_IS_EXPOSED=${{ secrets.APP_IS_EXPOSED }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_META_ANALYSE_IS_NEEDED=${{ secrets.AUDIO_META_ANALYSE_IS_NEEDED }}" >> ${{ env.ENV_FILE }}
+          echo "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR=${{ secrets.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}" \
+          >> ${{ env.ENV_FILE }}
+          echo "ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}" >> ${{ env.ENV_FILE }}
+          echo "MEDIA_DEFAULT_INTERNAL_DIR=${{ secrets.MEDIA_DEFAULT_INTERNAL_DIR }}" >> ${{ env.ENV_FILE }}
+          echo "LIBRARIES_DIR_NAME=${{ secrets.LIBRARIES_DIR_NAME }}" >> ${{ env.ENV_FILE }}
+          echo "STATIC_FILES_ARE_NEEDED=${{ secrets.STATIC_FILES_ARE_NEEDED }}" >> ${{ env.ENV_FILE }}
+          echo "STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ secrets.STATIC_FILES_DEFAULT_INTERNAL_DIR }}" >> ${{ env.ENV_FILE }}
+          echo "DJANGO_LOGS_ARE_NEEDED=${{ secrets.DJANGO_LOGS_ARE_NEEDED }}" >> ${{ env.ENV_FILE }}
+          
+          echo "DB_CONTAINER_NAME=${{ secrets.DB_CONTAINER_NAME }}" >> ${{ env.ENV_FILE }}
+          echo "DB_IMAGE_REPO=${{ secrets.DB_IMAGE_REPO }}" >> ${{ env.ENV_FILE }}
+          echo "DB_IMAGE_TAG=${{ secrets.DB_IMAGE_TAG }}" >> ${{ env.ENV_FILE }}
+          echo "DB_DATA_DIR=${{ secrets.DB_DATA_DIR }}" >> ${{ env.ENV_FILE }}
+          echo "DB_SUPERUSER_NAME=${{ secrets.DB_SUPERUSER_NAME }}" >> ${{ env.ENV_FILE }}
+          echo "DB_SUPERUSER_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}" >> ${{ env.ENV_FILE }}
+          echo "DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}" >> ${{ env.ENV_FILE }}
+          echo "DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}" >> ${{ env.ENV_FILE }}
+          echo "DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}" >> ${{ env.ENV_FILE }}
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> ${{ env.ENV_FILE }}
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> ${{ env.ENV_FILE }}
+
+          echo "AUDIO_FINGERPRINTER_CONTAINER_NAME=${{ secrets.AUDIO_FINGERPRINTER_CONTAINER_NAME }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_IMAGE_REPO=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_REPO }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_IMAGE_TAG=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_TAG }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_PORT=${{ secrets.AUDIO_FINGERPRINTER_PORT }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET=${{ secrets.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}" >> ${{ env.ENV_FILE }}
+          echo "AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ secrets.AUDIO_FINGERPRINTER_POST_ENDPOINT }}" >> ${{ env.ENV_FILE }}
 
       - name: Install requirements
         run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
@@ -82,7 +86,7 @@ jobs:
         run: sudo apt-get install jq
 
       - name: Add fpcalc to PATH
-        run: echo "${{ github.workspace }}/bin/fpcalc" >> $GITHUB_PATH
+        run: echo /bin/fpcalc" >> $GITHUB_PATH
 
       - name: Set up filesystem
         run: bash scripts/setup_filesystem.sh
@@ -94,7 +98,7 @@ jobs:
         run: |
           attempts=0
           max_attempts=5
-          while ! pg_isready -h localhost -p ${{ env.DB_PORT }}; do
+          while ! pg_isready -h localhost -p ${{ vars.DB_PORT }}; do
             if [ $attempts -eq $max_attempts ]; then
               echo "DB service did not start within the expected time."
               exit 1
@@ -103,12 +107,6 @@ jobs:
             sleep 15
             attempts=$((attempts+1))
           done
-
-      - name: Init db
-        run: ${{ github.workspace }}/scripts/data/db_init.sh
-        
-      - name: Init django data
-        run: ${{ github.workspace }}/scripts/data/django_data_init.sh
 
       - name: Run pytest
         run: pytest
