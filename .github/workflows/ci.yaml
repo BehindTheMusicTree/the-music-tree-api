@@ -50,7 +50,7 @@ jobs:
           echo "STATIC_FILES_ARE_NEEDED=${{ secrets.STATIC_FILES_ARE_NEEDED }}" >> ${{ env.ENV_FILE }}
           echo "STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ secrets.STATIC_FILES_DEFAULT_INTERNAL_DIR }}" >> ${{ env.ENV_FILE }}
           echo "DJANGO_LOGS_ARE_NEEDED=${{ secrets.DJANGO_LOGS_ARE_NEEDED }}" >> ${{ env.ENV_FILE }}
-          
+
           echo "DB_CONTAINER_NAME=${{ secrets.DB_CONTAINER_NAME }}" >> ${{ env.ENV_FILE }}
           echo "DB_IMAGE_REPO=${{ secrets.DB_IMAGE_REPO }}" >> ${{ env.ENV_FILE }}
           echo "DB_IMAGE_TAG=${{ secrets.DB_IMAGE_TAG }}" >> ${{ env.ENV_FILE }}
@@ -86,7 +86,7 @@ jobs:
         run: sudo apt-get install jq
 
       - name: Add fpcalc to PATH
-        run: echo /bin/fpcalc" >> $GITHUB_PATH
+        run: echo bin/fpcalc" >> $GITHUB_PATH
 
       - name: Set up filesystem
         run: bash scripts/setup_filesystem.sh
@@ -143,11 +143,8 @@ jobs:
       - name: Remove previously collected static files
         run: rm -rf ${{ env.STATIC_FILES_DIR }}*
 
-      - name: LS
-        run: ls -all ${{ github.workspace }}
-
       - name: Collect static files
-        run: python ${{ github.workspace }}/manage.py collectstatic --noinput
+        run: python manage.py collectstatic --noinput
 
       - name: Configure Git
         run: |
@@ -158,8 +155,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'mignot@users.noreply.github.com'
           git add -A
           git commit -am "Add collected static files"
           git push
