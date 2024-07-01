@@ -96,8 +96,8 @@ jobs:
             attempts=$((attempts+1))
           done
 
-      - name: Echo db container logs
-        run: docker logs ${{ env.DB_CONTAINER_NAME }}
+      - name: Echo afg container logs
+        run: docker logs ${{ env.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
 
       - name: Init db data
         run: |
