@@ -114,6 +114,9 @@ jobs:
             attempts=$((attempts+1))
           done
 
+      - name: Echo db container logs
+        run: docker logs ${{ vars.DB_CONTAINER_NAME }}
+
       - name: Run pytest
         run: pytest
 
