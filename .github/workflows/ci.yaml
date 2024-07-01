@@ -90,6 +90,9 @@ jobs:
 
       - name: Run db and afg containers
         run: bash scripts/run_db_and_afg_containers.sh
+
+      - name: Echo db container logs
+        run: docker logs ${{ vars.DB_CONTAINER_NAME }}
         
       - name: Wait for db service to start
         run: |
@@ -104,9 +107,6 @@ jobs:
             sleep 15
             attempts=$((attempts+1))
           done
-
-      - name: Echo db container logs
-        run: docker logs ${{ vars.DB_CONTAINER_NAME }}
 
       - name: Run pytest
         run: pytest
