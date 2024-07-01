@@ -13,6 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE')
 
+APP_ENV_FILE = None
 if APP_ENV_FILE_RELATIVE_PATH:
     APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
     if not APP_ENV_FILE.exists():
