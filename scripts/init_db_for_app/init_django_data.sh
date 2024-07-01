@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Initializing Django data"
+
 SCRIPTS_DIR=$(realpath $(dirname "$0")/../)
 PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR../"))/
 APP_ENV_FILE="${PROJECT_DIR}env/.env"

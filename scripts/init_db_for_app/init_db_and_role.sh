@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Initializing database and role"
+
 if [ -z "$1" ]; then
     echo "No env file specified"
 else
@@ -18,6 +20,7 @@ else
     done < "$APP_ENV_FILE"
 fi
 
+echo "DB_CONTAINER_NAME: $DB_CONTAINER_NAME"
 required_vars=(
   DB_CONTAINER_NAME
   DB_SUPERUSER_NAME
