@@ -27,6 +27,7 @@ jobs:
     env:
       ENV_FILE: ${{ vars.ENV_FILE }}
       DB_PORT: ${{ secrets.DB_PORT }}
+      DB_HOST: ${{ secrets.DB_HOST }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -99,7 +100,7 @@ jobs:
         run: |
           attempts=0
           max_attempts=5
-          while ! pg_isready -h localhost -p ${{ env.DB_PORT }}; do
+          while ! pg_isready -h ${{ env.DB_HOST }} -p ${{ env.DB_PORT }}; do
             if [ $attempts -eq $max_attempts ]; then
               echo "DB service did not start within the expected time."
               exit 1
