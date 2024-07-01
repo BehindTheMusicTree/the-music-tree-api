@@ -133,7 +133,7 @@ jobs:
       APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
       AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
       STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
-      STATIC_FILES_DIR: ${{ github.workspace }}/${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
+      STATIC_FILES_DIR: /${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
       DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
     steps:
       - name: Checkout code
@@ -192,8 +192,6 @@ jobs:
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
           build-args: |
             ENV=${{ vars.ENV }}
-
-            DOCKER_COMPOSE_PART_FILENAME=${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
 
             DEBUG=${{ vars.DEBUG }}
             DB_IS_NEEDED=${{ vars.DB_IS_NEEDED }}
@@ -324,6 +322,7 @@ jobs:
       name: TEST
     env:
       ENV_FILE: ${{ vars.ENV_FILE }}
+      DOCKER_COMPOSE_PART_FILENAME: ${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
 
     steps:
       - uses: actions/checkout@v4
@@ -363,18 +362,20 @@ jobs:
 
       - name: Add host to known_hosts
         run: |
-          mkdir -p ~/.ssh &&
-          ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts
+          mkdir -p ~/.ssh && ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts
 
       - name: Generate partial docker compose file
         env: 
           APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
         run: |
-          bash ${{ github.workspace }}/scripts/generate_docker_compose_part.sh "${{ env.ENV_FILE }}"
+          bash scripts/generate_docker_compose_part.sh "${{ env.ENV_FILE }}"
 
       - name: Transfer partial docker-compose on server
+        env: 
+          DOCKER_COMPOSE_DIR: ${{ vars.DOCKER_COMPOSE_DIR }}
+          DOCKER_COMPOSE_PARTS_DIR_NAME: ${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}
         run: |
-          scp ${{ github.workspace }}/scripts/${{ env.DOCKER_COMPOSE_PART_FILENAME }} ${{ env.SSH_DESTINATION }}:\
+          scp scripts/${{ env.DOCKER_COMPOSE_PART_FILENAME }} ${{ env.SSH_DESTINATION }}:\
           ${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}/${{ env.DOCKER_COMPOSE_PART_FILENAME }}
 
   redeploy-webhook-call:

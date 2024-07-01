@@ -4,22 +4,31 @@ import datetime
 import json
 import os
 from pathlib import Path
+from re import A
 import subprocess
 import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-APP_ENV_FILE = BASE_DIR / 'env/.env'
-dotenv.load_dotenv(APP_ENV_FILE)
+APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE')
+
+if APP_ENV_FILE_RELATIVE_PATH:
+    APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
+    if not APP_ENV_FILE.exists():
+        raise EnvironmentError("The env file {APP_ENV_FILE} does not exist")
+
+    dotenv.load_dotenv(APP_ENV_FILE)
+else:
+    print("No env file set.")
 
 CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
 generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
 try:
     result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path),
-                             APP_ENV_FILE,
                              str(BASE_DIR) + '/',
-                             CALCULATED_PATHS_ENV_FILE],
+                             CALCULATED_PATHS_ENV_FILE,
+                             APP_ENV_FILE or ""],
                             check=True,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
