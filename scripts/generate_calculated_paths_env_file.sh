@@ -13,24 +13,6 @@ if [ -z "$2" ]; then
 fi
 GENERATED_PATHS_ENV_FILE=$2
 
-if [ -z "$3" ]; then
-    echo "No env file provided."
-else
-    APP_ENV_FILE=$3
-    if [ ! -f "$APP_ENV_FILE" ]; then
-        echo "$APP_ENV_FILE env file does not exist" >&2
-        exit 1
-    fi
-
-    echo "Loading environment variables from ${APP_ENV_FILE}"
-    while IFS='=' read -r key value
-    do
-        # Skip comments and empty lines
-        if [ -z "$key" ]; then continue; fi
-        export "$key=$value"
-    done < "$APP_ENV_FILE"
-fi
-
 required_vars=("APP_IS_EXPOSED" "LIBRARIES_DIR_NAME")
 for var in "${required_vars[@]}"; do
     if [ -z "${!var}" ]; then

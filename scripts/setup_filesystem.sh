@@ -45,7 +45,7 @@ if [ -z $LIBRARIES_DIR_NAME ]; then
 fi
 
 CALCULATED_PATHS_ENV_FILE=${PROJECT_DIR}env/calculated_paths/.env
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE" "$APP_ENV_FILE"
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
 
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file"
@@ -101,76 +101,43 @@ if [ $DJANGO_LOGS_ARE_NEEDED = "true" ]; then
         echo "Log directory $DJANGO_LOG_DIR already exists"
     fi
 
-    if [ -z $DJANGO_LOG_GENERAL_FILENAME ]; then
-        echo "DJANGO_LOG_GENERAL_FILENAME is not set" >&2
-        exit 1
-    fi
+    log_filenames=(
+        DJANGO_LOG_GENERAL_FILENAME
+        DJANGO_LOG_INFO_FILENAME
+        DJANGO_LOG_REQUESTS_FILENAME
+        DJANGO_LOG_REQUESTS_DEBUG_FILENAME
+        DJANGO_LOG_EXCEPTIONS_FILENAME
+        DJANGO_LOG_DJANGO_FILENAME
+        DJANGO_LOG_APP_FILENAME
+    )
 
-    if [ -z $DJANGO_LOG_INFO_FILENAME ]; then
-        echo "DJANGO_LOG_INFO_FILENAME is not set" >&2
-        exit 1
-    fi
-
-    if [ -z $DJANGO_LOG_REQUESTS_FILENAME ]; then
-        echo "DJANGO_LOG_REQUESTS_FILENAME is not set" >&2
-        exit 1
-    fi
-
-    if [ -z $DJANGO_LOG_REQUESTS_DEBUG_FILENAME ]; then
-        echo "DJANGO_LOG_REQUESTS_DEBUG_FILENAME is not set" >&2
-        exit 1
-    fi
-
-    if [ -z $DJANGO_LOG_EXCEPTIONS_FILENAME ]; then
-        echo "DJANGO_LOG_EXCEPTIONS_FILENAME is not set" >&2
-        exit 1
-    fi
-
-    if [ -z $DJANGO_LOG_DJANGO_FILENAME ]; then
-        echo "DJANGO_LOG_DJANGO_FILENAME is not set" >&2
-        exit 1
-    fi
-
-    if [ -z $DJANGO_LOG_APP_FILENAME ]; then
-        echo "DJANGO_LOG_APP_FILENAME is not set" >&2
-        exit 1
-    fi
-
-    touch ${DJANGO_LOG_DIR}$DJANGO_LOG_GENERAL_FILENAME
-    touch ${DJANGO_LOG_DIR}$DJANGO_LOG_INFO_FILENAME
-    touch ${DJANGO_LOG_DIR}$DJANGO_LOG_REQUESTS_FILENAME
-    touch ${DJANGO_LOG_DIR}$DJANGO_LOG_REQUESTS_DEBUG_FILENAME
-    touch ${DJANGO_LOG_DIR}$DJANGO_LOG_EXCEPTIONS_FILENAME
-    touch ${DJANGO_LOG_DIR}$DJANGO_LOG_DJANGO_FILENAME
-    touch ${DJANGO_LOG_DIR}$DJANGO_LOG_APP_FILENAME
+    for log_filename in "${log_filenames[@]}"; do
+        if [ -z "${!log_filename}" ]; then
+            echo "$log_filename is not set" >&2
+            exit 1
+        fi
+        touch "${DJANGO_LOG_DIR}${!log_filename}"
+    done
 fi
 
 if [ $APP_IS_EXPOSED = "true" ]; then
-    if [ -z $GUNICORN_LOG_DIR ]; then
-        echo "GUNICORN_LOG_DIR is not set while app is exposed" >&2
-        exit 1
-    fi
+    required_vars=(
+        GUNICORN_LOG_DIR
+        GUNICORN_LOG_ERROR_FILENAME
+        GUNICORN_LOG_ACCESS_FILENAME
+    )
 
-    if [ -z $GUNICORN_LOG_ERROR_FILENAME ]; then
-        echo "GUNICORN_LOG_ERROR_FILENAME is not set while app is exposed" >&2
-        exit 1
-    fi
+    for var_name in "${required_vars[@]}"; do
+        if [ -z "${!var_name}" ]; then
+            echo "$var_name is not set while app is exposed" >&2
+            exit 1
+        fi
+    done
 
-    if [ -z $GUNICORN_LOG_ACCESS_FILENAME ]; then
-        echo "GUNICORN_LOG_ACCESS_FILENAME is not set while app is exposed" >&2
-        exit 1
-    fi
-
-    if [ ! -d "$GUNICORN_LOG_DIR" ]; then
-        echo "Creating Gunicorn log directory $GUNICORN_LOG_DIR"
-        mkdir -p $GUNICORN_LOG_DIR
-    else
-        echo "Gunicorn log directory $GUNICORN_LOG_DIR already exists"
-    fi
-
-    touch ${GUNICORN_LOG_DIR}$GUNICORN_LOG_ERROR_FILENAME
-    touch ${GUNICORN_LOG_DIR}$GUNICORN_LOG_ACCESS_FILENAME
-else:
+    GUNICORN_LOG_ERROR_FILE=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ERROR_FILENAME}
+    GUNICORN_LOG_ACCESS_FILE=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ACCESS_FILENAME}
+    chmod -R 775 "$GUNICORN_LOG_DIR"
+else
     echo "APP_IS_EXPOSED is set to false. Gunicorn logs are not needed."
 fi
 

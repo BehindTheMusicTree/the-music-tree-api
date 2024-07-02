@@ -25,7 +25,7 @@ SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_S
 PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
 
 CALCULATED_PATHS_ENV_FILE=$(cd "${PROJECT_DIR}env/calculated_paths/" && pwd)/.env
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE" "$APP_ENV_FILE"
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
 
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file"
