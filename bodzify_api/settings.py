@@ -8,7 +8,6 @@ from re import A
 import subprocess
 import dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
