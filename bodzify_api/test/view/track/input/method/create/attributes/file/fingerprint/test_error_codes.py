@@ -43,3 +43,8 @@ class TestCase(TrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.track_file.fingerprinting_error_code.pk == \
             FINGERPRINTING_ERROR_CODES.SERVICE_NOT_FOUND
+
+    def test_audio_fingerprinter_service_not_down_then_no_error_code(self):
+        response = self.post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m52.mp3")
+        assert response.status_code == status.HTTP_201_CREATED
+        assert not self.saved_lib_track.track_file.fingerprinting_error_code
