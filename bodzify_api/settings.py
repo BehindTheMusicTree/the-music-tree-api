@@ -12,7 +12,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
 APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
-
 if not APP_ENV_FILE.exists():
     print("No env file at {APP_ENV_FILE}")
     APP_ENV_FILE = None
@@ -40,6 +39,10 @@ except subprocess.CalledProcessError as e:
 
 dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
 
+AUDIO_FINGERPRINTER_CONTAINER_NAME = os.getenv('AUDIO_FINGERPRINTER_CONTAINER_NAME')
+if not AUDIO_FINGERPRINTER_CONTAINER_NAME:
+    raise EnvironmentError("The AUDIO_FINGERPRINTER_CONTAINER_NAME variable must be set")
+
 APP_IS_EXPOSED = os.getenv('APP_IS_EXPOSED')
 print("APP_IS_EXPOSED: " + str(APP_IS_EXPOSED))
 if not APP_IS_EXPOSED or APP_IS_EXPOSED not in ['true', 'false']:
@@ -53,7 +56,7 @@ if APP_IS_EXPOSED == 'true':
 
     CSRF_TRUSTED_ORIGINS_STR = os.getenv('CSRF_TRUSTED_ORIGINS')
     if not CSRF_TRUSTED_ORIGINS_STR:
-        raise EnvironmentError("The CSRF_TRUSTED_ORIGINS variable is not set")
+        raise EnvironmentError("The CSRF_TRUSTED_ORIGINS variable must be set")
 
     try:
         loaded_csrf_trusted_origins = json.loads(CSRF_TRUSTED_ORIGINS_STR)
@@ -74,7 +77,7 @@ if APP_IS_EXPOSED == 'true':
 
     ALLOWED_HOSTS_STR = os.getenv('ALLOWED_HOSTS')
     if not ALLOWED_HOSTS_STR:
-        raise EnvironmentError("The ALLOWED_HOSTS variable is not set")
+        raise EnvironmentError("The ALLOWED_HOSTS variable must be set")
 
     try:
         loaded_allowed_hosts = json.loads(ALLOWED_HOSTS_STR)
@@ -96,15 +99,21 @@ if APP_IS_EXPOSED == 'true':
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
     if not SECRET_KEY:
-        raise EnvironmentError("The DJANGO_SECRET_KEY variable is not set")
+        raise EnvironmentError("The DJANGO_SECRET_KEY variable must be set")
 else:
     ALLOWED_HOSTS = ['127.0.0.1']
     SECRET_KEY = "django-default-secret-when-not-exposed"
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-API_VERSION = 'v1'
-APP_NAME = "bodzify_api"
+API_VERSION = os.getenv('API_VERSION')
+if not API_VERSION:
+    raise EnvironmentError("The API_VERSION variable must be set")
+
+APP_NAME = os.getenv('APP_NAME')
+if not APP_NAME:
+    raise EnvironmentError("The APP_NAME variable must be set")
+
 API_DESCRIPTION = "API to handle genre oriented music libraries"
 API_ROOT_BASE = 'api/' + API_VERSION + '/'
 API_ROOT = Path(BASE_DIR) / APP_NAME
@@ -159,12 +168,12 @@ if not DEBUG or DEBUG not in ['true', 'false']:
 
 INSTALLED_APPS = ['django.contrib.admin',
                   'django.contrib.auth',
-                  'polymorphic',
                   'django.contrib.contenttypes',
                   'django.contrib.sessions',
                   'django.contrib.messages',
                   'django.contrib.staticfiles',
                   'django_extensions',
+                  'polymorphic',
                   'corsheaders',
                   'drf_spectacular',
                   'rest_framework',
@@ -196,23 +205,23 @@ DB_IS_NEEDED = True if DB_IS_NEEDED_STR == 'true' else False
 if DB_IS_NEEDED:
     DB_BODZIFY_API_DB_NAME = os.getenv('DB_BODZIFY_API_DB_NAME')
     if DB_BODZIFY_API_DB_NAME is None:
-        raise EnvironmentError("The DB_BODZIFY_API_DB_NAME variable is not set")
+        raise EnvironmentError("The DB_BODZIFY_API_DB_NAME variable must be set")
 
     DB_BODZIFY_API_USERNAME = os.getenv('DB_BODZIFY_API_USERNAME')
     if DB_BODZIFY_API_USERNAME is None:
-        raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable is not set")
+        raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable must be set")
 
     DB_BODZIFY_API_USER_PASSWORD = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
     if DB_BODZIFY_API_USER_PASSWORD is None:
-        raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable is not set")
+        raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable must be set")
 
     DB_HOST = os.getenv('DB_HOST')
     if DB_HOST is None:
-        raise EnvironmentError("The DB_HOST variable is not set")
+        raise EnvironmentError("The DB_HOST variable must be set")
 
     DB_PORT = os.getenv('DB_PORT')
     if DB_PORT is None:
-        raise EnvironmentError("The DB_PORT variable is not set")
+        raise EnvironmentError("The DB_PORT variable must be set")
 
     DATABASES = {
         'default': {
@@ -304,18 +313,18 @@ if AUDIO_META_ANALYSE_IS_NEEDED:
     TMP_UPLOADED_FILES_DIR = os.getenv('TMP_UPLOADED_FILES_DIR')
     AUDIO_FINGERPRINTER_PORT = os.getenv('AUDIO_FINGERPRINTER_PORT')
     if AUDIO_FINGERPRINTER_PORT is None:
-        raise Exception("AUDIO_FINGERPRINTER_PORT env variable is not set")
+        raise Exception("AUDIO_FINGERPRINTER_PORT env variable must be set")
 
     AUDIO_FINGERPRINTER_POST_ENDPOINT = os.getenv('AUDIO_FINGERPRINTER_POST_ENDPOINT')
     if AUDIO_FINGERPRINTER_POST_ENDPOINT is None:
-        raise Exception("AUDIO_FINGERPRINTER_POST_ENDPOINT env variable is not set")
+        raise Exception("AUDIO_FINGERPRINTER_POST_ENDPOINT env variable must be set")
 
     AUDIO_FINGERPRINTER_POST_FULL_URL = AUDIO_FINGERPRINTER_BASE_URL + \
         ":" + AUDIO_FINGERPRINTER_PORT + '/' + AUDIO_FINGERPRINTER_POST_ENDPOINT
 
     ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
     if not ACOUSTID_API_KEY and AUDIO_META_ANALYSE_IS_NEEDED:
-        raise EnvironmentError("The ACOUSTID_API_KEY variable is not set")
+        raise EnvironmentError("The ACOUSTID_API_KEY variable must be set")
 
 STATIC_FILES_ARE_NEEDED_STR = os.getenv('STATIC_FILES_ARE_NEEDED')
 if not STATIC_FILES_ARE_NEEDED_STR or STATIC_FILES_ARE_NEEDED_STR not in ['true', 'false']:
@@ -325,13 +334,23 @@ STATIC_FILES_ARE_NEEDED = True if STATIC_FILES_ARE_NEEDED_STR == 'true' else Fal
 if STATIC_FILES_ARE_NEEDED:
     print("STATIC_FILES_ARE_NEEDED is true. Setting up static files.")
     STATIC_URL = 'static/'
-    STATIC_ROOT = Path(os.getenv('STATIC_FILES_DIR'))
+    STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
+    if not STATIC_FILES_DIR_ENV:
+        raise EnvironmentError("The STATIC_FILES_DIR variable must be set")
+    STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
 else:
     print("Static files are not needed.")
 
-MEDIA_ROOT = Path(os.getenv('MEDIA_DIR'))
+MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
+if not MEDIA_DIR_ENV:
+    raise EnvironmentError("The MEDIA_DIR variable must be set")
+MEDIA_ROOT = Path(MEDIA_DIR_ENV)
+
 LIBRARIES_DIR_NAME = os.getenv('LIBRARIES_DIR_NAME')
-LIBRARIES_DIR = Path(os.getenv('LIBRARIES_DIR'))
+if not LIBRARIES_DIR_NAME:
+    raise EnvironmentError("The LIBRARIES_DIR_NAME variable must be set")
+
+LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
 
 LOGS_ARE_NEEDED_STR = os.getenv('DJANGO_LOGS_ARE_NEEDED')
 if not LOGS_ARE_NEEDED_STR or LOGS_ARE_NEEDED_STR not in ['true', 'false']:
@@ -340,35 +359,38 @@ LOGS_ARE_NEEDED = True if LOGS_ARE_NEEDED_STR == 'true' else False
 
 if LOGS_ARE_NEEDED:
     print("DJANGO_LOGS_ARE_NEEDED is true. Setting up logs.")
-    LOG_DIR = Path(os.getenv('DJANGO_LOG_DIR'))
+    LOG_DIR_ENV = os.getenv('DJANGO_LOG_DIR')
+    if not LOG_DIR_ENV:
+        raise EnvironmentError("The DJANGO_LOG_DIR variable must be set")
+    LOG_DIR = Path(LOG_DIR_ENV)
 
     LOG_GENERAL_FILENAME = os.getenv('DJANGO_LOG_GENERAL_FILENAME')
     if not LOG_GENERAL_FILENAME:
-        raise EnvironmentError("The DJANGO_LOG_GENERAL_FILENAME variable is not set")
+        raise EnvironmentError("The DJANGO_LOG_GENERAL_FILENAME variable must be set")
 
     LOG_INFO_FILENAME = os.getenv('DJANGO_LOG_INFO_FILENAME')
     if not LOG_INFO_FILENAME:
-        raise EnvironmentError("The DJANGO_LOG_INFO_FILENAME variable is not set")
+        raise EnvironmentError("The DJANGO_LOG_INFO_FILENAME variable must be set")
 
     LOG_REQUESTS_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_FILENAME')
     if not LOG_REQUESTS_FILENAME:
-        raise EnvironmentError("The DJANGO_LOG_REQUESTS_FILENAME variable is not set")
+        raise EnvironmentError("The DJANGO_LOG_REQUESTS_FILENAME variable must be set")
 
     LOG_REQUESTS_DEBUG_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_DEBUG_FILENAME')
     if not LOG_REQUESTS_DEBUG_FILENAME:
-        raise EnvironmentError("The DJANGO_LOG_REQUESTS_DEBUG_FILENAME variable is not set")
+        raise EnvironmentError("The DJANGO_LOG_REQUESTS_DEBUG_FILENAME variable must be set")
 
     LOG_EXCEPTIONS_FILENAME = os.getenv('DJANGO_LOG_EXCEPTIONS_FILENAME')
     if not LOG_EXCEPTIONS_FILENAME:
-        raise EnvironmentError("The DJANGO_LOG_EXCEPTIONS_FILENAME variable is not set")
+        raise EnvironmentError("The DJANGO_LOG_EXCEPTIONS_FILENAME variable must be set")
 
     LOG_DJANGO_FILENAME = os.getenv('DJANGO_LOG_DJANGO_FILENAME')
     if not LOG_DJANGO_FILENAME:
-        raise EnvironmentError("The DJANGO_LOG_DJANGO_FILENAME variable is not set")
+        raise EnvironmentError("The DJANGO_LOG_DJANGO_FILENAME variable must be set")
 
     LOG_APP_FILENAME = os.getenv('DJANGO_LOG_APP_FILENAME')
     if not LOG_APP_FILENAME:
-        raise EnvironmentError("The DJANGO_LOG_APP_FILENAME variable is not set")
+        raise EnvironmentError("The DJANGO_LOG_APP_FILENAME variable must be set")
 
     LOGGING = {
         'version': 1,

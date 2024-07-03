@@ -39,15 +39,9 @@ docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -c "CREATE DATABASE $D
 
 # Display all databases
 DATABASES=$(docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -t -c "SELECT datname FROM pg_database;")
-echo "All databases: $DATABASES"
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME \
 psql -d $DB_BODZIFY_API_DB_NAME -c "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
-
-# Display all users
-USERS=$(docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME \
-psql -t -c "SELECT rolname FROM pg_roles WHERE rolcanlogin = true;")
-echo "All users: $USERS"
 
 docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME bash -c \
 "psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;\"; \
