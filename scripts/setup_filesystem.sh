@@ -129,6 +129,7 @@ if [ $APP_IS_EXPOSED = "true" ]; then
         GUNICORN_LOG_ERROR_FILENAME
         GUNICORN_LOG_ACCESS_FILENAME
         DJANGO_LOG_DIR_SYMLINK_TARGET
+        MEDIA_DIR_SYMLINK_TARGET
         DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET
         TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET
         GUNICORN_LOG_DIR_SYMLINK_TARGET
@@ -144,29 +145,22 @@ if [ $APP_IS_EXPOSED = "true" ]; then
     GUNICORN_LOG_ACCESS_FILE=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ACCESS_FILENAME}
     chmod -R 775 "$GUNICORN_LOG_DIR"
 
-    echo "DJANGO_LOG_DIR_SYMLINK_TARGET is set to $DJANGO_LOG_DIR_SYMLINK_TARGET"
-    if [ ! -L "$DJANGO_LOG_DIR_SYMLINK_TARGET" ]; then
-        echo "Creating symlink for the django log directory."
-        ln -s "$DJANGO_LOG_DIR" "$DJANGO_LOG_DIR_SYMLINK_TARGET"
-    fi
+    declare -A SYMLINKS=(
+        ["$DJANGO_LOG_DIR"]="$DJANGO_LOG_DIR_SYMLINK_TARGET"
+        ["$MEDIA_DIR"]="$MEDIA_DIR_SYMLINK_TARGET"
+        ["$STATIC_FILES_DIR"]="$DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET"
+        ["$TMP_UPLOADED_FILES_DIR"]="$TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET"
+        ["$GUNICORN_LOG_DIR"]="$GUNICORN_LOG_DIR_SYMLINK_TARGET"
+    )
 
-    echo "DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET is set to $DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET"
-    if [ ! -L "$DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET" ]; then
-        echo "Creating symlink for the static files directory."
-        ln -s "$STATIC_FILES_DIR" "$DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET"
-    fi
-
-    echo "TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET is set to $TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET"
-    if [ ! -L "$TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET" ]; then
-        echo "Creating symlink for the tmp uploaded files directory."
-        ln -s "$TMP_UPLOADED_FILES_DIR" "$TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET"
-    fi
-
-    echo "GUNICORN_LOG_DIR_SYMLINK_TARGET is set to $GUNICORN_LOG_DIR_SYMLINK_TARGET"
-    if [ ! -L "$GUNICORN_LOG_DIR_SYMLINK_TARGET" ]; then
-        echo "Creating symlink for the gunicorn log directory."
-        ln -s "$GUNICORN_LOG_DIR" "$GUNICORN_LOG_DIR_SYMLINK_TARGET"
-    fi
+    for SRC_DIR in "${!SYMLINKS[@]}"; do
+        TARGET_DIR=${SYMLINKS[$SRC_DIR]}
+        echo "$TARGET_DIR is set to $SRC_DIR"
+        if [ ! -L "$TARGET_DIR" ]; then
+            echo "Creating symlink for the directory."
+            ln -s "$SRC_DIR" "$TARGET_DIR"
+        fi
+    done
 else
     echo "APP_IS_EXPOSED is set to false. Gunicorn logs are not needed."
 fi
