@@ -28,9 +28,12 @@ check_bool_var() {
   if [ -z "$var_value" ]; then
     echo "$var_name is not set." >&2
     exit 1
-  elif [ "$var_value" != "true" ] && [ "$var_value" != "false" ]; then
-    echo "$var_name must be 'true' or 'false'." >&2
-    exit 1
+  else
+    var_value_lower=$(echo "$var_value" | tr '[:upper:]' '[:lower:]')
+    if [ "$var_value_lower" != "true" ] && [ "$var_value_lower" != "false" ]; then
+        echo "$var_name must be 'true' or 'false'." >&2
+        exit 1
+    fi
   fi
 }
 
@@ -125,8 +128,11 @@ if [ $APP_IS_EXPOSED = "true" ]; then
         GUNICORN_LOG_DIR
         GUNICORN_LOG_ERROR_FILENAME
         GUNICORN_LOG_ACCESS_FILENAME
+        DJANGO_LOG_DIR_SYMLINK_TARGET
+        DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET
+        TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET
+        GUNICORN_LOG_DIR_SYMLINK_TARGET
     )
-
     for var_name in "${required_vars[@]}"; do
         if [ -z "${!var_name}" ]; then
             echo "$var_name is not set while app is exposed" >&2
@@ -137,6 +143,30 @@ if [ $APP_IS_EXPOSED = "true" ]; then
     GUNICORN_LOG_ERROR_FILE=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ERROR_FILENAME}
     GUNICORN_LOG_ACCESS_FILE=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ACCESS_FILENAME}
     chmod -R 775 "$GUNICORN_LOG_DIR"
+
+    echo "DJANGO_LOG_DIR_SYMLINK_TARGET is set to $DJANGO_LOG_DIR_SYMLINK_TARGET"
+    if [ ! -L "$DJANGO_LOG_DIR_SYMLINK_TARGET" ]; then
+        echo "Creating symlink for the django log directory."
+        ln -s "$DJANGO_LOG_DIR" "$DJANGO_LOG_DIR_SYMLINK_TARGET"
+    fi
+
+    echo "DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET is set to $DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET"
+    if [ ! -L "$DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET" ]; then
+        echo "Creating symlink for the static files directory."
+        ln -s "$STATIC_FILES_DIR" "$DJANGO_STATIC_FILES_DIR_SYMLINK_TARGET"
+    fi
+
+    echo "TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET is set to $TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET"
+    if [ ! -L "$TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET" ]; then
+        echo "Creating symlink for the tmp uploaded files directory."
+        ln -s "$TMP_UPLOADED_FILES_DIR" "$TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET"
+    fi
+
+    echo "GUNICORN_LOG_DIR_SYMLINK_TARGET is set to $GUNICORN_LOG_DIR_SYMLINK_TARGET"
+    if [ ! -L "$GUNICORN_LOG_DIR_SYMLINK_TARGET" ]; then
+        echo "Creating symlink for the gunicorn log directory."
+        ln -s "$GUNICORN_LOG_DIR" "$GUNICORN_LOG_DIR_SYMLINK_TARGET"
+    fi
 else
     echo "APP_IS_EXPOSED is set to false. Gunicorn logs are not needed."
 fi

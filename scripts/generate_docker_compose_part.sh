@@ -18,6 +18,40 @@ else
   done < "$ENV_FILE"
 fi
 
+required_vars=(
+  DOCKER_COMPOSE_PART_FILENAME
+  DOCKER_NETWORK_NAME
+  DOCKERHUB_USERNAME
+
+  DB_IMAGE_REPO
+  DB_IMAGE_TAG
+  DB_CONTAINER_NAME
+  DB_DATA_DIR
+  DB_PORT
+  DB_ENV_VARIABLES_FILENAME
+
+  AUDIO_FINGERPRINTER_IMAGE_REPO
+  AUDIO_FINGERPRINTER_IMAGE_TAG
+  AUDIO_FINGERPRINTER_CONTAINER_NAME
+  AUDIO_FINGERPRINTER_PORT
+  AUDIO_FINGERPRINTER_ENV_FILENAME
+  AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET
+  AUDIO_FINGERPRINTER_FLASK_LOG_DIR_SYMLINK_TARGET
+
+  APP_IMAGE_REPO
+  APP_IMAGE_TAG
+  APP_CONTAINER_NAME
+  APP_PORT
+  APP_ENV_FILENAME
+  GUNICORN_LOG_DIR
+  GUNICORN_LOG_ERROR_FILENAME
+  GUNICORN_LOG_ACCESS_FILENAME
+  DJANGO_LOG_DIR
+  MEDIA_DIR
+  STATIC_FILES_DIR
+  TMP_UPLOADED_FILES_DIR
+)
+
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 
@@ -27,11 +61,10 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     container_name: $DB_CONTAINER_NAME
     volumes:
       - db-data:$DB_DATA_DIR
-      - ./db_init_roles.sql:/db/init_roles.sql
     ports:
       - "$DB_PORT:$DB_PORT"
     networks:
-      - bodzify-network
+      - $DOCKER_NETWORK_NAME
     env_file: $DB_ENV_VARIABLES_FILENAME
 
   audio_fingerprinter:
@@ -40,11 +73,12 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     container_name: $AUDIO_FINGERPRINTER_CONTAINER_NAME
     volumes:
       - api-upload-temp-files:$AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET
-      - afg-log-dir:$AUDIO_FINGERPRINTER_FLASK_LOG_DIR_SYMLINK_TARGET
+      - afg-flask-log-dir:$AUDIO_FINGERPRINTER_FLASK_LOG_DIR_SYMLINK_TARGET
+      - afg-gunicorn-log-dir:$AUDIO_FINGERPRINTER_GUNICORN_LOG_DIR_SYMLINK_TARGET
     ports:
       - "$AUDIO_FINGERPRINTER_PORT:$AUDIO_FINGERPRINTER_PORT"
     networks:
-      - bodzify-network
+      - $DOCKER_NETWORK_NAME
     env_file: $AUDIO_FINGERPRINTER_ENV_FILENAME
 
   api:
@@ -66,7 +100,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     expose:
       - $APP_PORT
     networks:
-      - bodzify-network
+      - $DOCKER_NETWORK_NAME
     depends_on:
       - audio_fingerprinter
       - db
