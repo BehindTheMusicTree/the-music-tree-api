@@ -326,7 +326,6 @@ jobs:
       ENV: ${{ vars.ENV }}
 
       DOCKER_COMPOSE_PART_FILENAME: ${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
-      : ${{ vars.SCRIPT_RUN_AFB_AND_DB_CONTAINERS_FILENAME }}
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
       DEBUG: ${{ vars.DEBUG }}
