@@ -11,7 +11,8 @@ from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 class TestCase(TrackTestCase):
 
     @pytest.mark.critical
-    def test_drown_7m21_mp3_then_ok(self):
+    def test_audio_fingerprinter_connection_ok(self):
+        print("test_drown_7m21_mp3_then_ok")
         response = self.post_lib_track_with_specific_sample("oostil - drown (massano remix) - 7m21.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         if self.saved_lib_track.track_file.fingerprinting_error_code is not None:

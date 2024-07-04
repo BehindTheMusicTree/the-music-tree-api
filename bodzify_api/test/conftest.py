@@ -2,6 +2,8 @@
 
 import pytest
 
+critical_test_failed = False
+
 
 def base_child_instance(request, db):
     test_case = request.param()
@@ -15,9 +17,19 @@ def pytest_configure(config):
 
 
 def pytest_runtest_makereport(item, call):
-    if "critical" in item.keywords:
+    global critical_test_failed
+    critical_marker = item.get_closest_marker("critical")
+    if call.when == "call" and critical_marker is not None:
         if call.excinfo is not None:
-            pytest.exit("A critical test failed, stopping the execution of the test suite.")
+            critical_test_failed = True
+            print(f"CRITICAL TEST FAILED: {item.name}")
+            print(f"Output: {call.excinfo}")
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_setup(item):
+    if critical_test_failed:
+        pytest.skip("A critical test has failed. Skipping the rest of the tests..")
 
 
 def pytest_collection_modifyitems(config, items):
@@ -25,8 +37,10 @@ def pytest_collection_modifyitems(config, items):
     critical_tests = []
     non_critical_tests = []
 
+    print("Setting critical tests first")
     for item in items:
-        if "critical" in item.keywords:
+        critical_marker = item.get_closest_marker("critical")
+        if critical_marker is not None:
             critical_tests.append(item)
         else:
             non_critical_tests.append(item)
