@@ -32,7 +32,7 @@ from bodzify_api.model.track_file.FingerprintingErrorCode import FINGERPRINTING_
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.musicbrainz.MusicbrainzArtist \
     import MusicbrainzArtist, ATTRIBUTES_LABEL as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.PlaylistLibTrackRelation \
     import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria
@@ -124,7 +124,7 @@ class TrackService(Service):
     @staticmethod
     def _get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
-            with tempfile.NamedTemporaryFile(delete=False, dir=settings.TMP_UPLOADED_FILES_DIR) as tmp_file:
+            with tempfile.NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR) as tmp_file:
                 for chunk in file.chunks():
                     tmp_file.write(chunk)
                 file_path = tmp_file.name
@@ -149,15 +149,16 @@ class TrackService(Service):
             user: User, save_data: dict, schema_data: dict):
         schema_file_key = SAVE_SCHEMA_FIELDS.FILE
         if schema_file_key in schema_data:
-            file = schema_data[schema_file_key]
+            track_file = schema_data[schema_file_key]
             track_file_schema_data = dict()
-            track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE] = file
+            track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE] = track_file
 
             duration_in_sec = None
+            fingerprinting_error_code_pk = None
             try:
                 # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack
                 # model, doing it here enables to calculate it only once.
-                fingerprint, duration_in_sec = TrackService._get_fingerprint_and_duration_from_file(file=file)
+                fingerprint, duration_in_sec = TrackService._get_fingerprint_and_duration_from_file(file=track_file)
                 save_data[SAVE_MODEL_FIELDS.DURATION_IN_SEC] = duration_in_sec
 
                 track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINT_CHAR] = binascii.hexlify(
@@ -196,22 +197,21 @@ class TrackService(Service):
                     fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.UNKNOWN_CONNEXION_ERROR
                 track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINTING_ERROR_CODE] = fingerprinting_error_code_pk
 
-            file_schema_serializer = TrackFileSchemaSerializer(data=track_file_schema_data)
-            file_schema_serializer.is_valid(raise_exception=True)
+            track_file_schema_serializer = TrackFileSchemaSerializer(data=track_file_schema_data)
+            track_file_schema_serializer.is_valid(raise_exception=True)
 
-            file_model_data = dict()
-            file_model_data[TRACK_FILE_MODEL_FIELDS.USER] = user.pk
-            file_model_data[TRACK_FILE_MODEL_FIELDS.FILE] = track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE]
+            track_file_model_data = dict()
+            track_file_model_data[TRACK_FILE_MODEL_FIELDS.USER] = user.pk
+            track_file_model_data[TRACK_FILE_MODEL_FIELDS.FILE] = track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FILE]
             if fingerprint:
-                file_model_data[TRACK_FILE_MODEL_FIELDS.FINGERPRINT] = fingerprint
-            print(fingerprinting_error_code_pk)
+                track_file_model_data[TRACK_FILE_MODEL_FIELDS.FINGERPRINT] = fingerprint
             if fingerprinting_error_code_pk is not None:
-                file_model_data[TRACK_FILE_MODEL_FIELDS.FINGERPRINTING_ERROR_CODE] = fingerprinting_error_code_pk
+                track_file_model_data[TRACK_FILE_MODEL_FIELDS.FINGERPRINTING_ERROR_CODE] = fingerprinting_error_code_pk
 
-            file_model_serializer = TrackFileModelSerializer(data=file_model_data)
-            file_model_serializer.is_valid(raise_exception=True)
-            file = file_model_serializer.save(user=user)
-            save_data[SAVE_MODEL_FIELDS.TRACK_FILE] = file.pk  # type: ignore
+            track_file_model_serializer = TrackFileModelSerializer(data=track_file_model_data)
+            track_file_model_serializer.is_valid(raise_exception=True)
+            track_file = track_file_model_serializer.save(user=user)
+            save_data[SAVE_MODEL_FIELDS.TRACK_FILE] = track_file.pk  # type: ignore
 
             if duration_in_sec:
                 save_data[SAVE_MODEL_FIELDS.DURATION_IN_SEC] = duration_in_sec
@@ -358,10 +358,10 @@ class TrackService(Service):
                     musicbrainz_recording_pk = musicbrainz_recording.pk
 
                 data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
-            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_CODE] = False
+            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = None
 
-        except MusicbrainzException:
-            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_CODE] = True
+        except MusicbrainzException as e:
+            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = str(e)
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
@@ -541,7 +541,7 @@ class TrackService(Service):
         # stream=True more effective for large files
         track_file_streamed = requests.get(mine_track_url, stream=True)
 
-        with tempfile.NamedTemporaryFile(delete=True, dir=settings.TMP_UPLOADED_FILES_DIR) as track_temp_file:
+        with tempfile.NamedTemporaryFile(delete=True, dir=settings.FILE_UPLOAD_TEMP_DIR) as track_temp_file:
             for block in track_file_streamed.iter_content(1024 * 8):
                 if not block:
                     break

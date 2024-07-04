@@ -4,7 +4,6 @@ import datetime
 import json
 import os
 from pathlib import Path
-from re import A
 import subprocess
 import dotenv
 
@@ -27,12 +26,10 @@ try:
                              CALCULATED_PATHS_ENV_FILE,
                              APP_ENV_FILE or ""],
                             check=True,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
+                            # stderr=subprocess.PIPE,
                             text=True,
                             env=os.environ.copy())
     print("Paths env file generated.")
-    print("Output:", result.stdout)
 except subprocess.CalledProcessError as e:
     print("Error while generating the paths env file:", e.stderr)
     raise EnvironmentError("Error while generating the paths env file: " + str(e)) from e
@@ -43,13 +40,15 @@ AUDIO_FINGERPRINTER_CONTAINER_NAME = os.getenv('AUDIO_FINGERPRINTER_CONTAINER_NA
 if not AUDIO_FINGERPRINTER_CONTAINER_NAME:
     raise EnvironmentError("The AUDIO_FINGERPRINTER_CONTAINER_NAME variable must be set")
 
-APP_IS_EXPOSED = os.getenv('APP_IS_EXPOSED')
-print("APP_IS_EXPOSED: " + str(APP_IS_EXPOSED))
-if not APP_IS_EXPOSED or APP_IS_EXPOSED not in ['true', 'false']:
-    raise EnvironmentError("The APP_IS_EXPOSED variable is not set or is not a boolean")
-
-if APP_IS_EXPOSED == 'true':
-    print("The app is exposed.")
+APP_IS_EXPOSED_STR = os.getenv('APP_IS_EXPOSED')
+if not APP_IS_EXPOSED_STR:
+    raise EnvironmentError("The APP_IS_EXPOSED variable must be set")
+APP_IS_EXPOSED_STR = APP_IS_EXPOSED_STR.lower()
+if APP_IS_EXPOSED_STR not in ['true', 'false']:
+    raise EnvironmentError("The APP_IS_EXPOSED variable is not a boolean")
+APP_IS_EXPOSED = (APP_IS_EXPOSED_STR == 'true')
+if APP_IS_EXPOSED:
+    print("APP_IS_EXPOSED is true. Setting up security.")
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -144,6 +143,7 @@ SIMPLE_PLAYLIST_NAME_LEN_MAX = 200
 MUSICBRAINZ_BASE_URL = "https://musicbrainz.org/"
 MUSICBRAINZ_RECORDING_URL = MUSICBRAINZ_BASE_URL + "recording/"
 MUSICBRAINZ_RECORDING_TITLE_LEN_MAX = 200
+MUSICBRAINZ_LOOKUP_ERROR_STR_LEN_MAX = 255
 MUSICBRAINZ_ARTIST_URL = MUSICBRAINZ_BASE_URL + "artist/"
 MUSICBRAINZ_ARTIST_NAME_LEN_MAX = 200
 
@@ -157,9 +157,6 @@ SECURE_SSL_REDIRECT = False
 # If the response is produced without problems, Django commits the transaction.
 # If the view produces an exception, Django rolls back the transaction.
 ATOMIC_REQUESTS = True
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
@@ -198,8 +195,11 @@ ROOT_URLCONF = 'bodzify_api.urls'
 
 # DB may not be necessary (running collectstati for instance)
 DB_IS_NEEDED_STR = os.getenv('DB_IS_NEEDED')
-if not DB_IS_NEEDED_STR or DB_IS_NEEDED_STR not in ['true', 'false']:
-    raise EnvironmentError("The DB_IS_NEEDED variable is not set or is not a boolean")
+if not DB_IS_NEEDED_STR:
+    raise EnvironmentError("The DB_IS_NEEDED variable must be set")
+DB_IS_NEEDED_STR = DB_IS_NEEDED_STR.lower()
+if DB_IS_NEEDED_STR not in ['true', 'false']:
+    raise EnvironmentError("The DB_IS_NEEDED is not a boolean")
 DB_IS_NEEDED = True if DB_IS_NEEDED_STR == 'true' else False
 
 if DB_IS_NEEDED:
@@ -235,7 +235,6 @@ if DB_IS_NEEDED:
             'DISABLE_SERVER_SIDE_CURSORS': True
         }
     }
-
 
 TEMPLATES = [
     {
@@ -310,7 +309,12 @@ AUDIO_META_ANALYSE_IS_NEEDED = True if AUDIO_META_ANALYSE_IS_NEEDED_STR == 'true
 print("AUDIO_META_ANALYSE_IS_NEEDED: " + str(AUDIO_META_ANALYSE_IS_NEEDED))
 
 if AUDIO_META_ANALYSE_IS_NEEDED:
-    TMP_UPLOADED_FILES_DIR = os.getenv('TMP_UPLOADED_FILES_DIR')
+    TMP_UPLOADED_FILES_DIR_ENV = os.getenv('TMP_UPLOADED_FILES_DIR')
+    if not TMP_UPLOADED_FILES_DIR_ENV:
+        raise EnvironmentError("The TMP_UPLOADED_FILES_DIR variable must be set")
+    FILE_UPLOAD_TEMP_DIR = Path(TMP_UPLOADED_FILES_DIR_ENV)  # Django constant, do not rename.
+    print("FILE_UPLOAD_TEMP_DIR: " + str(FILE_UPLOAD_TEMP_DIR))
+
     AUDIO_FINGERPRINTER_PORT = os.getenv('AUDIO_FINGERPRINTER_PORT')
     if AUDIO_FINGERPRINTER_PORT is None:
         raise Exception("AUDIO_FINGERPRINTER_PORT env variable must be set")
@@ -344,18 +348,22 @@ else:
 MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
 if not MEDIA_DIR_ENV:
     raise EnvironmentError("The MEDIA_DIR variable must be set")
-MEDIA_ROOT = Path(MEDIA_DIR_ENV)
+MEDIA_ROOT = Path(MEDIA_DIR_ENV)  # Django constant, do not rename.
+print("MEDIA_ROOT: " + str(MEDIA_ROOT))
 
 LIBRARIES_DIR_NAME = os.getenv('LIBRARIES_DIR_NAME')
 if not LIBRARIES_DIR_NAME:
     raise EnvironmentError("The LIBRARIES_DIR_NAME variable must be set")
-
 LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
+print("LIBRARIES_DIR: " + str(LIBRARIES_DIR))
 
 LOGS_ARE_NEEDED_STR = os.getenv('DJANGO_LOGS_ARE_NEEDED')
-if not LOGS_ARE_NEEDED_STR or LOGS_ARE_NEEDED_STR not in ['true', 'false']:
+if not LOGS_ARE_NEEDED_STR:
+    raise EnvironmentError("The LOGS_ARE_NEEDED variable must be set")
+LOGS_ARE_NEEDED_STR = LOGS_ARE_NEEDED_STR.lower()
+if LOGS_ARE_NEEDED_STR not in ['true', 'false']:
     raise EnvironmentError("The LOGS_ARE_NEEDED variable is not set or is not a boolean")
-LOGS_ARE_NEEDED = True if LOGS_ARE_NEEDED_STR == 'true' else False
+LOGS_ARE_NEEDED = (LOGS_ARE_NEEDED_STR == 'true')
 
 if LOGS_ARE_NEEDED:
     print("DJANGO_LOGS_ARE_NEEDED is true. Setting up logs.")

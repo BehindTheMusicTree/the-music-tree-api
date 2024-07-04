@@ -12,7 +12,7 @@ from bodzify_api.model.track_file.TrackFile import TrackFile as TrackFile
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.TestUser import TestUser

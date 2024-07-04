@@ -2,9 +2,7 @@ from django.contrib import admin
 
 from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecordingLookupErrorCode \
-    import MusicbrainzRecordingLookupErrorCode
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.criteria.CriteriaAscendantRelation import CriteriaAscendantRelation
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
@@ -31,4 +29,3 @@ admin.site.register(Artist)
 admin.site.register(TrackFile)
 admin.site.register(MusicbrainzArtist)
 admin.site.register(MusicbrainzRecording)
-admin.site.register(MusicbrainzRecordingLookupErrorCode)
