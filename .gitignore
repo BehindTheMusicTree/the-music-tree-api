@@ -10,3 +10,5 @@ share/
 log/
 
 env/.env_generated_paths
+
+tmp-uploaded-files/
