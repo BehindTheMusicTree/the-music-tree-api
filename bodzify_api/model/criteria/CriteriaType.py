@@ -18,10 +18,10 @@ class ATTRIBUTES_LABEL:
 
 
 class CriteriaType(models.Model):
-    label = models.CharField(unique=True, max_length=20, default=None)
+    label = models.CharField(unique=True, max_length=20)
 
     def __str__(self) -> str:
-        return str(self.id) + " " + self.label
+        return str(self.pk) + " " + self.label
 
     class Meta:
         constraints = [

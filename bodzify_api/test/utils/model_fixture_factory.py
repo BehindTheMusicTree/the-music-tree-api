@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.TrackFile import TrackFile as TrackFile
+from bodzify_api.model.track_file.TrackFile import TrackFile as TrackFile
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist

@@ -11,11 +11,10 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from bodzify_api.utils import utils
-from bodzify_api.settings import settings
+from bodzify_api import settings
 import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
-from bodzify_api.model.TrackFile import TrackFile
+from bodzify_api.model.track_file.TrackFile import TrackFile
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
@@ -33,8 +32,8 @@ class ATTRIBUTES_LABEL:
     TRACK_FILE_USER_FRIENDLY = "file"
     DURATION_IN_SEC = "duration_in_sec"
     DURATION_STR_IN_HOUR_MIN_SEC = "duration_str_in_hour_min_sec"
-    MUSICBRAINZ_RECORDING_LOOKUP_HAS_FAILED_WITH_ERRORS = "musicbrainz_recording_lookup_has_failed_with_errors"
     MUSICBRAINZ_RECORDING = "musicbrainz_recording"
+    MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR = "musicbrainz_recording_lookup_error_str"
     TITLE = "title"
     ARTIST = "artist"
     ALBUM = "album"
@@ -55,7 +54,10 @@ class LibraryTrack(models.Model):
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file = models.OneToOneField(TrackFile, on_delete=models.CASCADE)
     duration_in_sec = models.IntegerField()
-    musicbrainz_recording_lookup_has_failed_with_errors = models.BooleanField(null=True)
+    musicbrainz_recording_lookup_error_str = models.CharField(max_length=settings.MUSICBRAINZ_LOOKUP_ERROR_STR_LEN_MAX,
+                                                              blank=True,
+                                                              default=None,
+                                                              null=True)
     musicbrainz_recording = models.ForeignKey(MusicbrainzRecording,
                                               on_delete=models.DO_NOTHING,
                                               default=None,
@@ -87,7 +89,7 @@ class LibraryTrack(models.Model):
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
-    @property
+    @ property
     def duration_str_in_hour_min_sec(self):
         duration_in_sec = int(self.duration_in_sec or 0)
         return str(datetime.timedelta(seconds=duration_in_sec))
@@ -97,19 +99,20 @@ class LibraryTrack(models.Model):
         verbose_name = 'Library Track'
         verbose_name_plural = 'Library Tracks'
 
-    @property
+    @ property
     def relative_url(self) -> str:
         return "tracks/" + self.uuid + "/"
 
     def __str__(self):
         album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
         genre_str = f"{ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
-        duration_str_in_hour_min_sec = f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else ""
+        duration_str_in_sec = f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {
+            str(self.duration_in_sec)} " if self.duration_in_sec else ""
         rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
         language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
         file_str = f"{ATTRIBUTES_LABEL.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
-                f"{genre_str}{duration_str_in_hour_min_sec}{rating_str}{language_str}"
+                f"{genre_str}{duration_str_in_sec}{rating_str}{language_str}"
                 f"{ATTRIBUTES_LABEL.CREATED_ON}: {str(self.created_on)} {file_str}")
 
     def save(self, *args, **kwargs):

@@ -12,7 +12,8 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.TrackFile import TrackFile
+from bodzify_api.model.track_file.FingerprintingErrorCode import FingerprintingErrorCode
+from bodzify_api.model.track_file.TrackFile import TrackFile
 
 admin.site.register(Criteria)
 admin.site.register(CriteriaAscendantRelation)
@@ -22,6 +23,7 @@ admin.site.register(PlaylistLibTrackRelation)
 admin.site.register(SimplePlaylist)
 admin.site.register(CriteriaPlaylist)
 admin.site.register(LibraryTrack)
+admin.site.register(FingerprintingErrorCode)
 admin.site.register(Album)
 admin.site.register(Artist)
 admin.site.register(TrackFile)

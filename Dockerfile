@@ -1,45 +1,119 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.11-buster 
+FROM python:3.11-buster
 
+ARG APP_IS_EXPOSED
+ARG AUDIO_META_ANALYSE_IS_NEEDED
+ARG TMP_UPLOADED_FILES_DIR
+ARG MEDIA_DIR
+ARG LIBRARIES_DIR_NAME
+
+ARG STATIC_FILES_ARE_NEEDED
+ARG STATIC_FILES_DIR
+ARG STATIC_FILES_DEFAULT_INTERNAL_DIR
+
+ARG DJANGO_LOGS_ARE_NEEDED
+ARG DJANGO_LOG_DIR
+ARG DJANGO_LOG_GENERAL_FILENAME
+ARG DJANGO_LOG_INFO_FILENAME
+ARG DJANGO_LOG_REQUESTS_FILENAME
+ARG DJANGO_LOG_REQUESTS_DEBUG_FILENAME
+ARG DJANGO_LOG_EXCEPTIONS_FILENAME
+ARG DJANGO_LOG_DJANGO_FILENAME
+ARG DJANGO_LOG_APP_FILENAME
+
+ARG GUNICORN_LOG_DIR
+ARG GUNICORN_LOG_ERROR_FILENAME
+ARG GUNICORN_LOG_ACCESS_FILENAME
+
+ARG DJANGO_LOG_DIR_SYMLINK_TARGET
+ARG MEDIA_DIR_SYMLINK_TARGET
+ARG STATIC_FILES_DIR_SYMLINK_TARGET
+ARG TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET
+ARG GUNICORN_LOG_DIR_SYMLINK_TARGET
+
+RUN for var in \
+    APP_IS_EXPOSED \
+    AUDIO_META_ANALYSE_IS_NEEDED \
+    TMP_UPLOADED_FILES_DIR \
+    MEDIA_DIR \
+    LIBRARIES_DIR_NAME \
+    STATIC_FILES_ARE_NEEDED \
+    STATIC_FILES_DIR \
+    STATIC_FILES_DEFAULT_INTERNAL_DIR \
+    DJANGO_LOGS_ARE_NEEDED \
+    DJANGO_LOG_DIR \
+    DJANGO_LOG_GENERAL_FILENAME \
+    DJANGO_LOG_INFO_FILENAME \
+    DJANGO_LOG_REQUESTS_FILENAME \
+    DJANGO_LOG_REQUESTS_DEBUG_FILENAME \
+    DJANGO_LOG_EXCEPTIONS_FILENAME \
+    DJANGO_LOG_DJANGO_FILENAME \
+    DJANGO_LOG_APP_FILENAME \
+    GUNICORN_LOG_DIR \
+    GUNICORN_LOG_ERROR_FILENAME \
+    GUNICORN_LOG_ACCESS_FILENAME \
+    DJANGO_LOG_DIR_SYMLINK_TARGET \
+    MEDIA_DIR_SYMLINK_TARGET \
+    STATIC_FILES_DIR_SYMLINK_TARGET \
+    TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET \
+    GUNICORN_LOG_DIR_SYMLINK_TARGET; do \
+  if [ -z "$(eval echo \$$var)" ]; then \
+    echo "The $var argument is not provided" >&2; \
+    exit 1; \
+  fi; \
+done
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    DOCKER_HOME=/home/app/webapp \
+    APP_IS_EXPOSED=$APP_IS_EXPOSED \
+    AUDIO_META_ANALYSE_IS_NEEDED=$AUDIO_META_ANALYSE_IS_NEEDED \
+    TMP_UPLOADED_FILES_DIR=$TMP_UPLOADED_FILES_DIR \
+    MEDIA_DIR=$MEDIA_DIR \
+    LIBRARIES_DIR_NAME=$LIBRARIES_DIR_NAME \
 
-# To run gunicorn as a non-root user without password prompt
-RUN apt-get update && apt-get install -y gosu
+    STATIC_FILES_ARE_NEEDED=$STATIC_FILES_ARE_NEEDED \
+    STATIC_FILES_DIR=$STATIC_FILES_DIR \
+    STATIC_FILES_DEFAULT_INTERNAL_DIR=$STATIC_FILES_DEFAULT_INTERNAL_DIR \
 
-# Prevents Python from writing pyc files to disc
-ENV PYTHONDONTWRITEBYTECODE 1 
-# Prevents Python from buffering stdout and stderr
-ENV PYTHONUNBUFFERED 1
+    DJANGO_LOGS_ARE_NEEDED=$DJANGO_LOGS_ARE_NEEDED \
+    DJANGO_LOG_DIR=$DJANGO_LOG_DIR \
+    DJANGO_LOG_GENERAL_FILENAME=$DJANGO_LOG_GENERAL_FILENAME \
+    DJANGO_LOG_INFO_FILENAME=$DJANGO_LOG_INFO_FILENAME \
+    DJANGO_LOG_REQUESTS_FILENAME=$DJANGO_LOG_REQUESTS_FILENAME \
+    DJANGO_LOG_REQUESTS_DEBUG_FILENAME=$DJANGO_LOG_REQUESTS_DEBUG_FILENAME \
+    DJANGO_LOG_EXCEPTIONS_FILENAME=$DJANGO_LOG_EXCEPTIONS_FILENAME \
+    DJANGO_LOG_DJANGO_FILENAME=$DJANGO_LOG_DJANGO_FILENAME \
+    DJANGO_LOG_APP_FILENAME=$DJANGO_LOG_APP_FILENAME \
 
-ENV DockerHome=/home/app/webapp
-RUN mkdir -p $DockerHome
-WORKDIR $DockerHome
+    GUNICORN_LOG_DIR=$GUNICORN_LOG_DIR \
+    GUNICORN_LOG_ERROR_FILENAME=$GUNICORN_LOG_ERROR_FILENAME \
+    GUNICORN_LOG_ACCESS_FILENAME=$GUNICORN_LOG_ACCESS_FILENAME \
 
-COPY . $DockerHome
+    DJANGO_LOG_DIR_SYMLINK_TARGET=$DJANGO_LOG_DIR_SYMLINK_TARGET \
+    MEDIA_DIR_SYMLINK_TARGET=$MEDIA_DIR_SYMLINK_TARGET \
+    STATIC_FILES_DIR_SYMLINK_TARGET=$STATIC_FILES_DIR_SYMLINK_TARGET \
+    TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET=$TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET \
+    GUNICORN_LOG_DIR_SYMLINK_TARGET=$GUNICORN_LOG_DIR_SYMLINK_TARGET
 
-ENV MediaDir=/home/app/webapp/lib/bodzify-api/media
-ENV LibrariesDir=${MediaDir}/libraries
-ENV LogDir=/home/app/webapp/log/
-ENV DjangoLogDir=${LogDir}django/
-ENV GunicornLogDir=${LogDir}gunicorn/
-ENV TempUploadedFilesDir=/tmp/bodzify-api/uploaded-files/
+RUN apt-get update && \
+    apt-get install -y gosu && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p ${DockerHome}/staticfiles $LibrariesDir $LogDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir && \
-    touch ${DjangoLogDir}requests.log \
-    ${DjangoLogDir}requests.debug.log \
-    ${DjangoLogDir}general.log \
-    ${DjangoLogDir}info.log \
-    ${DjangoLogDir}django.log \
-    ${DjangoLogDir}bodzify-api.log \
-    ${GunicornLogDir}error.log \
-    ${GunicornLogDir}access.log && \
-    chmod 777 -R $LibrariesDir $GunicornLogDir $TempUploadedFilesDir && \
+COPY . $DOCKER_HOME
+
+WORKDIR $DOCKER_HOME
+
+RUN apt update && \
+    bash scripts/install_dependencies.sh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \
-    pip install -r requirements.txt --cache-dir /opt/bodzify-api/pip_cache && \
-    apt update && \
-    apt install -y flac ffmpeg libchromaprint-tools && \
-    chown -R www-data:www-data /opt/bodzify-api && \
-    python manage.py collectstatic --noinput
+    # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
+    pip install -r requirements.txt && \
+    bash scripts/setup_filesystem.sh
+
+RUN pip list | grep gunicorn
+RUN echo $PATH && which gunicorn

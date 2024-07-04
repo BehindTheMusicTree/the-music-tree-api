@@ -5,12 +5,12 @@ from pathlib import Path
 import shutil
 from django.contrib.auth.models import User
 
-from bodzify_api.settings import settings
+from bodzify_api import settings
 
 
 class TestUser():
     lib_abs_path: Path
-    lib_path_relative_to_media_dir: Path
+    LIBRARIES_DIR_relative_to_media_dir: Path
     django_user: User
     lib_track_default_filename: str
 
@@ -26,13 +26,14 @@ class TestUser():
                 print('Failed to delete %s. Reason: %s' % (filePath, e))
 
     def __set_up_dirs(self):
-        self.lib_abs_path = settings.LIB_PATH / Path(settings.USER_LIB_DIR_NAME_PREFIXE + str(self.django_user.pk))
+        self.lib_abs_path = settings.LIBRARIES_DIR / Path(settings.USER_LIBRARIES_DIR_NAME_PREFIXE +
+                                                          str(self.django_user.pk))
         if not self.lib_abs_path.exists():
             os.makedirs(self.lib_abs_path)
 
-        self.lib_path_relative_to_media_dir = \
-            Path(settings.LIB_DIR_NAME) / (settings.USER_LIB_DIR_NAME_PREFIXE + str(self.django_user.pk))
-        self.lib_abs_path = settings.MEDIA_ROOT / self.lib_path_relative_to_media_dir
+        self.LIBRARIES_DIR_relative_to_media_dir = \
+            Path(settings.LIBRARIES_DIR_NAME) / (settings.USER_LIBRARIES_DIR_NAME_PREFIXE + str(self.django_user.pk))
+        self.lib_abs_path = settings.MEDIA_ROOT / self.LIBRARIES_DIR_relative_to_media_dir
         self.__empty_user_library()
 
     def __init__(self, username: str, lib_track_default_file_abs_path: Path) -> None:

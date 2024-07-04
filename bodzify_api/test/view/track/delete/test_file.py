@@ -3,7 +3,7 @@
 from pathlib import Path
 import pytest
 from rest_framework import status
-from bodzify_api.model.TrackFile import TrackFile
+from bodzify_api.model.track_file.TrackFile import TrackFile
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
