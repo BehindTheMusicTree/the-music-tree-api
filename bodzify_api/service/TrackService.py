@@ -197,7 +197,8 @@ class TrackService(Service):
                     fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.UNKNOWN_CONNEXION_ERROR
                 track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINTING_ERROR_CODE] = fingerprinting_error_code_pk
 
-            track_file_schema_serializer = TrackFileSchemaSerializer(data=track_file_schema_data)
+            track_file_schema_serializer = TrackFileSchemaSerializer(
+                data=track_file_schema_data, context={'user': user})
             track_file_schema_serializer.is_valid(raise_exception=True)
 
             track_file_model_data = dict()

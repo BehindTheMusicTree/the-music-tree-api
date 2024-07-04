@@ -26,8 +26,9 @@ class TrackFileSchemaSerializer(serializers.Serializer):
         if FIELDS.FINGERPRINT_CHAR in attrs:
             if FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT in attrs and attrs[
                     FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT]:
+                user = self.context['user']
                 fingerprint = binascii.unhexlify(attrs[FIELDS.FINGERPRINT_CHAR])
-                if TrackFile.objects.filter(user=attrs['user'], fingerprint=fingerprint).exists():
+                if TrackFile.objects.filter(user=user, fingerprint=fingerprint).exists():
                     raise serializers.ValidationError(
                         "This track already exists in the library (acoustic fingerprint check).")
         return super().validate(attrs)
