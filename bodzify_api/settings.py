@@ -46,6 +46,10 @@ APP_IS_EXPOSED = (APP_IS_EXPOSED_STR == 'true')
 if APP_IS_EXPOSED:
     print("APP_IS_EXPOSED is true. Setting up security.")
 
+    API_VERSION = os.getenv('API_VERSION')
+    if not API_VERSION:
+        raise EnvironmentError("The API_VERSION variable must be set")
+
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
@@ -100,10 +104,6 @@ else:
     SECRET_KEY = "django-default-secret-when-not-exposed"
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-API_VERSION = os.getenv('API_VERSION')
-if not API_VERSION:
-    raise EnvironmentError("The API_VERSION variable must be set")
 
 APP_NAME = os.getenv('APP_NAME')
 if not APP_NAME:
