@@ -121,6 +121,7 @@ jobs:
       name: COLLECT_STATIC
     env:
       ENV: ${{ vars.ENV }}
+      APP_NAME: ${{vars.APP_NAME}}
       DEBUG: ${{ vars.DEBUG }}
       DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
       APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}

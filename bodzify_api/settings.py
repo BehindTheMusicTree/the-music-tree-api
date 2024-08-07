@@ -36,6 +36,10 @@ except subprocess.CalledProcessError as e:
 
 dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
 
+API_VERSION = os.getenv('API_VERSION')
+if not API_VERSION:
+    raise EnvironmentError("The API_VERSION variable must be set")
+
 APP_IS_EXPOSED_STR = os.getenv('APP_IS_EXPOSED')
 if not APP_IS_EXPOSED_STR:
     raise EnvironmentError("The APP_IS_EXPOSED variable must be set")
@@ -45,10 +49,6 @@ if APP_IS_EXPOSED_STR not in ['true', 'false']:
 APP_IS_EXPOSED = (APP_IS_EXPOSED_STR == 'true')
 if APP_IS_EXPOSED:
     print("APP_IS_EXPOSED is true. Setting up security.")
-
-    API_VERSION = os.getenv('API_VERSION')
-    if not API_VERSION:
-        raise EnvironmentError("The API_VERSION variable must be set")
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
