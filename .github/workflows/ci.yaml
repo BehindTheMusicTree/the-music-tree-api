@@ -121,7 +121,7 @@ jobs:
       name: COLLECT_STATIC
     env:
       ENV: ${{ vars.ENV }}
-      
+
       APP_NAME: ${{vars.APP_NAME}}
       API_VERSION: ${{ vars.API_VERSION }}
 
@@ -190,7 +190,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.APP_IMAGE_REPO }}:${{ vars.APP_IMAGE_TAG }}
+          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_IMAGE_TAG }}
           build-args: |
             ENV=${{ vars.ENV }}
 
