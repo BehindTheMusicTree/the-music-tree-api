@@ -36,10 +36,6 @@ except subprocess.CalledProcessError as e:
 
 dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
 
-AUDIO_FINGERPRINTER_CONTAINER_NAME = os.getenv('AUDIO_FINGERPRINTER_CONTAINER_NAME')
-if not AUDIO_FINGERPRINTER_CONTAINER_NAME:
-    raise EnvironmentError("The AUDIO_FINGERPRINTER_CONTAINER_NAME variable must be set")
-
 APP_IS_EXPOSED_STR = os.getenv('APP_IS_EXPOSED')
 if not APP_IS_EXPOSED_STR:
     raise EnvironmentError("The APP_IS_EXPOSED variable must be set")
@@ -309,6 +305,10 @@ AUDIO_META_ANALYSE_IS_NEEDED = True if AUDIO_META_ANALYSE_IS_NEEDED_STR == 'true
 print("AUDIO_META_ANALYSE_IS_NEEDED: " + str(AUDIO_META_ANALYSE_IS_NEEDED))
 
 if AUDIO_META_ANALYSE_IS_NEEDED:
+    AUDIO_FINGERPRINTER_CONTAINER_NAME = os.getenv('AUDIO_FINGERPRINTER_CONTAINER_NAME')
+    if not AUDIO_FINGERPRINTER_CONTAINER_NAME:
+        raise EnvironmentError("The AUDIO_FINGERPRINTER_CONTAINER_NAME variable must be set")
+
     TMP_UPLOADED_FILES_DIR_ENV = os.getenv('TMP_UPLOADED_FILES_DIR')
     if not TMP_UPLOADED_FILES_DIR_ENV:
         raise EnvironmentError("The TMP_UPLOADED_FILES_DIR variable must be set")

@@ -14,8 +14,7 @@ on:
 env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
-  IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
-  IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
+  APP_IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
   APP_ENV_FILENAME: ${{ vars.APP_ENV_FILENAME }}
 
 jobs:
@@ -187,7 +186,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
+          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.APP_IMAGE_REPO }}:${{ vars.APP_IMAGE_TAG }}
           build-args: |
             ENV=${{ vars.ENV }}
 

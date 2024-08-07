@@ -51,6 +51,12 @@ required_vars=(
   STATIC_FILES_DIR
   TMP_UPLOADED_FILES_DIR
 )
+for var in "${required_vars[@]}"; do
+  if [ -z "${!var}" ]; then
+    echo "$var must be set." >&2
+    exit 1
+  fi
+done
 
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
