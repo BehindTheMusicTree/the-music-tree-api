@@ -113,7 +113,6 @@ if [ $DJANGO_LOGS_ARE_NEEDED = "true" ]; then
         DJANGO_LOG_DJANGO_FILENAME
         DJANGO_LOG_APP_FILENAME
     )
-
     for log_filename in "${log_filenames[@]}"; do
         if [ -z "${!log_filename}" ]; then
             echo "$log_filename is not set" >&2

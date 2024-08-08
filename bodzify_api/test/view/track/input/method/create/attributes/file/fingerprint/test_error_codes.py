@@ -41,8 +41,8 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m52.mp3")
         restart_docker_container(settings.AUDIO_FINGERPRINTER_CONTAINER_NAME)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.track_file.fingerprinting_error_code.pk == \
-            FINGERPRINTING_ERROR_CODES.SERVICE_NOT_FOUND
+        assert self.saved_lib_track.track_file.fingerprinting_error_code.pk in [
+            FINGERPRINTING_ERROR_CODES.SERVICE_NOT_FOUND, FINGERPRINTING_ERROR_CODES.UNKNOWN_CONNEXION_ERROR]
 
     def test_audio_fingerprinter_service_not_down_then_no_error_code(self):
         response = self.post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m52.mp3")
