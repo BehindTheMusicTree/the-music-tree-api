@@ -31,6 +31,9 @@ def restart_docker_container(container_id_or_name):
         container = client.containers.get(container_id_or_name)
         container.start()
         logging.debug(f"Container {container_id_or_name} restarted successfully.")
+        container.reload()  # Refresh the container's attributes
+        status = container.status
+        logging.debug(f"Container {container_id_or_name} status: {status}")
     except docker.errors.NotFound:
         logging.debug(f"Container {container_id_or_name} not found.")
     except Exception as e:
