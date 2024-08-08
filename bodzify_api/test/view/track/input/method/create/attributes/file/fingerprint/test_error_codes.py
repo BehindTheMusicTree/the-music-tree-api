@@ -18,11 +18,11 @@ def stop_docker_container(container_id_or_name):
     try:
         container = client.containers.get(container_id_or_name)
         container.stop()
-        logging.debug.debug(f"Container {container_id_or_name} stopped successfully.")
+        logging.debug(f"Container {container_id_or_name} stopped successfully.")
     except docker.errors.NotFound:
-        logging.debug.debug(f"Container {container_id_or_name} not found.")
+        logging.debug(f"Container {container_id_or_name} not found.")
     except Exception as e:
-        logging.debug.error(f"Error stopping container {container_id_or_name}: {e}")
+        logging.error(f"Error stopping container {container_id_or_name}: {e}")
 
 
 def restart_docker_container(container_id_or_name):
@@ -30,11 +30,11 @@ def restart_docker_container(container_id_or_name):
     try:
         container = client.containers.get(container_id_or_name)
         container.start()
-        logging.debug.debug(f"Container {container_id_or_name} restarted successfully.")
+        logging.debug(f"Container {container_id_or_name} restarted successfully.")
     except docker.errors.NotFound:
-        logging.debug.debug(f"Container {container_id_or_name} not found.")
+        logging.debug(f"Container {container_id_or_name} not found.")
     except Exception as e:
-        logging.debug.error(f"Error restarting container {container_id_or_name}: {e}")
+        logging.error(f"Error restarting container {container_id_or_name}: {e}")
 
 
 class TestCase(TrackTestCase):
