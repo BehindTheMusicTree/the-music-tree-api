@@ -377,6 +377,7 @@ jobs:
       GUNICORN_LOG_ACCESS_FILENAME: ${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
 
       DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+      DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
       DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
       DB_IMAGE_TAG: ${{ vars.DB_IMAGE_TAG }}
       DB_SUPERUSER_NAME: ${{ vars.DB_SUPERUSER_NAME }}
