@@ -346,6 +346,7 @@ jobs:
       DOCKER_NETWORK_NAME: ${{ vars.DOCKER_NETWORK_NAME }}
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
       APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
+      APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
 
       DEBUG: ${{ vars.DEBUG }}
       DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
