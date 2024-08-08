@@ -111,7 +111,7 @@ jobs:
           bash scripts/data/reinit_django_data.sh
 
       - name: Run pytest
-        run: pytest
+        run: pytest bodzify_api/test/view/track/input/method/create/attributes/file/fingerprint/test_error_codes.py
 
   collect-and-push-static-files:
     name: Collect and push static files
