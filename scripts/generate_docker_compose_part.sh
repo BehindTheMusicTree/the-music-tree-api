@@ -28,7 +28,7 @@ required_vars=(
   DB_CONTAINER_NAME
   DB_DATA_DIR
   DB_PORT
-  DB_ENV_VARIABLES_FILENAME
+  DB_ENV_FILENAME
 
   AUDIO_FINGERPRINTER_IMAGE_REPO
   AUDIO_FINGERPRINTER_IMAGE_TAG
@@ -71,7 +71,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - "$DB_PORT:$DB_PORT"
     networks:
       - $DOCKER_NETWORK_NAME
-    env_file: $DB_ENV_VARIABLES_FILENAME
+    env_file: $DB_ENV_FILENAME
 
   audio_fingerprinter:
     working_dir: /app/
