@@ -10,17 +10,19 @@ from bodzify_api.model.track_file.FingerprintingErrorCode import FINGERPRINTING_
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 from bodzify_api import settings
 
+general_logger = logging.getLogger(settings.LOG_GENERAL_FILENAME)
+
 
 def stop_docker_container(container_id_or_name):
     client = docker.from_env()
     try:
         container = client.containers.get(container_id_or_name)
         container.stop()
-        print(f"Container {container_id_or_name} stopped successfully.")
+        general_logger.debug(f"Container {container_id_or_name} stopped successfully.")
     except docker.errors.NotFound:
-        print(f"Container {container_id_or_name} not found.")
+        general_logger.debug(f"Container {container_id_or_name} not found.")
     except Exception as e:
-        print(f"Error stopping container {container_id_or_name}: {e}")
+        general_logger.error(f"Error stopping container {container_id_or_name}: {e}")
 
 
 def restart_docker_container(container_id_or_name):
@@ -28,11 +30,11 @@ def restart_docker_container(container_id_or_name):
     try:
         container = client.containers.get(container_id_or_name)
         container.start()
-        print(f"Container {container_id_or_name} restarted successfully.")
+        general_logger.debug(f"Container {container_id_or_name} restarted successfully.")
     except docker.errors.NotFound:
-        print(f"Container {container_id_or_name} not found.")
+        general_logger.debug(f"Container {container_id_or_name} not found.")
     except Exception as e:
-        print(f"Error restarting container {container_id_or_name}: {e}")
+        general_logger.error(f"Error restarting container {container_id_or_name}: {e}")
 
 
 class TestCase(TrackTestCase):
