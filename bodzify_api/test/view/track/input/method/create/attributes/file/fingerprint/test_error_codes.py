@@ -31,7 +31,7 @@ def restart_docker_container(container_id_or_name):
     try:
         container = client.containers.get(container_id_or_name)
         container.start()
-        sleep(15)  # Wait for the container to restart
+        sleep(5)  # Wait for the container to restart
         logging.debug(f"Container {container_id_or_name} restarted successfully.")
         container.reload()  # Refresh the container's attributes
         status = container.status
