@@ -63,9 +63,6 @@ done
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 
 cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
-version: '3.8'
-
-services:
   db:
     image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
     container_name: $DB_CONTAINER_NAME
