@@ -420,7 +420,8 @@ jobs:
 
       - name: Transfer partial docker-compose file to server
         run: |
-          scp scripts/${{ vars.DOCKER_COMPOSE_PART_FILENAME }} ${{ env.SSH_DESTINATION }}:${{ vars.DOCKER_COMPOSE_DIR }}
+          scp scripts/${{ vars.DOCKER_COMPOSE_PART_FILENAME }} ${{ env.SSH_DESTINATION }}:\
+          ${{ vars.DOCKER_COMPOSE_DIR }}/${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
 
 
   redeploy-webhook-call:
