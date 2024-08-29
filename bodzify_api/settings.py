@@ -26,7 +26,7 @@ try:
                              CALCULATED_PATHS_ENV_FILE,
                              APP_ENV_FILE or ""],
                             check=True,
-                            # stderr=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
                             text=True,
                             env=os.environ.copy())
     print("Paths env file generated.")
