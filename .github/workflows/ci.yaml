@@ -286,21 +286,21 @@ jobs:
 
             echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.ENV_FILE }} &&
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.ENV_FILE }} &&
-            echo 'APP_IS_EXPOSED=${{ secrets.APP_IS_EXPOSED }}' >> ${{ env.ENV_FILE }} &&
+            echo 'APP_IS_EXPOSED=${{ vars.APP_IS_EXPOSED }}' >> ${{ env.ENV_FILE }} &&
 
             echo 'AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}' >> ${{ env.ENV_FILE }} &&
             echo 'TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}' >> ${{ env.ENV_FILE }} &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.ENV_FILE }} &&
 
-            echo 'DB_IS_NEEDED=${{ secrets.DB_IS_NEEDED }}' >> ${{ env.ENV_FILE }} &&
+            echo 'DB_IS_NEEDED=${{ vars.DB_IS_NEEDED }}' >> ${{ env.ENV_FILE }} &&
 
             echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> ${{ env.ENV_FILE }} &&
-            echo 'LIBRARIES_DIR_NAME=${{ secrets.LIBRARIES_DIR_NAME }}' >> ${{ env.ENV_FILE }} &&
+            echo 'LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}' >> ${{ env.ENV_FILE }} &&
             
-            echo 'STATIC_FILES_ARE_NEEDED=${{ secrets.STATIC_FILES_ARE_NEEDED }}' >> ${{ env.ENV_FILE }} &&
-            echo 'STATIC_FILES_DIR=${{ secrets.STATIC_FILES_DIR }}' >> ${{ env.ENV_FILE }} &&
+            echo 'STATIC_FILES_ARE_NEEDED=${{ vars.STATIC_FILES_ARE_NEEDED }}' >> ${{ env.ENV_FILE }} &&
+            echo 'STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}' >> ${{ env.ENV_FILE }} &&
 
-            echo 'DJANGO_LOGS_ARE_NEEDED=${{ secrets.DJANGO_LOGS_ARE_NEEDED }}' >> ${{ env.ENV_FILE }} &&
+            echo 'DJANGO_LOGS_ARE_NEEDED=${{ vars.DJANGO_LOGS_ARE_NEEDED }}' >> ${{ env.ENV_FILE }} &&
             echo 'DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}' >> ${{ env.ENV_FILE }} &&
             echo 'DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}' >> ${{ env.ENV_FILE }} &&
             echo 'DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}' >> ${{ env.ENV_FILE }} &&
@@ -323,13 +323,13 @@ jobs:
             echo 'DB_HOST=${{ secrets.DB_HOST }}' >> ${{ env.ENV_FILE }} &&
             echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ${{ env.ENV_FILE }} &&
             
-            echo 'AUDIO_FINGERPRINTER_IMAGE_REPO=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_REPO }}' \
+            echo 'AUDIO_FINGERPRINTER_IMAGE_REPO=${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}' \
               >> ${{ env.ENV_FILE }}
-            echo 'AUDIO_FINGERPRINTER_IMAGE_TAG=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_TAG }}' >> ${{ env.ENV_FILE }}
-            echo 'AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.ENV_FILE }}
-            echo 'AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET=${{ secrets.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}' \
+            echo 'AUDIO_FINGERPRINTER_IMAGE_TAG=${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}' >> ${{ env.ENV_FILE }}
+            echo 'AUDIO_FINGERPRINTER_PORT=${{ vars.TEST_AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.ENV_FILE }}
+            echo 'AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET=${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}' \
               >> ${{ env.ENV_FILE }}
-            echo 'AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ secrets.AUDIO_FINGERPRINTER_POST_ENDPOINT }}' \
+            echo 'AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}' \
               >> ${{ env.ENV_FILE }}
           "
 
