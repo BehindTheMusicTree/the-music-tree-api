@@ -346,7 +346,7 @@ jobs:
             echo 'POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
             echo 'POSTGRES_USER=${{ secrets.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
             echo 'POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE }} &&
-            echo 'POSTGRES_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE }} &&
+            echo 'POSTGRES_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE }}
           "
 
       - name: Set api environment variables on server
