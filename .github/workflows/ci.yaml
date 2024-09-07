@@ -456,9 +456,12 @@ jobs:
           bash scripts/generate_docker_compose_part.sh
 
       - name: Transfer partial docker-compose file to server
+        env:
+          DOCKER_COMPOSE_PART_DIR: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}
+          DOCKER_COMPOSE_PART_FILE: ${{ env.DOCKER_COMPOSE_PART_DIR }}/${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
         run: |
-          scp scripts/${{ vars.DOCKER_COMPOSE_PART_FILENAME }} ${{ env.SSH_DESTINATION }}:\
-          ${{ vars.DOCKER_COMPOSE_DIR }}/${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
+          scp scripts/${{ vars.DOCKER_COMPOSE_PART_FILENAME }} \
+            ${{ env.SSH_DESTINATION }}:${{ vars.DOCKER_COMPOSE_PART_FILE }}
 
 
   redeploy-webhook-call:

@@ -60,9 +60,9 @@ for var in "${required_vars[@]}"; do
 done
 
 # Get the directory of the script even when it's called from another script
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+scripts_dir=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 
-cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
+cat << EOF > ${scripts_dir}$DOCKER_COMPOSE_PART_FILENAME
   db:
     image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
     container_name: $DB_CONTAINER_NAME
