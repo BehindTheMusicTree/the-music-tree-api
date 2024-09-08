@@ -15,7 +15,6 @@ env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
   APP_IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
-  APP_ENV_FILENAME: ${{ vars.APP_ENV_FILENAME }}
 
 jobs:
   pytest:
@@ -257,6 +256,8 @@ jobs:
     needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
+    env:
+      DOCKER_COMPOSE_DIR: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}/
     steps:
       - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.9.0
@@ -270,7 +271,7 @@ jobs:
 
       - name: Set api environment variables on server
         env: 
-          API_ENV_FILE: "${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.DOCKERIZED_APP_ENV_FILENAME }}"
+          API_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.DOCKERIZED_APP_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.API_ENV_FILE }} &&
@@ -335,7 +336,7 @@ jobs:
 
       - name: Set db environment variables on server
         env: 
-          DB_ENV_FILE: "${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.DB_ENV_FILENAME }}"
+          DB_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.DB_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.DB_ENV_FILE }} &&
@@ -349,9 +350,9 @@ jobs:
             echo 'POSTGRES_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE }}
           "
 
-      - name: Set api environment variables on server
+      - name: Set apf environment variables on server
         env: 
-          AFP_ENV_FILE: "${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}"
+          AFP_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.AFP_ENV_FILE }} &&
