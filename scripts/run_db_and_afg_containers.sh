@@ -10,7 +10,6 @@ app_env_file="${project_dir}env/.env"
 
 if [ ! -f "$app_env_file" ]; then
     echo "$app_env_file env file does not exist" >&2
-    exit 1
 else
     echo "Loading environment variables from $app_env_file"
     if [ ! -f "$app_env_file" ]; then
