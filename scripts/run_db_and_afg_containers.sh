@@ -6,9 +6,11 @@ echo "Running the database and audio fingerprinter containers."
 scripts_dir=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 project_dir=$(realpath $(dirname "$scripts_dir"))/
 
-app_env_file=${project_dir}env/.env
-if [ -z $app_env_file ]; then
-    echo "No env file specified"
+app_env_file="${project_dir}env/.env"
+
+if [ ! -f "$app_env_file" ]; then
+    echo "$app_env_file env file does not exist" >&2
+    exit 1
 else
     echo "Loading environment variables from $app_env_file"
     if [ ! -f "$app_env_file" ]; then
