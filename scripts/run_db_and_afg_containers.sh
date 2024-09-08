@@ -2,13 +2,17 @@
 
 echo "Running the database and audio fingerprinter containers."
 
-if [ -z "$1" ]; then
+# Get the directory of the script even when it's called from another script
+scripts_dir=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+project_dir=$(realpath $(dirname "$scripts_dir"))/
+
+app_env_file=${project_dir}env/.env
+if [ -z $app_env_file ]; then
     echo "No env file specified"
 else
-    APP_ENV_FILE="$1"
-    echo "Loading environment variables from ${APP_ENV_FILE}"
-    if [ ! -f "$APP_ENV_FILE" ]; then
-        echo "$APP_ENV_FILE env file does not exist" >&2
+    echo "Loading environment variables from $app_env_file"
+    if [ ! -f "$app_env_file" ]; then
+        echo "$app_env_file env file does not exist" >&2
         exit 1
     fi
 
@@ -17,26 +21,22 @@ else
         # Skip comments and empty lines
         if [ -z "$key" ]; then continue; fi
         export "$key=$value"
-    done < "$APP_ENV_FILE"
+    done < "$app_env_file"
 fi
 
-# Get the directory of the script even when it's called from another script
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
-
-CALCULATED_PATHS_ENV_FILE=$(cd "${PROJECT_DIR}env/calculated_paths/" && pwd)/.env
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
+calculated_paths_env_file=$(cd "${project_dir}env/calculated_paths/" && pwd)/.env
+bash "${scripts_dir}generate_calculated_paths_env_file.sh" "$project_dir" "$calculated_paths_env_file"
 
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file"
     exit 1
 fi
 
-echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
+echo "Loading calculated paths from ${calculated_paths_env_file}"
 while IFS='=' read -r key value
 do
     export "$key=$value"
-done < "$CALCULATED_PATHS_ENV_FILE"
+done < "$calculated_paths_env_file"
 
 required_vars=(
   ENV
