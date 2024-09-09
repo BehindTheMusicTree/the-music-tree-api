@@ -355,8 +355,10 @@ jobs:
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.AFP_ENV_FILE }} &&
             touch ${{ env.AFP_ENV_FILE }} &&
-            
-            echo 'APP_PORT=${{ secrets.AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.AFP_ENV_FILE }} &&
+
+            echo 'ENV=${{ vars.ENV }}' >> ${{ env.AFP_ENV_FILE }} &&
+            echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.AFP_ENV_FILE }} &&
+            echo 'APP_PORT=${{ secrets.AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.AFP_ENV_FILE }}
           "
 
   set-partial-docker-compose-on-server:
