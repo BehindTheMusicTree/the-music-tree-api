@@ -3,8 +3,8 @@
 echo "Running the database and audio fingerprinter containers."
 
 # Get the directory of the script even when it's called from another script
-scripts_dir=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-project_dir=$(realpath $(dirname "$scripts_dir"))/
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+project_dir=$(realpath $(dirname "$SCRIPTS_DIR"))/
 
 app_env_file="${project_dir}env/.env"
 
@@ -26,7 +26,7 @@ else
 fi
 
 calculated_paths_env_file=$(cd "${project_dir}env/calculated_paths/" && pwd)/.env
-bash "${scripts_dir}generate_calculated_paths_env_file.sh" "$project_dir" "$calculated_paths_env_file"
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$project_dir" "$calculated_paths_env_file"
 
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file"
