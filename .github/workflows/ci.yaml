@@ -355,18 +355,8 @@ jobs:
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.AFP_ENV_FILE }} &&
             touch ${{ env.AFP_ENV_FILE }} &&
-
-            echo 'ENV=TEST' >> ${{ env.AFP_ENV_FILE }} &&
             
-            echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.AFP_ENV_FILE }} &&
             echo 'APP_PORT=${{ secrets.AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'POOL_INTERNAL_DIR=${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}' \
-            >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'FLASK_LOGS_ARE_NEEDED=true' >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'FLASK_LOG_APP_FILENAME=${{ vars.FLASK_LOG_APP_FILENAME }}' >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'FLASK_LOG_ERROR_FILENAME=${{ vars.FLASK_LOG_ERROR_FILENAME }}' >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'FLASK_LOG_REQUESTS_FILENAME=${{ vars.FLASK_LOG_REQUESTS_FILENAME }}' >> ${{ env.AFP_ENV_FILE }}
           "
 
   set-partial-docker-compose-on-server:
