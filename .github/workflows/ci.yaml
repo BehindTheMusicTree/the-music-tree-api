@@ -348,7 +348,7 @@ jobs:
             echo 'POSTGRES_PORT=${{ secrets.DB_PORT }}' >> ${{ env.DB_ENV_FILE }}
           "
 
-      - name: Set apf environment variables on server
+      - name: Set afp environment variables on server
         env: 
           AFP_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}"
         run: |
