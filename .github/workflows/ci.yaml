@@ -31,7 +31,7 @@ jobs:
       DOCKER_NETWORK_NAME: ${{ vars.DOCKER_NETWORK_NAME }}
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
-      DEBUG: ${{ vars.DEBUG }}
+      DEBUG: true
 
       DB_IS_NEEDED: true
       APP_IS_EXPOSED: false
@@ -60,7 +60,7 @@ jobs:
       AUDIO_FINGERPRINTER_IMAGE_TAG: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
       AUDIO_FINGERPRINTER_CONTAINER_NAME: ${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
       AUDIO_FINGERPRINTER_PORT: ${{ secrets.AUDIO_FINGERPRINTER_PORT }}
-      AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET: ${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}
+      AUDIO_FINGERPRINTER_DOCKERIZED_POOL_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_POOL_DIR }}
       AUDIO_FINGERPRINTER_POST_ENDPOINT: ${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}
 
     steps:
@@ -123,7 +123,7 @@ jobs:
       APP_NAME: ${{vars.APP_NAME}}
       API_VERSION: ${{ vars.API_VERSION }}
 
-      DEBUG: ${{ vars.DEBUG }}
+      DEBUG: false
       DB_IS_NEEDED: false
       APP_IS_EXPOSED: false
       AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
@@ -194,7 +194,7 @@ jobs:
             APP_NAME: ${{ vars.APP_NAME }}
             API_VERSION: ${{ vars.API_VERSION }}
 
-            DEBUG=${{ vars.DEBUG }}
+            DEBUG=true
             DB_IS_NEEDED=true
 
             AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
@@ -282,7 +282,7 @@ jobs:
             echo 'DOCKERHUB_USERNAME=${{ vars.DOCKERHUB_USERNAME }}'
             echo 'DOCKER_NETWORK_NAME=${{ vars.DOCKER_NETWORK_NAME }}'
 
-            echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DEBUG=true' >> ${{ env.API_ENV_FILE }} &&
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'APP_IS_EXPOSED=true' >> ${{ env.API_ENV_FILE }} &&
 
@@ -356,7 +356,7 @@ jobs:
             touch ${{ env.AFP_ENV_FILE }} &&
 
             echo 'ENV=${{ vars.ENV }}' >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.AFP_ENV_FILE }} &&
+            echo 'DEBUG=true' >> ${{ env.AFP_ENV_FILE }} &&
             echo 'APP_PORT=${{ secrets.AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.AFP_ENV_FILE }}
           "
 
@@ -376,7 +376,7 @@ jobs:
       APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
       APP_ENV_FILENAME: ${{ vars.DOCKERIZED_APP_ENV_FILENAME }}
 
-      DEBUG: ${{ vars.DEBUG }}
+      DEBUG: true
       DB_IS_NEEDED: true
       APP_IS_EXPOSED: true
       APP_PORT: ${{ secrets.APP_PORT }}
