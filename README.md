@@ -30,7 +30,7 @@ You need to set up several environment variables for development, build, and run
 Create a copy of the file env/.env.development.example here: env/.env and set the values.
 
 #### Build
-Create a .env.build file in the root directory with the following content:
+The docker build
 
 #### Run
 Create a .env file in the root directory with the following content:
