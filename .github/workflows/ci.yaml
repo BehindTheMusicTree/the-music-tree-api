@@ -186,7 +186,7 @@ jobs:
   build-and-push-to-dockerhub:
     name: Build / Push to Dockerhub
     runs-on: ubuntu-latest
-    needs: [collect-and-push-static-files]
+    # needs: [collect-and-push-static-files]
     environment: 
       name: TEST
     steps:
@@ -205,8 +205,8 @@ jobs:
           push: true
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
           build-args: |
-            APP_NAME: ${{ vars.APP_NAME }}
-            APP_VERSION: ${{ vars.APP_VERSION }}
+            APP_NAME=${{ vars.APP_NAME }}
+            APP_VERSION=${{ vars.APP_VERSION }}
 
             TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
             MEDIA_DIR=${{ vars.MEDIA_DIR }}
