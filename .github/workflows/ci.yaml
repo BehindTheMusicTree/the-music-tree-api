@@ -56,12 +56,12 @@ jobs:
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_PORT: ${{ secrets.DB_PORT }}
 
-      AUDIO_FINGERPRINTER_IMAGE_REPO: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}
-      AUDIO_FINGERPRINTER_IMAGE_TAG: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
-      AUDIO_FINGERPRINTER_CONTAINER_NAME: ${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
-      AUDIO_FINGERPRINTER_PORT: ${{ secrets.AUDIO_FINGERPRINTER_PORT }}
-      AUDIO_FINGERPRINTER_DOCKERIZED_POOL_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_POOL_DIR }}
-      AUDIO_FINGERPRINTER_POST_ENDPOINT: ${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}
+      AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
+      AFP_VERSION: ${{ vars.AFP_VERSION }}
+      AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
+      AFP_PORT: ${{ secrets.AFP_PORT }}
+      AFP_DOCKERIZED_POOL_DIR: ${{ vars.AFP_DOCKERIZED_POOL_DIR }}
+      AFP_POST_ENDPOINT: ${{ vars.AFP_POST_ENDPOINT }}
 
     steps:
       - name: Checkout code
@@ -102,7 +102,7 @@ jobs:
           done
 
       - name: Echo afp container logs
-        run: docker logs ${{ env.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
+        run: docker logs ${{ env.AFP_CONTAINER_NAME }}
 
       - name: Init db data
         run: |
@@ -248,10 +248,10 @@ jobs:
             echo 'DB_HOST=${{ secrets.DB_HOST }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ${{ env.API_ENV_FILE }} &&
             
-            echo 'AUDIO_FINGERPRINTER_CONTAINER_NAME=${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}' \
+            echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' \
               >> ${{ env.API_ENV_FILE }} &&
-            echo 'AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}' \
+            echo 'AFP_PORT=${{ secrets.TEST_AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' \
               >> ${{ env.API_ENV_FILE }}
           "
 
@@ -273,7 +273,7 @@ jobs:
 
       - name: Set afp environment variables on server
         env: 
-          AFP_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}"
+          AFP_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.AFP_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.AFP_ENV_FILE }} &&
@@ -281,7 +281,7 @@ jobs:
 
             echo 'ENV=${{ vars.ENV }}' >> ${{ env.AFP_ENV_FILE }} &&
             echo 'DEBUG=true' >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'APP_PORT=${{ secrets.AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.AFP_ENV_FILE }}
+            echo 'APP_PORT=${{ secrets.AFP_PORT }}' >> ${{ env.AFP_ENV_FILE }}
           "
 
   set-partial-docker-compose-on-server:
@@ -313,14 +313,14 @@ jobs:
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_ENV_FILENAME: ${{ vars.DB_ENV_FILENAME }}
 
-          AUDIO_FINGERPRINTER_IMAGE_REPO: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}
-          AUDIO_FINGERPRINTER_IMAGE_TAG: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
-          AUDIO_FINGERPRINTER_CONTAINER_NAME: ${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
-          AUDIO_FINGERPRINTER_PORT: ${{ secrets.AUDIO_FINGERPRINTER_PORT }}
-          AUDIO_FINGERPRINTER_ENV_FILENAME: ${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}
-          AUDIO_FINGERPRINTER_DOCKERIZED_POOL_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_POOL_DIR }}
-          AUDIO_FINGERPRINTER_DOCKERIZED_FLASK_LOG_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_FLASK_LOG_DIR }}
-          AUDIO_FINGERPRINTER_DOCKERIZED_GUNICORN_LOG_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_GUNICORN_LOG_DIR }}
+          AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
+          AFP_VERSION: ${{ vars.AFP_VERSION }}
+          AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
+          AFP_PORT: ${{ secrets.AFP_PORT }}
+          AFP_ENV_FILENAME: ${{ vars.AFP_ENV_FILENAME }}
+          AFP_DOCKERIZED_POOL_DIR: ${{ vars.AFP_DOCKERIZED_POOL_DIR }}
+          AFP_DOCKERIZED_FLASK_LOG_DIR: ${{ vars.AFP_DOCKERIZED_FLASK_LOG_DIR }}
+          AFP_DOCKERIZED_GUNICORN_LOG_DIR: ${{ vars.AFP_DOCKERIZED_GUNICORN_LOG_DIR }}
 
           APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
           APP_VERSION: ${{ vars.APP_VERSION }}
