@@ -35,7 +35,7 @@ jobs:
 
       DB_IS_NEEDED: true
       APP_IS_EXPOSED: false
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
+      AUDIO_META_ANALYSE_IS_NEEDED: true
       TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}
       ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
       MEDIA_DEFAULT_INTERNAL_DIR: ${{ vars.MEDIA_DEFAULT_INTERNAL_DIR }}
@@ -126,7 +126,7 @@ jobs:
       DEBUG: false
       DB_IS_NEEDED: false
       APP_IS_EXPOSED: false
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
+      AUDIO_META_ANALYSE_IS_NEEDED: false
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
       STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
       STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
@@ -197,7 +197,7 @@ jobs:
             DEBUG=true
             DB_IS_NEEDED=true
 
-            AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
+            AUDIO_META_ANALYSE_IS_NEEDED=true
             TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
             ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}
 
@@ -286,7 +286,7 @@ jobs:
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'APP_IS_EXPOSED=true' >> ${{ env.API_ENV_FILE }} &&
 
-            echo 'AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'AUDIO_META_ANALYSE_IS_NEEDED=true' >> ${{ env.API_ENV_FILE }} &&
             echo 'TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.API_ENV_FILE }} &&
 
@@ -381,7 +381,7 @@ jobs:
       APP_IS_EXPOSED: true
       APP_PORT: ${{ secrets.APP_PORT }}
 
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
+      AUDIO_META_ANALYSE_IS_NEEDED: true
       TMP_UPLOADED_FILES_DIR: ${{ vars.TMP_UPLOADED_FILES_DIR }}
       ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
 
