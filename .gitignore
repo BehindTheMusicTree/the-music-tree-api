@@ -8,7 +8,6 @@ share/
 */migrations/*.py
 !*/migrations/__init__.py
 log/
-
 env/.env_generated_paths
-
 tmp-uploaded-files/
+static-files/*
