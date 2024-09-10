@@ -189,22 +189,13 @@ jobs:
           push: true
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_IMAGE_TAG }}
           build-args: |
-            ENV=${{ vars.ENV }}
-
             APP_NAME: ${{ vars.APP_NAME }}
             API_VERSION: ${{ vars.API_VERSION }}
 
-            DEBUG=true
-            DB_IS_NEEDED=true
-
-            AUDIO_META_ANALYSE_IS_NEEDED=true
             TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
-            ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}
-
             MEDIA_DIR=${{ vars.MEDIA_DIR }}
             LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
 
-            STATIC_FILES_ARE_NEEDED=true
             STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}
             STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
 
@@ -273,8 +264,6 @@ jobs:
           ssh ${{ env.SSH_DESTINATION }} "
             rm -f ${{ env.API_ENV_FILE }} &&
             touch ${{ env.API_ENV_FILE }} &&
-
-            echo 'ENV=TEST' >> ${{ env.API_ENV_FILE }} &&
 
             echo 'APP_NAME=${{ vars.APP_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'API_VERSION=${{ vars.API_VERSION }}' >> ${{ env.API_ENV_FILE }} &&
@@ -395,7 +384,7 @@ jobs:
           AUDIO_FINGERPRINTER_PORT: ${{ secrets.AUDIO_FINGERPRINTER_PORT }}
           AUDIO_FINGERPRINTER_ENV_FILENAME: ${{ vars.AUDIO_FINGERPRINTER_ENV_FILENAME }}
           AUDIO_FINGERPRINTER_DOCKERIZED_POOL_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_POOL_DIR }}
-          AUDIO_FINGERPRINTER_DOCKERIZED_FLASK_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_FLASK_LOG_DIR }}
+          AUDIO_FINGERPRINTER_DOCKERIZED_FLASK_LOG_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_FLASK_LOG_DIR }}
           AUDIO_FINGERPRINTER_DOCKERIZED_GUNICORN_LOG_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_GUNICORN_LOG_DIR }}
 
           APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
