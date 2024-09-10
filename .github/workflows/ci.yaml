@@ -348,6 +348,7 @@ jobs:
           GUNICORN_LOG_ACCESS_FILENAME: ${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
           DJANGO_LOG_DIR: ${{ vars.DJANGO_LOG_DIR }}
           MEDIA_DIR: ${{ vars.MEDIA_DIR }}
+          STATIC_FILES_DIR: ${{ vars.STATIC_FILES_DIR }}
           TMP_UPLOADED_FILES_DIR: ${{ vars.TMP_UPLOADED_FILES_DIR }}
         run: |
           bash scripts/generate_docker_compose_part.sh
