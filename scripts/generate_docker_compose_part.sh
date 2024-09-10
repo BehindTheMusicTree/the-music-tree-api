@@ -40,7 +40,7 @@ required_vars=(
   AUDIO_FINGERPRINTER_DOCKERIZED_GUNICORN_LOG_DIR
 
   APP_IMAGE_REPO
-  APP_IMAGE_TAG
+  APP_VERSION
   APP_CONTAINER_NAME
   APP_PORT
   APP_ENV_FILENAME
@@ -90,7 +90,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
 
   api:
     working_dir: /home/app/webapp/
-    image: $DOCKERHUB_USERNAME/$APP_IMAGE_REPO:$APP_IMAGE_TAG
+    image: $DOCKERHUB_USERNAME/$APP_IMAGE_REPO:$APP_VERSION
     container_name: $APP_CONTAINER_NAME
     command: >
       gunicorn bodzify_api.wsgi:application

@@ -26,7 +26,7 @@ jobs:
       ENV: ${{ vars.ENV }}
 
       APP_NAME: ${{ vars.APP_NAME }}
-      API_VERSION: ${{ vars.API_VERSION }}
+      APP_VERSION: ${{ vars.APP_VERSION }}
 
       DOCKER_NETWORK_NAME: ${{ vars.DOCKER_NETWORK_NAME }}
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
@@ -121,7 +121,7 @@ jobs:
       ENV: ${{ vars.ENV }}
 
       APP_NAME: ${{vars.APP_NAME}}
-      API_VERSION: ${{ vars.API_VERSION }}
+      APP_VERSION: ${{ vars.APP_VERSION }}
 
       DEBUG: false
       DB_IS_NEEDED: false
@@ -187,10 +187,10 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_IMAGE_TAG }}
+          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
           build-args: |
             APP_NAME: ${{ vars.APP_NAME }}
-            API_VERSION: ${{ vars.API_VERSION }}
+            APP_VERSION: ${{ vars.APP_VERSION }}
 
             TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
             MEDIA_DIR=${{ vars.MEDIA_DIR }}
@@ -329,7 +329,7 @@ jobs:
           AUDIO_FINGERPRINTER_DOCKERIZED_GUNICORN_LOG_DIR: ${{ vars.AUDIO_FINGERPRINTER_DOCKERIZED_GUNICORN_LOG_DIR }}
 
           APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
-          APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
+          APP_VERSION: ${{ vars.APP_VERSION }}
           APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
           APP_PORT: ${{ secrets.APP_PORT }}
           APP_ENV_FILENAME: ${{ vars.DOCKERIZED_APP_ENV_FILENAME }}
