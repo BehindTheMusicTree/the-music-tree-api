@@ -32,24 +32,20 @@ create_directory_if_not_exists() {
     fi
 }
 
-if [ -z "$1" ]; then
-    echo "No env file specified"
-else
-    APP_ENV_FILE="$1"
-    if [ ! -f "$APP_ENV_FILE" ]; then
-        print_error_and_exit "env file $APP_ENV_FILE does not exist"
-    fi
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+PROJECT_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
+ENV_FILE=${PROJECT_DIR}env/.env
 
-    echo "Loading environment variables from ${APP_ENV_FILE}"
+if [ ! -f "$ENV_FILE" ]; then
+    echo "Env file $ENV_FILE does not exist"
+else
+    echo "Loading environment variables from ${ENV_FILE}"
     while IFS='=' read -r key value; do
         # Skip comments and empty lines
         if [ -z "$key" ]; then continue; fi
         export "$key=$value"
-    done < "$APP_ENV_FILE"
+    done < "$ENV_FILE"
 fi
-
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-PROJECT_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
 
 check_bool_var "APP_IS_EXPOSED"
 check_bool_var "DJANGO_LOGS_ARE_NEEDED"
