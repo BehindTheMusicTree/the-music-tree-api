@@ -36,10 +36,6 @@ except subprocess.CalledProcessError as e:
 
 dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
 
-APP_VERSION = os.getenv('APP_VERSION')
-if not APP_VERSION:
-    raise EnvironmentError("The APP_VERSION variable must be set")
-
 APP_IS_EXPOSED_STR = os.getenv('APP_IS_EXPOSED')
 if not APP_IS_EXPOSED_STR:
     raise EnvironmentError("The APP_IS_EXPOSED variable must be set")
@@ -49,6 +45,11 @@ if APP_IS_EXPOSED_STR not in ['true', 'false']:
 APP_IS_EXPOSED = (APP_IS_EXPOSED_STR == 'true')
 if APP_IS_EXPOSED:
     print("APP_IS_EXPOSED is true. Setting up security.")
+    
+    APP_VERSION = os.getenv('APP_VERSION')
+    if not APP_VERSION:
+        raise EnvironmentError("The APP_VERSION variable must be set as the app is exposed")
+    API_ROOT_BASE = 'api/' + APP_VERSION + '/'
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -110,7 +111,7 @@ if not APP_NAME:
     raise EnvironmentError("The APP_NAME variable must be set")
 
 API_DESCRIPTION = "API to handle genre oriented music libraries"
-API_ROOT_BASE = 'api/' + APP_VERSION + '/'
+
 API_ROOT = Path(BASE_DIR) / APP_NAME
 CONTACT_EMAIL = "andreas.garcia@bodzify.com"
 UUID_LEN = 22
