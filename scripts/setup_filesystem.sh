@@ -89,6 +89,7 @@ if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
     else
         echo "STATIC_FILES_DIR is the default internal directory $DEFAULT_STATIC_FILES_DIR"
     fi
+    chmod -R 775 "$STATIC_FILES_DIR"
 fi
 
 if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
@@ -108,6 +109,7 @@ if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
         check_var_is_set "$log_filename"
         touch "${DJANGO_LOG_DIR}${!log_filename}"
     done
+    chmod -R 775 "$DJANGO_LOG_DIR"
 else
     echo "DJANGO_LOGS_ARE_NEEDED is set to false. Django logs are not needed."
 fi
@@ -133,8 +135,15 @@ fi
 
 if [ "$AUDIO_META_ANALYSE_IS_NEEDED" = "true" ]; then
     create_directory_if_not_exists "$TMP_UPLOADED_FILES_DIR"
+    chmod 775 "$TMP_UPLOADED_FILES_DIR"
 else
     echo "AUDIO_META_ANALYSE_IS_NEEDED is set to false. Temp uploaded files dir is not needed."
 fi
 
-chmod 775 "$MEDIA_DIR" "$STATIC_FILES_DIR" "$DJANGO_LOG_DIR" "$TMP_UPLOADED_FILES_DIR" "$GUNICORN_LOG_DIR"
+if [ -z "$MEDIA_DIR" ]; then
+    echo "MEDIA_DIR is not set. Using default internal directory."
+    MEDIA_DIR="${PROJECT_DIR}media/"
+fi
+echo "MEDIA_DIR is set to $MEDIA_DIR"
+create_directory_if_not_exists "$MEDIA_DIR"
+chmod -R 775 "$MEDIA_DIR"
