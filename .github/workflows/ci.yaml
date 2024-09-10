@@ -40,9 +40,9 @@ jobs:
       ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
       MEDIA_DEFAULT_INTERNAL_DIR: ${{ vars.MEDIA_DEFAULT_INTERNAL_DIR }}
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
-      STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
+      STATIC_FILES_ARE_NEEDED: false
       STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-      DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
+      DJANGO_LOGS_ARE_NEEDED: true
 
       DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
       DB_IMAGE_TAG: ${{ vars.DB_IMAGE_TAG }}
@@ -128,9 +128,9 @@ jobs:
       APP_IS_EXPOSED: false
       AUDIO_META_ANALYSE_IS_NEEDED: false
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
-      STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
+      STATIC_FILES_ARE_NEEDED: true
       STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-      DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
+      DJANGO_LOGS_ARE_NEEDED: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -204,11 +204,11 @@ jobs:
             MEDIA_DIR=${{ vars.MEDIA_DIR }}
             LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
 
-            STATIC_FILES_ARE_NEEDED=${{ vars.STATIC_FILES_ARE_NEEDED }}
+            STATIC_FILES_ARE_NEEDED=true
             STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}
             STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
 
-            DJANGO_LOGS_ARE_NEEDED=${{ vars.DJANGO_LOGS_ARE_NEEDED }}
+            DJANGO_LOGS_ARE_NEEDED=true
             DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}
             DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
             DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
@@ -295,10 +295,10 @@ jobs:
             echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             
-            echo 'STATIC_FILES_ARE_NEEDED=${{ vars.STATIC_FILES_ARE_NEEDED }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'STATIC_FILES_ARE_NEEDED=true' >> ${{ env.API_ENV_FILE }} &&
             echo 'STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}' >> ${{ env.API_ENV_FILE }} &&
 
-            echo 'DJANGO_LOGS_ARE_NEEDED=${{ vars.DJANGO_LOGS_ARE_NEEDED }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DJANGO_LOGS_ARE_NEEDED=true' >> ${{ env.API_ENV_FILE }} &&
             echo 'DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}' >> ${{ env.API_ENV_FILE }} &&
@@ -388,11 +388,11 @@ jobs:
       MEDIA_DIR: ${{ vars.MEDIA_DIR }}
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
 
-      STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
+      STATIC_FILES_ARE_NEEDED: true
       STATIC_FILES_DIR: ${{ vars.STATIC_FILES_DIR }}
       STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
 
-      DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
+      DJANGO_LOGS_ARE_NEEDED: true
       DJANGO_LOG_DIR: ${{ vars.DJANGO_LOG_DIR }}
       DJANGO_LOG_GENERAL_FILENAME: ${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
       DJANGO_LOG_INFO_FILENAME: ${{ vars.DJANGO_LOG_INFO_FILENAME }}
