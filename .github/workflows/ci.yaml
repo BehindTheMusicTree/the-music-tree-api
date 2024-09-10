@@ -70,7 +70,23 @@ jobs:
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-           python-version: 3.11
+           python-version: 3.12
+
+      - name: Cache apt packages
+        uses: actions/cache@v2
+        with:
+          path: /var/cache/apt
+          key: ${{ runner.os }}-apt-${{ hashFiles('scripts/install_dependencies.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+  
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: sudo -E bash scripts/install_dependencies.sh
