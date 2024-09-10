@@ -97,6 +97,7 @@ if [ $STATIC_FILES_ARE_NEEDED = "true" ]; then
 fi
 
 if [ $DJANGO_LOGS_ARE_NEEDED = "true" ]; then
+    echo "DJANGO_LOGS_ARE_NEEDED is set to true. Creating Django log directories."
     if [ ! -d "$DJANGO_LOG_DIR" ]; then
         echo "Creating log directory $DJANGO_LOG_DIR"
         mkdir -p $DJANGO_LOG_DIR
@@ -120,6 +121,8 @@ if [ $DJANGO_LOGS_ARE_NEEDED = "true" ]; then
         fi
         touch "${DJANGO_LOG_DIR}${!log_filename}"
     done
+else
+    echo "DJANGO_LOGS_ARE_NEEDED is set to false. Django logs are not needed."
 fi
 
 if [ $APP_IS_EXPOSED = "true" ]; then
