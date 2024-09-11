@@ -231,7 +231,7 @@ jobs:
   set-env-variables-on-server:
     name: Set environment variables on server
     runs-on: ubuntu-latest
-    needs: [build-and-push-to-dockerhub]
+    # needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
     env:
@@ -258,8 +258,7 @@ jobs:
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'CSRF_TRUSTED_ORIGINS=${{ vars.CSRF_TRUSTED_ORIGINS }}'  >> ${{ env.API_ENV_FILE }} &&
-            echo 'ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}' >> ${{ env.API_ENV_FILE }} &&
-            
+            echo 'ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}' | sed 's/"/\\"/g' >> ${{ env.API_ENV_FILE }} &&     
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> ${{ env.API_ENV_FILE }} &&
