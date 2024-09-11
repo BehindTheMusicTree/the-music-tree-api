@@ -54,9 +54,20 @@ The docker build requires the following environment variables:
    GUNICORN_LOG_ERROR_FILENAME=***
    GUNICORN_LOG_ACCESS_FILENAME=***
 
-
-#### Run
-Create a .env file in the root directory with the following content:
+#### Running the container
+Running the container requires the following environment variables:
+   DJANGO_SECRET_KEY
+   ACOUSTID_API_KEY
+   CSRF_TRUSTED_ORIGINS
+   ALLOWED_HOSTS
+   DB_BODZIFY_API_DB_NAME
+   DB_BODZIFY_API_USERNAME
+   DB_BODZIFY_API_USER_PASSWORD
+   DB_HOST
+   DB_PORT
+   AFP_CONTAINER_NAME
+   AFP_PORT
+   AFP_POST_ENDPOINT
 
 ## Usage
 TODO
