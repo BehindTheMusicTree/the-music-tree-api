@@ -24,7 +24,8 @@ Bodzify API is an online platform similar to iTunes, designed for managing and i
    cd bodzify-api
 
 ### Environment Variables
-You need to set up several environment variables for development, build, and run. Below are the required variables and examples of how to set them.
+You need to set up several environment variables for development, build, and run. Below are the required variables and 
+examples of how to set them.
 
 #### Development
 Create a copy of the file env/.env.development.example here: env/.env and set the values.
