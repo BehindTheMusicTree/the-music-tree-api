@@ -251,14 +251,14 @@ jobs:
         env: 
           API_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.DOCKERIZED_APP_ENV_FILENAME }}"
         run: |
-          ssh ${{ env.SSH_DESTINATION }} "
+          ssh ${{ env.SSH_DESTINATION }} bash -s << 'EOF'
             rm -f ${{ env.API_ENV_FILE }} &&
             touch ${{ env.API_ENV_FILE }} &&
 
             echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'CSRF_TRUSTED_ORIGINS=$(echo ${{ vars.CSRF_TRUSTED_ORIGINS }} | sed 's/\"/\\\"/g')' >> ${{ env.API_ENV_FILE }} &&
-            echo 'ALLOWED_HOSTS=$(echo ${{ vars.ALLOWED_HOSTS }} | sed 's/\"/\\\"/g')' >> ${{ env.API_ENV_FILE }} &&
+            echo 'CSRF_TRUSTED_ORIGINS=$(echo ${{ vars.CSRF_TRUSTED_ORIGINS }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'ALLOWED_HOSTS=$(echo ${{ vars.ALLOWED_HOSTS }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> ${{ env.API_ENV_FILE }} &&
@@ -270,7 +270,7 @@ jobs:
             echo 'AFP_PORT=${{ secrets.AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' \
               >> ${{ env.API_ENV_FILE }}
-          "
+          EOF
 
       - name: Set db environment variables on server
         env: 
