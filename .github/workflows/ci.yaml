@@ -267,7 +267,7 @@ jobs:
             
             echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' \
               >> ${{ env.API_ENV_FILE }} &&
-            echo 'AFP_PORT=${{ secrets.TEST_AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'AFP_PORT=${{ secrets.AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' \
               >> ${{ env.API_ENV_FILE }}
           "
