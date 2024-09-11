@@ -30,7 +30,30 @@ You need to set up several environment variables for development, build, and run
 Create a copy of the file env/.env.development.example here: env/.env and set the values.
 
 #### Build
-The docker build
+The docker build requires the following environment variables:
+   APP_NAME=***
+   APP_VERSION=***
+
+   TMP_UPLOADED_FILES_DIR=***
+   MEDIA_DIR=***
+   LIBRARIES_DIR_NAME=***
+
+   STATIC_FILES_DIR=***
+   STATIC_FILES_DEFAULT_INTERNAL_DIR=***
+
+   DJANGO_LOG_DIR=***
+   DJANGO_LOG_GENERAL_FILENAME=***
+   DJANGO_LOG_INFO_FILENAME=***
+   DJANGO_LOG_REQUESTS_FILENAME=***
+   DJANGO_LOG_REQUESTS_DEBUG_FILENAME=***
+   DJANGO_LOG_EXCEPTIONS_FILENAME=***
+   DJANGO_LOG_DJANGO_FILENAME=***
+   DJANGO_LOG_APP_FILENAME=***
+
+   GUNICORN_LOG_DIR=***
+   GUNICORN_LOG_ERROR_FILENAME=***
+   GUNICORN_LOG_ACCESS_FILENAME=***
+
 
 #### Run
 Create a .env file in the root directory with the following content:
