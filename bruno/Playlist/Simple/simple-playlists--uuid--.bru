@@ -1,0 +1,19 @@
+meta {
+  name: simple-playlists--uuid--
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{BASE_URL}}playlists/simple/{{simplePlaylistUuid}}/
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAccess}}
+}
+
+body:multipart-form {
+  ~name: stylaxj
+}

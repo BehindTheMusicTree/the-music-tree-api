@@ -1,0 +1,20 @@
+meta {
+  name: genre-playlists--uuid--
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}playlists/{{playlistUuid}}/
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAccess}}
+}
+
+tests {
+  var jsonData = JSON.parse(responseBody)
+  bru.setEnvVar("playlistUuid", jsonData.results[0].uuid)
+}

@@ -1,0 +1,15 @@
+meta {
+  name: artists-
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{BASE_URL}}artists/{{artistUuid}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAccess}}
+}

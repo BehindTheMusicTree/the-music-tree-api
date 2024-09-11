@@ -1,0 +1,35 @@
+meta {
+  name: auth-token-
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}auth/token/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "username": "{{USERNAME}}",
+      "password": "{{PASSWORD}}"
+  }
+}
+
+script:pre-request {
+  if(bru.getEnvVar("ENV") == "DEV") {
+  //     pm.globals.set("BASE_URL", pm.globals.get("BASE_URL_DEV"));
+  }
+  else if(bru.getEnvVar("ENV") == "TEST") {
+  //     pm.globals.set("BASE_URL", pm.globals.get("BASE_URL_TEST"));
+  }
+  // console.log(pm.globals.get("BASE_URL"))
+  
+}
+
+tests {
+  var jsonData = JSON.parse(responseBody)
+  bru.setEnvVar("tokenAccess", jsonData.access)
+  bru.setEnvVar("tokenRefresh", jsonData.refresh)
+}

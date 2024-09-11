@@ -1,0 +1,19 @@
+meta {
+  name: tracks--uuid--download-
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}tracks/{{trackUuid}}/
+  body: json
+  auth: bearer
+}
+
+headers {
+  Authorization: {{authorization}}
+}
+
+auth:bearer {
+  token: {{tokenAccess}}
+}
