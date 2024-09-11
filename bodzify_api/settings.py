@@ -57,6 +57,7 @@ if APP_IS_EXPOSED:
     if not CSRF_TRUSTED_ORIGINS_STR:
         raise EnvironmentError("The CSRF_TRUSTED_ORIGINS variable must be set")
 
+    print("CSRF_TRUSTED_ORIGINS: " + CSRF_TRUSTED_ORIGINS_STR)
     try:
         loaded_csrf_trusted_origins = json.loads(CSRF_TRUSTED_ORIGINS_STR)
         if not isinstance(loaded_csrf_trusted_origins, list):
