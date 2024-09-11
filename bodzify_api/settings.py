@@ -63,7 +63,7 @@ if APP_IS_EXPOSED:
             loaded_csrf_trusted_origins = [loaded_csrf_trusted_origins]
         CSRF_TRUSTED_ORIGINS = loaded_csrf_trusted_origins
     except json.JSONDecodeError:
-        raise ValueError("CSRF_TRUSTED_ORIGINS_STR must either be a list or an element.")
+        raise ValueError("CSRF_TRUSTED_ORIGINS must either be a list or an element.")
     except Exception as e:
         raise EnvironmentError("The CSRF_TRUSTED_ORIGINS variable is not a valid element or list.")
 
