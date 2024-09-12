@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import datetime
-import json
 import os
 from pathlib import Path
 import subprocess
@@ -224,9 +223,19 @@ if DB_IS_NEEDED:
     if DB_BODZIFY_API_USER_PASSWORD is None:
         raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable must be set")
 
-    DB_HOST = os.getenv('DB_HOST')
-    if DB_HOST is None:
-        raise EnvironmentError("The DB_HOST variable must be set")
+    DB_CONTAINER_NAME = os.getenv('DB_CONTAINER_NAME')
+    if not DB_CONTAINER_NAME:
+        raise EnvironmentError("The DB_CONTAINER_NAME variable must be set")
+
+    if APP_IS_EXPOSED:
+        print("The app is exposed. The db host is the db container name.")
+        DB_HOST = DB_CONTAINER_NAME
+    else:
+        print("The app is not exposed. The db host is set to the env var DB_HOST.")
+        DB_HOST = os.getenv('DB_HOST')
+        if DB_HOST is None:
+            raise EnvironmentError("The DB_HOST variable must be set")
+    print("DB_HOST: " + DB_HOST)
 
     DB_PORT = os.getenv('DB_PORT')
     if DB_PORT is None:
@@ -235,7 +244,6 @@ if DB_IS_NEEDED:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            # 'ENGINE': 'django.db.backends.postgresql',
             'NAME': DB_BODZIFY_API_DB_NAME,
             'USER': DB_BODZIFY_API_USERNAME,
             'PASSWORD': DB_BODZIFY_API_USER_PASSWORD,

@@ -117,9 +117,6 @@ jobs:
             attempts=$((attempts+1))
           done
 
-      - name: Echo afp container logs
-        run: docker logs ${{ env.AFP_CONTAINER_NAME }}
-
       - name: Init db data
         run: |
           bash scripts/data/reinit_django_data.sh
@@ -262,7 +259,7 @@ jobs:
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'DB_HOST=${{ secrets.DB_HOST }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_CONTAINER_NAME=${{ secrets.DB_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ${{ env.API_ENV_FILE }} &&
             
             echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' \
