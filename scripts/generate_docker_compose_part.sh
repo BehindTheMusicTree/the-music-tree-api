@@ -24,7 +24,7 @@ required_vars=(
   DOCKERHUB_USERNAME
 
   DB_IMAGE_REPO
-  DB_IMAGE_TAG
+  DB_VERSION
   DB_CONTAINER_NAME
   DB_DATA_DIR
   DB_PORT
@@ -64,7 +64,7 @@ SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_S
 
 cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
   db:
-    image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_IMAGE_TAG
+    image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     container_name: $DB_CONTAINER_NAME
     volumes:
       - db-data:$DB_DATA_DIR
