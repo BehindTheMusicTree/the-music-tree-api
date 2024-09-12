@@ -80,7 +80,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     image: $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
     container_name: $AFP_CONTAINER_NAME
     volumes:
-      - api-upload-temp-files:$AFP_DOCKERIZED_POOL_DIR
+      - api-upload-tmp-files-dir:$AFP_DOCKERIZED_POOL_DIR
       - afp-flask-log-dir:$AFP_DOCKERIZED_FLASK_LOG_DIR
       - afp-gunicorn-log-dir:$AFP_DOCKERIZED_GUNICORN_LOG_DIR
     ports:
@@ -103,8 +103,8 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-django-log-dir:${DJANGO_LOG_DIR}
       - api-gunicorn-log-dir:${GUNICORN_LOG_DIR}
       - api-media-dir:${MEDIA_DIR}
-      - api-static-files:${STATIC_FILES_DIR}
-      - api-upload-temp-files:${TMP_UPLOADED_FILES_DIR}
+      - api-static-files-dir:${STATIC_FILES_DIR}
+      - api-upload-tmp-files-dir:${TMP_UPLOADED_FILES_DIR}
     expose:
       - $APP_PORT
     networks:
