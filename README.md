@@ -70,6 +70,12 @@ Running the container requires the following environment variables:
    AFP_PORT
    AFP_POST_ENDPOINT
 
+## Database Requirement
+The Bodzify API requires a database to function. It has been tested with PostgreSQL, and it is recommended to use PostgreSQL for the best compatibility and performance.
+
+## Audio Meta Analyse Requirement
+For audio meta analysis, the Bodzify API requires an app called Audio Fingerprinter. You can find the Audio Fingerprinter app on GitHub at the following link: Audio Fingerprinter.
+
 ## Usage
 TODO
 
