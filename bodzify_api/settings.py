@@ -57,19 +57,15 @@ if APP_IS_EXPOSED:
     if not CSRF_TRUSTED_ORIGINS_STR:
         raise EnvironmentError("The CSRF_TRUSTED_ORIGINS variable must be set")
 
-    print("CSRF_TRUSTED_ORIGINS: " + CSRF_TRUSTED_ORIGINS_STR)
-    try:
-        loaded_csrf_trusted_origins = json.loads(CSRF_TRUSTED_ORIGINS_STR)
-        if not isinstance(loaded_csrf_trusted_origins, list):
-            loaded_csrf_trusted_origins = [loaded_csrf_trusted_origins]
-        CSRF_TRUSTED_ORIGINS = loaded_csrf_trusted_origins
-    except json.JSONDecodeError:
-        raise ValueError("CSRF_TRUSTED_ORIGINS must either be a list or an element.")
-    except Exception as e:
-        raise EnvironmentError("The CSRF_TRUSTED_ORIGINS variable is not a valid element or list.")
+    print(f"CSRF_TRUSTED_ORIGINS env variable: {CSRF_TRUSTED_ORIGINS_STR}")
+    CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS_STR.split(',')
+    for csrf_trusted_origin in CSRF_TRUSTED_ORIGINS:
+        csrf_trusted_origin = csrf_trusted_origin.strip()
+        if csrf_trusted_origin == '':
+            raise ValueError("An CSRF trusted origin is empty.")
 
     if len(CSRF_TRUSTED_ORIGINS) > 0:
-        print("The app is exposed to the following origins:")
+        print("The app is exposed to the following origin(s):")
         for csrf_trusted_origin in CSRF_TRUSTED_ORIGINS:
             print(str(csrf_trusted_origin))
     else:
@@ -78,23 +74,20 @@ if APP_IS_EXPOSED:
     ALLOWED_HOSTS_STR = os.getenv('ALLOWED_HOSTS')
     if not ALLOWED_HOSTS_STR:
         raise EnvironmentError("The ALLOWED_HOSTS variable must be set")
+    print(f"ALLOWED_HOSTS env variable: {ALLOWED_HOSTS_STR}")
 
-    try:
-        loaded_allowed_hosts = json.loads(ALLOWED_HOSTS_STR)
-        if not isinstance(loaded_allowed_hosts, list):
-            loaded_allowed_hosts = [loaded_allowed_hosts]
-        ALLOWED_HOSTS = loaded_allowed_hosts
-    except json.JSONDecodeError:
-        raise ValueError("ALLOWED_HOSTS must either be a list or an element.")
-    except Exception as e:
-        raise EnvironmentError("The ALLOWED_HOSTS variable is not a valid element or list.")
+    ALLOWED_HOSTS = ALLOWED_HOSTS_STR.split(',')
+    for csrf_trusted_origin in ALLOWED_HOSTS:
+        csrf_trusted_origin = csrf_trusted_origin.strip()
+        if csrf_trusted_origin == '':
+            raise ValueError("An allowed host is empty.")
 
     if len(ALLOWED_HOSTS) > 0:
-        print("The allowed hosts are: ")
-        for allowed_host in ALLOWED_HOSTS:
-            print(str(allowed_host))
+        print("Allowed host(s): ")
+        for csrf_trusted_origin in ALLOWED_HOSTS:
+            print(str(csrf_trusted_origin))
     else:
-        raise EnvironmentError("The app is exposed but no allowed host are set.")
+        raise EnvironmentError("The app is exposed but no allowed hosts are set.")
 
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
@@ -160,12 +153,28 @@ DEBUG = os.getenv('DEBUG')
 if not DEBUG or DEBUG not in ['true', 'false']:
     raise EnvironmentError("The DEBUG variable is not set or is not a boolean")
 
+STATIC_FILES_ARE_NEEDED_STR = os.getenv('STATIC_FILES_ARE_NEEDED')
+if not STATIC_FILES_ARE_NEEDED_STR or STATIC_FILES_ARE_NEEDED_STR not in ['true', 'false']:
+    raise EnvironmentError("The STATIC_FILES_ARE_NEEDED variable is not set or is not a boolean")
+STATIC_FILES_ARE_NEEDED = True if STATIC_FILES_ARE_NEEDED_STR == 'true' else False
+
+STATICFILES_DIRS = []
+if STATIC_FILES_ARE_NEEDED:
+    print("STATIC_FILES_ARE_NEEDED is true. Setting up static files.")
+    STATIC_URL = 'static/'
+    STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
+    if not STATIC_FILES_DIR_ENV:
+        raise EnvironmentError("The STATIC_FILES_DIR variable must be set")
+    STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
+else:
+    print("Static files are not needed.")
+    STATIC_ROOT = ''
+
 INSTALLED_APPS = ['django.contrib.admin',
                   'django.contrib.auth',
                   'django.contrib.contenttypes',
                   'django.contrib.sessions',
                   'django.contrib.messages',
-                  'django.contrib.staticfiles',
                   'django_extensions',
                   'polymorphic',
                   'corsheaders',
@@ -177,8 +186,11 @@ INSTALLED_APPS = ['django.contrib.admin',
                   'drf_multiple_model',
                   APP_NAME]
 
-MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
-              'bodzify_api.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
+if STATIC_FILES_ARE_NEEDED:
+    INSTALLED_APPS.append('django.contrib.staticfiles')
+
+MIDDLEWARE = [f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
+              f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
               'django.middleware.security.SecurityMiddleware',
               'corsheaders.middleware.CorsMiddleware',
               'django.contrib.sessions.middleware.SessionMiddleware',
@@ -188,7 +200,7 @@ MIDDLEWARE = ['bodzify_api.middleware.ExceptionLoggingMiddleware.ExceptionLoggin
               'django.contrib.messages.middleware.MessageMiddleware',
               'django.middleware.clickjacking.XFrameOptionsMiddleware']
 
-ROOT_URLCONF = 'bodzify_api.urls'
+ROOT_URLCONF = f'{APP_NAME}.urls'
 
 # DB may not be necessary (running collectstati for instance)
 DB_IS_NEEDED_STR = os.getenv('DB_IS_NEEDED')
@@ -247,7 +259,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'bodzify_api.wsgi.application'
+WSGI_APPLICATION = f'{APP_NAME}.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
                             {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
@@ -294,11 +306,6 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-ALLOWED_HOSTS = []
-STATICFILES_DIRS = []
-STATIC_ROOT = ''
-MEDIA_ROOT = ''
-
 AUDIO_META_ANALYSE_IS_NEEDED_STR = os.getenv('AUDIO_META_ANALYSE_IS_NEEDED')
 if not AUDIO_META_ANALYSE_IS_NEEDED_STR or AUDIO_META_ANALYSE_IS_NEEDED_STR not in ['true', 'false']:
     raise EnvironmentError("The AUDIO_META_ANALYSE_IS_NEEDED variable is not set or is not a boolean")
@@ -330,21 +337,6 @@ if AUDIO_META_ANALYSE_IS_NEEDED:
     ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
     if not ACOUSTID_API_KEY and AUDIO_META_ANALYSE_IS_NEEDED:
         raise EnvironmentError("The ACOUSTID_API_KEY variable must be set")
-
-STATIC_FILES_ARE_NEEDED_STR = os.getenv('STATIC_FILES_ARE_NEEDED')
-if not STATIC_FILES_ARE_NEEDED_STR or STATIC_FILES_ARE_NEEDED_STR not in ['true', 'false']:
-    raise EnvironmentError("The STATIC_FILES_ARE_NEEDED variable is not set or is not a boolean")
-STATIC_FILES_ARE_NEEDED = True if STATIC_FILES_ARE_NEEDED_STR == 'true' else False
-
-if STATIC_FILES_ARE_NEEDED:
-    print("STATIC_FILES_ARE_NEEDED is true. Setting up static files.")
-    STATIC_URL = 'static/'
-    STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
-    if not STATIC_FILES_DIR_ENV:
-        raise EnvironmentError("The STATIC_FILES_DIR variable must be set")
-    STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
-else:
-    print("Static files are not needed.")
 
 MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
 if not MEDIA_DIR_ENV:
@@ -512,3 +504,6 @@ if LOGS_ARE_NEEDED:
     }
 else:
     print("Logs are not needed.")
+
+print(f"STATIC_ROOT: {STATIC_ROOT}")
+print(f"STATICFILES_DIRS: {STATICFILES_DIRS}")
