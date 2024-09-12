@@ -83,3 +83,4 @@ This project is licensed under the MIT License.
 
 ## Acknowledgements
 This project use acoustid to fingerprint the audio files in order to identify each track.
+Please visit [Acoustid Web Service](https://acoustid.org/webservice).
