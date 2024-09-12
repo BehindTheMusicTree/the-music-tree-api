@@ -62,7 +62,7 @@ Running the container requires the following environment variables:
 - `DB_BODZIFY_API_USER_PASSWORD`
 - `DB_HOST`
 - `DB_PORT`
-- `AFP_CONTAINER_NAME`
+- `AFP_CONTAINER_NAME` (AFP meaning Audio FingerPrinter)
 - `AFP_PORT`
 - `AFP_POST_ENDPOINT`
 
