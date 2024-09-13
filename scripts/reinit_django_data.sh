@@ -3,8 +3,7 @@
 echo "Initializing Django data"
 
 # Get the directory of the script even when it's called from another script
-SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-SCRIPTS_DIR=$(realpath "$SCRIPT_DIR../")/
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_DIR=$(realpath "$SCRIPTS_DIR../")/
 
 # Environment file
@@ -111,7 +110,7 @@ find "${MIGRATIONS_DIR}*.pyc"  -delete
 
 # Create database
 echo "Creating database."
-bash ${SCRIPT_DIR}${INIT_DB_AND_ROLE_SCRIPT_NAME}
+bash ${SCRIPTS_DIR}${INIT_DB_AND_ROLE_SCRIPT_NAME}
 
 MANAGE_PATH=${PROJECT_DIR}manage.py
 
