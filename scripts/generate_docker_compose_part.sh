@@ -27,6 +27,7 @@ required_vars=(
   DB_VERSION
   DB_CONTAINER_NAME
   DB_DATA_DIR
+  HOST_DB_PORT
   DB_PORT
   DB_ENV_FILENAME
 
@@ -43,7 +44,6 @@ required_vars=(
   APP_IMAGE_REPO
   APP_VERSION
   APP_CONTAINER_NAME
-  HOST_API_PORT
   APP_PORT
   APP_ENV_FILENAME
   GUNICORN_LOG_DIR
@@ -71,7 +71,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     volumes:
       - db-data:$DB_DATA_DIR
     ports:
-      - "$DB_PORT:$DB_PORT"
+      - "$HOST_DB_PORT:$DB_PORT"
     networks:
       - $DOCKER_NETWORK_NAME
     env_file: $DB_ENV_FILENAME
@@ -84,8 +84,8 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-upload-tmp-files:$AFP_DOCKERIZED_POOL_DIR
       - afp-flask-log-dir:$AFP_DOCKERIZED_FLASK_LOG_DIR
       - afp-gunicorn-log-dir:$AFP_DOCKERIZED_GUNICORN_LOG_DIR
-    ports:
-      - "$AFP_PORT:$AFP_PORT"
+    expose:
+      - $AFP_PORT
     networks:
       - $DOCKER_NETWORK_NAME
     env_file: $AFP_ENV_FILENAME
@@ -106,8 +106,8 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-media-dir:${MEDIA_DIR}
       - api-static-files:${STATIC_FILES_DIR}
       - api-upload-tmp-files:${TMP_UPLOADED_FILES_DIR}
-    ports:
-      - $HOST_API_PORT:$APP_PORT
+    expose:
+      - $APP_PORT
     networks:
       - $DOCKER_NETWORK_NAME
     depends_on:

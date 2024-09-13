@@ -324,6 +324,7 @@ jobs:
           DB_VERSION: ${{ vars.DB_VERSION }}
           DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
           DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
+          HOST_DB_PORT: ${{ vars.HOST_DB_PORT }}
           DB_PORT: ${{ vars.DB_PORT }}
           DB_ENV_FILENAME: ${{ vars.DB_ENV_FILENAME }}
 
@@ -340,7 +341,6 @@ jobs:
           APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
           APP_VERSION: ${{ vars.APP_VERSION }}
           APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
-          HOST_API_PORT: ${{ vars.HOST_API_PORT }}
           APP_PORT: ${{ vars.APP_PORT }}
           APP_ENV_FILENAME: ${{ vars.DOCKERIZED_APP_ENV_FILENAME }}
           GUNICORN_LOG_DIR: ${{ vars.GUNICORN_LOG_DIR }}
