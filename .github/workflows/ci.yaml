@@ -266,15 +266,14 @@ jobs:
             echo 'ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'DB_BODZIFY_API_USER_PASSWORD="${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}"' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_USER_PASSWORD="${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}"' >> 
+              ${{ env.API_ENV_FILE }} &&
             echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_PORT=${{ vars.DB_PORT }}' >> ${{ env.API_ENV_FILE }} &&
             
-            echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' \
-              >> ${{ env.API_ENV_FILE }} &&
+            echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'AFP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' \
-              >> ${{ env.API_ENV_FILE }}
+            echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' >> ${{ env.API_ENV_FILE }}
           EOF
 
       - name: Set db environment variables on server
@@ -288,7 +287,7 @@ jobs:
             echo 'ENV=TEST' >> ${{ env.DB_ENV_FILE }} &&
 
             echo 'POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
-            echo 'POSTGRES_USER=${{ secrets.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
+            echo 'POSTGRES_USER=${{ vars.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
             echo 'POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE }} &&
             echo 'POSTGRES_PORT=${{ vars.DB_PORT }}' >> ${{ env.DB_ENV_FILE }}
           "
