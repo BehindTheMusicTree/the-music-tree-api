@@ -187,6 +187,7 @@ jobs:
       name: TEST
     env:
       IMAGE_FULL_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
+      IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -222,14 +223,21 @@ jobs:
 
       - name: Check if image exists on Docker Hub
         id: check-image
-        env:
-          IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
         run: |
           IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.IMAGE_URL }})
-          echo "image_exists=$IMAGE_EXISTS" >> $GITHUB_ENV
+          echo "::set-output name=image_exists::$IMAGE_EXISTS"
+
+      - name: Compare image digests
+        id: compare-digests
+        if: steps.check-image.outputs.image_exists == '200'
+        run: |
+          LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.IMAGE_FULL_NAME }} | cut -d'@' -f2)
+          REMOTE_DIGEST=$(curl -s ${{ env.IMAGE_URL }}/ | jq -r '.images[0].digest')
+          echo "local_digest=$LOCAL_DIGEST" >> $GITHUB_ENV
+          echo "remote_digest=$REMOTE_DIGEST" >> $GITHUB_ENV
 
       - name: Push Docker image
-        if: steps.check-image.outputs.image_exists != '200'
+        if: steps.compare-digests.outputs.local_digest != steps.compare-digests.outputs.remote_digest
         run: |
           docker push ${{ env.IMAGE_FULL_NAME }}
 
