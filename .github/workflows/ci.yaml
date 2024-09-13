@@ -119,7 +119,7 @@ jobs:
 
       - name: Init db data
         run: |
-          bash scripts/data/reinit_django_data.sh
+          bash scripts/reinit_django_data.sh
 
       - name: Run pytest
         run: pytest
