@@ -225,11 +225,11 @@ jobs:
         id: check-image
         run: |
           IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.IMAGE_URL }})
-          echo "::set-output name=image_exists::$IMAGE_EXISTS"
+          echo "image_exists=$IMAGE_EXISTS" >> $GITHUB_ENV
 
       - name: Compare image digests
         id: compare-digests
-        if: steps.check-image.outputs.image_exists == '200'
+        if: steps.check-image.outputs.image_exists != '200'
         run: |
           LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.IMAGE_FULL_NAME }} | cut -d'@' -f2)
           REMOTE_DIGEST=$(curl -s ${{ env.IMAGE_URL }}/ | jq -r '.images[0].digest')
