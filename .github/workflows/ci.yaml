@@ -324,7 +324,7 @@ jobs:
           DB_VERSION: ${{ vars.DB_VERSION }}
           DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
           DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
-          HOST_DB_PORT: ${{ vars.HOST_DB_PORT }}
+          DB_PORT_HOST: ${{ vars.DB_PORT_HOST }}
           DB_PORT: ${{ vars.DB_PORT }}
           DB_ENV_FILENAME: ${{ vars.DB_ENV_FILENAME }}
 

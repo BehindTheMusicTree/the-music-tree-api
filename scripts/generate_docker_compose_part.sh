@@ -27,7 +27,7 @@ required_vars=(
   DB_VERSION
   DB_CONTAINER_NAME
   DB_DATA_DIR
-  HOST_DB_PORT
+  DB_PORT_HOST
   DB_PORT
   DB_ENV_FILENAME
 
@@ -71,7 +71,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     volumes:
       - db-data:$DB_DATA_DIR
     ports:
-      - "$HOST_DB_PORT:$DB_PORT"
+      - "$DB_PORT_HOST:$DB_PORT"
     networks:
       - $DOCKER_NETWORK_NAME
     env_file: $DB_ENV_FILENAME
