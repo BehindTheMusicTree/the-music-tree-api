@@ -223,7 +223,7 @@ jobs:
       - name: Check if image exists on Docker Hub
         id: check-image
         run: |
-          IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" ${{ IMAGE_FULL_NAME }})
+          IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.IMAGE_FULL_NAME }})
           echo "image_exists=$IMAGE_EXISTS" >> $GITHUB_ENV
 
       - name: Push Docker image
