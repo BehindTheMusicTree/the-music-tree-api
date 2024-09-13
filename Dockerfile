@@ -117,5 +117,4 @@ RUN apt update && \
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh
 
-RUN pip list | grep gunicorn
-RUN echo $PATH && which gunicorn
+ENTRYPOINT ["/scripts/entrypoint.sh"]
