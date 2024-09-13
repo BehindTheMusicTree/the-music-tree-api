@@ -14,8 +14,7 @@ on:
 env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
-  APP_IMAGE_REPO: ${{ vars.API_IMAGE_REPO }}
-
+  
 jobs:
   pytest:
     name: Pytest
@@ -180,12 +179,14 @@ jobs:
           git diff --staged --exit-code || git commit -am "Add collected static files"
           git push
 
-  build-and-push-to-dockerhub:
-    name: Build / Push to Dockerhub
+  build-and-push-eventually-to-dockerhub:
+    name: Build / Push evnetually to Dockerhub
     runs-on: ubuntu-latest
-    # needs: [collectt-and-push-static-files]
+    # needs: [collect-and-push-static-files]
     environment: 
       name: TEST
+    env:
+      IMAGE_FULL_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -195,40 +196,47 @@ jobs:
           echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
           docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
-          build-args: |
-            APP_NAME=${{ vars.APP_NAME }}
-            APP_VERSION=${{ vars.APP_VERSION }}
+      - name: Build Docker image
+        id: build
+        run: |
+          docker build \
+            --build-arg APP_NAME=${{ vars.APP_NAME }} \
+            --build-arg APP_VERSION=${{ vars.APP_VERSION }} \
+            --build-arg TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }} \
+            --build-arg MEDIA_DIR=${{ vars.MEDIA_DIR }} \
+            --build-arg LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }} \
+            --build-arg STATIC_FILES_DIR=${{ vars.STATIC_FILES }} \
+            --build-arg STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }} \
+            --build-arg DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }} \
+            --build-arg DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }} \
+            --build-arg DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }} \
+            --build-arg DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }} \
+            --build-arg DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }} \
+            --build-arg DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }} \
+            --build-arg DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }} \
+            --build-arg DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }} \
+            --build-arg GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }} \
+            --build-arg GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }} \
+            --build-arg GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }} \
+            -t ${{ env.IMAGE_FULL_NAME }} .
+        
+      - name: Check if image exists on Docker Hub
+        id: check-image
+        env:
+          IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
+        run: |
+          IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.IMAGE_URL }})
+          echo "image_exists=$IMAGE_EXISTS" >> $GITHUB_OUTPUT
 
-            TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
-            MEDIA_DIR=${{ vars.MEDIA_DIR }}
-            LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
-
-            STATIC_FILES_DIR=${{ vars.STATIC_FILES }}
-            STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-
-            DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}
-            DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
-            DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
-            DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
-            DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}
-            DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
-            DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
-            DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}
-
-            GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
-            GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
-            GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
+      - name: Push Docker image
+        if: steps.check-image.outputs.image_exists != '200'
+        run: |
+          docker push ${{ env.IMAGE_FULL_NAME }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
     runs-on: ubuntu-latest
-    # needs: [build-and-push-to-dockerhub]
+    # needs: [build-and-push-eventually-to-dockerhub]
     environment: 
       name: TEST
     env:
@@ -301,7 +309,7 @@ jobs:
   set-partial-docker-compose-on-server:
     name: Set partial docker-compose on server
     runs-on: ubuntu-latest
-    needs: [build-and-push-to-dockerhub]
+    needs: [build-and-push-eventually-to-dockerhub]
     environment: 
       name: TEST
     steps:
@@ -362,7 +370,7 @@ jobs:
 
   redeploy-webhook-call:
     name: Redeploy webhook call
-    needs: [set-env-variables-on-server, set-partial-docker-compose-on-server, build-and-push-to-dockerhub]
+    needs: [set-env-variables-on-server, set-partial-docker-compose-on-server, build-and-push-eventually-to-dockerhub]
     uses: Bodzify/bodzify-server-management/.github/workflows/call-redeployment-webhook.yml@main
     with:
       env: TEST
