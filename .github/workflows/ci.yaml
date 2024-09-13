@@ -14,6 +14,7 @@ on:
 env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+  INIT_DB_AND_ROLE_SCRIPT_NAME: init_db_and_role_if_necessary.sh
   
 jobs:
   pytest:
@@ -219,6 +220,7 @@ jobs:
             --build-arg GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }} \
             --build-arg GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }} \
             --build-arg GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }} \
+            --build-arg INIT_DB_AND_ROLE_SCRIPT_NAME=${{ env.INIT_DB_AND_ROLE_SCRIPT_NAME }} \
             -t ${{ env.IMAGE_FULL_NAME }} .
 
       - name: Check if image exists on Docker Hub

@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1
 
+# Base Image: Debian Buster (a full Debian distribution).
+# Size: Larger, as it includes more tools and libraries by default.
+# Use Case: Suitable when you need a full Debian environment with more pre-installed tools and libraries.
 FROM python:3.11-buster
 
 ARG APP_NAME
@@ -25,6 +28,8 @@ ARG GUNICORN_LOG_DIR
 ARG GUNICORN_LOG_ERROR_FILENAME
 ARG GUNICORN_LOG_ACCESS_FILENAME
 
+ARG INIT_DB_AND_ROLE_SCRIPT_NAME
+
 RUN for var in \
     APP_NAME \
     APP_VERSION \
@@ -47,7 +52,9 @@ RUN for var in \
 
     GUNICORN_LOG_DIR \
     GUNICORN_LOG_ERROR_FILENAME \
-    GUNICORN_LOG_ACCESS_FILENAME; do \
+    GUNICORN_LOG_ACCESS_FILENAME \
+
+    INIT_DB_AND_ROLE_SCRIPT_NAME; do \
   if [ -z "$(eval echo \$$var)" ]; then \
     echo "The $var argument is not provided" >&2; \
     exit 1; \
@@ -88,7 +95,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
     GUNICORN_LOG_DIR=$GUNICORN_LOG_DIR \
     GUNICORN_LOG_ERROR_FILENAME=$GUNICORN_LOG_ERROR_FILENAME \
-    GUNICORN_LOG_ACCESS_FILENAME=$GUNICORN_LOG_ACCESS_FILENAME
+    GUNICORN_LOG_ACCESS_FILENAME=$GUNICORN_LOG_ACCESS_FILENAME \
+
+    INIT_DB_AND_ROLE_SCRIPT=${$DOCKER_HOME}/scripts/${INIT_DB_AND_ROLE_SCRIPT_NAME}
 
 RUN apt-get update && \
     apt-get install -y gosu && \

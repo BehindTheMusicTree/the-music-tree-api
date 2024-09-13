@@ -7,6 +7,7 @@ SCRIPT_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SO
 SCRIPTS_DIR=$(realpath "$SCRIPT_DIR../")/
 PROJECT_DIR=$(realpath "$SCRIPTS_DIR../")/
 
+# Environment file
 APP_ENV_FILE=$1
 if [ -z "$APP_ENV_FILE" ]; then
   echo "No env file provided as arg. Checking env/.env file"
@@ -28,11 +29,11 @@ else
   fi
 fi
 
+# Calculated paths environment file
 CALCULATED_PATHS_ENV_FILE=${PROJECT_DIR}env/calculated_paths/.env
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
-
+OUTPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE")
 if [ $? -ne 0 ]; then
-    echo "Failed to generate calculated paths env file"
+    echo "Failed to generate calculated paths env file: $OUTPUT" >&2
     exit 1
 fi
 
@@ -42,38 +43,43 @@ do
     export "$key=$value"
 done < "$CALCULATED_PATHS_ENV_FILE"
 
-required_vars=(
+# Required environment variables
+REQUIRED_VARS=(
   APP_NAME
   DB_CONTAINER_NAME
   DB_BODZIFY_API_DB_NAME
   DB_SUPERUSER_NAME
   LIBRARIES_DIR
+  INIT_DB_AND_ROLE_SCRIPT_NAME
 )
-for var in "${required_vars[@]}"; do
-  if [ -z "${!var}" ]; then
-    echo "$var must be set."
+for VAR in "${REQUIRED_VARS[@]}"; do
+  if [ -z "${!VAR}" ]; then
+    echo "$VAR must be set." >&2
     exit 1
   fi
 done
 
+# Check active connections
 ACTIVE_CONNECTIONS=$(docker exec -i $DB_CONTAINER_NAME \
 psql -U $DB_SUPERUSER_NAME \
 -tAc "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}' AND pid <> pg_backend_pid();")
 
 if [ "$ACTIVE_CONNECTIONS" -gt 0 ]; then
-    echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Aborting."
+    echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Aborting." >&2
     exit 1
 else
     echo "Database is not being accessed by other users. Proceeding."
 fi
 
+# Empty library directory
 echo "Empty library directory"
-users_subfolders_count=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
-total_track_files_count=$(find "$LIBRARIES_DIR" -mindepth 2 -type f | wc -l)
+USERS_SUBFOLDERS_COUNT=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
+TOTAL_TRACK_FILES_COUNT=$(find "$LIBRARIES_DIR" -mindepth 2 -type f | wc -l)
 rm -rf "$LIBRARIES_DIR"*
-echo "$users_subfolders_count user subfolders were deleted."
-echo "$total_track_files_count track files were deleted."
+echo "$USERS_SUBFOLDERS_COUNT user subfolders were deleted."
+echo "$TOTAL_TRACK_FILES_COUNT track files were deleted."
 
+# Check if database exists
 echo "Check if database exists"
 DB_EXISTS=$(docker exec -i $DB_CONTAINER_NAME \
 psql -U $DB_SUPERUSER_NAME -tAc "SELECT 1 FROM pg_database WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
@@ -85,6 +91,7 @@ else
     echo "Database does not exist."
 fi
 
+# Check if user exists
 echo "Check if user exists"
 USER_EXISTS=$(docker exec -i $DB_CONTAINER_NAME \
 psql -U $DB_SUPERUSER_NAME -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DB_BODZIFY_API_USERNAME}'")
@@ -96,16 +103,19 @@ else
     echo "User does not exist."
 fi
 
-Echo "Deleting migrations."
+# Delete migrations
+echo "Deleting migrations."
 MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
 find "${MIGRATIONS_DIR}*.py" -not -name "__init__.py" -delete
 find "${MIGRATIONS_DIR}*.pyc"  -delete
 
+# Create database
 echo "Creating database."
-bash ${SCRIPT_DIR}init_db_and_role.sh
+bash ${SCRIPT_DIR}${INIT_DB_AND_ROLE_SCRIPT_NAME}
 
 MANAGE_PATH=${PROJECT_DIR}manage.py
 
+# Create initial migrations
 echo "Creating initial migrations."
 python3 $MANAGE_PATH makemigrations
 

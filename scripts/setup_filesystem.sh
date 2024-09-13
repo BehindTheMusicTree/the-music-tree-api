@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 print_error_and_exit() {
     echo "Error: $1" >&2
     exit 1
@@ -58,10 +60,15 @@ else
     done < "$ENV_FILE"
 fi
 
-check_bool_var "APP_IS_EXPOSED"
-check_bool_var "DJANGO_LOGS_ARE_NEEDED"
-check_bool_var "STATIC_FILES_ARE_NEEDED"
-check_bool_var "AUDIO_META_ANALYSE_IS_NEEDED"
+BOOL_VARS=(
+  "APP_IS_EXPOSED"
+  "DJANGO_LOGS_ARE_NEEDED"
+  "STATIC_FILES_ARE_NEEDED"
+  "AUDIO_META_ANALYSE_IS_NEEDED"
+)
+for VAR in "${BOOL_VARS[@]}"; do
+  check_bool_var "$VAR"
+done
 
 check_var_is_set "LIBRARIES_DIR_NAME"
 
@@ -155,3 +162,6 @@ fi
 echo "MEDIA_DIR is set to $MEDIA_DIR"
 create_directory_if_not_exists "$MEDIA_DIR"
 set_read_write_permissions_and_owner "$MEDIA_DIR"
+
+check_var_is_set "INIT_DB_AND_ROLE_SCRIPT_NAME"
+chmod +x ${SCRIPTS_DIR}${INIT_DB_AND_ROLE_SCRIPT_NAME}
