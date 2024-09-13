@@ -231,13 +231,17 @@ jobs:
         id: compare-digests
         if: steps.check-image.outputs.image_exists != '200'
         run: |
-          LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.IMAGE_FULL_NAME }} | cut -d'@' -f2)
-          REMOTE_DIGEST=$(curl -s ${{ env.IMAGE_URL }}/ | jq -r '.images[0].digest')
-          echo "local_digest=$LOCAL_DIGEST" >> $GITHUB_ENV
-          echo "remote_digest=$REMOTE_DIGEST" >> $GITHUB_ENV
+          LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.IMAGE_FULL_NAME }} | cut -d'@' -f2 || echo "not_found")
+          if [ "$LOCAL_DIGEST" == "not_found" ]; then
+            echo "local_digest=not_found" >> $GITHUB_ENV
+          else
+            REMOTE_DIGEST=$(curl -s $IMAGE_URL | jq -r '.images[0].digest')
+            echo "local_digest=$LOCAL_DIGEST" >> $GITHUB_ENV
+            echo "remote_digest=$REMOTE_DIGEST" >> $GITHUB_ENV
+          fi
 
       - name: Push Docker image
-        if: steps.compare-digests.outputs.local_digest != steps.compare-digests.outputs.remote_digest
+        if: steps.compare-digests.outputs.local_digest == 'not_found' || steps.compare-digests.outputs.local_digest != steps.compare-digests.outputs.remote_digest
         run: |
           docker push ${{ env.IMAGE_FULL_NAME }}
 
