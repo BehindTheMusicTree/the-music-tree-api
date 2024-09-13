@@ -266,8 +266,7 @@ jobs:
             echo 'ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'DB_BODZIFY_API_USER_PASSWORD="${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}"' >> 
-              ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_USER_PASSWORD="${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}"' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_PORT=${{ vars.DB_PORT }}' >> ${{ env.API_ENV_FILE }} &&
             
