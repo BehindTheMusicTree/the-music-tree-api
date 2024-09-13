@@ -159,12 +159,13 @@ STATIC_FILES_ARE_NEEDED = True if STATIC_FILES_ARE_NEEDED_STR == 'true' else Fal
 
 STATICFILES_DIRS = []
 if STATIC_FILES_ARE_NEEDED:
-    print("STATIC_FILES_ARE_NEEDED is true. Setting up static files.")
+    print("STATIC_FILES_ARE_NEEDED is true. Setting up static files...")
     STATIC_URL = 'static/'
     STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
     if not STATIC_FILES_DIR_ENV:
         raise EnvironmentError("The STATIC_FILES_DIR variable must be set")
     STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
+    print("STATIC_ROOT: " + str(STATIC_ROOT))
 else:
     print("Static files are not needed.")
     STATIC_ROOT = ''
@@ -223,12 +224,11 @@ if DB_IS_NEEDED:
     if DB_BODZIFY_API_USER_PASSWORD is None:
         raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable must be set")
 
-    DB_CONTAINER_NAME = os.getenv('DB_CONTAINER_NAME')
-    if not DB_CONTAINER_NAME:
-        raise EnvironmentError("The DB_CONTAINER_NAME variable must be set")
-
     if APP_IS_EXPOSED:
         print("The app is exposed. The db host is the db container name.")
+        DB_CONTAINER_NAME = os.getenv('DB_CONTAINER_NAME')
+        if not DB_CONTAINER_NAME:
+            raise EnvironmentError("The DB_CONTAINER_NAME variable must be set")
         DB_HOST = DB_CONTAINER_NAME
     else:
         print("The app is not exposed. The db host is set to the env var DB_HOST.")
