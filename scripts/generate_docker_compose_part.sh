@@ -43,6 +43,7 @@ required_vars=(
   APP_IMAGE_REPO
   APP_VERSION
   APP_CONTAINER_NAME
+  HOST_API_PORT
   APP_PORT
   APP_ENV_FILENAME
   GUNICORN_LOG_DIR
@@ -105,8 +106,8 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-media-dir:${MEDIA_DIR}
       - api-static-files:${STATIC_FILES_DIR}
       - api-upload-tmp-files:${TMP_UPLOADED_FILES_DIR}
-    expose:
-      - $APP_PORT
+    ports:
+      - $HOST_API_PORT:$APP_PORT
     networks:
       - $DOCKER_NETWORK_NAME
     depends_on:
