@@ -180,7 +180,7 @@ jobs:
           git push
 
   build-and-push-eventually-to-dockerhub:
-    name: Build / Push evnetually to Dockerhub
+    name: Build / Push eventually to Dockerhub
     runs-on: ubuntu-latest
     # needs: [collect-and-push-static-files]
     environment: 
@@ -219,14 +219,13 @@ jobs:
             --build-arg GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }} \
             --build-arg GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }} \
             -t ${{ env.IMAGE_FULL_NAME }} .
-        
+
       - name: Check if image exists on Docker Hub
         id: check-image
-        env:
-          IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
         run: |
-          IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.IMAGE_URL }})
-          echo "image_exists=$IMAGE_EXISTS" >> $GITHUB_OUTPUT
+          IMAGE_URL="https://hub.docker.com/v2/repositories/${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/"
+          IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" $IMAGE_URL)
+          echo "image_exists=$IMAGE_EXISTS" >> $GITHUB_ENV
 
       - name: Push Docker image
         if: steps.check-image.outputs.image_exists != '200'
