@@ -119,7 +119,8 @@ RUN apt update && \
     pip install --upgrade pip && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
     pip install -r requirements.txt && \
-    bash scripts/setup_filesystem.sh
+    bash scripts/setup_filesystem.sh && \
+    chmod +x ${ROOT_DIR}scripts/entrypoint.sh
 
 # Set the entrypoint using shell form to allow environment variable expansion
 ENTRYPOINT ["sh", "-c", "${ROOT_DIR}scripts/entrypoint.sh"]
