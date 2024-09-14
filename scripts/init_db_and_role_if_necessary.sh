@@ -39,32 +39,31 @@ for VAR in "${REQUIRED_VARS[@]}"; do
   fi
 done
 
-DB_EXISTS=$(docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME \
-  psql -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_BODZIFY_API_DB_NAME';")
+DB_EXISTS=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -tAc \
+  "SELECT 1 FROM pg_database WHERE datname='$DB_BODZIFY_API_DB_NAME';")
 
 if [ "$DB_EXISTS" != "1" ]; then
     echo "Database $DB_BODZIFY_API_DB_NAME does not exist. Creating..."
-    docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;"
+    psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;"
 else
     echo "Database $DB_BODZIFY_API_DB_NAME already exists."
 fi
 
-DATABASES=$(docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -t -c "SELECT datname FROM pg_database;")
+DATABASES=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -t -c "SELECT datname FROM pg_database;")
 
-docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME \
-  psql -d $DB_BODZIFY_API_DB_NAME -c "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
+psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
 
-docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME bash -c \
-  "psql -c \"GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME;\"; \
-  psql -c \"ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8';\"; \
-  psql -c \"ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed';\"; \
-  psql -c \"ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC';\"; \
-  psql -c \"ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB;\"; \
-  psql -d $DB_BODZIFY_API_DB_NAME -c \"GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_BODZIFY_API_USERNAME;\"; \
-  psql -d $DB_BODZIFY_API_DB_NAME -c \"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_BODZIFY_API_USERNAME;\""
+psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+  "GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME; \
+  ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8'; \
+  ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed'; \
+  ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC'; \
+  ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB; \
+  GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_BODZIFY_API_USERNAME; \
+  GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_BODZIFY_API_USERNAME;"
 
 # List all databases to verify that the new database was created
-docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -c "\l"
+psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "\l"
 
 # List all roles to verify that the new role was created
-docker exec -u $DB_SUPERUSER_NAME $DB_CONTAINER_NAME psql -c "\du"
+psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "\du"
