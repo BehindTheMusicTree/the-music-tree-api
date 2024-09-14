@@ -121,4 +121,5 @@ RUN apt update && \
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh
 
+# Set the entrypoint using shell form to allow environment variable expansion
 ENTRYPOINT ["sh", "-c", "$DOCKER_HOME/scripts/entrypoint.sh"]
