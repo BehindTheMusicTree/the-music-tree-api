@@ -121,4 +121,4 @@ RUN apt update && \
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh
 
-ENTRYPOINT ["/home/app/scripts/entrypoint.sh"]
+ENTRYPOINT ["sh", "-c", "$DOCKER_HOME/scripts/entrypoint.sh"]
