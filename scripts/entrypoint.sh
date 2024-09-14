@@ -11,9 +11,16 @@ REQUIRES_VARS=(
     GUNICORN_LOG_ERROR_FILENAME
     GUNICORN_LOG_ACCESS_FILENAME
 )
+for VAR in "${REQUIRES_VARS[@]}"; do
+    if [ -z "${!VAR}" ]; then
+        echo "$VAR must be set." >&2
+        exit 1
+    fi
+done
 
-if [ -z "INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT" ]; then
-    echo "INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT must be set." >&2
+echo "Initializing the database and roles if necessary..."
+if [ ! -f "${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT}" ]; then
+    echo "${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT} does not exist" >&2
     exit 1
 fi
 

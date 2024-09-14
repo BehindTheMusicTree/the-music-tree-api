@@ -67,7 +67,7 @@ done
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DOCKER_HOME=$ROOT_DIR \
+    ROOT_DIR=$ROOT_DIR \
 
     ENV=TEST \
 
@@ -101,16 +101,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     GUNICORN_LOG_ERROR_FILENAME=$GUNICORN_LOG_ERROR_FILENAME \
     GUNICORN_LOG_ACCESS_FILENAME=$GUNICORN_LOG_ACCESS_FILENAME \
 
-    INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT=${DOCKER_HOME}/scripts/${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME}
+    INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT=${ROOT_DIR}scripts/${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME}
 
 RUN apt-get update && \
     apt-get install -y gosu && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY . $DOCKER_HOME
+COPY . $ROOT_DIR
 
-WORKDIR $DOCKER_HOME
+WORKDIR $ROOT_DIR
 
 RUN apt update && \
     bash scripts/install_dependencies.sh && \
@@ -122,4 +122,4 @@ RUN apt update && \
     bash scripts/setup_filesystem.sh
 
 # Set the entrypoint using shell form to allow environment variable expansion
-ENTRYPOINT ["sh", "-c", "${DOCKER_HOME}scripts/entrypoint.sh"]
+ENTRYPOINT ["sh", "-c", "${ROOT_DIR}scripts/entrypoint.sh"]
