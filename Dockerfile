@@ -5,6 +5,8 @@
 # Use Case: Suitable when you need a full Debian environment with more pre-installed tools and libraries.
 FROM python:3.11-buster
 
+ARG ROOT_DIR
+
 ARG APP_NAME
 ARG APP_VERSION
 
@@ -31,6 +33,8 @@ ARG GUNICORN_LOG_ACCESS_FILENAME
 ARG INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME
 
 RUN for var in \
+    ROOT_DIR \
+    
     APP_NAME \
     APP_VERSION \
 
@@ -63,7 +67,7 @@ done
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DOCKER_HOME=/home/app/webapp \
+    DOCKER_HOME=$ROOT_DIR \
 
     ENV=TEST \
 
@@ -117,4 +121,4 @@ RUN apt update && \
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh
 
-ENTRYPOINT ["/home/app/webapp/scripts/entrypoint.sh"]
+ENTRYPOINT ["/home/app/scripts/entrypoint.sh"]

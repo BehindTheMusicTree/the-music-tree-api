@@ -15,6 +15,7 @@ env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
   INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME: init_db_and_role_if_necessary.sh
+  ROOT_DIR: /home/app/
   
 jobs:
   pytest:
@@ -202,6 +203,7 @@ jobs:
         id: build
         run: |
           docker build \
+            --build-arg ROOT_DIR=${{ env.ROOT_DIR }} \
             --build-arg APP_NAME=${{ vars.APP_NAME }} \
             --build-arg APP_VERSION=${{ vars.APP_VERSION }} \
             --build-arg TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }} \
