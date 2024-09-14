@@ -117,4 +117,4 @@ RUN apt update && \
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh
 
-ENTRYPOINT ["/app/scripts/entrypoint.sh"]
+ENTRYPOINT ["/home/app/webapp/scripts/entrypoint.sh"]
