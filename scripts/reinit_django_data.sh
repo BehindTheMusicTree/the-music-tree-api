@@ -38,6 +38,7 @@ fi
 
 CALCULATED_PATHS_ENV_FILE=${PROJECT_DIR}env/calculated_paths/.env
 echo "Generating calculated paths env file: ${CALCULATED_PATHS_ENV_FILE}"
+export DB_IS_NEEDED=true
 OUTPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE")
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file: $OUTPUT" >&2

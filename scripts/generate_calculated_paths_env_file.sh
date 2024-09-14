@@ -20,14 +20,17 @@ BASE_DIR=$1
 [ -z "$2" ] && print_error_and_exit "NO CALCULATED PATHS ENV FILE PATH PROVIDED."
 GENERATED_PATHS_ENV_FILE=$2
 
-REQUIRED_VARS=("APP_IS_EXPOSED" "LIBRARIES_DIR_NAME")
+REQUIRED_VARS=("APP_IS_EXPOSED" "LIBRARIES_DIR_NAME" "DB_IS_NEEDED")
 for VAR in "${REQUIRED_VARS[@]}"; do
     check_var_is_set "$VAR"
 done
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
     echo "APP_IS_EXPOSED is set to true"
-    REQUIRED_VARS=("MEDIA_DIR" "TMP_UPLOADED_FILES_DIR" "DB_CONTAINER_NAME")
+    REQUIRED_VARS=("MEDIA_DIR" "TMP_UPLOADED_FILES_DIR")
+    if [ "$DB_IS_NEEDED" = "true" ]; then
+        REQUIRED_VARS+=("DB_CONTAINER_NAME")
+    fi
     [ "$STATIC_FILES_ARE_NEEDED" = "true" ] && REQUIRED_VARS+=("STATIC_FILES_DIR")
     [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ] && REQUIRED_VARS+=("DJANGO_LOG_DIR")
     for VAR in "${REQUIRED_VARS[@]}"; do
@@ -36,7 +39,18 @@ if [ "$APP_IS_EXPOSED" = "true" ]; then
     DB_HOST=$DB_CONTAINER_NAME
 else
     echo "APP_IS_EXPOSED is set to false"
-    check_var_is_set "DB_HOST"
+    REQUIRED_VARS=( \
+        "MEDIA_DEFAULT_INTERNAL_DIR" \
+        "STATIC_FILES_DEFAULT_INTERNAL_DIR" \
+        "DJANGO_LOG_DEFAULT_INTERNAL_DIR" \
+        "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR")
+    if [ "$DB_IS_NEEDED" = "true" ]; then
+        REQUIRED_VARS+=("DB_HOST")
+    fi
+    for VAR in "${REQUIRED_VARS[@]}"; do
+        check_var_is_set "$VAR"
+    done
+    
     MEDIA_DIR="${BASE_DIR}${MEDIA_DEFAULT_INTERNAL_DIR}"
     [ "$STATIC_FILES_ARE_NEEDED" = "true" ] && STATIC_FILES_DIR="${BASE_DIR}${STATIC_FILES_DEFAULT_INTERNAL_DIR}"
     [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ] && DJANGO_LOG_DIR="${BASE_DIR}${DJANGO_LOG_DEFAULT_INTERNAL_DIR}"
