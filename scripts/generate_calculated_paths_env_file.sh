@@ -27,16 +27,20 @@ done
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
     echo "APP_IS_EXPOSED is set to true"
-    REQUIRED_VARS=("MEDIA_DIR" "TMP_UPLOADED_FILES_DIR")
+    check_var_is_set "MEDIA_DIR"
+    check_var_is_set "TMP_UPLOADED_FILES_DIR"
     if [ "$DB_IS_NEEDED" = "true" ]; then
-        REQUIRED_VARS+=("DB_CONTAINER_NAME")
+        check_var_is_set "DB_CONTAINER_NAME"
+        DB_HOST=$DB_CONTAINER_NAME
     fi
-    [ "$STATIC_FILES_ARE_NEEDED" = "true" ] && REQUIRED_VARS+=("STATIC_FILES_DIR")
-    [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ] && REQUIRED_VARS+=("DJANGO_LOG_DIR")
-    for VAR in "${REQUIRED_VARS[@]}"; do
-        check_var_is_set "$VAR"
-    done
-    DB_HOST=$DB_CONTAINER_NAME
+    if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
+        check_var_is_set "STATIC_FILES_DIR"
+        STATIC_FILES_DIR="${BASE_DIR}${STATIC_FILES_DIR}"
+    fi
+    if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
+        check_var_is_set "DJANGO_LOG_DIR"
+        DJANGO_LOG_DIR="${BASE_DIR}${DJANGO_LOG_DIR}"
+    fi
 else
     echo "APP_IS_EXPOSED is set to false"
     if [ "$DB_IS_NEEDED" = "true" ]; then
@@ -52,9 +56,6 @@ else
     fi
     if [ "$AUDIO_META_ANALYSE_IS_NEEDED" = "true" ]; then
         check_var_is_set "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR"
-        check_var_is_set "AUDIO_META_ANALYSE_DEFAULT_INTERNAL_DIR"
-        check_var_is_set "MEDIA_DEFAULT_INTERNAL_DIR"
-        AUDIO_META_ANALYSE_DIR="${BASE_DIR}${MEDIA_DEFAULT_INTERNAL_DIR}"
         TMP_UPLOADED_FILES_DIR="${BASE_DIR}${TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR}"
     fi
 fi
