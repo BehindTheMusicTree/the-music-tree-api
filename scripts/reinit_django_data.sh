@@ -2,11 +2,18 @@
 
 echo "Initializing Django data"
 
+export_value_removing_surrounding_quotes() {
+    local VAR_NAME=$1
+    local VAR_VALUE=${!VAR_NAME}
+    VAR_VALUE=${VAR_VALUE#\'}
+    VAR_VALUE=${VAR_VALUE%\'}
+    export "$VAR_NAME=$VAR_VALUE"
+}
+
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_DIR=$(realpath "$SCRIPTS_DIR../")/
 
-# Environment file
 APP_ENV_FILE=$1
 if [ -z "$APP_ENV_FILE" ]; then
   echo "No env file provided as arg. Checking env/.env file"
@@ -29,8 +36,8 @@ else
   fi
 fi
 
-# Calculated paths environment file
 CALCULATED_PATHS_ENV_FILE=${PROJECT_DIR}env/calculated_paths/.env
+echo "Generating calculated paths env file: ${CALCULATED_PATHS_ENV_FILE}"
 OUTPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE")
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file: $OUTPUT" >&2
@@ -43,12 +50,15 @@ do
     export "$key=$value"
 done < "$CALCULATED_PATHS_ENV_FILE"
 
-# Required environment variables
 REQUIRED_VARS=(
   APP_NAME
-  DB_CONTAINER_NAME
+  DB_HOST
+  DB_PORT
   DB_BODZIFY_API_DB_NAME
   DB_SUPERUSER_NAME
+  DB_SUPERUSER_PASSWORD
+  DB_BODZIFY_API_USERNAME
+  DB_BODZIFY_API_USER_PASSWORD
   LIBRARIES_DIR
   INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME
 )
@@ -59,7 +69,14 @@ for VAR in "${REQUIRED_VARS[@]}"; do
   fi
 done
 
-# Empty library directory
+VARS_WITH_POTENTIAL_SURROUNDING_QUOTES=(
+  DB_SUPERUSER_PASSWORD
+  DB_BODZIFY_API_USER_PASSWORD
+)
+for VAR in "${VARS_WITH_POTENTIAL_SURROUNDING_QUOTES[@]}"; do
+  export_value_removing_surrounding_quotes "$VAR"
+done
+
 echo "Empty library directory"
 USERS_SUBFOLDERS_COUNT=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
 TOTAL_TRACK_FILES_COUNT=$(find "$LIBRARIES_DIR" -mindepth 2 -type f | wc -l)
@@ -67,10 +84,13 @@ rm -rf "$LIBRARIES_DIR"*
 echo "$USERS_SUBFOLDERS_COUNT user subfolders were deleted."
 echo "$TOTAL_TRACK_FILES_COUNT track files were deleted."
 
-# Check active connections on database
-ACTIVE_CONNECTIONS=$(docker exec -i $DB_CONTAINER_NAME \
-psql -U $DB_SUPERUSER_NAME \
--tAc "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}' AND pid <> pg_backend_pid();")
+echo "Check if database is being accessed by other users"
+ACTIVE_CONNECTIONS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+  "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}' AND pid <> pg_backend_pid();" 2>&1)
+if [ $? -ne 0 ]; then
+  echo "Failed to check active connections. Details: $ACTIVE_CONNECTIONS"
+  exit 1
+fi
 
 if [ "$ACTIVE_CONNECTIONS" -gt 0 ]; then
     echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Aborting." >&2
@@ -79,53 +99,61 @@ else
     echo "Database is not being accessed by other users. Proceeding."
 fi
 
-# Check if database exists
 echo "Check if database exists"
-DB_EXISTS=$(docker exec -i $DB_CONTAINER_NAME \
-psql -U $DB_SUPERUSER_NAME -tAc "SELECT 1 FROM pg_database WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
+DB_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+  "SELECT 1 FROM pg_database WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
 if [ "$DB_EXISTS" = "1" ]; then
     echo "Database exists. Dropping database"
-    docker exec -i $DB_CONTAINER_NAME \
-    psql -U $DB_SUPERUSER_NAME -c "DROP DATABASE $DB_BODZIFY_API_DB_NAME;"
+    DROP_DB_OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
+    if [ $? -ne 0 ]; then
+      echo "Failed to drop the database. Details: $DROP_DB_OUTPUT"
+      exit 1
+    fi
 else
     echo "Database does not exist."
 fi
 
-# Check if user exists
 echo "Check if user exists"
-USER_EXISTS=$(docker exec -i $DB_CONTAINER_NAME \
-psql -U $DB_SUPERUSER_NAME -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DB_BODZIFY_API_USERNAME}'")
+USER_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+  "SELECT 1 FROM pg_roles WHERE rolname='${DB_BODZIFY_API_USERNAME}'")
 if [ "$USER_EXISTS" = "1" ]; then
     echo "User exists. Dropping user"
-    docker exec -i $DB_CONTAINER_NAME \
-    psql -U $DB_SUPERUSER_NAME -c "DROP USER $DB_BODZIFY_API_USERNAME;"
+    DROP_USER_OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
+    if [ $? -ne 0 ]; then
+      echo "Failed to drop the user. Details: $DROP_USER_OUTPUT"
+      exit 1
+    fi
 else 
     echo "User does not exist."
 fi
 
-# Delete migrations
 echo "Deleting migrations."
 MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
 find "${MIGRATIONS_DIR}*.py" -not -name "__init__.py" -delete
 find "${MIGRATIONS_DIR}*.pyc"  -delete
 
-# Create database
-echo "Creating database."
+echo "Running the script to initialize the database and role."
 bash ${SCRIPTS_DIR}${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME}
+if [ $? -ne 0 ]; then
+  echo "The script $INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME failed."
+  exit 1
+fi
 
-MANAGE_PATH=${PROJECT_DIR}manage.py
+MANAGE_SCRIPT=${PROJECT_DIR}manage.py
+echo "MANAGE_SCRIPT: $MANAGE_SCRIPT"
 
-# Create initial migrations
 echo "Creating initial migrations."
-MAKEMIGRATIONS_OUTPUT=$(python3 $MANAGE_PATH makemigrations 2>&1)
+MAKEMIGRATIONS_OUTPUT=$(python3 $MANAGE_SCRIPT makemigrations 2>&1)
 echo "$MAKEMIGRATIONS_OUTPUT"
 if echo "$MAKEMIGRATIONS_OUTPUT" | grep -q "Connection refused"; then
     echo "Failed to create migrations due to database connection issue." >&2
     exit 1
 fi
 
-# Apply migrations
-python3 $MANAGE_PATH migrate
+echo "Applying migrations."
+python3 $MANAGE_SCRIPT migrate
 
-# Load all fixture data
-python3 $MANAGE_PATH loaddata app admin_user_dev mobile_test_user postman_test_user ultimate_music_guide_test_user_dev
+echo "Loading initial data."
+python3 $MANAGE_SCRIPT loaddata app admin_user_dev mobile_test_user postman_test_user ultimate_music_guide_test_user_dev
+
+unset PGPASSWORD

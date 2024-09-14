@@ -2,6 +2,14 @@
 
 echo "Running the database and audio fingerprinter containers."
 
+export_value_removing_surrounding_quotes() {
+    local VAR_NAME=$1
+    local VAR_VALUE=${!VAR_NAME}
+    VAR_VALUE=${VAR_VALUE#\'}
+    VAR_VALUE=${VAR_VALUE%\'}
+    export "$VAR_NAME=$VAR_VALUE"
+}
+
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 project_dir=$(realpath $(dirname "$SCRIPTS_DIR"))/
@@ -42,11 +50,8 @@ done < "$calculated_paths_env_file"
 required_vars=(
   ENV
   DOCKERHUB_USERNAME
-
   DEBUG
-
   TMP_UPLOADED_FILES_DIR
-
   DB_CONTAINER_NAME
   DB_IMAGE_REPO
   DB_VERSION
@@ -57,19 +62,25 @@ required_vars=(
   DB_BODZIFY_API_USERNAME
   DB_BODZIFY_API_USER_PASSWORD
   DB_PORT
-
   AFP_CONTAINER_NAME
   AFP_IMAGE_REPO
   AFP_VERSION
   AFP_DOCKERIZED_POOL_DIR
   AFP_PORT
 )
-
 for var in "${required_vars[@]}"; do
   if [ -z "${!var}" ]; then
     echo "$var must be set."
     exit 1
   fi
+done
+
+VARS_WITH_EVENTUAL_SURROUNDING_QUOTES=(
+  DB_SUPERUSER_PASSWORD
+  DB_BODZIFY_API_USER_PASSWORD
+)
+for VAR in "${VARS_WITH_EVENTUAL_SURROUNDING_QUOTES[@]}"; do
+  export_value_removing_surrounding_quotes "$VAR"
 done
 
 echo "Running the database and audio fingerprinter containers."

@@ -6,35 +6,37 @@ print_error_and_exit() {
 }
 
 check_var_is_set() {
-    local var_name=$1
-    if [ -z "${!var_name}" ]; then
-        print_error_and_exit "$var_name is not set"
+    local VAR_NAME=$1
+    if [ -z "${!VAR_NAME}" ]; then
+        print_error_and_exit "$VAR_NAME is not set"
     fi
 }
 
-echo "Generating calculated paths env file"
+echo "Generating the env file with calculated paths and db host"
 
-[ -z "$1" ] && print_error_and_exit "no base dir provided."
+[ -z "$1" ] && print_error_and_exit "NO BASE DIR PROVIDED."
 BASE_DIR=$1
 
-[ -z "$2" ] && print_error_and_exit "no calculated paths env file path provided."
+[ -z "$2" ] && print_error_and_exit "NO CALCULATED PATHS ENV FILE PATH PROVIDED."
 GENERATED_PATHS_ENV_FILE=$2
 
-required_vars=("APP_IS_EXPOSED" "LIBRARIES_DIR_NAME")
-for var in "${required_vars[@]}"; do
-    check_var_is_set "$var"
+REQUIRED_VARS=("APP_IS_EXPOSED" "LIBRARIES_DIR_NAME")
+for VAR in "${REQUIRED_VARS[@]}"; do
+    check_var_is_set "$VAR"
 done
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
     echo "APP_IS_EXPOSED is set to true"
-    required_vars=("MEDIA_DIR" "TMP_UPLOADED_FILES_DIR")
-    [ "$STATIC_FILES_ARE_NEEDED" = "true" ] && required_vars+=("STATIC_FILES_DIR")
-    [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ] && required_vars+=("DJANGO_LOG_DIR")
-    for var in "${required_vars[@]}"; do
-        check_var_is_set "$var"
+    REQUIRED_VARS=("MEDIA_DIR" "TMP_UPLOADED_FILES_DIR" "DB_CONTAINER_NAME")
+    [ "$STATIC_FILES_ARE_NEEDED" = "true" ] && REQUIRED_VARS+=("STATIC_FILES_DIR")
+    [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ] && REQUIRED_VARS+=("DJANGO_LOG_DIR")
+    for VAR in "${REQUIRED_VARS[@]}"; do
+        check_var_is_set "$VAR"
     done
+    DB_HOST=$DB_CONTAINER_NAME
 else
     echo "APP_IS_EXPOSED is set to false"
+    check_var_is_set "DB_HOST"
     MEDIA_DIR="${BASE_DIR}${MEDIA_DEFAULT_INTERNAL_DIR}"
     [ "$STATIC_FILES_ARE_NEEDED" = "true" ] && STATIC_FILES_DIR="${BASE_DIR}${STATIC_FILES_DEFAULT_INTERNAL_DIR}"
     [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ] && DJANGO_LOG_DIR="${BASE_DIR}${DJANGO_LOG_DEFAULT_INTERNAL_DIR}"
@@ -53,6 +55,8 @@ echo "LIBRARIES_DIR: $LIBRARIES_DIR"
 echo "MEDIA_DIR=$MEDIA_DIR" >> "$GENERATED_PATHS_ENV_FILE"
 echo "LIBRARIES_DIR_NAME=$LIBRARIES_DIR_NAME" >> "$GENERATED_PATHS_ENV_FILE"
 echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$GENERATED_PATHS_ENV_FILE"
+
+echo "DB_HOST=$DB_HOST" >> "$GENERATED_PATHS_ENV_FILE"
 
 if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
     echo "STATIC_FILES_DIR: $STATIC_FILES_DIR"
