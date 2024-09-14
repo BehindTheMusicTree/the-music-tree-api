@@ -199,55 +199,33 @@ jobs:
           echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
           docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build Docker image
-        id: build
-        run: |
-          docker build \
-            --build-arg ROOT_DIR=${{ env.CONTAINER_ROOT_DIR }} \
-            --build-arg APP_NAME=${{ vars.APP_NAME }} \
-            --build-arg APP_VERSION=${{ vars.APP_VERSION }} \
-            --build-arg TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }} \
-            --build-arg MEDIA_DIR=${{ vars.MEDIA_DIR }} \
-            --build-arg LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }} \
-            --build-arg STATIC_FILES_DIR=${{ vars.STATIC_FILES }} \
-            --build-arg STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }} \
-            --build-arg DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }} \
-            --build-arg DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }} \
-            --build-arg DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }} \
-            --build-arg DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }} \
-            --build-arg DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }} \
-            --build-arg DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }} \
-            --build-arg DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }} \
-            --build-arg DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }} \
-            --build-arg GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }} \
-            --build-arg GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }} \
-            --build-arg GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }} \
-            --build-arg INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME=${{ env.INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME }} \
-            -t ${{ env.IMAGE_FULL_NAME }} .
-
-      - name: Check if image exists on Docker Hub
-        id: check-image
-        run: |
-          IMAGE_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.IMAGE_URL }})
-          echo "image_exists=$IMAGE_EXISTS" >> $GITHUB_ENV
-
-      - name: Compare image digests
-        id: compare-digests
-        if: steps.check-image.outputs.image_exists != '200'
-        run: |
-          LOCAL_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.IMAGE_FULL_NAME }} | cut -d'@' -f2 || echo "not_found")
-          if [ "$LOCAL_DIGEST" == "not_found" ]; then
-            echo "local_digest=not_found" >> $GITHUB_ENV
-          else
-            REMOTE_DIGEST=$(curl -s $IMAGE_URL | jq -r '.images[0].digest')
-            echo "local_digest=$LOCAL_DIGEST" >> $GITHUB_ENV
-            echo "remote_digest=$REMOTE_DIGEST" >> $GITHUB_ENV
-          fi
-
-      - name: Push Docker image
-        if: steps.compare-digests.outputs.local_digest == 'not_found' || steps.compare-digests.outputs.local_digest != steps.compare-digests.outputs.remote_digest
-        run: |
-          docker push ${{ env.IMAGE_FULL_NAME }}
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_FULL_NAME }}
+          build-args: |
+            ROOT_DIR=${{ env.CONTAINER_ROOT_DIR }}
+            APP_NAME=${{ vars.APP_NAME }}
+            APP_VERSION=${{ vars.APP_VERSION }}
+            TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
+            MEDIA_DIR=${{ vars.MEDIA_DIR }}
+            LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
+            STATIC_FILES_DIR=${{ vars.STATIC_FILES }}
+            STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
+            DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}
+            DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
+            DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
+            DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
+            DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}
+            DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
+            DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
+            DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}
+            GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
+            GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
+            GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
+            INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME=${{ env.INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
