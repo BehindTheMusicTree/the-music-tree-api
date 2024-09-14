@@ -63,8 +63,6 @@ jobs:
       AFP_DOCKERIZED_POOL_DIR: ${{ vars.AFP_DOCKERIZED_POOL_DIR }}
       AFP_POST_ENDPOINT: ${{ vars.AFP_POST_ENDPOINT }}
 
-      INIT_DB_AND_ROLE_SCRIPT_NAME: ${{ env.INIT_DB_AND_ROLE_SCRIPT_NAME }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
