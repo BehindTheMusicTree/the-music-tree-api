@@ -47,8 +47,6 @@ required_vars=(
   APP_PORT
   APP_ENV_FILENAME
   GUNICORN_LOG_DIR
-  GUNICORN_LOG_ERROR_FILENAME
-  GUNICORN_LOG_ACCESS_FILENAME
   DJANGO_LOG_DIR
   MEDIA_DIR
   STATIC_FILES_DIR
@@ -94,12 +92,6 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     working_dir: /home/app/webapp/
     image: $DOCKERHUB_USERNAME/$APP_IMAGE_REPO:$APP_VERSION
     container_name: $APP_CONTAINER_NAME
-    command: >
-      gunicorn bodzify_api.wsgi:application
-      --bind 0.0.0.0:$APP_PORT
-      --error-logfile=${GUNICORN_LOG_DIR}$GUNICORN_LOG_ERROR_FILENAME
-      --access-logfile=${GUNICORN_LOG_DIR}$GUNICORN_LOG_ACCESS_FILENAME
-      --log-level=info
     volumes:
       - api-django-log-dir:${DJANGO_LOG_DIR}
       - api-gunicorn-log-dir:${GUNICORN_LOG_DIR}
