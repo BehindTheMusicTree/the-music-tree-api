@@ -39,8 +39,6 @@ if [ "$APP_IS_EXPOSED" = "true" ]; then
     DB_HOST=$DB_CONTAINER_NAME
 else
     echo "APP_IS_EXPOSED is set to false"
-    check_var_is_set "MEDIA_DEFAULT_INTERNAL_DIR"
-    check_var_is_set "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR"
     if [ "$DB_IS_NEEDED" = "true" ]; then
         check_var_is_set "DB_HOST"
     fi
@@ -53,6 +51,7 @@ else
         DJANGO_LOG_DIR="${BASE_DIR}${DJANGO_LOG_DEFAULT_INTERNAL_DIR}"
     fi
     if [ "$AUDIO_META_ANALYSE_IS_NEEDED" = "true" ]; then
+        check_var_is_set "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR"
         check_var_is_set "AUDIO_META_ANALYSE_DEFAULT_INTERNAL_DIR"
         check_var_is_set "MEDIA_DEFAULT_INTERNAL_DIR"
         AUDIO_META_ANALYSE_DIR="${BASE_DIR}${MEDIA_DEFAULT_INTERNAL_DIR}"
