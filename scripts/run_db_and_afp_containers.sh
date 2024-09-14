@@ -87,7 +87,7 @@ fi
 docker run \
 --name=$DB_CONTAINER_NAME \
 --volume=db-data:$DB_DATA_DIR \
--p $DB_PORT:5432 \
+-p $DB_PORT:$DB_PORT \
 -e ENV=$ENV \
 -e POSTGRES_DB=$DB_BODZIFY_API_DB_NAME \
 -e POSTGRES_USER=$DB_SUPERUSER_NAME \

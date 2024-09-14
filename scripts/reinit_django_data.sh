@@ -22,6 +22,7 @@ else
           # Skip comments and empty lines
           if [ -z "$key" ]; then continue; fi
           export "$key=$value"
+          echo "$key=$value"
       done < "$APP_ENV_FILE"
   else
       echo "The provided env file does not exist"
@@ -58,7 +59,15 @@ for VAR in "${REQUIRED_VARS[@]}"; do
   fi
 done
 
-# Check active connections
+# Empty library directory
+echo "Empty library directory"
+USERS_SUBFOLDERS_COUNT=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
+TOTAL_TRACK_FILES_COUNT=$(find "$LIBRARIES_DIR" -mindepth 2 -type f | wc -l)
+rm -rf "$LIBRARIES_DIR"*
+echo "$USERS_SUBFOLDERS_COUNT user subfolders were deleted."
+echo "$TOTAL_TRACK_FILES_COUNT track files were deleted."
+
+# Check active connections on database
 ACTIVE_CONNECTIONS=$(docker exec -i $DB_CONTAINER_NAME \
 psql -U $DB_SUPERUSER_NAME \
 -tAc "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}' AND pid <> pg_backend_pid();")
@@ -69,14 +78,6 @@ if [ "$ACTIVE_CONNECTIONS" -gt 0 ]; then
 else
     echo "Database is not being accessed by other users. Proceeding."
 fi
-
-# Empty library directory
-echo "Empty library directory"
-USERS_SUBFOLDERS_COUNT=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
-TOTAL_TRACK_FILES_COUNT=$(find "$LIBRARIES_DIR" -mindepth 2 -type f | wc -l)
-rm -rf "$LIBRARIES_DIR"*
-echo "$USERS_SUBFOLDERS_COUNT user subfolders were deleted."
-echo "$TOTAL_TRACK_FILES_COUNT track files were deleted."
 
 # Check if database exists
 echo "Check if database exists"
@@ -116,7 +117,12 @@ MANAGE_PATH=${PROJECT_DIR}manage.py
 
 # Create initial migrations
 echo "Creating initial migrations."
-python3 $MANAGE_PATH makemigrations
+MAKEMIGRATIONS_OUTPUT=$(python3 $MANAGE_PATH makemigrations 2>&1)
+echo "$MAKEMIGRATIONS_OUTPUT"
+if echo "$MAKEMIGRATIONS_OUTPUT" | grep -q "Connection refused"; then
+    echo "Failed to create migrations due to database connection issue." >&2
+    exit 1
+fi
 
 # Apply migrations
 python3 $MANAGE_PATH migrate
