@@ -41,8 +41,6 @@ else
     echo "APP_IS_EXPOSED is set to false"
     REQUIRED_VARS=( \
         "MEDIA_DEFAULT_INTERNAL_DIR" \
-        "STATIC_FILES_DEFAULT_INTERNAL_DIR" \
-        "DJANGO_LOG_DEFAULT_INTERNAL_DIR" \
         "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR")
     if [ "$DB_IS_NEEDED" = "true" ]; then
         REQUIRED_VARS+=("DB_HOST")
@@ -50,7 +48,7 @@ else
     for VAR in "${REQUIRED_VARS[@]}"; do
         check_var_is_set "$VAR"
     done
-    
+
     MEDIA_DIR="${BASE_DIR}${MEDIA_DEFAULT_INTERNAL_DIR}"
     [ "$STATIC_FILES_ARE_NEEDED" = "true" ] && STATIC_FILES_DIR="${BASE_DIR}${STATIC_FILES_DEFAULT_INTERNAL_DIR}"
     [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ] && DJANGO_LOG_DIR="${BASE_DIR}${DJANGO_LOG_DEFAULT_INTERNAL_DIR}"
