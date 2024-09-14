@@ -121,6 +121,7 @@ RUN apt update && \
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh && \
     chmod +x ${ROOT_DIR}scripts/entrypoint.sh
+RUN ls -l ${ROOT_DIR}scripts/entrypoint.sh
 
 # Set the entrypoint using shell form to allow environment variable expansion
 ENTRYPOINT ["sh", "-c", "${ROOT_DIR}scripts/entrypoint.sh"]
