@@ -20,7 +20,12 @@ BASE_DIR=$1
 [ -z "$2" ] && print_error_and_exit "NO CALCULATED PATHS ENV FILE PATH PROVIDED."
 GENERATED_PATHS_ENV_FILE=$2
 
-REQUIRED_VARS=("APP_IS_EXPOSED" "LIBRARIES_DIR_NAME" "DB_IS_NEEDED")
+REQUIRED_VARS=( \
+    "APP_IS_EXPOSED" \
+    "LIBRARIES_DIR_NAME" \
+    "DB_IS_NEEDED" "STATIC_FILES_ARE_NEEDED" \
+    "DJANGO_LOGS_ARE_NEEDED" \
+    "AUDIO_META_ANALYSE_IS_NEEDED")
 for VAR in "${REQUIRED_VARS[@]}"; do
     check_var_is_set "$VAR"
 done
@@ -43,6 +48,8 @@ if [ "$APP_IS_EXPOSED" = "true" ]; then
     fi
 else
     echo "APP_IS_EXPOSED is set to false"
+    check_var_is_set "MEDIA_DEFAULT_INTERNAL_DIR"
+    MEDIA_DIR="${BASE_DIR}${MEDIA_DEFAULT_INTERNAL_DIR}"
     if [ "$DB_IS_NEEDED" = "true" ]; then
         check_var_is_set "DB_HOST"
     fi
