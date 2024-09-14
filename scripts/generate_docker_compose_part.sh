@@ -90,7 +90,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     env_file: $AFP_ENV_FILENAME
 
   ${APP_SERVICE_NAME}:
-    working_dir: $$APP_ROOT_DIR
+    working_dir: $APP_ROOT_DIR
     image: $DOCKERHUB_USERNAME/$APP_IMAGE_REPO:$APP_VERSION
     container_name: $APP_CONTAINER_NAME
     volumes:
