@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Starting the api container"
+
 set -e
 
 REQUIRES_VARS=(
