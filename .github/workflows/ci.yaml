@@ -254,7 +254,7 @@ jobs:
             rm -f ${{ env.API_ENV_FILE }} &&
             touch ${{ env.API_ENV_FILE }} &&
 
-            ECHO 'APP_PORT=${{ vars.API_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'APP_PORT=${{ vars.API_PORT }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DJANGO_SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}"' >> ${{ env.API_ENV_FILE }} &&
             echo 'ACOUSTID_API_KEY="${{ secrets.ACOUSTID_API_KEY }}"' >> ${{ env.API_ENV_FILE }} &&
             echo 'CSRF_TRUSTED_ORIGINS=${{ vars.CSRF_TRUSTED_ORIGINS }}' >> ${{ env.API_ENV_FILE }} &&
