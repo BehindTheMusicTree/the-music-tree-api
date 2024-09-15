@@ -3,6 +3,14 @@
 # WARNING: This script will purge the Django data.
 # Use with caution.
 
+export_value_removing_surrounding_quotes() {
+    local VAR_NAME=$1
+    local VAR_VALUE=${!VAR_NAME}
+    VAR_VALUE=${VAR_VALUE#\'}
+    VAR_VALUE=${VAR_VALUE%\'}
+    export "$VAR_NAME=$VAR_VALUE"
+}
+
 SKIP_CONFIRMATION=false
 
 while getopts ":s" opt; do
@@ -33,33 +41,11 @@ if [ "$CONFIRMATION" != "yes" ]; then
     exit 1
 fi
 
-export_value_removing_surrounding_quotes() {
-    local VAR_NAME=$1
-    local VAR_VALUE=${!VAR_NAME}
-    VAR_VALUE=${VAR_VALUE#\'}
-    VAR_VALUE=${VAR_VALUE%\'}
-    export "$VAR_NAME=$VAR_VALUE"
-}
-
-check_var_is_set() {
-    local var_name=$1
-    if [ -z "${!var_name}" ]; then
-        echo "$var_name is not set" >&2
-        exit 1
-    fi
-}
-
-export_value_removing_surrounding_quotes() {
-    local VAR_NAME=$1
-    local VAR_VALUE=${!VAR_NAME}
-    VAR_VALUE=${VAR_VALUE#\'}
-    VAR_VALUE=${VAR_VALUE%\'}
-    export "$VAR_NAME=$VAR_VALUE"
-}
-
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
 ENV_FILE=${PROJECT_DIR}env/.env
+CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
+source ${SCRIPTS_DIR}utils.sh
 
 if [ ! -f "$ENV_FILE" ]; then
     echo "Env file $ENV_FILE does not exist"
@@ -71,7 +57,6 @@ else
     done < "$ENV_FILE"
 fi
 
-CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
 OUTPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE")
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file: $OUTPUT" >&2
@@ -94,21 +79,18 @@ REQUIRED_VARS=(
     DB_BODZIFY_API_USERNAME
 )
 for VAR in "${REQUIRED_VARS[@]}"; do
-    if [ -z "${!VAR}" ]; then
-        echo "$VAR must be set." >&2
-        exit 1
-    fi
+    check_var_is_set "$VAR"
 done
 
 export_value_removing_surrounding_quotes "$VAR"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
-  echo "The app is exposed. The database host is the database container name"
+  echo "The app is exposed. The database host is the database container name."
   check_var_is_set "DB_CONTAINER_NAME"
   DB_HOST=$DB_CONTAINER_NAME
 else
-  echo "The app is exposed. The database host is the database URL"
+  echo "The app is exposed. The database host is the database URL."
   check_var_is_set "DB_URL"
   DB_HOST=$DB_URL
 fi

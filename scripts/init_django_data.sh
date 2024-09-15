@@ -1,12 +1,7 @@
 #!/bin/bash
 
-check_var_is_set() {
-    local var_name=$1
-    if [ -z "${!var_name}" ]; then
-        echo "$var_name is not set" >&2
-        exit 1
-    fi
-}
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+source ${SCRIPTS_DIR}utils.sh
 
 REQUIRED_VARS=(
   APP_NAME
@@ -21,7 +16,6 @@ for VAR in "${REQUIRED_VARS[@]}"; do
   check_var_is_set "$VAR"
 done
 
-SCRIPTS_DIR=$(dirname "$0")/
 PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
 MANAGE_SCRIPT=${PROJECT_DIR}manage.py
 echo "MANAGE_SCRIPT: $MANAGE_SCRIPT"

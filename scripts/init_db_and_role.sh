@@ -2,13 +2,6 @@
 
 echo "Initializing database and role"
 
-check_var_is_set() {
-    local var_name=$1
-    if [ -z "${!var_name}" ]; then
-        print_error_and_exit "$var_name is not set"
-    fi
-}
-
 export_value_removing_surrounding_quotes() {
     local VAR_NAME=$1
     local VAR_VALUE=${!VAR_NAME}
@@ -16,6 +9,9 @@ export_value_removing_surrounding_quotes() {
     VAR_VALUE=${VAR_VALUE%\'}
     export "$VAR_NAME=$VAR_VALUE"
 }
+
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+source ${SCRIPTS_DIR}utils.sh
 
 if [ -z "$1" ]; then
     echo "No ENV file specified as arg."

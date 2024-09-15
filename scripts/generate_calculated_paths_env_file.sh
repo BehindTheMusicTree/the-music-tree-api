@@ -1,13 +1,5 @@
 #!/bin/bash
 
-check_var_is_set() {
-    local VAR_NAME=$1
-    if [ -z "${!VAR_NAME}" ]; then
-        echo "$VAR_NAME is not set" >&2
-        exit 1
-    fi
-}
-
 echo "Generating the env file with calculated paths"
 
 if [ -z "$1" ]; then
@@ -22,12 +14,17 @@ if [ -z "$2" ]; then
 fi
 GENERATED_PATHS_ENV_FILE=$2
 
-REQUIRED_VARS=( \
-    "APP_IS_EXPOSED" \
-    "LIBRARIES_DIR_NAME" \
-    "DB_IS_NEEDED" "STATIC_FILES_ARE_NEEDED" \
-    "DJANGO_LOGS_ARE_NEEDED" \
-    "AUDIO_META_ANALYSE_IS_NEEDED")
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+source ${SCRIPTS_DIR}utils.sh
+
+REQUIRED_VARS=(
+    "APP_IS_EXPOSED"
+    "LIBRARIES_DIR_NAME"
+    "DB_IS_NEEDED"
+    "STATIC_FILES_ARE_NEEDED"
+    "DJANGO_LOGS_ARE_NEEDED"
+    "AUDIO_META_ANALYSE_IS_NEEDED"
+)
 for VAR in "${REQUIRED_VARS[@]}"; do
     check_var_is_set "$VAR"
 done
