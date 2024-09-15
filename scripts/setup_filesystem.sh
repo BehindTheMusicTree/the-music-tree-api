@@ -70,13 +70,7 @@ for VAR in "${BOOL_VARS[@]}"; do
   check_bool_var "$VAR"
 done
 
-REQUIRED_VARS=(
-  "LIBRARIES_DIR_NAME"
-  "MEDIA_DEFAULT_INTERNAL_DIR"
-)
-for VAR in "${REQUIRED_VARS[@]}"; do
-  check_var_is_set "$VAR"
-done
+check_var_is_set "LIBRARIES_DIR_NAME"
 
 CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
 bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
