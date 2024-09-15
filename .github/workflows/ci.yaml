@@ -105,11 +105,10 @@ jobs:
         run: bash scripts/run_db_and_afp_containers.sh
         
       - name: Wait for db service to start
-        run: scripts/wait-for-db.sh ${{ env.DB_HOST }} ${{ env.DB_PORT }} 10 5
+        run: bash scripts/wait-for-db.sh ${{ env.DB_HOST }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
       - name: Init db data
-        run: |
-          bash scripts/reinit_django_data.sh
+        run: bash scripts/reinit_django_data.sh
 
       - name: Run pytest
         run: pytest
@@ -199,7 +198,8 @@ jobs:
             ROOT_DIR=${{ env.CONTAINER_ROOT_DIR }}
             APP_NAME=${{ vars.APP_NAME }}
             APP_VERSION=${{ vars.APP_VERSION }}
-            DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}
+            DB_CONNECTION_TEST_MAX_ATTEMPTS: ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }}
+            DB_CONNECTION_TEST_SLEEP_INTERVAL: ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
             TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
             MEDIA_DIR=${{ vars.MEDIA_DIR }}
             LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
