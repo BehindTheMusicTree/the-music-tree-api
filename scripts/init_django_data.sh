@@ -20,8 +20,8 @@ for VAR in "${REQUIRED_VARS[@]}"; do
   check_var_is_set "$VAR"
 done
 
-SCRIPTS_DIR=$(dirname "$0")
-PROJECT_DIR=$(realpath "${SCRIPTS_DIR}/..")
+SCRIPTS_DIR=$(dirname "$0")/
+PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
 MANAGE_SCRIPT=${PROJECT_DIR}manage.py
 echo "MANAGE_SCRIPT: $MANAGE_SCRIPT"
 MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
