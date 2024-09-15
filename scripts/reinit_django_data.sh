@@ -77,6 +77,7 @@ VARS_WITH_POTENTIAL_SURROUNDING_QUOTES=(
 for VAR in "${VARS_WITH_POTENTIAL_SURROUNDING_QUOTES[@]}"; do
   export_value_removing_surrounding_quotes "$VAR"
 done
+export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 echo "Empty library directory"
 USERS_SUBFOLDERS_COUNT=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
