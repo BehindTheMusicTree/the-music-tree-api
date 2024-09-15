@@ -1,23 +1,25 @@
 #!/bin/bash
 
-print_error_and_exit() {
-    echo "Error: $1" >&2
-    exit 1
-}
-
 check_var_is_set() {
     local VAR_NAME=$1
     if [ -z "${!VAR_NAME}" ]; then
-        print_error_and_exit "$VAR_NAME is not set"
+        echo "$VAR_NAME is not set" >&2
+        exit 1
     fi
 }
 
 echo "Generating the env file with calculated paths"
 
-[ -z "$1" ] && print_error_and_exit "NO BASE DIR PROVIDED."
+if [ -z "$1" ]; then
+    echo "No base dirt provided." >&2
+    exit 1
+fi
 BASE_DIR=$1
 
-[ -z "$2" ] && print_error_and_exit "NO CALCULATED PATHS ENV FILE PATH PROVIDED."
+if [ -z "$2" ]; then
+    echo "No generated paths env file provided." >&2
+    exit 1
+fi
 GENERATED_PATHS_ENV_FILE=$2
 
 REQUIRED_VARS=( \
@@ -63,7 +65,11 @@ fi
 LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
 
 [ -f "$GENERATED_PATHS_ENV_FILE" ] && rm -f "$GENERATED_PATHS_ENV_FILE"
-touch "$GENERATED_PATHS_ENV_FILE"
+OUTPUT=$(touch "$GENERATED_PATHS_ENV_FILE")
+if [ $? -ne 0 ]; then
+    echo "Failed to create the generated paths env file: $OUTPUT" >&2
+    exit 1
+fi
 
 echo "MEDIA_DIR: $MEDIA_DIR"
 echo "LIBRARIES_DIR_NAME: $LIBRARIES_DIR_NAME"

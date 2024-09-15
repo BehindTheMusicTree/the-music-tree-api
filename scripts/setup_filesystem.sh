@@ -1,16 +1,10 @@
 #!/bin/bash
 
-set -e
-
-print_error_and_exit() {
-    echo "Error: $1" >&2
-    exit 1
-}
-
 check_var_is_set() {
     local var_name=$1
     if [ -z "${!var_name}" ]; then
-        print_error_and_exit "$var_name is not set"
+        echo "$var_name is not set" >&2
+        exit 1
     fi
 }
 
@@ -20,7 +14,8 @@ check_bool_var() {
     check_var_is_set "$var_name"
     var_value_lower=$(echo "$var_value" | tr '[:upper:]' '[:lower:]')
     if [ "$var_value_lower" != "true" ] && [ "$var_value_lower" != "false" ]; then
-        print_error_and_exit "$var_name must be 'true' or 'false'"
+        echo "$var_name must be set to true or false" >&2
+        exit 1
     fi
 }
 
@@ -28,7 +23,12 @@ create_directory_if_not_exists() {
     local dir_path=$1
     if [ ! -d "$dir_path" ]; then
         echo "Creating directory $dir_path"
-        mkdir -p "$dir_path" || print_error_and_exit "Failed to create directory $dir_path"
+        OUTPUT=$(mkdir -p "$dir_path")
+        if [ $? -ne 0 ]; then
+            echo "Failed to create directory $dir_path. Details: $OUTPUT" >&2
+            exit 1
+        fi
+        
     else
         echo "Directory $dir_path already exists"
     fi
@@ -36,14 +36,22 @@ create_directory_if_not_exists() {
 
 touch_file_or_exit() {
     local file_path=$1
-    touch "$file_path" || print_error_and_exit "Failed to create file $file_path"
+    OUTPUT=$(touch "$file_path")
 }
 
 set_read_write_permissions_and_owner() {
     local path=$1
     local user=$(whoami)
-    chmod -R 740 "$path" || print_error_and_exit "Failed to change permissions of $path"
-    chown -R "$user" "$path" || print_error_and_exit "Failed to change owner of $path"
+    OUTPUT=$(chmod -R 740 "$path")
+    if [ $? -ne 0 ]; then
+        echo "Failed to change permissions of $path. Details: $OUTPUT" >&2
+        exit 1
+    fi
+    OUTPUT=$(chown -R "$user" "$path")
+    if [ $? -ne 0 ]; then
+        echo "Failed to change owner of $path. Details: $OUTPUT" >&2
+        exit 1
+    fi
 }
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
@@ -70,13 +78,11 @@ for VAR in "${BOOL_VARS[@]}"; do
   check_bool_var "$VAR"
 done
 
-check_var_is_set "LIBRARIES_DIR_NAME"
-
 CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
-
+OUPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE")
 if [ $? -ne 0 ]; then
-    print_error_and_exit "Failed to generate calculated paths env file"
+    echo "Failed to generate calculated paths env file: $OUTPUT" >&2
+    exit 1
 fi
 
 echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
@@ -96,9 +102,17 @@ if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
         if [ ! -d "$DEFAULT_STATIC_FILES_DIR" ] || [ "$(find "$DEFAULT_STATIC_FILES_DIR" -mindepth 1 -print -quit | grep -q .)" ]; then
             echo "No static files found in default internal directory $STATIC_FILES_DEFAULT_INTERNAL_DIR"
         else
-            mv "$DEFAULT_STATIC_FILES_DIR"/* "$STATIC_FILES_DIR" || print_error_and_exit "Failed to move static files to $STATIC_FILES_DIR"
+            OUTPUT=$(mv "$DEFAULT_STATIC_FILES_DIR"/* "$STATIC_FILES_DIR")
+            if [ $? -ne 0 ]; then
+                echo "Failed to move static files from default internal directory to $STATIC_FILES_DIR. Details: $OUTPUT" >&2
+                exit 1
+            fi
             echo "Deleting default internal static files directory"
-            rm -r "$DEFAULT_STATIC_FILES_DIR" || print_error_and_exit "Failed to delete default internal static files directory"
+            OUTPUT=$(rm -rf "$DEFAULT_STATIC_FILES_DIR")
+            if [ $? -ne 0 ]; then
+                echo "Failed to delete default internal static files directory. Details: $OUTPUT" >&2
+                exit 1
+            fi
         fi
     else
         echo "STATIC_FILES_DIR is the default internal directory $DEFAULT_STATIC_FILES_DIR"

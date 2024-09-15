@@ -20,6 +20,14 @@ export_value_removing_surrounding_quotes() {
     export "$VAR_NAME=$VAR_VALUE"
 }
 
+check_var_is_set() {
+    local var_name=$1
+    if [ -z "${!var_name}" ]; then
+        echo "$var_name is not set" >&2
+        exit 1
+    fi
+}
+
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_DIR=$(realpath "$SCRIPTS_DIR../")/
@@ -107,7 +115,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-OUTPUT=$(bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh)
+OUTPUT=$(bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh -s)
 if [ $? -ne 0 ]; then
   echo "Failed to purge Django data. Details: $OUTPUT"
   exit 1
