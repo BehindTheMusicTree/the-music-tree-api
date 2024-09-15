@@ -256,8 +256,8 @@ jobs:
             touch ${{ env.API_ENV_FILE }} &&
 
             echo 'APP_PORT=${{ vars.API_PORT }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'DJANGO_SECRET_KEY=\'${{ secrets.DJANGO_SECRET_KEY }}\'' >> ${{ env.API_ENV_FILE }} &&
-            echo 'ACOUSTID_API_KEY="${{ secrets.ACOUSTID_API_KEY }}"' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DJANGO_SECRET_KEY='\''${{ secrets.DJANGO_SECRET_KEY }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            echo 'ACOUSTID_API_KEY='\''${{ secrets.ACOUSTID_API_KEY }}'\''' >> ${{ env.API_ENV_FILE }} &&
             echo 'CSRF_TRUSTED_ORIGINS=${{ vars.CSRF_TRUSTED_ORIGINS }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}' >> ${{ env.API_ENV_FILE }} &&
 
@@ -266,7 +266,7 @@ jobs:
             echo 'DB_SUPERUSER_NAME=${{ vars.DB_SUPERUSER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'DB_BODZIFY_API_USER_PASSWORD="${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}\'' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_USER_PASSWORD='\''${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}'\''' >> ${{ env.API_ENV_FILE }} &&
             
             echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'AFP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
