@@ -105,18 +105,7 @@ jobs:
         run: bash scripts/run_db_and_afp_containers.sh
         
       - name: Wait for db service to start
-        run: |
-          attempts=0
-          MAX_ATTEMPS=10
-          while ! pg_isready -h ${{ env.DB_HOST }} -p ${{ env.DB_PORT }}; do
-            if [ $attempts -eq $MAX_ATTEMPS ]; then
-              echo "DB service did not start within the expected time."
-              exit 1
-            fi
-            echo "Waiting for DB service to start..."
-            sleep 5
-            attempts=$((attempts+1))
-          done
+        run: ./wait-for-db.sh ${{ env.DB_HOST }} ${{ env.DB_PORT }} 10 5
 
       - name: Init db data
         run: |
