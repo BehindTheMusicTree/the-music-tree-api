@@ -1,32 +1,15 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-    echo "No env file specified"
-else
-  ENV_FILE="$1"
-  if [ ! -f "$ENV_FILE" ]; then
-      echo "$ENV_FILE env file does not exist" >&2
-      exit 1
-  fi
-
-  echo "Loading environment variables from ${ENV_FILE}" >&2
-  while IFS='=' read -r key value
-  do
-      # Skip comments and empty lines
-      if [ -z "$key" ]; then continue; fi
-      export "$key=$value"
-  done < "$ENV_FILE"
-fi
-
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
+
+load_project_env_file
 
 REQUIRED_NON_BOOL_VARS=(
   DOCKER_COMPOSE_PART_FILENAME
   DOCKER_NETWORK_NAME
   DOCKERHUB_USERNAME
-
   DB_IMAGE_REPO
   DB_VERSION
   DB_CONTAINER_NAME
@@ -34,7 +17,6 @@ REQUIRED_NON_BOOL_VARS=(
   DB_PORT_HOST
   DB_PORT
   DB_ENV_FILENAME
-
   AFP_IMAGE_REPO
   AFP_VERSION
   AFP_CONTAINER_NAME
@@ -43,7 +25,6 @@ REQUIRED_NON_BOOL_VARS=(
   AFP_DOCKERIZED_POOL_DIR
   AFP_DOCKERIZED_FLASK_LOG_DIR
   AFP_DOCKERIZED_GUNICORN_LOG_DIR
-
   APP_SERVICE_NAME
   APP_ROOT_DIR
   APP_IMAGE_REPO
@@ -55,11 +36,9 @@ REQUIRED_NON_BOOL_VARS=(
   DJANGO_LOG_DIR
   MEDIA_DIR
   STATIC_FILES_DIR
-  TMP_UPLOADED_FILES_DIR
+  TMP_UPLOADED_FILES
 )
-for var in "${REQUIRED_NON_BOOL_VARS[@]}"; do
-  check_var_is_set "$var"
-done
+check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
 
 cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
   db:
@@ -96,7 +75,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-gunicorn-log-dir:${GUNICORN_LOG_DIR}
       - api-media-dir:${MEDIA_DIR}
       - api-static-files:${STATIC_FILES_DIR}
-      - api-upload-tmp-files:${TMP_UPLOADED_FILES_DIR}
+      - api-upload-tmp-files:${TMP_UPLOADED_FILES}
     expose:
       - $APP_PORT
     networks:

@@ -199,7 +199,7 @@ jobs:
             APP_VERSION=${{ vars.APP_VERSION }}
             DB_CONNECTION_TEST_MAX_ATTEMPTS=${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }}
             DB_CONNECTION_TEST_SLEEP_INTERVAL=${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
-            TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
+            TMP_UPLOADED_FILES=${{ vars.TMP_UPLOADED_FILES }}
             MEDIA_DIR=${{ vars.MEDIA_DIR }}
             LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
             STATIC_FILES_DIR=${{ vars.STATIC_FILES }}
@@ -349,7 +349,7 @@ jobs:
           DJANGO_LOG_DIR: ${{ vars.DJANGO_LOG_DIR }}
           MEDIA_DIR: ${{ vars.MEDIA_DIR }}
           STATIC_FILES_DIR: ${{ vars.STATIC_FILES }}
-          TMP_UPLOADED_FILES_DIR: ${{ vars.TMP_UPLOADED_FILES_DIR }}
+          TMP_UPLOADED_FILES: ${{ vars.TMP_UPLOADED_FILES }}
         run: |
           bash scripts/generate_docker_compose_part.sh
 

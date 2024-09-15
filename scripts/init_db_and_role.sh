@@ -1,29 +1,11 @@
 #!/bin/bash
 
-echo "Initializing database and role"
+echo "Initializing database and role."
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
-if [ -z "$1" ]; then
-    echo "No ENV file specified as arg."
-else
-    APP_ENV_FILE="$1"
-    echo "Loading environment variables from ${APP_ENV_FILE}"
-    if [ ! -f "$APP_ENV_FILE" ]; then
-        echo "$APP_ENV_FILE ENV file does not exist"
-    else
-      while IFS='=' read -r KEY VALUE; do
-          # Skip comments and empty lines
-          if [[ -z "$KEY" || "$KEY" =~ ^# ]]; then continue; fi
-          # Trim whitespace from KEY
-          KEY=$(echo "$KEY" | xargs)
-          if [ -n "$KEY" ]; then
-              export "$KEY=$VALUE"
-          fi
-      done < "$APP_ENV_FILE"
-    fi
-fi
+load_project_env_file
 
 REQUIRED_NON_BOOL_VARS=(
   DB_PORT
@@ -33,19 +15,16 @@ REQUIRED_NON_BOOL_VARS=(
   DB_BODZIFY_API_USERNAME
   DB_BODZIFY_API_USER_PASSWORD
 )
-for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
-  check_var_is_set "$VAR"
-done
-
-check_bool_var_is_set "APP_IS_EXPOSED"
+check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
+check_bool_vars_are_set "APP_IS_EXPOSED"
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
   echo "The app is exposed. The database host is the database container name"
-  check_var_is_set "DB_CONTAINER_NAME"
+  check_vars_are_set "DB_CONTAINER_NAME"
   DB_HOST=$DB_CONTAINER_NAME
 else
-  echo "The app is exposed. The database host is the database URL"
-  check_var_is_set "DB_URL"
+  echo "The app is exposed. The database host is the database URL."
+  check_vars_are_set "DB_URL"
   DB_HOST=$DB_URL
 fi
 echo "DB_HOST: $DB_HOST"
@@ -54,7 +33,7 @@ export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
 export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
-echo "Checking if database $DB_BODZIFY_API_DB_NAME exists"
+echo "Checking if database $DB_BODZIFY_API_DB_NAME exists..."
 DB_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT 1 FROM pg_database WHERE datname='$DB_BODZIFY_API_DB_NAME';" 2>&1)
 
@@ -63,26 +42,28 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 if [ "$DB_EXISTS" = "1" ]; then
-  echo "Database $DB_BODZIFY_API_DB_NAME already exists. Abort." >&2
+  echo "Database $DB_BODZIFY_API_DB_NAME already exists. Aborting..." >&2
   exit 1
 fi
+echo "Database $DB_BODZIFY_API_DB_NAME does not exist."
 
 echo "Checking if role $DB_BODZIFY_API_USERNAME exists"
-ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
+ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
   "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
-if [ "$ROLE_EXISTS" != "1" ]; then
-  echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort." >&2
+if [ "$ROLE_EXISTS" = "1" ]; then
+  echo "Role $DB_BODZIFY_API_USERNAME already exists. Aborting..." >&2
   exit 1
 fi
+echo "Role $DB_BODZIFY_API_USERNAME does not exist."
 
-echo "Creating database $DB_BODZIFY_API_DB_NAME"
+echo "Creating database $DB_BODZIFY_API_DB_NAME ..."
 OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
 if [ $? -ne 0 ]; then
   echo "Failed to create the database. Details: $OUTPUT"
   exit 1
 fi
 
-echo "Creating role $DB_BODZIFY_API_USERNAME"
+echo "Creating role $DB_BODZIFY_API_USERNAME ..."
 OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
   "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';")
 if [ $? -ne 0 ]; then

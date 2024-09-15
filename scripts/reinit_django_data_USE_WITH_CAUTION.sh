@@ -12,6 +12,13 @@ if [ "$CONFIRMATION" != "yes" ]; then
     exit 1
 fi
 
+# Get the directory of the script even when it's called from another script
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+source ${SCRIPTS_DIR}utils.sh
+
+load_project_env_file
+load_project_calculated_paths_env_vars
+
 REQUIRED_NON_BOOL_VARS=(
     APP_NAME
     LIBRARIES_DIR
@@ -21,25 +28,21 @@ REQUIRED_NON_BOOL_VARS=(
     DB_SUPERUSER_PASSWORD
     DB_BODZIFY_API_USERNAME
 )
-for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
-    check_var_is_set "$VAR"
-done
-check_bool_var_is_set "APP_IS_EXPOSED"
-
-# Get the directory of the script even when it's called from another script
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+check_vars_are_set "${REQUIRED_NON_BOOL_VARS[@]}"
+export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+echo "Environment variables loaded successfully."
 
 echo "Running purge script..."
 bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh -s
 if [ $? -ne 0 ]; then
-  echo "Failed to purge Django data. Aborting." >&2
+  echo "Failed to purge Django data. Aborting..." >&2
   exit 1
 fi
 
 echo "Running Django data init script..."
 bash ${SCRIPTS_DIR}init_django_data.sh -s
 if [ $? -ne 0 ]; then
-  echo "Failed to initialize data. Aborting." >&2
+  echo "Failed to initialize data. Aborting..." >&2
   exit 1
 fi
 

@@ -18,6 +18,10 @@ create_directory_if_not_exists() {
 touch_file_or_exit() {
     local file_path=$1
     OUTPUT=$(touch "$file_path")
+    if [ $? -ne 0 ]; then
+        echo "Failed to create file $file_path. Details: $OUTPUT" >&2
+        exit 1
+    fi
 }
 
 set_read_write_permissions_and_owner() {
@@ -40,15 +44,7 @@ PROJECT_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
 ENV_FILE=${PROJECT_DIR}env/.env
 source "${SCRIPTS_DIR}utils.sh"
 
-if [ ! -f "$ENV_FILE" ]; then
-    echo "Env file $ENV_FILE does not exist" >&2
-else
-    echo "Loading environment variables from ${ENV_FILE}"
-    while IFS='=' read -r key value; do
-        if [ -z "$key" ]; then continue; fi
-        export "$key=$value"
-    done < "$ENV_FILE"
-fi
+load_project_env_file
 
 REQUIRED_BOOL_VARS=(
   "APP_IS_EXPOSED"
@@ -56,27 +52,15 @@ REQUIRED_BOOL_VARS=(
   "STATIC_FILES_ARE_NEEDED"
   "AUDIO_META_ANALYSE_IS_NEEDED"
 )
-for VAR in "${REQUIRED_BOOL_VARS[@]}"; do
-  check_bool_var_is_set "$VAR"
-done
+check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
 
-CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
-OUPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE")
-if [ $? -ne 0 ]; then
-    echo "Failed to generate calculated paths env file: $OUTPUT" >&2
-    exit 1
-fi
-
-echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
-while IFS='=' read -r key value; do
-    export "$key=$value"
-done < "$CALCULATED_PATHS_ENV_FILE"
+load_project_calculated_paths_env_vars
 
 create_directory_if_not_exists "$LIBRARIES_DIR"
 
 if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
     create_directory_if_not_exists "$STATIC_FILES_DIR"
-    check_var_is_set "STATIC_FILES_DEFAULT_INTERNAL_DIR"
+    check_vars_are_set "STATIC_FILES_DEFAULT_INTERNAL_DIR"
 
     DEFAULT_STATIC_FILES_DIR="${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR"
     if [ "$STATIC_FILES_DIR" != "$DEFAULT_STATIC_FILES_DIR" ]; then
@@ -116,7 +100,7 @@ if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
         DJANGO_LOG_APP_FILENAME
     )
     for log_filename in "${log_filenames[@]}"; do
-        check_var_is_set "$log_filename"
+        check_vars_are_set "$log_filename"
         touch_file_or_exit "${DJANGO_LOG_DIR}${!log_filename}"
     done
     set_read_write_permissions_and_owner "$DJANGO_LOG_DIR"
@@ -131,7 +115,7 @@ if [ "$APP_IS_EXPOSED" = "true" ]; then
         GUNICORN_LOG_ACCESS_FILENAME
     )
     for var_name in "${REQUIRED_NON_BOOL_VARS[@]}"; do
-        check_var_is_set "$var_name"
+        check_vars_are_set "$var_name"
     done
 
     GUNICORN_LOG_ERROR_FILE="${GUNICORN_LOG_DIR}${GUNICORN_LOG_ERROR_FILENAME}"
@@ -145,8 +129,8 @@ else
 fi
 
 if [ "$AUDIO_META_ANALYSE_IS_NEEDED" = "true" ]; then
-    create_directory_if_not_exists "$TMP_UPLOADED_FILES_DIR"
-    set_read_write_permissions_and_owner "$TMP_UPLOADED_FILES_DIR"
+    create_directory_if_not_exists "$TMP_UPLOADED_FILES"
+    set_read_write_permissions_and_owner "$TMP_UPLOADED_FILES"
 else
     echo "AUDIO_META_ANALYSE_IS_NEEDED is set to false. Temp uploaded files dir is not needed."
 fi
@@ -165,3 +149,5 @@ for script in "${SCRIPTS_DIR}"*; do
         chmod +x "$script"
     fi
 done
+
+echo "All directories and files are created and permissions are set."

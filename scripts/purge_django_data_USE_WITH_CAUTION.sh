@@ -32,26 +32,8 @@ ENV_FILE=${PROJECT_DIR}env/.env
 CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
 source ${SCRIPTS_DIR}utils.sh
 
-if [ ! -f "$ENV_FILE" ]; then
-    echo "Env file $ENV_FILE does not exist"
-else
-    echo "Loading environment variables from ${ENV_FILE}"
-    while IFS='=' read -r key value; do
-        if [ -z "$key" ]; then continue; fi
-        export "$key=$value"
-    done < "$ENV_FILE"
-fi
-
-OUTPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE")
-if [ $? -ne 0 ]; then
-    echo "Failed to generate calculated paths env file: $OUTPUT" >&2
-    exit 1
-fi
-
-echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
-while IFS='=' read -r key value; do
-    export "$key=$value"
-done < "$CALCULATED_PATHS_ENV_FILE"
+load_project_env_file
+load_project_calculated_paths_env_vars
 
 REQUIRED_NON_BOOL_VARS=(
     APP_NAME
@@ -63,20 +45,20 @@ REQUIRED_NON_BOOL_VARS=(
     DB_BODZIFY_API_USERNAME
 )
 for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
-    check_var_is_set "$VAR"
+    check_vars_are_set "$VAR"
 done
-check_bool_var_is_set "APP_IS_EXPOSED"
+check_bool_vars_are_set "APP_IS_EXPOSED"
 
 export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
   echo "The app is exposed. The database host is the database container name."
-  check_var_is_set "DB_CONTAINER_NAME"
+  check_vars_are_set "DB_CONTAINER_NAME"
   DB_HOST=$DB_CONTAINER_NAME
 else
   echo "The app is exposed. The database host is the database URL."
-  check_var_is_set "DB_URL"
+  check_vars_are_set "DB_URL"
   DB_HOST=$DB_URL
 fi
 echo "DB_HOST: $DB_HOST"
@@ -95,7 +77,7 @@ ACTIVE_CONNECTIONS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
 echo "Active connections: $ACTIVE_CONNECTIONS"
 if [ "$ACTIVE_CONNECTIONS" -gt 0 ]; then
-    echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Aborting." >&2
+    echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Aborting..." >&2
     exit 1
 else
     echo "Database is not being accessed by other users. Proceeding."

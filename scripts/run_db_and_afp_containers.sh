@@ -8,41 +8,14 @@ PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
 APP_ENV_FILE="${PROJECT_DIR}env/.env"
 source "${SCRIPTS_DIR}utils.sh"
 
-if [ ! -f "$APP_ENV_FILE" ]; then
-    echo "$APP_ENV_FILE env file does not exist" >&2
-else
-    echo "Loading environment variables from $APP_ENV_FILE"
-    if [ ! -f "$APP_ENV_FILE" ]; then
-        echo "$APP_ENV_FILE env file does not exist" >&2
-        exit 1
-    fi
-
-    while IFS='=' read -r key value
-    do
-        # Skip comments and empty lines
-        if [ -z "$key" ]; then continue; fi
-        export "$key=$value"
-    done < "$APP_ENV_FILE"
-fi
-
-CALCULATED_PATHS_ENV_FILE=$(cd "${PROJECT_DIR}env/calculated_paths/" && pwd)/.env
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
-
-if [ $? -ne 0 ]; then
-    echo "Failed to generate calculated paths env file"
-    exit 1
-fi
-
-echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
-while IFS='=' read -r key value
-do
-    export "$key=$value"
-done < "$CALCULATED_PATHS_ENV_FILE"
+load_project_env_file
+load_project_calculated_paths_env_vars
 
 REQUIRED_NON_BOOL_VARS=(
   ENV
   DOCKERHUB_USERNAME
-  TMP_UPLOADED_FILES_DIR
+  LIBRARIES_DIR_NAME
+  TMP_UPLOADED_FILES
   DB_CONTAINER_NAME
   DB_IMAGE_REPO
   DB_VERSION
@@ -59,31 +32,34 @@ REQUIRED_NON_BOOL_VARS=(
   AFP_DOCKERIZED_POOL_DIR
   AFP_PORT
 )
-for var in "${REQUIRED_NON_BOOL_VARS[@]}"; do
-  check_var_is_set "$var"
-done
-check_bool_var_is_set "DEBUG"
-
-VARS_WITH_EVENTUAL_SURROUNDING_QUOTES=(
-  DB_SUPERUSER_PASSWORD
-  DB_BODZIFY_API_USER_PASSWORD
+check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
+REQUIRED_BOOL_VARS=(
+    "DEBUG"
+    "APP_IS_EXPOSED"
+    "STATIC_FILES_ARE_NEEDED"
+    "DJANGO_LOGS_ARE_NEEDED"
+    "AUDIO_META_ANALYSE_IS_NEEDED"
 )
-for VAR in "${VARS_WITH_EVENTUAL_SURROUNDING_QUOTES[@]}"; do
-  export_value_removing_surrounding_quotes "$VAR"
-done
+check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
+export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+echo "Environment variables loaded successfully."
 
-echo "Running the database and audio fingerprinter containers."
-
+echo "Pulling the database and audio fingerprinter images..."
 docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
 docker pull $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
+echo "Images pulled successfully."
 
 CONTAINER_IDS=$(docker ps -a -q)
 if [ -n "$CONTAINER_IDS" ]; then
+    echo "Removing existing containers..."
     docker rm -f $CONTAINER_IDS
+    echo "Containers removed successfully."
 else
     echo "No container to remove."
 fi
 
+echo "Running the database and audio fingerprinter containers..."
 docker run \
 --name=$DB_CONTAINER_NAME \
 --volume=db-data:$DB_DATA_DIR \
@@ -97,9 +73,10 @@ docker run \
 
 docker run \
 --name=$AFP_CONTAINER_NAME \
---volume=$TMP_UPLOADED_FILES_DIR:$AFP_DOCKERIZED_POOL_DIR \
+--volume=$TMP_UPLOADED_FILES:$AFP_DOCKERIZED_POOL_DIR \
 -p $AFP_PORT:$AFP_PORT \
 -e ENV=$ENV \
 -e DEBUG=$DEBUG \
 -e APP_PORT=$AFP_PORT \
 -d $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
+echo "Containers running successfully."

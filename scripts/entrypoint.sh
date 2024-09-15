@@ -5,9 +5,8 @@ echo "Starting the api container"
 SCRIPTS_DIR=${ROOT_DIR}scripts/
 source ${SCRIPTS_DIR}utils.sh
 
-REQUIRES_VARS=(
+REQUIRED_NON_BOOL_VARS=(
     APP_PORT
-    APP_IS_EXPOSED
     DB_CONTAINER_NAME
     DB_PORT
     DB_CONNECTION_TEST_MAX_ATTEMPTS
@@ -21,9 +20,15 @@ REQUIRES_VARS=(
     GUNICORN_LOG_ERROR_FILENAME
     GUNICORN_LOG_ACCESS_FILENAME
 )
-for VAR in "${REQUIRES_VARS[@]}"; do
-    check_var_is_set "$VAR"
-done
+check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
+export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+
+REQUIRED_BOOL_VARS=(
+    DEBUG
+    APP_IS_EXPOSED
+)
+check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
 
 echo "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
 OUTPUT=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL)

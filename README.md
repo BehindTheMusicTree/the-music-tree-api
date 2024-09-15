@@ -34,7 +34,7 @@ Create a copy of the file env/.env.development.example here: env/.env and set th
 The docker build requires the following environment variables:
 - `APP_NAME`
 - `APP_VERSION`
-- `TMP_UPLOADED_FILES_DIR`
+- `TMP_UPLOADED_FILES`
 - `MEDIA_DIR`
 - `LIBRARIES_DIR_NAME`
 - `STATIC_FILES_DIR`

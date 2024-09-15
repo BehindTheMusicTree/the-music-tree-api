@@ -6,6 +6,13 @@ from pathlib import Path
 import subprocess
 import dotenv
 
+
+def remove_eventual_surronding_quotes(s: str) -> str:
+    if s.startswith('"') and s.endswith('"'):
+        return s[1:-1]
+    return s
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
@@ -14,16 +21,14 @@ if not APP_ENV_FILE.exists():
     print(f"No env file at {APP_ENV_FILE}")
     APP_ENV_FILE = None
 else:
-    print("Env file provided. Loading.")
+    print(f"Env file provided at {APP_ENV_FILE} . Loading...")
     dotenv.load_dotenv(APP_ENV_FILE)
+    print("Env file loaded.")
 
 CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
 generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
 try:
-    result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path),
-                             str(BASE_DIR) + '/',
-                             CALCULATED_PATHS_ENV_FILE,
-                             APP_ENV_FILE or ""],
+    result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path)],
                             check=True,
                             stderr=subprocess.PIPE,
                             text=True,
@@ -220,10 +225,13 @@ if DB_IS_NEEDED:
     if DB_BODZIFY_API_USERNAME is None:
         raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable must be set")
 
-    DB_BODZIFY_API_USER_PASSWORD = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
-    if DB_BODZIFY_API_USER_PASSWORD is None:
+    DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
+    print("DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES: " +
+          str(DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES))
+    if DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES is None:
         raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable must be set")
-
+    DB_BODZIFY_API_USER_PASSWORD = remove_eventual_surronding_quotes(DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES)
+    print("DB_BODZIFY_API_USER_PASSWORD: " + DB_BODZIFY_API_USER_PASSWORD)
     if APP_IS_EXPOSED:
         print("The app is exposed. The db host is the db container name.")
         DB_CONTAINER_NAME = os.getenv('DB_CONTAINER_NAME')
@@ -247,7 +255,7 @@ if DB_IS_NEEDED:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': DB_BODZIFY_API_DB_NAME,
             'USER': DB_BODZIFY_API_USERNAME,
-            'PASSWORD': DB_BODZIFY_API_USER_PASSWORD,
+            'PASSWORD': DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES,
             'HOST': DB_HOST,
             'PORT': DB_PORT,
             'DISABLE_SERVER_SIDE_CURSORS': True
@@ -326,9 +334,9 @@ if AUDIO_META_ANALYSE_IS_NEEDED:
     if not AFP_CONTAINER_NAME:
         raise EnvironmentError("The AFP_CONTAINER_NAME variable must be set")
 
-    TMP_UPLOADED_FILES_DIR_ENV = os.getenv('TMP_UPLOADED_FILES_DIR')
+    TMP_UPLOADED_FILES_DIR_ENV = os.getenv('TMP_UPLOADED_FILES')
     if not TMP_UPLOADED_FILES_DIR_ENV:
-        raise EnvironmentError("The TMP_UPLOADED_FILES_DIR variable must be set")
+        raise EnvironmentError("The TMP_UPLOADED_FILES variable must be set")
     FILE_UPLOAD_TEMP_DIR = Path(TMP_UPLOADED_FILES_DIR_ENV)  # Django constant, do not rename.
     print("FILE_UPLOAD_TEMP_DIR: " + str(FILE_UPLOAD_TEMP_DIR))
 
