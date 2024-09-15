@@ -105,7 +105,7 @@ jobs:
         run: bash scripts/run_db_and_afp_containers.sh
         
       - name: Wait for db service to start
-        run: bash scripts/wait-for-db.sh ${{ env.DB_HOST }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
+        run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_HOST }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
       - name: Init db data
         run: bash scripts/reinit_django_data.sh

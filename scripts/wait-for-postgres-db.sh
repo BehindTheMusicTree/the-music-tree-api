@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Usage: ./wait-for-db.sh <DB_HOST> <DB_PORT> [MAX_ATTEMPTS] [SLEEP_INTERVAL]
-# Example: ./wait-for-db.sh localhost 5432 10 5
+# Usage: ./wait-for-postgres-db.sh <DB_HOST> <DB_PORT> [MAX_ATTEMPTS] [SLEEP_INTERVAL]
+# Example: ./wait-for-postgres-db.sh localhost 5432 10 5
 
 DB_HOST=$1
 DB_PORT=$2
