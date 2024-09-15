@@ -26,7 +26,6 @@ done
 # Wait for the database to be ready
 bash ./wait-for-db.sh $DB_CONTAINER_NAME $DB_PORT 10 5
 
-
 echo "Initializing the database and roles if necessary..."
 if [ ! -f "${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT}" ]; then
     echo "${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT} does not exist" >&2

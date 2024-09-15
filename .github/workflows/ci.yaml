@@ -16,6 +16,8 @@ env:
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
   INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME: init_db_and_role_if_necessary.sh
   CONTAINER_ROOT_DIR: /home/app/
+  DB_CONNECTION_TEST_MAX_ATTEMPTS: 10
+  DB_CONNECTION_TEST_SLEEP_INTERVAL: 5
   
 jobs:
   pytest:
@@ -25,7 +27,6 @@ jobs:
       name: CI_TEST
     env:
       ENV: ${{ vars.ENV }}
-
       APP_NAME: ${{ vars.APP_NAME }}
       APP_VERSION: ${{ vars.APP_VERSION }}
 
@@ -33,7 +34,6 @@ jobs:
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
       DEBUG: true
-
       DB_IS_NEEDED: true
       APP_IS_EXPOSED: false
       AUDIO_META_ANALYSE_IS_NEEDED: true
@@ -105,7 +105,7 @@ jobs:
         run: bash scripts/run_db_and_afp_containers.sh
         
       - name: Wait for db service to start
-        run: ./wait-for-db.sh ${{ env.DB_HOST }} ${{ env.DB_PORT }} 10 5
+        run: scripts/wait-for-db.sh ${{ env.DB_HOST }} ${{ env.DB_PORT }} 10 5
 
       - name: Init db data
         run: |
