@@ -56,8 +56,8 @@ done < "$CALCULATED_PATHS_ENV_FILE"
 REQUIRED_NON_BOOL_VARS=(
     APP_NAME
     LIBRARIES_DIR
-    DB_BODZIFY_API_DB_NAME
     DB_PORT
+    DB_BODZIFY_API_DB_NAME
     DB_SUPERUSER_NAME
     DB_SUPERUSER_PASSWORD
     DB_BODZIFY_API_USERNAME
@@ -67,7 +67,7 @@ for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
 done
 check_bool_var_is_set "APP_IS_EXPOSED"
 
-export_value_removing_surrounding_quotes "$VAR"
+export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
@@ -93,6 +93,7 @@ echo "$TOTAL_TRACK_FILES_COUNT track files were deleted."
 echo "Check if database is being accessed by other users"
 ACTIVE_CONNECTIONS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
+echo "Active connections: $ACTIVE_CONNECTIONS"
 if [ "$ACTIVE_CONNECTIONS" -gt 0 ]; then
     echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Aborting." >&2
     exit 1

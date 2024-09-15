@@ -12,20 +12,34 @@ if [ "$CONFIRMATION" != "yes" ]; then
     exit 1
 fi
 
+REQUIRED_NON_BOOL_VARS=(
+    APP_NAME
+    LIBRARIES_DIR
+    DB_BODZIFY_API_DB_NAME
+    DB_PORT
+    DB_SUPERUSER_NAME
+    DB_SUPERUSER_PASSWORD
+    DB_BODZIFY_API_USERNAME
+)
+for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
+    check_var_is_set "$VAR"
+done
+check_bool_var_is_set "APP_IS_EXPOSED"
+
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 
 echo "Running purge script..."
-OUTPUT=$(bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh -s)
+bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh -s
 if [ $? -ne 0 ]; then
-  echo "Failed to purge Django data. Details: $OUTPUT" >&2
+  echo "Failed to purge Django data. Aborting." >&2
   exit 1
 fi
 
 echo "Running Django data init script..."
-OUTPUT=$(bash ${SCRIPTS_DIR}init_django_data.sh -s)
+bash ${SCRIPTS_DIR}init_django_data.sh -s
 if [ $? -ne 0 ]; then
-  echo "Failed to initialize data: $OUTPUT" >&2
+  echo "Failed to initialize data. Aborting." >&2
   exit 1
 fi
 

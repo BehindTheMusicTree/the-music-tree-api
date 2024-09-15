@@ -26,6 +26,7 @@ else
 fi
 
 REQUIRED_NON_BOOL_VARS=(
+  DB_PORT
   DB_SUPERUSER_NAME
   DB_SUPERUSER_PASSWORD
   DB_BODZIFY_API_DB_NAME
@@ -54,7 +55,7 @@ export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 echo "Checking if database $DB_BODZIFY_API_DB_NAME exists"
-DB_EXISTS=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -tAc \
+DB_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT 1 FROM pg_database WHERE datname='$DB_BODZIFY_API_DB_NAME';" 2>&1)
 
 if [ $? -ne 0 ]; then
@@ -67,7 +68,7 @@ if [ "$DB_EXISTS" = "1" ]; then
 fi
 
 echo "Checking if role $DB_BODZIFY_API_USERNAME exists"
-ROLE_EXISTS=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
+ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
   "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
 if [ "$ROLE_EXISTS" != "1" ]; then
   echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort." >&2
@@ -75,14 +76,14 @@ if [ "$ROLE_EXISTS" != "1" ]; then
 fi
 
 echo "Creating database $DB_BODZIFY_API_DB_NAME"
-OUTPUT=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
+OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
 if [ $? -ne 0 ]; then
   echo "Failed to create the database. Details: $OUTPUT"
   exit 1
 fi
 
 echo "Creating role $DB_BODZIFY_API_USERNAME"
-OUTPUT=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
   "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';")
 if [ $? -ne 0 ]; then
   echo "Failed to create the role. Details: $OUTPUT"
@@ -90,7 +91,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Granting privileges to role $DB_BODZIFY_API_USERNAME"
-OUTPUT=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
   "GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME; \
   ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8'; \
   ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed'; \
@@ -104,9 +105,9 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Displaying databases to verify that the new database was created"
-psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "\l"
+psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\l"
 
 echo "Displaying roles to verify that the new role was created"
-psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "\du"
+psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\du"
 
 unset PGPASSWORD
