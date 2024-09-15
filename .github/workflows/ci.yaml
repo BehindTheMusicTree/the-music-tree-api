@@ -14,7 +14,6 @@ on:
 env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
-  INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME: init_db_and_role_if_necessary.sh
   CONTAINER_ROOT_DIR: /home/app/
   DB_CONNECTION_TEST_MAX_ATTEMPTS: 10
   DB_CONNECTION_TEST_SLEEP_INTERVAL: 5
@@ -101,14 +100,14 @@ jobs:
       - name: Set up filesystem
         run: bash scripts/setup_filesystem.sh
 
-      - name: Run db and afp containers
+      - name: Run database and Audio Fingerprint containers
         run: bash scripts/run_db_and_afp_containers.sh
         
-      - name: Wait for db service to start
+      - name: Wait for database service to start
         run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
-      - name: Init db data
-        run: bash scripts/reinit_django_data.sh
+      - name: Init django data
+        run: bash scripts/init_django_data.sh
 
       - name: Run pytest
         run: pytest
@@ -216,7 +215,6 @@ jobs:
             GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
             GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
             GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
-            INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME=${{ env.INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME }}
 
   set-env-variables-on-server:
     name: Set environment variables on server

@@ -163,5 +163,5 @@ echo "MEDIA_DIR is set to $MEDIA_DIR"
 create_directory_if_not_exists "$MEDIA_DIR"
 set_read_write_permissions_and_owner "$MEDIA_DIR"
 
-check_var_is_set "INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME"
-chmod +x ${SCRIPTS_DIR}${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT_NAME}
+chmod +x ${SCRIPTS_DIR}init_django_data.sh
+chmod +x ${SCRIPTS_DIR}reinit_django_data_USE_WITH_CAUTION.sh

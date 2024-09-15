@@ -78,34 +78,47 @@ if [ $? -ne 0 ]; then
   echo "Failed to check if the database exists. Details: $DB_EXISTS" >&2
   exit 1
 fi
-if [ "$DB_EXISTS" != "1" ]; then
-    echo "Database $DB_BODZIFY_API_DB_NAME does not exist. Creating..."
-    psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;"
-else
-    echo "Database $DB_BODZIFY_API_DB_NAME already exists."
+if [ "$DB_EXISTS" = "1" ]; then
+  echo "Database $DB_BODZIFY_API_DB_NAME already exists. Abort." >&2
+  exit 1
 fi
 
 echo "Checking if role $DB_BODZIFY_API_USERNAME exists"
 ROLE_EXISTS=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
   "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
-
 if [ "$ROLE_EXISTS" != "1" ]; then
-  echo "Creating role $DB_BODZIFY_API_USERNAME"
-  psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
-    "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
-else
-  echo "Role $DB_BODZIFY_API_USERNAME already exists. Skipping creation."
+  echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort." >&2
+  exit 1
+fi
+
+echo "Creating database $DB_BODZIFY_API_DB_NAME"
+OUTPUT=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
+if [ $? -ne 0 ]; then
+  echo "Failed to create the database. Details: $OUTPUT"
+  exit 1
+fi
+
+echo "Creating role $DB_BODZIFY_API_USERNAME"
+OUTPUT=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+  "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';")
+if [ $? -ne 0 ]; then
+  echo "Failed to create the role. Details: $OUTPUT"
+  exit 1
 fi
 
 echo "Granting privileges to role $DB_BODZIFY_API_USERNAME"
-psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+OUTPUT=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
   "GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME; \
   ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8'; \
   ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed'; \
   ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC'; \
   ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB; \
   GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_BODZIFY_API_USERNAME; \
-  GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_BODZIFY_API_USERNAME;"
+  GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_BODZIFY_API_USERNAME;")
+if [ $? -ne 0 ]; then
+  echo "Failed to grant privileges to the role. Details: $OUTPUT"
+  exit 1
+fi
 
 echo "Displaying databases to verify that the new database was created"
 psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "\l"

@@ -516,3 +516,4 @@ else:
 
 print(f"STATIC_ROOT: {STATIC_ROOT}")
 print(f"STATICFILES_DIRS: {STATICFILES_DIRS}")
+print("Finished loading settings.")

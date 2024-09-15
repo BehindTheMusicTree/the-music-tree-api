@@ -3,7 +3,6 @@
 echo "Starting the api container"
 
 REQUIRES_VARS=(
-    INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT
     APP_PORT
     APP_IS_EXPOSED
     DB_CONTAINER_NAME
@@ -26,17 +25,19 @@ for VAR in "${REQUIRES_VARS[@]}"; do
     fi
 done
 
-echo "Running scripts/wait-for-postgres-db.sh to wait for the database..."
-OUTPUT=$(bash ${ROOT_DIR}scripts/wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL)
+SCRIPTS_DIR=${ROOT_DIR}scripts/
+
+echo "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
+OUTPUT=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL)
 if [ $? -ne 0 ]; then
     echo "Failed to wait for the database: $OUTPUT" >&2
     exit 1
 fi
 echo "Database is ready"
 
-OUTPUT=$(bash ${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT})
+OUTPUT=$(bash ${SCRIPTS_DIR}init_django_data.sh)
 if [ $? -ne 0 ]; then
-    echo "Failed to initialize the database and roles: $OUTPUT" >&2
+    echo "Failed to initialize Django data: $OUTPUT" >&2
     exit 1
 fi
 
