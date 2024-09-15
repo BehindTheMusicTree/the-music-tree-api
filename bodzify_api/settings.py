@@ -33,7 +33,6 @@ try:
                             stderr=subprocess.PIPE,
                             text=True,
                             env=os.environ.copy())
-    print("Paths env file generated.")
 except subprocess.CalledProcessError as e:
     print("Error while generating the paths env file:", e.stderr)
     raise EnvironmentError("Error while generating the paths env file: " + str(e)) from e
@@ -43,6 +42,8 @@ dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
 APP_VERSION = os.getenv('APP_VERSION')
 if not APP_VERSION:
     raise EnvironmentError("The APP_VERSION variable must be set")
+API_ROOT_BASE = 'api/' + APP_VERSION + '/'
+print("API_ROOT_BASE: " + API_ROOT_BASE)
 
 APP_IS_EXPOSED_STR = os.getenv('APP_IS_EXPOSED')
 if not APP_IS_EXPOSED_STR:
@@ -108,7 +109,6 @@ if not APP_NAME:
     raise EnvironmentError("The APP_NAME variable must be set")
 
 API_DESCRIPTION = "API to handle genre oriented music libraries"
-API_ROOT_BASE = 'api/' + APP_VERSION + '/'
 API_ROOT = Path(BASE_DIR) / APP_NAME
 CONTACT_EMAIL = "andreas.garcia@bodzify.com"
 UUID_LEN = 22
