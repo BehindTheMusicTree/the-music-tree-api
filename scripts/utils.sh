@@ -1,5 +1,46 @@
 #!/bin/bash
 
+create_directory_if_not_exists_or_exit() {
+    local dir_path=$1
+    if [ ! -d "$dir_path" ]; then
+        echo "Creating directory $dir_path ..."
+        OUTPUT=$(mkdir -p "$dir_path")
+        if [ $? -ne 0 ]; then
+            echo "Failed to create directory $dir_path : $OUTPUT" >&2
+            exit 1
+        fi
+        
+    else
+        echo "Directory $dir_path already exists"
+    fi
+}
+
+touch_file_or_exit() {
+    local file_path=$1
+    echo "Creating file $file_path ..."
+    OUTPUT=$(touch "$file_path")
+    if [ $? -ne 0 ]; then
+        echo "Failed to create file $file_path : $OUTPUT" >&2
+        exit 1
+    fi
+    echo "File $file_path created successfully."
+}
+
+set_read_write_permissions_and_owner_or_exit() {
+    local path=$1
+    local user=$(whoami)
+    OUTPUT=$(chmod -R 740 "$path")
+    if [ $? -ne 0 ]; then
+        echo "Failed to change permissions of $path : $OUTPUT" >&2
+        exit 1
+    fi
+    OUTPUT=$(chown -R "$user" "$path")
+    if [ $? -ne 0 ]; then
+        echo "Failed to change owner of $path : $OUTPUT" >&2
+        exit 1
+    fi
+}
+
 check_vars_are_set() {
     local missing_vars=()
     for var_name in "$@"; do

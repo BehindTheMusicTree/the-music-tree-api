@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Generating partial docker-compose..."
+
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
@@ -40,6 +42,10 @@ REQUIRED_NON_BOOL_VARS=(
 )
 check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
 
+DOCKER_COMPOSE_PART_FILE="${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME"
+touch_file_or_exitn $DOCKER_COMPOSE_PART_FILE
+
+echo "Writing to $DOCKER_COMPOSE_PART_FILE..."
 cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
   db:
     image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
@@ -85,3 +91,4 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - db
     env_file: $APP_ENV_FILENAME
 EOF
+echo "Partial docker-compose written to $DOCKER_COMPOSE_PART_FILE"
