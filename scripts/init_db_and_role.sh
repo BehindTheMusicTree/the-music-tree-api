@@ -5,7 +5,7 @@ echo "Initializing database and role."
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
-load_project_env_file
+load_project_env_file_if_exists
 
 REQUIRED_NON_BOOL_VARS=(
   DB_PORT

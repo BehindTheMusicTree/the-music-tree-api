@@ -6,7 +6,7 @@ SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_S
 PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
 source ${SCRIPTS_DIR}utils.sh
 
-load_project_env_file
+load_project_env_file_if_exists
 
 REQUIRED_NON_BOOL_VARS=(
   APP_NAME

@@ -8,7 +8,7 @@ PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
 APP_ENV_FILE="${PROJECT_DIR}env/.env"
 source "${SCRIPTS_DIR}utils.sh"
 
-load_project_env_file
+load_project_env_file_if_exists
 load_project_calculated_paths_env_vars
 
 REQUIRED_NON_BOOL_VARS=(
