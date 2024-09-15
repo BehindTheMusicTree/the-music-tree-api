@@ -42,15 +42,14 @@ load_project_env_file_if_exists() {
     local ENV_FILE=${PROJECT_DIR}env/.env
     if [ ! -f "$ENV_FILE" ]; then
         echo "$ENV_FILE env file does not exist."
-        exit 0
+    else
+        echo "Loading environment variables from ${ENV_FILE} ..."
+        while IFS='=' read -r key value; do
+            # Skip comments and empty lines
+            if [ -z "$key" ]; then continue; fi
+            export "$key=$value"
+        done < "$ENV_FILE"
     fi
-
-    echo "Loading environment variables from ${ENV_FILE} ..."
-    while IFS='=' read -r key value; do
-        # Skip comments and empty lines
-        if [ -z "$key" ]; then continue; fi
-        export "$key=$value"
-    done < "$ENV_FILE"
 }
 
 load_project_calculated_paths_env_vars() {
