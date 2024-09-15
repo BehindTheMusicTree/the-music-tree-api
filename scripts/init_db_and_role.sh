@@ -2,14 +2,6 @@
 
 echo "Initializing database and role"
 
-export_value_removing_surrounding_quotes() {
-    local VAR_NAME=$1
-    local VAR_VALUE=${!VAR_NAME}
-    VAR_VALUE=${VAR_VALUE#\'}
-    VAR_VALUE=${VAR_VALUE%\'}
-    export "$VAR_NAME=$VAR_VALUE"
-}
-
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
@@ -56,14 +48,8 @@ else
 fi
 echo "DB_HOST: $DB_HOST"
 
-VARS_WITH_EVENTUAL_SURROUNDING_QUOTES=(
-  DB_SUPERUSER_PASSWORD
-  DB_BODZIFY_API_USER_PASSWORD
-)
-for VAR in "${VARS_WITH_EVENTUAL_SURROUNDING_QUOTES[@]}"; do
-  export_value_removing_surrounding_quotes "$VAR"
-done
-
+export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 echo "Checking if database $DB_BODZIFY_API_DB_NAME exists"

@@ -1,16 +1,5 @@
 #!/bin/bash
 
-check_bool_var() {
-    local var_name="$1"
-    local var_value="${!1}"
-    check_var_is_set "$var_name"
-    var_value_lower=$(echo "$var_value" | tr '[:upper:]' '[:lower:]')
-    if [ "$var_value_lower" != "true" ] && [ "$var_value_lower" != "false" ]; then
-        echo "$var_name must be set to true or false" >&2
-        exit 1
-    fi
-}
-
 create_directory_if_not_exists() {
     local dir_path=$1
     if [ ! -d "$dir_path" ]; then
@@ -49,6 +38,7 @@ set_read_write_permissions_and_owner() {
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
 ENV_FILE=${PROJECT_DIR}env/.env
+source "${SCRIPTS_DIR}utils.sh"
 
 if [ ! -f "$ENV_FILE" ]; then
     echo "Env file $ENV_FILE does not exist" >&2
@@ -169,5 +159,9 @@ echo "MEDIA_DIR is set to $MEDIA_DIR"
 create_directory_if_not_exists "$MEDIA_DIR"
 set_read_write_permissions_and_owner "$MEDIA_DIR"
 
-chmod +x ${SCRIPTS_DIR}init_django_data.sh
-chmod +x ${SCRIPTS_DIR}reinit_django_data_USE_WITH_CAUTION.sh
+echo "Make all scripts in $SCRIPTS_DIR executable."
+for script in "${SCRIPTS_DIR}"*; do
+    if [ -f "$script" ]; then
+        chmod +x "$script"
+    fi
+done

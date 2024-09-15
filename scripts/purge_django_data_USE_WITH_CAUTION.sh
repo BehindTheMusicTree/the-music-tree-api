@@ -1,15 +1,6 @@
 #!/bin/bash
 
-# WARNING: This script will purge the Django data.
-# Use with caution.
-
-export_value_removing_surrounding_quotes() {
-    local VAR_NAME=$1
-    local VAR_VALUE=${!VAR_NAME}
-    VAR_VALUE=${VAR_VALUE#\'}
-    VAR_VALUE=${VAR_VALUE%\'}
-    export "$VAR_NAME=$VAR_VALUE"
-}
+# WARNING: This script will purge the Django data. Use with caution.
 
 SKIP_CONFIRMATION=false
 

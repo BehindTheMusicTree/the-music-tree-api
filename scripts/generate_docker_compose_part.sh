@@ -18,6 +18,10 @@ else
   done < "$ENV_FILE"
 fi
 
+# Get the directory of the script even when it's called from another script
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+source ${SCRIPTS_DIR}utils.sh
+
 required_vars=(
   DOCKER_COMPOSE_PART_FILENAME
   DOCKER_NETWORK_NAME
@@ -54,14 +58,8 @@ required_vars=(
   TMP_UPLOADED_FILES_DIR
 )
 for var in "${required_vars[@]}"; do
-  if [ -z "${!var}" ]; then
-    echo "$var must be set." >&2
-    exit 1
-  fi
+  check_var_is_set "$var"
 done
-
-# Get the directory of the script even when it's called from another script
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 
 cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
   db:

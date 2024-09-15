@@ -2,26 +2,18 @@
 
 echo "Running the database and audio fingerprinter containers."
 
-export_value_removing_surrounding_quotes() {
-    local VAR_NAME=$1
-    local VAR_VALUE=${!VAR_NAME}
-    VAR_VALUE=${VAR_VALUE#\'}
-    VAR_VALUE=${VAR_VALUE%\'}
-    export "$VAR_NAME=$VAR_VALUE"
-}
-
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-project_dir=$(realpath $(dirname "$SCRIPTS_DIR"))/
+PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
+APP_ENV_FILE="${PROJECT_DIR}env/.env"
+source "${SCRIPTS_DIR}utils.sh"
 
-app_env_file="${project_dir}env/.env"
-
-if [ ! -f "$app_env_file" ]; then
-    echo "$app_env_file env file does not exist" >&2
+if [ ! -f "$APP_ENV_FILE" ]; then
+    echo "$APP_ENV_FILE env file does not exist" >&2
 else
-    echo "Loading environment variables from $app_env_file"
-    if [ ! -f "$app_env_file" ]; then
-        echo "$app_env_file env file does not exist" >&2
+    echo "Loading environment variables from $APP_ENV_FILE"
+    if [ ! -f "$APP_ENV_FILE" ]; then
+        echo "$APP_ENV_FILE env file does not exist" >&2
         exit 1
     fi
 
@@ -30,24 +22,24 @@ else
         # Skip comments and empty lines
         if [ -z "$key" ]; then continue; fi
         export "$key=$value"
-    done < "$app_env_file"
+    done < "$APP_ENV_FILE"
 fi
 
-calculated_paths_env_file=$(cd "${project_dir}env/calculated_paths/" && pwd)/.env
-bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$project_dir" "$calculated_paths_env_file"
+CALCULATED_PATHS_ENV_FILE=$(cd "${PROJECT_DIR}env/calculated_paths/" && pwd)/.env
+bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh" "$PROJECT_DIR" "$CALCULATED_PATHS_ENV_FILE"
 
 if [ $? -ne 0 ]; then
     echo "Failed to generate calculated paths env file"
     exit 1
 fi
 
-echo "Loading calculated paths from ${calculated_paths_env_file}"
+echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
 while IFS='=' read -r key value
 do
     export "$key=$value"
-done < "$calculated_paths_env_file"
+done < "$CALCULATED_PATHS_ENV_FILE"
 
-required_vars=(
+REQUIRED_VARS=(
   ENV
   DOCKERHUB_USERNAME
   DEBUG
@@ -68,11 +60,8 @@ required_vars=(
   AFP_DOCKERIZED_POOL_DIR
   AFP_PORT
 )
-for var in "${required_vars[@]}"; do
-  if [ -z "${!var}" ]; then
-    echo "$var must be set."
-    exit 1
-  fi
+for var in "${REQUIRED_VARS[@]}"; do
+  check_var_is_set "$var"
 done
 
 VARS_WITH_EVENTUAL_SURROUNDING_QUOTES=(
@@ -88,9 +77,9 @@ echo "Running the database and audio fingerprinter containers."
 docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
 docker pull $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
 
-container_ids=$(docker ps -a -q)
-if [ -n "$container_ids" ]; then
-    docker rm -f $container_ids
+CONTAINER_IDS=$(docker ps -a -q)
+if [ -n "$CONTAINER_IDS" ]; then
+    docker rm -f $CONTAINER_IDS
 else
     echo "No container to remove."
 fi
