@@ -68,12 +68,10 @@ done
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     ROOT_DIR=$ROOT_DIR \
-
     ENV=TEST \
-
     APP_NAME=$APP_NAME \
     APP_VERSION=$APP_VERSION \
-    
+  
     DEBUG=true \
     APP_IS_EXPOSED=true \
     AUDIO_META_ANALYSE_IS_NEEDED=true \
@@ -118,9 +116,9 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
-    pip install -r requirements.txt && \
-    bash scripts/setup_filesystem.sh && \
-    chmod +x ${ROOT_DIR}scripts/entrypoint.sh
+    pip install -r requirements.txt
+RUN bash scripts/setup_filesystem.sh
+RUN chmod +x ${ROOT_DIR}scripts/entrypoint.sh
 RUN ls -l ${ROOT_DIR}scripts/entrypoint.sh
 
 # Set the entrypoint using shell form to allow environment variable expansion
