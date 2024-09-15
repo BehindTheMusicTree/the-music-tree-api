@@ -12,7 +12,7 @@ check_var_is_set() {
     fi
 }
 
-echo "Generating the env file with calculated paths and db host"
+echo "Generating the env file with calculated paths"
 
 [ -z "$1" ] && print_error_and_exit "NO BASE DIR PROVIDED."
 BASE_DIR=$1
@@ -34,10 +34,6 @@ if [ "$APP_IS_EXPOSED" = "true" ]; then
     echo "APP_IS_EXPOSED is set to true"
     check_var_is_set "MEDIA_DIR"
     check_var_is_set "TMP_UPLOADED_FILES_DIR"
-    if [ "$DB_IS_NEEDED" = "true" ]; then
-        check_var_is_set "DB_CONTAINER_NAME"
-        DB_HOST=$DB_CONTAINER_NAME
-    fi
     if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
         check_var_is_set "STATIC_FILES_DIR"
         STATIC_FILES_DIR="${BASE_DIR}${STATIC_FILES_DIR}"
