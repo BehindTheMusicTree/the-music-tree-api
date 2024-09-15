@@ -28,7 +28,7 @@ for VAR in "${REQUIRES_VARS[@]}"; do
 done
 
 # Wait for the database to be ready
-bash ./wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL
+bash ${ROOT_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL
 
 echo "Initializing the database and roles if necessary..."
 if [ ! -f "${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT}" ]; then
