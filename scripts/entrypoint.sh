@@ -27,8 +27,14 @@ for VAR in "${REQUIRES_VARS[@]}"; do
     fi
 done
 
-# Wait for the database to be ready
-bash ${ROOT_DIR}scripts/wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL
+echo "Running scripts/wait-for-postgres-db.sh to wait for the database..."
+OUTPUT=$(bash ${ROOT_DIR}scripts/wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL)
+if [ $? -ne 0 ]; then
+    echo "Failed to wait for the database: $OUTPUT" >&2
+    exit 1
+fi
+
+echo "Database is ready"
 
 echo "Initializing the database and roles if necessary..."
 if [ ! -f "${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT}" ]; then
