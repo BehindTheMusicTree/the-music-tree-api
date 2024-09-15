@@ -17,19 +17,13 @@ while getopts ":s" opt; do
 done
 
 if [ "$SKIP_CONFIRMATION" != "true" ]; then
-    echo "WARNING: This script will purge the Django data."
-    echo "Use with caution."
+    echo "WARNING: This script will purge the Django data. Use with caution."
     read -p "Are you sure you want to proceed? (yes/no): " CONFIRMATION
 
     if [ "$CONFIRMATION" != "yes" ]; then
         echo "Operation aborted."
         exit 1
     fi
-fi
-
-if [ "$CONFIRMATION" != "yes" ]; then
-    echo "Operation aborted."
-    exit 1
 fi
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
@@ -131,7 +125,15 @@ else
     echo "User $DB_SUPERUSER_NAME does not exist."
 fi
 
-echo "Deleting migrations."
 MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
-find "${MIGRATIONS_DIR}*.py" -not -name "__init__.py" -delete
-find "${MIGRATIONS_DIR}*.pyc"  -delete
+echo "Deleting migrations in directory $MIGRATIONS_DIR ..."
+OUTPUT=$(find "${MIGRATIONS_DIR}*.py" -not -name "__init__.py" -delete)
+if [ $? -ne 0 ]; then
+    echo "Failed to delete migrations. Details: $OUTPUT" >&2
+    exit 1
+fi
+OUTPUT=$(find "${MIGRATIONS_DIR}*.pyc"  -delete)
+if [ $? -ne 0 ]; then
+    echo "Failed to delete migrations. Details: $OUTPUT" >&2
+    exit 1
+fi
