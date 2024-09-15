@@ -272,7 +272,9 @@ jobs:
             
             echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
             echo 'AFP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
-            echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' >> ${{ env.API_ENV_FILE }}
+            echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' >> ${{ env.API_ENV_FILE }} &&
+            
+            chmod 600 ${{ env.API_ENV_FILE }}
           EOF
 
       - name: Set db environment variables on server
@@ -288,7 +290,9 @@ jobs:
             echo 'POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
             echo 'POSTGRES_USER=${{ vars.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
             echo 'POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE }} &&
-            echo 'POSTGRES_PORT=${{ vars.DB_PORT }}' >> ${{ env.DB_ENV_FILE }}
+            echo 'POSTGRES_PORT=${{ vars.DB_PORT }}' >> ${{ env.DB_ENV_FILE }} &&
+
+            chmod 600 ${{ env.DB_ENV_FILE }}
           "
 
       - name: Set afp environment variables on server
@@ -301,7 +305,9 @@ jobs:
 
             echo 'ENV=${{ vars.ENV }}' >> ${{ env.AFP_ENV_FILE }} &&
             echo 'DEBUG=true' >> ${{ env.AFP_ENV_FILE }} &&
-            echo 'APP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.AFP_ENV_FILE }}
+            echo 'APP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.AFP_ENV_FILE }} &&
+
+            chmod 600 ${{ env.AFP_ENV_FILE }}
           "
 
   set-partial-docker-compose-on-server:
