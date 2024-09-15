@@ -53,7 +53,7 @@ done < "$CALCULATED_PATHS_ENV_FILE"
 
 REQUIRED_VARS=(
   APP_NAME
-  DB_HOST
+  APP_IS_EXPOSED
   DB_PORT
   DB_BODZIFY_API_DB_NAME
   DB_SUPERUSER_NAME
@@ -69,6 +69,17 @@ for VAR in "${REQUIRED_VARS[@]}"; do
     exit 1
   fi
 done
+
+if [ "$APP_IS_EXPOSED" = "true" ]; then
+  echo "The app is exposed. The database host is the database container name"
+  check_var_is_set "DB_CONTAINER_NAME"
+  DB_HOST=$DB_CONTAINER_NAME
+else
+  echo "The app is exposed. The database host is the database URL"
+  check_var_is_set "DB_URL"
+  DB_HOST=$DB_URL
+fi
+echo "DB_HOST: $DB_HOST"
 
 VARS_WITH_POTENTIAL_SURROUNDING_QUOTES=(
   DB_SUPERUSER_PASSWORD

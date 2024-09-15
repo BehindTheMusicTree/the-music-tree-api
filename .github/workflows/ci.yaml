@@ -54,7 +54,7 @@ jobs:
       DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
       DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
       DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
-      DB_HOST: ${{ vars.DB_HOST }}
+      DB_URL: ${{ vars.DB_URL }}
       DB_PORT: ${{ vars.DB_PORT }}
 
       AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
@@ -105,7 +105,7 @@ jobs:
         run: bash scripts/run_db_and_afp_containers.sh
         
       - name: Wait for db service to start
-        run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_HOST }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
+        run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
       - name: Init db data
         run: bash scripts/reinit_django_data.sh

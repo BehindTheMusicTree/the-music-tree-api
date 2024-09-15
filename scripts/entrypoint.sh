@@ -2,11 +2,10 @@
 
 echo "Starting the api container"
 
-set -e
-
 REQUIRES_VARS=(
     INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT
     APP_PORT
+    APP_IS_EXPOSED
     DB_CONTAINER_NAME
     DB_PORT
     DB_CONNECTION_TEST_MAX_ATTEMPTS

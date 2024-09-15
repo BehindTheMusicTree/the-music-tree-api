@@ -231,10 +231,11 @@ if DB_IS_NEEDED:
             raise EnvironmentError("The DB_CONTAINER_NAME variable must be set")
         DB_HOST = DB_CONTAINER_NAME
     else:
-        print("The app is not exposed. The db host is set to the env var DB_HOST.")
-        DB_HOST = os.getenv('DB_HOST')
-        if DB_HOST is None:
-            raise EnvironmentError("The DB_HOST variable must be set")
+        print("The app is not exposed. The db host is the db url.")
+        DB_URL = os.getenv('DB_URL')
+        if DB_URL is None:
+            raise EnvironmentError("The DB_URL variable must be set")
+        DB_HOST = DB_URL
     print("DB_HOST: " + DB_HOST)
 
     DB_PORT = os.getenv('DB_PORT')
