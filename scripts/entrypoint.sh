@@ -32,14 +32,7 @@ if [ $? -ne 0 ]; then
     echo "Failed to wait for the database: $OUTPUT" >&2
     exit 1
 fi
-
 echo "Database is ready"
-
-echo "Initializing the database and roles if necessary..."
-if [ ! -f "${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT}" ]; then
-    echo "${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT} does not exist" >&2
-    exit 1
-fi
 
 OUTPUT=$(bash ${INIT_IF_NECESSARY_DB_AND_ROLE_SCRIPT})
 if [ $? -ne 0 ]; then

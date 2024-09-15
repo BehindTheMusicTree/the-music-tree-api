@@ -57,11 +57,11 @@ Running the container requires the following environment variables:
 - `ACOUSTID_API_KEY`
 - `CSRF_TRUSTED_ORIGINS`
 - `ALLOWED_HOSTS`
+- `DB_CONTAINER_NAME`
+- `DB_PORT=5432`
 - `DB_BODZIFY_API_DB_NAME`
 - `DB_BODZIFY_API_USERNAME`
 - `DB_BODZIFY_API_USER_PASSWORD`
-- `DB_CONTAINER_NAME`
-- `DB_PORT=5432`
 - `AFP_CONTAINER_NAME` (AFP meaning Audio FingerPrinter)
 - `AFP_PORT`
 - `AFP_POST_ENDPOINT`

@@ -2,6 +2,13 @@
 
 echo "Initializing database and role"
 
+check_var_is_set() {
+    local var_name=$1
+    if [ -z "${!var_name}" ]; then
+        print_error_and_exit "$var_name is not set"
+    fi
+}
+
 export_value_removing_surrounding_quotes() {
     local VAR_NAME=$1
     local VAR_VALUE=${!VAR_NAME}
@@ -39,10 +46,7 @@ REQUIRED_VARS=(
   DB_BODZIFY_API_USER_PASSWORD
 )
 for VAR in "${REQUIRED_VARS[@]}"; do
-  if [ -z "${!VAR}" ]; then
-    echo "$VAR must be set." >&2
-    exit 1
-  fi
+  check_var_is_set "$VAR"
 done
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
@@ -74,7 +78,6 @@ if [ $? -ne 0 ]; then
   echo "Failed to check if the database exists. Details: $DB_EXISTS" >&2
   exit 1
 fi
-
 if [ "$DB_EXISTS" != "1" ]; then
     echo "Database $DB_BODZIFY_API_DB_NAME does not exist. Creating..."
     psql -h $DB_HOST -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;"
@@ -82,9 +85,17 @@ else
     echo "Database $DB_BODZIFY_API_DB_NAME already exists."
 fi
 
-echo "Creating role $DB_BODZIFY_API_USERNAME"
-psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
-  "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
+echo "Checking if role $DB_BODZIFY_API_USERNAME exists"
+ROLE_EXISTS=$(psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
+  "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
+
+if [ "$ROLE_EXISTS" != "1" ]; then
+  echo "Creating role $DB_BODZIFY_API_USERNAME"
+  psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+    "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';"
+else
+  echo "Role $DB_BODZIFY_API_USERNAME already exists. Skipping creation."
+fi
 
 echo "Granting privileges to role $DB_BODZIFY_API_USERNAME"
 psql -h $DB_HOST -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
