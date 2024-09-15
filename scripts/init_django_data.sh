@@ -3,7 +3,8 @@
 check_var_is_set() {
     local var_name=$1
     if [ -z "${!var_name}" ]; then
-        print_error_and_exit "$var_name is not set"
+        echo "$var_name is not set" >&2
+        exit 1
     fi
 }
 
