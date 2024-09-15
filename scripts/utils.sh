@@ -16,7 +16,7 @@ export_value_removing_surrounding_quotes() {
     export "$VAR_NAME=$VAR_VALUE"
 }
 
-check_bool_var() {
+check_bool_var_is_set() {
     local var_name="$1"
     local var_value="${!1}"
     check_var_is_set "$var_name"

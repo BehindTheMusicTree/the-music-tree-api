@@ -50,14 +50,14 @@ else
     done < "$ENV_FILE"
 fi
 
-BOOL_VARS=(
+REQUIRED_BOOL_VARS=(
   "APP_IS_EXPOSED"
   "DJANGO_LOGS_ARE_NEEDED"
   "STATIC_FILES_ARE_NEEDED"
   "AUDIO_META_ANALYSE_IS_NEEDED"
 )
-for VAR in "${BOOL_VARS[@]}"; do
-  check_bool_var "$VAR"
+for VAR in "${REQUIRED_BOOL_VARS[@]}"; do
+  check_bool_var_is_set "$VAR"
 done
 
 CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
@@ -125,12 +125,12 @@ else
 fi
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
-    required_vars=(
+    REQUIRED_NON_BOOL_VARS=(
         GUNICORN_LOG_DIR
         GUNICORN_LOG_ERROR_FILENAME
         GUNICORN_LOG_ACCESS_FILENAME
     )
-    for var_name in "${required_vars[@]}"; do
+    for var_name in "${REQUIRED_NON_BOOL_VARS[@]}"; do
         check_var_is_set "$var_name"
     done
 

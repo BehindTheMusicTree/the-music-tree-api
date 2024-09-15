@@ -25,17 +25,18 @@ else
     fi
 fi
 
-REQUIRED_VARS=(
-  APP_IS_EXPOSED
+REQUIRED_NON_BOOL_VARS=(
   DB_SUPERUSER_NAME
   DB_SUPERUSER_PASSWORD
   DB_BODZIFY_API_DB_NAME
   DB_BODZIFY_API_USERNAME
   DB_BODZIFY_API_USER_PASSWORD
 )
-for VAR in "${REQUIRED_VARS[@]}"; do
+for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
   check_var_is_set "$VAR"
 done
+
+check_bool_var_is_set "APP_IS_EXPOSED"
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
   echo "The app is exposed. The database host is the database container name"

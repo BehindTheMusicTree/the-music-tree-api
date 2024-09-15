@@ -3,18 +3,19 @@
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
-REQUIRED_VARS=(
+REQUIRED_NON_BOOL_VARS=(
   APP_NAME
-  APP_IS_EXPOSED
   DB_SUPERUSER_NAME
   DB_SUPERUSER_PASSWORD
   DB_BODZIFY_API_DB_NAME
   DB_BODZIFY_API_USERNAME
   DB_BODZIFY_API_USER_PASSWORD
 )
-for VAR in "${REQUIRED_VARS[@]}"; do
+for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
   check_var_is_set "$VAR"
 done
+
+check_bool_var_is_set "APP_IS_EXPOSED"
 
 PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
 MANAGE_SCRIPT=${PROJECT_DIR}manage.py

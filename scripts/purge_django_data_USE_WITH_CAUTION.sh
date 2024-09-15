@@ -53,9 +53,8 @@ while IFS='=' read -r key value; do
     export "$key=$value"
 done < "$CALCULATED_PATHS_ENV_FILE"
 
-REQUIRED_VARS=(
+REQUIRED_NON_BOOL_VARS=(
     APP_NAME
-    APP_IS_EXPOSED
     LIBRARIES_DIR
     DB_BODZIFY_API_DB_NAME
     DB_PORT
@@ -63,9 +62,10 @@ REQUIRED_VARS=(
     DB_SUPERUSER_PASSWORD
     DB_BODZIFY_API_USERNAME
 )
-for VAR in "${REQUIRED_VARS[@]}"; do
+for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
     check_var_is_set "$VAR"
 done
+check_bool_var_is_set "APP_IS_EXPOSED"
 
 export_value_removing_surrounding_quotes "$VAR"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
@@ -90,6 +90,9 @@ rm -rf "$LIBRARIES_DIR"*
 echo "$USERS_SUBFOLDERS_COUNT user subfolders were deleted."
 echo "$TOTAL_TRACK_FILES_COUNT track files were deleted."
 
+echo "Check if database is being accessed by other users"
+ACTIVE_CONNECTIONS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+  "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
 if [ "$ACTIVE_CONNECTIONS" -gt 0 ]; then
     echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Aborting." >&2
     exit 1
@@ -118,7 +121,7 @@ if [ "$USER_EXISTS" = "1" ]; then
     echo "User exists. Dropping user"
     OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
     if [ $? -ne 0 ]; then
-      echo "Failed to drop the user. Details: $OUTPUT"
+      echo "Failed to drop the user: $OUTPUT"
       exit 1
     fi
 else 
@@ -127,13 +130,20 @@ fi
 
 MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
 echo "Deleting migrations in directory $MIGRATIONS_DIR ..."
-OUTPUT=$(find "${MIGRATIONS_DIR}*.py" -not -name "__init__.py" -delete)
+echo "Deleting .py migrations..."
+find "${MIGRATIONS_DIR}" -name "*.py" -not -name "__init__.py" -exec rm -f {} \;
 if [ $? -ne 0 ]; then
-    echo "Failed to delete migrations. Details: $OUTPUT" >&2
+    echo "Failed to delete .py migrations" >&2
     exit 1
 fi
-OUTPUT=$(find "${MIGRATIONS_DIR}*.pyc"  -delete)
+echo ".py migrations deleted successfully."
+
+echo "Deleting .pyc migrations..."
+find "${MIGRATIONS_DIR}" -name "*.pyc" -exec rm -f {} \;
 if [ $? -ne 0 ]; then
-    echo "Failed to delete migrations. Details: $OUTPUT" >&2
+    echo "Failed to delete .pyc migrations" >&2
     exit 1
 fi
+echo ".pyc migrations deleted successfully."
+
+echo "Django data purged successfully."

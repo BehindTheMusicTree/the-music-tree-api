@@ -17,17 +17,14 @@ GENERATED_PATHS_ENV_FILE=$2
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
-REQUIRED_VARS=(
+check_var_is_set "LIBRARIES_DIR_NAME"
+
+REQUIRED_BOOL_VARS=(
     "APP_IS_EXPOSED"
-    "LIBRARIES_DIR_NAME"
-    "DB_IS_NEEDED"
     "STATIC_FILES_ARE_NEEDED"
     "DJANGO_LOGS_ARE_NEEDED"
     "AUDIO_META_ANALYSE_IS_NEEDED"
 )
-for VAR in "${REQUIRED_VARS[@]}"; do
-    check_var_is_set "$VAR"
-done
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
     echo "APP_IS_EXPOSED is set to true"

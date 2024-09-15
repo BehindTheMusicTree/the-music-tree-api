@@ -22,7 +22,7 @@ fi
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
-required_vars=(
+REQUIRED_NON_BOOL_VARS=(
   DOCKER_COMPOSE_PART_FILENAME
   DOCKER_NETWORK_NAME
   DOCKERHUB_USERNAME
@@ -57,7 +57,7 @@ required_vars=(
   STATIC_FILES_DIR
   TMP_UPLOADED_FILES_DIR
 )
-for var in "${required_vars[@]}"; do
+for var in "${REQUIRED_NON_BOOL_VARS[@]}"; do
   check_var_is_set "$var"
 done
 
