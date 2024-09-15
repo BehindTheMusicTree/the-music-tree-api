@@ -23,6 +23,12 @@ REQUIRED_VARS=(
     DB_SUPERUSER_PASSWORD
     DB_BODZIFY_API_USERNAME
 )
+for VAR in "${REQUIRED_VARS[@]}"; do
+    if [ -z "${!VAR}" ]; then
+        echo "$VAR must be set." >&2
+        exit 1
+    fi
+done
 
 export_value_removing_surrounding_quotes() {
     local VAR_NAME=$1
@@ -48,7 +54,7 @@ export_value_removing_surrounding_quotes DB_SUPERUSER_PASSWORD
 CURRENT_SCRIPT_DIR=$(dirname "$0")
 PROJECT_DIR=$(realpath "${CURRENT_SCRIPT_DIR}/..")
 
-echo "Empty library directory"
+echo "Empty the library directory $LIBRARIES_DIR ..."
 USERS_SUBFOLDERS_COUNT=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
 TOTAL_TRACK_FILES_COUNT=$(find "$LIBRARIES_DIR" -mindepth 2 -type f | wc -l)
 rm -rf "$LIBRARIES_DIR"*
