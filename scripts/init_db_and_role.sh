@@ -34,6 +34,7 @@ export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 echo "Checking if database $DB_BODZIFY_API_DB_NAME exists..."
+psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "SELECT * FROM pg_database;"
 DB_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT 1 FROM pg_database WHERE datname='$DB_BODZIFY_API_DB_NAME';")
 if [ $? -ne 0 ]; then
