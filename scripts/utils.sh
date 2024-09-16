@@ -160,6 +160,8 @@ check_if_db_empty_or_exit () {
     check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
     export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
     export PGPASSWORD=$DB_SUPERUSER_PASSWORD
+
+    determine_db_host_if_not_set
     
     echo "Checking if database $DB_BODZIFY_API_DB_NAME exists..."
     psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "SELECT * FROM pg_database;"
