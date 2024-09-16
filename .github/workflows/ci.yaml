@@ -106,7 +106,13 @@ jobs:
         run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
       - name: Check db
-        run: bash scripts/check_db.sh
+        run: 
+          psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "
+            SELECT 
+              datname AS database_name, 
+              pg_stat_file('base/' || oid || '/PG_VERSION').modification AS creation_date
+            FROM 
+              pg_database;"
 
       - name: Init django data
         run: bash scripts/init_django_data.sh
