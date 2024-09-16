@@ -107,7 +107,7 @@ jobs:
 
       - name: Check db
         run: 
-          psql -h ${{ vars.DB_CONTAINER_NAME}} -p ${{ vars.DB_PORT }} -U ${{ vars.DB_SUPERUSER_NAME }} -tAc "
+          psql -h localhost -p ${{ vars.DB_PORT }} -U ${{ vars.DB_SUPERUSER_NAME }} -tAc "
             SELECT 
               datname AS database_name, 
               pg_stat_file('base/' || oid || '/PG_VERSION').modification AS creation_date
