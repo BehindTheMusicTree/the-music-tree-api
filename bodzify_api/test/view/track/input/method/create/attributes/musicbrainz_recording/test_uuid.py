@@ -10,7 +10,7 @@ from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 class TestCase(TrackTestCase):
 
     def test_not_found_then_none(self):
-        response = self.post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m52.mp3")
+        response = self.post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m53_not_found.wav")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.musicbrainz_recording is None
 
