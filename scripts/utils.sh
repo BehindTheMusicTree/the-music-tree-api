@@ -166,6 +166,8 @@ check_if_db_new_or_exit () {
         echo "Database $DB_BODZIFY_API_DB_NAME exists."\
         "Checking if role $DB_BODZIFY_API_USERNAME exists..."
         echo "DEBUGGING"
+        psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
+        "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';"
         local ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
         "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
         if [ $? -ne 0 ]; then
