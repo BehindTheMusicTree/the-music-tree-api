@@ -96,7 +96,6 @@ load_app_env_file_if_exists() {
 
 load_project_calculated_paths_env_vars() {
     echo "Loading calculated paths..."
-    check_vars_are_set "LIBRARIES_DIR_NAME"
     check_bool_vars_are_set "APP_IS_EXPOSED"
 
     local SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
