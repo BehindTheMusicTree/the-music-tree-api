@@ -24,11 +24,13 @@ if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
 
     DEFAULT_STATIC_FILES="${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR"
     if [ "$STATIC_FILES" != "$DEFAULT_STATIC_FILES" ]; then
+        echo "STATIC_FILES: $STATIC_FILES"
+        echo "DEFAULT_STATIC_FILES: $DEFAULT_STATIC_FILES"
         echo "STATIC_FILES is not the default internal directory. Moving static files to $STATIC_FILES"
         if [ ! -d "$DEFAULT_STATIC_FILES" ] || [ "$(find "$DEFAULT_STATIC_FILES" -mindepth 1 -print -quit | grep -q .)" ]; then
-            echo "No static files found in default internal directory $STATIC_FILES_DEFAULT_INTERNAL_DIR"
+            echo "No static files found in default internal directory $STATIC_FILES_DEFAULT_INTERNAL_DIR ."
         else
-            OUTPUT=$(mv "$DEFAULT_STATIC_FILES"/* "$STATIC_FILES")
+            OUTPUT=$(mv "$DEFAULT_STATIC_FILES"* "$STATIC_FILES")
             if [ $? -ne 0 ]; then
                 echo "Failed to move static files from default internal directory to $STATIC_FILES. Details: $OUTPUT" >&2
                 exit 1
