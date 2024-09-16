@@ -27,7 +27,7 @@ MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
 
 echo "Checking if migrations already exist..."
 if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
-    echo "Migrations already exist. Aborting..."
+    echo "Migrations already exist. Abort"
     exit 1
 fi
 echo "Migrations do not exist."
@@ -53,7 +53,7 @@ echo "Migrations created successfully."
 echo "Applying migrations..."
 python3 $MANAGE_SCRIPT migrate
 if [ $? -ne 0 ]; then
-  echo "Failed to apply migrations. Aborting..." >&2
+  echo "Failed to apply migrations. Abort" >&2
   exit 1
 fi
 echo "Migrations applied successfully."

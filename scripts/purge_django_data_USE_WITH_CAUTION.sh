@@ -79,7 +79,7 @@ ACTIVE_CONNECTIONS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
 echo "Active connections: $ACTIVE_CONNECTIONS"
 if [ "$ACTIVE_CONNECTIONS" -gt 0 ]; then
-    echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Aborting..." >&2
+    echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Abort" >&2
     exit 1
 else
     echo "Database is not being accessed by other users. Proceeding."
