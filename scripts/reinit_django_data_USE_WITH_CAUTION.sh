@@ -32,17 +32,15 @@ check_vars_are_set "${REQUIRED_NON_BOOL_VARS[@]}"
 export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
 echo "Environment variables loaded successfully."
 
-echo "Running purge script..."
-bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh -s
+OUTPUT=$(bash ${SCRIPTS_DIR}purge_django_data.sh)
 if [ $? -ne 0 ]; then
-  echo "Failed to purge Django data. Aborting..." >&2
+  echo "Failed to purge data. Aborting..." >&2
   exit 1
 fi
 
-echo "Running Django data init script..."
-bash ${SCRIPTS_DIR}init_django_data.sh -s
+OUTPUT=$(bash ${SCRIPTS_DIR}init_django_data.sh)
 if [ $? -ne 0 ]; then
-  echo "Failed to initialize data. Aborting..." >&2
+  echo "Failed to initialize Django data." >&2
   exit 1
 fi
 

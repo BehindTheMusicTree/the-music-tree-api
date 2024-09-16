@@ -2,6 +2,8 @@
 
 # WARNING: This script will purge the Django data. Use with caution.
 
+echo "Purging Django data..."
+
 SKIP_CONFIRMATION=false
 
 while getopts ":s" opt; do

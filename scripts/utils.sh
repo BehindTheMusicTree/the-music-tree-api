@@ -115,7 +115,11 @@ load_project_calculated_paths_env_vars() {
     fi
 
     local CALCULATED_PATHS_ENV_FILE="${CALTULATED_PATHS_DIR}.env"
-    bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh"
+    OUTPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh")
+    if [ $? -ne 0 ]; then
+        echo "Failed to generate calculated paths env file: $OUTPUT" >&2
+        exit 1
+    fi
     
     echo "Loading calculated paths from ${CALCULATED_PATHS_ENV_FILE}"
     while IFS='=' read -r key value; do

@@ -63,3 +63,5 @@ python3 $MANAGE_SCRIPT loaddata app admin_user_dev mobile_test_user postman_test
 echo "Initial data loaded successfully."
 
 unset PGPASSWORD
+
+echo "Django data initialized successfully."
