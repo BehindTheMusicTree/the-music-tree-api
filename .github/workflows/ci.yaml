@@ -105,27 +105,6 @@ jobs:
       - name: Wait for database service to start
         run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
-      - name: Check db
-        run: |
-          export PGPASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }} &&
-          psql -h localhost -p 5432 -U postgres -tAc "
-            SELECT 
-              datname AS database_name, 
-              pg_stat_activity.backend_start AS creation_date
-            FROM 
-              pg_database
-            JOIN 
-              pg_stat_activity ON pg_stat_activity.datid = pg_database.oid
-            WHERE 
-              pg_stat_activity.pid = (
-                SELECT 
-                  MIN(pid) 
-                FROM 
-                  pg_stat_activity 
-                WHERE 
-                  pg_stat_activity.datid = pg_database.oid
-              );"
-
       - name: Init django data
         run: bash scripts/init_django_data.sh
 

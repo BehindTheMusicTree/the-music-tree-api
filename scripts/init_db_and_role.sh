@@ -25,13 +25,23 @@ source ${SCRIPTS_DIR}utils.sh
 
 load_env_vars
 determine_db_host_if_not_set
-check_if_db_empty_or_exit
+check_if_db_new_or_exit
 
-echo "Creating database $DB_BODZIFY_API_DB_NAME ..."
-output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
+echo "Creating database $DB_BODZIFY_API_DB_NAME if it does not exist..."
+output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "SELECT 1 FROM pg_database WHERE datname = '$DB_BODZIFY_API_DB_NAME';")
 if [ $? -ne 0 ]; then
-  echo "Failed to create the database: $output"
+  echo "Failed to check if the database exists: $output"
   exit 1
+fi
+if [ -z "$output" ]; then
+  echo "Database $DB_BODZIFY_API_DB_NAME does not exist. Creating it..."
+  output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
+  if [ $? -ne 0 ]; then
+    echo "Failed to create the database: $output"
+    exit 1
+  fi
+else
+  echo "Database $DB_BODZIFY_API_DB_NAME already exists."
 fi
 
 echo "Creating role $DB_BODZIFY_API_USERNAME ..."
