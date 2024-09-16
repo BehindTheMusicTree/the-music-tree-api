@@ -131,11 +131,26 @@ load_project_calculated_paths_env_vars() {
     echo "Calculated paths loaded successfully."
 }
 
+determine_db_host_if_not_set () {
+    if [ -z "$DB_HOST" ]; then
+        echo "DB_HOST is not set. Determining the host..."
+        check_bool_vars_are_set "APP_IS_EXPOSED"
+        if [ "$APP_IS_EXPOSED" = "true" ]; then
+            check_vars_are_set "DB_CONTAINER_NAME"
+            DB_HOST=$DB_CONTAINER_NAME
+        else
+            check_vars_are_set "DB_URL"
+            DB_HOST=$DB_URL
+        fi
+        echo "DB_HOST: $DB_HOST"
+        export DB_HOST
+    fi
+}
+
 check_if_db_empty_or_exit () {
     echo "Checking if the database is empty..."
 
     local REQUIRED_NON_BOOL_VARS=(
-        DB_HOST
         DB_PORT
         DB_SUPERUSER_NAME
         DB_SUPERUSER_PASSWORD
@@ -144,6 +159,7 @@ check_if_db_empty_or_exit () {
     )
     check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
     export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+    export PGPASSWORD=$DB_SUPERUSER_PASSWORD
     
     echo "Checking if database $DB_BODZIFY_API_DB_NAME exists..."
     psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "SELECT * FROM pg_database;"

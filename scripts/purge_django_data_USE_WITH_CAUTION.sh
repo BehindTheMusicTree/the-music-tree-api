@@ -54,18 +54,7 @@ check_bool_vars_are_set "APP_IS_EXPOSED"
 export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
-if [ "$APP_IS_EXPOSED" = "true" ]; then
-  echo "The app is exposed. The database host is the database container name."
-  check_vars_are_set "DB_CONTAINER_NAME"
-  DB_HOST=$DB_CONTAINER_NAME
-else
-  echo "The app is exposed. The database host is the database URL."
-  check_vars_are_set "DB_URL"
-  DB_HOST=$DB_URL
-fi
-echo "DB_HOST: $DB_HOST"
-
-export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
+determine_db_host_if_not_set
 
 echo "Empty the library directory $LIBRARIES_DIR ..."
 USERS_SUBFOLDERS_COUNT=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)

@@ -18,26 +18,13 @@ load_env_vars () {
   export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 }
 
-set_db_host () {
-  if [ "$APP_IS_EXPOSED" = "true" ]; then
-    echo "The app is exposed. The database host is the database container name"
-    check_vars_are_set "DB_CONTAINER_NAME"
-    DB_HOST=$DB_CONTAINER_NAME
-  else
-    echo "The app is exposed. The database host is the database URL."
-    check_vars_are_set "DB_URL"
-    DB_HOST=$DB_URL
-  fi
-  echo "DB_HOST: $DB_HOST"
-}
-
 echo "Initializing database and role..."
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
 load_env_vars
-set_db_host
+determine_db_host_if_not_set
 check_if_db_empty_or_exit
 
 echo "Creating database $DB_BODZIFY_API_DB_NAME ..."
