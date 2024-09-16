@@ -66,10 +66,10 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-echo "Displaying databases to verify that the new database was created"
+echo "Displaying databases to verify that the new database was created."
 psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\l"
 
-echo "Displaying roles to verify that the new role was created"
+echo "Displaying roles to verify that the new role was created."
 psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\du"
 
 unset PGPASSWORD
