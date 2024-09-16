@@ -107,6 +107,7 @@ jobs:
 
       - name: Check db
         run: 
+          export PGPASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }} &&
           psql -h localhost -p ${{ vars.DB_PORT }} -U ${{ vars.DB_SUPERUSER_NAME }} -tAc "
             SELECT 
               datname AS database_name, 
