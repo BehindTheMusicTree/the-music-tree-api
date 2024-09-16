@@ -12,22 +12,29 @@ setup_static_files () {
         create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
 
         if [ "$STATIC_FILES" != "$STATIC_FILES_DEFAULT" ]; then
-            echo "STATIC_FILES ${STATIC_FILES} is not the default internal directory ${STATIC_FILES_DEFAULT} . \
-                Moving static files to $STATIC_FILES ..."
+            echo "STATIC_FILES ${STATIC_FILES} is not the default internal directory ${STATIC_FILES_DEFAULT} . "\
+                "Setting up $STATIC_FILES ..."
+            create_directory_if_not_exists_or_exit "$STATIC_FILES"
+          
             if [ ! -d "$STATIC_FILES_DEFAULT" ] || [ "$(find "$STATIC_FILES_DEFAULT" -mindepth 1 -print -quit | grep -q .)" ]; then
                 echo "No static files found in default internal directory $STATIC_FILES_DEFAULT ."
             else
+                echo "Moving static files from default internal directory to $STATIC_FILES ..."  
                 local output=$(mv "$STATIC_FILES_DEFAULT"* "$STATIC_FILES")
                 if [ $? -ne 0 ]; then
                     echo "Failed to move static files from ${STATIC_FILES_DEFAULT} directory to $STATIC_FILES: $output" >&2
                     exit 1
                 fi
+                echo "Static files moved successfully."
+
                 echo "Deleting default internal static files directory..."
                 output=$(rm -rf "$STATIC_FILES_DEFAULT")
                 if [ $? -ne 0 ]; then
                     echo "Failed to delete default internal static files directory: $output" >&2
                     exit 1
                 fi
+                echo "Default internal static files directory deleted successfully."
+
             fi
         else
             echo "STATIC_FILES is the default internal directory $STATIC_FILES_DEFAULT"
