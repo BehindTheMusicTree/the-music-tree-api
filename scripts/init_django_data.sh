@@ -32,7 +32,11 @@ if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '
 fi
 echo "Migrations do not exist."
 
-bash ${SCRIPTS_DIR}init_db_and_role.sh
+OUTPUT=$(bash ${SCRIPTS_DIR}init_db_and_role.sh)
+if [ $? -ne 0 ]; then
+  echo "Failed to initialize database and role." >&2
+  exit 1
+fi
 
 echo "Creating initial migrations..."
 OUTPUT=$(python3 $MANAGE_SCRIPT makemigrations 2>&1)

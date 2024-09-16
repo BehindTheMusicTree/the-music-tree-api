@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Initializing database and role."
+echo "Initializing database and role..."
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
@@ -36,7 +36,6 @@ export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 echo "Checking if database $DB_BODZIFY_API_DB_NAME exists..."
 DB_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT 1 FROM pg_database WHERE datname='$DB_BODZIFY_API_DB_NAME';" 2>&1)
-
 if [ $? -ne 0 ]; then
   echo "Failed to check if the database exists. Details: $DB_EXISTS" >&2
   exit 1
