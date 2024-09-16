@@ -115,6 +115,8 @@ setup_media_dirs () {
     echo "Media directories are set up."
 }
 
+echo "Setting up filesystem..."
+
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 PROJECT_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
 source "${SCRIPTS_DIR}utils.sh"
