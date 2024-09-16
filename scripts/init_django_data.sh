@@ -1,7 +1,9 @@
 #!/bin/bash
 
 load_env_vars() {
-  REQUIRED_NON_BOOL_VARS=(
+  exho "Loading environment variables..."
+  load_project_env_file_if_exists
+  local REQUIRED_NON_BOOL_VARS=(
     APP_NAME
     DB_SUPERUSER_NAME
     DB_SUPERUSER_PASSWORD
@@ -13,6 +15,7 @@ load_env_vars() {
   check_bool_vars_are_set "APP_IS_EXPOSED"
   export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
   export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+  echo "Environment variables loaded successfully."
 }
 
 exit_if_django_data_exists() {
@@ -31,7 +34,6 @@ SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_S
 PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
 source ${SCRIPTS_DIR}utils.sh
 
-load_project_env_file_if_exists
 load_env_vars
 exit_if_django_data_exists
 

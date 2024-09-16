@@ -3,6 +3,24 @@
 # WARNING: This script will reinitialize the Django database.
 # Use with caution as it may result in data loss.
 
+load_env_vars () {
+  echo "Loading environment variables..."
+  load_project_env_file_if_exists
+  load_project_calculated_paths_env_vars
+
+  local REQUIRED_NON_BOOL_VARS=(
+      APP_NAME
+      LIBRARIES_DIR
+      DB_BODZIFY_API_DB_NAME
+      DB_PORT
+      DB_SUPERUSER_NAME
+      DB_SUPERUSER_PASSWORD
+      DB_BODZIFY_API_USERNAME
+  )
+  check_vars_are_set "${REQUIRED_NON_BOOL_VARS[@]}"
+  echo "Environment variables loaded successfully."
+}
+
 echo "WARNING: This script will reinitialize the Django database."
 echo "Use with caution as it may result in data loss."
 read -p "Are you sure you want to proceed? (yes/no): " CONFIRMATION
@@ -16,25 +34,11 @@ fi
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
-load_project_env_file_if_exists
-load_project_calculated_paths_env_vars
-
-REQUIRED_NON_BOOL_VARS=(
-    APP_NAME
-    LIBRARIES_DIR
-    DB_BODZIFY_API_DB_NAME
-    DB_PORT
-    DB_SUPERUSER_NAME
-    DB_SUPERUSER_PASSWORD
-    DB_BODZIFY_API_USERNAME
-)
-check_vars_are_set "${REQUIRED_NON_BOOL_VARS[@]}"
-export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
-echo "Environment variables loaded successfully."
+load_env_vars
 
 bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh -s
 if [ $? -ne 0 ]; then
-  echo "Failed to purge data. Abort" >&2
+  echo "Failed to purge data." >&2
   exit 1
 fi
 
