@@ -90,9 +90,9 @@ DB_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT 1 FROM pg_database WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
 if [ "$DB_EXISTS" = "1" ]; then
     echo "Database exists. Dropping database"
-    OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
+    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
     if [ $? -ne 0 ]; then
-      echo "Failed to drop the database. Details: $OUTPUT"
+      echo "Failed to drop the database. Details: $output"
       exit 1
     fi
 else
@@ -104,9 +104,9 @@ USER_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT 1 FROM pg_roles WHERE rolname='${DB_BODZIFY_API_USERNAME}'")
 if [ "$USER_EXISTS" = "1" ]; then
     echo "User exists. Dropping user"
-    OUTPUT=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
+    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
     if [ $? -ne 0 ]; then
-      echo "Failed to drop the user: $OUTPUT"
+      echo "Failed to drop the user: $output"
       exit 1
     fi
 else 

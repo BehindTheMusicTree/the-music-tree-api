@@ -49,9 +49,9 @@ fi
 LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
 
 [ -f "$GENERATED_PATHS_ENV_FILE" ] && rm -f "$GENERATED_PATHS_ENV_FILE"
-OUTPUT=$(touch "$GENERATED_PATHS_ENV_FILE")
+output=$(touch "$GENERATED_PATHS_ENV_FILE")
 if [ $? -ne 0 ]; then
-    echo "Failed to create the generated paths env file: $OUTPUT" >&2
+    echo "Failed to create the generated paths env file: $output" >&2
     exit 1
 fi
 

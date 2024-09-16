@@ -31,16 +31,16 @@ REQUIRED_BOOL_VARS=(
 check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
 
 echo "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
-OUTPUT=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL)
+output=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL)
 if [ $? -ne 0 ]; then
-    echo "Failed to wait for the database: $OUTPUT" >&2
+    echo "Failed to wait for the database: $output" >&2
     exit 1
 fi
 echo "Database is ready"
 
-OUTPUT=$(bash ${SCRIPTS_DIR}init_django_data.sh)
+output=$(bash ${SCRIPTS_DIR}init_django_data.sh)
 if [ $? -ne 0 ]; then
-    echo "Failed to initialize Django data: $OUTPUT" >&2
+    echo "Failed to initialize Django data: $output" >&2
     exit 1
 fi
 

@@ -45,12 +45,12 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Creating initial migrations..."
-OUTPUT=$(python3 $MANAGE_SCRIPT makemigrations 2>&1)
-echo "$OUTPUT"
-if echo "$OUTPUT" | grep -q "Connection refused"; then
+output=$(python3 $MANAGE_SCRIPT makemigrations 2>&1)
+echo "$output"
+if echo "$output" | grep -q "Connection refused"; then
     echo "Failed to create migrations due to database connection issue." >&2
     exit 1
-elif echo "$OUTPUT" | grep -q "password authentication failed"; then
+elif echo "$output" | grep -q "password authentication failed"; then
     echo "Password authentication failed." >&2
     exit 1
 fi

@@ -4,9 +4,9 @@ create_directory_if_not_exists_or_exit() {
     local dir_path=$1
     if [ ! -d "$dir_path" ]; then
         echo "Creating directory $dir_path ..."
-        OUTPUT=$(mkdir -p "$dir_path")
+        output=$(mkdir -p "$dir_path")
         if [ $? -ne 0 ]; then
-            echo "Failed to create directory $dir_path : $OUTPUT" >&2
+            echo "Failed to create directory $dir_path : $output" >&2
             exit 1
         fi
         echo "Directory $dir_path created successfully."
@@ -19,9 +19,9 @@ create_directory_if_not_exists_or_exit() {
 touch_file_or_exit() {
     local file_path=$1
     echo "Creating file $file_path ..."
-    OUTPUT=$(touch "$file_path")
+    output=$(touch "$file_path")
     if [ $? -ne 0 ]; then
-        echo "Failed to create file $file_path : $OUTPUT" >&2
+        echo "Failed to create file $file_path : $output" >&2
         exit 1
     fi
     echo "File $file_path created successfully."
@@ -30,14 +30,14 @@ touch_file_or_exit() {
 set_read_write_permissions_and_owner_or_exit() {
     local path=$1
     local user=$(whoami)
-    OUTPUT=$(chmod -R 740 "$path")
+    output=$(chmod -R 740 "$path")
     if [ $? -ne 0 ]; then
-        echo "Failed to change permissions of $path : $OUTPUT" >&2
+        echo "Failed to change permissions of $path : $output" >&2
         exit 1
     fi
-    OUTPUT=$(chown -R "$user" "$path")
+    output=$(chown -R "$user" "$path")
     if [ $? -ne 0 ]; then
-        echo "Failed to change owner of $path : $OUTPUT" >&2
+        echo "Failed to change owner of $path : $output" >&2
         exit 1
     fi
 }
@@ -116,9 +116,9 @@ load_project_calculated_paths_env_vars() {
     fi
 
     local CALCULATED_PATHS_ENV_FILE="${CALTULATED_PATHS_DIR}.env"
-    OUTPUT=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh")
+    output=$(bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh")
     if [ $? -ne 0 ]; then
-        echo "Failed to generate calculated paths env file: $OUTPUT" >&2
+        echo "Failed to generate calculated paths env file: $output" >&2
         exit 1
     fi
     
