@@ -19,6 +19,7 @@ load_env_vars() {
 }
 
 exit_if_django_data_exists() {
+  check_if_db_empty_or_exit
   echo "Checking if migrations already exist..."
   local MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
   if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then

@@ -31,31 +31,6 @@ set_db_host () {
   echo "DB_HOST: $DB_HOST"
 }
 
-check_if_db_empty_or_exit () {
-  echo "Checking if database $DB_BODZIFY_API_DB_NAME exists..."
-  psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "SELECT * FROM pg_database;"
-  local DB_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
-    "SELECT 1 FROM pg_database WHERE datname='$DB_BODZIFY_API_DB_NAME';")
-  if [ $? -ne 0 ]; then
-    echo "Failed to check if the database exists. Details: $DB_EXISTS" >&2
-    exit 1
-  fi
-  if [ "$DB_EXISTS" = "1" ]; then
-    echo "Database $DB_BODZIFY_API_DB_NAME already exists. Abort" >&2
-    exit 1
-  fi
-  echo "Database $DB_BODZIFY_API_DB_NAME does not exist."
-
-  echo "Checking if role $DB_BODZIFY_API_USERNAME exists"
-  local ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
-    "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
-  if [ "$ROLE_EXISTS" = "1" ]; then
-    echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort" >&2
-    exit 1
-  fi
-  echo "Role $DB_BODZIFY_API_USERNAME does not exist."
-}
-
 echo "Initializing database and role..."
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
