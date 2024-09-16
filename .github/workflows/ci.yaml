@@ -126,9 +126,7 @@ jobs:
       DEBUG: false
       DB_IS_NEEDED: false
       APP_IS_EXPOSED: false
-      LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
       STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
-      MEDIA_DIR_INTERNAL: ${{ vars.MEDIA_DIR_INTERNAL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
