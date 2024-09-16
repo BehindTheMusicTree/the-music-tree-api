@@ -14,6 +14,7 @@ load_env_vars () {
 
 setup_static_files () {
     if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
+        echo "STATIC_FILES_ARE_NEEDED is set to true. Setting up static files..."
         create_directory_if_not_exists_or_exit "$STATIC_FILES"
         check_vars_are_set "STATIC_FILES_DEFAULT_INTERNAL_DIR"
 
@@ -41,6 +42,9 @@ setup_static_files () {
             echo "STATIC_FILES is the default internal directory $DEFAULT_STATIC_FILES"
         fi
         set_read_write_permissions_and_owner_or_exit "$STATIC_FILES"
+        echo "Static files are set up."
+    else
+        echo "STATIC_FILES_ARE_NEEDED is set to false. Static files are not needed."
     fi
 }
 
