@@ -1,9 +1,11 @@
 #!/bin/bash
 
 load_env_vars () {
+    echo "Loading environment variables for the filesystem setup..."
     load_app_env_file_if_exists
     check_bool_vars_are_set "APP_IS_EXPOSED"
     load_project_calculated_paths_env_vars
+    echo "Environment variables loaded for the filesystem setup."
 }
 
 setup_static_files () {
@@ -119,8 +121,6 @@ APP_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
 source "${SCRIPTS_DIR}utils.sh"
 
 load_env_vars
-
-create_directory_if_not_exists_or_exit "$LIBRARIES_DIR"
 
 setup_static_files
 setup_django_log

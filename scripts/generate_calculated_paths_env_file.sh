@@ -59,8 +59,8 @@ calculate_media_dirs(){
             echo "TMP_UPLOADED_FILES_INTERNAL is set. Setting the temporary files directory to internal."
             TMP_UPLOADED_FILES="${APP_DIR}${TMP_UPLOADED_FILES_INTERNAL}"
         else
-            echo "Neither TMP_UPLOADED_FILES_EXTERNAL nor TMP_UPLOADED_FILES_INTERNAL is set. \
-                The app will not handle media files."
+            echo "Neither TMP_UPLOADED_FILES_EXTERNAL nor TMP_UPLOADED_FILES_INTERNAL is set." \
+                " The app will not handle media files."
         fi
     fi
 
@@ -126,8 +126,7 @@ main () {
     calculate_media_dirs
     calculate_static_files_dir
     calculate_django_log_dir
-    calculate_media_dirs
-
+    
     echo "Generated the env file with calculated paths successfully."
 }
 
