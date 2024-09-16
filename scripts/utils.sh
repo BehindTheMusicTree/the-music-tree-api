@@ -163,23 +163,22 @@ check_if_db_new_or_exit () {
         exit 1
     fi
     if [ "$DB_EXISTS" = "1" ]; then
-        echo "Database $DB_BODZIFY_API_DB_NAME exists. Proceed."
+        echo "Database $DB_BODZIFY_API_DB_NAME exists. Proceed. "\
+        "Checking if role $DB_BODZIFY_API_USERNAME exists..."
+        local ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
+        "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
+        if [ $? -ne 0 ]; then
+            echo "Failed to check if the role exists: $ROLE_EXISTS" >&2
+            exit 1
+        fi
+        if [ "$ROLE_EXISTS" = "1" ]; then
+            echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort." >&2
+            exit 1
+        fi
+        echo "Role $DB_BODZIFY_API_USERNAME does not exist."
     else
-        echo "Database $DB_BODZIFY_API_DB_NAME does not exist. Proceed."
+        echo "Database $DB_BODZIFY_API_DB_NAME does not exist."
     fi
-
-    echo "Checking if role $DB_BODZIFY_API_USERNAME exists..."
-    local ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
-    "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
-    if [ $? -ne 0 ]; then
-        echo "Failed to check if the role exists: $ROLE_EXISTS" >&2
-        exit 1
-    fi
-    if [ "$ROLE_EXISTS" = "1" ]; then
-        echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort." >&2
-        exit 1
-    fi
-    echo "Role $DB_BODZIFY_API_USERNAME does not exist."
 
     echo "The database is new."
 }
