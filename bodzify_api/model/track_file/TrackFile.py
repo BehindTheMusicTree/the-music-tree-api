@@ -40,9 +40,10 @@ def _get_user_lib_path(instance, filename):
         return ''
 
 
-if settings.LIBRARIES_DIR_NAME:
-    LIBRARIES_DIR_MAX_LENGTH = len(
-        settings.LIBRARIES_DIR_NAME) + len(settings.USER_LIBRARIES_DIR_NAME_PREFIXE) + len(settings.USER_MAX_NUMBER)
+if settings.FILE_UPLOAD_ENABLED:
+    LIBRARIES_DIR_MAX_LENGTH = (len(settings.LIBRARIES_DIR_NAME) +  # type: ignore
+                                len(settings.USER_LIBRARIES_DIR_NAME_PREFIXE) +
+                                len(settings.USER_MAX_NUMBER))
 FILE_PATH_MAX_LENGTH = settings.LIB_TRACK_FILENAME_LEN_MAX + LIBRARIES_DIR_MAX_LENGTH
 
 
