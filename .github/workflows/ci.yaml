@@ -101,6 +101,8 @@ jobs:
         run: bash scripts/setup_filesystem.sh
 
       - name: Run database and Audio Fingerprint containers
+        env:
+          DB_DATA_MUST_PERSIST: false
         run: bash scripts/run_db_and_afp_containers.sh
         
       - name: Wait for database service to start
