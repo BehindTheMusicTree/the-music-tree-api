@@ -226,12 +226,10 @@ if DB_IS_NEEDED:
         raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable must be set")
 
     DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
-    print("DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES: " +
-          str(DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES))
     if DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES is None:
         raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable must be set")
     DB_BODZIFY_API_USER_PASSWORD = remove_eventual_surronding_quotes(DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES)
-    print("DB_BODZIFY_API_USER_PASSWORD: " + DB_BODZIFY_API_USER_PASSWORD)
+
     if APP_IS_EXPOSED:
         print("The app is exposed. The db host is the db container name.")
         DB_CONTAINER_NAME = os.getenv('DB_CONTAINER_NAME')
@@ -522,6 +520,4 @@ if LOGS_ARE_NEEDED:
 else:
     print("Logs are not needed.")
 
-print(f"STATIC_ROOT: {STATIC_ROOT}")
-print(f"STATICFILES_DIRS: {STATICFILES_DIRS}")
 print("Finished loading settings.")
