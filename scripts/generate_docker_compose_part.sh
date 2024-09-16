@@ -37,7 +37,7 @@ REQUIRED_NON_BOOL_VARS=(
   GUNICORN_LOG_DIR
   DJANGO_LOG_DIR
   MEDIA_DIR
-  STATIC_FILES_DIR
+  STATIC_FILES
   TMP_UPLOADED_FILES
 )
 check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
@@ -80,7 +80,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-django-log-dir:${DJANGO_LOG_DIR}
       - api-gunicorn-log-dir:${GUNICORN_LOG_DIR}
       - api-media-dir:${MEDIA_DIR}
-      - api-static-files:${STATIC_FILES_DIR}
+      - api-static-files:${STATIC_FILES}
       - api-upload-tmp-files:${TMP_UPLOADED_FILES}
     expose:
       - $APP_PORT

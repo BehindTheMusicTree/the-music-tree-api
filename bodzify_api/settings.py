@@ -166,10 +166,10 @@ STATICFILES_DIRS = []
 if STATIC_FILES_ARE_NEEDED:
     print("STATIC_FILES_ARE_NEEDED is true. Setting up static files...")
     STATIC_URL = 'static/'
-    STATIC_FILES_DIR_ENV = os.getenv('STATIC_FILES_DIR')
-    if not STATIC_FILES_DIR_ENV:
-        raise EnvironmentError("The STATIC_FILES_DIR variable must be set")
-    STATIC_ROOT = Path(STATIC_FILES_DIR_ENV)
+    STATIC_FILES_ENV = os.getenv('STATIC_FILES')
+    if not STATIC_FILES_ENV:
+        raise EnvironmentError("The STATIC_FILES variable must be set")
+    STATIC_ROOT = Path(STATIC_FILES_ENV)
     print("STATIC_ROOT: " + str(STATIC_ROOT))
 else:
     print("Static files are not needed.")

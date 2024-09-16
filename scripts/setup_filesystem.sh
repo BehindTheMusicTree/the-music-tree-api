@@ -19,31 +19,31 @@ load_project_calculated_paths_env_vars
 create_directory_if_not_exists_or_exit "$LIBRARIES_DIR"
 
 if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
-    create_directory_if_not_exists_or_exit "$STATIC_FILES_DIR"
+    create_directory_if_not_exists_or_exit "$STATIC_FILES"
     check_vars_are_set "STATIC_FILES_DEFAULT_INTERNAL_DIR"
 
-    DEFAULT_STATIC_FILES_DIR="${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR"
-    if [ "$STATIC_FILES_DIR" != "$DEFAULT_STATIC_FILES_DIR" ]; then
-        echo "STATIC_FILES_DIR is not the default internal directory. Moving static files to $STATIC_FILES_DIR"
-        if [ ! -d "$DEFAULT_STATIC_FILES_DIR" ] || [ "$(find "$DEFAULT_STATIC_FILES_DIR" -mindepth 1 -print -quit | grep -q .)" ]; then
+    DEFAULT_STATIC_FILES="${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR"
+    if [ "$STATIC_FILES" != "$DEFAULT_STATIC_FILES" ]; then
+        echo "STATIC_FILES is not the default internal directory. Moving static files to $STATIC_FILES"
+        if [ ! -d "$DEFAULT_STATIC_FILES" ] || [ "$(find "$DEFAULT_STATIC_FILES" -mindepth 1 -print -quit | grep -q .)" ]; then
             echo "No static files found in default internal directory $STATIC_FILES_DEFAULT_INTERNAL_DIR"
         else
-            OUTPUT=$(mv "$DEFAULT_STATIC_FILES_DIR"/* "$STATIC_FILES_DIR")
+            OUTPUT=$(mv "$DEFAULT_STATIC_FILES"/* "$STATIC_FILES")
             if [ $? -ne 0 ]; then
-                echo "Failed to move static files from default internal directory to $STATIC_FILES_DIR. Details: $OUTPUT" >&2
+                echo "Failed to move static files from default internal directory to $STATIC_FILES. Details: $OUTPUT" >&2
                 exit 1
             fi
             echo "Deleting default internal static files directory"
-            OUTPUT=$(rm -rf "$DEFAULT_STATIC_FILES_DIR")
+            OUTPUT=$(rm -rf "$DEFAULT_STATIC_FILES")
             if [ $? -ne 0 ]; then
                 echo "Failed to delete default internal static files directory. Details: $OUTPUT" >&2
                 exit 1
             fi
         fi
     else
-        echo "STATIC_FILES_DIR is the default internal directory $DEFAULT_STATIC_FILES_DIR"
+        echo "STATIC_FILES is the default internal directory $DEFAULT_STATIC_FILES"
     fi
-    set_read_write_permissions_and_owner_or_exit "$STATIC_FILES_DIR"
+    set_read_write_permissions_and_owner_or_exit "$STATIC_FILES"
 fi
 
 if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then

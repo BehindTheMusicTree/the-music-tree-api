@@ -22,8 +22,8 @@ if [ "$APP_IS_EXPOSED" = "true" ]; then
     check_vars_are_set "MEDIA_DIR"
     check_vars_are_set "TMP_UPLOADED_FILES"
     if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
-        check_vars_are_set "STATIC_FILES_DIR"
-        STATIC_FILES_DIR="${BASE_DIR}${STATIC_FILES_DIR}"
+        check_vars_are_set "STATIC_FILES"
+        STATIC_FILES="${BASE_DIR}${STATIC_FILES}"
     fi
     if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
         check_vars_are_set "DJANGO_LOG_DIR"
@@ -34,7 +34,7 @@ else
     MEDIA_DIR="${BASE_DIR}${MEDIA_DEFAULT_INTERNAL_DIR}"
     if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
         check_vars_are_set "STATIC_FILES_DEFAULT_INTERNAL_DIR"
-        STATIC_FILES_DIR="${BASE_DIR}${STATIC_FILES_DEFAULT_INTERNAL_DIR}"
+        STATIC_FILES="${BASE_DIR}${STATIC_FILES_DEFAULT_INTERNAL_DIR}"
     fi
     if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
         check_vars_are_set "DJANGO_LOG_DEFAULT_INTERNAL_DIR"
@@ -60,9 +60,9 @@ echo "LIBRARIES_DIR_NAME=$LIBRARIES_DIR_NAME" >> "$GENERATED_PATHS_ENV_FILE"
 echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$GENERATED_PATHS_ENV_FILE"
 
 if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
-    echo "STATIC_FILES_DIR=$STATIC_FILES_DIR" >> "$GENERATED_PATHS_ENV_FILE"
+    echo "STATIC_FILES=$STATIC_FILES" >> "$GENERATED_PATHS_ENV_FILE"
 else
-    echo "STATIC_FILES_ARE_NEEDED is set to false so STATIC_FILES_DIR is not set."
+    echo "STATIC_FILES_ARE_NEEDED is set to false so STATIC_FILES is not set."
 fi
 
 if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then

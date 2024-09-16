@@ -37,7 +37,7 @@ The docker build requires the following environment variables:
 - `TMP_UPLOADED_FILES`
 - `MEDIA_DIR`
 - `LIBRARIES_DIR_NAME`
-- `STATIC_FILES_DIR`
+- `STATIC_FILES`
 - `STATIC_FILES_DEFAULT_INTERNAL_DIR`
 - `DJANGO_LOG_DIR`
 - `DJANGO_LOG_GENERAL_FILENAME`
