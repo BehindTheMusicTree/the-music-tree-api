@@ -21,8 +21,8 @@ REQUIRED_NON_BOOL_VARS=(
     GUNICORN_LOG_ACCESS_FILENAME
 )
 check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
-export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
-export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
 
 REQUIRED_BOOL_VARS=(
     DEBUG

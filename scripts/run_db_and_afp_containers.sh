@@ -35,8 +35,8 @@ load_env_vars () {
         "AUDIO_META_ANALYSE_IS_NEEDED"
     )
     check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
-    export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
-    export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+    export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+    export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
     echo "Environment variables loaded successfully."
 }
 
@@ -67,36 +67,37 @@ fi
 echo "Running the database container..."
 if [ "$DB_DATA_MUST_PERSIST" = true ]; then
     docker run \
-    --name=$DB_CONTAINER_NAME \
-    --volume=db-data:$DB_DATA_DIR \
-    -p $DB_PORT:$DB_PORT \
-    -e ENV=$ENV \
-    -e POSTGRES_DB=$DB_BODZIFY_API_DB_NAME \
-    -e POSTGRES_USER=$DB_SUPERUSER_NAME \
-    -e POSTGRES_PASSWORD=$DB_SUPERUSER_PASSWORD \
-    -e POSTGRES_PORT=$DB_PORT \
-    -d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
+        --name=$DB_CONTAINER_NAME \
+        --volume=db-data:$DB_DATA_DIR \
+        -p $DB_PORT:$DB_PORT \
+        -e ENV=$ENV \
+        -e POSTGRES_DB=$DB_BODZIFY_API_DB_NAME \
+        -e POSTGRES_USER=$DB_SUPERUSER_NAME \
+        -e POSTGRES_PASSWORD=$DB_SUPERUSER_PASSWORD \
+        -e POSTGRES_PORT=$DB_PORT \
+        -d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
 else
     docker run \
-    --name=$DB_CONTAINER_NAME \
-    -p $DB_PORT:$DB_PORT \
-    -e ENV=$ENV \
-    -e POSTGRES_DB=$DB_BODZIFY_API_DB_NAME \
-    -e POSTGRES_USER=$DB_SUPERUSER_NAME \
-    -e POSTGRES_PASSWORD=$DB_SUPERUSER_PASSWORD \
-    -e POSTGRES_PORT=$DB_PORT \
-    -d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
+        --name=$DB_CONTAINER_NAME \
+        -p $DB_PORT:$DB_PORT \
+        -e ENV=$ENV \
+        -e POSTGRES_DB=$DB_BODZIFY_API_DB_NAME \
+        -e POSTGRES_USER=$DB_SUPERUSER_NAME \
+        -e POSTGRES_PASSWORD=$DB_SUPERUSER_PASSWORD \
+        -e POSTGRES_PORT=$DB_PORT \
+        -d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
 fi
 echo "Database container running successfully."
 
 echo "Running the audio fingerprinter container..."
 docker run \
---name=$AFP_CONTAINER_NAME \
---volume=$TMP_UPLOADED_FILES:$AFP_DOCKERIZED_POOL_DIR \
--p $AFP_PORT:$AFP_PORT \
--e ENV=$ENV \
--e DEBUG=$DEBUG \
--e APP_PORT=$AFP_PORT \
--d $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
+    --name=$AFP_CONTAINER_NAME \
+    --volume=$TMP_UPLOADED_FILES:$AFP_DOCKERIZED_POOL_DIR \
+    -p $AFP_PORT:$AFP_PORT \
+    -e ENV=$ENV \
+    -e DEBUG=$DEBUG \
+    -e APP_PORT=$AFP_PORT \
+    -d $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
 echo "Audio fingerprinter container running successfully."
+
 echo "Containers running successfully."

@@ -51,7 +51,7 @@ for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
 done
 check_bool_vars_are_set "APP_IS_EXPOSED"
 
-export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 if [ "$APP_IS_EXPOSED" = "true" ]; then
@@ -65,7 +65,7 @@ else
 fi
 echo "DB_HOST: $DB_HOST"
 
-export_value_removing_surrounding_quotes DB_SUPERUSER_PASSWORD
+export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
 
 echo "Empty the library directory $LIBRARIES_DIR ..."
 USERS_SUBFOLDERS_COUNT=$(find "$LIBRARIES_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
