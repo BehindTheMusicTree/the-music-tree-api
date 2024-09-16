@@ -46,7 +46,7 @@ check_vars_are_set() {
     local missing_vars=()
     for var_name in "$@"; do
         if [ -z "${!var_name}" ]; then
-            echo "$var_name is not set" >&2
+            echo "$var_name must be set." >&2
             exit 1
         fi
     done

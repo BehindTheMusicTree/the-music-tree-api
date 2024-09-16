@@ -68,17 +68,17 @@ calculate_media_dirs(){
         echo "TMP_UPLOADED_FILES is set to $TMP_UPLOADED_FILES"
         echo "TMP_UPLOADED_FILES=$TMP_UPLOADED_FILES" >> "$CALCULATED_PATHS_ENV_FILE"
 
-        echo "Setting up media directories..."
+        echo "As TMP_UPLOADED_FILES is set, setting up media directories..."
         if [ -n "$MEDIA_DIR_EXTERNAL" ]; then
-            if [ -n "$STATIC_FILES_INTERNAL" ]; then
-                echo "STATIC_FILES_INTERNAL and MEDIA_DIR_EXTERNAL must not be set at the same time." >&2
+            if [ -n "$MEDIA_DIR_INTERNAL" ]; then
+                echo "MEDIA_DIR_INTERNAL and MEDIA_DIR_EXTERNAL must not be set at the same time." >&2
                 exit 1
             fi
-            echo "MEDIA_DIR_EXTERNAL is set. Setting media directory to external."
+            echo "MEDIA_DIR_EXTERNAL is set. Setting media directory to external..."
             MEDIA_DIR="${MEDIA_DIR_EXTERNAL}"
         else
             if [ -n "$MEDIA_DIR_INTERNAL" ]; then
-                echo "MEDIA_DIR_INTERNAL is set. Setting media directory to internal."
+                echo "MEDIA_DIR_INTERNAL is set. Setting media directory to internal..."
                 MEDIA_DIR="${APP_DIR}${MEDIA_DIR_INTERNAL}"
             else
                 echo "Neither MEDIA_DIR_EXTERNAL nor MEDIA_DIR_INTERNAL is set. Abort." >&2
@@ -87,10 +87,13 @@ calculate_media_dirs(){
         fi
         echo "MEDIA_DIR is set to $MEDIA_DIR"
         echo "MEDIA_DIR=$MEDIA_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
+
+        echo "Setting up libraries directory..."
         check_vars_are_set "LIBRARIES_DIR_NAME"
         LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
         echo "LIBRARIES_DIR is set to $LIBRARIES_DIR"
         echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
+        echo "Libraries directory is set up."
     else
         if [ -n "$MEDIA_DIR_EXTERNAL" ]; then
             echo "MEDIA_DIR_EXTERNAL must not be set if TMP_UPLOADED_FILES_INTERNAL is not set." >&2
