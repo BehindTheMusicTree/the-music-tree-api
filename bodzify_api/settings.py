@@ -320,12 +320,11 @@ if not TMP_UPLOADED_FILES_STR:
     print("TMP_UPLOADED_FILES is not set. The app will not handle uploaded files.")
     FILE_UPLOAD_ENABLED = False
 
-    for var_name in [
-        'AFP_PORT',
-        'AFP_POST_ENDPOINT',
-        'ACOUSTID_API_KEY',
-        'MEDIA_DIR',
-            'LIBRARIES_DIR_NAME']:
+    for var_name in ['AFP_PORT',
+                     'AFP_POST_ENDPOINT',
+                     'ACOUSTID_API_KEY',
+                     'MEDIA_DIR',
+                     'LIBRARIES_DIR_NAME']:
         if os.getenv(var_name):
             raise EnvironmentError(f"The {var_name} env variable cannot be set as TMP_UPLOADED_FILES is not.")
 else:
