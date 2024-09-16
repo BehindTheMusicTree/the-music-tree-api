@@ -1,30 +1,5 @@
 #!/bin/bash
 
-calculate_media_dirs() {
-    if [ -n "$MEDIA_DIR_EXTERNAL" ]; then
-        if [ -n "$STATIC_FILES_INTERNAL" ]; then
-            echo "STATIC_FILES_INTERNAL and MEDIA_DIR_EXTERNAL must not be set at the same time." >&2
-            exit 1
-        fi
-        echo "MEDIA_DIR_EXTERNAL is set. Setting media directory to external."
-        MEDIA_DIR="${MEDIA_DIR_EXTERNAL}"
-    else
-        if [ -n "$MEDIA_DIR_INTERNAL" ]; then
-            echo "MEDIA_DIR_INTERNAL is set. Setting media directory to internal."
-            MEDIA_DIR="${APP_DIR}${MEDIA_DIR_INTERNAL}"
-        else
-            echo "Neither MEDIA_DIR_EXTERNAL nor MEDIA_DIR_INTERNAL is set. Abort." >&2
-            exit 1
-        fi
-    fi
-    echo "MEDIA_DIR is set to $MEDIA_DIR"
-    echo "MEDIA_DIR=$MEDIA_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
-    check_vars_are_set "LIBRARIES_DIR_NAME"
-    LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
-    echo "LIBRARIES_DIR is set to $LIBRARIES_DIR"
-    echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
-}
-
 calculate_static_files_dir(){
     if [ -n "$STATIC_FILES_INTERNAL" ]; then
         echo "STATIC_FILES_INTERNAL is set. Static files are needed."
@@ -71,7 +46,7 @@ calculate_django_log_dir(){
     fi
 }
 
-calculate_tmp_uploaded_files_dir(){
+calculate_media_dirs(){
     if [ -n "$TMP_UPLOADED_FILES_EXTERNAL" ]; then
         if [ -n "$TMP_UPLOADED_FILES_INTERNAL" ]; then
             echo "TMP_UPLOADED_FILES_INTERNAL and TMP_UPLOADED_FILES_EXTERNAL must not be set at the same time." >&2
@@ -85,13 +60,46 @@ calculate_tmp_uploaded_files_dir(){
             TMP_UPLOADED_FILES="${APP_DIR}${TMP_UPLOADED_FILES_INTERNAL}"
         else
             echo "Neither TMP_UPLOADED_FILES_EXTERNAL nor TMP_UPLOADED_FILES_INTERNAL is set. \
-                The temporary files directory is not needed."
+                The app will not handle media files."
         fi
     fi
 
     if [ -n "$TMP_UPLOADED_FILES" ]; then
         echo "TMP_UPLOADED_FILES is set to $TMP_UPLOADED_FILES"
         echo "TMP_UPLOADED_FILES=$TMP_UPLOADED_FILES" >> "$CALCULATED_PATHS_ENV_FILE"
+
+        echo "Setting up media directories..."
+        if [ -n "$MEDIA_DIR_EXTERNAL" ]; then
+            if [ -n "$STATIC_FILES_INTERNAL" ]; then
+                echo "STATIC_FILES_INTERNAL and MEDIA_DIR_EXTERNAL must not be set at the same time." >&2
+                exit 1
+            fi
+            echo "MEDIA_DIR_EXTERNAL is set. Setting media directory to external."
+            MEDIA_DIR="${MEDIA_DIR_EXTERNAL}"
+        else
+            if [ -n "$MEDIA_DIR_INTERNAL" ]; then
+                echo "MEDIA_DIR_INTERNAL is set. Setting media directory to internal."
+                MEDIA_DIR="${APP_DIR}${MEDIA_DIR_INTERNAL}"
+            else
+                echo "Neither MEDIA_DIR_EXTERNAL nor MEDIA_DIR_INTERNAL is set. Abort." >&2
+                exit 1
+            fi
+        fi
+        echo "MEDIA_DIR is set to $MEDIA_DIR"
+        echo "MEDIA_DIR=$MEDIA_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
+        check_vars_are_set "LIBRARIES_DIR_NAME"
+        LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
+        echo "LIBRARIES_DIR is set to $LIBRARIES_DIR"
+        echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
+    else
+        if [ -n "$MEDIA_DIR_EXTERNAL" ]; then
+            echo "MEDIA_DIR_EXTERNAL must not be set if TMP_UPLOADED_FILES_INTERNAL is not set." >&2
+            exit 1
+        fi
+        if [ -n "$LIBRARIES_DIR_NAME" ]; then
+            echo "LIBRARIES_DIR_NAME must not be set if TMP_UPLOADED_FILES_INTERNAL is not set." >&2
+            exit 1
+        fi
     fi
 }
 
@@ -115,7 +123,7 @@ main () {
     calculate_media_dirs
     calculate_static_files_dir
     calculate_django_log_dir
-    calculate_tmp_uploaded_files_dir
+    calculate_media_dirs
 
     echo "Generated the env file with calculated paths successfully."
 }
