@@ -107,7 +107,7 @@ jobs:
 
       - name: Check db
         run: 
-          psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "
+          psql -h $DB_CONTAINER_NAME -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "
             SELECT 
               datname AS database_name, 
               pg_stat_file('base/' || oid || '/PG_VERSION').modification AS creation_date
