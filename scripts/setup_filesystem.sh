@@ -1,56 +1,48 @@
 #!/bin/bash
 
 load_env_vars () {
-    load_project_env_file_if_exists
-    local REQUIRED_BOOL_VARS=(
-        "APP_IS_EXPOSED"
-        "DJANGO_LOGS_ARE_NEEDED"
-        "STATIC_FILES_ARE_NEEDED"
-        "AUDIO_META_ANALYSE_IS_NEEDED"
-    )
-    check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
+    load_app_env_file_if_exists
+    check_bool_vars_are_set "APP_IS_EXPOSED"
     load_project_calculated_paths_env_vars
+    check_vars_are_set "MEDIA_DIR" "LIBRARIES_DIR"
 }
 
 setup_static_files () {
-    if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
-        echo "STATIC_FILES_ARE_NEEDED is set to true. Setting up static files..."
-        create_directory_if_not_exists_or_exit "$STATIC_FILES"
-        check_vars_are_set "STATIC_FILES_DEFAULT_INTERNAL_DIR"
+    if [ -n "$STATIC_FILES_INTERNAL" ]; then
+        echo "STATIC_FILES_INTERNAL is set. Static files are needed."
+        create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
 
-        local DEFAULT_STATIC_FILES="${PROJECT_DIR}$STATIC_FILES_DEFAULT_INTERNAL_DIR"
-        if [ "$STATIC_FILES" != "$DEFAULT_STATIC_FILES" ]; then
-            echo "STATIC_FILES: $STATIC_FILES"
-            echo "DEFAULT_STATIC_FILES: $DEFAULT_STATIC_FILES"
-            echo "STATIC_FILES is not the default internal directory. Moving static files to $STATIC_FILES"
-            if [ ! -d "$DEFAULT_STATIC_FILES" ] || [ "$(find "$DEFAULT_STATIC_FILES" -mindepth 1 -print -quit | grep -q .)" ]; then
-                echo "No static files found in default internal directory $STATIC_FILES_DEFAULT_INTERNAL_DIR ."
+        if [ "$STATIC_FILES" != "$STATIC_FILES_DEFAULT" ]; then
+            echo "STATIC_FILES ${STATIC_FILES} is not the default internal directory ${STATIC_FILES_DEFAULT} . \
+                Moving static files to $STATIC_FILES ..."
+            if [ ! -d "$STATIC_FILES_DEFAULT" ] || [ "$(find "$STATIC_FILES_DEFAULT" -mindepth 1 -print -quit | grep -q .)" ]; then
+                echo "No static files found in default internal directory $STATIC_FILES_DEFAULT ."
             else
-                local output=$(mv "$DEFAULT_STATIC_FILES"* "$STATIC_FILES")
+                local output=$(mv "$STATIC_FILES_DEFAULT"* "$STATIC_FILES")
                 if [ $? -ne 0 ]; then
-                    echo "Failed to move static files from default internal directory to $STATIC_FILES: $output" >&2
+                    echo "Failed to move static files from ${STATIC_FILES_DEFAULT} directory to $STATIC_FILES: $output" >&2
                     exit 1
                 fi
-                echo "Deleting default internal static files directory"
-                output=$(rm -rf "$DEFAULT_STATIC_FILES")
+                echo "Deleting default internal static files directory..."
+                output=$(rm -rf "$STATIC_FILES_DEFAULT")
                 if [ $? -ne 0 ]; then
                     echo "Failed to delete default internal static files directory: $output" >&2
                     exit 1
                 fi
             fi
         else
-            echo "STATIC_FILES is the default internal directory $DEFAULT_STATIC_FILES"
+            echo "STATIC_FILES is the default internal directory $STATIC_FILES_DEFAULT"
         fi
         set_read_write_permissions_and_owner_or_exit "$STATIC_FILES"
         echo "Static files are set up."
     else
-        echo "STATIC_FILES_ARE_NEEDED is set to false. Static files are not needed."
+        echo "STATIC_FILES_INTERNAL is not set. Static files are not needed."
     fi
 }
 
 setup_django_log () {
-    if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
-        echo "DJANGO_LOGS_ARE_NEEDED is set to true. Creating Django log directories."
+    if [ -n "$DJANGO_LOGS_DIR" ]; then
+        echo "DJANGO_LOGS_DIR is set. Setting Django logs dirextories and files."
         create_directory_if_not_exists_or_exit "$DJANGO_LOG_DIR"
 
         local LOG_FILENAMES=(
@@ -68,7 +60,7 @@ setup_django_log () {
         done
         set_read_write_permissions_and_owner_or_exit "$DJANGO_LOG_DIR"
     else
-        echo "DJANGO_LOGS_ARE_NEEDED is set to false. Django logs are not needed."
+        echo "DJANGO_LOGS_DIR is not set. Django logs are not needed."
     fi
 }
 
@@ -98,27 +90,26 @@ setup_gunicorn_log () {
 
 setup_media_dirs () {
     echo "Setting up media directories..."
-    if [ "$AUDIO_META_ANALYSE_IS_NEEDED" = "true" ]; then
+    if [ -n "${TMP_UPLOADED_FILES}" ]; then
+        echo "TMP_UPLOADED_FILES is set. Setting up temp uploaded files directory and media direcroties..."
         create_directory_if_not_exists_or_exit "$TMP_UPLOADED_FILES"
         set_read_write_permissions_and_owner_or_exit "$TMP_UPLOADED_FILES"
-    else
-        echo "AUDIO_META_ANALYSE_IS_NEEDED is set to false. Temp uploaded files dir is not needed."
-    fi
+        echo "Temp uploaded files directory is set up."
 
-    if [ -z "$MEDIA_DIR" ]; then
-        echo "MEDIA_DIR is not set. Using default internal directory."
-        MEDIA_DIR="${PROJECT_DIR}media/"
+        echo "Setting up media directory..."
+        create_directory_if_not_exists_or_exit "$MEDIA_DIR"
+        create_directory_if_not_exists_or_exit "$LIBRARIES_DIR"
+        set_read_write_permissions_and_owner_or_exit "$MEDIA_DIR"
+        echo "Media directories are set up."
+    else
+        echo "TMP_UPLOADED_FILES is not set. The app will not handle media files."
     fi
-    echo "MEDIA_DIR is set to $MEDIA_DIR"
-    create_directory_if_not_exists_or_exit "$MEDIA_DIR"
-    set_read_write_permissions_and_owner_or_exit "$MEDIA_DIR"
-    echo "Media directories are set up."
 }
 
 echo "Setting up filesystem..."
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-PROJECT_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
+APP_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
 source "${SCRIPTS_DIR}utils.sh"
 
 load_env_vars
@@ -142,4 +133,4 @@ for script in "${SCRIPTS_DIR}"*; do
 done
 echo "All scripts in $SCRIPTS_DIR are now executable."
 
-echo "All directories and files are created and permissions are set."
+echo "The filesystem is set up."

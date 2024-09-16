@@ -3,6 +3,7 @@
 
 import base64
 import re
+from telnetlib import STATUS
 from typing import Optional
 import requests
 
@@ -80,6 +81,10 @@ class RESPONSE_FIELDS:
         FINGERPRINT = 'fingerprint'
         DURATION = 'duration'
 
+    class ERROR:
+        STATUS = 'status'
+        MESSAGE = 'message'
+
 
 class AudioFingerprinterApiClient:
 
@@ -108,7 +113,8 @@ class AudioFingerprinterApiClient:
                 duration = response_json[RESPONSE_FIELDS.OK.DURATION]
                 return fingerprint_bytes, duration
             elif response.status_code == 400:
-                error_code = AudioFingerprinterApiClient._get_service_error_code_from_message(response_json)
+                error_code = AudioFingerprinterApiClient._get_service_error_code_from_message(
+                    response_json[RESPONSE_FIELDS.ERROR.MESSAGE])
                 if error_code == 2:
                     raise WrongFileExtension(response_json)
                 elif error_code == 3:
@@ -122,7 +128,8 @@ class AudioFingerprinterApiClient:
             elif response.status_code == 504:
                 raise TimeoutError()
             elif response.status_code == 422:
-                error_code = AudioFingerprinterApiClient._get_service_error_code_from_message(response_json)
+                error_code = AudioFingerprinterApiClient._get_service_error_code_from_message(
+                    response_json[RESPONSE_FIELDS.ERROR.MESSAGE])
                 if error_code == 1:
                     raise FpcalcStatusError(response_json)
                 else:

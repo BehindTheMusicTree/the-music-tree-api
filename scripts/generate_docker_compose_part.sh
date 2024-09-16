@@ -6,7 +6,7 @@ echo "Generating partial docker-compose..."
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
-load_project_env_file_if_exists
+load_app_env_file_if_exists
 
 REQUIRED_NON_BOOL_VARS=(
   DOCKER_COMPOSE_PART_FILENAME
@@ -24,9 +24,9 @@ REQUIRED_NON_BOOL_VARS=(
   AFP_CONTAINER_NAME
   AFP_PORT
   AFP_ENV_FILENAME
-  AFP_DOCKERIZED_POOL_DIR
-  AFP_DOCKERIZED_FLASK_LOG_DIR
-  AFP_DOCKERIZED_GUNICORN_LOG_DIR
+  AFP_POOL_DIR_EXTERNAL
+  AFP_FLASK_LOG_DIR_EXTERNAL
+  AFP_GUNICORN_LOG_DIR_EXTERNAL
   APP_SERVICE_NAME
   APP_ROOT_DIR
   APP_IMAGE_REPO
@@ -35,9 +35,9 @@ REQUIRED_NON_BOOL_VARS=(
   APP_PORT
   APP_ENV_FILENAME
   GUNICORN_LOG_DIR
-  DJANGO_LOG_DIR
-  MEDIA_DIR
-  STATIC_FILES
+  DJANGO_LOG_DIR_EXTERNAL
+  MEDIA_DIR_EXTERNAL
+  STATIC_FILES_EXTERNAL
   TMP_UPLOADED_FILES
 )
 check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
@@ -63,9 +63,9 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     image: $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
     container_name: $AFP_CONTAINER_NAME
     volumes:
-      - api-upload-tmp-files:$AFP_DOCKERIZED_POOL_DIR
-      - afp-flask-log-dir:$AFP_DOCKERIZED_FLASK_LOG_DIR
-      - afp-gunicorn-log-dir:$AFP_DOCKERIZED_GUNICORN_LOG_DIR
+      - api-upload-tmp-files:$AFP_POOL_DIR_EXTERNAL
+      - afp-flask-log-dir:$AFP_FLASK_LOG_DIR_EXTERNAL
+      - afp-gunicorn-log-dir:$AFP_GUNICORN_LOG_DIR_EXTERNAL
     expose:
       - $AFP_PORT
     networks:
@@ -77,10 +77,10 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
     image: $DOCKERHUB_USERNAME/$APP_IMAGE_REPO:$APP_VERSION
     container_name: $APP_CONTAINER_NAME
     volumes:
-      - api-django-log-dir:${DJANGO_LOG_DIR}
+      - api-django-log-dir:${DJANGO_LOG_DIR_EXTERNAL}
       - api-gunicorn-log-dir:${GUNICORN_LOG_DIR}
-      - api-media-dir:${MEDIA_DIR}
-      - api-static-files:${STATIC_FILES}
+      - api-media-dir:${MEDIA_DIR_EXTERNAL}
+      - api-static-files:${STATIC_FILES_EXTERNAL}
       - api-upload-tmp-files:${TMP_UPLOADED_FILES}
     expose:
       - $APP_PORT

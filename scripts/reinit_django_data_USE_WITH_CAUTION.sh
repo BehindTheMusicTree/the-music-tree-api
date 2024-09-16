@@ -5,7 +5,7 @@
 
 load_env_vars () {
   echo "Loading environment variables..."
-  load_project_env_file_if_exists
+  load_app_env_file_if_exists
   load_project_calculated_paths_env_vars
 
   local REQUIRED_NON_BOOL_VARS=(

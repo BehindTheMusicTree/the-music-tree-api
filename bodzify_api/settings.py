@@ -157,23 +157,17 @@ DEBUG = os.getenv('DEBUG')
 if not DEBUG or DEBUG not in ['true', 'false']:
     raise EnvironmentError("The DEBUG variable is not set or is not a boolean")
 
-STATIC_FILES_ARE_NEEDED_STR = os.getenv('STATIC_FILES_ARE_NEEDED')
-if not STATIC_FILES_ARE_NEEDED_STR or STATIC_FILES_ARE_NEEDED_STR not in ['true', 'false']:
-    raise EnvironmentError("The STATIC_FILES_ARE_NEEDED variable is not set or is not a boolean")
-STATIC_FILES_ARE_NEEDED = True if STATIC_FILES_ARE_NEEDED_STR == 'true' else False
-
-STATICFILES_DIRS = []
-if STATIC_FILES_ARE_NEEDED:
-    print("STATIC_FILES_ARE_NEEDED is true. Setting up static files...")
-    STATIC_URL = 'static/'
-    STATIC_FILES_ENV = os.getenv('STATIC_FILES')
-    if not STATIC_FILES_ENV:
-        raise EnvironmentError("The STATIC_FILES variable must be set")
-    STATIC_ROOT = Path(STATIC_FILES_ENV)
-    print("STATIC_ROOT: " + str(STATIC_ROOT))
-else:
+STATIC_FILES = os.getenv('STATIC_FILES')
+if not STATIC_FILES:
     print("Static files are not needed.")
     STATIC_ROOT = ''
+else:
+    print("STATIC_FILES_ARE_NEEDED is true. Setting up static files...")
+    STATIC_FILES_ARE_NEEDED = True
+    STATICFILES_DIRS = []
+    STATIC_URL = 'static/'
+    STATIC_ROOT = Path(STATIC_FILES)
+    print("STATIC_ROOT: " + str(STATIC_ROOT))
 
 INSTALLED_APPS = ['django.contrib.admin',
                   'django.contrib.auth',
@@ -321,13 +315,22 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-AUDIO_META_ANALYSE_IS_NEEDED_STR = os.getenv('AUDIO_META_ANALYSE_IS_NEEDED')
-if not AUDIO_META_ANALYSE_IS_NEEDED_STR or AUDIO_META_ANALYSE_IS_NEEDED_STR not in ['true', 'false']:
-    raise EnvironmentError("The AUDIO_META_ANALYSE_IS_NEEDED variable is not set or is not a boolean")
-AUDIO_META_ANALYSE_IS_NEEDED = True if AUDIO_META_ANALYSE_IS_NEEDED_STR == 'true' else False
-print("AUDIO_META_ANALYSE_IS_NEEDED: " + str(AUDIO_META_ANALYSE_IS_NEEDED))
+TMP_UPLOADED_FILES_STR = os.getenv('TMP_UPLOADED_FILES')
+if not TMP_UPLOADED_FILES_STR:
+    print("TMP_UPLOADED_FILES is not set. The app will not handle uploaded files.")
+    FILE_UPLOAD_ENABLED = False
 
-if AUDIO_META_ANALYSE_IS_NEEDED:
+    for var_name in [
+        'AFP_PORT',
+        'AFP_POST_ENDPOINT',
+        'ACOUSTID_API_KEY',
+        'MEDIA_DIR',
+            'LIBRARIES_DIR_NAME']:
+        if os.getenv(var_name):
+            raise EnvironmentError(f"The {var_name} env variable cannot be set as TMP_UPLOADED_FILES is not.")
+else:
+    print("TMP_UPLOADED_FILES is set. The app will handle uploaded files.")
+    FILE_UPLOAD_ENABLED = True
     AFP_CONTAINER_NAME = os.getenv('AFP_CONTAINER_NAME')
     if not AFP_CONTAINER_NAME:
         raise EnvironmentError("The AFP_CONTAINER_NAME variable must be set")
@@ -350,35 +353,27 @@ if AUDIO_META_ANALYSE_IS_NEEDED:
         ":" + AFP_PORT + '/' + AFP_POST_ENDPOINT
 
     ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
-    if not ACOUSTID_API_KEY and AUDIO_META_ANALYSE_IS_NEEDED:
+    if not ACOUSTID_API_KEY and FILE_UPLOAD_ENABLED:
         raise EnvironmentError("The ACOUSTID_API_KEY variable must be set")
 
-MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
-if not MEDIA_DIR_ENV:
-    raise EnvironmentError("The MEDIA_DIR variable must be set")
-MEDIA_ROOT = Path(MEDIA_DIR_ENV)  # Django constant, do not rename.
-print("MEDIA_ROOT: " + str(MEDIA_ROOT))
+    MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
+    if not MEDIA_DIR_ENV:
+        raise EnvironmentError("The MEDIA_DIR variable must be set")
+    MEDIA_ROOT = Path(MEDIA_DIR_ENV)  # Django constant, do not rename.
+    print("MEDIA_ROOT: " + str(MEDIA_ROOT))
 
-LIBRARIES_DIR_NAME = os.getenv('LIBRARIES_DIR_NAME')
-if not LIBRARIES_DIR_NAME:
-    raise EnvironmentError("The LIBRARIES_DIR_NAME variable must be set")
-LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
-print("LIBRARIES_DIR: " + str(LIBRARIES_DIR))
+    LIBRARIES_DIR_NAME = os.getenv('LIBRARIES_DIR_NAME')
+    if not LIBRARIES_DIR_NAME:
+        raise EnvironmentError("The LIBRARIES_DIR_NAME variable must be set")
+    LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
+    print("LIBRARIES_DIR: " + str(LIBRARIES_DIR))
 
-LOGS_ARE_NEEDED_STR = os.getenv('DJANGO_LOGS_ARE_NEEDED')
-if not LOGS_ARE_NEEDED_STR:
-    raise EnvironmentError("The LOGS_ARE_NEEDED variable must be set")
-LOGS_ARE_NEEDED_STR = LOGS_ARE_NEEDED_STR.lower()
-if LOGS_ARE_NEEDED_STR not in ['true', 'false']:
-    raise EnvironmentError("The LOGS_ARE_NEEDED variable is not set or is not a boolean")
-LOGS_ARE_NEEDED = (LOGS_ARE_NEEDED_STR == 'true')
-
-if LOGS_ARE_NEEDED:
-    print("DJANGO_LOGS_ARE_NEEDED is true. Setting up logs.")
-    LOG_DIR_ENV = os.getenv('DJANGO_LOG_DIR')
-    if not LOG_DIR_ENV:
-        raise EnvironmentError("The DJANGO_LOG_DIR variable must be set")
-    LOG_DIR = Path(LOG_DIR_ENV)
+LOG_DIR_STR = os.getenv('DJANGO_LOG_DIR')
+if not LOG_DIR_STR:
+    print("The DJANGO_LOG_DIR variable is not set. Logs will not be set up.")
+else:
+    print("LOG_DIR is set. Setting up logs.")
+    LOG_DIR = Path(LOG_DIR_STR)
 
     LOG_GENERAL_FILENAME = os.getenv('DJANGO_LOG_GENERAL_FILENAME')
     if not LOG_GENERAL_FILENAME:
@@ -517,7 +512,6 @@ if LOGS_ARE_NEEDED:
             },
         },
     }
-else:
-    print("Logs are not needed.")
+    print("Logs are set up.")
 
 print("Finished loading settings.")

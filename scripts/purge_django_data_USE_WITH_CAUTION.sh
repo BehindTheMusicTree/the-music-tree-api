@@ -29,12 +29,12 @@ if [ "$SKIP_CONFIRMATION" != "true" ]; then
 fi
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
-ENV_FILE=${PROJECT_DIR}env/.env
-CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
+APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
+ENV_FILE=${APP_DIR}env/.env
+CALCULATED_PATHS_ENV_FILE="${APP_DIR}env/calculated_paths/.env"
 source ${SCRIPTS_DIR}utils.sh
 
-load_project_env_file_if_exists
+load_app_env_file_if_exists
 load_project_calculated_paths_env_vars
 
 REQUIRED_NON_BOOL_VARS=(
@@ -102,7 +102,7 @@ else
     echo "User $DB_SUPERUSER_NAME does not exist."
 fi
 
-MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
+MIGRATIONS_DIR="${APP_DIR}${APP_NAME}/migrations/"
 echo "Deleting migrations in directory $MIGRATIONS_DIR ..."
 echo "Deleting .py migrations..."
 find "${MIGRATIONS_DIR}" -name "*.py" -not -name "__init__.py" -exec rm -f {} \;

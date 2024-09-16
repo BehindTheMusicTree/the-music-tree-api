@@ -1,7 +1,7 @@
 #!/bin/bash
 
 load_env_vars () {
-  load_project_env_file_if_exists
+  load_app_env_file_if_exists
 
   local REQUIRED_NON_BOOL_VARS=(
     DB_PORT

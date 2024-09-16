@@ -2,7 +2,7 @@
 
 load_env_vars() {
   echo "Loading environment variables..."
-  load_project_env_file_if_exists
+  load_app_env_file_if_exists
   local REQUIRED_NON_BOOL_VARS=(
     APP_NAME
     DB_SUPERUSER_NAME
@@ -21,7 +21,7 @@ load_env_vars() {
 exit_if_django_data_exists() {
   check_if_db_empty_or_exit
   echo "Checking if migrations already exist..."
-  local MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
+  local MIGRATIONS_DIR="${APP_DIR}${APP_NAME}/migrations/"
   if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
       echo "Migrations already exist. Abort"
       exit 1
@@ -32,13 +32,13 @@ exit_if_django_data_exists() {
 echo "Initializing Django data..."
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
+APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
 source ${SCRIPTS_DIR}utils.sh
 
 load_env_vars
 exit_if_django_data_exists
 
-MANAGE_SCRIPT=${PROJECT_DIR}manage.py
+MANAGE_SCRIPT=${APP_DIR}manage.py
 echo "MANAGE_SCRIPT: $MANAGE_SCRIPT"
 
 bash ${SCRIPTS_DIR}init_db_and_role.sh

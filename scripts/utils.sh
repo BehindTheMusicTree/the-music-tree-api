@@ -18,7 +18,7 @@ create_directory_if_not_exists_or_exit() {
 
 touch_file_or_exit() {
     local file_path=$1
-    echo "Creating file $file_path ..."
+    echo "Touching file $file_path ..."
     output=$(touch "$file_path")
     if [ $? -ne 0 ]; then
         echo "Failed to create file $file_path : $output" >&2
@@ -78,10 +78,10 @@ export_value_removing_eventual_surrounding_quotes() {
     export "$VAR_NAME=$VAR_VALUE"
 }
 
-load_project_env_file_if_exists() {
+load_app_env_file_if_exists() {
     local SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-    local PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
-    local ENV_FILE=${PROJECT_DIR}env/.env
+    local APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
+    local ENV_FILE=${APP_DIR}env/.env
     if [ ! -f "$ENV_FILE" ]; then
         echo "$ENV_FILE env file does not exist."
     else
@@ -96,19 +96,12 @@ load_project_env_file_if_exists() {
 
 load_project_calculated_paths_env_vars() {
     echo "Loading calculated paths..."
-
     check_vars_are_set "LIBRARIES_DIR_NAME"
-    REQUIRED_BOOL_VARS=(
-        "APP_IS_EXPOSED"
-        "STATIC_FILES_ARE_NEEDED"
-        "DJANGO_LOGS_ARE_NEEDED"
-        "AUDIO_META_ANALYSE_IS_NEEDED"
-    )
-    check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
+    check_bool_vars_are_set "APP_IS_EXPOSED"
 
     local SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-    local PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
-    local CALTULATED_PATHS_DIR="${PROJECT_DIR}env/calculated_paths/"
+    local APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
+    local CALTULATED_PATHS_DIR="${APP_DIR}env/calculated_paths/"
 
     if [ ! -d "$CALTULATED_PATHS_DIR" ]; then
         echo "$CALTULATED_PATHS_DIR directory does not exist" >&2

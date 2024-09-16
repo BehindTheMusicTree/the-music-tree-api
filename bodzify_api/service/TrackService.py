@@ -135,8 +135,7 @@ class TrackService(Service):
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
             filename = os.path.basename(file_path)
-            fingerprint, duration_in_sec = \
-                AudioFingerprinterApiClient.post_fingerprint_audio(filename=filename)
+            fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(filename=filename)
         elif isinstance(file, AppDjangoFile):
             filename = os.path.basename(file.file_abs_path)
             fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 load_env_vars () {
-    load_project_env_file_if_exists
+    load_app_env_file_if_exists
     load_project_calculated_paths_env_vars
 
     local REQUIRED_NON_BOOL_VARS=(
@@ -22,7 +22,7 @@ load_env_vars () {
         AFP_CONTAINER_NAME
         AFP_IMAGE_REPO
         AFP_VERSION
-        AFP_DOCKERIZED_POOL_DIR
+        AFP_POOL_DIR_EXTERNAL
         AFP_PORT
     )
     check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
@@ -30,9 +30,6 @@ load_env_vars () {
         "DEBUG"
         "APP_IS_EXPOSED"
         "DB_DATA_MUST_PERSIST"
-        "STATIC_FILES_ARE_NEEDED"
-        "DJANGO_LOGS_ARE_NEEDED"
-        "AUDIO_META_ANALYSE_IS_NEEDED"
     )
     check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
     export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
@@ -44,8 +41,8 @@ echo "Running the database and audio fingerprinter containers."
 
 # Get the directory of the script even when it's called from another script
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
-APP_ENV_FILE="${PROJECT_DIR}env/.env"
+APP_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
+APP_ENV_FILE="${APP_DIR}env/.env"
 source "${SCRIPTS_DIR}utils.sh"
 
 load_env_vars
@@ -92,7 +89,7 @@ echo "Database container running successfully."
 echo "Running the audio fingerprinter container..."
 docker run \
     --name=$AFP_CONTAINER_NAME \
-    --volume=$TMP_UPLOADED_FILES:$AFP_DOCKERIZED_POOL_DIR \
+    --volume=$TMP_UPLOADED_FILES:$AFP_POOL_DIR_EXTERNAL \
     -p $AFP_PORT:$AFP_PORT \
     -e ENV=$ENV \
     -e DEBUG=$DEBUG \

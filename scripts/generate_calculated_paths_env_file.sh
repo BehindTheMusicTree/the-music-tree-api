@@ -1,79 +1,122 @@
 #!/bin/bash
 
-load_env_vars () {
-    echo "Loading environment variables..."
-    check_vars_are_set "LIBRARIES_DIR_NAME"
-
-    REQUIRED_BOOL_VARS=(
-        "APP_IS_EXPOSED"
-        "STATIC_FILES_ARE_NEEDED"
-        "DJANGO_LOGS_ARE_NEEDED"
-        "AUDIO_META_ANALYSE_IS_NEEDED"
-    )
-    check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
-    echo "Environment variables loaded successfully."
+calculate_media_dirs() {
+    if [ -n "$MEDIA_DIR_EXTERNAL" ]; then
+        if [ -n "$STATIC_FILES_INTERNAL" ]; then
+            echo "STATIC_FILES_INTERNAL and MEDIA_DIR_EXTERNAL must not be set at the same time." >&2
+            exit 1
+        fi
+        echo "MEDIA_DIR_EXTERNAL is set. Setting media directory to external."
+        MEDIA_DIR="${MEDIA_DIR_EXTERNAL}"
+    else
+        if [ -n "$MEDIA_DIR_INTERNAL" ]; then
+            echo "MEDIA_DIR_INTERNAL is set. Setting media directory to internal."
+            MEDIA_DIR="${APP_DIR}${MEDIA_DIR_INTERNAL}"
+        else
+            echo "Neither MEDIA_DIR_EXTERNAL nor MEDIA_DIR_INTERNAL is set. Abort." >&2
+            exit 1
+        fi
+    fi
+    echo "MEDIA_DIR is set to $MEDIA_DIR"
+    echo "MEDIA_DIR=$MEDIA_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
+    LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
+    echo "LIBRARIES_DIR is set to $LIBRARIES_DIR"
+    echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
 }
 
-echo "Generating the env file with calculated paths..."
+calculate_static_files_dir(){
+    if [ -n "$STATIC_FILES_INTERNAL" ]; then
+        echo "STATIC_FILES_INTERNAL is set. Static files are needed."
+        STATIC_FILES_DEFAULT="${APP_DIR}${STATIC_FILES_INTERNAL}"
+        if [ -n "$STATIC_FILES_EXTERNAL" ]; then
+            echo "STATIC_FILES_EXTERNAL is set. Setting static files to external."
+            STATIC_FILES="${STATIC_FILES_EXTERNAL}"
+        else
+            echo "STATIC_FILES_EXTERNAL is not set. Setting static files to internal."
+            STATIC_FILES="${STATIC_FILES_DEFAULT}"
+        fi
 
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
-GENERATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
-
-source ${SCRIPTS_DIR}utils.sh
-load_env_vars
-
-[ -f "$GENERATED_PATHS_ENV_FILE" ] && rm -f "$GENERATED_PATHS_ENV_FILE"
-output=$(touch "$GENERATED_PATHS_ENV_FILE")
-if [ $? -ne 0 ]; then
-    echo "Failed to create the generated paths env file: $output" >&2
-    exit 1
-fi
-
-if [ "$APP_IS_EXPOSED" = "true" ]; then
-    check_vars_are_set "MEDIA_DIR"
-    check_vars_are_set "TMP_UPLOADED_FILES"
-    if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
-        check_vars_are_set "STATIC_FILES"
+        echo "STATIC_FILES is set to $STATIC_FILES"
+        echo "STATIC_FILES_DEFAULT=$STATIC_FILES_DEFAULT" >> "$CALCULATED_PATHS_ENV_FILE"
+        echo "STATIC_FILES=$STATIC_FILES" >> "$CALCULATED_PATHS_ENV_FILE"
+    else
+        if [ -n "$STATIC_FILES_EXTERNAL" ]; then
+            echo "STATIC_FILES_EXTERNAL must not be set if STATIC_FILES_INTERNAL is not set." >&2
+            exit 1
+        fi
     fi
-    if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
-        check_vars_are_set "DJANGO_LOG_DIR"
-        DJANGO_LOG_DIR="${PROJECT_DIR}${DJANGO_LOG_DIR}"
+}
+
+calculate_django_log_dir(){
+    if [ -n "$DJANGO_LOG_DIR_EXTERNAL" ]; then
+        if [ -n "$DJANGO_LOG_DIR_INTERNAL" ]; then
+            echo "DJANGO_LOG_DIR_INTERNAL and DJANGO_LOG_DIR_EXTERNAL must not be set at the same time." >&2
+            exit 1
+        fi
+        echo "DJANGO_LOG_DIR_EXTERNAL is set. Setting the Django logs to external."
+        DJANGO_LOG_DIR="${DJANGO_LOG_DIR_EXTERNAL}"
+    else
+        if [ -n "$DJANGO_LOG_DIR_INTERNAL" ]; then
+            echo "DJANGO_LOG_DIR_INTERNAL is set. Setting the Django logs to internal."
+            DJANGO_LOG_DIR="${APP_DIR}${DJANGO_LOG_DIR_INTERNAL}"
+        else
+            echo "Neither DJANGO_LOG_DIR_EXTERNAL nor DJANGO_LOG_DIR_INTERNAL is set. Django logs are not needed."
+        fi
     fi
-else
-    check_vars_are_set "MEDIA_DEFAULT_INTERNAL_DIR"
-    MEDIA_DIR="${PROJECT_DIR}${MEDIA_DEFAULT_INTERNAL_DIR}"
-    if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
-        check_vars_are_set "STATIC_FILES_DEFAULT_INTERNAL_DIR"
-        STATIC_FILES="${PROJECT_DIR}${STATIC_FILES_DEFAULT_INTERNAL_DIR}"
+
+    if [ -n "$DJANGO_LOG_DIR" ]; then
+        echo "DJANGO_LOG_DIR is set to $DJANGO_LOG_DIR"
+        echo "DJANGO_LOG_DIR=$DJANGO_LOG_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
     fi
-    if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
-        check_vars_are_set "DJANGO_LOG_DEFAULT_INTERNAL_DIR"
-        DJANGO_LOG_DIR="${PROJECT_DIR}${DJANGO_LOG_DEFAULT_INTERNAL_DIR}"
+}
+
+calculate_tmp_uploaded_files_dir(){
+    if [ -n "$TMP_UPLOADED_FILES_EXTERNAL" ]; then
+        if [ -n "$TMP_UPLOADED_FILES_INTERNAL" ]; then
+            echo "TMP_UPLOADED_FILES_INTERNAL and TMP_UPLOADED_FILES_EXTERNAL must not be set at the same time." >&2
+            exit 1
+        fi
+        echo "TMP_UPLOADED_FILES_EXTERNAL is set. Setting the temporary files directory to external."
+        TMP_UPLOADED_FILES="${TMP_UPLOADED_FILES_EXTERNAL}"
+    else
+        if [ -n "$TMP_UPLOADED_FILES_INTERNAL" ]; then
+            echo "TMP_UPLOADED_FILES_INTERNAL is set. Setting the temporary files directory to internal."
+            TMP_UPLOADED_FILES="${APP_DIR}${TMP_UPLOADED_FILES_INTERNAL}"
+        else
+            echo "Neither TMP_UPLOADED_FILES_EXTERNAL nor TMP_UPLOADED_FILES_INTERNAL is set. \
+                The temporary files directory is not needed."
+        fi
     fi
-    if [ "$AUDIO_META_ANALYSE_IS_NEEDED" = "true" ]; then
-        check_vars_are_set "TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR"
-        TMP_UPLOADED_FILES="${PROJECT_DIR}${TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR}"
+
+    if [ -n "$TMP_UPLOADED_FILES" ]; then
+        echo "TMP_UPLOADED_FILES is set to $TMP_UPLOADED_FILES"
+        echo "TMP_UPLOADED_FILES=$TMP_UPLOADED_FILES" >> "$CALCULATED_PATHS_ENV_FILE"
     fi
-fi
+}
 
-LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
+main () {
+    echo "Generating the env file with calculated paths..."
 
-echo "MEDIA_DIR=$MEDIA_DIR" >> "$GENERATED_PATHS_ENV_FILE"
-echo "LIBRARIES_DIR_NAME=$LIBRARIES_DIR_NAME" >> "$GENERATED_PATHS_ENV_FILE"
-echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$GENERATED_PATHS_ENV_FILE"
-echo "TMP_UPLOADED_FILES=$TMP_UPLOADED_FILES" >> "$GENERATED_PATHS_ENV_FILE"
+    SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+    APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
+    CALCULATED_PATHS_ENV_FILE="${APP_DIR}env/calculated_paths/.env"
 
-if [ "$STATIC_FILES_ARE_NEEDED" = "true" ]; then
-    echo "STATIC_FILES=$STATIC_FILES" >> "$GENERATED_PATHS_ENV_FILE"
-else
-    echo "STATIC_FILES_ARE_NEEDED is set to false so STATIC_FILES is not set."
-fi
+    source ${SCRIPTS_DIR}utils.sh
+    load_env_vars
 
-if [ "$DJANGO_LOGS_ARE_NEEDED" = "true" ]; then
-    check_vars_are_set "DJANGO_LOG_DIR"
-    echo "DJANGO_LOG_DIR=$DJANGO_LOG_DIR" >> "$GENERATED_PATHS_ENV_FILE"
-fi
+    [ -f "$CALCULATED_PATHS_ENV_FILE" ] && rm -f "$CALCULATED_PATHS_ENV_FILE"
+    output=$(touch "$CALCULATED_PATHS_ENV_FILE")
+    if [ $? -ne 0 ]; then
+        echo "Failed to create the generated paths env file: $output" >&2
+        exit 1
+    fi
 
+    calculate_media_dirs
+    calculate_static_files_dir
+    calculate_django_log_dir
+    calculate_tmp_uploaded_files_dir
 
-echo "Generated the env file with calculated paths successfully."
+    echo "Generated the env file with calculated paths successfully."
+}
+
+main "$@"
