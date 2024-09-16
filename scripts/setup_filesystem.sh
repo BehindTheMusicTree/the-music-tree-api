@@ -4,7 +4,6 @@ load_env_vars () {
     load_app_env_file_if_exists
     check_bool_vars_are_set "APP_IS_EXPOSED"
     load_project_calculated_paths_env_vars
-    check_vars_are_set "MEDIA_DIR" "LIBRARIES_DIR"
 }
 
 setup_static_files () {

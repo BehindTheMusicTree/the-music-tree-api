@@ -19,6 +19,7 @@ calculate_media_dirs() {
     fi
     echo "MEDIA_DIR is set to $MEDIA_DIR"
     echo "MEDIA_DIR=$MEDIA_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
+    check_vars_are_set "LIBRARIES_DIR_NAME"
     LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
     echo "LIBRARIES_DIR is set to $LIBRARIES_DIR"
     echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
