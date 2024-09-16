@@ -1,5 +1,30 @@
 #!/bin/bash
 
+load_env_vars() {
+  REQUIRED_NON_BOOL_VARS=(
+    APP_NAME
+    DB_SUPERUSER_NAME
+    DB_SUPERUSER_PASSWORD
+    DB_BODZIFY_API_DB_NAME
+    DB_BODZIFY_API_USERNAME
+    DB_BODZIFY_API_USER_PASSWORD
+  )
+  check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
+  check_bool_vars_are_set "APP_IS_EXPOSED"
+  export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+  export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+}
+
+exit_if_django_data_exists() {
+  echo "Checking if migrations already exist..."
+  local MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
+  if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
+      echo "Migrations already exist. Abort"
+      exit 1
+  fi
+  echo "Migrations do not exist."
+}
+
 echo "Initializing Django data..."
 
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
@@ -7,32 +32,13 @@ PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
 source ${SCRIPTS_DIR}utils.sh
 
 load_project_env_file_if_exists
-
-REQUIRED_NON_BOOL_VARS=(
-  APP_NAME
-  DB_SUPERUSER_NAME
-  DB_SUPERUSER_PASSWORD
-  DB_BODZIFY_API_DB_NAME
-  DB_BODZIFY_API_USERNAME
-  DB_BODZIFY_API_USER_PASSWORD
-)
-check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
-check_bool_vars_are_set "APP_IS_EXPOSED"
-export_value_removing_surrounding_quotes "DB_SUPERUSER_PASSWORD"
-export_value_removing_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+load_env_vars
+exit_if_django_data_exists
 
 MANAGE_SCRIPT=${PROJECT_DIR}manage.py
 echo "MANAGE_SCRIPT: $MANAGE_SCRIPT"
-MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
 
-echo "Checking if migrations already exist..."
-if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
-    echo "Migrations already exist. Abort"
-    exit 1
-fi
-echo "Migrations do not exist."
-
-OUTPUT=$(bash ${SCRIPTS_DIR}init_db_and_role.sh)
+bash ${SCRIPTS_DIR}init_db_and_role.sh
 if [ $? -ne 0 ]; then
   echo "Failed to initialize database and role." >&2
   exit 1
