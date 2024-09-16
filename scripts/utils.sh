@@ -9,6 +9,7 @@ create_directory_if_not_exists_or_exit() {
             echo "Failed to create directory $dir_path : $OUTPUT" >&2
             exit 1
         fi
+        echo "Directory $dir_path created successfully."
         
     else
         echo "Directory $dir_path already exists"
