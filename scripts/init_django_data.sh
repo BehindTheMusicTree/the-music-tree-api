@@ -1,7 +1,7 @@
 #!/bin/bash
 
 load_env_vars() {
-  exho "Loading environment variables..."
+  echo "Loading environment variables..."
   load_project_env_file_if_exists
   local REQUIRED_NON_BOOL_VARS=(
     APP_NAME
