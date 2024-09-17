@@ -161,6 +161,7 @@ STATIC_FILES = os.getenv('STATIC_FILES')
 if not STATIC_FILES:
     print("Static files are not needed.")
     STATIC_ROOT = ''
+    STATIC_FILES_ARE_BEING_SERVED_OR_COLLECTED = False
 else:
     print("STATIC_FILES is set. Setting up static files configuration...")
     STATIC_FILES_ARE_BEING_SERVED_OR_COLLECTED = True
