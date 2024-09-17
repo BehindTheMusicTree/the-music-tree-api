@@ -172,6 +172,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Display last commit message
+        run: git log -1 --pretty=format:"%s"
+
       - name: List files
         run: ls -la
 
