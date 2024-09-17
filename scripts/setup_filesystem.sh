@@ -9,66 +9,64 @@ load_env_vars () {
     echo "Environment variables loaded for the filesystem setup."
 }
 
-setup_static_files () {
-    if [ $ENV = "COLLECT_STATIC" ]; then
-        check_vars_are_set STATIC_FILES_DEFAULT 
-        echo "ENV is set to COLLECT_STATIC. Setting up the filesystem..."
-        create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
-        echo "Checking if files exist in $STATIC_FILES_DEFAULT..."
-        if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
-            echo "No files found in $STATIC_FILES_DEFAULT."
-        else
-            echo "Files found in $STATIC_FILES_DEFAULT. Removing them..."
-            output=$(rm -rf "$STATIC_FILES_DEFAULT"/*)
-            if [ $? -ne 0 ]; then
-                echo "ERROR: Failed to remove files from $STATIC_FILES_DEFAULT: $output" >&2
-                exit 1
-            fi
-            echo "Files removed from $STATIC_FILES_DEFAULT."
-        fi
+setup_static_files_for_collection() {
+    check_vars_are_set STATIC_FILES_DEFAULT 
+    echo "ENV is set to COLLECT_STATIC. Setting up the filesystem..."
+    create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
+    echo "Checking if files exist in $STATIC_FILES_DEFAULT..."
+    if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
+        echo "No files found in $STATIC_FILES_DEFAULT."
     else
-        if [ -z "$STATIC_FILES_DEFAULT" ]; then
-            echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is not set. Static files are not needed."
-        else 
-            echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is set. Static files are needed. "\
-                "Setting up the filesystem..."
-            if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
-                echo "ERROR: No files found in $STATIC_FILES_DEFAULT. Abort." >&2
-                exit 1
+        echo "Files found in $STATIC_FILES_DEFAULT. Removing them..."
+        output=$(rm -rf "$STATIC_FILES_DEFAULT"/*)
+        if [ $? -ne 0 ]; then
+            echo "ERROR: Failed to remove files from $STATIC_FILES_DEFAULT: $output" >&2
+            exit 1
+        fi
+        echo "Files removed from $STATIC_FILES_DEFAULT."
+    fi
+}
+
+setup_static_files_for_serving() {
+    if [ -z "$STATIC_FILES_DEFAULT" ]; then
+        echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is not set. Static files are not needed."
+    else 
+        echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is set. Static files are needed. "\
+            "Setting up the filesystem..."
+        if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
+            echo "ERROR: No files found in $STATIC_FILES_DEFAULT. Abort." >&2
+            exit 1
+        else
+            if [ "$STATIC_FILES_DEFAULT" = "$STATIC_FILES" ]; then
+                echo "STATIC_FILES_DEFAULT is not empty and STATIC_FILES is set to STATIC_FILES_DEFAULT. "\
+                    "The static files are already set up."
             else
-                if [ "$STATIC_FILES_DEFAULT" = "$STATIC_FILES" ]; then
-                    echo "STATIC_FILES_DEFAULT is not empty and STATIC_FILES is set to STATIC_FILES_DEFAULT. "\
-                        "The static files are already set up."
+                echo "STATIC_FILES_DEFAULT is not empty and STATIC_FILES is not set to STATIC_FILES_DEFAULT. "\
+                    "Setting up the filesystem..."
+                create_directory_if_not_exists_or_exit "$STATIC_FILES"
+                echo "Checking if files exist in $STATIC_FILES..."
+                if [ -z "$(ls -A $STATIC_FILES)" ]; then
+                    echo "No files found in $STATIC_FILES ."
                 else
-                    echo "STATIC_FILES_DEFAULT is not empty and STATIC_FILES is not set to STATIC_FILES_DEFAULT. "\
-                        "Setting up the filesystem..."
-                    create_directory_if_not_exists_or_exit "$STATIC_FILES"
-                    echo "Checking if files exist in $STATIC_FILES..."
-                    if [ -z "$(ls -A $STATIC_FILES)" ]; then
-                        echo "No files found in $STATIC_FILES."
-                    else
-                        echo "Files found in $STATIC_FILES. Removing them..."
-                        output=$(rm -rf "$STATIC_FILES"/*)
-                        if [ $? -ne 0 ]; then
-                            echo "ERROR: Failed to remove files from $STATIC_FILES: $output" >&2
-                            exit 1
-                        fi
-                        echo "Files removed from $STATIC_FILES."
-                    fi
-                    echo "$STATIC_FILES is empty. Copying files from $STATIC_FILES_DEFAULT to $STATIC_FILES..."
-                    output=$(cp -r "$STATIC_FILES_DEFAULT"/* "$STATIC_FILES")
+                    echo "Files found in $STATIC_FILES. Removing them..."
+                    output=$(rm -rf "$STATIC_FILES"/*)
                     if [ $? -ne 0 ]; then
-                        echo "ERROR: Failed to copy files from $STATIC_FILES_DEFAULT to $STATIC_FILES: $output" >&2
+                        echo "ERROR: Failed to remove files from $STATIC_FILES: $output" >&2
                         exit 1
                     fi
-                    echo "Files copied from $STATIC_FILES_DEFAULT to $STATIC_FILES."
+                    echo "Files removed from $STATIC_FILES."
                 fi
+                echo "$STATIC_FILES is empty. Copying files from $STATIC_FILES_DEFAULT to $STATIC_FILES..."
+                output=$(cp -r "$STATIC_FILES_DEFAULT"/* "$STATIC_FILES")
+                if [ $? -ne 0 ]; then
+                    echo "ERROR: Failed to copy files from $STATIC_FILES_DEFAULT to $STATIC_FILES: $output" >&2
+                    exit 1
+                fi
+                echo "Files copied from $STATIC_FILES_DEFAULT to $STATIC_FILES."
             fi
         fi
     fi
-    echo "Static files are set up."
 }
-
 setup_django_log () {
     if [ -n "$DJANGO_LOGS_DIR" ]; then
         echo "DJANGO_LOGS_DIR is set. Setting Django logs dirextories and files."
@@ -142,8 +140,15 @@ main (){
     source "${SCRIPTS_DIR}utils.sh"
 
     load_env_vars
+    check_vars_are_set ENV
 
-    setup_static_files
+    if [ $ENV = "COLLECT_STATIC" ]; then
+        setup_static_files_for_collection
+    else
+        setup_static_files_for_serving
+    fi
+
+    echo "Static files are set up."
     setup_django_log
     setup_gunicorn_log
     setup_media_dirs
