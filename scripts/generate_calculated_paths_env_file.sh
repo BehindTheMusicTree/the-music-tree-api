@@ -25,12 +25,12 @@ calculate_static_files_dir(){
     
     if [ -n "$STATIC_FILES_INTERNAL" ]; then
         echo "STATIC_FILES_INTERNAL is set. Setting the static files default directory to internal."
-        $STATIC_FILES_DEFAULT="${APP_DIR}${STATIC_FILES_INTERNAL}"
+        STATIC_FILES_DEFAULT="${APP_DIR}${STATIC_FILES_INTERNAL}"
         if [ -n "$STATIC_FILES_EXTERNAL" ]; then
             echo "STATIC_FILES_EXTERNAL is set. Setting the static files directory to external."
             STATIC_FILES="${STATIC_FILES_EXTERNAL}"
         else
-            echo "$STATIC_FILES_EXTERNAL is not set. Setting the static files directory to internal."
+            echo "STATIC_FILES_EXTERNAL is not set. Setting the static files directory to internal."
             STATIC_FILES="${STATIC_FILES_DEFAULT}"
         fi
     fi

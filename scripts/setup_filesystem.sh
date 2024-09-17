@@ -152,6 +152,13 @@ main (){
     source "${SCRIPTS_DIR}utils.sh"
 
     load_env_vars
+    status=$?
+    if [ $status -ne 0 ]; then
+        echo "Failed to load environment variables for the filesystem setup." >&2
+        exit 1
+    else
+        echo "Environment variables loaded."
+    fi
 
     setup_static_files
     setup_django_log
