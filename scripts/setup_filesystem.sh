@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 load_env_vars () {
     echo "Loading environment variables for the filesystem setup..."
     load_app_env_file_if_exists
@@ -14,7 +16,7 @@ setup_static_files () {
         check_vars_are_set STATIC_FILES_DEFAULT
         echo "ENV is set to COLLECT_STATIC. Setting up the filesystem..."
         if [ -n "$STATIC_FILES_DIR_EXTERNAL" ]; then
-            echo "In collct static mode, $STATIC_FILES_DIR_EXTERNAL must not be set." >&2
+            echo "In collect static mode, $STATIC_FILES_DIR_EXTERNAL must not be set." >&2
             exit 1
         fi
         create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
@@ -30,7 +32,6 @@ setup_static_files () {
             fi
             echo "Files removed from $STATIC_FILES_DEFAULT."
         fi
-
     else
         if [ -z "$STATIC_FILES_DEFAULT" ]; then
             echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is not set. Static files are not needed."
