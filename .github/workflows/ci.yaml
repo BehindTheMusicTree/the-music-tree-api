@@ -171,6 +171,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
 
       - name: Display last commit message
         run: git log -1 --pretty=format:"%s"
