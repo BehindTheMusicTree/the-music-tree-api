@@ -139,7 +139,7 @@ determine_db_host_if_not_set () {
     fi
 }
 
-check_if_db_new_or_exit () {
+is_db_new () {
     echo "Checking if the database is empty..."
 
     local REQUIRED_NON_BOOL_VARS=(
@@ -165,19 +165,15 @@ check_if_db_new_or_exit () {
     if [ "$DB_EXISTS" = "1" ]; then
         echo "Database $DB_BODZIFY_API_DB_NAME exists."\
         "Checking if role $DB_BODZIFY_API_USERNAME exists..."
-        echo "DEBUGGING"
-        psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
-        "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';"
         local ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
         "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
-        echo "Status: $?"
         if [ $? -ne 0 ]; then
-            echo "Failed to check if the role exists: $ROLE_EXISTS"
+            echo "Failed to check if the role exists: $ROLE_EXISTS" >&2
             exit 1
         fi
         if [ "$ROLE_EXISTS" = "1" ]; then
-            echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort."
-            exit 1
+            echo "Role $DB_BODZIFY_API_USERNAME already exists."
+            return 1
         fi
         echo "Role $DB_BODZIFY_API_USERNAME does not exist."
     else
@@ -185,4 +181,5 @@ check_if_db_new_or_exit () {
     fi
 
     echo "The database is new."
+    return 0
 }
