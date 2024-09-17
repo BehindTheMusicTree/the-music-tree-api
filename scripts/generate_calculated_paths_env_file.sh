@@ -5,7 +5,7 @@ calculate_static_files_dir(){
         echo "ENV is set to COLLECT_STATIC. Calculating the static files directory..."
         check_vars_are_set STATIC_FILES_INTERNAL
         if [ -n "$STATIC_FILES_EXTERNAL" ]; then
-            echo "ERROR: In collct static mode, $STATIC_FILES_EXTERNAL must not be set." >&2
+            echo "ERROR: In collect static mode, $STATIC_FILES_EXTERNAL must not be set." >&2
             exit 1
         fi
     else 
@@ -33,6 +33,8 @@ calculate_static_files_dir(){
             echo "STATIC_FILES_EXTERNAL is not set. Setting the static files directory to internal."
             STATIC_FILES="${STATIC_FILES_DEFAULT}"
         fi
+        echo "STATIC_FILES_DEFAULT=$STATIC_FILES_DEFAULT" >> "$CALCULATED_PATHS_ENV_FILE"
+        echo "STATIC_FILES=$STATIC_FILES" >> "$CALCULATED_PATHS_ENV_FILE"
     fi
 }
 
@@ -123,13 +125,13 @@ calculate_media_dirs(){
 main () {
     echo "Generating the env file with calculated paths..."
 
-    check_vars_are_set ENV
-
     SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
     APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
     CALCULATED_PATHS_ENV_FILE="${APP_DIR}env/calculated_paths/.env"
 
     source ${SCRIPTS_DIR}utils.sh
+
+    check_vars_are_set ENV
 
     [ -f "$CALCULATED_PATHS_ENV_FILE" ] && rm -f "$CALCULATED_PATHS_ENV_FILE"
     output=$(touch "$CALCULATED_PATHS_ENV_FILE")
