@@ -18,8 +18,9 @@ setup_static_files () {
                 "Setting up $STATIC_FILES ..."
             create_directory_if_not_exists_or_exit "$STATIC_FILES"
           
-            if [ ! -d "$STATIC_FILES_DEFAULT" ] || [ "$(find "$STATIC_FILES_DEFAULT" -mindepth 1 -print -quit | grep -q .)" ]; then
-                echo "No static files found in default internal directory $STATIC_FILES_DEFAULT ."
+            if [ ! -d "$STATIC_FILES_DEFAULT" ] || [ -z "$(find "$STATIC_FILES_DEFAULT" -mindepth 1 -print -quit)" ]; then
+                echo "No static files found in default internal directory $STATIC_FILES_DEFAULT . Abort." >&2
+                exit 1
             else
                 echo "Moving static files from default internal directory to $STATIC_FILES ..."  
                 local output=$(mv "$STATIC_FILES_DEFAULT"* "$STATIC_FILES")
