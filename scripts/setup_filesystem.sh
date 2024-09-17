@@ -1,89 +1,89 @@
 #!/bin/bash
 
 load_env_vars () {
-    echo "Loading environment variables for the filesystem setup..."
+    log "Loading environment variables for the filesystem setup..."
     load_app_env_file_if_exists
     check_vars_are_set ENV
     check_bool_vars_are_set APP_IS_EXPOSED
     load_project_calculated_paths_env_vars
-    echo "Environment variables loaded for the filesystem setup."
+    log "Environment variables loaded for the filesystem setup."
 }
 
 setup_static_files_for_collection() {
     check_vars_are_set STATIC_FILES_DEFAULT 
-    echo "ENV is set to COLLECT_STATIC. Setting up the filesystem..."
+    log "ENV is set to COLLECT_STATIC. Setting up the filesystem..."
     create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
-    echo "Checking if files exist in $STATIC_FILES_DEFAULT..."
+    log "Checking if files exist in $STATIC_FILES_DEFAULT..."
     if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
-        echo "No files found in $STATIC_FILES_DEFAULT."
+        log "No files found in $STATIC_FILES_DEFAULT."
     else
-        echo "Files found in $STATIC_FILES_DEFAULT. Removing them..."
+        log "Files found in $STATIC_FILES_DEFAULT. Removing them..."
         output=$(rm -rf "$STATIC_FILES_DEFAULT"/*)
         if [ $? -ne 0 ]; then
-            echo "ERROR: Failed to remove files from $STATIC_FILES_DEFAULT: $output" >&2
+            log "ERROR: Failed to remove files from $STATIC_FILES_DEFAULT: $output" >&2
             exit 1
         fi
-        echo "Files removed from $STATIC_FILES_DEFAULT."
+        log "Files removed from $STATIC_FILES_DEFAULT."
     fi
 }
 
 setup_static_files_for_serving() {
     if [ -z "$STATIC_FILES_DEFAULT" ]; then
-        echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is not set. Static files are not needed."
+        log "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is not set. Static files are not needed."
     else 
-        echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is set. Static files are needed. "\
+        log "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is set. Static files are needed. "\
             "Setting up the filesystem..."
-        echo "Checking if the directory $STATIC_FILES_DEFAULT exists..."
+        log "Checking if the directory $STATIC_FILES_DEFAULT exists..."
         if [ ! -d "$STATIC_FILES_DEFAULT" ]; then
-            echo "ERROR: $STATIC_FILES_DEFAULT does not exist. Abort." >&2
+            log "ERROR: $STATIC_FILES_DEFAULT does not exist. Abort." >&2
             exit 1
         fi
         if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
-            echo "ERROR: No files found in $STATIC_FILES_DEFAULT. Abort." >&2
+            log "ERROR: No files found in $STATIC_FILES_DEFAULT. Abort." >&2
             exit 1
         else
             if [ "$STATIC_FILES_DEFAULT" = "$STATIC_FILES" ]; then
-                echo "STATIC_FILES_DEFAULT is not empty and STATIC_FILES is set to STATIC_FILES_DEFAULT. "\
+                log "STATIC_FILES_DEFAULT is not empty and STATIC_FILES is set to STATIC_FILES_DEFAULT. "\
                     "The static files are already set up."
             else
-                echo "STATIC_FILES_DEFAULT is not empty and STATIC_FILES is not set to STATIC_FILES_DEFAULT. "\
+                log "STATIC_FILES_DEFAULT is not empty and STATIC_FILES is not set to STATIC_FILES_DEFAULT. "\
                     "Setting up the filesystem..."
                 create_directory_if_not_exists_or_exit "$STATIC_FILES"
-                echo "Checking if files exist in $STATIC_FILES..."
+                log "Checking if files exist in $STATIC_FILES..."
                 if [ -z "$(ls -A $STATIC_FILES)" ]; then
-                    echo "No files found in $STATIC_FILES ."
+                    log "No files found in $STATIC_FILES ."
                 else
-                    echo "Files found in $STATIC_FILES. Removing them..."
+                    log "Files found in $STATIC_FILES. Removing them..."
                     output=$(rm -rf "$STATIC_FILES"/*)
                     if [ $? -ne 0 ]; then
-                        echo "ERROR: Failed to remove files from $STATIC_FILES: $output" >&2
+                        log "ERROR: Failed to remove files from $STATIC_FILES: $output" >&2
                         exit 1
                     fi
-                    echo "Files removed from $STATIC_FILES."
+                    log "Files removed from $STATIC_FILES."
                 fi
-                echo "$STATIC_FILES is empty. Moving files from $STATIC_FILES_DEFAULT to $STATIC_FILES..."
+                log "$STATIC_FILES is empty. Moving files from $STATIC_FILES_DEFAULT to $STATIC_FILES..."
                 output=$(mv "$STATIC_FILES_DEFAULT"/* "$STATIC_FILES")
                 if [ $? -ne 0 ]; then
-                    echo "ERROR: Failed to move files from $STATIC_FILES_DEFAULT to $STATIC_FILES: $output" >&2
+                    log "ERROR: Failed to move files from $STATIC_FILES_DEFAULT to $STATIC_FILES: $output" >&2
                     exit 1
                 fi
-                echo "Files moved from $STATIC_FILES_DEFAULT to $STATIC_FILES."
+                log "Files moved from $STATIC_FILES_DEFAULT to $STATIC_FILES."
                 set_read_write_permissions_and_owner_or_exit "$STATIC_FILES"
 
-                echo "Removing the static files default directory..."
+                log "Removing the static files default directory..."
                 output=$(rmdir "$STATIC_FILES_DEFAULT")
                 if [ $? -ne 0 ]; then
-                    echo "ERROR: Failed to remove the static files default directory: $output" >&2
+                    log "ERROR: Failed to remove the static files default directory: $output" >&2
                     exit 1
                 fi
-                echo "Static files default directory removed."
+                log "Static files default directory removed."
             fi
         fi
     fi
 }
 setup_django_log () {
     if [ -n "$DJANGO_LOGS_DIR" ]; then
-        echo "DJANGO_LOGS_DIR is set. Setting Django logs dirextories and files."
+        log "DJANGO_LOGS_DIR is set. Setting Django logs dirextories and files."
         create_directory_if_not_exists_or_exit "$DJANGO_LOG_DIR"
 
         local LOG_FILENAMES=(
@@ -101,13 +101,13 @@ setup_django_log () {
         done
         set_read_write_permissions_and_owner_or_exit "$DJANGO_LOG_DIR"
     else
-        echo "DJANGO_LOGS_DIR is not set. Django logs are not needed."
+        log "DJANGO_LOGS_DIR is not set. Django logs are not needed."
     fi
 }
 
 setup_gunicorn_log () {
     if [ "$APP_IS_EXPOSED" = "true" ]; then
-        echo "App is exposed. Setting up Gunicorn logs."
+        log "App is exposed. Setting up Gunicorn logs."
         REQUIRED_NON_BOOL_VARS=(
             GUNICORN_LOG_DIR
             GUNICORN_LOG_ERROR_FILENAME
@@ -123,35 +123,35 @@ setup_gunicorn_log () {
         touch_file_or_exit "$GUNICORN_LOG_ERROR_FILE"
         touch_file_or_exit "$GUNICORN_LOG_ACCESS_FILE"
         set_read_write_permissions_and_owner_or_exit "$GUNICORN_LOG_DIR"
-        echo "Gunicorn logs are set up."
+        log "Gunicorn logs are set up."
     else
-        echo "APP_IS_EXPOSED is set to false. Gunicorn logs are not needed."
+        log "APP_IS_EXPOSED is set to false. Gunicorn logs are not needed."
     fi
 }
 
 setup_media_dirs () {
     if [ -n "${TMP_UPLOADED_FILES}" ]; then
-        echo "TMP_UPLOADED_FILES is set. Setting up temp uploaded files directory and media direcroties..."
+        log "TMP_UPLOADED_FILES is set. Setting up temp uploaded files directory and media direcroties..."
         create_directory_if_not_exists_or_exit "$TMP_UPLOADED_FILES"
         set_read_write_permissions_and_owner_or_exit "$TMP_UPLOADED_FILES"
-        echo "Temp uploaded files directory is set up."
+        log "Temp uploaded files directory is set up."
 
-        echo "Setting up media directory..."
+        log "Setting up media directory..."
         create_directory_if_not_exists_or_exit "$MEDIA_DIR"
         create_directory_if_not_exists_or_exit "$LIBRARIES_DIR"
         set_read_write_permissions_and_owner_or_exit "$MEDIA_DIR"
-        echo "Media directories are set up."
+        log "Media directories are set up."
     else
-        echo "TMP_UPLOADED_FILES is not set. The app will not handle media files."
+        log "TMP_UPLOADED_FILES is not set. The app will not handle media files."
     fi
 }
 
 main (){
-    echo "Setting up filesystem..."
-
     SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
     APP_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
     source "${SCRIPTS_DIR}utils.sh"
+    
+    log "Setting up filesystem..."
 
     load_env_vars
     check_vars_are_set ENV
@@ -162,24 +162,24 @@ main (){
         setup_static_files_for_serving
     fi
 
-    echo "Static files are set up."
+    log "Static files are set up."
     setup_django_log
     setup_gunicorn_log
     setup_media_dirs
 
-    echo "Making all scripts in $SCRIPTS_DIR executable..."
+    log "Making all scripts in $SCRIPTS_DIR executable..."
     for script in "${SCRIPTS_DIR}"*; do
         if [ -f "$script" ]; then
             output=$(chmod +x "$script")
             if [ $? -ne 0 ]; then
-                echo "ERROR: Failed to make $script executable: $output" >&2
+                log "ERROR: Failed to make $script executable: $output" >&2
                 exit 1
             fi
         fi
     done
-    echo "All scripts in $SCRIPTS_DIR are now executable."
+    log "All scripts in $SCRIPTS_DIR are now executable."
 
-    echo "The filesystem is set up."
+    log "The filesystem is set up."
 }
 
 main "$@"

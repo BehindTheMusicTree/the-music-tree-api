@@ -1,7 +1,7 @@
 #!/bin/bash
 
 load_env_vars() {
-  echo "Loading environment variables..."
+  log "Loading environment variables..."
   load_app_env_file_if_exists
   local REQUIRED_NON_BOOL_VARS=(
     APP_NAME
@@ -15,72 +15,72 @@ load_env_vars() {
   check_bool_vars_are_set APP_IS_EXPOSED
   export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
   export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
-  echo "Environment variables loaded successfully."
+  log "Environment variables loaded successfully."
 }
 
 exit_if_migrations_exist() {
-  echo "Checking if migrations already exist..."
+  log "Checking if migrations already exist..."
   local MIGRATIONS_DIR="${APP_DIR}${APP_NAME}/migrations/"
   if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
-      echo "ERROR: Migrations already exist. Abort" >&2
+      log "ERROR: Migrations already exist. Abort" >&2
       exit 1
   fi
-  echo "Migrations do not exist."
+  log "Migrations do not exist."
 }
 
 create_initial_migration() {
-  echo "Creating initial migrations..."
+  log "Creating initial migrations..."
   output=$(python3 $MANAGE_SCRIPT makemigrations 2>&1)
-  echo "$output"
+  log "$output"
   if echo "$output" | grep -q "Connection refused"; then
-      echo "Failed to create migrations due to database connection issue." >&2
+      log "Failed to create migrations due to database connection issue." >&2
       exit 1
   elif echo "$output" | grep -q "password authentication failed"; then
-      echo "ERROR: Password authentication failed." >&2
+      log "ERROR: Password authentication failed." >&2
       exit 1
   fi
-  echo "Migrations created successfully."
+  log "Migrations created successfully."
 }
 
 apply_migrations() {
-  echo "Applying migrations..."
+  log "Applying migrations..."
   python3 $MANAGE_SCRIPT migrate
   if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to apply migrations. Abort" >&2
+    log "ERROR: Failed to apply migrations. Abort" >&2
     exit 1
   fi
-  echo "Migrations applied successfully."
+  log "Migrations applied successfully."
 }
 
 main (){
-  echo "Initializing Django data..."
-
   SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
   APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
   source ${SCRIPTS_DIR}utils.sh
+
+  log "Initializing Django data..."
 
   load_env_vars
   exit_if_migrations_exist
 
   MANAGE_SCRIPT=${APP_DIR}manage.py
-  echo "MANAGE_SCRIPT: $MANAGE_SCRIPT"
+  log "MANAGE_SCRIPT: $MANAGE_SCRIPT"
 
   bash ${SCRIPTS_DIR}init_db_and_role.sh
   if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to initialize database and role." >&2
+    log "ERROR: Failed to initialize database and role." >&2
     exit 1
   fi
 
   create_initial_migration
   apply_migrations
 
-  echo "Loading initial data..."
+  log "Loading initial data..."
   python3 $MANAGE_SCRIPT loaddata app admin_user_dev mobile_test_user postman_test_user ultimate_music_guide_test_user_dev
-  echo "Initial data loaded successfully."
+  log "Initial data loaded successfully."
 
   unset PGPASSWORD
 
-  echo "Django data initialized successfully."
+  log "Django data initialized successfully."
 }
 
 main "$@"

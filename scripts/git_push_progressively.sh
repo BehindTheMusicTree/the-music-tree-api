@@ -1,8 +1,11 @@
 #!/bin/bash
 
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+source ${SCRIPTS_DIR}utils.sh
+
 # Check if the commit message is passed as an argument
 if [ $# -eq 0 ]; then
-    echo "ERROR: please provide a commit message as an argument." >&2
+    log "ERROR: please provide a commit message as an argument." >&2
     exit 1
 fi
 
@@ -15,7 +18,7 @@ while true; do
 
     # Check if the file list is empty
     if [ ${#files[@]} -eq 0 ]; then
-        echo "No files to add. Ending script."
+        log "No files to add. Ending script."
         break
     fi
 
