@@ -22,14 +22,14 @@ create_database_if_not_exists () {
   echo "Creating database $DB_BODZIFY_API_DB_NAME if it does not exist..."
   output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "SELECT 1 FROM pg_database WHERE datname = '$DB_BODZIFY_API_DB_NAME';")
   if [ $? -ne 0 ]; then
-    echo "Failed to check if the database exists: $output"
+    echo "Failed to check if the database exists: $output" >&2
     exit 1
   fi
   if [ -z "$output" ]; then
     echo "Database $DB_BODZIFY_API_DB_NAME does not exist. Creating it..."
     output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
     if [ $? -ne 0 ]; then
-      echo "Failed to create the database: $output"
+      echo "Failed to create the database: $output" >&2
       exit 1
     fi
   else
@@ -46,7 +46,7 @@ create_role_and_grant_permissions_if_not_exists(){
     echo "Failed to check if the role exists: $output" >&2
     exit 1
   fi
-  if [ -n "$ROLE_EXISTS" ]; then
+  if [ -n "$output" ]; then
     echo "Role $DB_BODZIFY_API_USERNAME already exists."
   else
     echo "Role $DB_BODZIFY_API_USERNAME does not exist. Creating it..."
