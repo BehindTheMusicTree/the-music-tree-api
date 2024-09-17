@@ -38,12 +38,22 @@ create_database_if_not_exists () {
 }
 
 create_role_and_grant_permissions_if_not_exists(){
-  echo "Creating role $DB_BODZIFY_API_USERNAME ..."
-  output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
-    "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';")
+  local output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
+    "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
   if [ $? -ne 0 ]; then
-    echo "Failed to create the role: $output"
+    echo "Failed to check if the role exists: $output"
     exit 1
+  fi
+  if [ -n "$ROLE_EXISTS" ]; then
+    echo "Role $DB_BODZIFY_API_USERNAME already exists."
+  else
+    echo "Creating role $DB_BODZIFY_API_USERNAME ..."
+    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+      "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';")
+    if [ $? -ne 0 ]; then
+      echo "Failed to create the role: $output"
+      exit 1
+    fi
   fi
 
   echo "Granting privileges to role $DB_BODZIFY_API_USERNAME"
