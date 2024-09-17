@@ -60,7 +60,7 @@ calculate_media_dirs(){
             TMP_UPLOADED_FILES="${APP_DIR}${TMP_UPLOADED_FILES_INTERNAL}"
         else
             echo "Neither TMP_UPLOADED_FILES_EXTERNAL nor TMP_UPLOADED_FILES_INTERNAL is set." \
-                " The app will not handle media files."
+                "The app will not handle media files."
         fi
     fi
 
@@ -114,7 +114,6 @@ main () {
     CALCULATED_PATHS_ENV_FILE="${APP_DIR}env/calculated_paths/.env"
 
     source ${SCRIPTS_DIR}utils.sh
-    load_env_vars
 
     [ -f "$CALCULATED_PATHS_ENV_FILE" ] && rm -f "$CALCULATED_PATHS_ENV_FILE"
     output=$(touch "$CALCULATED_PATHS_ENV_FILE")

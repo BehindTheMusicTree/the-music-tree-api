@@ -97,7 +97,6 @@ setup_gunicorn_log () {
 }
 
 setup_media_dirs () {
-    echo "Setting up media directories..."
     if [ -n "${TMP_UPLOADED_FILES}" ]; then
         echo "TMP_UPLOADED_FILES is set. Setting up temp uploaded files directory and media direcroties..."
         create_directory_if_not_exists_or_exit "$TMP_UPLOADED_FILES"
