@@ -20,15 +20,16 @@ load_env_vars () {
 
 create_database_if_not_exists () {
   echo "Creating database $DB_BODZIFY_API_DB_NAME if it does not exist..."
-  output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "SELECT 1 FROM pg_database WHERE datname = '$DB_BODZIFY_API_DB_NAME';")
-  if [ $? -ne 0 ]; then
+  echo "Checking if database $DB_BODZIFY_API_DB_NAME exists..."
+  output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "SELECT 1 FROM pg_database WHERE datname = '$DB_BODZIFY_API_DB_NAME';" 2>&1)
+  if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
     echo "ERROR: Failed to check if the database exists: $output" >&2
     exit 1
   fi
-  if [ -z "$output" ]; then
+  if [ ! "$output" = "1" ]; then
     echo "Database $DB_BODZIFY_API_DB_NAME does not exist. Creating it..."
-    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
-    if [ $? -ne 0 ]; then
+    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
+    if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
       echo "FERROR: ailed to create the database: $output" >&2
       exit 1
     fi
@@ -40,9 +41,8 @@ create_database_if_not_exists () {
 create_role_and_grant_permissions_if_not_exists(){
   echo "Creating role $DB_BODZIFY_API_USERNAME if it does not exist..."
   echo "Checking if role $DB_BODZIFY_API_USERNAME exists..."
-  local output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
-    "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
-  if [ $? -ne 0 ]; then
+  local output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';" 2>&1)
+  if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
     echo "ERROR: Failed to check if the role exists: $output" >&2
     exit 1
   fi
@@ -52,7 +52,7 @@ create_role_and_grant_permissions_if_not_exists(){
     echo "Role $DB_BODZIFY_API_USERNAME does not exist. Creating it..."
     output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
       "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';" 2>&1)
-    if [ $? -ne 0 ]; then
+    if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
       echo "ERROR: Failed to create the role: $output" >&2
       exit 1
     fi
@@ -67,8 +67,9 @@ create_role_and_grant_permissions_if_not_exists(){
     ALTER ROLE $DB_BODZIFY_API_USERNAME SET timezone TO 'UTC'; \
     ALTER USER $DB_BODZIFY_API_USERNAME CREATEDB; \
     GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_BODZIFY_API_USERNAME; \
-    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_BODZIFY_API_USERNAME;")
-  if [ $? -ne 0 ]; then
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_BODZIFY_API_USERNAME;" 2>&1)
+
+  if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
     echo "ERROR: Failed to grant privileges to the role: $output" >&2
     exit 1
   fi
@@ -84,10 +85,18 @@ main (){
   create_role_and_grant_permissions_if_not_exists
 
   echo "Displaying databases to verify that the new database was created."
-  psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\l"
+  output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\l" 2>&1)
+  if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
+    echo "ERROR: Failed to display databases: $output" >&2
+    exit 1
+  fi
 
   echo "Displaying roles to verify that the new role was created."
-  psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\du"
+  output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\du" 2>&1)
+  if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
+    echo "ERROR: Failed to display roles: $output" >&2
+    exit 1
+  fi
 
   unset PGPASSWORD
 }

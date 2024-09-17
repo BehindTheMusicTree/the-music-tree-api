@@ -64,10 +64,13 @@ echo "$USERS_SUBFOLDERS_COUNT user subfolders were deleted."
 echo "$TOTAL_TRACK_FILES_COUNT track files were deleted."
 
 echo "Check if database is being accessed by other users"
-ACTIVE_CONNECTIONS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
-  "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
-echo "Active connections: $ACTIVE_CONNECTIONS"
-if [ "$ACTIVE_CONNECTIONS" -gt 0 ]; then
+output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+  "SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}'" 2>&1)
+if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
+    echo "ERROR: Failed to check if the database is being accessed by other users: $output" >&2
+    exit 1
+fi
+if [ "$output" -gt 0 ]; then
     echo "ERROR: Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Abort" >&2
     exit 1
 else
@@ -75,12 +78,12 @@ else
 fi
 
 echo "Check if database exists"
-DB_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
-  "SELECT 1 FROM pg_database WHERE datname='${DB_BODZIFY_API_DB_NAME}'")
-if [ "$DB_EXISTS" = "1" ]; then
+output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+  "SELECT 1 FROM pg_database WHERE datname='${DB_BODZIFY_API_DB_NAME}'" 2>&1)
+if [ "$output" = "1" ]; then
     echo "Database exists. Dropping database"
     output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
-    if [ $? -ne 0 ]; then
+    if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
       echo "ERROR: Failed to drop the database. Details: $output" >&2
       exit 1
     fi
@@ -89,14 +92,19 @@ else
 fi
 
 echo "Check if user exists"
-USER_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
-  "SELECT 1 FROM pg_roles WHERE rolname='${DB_BODZIFY_API_USERNAME}'")
-if [ "$USER_EXISTS" = "1" ]; then
+output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+  	"SELECT 1 FROM pg_roles WHERE rolname='${DB_BODZIFY_API_USERNAME}'" 2>&1)
+
+if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
+	echo "ERROR: Failed to check if the user exists: $output" >&2
+	exit 1
+fi
+if [ "$output" = "1" ]; then
     echo "User exists. Dropping user"
     output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
     if [ $? -ne 0 ]; then
-      echo "ERROR: Failed to drop the user: $output" >&2
-      exit 1
+		echo "ERROR: Failed to drop the user: $output" >&2
+		exit 1
     fi
 else 
     echo "User $DB_SUPERUSER_NAME does not exist."
