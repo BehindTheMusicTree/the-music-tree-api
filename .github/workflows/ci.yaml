@@ -39,7 +39,6 @@ jobs:
       ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
       MEDIA_DIR_INTERNAL: ${{ vars.MEDIA_DIR_INTERNAL }}
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
-      STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
 
       DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
       DB_VERSION: ${{ vars.DB_VERSION }}
