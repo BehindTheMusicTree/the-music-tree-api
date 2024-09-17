@@ -33,6 +33,11 @@ setup_static_files_for_serving() {
     else 
         echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is set. Static files are needed. "\
             "Setting up the filesystem..."
+        echo "Checking if the directory $STATIC_FILES_DEFAULT exists..."
+        if [ ! -d "$STATIC_FILES_DEFAULT" ]; then
+            echo "ERROR: $STATIC_FILES_DEFAULT does not exist. Abort." >&2
+            exit 1
+        fi
         if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
             echo "ERROR: No files found in $STATIC_FILES_DEFAULT. Abort." >&2
             exit 1
