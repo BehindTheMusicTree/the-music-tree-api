@@ -141,9 +141,6 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Remove previously collected static files
-        run: rm -rf ${{ env.STATIC_FILES_INTERNAL }}*
-
       - name: Set up filesystem
         run: bash scripts/setup_filesystem.sh
 

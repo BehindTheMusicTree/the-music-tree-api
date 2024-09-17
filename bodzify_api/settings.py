@@ -162,8 +162,8 @@ if not STATIC_FILES:
     print("Static files are not needed.")
     STATIC_ROOT = ''
 else:
-    print("STATIC_FILES_ARE_NEEDED is true. Setting up static files...")
-    STATIC_FILES_ARE_NEEDED = True
+    print("STATIC_FILES is set. Setting up static files configuration...")
+    STATIC_FILES_ARE_BEING_SERVED_OR_COLLECTED = True
     STATICFILES_DIRS = []
     STATIC_URL = 'static/'
     STATIC_ROOT = Path(STATIC_FILES)
@@ -185,7 +185,7 @@ INSTALLED_APPS = ['django.contrib.admin',
                   'drf_multiple_model',
                   APP_NAME]
 
-if STATIC_FILES_ARE_NEEDED:
+if STATIC_FILES_ARE_BEING_SERVED_OR_COLLECTED:
     INSTALLED_APPS.append('django.contrib.staticfiles')
 
 MIDDLEWARE = [f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',

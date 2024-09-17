@@ -1,24 +1,37 @@
 #!/bin/bash
 
 calculate_static_files_dir(){
-    if [ -n "$STATIC_FILES_INTERNAL" ]; then
-        echo "STATIC_FILES_INTERNAL is set. Static files are needed."
-        STATIC_FILES_DEFAULT="${APP_DIR}${STATIC_FILES_INTERNAL}"
+    if [ $ENV = "COLLECT_STATIC" ]; then
+        echo "ENV is set to COLLECT_STATIC. Calculating the static files directory..."
+        check_vars_are_set STATIC_FILES_INTERNAL
         if [ -n "$STATIC_FILES_EXTERNAL" ]; then
-            echo "STATIC_FILES_EXTERNAL is set. Setting static files to external."
+            echo "In collct static mode, $STATIC_FILES_EXTERNAL must not be set." >&2
+            exit 1
+        fi
+    else 
+        if [ -z "$STATIC_FILES_INTERNAL" ]; then
+            echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_INTERNAL is not set. Static files are not needed."
+            if [ -n "$STATIC_FILES_EXTERNAL" ]; then
+                echo "STATIC_FILES_EXTERNAL must not be set if STATIC_FILES_INTERNAL is not set." >&2
+                exit 1
+            fi
+        else
+            if [ $STATIC_FILES_INTERNAL = $STATIC_FILES_EXTERNAL ]; then
+                echo "STATIC_FILES_INTERNAL and STATIC_FILES_EXTERNAL must not be set to the same value." >&2
+                exit 1
+            fi
+        fi
+    fi
+    
+    if [ -n "$STATIC_FILES_INTERNAL" ]; then
+        echo "STATIC_FILES_INTERNAL is set. Setting the static files default directory to internal."
+        $STATIC_FILES_DEFAULT="${APP_DIR}${STATIC_FILES_INTERNAL}"
+        if [ -n "$STATIC_FILES_EXTERNAL" ]; then
+            echo "STATIC_FILES_EXTERNAL is set. Setting the static files directory to external."
             STATIC_FILES="${STATIC_FILES_EXTERNAL}"
         else
-            echo "STATIC_FILES_EXTERNAL is not set. Setting static files to internal."
+            echo "$STATIC_FILES_EXTERNAL is not set. Setting the static files directory to internal."
             STATIC_FILES="${STATIC_FILES_DEFAULT}"
-        fi
-
-        echo "STATIC_FILES is set to $STATIC_FILES"
-        echo "STATIC_FILES_DEFAULT=$STATIC_FILES_DEFAULT" >> "$CALCULATED_PATHS_ENV_FILE"
-        echo "STATIC_FILES=$STATIC_FILES" >> "$CALCULATED_PATHS_ENV_FILE"
-    else
-        if [ -n "$STATIC_FILES_EXTERNAL" ]; then
-            echo "STATIC_FILES_EXTERNAL must not be set if STATIC_FILES_INTERNAL is not set." >&2
-            exit 1
         fi
     fi
 }
@@ -108,6 +121,8 @@ calculate_media_dirs(){
 
 main () {
     echo "Generating the env file with calculated paths..."
+
+    check_vars_are_set ENV
 
     SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
     APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
