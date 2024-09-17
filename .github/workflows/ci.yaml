@@ -17,7 +17,7 @@ env:
   CONTAINER_ROOT_DIR: /home/app/
   DB_CONNECTION_TEST_MAX_ATTEMPTS: 10
   DB_CONNECTION_TEST_SLEEP_INTERVAL: 5
-
+  
 jobs:
   pytest:
     name: Pytest
@@ -28,8 +28,10 @@ jobs:
       ENV: ${{ vars.ENV }}
       APP_NAME: ${{ vars.APP_NAME }}
       APP_VERSION: ${{ vars.APP_VERSION }}
+
       DOCKER_NETWORK_NAME: ${{ vars.DOCKER_NETWORK_NAME }}
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+
       DEBUG: true
       DB_IS_NEEDED: true
       APP_IS_EXPOSED: false
@@ -37,6 +39,7 @@ jobs:
       ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
       MEDIA_DIR_INTERNAL: ${{ vars.MEDIA_DIR_INTERNAL }}
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
+
       DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
       DB_VERSION: ${{ vars.DB_VERSION }}
       DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
@@ -48,6 +51,7 @@ jobs:
       DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
       DB_URL: ${{ vars.DB_URL }}
       DB_PORT: ${{ vars.DB_PORT }}
+
       AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
       AFP_VERSION: ${{ vars.AFP_VERSION }}
       AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
@@ -71,7 +75,7 @@ jobs:
           key: ${{ runner.os }}-apt-${{ hashFiles('scripts/install_dependencies.sh') }}
           restore-keys: |
             ${{ runner.os }}-apt-
-
+  
       - name: Cache pip
         uses: actions/cache@v2
         with:
@@ -96,7 +100,7 @@ jobs:
         env:
           DB_DATA_MUST_PERSIST: false
         run: bash scripts/run_db_and_afp_containers.sh
-
+        
       - name: Wait for database service to start
         run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
@@ -114,7 +118,7 @@ jobs:
       name: COLLECT_STATIC
     env:
       ENV: ${{ vars.ENV }}
-      APP_NAME: ${{ vars.APP_NAME }}
+      APP_NAME: ${{vars.APP_NAME}}
       APP_VERSION: ${{ vars.APP_VERSION }}
       DEBUG: false
       DB_IS_NEEDED: false
@@ -141,7 +145,7 @@ jobs:
 
       - name: Collect static files
         run: python manage.py collectstatic --noinput
-
+        
       - name: Configure Git
         run: |
           git config --global user.name 'GitHub Actions'
@@ -173,10 +177,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
-
+    
       - name: Checkout specific commit
         env: 
-          COLLECT_STATIC_FILES_COMMIT_HASH: ${{ needs.collect-and-push-static-files.outputs.collect_static_files_commit_hash }}
+          COLLECT_STATIC_FILES_COMMIT_HASH: ${{needs.collect-and-push-static-files.outputs.collect_static_files_commit_hash}}
         run: |
           git checkout ${{ env.COLLECT_STATIC_FILES_COMMIT_HASH }}
 
@@ -241,4 +245,132 @@ jobs:
 
       - name: Set api environment variables on server
         env: 
-          API_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.D
+          API_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.DOCKERIZED_APP_ENV_FILENAME }}"
+        run: |
+          ssh ${{ env.SSH_DESTINATION }} bash -s << 'EOF'
+            rm -f ${{ env.API_ENV_FILE }} &&
+            touch ${{ env.API_ENV_FILE }} &&
+
+            echo 'APP_PORT=${{ vars.API_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DJANGO_SECRET_KEY='\''${{ secrets.DJANGO_SECRET_KEY }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            echo 'ACOUSTID_API_KEY='\''${{ secrets.ACOUSTID_API_KEY }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            echo 'CSRF_TRUSTED_ORIGINS=${{ vars.CSRF_TRUSTED_ORIGINS }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}' >> ${{ env.API_ENV_FILE }} &&
+
+            echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_PORT=${{ vars.DB_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_SUPERUSER_NAME=${{ vars.DB_SUPERUSER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_SUPERUSER_PASSWORD='\''${{ secrets.DB_SUPERUSER_PASSWORD }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_USER_PASSWORD='\''${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            
+            echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'AFP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' >> ${{ env.API_ENV_FILE }} &&
+            
+            chmod 600 ${{ env.API_ENV_FILE }}
+          EOF
+
+      - name: Set db environment variables on server
+        env: 
+          DB_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.DB_ENV_FILENAME }}"
+        run: |
+          ssh ${{ env.SSH_DESTINATION }} "
+            rm -f ${{ env.DB_ENV_FILE }} &&
+            touch ${{ env.DB_ENV_FILE }} &&
+
+            echo 'ENV=TEST' >> ${{ env.DB_ENV_FILE }} &&
+
+            echo 'POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
+            echo 'POSTGRES_USER=${{ vars.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
+            echo 'POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE }} &&
+            echo 'POSTGRES_PORT=${{ vars.DB_PORT }}' >> ${{ env.DB_ENV_FILE }} &&
+
+            chmod 600 ${{ env.DB_ENV_FILE }}
+          "
+
+      - name: Set afp environment variables on server
+        env: 
+          AFP_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.AFP_ENV_FILENAME }}"
+        run: |
+          ssh ${{ env.SSH_DESTINATION }} "
+            rm -f ${{ env.AFP_ENV_FILE }} &&
+            touch ${{ env.AFP_ENV_FILE }} &&
+
+            echo 'ENV=${{ vars.ENV }}' >> ${{ env.AFP_ENV_FILE }} &&
+            echo 'DEBUG=true' >> ${{ env.AFP_ENV_FILE }} &&
+            echo 'APP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.AFP_ENV_FILE }} &&
+
+            chmod 600 ${{ env.AFP_ENV_FILE }}
+          "
+
+  set-partial-docker-compose-on-server:
+    name: Set partial docker-compose on server
+    runs-on: ubuntu-latest
+    needs: [build-and-push-to-dockerhub]
+    environment: 
+      name: TEST
+    steps:
+      - uses: actions/checkout@v4
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.TEST_SERVER_SSH_BODZIFY_PRIVATE_KEY }}
+
+      - name: Add host to known_hosts
+        run: |
+          mkdir -p ~/.ssh && ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts      
+          
+      - name: Generate partial docker compose file
+        env: 
+          DOCKER_COMPOSE_PART_FILENAME: ${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
+          DOCKER_NETWORK_NAME: ${{ vars.DOCKER_NETWORK_NAME }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+
+          DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
+          DB_VERSION: ${{ vars.DB_VERSION }}
+          DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+          DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
+          DB_PORT_HOST: ${{ vars.DB_PORT_HOST }}
+          DB_PORT: ${{ vars.DB_PORT }}
+          DB_ENV_FILENAME: ${{ vars.DB_ENV_FILENAME }}
+
+          AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
+          AFP_VERSION: ${{ vars.AFP_VERSION }}
+          AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
+          AFP_PORT: ${{ vars.AFP_PORT }}
+          AFP_ENV_FILENAME: ${{ vars.AFP_ENV_FILENAME }}
+          AFP_POOL_DIR_EXTERNAL: ${{ vars.AFP_POOL_DIR_EXTERNAL }}
+          AFP_FLASK_LOG_DIR_EXTERNAL: ${{ vars.AFP_FLASK_LOG_DIR_EXTERNAL }}
+          AFP_GUNICORN_LOG_DIR_EXTERNAL: ${{ vars.AFP_GUNICORN_LOG_DIR_EXTERNAL }}
+
+          APP_ROOT_DIR: ${{ env.CONTAINER_ROOT_DIR }}
+          APP_SERVICE_NAME: ${{ vars.API_SERVICE_NAME }}
+          APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
+          APP_VERSION: ${{ vars.APP_VERSION }}
+          APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
+          APP_PORT: ${{ vars.API_PORT }}
+          APP_ENV_FILENAME: ${{ vars.DOCKERIZED_APP_ENV_FILENAME }}
+          GUNICORN_LOG_DIR: ${{ vars.GUNICORN_LOG_DIR }}
+          GUNICORN_LOG_ERROR_FILENAME: ${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
+          GUNICORN_LOG_ACCESS_FILENAME: ${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
+          DJANGO_LOG_DIR_EXTERNAL: ${{ vars.DJANGO_LOG_DIR_EXTERNAL }}
+          MEDIA_DIR_EXTERNAL: ${{ vars.MEDIA_DIR_EXTERNAL }}
+          STATIC_FILES_EXTERNAL: ${{ vars.STATIC_FILES_EXTERNAL }}
+          TMP_UPLOADED_FILES_EXTERNAL: ${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
+        run: |
+          bash scripts/generate_docker_compose_part.sh
+
+      - name: Transfer partial docker-compose file to server
+        env:
+          DOCKER_COMPOSE_PART_FILE: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
+        run: |
+          scp scripts/${{ vars.DOCKER_COMPOSE_PART_FILENAME }} ${{ env.SSH_DESTINATION }}:${{ env.DOCKER_COMPOSE_PART_FILE }}
+
+  redeploy-webhook-call:
+    name: Redeploy webhook call
+    needs: [set-env-variables-on-server, set-partial-docker-compose-on-server]
+    uses: Bodzify/bodzify-server-management/.github/workflows/call-redeployment-webhook.yml@main
+    with:
+      env: TEST
+    secrets: inherit
