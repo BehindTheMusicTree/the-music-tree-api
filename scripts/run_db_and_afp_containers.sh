@@ -8,7 +8,7 @@ load_env_vars () {
         ENV
         DOCKERHUB_USERNAME
         LIBRARIES_DIR_NAME
-        TMP_UPLOADED_FILES_EXTERNAL
+        TMP_UPLOADED_FILES
         DB_CONTAINER_NAME
         DB_IMAGE_REPO
         DB_VERSION
@@ -93,7 +93,7 @@ main() {
     echo "Running the audio fingerprinter container..."
     docker run \
         --name=$AFP_CONTAINER_NAME \
-        --volume=$TMP_UPLOADED_FILES_EXTERNAL:$AFP_POOL_DIR_EXTERNAL \
+        --volume=$TMP_UPLOADED_FILES:$AFP_POOL_DIR_EXTERNAL \
         -p $AFP_PORT:$AFP_PORT \
         -e ENV=$ENV \
         -e DEBUG=$DEBUG \
