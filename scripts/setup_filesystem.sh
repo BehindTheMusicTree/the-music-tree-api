@@ -3,7 +3,7 @@
 load_env_vars () {
     echo "Loading environment variables for the filesystem setup..."
     load_app_env_file_if_exists
-    check_bool_vars_are_set "APP_IS_EXPOSED"
+    check_bool_vars_are_set APP_IS_EXPOSED
     load_project_calculated_paths_env_vars
     echo "Environment variables loaded for the filesystem setup."
 }

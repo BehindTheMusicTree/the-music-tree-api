@@ -26,13 +26,8 @@ load_env_vars () {
         AFP_PORT
     )
     check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
-    local REQUIRED_BOOL_VARS=(
-        "DEBUG"
-        "APP_IS_EXPOSED"
-        "DB_DATA_MUST_PERSIST"
-    )
-    check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
-    export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+    check_bool_vars_are_set DEBUG APP_IS_EXPOSED DB_DATA_MUST_PERSIST
+    export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
     export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
     echo "Environment variables loaded successfully."
 }

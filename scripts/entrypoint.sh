@@ -16,41 +16,50 @@ load_env_vars () {
         GUNICORN_LOG_ERROR_FILENAME
         GUNICORN_LOG_ACCESS_FILENAME
     )
-    check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
-    export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
-    export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+    check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]} 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Failed to load environment variables." >&2
+        exit 1
+    fi
 
-    REQUIRED_BOOL_VARS=(
-        DEBUG
-        APP_IS_EXPOSED
-    )
-    check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
+    export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD 2>&1
+    export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD" 2>&1
+
+    check_bool_vars_are_set DEBUG APP_IS_EXPOSED 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Failed to load boolean environment variables." >&2
+        exit 1
+    fi
 }
 
-echo "Starting the api container"
+main (){
+    echo "Starting the api container"
 
-SCRIPTS_DIR=${ROOT_DIR}scripts/
-source ${SCRIPTS_DIR}utils.sh
+    SCRIPTS_DIR=${ROOT_DIR}scripts/
+    source ${SCRIPTS_DIR}utils.sh 2>&1
 
-load_env_vars
+    load_env_vars 2>&1
 
-echo "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
-output=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL)
-if [ $? -ne 0 ]; then
-    echo "Failed to wait for the database: $output" >&2
-    exit 1
-fi
-echo "Database is ready"
+    echo "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
+    output=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL 2>&1)
+    if [ $? -ne 0 ]; then
+        echo "Failed to wait for the database: $output" >&2
+        exit 1
+    fi
+    echo "Database is ready"
 
-output=$(bash ${SCRIPTS_DIR}init_django_data.sh)
-if [ $? -ne 0 ]; then
-    echo "Failed to initialize Django data: $output" >&2
-    exit 1
-fi
+    output=$(bash ${SCRIPTS_DIR}init_django_data.sh 2>&1)
+    if [ $? -ne 0 ]; then
+        echo "Failed to initialize Django data: $output" >&2
+        exit 1
+    fi
 
-# Start the application with gunicorn
-exec gunicorn bodzify_api.wsgi:application \
-    --bind 0.0.0.0:${APP_PORT} \
-    --error-logfile=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ERROR_FILENAME} \
-    --access-logfile=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ACCESS_FILENAME} \
-    --log-level=info
+    # Start the application with gunicorn
+    exec gunicorn bodzify_api.wsgi:application \
+        --bind 0.0.0.0:${APP_PORT} \
+        --error-logfile=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ERROR_FILENAME} \
+        --access-logfile=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ACCESS_FILENAME} \
+        --log-level=info 2>&1
+}
+
+main "$@" 2>&1

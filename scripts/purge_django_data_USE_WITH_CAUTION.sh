@@ -49,9 +49,9 @@ REQUIRED_NON_BOOL_VARS=(
 for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
     check_vars_are_set "$VAR"
 done
-check_bool_vars_are_set "APP_IS_EXPOSED"
+check_bool_vars_are_set APP_IS_EXPOSED
 
-export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
 export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
 determine_db_host_if_not_set

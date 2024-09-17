@@ -96,7 +96,7 @@ load_app_env_file_if_exists() {
 
 load_project_calculated_paths_env_vars() {
     echo "Loading calculated paths..."
-    check_bool_vars_are_set "APP_IS_EXPOSED"
+    check_bool_vars_are_set APP_IS_EXPOSED
 
     local SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
     local APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
@@ -126,9 +126,9 @@ load_project_calculated_paths_env_vars() {
 determine_db_host_if_not_set () {
     if [ -z "$DB_HOST" ]; then
         echo "DB_HOST is not set. Determining the host..."
-        check_bool_vars_are_set "APP_IS_EXPOSED"
+        check_bool_vars_are_set APP_IS_EXPOSED
         if [ "$APP_IS_EXPOSED" = "true" ]; then
-            check_vars_are_set "DB_CONTAINER_NAME"
+            check_vars_are_set DB_CONTAINER_NAME
             DB_HOST=$DB_CONTAINER_NAME
         else
             check_vars_are_set "DB_URL"
@@ -150,7 +150,7 @@ is_db_new () {
         DB_BODZIFY_API_USERNAME
     )
     check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
-    export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+    export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
     export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 
     determine_db_host_if_not_set
