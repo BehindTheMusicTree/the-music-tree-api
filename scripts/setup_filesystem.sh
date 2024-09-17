@@ -6,12 +6,6 @@ load_env_vars () {
     check_vars_are_set ENV
     check_bool_vars_are_set APP_IS_EXPOSED
     load_project_calculated_paths_env_vars
-    if [ $? -ne 0 ]; then
-        echo "Failed to load the calculated paths env file." >&2
-        exit 1
-    else
-        echo "Calculated paths loaded."
-    fi
     echo "Environment variables loaded for the filesystem setup."
 }
 
@@ -152,13 +146,6 @@ main (){
     source "${SCRIPTS_DIR}utils.sh"
 
     load_env_vars
-    status=$?
-    if [ $status -ne 0 ]; then
-        echo "Failed to load environment variables for the filesystem setup." >&2
-        exit 1
-    else
-        echo "Environment variables loaded."
-    fi
 
     setup_static_files
     setup_django_log
