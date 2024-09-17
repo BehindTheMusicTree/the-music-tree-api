@@ -61,13 +61,22 @@ setup_static_files_for_serving() {
                     fi
                     echo "Files removed from $STATIC_FILES."
                 fi
-                echo "$STATIC_FILES is empty. Copying files from $STATIC_FILES_DEFAULT to $STATIC_FILES..."
-                output=$(cp -r "$STATIC_FILES_DEFAULT"/* "$STATIC_FILES")
+                echo "$STATIC_FILES is empty. Moving files from $STATIC_FILES_DEFAULT to $STATIC_FILES..."
+                output=$(mv "$STATIC_FILES_DEFAULT"/* "$STATIC_FILES")
                 if [ $? -ne 0 ]; then
-                    echo "ERROR: Failed to copy files from $STATIC_FILES_DEFAULT to $STATIC_FILES: $output" >&2
+                    echo "ERROR: Failed to move files from $STATIC_FILES_DEFAULT to $STATIC_FILES: $output" >&2
                     exit 1
                 fi
-                echo "Files copied from $STATIC_FILES_DEFAULT to $STATIC_FILES."
+                echo "Files moved from $STATIC_FILES_DEFAULT to $STATIC_FILES."
+                set_read_write_permissions_and_owner_or_exit "$STATIC_FILES"
+
+                echo "Removing the static files default directory..."
+                output=$(rmdir "$STATIC_FILES_DEFAULT")
+                if [ $? -ne 0 ]; then
+                    echo "ERROR: Failed to remove the static files default directory: $output" >&2
+                    exit 1
+                fi
+                echo "Static files default directory removed."
             fi
         fi
     fi
