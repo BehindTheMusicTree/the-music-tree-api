@@ -125,7 +125,7 @@ jobs:
       APP_IS_EXPOSED: false
       STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
     outputs:
-      collect_static_files_commit_hash: ${{ steps.commit-and-push-static-Files.outputs.test }}
+      collect_static_files_commit_hash: ${{ steps.commit-and-push-static-Files.outputs.collect_static_files_commit_hash }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
