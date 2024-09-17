@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 load_env_vars () {
     echo "Loading environment variables for the filesystem setup..."
     load_app_env_file_if_exists
@@ -140,29 +138,33 @@ setup_media_dirs () {
     fi
 }
 
-echo "Setting up filesystem..."
+main (){
+    echo "Setting up filesystem..."
 
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-APP_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
-source "${SCRIPTS_DIR}utils.sh"
+    SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+    APP_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
+    source "${SCRIPTS_DIR}utils.sh"
 
-load_env_vars
+    load_env_vars
 
-setup_static_files
-setup_django_log
-setup_gunicorn_log
-setup_media_dirs
+    setup_static_files
+    setup_django_log
+    setup_gunicorn_log
+    setup_media_dirs
 
-echo "Making all scripts in $SCRIPTS_DIR executable..."
-for script in "${SCRIPTS_DIR}"*; do
-    if [ -f "$script" ]; then
-        output=$(chmod +x "$script")
-        if [ $? -ne 0 ]; then
-            echo "Failed to make $script executable: $output" >&2
-            exit 1
+    echo "Making all scripts in $SCRIPTS_DIR executable..."
+    for script in "${SCRIPTS_DIR}"*; do
+        if [ -f "$script" ]; then
+            output=$(chmod +x "$script")
+            if [ $? -ne 0 ]; then
+                echo "Failed to make $script executable: $output" >&2
+                exit 1
+            fi
         fi
-    fi
-done
-echo "All scripts in $SCRIPTS_DIR are now executable."
+    done
+    echo "All scripts in $SCRIPTS_DIR are now executable."
 
-echo "The filesystem is set up."
+    echo "The filesystem is set up."
+}
+
+main "$@"

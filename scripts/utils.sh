@@ -54,11 +54,9 @@ check_vars_are_set() {
 
 check_bool_vars_are_set() {
     local invalid_vars=()
+    check_vars_are_set "$@"
     for var_name in "$@"; do
-        if [ -z "${!var_name}" ]; then
-            echo "$var_name is not set" >&2
-            invalid_vars+=("$var_name")
-        elif [ "${!var_name}" != "true" ] && [ "${!var_name}" != "false" ]; then
+        if [ "${!var_name}" != "true" ] && [ "${!var_name}" != "false" ]; then
             echo "$var_name is not a valid boolean (true/false)" >&2
             invalid_vars+=("$var_name")
         fi
