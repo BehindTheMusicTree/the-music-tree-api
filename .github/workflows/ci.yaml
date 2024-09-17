@@ -142,7 +142,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Set up filesystem
-        run: bash scripts/setup_filesystem.sh
+        run: stdbuf -oL -eL scripts/setup_filesystem.sh
 
       - name: Collect static files
         run: python manage.py collectstatic --noinput
