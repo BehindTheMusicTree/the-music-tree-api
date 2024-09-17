@@ -38,7 +38,7 @@ REQUIRED_NON_BOOL_VARS=(
   DJANGO_LOG_DIR_EXTERNAL
   MEDIA_DIR_EXTERNAL
   STATIC_FILES_EXTERNAL
-  TMP_UPLOADED_FILES
+  TMP_UPLOADED_FILES_EXTERNAL
 )
 check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
 
@@ -81,7 +81,7 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-gunicorn-log-dir:${GUNICORN_LOG_DIR}
       - api-media-dir:${MEDIA_DIR_EXTERNAL}
       - api-static-files:${STATIC_FILES_EXTERNAL}
-      - api-upload-tmp-files:${TMP_UPLOADED_FILES}
+      - api-upload-tmp-files:${TMP_UPLOADED_FILES_EXTERNAL}
     expose:
       - $APP_PORT
     networks:
