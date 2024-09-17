@@ -171,12 +171,12 @@ check_if_db_new_or_exit () {
         local ROLE_EXISTS=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
         "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
         echo "Status: $?"
-        # if [ $? -ne 0 ]; then
-        #     echo "Failed to check if the role exists: $ROLE_EXISTS" >&2
-        #     exit 1
-        # fi
+        if [ $? -ne 0 ]; then
+            echo "Failed to check if the role exists: $ROLE_EXISTS"
+            exit 1
+        fi
         if [ "$ROLE_EXISTS" = "1" ]; then
-            echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort." >&2
+            echo "Role $DB_BODZIFY_API_USERNAME already exists. Abort."
             exit 1
         fi
         echo "Role $DB_BODZIFY_API_USERNAME does not exist."
