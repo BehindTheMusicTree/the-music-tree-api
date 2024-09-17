@@ -43,14 +43,14 @@ main (){
     echo "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
     output=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL 2>&1)
     if [ $? -ne 0 ]; then
-        echo "Failed to wait for the database: $output" >&2
+        echo "Failed to wait for the database: $output"
         exit 1
     fi
     echo "Database is ready"
 
     output=$(bash ${SCRIPTS_DIR}init_django_data.sh 2>&1)
     if [ $? -ne 0 ]; then
-        echo "Failed to initialize Django data: $output" >&2
+        echo "Failed to initialize Django data: $output"
         exit 1
     fi
 
