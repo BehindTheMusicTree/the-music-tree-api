@@ -1,34 +1,38 @@
 #!/bin/bash
 
+load_env_vars () {
+    REQUIRED_NON_BOOL_VARS=(
+        APP_PORT
+        DB_CONTAINER_NAME
+        DB_PORT
+        DB_CONNECTION_TEST_MAX_ATTEMPTS
+        DB_CONNECTION_TEST_SLEEP_INTERVAL
+        DB_SUPERUSER_NAME
+        DB_SUPERUSER_PASSWORD
+        DB_BODZIFY_API_DB_NAME
+        DB_BODZIFY_API_USERNAME
+        DB_BODZIFY_API_USER_PASSWORD
+        GUNICORN_LOG_DIR
+        GUNICORN_LOG_ERROR_FILENAME
+        GUNICORN_LOG_ACCESS_FILENAME
+    )
+    check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
+    export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
+    export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
+
+    REQUIRED_BOOL_VARS=(
+        DEBUG
+        APP_IS_EXPOSED
+    )
+    check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
+}
+
 echo "Starting the api container"
 
 SCRIPTS_DIR=${ROOT_DIR}scripts/
 source ${SCRIPTS_DIR}utils.sh
 
-REQUIRED_NON_BOOL_VARS=(
-    APP_PORT
-    DB_CONTAINER_NAME
-    DB_PORT
-    DB_CONNECTION_TEST_MAX_ATTEMPTS
-    DB_CONNECTION_TEST_SLEEP_INTERVAL
-    DB_SUPERUSER_NAME
-    DB_SUPERUSER_PASSWORD
-    DB_BODZIFY_API_DB_NAME
-    DB_BODZIFY_API_USERNAME
-    DB_BODZIFY_API_USER_PASSWORD
-    GUNICORN_LOG_DIR
-    GUNICORN_LOG_ERROR_FILENAME
-    GUNICORN_LOG_ACCESS_FILENAME
-)
-check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
-export_value_removing_eventual_surrounding_quotes "DB_SUPERUSER_PASSWORD"
-export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
-
-REQUIRED_BOOL_VARS=(
-    DEBUG
-    APP_IS_EXPOSED
-)
-check_bool_vars_are_set ${REQUIRED_BOOL_VARS[@]}
+load_env_vars
 
 echo "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
 output=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL)

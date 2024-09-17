@@ -18,7 +18,7 @@ load_env_vars () {
   export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 }
 
-initialize_db_and_role () {
+create_database_if_not_exists () {
   echo "Creating database $DB_BODZIFY_API_DB_NAME if it does not exist..."
   output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "SELECT 1 FROM pg_database WHERE datname = '$DB_BODZIFY_API_DB_NAME';")
   if [ $? -ne 0 ]; then
@@ -35,7 +35,9 @@ initialize_db_and_role () {
   else
     echo "Database $DB_BODZIFY_API_DB_NAME already exists."
   fi
+}
 
+create_role_and_grant_permissions_if_not_exists(){
   echo "Creating role $DB_BODZIFY_API_USERNAME ..."
   output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
     "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';")
@@ -57,14 +59,6 @@ initialize_db_and_role () {
     echo "Failed to grant privileges to the role: $output"
     exit 1
   fi
-
-  echo "Displaying databases to verify that the new database was created."
-  psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\l"
-
-  echo "Displaying roles to verify that the new role was created."
-  psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\du"
-
-  unset PGPASSWORD
 }
 
 main (){
@@ -73,13 +67,16 @@ main (){
 
   load_env_vars
   determine_db_host_if_not_set
+  create_database_if_not_exists
+  create_role_and_grant_permissions_if_not_exists
 
-  if is_db_new; then
-    echo "The database is new."
-    initialize_db_and_role
-  else
-    echo "The database already exists."
-  fi
+  echo "Displaying databases to verify that the new database was created."
+  psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\l"
+
+  echo "Displaying roles to verify that the new role was created."
+  psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\du"
+
+  unset PGPASSWORD
 }
 
 main "$@"
