@@ -159,7 +159,7 @@ jobs:
           git diff --staged --exit-code || git commit -am "Add collected static files"          
           git push
           COLLECT_STATIC_FILES_COMMIT_HASH=$(git rev-parse HEAD)
-          
+
           # Save the commit hash to the Github environment variables
           echo "COLLECT_STATIC_FILES_COMMIT_HASH=$COLLECT_STATIC_FILES_COMMIT_HASH" >> $GITHUB_ENV
 
@@ -180,7 +180,9 @@ jobs:
           fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
     
       - name: Checkout specific commit
-        run: git checkout ${{ env.COLLECT_STATIC_FILES_COMMIT_HASH }}
+        run: |
+          echo "COLLECT_STATIC_FILES_COMMIT_HASH: ${{ env.COLLECT_STATIC_FILES_COMMIT_HASH }}"
+          git checkout ${{ env.COLLECT_STATIC_FILES_COMMIT_HASH }}
 
       - name: Display last commit message
         run: git log -1 --pretty=format:"%s"
