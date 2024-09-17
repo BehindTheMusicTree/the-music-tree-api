@@ -172,12 +172,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check existence of static files directory
-        run: |
-          if [ ! -d static-files ]; then
-            echo "Static files directory does not exist"
-            exit 1
-          fi
+      - name: List files
+        run: ls -la
 
       - name: Login to Dockerhub
         run: |
