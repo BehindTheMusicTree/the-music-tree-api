@@ -12,7 +12,7 @@ while getopts ":s" opt; do
       SKIP_CONFIRMATION=true
       ;;
     \?)
-      echo "Invalid option: -$OPTARG" >&2
+      echo "ERROR: Invalid option: -$OPTARG" >&2
       exit 1
       ;;
   esac
@@ -23,7 +23,7 @@ if [ "$SKIP_CONFIRMATION" != "true" ]; then
     read -p "Are you sure you want to proceed? (yes/no): " CONFIRMATION
 
     if [ "$CONFIRMATION" != "yes" ]; then
-        echo "Operation aborted."
+        echo "Operation aborted." >&2
         exit 1
     fi
 fi
@@ -81,7 +81,7 @@ if [ "$DB_EXISTS" = "1" ]; then
     echo "Database exists. Dropping database"
     output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
     if [ $? -ne 0 ]; then
-      echo "Failed to drop the database. Details: $output"
+      echo "ERROR: Failed to drop the database. Details: $output" >&2
       exit 1
     fi
 else
@@ -95,7 +95,7 @@ if [ "$USER_EXISTS" = "1" ]; then
     echo "User exists. Dropping user"
     output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
     if [ $? -ne 0 ]; then
-      echo "Failed to drop the user: $output"
+      echo "ERROR: Failed to drop the user: $output" >&2
       exit 1
     fi
 else 
@@ -107,7 +107,7 @@ echo "Deleting migrations in directory $MIGRATIONS_DIR ..."
 echo "Deleting .py migrations..."
 find "${MIGRATIONS_DIR}" -name "*.py" -not -name "__init__.py" -exec rm -f {} \;
 if [ $? -ne 0 ]; then
-    echo "Failed to delete .py migrations" >&2
+    echo "ERROR: Failed to delete .py migrations" >&2
     exit 1
 fi
 echo ".py migrations deleted successfully."
@@ -115,7 +115,7 @@ echo ".py migrations deleted successfully."
 echo "Deleting .pyc migrations..."
 find "${MIGRATIONS_DIR}" -name "*.pyc" -exec rm -f {} \;
 if [ $? -ne 0 ]; then
-    echo "Failed to delete .pyc migrations" >&2
+    echo "ERROR: Failed to delete .pyc migrations" >&2
     exit 1
 fi
 echo ".pyc migrations deleted successfully."

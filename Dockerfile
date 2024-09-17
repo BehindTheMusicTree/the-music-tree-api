@@ -50,7 +50,7 @@ RUN for var in \
     GUNICORN_LOG_ERROR_FILENAME \
     GUNICORN_LOG_ACCESS_FILENAME; do \
   if [ -z "$(eval echo \$$var)" ]; then \
-    echo "The $var argument is not provided" >&2; \
+    echo "ERROR: The $var argument is not provided" >&2; \
     exit 1; \
   fi; \
 done

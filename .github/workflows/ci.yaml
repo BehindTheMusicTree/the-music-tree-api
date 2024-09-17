@@ -141,11 +141,8 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install expect
-        run: sudo apt-get install -y expect
-
       - name: Set up filesystem
-        run: unbuffer scripts/setup_filesystem.sh
+        run: scripts/setup_filesystem.sh | tee setup_filesystem.log
 
       - name: Collect static files
         run: python manage.py collectstatic --noinput

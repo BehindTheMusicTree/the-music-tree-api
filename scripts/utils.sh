@@ -6,7 +6,7 @@ create_directory_if_not_exists_or_exit() {
         echo "Creating directory $dir_path ..."
         output=$(mkdir -p "$dir_path")
         if [ $? -ne 0 ]; then
-            echo "Failed to create directory $dir_path : $output" >&2
+            echo "ERROR: Failed to create directory $dir_path : $output" >&2
             exit 1
         fi
         echo "Directory $dir_path created successfully."
@@ -21,7 +21,7 @@ touch_file_or_exit() {
     echo "Touching file $file_path ..."
     output=$(touch "$file_path")
     if [ $? -ne 0 ]; then
-        echo "Failed to create file $file_path : $output" >&2
+        echo "ERROR: Failed to create file $file_path : $output" >&2
         exit 1
     fi
     echo "File $file_path created successfully."
@@ -32,12 +32,12 @@ set_read_write_permissions_and_owner_or_exit() {
     local user=$(whoami)
     output=$(chmod -R 740 "$path")
     if [ $? -ne 0 ]; then
-        echo "Failed to change permissions of $path : $output" >&2
+        echo "ERROR: Failed to change permissions of $path : $output" >&2
         exit 1
     fi
     output=$(chown -R "$user" "$path")
     if [ $? -ne 0 ]; then
-        echo "Failed to change owner of $path : $output" >&2
+        echo "ERROR: Failed to change owner of $path : $output" >&2
         exit 1
     fi
 }
@@ -46,7 +46,7 @@ check_vars_are_set() {
     local missing_vars=()
     for var_name in "$@"; do
         if [ -z "${!var_name}" ]; then
-            echo "$var_name must be set." >&2
+            echo "ERROR: $var_name must be set." >&2
             exit 1
         fi
     done
@@ -57,13 +57,13 @@ check_bool_vars_are_set() {
     check_vars_are_set "$@"
     for var_name in "$@"; do
         if [ "${!var_name}" != "true" ] && [ "${!var_name}" != "false" ]; then
-            echo "$var_name is not a valid boolean (true/false)" >&2
+            echo "ERROR: $var_name is not a valid boolean (true/false)" >&2
             invalid_vars+=("$var_name")
         fi
     done
 
     if [ ${#invalid_vars[@]} -ne 0 ]; then
-        echo "The following boolean variables are invalid: ${invalid_vars[*]}" >&2
+        echo "ERROR: the following boolean variables are invalid: ${invalid_vars[*]}" >&2
         exit 1
     fi
 }
@@ -101,14 +101,14 @@ load_project_calculated_paths_env_vars() {
     local CALTULATED_PATHS_DIR="${APP_DIR}env/calculated_paths/"
 
     if [ ! -d "$CALTULATED_PATHS_DIR" ]; then
-        echo "$CALTULATED_PATHS_DIR directory does not exist" >&2
+        echo "ERROR: $CALTULATED_PATHS_DIR directory does not exist" >&2
         exit 1
     fi
 
     local CALCULATED_PATHS_ENV_FILE="${CALTULATED_PATHS_DIR}.env"
     bash "${SCRIPTS_DIR}generate_calculated_paths_env_file.sh"
     if [ $? -ne 0 ]; then
-        echo "Failed to generate calculated paths env file: $output" >&2
+        echo "ERROR: failed to generate calculated paths env file: $output" >&2
         exit 1
     fi
     

@@ -14,7 +14,7 @@ setup_static_files () {
         check_vars_are_set STATIC_FILES_DEFAULT
         echo "ENV is set to COLLECT_STATIC. Setting up the filesystem..."
         if [ -n "$STATIC_FILES_DIR_EXTERNAL" ]; then
-            echo "In collect static mode, $STATIC_FILES_DIR_EXTERNAL must not be set." >&2
+            echo "ERROR: In collect static mode, $STATIC_FILES_DIR_EXTERNAL must not be set." >&2
             exit 1
         fi
         create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
@@ -25,7 +25,7 @@ setup_static_files () {
             echo "Files found in $STATIC_FILES_DEFAULT. Removing them..."
             output=$(rm -rf "$STATIC_FILES_DEFAULT"/*)
             if [ $? -ne 0 ]; then
-                echo "Failed to remove files from $STATIC_FILES_DEFAULT: $output" >&2
+                echo "ERROR: Failed to remove files from $STATIC_FILES_DEFAULT: $output" >&2
                 exit 1
             fi
             echo "Files removed from $STATIC_FILES_DEFAULT."
@@ -37,7 +37,7 @@ setup_static_files () {
             echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_DEFAULT is set. Static files are needed. "\
                 "Setting up the filesystem..."
             if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
-                echo "No files found in $STATIC_FILES_DEFAULT. Abort." >&2
+                echo "ERROR: No files found in $STATIC_FILES_DEFAULT. Abort." >&2
                 exit 1
             else
                 if [ "$STATIC_FILES_DEFAULT" = "$STATIC_FILES" ]; then
@@ -54,7 +54,7 @@ setup_static_files () {
                         echo "Files found in $STATIC_FILES. Removing them..."
                         output=$(rm -rf "$STATIC_FILES"/*)
                         if [ $? -ne 0 ]; then
-                            echo "Failed to remove files from $STATIC_FILES: $output" >&2
+                            echo "ERROR: Failed to remove files from $STATIC_FILES: $output" >&2
                             exit 1
                         fi
                         echo "Files removed from $STATIC_FILES."
@@ -62,7 +62,7 @@ setup_static_files () {
                     echo "$STATIC_FILES is empty. Copying files from $STATIC_FILES_DEFAULT to $STATIC_FILES..."
                     output=$(cp -r "$STATIC_FILES_DEFAULT"/* "$STATIC_FILES")
                     if [ $? -ne 0 ]; then
-                        echo "Failed to copy files from $STATIC_FILES_DEFAULT to $STATIC_FILES: $output" >&2
+                        echo "ERROR: Failed to copy files from $STATIC_FILES_DEFAULT to $STATIC_FILES: $output" >&2
                         exit 1
                     fi
                     echo "Files copied from $STATIC_FILES_DEFAULT to $STATIC_FILES."
@@ -157,7 +157,7 @@ main (){
         if [ -f "$script" ]; then
             output=$(chmod +x "$script")
             if [ $? -ne 0 ]; then
-                echo "Failed to make $script executable: $output" >&2
+                echo "ERROR: Failed to make $script executable: $output" >&2
                 exit 1
             fi
         fi

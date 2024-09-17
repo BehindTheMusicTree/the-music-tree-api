@@ -18,7 +18,7 @@ load_env_vars () {
     )
     check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]} 2>&1
     if [ $? -ne 0 ]; then
-        echo "Failed to load environment variables." >&2
+        echo "ERROR: Failed to load environment variables." >&2
         exit 1
     fi
 
@@ -27,7 +27,7 @@ load_env_vars () {
 
     check_bool_vars_are_set DEBUG APP_IS_EXPOSED 2>&1
     if [ $? -ne 0 ]; then
-        echo "Failed to load boolean environment variables." >&2
+        echo "ERROR: Failed to load boolean environment variables." >&2
         exit 1
     fi
 }
@@ -43,14 +43,14 @@ main (){
     echo "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
     output=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL 2>&1)
     if [ $? -ne 0 ]; then
-        echo "Failed to wait for the database: $output"
+        echo "Failed to wait for the database: $output" >&2
         exit 1
     fi
     echo "Database is ready"
 
     output=$(bash ${SCRIPTS_DIR}init_django_data.sh 2>&1)
     if [ $? -ne 0 ]; then
-        echo "Failed to initialize Django data: $output"
+        echo "Failed to initialize Django data: $output" >&2
         exit 1
     fi
 

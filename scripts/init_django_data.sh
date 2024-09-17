@@ -22,7 +22,7 @@ exit_if_migrations_exist() {
   echo "Checking if migrations already exist..."
   local MIGRATIONS_DIR="${APP_DIR}${APP_NAME}/migrations/"
   if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
-      echo "Migrations already exist. Abort"
+      echo "ERROR: Migrations already exist. Abort" >&2
       exit 1
   fi
   echo "Migrations do not exist."
@@ -36,7 +36,7 @@ create_initial_migration() {
       echo "Failed to create migrations due to database connection issue." >&2
       exit 1
   elif echo "$output" | grep -q "password authentication failed"; then
-      echo "Password authentication failed." >&2
+      echo "ERROR: Password authentication failed." >&2
       exit 1
   fi
   echo "Migrations created successfully."
@@ -46,7 +46,7 @@ apply_migrations() {
   echo "Applying migrations..."
   python3 $MANAGE_SCRIPT migrate
   if [ $? -ne 0 ]; then
-    echo "Failed to apply migrations. Abort" >&2
+    echo "ERROR: Failed to apply migrations. Abort" >&2
     exit 1
   fi
   echo "Migrations applied successfully."
@@ -67,7 +67,7 @@ main (){
 
   bash ${SCRIPTS_DIR}init_db_and_role.sh
   if [ $? -ne 0 ]; then
-    echo "Failed to initialize database and role." >&2
+    echo "ERROR: Failed to initialize database and role." >&2
     exit 1
   fi
 

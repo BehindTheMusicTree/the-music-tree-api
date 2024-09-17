@@ -22,14 +22,14 @@ create_database_if_not_exists () {
   echo "Creating database $DB_BODZIFY_API_DB_NAME if it does not exist..."
   output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "SELECT 1 FROM pg_database WHERE datname = '$DB_BODZIFY_API_DB_NAME';")
   if [ $? -ne 0 ]; then
-    echo "Failed to check if the database exists: $output" >&2
+    echo "ERROR: Failed to check if the database exists: $output" >&2
     exit 1
   fi
   if [ -z "$output" ]; then
     echo "Database $DB_BODZIFY_API_DB_NAME does not exist. Creating it..."
     output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;")
     if [ $? -ne 0 ]; then
-      echo "Failed to create the database: $output" >&2
+      echo "FERROR: ailed to create the database: $output" >&2
       exit 1
     fi
   else
@@ -43,7 +43,7 @@ create_role_and_grant_permissions_if_not_exists(){
   local output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
     "SELECT 1 FROM pg_roles WHERE rolname='$DB_BODZIFY_API_USERNAME';")
   if [ $? -ne 0 ]; then
-    echo "Failed to check if the role exists: $output" >&2
+    echo "ERROR: Failed to check if the role exists: $output" >&2
     exit 1
   fi
   if [ -n "$output" ]; then
@@ -53,7 +53,7 @@ create_role_and_grant_permissions_if_not_exists(){
     output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
       "CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';" 2>&1)
     if [ $? -ne 0 ]; then
-      echo "Failed to create the role: $output" >&2
+      echo "ERROR: Failed to create the role: $output" >&2
       exit 1
     fi
     echo "Role $DB_BODZIFY_API_USERNAME created successfully."
@@ -69,7 +69,7 @@ create_role_and_grant_permissions_if_not_exists(){
     GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_BODZIFY_API_USERNAME; \
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_BODZIFY_API_USERNAME;")
   if [ $? -ne 0 ]; then
-    echo "Failed to grant privileges to the role: $output" >&2
+    echo "ERROR: Failed to grant privileges to the role: $output" >&2
     exit 1
   fi
 }

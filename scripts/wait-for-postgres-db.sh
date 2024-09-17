@@ -13,7 +13,7 @@ attempts=0
 echo "Waiting for DB service to start..."
 while ! pg_isready -h "$DB_HOST" -p "$DB_PORT"; do
   if [ "$attempts" -eq "$MAX_ATTEMPTS" ]; then
-    echo "DB service did not start within the expected time."
+    echo "ERROR: DB service did not start within the expected time." >&2
     exit 1
   fi
   echo "Waiting for DB service to start..."

@@ -5,19 +5,19 @@ calculate_static_files_dir(){
         echo "ENV is set to COLLECT_STATIC. Calculating the static files directory..."
         check_vars_are_set STATIC_FILES_INTERNAL
         if [ -n "$STATIC_FILES_EXTERNAL" ]; then
-            echo "In collct static mode, $STATIC_FILES_EXTERNAL must not be set." >&2
+            echo "ERROR: In collct static mode, $STATIC_FILES_EXTERNAL must not be set." >&2
             exit 1
         fi
     else 
         if [ -z "$STATIC_FILES_INTERNAL" ]; then
             echo "ENV is not set to COLLECT_STATIC and STATIC_FILES_INTERNAL is not set. Static files are not needed."
             if [ -n "$STATIC_FILES_EXTERNAL" ]; then
-                echo "STATIC_FILES_EXTERNAL must not be set if STATIC_FILES_INTERNAL is not set." >&2
+                echo "ERROR: STATIC_FILES_EXTERNAL must not be set if STATIC_FILES_INTERNAL is not set." >&2
                 exit 1
             fi
         else
             if [ $STATIC_FILES_INTERNAL = $STATIC_FILES_EXTERNAL ]; then
-                echo "STATIC_FILES_INTERNAL and STATIC_FILES_EXTERNAL must not be set to the same value." >&2
+                echo "ERROR: STATIC_FILES_INTERNAL and STATIC_FILES_EXTERNAL must not be set to the same value." >&2
                 exit 1
             fi
         fi
@@ -39,7 +39,7 @@ calculate_static_files_dir(){
 calculate_django_log_dir(){
     if [ -n "$DJANGO_LOG_DIR_EXTERNAL" ]; then
         if [ -n "$DJANGO_LOG_DIR_INTERNAL" ]; then
-            echo "DJANGO_LOG_DIR_INTERNAL and DJANGO_LOG_DIR_EXTERNAL must not be set at the same time." >&2
+            echo "ERROR: DJANGO_LOG_DIR_INTERNAL and DJANGO_LOG_DIR_EXTERNAL must not be set at the same time." >&2
             exit 1
         fi
         echo "DJANGO_LOG_DIR_EXTERNAL is set. Setting the Django logs to external."
@@ -62,7 +62,8 @@ calculate_django_log_dir(){
 calculate_media_dirs(){
     if [ -n "$TMP_UPLOADED_FILES_EXTERNAL" ]; then
         if [ -n "$TMP_UPLOADED_FILES_INTERNAL" ]; then
-            echo "TMP_UPLOADED_FILES_INTERNAL and TMP_UPLOADED_FILES_EXTERNAL must not be set at the same time." >&2
+            echo "ERROR: TMP_UPLOADED_FILES_INTERNAL and TMP_UPLOADED_FILES_EXTERNAL must not be set at the same "\
+                "time." >&2
             exit 1
         fi
         echo "TMP_UPLOADED_FILES_EXTERNAL is set. Setting the temporary files directory to external."
@@ -84,7 +85,7 @@ calculate_media_dirs(){
         echo "As TMP_UPLOADED_FILES is set, setting up media directories..."
         if [ -n "$MEDIA_DIR_EXTERNAL" ]; then
             if [ -n "$MEDIA_DIR_INTERNAL" ]; then
-                echo "MEDIA_DIR_INTERNAL and MEDIA_DIR_EXTERNAL must not be set at the same time." >&2
+                echo "ERROR: MEDIA_DIR_INTERNAL and MEDIA_DIR_EXTERNAL must not be set at the same time." >&2
                 exit 1
             fi
             echo "MEDIA_DIR_EXTERNAL is set. Setting media directory to external..."
@@ -94,7 +95,7 @@ calculate_media_dirs(){
                 echo "MEDIA_DIR_INTERNAL is set. Setting media directory to internal..."
                 MEDIA_DIR="${APP_DIR}${MEDIA_DIR_INTERNAL}"
             else
-                echo "Neither MEDIA_DIR_EXTERNAL nor MEDIA_DIR_INTERNAL is set. Abort." >&2
+                echo "ERROR: Neither MEDIA_DIR_EXTERNAL nor MEDIA_DIR_INTERNAL is set. Abort." >&2
                 exit 1
             fi
         fi
@@ -109,11 +110,11 @@ calculate_media_dirs(){
         echo "Libraries directory is set up."
     else
         if [ -n "$MEDIA_DIR_EXTERNAL" ]; then
-            echo "MEDIA_DIR_EXTERNAL must not be set if TMP_UPLOADED_FILES_INTERNAL is not set." >&2
+            echo "ERROR: MEDIA_DIR_EXTERNAL must not be set if TMP_UPLOADED_FILES_INTERNAL is not set." >&2
             exit 1
         fi
         if [ -n "$LIBRARIES_DIR_NAME" ]; then
-            echo "LIBRARIES_DIR_NAME must not be set if TMP_UPLOADED_FILES_INTERNAL is not set." >&2
+            echo "ERROR: LIBRARIES_DIR_NAME must not be set if TMP_UPLOADED_FILES_INTERNAL is not set." >&2
             exit 1
         fi
     fi
@@ -133,7 +134,7 @@ main () {
     [ -f "$CALCULATED_PATHS_ENV_FILE" ] && rm -f "$CALCULATED_PATHS_ENV_FILE"
     output=$(touch "$CALCULATED_PATHS_ENV_FILE")
     if [ $? -ne 0 ]; then
-        echo "Failed to create the generated paths env file: $output" >&2
+        echo "ERROR: Failed to create the generated paths env file: $output" >&2
         exit 1
     fi
 

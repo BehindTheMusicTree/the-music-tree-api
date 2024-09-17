@@ -46,12 +46,12 @@ main() {
     echo $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     if [ $? -ne 0 ]; then
-        echo "Error: Failed to pull the database image." >&2
+        echo "ERROR: Failed to pull the database image." >&2
         exit 1
     fi
     docker pull $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
     if [ $? -ne 0 ]; then
-        echo "Error: Failed to pull the audio fingerprinter image." >&2
+        echo "ERROR: Failed to pull the audio fingerprinter image." >&2
         exit 1
     fi
     echo "Images pulled successfully."

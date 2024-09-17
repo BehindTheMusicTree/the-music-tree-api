@@ -2,7 +2,7 @@
 
 # Check if the commit message is passed as an argument
 if [ $# -eq 0 ]; then
-    echo "Please provide a commit message as an argument."
+    echo "ERROR: please provide a commit message as an argument." >&2
     exit 1
 fi
 

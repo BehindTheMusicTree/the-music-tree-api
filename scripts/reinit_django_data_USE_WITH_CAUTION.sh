@@ -26,7 +26,7 @@ echo "Use with caution as it may result in data loss."
 read -p "Are you sure you want to proceed? (yes/no): " CONFIRMATION
 
 if [ "$CONFIRMATION" != "yes" ]; then
-    echo "Operation aborted."
+    echo "Operation aborted." >&2
     exit 1
 fi
 
@@ -38,13 +38,13 @@ load_env_vars
 
 bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh -s
 if [ $? -ne 0 ]; then
-  echo "Failed to purge data." >&2
+  echo "ERROR: Failed to purge data." >&2
   exit 1
 fi
 
 bash ${SCRIPTS_DIR}init_django_data.sh
 if [ $? -ne 0 ]; then
-  echo "Failed to initialize Django data." >&2
+  echo "ERROR: Failed to initialize Django data." >&2
   exit 1
 fi
 
