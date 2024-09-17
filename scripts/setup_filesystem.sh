@@ -11,12 +11,8 @@ load_env_vars () {
 
 setup_static_files () {
     if [ $ENV = "COLLECT_STATIC" ]; then
-        check_vars_are_set STATIC_FILES_DEFAULT
+        check_vars_are_set STATIC_FILES_DEFAULT 
         echo "ENV is set to COLLECT_STATIC. Setting up the filesystem..."
-        if [ -n "$STATIC_FILES_DIR_EXTERNAL" ]; then
-            echo "ERROR: In collect static mode, $STATIC_FILES_DIR_EXTERNAL must not be set." >&2
-            exit 1
-        fi
         create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
         echo "Checking if files exist in $STATIC_FILES_DEFAULT..."
         if [ -z "$(ls -A $STATIC_FILES_DEFAULT)" ]; then
