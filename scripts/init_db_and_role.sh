@@ -54,7 +54,7 @@ initialize_db_and_role () {
     GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_BODZIFY_API_USERNAME; \
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_BODZIFY_API_USERNAME;")
   if [ $? -ne 0 ]; then
-    echo "Failed to grant privileges to the role. Details: $output"
+    echo "Failed to grant privileges to the role: $output"
     exit 1
   fi
 
@@ -67,17 +67,19 @@ initialize_db_and_role () {
   unset PGPASSWORD
 }
 
-echo "Initializing database and role..."
+main (){
+  SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+  source ${SCRIPTS_DIR}utils.sh
 
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-source ${SCRIPTS_DIR}utils.sh
+  load_env_vars
+  determine_db_host_if_not_set
 
-load_env_vars
-determine_db_host_if_not_set
-
-if is_db_new; then
+  if is_db_new; then
     echo "The database is new."
     initialize_db_and_role
-else
+  else
     echo "The database already exists."
-fi
+  fi
+}
+
+main "$@"
