@@ -169,6 +169,10 @@ else:
     STATIC_URL = 'static/'
     STATIC_ROOT = Path(STATIC_FILES)
     print("STATIC_ROOT: " + str(STATIC_ROOT))
+    print("Checkink if the static root exists...")
+    if not STATIC_ROOT.exists():
+        raise EnvironmentError(f"The static root {STATIC_ROOT} does not exist.")
+    print("The static root exists.")
 
 INSTALLED_APPS = ['django.contrib.admin',
                   'django.contrib.auth',
@@ -318,7 +322,7 @@ SIMPLE_JWT = {
 
 TMP_UPLOADED_FILES_STR = os.getenv('TMP_UPLOADED_FILES')
 if not TMP_UPLOADED_FILES_STR:
-    print("TMP_UPLOADED_FILES is not set. The app will not handle uploaded files.")
+    print("TMP_UPLOADED_FILES is not set. The app will not handle media files.")
     FILE_UPLOAD_ENABLED = False
 
     for var_name in ['AFP_PORT',
@@ -340,6 +344,10 @@ else:
         raise EnvironmentError("The TMP_UPLOADED_FILES variable must be set")
     FILE_UPLOAD_TEMP_DIR = Path(TMP_UPLOADED_FILES_DIR_ENV)  # Django constant, do not rename.
     print("FILE_UPLOAD_TEMP_DIR: " + str(FILE_UPLOAD_TEMP_DIR))
+    print("Checking the FILE_UPLOAD_TEMP_DIR directory...")
+    if not FILE_UPLOAD_TEMP_DIR.exists():
+        raise EnvironmentError(f"The file upload temp directory {FILE_UPLOAD_TEMP_DIR} does not exist.")
+    print("The FILE_UPLOAD_TEMP_DIR directory exists.")
 
     AFP_PORT = os.getenv('AFP_PORT')
     if AFP_PORT is None:
@@ -361,12 +369,20 @@ else:
         raise EnvironmentError("The MEDIA_DIR variable must be set")
     MEDIA_ROOT = Path(MEDIA_DIR_ENV)  # Django constant, do not rename.
     print("MEDIA_ROOT: " + str(MEDIA_ROOT))
+    print("Checking the MEDIA_ROOT directory...")
+    if not MEDIA_ROOT.exists():
+        raise EnvironmentError(f"The media root directory {MEDIA_ROOT} does not exist.")
+    print("The MEDIA_ROOT directory exists.")
 
     LIBRARIES_DIR_NAME = os.getenv('LIBRARIES_DIR_NAME')
     if not LIBRARIES_DIR_NAME:
         raise EnvironmentError("The LIBRARIES_DIR_NAME variable must be set")
     LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
     print("LIBRARIES_DIR: " + str(LIBRARIES_DIR))
+    print("Checking the LIBRARIES_DIR directory...")
+    if not LIBRARIES_DIR.exists():
+        raise EnvironmentError(f"The libraries directory {LIBRARIES_DIR} does not exist.")
+    print("The LIBRARIES_DIR directory exists.")
 
 LOG_DIR_STR = os.getenv('DJANGO_LOG_DIR')
 if not LOG_DIR_STR:
@@ -374,34 +390,74 @@ if not LOG_DIR_STR:
 else:
     print("LOG_DIR is set. Setting up logs.")
     LOG_DIR = Path(LOG_DIR_STR)
+    print("LOG_DIR: " + str(LOG_DIR))
+    print("Checking the LOG_DIR directory...")
+    if not LOG_DIR.exists():
+        raise EnvironmentError(f"The log directory {LOG_DIR} does not exist.")
+    print("The LOG_DIR directory exists.")
 
     LOG_GENERAL_FILENAME = os.getenv('DJANGO_LOG_GENERAL_FILENAME')
     if not LOG_GENERAL_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_GENERAL_FILENAME variable must be set")
+    LOG_GENERAL_FILE = LOG_DIR / LOG_GENERAL_FILENAME
+    print("LOG_GENERAL_FILE: " + str(LOG_GENERAL_FILE))
+    print("Checking the LOG_GENERAL_FILE...")
+    if not LOG_GENERAL_FILE.exists():
+        raise EnvironmentError(f"The log general file {LOG_GENERAL_FILE} does not exist.")
 
     LOG_INFO_FILENAME = os.getenv('DJANGO_LOG_INFO_FILENAME')
     if not LOG_INFO_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_INFO_FILENAME variable must be set")
+    LOG_INFO_FILE = LOG_DIR / LOG_INFO_FILENAME
+    print("LOG_INFO_FILE: " + str(LOG_INFO_FILE))
+    print("Checking the LOG_INFO_FILE...")
+    if not LOG_INFO_FILE.exists():
+        raise EnvironmentError(f"The log info file {LOG_INFO_FILE} does not exist.")
 
     LOG_REQUESTS_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_FILENAME')
     if not LOG_REQUESTS_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_REQUESTS_FILENAME variable must be set")
+    LOG_REQUESTS_FILE = LOG_DIR / LOG_REQUESTS_FILENAME
+    print("LOG_REQUESTS_FILE: " + str(LOG_REQUESTS_FILE))
+    print("Checking the LOG_REQUESTS_FILE...")
+    if not LOG_REQUESTS_FILE.exists():
+        raise EnvironmentError(f"The log requests file {LOG_REQUESTS_FILE} does not exist.")
 
     LOG_REQUESTS_DEBUG_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_DEBUG_FILENAME')
     if not LOG_REQUESTS_DEBUG_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_REQUESTS_DEBUG_FILENAME variable must be set")
+    LOG_REQUESTS_DEBUG_FILE = LOG_DIR / LOG_REQUESTS_DEBUG_FILENAME
+    print("LOG_REQUESTS_DEBUG_FILE: " + str(LOG_REQUESTS_DEBUG_FILE))
+    print("Checking the LOG_REQUESTS_DEBUG_FILE...")
+    if not LOG_REQUESTS_DEBUG_FILE.exists():
+        raise EnvironmentError(f"The log requests debug file {LOG_REQUESTS_DEBUG_FILE} does not exist.")
 
     LOG_EXCEPTIONS_FILENAME = os.getenv('DJANGO_LOG_EXCEPTIONS_FILENAME')
     if not LOG_EXCEPTIONS_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_EXCEPTIONS_FILENAME variable must be set")
+    LOG_EXCEPTIONS_FILE = LOG_DIR / LOG_EXCEPTIONS_FILENAME
+    print("LOG_EXCEPTIONS_FILE: " + str(LOG_EXCEPTIONS_FILE))
+    print("Checking the LOG_EXCEPTIONS_FILE...")
+    if not LOG_EXCEPTIONS_FILE.exists():
+        raise EnvironmentError(f"The log exceptions file {LOG_EXCEPTIONS_FILE} does not exist.")
 
     LOG_DJANGO_FILENAME = os.getenv('DJANGO_LOG_DJANGO_FILENAME')
     if not LOG_DJANGO_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_DJANGO_FILENAME variable must be set")
+    LOG_DJANGO_FILE = LOG_DIR / LOG_DJANGO_FILENAME
+    print("LOG_DJANGO_FILE: " + str(LOG_DJANGO_FILE))
+    print("Checking the LOG_DJANGO_FILE...")
+    if not LOG_DJANGO_FILE.exists():
+        raise EnvironmentError(f"The log django file {LOG_DJANGO_FILE} does not exist.")
 
     LOG_APP_FILENAME = os.getenv('DJANGO_LOG_APP_FILENAME')
     if not LOG_APP_FILENAME:
         raise EnvironmentError("The DJANGO_LOG_APP_FILENAME variable must be set")
+    LOG_APP_FILE = LOG_DIR / LOG_APP_FILENAME
+    print("LOG_APP_FILE: " + str(LOG_APP_FILE))
+    print("Checking the LOG_APP_FILE...")
+    if not LOG_APP_FILE.exists():
+        raise EnvironmentError(f"The log app file {LOG_APP_FILE} does not exist.")
 
     LOGGING = {
         'version': 1,
@@ -415,7 +471,7 @@ else:
             'general': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / LOG_GENERAL_FILENAME,
+                'filename': LOG_GENERAL_FILE,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -423,7 +479,7 @@ else:
             'info': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / LOG_INFO_FILENAME,
+                'filename': LOG_INFO_FILE,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -431,7 +487,7 @@ else:
             'requests': {
                 'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / LOG_REQUESTS_FILENAME,
+                'filename': LOG_REQUESTS_FILE,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -439,7 +495,7 @@ else:
             'requests_with_trace': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / LOG_REQUESTS_DEBUG_FILENAME,
+                'filename': LOG_REQUESTS_DEBUG_FILE,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -447,7 +503,7 @@ else:
             'exceptions': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / LOG_EXCEPTIONS_FILENAME,
+                'filename': LOG_EXCEPTIONS_FILE,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -455,7 +511,7 @@ else:
             'django': {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / LOG_DJANGO_FILENAME,
+                'filename': LOG_DJANGO_FILE,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
@@ -463,7 +519,7 @@ else:
             APP_NAME: {
                 'level': 'DEBUG',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': LOG_DIR / LOG_APP_FILENAME,
+                'filename': LOG_APP_FILE,
                 'maxBytes': 1024*1024*15,  # 15MB
                 'backupCount': 10,
                 'formatter': 'standard'
