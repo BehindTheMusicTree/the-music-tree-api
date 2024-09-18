@@ -28,7 +28,7 @@ You need to set up several environment variables for development, build, and run
 examples of how to set them.
 
 #### Development
-Create a copy of the file env/.env.development.example here: env/.env and set the values.
+Create a copy of the file env/dev/.env.dev.template here: env/.env and set the values.
 
 #### Build
 The docker build requires the following environment variables:
