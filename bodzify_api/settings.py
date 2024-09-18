@@ -396,9 +396,10 @@ def setup_afp_connection():
 
 
 def setup_static_files():
-    print_django("Setting up static files configuration...")
+    print_django(f"The app is using static files for {STATIC_FILES_STATE}")
 
     # Django constant, do not rename.
+    global STATIC_ROOT
     STATIC_ROOT = Path(STATIC_FILES)  # type: ignore
     print_django("STATIC_ROOT: " + str(STATIC_ROOT))
     if not STATIC_ROOT.exists():
@@ -410,7 +411,7 @@ def setup_static_files():
     # STATICFILES_DIRS = [] # No additional static files directories are needed.
 
 
-def setup_installed_apps(static_files_state: str, app_is_exposed: bool):
+def setup_installed_apps():
     global INSTALLED_APPS
     INSTALLED_APPS = ['django.contrib.admin',
                       'django.contrib.auth',
@@ -427,10 +428,10 @@ def setup_installed_apps(static_files_state: str, app_is_exposed: bool):
                       'drf_multiple_model',
                       APP_NAME]
 
-    if app_is_exposed:
+    if APP_IS_EXPOSED == True:
         INSTALLED_APPS.append('rest_framework_simplejwt')
 
-    if static_files_state in [StaticFileState.COLLECTING, StaticFileState.SERVING]:
+    if STATIC_FILES_STATE in [StaticFileState.COLLECTING, StaticFileState.SERVING]:
         INSTALLED_APPS.append('django.contrib.staticfiles')
 
 
@@ -673,13 +674,12 @@ if 'loaddata' in sys.argv:
     print_django("settings.py is being executed because of a loaddata command.")
     STATIC_FILES_STATE = StaticFileState.NOT_NEEDED
     setup_app_constants()
-    setup_installed_apps(static_files_state=STATIC_FILES_STATE, app_is_exposed=False)
+    setup_installed_apps()
     setup_middlewares()
     setup_django_constants()
     setup_db_connection_if_needed()
     setup_templates()  # Needed to use the admin application
 else:
-    print_django("settings.py is not being executed because of a loaddata command.")
     load_calculated_env_paths()
     setup_app_exposure_if_needed()
     setup_app_constants()
@@ -698,7 +698,7 @@ else:
             STATIC_FILES_STATE = StaticFileState.SERVING
             setup_static_files()
 
-    setup_installed_apps(static_files_state=STATIC_FILES_STATE, app_is_exposed=APP_IS_EXPOSED)
+    setup_installed_apps()
     setup_middlewares()
     setup_db_connection_if_needed()
     setup_templates()
