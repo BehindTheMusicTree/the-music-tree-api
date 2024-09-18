@@ -49,5 +49,6 @@ urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
                path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
                path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc')]
 
-if settings.STATIC_ROOT:
+
+if settings.ENV != 'COLLECT_STATIC' and settings.APP_IS_EXPOSED is False:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
