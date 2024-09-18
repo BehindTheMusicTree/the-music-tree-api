@@ -344,24 +344,25 @@ class TrackService(Service):
     def _update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(data: dict,
                                                                                           fingerprint: bytes,
                                                                                           duration_in_sec: float):
-        try:
-            musicbrainz_recording_dict = TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
-                fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
-            if musicbrainz_recording_dict:
-                musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID]
-                try:
-                    musicbrainz_recording_pk = MusicbrainzRecording.objects.get(uuid=musicbrainz_recording_uuid).pk
-                except ObjectDoesNotExist:
-                    musicbrainz_recording = TrackService.__create_musicbrainz_recording_instance_from_dict(
-                        musicbrainz_recording_uuid=musicbrainz_recording_uuid,
-                        musicbrainz_recording_dict=musicbrainz_recording_dict)
-                    musicbrainz_recording_pk = musicbrainz_recording.pk
+        if duration_in_sec > 0:  # If the duration is 0, it is not possible to get a musicbrainz recording
+            try:
+                musicbrainz_recording_dict = TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
+                    fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
+                if musicbrainz_recording_dict:
+                    musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID]
+                    try:
+                        musicbrainz_recording_pk = MusicbrainzRecording.objects.get(uuid=musicbrainz_recording_uuid).pk
+                    except ObjectDoesNotExist:
+                        musicbrainz_recording = TrackService.__create_musicbrainz_recording_instance_from_dict(
+                            musicbrainz_recording_uuid=musicbrainz_recording_uuid,
+                            musicbrainz_recording_dict=musicbrainz_recording_dict)
+                        musicbrainz_recording_pk = musicbrainz_recording.pk
 
-                data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
-            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = None
+                    data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
+                data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = None
 
-        except MusicbrainzException as e:
-            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = str(e)
+            except MusicbrainzException as e:
+                data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = str(e)
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
