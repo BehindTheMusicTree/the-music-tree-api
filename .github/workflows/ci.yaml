@@ -104,6 +104,13 @@ jobs:
       - name: Wait for database service to start
         run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
+      - name: Set up fixtures files
+        env:
+          FIXTURES_DIR: ${{ vars.APP_NAME }}/fixtures/
+        run: |
+          cp ${{ env.FIXTURES_DIR }}app/*.json ${{ env.FIXTURES_DIR }}
+          cp ${{ env.FIXTURES_DIR }}users/ci_test/*.json ${{ env.FIXTURES_DIR }}
+
       - name: Init django data
         run: bash scripts/init_django_data.sh
 
@@ -197,7 +204,7 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_FULL_NAME }}
           build-args: |
-            ROOT_DIR=${{ env.CONTAINER_ROOT_DIR }}
+            PROJECT_DIR=${{ env.CONTAINER_ROOT_DIR }}
             APP_NAME=${{ vars.APP_NAME }}
             APP_VERSION=${{ vars.APP_VERSION }}
             DB_CONNECTION_TEST_MAX_ATTEMPTS=${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }}

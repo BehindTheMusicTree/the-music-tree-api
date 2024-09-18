@@ -20,7 +20,7 @@ load_env_vars() {
 
 exit_if_migrations_exist() {
   log "Checking if migrations already exist..."
-  local MIGRATIONS_DIR="${APP_DIR}${APP_NAME}/migrations/"
+  local MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
   if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
       log "ERROR: Migrations already exist. Abort" >&2
       exit 1
@@ -52,9 +52,39 @@ apply_migrations() {
   log "Migrations applied successfully."
 }
 
+load_initial_fixtures() {
+  log "Loading initial data."
+  log "Loading app.json..."
+  app_fixture="${PROJECT_DIR}${APP_NAME}/fixtures/app.json"
+  if [ -f "$app_fixture" ]; then
+      python3 $MANAGE_SCRIPT loaddata $app_fixture
+      if [ $? -ne 0 ]; then
+          log "ERROR: Failed to load initial data from $app_fixture" >&2
+          exit 1
+      fi
+  else
+      log "ERROR: app.json not found in ${PROJECT_DIR}${APP_NAME}/fixtures/" >&2
+      exit 1
+  fi
+  log "app.json loaded successfully."
+
+  log "Loading other fixtures..."
+  for fixture in ${PROJECT_DIR}${APP_NAME}/fixtures/*.json; 
+  do
+      if [ "$fixture" != "$app_fixture" ]; then
+          python3 $MANAGE_SCRIPT loaddata $fixture
+          if [ $? -ne 0 ]; then
+              log "ERROR: Failed to load initial data from $fixture" >&2
+              exit 1
+          fi
+      fi
+  done
+  log "Initial data loaded successfully."
+}
+
 main (){
   SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-  APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
+  PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
   source ${SCRIPTS_DIR}utils.sh
 
   log "Initializing Django data..."
@@ -62,7 +92,7 @@ main (){
   load_env_vars
   exit_if_migrations_exist
 
-  MANAGE_SCRIPT=${APP_DIR}manage.py
+  MANAGE_SCRIPT=${PROJECT_DIR}manage.py
   log "MANAGE_SCRIPT: $MANAGE_SCRIPT"
 
   bash ${SCRIPTS_DIR}init_db_and_role.sh
@@ -73,10 +103,7 @@ main (){
 
   create_initial_migration
   apply_migrations
-
-  log "Loading initial data..."
-  python3 $MANAGE_SCRIPT loaddata app admin_user_dev mobile_test_user postman_test_user ultimate_music_guide_test_user_dev
-  log "Initial data loaded successfully."
+  load_initial_fixtures
 
   unset PGPASSWORD
 

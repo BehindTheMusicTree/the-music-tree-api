@@ -5,7 +5,7 @@
 # Use Case: Suitable when you need a full Debian environment with more pre-installed tools and libraries.
 FROM python:3.11-buster
 
-ARG ROOT_DIR
+ARG PROJECT_DIR
 ARG APP_NAME
 ARG APP_VERSION
 ARG DB_CONNECTION_TEST_MAX_ATTEMPTS
@@ -28,7 +28,7 @@ ARG GUNICORN_LOG_ERROR_FILENAME
 ARG GUNICORN_LOG_ACCESS_FILENAME
 
 RUN for var in \
-    ROOT_DIR \
+    PROJECT_DIR \
     APP_NAME \
     APP_VERSION \
     DB_CONNECTION_TEST_MAX_ATTEMPTS \
@@ -57,9 +57,11 @@ done
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    ROOT_DIR=$ROOT_DIR \
+    PROJECT_DIR=$PROJECT_DIR \
     ENV=TEST \
     APP_NAME=$APP_NAME \
+    APP_DIR=${PROJECT_DIR}${APP_NAME}/ \
+    FIXTURES_DIR=${APP_DIR}fixtures/ \
     APP_VERSION=$APP_VERSION \
     DEBUG=true \
     APP_IS_EXPOSED=true \
@@ -88,9 +90,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY . $ROOT_DIR
+COPY . $PROJECT_DIR
 
-WORKDIR $ROOT_DIR
+WORKDIR $PROJECT_DIR
 
 RUN apt update && \
     bash scripts/install_dependencies.sh && \
@@ -100,7 +102,10 @@ RUN apt update && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh && \
-    chmod +x ${ROOT_DIR}scripts/entrypoint.sh
+    chmod +x ${PROJECT_DIR}scripts/entrypoint.sh && \
+    cp ${FIXTURES_DIR}/app/* ${FIXTURES_DIR} && \
+    cp ${FIXTURES_DIR}/app/users/test/* ${FIXTURES_DIR} && \
+    cp ${FIXTURES_DIR}/app/users/umg/* ${FIXTURES_DIR} && \
     
 # Set the entrypoint using shell form to allow environment variable expansion
-ENTRYPOINT ["sh", "-c", "${ROOT_DIR}scripts/entrypoint.sh"]
+ENTRYPOINT ["sh", "-c", "${PROJECT_DIR}scripts/entrypoint.sh"]
