@@ -31,7 +31,8 @@ router.register(r'genres', GenreViewSet, basename='genre')
 router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
 router.register(r'plays', PlayViewSet)
 
-# Do not move after GenrePlaylistViewSet or SimplePlaylistViewSet or it will cause confusion resolving reverse urls
+# Do not move PlaylistViewSet after GenrePlaylistViewSet or SimplePlaylistViewSet or it will cause confusion resolving
+# reverse urls.
 router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'simple-playlists', SimplePlaylistViewSet, basename='simple-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
