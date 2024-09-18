@@ -20,7 +20,7 @@ load_env_vars () {
 create_database_if_not_exists () {
 	log "Creating database $DB_BODZIFY_API_DB_NAME if it does not exist..."
 	log "Checking if database $DB_BODZIFY_API_DB_NAME exists..."
-	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c \
+	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
 		"SELECT 1 FROM pg_database WHERE datname = '$DB_BODZIFY_API_DB_NAME';" 2>&1)
 	echo "output: $output"
 	if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
@@ -29,9 +29,10 @@ create_database_if_not_exists () {
 	fi
 	if [ ! "$output" = "1" ]; then
 		log "Database $DB_BODZIFY_API_DB_NAME does not exist. Creating it..."
-		output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "CREATE DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
+		output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+		"CREATE DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
 		if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
-		log "FERROR: failed to create the database: $output" >&2
+		log "ERROR: failed to create the database: $output" >&2
 		exit 1
 		fi
 	else
@@ -51,7 +52,7 @@ create_role_and_grant_permissions_if_not_exists(){
 		log "Role $DB_BODZIFY_API_USERNAME already exists."
 	else
 		log "Role $DB_BODZIFY_API_USERNAME does not exist. Creating it..."
-		output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+		output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
 		"CREATE USER $DB_BODZIFY_API_USERNAME WITH PASSWORD '$DB_BODZIFY_API_USER_PASSWORD';" 2>&1)
 		if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
 		log "ERROR: Failed to create the role: $output" >&2
@@ -61,7 +62,7 @@ create_role_and_grant_permissions_if_not_exists(){
 	fi
 
 	log "Granting privileges to role $DB_BODZIFY_API_USERNAME"
-	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -c \
+	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d $DB_BODZIFY_API_DB_NAME -tAc \
 		"GRANT ALL PRIVILEGES ON DATABASE $DB_BODZIFY_API_DB_NAME TO $DB_BODZIFY_API_USERNAME; \
 		ALTER ROLE $DB_BODZIFY_API_USERNAME SET client_encoding TO 'utf8'; \
 		ALTER ROLE $DB_BODZIFY_API_USERNAME SET default_transaction_isolation TO 'read committed'; \
@@ -86,14 +87,14 @@ main (){
 	create_role_and_grant_permissions_if_not_exists
 
 	log "Displaying databases to verify that the new database was created."
-	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\l" 2>&1)
+	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "\l" 2>&1)
 	if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
 		log "ERROR: Failed to display databases: $output" >&2
 		exit 1
 	fi
 
 	log "Displaying roles to verify that the new role was created."
-	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "\du" 2>&1)
+	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "\du" 2>&1)
 	if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
 		log "ERROR: Failed to display roles: $output" >&2
 		exit 1

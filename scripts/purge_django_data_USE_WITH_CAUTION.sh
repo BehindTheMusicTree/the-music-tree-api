@@ -87,7 +87,7 @@ output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
   "SELECT 1 FROM pg_database WHERE datname='${DB_BODZIFY_API_DB_NAME}'" 2>&1)
 if [ "$output" = "1" ]; then
     log "Database exists. Dropping database"
-    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
+    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "DROP DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
     if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
       log "ERROR: Failed to drop the database. Details: $output" >&2
       exit 1
@@ -106,7 +106,7 @@ if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
 fi
 if [ "$output" = "1" ]; then
     log "User exists. Dropping user"
-    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -c "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
+    output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
     if [ $? -ne 0 ]; then
 		log "ERROR: Failed to drop the user: $output" >&2
 		exit 1
