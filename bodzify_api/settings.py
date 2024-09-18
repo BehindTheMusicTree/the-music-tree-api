@@ -330,13 +330,13 @@ def setup_afp_connection():
         AFP_BASE_URL = AFP_CONTAINER_NAME
     else:
         print_django("The app is not exposed. The AFP host is the AFP url.")
-        AFP_BASE_URL = "http://" + load_required_str_env_var('AFP_URL')
+        AFP_BASE_URL = load_required_str_env_var('AFP_URL')
 
     AFP_PORT = load_required_str_env_var('AFP_PORT')
     AFP_POST_ENDPOINT = load_required_str_env_var('AFP_POST_ENDPOINT')
 
     global AFP_POST_FULL_URL
-    AFP_POST_FULL_URL = AFP_BASE_URL + ":" + AFP_PORT + '/' + AFP_POST_ENDPOINT
+    AFP_POST_FULL_URL = "http://" + AFP_BASE_URL + ":" + AFP_PORT + '/' + AFP_POST_ENDPOINT
     print_django(f"AFP_POST_FULL_URL: {AFP_POST_FULL_URL}")
 
 
