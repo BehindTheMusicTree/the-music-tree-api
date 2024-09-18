@@ -23,8 +23,8 @@ from rest_framework.exceptions import ValidationError
 
 from bodzify_api.exception.musicbrainz import MusicbrainzException
 from bodzify_api import settings
-from bodzify_api.utils.utils import AppDjangoFile
 from bodzify_api.utils import audio_fingerprinter_api_client
+from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.utils.audio_fingerprinter_api_client import AudioFingerprinterApiClient, AudioFingerprinterError
 from bodzify_api.utils import audio_metadata
 from bodzify_api.service.Service import Service
@@ -124,7 +124,7 @@ class TrackService(Service):
     @staticmethod
     def _get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
-            with tempfile.NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR) as tmp_file:
+            with tempfile.NamedTemporaryFile(delete=False, dir=settings.TMP_UPLOADED_FILES) as tmp_file:
                 for chunk in file.chunks():
                     tmp_file.write(chunk)
                 file_path = tmp_file.name
@@ -541,7 +541,7 @@ class TrackService(Service):
         # stream=True more effective for large files
         track_file_streamed = requests.get(mine_track_url, stream=True)
 
-        with tempfile.NamedTemporaryFile(delete=True, dir=settings.FILE_UPLOAD_TEMP_DIR) as track_temp_file:
+        with tempfile.NamedTemporaryFile(delete=True, dir=settings.TMP_UPLOADED_FILES) as track_temp_file:
             for block in track_file_streamed.iter_content(1024 * 8):
                 if not block:
                     break

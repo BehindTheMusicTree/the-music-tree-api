@@ -3,53 +3,17 @@
 import datetime
 import os
 from pathlib import Path
-import subprocess
 import sys
-import dotenv
+
+from bodzify_api.utils.env_var_loader import load_calculated_env_paths, load_env_vars_from_file_if_exists, \
+    load_required_bool_env_var, load_required_path_env_var, load_required_secret_env_var, load_required_str_env_var
+from bodzify_api.utils.utils import print_django
 
 
 class StaticFileState:
     SERVING = "SERVING"
     COLLECTING = "COLLECTING"
     NOT_NEEDED = "NOT_NEEDED"
-
-
-def print_django(message):
-    print(f"[Django] {message}")
-
-
-def remove_eventual_surrounding_quotes(s: str) -> str:
-    if s.startswith('"') and s.endswith('"'):
-        return s[1:-1]
-    return s
-
-
-def load_calculated_env_paths():
-    CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
-    generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
-    try:
-        result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path)],
-                                check=True,
-                                stderr=subprocess.PIPE,
-                                text=True,
-                                env=os.environ.copy())
-    except subprocess.CalledProcessError as e:
-        print_django("Error while generating the paths env file:", e.stderr)  # type: ignore
-        raise EnvironmentError("Error while generating the paths env file: " + str(e)) from e
-
-    dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
-
-
-def load_env_vars_from_file():
-    APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
-    APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
-    if not APP_ENV_FILE.exists():
-        print_django(f"No env file at {APP_ENV_FILE}")
-        APP_ENV_FILE = None
-    else:
-        print_django(f"Env file provided at {APP_ENV_FILE} . Loading...")
-        dotenv.load_dotenv(APP_ENV_FILE)
-        print_django("Env file loaded.")
 
 
 def init_logs_if_needed():
@@ -64,57 +28,43 @@ def init_logs_if_needed():
             raise EnvironmentError(f"The log directory {LOG_DIR} does not exist.")
         print_django(f"The log dir {LOG_DIR} exists.")
 
-        LOG_GENERAL_FILENAME = os.getenv('DJANGO_LOG_GENERAL_FILENAME')
-        if not LOG_GENERAL_FILENAME:
-            raise EnvironmentError("The DJANGO_LOG_GENERAL_FILENAME variable must be set")
+        LOG_GENERAL_FILENAME = load_required_str_env_var('DJANGO_LOG_GENERAL_FILENAME')
         LOG_GENERAL_FILE = LOG_DIR / LOG_GENERAL_FILENAME
         if not LOG_GENERAL_FILE.exists():
             raise EnvironmentError(f"The log general file {LOG_GENERAL_FILE} does not exist.")
         print_django("The log general file {LOG_GENERAL_FILE} exists.")
 
-        LOG_INFO_FILENAME = os.getenv('DJANGO_LOG_INFO_FILENAME')
-        if not LOG_INFO_FILENAME:
-            raise EnvironmentError("The DJANGO_LOG_INFO_FILENAME variable must be set")
+        LOG_INFO_FILENAME = load_required_str_env_var('DJANGO_LOG_INFO_FILENAME')
         LOG_INFO_FILE = LOG_DIR / LOG_INFO_FILENAME
         if not LOG_INFO_FILE.exists():
             raise EnvironmentError(f"The log info file {LOG_INFO_FILE} does not exist.")
         print_django(f"The log info file {LOG_INFO_FILE} exists.")
 
-        LOG_REQUESTS_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_FILENAME')
-        if not LOG_REQUESTS_FILENAME:
-            raise EnvironmentError("The DJANGO_LOG_REQUESTS_FILENAME variable must be set")
+        LOG_REQUESTS_FILENAME = load_required_str_env_var('DJANGO_LOG_REQUESTS_FILENAME')
         LOG_REQUESTS_FILE = LOG_DIR / LOG_REQUESTS_FILENAME
         if not LOG_REQUESTS_FILE.exists():
             raise EnvironmentError(f"The log requests file {LOG_REQUESTS_FILE} does not exist.")
         print_django(f"The log info file {LOG_REQUESTS_FILE} exists.")
 
-        LOG_REQUESTS_DEBUG_FILENAME = os.getenv('DJANGO_LOG_REQUESTS_DEBUG_FILENAME')
-        if not LOG_REQUESTS_DEBUG_FILENAME:
-            raise EnvironmentError("The DJANGO_LOG_REQUESTS_DEBUG_FILENAME variable must be set")
+        LOG_REQUESTS_DEBUG_FILENAME = load_required_str_env_var('DJANGO_LOG_REQUESTS_DEBUG_FILENAME')
         LOG_REQUESTS_DEBUG_FILE = LOG_DIR / LOG_REQUESTS_DEBUG_FILENAME
         if not LOG_REQUESTS_DEBUG_FILE.exists():
             raise EnvironmentError(f"The log requests debug file {LOG_REQUESTS_DEBUG_FILE} does not exist.")
         print_django(f"The log info file {LOG_REQUESTS_DEBUG_FILE} exists.")
 
-        LOG_EXCEPTIONS_FILENAME = os.getenv('DJANGO_LOG_EXCEPTIONS_FILENAME')
-        if not LOG_EXCEPTIONS_FILENAME:
-            raise EnvironmentError("The DJANGO_LOG_EXCEPTIONS_FILENAME variable must be set")
+        LOG_EXCEPTIONS_FILENAME = load_required_str_env_var('DJANGO_LOG_EXCEPTIONS_FILENAME')
         LOG_EXCEPTIONS_FILE = LOG_DIR / LOG_EXCEPTIONS_FILENAME
         if not LOG_EXCEPTIONS_FILE.exists():
             raise EnvironmentError(f"The log exceptions file {LOG_EXCEPTIONS_FILE} does not exist.")
         print_django(f"The log info file {LOG_EXCEPTIONS_FILE} exists.")
 
-        LOG_DJANGO_FILENAME = os.getenv('DJANGO_LOG_DJANGO_FILENAME')
-        if not LOG_DJANGO_FILENAME:
-            raise EnvironmentError("The DJANGO_LOG_DJANGO_FILENAME variable must be set")
+        LOG_DJANGO_FILENAME = load_required_str_env_var('DJANGO_LOG_DJANGO_FILENAME')
         LOG_DJANGO_FILE = LOG_DIR / LOG_DJANGO_FILENAME
         if not LOG_DJANGO_FILE.exists():
             raise EnvironmentError(f"The log django file {LOG_DJANGO_FILE} does not exist.")
         print_django(f"The log info file {LOG_DJANGO_FILE} exists.")
 
-        LOG_APP_FILENAME = os.getenv('DJANGO_LOG_APP_FILENAME')
-        if not LOG_APP_FILENAME:
-            raise EnvironmentError("The DJANGO_LOG_APP_FILENAME variable must be set")
+        LOG_APP_FILENAME = load_required_str_env_var('DJANGO_LOG_APP_FILENAME')
         LOG_APP_FILE = LOG_DIR / LOG_APP_FILENAME
         if not LOG_APP_FILE.exists():
             raise EnvironmentError(f"The log app file {LOG_APP_FILE} does not exist.")
@@ -236,9 +186,7 @@ def init_logs_if_needed():
 def setup_app_exposure_if_needed():
     global ALLOWED_HOSTS
 
-    APP_VERSION = os.getenv('APP_VERSION')
-    if not APP_VERSION:
-        raise EnvironmentError("The APP_VERSION variable must be set")
+    APP_VERSION = load_required_str_env_var('APP_VERSION')
     global API_ROOT_BASE
     API_ROOT_BASE = 'api/' + APP_VERSION + '/'
     print_django("API_ROOT_BASE: " + API_ROOT_BASE)
@@ -258,9 +206,7 @@ def setup_app_exposure_if_needed():
         CSRF_COOKIE_SECURE = True
         print_django(f"CSRF_COOKIE_SECURE: {CSRF_COOKIE_SECURE}")
 
-        CSRF_TRUSTED_ORIGINS_STR = os.getenv('CSRF_TRUSTED_ORIGINS')
-        if not CSRF_TRUSTED_ORIGINS_STR:
-            raise EnvironmentError("The CSRF_TRUSTED_ORIGINS variable must be set")
+        CSRF_TRUSTED_ORIGINS_STR = load_required_str_env_var('CSRF_TRUSTED_ORIGINS')
         print_django(f"CSRF_TRUSTED_ORIGINS env variable: {CSRF_TRUSTED_ORIGINS_STR}")
         global CSRF_TRUSTED_ORIGINS
         CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS_STR.split(',')
@@ -275,9 +221,7 @@ def setup_app_exposure_if_needed():
         else:
             raise EnvironmentError("The app is exposed but no trusted origins are set.")
 
-        ALLOWED_HOSTS_STR = os.getenv('ALLOWED_HOSTS')
-        if not ALLOWED_HOSTS_STR:
-            raise EnvironmentError("The ALLOWED_HOSTS variable must be set")
+        ALLOWED_HOSTS_STR = load_required_str_env_var('ALLOWED_HOSTS')
         ALLOWED_HOSTS = ALLOWED_HOSTS_STR.split(',')
         for csrf_trusted_origin in ALLOWED_HOSTS:
             csrf_trusted_origin = csrf_trusted_origin.strip()
@@ -310,9 +254,7 @@ def setup_app_constants():
 
     # SECURITY WARNING: don't run with debug turned on in production!
     global DEBUG
-    DEBUG = os.getenv('DEBUG')
-    if not DEBUG or DEBUG not in ['true', 'false']:
-        raise EnvironmentError("The DEBUG variable is not set or is not a boolean")
+    DEBUG = load_required_bool_env_var('DEBUG')
 
     global UUID_LEN
     UUID_LEN = 22
@@ -383,8 +325,19 @@ def setup_app_constants():
 
 
 def setup_afp_connection():
-    global AFP_BASE_URL
-    AFP_BASE_URL = "http://127.0.0.1"
+    if APP_IS_EXPOSED:
+        print_django("The app is exposed. The AFP host is the AFP container name.")
+        AFP_BASE_URL = AFP_CONTAINER_NAME
+    else:
+        print_django("The app is not exposed. The AFP host is the AFP url.")
+        AFP_BASE_URL = "http://" + load_required_str_env_var('AFP_URL')
+
+    AFP_PORT = load_required_str_env_var('AFP_PORT')
+    AFP_POST_ENDPOINT = load_required_str_env_var('AFP_POST_ENDPOINT')
+
+    global AFP_POST_FULL_URL
+    AFP_POST_FULL_URL = AFP_BASE_URL + ":" + AFP_PORT + '/' + AFP_POST_ENDPOINT
+    print_django(f"AFP_POST_FULL_URL: {AFP_POST_FULL_URL}")
 
 
 def setup_static_files():
@@ -441,61 +394,35 @@ def setup_middlewares():
                   'django.middleware.clickjacking.XFrameOptionsMiddleware']
 
 
-def setup_db_connection_if_needed():
-    # DB may not be necessary (running collectstati for instance)
-    DB_IS_NEEDED_STR = os.getenv('DB_IS_NEEDED')
-    if not DB_IS_NEEDED_STR:
-        raise EnvironmentError("The DB_IS_NEEDED variable must be set")
-    DB_IS_NEEDED_STR = DB_IS_NEEDED_STR.lower()
-    if DB_IS_NEEDED_STR not in ['true', 'false']:
-        raise EnvironmentError("The DB_IS_NEEDED is not a boolean")
-    DB_IS_NEEDED = True if DB_IS_NEEDED_STR == 'true' else False
+def setup_db_connection():
+    DB_BODZIFY_API_DB_NAME = load_required_str_env_var('DB_BODZIFY_API_DB_NAME')
+    DB_BODZIFY_API_USERNAME = load_required_str_env_var('DB_BODZIFY_API_USERNAME')
+    DB_BODZIFY_API_USER_PASSWORD = load_required_secret_env_var('DB_BODZIFY_API_USER_PASSWORD')
 
-    if DB_IS_NEEDED:
-        DB_BODZIFY_API_DB_NAME = os.getenv('DB_BODZIFY_API_DB_NAME')
-        if DB_BODZIFY_API_DB_NAME is None:
-            raise EnvironmentError("The DB_BODZIFY_API_DB_NAME variable must be set")
+    if APP_IS_EXPOSED:
+        print_django("The app is exposed. The db host is the db container name.")
+        DB_CONTAINER_NAME = load_required_str_env_var('DB_CONTAINER_NAME')
+        DB_HOST = DB_CONTAINER_NAME
+    else:
+        print_django("The app is not exposed. The db host is the db url.")
+        DB_URL = load_required_str_env_var('DB_URL')
+        DB_HOST = DB_URL
+    print_django(f"DB_HOST: " + DB_HOST)
 
-        DB_BODZIFY_API_USERNAME = os.getenv('DB_BODZIFY_API_USERNAME')
-        if DB_BODZIFY_API_USERNAME is None:
-            raise EnvironmentError("The DB_BODZIFY_API_USERNAME variable must be set")
+    DB_PORT = load_required_str_env_var('DB_PORT')
 
-        DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
-        if DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES is None:
-            raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable must be set")
-        DB_BODZIFY_API_USER_PASSWORD = remove_eventual_surrounding_quotes(
-            DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES)
-
-        if APP_IS_EXPOSED:
-            print_django("The app is exposed. The db host is the db container name.")
-            DB_CONTAINER_NAME = os.getenv('DB_CONTAINER_NAME')
-            if not DB_CONTAINER_NAME:
-                raise EnvironmentError("The DB_CONTAINER_NAME variable must be set")
-            DB_HOST = DB_CONTAINER_NAME
-        else:
-            print_django("The app is not exposed. The db host is the db url.")
-            DB_URL = os.getenv('DB_URL')
-            if DB_URL is None:
-                raise EnvironmentError("The DB_URL variable must be set")
-            DB_HOST = DB_URL
-        print_django("DB_HOST: " + DB_HOST)
-
-        DB_PORT = os.getenv('DB_PORT')
-        if DB_PORT is None:
-            raise EnvironmentError("The DB_PORT variable must be set")
-
-        global DATABASES
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                'NAME': DB_BODZIFY_API_DB_NAME,
-                'USER': DB_BODZIFY_API_USERNAME,
-                'PASSWORD': DB_BODZIFY_API_USER_PASSWORD,
-                'HOST': DB_HOST,
-                'PORT': DB_PORT,
-                'DISABLE_SERVER_SIDE_CURSORS': True
-            }
+    global DATABASES
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': DB_BODZIFY_API_DB_NAME,
+            'USER': DB_BODZIFY_API_USERNAME,
+            'PASSWORD': DB_BODZIFY_API_USER_PASSWORD,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'DISABLE_SERVER_SIDE_CURSORS': True
         }
+    }
 
 
 def setup_templates():
@@ -568,110 +495,46 @@ def setup_django_constants():
     }
 
 
-def setup_media_dirs_if_needed():
-    global FILE_UPLOAD_ENABLED
-    TMP_UPLOADED_FILES_STR = os.getenv('TMP_UPLOADED_FILES')
-    if not TMP_UPLOADED_FILES_STR:
-        print_django("TMP_UPLOADED_FILES is not set. The app will not handle media files.")
-        FILE_UPLOAD_ENABLED = False
+def setup_media_dirs():
+    print_django("TMP_UPLOADED_FILES is set. Setting up the media variables...")
 
-        for var_name in ['AFP_PORT',
-                         'AFP_POST_ENDPOINT',
-                         'ACOUSTID_API_KEY',
-                         'MEDIA_DIR',
-                         'LIBRARIES_DIR_NAME']:
-            if os.getenv(var_name):
-                raise EnvironmentError(f"The {var_name} env variable cannot be set as TMP_UPLOADED_FILES is not.")
-    else:
-        print_django("TMP_UPLOADED_FILES is set. Setting up the media variables...")
-        FILE_UPLOAD_ENABLED = True
-        global AFP_CONTAINER_NAME
-        AFP_CONTAINER_NAME = os.getenv('AFP_CONTAINER_NAME')
-        if not AFP_CONTAINER_NAME:
-            raise EnvironmentError("The AFP_CONTAINER_NAME variable must be set")
+    global TMP_UPLOADED_FILES
+    TMP_UPLOADED_FILES = load_required_path_env_var('TMP_UPLOADED_FILES')
 
-        TMP_UPLOADED_FILES_DIR_ENV = os.getenv('TMP_UPLOADED_FILES')
-        if not TMP_UPLOADED_FILES_DIR_ENV:
-            raise EnvironmentError("The TMP_UPLOADED_FILES variable must be set")
-        global FILE_UPLOAD_TEMP_DIR
-        FILE_UPLOAD_TEMP_DIR = Path(TMP_UPLOADED_FILES_DIR_ENV)  # Django constant, do not rename.
-        print_django("FILE_UPLOAD_TEMP_DIR: " + str(FILE_UPLOAD_TEMP_DIR))
-        if not FILE_UPLOAD_TEMP_DIR.exists():
-            raise EnvironmentError(f"The file upload temp directory {FILE_UPLOAD_TEMP_DIR} does not exist.")
-        print_django("The FILE_UPLOAD_TEMP_DIR directory exists.")
+    global ACOUSTID_API_KEY
+    ACOUSTID_API_KEY = load_required_str_env_var('ACOUSTID_API_KEY')
 
-        global AFP_PORT
-        AFP_PORT = os.getenv('AFP_PORT')
-        if AFP_PORT is None:
-            raise Exception("AFP_PORT env variable must be set")
+    global MEDIA_ROOT  # Django constant, do not rename.
+    MEDIA_ROOT = load_required_path_env_var('MEDIA_DIR')
 
-        AFP_POST_ENDPOINT = os.getenv('AFP_POST_ENDPOINT')
-        if AFP_POST_ENDPOINT is None:
-            raise Exception("AFP_POST_ENDPOINT env variable must be set")
+    global LIBRARIES_DIR_NAME
+    LIBRARIES_DIR_NAME = load_required_str_env_var('LIBRARIES_DIR_NAME')
 
-        global AFP_POST_FULL_URL
-        AFP_POST_FULL_URL = AFP_BASE_URL + ":" + AFP_PORT + '/' + AFP_POST_ENDPOINT
-
-        global ACOUSTID_API_KEY
-        ACOUSTID_API_KEY = os.getenv('ACOUSTID_API_KEY')
-        if not ACOUSTID_API_KEY and FILE_UPLOAD_ENABLED:
-            raise EnvironmentError("The ACOUSTID_API_KEY variable must be set")
-
-        MEDIA_DIR_ENV = os.getenv('MEDIA_DIR')
-        if not MEDIA_DIR_ENV:
-            raise EnvironmentError("The MEDIA_DIR variable must be set")
-        global MEDIA_ROOT
-        MEDIA_ROOT = Path(MEDIA_DIR_ENV)  # Django constant, do not rename.
-        print_django("MEDIA_ROOT: " + str(MEDIA_ROOT))
-        if not MEDIA_ROOT.exists():
-            raise EnvironmentError(f"The media root directory {MEDIA_ROOT} does not exist.")
-        print_django("The MEDIA_ROOT directory exists.")
-
-        global LIBRARIES_DIR_NAME
-        LIBRARIES_DIR_NAME = os.getenv('LIBRARIES_DIR_NAME')
-        if not LIBRARIES_DIR_NAME:
-            raise EnvironmentError("The LIBRARIES_DIR_NAME variable must be set")
-
-        global LIBRARIES_DIR
-        LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
-        print_django("LIBRARIES_DIR: " + str(LIBRARIES_DIR))
-        if not LIBRARIES_DIR.exists():
-            raise EnvironmentError(f"The libraries directory {LIBRARIES_DIR} does not exist.")
-        print_django("The LIBRARIES_DIR directory exists.")
-        print_django("Media variables are set.")
+    global LIBRARIES_DIR
+    LIBRARIES_DIR = MEDIA_ROOT / LIBRARIES_DIR_NAME
+    print_django("LIBRARIES_DIR: " + str(LIBRARIES_DIR))
+    if not LIBRARIES_DIR.exists():
+        raise EnvironmentError(f"The libraries directory {LIBRARIES_DIR} does not exist.")
+    print_django("The LIBRARIES_DIR directory exists.")
+    print_django("Media variables are set.")
 
 
 def set_secret_key():
     global SECRET_KEY
     if APP_IS_EXPOSED:
         # SECURITY WARNING: keep the secret key used in production secret!
-        SECRET_KEY_WITH_EVENTUAL_SURROUNDING_QUOTES = os.getenv('DJANGO_SECRET_KEY')
-        if not SECRET_KEY_WITH_EVENTUAL_SURROUNDING_QUOTES:
-            raise EnvironmentError("The DJANGO_SECRET_KEY variable must be set")
-        SECRET_KEY = remove_eventual_surrounding_quotes(SECRET_KEY_WITH_EVENTUAL_SURROUNDING_QUOTES)
+        SECRET_KEY = load_required_secret_env_var('SECRET_KEY')
     else:
         SECRET_KEY = "django_default_secret_when_not_exposed"
 
 
-load_env_vars_from_file()
+APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
+APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
+load_env_vars_from_file_if_exists(APP_ENV_FILE)
 
-ENV = os.getenv('ENV')
-if not ENV:
-    raise EnvironmentError("The ENV variable must be set")
-print_django(f"ENV is set to {ENV}")
-
-APP_NAME = os.getenv('APP_NAME')
-if not APP_NAME:
-    raise EnvironmentError("The APP_NAME variable must be set")
-
-APP_IS_EXPOSED_STR = os.getenv('APP_IS_EXPOSED')
-if not APP_IS_EXPOSED_STR:
-    raise EnvironmentError("The APP_IS_EXPOSED variable must be set")
-APP_IS_EXPOSED_STR = APP_IS_EXPOSED_STR.lower()
-if APP_IS_EXPOSED_STR not in ['true', 'false']:
-    raise EnvironmentError("The APP_IS_EXPOSED variable is not a boolean")
-
-APP_IS_EXPOSED = (APP_IS_EXPOSED_STR == 'true')
+ENV = load_required_str_env_var('ENV')
+APP_NAME = load_required_str_env_var('APP_NAME')
+APP_IS_EXPOSED = load_required_bool_env_var('APP_IS_EXPOSED')
 FILE_UPLOAD_ENABLED = None
 
 set_secret_key()
@@ -683,13 +546,12 @@ if 'loaddata' in sys.argv:
     setup_installed_apps()
     setup_middlewares()
     setup_django_constants()
-    setup_db_connection_if_needed()
+    setup_db_connection()
     setup_templates()  # Needed to use the admin application
 else:
-    load_calculated_env_paths()
+    load_calculated_env_paths(BASE_DIR)
     setup_app_exposure_if_needed()
     setup_app_constants()
-    setup_afp_connection()
 
     STATIC_FILES = os.getenv('STATIC_FILES')
     if ENV == 'COLLECT_STATIC':
@@ -706,10 +568,30 @@ else:
 
     setup_installed_apps()
     setup_middlewares()
-    setup_db_connection_if_needed()
     setup_templates()
     setup_django_constants()
-    setup_media_dirs_if_needed()
     init_logs_if_needed()
+
+    if load_required_bool_env_var('DB_IS_NEEDED'):
+        setup_db_connection()
+
+    # FILE_UPLOAD_TEMP_DIR is a Django constant, do not rename.
+    FILE_UPLOAD_TEMP_DIR = os.getenv('TMP_UPLOADED_FILES')
+    if not FILE_UPLOAD_TEMP_DIR:
+        print_django("TMP_UPLOADED_FILES is not set. The app will not handle media files.")
+        FILE_UPLOAD_ENABLED = False
+        for var_name in ['AFP_PORT',
+                         'AFP_CONTAINER_NAME',
+                         'AFP_POST_ENDPOINT',
+                         'ACOUSTID_API_KEY',
+                         'MEDIA_DIR',
+                         'LIBRARIES_DIR_NAME']:
+            if os.getenv(var_name):
+                raise EnvironmentError(f"The {var_name} env variable cannot be set as TMP_UPLOADED_FILES is not.")
+    else:
+        FILE_UPLOAD_ENABLED = True
+        AFP_CONTAINER_NAME = load_required_str_env_var('AFP_CONTAINER_NAME')
+        setup_media_dirs()
+        setup_afp_connection()
 
 print_django("Finished loading settings.")

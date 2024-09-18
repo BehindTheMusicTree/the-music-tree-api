@@ -44,6 +44,9 @@ def restart_docker_container(container_id_or_name):
 
 class TestCase(TrackTestCase):
     def test_audio_fingerprinter_service_down_then_corresponding_error_code(self):
+        if not settings.AFP_CONTAINER_NAME:
+            self.skipTest("The Audio Fingerprinter is not accessed through a Docker container.")
+
         stop_docker_container(settings.AFP_CONTAINER_NAME)
         response = self.post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m52.mp3")
         restart_docker_container(settings.AFP_CONTAINER_NAME)
