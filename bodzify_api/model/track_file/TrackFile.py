@@ -32,21 +32,12 @@ class ATTRIBUTES_LABEL:
 
 
 def _get_user_lib_path(instance, filename):
-    if settings.FILE_UPLOAD_ENABLED:
+    if settings.FILE_UPLOAD_ENABLED is True:
         return '{0}{1}/{2}'.format(settings.LIBRARIES_DIR_NAME + '/' + settings.USER_LIBRARIES_DIR_NAME_PREFIXE,
                                    instance.user.id,
                                    filename)
     else:
         return ''
-
-
-if settings.FILE_UPLOAD_ENABLED:
-    LIBRARIES_DIR_MAX_LENGTH = (len(settings.LIBRARIES_DIR_NAME) +  # type: ignore
-                                len(settings.USER_LIBRARIES_DIR_NAME_PREFIXE) +
-                                len(settings.USER_MAX_NUMBER))
-    FILE_PATH_MAX_LENGTH = settings.LIB_TRACK_FILENAME_LEN_MAX + LIBRARIES_DIR_MAX_LENGTH
-else:
-    FILE_PATH_MAX_LENGTH = 0
 
 
 class PreserveSpacesStorage(FileSystemStorage):
@@ -63,7 +54,7 @@ class TrackFile(models.Model):
                                         validate_filename_length,
                                         validate_size,
                                         validate_content_type_is_audio],
-                            max_length=FILE_PATH_MAX_LENGTH,
+                            max_length=settings.FILE_PATH_MAX_LENGTH,
                             null=True)
     filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LEN_MAX, blank=True)
     extension = models.CharField(max_length=5, blank=True)
