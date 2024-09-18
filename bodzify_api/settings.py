@@ -496,7 +496,7 @@ def setup_django_constants():
 
 
 def setup_media_dirs():
-    print_django("TMP_UPLOADED_FILES is set. Setting up the media variables...")
+    print_django("FILE_UPLOAD_TEMP_DIR is set. Setting up the media variables...")
 
     global ACOUSTID_API_KEY
     ACOUSTID_API_KEY = load_required_str_env_var('ACOUSTID_API_KEY')
@@ -575,8 +575,9 @@ else:
 
     # FILE_UPLOAD_TEMP_DIR is a Django constant, do not rename.
     FILE_UPLOAD_TEMP_DIR = os.getenv('TMP_UPLOADED_FILES')
+    print_django(f"FILE_UPLOAD_TEMP_DIR: {FILE_UPLOAD_TEMP_DIR}")
     if not FILE_UPLOAD_TEMP_DIR:
-        print_django("TMP_UPLOADED_FILES is not set. The app will not handle media files.")
+        print_django("TMP_UPLOADED_FILES/FILE_UPLOAD_TEMP_DIR is not set. The app will not handle media files.")
         FILE_UPLOAD_ENABLED = False
         for var_name in ['AFP_PORT',
                          'AFP_CONTAINER_NAME',
@@ -585,7 +586,8 @@ else:
                          'MEDIA_DIR',
                          'LIBRARIES_DIR_NAME']:
             if os.getenv(var_name):
-                raise EnvironmentError(f"The {var_name} env variable cannot be set as TMP_UPLOADED_FILES is not.")
+                raise EnvironmentError(f"The {var_name} env variable cannot be set as \
+                    TMP_UPLOADED_FILES/FILE_UPLOAD_TEMP_DIR is not.")
     else:
         FILE_UPLOAD_ENABLED = True
         AFP_CONTAINER_NAME = load_required_str_env_var('AFP_CONTAINER_NAME')
