@@ -18,7 +18,7 @@ def print_django(message):
     print(f"[Django] {message}")
 
 
-def remove_eventual_surronding_quotes(s: str) -> str:
+def remove_eventual_surrounding_quotes(s: str) -> str:
     if s.startswith('"') and s.endswith('"'):
         return s[1:-1]
     return s
@@ -235,7 +235,6 @@ def init_logs_if_needed():
 
 def setup_app_exposure_if_needed():
     global ALLOWED_HOSTS
-    global SECRET_KEY
 
     APP_VERSION = os.getenv('APP_VERSION')
     if not APP_VERSION:
@@ -290,16 +289,9 @@ def setup_app_exposure_if_needed():
                 print_django(str(csrf_trusted_origin))
         else:
             raise EnvironmentError("The app is exposed but no allowed hosts are set.")
-
-        # SECURITY WARNING: keep the secret key used in production secret!
-        SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
-        if not SECRET_KEY:
-            raise EnvironmentError("The DJANGO_SECRET_KEY variable must be set")
     else:
         ALLOWED_HOSTS = ['127.0.0.1']
-        SECRET_KEY = "django-default-secret-when-not-exposed"
 
-    print_django("The secret key is set.")
     print_django(f"ALLOWED_HOSTS is set to {ALLOWED_HOSTS}")
     global CORS_ALLOW_ALL_ORIGINS
     CORS_ALLOW_ALL_ORIGINS = True  # TODO: don't allow all
@@ -471,7 +463,7 @@ def setup_db_connection_if_needed():
         DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES = os.getenv('DB_BODZIFY_API_USER_PASSWORD')
         if DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES is None:
             raise EnvironmentError("The DB_BODZIFY_API_USER_PASSWORD variable must be set")
-        DB_BODZIFY_API_USER_PASSWORD = remove_eventual_surronding_quotes(
+        DB_BODZIFY_API_USER_PASSWORD = remove_eventual_surrounding_quotes(
             DB_BODZIFY_API_USER_PASSWORD_WITH_EVENTUAL_QUOTES)
 
         if APP_IS_EXPOSED:
@@ -649,6 +641,18 @@ def setup_media_dirs_if_needed():
         print_django("Media variables are set.")
 
 
+def set_secret_key():
+    global SECRET_KEY
+    if APP_IS_EXPOSED:
+        # SECURITY WARNING: keep the secret key used in production secret!
+        SECRET_KEY_WITH_EVENTUAL_SURROUNDING_QUOTES = os.getenv('DJANGO_SECRET_KEY')
+        if not SECRET_KEY_WITH_EVENTUAL_SURROUNDING_QUOTES:
+            raise EnvironmentError("The DJANGO_SECRET_KEY variable must be set")
+        SECRET_KEY = remove_eventual_surrounding_quotes(SECRET_KEY_WITH_EVENTUAL_SURROUNDING_QUOTES)
+    else:
+        SECRET_KEY = "django_default_secret_when_not_exposed"
+
+
 load_env_vars_from_file()
 
 ENV = os.getenv('ENV')
@@ -669,6 +673,8 @@ if APP_IS_EXPOSED_STR not in ['true', 'false']:
 
 APP_IS_EXPOSED = (APP_IS_EXPOSED_STR == 'true')
 FILE_UPLOAD_ENABLED = None
+
+set_secret_key()
 
 if 'loaddata' in sys.argv:
     print_django("settings.py is being executed because of a loaddata command.")
