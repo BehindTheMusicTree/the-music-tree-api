@@ -61,7 +61,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     ENV=TEST \
     APP_NAME=$APP_NAME \
     APP_DIR=${PROJECT_DIR}${APP_NAME}/ \
-    FIXTURES_DIR=${APP_DIR}fixtures/ \
     APP_VERSION=$APP_VERSION \
     DEBUG=true \
     APP_IS_EXPOSED=true \
@@ -103,9 +102,9 @@ RUN apt update && \
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh && \
     chmod +x ${PROJECT_DIR}scripts/entrypoint.sh && \
+    FIXTURES_DIR=${PROJECT_DIR}fixtures/ && \
     cp ${FIXTURES_DIR}app/* ${FIXTURES_DIR} && \
     cp ${FIXTURES_DIR}app/users/test/* ${FIXTURES_DIR} && \
-    cp ${FIXTURES_DIR}app/users/umg/* ${FIXTURES_DIR} && \
-    
+    cp ${FIXTURES_DIR}app/users/umg/* ${FIXTURES_DIR}
 # Set the entrypoint using shell form to allow environment variable expansion
 ENTRYPOINT ["sh", "-c", "${PROJECT_DIR}scripts/entrypoint.sh"]
