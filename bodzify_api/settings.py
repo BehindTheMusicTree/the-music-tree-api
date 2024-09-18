@@ -498,9 +498,6 @@ def setup_django_constants():
 def setup_media_dirs():
     print_django("TMP_UPLOADED_FILES is set. Setting up the media variables...")
 
-    global TMP_UPLOADED_FILES
-    TMP_UPLOADED_FILES = load_required_path_env_var('TMP_UPLOADED_FILES')
-
     global ACOUSTID_API_KEY
     ACOUSTID_API_KEY = load_required_str_env_var('ACOUSTID_API_KEY')
 
@@ -523,7 +520,8 @@ def set_secret_key():
     global SECRET_KEY
     if APP_IS_EXPOSED:
         # SECURITY WARNING: keep the secret key used in production secret!
-        SECRET_KEY = load_required_secret_env_var('SECRET_KEY')
+        # SECRET_KET is a Django constant, do not rename.
+        SECRET_KEY = load_required_secret_env_var('DJANGO_SECRET_KEY')
     else:
         SECRET_KEY = "django_default_secret_when_not_exposed"
 
