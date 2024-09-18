@@ -25,7 +25,7 @@ calculate_static_files_dir(){
     
     if [ -n "$STATIC_FILES_INTERNAL" ]; then
         log "STATIC_FILES_INTERNAL is set. Setting the static files default directory to internal."
-        STATIC_FILES_DEFAULT="${APP_DIR}${STATIC_FILES_INTERNAL}"
+        STATIC_FILES_DEFAULT="${PROJECT_DIR}${STATIC_FILES_INTERNAL}"
         if [ -n "$STATIC_FILES_EXTERNAL" ]; then
             log "STATIC_FILES_EXTERNAL is set. Setting the static files directory to external."
             STATIC_FILES="${STATIC_FILES_EXTERNAL}"
@@ -51,7 +51,7 @@ calculate_django_log_dir(){
     else
         if [ -n "$DJANGO_LOG_DIR_INTERNAL" ]; then
             log "DJANGO_LOG_DIR_INTERNAL is set. Setting the Django logs to internal."
-            DJANGO_LOG_DIR="${APP_DIR}${DJANGO_LOG_DIR_INTERNAL}"
+            DJANGO_LOG_DIR="${PROJECT_DIR}${DJANGO_LOG_DIR_INTERNAL}"
         else
             log "Neither DJANGO_LOG_DIR_EXTERNAL nor DJANGO_LOG_DIR_INTERNAL is set. Django logs are not needed."
         fi
@@ -75,7 +75,7 @@ calculate_media_dirs(){
     else
         if [ -n "$TMP_UPLOADED_FILES_INTERNAL" ]; then
             log "TMP_UPLOADED_FILES_INTERNAL is set. Setting the temporary files directory to internal."
-            TMP_UPLOADED_FILES="${APP_DIR}${TMP_UPLOADED_FILES_INTERNAL}"
+            TMP_UPLOADED_FILES="${PROJECT_DIR}${TMP_UPLOADED_FILES_INTERNAL}"
         else
             log "Neither TMP_UPLOADED_FILES_EXTERNAL nor TMP_UPLOADED_FILES_INTERNAL is set." \
                 "The app will not handle media files."
@@ -97,7 +97,7 @@ calculate_media_dirs(){
         else
             if [ -n "$MEDIA_DIR_INTERNAL" ]; then
                 log "MEDIA_DIR_INTERNAL is set. Setting media directory to internal..."
-                MEDIA_DIR="${APP_DIR}${MEDIA_DIR_INTERNAL}"
+                MEDIA_DIR="${PROJECT_DIR}${MEDIA_DIR_INTERNAL}"
             else
                 log "ERROR: Neither MEDIA_DIR_EXTERNAL nor MEDIA_DIR_INTERNAL is set. Abort." >&2
                 exit 1
@@ -126,8 +126,8 @@ calculate_media_dirs(){
 
 main () {
     SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-    APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
-    CALCULATED_PATHS_ENV_FILE="${APP_DIR}env/calculated_paths/.env"
+    PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
+    CALCULATED_PATHS_ENV_FILE="${PROJECT_DIR}env/calculated_paths/.env"
     source ${SCRIPTS_DIR}utils.sh
 
     log "Generating the env file with calculated paths..."

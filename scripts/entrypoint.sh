@@ -33,7 +33,7 @@ load_env_vars () {
 }
 
 main (){
-    SCRIPTS_DIR=${ROOT_DIR}scripts/
+    SCRIPTS_DIR=${PROJECT_DIR}scripts/
     source ${SCRIPTS_DIR}utils.sh 2>&1
     
     log "Starting the api container"

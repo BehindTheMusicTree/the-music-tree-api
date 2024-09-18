@@ -34,8 +34,8 @@ load_env_vars () {
 
 main() {
     SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-    APP_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
-    APP_ENV_FILE="${APP_DIR}env/.env"
+    PROJECT_DIR=$(realpath $(dirname "$SCRIPTS_DIR"))/
+    APP_ENV_FILE="${PROJECT_DIR}env/.env"
     source "${SCRIPTS_DIR}utils.sh"
 
     log "Running the database and audio fingerprinter containers..."

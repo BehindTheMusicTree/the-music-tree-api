@@ -148,7 +148,7 @@ setup_media_dirs () {
 
 main (){
     SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-    APP_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
+    PROJECT_DIR=$(realpath "$(dirname "$SCRIPTS_DIR")")/
     source "${SCRIPTS_DIR}utils.sh"
     
     log "Setting up filesystem..."

@@ -86,8 +86,8 @@ export_value_removing_eventual_surrounding_quotes() {
 
 load_app_env_file_if_exists() {
     local SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-    local APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
-    local ENV_FILE=${APP_DIR}env/.env
+    local PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
+    local ENV_FILE=${PROJECT_DIR}env/.env
     if [ ! -f "$ENV_FILE" ]; then
         log "$ENV_FILE env file does not exist."
     else
@@ -105,8 +105,8 @@ load_project_calculated_paths_env_vars() {
     check_bool_vars_are_set APP_IS_EXPOSED
 
     local SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
-    local APP_DIR=$(realpath "${SCRIPTS_DIR}..")/
-    local CALTULATED_PATHS_DIR="${APP_DIR}env/calculated_paths/"
+    local PROJECT_DIR=$(realpath "${SCRIPTS_DIR}..")/
+    local CALTULATED_PATHS_DIR="${PROJECT_DIR}env/calculated_paths/"
 
     if [ ! -d "$CALTULATED_PATHS_DIR" ]; then
         log "ERROR: $CALTULATED_PATHS_DIR directory does not exist" >&2
