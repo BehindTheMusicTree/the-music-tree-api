@@ -103,9 +103,9 @@ RUN apt update && \
     pip install -r requirements.txt && \
     bash scripts/setup_filesystem.sh && \
     chmod +x ${PROJECT_DIR}scripts/entrypoint.sh && \
-    cp ${FIXTURES_DIR}/app/* ${FIXTURES_DIR} && \
-    cp ${FIXTURES_DIR}/app/users/test/* ${FIXTURES_DIR} && \
-    cp ${FIXTURES_DIR}/app/users/umg/* ${FIXTURES_DIR} && \
+    cp ${FIXTURES_DIR}app/* ${FIXTURES_DIR} && \
+    cp ${FIXTURES_DIR}app/users/test/* ${FIXTURES_DIR} && \
+    cp ${FIXTURES_DIR}app/users/umg/* ${FIXTURES_DIR} && \
     
 # Set the entrypoint using shell form to allow environment variable expansion
 ENTRYPOINT ["sh", "-c", "${PROJECT_DIR}scripts/entrypoint.sh"]
