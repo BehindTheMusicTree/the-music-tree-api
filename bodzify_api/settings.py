@@ -8,6 +8,12 @@ import sys
 import dotenv
 
 
+class StaticFileState:
+    SERVING = "SERVING"
+    COLLECTING = "COLLECTING"
+    NOT_NEEDED = "NOT_NEEDED"
+
+
 def print_django(message):
     print(f"[Django] {message}")
 
@@ -389,36 +395,22 @@ def setup_afp_connection():
     AFP_BASE_URL = "http://127.0.0.1"
 
 
-def setup_static_files_if_needed():
-    global STATIC_FILES
-    STATIC_FILES = os.getenv('STATIC_FILES')
-    if not STATIC_FILES:
-        print_django("Static files are not needed.")
-        static_files_are_being_served_or_collected = False
-    else:
-        print_django("STATIC_FILES is set. Setting up static files configuration...")
-        static_files_are_being_served_or_collected = True
+def setup_static_files():
+    print_django("Setting up static files configuration...")
 
-        if ENV == 'COLLECT_STATIC' or APP_IS_EXPOSED is False:
-            print_django("The app is in collect static mode or is not exposed (which means no web server). STATIC_ROOT is needed.")
-            global STATIC_ROOT
-            STATIC_ROOT = Path(STATIC_FILES)
-            print_django("STATIC_ROOT: " + str(STATIC_ROOT))
-            if not STATIC_ROOT.exists():
-                raise EnvironmentError(f"The static root {STATIC_ROOT} does not exist.")
-            print_django(f"{STATIC_ROOT} exists.")
-        else:
-            print_django(
-                "The app is exposed (which means it has a web server) or is not in collect static mode. STATIC_ROOT is \
-                not needed.")
-        global STATIC_URL
-        STATIC_URL = '/static/'
-        # STATICFILES_DIRS = [] # No additional static files directories are needed.
+    # Django constant, do not rename.
+    STATIC_ROOT = Path(STATIC_FILES)  # type: ignore
+    print_django("STATIC_ROOT: " + str(STATIC_ROOT))
+    if not STATIC_ROOT.exists():
+        raise EnvironmentError(f"The static root {STATIC_ROOT} does not exist.")
+    print_django(f"The dir {STATIC_ROOT} exists.")
 
-    return static_files_are_being_served_or_collected
+    global STATIC_URL
+    STATIC_URL = '/static/'
+    # STATICFILES_DIRS = [] # No additional static files directories are needed.
 
 
-def setup_installed_apps(static_files_are_being_served_or_collected: bool, app_is_exposed: bool):
+def setup_installed_apps(static_files_state: str, app_is_exposed: bool):
     global INSTALLED_APPS
     INSTALLED_APPS = ['django.contrib.admin',
                       'django.contrib.auth',
@@ -438,7 +430,7 @@ def setup_installed_apps(static_files_are_being_served_or_collected: bool, app_i
     if app_is_exposed:
         INSTALLED_APPS.append('rest_framework_simplejwt')
 
-    if static_files_are_being_served_or_collected:
+    if static_files_state in [StaticFileState.COLLECTING, StaticFileState.SERVING]:
         INSTALLED_APPS.append('django.contrib.staticfiles')
 
 
@@ -679,9 +671,9 @@ FILE_UPLOAD_ENABLED = None
 
 if 'loaddata' in sys.argv:
     print_django("settings.py is being executed because of a loaddata command.")
+    STATIC_FILES_STATE = StaticFileState.NOT_NEEDED
     setup_app_constants()
-    setup_installed_apps(static_files_are_being_served_or_collected=False,
-                         app_is_exposed=False)
+    setup_installed_apps(static_files_state=STATIC_FILES_STATE, app_is_exposed=False)
     setup_middlewares()
     setup_django_constants()
     setup_db_connection_if_needed()
@@ -692,9 +684,21 @@ else:
     setup_app_exposure_if_needed()
     setup_app_constants()
     setup_afp_connection()
-    static_files_are_being_served_or_collected = setup_static_files_if_needed()
-    setup_installed_apps(static_files_are_being_served_or_collected=static_files_are_being_served_or_collected,
-                         app_is_exposed=APP_IS_EXPOSED)
+
+    STATIC_FILES = os.getenv('STATIC_FILES')
+    if ENV == 'COLLECT_STATIC':
+        STATIC_FILES_STATE = StaticFileState.COLLECTING
+        setup_static_files()
+    else:
+        if not STATIC_FILES:
+            print_django("Static files are not needed.")
+            STATIC_FILES_STATE = StaticFileState.NOT_NEEDED
+        else:
+            print_django("Static files are being served.")
+            STATIC_FILES_STATE = StaticFileState.SERVING
+            setup_static_files()
+
+    setup_installed_apps(static_files_state=STATIC_FILES_STATE, app_is_exposed=APP_IS_EXPOSED)
     setup_middlewares()
     setup_db_connection_if_needed()
     setup_templates()

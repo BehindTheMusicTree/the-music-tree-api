@@ -51,5 +51,5 @@ urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
                path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc')]
 
 
-if settings.ENV != 'COLLECT_STATIC' and settings.APP_IS_EXPOSED is False:
+if settings.STATIC_FILES_STATE in [settings.StaticFileState.COLLECTING, settings.StaticFileState.SERVING]:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
