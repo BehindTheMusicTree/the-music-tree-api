@@ -11,10 +11,10 @@ log() {
 create_directory_if_not_exists_or_exit() {
     local dir_path=$1
     if [ ! -d "$dir_path" ]; then
-        log"Creating directory $dir_path ..."
-        output=$(mkdir -p "$dir_path")
+        log "Creating directory $dir_path ..."
+        mkdir -p "$dir_path"
         if [ $? -ne 0 ]; then
-            log "ERROR: Failed to create directory $dir_path : $output" >&2
+            log "ERROR: Failed to create directory $dir_path" >&2
             exit 1
         fi
         log "Directory $dir_path created successfully."

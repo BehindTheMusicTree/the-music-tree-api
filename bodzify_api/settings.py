@@ -13,31 +13,39 @@ def remove_eventual_surronding_quotes(s: str) -> str:
     return s
 
 
+def load_env_vars():
+    APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
+    APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
+    if not APP_ENV_FILE.exists():
+        print(f"No env file at {APP_ENV_FILE}")
+        APP_ENV_FILE = None
+    else:
+        print(f"Env file provided at {APP_ENV_FILE} . Loading...")
+        dotenv.load_dotenv(APP_ENV_FILE)
+        print("Env file loaded.")
+
+    CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
+    generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
+    try:
+        result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path)],
+                                check=True,
+                                stderr=subprocess.PIPE,
+                                text=True,
+                                env=os.environ.copy())
+    except subprocess.CalledProcessError as e:
+        print("Error while generating the paths env file:", e.stderr)
+        raise EnvironmentError("Error while generating the paths env file: " + str(e)) from e
+
+    dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
-APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH
-if not APP_ENV_FILE.exists():
-    print(f"No env file at {APP_ENV_FILE}")
-    APP_ENV_FILE = None
-else:
-    print(f"Env file provided at {APP_ENV_FILE} . Loading...")
-    dotenv.load_dotenv(APP_ENV_FILE)
-    print("Env file loaded.")
+load_env_vars()
 
-CALCULATED_PATHS_ENV_FILE = BASE_DIR / 'env/calculated_paths/.env'
-generate_calculated_paths_env_file_script_path = BASE_DIR / 'scripts/generate_calculated_paths_env_file.sh'
-try:
-    result = subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path)],
-                            check=True,
-                            stderr=subprocess.PIPE,
-                            text=True,
-                            env=os.environ.copy())
-except subprocess.CalledProcessError as e:
-    print("Error while generating the paths env file:", e.stderr)
-    raise EnvironmentError("Error while generating the paths env file: " + str(e)) from e
-
-dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
+ENV = os.getenv('ENV')
+if not ENV:
+    raise EnvironmentError("The ENV variable must be set")
 
 APP_VERSION = os.getenv('APP_VERSION')
 if not APP_VERSION:
@@ -157,22 +165,28 @@ DEBUG = os.getenv('DEBUG')
 if not DEBUG or DEBUG not in ['true', 'false']:
     raise EnvironmentError("The DEBUG variable is not set or is not a boolean")
 
+
 STATIC_FILES = os.getenv('STATIC_FILES')
 if not STATIC_FILES:
     print("Static files are not needed.")
-    STATIC_ROOT = ''
     STATIC_FILES_ARE_BEING_SERVED_OR_COLLECTED = False
 else:
     print("STATIC_FILES is set. Setting up static files configuration...")
     STATIC_FILES_ARE_BEING_SERVED_OR_COLLECTED = True
+
+    if ENV == 'COLLECT_STATIC' or APP_IS_EXPOSED is False:
+        print("The app is in collect static mode or is not exposed (which means no web server). STATIC_ROOT is needed.")
+        STATIC_ROOT = Path(STATIC_FILES)
+        print("STATIC_ROOT: " + str(STATIC_ROOT))
+        if not STATIC_ROOT.exists():
+            raise EnvironmentError(f"The static root {STATIC_ROOT} does not exist.")
+        print(f"{STATIC_ROOT} exists.")
+    else:
+        print("The app is exposed (which means it has a web server) or is not in collect static mode. STATIC_ROOT is \
+            not needed.")
+
     STATICFILES_DIRS = []
-    STATIC_URL = 'static/'
-    STATIC_ROOT = Path(STATIC_FILES)
-    print("STATIC_ROOT: " + str(STATIC_ROOT))
-    print("Checkink if the static root exists...")
-    if not STATIC_ROOT.exists():
-        raise EnvironmentError(f"The static root {STATIC_ROOT} does not exist.")
-    print("The static root exists.")
+    STATIC_URL = '/static/'
 
 INSTALLED_APPS = ['django.contrib.admin',
                   'django.contrib.auth',
