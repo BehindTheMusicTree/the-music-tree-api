@@ -127,7 +127,6 @@ jobs:
     env:
       ENV: ${{ vars.ENV }}
       APP_NAME: ${{vars.APP_NAME}}
-      APP_VERSION: ${{ vars.APP_VERSION }}
       DEBUG: false
       DB_IS_NEEDED: false
       APP_IS_EXPOSED: false
@@ -152,6 +151,9 @@ jobs:
         run: bash scripts/setup_filesystem.sh
 
       - name: Collect static files
+        env:
+          APP_VERSION: ${{ vars.APP_VERSION }}
+          STATIC_URL: ${{ vars.STATIC_URL }}
         run: python manage.py collectstatic --noinput
         
       - name: Configure Git
