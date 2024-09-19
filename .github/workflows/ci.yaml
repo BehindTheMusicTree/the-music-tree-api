@@ -153,7 +153,7 @@ jobs:
       - name: Collect static files
         env:
           APP_VERSION: ${{ vars.APP_VERSION }}
-          STATIC_URL: ${{ vars.STATIC_URL }}
+          STATIC_FILES_URL: ${{ vars.API_STATIC_FILES_URL }}
         run: python manage.py collectstatic --noinput
         
       - name: Configure Git
@@ -214,10 +214,11 @@ jobs:
             DB_CONNECTION_TEST_SLEEP_INTERVAL=${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
             TMP_UPLOADED_FILES_EXTERNAL=${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
             MEDIA_DIR_EXTERNAL=${{ vars.MEDIA_DIR_EXTERNAL }}
+            MEDIA_URL=${{ vars.API_MEDIA_URL }}
             LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
             STATIC_FILES_EXTERNAL=${{ vars.STATIC_FILES_EXTERNAL }}
             STATIC_FILES_INTERNAL=${{ vars.STATIC_FILES_INTERNAL }}
-            STATIC_URL=${{ vars.STATIC_URL }}
+            STATIC_FILES_URL=${{ vars.API_STATIC_FILES_URL }}
             DJANGO_LOG_DIR_EXTERNAL=${{ vars.DJANGO_LOG_DIR_EXTERNAL }}
             DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
             DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}

@@ -352,7 +352,7 @@ def setup_static_files():
     print_django(f"The dir {STATIC_ROOT} exists.")
 
     global STATIC_URL
-    STATIC_URL = load_required_str_env_var('STATIC_URL')
+    STATIC_URL = load_required_str_env_var('STATIC_FILES_URL')
     # STATICFILES_DIRS = [] # No additional static files directories are needed.
 
 
@@ -500,6 +500,9 @@ def setup_media_dirs():
 
     global ACOUSTID_API_KEY
     ACOUSTID_API_KEY = load_required_str_env_var('ACOUSTID_API_KEY')
+
+    global MEDIA_URL
+    MEDIA_URL = load_required_str_env_var('MEDIA_URL')
 
     global MEDIA_ROOT  # Django constant, do not rename.
     MEDIA_ROOT = load_required_path_env_var('MEDIA_DIR')
