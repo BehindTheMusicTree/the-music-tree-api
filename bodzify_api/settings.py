@@ -501,11 +501,12 @@ def setup_media_dirs():
     global ACOUSTID_API_KEY
     ACOUSTID_API_KEY = load_required_str_env_var('ACOUSTID_API_KEY')
 
-    global MEDIA_URL
-    MEDIA_URL = load_required_str_env_var('MEDIA_URL')
-
     global MEDIA_ROOT  # Django constant, do not rename.
     MEDIA_ROOT = load_required_path_env_var('MEDIA_DIR')
+
+    if APP_IS_EXPOSED:
+        global MEDIA_URL
+        MEDIA_URL = load_required_str_env_var('MEDIA_URL')
 
     global LIBRARIES_DIR_NAME
     LIBRARIES_DIR_NAME = load_required_str_env_var('LIBRARIES_DIR_NAME')
