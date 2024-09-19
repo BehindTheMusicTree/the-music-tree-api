@@ -352,7 +352,7 @@ def setup_static_files():
     print_django(f"The dir {STATIC_ROOT} exists.")
 
     global STATIC_URL
-    STATIC_URL = '/static/'
+    STATIC_URL = load_required_str_env_var('STATIC_URL')
     # STATICFILES_DIRS = [] # No additional static files directories are needed.
 
 
