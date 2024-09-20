@@ -12,7 +12,7 @@ on:
     branches: [main, dev]
 
 env:
-  SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
+  SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.DOMAIN_NAME }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
   CONTAINER_ROOT_DIR: /home/app/
   DB_CONNECTION_TEST_MAX_ATTEMPTS: 10
@@ -248,7 +248,7 @@ jobs:
       - name: Add host to known_hosts
         run: |
           mkdir -p ~/.ssh &&
-          ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ vars.DOMAIN_NAME }} >> ~/.ssh/known_hosts
 
       - name: Set api environment variables on server
         env: 
@@ -326,7 +326,7 @@ jobs:
 
       - name: Add host to known_hosts
         run: |
-          mkdir -p ~/.ssh && ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts      
+          mkdir -p ~/.ssh && ssh-keyscan -H ${{ vars.DOMAIN_NAME }} >> ~/.ssh/known_hosts      
           
       - name: Generate partial docker compose file
         env: 
