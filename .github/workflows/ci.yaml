@@ -17,6 +17,7 @@ env:
   CONTAINER_ROOT_DIR: /home/app/
   DB_CONNECTION_TEST_MAX_ATTEMPTS: 10
   DB_CONNECTION_TEST_SLEEP_INTERVAL: 5
+  DOCKERIZED_APP_ENV_FILENAME: .env_api
   
 jobs:
   pytest:
@@ -252,7 +253,7 @@ jobs:
 
       - name: Set api environment variables on server
         env: 
-          API_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.DOCKERIZED_APP_ENV_FILENAME }}"
+          API_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ env.DOCKERIZED_APP_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} bash -s << 'EOF'
             rm -f ${{ env.API_ENV_FILE }} &&
@@ -359,7 +360,7 @@ jobs:
           APP_VERSION: ${{ vars.APP_VERSION }}
           APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
           APP_PORT: ${{ vars.API_PORT }}
-          APP_ENV_FILENAME: ${{ vars.DOCKERIZED_APP_ENV_FILENAME }}
+          APP_ENV_FILENAME: ${{ env.DOCKERIZED_APP_ENV_FILENAME }}
           GUNICORN_LOG_DIR: ${{ vars.GUNICORN_LOG_DIR }}
           GUNICORN_LOG_ERROR_FILENAME: ${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
           GUNICORN_LOG_ACCESS_FILENAME: ${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
