@@ -40,7 +40,7 @@ def load_required_path_env_var(var_name: str) -> Path:
 
 def load_calculated_env_paths(base_dir: Path):
     CALCULATED_PATHS_ENV_FILE = base_dir / 'env/calculated_paths/.env'
-    generate_calculated_paths_env_file_script_path = base_dir / 'scripts/generate_calculated_paths_env_file.sh'
+    generate_calculated_paths_env_file_script_path = base_dir / 'scripts/generate-calculated-paths-env-file.sh'
     try:
         subprocess.run(['bash', str(generate_calculated_paths_env_file_script_path)],
                        check=True,

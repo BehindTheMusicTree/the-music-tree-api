@@ -36,13 +36,13 @@ fi
 
 load_env_vars
 
-bash ${SCRIPTS_DIR}purge_django_data_USE_WITH_CAUTION.sh -s
+bash ${SCRIPTS_DIR}purge-django-data-USE-WITH-CAUTION.sh -s
 if [ $? -ne 0 ]; then
   log "ERROR: Failed to purge data." >&2
   exit 1
 fi
 
-bash ${SCRIPTS_DIR}init_django_data.sh
+bash ${SCRIPTS_DIR}init-django-data.sh
 if [ $? -ne 0 ]; then
   log "ERROR: Failed to initialize Django data." >&2
   exit 1

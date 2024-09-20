@@ -48,7 +48,7 @@ main (){
     fi
     log "Database is ready"
 
-    output=$(bash ${SCRIPTS_DIR}init_django_data.sh 2>&1)
+    output=$(bash ${SCRIPTS_DIR}init-django-data.sh 2>&1)
     if [ $? -ne 0 ]; then
         log "Failed to initialize Django data: $output" >&2
         exit 1

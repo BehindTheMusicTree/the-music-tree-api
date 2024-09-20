@@ -100,13 +100,13 @@ COPY . $PROJECT_DIR
 WORKDIR $PROJECT_DIR
 
 RUN apt update && \
-    bash scripts/install_dependencies.sh && \
+    bash scripts/install-dependencies.sh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
     pip install -r requirements.txt && \
-    bash scripts/setup_filesystem.sh && \
+    bash scripts/setup-filesystem.sh && \
     chmod +x ${PROJECT_DIR}scripts/entrypoint.sh && \
     FIXTURES_DIR=${APP_DIR}fixtures/ && \
     cp ${FIXTURES_DIR}app/* ${FIXTURES_DIR} && \

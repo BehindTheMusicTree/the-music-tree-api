@@ -95,7 +95,7 @@ main (){
   MANAGE_SCRIPT=${PROJECT_DIR}manage.py
   log "MANAGE_SCRIPT: $MANAGE_SCRIPT"
 
-  bash ${SCRIPTS_DIR}init_db_and_role.sh
+  bash ${SCRIPTS_DIR}init-db-and-role.sh
   if [ $? -ne 0 ]; then
     log "ERROR: Failed to initialize database and role." >&2
     exit 1
