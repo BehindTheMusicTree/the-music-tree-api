@@ -4,12 +4,15 @@
 SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 source ${SCRIPTS_DIR}utils.sh
 
-log "Generating partial docker-compose..."
+log "Generating partial docker-compose files..."
+
+# One docker-compose part file for each service so that the Web Server Management add the network name for 
+# each one of them separatly.
 
 load_app_env_file_if_exists
 
 REQUIRED_NON_BOOL_VARS=(
-  DOCKER_COMPOSE_PARTS_DIR_NAME
+  DOCKER_COMPOSE_PART_FILENAME_SUFFIXE
   DOCKERHUB_USERNAME
   DB_IMAGE_REPO
   DB_VERSION
@@ -41,16 +44,7 @@ REQUIRED_NON_BOOL_VARS=(
 )
 check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
 
-DOCKER_COMPOSE_PARTS_DIR="${SCRIPTS_DIR}${DOCKER_COMPOSE_PARTS_DIR_NAME}/"
-
-# One docker-compose part file for each service so that the Web Server Management add the network name for 
-# each one of them separatly.
-
-log "Generating the partial docker-compose files in $DOCKER_COMPOSE_PARTS_DIR..."
-
-create_dir_if_not_exists $DOCKER_COMPOSE_PARTS_DIR
-
-DOCKER_COMPOSE_PART_DB_FILE="${DOCKER_COMPOSE_PARTS_DIR}db_compose_part.yml"
+DOCKER_COMPOSE_PART_DB_FILE="${SCRIPTS_DIR}db${DOCKER_COMPOSE_PART_FILENAME_SUFFIXE}"
 log "Generating the DB partial docker-compose files in $DOCKER_COMPOSE_PART_DB_FILE..."
 cat << EOF > "$DOCKER_COMPOSE_PART_DB_FILE"
   db:
@@ -64,8 +58,8 @@ cat << EOF > "$DOCKER_COMPOSE_PART_DB_FILE"
 EOF
 log "DB partial docker-compose file generated."
 
-DOCKER_COMPOSE_PART_AFP_FILE="${DOCKER_COMPOSE_PARTS_DIR}afp_compose_part.yml"
-log "Generating the DB partial docker-compose files in $DOCKER_COMPOSE_PART_AFP_FILE..."
+DOCKER_COMPOSE_PART_AFP_FILE="${SCRIPTS_DIR}afp${DOCKER_COMPOSE_PART_FILENAME_SUFFIXE}"
+log "Generating the AFP partial docker-compose files in $DOCKER_COMPOSE_PART_AFP_FILE..."
 cat << EOF > "$DOCKER_COMPOSE_PART_AFP_FILE"
   audio_fingerprinter:
     working_dir: /app/
@@ -81,8 +75,8 @@ cat << EOF > "$DOCKER_COMPOSE_PART_AFP_FILE"
 EOF
 log "AFP partial docker-compose file generated."
 
-DOCKER_COMPOSE_PART_API_FILE="${DOCKER_COMPOSE_PARTS_DIR}api_compose_part.yml"
-log "Generating the DB partial docker-compose files in $DOCKER_COMPOSE_PART_API_FILE..."
+DOCKER_COMPOSE_PART_API_FILE="${SCRIPTS_DIR}api${DOCKER_COMPOSE_PART_FILENAME_SUFFIXE}"
+log "Generating the API partial docker-compose files in $DOCKER_COMPOSE_PART_API_FILE..."
 cat << EOF > "$DOCKER_COMPOSE_PART_API_FILE"
   ${APP_SERVICE_NAME}:
     working_dir: $APP_ROOT_DIR

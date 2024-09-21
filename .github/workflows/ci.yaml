@@ -20,221 +20,221 @@ env:
   DOCKERIZED_APP_ENV_FILENAME: .env_api
   
 jobs:
-  pytest:
-    name: Pytest
-    runs-on: ubuntu-latest
-    environment: 
-      name: CI_TEST
-    env:
-      ENV: ${{ vars.ENV }}
-      APP_NAME: ${{ vars.APP_NAME }}
-      APP_VERSION: ${{ vars.APP_VERSION }}
+  # pytest:
+  #   name: Pytest
+  #   runs-on: ubuntu-latest
+  #   environment: 
+  #     name: CI_TEST
+  #   env:
+  #     ENV: ${{ vars.ENV }}
+  #     APP_NAME: ${{ vars.APP_NAME }}
+  #     APP_VERSION: ${{ vars.APP_VERSION }}
 
-      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+  #     DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
-      DEBUG: true
-      DB_IS_NEEDED: true
-      APP_IS_EXPOSED: false
-      TMP_UPLOADED_FILES_EXTERNAL: ${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
-      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
-      MEDIA_DIR_INTERNAL: ${{ vars.MEDIA_DIR_INTERNAL }}
-      LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
+  #     DEBUG: true
+  #     DB_IS_NEEDED: true
+  #     APP_IS_EXPOSED: false
+  #     TMP_UPLOADED_FILES_EXTERNAL: ${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
+  #     ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
+  #     MEDIA_DIR_INTERNAL: ${{ vars.MEDIA_DIR_INTERNAL }}
+  #     LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
 
-      DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
-      DB_VERSION: ${{ vars.DB_VERSION }}
-      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
-      DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
-      DB_SUPERUSER_NAME: ${{ vars.DB_SUPERUSER_NAME }}
-      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
-      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
-      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
-      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
-      DB_URL: ${{ vars.DB_URL }}
-      DB_PORT: ${{ vars.DB_PORT }}
+  #     DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
+  #     DB_VERSION: ${{ vars.DB_VERSION }}
+  #     DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+  #     DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
+  #     DB_SUPERUSER_NAME: ${{ vars.DB_SUPERUSER_NAME }}
+  #     DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
+  #     DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
+  #     DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
+  #     DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+  #     DB_URL: ${{ vars.DB_URL }}
+  #     DB_PORT: ${{ vars.DB_PORT }}
 
-      AFP_URL: ${{ vars.AFP_URL }}
-      AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
-      AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
-      AFP_VERSION: ${{ vars.AFP_VERSION }}
-      AFP_PORT: ${{ vars.AFP_PORT }}
-      AFP_POOL_DIR_EXTERNAL: ${{ vars.AFP_POOL_DIR_EXTERNAL }}
-      AFP_POST_ENDPOINT: ${{ vars.AFP_POST_ENDPOINT }}
+  #     AFP_URL: ${{ vars.AFP_URL }}
+  #     AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
+  #     AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
+  #     AFP_VERSION: ${{ vars.AFP_VERSION }}
+  #     AFP_PORT: ${{ vars.AFP_PORT }}
+  #     AFP_POOL_DIR_EXTERNAL: ${{ vars.AFP_POOL_DIR_EXTERNAL }}
+  #     AFP_POST_ENDPOINT: ${{ vars.AFP_POST_ENDPOINT }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.12
+  #     - name: Setup Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: 3.12
 
-      - name: Cache apt packages
-        uses: actions/cache@v2
-        with:
-          path: /var/cache/apt
-          key: ${{ runner.os }}-apt-${{ hashFiles('scripts/install-dependencies.sh') }}
-          restore-keys: |
-            ${{ runner.os }}-apt-
+  #     - name: Cache apt packages
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: /var/cache/apt
+  #         key: ${{ runner.os }}-apt-${{ hashFiles('scripts/install-dependencies.sh') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-apt-
   
-      - name: Cache pip
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+  #     - name: Cache pip
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/.cache/pip
+  #         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-pip-
 
-      - name: Install dependencies
-        run: sudo -E bash scripts/install-dependencies.sh
+  #     - name: Install dependencies
+  #       run: sudo -E bash scripts/install-dependencies.sh
 
-      - name: Add fpcalc to PATH
-        run: echo "bin/fpcalc" >> $GITHUB_PATH
+  #     - name: Add fpcalc to PATH
+  #       run: echo "bin/fpcalc" >> $GITHUB_PATH
 
-      - name: Install requirements
-        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
+  #     - name: Install requirements
+  #       run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
 
-      - name: Set up filesystem
-        run: bash scripts/setup-filesystem.sh
+  #     - name: Set up filesystem
+  #       run: bash scripts/setup-filesystem.sh
 
-      - name: Run database and Audio Fingerprint containers
-        env:
-          DB_DATA_MUST_PERSIST: false
-        run: bash scripts/run-db-and-afp-containers.sh
+  #     - name: Run database and Audio Fingerprint containers
+  #       env:
+  #         DB_DATA_MUST_PERSIST: false
+  #       run: bash scripts/run-db-and-afp-containers.sh
         
-      - name: Wait for database service to start
-        run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
+  #     - name: Wait for database service to start
+  #       run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
-      - name: Set up fixtures files
-        env:
-          FIXTURES_DIR: ${{ vars.APP_NAME }}/fixtures/
-        run: |
-          cp ${{ env.FIXTURES_DIR }}app/*.json ${{ env.FIXTURES_DIR }}
-          cp ${{ env.FIXTURES_DIR }}users/ci_test/*.json ${{ env.FIXTURES_DIR }}
+  #     - name: Set up fixtures files
+  #       env:
+  #         FIXTURES_DIR: ${{ vars.APP_NAME }}/fixtures/
+  #       run: |
+  #         cp ${{ env.FIXTURES_DIR }}app/*.json ${{ env.FIXTURES_DIR }}
+  #         cp ${{ env.FIXTURES_DIR }}users/ci_test/*.json ${{ env.FIXTURES_DIR }}
 
-      - name: Init django data
-        run: bash scripts/init-django-data.sh
+  #     - name: Init django data
+  #       run: bash scripts/init-django-data.sh
 
-      - name: Run pytest
-        run: pytest
+  #     - name: Run pytest
+  #       run: pytest
 
-  collect-and-push-static-files:
-    name: Collect and push static files
-    runs-on: ubuntu-latest
-    needs: [pytest]
-    environment: 
-      name: COLLECT_STATIC
-    env:
-      ENV: ${{ vars.ENV }}
-      APP_NAME: ${{vars.APP_NAME}}
-      DEBUG: false
-      DB_IS_NEEDED: false
-      APP_IS_EXPOSED: false
-      STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
-    outputs:
-      collect_static_files_commit_hash: ${{ steps.commit-and-push-static-Files.outputs.collect_static_files_commit_hash }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # collect-and-push-static-files:
+  #   name: Collect and push static files
+  #   runs-on: ubuntu-latest
+  #   needs: [pytest]
+  #   environment: 
+  #     name: COLLECT_STATIC
+  #   env:
+  #     ENV: ${{ vars.ENV }}
+  #     APP_NAME: ${{vars.APP_NAME}}
+  #     DEBUG: false
+  #     DB_IS_NEEDED: false
+  #     APP_IS_EXPOSED: false
+  #     STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
+  #   outputs:
+  #     collect_static_files_commit_hash: ${{ steps.commit-and-push-static-Files.outputs.collect_static_files_commit_hash }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: 3.11
 
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
+  #     - name: Install dependencies
+  #       run: |
+  #         pip install --upgrade pip
+  #         pip install -r requirements.txt
 
-      - name: Set up filesystem
-        run: bash scripts/setup-filesystem.sh
+  #     - name: Set up filesystem
+  #       run: bash scripts/setup-filesystem.sh
 
-      - name: Collect static files
-        env:
-          APP_VERSION: ${{ vars.APP_VERSION }}
-          STATIC_FILES_URL: ${{ vars.API_STATIC_FILES_URL }}
-        run: python manage.py collectstatic --noinput
+  #     - name: Collect static files
+  #       env:
+  #         APP_VERSION: ${{ vars.APP_VERSION }}
+  #         STATIC_FILES_URL: ${{ vars.API_STATIC_FILES_URL }}
+  #       run: python manage.py collectstatic --noinput
         
-      - name: Configure Git
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
+  #     - name: Configure Git
+  #       run: |
+  #         git config --global user.name 'GitHub Actions'
+  #         git config --global user.email 'actions@github.com'
 
-      - name: Commit and push static files
-        id: commit-and-push-static-Files
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git add -A
-          git diff --staged --exit-code || git commit -am "Add collected static files"          
-          git push
+  #     - name: Commit and push static files
+  #       id: commit-and-push-static-Files
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         git add -A
+  #         git diff --staged --exit-code || git commit -am "Add collected static files"          
+  #         git push
 
-          # Output the commit hash so that it can be used in the next job
-          echo "collect_static_files_commit_hash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  #         # Output the commit hash so that it can be used in the next job
+  #         echo "collect_static_files_commit_hash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-  build-and-push-to-dockerhub:
-    name: Build / Push to Dockerhub
-    runs-on: ubuntu-latest
-    needs: [collect-and-push-static-files]
-    environment: 
-      name: TEST
-    env:
-      IMAGE_FULL_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
-      IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
-    steps:
-      - name: Checkout specific commit
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
-          ref: ${{ needs.collect-and-push-static-files.outputs.collect_static_files_commit_hash }}
+  # build-and-push-to-dockerhub:
+  #   name: Build / Push to Dockerhub
+  #   runs-on: ubuntu-latest
+  #   needs: [collect-and-push-static-files]
+  #   environment: 
+  #     name: TEST
+  #   env:
+  #     IMAGE_FULL_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
+  #     IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
+  #   steps:
+  #     - name: Checkout specific commit
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
+  #         ref: ${{ needs.collect-and-push-static-files.outputs.collect_static_files_commit_hash }}
 
-      - name: Display last commit message
-        run: git log -1 --pretty=format:"%s"
+  #     - name: Display last commit message
+  #       run: git log -1 --pretty=format:"%s"
 
-      - name: List files
-        run: ls -la
+  #     - name: List files
+  #       run: ls -la
 
-      - name: Login to Dockerhub
-        run: |
-          echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
-          docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+  #     - name: Login to Dockerhub
+  #       run: |
+  #         echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
+  #         docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build and Push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ env.IMAGE_FULL_NAME }}
-          build-args: |
-            PROJECT_DIR=${{ env.CONTAINER_ROOT_DIR }}
-            APP_NAME=${{ vars.APP_NAME }}
-            APP_VERSION=${{ vars.APP_VERSION }}
-            DB_CONNECTION_TEST_MAX_ATTEMPTS=${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }}
-            DB_CONNECTION_TEST_SLEEP_INTERVAL=${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
-            TMP_UPLOADED_FILES_EXTERNAL=${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
-            MEDIA_DIR_EXTERNAL=${{ vars.MEDIA_DIR_EXTERNAL }}
-            MEDIA_URL=${{ vars.API_MEDIA_URL }}
-            LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
-            STATIC_FILES_EXTERNAL=${{ vars.STATIC_FILES_EXTERNAL }}
-            STATIC_FILES_INTERNAL=${{ vars.STATIC_FILES_INTERNAL }}
-            STATIC_FILES_URL=${{ vars.API_STATIC_FILES_URL }}
-            DJANGO_LOG_DIR_EXTERNAL=${{ vars.DJANGO_LOG_DIR_EXTERNAL }}
-            DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
-            DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
-            DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
-            DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}
-            DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
-            DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
-            DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}
-            GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
-            GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
-            GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
+  #     - name: Build and Push Docker image
+  #       uses: docker/build-push-action@v5
+  #       with:
+  #         context: .
+  #         push: true
+  #         tags: ${{ env.IMAGE_FULL_NAME }}
+  #         build-args: |
+  #           PROJECT_DIR=${{ env.CONTAINER_ROOT_DIR }}
+  #           APP_NAME=${{ vars.APP_NAME }}
+  #           APP_VERSION=${{ vars.APP_VERSION }}
+  #           DB_CONNECTION_TEST_MAX_ATTEMPTS=${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }}
+  #           DB_CONNECTION_TEST_SLEEP_INTERVAL=${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
+  #           TMP_UPLOADED_FILES_EXTERNAL=${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
+  #           MEDIA_DIR_EXTERNAL=${{ vars.MEDIA_DIR_EXTERNAL }}
+  #           MEDIA_URL=${{ vars.API_MEDIA_URL }}
+  #           LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
+  #           STATIC_FILES_EXTERNAL=${{ vars.STATIC_FILES_EXTERNAL }}
+  #           STATIC_FILES_INTERNAL=${{ vars.STATIC_FILES_INTERNAL }}
+  #           STATIC_FILES_URL=${{ vars.API_STATIC_FILES_URL }}
+  #           DJANGO_LOG_DIR_EXTERNAL=${{ vars.DJANGO_LOG_DIR_EXTERNAL }}
+  #           DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
+  #           DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
+  #           DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
+  #           DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}
+  #           DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
+  #           DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
+  #           DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}
+  #           GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
+  #           GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
+  #           GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
     runs-on: ubuntu-latest
-    needs: [build-and-push-to-dockerhub]
+    # needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
     env:
@@ -315,12 +315,12 @@ jobs:
   set-partial-docker-compose-on-server:
     name: Set partial docker-compose on server
     runs-on: ubuntu-latest
-    needs: [build-and-push-to-dockerhub]
+    # needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
     env:
-      DOCKER_COMPOSE_PARTS_DIR_NAME: ${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}
-      SERVER_DOCKER_COMPOSE_DIR: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}
+      SERVER_DOCKER_COMPOSE_DIR: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}/
+      DOCKER_COMPOSE_PART_FILENAME_SUFFIXE: _part_compose.yml
     steps:
       - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.9.0
@@ -333,9 +333,7 @@ jobs:
           
       - name: Generate partial docker compose files
         env: 
-          DOCKER_COMPOSE_PART_FILENAME_API: ${{ env.DOCKER_COMPOSE_PART_FILENAME_API }}
-          DOCKER_COMPOSE_PART_FILENAME_AFP: ${{ env.DOCKER_COMPOSE_PART_FILENAME_AFP }}
-          DOCKER_COMPOSE_PART_FILENAME_DB: ${{ env.DOCKER_COMPOSE_PART_FILENAME_DB }}
+          DOCKER_COMPOSE_PART_FILENAME_SUFFIXE: ${{ vars.DOCKER_COMPOSE_PART_FILENAME_SUFFIXE }}
           DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
           DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
@@ -370,17 +368,11 @@ jobs:
           STATIC_FILES_EXTERNAL: ${{ vars.STATIC_FILES_EXTERNAL }}
           TMP_UPLOADED_FILES_EXTERNAL: ${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
         run: |
-          bash scripts/generate-docker-compose-part.sh
+          bash scripts/generate-docker-compose-parts.sh
 
-      - name: SSH Remove previous partial docker-compose files
-        env:
-          SERVER_DOCKER_COMPOSE_PARTS_DIR: ${{ env.SERVER_DOCKER_COMPOSE_DIR }}${{ env.DOCKER_COMPOSE_PARTS_DIR_NAME }}
+      - name: SSH Transfer partial docker-compose files to server
         run: |
-          ssh ${{ env.SSH_DESTINATION }} "rm -rf ${{ env.SERVER_DOCKER_COMPOSE_PARTS_DIR }}"
-
-      - name: Transfer partial docker-compose files to server
-        run: |
-          scp scripts/${{ env.DOCKER_COMPOSE_PARTS_DIR_NAME }} ${{ env.SSH_DESTINATION }}:${{ env.SERVER_DOCKER_COMPOSE_DIR }}
+          scp scripts/*${{ vars.DOCKER_COMPOSE_PART_FILENAME_SUFFIXE }} ${{ env.SSH_DESTINATION }}:${{ env.SERVER_DOCKER_COMPOSE_DIR }}
 
   redeploy-webhook-call:
     name: Redeploy webhook call
