@@ -2,6 +2,7 @@
 
 load_env_vars () {
     REQUIRED_NON_BOOL_VARS=(
+        PROJECT_DIR
         APP_PORT
         DB_CONTAINER_NAME
         DB_PORT
