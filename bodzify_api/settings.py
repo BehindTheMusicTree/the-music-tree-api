@@ -233,13 +233,15 @@ def setup_app_exposure_if_needed():
                 print_django(str(csrf_trusted_origin))
         else:
             raise EnvironmentError("The app is exposed but no allowed hosts are set.")
+
+        print_django(f"CORS_ALLOW_ALL_ORIGINS is not set as a web server is used to handle CORS.")
     else:
         ALLOWED_HOSTS = ['127.0.0.1']
+        global CORS_ALLOW_ALL_ORIGINS
+        CORS_ALLOW_ALL_ORIGINS = True
+        print_django(f"CORS_ALLOW_ALL_ORIGINS is set to: {CORS_ALLOW_ALL_ORIGINS}")
 
     print_django(f"ALLOWED_HOSTS is set to {ALLOWED_HOSTS}")
-    global CORS_ALLOW_ALL_ORIGINS
-    CORS_ALLOW_ALL_ORIGINS = True  # TODO: don't allow all
-    print_django(f"CORS_ALLOW_ALL_ORIGINS is set to: {CORS_ALLOW_ALL_ORIGINS}")
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

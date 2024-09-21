@@ -118,118 +118,118 @@ jobs:
   #     - name: Run pytest
   #       run: pytest
 
-  # collect-and-push-static-files:
-  #   name: Collect and push static files
-  #   runs-on: ubuntu-latest
-  #   needs: [pytest]
-  #   environment: 
-  #     name: COLLECT_STATIC
-  #   env:
-  #     ENV: ${{ vars.ENV }}
-  #     APP_NAME: ${{vars.APP_NAME}}
-  #     DEBUG: false
-  #     DB_IS_NEEDED: false
-  #     APP_IS_EXPOSED: false
-  #     STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
-  #   outputs:
-  #     collect_static_files_commit_hash: ${{ steps.commit-and-push-static-Files.outputs.collect_static_files_commit_hash }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  collect-and-push-static-files:
+    name: Collect and push static files
+    runs-on: ubuntu-latest
+    # needs: [pytest]
+    environment: 
+      name: COLLECT_STATIC
+    env:
+      ENV: ${{ vars.ENV }}
+      APP_NAME: ${{vars.APP_NAME}}
+      DEBUG: false
+      DB_IS_NEEDED: false
+      APP_IS_EXPOSED: false
+      STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
+    outputs:
+      collect_static_files_commit_hash: ${{ steps.commit-and-push-static-Files.outputs.collect_static_files_commit_hash }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.11
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
 
-  #     - name: Install dependencies
-  #       run: |
-  #         pip install --upgrade pip
-  #         pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-  #     - name: Set up filesystem
-  #       run: bash scripts/setup-filesystem.sh
+      - name: Set up filesystem
+        run: bash scripts/setup-filesystem.sh
 
-  #     - name: Collect static files
-  #       env:
-  #         APP_VERSION: ${{ vars.APP_VERSION }}
-  #         STATIC_FILES_URL: ${{ vars.API_STATIC_FILES_URL }}
-  #       run: python manage.py collectstatic --noinput
+      - name: Collect static files
+        env:
+          APP_VERSION: ${{ vars.APP_VERSION }}
+          STATIC_FILES_URL: ${{ vars.API_STATIC_FILES_URL }}
+        run: python manage.py collectstatic --noinput
         
-  #     - name: Configure Git
-  #       run: |
-  #         git config --global user.name 'GitHub Actions'
-  #         git config --global user.email 'actions@github.com'
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
 
-  #     - name: Commit and push static files
-  #       id: commit-and-push-static-Files
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: |
-  #         git add -A
-  #         git diff --staged --exit-code || git commit -am "Add collected static files"          
-  #         git push
+      - name: Commit and push static files
+        id: commit-and-push-static-Files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add -A
+          git diff --staged --exit-code || git commit -am "Add collected static files"          
+          git push
 
-  #         # Output the commit hash so that it can be used in the next job
-  #         echo "collect_static_files_commit_hash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          # Output the commit hash so that it can be used in the next job
+          echo "collect_static_files_commit_hash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-  # build-and-push-to-dockerhub:
-  #   name: Build / Push to Dockerhub
-  #   runs-on: ubuntu-latest
-  #   needs: [collect-and-push-static-files]
-  #   environment: 
-  #     name: TEST
-  #   env:
-  #     IMAGE_FULL_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
-  #     IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
-  #   steps:
-  #     - name: Checkout specific commit
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
-  #         ref: ${{ needs.collect-and-push-static-files.outputs.collect_static_files_commit_hash }}
+  build-and-push-to-dockerhub:
+    name: Build / Push to Dockerhub
+    runs-on: ubuntu-latest
+    needs: [collect-and-push-static-files]
+    environment: 
+      name: TEST
+    env:
+      IMAGE_FULL_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
+      IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
+    steps:
+      - name: Checkout specific commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
+          ref: ${{ needs.collect-and-push-static-files.outputs.collect_static_files_commit_hash }}
 
-  #     - name: Display last commit message
-  #       run: git log -1 --pretty=format:"%s"
+      - name: Display last commit message
+        run: git log -1 --pretty=format:"%s"
 
-  #     - name: List files
-  #       run: ls -la
+      - name: List files
+        run: ls -la
 
-  #     - name: Login to Dockerhub
-  #       run: |
-  #         echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
-  #         docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
+      - name: Login to Dockerhub
+        run: |
+          echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
+          docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
 
-  #     - name: Build and Push Docker image
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: .
-  #         push: true
-  #         tags: ${{ env.IMAGE_FULL_NAME }}
-  #         build-args: |
-  #           PROJECT_DIR=${{ env.CONTAINER_ROOT_DIR }}
-  #           APP_NAME=${{ vars.APP_NAME }}
-  #           APP_VERSION=${{ vars.APP_VERSION }}
-  #           DB_CONNECTION_TEST_MAX_ATTEMPTS=${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }}
-  #           DB_CONNECTION_TEST_SLEEP_INTERVAL=${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
-  #           TMP_UPLOADED_FILES_EXTERNAL=${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
-  #           MEDIA_DIR_EXTERNAL=${{ vars.MEDIA_DIR_EXTERNAL }}
-  #           MEDIA_URL=${{ vars.API_MEDIA_URL }}
-  #           LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
-  #           STATIC_FILES_EXTERNAL=${{ vars.STATIC_FILES_EXTERNAL }}
-  #           STATIC_FILES_INTERNAL=${{ vars.STATIC_FILES_INTERNAL }}
-  #           STATIC_FILES_URL=${{ vars.API_STATIC_FILES_URL }}
-  #           DJANGO_LOG_DIR_EXTERNAL=${{ vars.DJANGO_LOG_DIR_EXTERNAL }}
-  #           DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
-  #           DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
-  #           DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
-  #           DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}
-  #           DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
-  #           DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
-  #           DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}
-  #           GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
-  #           GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
-  #           GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_FULL_NAME }}
+          build-args: |
+            PROJECT_DIR=${{ env.CONTAINER_ROOT_DIR }}
+            APP_NAME=${{ vars.APP_NAME }}
+            APP_VERSION=${{ vars.APP_VERSION }}
+            DB_CONNECTION_TEST_MAX_ATTEMPTS=${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }}
+            DB_CONNECTION_TEST_SLEEP_INTERVAL=${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
+            TMP_UPLOADED_FILES_EXTERNAL=${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
+            MEDIA_DIR_EXTERNAL=${{ vars.MEDIA_DIR_EXTERNAL }}
+            MEDIA_URL=${{ vars.API_MEDIA_URL }}
+            LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
+            STATIC_FILES_EXTERNAL=${{ vars.STATIC_FILES_EXTERNAL }}
+            STATIC_FILES_INTERNAL=${{ vars.STATIC_FILES_INTERNAL }}
+            STATIC_FILES_URL=${{ vars.API_STATIC_FILES_URL }}
+            DJANGO_LOG_DIR_EXTERNAL=${{ vars.DJANGO_LOG_DIR_EXTERNAL }}
+            DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
+            DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
+            DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
+            DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}
+            DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
+            DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
+            DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}
+            GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
+            GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
+            GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
@@ -315,7 +315,7 @@ jobs:
   set-partial-docker-compose-on-server:
     name: Set partial docker-compose on server
     runs-on: ubuntu-latest
-    # needs: [build-and-push-to-dockerhub]
+    needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
     env:
