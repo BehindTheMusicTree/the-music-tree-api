@@ -30,7 +30,6 @@ jobs:
       APP_NAME: ${{ vars.APP_NAME }}
       APP_VERSION: ${{ vars.APP_VERSION }}
 
-      DOCKER_NETWORK_NAME: ${{ vars.DOCKER_NETWORK_NAME }}
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
       DEBUG: true
@@ -334,7 +333,6 @@ jobs:
       - name: Generate partial docker compose file
         env: 
           DOCKER_COMPOSE_PART_FILENAME: ${{ env.DOCKER_COMPOSE_PART_FILENAME }}
-          DOCKER_NETWORK_NAME: ${{ vars.DOCKER_NETWORK_NAME }}
           DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
           DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}

@@ -9,8 +9,9 @@ log "Generating partial docker-compose..."
 load_app_env_file_if_exists
 
 REQUIRED_NON_BOOL_VARS=(
-  DOCKER_COMPOSE_PART_FILENAME
-  DOCKER_NETWORK_NAME
+  DOCKER_COMPOSE_PART_FILENAME_API
+  DOCKER_COMPOSE_PART_FILENAME_AFP
+  DOCKER_COMPOSE_PART_FILENAME_DB
   DOCKERHUB_USERNAME
   DB_IMAGE_REPO
   DB_VERSION
@@ -46,7 +47,7 @@ DOCKER_COMPOSE_PART_FILE="${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME"
 touch_file_or_exitn $DOCKER_COMPOSE_PART_FILE
 
 log "Writing to $DOCKER_COMPOSE_PART_FILE..."
-cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
+cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_DB
   db:
     image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     container_name: $DB_CONTAINER_NAME
@@ -54,10 +55,10 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - db-data:$DB_DATA_DIR
     ports:
       - "$DB_PORT_HOST:$DB_PORT"
-    networks:
-      - $DOCKER_NETWORK_NAME
     env_file: $DB_ENV_FILENAME
+EOF
 
+cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_AFP
   audio_fingerprinter:
     working_dir: /app/
     image: $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
@@ -68,10 +69,10 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - afp-gunicorn-log-dir:$AFP_GUNICORN_LOG_DIR_EXTERNAL
     expose:
       - $AFP_PORT
-    networks:
-      - $DOCKER_NETWORK_NAME
     env_file: $AFP_ENV_FILENAME
+EOF
 
+cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_API
   ${APP_SERVICE_NAME}:
     working_dir: $APP_ROOT_DIR
     image: $DOCKERHUB_USERNAME/$APP_IMAGE_REPO:$APP_VERSION
@@ -84,11 +85,9 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME
       - api-upload-tmp-files:${TMP_UPLOADED_FILES_EXTERNAL}
     expose:
       - $APP_PORT
-    networks:
-      - $DOCKER_NETWORK_NAME
     depends_on:
       - audio_fingerprinter
       - db
     env_file: $APP_ENV_FILENAME
 EOF
-log "Partial docker-compose written to $DOCKER_COMPOSE_PART_FILE"
+log "Partial docker-compose files written to $DOCKER_COMPOSE_PART_FILE"
