@@ -9,9 +9,7 @@ log "Generating partial docker-compose..."
 load_app_env_file_if_exists
 
 REQUIRED_NON_BOOL_VARS=(
-  DOCKER_COMPOSE_PART_FILENAME_API
-  DOCKER_COMPOSE_PART_FILENAME_AFP
-  DOCKER_COMPOSE_PART_FILENAME_DB
+  DOCKER_COMPOSE_PARTS_DIR_NAME
   DOCKERHUB_USERNAME
   DB_IMAGE_REPO
   DB_VERSION
@@ -43,11 +41,18 @@ REQUIRED_NON_BOOL_VARS=(
 )
 check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
 
-DOCKER_COMPOSE_PART_FILE="${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME"
-touch_file_or_exitn $DOCKER_COMPOSE_PART_FILE
+DOCKER_COMPOSE_PARTS_DIR="${SCRIPTS_DIR}${DOCKER_COMPOSE_PARTS_DIR_NAME}/"
 
-log "Writing to $DOCKER_COMPOSE_PART_FILE..."
-cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_DB
+# One docker-compose part file for each service so that the Web Server Management add the network name for 
+# each one of them separatly.
+
+log "Generating the partial docker-compose files in $DOCKER_COMPOSE_PARTS_DIR..."
+
+create_dir_if_not_exists $DOCKER_COMPOSE_PARTS_DIR
+
+DOCKER_COMPOSE_PART_DB_FILE="${DOCKER_COMPOSE_PARTS_DIR}db_compose_part.yml"
+log "Generating the DB partial docker-compose files in $DOCKER_COMPOSE_PART_DB_FILE..."
+cat << EOF > "$DOCKER_COMPOSE_PART_DB_FILE"
   db:
     image: $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     container_name: $DB_CONTAINER_NAME
@@ -57,8 +62,11 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_DB
       - "$DB_PORT_HOST:$DB_PORT"
     env_file: $DB_ENV_FILENAME
 EOF
+log "DB partial docker-compose file generated."
 
-cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_AFP
+DOCKER_COMPOSE_PART_AFP_FILE="${DOCKER_COMPOSE_PARTS_DIR}afp_compose_part.yml"
+log "Generating the DB partial docker-compose files in $DOCKER_COMPOSE_PART_AFP_FILE..."
+cat << EOF > "$DOCKER_COMPOSE_PART_AFP_FILE"
   audio_fingerprinter:
     working_dir: /app/
     image: $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
@@ -71,8 +79,11 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_AFP
       - $AFP_PORT
     env_file: $AFP_ENV_FILENAME
 EOF
+log "AFP partial docker-compose file generated."
 
-cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_API
+DOCKER_COMPOSE_PART_API_FILE="${DOCKER_COMPOSE_PARTS_DIR}api_compose_part.yml"
+log "Generating the DB partial docker-compose files in $DOCKER_COMPOSE_PART_API_FILE..."
+cat << EOF > "$DOCKER_COMPOSE_PART_API_FILE"
   ${APP_SERVICE_NAME}:
     working_dir: $APP_ROOT_DIR
     image: $DOCKERHUB_USERNAME/$APP_IMAGE_REPO:$APP_VERSION
@@ -90,4 +101,5 @@ cat << EOF > ${SCRIPTS_DIR}$DOCKER_COMPOSE_PART_FILENAME_API
       - db
     env_file: $APP_ENV_FILENAME
 EOF
-log "Partial docker-compose files written to $DOCKER_COMPOSE_PART_FILE"
+log "API partial docker-compose file generated."
+log "Partial docker-compose files generated."

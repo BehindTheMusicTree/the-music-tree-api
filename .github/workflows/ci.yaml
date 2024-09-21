@@ -319,7 +319,8 @@ jobs:
     environment: 
       name: TEST
     env:
-      DOCKER_COMPOSE_PART_FILENAME: api-compose-part.yml
+      DOCKER_COMPOSE_PARTS_DIR_NAME: ${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}
+      SERVER_DOCKER_COMPOSE_DIR: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}
     steps:
       - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.9.0
@@ -330,9 +331,11 @@ jobs:
         run: |
           mkdir -p ~/.ssh && ssh-keyscan -H ${{ vars.DOMAIN_NAME }} >> ~/.ssh/known_hosts      
           
-      - name: Generate partial docker compose file
+      - name: Generate partial docker compose files
         env: 
-          DOCKER_COMPOSE_PART_FILENAME: ${{ env.DOCKER_COMPOSE_PART_FILENAME }}
+          DOCKER_COMPOSE_PART_FILENAME_API: ${{ env.DOCKER_COMPOSE_PART_FILENAME_API }}
+          DOCKER_COMPOSE_PART_FILENAME_AFP: ${{ env.DOCKER_COMPOSE_PART_FILENAME_AFP }}
+          DOCKER_COMPOSE_PART_FILENAME_DB: ${{ env.DOCKER_COMPOSE_PART_FILENAME_DB }}
           DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
           DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
@@ -369,11 +372,15 @@ jobs:
         run: |
           bash scripts/generate-docker-compose-part.sh
 
-      - name: Transfer partial docker-compose file to server
+      - name: SSH Remove previous partial docker-compose files
         env:
-          DOCKER_COMPOSE_PART_FILE: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_PARTS_DIR_NAME }}/${{ env.DOCKER_COMPOSE_PART_FILENAME }}
+          SERVER_DOCKER_COMPOSE_PARTS_DIR: ${{ env.SERVER_DOCKER_COMPOSE_DIR }}${{ env.DOCKER_COMPOSE_PARTS_DIR_NAME }}
         run: |
-          scp scripts/${{ env.DOCKER_COMPOSE_PART_FILENAME }} ${{ env.SSH_DESTINATION }}:${{ env.DOCKER_COMPOSE_PART_FILE }}
+          ssh ${{ env.SSH_DESTINATION }} "rm -rf ${{ env.SERVER_DOCKER_COMPOSE_PARTS_DIR }}"
+
+      - name: Transfer partial docker-compose files to server
+        run: |
+          scp scripts/${{ env.DOCKER_COMPOSE_PARTS_DIR_NAME }} ${{ env.SSH_DESTINATION }}:${{ env.SERVER_DOCKER_COMPOSE_DIR }}
 
   redeploy-webhook-call:
     name: Redeploy webhook call
