@@ -41,21 +41,21 @@ main (){
     SCRIPTS_DIR=${PROJECT_DIR}scripts/
     source ${SCRIPTS_DIR}utils.sh 2>&1
     
-    log_with_script_prefixe "Starting the api container"
+    log_with_script_prefixe "Starting the api container..."
 
     load_env_vars 2>&1
 
     log_with_script_prefixe "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
-    output=$(bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL 2>&1)
+    bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL
     if [ $? -ne 0 ]; then
-        log_with_script_prefixe "Failed to wait for the database: $output" >&2
+        log_with_script_prefixe "ERROR: Failed to wait for the database." >&2
         exit 1
     fi
     log_with_script_prefixe "Database is ready"
 
-    output=$(bash ${SCRIPTS_DIR}init-django-data.sh 2>&1)
+    bash ${SCRIPTS_DIR}init-django-data.sh
     if [ $? -ne 0 ]; then
-        log_with_script_prefixe "Failed to initialize Django data: $output" >&2
+        log_with_script_prefixe "ERROR: Failed to initialize Django data." >&2
         exit 1
     fi
 
