@@ -4,7 +4,7 @@ log_with_script_prefixe () {
     log "[Django data initializer] $1"
 }
 
-load_env_vars() {
+check_script_vars_are_set() {
   log_with_script_prefixe "Loading environment variables..."
   load_app_env_file_if_exists
   local REQUIRED_NON_BOOL_VARS=(
@@ -93,7 +93,7 @@ main (){
 
   log_with_script_prefixe "Initializing Django data..."
 
-  load_env_vars
+  check_script_vars_are_set
   exit_if_migrations_exist
 
   MANAGE_SCRIPT=${PROJECT_DIR}manage.py

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 log_with_utils_prefixe () {
     log "[Utils] $1"

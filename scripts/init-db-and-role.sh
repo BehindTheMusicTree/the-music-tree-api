@@ -4,7 +4,7 @@ log_with_script_prefixe () {
     log "[DB Initializer] $1"
 }
 
-load_env_vars () {
+check_script_vars_are_set () {
 	load_app_env_file_if_exists
 	local REQUIRED_NON_BOOL_VARS=(
 		DB_PORT
@@ -84,7 +84,7 @@ main (){
 	SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 	source ${SCRIPTS_DIR}utils.sh
 
-	load_env_vars
+	check_script_vars_are_set
 	determine_db_host_if_not_set
 	create_database_if_not_exists
 	create_role_and_grant_permissions_if_not_exists

@@ -111,5 +111,6 @@ RUN apt update && \
     cp ${FIXTURES_DIR}app/* ${FIXTURES_DIR} && \
     cp ${FIXTURES_DIR}users/test/* ${FIXTURES_DIR} && \
     cp ${FIXTURES_DIR}users/umg/* ${FIXTURES_DIR}
+    
 # Set the entrypoint using shell form to allow environment variable expansion
 ENTRYPOINT ["sh", "-c", "${PROJECT_DIR}scripts/entrypoint.sh"]

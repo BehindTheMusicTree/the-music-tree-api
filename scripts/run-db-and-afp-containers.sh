@@ -4,7 +4,7 @@ log_with_script_prefixe () {
     log "[AFP and DB runner] $1"
 }
 
-load_env_vars () {
+check_script_vars_are_set () {
     load_app_env_file_if_exists
     load_project_calculated_paths_env_vars
 
@@ -44,7 +44,7 @@ main() {
 
     log_with_script_prefixe "Running the database and audio fingerprinter containers..."
 
-    load_env_vars
+    check_script_vars_are_set
 
     log_with_script_prefixe "Pulling the database and audio fingerprinter images..."
     log_with_script_prefixe $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION

@@ -4,7 +4,7 @@ log_with_script_prefixe () {
     log "[Filesystem setter] $1"
 }
 
-load_env_vars () {
+check_script_vars_are_set () {
     log_with_script_prefixe "Loading environment variables for the filesystem setup..."
     load_app_env_file_if_exists
     check_vars_are_set ENV
@@ -157,7 +157,7 @@ main (){
     
     log_with_script_prefixe "Setting up filesystem..."
 
-    load_env_vars
+    check_script_vars_are_set
     check_vars_are_set ENV
 
     if [ $ENV = "COLLECT_STATIC" ]; then

@@ -5,7 +5,7 @@ log_with_script_prefixe () {
     log "[Django data purger] $1"
 }
 
-load_env_vars() {
+check_script_vars_are_set() {
 	load_app_env_file_if_exists
 	load_project_calculated_paths_env_vars
 
@@ -153,7 +153,7 @@ main () {
 		fi
 	fi
 
-	load_env_vars
+	check_script_vars_are_set
 	determine_db_host_if_not_set
 	empty_libraries
 	empty_db

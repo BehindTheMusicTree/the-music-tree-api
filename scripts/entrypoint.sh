@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 log_with_script_prefixe () {
     log "[entrypoint] $1"
 }
 
-load_env_vars () {
+check_script_vars_are_set () {
     REQUIRED_NON_BOOL_VARS=(
         PROJECT_DIR
         APP_PORT
@@ -43,7 +43,7 @@ main (){
     
     log_with_script_prefixe "Starting the api container..."
 
-    load_env_vars 2>&1
+    check_script_vars_are_set 2>&1
 
     log_with_script_prefixe "Running ${SCRIPTS_DIR}wait-for-postgres-db.sh to wait for the database..."
     bash ${SCRIPTS_DIR}wait-for-postgres-db.sh $DB_CONTAINER_NAME $DB_PORT $DB_CONNECTION_TEST_MAX_ATTEMPTS $DB_CONNECTION_TEST_SLEEP_INTERVAL

@@ -6,7 +6,7 @@ log_with_script_prefixe () {
     log "[Django data reinitializer] $1"
 }
 
-load_env_vars () {
+check_script_vars_are_set () {
   log_with_script_prefixe "Loading environment variables..."
   load_app_env_file_if_exists
   load_project_calculated_paths_env_vars
@@ -55,7 +55,7 @@ if [ "$SKIP_CONFIRMATION" != "true" ]; then
 	fi
 fi
 
-load_env_vars
+check_script_vars_are_set
 
 bash ${SCRIPTS_DIR}purge-django-data-USE-WITH-CAUTION.sh -s
 if [ $? -ne 0 ]; then
