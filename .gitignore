@@ -1,8 +1,6 @@
 *.pyc
 env/.env_generated_paths
 log/
-bodzify_api/migrations/*.py
-bodzify_api/migrations/__init__.py
 media/
 tmp-uploaded-files/
 .venv/
