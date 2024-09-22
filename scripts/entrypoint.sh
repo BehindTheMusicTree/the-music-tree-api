@@ -53,10 +53,17 @@ main (){
     fi
     log_with_script_prefixe "Database is ready"
 
-    bash ${SCRIPTS_DIR}init-django-data.sh
-    if [ $? -ne 0 ]; then
-        log_with_script_prefixe "ERROR: Failed to initialize Django data." >&2
-        exit 1
+    log_with_script_prefixe "Checking if the database is initialized by checking if the Django migrations exist..."
+    MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
+    if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
+        log_with_script_prefixe "Migrations exist. Proceeding with the application start..."
+    else
+        log_with_script_prefixe "Migrations do not exist. Initializing the database..."
+        bash ${SCRIPTS_DIR}init-db-and-role.sh
+        if [ $? -ne 0 ]; then
+            log_with_script_prefixe "ERROR: Failed to initialize the database." >&2
+            exit 1
+        fi
     fi
 
     # Start the application with gunicorn
