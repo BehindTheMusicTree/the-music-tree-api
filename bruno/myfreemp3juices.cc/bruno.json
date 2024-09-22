@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "myfreemp3juices.cc",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

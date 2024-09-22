@@ -1,0 +1,22 @@
+meta {
+  name: genres--uuid-
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{BASE_URL}}genres/{{genreUuid}}/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAccess}}
+}
+
+body:json {
+  {
+      "name": "Rap",
+      "parent": ""
+  }
+}

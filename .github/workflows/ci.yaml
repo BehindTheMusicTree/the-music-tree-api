@@ -1,118 +1,122 @@
 name: API CI
 
 on:
-    workflow_call:
-    workflow_dispatch:
-    push:
-       branches: 
-        - main
-        - dev
-        - prevent-posting-same-track
-    pull_request:
-        branches: [main, dev]
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: 
+      - main
+      - dev
+      - prevent-posting-same-track
+  pull_request:
+    branches: [main, dev]
 
 env:
-  SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.TEST_SERVER_URL }}
+  SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.DOMAIN_NAME }}
   DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
-  IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
-  IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
-  APP_ENV_FILENAME: ${{ vars.APP_ENV_FILENAME }}
-
+  CONTAINER_ROOT_DIR: /home/app/
+  DB_CONNECTION_TEST_MAX_ATTEMPTS: 10
+  DB_CONNECTION_TEST_SLEEP_INTERVAL: 5
+  DOCKERIZED_APP_ENV_FILENAME: .env_api
+  
 jobs:
-  pytest:
-    name: Pytest
-    runs-on: ubuntu-latest
-    environment: 
-      name: CI_TEST
-    env:
-      ENV: ${{ vars.ENV }}
+  # pytest:
+  #   name: Pytest
+  #   runs-on: ubuntu-latest
+  #   environment: 
+  #     name: CI_TEST
+  #   env:
+  #     ENV: ${{ vars.ENV }}
+  #     APP_NAME: ${{ vars.APP_NAME }}
+  #     APP_VERSION: ${{ vars.APP_VERSION }}
 
-      APP_NAME: ${{ vars.APP_NAME }}
-      API_VERSION: ${{ vars.API_VERSION }}
+  #     DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
-      DOCKER_COMPOSE_DB_AND_AFG_FILENAME: ${{ vars.DOCKER_COMPOSE_DB_AND_AFG_FILENAME }}
-      DOCKER_NETWORK_NAME: ${{ vars.DOCKER_NETWORK_NAME }}
-      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+  #     DEBUG: true
+  #     DB_IS_NEEDED: true
+  #     APP_IS_EXPOSED: false
+  #     TMP_UPLOADED_FILES_EXTERNAL: ${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
+  #     ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
+  #     MEDIA_DIR_INTERNAL: ${{ vars.MEDIA_DIR_INTERNAL }}
+  #     LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
 
-      DEBUG: ${{ vars.DEBUG }}
+  #     DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
+  #     DB_VERSION: ${{ vars.DB_VERSION }}
+  #     DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+  #     DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
+  #     DB_SUPERUSER_NAME: ${{ vars.DB_SUPERUSER_NAME }}
+  #     DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
+  #     DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
+  #     DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
+  #     DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+  #     DB_URL: ${{ vars.DB_URL }}
+  #     DB_PORT: ${{ vars.DB_PORT }}
 
-      DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
-      APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
-      TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}
-      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
-      MEDIA_DEFAULT_INTERNAL_DIR: ${{ vars.MEDIA_DEFAULT_INTERNAL_DIR }}
-      LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
-      STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
-      STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-      DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
+  #     AFP_URL: ${{ vars.AFP_URL }}
+  #     AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
+  #     AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
+  #     AFP_VERSION: ${{ vars.AFP_VERSION }}
+  #     AFP_PORT: ${{ vars.AFP_PORT }}
+  #     AFP_POOL_DIR_EXTERNAL: ${{ vars.AFP_POOL_DIR_EXTERNAL }}
+  #     AFP_POST_ENDPOINT: ${{ vars.AFP_POST_ENDPOINT }}
 
-      DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
-      DB_IMAGE_TAG: ${{ vars.DB_IMAGE_TAG }}
-      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
-      DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
-      DB_SUPERUSER_NAME: ${{ vars.DB_SUPERUSER_NAME }}
-      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
-      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
-      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
-      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      AUDIO_FINGERPRINTER_IMAGE_REPO: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}
-      AUDIO_FINGERPRINTER_IMAGE_TAG: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
-      AUDIO_FINGERPRINTER_CONTAINER_NAME: ${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
-      AUDIO_FINGERPRINTER_PORT: ${{ secrets.AUDIO_FINGERPRINTER_PORT }}
-      AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET: ${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}
-      AUDIO_FINGERPRINTER_POST_ENDPOINT: ${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}
+  #     - name: Setup Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: 3.12
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #     - name: Cache apt packages
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: /var/cache/apt
+  #         key: ${{ runner.os }}-apt-${{ hashFiles('scripts/install-dependencies.sh') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-apt-
+  
+  #     - name: Cache pip
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/.cache/pip
+  #         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-pip-
 
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-           python-version: 3.11
+  #     - name: Install dependencies
+  #       run: sudo -E bash scripts/install-dependencies.sh
 
-      - name: Install dependencies
-        run: sudo -E bash scripts/install_dependencies.sh
+  #     - name: Add fpcalc to PATH
+  #       run: echo "bin/fpcalc" >> $GITHUB_PATH
 
-      - name: Add fpcalc to PATH
-        run: echo "bin/fpcalc" >> $GITHUB_PATH
+  #     - name: Install requirements
+  #       run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
 
-      - name: Install requirements
-        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
+  #     - name: Set up filesystem
+  #       run: bash scripts/setup-filesystem.sh
 
-      - name: Set up filesystem
-        run: bash scripts/setup_filesystem.sh
-
-      - name: Run db and afg containers
-        run: bash scripts/run_db_and_afg_containers.sh
+  #     - name: Run database and Audio Fingerprint containers
+  #       env:
+  #         DB_DATA_MUST_PERSIST: false
+  #       run: bash scripts/run-db-and-afp-containers.sh
         
-      - name: Wait for db service to start
-        run: |
-          attempts=0
-          MAX_ATTEMPS=10
-          while ! pg_isready -h ${{ env.DB_HOST }} -p ${{ env.DB_PORT }}; do
-            if [ $attempts -eq $MAX_ATTEMPS ]; then
-              echo "DB service did not start within the expected time."
-              exit 1
-            fi
-            echo "Waiting for DB service to start..."
-            sleep 5
-            attempts=$((attempts+1))
-          done
+  #     - name: Wait for database service to start
+  #       run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
-      - name: Echo afg container logs
-        run: docker logs ${{ env.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
+  #     - name: Set up fixtures files
+  #       env:
+  #         FIXTURES_DIR: ${{ vars.APP_NAME }}/fixtures/
+  #       run: |
+  #         cp ${{ env.FIXTURES_DIR }}app/*.json ${{ env.FIXTURES_DIR }}
+  #         cp ${{ env.FIXTURES_DIR }}users/ci_test/*.json ${{ env.FIXTURES_DIR }}
 
-      - name: Init db data
-        run: |
-          bash scripts/db/reinit_django_data.sh
+  #     - name: Init django data
+  #       run: bash scripts/init-django-data.sh
 
-      - name: Run pytest
-        run: pytest
+  #     - name: Run pytest
+  #       run: pytest
 
   collect-and-push-static-files:
     name: Collect and push static files
@@ -122,14 +126,13 @@ jobs:
       name: COLLECT_STATIC
     env:
       ENV: ${{ vars.ENV }}
-      DEBUG: ${{ vars.DEBUG }}
-      DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
-      APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
-      LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
-      STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
-      STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-      DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
+      APP_NAME: ${{vars.APP_NAME}}
+      DEBUG: false
+      DB_IS_NEEDED: false
+      APP_IS_EXPOSED: false
+      STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
+    outputs:
+      collect_static_files_commit_hash: ${{ steps.commit-and-push-static-Files.outputs.collect_static_files_commit_hash }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -144,73 +147,79 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Remove previously collected static files
-        run: rm -rf ${{ env.STATIC_FILES_DEFAULT_INTERNAL_DIR }}*
-
       - name: Set up filesystem
-        run: bash scripts/setup_filesystem.sh
+        run: bash scripts/setup-filesystem.sh
 
       - name: Collect static files
+        env:
+          APP_VERSION: ${{ vars.APP_VERSION }}
+          STATIC_FILES_URL: ${{ vars.API_STATIC_FILES_URL }}
         run: python manage.py collectstatic --noinput
-
+        
       - name: Configure Git
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
 
       - name: Commit and push static files
+        id: commit-and-push-static-Files
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git add -A
-          git diff --staged --exit-code || git commit -am "Add collected static files"
+          git diff --staged --exit-code || git commit -am "Add collected static files"          
           git push
 
+          # Output the commit hash so that it can be used in the next job
+          echo "collect_static_files_commit_hash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   build-and-push-to-dockerhub:
     name: Build / Push to Dockerhub
     runs-on: ubuntu-latest
-    # needs: [collect-and-push-static-files]
+    needs: [collect-and-push-static-files]
     environment: 
       name: TEST
+    env:
+      IMAGE_FULL_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.APP_IMAGE_REPO }}:${{ vars.APP_VERSION }}
+      IMAGE_URL: https://hub.docker.com/v2/repositories/${{ vars.DOCKERHUB_USERNAME }}/${{ vars.WEB_SERVER_IMAGE_REPO }}/tags/${{ vars.APP_VERSION }}/
     steps:
-      - name: Checkout code
+      - name: Checkout specific commit
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
+          ref: ${{ needs.collect-and-push-static-files.outputs.collect_static_files_commit_hash }}
+
+      - name: Display last commit message
+        run: git log -1 --pretty=format:"%s"
+
+      - name: List files
+        run: ls -la
 
       - name: Login to Dockerhub
         run: |
           echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
           docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build and push
+      - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
+          tags: ${{ env.IMAGE_FULL_NAME }}
           build-args: |
-            ENV=${{ vars.ENV }}
-
-            APP_NAME: ${{ vars.APP_NAME }}
-            API_VERSION: ${{ vars.API_VERSION }}
-
-            DEBUG=${{ vars.DEBUG }}
-            DB_IS_NEEDED=${{ vars.DB_IS_NEEDED }}
-            APP_IS_EXPOSED=${{ vars.APP_IS_EXPOSED }}
-
-            AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
-            TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}
-            ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}
-
-            MEDIA_DIR=${{ vars.MEDIA_DIR }}
+            PROJECT_DIR=${{ env.CONTAINER_ROOT_DIR }}
+            APP_NAME=${{ vars.APP_NAME }}
+            APP_VERSION=${{ vars.APP_VERSION }}
+            DB_CONNECTION_TEST_MAX_ATTEMPTS=${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }}
+            DB_CONNECTION_TEST_SLEEP_INTERVAL=${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
+            TMP_UPLOADED_FILES_EXTERNAL=${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
+            MEDIA_DIR_EXTERNAL=${{ vars.MEDIA_DIR_EXTERNAL }}
+            MEDIA_URL=${{ vars.API_MEDIA_URL }}
             LIBRARIES_DIR_NAME=${{ vars.LIBRARIES_DIR_NAME }}
-
-            STATIC_FILES_ARE_NEEDED=${{ vars.STATIC_FILES_ARE_NEEDED }}
-            STATIC_FILES_DIR=${{ vars.STATIC_FILES_DIR }}
-            STATIC_FILES_DEFAULT_INTERNAL_DIR=${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-
-            DJANGO_LOGS_ARE_NEEDED=${{ vars.DJANGO_LOGS_ARE_NEEDED }}
-            DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}
+            STATIC_FILES_EXTERNAL=${{ vars.STATIC_FILES_EXTERNAL }}
+            STATIC_FILES_INTERNAL=${{ vars.STATIC_FILES_INTERNAL }}
+            STATIC_FILES_URL=${{ vars.API_STATIC_FILES_URL }}
+            DJANGO_LOG_DIR_EXTERNAL=${{ vars.DJANGO_LOG_DIR_EXTERNAL }}
             DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
             DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}
             DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
@@ -218,35 +227,9 @@ jobs:
             DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
             DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
             DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}
-
             GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}
             GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
             GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
-
-            DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}
-            DB_IMAGE_REPO=${{ vars.DB_IMAGE_REPO }}
-            DB_IMAGE_TAG=${{ vars.DB_IMAGE_TAG }}
-            DB_DATA_DIR=${{ vars.DB_DATA_DIR }}
-            DB_SUPERUSER_NAME=${{ vars.DB_SUPERUSER_NAME }}
-            DB_SUPERUSER_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}
-            DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}
-            DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}
-            DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
-            DB_HOST=${{ secrets.DB_HOST }}
-            DB_PORT=${{ secrets.DB_PORT }}
-
-            AUDIO_FINGERPRINTER_CONTAINER_NAME=${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
-            AUDIO_FINGERPRINTER_IMAGE_REPO=${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}
-            AUDIO_FINGERPRINTER_IMAGE_TAG=${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
-            AUDIO_FINGERPRINTER_PORT=${{ secrets.AUDIO_FINGERPRINTER_PORT }}
-            AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET=${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}
-            AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}
-
-            DJANGO_LOG_DIR_SYMLINK_TARGET=${{ vars.API_DJANGO_LOG_DIR_SYMLINK_TARGET }}
-            MEDIA_DIR_SYMLINK_TARGET=${{ vars.API_MEDIA_DIR_SYMLINK_TARGET }}
-            STATIC_FILES_DIR_SYMLINK_TARGET=${{ vars.API_STATIC_FILES_DIR_SYMLINK_TARGET }}
-            TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET=${{ vars.API_TMP_UPLOADED_FILES_DIR_SYMLINK_TARGET }}
-            GUNICORN_LOG_DIR_SYMLINK_TARGET=${{ vars.API_GUNICORN_LOG_DIR_SYMLINK_TARGET }}
 
   set-env-variables-on-server:
     name: Set environment variables on server
@@ -254,6 +237,8 @@ jobs:
     # needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
+    env:
+      DOCKER_COMPOSE_DIR: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}/
     steps:
       - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.9.0
@@ -263,133 +248,79 @@ jobs:
       - name: Add host to known_hosts
         run: |
           mkdir -p ~/.ssh &&
-          ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ vars.DOMAIN_NAME }} >> ~/.ssh/known_hosts
 
-      - name: Set environment variables on server
+      - name: Set api environment variables on server
         env: 
-          ENV_FILE: "${{ vars.DOCKER_COMPOSE_DIR }}${{ vars.DOCKERIZED_APP_ENV_FILENAME }}"
+          API_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ env.DOCKERIZED_APP_ENV_FILENAME }}"
+        run: |
+          ssh ${{ env.SSH_DESTINATION }} bash -s << 'EOF'
+            rm -f ${{ env.API_ENV_FILE }} &&
+            touch ${{ env.API_ENV_FILE }} &&
+
+            echo 'APP_PORT=${{ vars.API_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DJANGO_SECRET_KEY='\''${{ secrets.DJANGO_SECRET_KEY }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            echo 'ACOUSTID_API_KEY='\''${{ secrets.ACOUSTID_API_KEY }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            echo 'CSRF_TRUSTED_ORIGINS=${{ vars.CSRF_TRUSTED_ORIGINS }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}' >> ${{ env.API_ENV_FILE }} &&
+
+            echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_PORT=${{ vars.DB_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_SUPERUSER_NAME=${{ vars.DB_SUPERUSER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_SUPERUSER_PASSWORD='\''${{ secrets.DB_SUPERUSER_PASSWORD }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'DB_BODZIFY_API_USER_PASSWORD='\''${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}'\''' >> ${{ env.API_ENV_FILE }} &&
+            
+            echo 'AFP_CONTAINER_NAME=${{ vars.AFP_CONTAINER_NAME }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'AFP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.API_ENV_FILE }} &&
+            echo 'AFP_POST_ENDPOINT=${{ vars.AFP_POST_ENDPOINT }}' >> ${{ env.API_ENV_FILE }} &&
+            
+            chmod 600 ${{ env.API_ENV_FILE }}
+          EOF
+
+      - name: Set db environment variables on server
+        env: 
+          DB_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.DB_ENV_FILENAME }}"
         run: |
           ssh ${{ env.SSH_DESTINATION }} "
-            rm -f ${{ env.ENV_FILE }} &&
-            touch ${{ env.ENV_FILE }} &&
+            rm -f ${{ env.DB_ENV_FILE }} &&
+            touch ${{ env.DB_ENV_FILE }} &&
 
-            echo 'ENV=TEST' >> ${{ env.ENV_FILE }} &&
+            echo 'ENV=TEST' >> ${{ env.DB_ENV_FILE }} &&
 
-            echo 'APP_NAME=${{ vars.APP_NAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'API_VERSION=${{ vars.API_VERSION }}' >> ${{ env.ENV_FILE }} &&
+            echo 'POSTGRES_DB=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
+            echo 'POSTGRES_USER=${{ vars.DB_SUPERUSER_NAME }}' >> ${{ env.DB_ENV_FILE }} &&
+            echo 'POSTGRES_PASSWORD=${{ secrets.DB_SUPERUSER_PASSWORD }}' >> ${{ env.DB_ENV_FILE }} &&
+            echo 'POSTGRES_PORT=${{ vars.DB_PORT }}' >> ${{ env.DB_ENV_FILE }} &&
 
-            echo 'DOCKERHUB_USERNAME=${{ vars.DOCKERHUB_USERNAME }}'
-            echo 'DOCKER_NETWORK_NAME=${{ vars.DOCKER_NETWORK_NAME }}'
+            chmod 600 ${{ env.DB_ENV_FILE }}
+          "
 
-            echo 'DEBUG=${{ vars.DEBUG }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}' >> ${{ env.ENV_FILE }} &&
-            echo 'APP_IS_EXPOSED=${{ secrets.APP_IS_EXPOSED }}' >> ${{ env.ENV_FILE }} &&
+      - name: Set afp environment variables on server
+        env: 
+          AFP_ENV_FILE: "${{ env.DOCKER_COMPOSE_DIR }}${{ vars.AFP_ENV_FILENAME }}"
+        run: |
+          ssh ${{ env.SSH_DESTINATION }} "
+            rm -f ${{ env.AFP_ENV_FILE }} &&
+            touch ${{ env.AFP_ENV_FILE }} &&
 
-            echo 'AUDIO_META_ANALYSE_IS_NEEDED=${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}' >> ${{ env.ENV_FILE }} &&
-            echo 'TMP_UPLOADED_FILES_DIR=${{ vars.TMP_UPLOADED_FILES_DIR }}' >> ${{ env.ENV_FILE }} &&
-            echo 'ACOUSTID_API_KEY=${{ secrets.ACOUSTID_API_KEY }}' >> ${{ env.ENV_FILE }} &&
+            echo 'ENV=${{ vars.ENV }}' >> ${{ env.AFP_ENV_FILE }} &&
+            echo 'DEBUG=true' >> ${{ env.AFP_ENV_FILE }} &&
+            echo 'APP_PORT=${{ vars.AFP_PORT }}' >> ${{ env.AFP_ENV_FILE }} &&
 
-            echo 'DB_IS_NEEDED=${{ secrets.DB_IS_NEEDED }}' >> ${{ env.ENV_FILE }} &&
-
-            echo 'MEDIA_DIR=${{ vars.MEDIA_DIR }}' >> ${{ env.ENV_FILE }} &&
-            echo 'LIBRARIES_DIR_NAME=${{ secrets.LIBRARIES_DIR_NAME }}' >> ${{ env.ENV_FILE }} &&
-            
-            echo 'STATIC_FILES_ARE_NEEDED=${{ secrets.STATIC_FILES_ARE_NEEDED }}' >> ${{ env.ENV_FILE }} &&
-            echo 'STATIC_FILES_DIR=${{ secrets.STATIC_FILES_DIR }}' >> ${{ env.ENV_FILE }} &&
-
-            echo 'DJANGO_LOGS_ARE_NEEDED=${{ secrets.DJANGO_LOGS_ARE_NEEDED }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_LOG_DIR=${{ vars.DJANGO_LOG_DIR }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_LOG_GENERAL_FILENAME=${{ vars.DJANGO_LOG_GENERAL_FILENAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_LOG_INFO_FILENAME=${{ vars.DJANGO_LOG_INFO_FILENAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_LOG_REQUESTS_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_LOG_REQUESTS_DEBUG_FILENAME=${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}' \
-              >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_LOG_EXCEPTIONS_FILENAME=${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}' \
-              >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_LOG_DJANGO_FILENAME=${{ vars.DJANGO_LOG_DJANGO_FILENAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DJANGO_LOG_APP_FILENAME=${{ vars.DJANGO_LOG_APP_FILENAME }}' >> ${{ env.ENV_FILE }} &&
-
-            echo 'GUNICORN_LOG_DIR=${{ vars.GUNICORN_LOG_DIR }}' >> ${{ env.ENV_FILE }} &&
-            echo 'GUNICORN_LOG_ERROR_FILENAME=${{ vars.GUNICORN_LOG_ERROR_FILENAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'GUNICORN_LOG_ACCESS_FILENAME=${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}' >> ${{ env.ENV_FILE }} &&
-
-            echo 'DB_CONTAINER_NAME=${{ vars.DB_CONTAINER_NAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DB_BODZIFY_API_DB_NAME=${{ secrets.DB_BODZIFY_API_DB_NAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DB_BODZIFY_API_USERNAME=${{ secrets.DB_BODZIFY_API_USERNAME }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DB_BODZIFY_API_USER_PASSWORD=${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DB_HOST=${{ secrets.DB_HOST }}' >> ${{ env.ENV_FILE }} &&
-            echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ${{ env.ENV_FILE }} &&
-            
-            echo 'AUDIO_FINGERPRINTER_IMAGE_REPO=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_REPO }}' \
-              >> ${{ env.ENV_FILE }}
-            echo 'AUDIO_FINGERPRINTER_IMAGE_TAG=${{ secrets.AUDIO_FINGERPRINTER_IMAGE_TAG }}' >> ${{ env.ENV_FILE }}
-            echo 'AUDIO_FINGERPRINTER_PORT=${{ secrets.TEST_AUDIO_FINGERPRINTER_PORT }}' >> ${{ env.ENV_FILE }}
-            echo 'AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET=${{ secrets.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}' \
-              >> ${{ env.ENV_FILE }}
-            echo 'AUDIO_FINGERPRINTER_POST_ENDPOINT=${{ secrets.AUDIO_FINGERPRINTER_POST_ENDPOINT }}' \
-              >> ${{ env.ENV_FILE }}
+            chmod 600 ${{ env.AFP_ENV_FILE }}
           "
 
   set-partial-docker-compose-on-server:
     name: Set partial docker-compose on server
     runs-on: ubuntu-latest
-    # needs: [build-and-push-to-dockerhub]
+    needs: [build-and-push-to-dockerhub]
     environment: 
       name: TEST
     env:
-      ENV: ${{ vars.ENV }}
-
-      DOCKER_COMPOSE_PART_FILENAME: ${{ vars.DOCKER_COMPOSE_PART_FILENAME }}
-      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
-
-      DEBUG: ${{ vars.DEBUG }}
-      DB_IS_NEEDED: ${{ vars.DB_IS_NEEDED }}
-      APP_IS_EXPOSED: ${{ vars.APP_IS_EXPOSED }}
-      APP_PORT: ${{ secrets.APP_PORT }}
-
-      AUDIO_META_ANALYSE_IS_NEEDED: ${{ vars.AUDIO_META_ANALYSE_IS_NEEDED }}
-      TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.TMP_UPLOADED_FILES_DEFAULT_INTERNAL_DIR }}
-      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
-
-      MEDIA_DIR: ${{ vars.MEDIA_DIR }}
-      LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
-
-      STATIC_FILES_ARE_NEEDED: ${{ vars.STATIC_FILES_ARE_NEEDED }}
-      STATIC_FILES_DIR: ${{ vars.STATIC_FILES_DIR }}
-      STATIC_FILES_DEFAULT_INTERNAL_DIR: ${{ vars.STATIC_FILES_DEFAULT_INTERNAL_DIR }}
-
-      DJANGO_LOGS_ARE_NEEDED: ${{ vars.DJANGO_LOGS_ARE_NEEDED }}
-      DJANGO_LOG_DIR: ${{ vars.DJANGO_LOG_DIR }}
-      DJANGO_LOG_GENERAL_FILENAME: ${{ vars.DJANGO_LOG_GENERAL_FILENAME }}
-      DJANGO_LOG_INFO_FILENAME: ${{ vars.DJANGO_LOG_INFO_FILENAME }}
-      DJANGO_LOG_REQUESTS_FILENAME: ${{ vars.DJANGO_LOG_REQUESTS_FILENAME }}
-      DJANGO_LOG_REQUESTS_DEBUG_FILENAME: ${{ vars.DJANGO_LOG_REQUESTS_DEBUG_FILENAME }}
-      DJANGO_LOG_EXCEPTIONS_FILENAME: ${{ vars.DJANGO_LOG_EXCEPTIONS_FILENAME }}
-      DJANGO_LOG_DJANGO_FILENAME: ${{ vars.DJANGO_LOG_DJANGO_FILENAME }}
-      DJANGO_LOG_APP_FILENAME: ${{ vars.DJANGO_LOG_APP_FILENAME }}
-
-      GUNICORN_LOG_DIR: ${{ vars.GUNICORN_LOG_DIR }}
-      GUNICORN_LOG_ERROR_FILENAME: ${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
-      GUNICORN_LOG_ACCESS_FILENAME: ${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
-
-      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
-      DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
-      DB_IMAGE_TAG: ${{ vars.DB_IMAGE_TAG }}
-      DB_SUPERUSER_NAME: ${{ vars.DB_SUPERUSER_NAME }}
-      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
-      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
-      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
-      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-
-      AUDIO_FINGERPRINTER_CONTAINER_NAME: ${{ vars.AUDIO_FINGERPRINTER_CONTAINER_NAME }}
-      AUDIO_FINGERPRINTER_IMAGE_REPO: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_REPO }}
-      AUDIO_FINGERPRINTER_IMAGE_TAG: ${{ vars.AUDIO_FINGERPRINTER_IMAGE_TAG }}
-      AUDIO_FINGERPRINTER_PORT: ${{ secrets.AUDIO_FINGERPRINTER_PORT }}
-      AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET: ${{ vars.AUDIO_FINGERPRINTER_POOL_DIR_SYMLINK_TARGET }}
-      AUDIO_FINGERPRINTER_POST_ENDPOINT: ${{ vars.AUDIO_FINGERPRINTER_POST_ENDPOINT }}
-
+      SERVER_DOCKER_COMPOSE_DIR: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}/
+      DOCKER_COMPOSE_PART_FILENAME_SUFFIXE: _part_compose.yml
     steps:
       - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.9.0
@@ -398,14 +329,50 @@ jobs:
 
       - name: Add host to known_hosts
         run: |
-          mkdir -p ~/.ssh && ssh-keyscan -H ${{ vars.TEST_SERVER_URL }} >> ~/.ssh/known_hosts      
+          mkdir -p ~/.ssh && ssh-keyscan -H ${{ vars.DOMAIN_NAME }} >> ~/.ssh/known_hosts      
           
-      - name: Generate partial docker compose file
+      - name: Generate partial docker compose files
         env: 
-          APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
-        run: |
-          bash scripts/generate_docker_compose_part.sh
+          DOCKER_COMPOSE_PART_FILENAME_SUFFIXE: ${{ vars.DOCKER_COMPOSE_PART_FILENAME_SUFFIXE }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
+          DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
+          DB_VERSION: ${{ vars.DB_VERSION }}
+          DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+          DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
+          DB_PORT_HOST: ${{ vars.DB_PORT_HOST }}
+          DB_PORT: ${{ vars.DB_PORT }}
+          DB_ENV_FILENAME: ${{ vars.DB_ENV_FILENAME }}
+
+          AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
+          AFP_VERSION: ${{ vars.AFP_VERSION }}
+          AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
+          AFP_PORT: ${{ vars.AFP_PORT }}
+          AFP_ENV_FILENAME: ${{ vars.AFP_ENV_FILENAME }}
+          AFP_POOL_DIR_EXTERNAL: ${{ vars.AFP_POOL_DIR_EXTERNAL }}
+          AFP_FLASK_LOG_DIR_EXTERNAL: ${{ vars.AFP_FLASK_LOG_DIR_EXTERNAL }}
+          AFP_GUNICORN_LOG_DIR_EXTERNAL: ${{ vars.AFP_GUNICORN_LOG_DIR_EXTERNAL }}
+
+          APP_ROOT_DIR: ${{ env.CONTAINER_ROOT_DIR }}
+          APP_SERVICE_NAME: ${{ vars.API_SERVICE_NAME }}
+          APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
+          APP_VERSION: ${{ vars.APP_VERSION }}
+          APP_CONTAINER_NAME: ${{ vars.APP_CONTAINER_NAME }}
+          APP_PORT: ${{ vars.API_PORT }}
+          APP_ENV_FILENAME: ${{ env.DOCKERIZED_APP_ENV_FILENAME }}
+          GUNICORN_LOG_DIR: ${{ vars.GUNICORN_LOG_DIR }}
+          GUNICORN_LOG_ERROR_FILENAME: ${{ vars.GUNICORN_LOG_ERROR_FILENAME }}
+          GUNICORN_LOG_ACCESS_FILENAME: ${{ vars.GUNICORN_LOG_ACCESS_FILENAME }}
+          DJANGO_LOG_DIR_EXTERNAL: ${{ vars.DJANGO_LOG_DIR_EXTERNAL }}
+          MEDIA_DIR_EXTERNAL: ${{ vars.MEDIA_DIR_EXTERNAL }}
+          STATIC_FILES_EXTERNAL: ${{ vars.STATIC_FILES_EXTERNAL }}
+          TMP_UPLOADED_FILES_EXTERNAL: ${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
+        run: |
+          bash scripts/generate-docker-compose-parts.sh
+
+      - name: SSH Transfer partial docker-compose files to server
+        run: |
+          scp scripts/*${{ vars.DOCKER_COMPOSE_PART_FILENAME_SUFFIXE }} ${{ env.SSH_DESTINATION }}:${{ env.SERVER_DOCKER_COMPOSE_DIR }}
 
   redeploy-webhook-call:
     name: Redeploy webhook call

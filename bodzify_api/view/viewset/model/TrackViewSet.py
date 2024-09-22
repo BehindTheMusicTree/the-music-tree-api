@@ -131,7 +131,14 @@ class TrackViewSet(AppModelViewSet):
             """)
                    )
     def create(self, request, *args, **kwargs):
-        return self._create(request, *args, **kwargs)
+        try:
+            return self._create(request, *args, **kwargs)
+        except OSError as e:
+            if e.errno == 28:  # No space left on device
+                return Response(data={"detail": "No space left on device."},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                raise  # Re-raise the exception if it's not the specific error
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
@@ -139,9 +146,7 @@ class TrackViewSet(AppModelViewSet):
         if track.track_file:
             return utility.get_file_response(filePath=track.track_file.file.path, filename=track.track_file.file.name)
         else:
-            return HttpResponse(
-                content="The requested track's file is missing.",
-                status=status.HTTP_410_GONE)
+            return Response(data={"detail": "The requested track's file is missing."}, status=status.HTTP_410_GONE)
 
     @transaction.atomic
     @extend_schema(request=LibTrackExtractSerializer,

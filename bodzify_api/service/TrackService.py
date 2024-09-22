@@ -23,8 +23,8 @@ from rest_framework.exceptions import ValidationError
 
 from bodzify_api.exception.musicbrainz import MusicbrainzException
 from bodzify_api import settings
-from bodzify_api.utils.utils import AppDjangoFile
 from bodzify_api.utils import audio_fingerprinter_api_client
+from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.utils.audio_fingerprinter_api_client import AudioFingerprinterApiClient, AudioFingerprinterError
 from bodzify_api.utils import audio_metadata
 from bodzify_api.service.Service import Service
@@ -135,8 +135,7 @@ class TrackService(Service):
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
             filename = os.path.basename(file_path)
-            fingerprint, duration_in_sec = \
-                AudioFingerprinterApiClient.post_fingerprint_audio(filename=filename)
+            fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(filename=filename)
         elif isinstance(file, AppDjangoFile):
             filename = os.path.basename(file.file_abs_path)
             fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(
@@ -345,24 +344,25 @@ class TrackService(Service):
     def _update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(data: dict,
                                                                                           fingerprint: bytes,
                                                                                           duration_in_sec: float):
-        try:
-            musicbrainz_recording_dict = TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
-                fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
-            if musicbrainz_recording_dict:
-                musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID]
-                try:
-                    musicbrainz_recording_pk = MusicbrainzRecording.objects.get(uuid=musicbrainz_recording_uuid).pk
-                except ObjectDoesNotExist:
-                    musicbrainz_recording = TrackService.__create_musicbrainz_recording_instance_from_dict(
-                        musicbrainz_recording_uuid=musicbrainz_recording_uuid,
-                        musicbrainz_recording_dict=musicbrainz_recording_dict)
-                    musicbrainz_recording_pk = musicbrainz_recording.pk
+        if duration_in_sec > 0:  # If the duration is 0, it is not possible to get a musicbrainz recording
+            try:
+                musicbrainz_recording_dict = TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
+                    fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
+                if musicbrainz_recording_dict:
+                    musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MUSICBRAINZ_API.FIELDS.ID]
+                    try:
+                        musicbrainz_recording_pk = MusicbrainzRecording.objects.get(uuid=musicbrainz_recording_uuid).pk
+                    except ObjectDoesNotExist:
+                        musicbrainz_recording = TrackService.__create_musicbrainz_recording_instance_from_dict(
+                            musicbrainz_recording_uuid=musicbrainz_recording_uuid,
+                            musicbrainz_recording_dict=musicbrainz_recording_dict)
+                        musicbrainz_recording_pk = musicbrainz_recording.pk
 
-                data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
-            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = None
+                    data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
+                data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = None
 
-        except MusicbrainzException as e:
-            data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = str(e)
+            except MusicbrainzException as e:
+                data[SAVE_MODEL_FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = str(e)
 
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)

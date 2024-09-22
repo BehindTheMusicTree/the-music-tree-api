@@ -1,0 +1,22 @@
+meta {
+  name: genres-
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://genres/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenAccess}}
+}
+
+body:json {
+  {
+      "name": "Rock",
+      "parent": "m5KRxi10OxW4BEOod9Qmjy"
+  }
+}

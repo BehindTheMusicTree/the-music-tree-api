@@ -31,7 +31,8 @@ router.register(r'genres', GenreViewSet, basename='genre')
 router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
 router.register(r'plays', PlayViewSet)
 
-# Do not move after GenrePlaylistViewSet or SimplePlaylistViewSet or it will cause confusion resolving reverse urls
+# Do not move PlaylistViewSet after GenrePlaylistViewSet or SimplePlaylistViewSet or it will cause confusion resolving
+# reverse urls.
 router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'simple-playlists', SimplePlaylistViewSet, basename='simple-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
@@ -49,5 +50,6 @@ urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
                path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
                path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc')]
 
-if settings.STATIC_FILES_ARE_NEEDED:
+
+if settings.STATIC_FILES_STATE in [settings.StaticFileState.COLLECTING, settings.StaticFileState.SERVING]:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
