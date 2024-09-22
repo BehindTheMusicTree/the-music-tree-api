@@ -53,25 +53,26 @@ main (){
     fi
     log_with_script_prefixe "Database is ready"
 
-    log_with_script_prefixe "Checking if the database is initialized by checking if the Django migrations exist..."
-    MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
-    if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
-        log_with_script_prefixe "Migrations exist. Proceeding with the application start..."
-    else
-        log_with_script_prefixe "Migrations do not exist. Initializing the database..."
-        bash ${SCRIPTS_DIR}init-db-and-role.sh
+    log_with_script_prefixe "Checking if Django data is initialized..."
+    bash ${SCRIPTS_DIR}check-django-initialized.sh
+    if [ $? -ne 0 ]; then
+        log_with_script_prefixe "Django is not initialized. Initializing it..." >&2
+        bash ${SCRIPTS_DIR}init-django-data.sh 2>&1
         if [ $? -ne 0 ]; then
-            log_with_script_prefixe "ERROR: Failed to initialize the database." >&2
+            log_with_script_prefixe "ERROR: Failed to initialize Django data." >&2
             exit 1
         fi
+    else
+        log_with_script_prefixe "Django data is already initialized."
     fi
 
-    # Start the application with gunicorn
+    log_with_script_prefixe "Starting Gunicorn..."
     exec gunicorn bodzify_api.wsgi:application \
         --bind 0.0.0.0:${APP_PORT} \
         --error-logfile=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ERROR_FILENAME} \
         --access-logfile=${GUNICORN_LOG_DIR}${GUNICORN_LOG_ACCESS_FILENAME} \
         --log-level=info 2>&1
+    log_with_script_prefixe "Gunicorn started."
 }
 
 main "$@" 2>&1
