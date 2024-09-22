@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 log_with_script_prefixe () {
     log "[entrypoint] $1"
