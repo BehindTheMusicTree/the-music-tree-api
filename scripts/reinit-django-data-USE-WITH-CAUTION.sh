@@ -30,11 +30,29 @@ source ${SCRIPTS_DIR}utils.sh
 
 log_with_script_prefixe "WARNING: This script will reinitialize the Django database."
 log_with_script_prefixe "Use with caution as it may result in data loss."
-read -p "Are you sure you want to proceed? (yes/no): " CONFIRMATION
 
-if [ "$CONFIRMATION" != "yes" ]; then
-    log_with_script_prefixe "Operation aborted." >&2
-    exit 1
+SKIP_CONFIRMATION=false
+
+while getopts ":s" opt; do
+case $opt in
+	s)
+	SKIP_CONFIRMATION=true
+	;;
+	\?)
+	log_with_script_prefixe "ERROR: Invalid option: -$OPTARG" >&2
+	exit 1
+	;;
+esac
+done
+
+if [ "$SKIP_CONFIRMATION" != "true" ]; then
+	log_with_script_prefixe "WARNING: This script will purge the Django data. Use with caution."
+	read -p "Are you sure you want to proceed? (yes/no): " CONFIRMATION
+
+	if [ "$CONFIRMATION" != "yes" ]; then
+		log_with_script_prefixe "Operation aborted." >&2
+		exit 1
+	fi
 fi
 
 load_env_vars
