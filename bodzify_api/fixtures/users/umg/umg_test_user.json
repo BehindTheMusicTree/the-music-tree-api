@@ -3,10 +3,10 @@
         "model": "auth.user", 
         "pk": 5, 
         "fields": {
-            "password": "pbkdf2_sha256$720000$HRCkOQABggXikOxxcQ25uy$CyqYG8gMEBnHd5tZo7gmtQG0uMi/U9Jznbf/J5g5b1w=", 
+            "password": "pbkdf2_sha256$720000$L2CHrvaKCemD72HSQGh4hY$MO/czUciLOGabMSKfqk6MvPSuNAVsZFVTeJ83c+KDIc=", 
             "last_login": null, 
             "is_superuser": false, 
-            "username": "ultimate_music_guide_user", 
+            "username": "ultimate_music_guide", 
             "first_name": "Ultimate", 
             "last_name": "Music Guide", 
             "email": "andreas.garcia@bodzify.com", 
