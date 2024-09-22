@@ -7,11 +7,14 @@ import dotenv
 from bodzify_api.utils.utils import print_django
 
 
-def load_required_str_env_var(var_name: str) -> str:
+def load_required_str_env_var(var_name: str, must_print_value: bool = True) -> str:
     var_value = os.getenv(var_name)
     if var_value is None:
         raise EnvironmentError(f"The {var_name} environment variable must be set")
-    print_django(f"{var_name}: {var_value}")
+    if must_print_value:
+        print_django(f"{var_name}: {var_value}")
+    else:
+        print_django(f"{var_name} is set.")
     return var_value
 
 
@@ -30,7 +33,7 @@ def load_required_int_env_var(var_name: str) -> int:
         raise EnvironmentError(f"The {var_name} environment variable must be an integer, got '{var_value}'") from e
 
 
-def load_required_path_env_var(var_name: str) -> Path:
+def load_required_path_env_var(var_name: str, must_print_value: bool = True) -> Path:
     path = Path(load_required_str_env_var(var_name))
     if not path.exists():
         raise EnvironmentError(f"The path {path} does not exist")
@@ -64,7 +67,7 @@ def load_env_vars_from_file_if_exists(env_file_path: Path):
 
 
 def load_required_secret_env_var(var_name: str) -> str:
-    var_value = load_required_str_env_var(var_name)
+    var_value = load_required_str_env_var(var_name=var_name, must_print_value=False)
     if var_value.startswith('"') and var_value.endswith('"'):
         return var_value[1:-1]
     return var_value

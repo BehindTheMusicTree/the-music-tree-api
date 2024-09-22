@@ -1,5 +1,9 @@
 #!/bin/bash
 
+log_with_script_prefixe () {
+    log "[AFP and DB runner] $1"
+}
+
 load_env_vars () {
     load_app_env_file_if_exists
     load_project_calculated_paths_env_vars
@@ -29,7 +33,7 @@ load_env_vars () {
     check_bool_vars_are_set DEBUG APP_IS_EXPOSED DB_DATA_MUST_PERSIST
     export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
     export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
-    log "Environment variables loaded successfully."
+    log_with_script_prefixe "Environment variables loaded successfully."
 }
 
 main() {
@@ -38,34 +42,34 @@ main() {
     APP_ENV_FILE="${PROJECT_DIR}env/.env"
     source "${SCRIPTS_DIR}utils.sh"
 
-    log "Running the database and audio fingerprinter containers..."
+    log_with_script_prefixe "Running the database and audio fingerprinter containers..."
 
     load_env_vars
 
-    log "Pulling the database and audio fingerprinter images..."
-    log $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
+    log_with_script_prefixe "Pulling the database and audio fingerprinter images..."
+    log_with_script_prefixe $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     if [ $? -ne 0 ]; then
-        log "ERROR: Failed to pull the database image." >&2
+        log_with_script_prefixe "ERROR: Failed to pull the database image." >&2
         exit 1
     fi
     docker pull $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
     if [ $? -ne 0 ]; then
-        log "ERROR: Failed to pull the audio fingerprinter image." >&2
+        log_with_script_prefixe "ERROR: Failed to pull the audio fingerprinter image." >&2
         exit 1
     fi
-    log "Images pulled successfully."
+    log_with_script_prefixe "Images pulled successfully."
 
     CONTAINER_IDS=$(docker ps -a -q)
     if [ -n "$CONTAINER_IDS" ]; then
-        log "Removing existing containers..."
+        log_with_script_prefixe "Removing existing containers..."
         docker rm -f $CONTAINER_IDS
-        log "Containers removed successfully."
+        log_with_script_prefixe "Containers removed successfully."
     else
-        log "No container to remove."
+        log_with_script_prefixe "No container to remove."
     fi
 
-    log "Running the database container..."
+    log_with_script_prefixe "Running the database container..."
     if [ "$DB_DATA_MUST_PERSIST" = true ]; then
         docker run \
             --name=$DB_CONTAINER_NAME \
@@ -88,9 +92,9 @@ main() {
             -e POSTGRES_PORT=$DB_PORT \
             -d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     fi
-    log "Database container running successfully."
+    log_with_script_prefixe "Database container running successfully."
 
-    log "Running the audio fingerprinter container..."
+    log_with_script_prefixe "Running the audio fingerprinter container..."
     docker run \
         --name=$AFP_CONTAINER_NAME \
         --volume=$TMP_UPLOADED_FILES:$AFP_POOL_DIR_EXTERNAL \
@@ -99,9 +103,9 @@ main() {
         -e DEBUG=$DEBUG \
         -e APP_PORT=$AFP_PORT \
         -d $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
-    log "Audio fingerprinter container running successfully."
+    log_with_script_prefixe "Audio fingerprinter container running successfully."
 
-    log "Containers running successfully."
+    log_with_script_prefixe "Containers running successfully."
 }
 
 main "$@"
