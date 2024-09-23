@@ -20,7 +20,7 @@ check_script_vars_are_set () {
       DB_SUPERUSER_PASSWORD
       DB_BODZIFY_API_USERNAME
   )
-  check_vars_are_set "${REQUIRED_NON_BOOL_VARS[@]}"
+  check_required_vars_are_set "${REQUIRED_NON_BOOL_VARS[@]}"
   log_with_script_prefixe "Environment variables loaded successfully."
 }
 

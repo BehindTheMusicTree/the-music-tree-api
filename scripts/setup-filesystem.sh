@@ -7,14 +7,14 @@ log_with_script_prefixe () {
 check_script_vars_are_set () {
     log_with_script_prefixe "Loading environment variables for the filesystem setup..."
     load_app_env_file_if_exists
-    check_vars_are_set ENV
+    check_required_vars_are_set ENV
     check_bool_vars_are_set APP_IS_EXPOSED
     load_project_calculated_paths_env_vars
     log_with_script_prefixe "Environment variables loaded for the filesystem setup."
 }
 
 setup_static_files_for_collection() {
-    check_vars_are_set STATIC_FILES_DEFAULT 
+    check_required_vars_are_set STATIC_FILES_DEFAULT 
     log_with_script_prefixe "ENV is set to COLLECT_STATIC. Setting up the filesystem..."
     create_directory_if_not_exists_or_exit "$STATIC_FILES_DEFAULT"
     log_with_script_prefixe "Checking if files exist in $STATIC_FILES_DEFAULT..."
@@ -100,7 +100,7 @@ setup_django_log () {
             DJANGO_LOG_APP_FILENAME
         )
         for log_filename in "${LOG_FILENAMES[@]}"; do
-            check_vars_are_set "$log_filename"
+            check_required_vars_are_set "$log_filename"
             touch_file_or_exit "${DJANGO_LOG_DIR}${!log_filename}"
         done
         set_read_write_permissions_and_owner_or_exit "$DJANGO_LOG_DIR"
@@ -118,7 +118,7 @@ setup_gunicorn_log () {
             GUNICORN_LOG_ACCESS_FILENAME
         )
         for var_name in "${REQUIRED_NON_BOOL_VARS[@]}"; do
-            check_vars_are_set "$var_name"
+            check_required_vars_are_set "$var_name"
         done
 
         GUNICORN_LOG_ERROR_FILE="${GUNICORN_LOG_DIR}${GUNICORN_LOG_ERROR_FILENAME}"
@@ -158,7 +158,7 @@ main (){
     log_with_script_prefixe "Setting up filesystem..."
 
     check_script_vars_are_set
-    check_vars_are_set ENV
+    check_required_vars_are_set ENV
 
     if [ $ENV = "COLLECT_STATIC" ]; then
         setup_static_files_for_collection

@@ -7,7 +7,7 @@ log_with_script_prefixe () {
 calculate_static_files_dir(){
     if [ $ENV = "COLLECT_STATIC" ]; then
         log_with_script_prefixe "ENV is set to COLLECT_STATIC. Calculating the static files directory..."
-        check_vars_are_set STATIC_FILES_INTERNAL
+        check_required_vars_are_set STATIC_FILES_INTERNAL
         if [ -n "$STATIC_FILES_EXTERNAL" ]; then
             log_with_script_prefixe "ERROR: In collect static mode, $STATIC_FILES_EXTERNAL must not be set." >&2
             exit 1
@@ -111,7 +111,7 @@ calculate_media_dirs(){
         echo "MEDIA_DIR=$MEDIA_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
 
         log_with_script_prefixe "Setting up libraries directory..."
-        check_vars_are_set "LIBRARIES_DIR_NAME"
+        check_required_vars_are_set "LIBRARIES_DIR_NAME"
         LIBRARIES_DIR="${MEDIA_DIR}${LIBRARIES_DIR_NAME}/"
         log_with_script_prefixe "LIBRARIES_DIR is set to $LIBRARIES_DIR"
         echo "LIBRARIES_DIR=$LIBRARIES_DIR" >> "$CALCULATED_PATHS_ENV_FILE"
@@ -136,7 +136,7 @@ main () {
 
     log_with_script_prefixe "Generating the env file with calculated paths..."
 
-    check_vars_are_set ENV
+    check_required_vars_are_set ENV
 
     [ -f "$CALCULATED_PATHS_ENV_FILE" ] && rm -f "$CALCULATED_PATHS_ENV_FILE"
     output=$(touch "$CALCULATED_PATHS_ENV_FILE")

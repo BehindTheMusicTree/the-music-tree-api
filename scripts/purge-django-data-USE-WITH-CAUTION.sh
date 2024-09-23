@@ -19,7 +19,7 @@ check_script_vars_are_set() {
 		DB_BODZIFY_API_USERNAME
 	)
 	for VAR in "${REQUIRED_NON_BOOL_VARS[@]}"; do
-		check_vars_are_set "$VAR"
+		check_required_vars_are_set "$VAR"
 	done
 	check_bool_vars_are_set APP_IS_EXPOSED
 

@@ -54,7 +54,7 @@ set_read_write_permissions_and_owner_or_exit() {
     fi
 }
 
-check_vars_are_set() {
+check_required_vars_are_set() {
     local missing_vars=()
     for var_name in "$@"; do
         if [ -z "${!var_name}" ]; then
@@ -66,7 +66,7 @@ check_vars_are_set() {
 
 check_bool_vars_are_set() {
     local invalid_vars=()
-    check_vars_are_set "$@"
+    check_required_vars_are_set "$@"
     for var_name in "$@"; do
         if [ "${!var_name}" != "true" ] && [ "${!var_name}" != "false" ]; then
             log_with_utils_prefixe "ERROR: $var_name is not a valid boolean (true/false)" >&2
@@ -138,10 +138,10 @@ determine_db_host_if_not_set () {
         log_with_utils_prefixe "DB_HOST is not set. Determining the host..."
         check_bool_vars_are_set APP_IS_EXPOSED
         if [ "$APP_IS_EXPOSED" = "true" ]; then
-            check_vars_are_set DB_CONTAINER_NAME
+            check_required_vars_are_set DB_CONTAINER_NAME
             DB_HOST=$DB_CONTAINER_NAME
         else
-            check_vars_are_set "DB_URL"
+            check_required_vars_are_set "DB_URL"
             DB_HOST=$DB_URL
         fi
         log_with_utils_prefixe "DB_HOST: $DB_HOST"

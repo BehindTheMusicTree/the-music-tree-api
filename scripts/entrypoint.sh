@@ -21,7 +21,7 @@ check_script_vars_are_set () {
         GUNICORN_LOG_ERROR_FILENAME
         GUNICORN_LOG_ACCESS_FILENAME
     )
-    check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]} 2>&1
+    check_required_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]} 2>&1
     if [ $? -ne 0 ]; then
         log_with_script_prefixe "ERROR: Failed to load environment variables." >&2
         exit 1

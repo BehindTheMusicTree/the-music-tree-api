@@ -314,7 +314,7 @@ jobs:
       name: TEST
     env:
       SERVER_DOCKER_COMPOSE_DIR: ${{ vars.WEBHOOK_DIR }}${{ vars.WEBHOOK_REDEPLOYMENT_DIR_NAME }}/${{ vars.DOCKER_COMPOSE_DIR_NAME }}/
-      DOCKER_COMPOSE_PART_FILENAME_SUFFIXE: _part_compose.yml
+      DOCKER_COMPOSE_PARTIAL_FILENAME_SUFFIXE: _part_compose.yml
     steps:
       - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.9.0
@@ -327,7 +327,7 @@ jobs:
           
       - name: Generate partial docker compose files
         env: 
-          DOCKER_COMPOSE_PART_FILENAME_SUFFIXE: ${{ vars.DOCKER_COMPOSE_PART_FILENAME_SUFFIXE }}
+          DOCKER_COMPOSE_PARTIAL_FILENAME_SUFFIXE: ${{ vars.DOCKER_COMPOSE_PARTIAL_FILENAME_SUFFIXE }}
           DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
 
           DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
@@ -366,7 +366,7 @@ jobs:
 
       - name: SSH Transfer partial docker-compose files to server
         run: |
-          scp scripts/*${{ vars.DOCKER_COMPOSE_PART_FILENAME_SUFFIXE }} ${{ env.SSH_DESTINATION }}:${{ env.SERVER_DOCKER_COMPOSE_DIR }}
+          scp scripts/*${{ vars.DOCKER_COMPOSE_PARTIAL_FILENAME_SUFFIXE }} ${{ env.SSH_DESTINATION }}:${{ env.SERVER_DOCKER_COMPOSE_DIR }}
 
   redeploy-webhook-call:
     name: Redeploy webhook call

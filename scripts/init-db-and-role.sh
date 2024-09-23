@@ -14,7 +14,7 @@ check_script_vars_are_set () {
 		DB_BODZIFY_API_USERNAME
 		DB_BODZIFY_API_USER_PASSWORD
 	)
-	check_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
+	check_required_vars_are_set ${REQUIRED_NON_BOOL_VARS[@]}
 	check_bool_vars_are_set APP_IS_EXPOSED
 	export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
 	export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD"
