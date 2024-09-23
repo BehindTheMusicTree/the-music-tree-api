@@ -189,19 +189,13 @@ jobs:
           fetch-depth: 0  # Fetch all history for all branches to retrieve the commit from collect-and-push-static-files
           ref: ${{ needs.collect-and-push-static-files.outputs.collect_static_files_commit_hash }}
 
-      - name: Display last commit message
-        run: git log -1 --pretty=format:"%s"
-
-      - name: List files
-        run: ls -la
-
       - name: Login to Dockerhub
         run: |
           echo "${{ secrets.DOCKERHUB_ACCESS_TOKEN }}" | \
           docker login -u "${{ env.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Build and Push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
