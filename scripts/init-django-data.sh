@@ -22,16 +22,6 @@ check_script_vars_are_set() {
   log_with_script_prefixe "Environment variables loaded successfully."
 }
 
-exit_if_migrations_exist() {
-  log_with_script_prefixe "Checking if migrations already exist..."
-  local MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
-  if [ -d "${MIGRATIONS_DIR}" ] && [ "$(find "${MIGRATIONS_DIR}" -type f ! -name '__init__.py' ! -path '*/__pycache__/*' | head -n 1)" ]; then
-      log_with_script_prefixe "ERROR: Migrations already exist. Abort" >&2
-      exit 1
-  fi
-  log_with_script_prefixe "Migrations do not exist."
-}
-
 create_initial_migration() {
   log_with_script_prefixe "Creating initial migrations..."
   output=$(python3 $MANAGE_SCRIPT makemigrations 2>&1)
@@ -94,7 +84,6 @@ main (){
   log_with_script_prefixe "Initializing Django data..."
 
   check_script_vars_are_set
-  exit_if_migrations_exist
 
   MANAGE_SCRIPT=${PROJECT_DIR}manage.py
   log_with_script_prefixe "MANAGE_SCRIPT: $MANAGE_SCRIPT"
