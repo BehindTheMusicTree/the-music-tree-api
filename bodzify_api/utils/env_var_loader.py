@@ -51,7 +51,7 @@ def load_calculated_env_paths(base_dir: Path):
                        text=True,
                        env=os.environ.copy())
     except subprocess.CalledProcessError as e:
-        print_django("Error while generating the paths env file:", e.stderr)  # type: ignore
+        print_django(f"Error while generating the paths env file: {e.stderr}")  # type: ignore
         raise EnvironmentError("Error while generating the paths env file: " + str(e)) from e
 
     dotenv.load_dotenv(CALCULATED_PATHS_ENV_FILE)
