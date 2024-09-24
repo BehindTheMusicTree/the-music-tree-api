@@ -6,7 +6,7 @@
             "password": "pbkdf2_sha256$720000$L2CHrvaKCemD72HSQGh4hY$MO/czUciLOGabMSKfqk6MvPSuNAVsZFVTeJ83c+KDIc=", 
             "last_login": null, 
             "is_superuser": false, 
-            "username": "ultimate_music_guide_test", 
+            "username": "ultimate_music_guide_dev", 
             "first_name": "Ultimate", 
             "last_name": "Music Guide", 
             "email": "andreas.garcia@bodzify.com", 
