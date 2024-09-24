@@ -1,11 +1,11 @@
 meta {
-  name: Country
+  name: post foot
   type: http
   seq: 2
 }
 
 post {
-  url: {{BASE_URL}}genres/
+  url: {{BASE_URL}}simple-playlists/
   body: json
   auth: inherit
 }
@@ -16,10 +16,10 @@ headers {
 
 body:json {
   {
-    "name": "Country"
+    "name": "foot"
   }
 }
 
 vars:post-response {
-  genreCountryUuid: res.body.uuid
+  simplePlaylistFootUuid: res.body.uuid
 }
