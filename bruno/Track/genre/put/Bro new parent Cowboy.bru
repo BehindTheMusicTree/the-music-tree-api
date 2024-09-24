@@ -5,13 +5,13 @@ meta {
 }
 
 put {
-  url: {{BASE_URL}}genres/{{GENRE_BRO_COUNTRY_UUID}}/
+  url: {{BASE_URL}}genres/{{genreBroCountryUuid}}/
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "parent": "{{GENRE_COWBOY_COUNTRY_UUID}}"
+    "parent": "{{genreCowboyCountryUuid}}"
   }
 }

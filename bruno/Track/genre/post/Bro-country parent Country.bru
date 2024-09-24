@@ -20,3 +20,8 @@ body:json {
     "parent": "{{genreCountryUuid}}"
   }
 }
+
+vars:post-response {
+  genreBroCountryUuid: res.body.uuid
+  genreBroCountryPlaylistUuid: res.body.criteriaPlaylist.uuid
+}
