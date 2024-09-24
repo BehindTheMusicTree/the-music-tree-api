@@ -3,7 +3,6 @@
 import binascii
 from calendar import monthrange
 import os
-import re
 import stat
 import random
 from typing import Optional
@@ -28,17 +27,17 @@ from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.utils.audio_fingerprinter_api_client import AudioFingerprinterApiClient, AudioFingerprinterError
 from bodzify_api.utils import audio_metadata
 from bodzify_api.service.Service import Service
-from bodzify_api.model.track_file.FingerprintingErrorCode import FINGERPRINTING_ERROR_CODES, FingerprintingErrorCode
+from bodzify_api.model.track_file.FingerprintingErrorCode import FingerprintingErrorCodes
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.musicbrainz.MusicbrainzArtist \
-    import MusicbrainzArtist, ATTRIBUTES_LABEL as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
+    import MusicbrainzArtist, AttributesLabel as MUSICBRAINZ_ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.PlaylistLibTrackRelation \
-    import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
+    import PlaylistLibTrackRelation, AttributesLabel as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
 from bodzify_api.model.Album import Album
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTE_LABEL
+from bodzify_api.model.track.LibraryTrack import AttributesLabel as LIB_TRACK_ATTRIBUTE_LABEL
 from bodzify_api.serializer.track.input.endpoint.post import LibTrackPostSerializer, FIELDS as POST_FIELDS
 from bodzify_api.serializer.track.input.model import FIELDS as SAVE_MODEL_FIELDS, TrackModelSerializer
 from bodzify_api.serializer.track_file.input.schema import TrackFileSchemaSerializer, FIELDS as TRACK_FILE_SCHEMA_FIELDS
@@ -122,7 +121,7 @@ class TrackService(Service):
                 position=F(PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION) - 1)
 
     @staticmethod
-    def _get_fingerprint_and_duration_from_file(file) -> tuple[bytes, int]:
+    def _get_fingerprint_and_duration_from_file(user_id: str, file, title: str) -> tuple[bytes, int]:
         if isinstance(file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR) as tmp_file:
                 for chunk in file.chunks():
@@ -130,16 +129,17 @@ class TrackService(Service):
                 file_path = tmp_file.name
                 filename = os.path.basename(file_path)
                 fingerprint, duration_in_sec = \
-                    AudioFingerprinterApiClient.post_fingerprint_audio(filename=filename)
+                    AudioFingerprinterApiClient.post_fingerprint_audio(filename=filename, title=title, user_id=user_id)
                 os.remove(file_path)
         elif isinstance(file, TemporaryUploadedFile):
             file_path = file.file.name
             filename = os.path.basename(file_path)
-            fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(filename=filename)
+            fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(
+                user_id=user_id, filename=filename, title=title)
         elif isinstance(file, AppDjangoFile):
             filename = os.path.basename(file.file_abs_path)
             fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(
-                filename=filename)
+                user_id=user_id, filename=filename, title=title)
 
         return fingerprint, int(duration_in_sec)
 
@@ -157,7 +157,8 @@ class TrackService(Service):
             try:
                 # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack
                 # model, doing it here enables to calculate it only once.
-                fingerprint, duration_in_sec = TrackService._get_fingerprint_and_duration_from_file(file=track_file)
+                fingerprint, duration_in_sec = TrackService._get_fingerprint_and_duration_from_file(
+                    user_id=user.pk, file=track_file, title=schema_data.get(SAVE_SCHEMA_FIELDS.TITLE, None))
                 save_data[SAVE_MODEL_FIELDS.DURATION_IN_SEC] = duration_in_sec
 
                 track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINT_CHAR] = binascii.hexlify(
@@ -175,25 +176,25 @@ class TrackService(Service):
                 fingerprint = None
                 error_class = e.__class__
                 if error_class == audio_fingerprinter_api_client.WrongFileExtension:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.WRONG_FILE_EXTENSION
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.WRONG_FILE_EXTENSION
                 elif error_class == audio_fingerprinter_api_client.WrongFileType:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.WRONG_FILE_TYPE
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.WRONG_FILE_TYPE
                 elif error_class == audio_fingerprinter_api_client.FileNotInPool:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.FILE_NOT_FOUND_IN_POOL
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.FILE_NOT_FOUND_IN_POOL
                 elif error_class == audio_fingerprinter_api_client.BadRequestError:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.UNKNOWN_BAD_REQUEST
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.UNKNOWN_BAD_REQUEST
                 elif error_class == audio_fingerprinter_api_client.InternalServerError:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.INTERNAL_ERROR
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.INTERNAL_ERROR
                 elif error_class == audio_fingerprinter_api_client.TimeoutError:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.TIMEOUT_ERROR
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.TIMEOUT_ERROR
                 elif error_class == audio_fingerprinter_api_client.FpcalcStatusError:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.FPCALC_ERROR_WITH_STATUS_2
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.FPCALC_ERROR_WITH_STATUS_2
                 elif error_class == audio_fingerprinter_api_client.UnknownUnprocessableEntityError:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.UNKNOWN_UNPROCESSABLE_ENTITY_ERROR
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.UNKNOWN_UNPROCESSABLE_ENTITY_ERROR
                 elif error_class == audio_fingerprinter_api_client.ServiceNotFoundError:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.SERVICE_NOT_FOUND
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.SERVICE_NOT_FOUND
                 elif error_class == audio_fingerprinter_api_client.ConnectionError:
-                    fingerprinting_error_code_pk = FINGERPRINTING_ERROR_CODES.UNKNOWN_CONNEXION_ERROR
+                    fingerprinting_error_code_pk = FingerprintingErrorCodes.UNKNOWN_CONNEXION_ERROR
                 track_file_schema_data[TRACK_FILE_SCHEMA_FIELDS.FINGERPRINTING_ERROR_CODE] = fingerprinting_error_code_pk
 
             track_file_schema_serializer = TrackFileSchemaSerializer(
