@@ -4,10 +4,7 @@ on:
   workflow_call:
   workflow_dispatch:
   push:
-    branches: 
-      - main
-      - dev
-      - prevent-posting-same-track
+    branches: [main, dev, fix-genre-put-playlist-parent]
   pull_request:
     branches: [main, dev]
 
