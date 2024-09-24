@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL
+from bodzify_api.model.Artist import Artist, AttributesLabel
 
 
 class FIELDS:
-    UUID = ATTRIBUTES_LABEL.UUID
-    NAME = ATTRIBUTES_LABEL.NAME
+    UUID = AttributesLabel.UUID
+    NAME = AttributesLabel.NAME
 
 
 class ArtistWithOnlyNameSerializer(serializers.ModelSerializer):

@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist \
 from bodzify_api.serializer.playlist.base.input.query_param \
     import BasePlaylistQueryParamSerializer, FIELDS as QUERY_PARAM_FIELDS
 from bodzify_api.service.Service import Service
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.playlist.base.output.with_tracks import BasePlaylistWithTracksSerializer
 
@@ -83,7 +83,7 @@ class PlaylistViewSet(AppModelViewSet):
                 criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
 
         return simple_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
-            tagless_playlist).order_by(ATTRIBUTES_LABEL.CREATED_ON)
+            tagless_playlist).order_by(AttributesLabel.CREATED_ON)
 
     @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
                                                 type=OpenApiTypes.STR,

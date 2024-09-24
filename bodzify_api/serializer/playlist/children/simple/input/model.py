@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.playlist.children.SimplePlaylist \
-    import SimplePlaylist, ATTRIBUTES_LABEL as SIMPLE_PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+    import SimplePlaylist, AttributesLabel as SIMPLE_PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
 from rest_framework import serializers
 
 

@@ -17,7 +17,7 @@ from bodzify_api.validator.track_file_validator \
 import bodzify_api.utils.audio_metadata as audio_metadata
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     USER = 'user'
     FILE = 'file'
     FILENAME = 'filename'
@@ -65,10 +65,10 @@ class TrackFile(models.Model):
                                                   blank=True)
     flac_md5_has_been_corrected = models.BooleanField(null=True, default=None, blank=True)
     size_in_bytes = models.DecimalField(null=True, blank=True, max_digits=11, decimal_places=2)
-    size_in_ko = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / 1024,  # type: ignore
+    size_in_ko = models.GeneratedField(expression=F(AttributesLabel.SIZE_IN_BYTES) / 1024,  # type: ignore
                                        output_field=models.DecimalField(max_digits=8, decimal_places=2),
                                        db_persist=True)
-    size_in_mo = models.GeneratedField(expression=F(ATTRIBUTES_LABEL.SIZE_IN_BYTES) / (1024 * 1024),  # type: ignore
+    size_in_mo = models.GeneratedField(expression=F(AttributesLabel.SIZE_IN_BYTES) / (1024 * 1024),  # type: ignore
                                        output_field=models.DecimalField(max_digits=5, decimal_places=2),
                                        db_persist=True)
     bitrate_in_kbps = models.IntegerField(null=True, blank=True)
@@ -97,7 +97,7 @@ class TrackFile(models.Model):
         super().save(*args, **kwargs)  # So that the file is saved before eventual modifications
 
         self.bitrate_in_kbps = audio_metadata.get_bitrate_from_file(self.file.path)
-        super().save(update_fields=[ATTRIBUTES_LABEL.BITRATE_IN_KBPS])
+        super().save(update_fields=[AttributesLabel.BITRATE_IN_KBPS])
 
         if self.file and self.extension == '.flac':
             if not audio_metadata.is_flac_file_md5_valid(self.file.path):
@@ -106,9 +106,9 @@ class TrackFile(models.Model):
                     self.flac_md5_has_been_corrected = True
                 except Exception:
                     raise ValidationError(
-                        {ATTRIBUTES_LABEL.FILE: ["The Flac file md5 check failed and could not be corrected. The " +
-                                                 "file is probably corrupted."]}
+                        {AttributesLabel.FILE: ["The Flac file md5 check failed and could not be corrected. The " +
+                                                "file is probably corrupted."]}
                     )
             else:
                 self.flac_md5_has_been_corrected = False
-            super().save(update_fields=[ATTRIBUTES_LABEL.FLAC_MD5_HAS_BEEN_CORRECTED])
+            super().save(update_fields=[AttributesLabel.FLAC_MD5_HAS_BEEN_CORRECTED])

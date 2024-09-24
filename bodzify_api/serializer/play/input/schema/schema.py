@@ -3,13 +3,13 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
-from bodzify_api.model.Play import Play, ATTRIBUTES_LABEL
+from bodzify_api.model.Play import Play, AttributesLabel
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 
 
 class FIELDS:
-    CONTENT_OBJECT_UUID = ATTRIBUTES_LABEL.CONTENT_OBJECT + '_uuid'
+    CONTENT_OBJECT_UUID = AttributesLabel.CONTENT_OBJECT + '_uuid'
 
 
 class PlaySchemaSerializer(serializers.ModelSerializer):

@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.model.track_file.FingerprintingErrorCode import FINGERPRINTING_ERROR_CODES
+from bodzify_api.model.track_file.FingerprintingErrorCode import FingerprintingErrorCodes
 import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
@@ -49,7 +49,7 @@ class TrackTestCase(AppTestCase):
 
     def _skip_if_fingerprinting_error_because_of_acoustid_unknown_connection_issue(self):
         if self.saved_lib_track.track_file.fingerprinting_error_code == (
-                FINGERPRINTING_ERROR_CODES.UNKNOWN_CONNEXION_ERROR):
+                FingerprintingErrorCodes.UNKNOWN_CONNEXION_ERROR):
             self.skipTest(self.SKIPPING_TEST_DUE_TO_ACOUSTID_UNKNOWN_CONNECTION_ISSUE)
 
     def _set_saved_lib_track_attribute(self, response):

@@ -2,9 +2,9 @@
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from bodzify_api.model.criteria.Criteria import ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import AttributesLabel as CRITERIA_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
-from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist, ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist, AttributesLabel
 from bodzify_api.serializer.playlist.children.criteria.input.query_param \
     import FIELDS as QUERY_PARAM_FIELDS, CriteriaPlaylistQueryParamSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.with_tracks \
@@ -46,7 +46,7 @@ class GenrePlaylistViewSet(AppModelViewSet):
             queryset = queryset.filter(base_playlist__user=self.request.user,
                                        criteria__parent__uuid=parent_uuid_query_param)
 
-        return queryset.order_by(f"{ATTRIBUTES_LABEL.CRITERIA}__{CRITERIA_ATTRIBUTES_LABEL.NAME}")
+        return queryset.order_by(f"{AttributesLabel.CRITERIA}__{CRITERIA_ATTRIBUTES_LABEL.NAME}")
 
     @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
                                                 type=OpenApiTypes.STR,

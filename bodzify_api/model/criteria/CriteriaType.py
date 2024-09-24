@@ -13,7 +13,7 @@ class CRITERIA_TYPES_LABEL:
     TAG = "tag"
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     LABEL = "label"
 
 

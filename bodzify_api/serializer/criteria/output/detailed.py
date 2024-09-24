@@ -3,8 +3,8 @@
 from typing import Any, Dict, List
 from rest_framework import serializers
 
-from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIBRARY_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel
+from bodzify_api.model.track.LibraryTrack import AttributesLabel as LIBRARY_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.criteria.type.detailed \
     import CriteriaTypeSerializer, FIELDS as CRITERIA_TYPE_FIELDS
@@ -18,29 +18,29 @@ from bodzify_api.serializer.track.output.without_playlists_and_album_and_genre \
 
 
 class FIELDS:
-    UUID = ATTRIBUTES_LABEL.UUID
-    NAME = ATTRIBUTES_LABEL.NAME
-    PARENT = ATTRIBUTES_LABEL.PARENT
-    ASCENDANTS = ATTRIBUTES_LABEL.ASCENDANTS
-    DESCENDANTS = ATTRIBUTES_LABEL.DESCENDANTS
-    ROOT = ATTRIBUTES_LABEL.ROOT
-    CHILDREN = ATTRIBUTES_LABEL.CHILDREN
-    TYPE = ATTRIBUTES_LABEL.TYPE
+    UUID = AttributesLabel.UUID
+    NAME = AttributesLabel.NAME
+    PARENT = AttributesLabel.PARENT
+    ASCENDANTS = AttributesLabel.ASCENDANTS
+    DESCENDANTS = AttributesLabel.DESCENDANTS
+    ROOT = AttributesLabel.ROOT
+    CHILDREN = AttributesLabel.CHILDREN
+    TYPE = AttributesLabel.TYPE
     TYPE_LABEL = CRITERIA_TYPE_FIELDS.LABEL
-    CREATED_ON = ATTRIBUTES_LABEL.CREATED_ON
-    LIB_TRACKS = ATTRIBUTES_LABEL.LIB_TRACKS
+    CREATED_ON = AttributesLabel.CREATED_ON
+    LIB_TRACKS = AttributesLabel.LIB_TRACKS
     LIB_TRACKS_TITLE = LIBRARY_TRACK_ATTRIBUTES_LABEL.TITLE
-    CRITERIA_PLAYLIST = ATTRIBUTES_LABEL.CRITERIA_PLAYLIST
+    CRITERIA_PLAYLIST = AttributesLabel.CRITERIA_PLAYLIST
 
 
 class CriteriaDetailedSerializer(serializers.ModelSerializer):
     type = CriteriaTypeSerializer()
     parent = CriteriaSimpleSerializer()
     ascendants = CriteriaAscendantRelationWithoutDescendantSerializer(
-        source=ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_ASCENDANTS,
+        source=AttributesLabel.CRITERIA_ASCENDANT_RELATION_ASCENDANTS,
         many=True)
     descendants = CriteriaAscendantRelationWithoutAscendantSerializer(
-        source=ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
+        source=AttributesLabel.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
         many=True)
     root = CriteriaSimpleSerializer()  # type: ignore
     children = serializers.SerializerMethodField()

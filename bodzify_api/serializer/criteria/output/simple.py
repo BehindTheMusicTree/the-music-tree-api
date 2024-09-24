@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel
 
 
 class FIELDS:
-    UUID = ATTRIBUTES_LABEL.UUID
-    NAME = ATTRIBUTES_LABEL.NAME
-    CREATED_ON = ATTRIBUTES_LABEL.CREATED_ON
+    UUID = AttributesLabel.UUID
+    NAME = AttributesLabel.NAME
+    CREATED_ON = AttributesLabel.CREATED_ON
 
 
 class CriteriaSimpleSerializer(serializers.ModelSerializer):

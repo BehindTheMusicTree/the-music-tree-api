@@ -3,7 +3,7 @@
 from django.db import models
 
 from bodzify_api import settings
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
 
 TYPE_LABEL = "simple"
 
@@ -12,7 +12,7 @@ class SPECIAL_NAMES:
     ALL = "All"
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     BASE_PLAYLIST = 'base_playlist'
     NAME = 'name'
 

@@ -10,7 +10,7 @@ from django.utils import timezone
 from bodzify_api import settings
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     UUID = 'uuid'
     USER = 'user'
     NAME = 'name'

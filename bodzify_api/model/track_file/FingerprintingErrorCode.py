@@ -3,11 +3,11 @@
 from django.db import models
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     LABEL = "label"
 
 
-class FINGERPRINTING_ERROR_CODES:
+class FingerprintingErrorCodes:
     SERVICE_NOT_FOUND = 0
     FPCALC_ERROR_WITH_STATUS_2 = 1
     WRONG_FILE_EXTENSION = 2

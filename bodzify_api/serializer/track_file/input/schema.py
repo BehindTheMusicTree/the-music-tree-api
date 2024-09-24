@@ -3,13 +3,13 @@
 import binascii
 from rest_framework import serializers
 
-from bodzify_api.model.track_file.TrackFile import ATTRIBUTES_LABEL as ATTRIBUTES_LABEL, TrackFile
+from bodzify_api.model.track_file.TrackFile import AttributesLabel as AttributesLabel, TrackFile
 
 
 class FIELDS:
-    FILE = ATTRIBUTES_LABEL.FILE
-    FINGERPRINT_CHAR = ATTRIBUTES_LABEL.FINGERPRINT
-    FINGERPRINTING_ERROR_CODE = ATTRIBUTES_LABEL.FINGERPRINTING_ERROR_CODE
+    FILE = AttributesLabel.FILE
+    FINGERPRINT_CHAR = AttributesLabel.FINGERPRINT
+    FINGERPRINTING_ERROR_CODE = AttributesLabel.FINGERPRINTING_ERROR_CODE
     SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = "should_cancel_if_duplicate_fingerprint"
 
 

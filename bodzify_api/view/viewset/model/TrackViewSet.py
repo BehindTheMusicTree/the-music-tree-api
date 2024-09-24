@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.serializers import ModelSerializer
 
 import bodzify_api.view.utility as utility
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import AttributesLabel as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.endpoint.extract import LibTrackExtractSerializer
 from bodzify_api.serializer.track.input.endpoint.post import LibTrackPostSerializer

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from typing import Any, Dict
-from bodzify_api.model.Play import Play, ATTRIBUTES_LABEL
+from bodzify_api.model.Play import Play, AttributesLabel
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
@@ -12,10 +12,10 @@ from bodzify_api.serializer.track.output.without_playlists_and_album_and_genre \
 
 
 class FIELDS:
-    UUID = ATTRIBUTES_LABEL.UUID
-    CONTENT_TYPE = ATTRIBUTES_LABEL.CONTENT_TYPE
-    CONTENT_OBJECT = ATTRIBUTES_LABEL.CONTENT_OBJECT
-    TIME = ATTRIBUTES_LABEL.TIME
+    UUID = AttributesLabel.UUID
+    CONTENT_TYPE = AttributesLabel.CONTENT_TYPE
+    CONTENT_OBJECT = AttributesLabel.CONTENT_OBJECT
+    TIME = AttributesLabel.TIME
 
 
 class PlayDetailedSerializer(serializers.ModelSerializer):
