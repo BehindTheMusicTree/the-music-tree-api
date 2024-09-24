@@ -122,10 +122,10 @@ class Criteria(models.Model):
             print("ICI")
             if self.parent is not None:
                 print("PARENR")
-                self.criteria_playlist.parent = self.parent.criteria_playlist
+                self.criteria_playlist.parent = self.parent.criteria_playlist  # type: ignore
             else:
-                self.criteria_playlist = None
-            self.criteria_playlist.save()
+                self.criteria_playlist.parent = None  # type: ignore
+            self.criteria_playlist.save()  # type: ignore
 
     def _update_playlists_of_ascendants(self, old_parent: Optional['Criteria']):
         common_criteria = self.get_common_criteria(old_parent)
