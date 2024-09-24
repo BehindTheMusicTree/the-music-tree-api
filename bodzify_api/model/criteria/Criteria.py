@@ -116,10 +116,18 @@ class Criteria(models.Model):
             self._update_root_of_children(criteria=self, new_root=self.root)  # type: ignore
 
         if old_criteria.parent != self.parent:
-            self._update_playlists(old_criteria.parent)
+            self._update_playlists_of_ascendants(old_criteria.parent)
             Criteria._update_ascendants_of_criteria_and_children(self)
 
-    def _update_playlists(self, old_parent: Optional['Criteria']):
+            print("ICI")
+            if self.parent is not None:
+                print("PARENR")
+                self.criteria_playlist.parent = self.parent.criteria_playlist
+            else:
+                self.criteria_playlist = None
+            self.criteria_playlist.save()
+
+    def _update_playlists_of_ascendants(self, old_parent: Optional['Criteria']):
         common_criteria = self.get_common_criteria(old_parent)
 
         from bodzify_api.model.track.LibraryTrack import LibraryTrack

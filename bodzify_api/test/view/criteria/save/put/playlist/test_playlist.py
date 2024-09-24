@@ -6,6 +6,7 @@ from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylis
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.criteria.input.schema.endpoint.put import FIELDS as PUT_FIELD
+from bodzify_api.test.view import criteria
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 
@@ -19,6 +20,28 @@ class TestCase(CriteriaTestCase):
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(criteria=rock_genre)
         assert playlist.name == genre_new_name
+
+    def test_new_parent_then_update_playlist_parent(self):
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
+        hardcore_genre = self.model_fixture_factory.create_genre(name="Hardcore")
+        data = {PUT_FIELD.PARENT: hardcore_genre.uuid}
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        assert response.status_code == status.HTTP_200_OK
+        punk_playlist = CriteriaPlaylist.objects.get(criteria=punk_genre)
+        hardcore_playlist = CriteriaPlaylist.objects.get(criteria=hardcore_genre)
+        assert punk_playlist.parent == hardcore_playlist
+
+    def test_new_root_then_update_playlist_root(self):
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
+        hardcore_genre = self.model_fixture_factory.create_genre(name="Hardcore")
+        data = {PUT_FIELD.PARENT: hardcore_genre.uuid}
+        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        assert response.status_code == status.HTTP_200_OK
+        punk_playlist = CriteriaPlaylist.objects.get(criteria=punk_genre)
+        hardcore_playlist = CriteriaPlaylist.objects.get(criteria=hardcore_genre)
+        assert punk_playlist.root == hardcore_playlist
 
     def test_new_parent_then_update_new_parent_playlist(self):
         punk_genre = self.model_fixture_factory.create_genre(name="Punk")
