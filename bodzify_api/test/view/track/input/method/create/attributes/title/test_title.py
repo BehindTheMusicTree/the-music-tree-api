@@ -10,7 +10,7 @@ class TestCase(TrackTestCase):
     def test_not_povided_then_set_from_filename_without_dots(self):
         response = self.post_lib_track_with_generic_sample_no_tags()
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.title == self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
+        assert self.saved_lib_track.title == self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_NONE
 
     def test_not_povided_then_set_from_filename_with_dots(self):
         filename_without_extension = "dot.in.filename"

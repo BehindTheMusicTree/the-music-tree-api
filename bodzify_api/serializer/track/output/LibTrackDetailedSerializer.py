@@ -9,7 +9,7 @@ from bodzify_api.serializer.playlist.mother.output.PlaylistWithoutTrackSerialize
 from bodzify_api.serializer.file.output.FileDetailedSerializer import FileDetailedSerializer
 
 
-class FIELDS:
+class Fields:
     UUID = AttributesLabel.UUID
     RELATIVE_URL = AttributesLabel.RELATIVE_URL
     FILE = 'file'
@@ -34,16 +34,16 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LibraryTrack
-        fields = [FIELDS.UUID,
-                  FIELDS.RELATIVE_URL,
-                  FIELDS.FILE,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST,
-                  FIELDS.ALBUM,
-                  FIELDS.GENRE,
-                  FIELDS.DURATION,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE,
-                  FIELDS.PLAYLISTS,
-                  FIELDS.ADDED_ON,
-                  FIELDS.PLAY_COUNT]
+        fields = [Fields.UUID,
+                  Fields.RELATIVE_URL,
+                  Fields.FILE,
+                  Fields.TITLE,
+                  Fields.ARTIST,
+                  Fields.ALBUM,
+                  Fields.GENRE,
+                  Fields.DURATION,
+                  Fields.RATING,
+                  Fields.LANGUAGE,
+                  Fields.PLAYLISTS,
+                  Fields.ADDED_ON,
+                  Fields.PLAY_COUNT]

@@ -3,10 +3,10 @@
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
 from bodzify_api.serializer.playlist.children.criteria.output.without_tracks \
-    import CriteriaPlaylistWithoutTracksSerializer, FIELDS as CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS
+    import CriteriaPlaylistWithoutTracksSerializer, Fields as CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS
 
 
-class FIELDS:
+class Fields:
     UUID = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.UUID
     NAME = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.NAME
     CRITERIA = CRITERIA_PLAYLIST_WITHOUT_TRACKS_FIELDS.CRITERIA
@@ -21,11 +21,11 @@ class CriteriaPlaylistWithTracksSerializer(CriteriaPlaylistWithoutTracksSerializ
 
     class Meta:
         model = CriteriaPlaylist
-        fields = [FIELDS.UUID,
-                  FIELDS.NAME,
-                  FIELDS.CRITERIA,
-                  FIELDS.PARENT,
-                  FIELDS.ROOT,
-                  FIELDS.CREATED_ON,
-                  FIELDS.LIB_TRACKS_COUNT,
-                  FIELDS.LIB_TRACKS]
+        fields = [Fields.UUID,
+                  Fields.NAME,
+                  Fields.CRITERIA,
+                  Fields.PARENT,
+                  Fields.ROOT,
+                  Fields.CREATED_ON,
+                  Fields.LIB_TRACKS_COUNT,
+                  Fields.LIB_TRACKS]

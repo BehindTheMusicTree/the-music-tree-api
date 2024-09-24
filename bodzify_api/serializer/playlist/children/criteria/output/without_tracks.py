@@ -3,12 +3,12 @@
 from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabel, CriteriaPlaylist
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root \
-    import FIELDS as CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS
+    import Fields as CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS
 from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root \
     import CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer
 
 
-class FIELDS:
+class Fields:
     UUID = CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS.UUID
     NAME = CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS.NAME
     CRITERIA = AttributesLabel.CRITERIA
@@ -32,10 +32,10 @@ class CriteriaPlaylistWithoutTracksSerializer(CriteriaPlaylistWithoutCriteriaAnd
 
     class Meta:
         model = CriteriaPlaylist
-        fields = [FIELDS.UUID,
-                  FIELDS.NAME,
-                  FIELDS.CRITERIA,
-                  FIELDS.CREATED_ON,
-                  FIELDS.PARENT,
-                  FIELDS.ROOT,
-                  FIELDS.LIB_TRACKS_COUNT]
+        fields = [Fields.UUID,
+                  Fields.NAME,
+                  Fields.CRITERIA,
+                  Fields.CREATED_ON,
+                  Fields.PARENT,
+                  Fields.ROOT,
+                  Fields.LIB_TRACKS_COUNT]

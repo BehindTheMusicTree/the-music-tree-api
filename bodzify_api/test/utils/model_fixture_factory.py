@@ -10,7 +10,7 @@ from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track_file.TrackFile import TrackFile as TrackFile
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
@@ -113,7 +113,7 @@ class ModelFixtureFactory:
                      created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                      updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> Criteria:
         return self.__create_criteria(
-            name=name, type=CRITERIA_TYPES_ID.GENRE, parent=parent, created_on=created_on, updated_on=updated_on)
+            name=name, type=CriteriaTypesId.GENRE, parent=parent, created_on=created_on, updated_on=updated_on)
 
     def create_tag(self,
                    name: str,
@@ -121,7 +121,7 @@ class ModelFixtureFactory:
                    created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                    updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> Criteria:
         return self.__create_criteria(
-            name=name, type=CRITERIA_TYPES_ID.TAG, parent=parent, created_on=created_on, updated_on=updated_on)
+            name=name, type=CriteriaTypesId.TAG, parent=parent, created_on=created_on, updated_on=updated_on)
 
     def create_simple_playlist(self,
                                name,

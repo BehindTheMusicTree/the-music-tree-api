@@ -8,7 +8,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.artist.with_only_name import ArtistWithOnlyNameSerializer
 
 
-class FIELDS:
+class Fields:
     UUID = AttributesLabel.UUID
     NAME = AttributesLabel.NAME
     YEAR = AttributesLabel.YEAR
@@ -33,10 +33,10 @@ class AlbumWithoutTracksSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = [FIELDS.UUID,
-                  FIELDS.NAME,
-                  FIELDS.YEAR,
-                  FIELDS.ALBUM_ARTISTS,
-                  FIELDS.LIB_TRACKS_COUNT,
-                  FIELDS.DURATION_IN_SEC,
-                  FIELDS.DURATION_STR_IN_HOUR_MIN_SEC]
+        fields = [Fields.UUID,
+                  Fields.NAME,
+                  Fields.YEAR,
+                  Fields.ALBUM_ARTISTS,
+                  Fields.LIB_TRACKS_COUNT,
+                  Fields.DURATION_IN_SEC,
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC]

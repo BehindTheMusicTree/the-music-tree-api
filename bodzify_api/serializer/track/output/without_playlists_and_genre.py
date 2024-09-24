@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer, FIELDS as LIB_TRACK_DETAILED_FIELDS
+from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer, Fields as LIB_TRACK_DETAILED_FIELDS
 
 
-class FIELDS:
+class Fields:
     UUID = LIB_TRACK_DETAILED_FIELDS.UUID
     RELATIVE_URL = LIB_TRACK_DETAILED_FIELDS.RELATIVE_URL
     FILE = LIB_TRACK_DETAILED_FIELDS.FILE
@@ -25,19 +25,19 @@ class LibTrackWithoutPlaylistsAndGenreSerializer(LibTrackDetailedSerializer):
 
     class Meta:
         model = LibraryTrack
-        fields = [FIELDS.UUID,
-                  FIELDS.RELATIVE_URL,
-                  FIELDS.FILE,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST,
-                  FIELDS.ALBUM,
-                  FIELDS.DURATION_IN_SEC,
-                  FIELDS.DURATION_STR_IN_HOUR_MIN_SEC,
-                  FIELDS.MUSICBRAINZ_RECORDING,
-                  FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_CODE,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE,
-                  FIELDS.CREATED_ON,
-                  FIELDS.PLAY_COUNT,
-                  FIELDS.PLAY_COUNT
+        fields = [Fields.UUID,
+                  Fields.RELATIVE_URL,
+                  Fields.FILE,
+                  Fields.TITLE,
+                  Fields.ARTIST,
+                  Fields.ALBUM,
+                  Fields.DURATION_IN_SEC,
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,
+                  Fields.MUSICBRAINZ_RECORDING,
+                  Fields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_CODE,
+                  Fields.RATING,
+                  Fields.LANGUAGE,
+                  Fields.CREATED_ON,
+                  Fields.PLAY_COUNT,
+                  Fields.PLAY_COUNT
                   ]

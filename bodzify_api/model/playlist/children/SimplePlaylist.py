@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabe
 TYPE_LABEL = "simple"
 
 
-class SPECIAL_NAMES:
+class SpecialNames:
     ALL = "All"
 
 

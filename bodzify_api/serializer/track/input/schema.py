@@ -4,11 +4,11 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.track.input.model import FIELDS as SAVE_MODEL_FIELDS
+from bodzify_api.serializer.track.input.model import Fields as SAVE_MODEL_FIELDS
 from bodzify_api.model.Album import AttributesLabel as AttributesLabel
 
 
-class FIELDS:
+class Fields:
     USER = SAVE_MODEL_FIELDS.USER
     FILE = "file"
     SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = "should_cancel_if_duplicate_fingerprint"
@@ -59,21 +59,21 @@ class LibTrackSchemaSerializer(serializers.Serializer):
     force_title_generation = serializers.BooleanField(required=False)
 
     class Meta:
-        fields = [FIELDS.FILE,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST_NAME,
-                  FIELDS.ALBUM_NAME,
-                  FIELDS.ALBUM_ARTISTS_NAMES_STR,
-                  FIELDS.GENRE_UUID,
-                  FIELDS.GENRE_NAME,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE,
-                  FIELDS.FORCE_TITLE_GENERATION,]
+        fields = [Fields.FILE,
+                  Fields.TITLE,
+                  Fields.ARTIST_NAME,
+                  Fields.ALBUM_NAME,
+                  Fields.ALBUM_ARTISTS_NAMES_STR,
+                  Fields.GENRE_UUID,
+                  Fields.GENRE_NAME,
+                  Fields.RATING,
+                  Fields.LANGUAGE,
+                  Fields.FORCE_TITLE_GENERATION,]
 
     def validate(self, attrs):
-        if FIELDS.GENRE_UUID in attrs and attrs[FIELDS.GENRE_UUID] not in ['', None] and not Criteria.objects.filter(
-                uuid=attrs[FIELDS.GENRE_UUID],
+        if Fields.GENRE_UUID in attrs and attrs[Fields.GENRE_UUID] not in ['', None] and not Criteria.objects.filter(
+                uuid=attrs[Fields.GENRE_UUID],
                 user=self.context['request'].user).exists():
-            raise serializers.ValidationError({FIELDS.GENRE_UUID: "The genre UUID does not exist."})
+            raise serializers.ValidationError({Fields.GENRE_UUID: "The genre UUID does not exist."})
 
         return super().validate(attrs)

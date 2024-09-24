@@ -10,7 +10,7 @@ from bodzify_api.serializer.playlist.base.output.without_tracks import BasePlayl
 from bodzify_api.serializer.track_file.output.detailed import FileDetailedSerializer
 
 
-class FIELDS:
+class Fields:
     UUID = AttributesLabel.UUID
     RELATIVE_URL = AttributesLabel.RELATIVE_URL
     FILE = AttributesLabel.TRACK_FILE_USER_FRIENDLY
@@ -39,19 +39,19 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LibraryTrack
-        fields = [FIELDS.UUID,
-                  FIELDS.RELATIVE_URL,
-                  FIELDS.FILE,
-                  FIELDS.DURATION_IN_SEC,
-                  FIELDS.DURATION_STR_IN_HOUR_MIN_SEC,
-                  FIELDS.MUSICBRAINZ_RECORDING,
-                  FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_CODE,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST,
-                  FIELDS.ALBUM,
-                  FIELDS.GENRE,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE,
-                  FIELDS.BASE_PLAYLISTS_USER_FRIENDLY,
-                  FIELDS.CREATED_ON,
-                  FIELDS.PLAY_COUNT]
+        fields = [Fields.UUID,
+                  Fields.RELATIVE_URL,
+                  Fields.FILE,
+                  Fields.DURATION_IN_SEC,
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,
+                  Fields.MUSICBRAINZ_RECORDING,
+                  Fields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_CODE,
+                  Fields.TITLE,
+                  Fields.ARTIST,
+                  Fields.ALBUM,
+                  Fields.GENRE,
+                  Fields.RATING,
+                  Fields.LANGUAGE,
+                  Fields.BASE_PLAYLISTS_USER_FRIENDLY,
+                  Fields.CREATED_ON,
+                  Fields.PLAY_COUNT]

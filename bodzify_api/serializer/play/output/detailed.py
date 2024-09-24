@@ -11,7 +11,7 @@ from bodzify_api.serializer.track.output.without_playlists_and_album_and_genre \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
 
 
-class FIELDS:
+class Fields:
     UUID = AttributesLabel.UUID
     CONTENT_TYPE = AttributesLabel.CONTENT_TYPE
     CONTENT_OBJECT = AttributesLabel.CONTENT_OBJECT
@@ -24,10 +24,10 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Play
-        fields = [FIELDS.UUID,
-                  FIELDS.CONTENT_TYPE,
-                  FIELDS.CONTENT_OBJECT,
-                  FIELDS.TIME]
+        fields = [Fields.UUID,
+                  Fields.CONTENT_TYPE,
+                  Fields.CONTENT_OBJECT,
+                  Fields.TIME]
 
     def get_content_object(self, obj) -> Dict[str, Any]:
         if isinstance(obj.content_object, BasePlaylist):

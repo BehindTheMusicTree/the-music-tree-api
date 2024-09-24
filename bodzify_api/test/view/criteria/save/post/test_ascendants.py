@@ -3,7 +3,7 @@
 from rest_framework import status
 from bodzify_api.model.criteria.CriteriaAscendantRelation import AttributesLabel
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
-from bodzify_api.serializer.criteria.input.schema.endpoint.post import FIELDS as POST_FIELDS
+from bodzify_api.serializer.criteria.input.schema.endpoint.post import Fields as POST_FIELDS
 
 
 class TestCase(CriteriaTestCase):

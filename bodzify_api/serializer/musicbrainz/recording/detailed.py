@@ -7,7 +7,7 @@ from bodzify_api.serializer.musicbrainz.artist.detailed \
     import MusicbrainzArtistDetailedSerializer
 
 
-class FIELDS:
+class Fields:
     UUID = AttributesLabel.UUID
     TITLE = AttributesLabel.TITLE
     SCORE = AttributesLabel.SCORE
@@ -25,13 +25,13 @@ class MusicbrainzRecordingDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MusicbrainzRecording
-        fields = [FIELDS.UUID,
-                  FIELDS.TITLE,
-                  FIELDS.SCORE,
-                  FIELDS.MUSICBRAINZ_ARTISTS,
-                  FIELDS.MUSICBRAINZ_LINK,
-                  FIELDS.DURATION_IN_SEC,
-                  FIELDS.DURATION_STR_IN_HOUR_MIN_SEC,
-                  FIELDS.RELEASE_DATE,
-                  FIELDS.CREATED_ON,
-                  FIELDS.UPDATED_ON]
+        fields = [Fields.UUID,
+                  Fields.TITLE,
+                  Fields.SCORE,
+                  Fields.MUSICBRAINZ_ARTISTS,
+                  Fields.MUSICBRAINZ_LINK,
+                  Fields.DURATION_IN_SEC,
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,
+                  Fields.RELEASE_DATE,
+                  Fields.CREATED_ON,
+                  Fields.UPDATED_ON]

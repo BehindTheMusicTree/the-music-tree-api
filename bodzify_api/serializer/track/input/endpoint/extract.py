@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.serializer.track.input.schema import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import Fields as SAVE_SCHEMA_FIELDS
 from bodzify_api.serializer.track.input.endpoint.endpoint import LibTrackEndPointSerializer
 from bodzify_api.validator.mine_track_validators import validate_url
 
 
-class FIELDS:
+class Fields:
     URL = "url"
     SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = SAVE_SCHEMA_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT
     TITLE = SAVE_SCHEMA_FIELDS.TITLE

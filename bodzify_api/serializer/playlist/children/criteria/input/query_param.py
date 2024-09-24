@@ -4,7 +4,7 @@ from rest_framework import serializers
 from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabel as AttributesLabel
 
 
-class FIELDS:
+class Fields:
     NAME = AttributesLabel.NAME
     PARENT = AttributesLabel.PARENT
 

@@ -7,7 +7,7 @@ from bodzify_api.model.playlist.BasePlaylist import AttributesLabel, BasePlaylis
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 
 
-class FIELDS:
+class Fields:
     UUID = AttributesLabel.UUID
     NAME = AttributesLabel.NAME
     TYPE = AttributesLabel.TYPE
@@ -40,10 +40,10 @@ class BasePlaylistWithoutTracksSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BasePlaylist
-        fields = [FIELDS.UUID,
-                  FIELDS.NAME,
-                  FIELDS.TYPE,
-                  FIELDS.CREATED_ON,
-                  FIELDS.LIB_TRACKS_COUNT,
-                  FIELDS.PLAY_COUNT,
-                  FIELDS.LAST_TRACK_LIST_UPDATE_DATE]
+        fields = [Fields.UUID,
+                  Fields.NAME,
+                  Fields.TYPE,
+                  Fields.CREATED_ON,
+                  Fields.LIB_TRACKS_COUNT,
+                  Fields.PLAY_COUNT,
+                  Fields.LAST_TRACK_LIST_UPDATE_DATE]

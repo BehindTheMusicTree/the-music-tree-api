@@ -5,7 +5,7 @@ from rest_framework import serializers
 from bodzify_api.model.track_file.TrackFile import AttributesLabel as AttributesLabel, TrackFile
 
 
-class FIELDS:
+class Fields:
     USER = AttributesLabel.USER
     FILE = AttributesLabel.FILE
     FINGERPRINT = AttributesLabel.FINGERPRINT
@@ -17,17 +17,17 @@ class TrackFileModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TrackFile
-        fields = [FIELDS.USER,
-                  FIELDS.FILE,
-                  FIELDS.FINGERPRINT,
-                  FIELDS.FINGERPRINTING_ERROR_CODE]
+        fields = [Fields.USER,
+                  Fields.FILE,
+                  Fields.FINGERPRINT,
+                  Fields.FINGERPRINTING_ERROR_CODE]
 
     def validate(self, attrs):
-        if FIELDS.FINGERPRINT in attrs:
-            if FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT in attrs and attrs[
-                    FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT]:
-                fingerprint = attrs[FIELDS.FINGERPRINT]
-                user = attrs[FIELDS.USER]
+        if Fields.FINGERPRINT in attrs:
+            if Fields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT in attrs and attrs[
+                    Fields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT]:
+                fingerprint = attrs[Fields.FINGERPRINT]
+                user = attrs[Fields.USER]
                 if TrackFile.objects.filter(user=user, fingerprint=fingerprint).exists():
                     raise serializers.ValidationError(
                         "This track already exists in the library (acoustic fingerprint check).")

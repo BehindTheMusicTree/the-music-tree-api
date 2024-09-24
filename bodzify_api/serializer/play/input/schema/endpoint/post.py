@@ -7,7 +7,7 @@ from bodzify_api.model.Play import Play, AttributesLabel
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
 
 
-class FIELDS:
+class Fields:
     CONTENT_OBJECT_UUID = AttributesLabel.CONTENT_OBJECT + '_uuid'
 
 
@@ -16,4 +16,4 @@ class PlayPostSerializer(InputEndpointSerializer):
 
     class Meta:
         model = Play
-        fields = [FIELDS.CONTENT_OBJECT_UUID]
+        fields = [Fields.CONTENT_OBJECT_UUID]

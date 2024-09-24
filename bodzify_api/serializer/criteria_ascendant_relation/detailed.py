@@ -6,7 +6,7 @@ from bodzify_api.model.criteria.CriteriaAscendantRelation import AttributesLabel
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 
 
-class FIELDS:
+class Fields:
     DESCENDANT = AttributesLabel.DESCENDANT
     ASCENDANT = AttributesLabel.ASCENDANT
     DEGREE = AttributesLabel.DEGREE
@@ -18,4 +18,4 @@ class CriteriaAscendantRelationDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CriteriaAscendantRelation
-        fields = [FIELDS.DESCENDANT, FIELDS.ASCENDANT, FIELDS.DEGREE]
+        fields = [Fields.DESCENDANT, Fields.ASCENDANT, Fields.DEGREE]

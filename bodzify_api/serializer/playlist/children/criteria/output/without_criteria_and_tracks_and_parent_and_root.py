@@ -2,10 +2,10 @@
 
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.playlist.children.child \
-    import ChildPlaylistSerializer, FIELDS as CHILD_PLAYLIST_FIELDS
+    import ChildPlaylistSerializer, Fields as CHILD_PLAYLIST_FIELDS
 
 
-class FIELDS:
+class Fields:
     UUID = CHILD_PLAYLIST_FIELDS.UUID
     NAME = CHILD_PLAYLIST_FIELDS.NAME
     CREATED_ON = CHILD_PLAYLIST_FIELDS.CREATED_ON
@@ -19,7 +19,7 @@ class CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer(ChildPl
 
     class Meta:
         model = CriteriaPlaylist
-        fields = [FIELDS.UUID,
-                  FIELDS.NAME,
-                  FIELDS.CREATED_ON,
-                  FIELDS.LIB_TRACKS_COUNT]
+        fields = [Fields.UUID,
+                  Fields.NAME,
+                  Fields.CREATED_ON,
+                  Fields.LIB_TRACKS_COUNT]

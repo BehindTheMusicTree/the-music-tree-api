@@ -3,12 +3,12 @@
 from rest_framework import serializers
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
 from bodzify_api.serializer.track.input.schema import \
-    LibTrackSchemaSerializer, FIELDS as SAVE_SCHEMA_FIELDS
+    LibTrackSchemaSerializer, Fields as SAVE_SCHEMA_FIELDS
 from bodzify_api.model.track.LibraryTrack import AttributesLabel
 from bodzify_api.serializer.track.input.endpoint.endpoint import LibTrackEndPointSerializer
 
 
-class FIELDS:
+class Fields:
     TRACK_FILE = AttributesLabel.TRACK_FILE
     SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = SAVE_SCHEMA_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT
     TITLE = SAVE_SCHEMA_FIELDS.TITLE

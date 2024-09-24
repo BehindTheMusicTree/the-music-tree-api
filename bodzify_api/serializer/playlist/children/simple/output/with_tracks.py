@@ -2,14 +2,14 @@
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.child \
-    import ChildPlaylistSerializer, FIELDS as CHILD_PLAYLIST_FIELDS
+    import ChildPlaylistSerializer, Fields as CHILD_PLAYLIST_FIELDS
 from bodzify_api.serializer.playlist_lib_track_relation.output.without_playlist \
     import PlaylistLibTrackRelationWithoutPlaylist
-from bodzify_api.model.playlist.BasePlaylist import FOREIGN_MODEL_RELATIONS_STR as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
+from bodzify_api.model.playlist.BasePlaylist import ForeignModelRelationsStr as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from rest_framework import serializers
 
 
-class FIELDS:
+class Fields:
     UUID = CHILD_PLAYLIST_FIELDS.UUID
     NAME = CHILD_PLAYLIST_FIELDS.NAME
     CREATED_ON = CHILD_PLAYLIST_FIELDS.CREATED_ON
@@ -24,8 +24,8 @@ class SimplePlaylistWithTracksSerializer(ChildPlaylistSerializer):
 
     class Meta:
         model = SimplePlaylist
-        fields = [FIELDS.UUID,
-                  FIELDS.NAME,
-                  FIELDS.CREATED_ON,
-                  FIELDS.LIB_TRACKS_COUNT,
-                  FIELDS.LIB_TRACKS]
+        fields = [Fields.UUID,
+                  Fields.NAME,
+                  Fields.CREATED_ON,
+                  Fields.LIB_TRACKS_COUNT,
+                  Fields.LIB_TRACKS]

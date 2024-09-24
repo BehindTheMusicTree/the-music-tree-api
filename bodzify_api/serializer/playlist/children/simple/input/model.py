@@ -6,7 +6,7 @@ from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_
 from rest_framework import serializers
 
 
-class FIELDS:
+class Fields:
     BASE_PLAYLIST = SIMPLE_PLAYLIST_ATTRIBUTES_LABEL.BASE_PLAYLIST
     NAME = SIMPLE_PLAYLIST_ATTRIBUTES_LABEL.NAME
     USER = PLAYLIST_ATTRIBUTES_LABEL.USER
@@ -16,5 +16,5 @@ class SimplePlaylistModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SimplePlaylist
-        fields = [FIELDS.BASE_PLAYLIST,
-                  FIELDS.NAME]
+        fields = [Fields.BASE_PLAYLIST,
+                  Fields.NAME]

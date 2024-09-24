@@ -2,16 +2,16 @@
 
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID, CriteriaType
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaType
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
 
 
-class SPECIAL_NAMES:
+class SpecialNames:
     GENRELESS = 'Genreless'
     TAGLESS = 'Tagless'
 
 
-class TYPES_LABEL:
+class TypesLabel:
     GENRE = 'genre'
     TAG = 'tag'
 
@@ -57,10 +57,10 @@ class CriteriaPlaylist(models.Model):
     @property
     def name(self):
         if self.criteria is None:
-            if self.type.pk == CRITERIA_TYPES_ID.GENRE:
-                return SPECIAL_NAMES.GENRELESS
-            elif self.type.pk == CRITERIA_TYPES_ID.TAG:
-                return SPECIAL_NAMES.TAGLESS
+            if self.type.pk == CriteriaTypesId.GENRE:
+                return SpecialNames.GENRELESS
+            elif self.type.pk == CriteriaTypesId.TAG:
+                return SpecialNames.TAGLESS
         else:
             return self.criteria.name
 

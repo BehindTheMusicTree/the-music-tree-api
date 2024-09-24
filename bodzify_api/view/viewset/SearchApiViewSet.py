@@ -2,9 +2,9 @@
 
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist \
-    import CriteriaPlaylist, SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
+    import CriteriaPlaylist, SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.criteria.output.without_tracks import CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.serializer.playlist.children.simple.output.without_tracks import SimplePlaylistWithoutTracksSerializer
@@ -20,12 +20,12 @@ from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSeriali
 from rest_framework.permissions import IsAuthenticated
 
 
-class QUERY_PARAMS_NAME:
+class QueryFields:
     QUERY = "query"
     TYPE = "type"
 
 
-class QUERY_FILTERS_FIELDS:
+class QueryFiltersFields:
     TITLE = "title"
     ARTIST_NAME = "artist_name"
     ALBUM_NAME = "album_name"
@@ -35,13 +35,13 @@ class QUERY_FILTERS_FIELDS:
     PLAYLIST_NAME = "playlist_name"
 
 
-class QUERY_PARAM_TYPE_VALUES:
-    TITLE = QUERY_FILTERS_FIELDS.TITLE
-    ARTIST_NAME = QUERY_FILTERS_FIELDS.ARTIST_NAME
-    ALBUM_NAME = QUERY_FILTERS_FIELDS.ALBUM_NAME
-    GENRE_NAME = QUERY_FILTERS_FIELDS.GENRE_NAME
-    TAG_NAME = QUERY_FILTERS_FIELDS.TAG_NAME
-    PLAYLIST_NAME = QUERY_FILTERS_FIELDS.PLAYLIST_NAME
+class QueryFieldTypeValues:
+    TITLE = QueryFiltersFields.TITLE
+    ARTIST_NAME = QueryFiltersFields.ARTIST_NAME
+    ALBUM_NAME = QueryFiltersFields.ALBUM_NAME
+    GENRE_NAME = QueryFiltersFields.GENRE_NAME
+    TAG_NAME = QueryFiltersFields.TAG_NAME
+    PLAYLIST_NAME = QueryFiltersFields.PLAYLIST_NAME
 
 
 def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) -> bool:
@@ -50,19 +50,19 @@ def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) ->
 
 def lib_track_filter(queryset, request, *args, **kwargs):
     queryset = queryset.filter(user=request.user.id)
-    if QUERY_PARAM_TYPE_VALUES.TITLE in request.query_params:
-        request.query_params[QUERY_PARAM_TYPE_VALUES.TITLE]
+    if QueryFieldTypeValues.TITLE in request.query_params:
+        request.query_params[QueryFieldTypeValues.TITLE]
         # TODO: handle type of query
-    if QUERY_PARAMS_NAME.QUERY in request.query_params:
-        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
+    if QueryFields.QUERY in request.query_params:
+        query = request.query_params[QueryFields.QUERY]
         if query != "":
             queryset = queryset.filter(title__icontains=query)
     return queryset.order_by(LIB_TRACK_ATTRIBUTES_LABEL.TITLE)
 
 
 def simple_playlist_filter(queryset, request, *args, **kwargs):
-    if QUERY_PARAMS_NAME.QUERY in request.query_params:
-        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
+    if QueryFields.QUERY in request.query_params:
+        query = request.query_params[QueryFields.QUERY]
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
@@ -71,33 +71,33 @@ def simple_playlist_filter(queryset, request, *args, **kwargs):
 
 
 def criteria_playlist_filter(queryset, request, *args, **kwargs):
-    if QUERY_PARAMS_NAME.QUERY in request.query_params:
-        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
+    if QueryFields.QUERY in request.query_params:
+        query = request.query_params[QueryFields.QUERY]
         unfiltered_queryset = queryset
         if query != "":
             queryset = unfiltered_queryset.filter(criteria__name__icontains=query)
             if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
-                    type_id=CRITERIA_TYPES_ID.GENRE)
+                    type_id=CriteriaTypesId.GENRE)
             if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
-                    type_id=CRITERIA_TYPES_ID.TAG)
+                    type_id=CriteriaTypesId.TAG)
     return queryset
 
 
 def album_filter(queryset, request, *args, **kwargs):
-    if QUERY_PARAMS_NAME.QUERY in request.query_params:
-        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
+    if QueryFields.QUERY in request.query_params:
+        query = request.query_params[QueryFields.QUERY]
         if query != "":
             queryset = queryset.filter(name__icontains=query).order_by(AttributesLabel.NAME)
     return queryset
 
 
 def artist_filter(queryset, request, *args, **kwargs):
-    if QUERY_PARAMS_NAME.QUERY in request.query_params:
-        query = request.query_params[QUERY_PARAMS_NAME.QUERY]
+    if QueryFields.QUERY in request.query_params:
+        query = request.query_params[QueryFields.QUERY]
         if query != "":
             queryset = queryset.filter(name__icontains=query).order_by(ARTIST_ATTRIBUTES_LABEL.NAME)
     return queryset

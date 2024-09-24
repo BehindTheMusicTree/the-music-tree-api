@@ -19,7 +19,7 @@ from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecord
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.Artist import AttributesLabel as ARTIST_ATTRIBUTES_LABEL
 from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as CRITERIA_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 
@@ -145,7 +145,7 @@ class LibraryTrack(models.Model):
 
             super().save(*args, **kwargs)
 
-            from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+            from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
             all_simple_playlist = SimplePlaylist.objects.get(base_playlist__user=self.user,
                                                              name=PLAYLIST_SPECIAL_NAMES.ALL)
@@ -180,7 +180,7 @@ class LibraryTrack(models.Model):
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__user=self.user,
-                                                                       type_id=CRITERIA_TYPES_ID.GENRE,
+                                                                       type_id=CriteriaTypesId.GENRE,
                                                                        criteria=None)
             base_playlist = genreless_criteria_playlist.base_playlist
             base_playlist.last_track_list_update_date = update_date
@@ -203,7 +203,7 @@ class LibraryTrack(models.Model):
                 new_genre_tree_item = new_genre_tree_item.parent
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__user=self.user,
-                                                                       type_id=CRITERIA_TYPES_ID.GENRE,
+                                                                       type_id=CriteriaTypesId.GENRE,
                                                                        criteria=None)
             genreless_parent_playlist = genreless_criteria_playlist.base_playlist
             PlaylistLibTrackRelation.objects.create(base_playlist=genreless_parent_playlist, library_track=self)

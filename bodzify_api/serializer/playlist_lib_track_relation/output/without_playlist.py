@@ -6,7 +6,7 @@ from bodzify_api.serializer.track.output.without_playlists_and_album \
 from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation, AttributesLabel
 
 
-class FIELDS:
+class Fields:
     LIB_TRACK = AttributesLabel.LIB_TRACK
     CREATED_ON = AttributesLabel.CREATED_ON
     POSITION = AttributesLabel.POSITION
@@ -17,6 +17,6 @@ class PlaylistLibTrackRelationWithoutPlaylist(serializers.ModelSerializer):
 
     class Meta:
         model = PlaylistLibTrackRelation
-        fields = [FIELDS.LIB_TRACK,
-                  FIELDS.CREATED_ON,
-                  FIELDS.POSITION]
+        fields = [Fields.LIB_TRACK,
+                  Fields.CREATED_ON,
+                  Fields.POSITION]

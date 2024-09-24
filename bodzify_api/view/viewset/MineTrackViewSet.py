@@ -9,7 +9,7 @@ import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 
 
-class GET_PARAMETER_NAME:
+class GetFields:
     SOURCE = "source"
     QUERY = "query"
 
@@ -25,12 +25,12 @@ class MineTrackViewSet(MultiSerializerViewSet):
         return self.serializers.get(self.action, MineTrackSerializer)
 
     @extend_schema(parameters=[
-        OpenApiParameter(GET_PARAMETER_NAME.SOURCE, OpenApiTypes.STR, OpenApiParameter.PATH),
-        OpenApiParameter(GET_PARAMETER_NAME.QUERY, OpenApiTypes.STR, OpenApiParameter.PATH),
+        OpenApiParameter(GetFields.SOURCE, OpenApiTypes.STR, OpenApiParameter.PATH),
+        OpenApiParameter(GetFields.QUERY, OpenApiTypes.STR, OpenApiParameter.PATH),
         OpenApiParameter(utility.REQUEST_PAGINATED_PAGE_FIELD, OpenApiTypes.INT, OpenApiParameter.PATH)])
     def list(self, request):
-        mine_source = request.GET.get(GET_PARAMETER_NAME.SOURCE, False)
-        query = request.GET.get(GET_PARAMETER_NAME.QUERY, False)
+        mine_source = request.GET.get(GetFields.SOURCE, False)
+        query = request.GET.get(GetFields.QUERY, False)
         page_number = request.GET.get(utility.REQUEST_PAGINATED_PAGE_FIELD, 0)
 
         mine_tracks = MineService.List(baseurl=mine_source, query=query, page_number=page_number)

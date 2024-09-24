@@ -4,7 +4,7 @@ from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel
 from rest_framework import serializers
 
 
-class FIELDS:
+class Fields:
     USER = AttributesLabel.USER
     TRACK_FILE = AttributesLabel.TRACK_FILE
     DURATION_IN_SEC = AttributesLabel.DURATION_IN_SEC
@@ -22,14 +22,14 @@ class TrackModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LibraryTrack
-        fields = [FIELDS.USER,
-                  FIELDS.TRACK_FILE,
-                  FIELDS.DURATION_IN_SEC,
-                  FIELDS.MUSICBRAINZ_RECORDING,
-                  FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST,
-                  FIELDS.ALBUM,
-                  FIELDS.GENRE,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE]
+        fields = [Fields.USER,
+                  Fields.TRACK_FILE,
+                  Fields.DURATION_IN_SEC,
+                  Fields.MUSICBRAINZ_RECORDING,
+                  Fields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR,
+                  Fields.TITLE,
+                  Fields.ARTIST,
+                  Fields.ALBUM,
+                  Fields.GENRE,
+                  Fields.RATING,
+                  Fields.LANGUAGE]
