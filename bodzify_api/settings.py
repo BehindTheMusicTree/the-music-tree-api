@@ -244,9 +244,6 @@ def setup_app_exposure_if_needed():
     print_django(f"ALLOWED_HOSTS is set to {ALLOWED_HOSTS}")
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 def setup_app_constants():
     # Before calling a view function, Django starts a transaction.
     # If the response is produced without problems, Django commits the transaction.
@@ -531,6 +528,8 @@ def set_secret_key():
     else:
         SECRET_KEY = "django_default_secret_when_not_exposed"
 
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV_FILE_RELATIVE_PATH = os.getenv('ENV_FILE', 'env/.env')
 APP_ENV_FILE = BASE_DIR / APP_ENV_FILE_RELATIVE_PATH

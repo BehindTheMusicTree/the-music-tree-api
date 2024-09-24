@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL
+from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CRITERIA_PLAYLIST_TYPES_LABEL
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
 
 
-class FIELDS:
+class Fields:
     TYPE = 'type'
     NAME = PLAYLIST_ATTRIBUTES_LABEL.NAME
 
@@ -22,10 +22,10 @@ class BasePlaylistQueryParamSerializer(serializers.Serializer):
     def validate_type(self, value):
         if value not in self.TYPE_VALID_VALUES:
             raise serializers.ValidationError(
-                {FIELDS.TYPE: ["Invalid type. Valid values are: " + ", ".join(self.TYPE_VALID_VALUES)]})
+                {Fields.TYPE: ["Invalid type. Valid values are: " + ", ".join(self.TYPE_VALID_VALUES)]})
         return value
 
     def validate_name(self, value):
         if value == '':
-            raise serializers.ValidationError({FIELDS.NAME: "Name cannot be empty"})
+            raise serializers.ValidationError({Fields.NAME: "Name cannot be empty"})
         return value

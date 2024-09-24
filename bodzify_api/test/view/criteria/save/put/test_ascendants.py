@@ -2,9 +2,9 @@
 
 import logging
 from rest_framework import status
-from bodzify_api.model.criteria.CriteriaAscendantRelation import ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.CriteriaAscendantRelation import AttributesLabel
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.criteria.input.schema.endpoint.put import FIELDS as PUT_FIELD
+from bodzify_api.serializer.criteria.input.schema.endpoint.put import Fields as PUT_FIELD
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 
@@ -43,7 +43,7 @@ class TestCase(CriteriaTestCase):
 
         updated_punkhardcore_genre = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
         punkhardcore_ascendants_unordered = updated_punkhardcore_genre.criteria_ascendant_relation_ascendants.all()  # type: ignore
-        punkhardcore_ascendants_ordered = punkhardcore_ascendants_unordered.order_by(ATTRIBUTES_LABEL.DEGREE)
+        punkhardcore_ascendants_ordered = punkhardcore_ascendants_unordered.order_by(AttributesLabel.DEGREE)
         assert len(punkhardcore_ascendants_ordered) == 2
         assert punkhardcore_ascendants_ordered[0].ascendant.uuid == punk_genre.uuid
         assert punkhardcore_ascendants_ordered[0].degree == 1
@@ -67,7 +67,7 @@ class TestCase(CriteriaTestCase):
         bretonpunkhardcore_ascendants_unordered = \
             updated_bretonpunkhardcore_genre.criteria_ascendant_relation_ascendants.all()  # type: ignore
         bretonpunkhardcore_ascendants_ordered = \
-            bretonpunkhardcore_ascendants_unordered.order_by(ATTRIBUTES_LABEL.DEGREE)
+            bretonpunkhardcore_ascendants_unordered.order_by(AttributesLabel.DEGREE)
         assert len(bretonpunkhardcore_ascendants_ordered) == 4
         assert bretonpunkhardcore_ascendants_ordered[0].ascendant.uuid == frenchpunkhardcore_genre.uuid
         assert bretonpunkhardcore_ascendants_ordered[0].degree == 1
@@ -90,7 +90,7 @@ class TestCase(CriteriaTestCase):
         assert self.saved_genre.root == punk_genre
         updated_punkhardcore_genre = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
         punkhardcore_ascendants_unordered = updated_punkhardcore_genre.criteria_ascendant_relation_ascendants.all()  # type: ignore
-        punkhardcore_ascendants_ordered = punkhardcore_ascendants_unordered.order_by(ATTRIBUTES_LABEL.DEGREE)
+        punkhardcore_ascendants_ordered = punkhardcore_ascendants_unordered.order_by(AttributesLabel.DEGREE)
         assert len(punkhardcore_ascendants_ordered) == 1
         assert punkhardcore_ascendants_ordered[0].ascendant.uuid == punk_genre.uuid
         assert punkhardcore_ascendants_ordered[0].degree == 1

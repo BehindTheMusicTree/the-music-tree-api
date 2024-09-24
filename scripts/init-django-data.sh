@@ -65,13 +65,15 @@ load_initial_fixtures() {
   log_with_script_prefixe "Loading other fixtures..."
   for fixture in ${PROJECT_DIR}${APP_NAME}/fixtures/*.json; 
   do
-      if [ "$fixture" != "$app_fixture" ]; then
-          python3 $MANAGE_SCRIPT loaddata $fixture
-          if [ $? -ne 0 ]; then
-              log_with_script_prefixe "ERROR: Failed to load initial data from $fixture" >&2
-              exit 1
-          fi
-      fi
+    log_with_script_prefixe "Loading fixture $fixture ..."
+    if [ "$fixture" != "$app_fixture" ]; then
+        python3 $MANAGE_SCRIPT loaddata $fixture
+        if [ $? -ne 0 ]; then
+            log_with_script_prefixe "ERROR: Failed to load initial data from $fixture" >&2
+            exit 1
+        fi
+    fi
+    log_with_script_prefixe "Fixture $fixture loaded."
   done
   log_with_script_prefixe "Initial data loaded successfully."
 }

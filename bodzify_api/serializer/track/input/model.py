@@ -1,35 +1,35 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel
 from rest_framework import serializers
 
 
-class FIELDS:
-    USER = ATTRIBUTES_LABEL.USER
-    TRACK_FILE = ATTRIBUTES_LABEL.TRACK_FILE
-    DURATION_IN_SEC = ATTRIBUTES_LABEL.DURATION_IN_SEC
-    MUSICBRAINZ_RECORDING = ATTRIBUTES_LABEL.MUSICBRAINZ_RECORDING
-    MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR = ATTRIBUTES_LABEL.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR
-    TITLE = ATTRIBUTES_LABEL.TITLE
-    ARTIST = ATTRIBUTES_LABEL.ARTIST
-    ALBUM = ATTRIBUTES_LABEL.ALBUM
-    GENRE = ATTRIBUTES_LABEL.GENRE
-    RATING = ATTRIBUTES_LABEL.RATING
-    LANGUAGE = ATTRIBUTES_LABEL.LANGUAGE
+class Fields:
+    USER = AttributesLabel.USER
+    TRACK_FILE = AttributesLabel.TRACK_FILE
+    DURATION_IN_SEC = AttributesLabel.DURATION_IN_SEC
+    MUSICBRAINZ_RECORDING = AttributesLabel.MUSICBRAINZ_RECORDING
+    MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR = AttributesLabel.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR
+    TITLE = AttributesLabel.TITLE
+    ARTIST = AttributesLabel.ARTIST
+    ALBUM = AttributesLabel.ALBUM
+    GENRE = AttributesLabel.GENRE
+    RATING = AttributesLabel.RATING
+    LANGUAGE = AttributesLabel.LANGUAGE
 
 
 class TrackModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LibraryTrack
-        fields = [FIELDS.USER,
-                  FIELDS.TRACK_FILE,
-                  FIELDS.DURATION_IN_SEC,
-                  FIELDS.MUSICBRAINZ_RECORDING,
-                  FIELDS.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR,
-                  FIELDS.TITLE,
-                  FIELDS.ARTIST,
-                  FIELDS.ALBUM,
-                  FIELDS.GENRE,
-                  FIELDS.RATING,
-                  FIELDS.LANGUAGE]
+        fields = [Fields.USER,
+                  Fields.TRACK_FILE,
+                  Fields.DURATION_IN_SEC,
+                  Fields.MUSICBRAINZ_RECORDING,
+                  Fields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR,
+                  Fields.TITLE,
+                  Fields.ARTIST,
+                  Fields.ALBUM,
+                  Fields.GENRE,
+                  Fields.RATING,
+                  Fields.LANGUAGE]

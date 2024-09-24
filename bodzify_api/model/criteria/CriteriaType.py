@@ -3,17 +3,17 @@
 from django.db import models
 
 
-class CRITERIA_TYPES_ID:
+class CriteriaTypesId:
     GENRE = 0
     TAG = 1
 
 
-class CRITERIA_TYPES_LABEL:
+class CriteriaTypesLabel:
     GENRE = "genre"
     TAG = "tag"
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     LABEL = "label"
 
 

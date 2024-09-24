@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.BasePlaylist import ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL, BasePlaylist
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL, BasePlaylist
 from rest_framework import serializers
 
 
-class FIELDS:
+class Fields:
     USER = PLAYLIST_ATTRIBUTES_LABEL.USER
 
 
@@ -12,4 +12,4 @@ class BasePlaylistModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BasePlaylist
-        fields = [FIELDS.USER]
+        fields = [Fields.USER]

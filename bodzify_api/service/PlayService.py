@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.play.input.schema.endpoint.post import PlayPostSerializer, FIELDS as POST_FIELDS
+from bodzify_api.serializer.play.input.schema.endpoint.post import PlayPostSerializer, Fields as POST_FIELDS
 from bodzify_api.serializer.play.input.schema.schema import PlaySchemaSerializer
-from bodzify_api.serializer.play.input.model import PlayModelSerializer, FIELDS as SAVE_FIELDS
+from bodzify_api.serializer.play.input.model import PlayModelSerializer, Fields as SAVE_FIELDS
 from bodzify_api.service.Service import Service
 
 

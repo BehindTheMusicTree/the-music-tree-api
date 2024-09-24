@@ -9,12 +9,12 @@ from django.utils import timezone
 from bodzify_api import settings
 
 
-class SPECIAL_NAMES:
+class SpecialNames:
     ALL = 'All'
     GENRELESS = 'Genreless'
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     MODEL = 'base_playlist'
     UUID = 'uuid'
     USER = 'user'
@@ -33,7 +33,7 @@ class ATTRIBUTES_LABEL:
 FOREIGN_MODEL_ATTRIBUTES_PREFIXE = 'base_playlist_'
 
 
-class FOREIGN_MODEL_ATTRIBUTES_LABEL:
+class ForeignModelAttributesLabel:
     UUID = ''
     USER = ''
     CREATED_ON = ''
@@ -44,14 +44,14 @@ class FOREIGN_MODEL_ATTRIBUTES_LABEL:
     PLAYLIST_LIB_TRACK_RELATIONS = ''
 
 
-for attr, value in vars(ATTRIBUTES_LABEL).items():
+for attr, value in vars(AttributesLabel).items():
     if not attr.startswith("__"):
-        setattr(FOREIGN_MODEL_ATTRIBUTES_LABEL, attr, FOREIGN_MODEL_ATTRIBUTES_PREFIXE + value)
+        setattr(ForeignModelAttributesLabel, attr, FOREIGN_MODEL_ATTRIBUTES_PREFIXE + value)
 
 FOREIGN_MODEL_RELATIONS_PREFIXE = 'base_playlist.'
 
 
-class FOREIGN_MODEL_RELATIONS_STR:
+class ForeignModelRelationsStr:
     UUID = ''
     USER = ''
     CREATED_ON = ''
@@ -63,9 +63,9 @@ class FOREIGN_MODEL_RELATIONS_STR:
     PLAYLIST_LIB_TRACK_RELATIONS = ''
 
 
-for attr, value in vars(ATTRIBUTES_LABEL).items():
+for attr, value in vars(AttributesLabel).items():
     if not attr.startswith("__"):
-        setattr(FOREIGN_MODEL_RELATIONS_STR, attr, FOREIGN_MODEL_RELATIONS_PREFIXE + value)
+        setattr(ForeignModelRelationsStr, attr, FOREIGN_MODEL_RELATIONS_PREFIXE + value)
 
 
 class BasePlaylist(models.Model):

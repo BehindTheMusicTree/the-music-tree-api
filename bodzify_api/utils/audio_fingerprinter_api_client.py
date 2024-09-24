@@ -2,6 +2,7 @@
 
 
 import base64
+import json
 import re
 from telnetlib import STATUS
 from typing import Optional
@@ -72,16 +73,18 @@ class ConnectionError(AudioFingerprinterError):
     pass
 
 
-class POST_FIELDS:
-    FILE_NAME = 'filename'
+class PostFields:
+    FILENAME = 'filename'
+    TITLE = 'title'
+    USER_ID = 'userId'
 
 
-class RESPONSE_FIELDS:
-    class OK:
+class ResponseFields:
+    class Ok:
         FINGERPRINT = 'fingerprint'
         DURATION = 'duration'
 
-    class ERROR:
+    class Error:
         STATUS = 'status'
         MESSAGE = 'message'
 
@@ -102,19 +105,24 @@ class AudioFingerprinterApiClient:
         return None
 
     @staticmethod
-    def post_fingerprint_audio(filename: str) -> tuple[bytes, float]:
+    def post_fingerprint_audio(filename: str, title: str, user_id: str) -> tuple[bytes, float]:
         try:
+            json_data = {
+                PostFields.FILENAME: filename,
+                PostFields.TITLE: title,
+                PostFields.USER_ID: user_id
+            }
             response = requests.post(settings.AFP_POST_FULL_URL,
-                                     json={POST_FIELDS.FILE_NAME: filename},
+                                     json=json_data,
                                      headers={'Content-Type': 'application/json'})
             response_json = response.json()
             if response.status_code == 200:
-                fingerprint_bytes = base64.b64decode(response_json[RESPONSE_FIELDS.OK.FINGERPRINT])
-                duration = response_json[RESPONSE_FIELDS.OK.DURATION]
+                fingerprint_bytes = base64.b64decode(response_json[ResponseFields.Ok.FINGERPRINT])
+                duration = response_json[ResponseFields.Ok.DURATION]
                 return fingerprint_bytes, duration
             elif response.status_code == 400:
                 error_code = AudioFingerprinterApiClient._get_service_error_code_from_message(
-                    response_json[RESPONSE_FIELDS.ERROR.MESSAGE])
+                    response_json[ResponseFields.Error.MESSAGE])
                 if error_code == 2:
                     raise WrongFileExtension(response_json)
                 elif error_code == 3:
@@ -129,7 +137,7 @@ class AudioFingerprinterApiClient:
                 raise TimeoutError()
             elif response.status_code == 422:
                 error_code = AudioFingerprinterApiClient._get_service_error_code_from_message(
-                    response_json[RESPONSE_FIELDS.ERROR.MESSAGE])
+                    response_json[ResponseFields.Error.MESSAGE])
                 if error_code == 1:
                     raise FpcalcStatusError(response_json)
                 else:

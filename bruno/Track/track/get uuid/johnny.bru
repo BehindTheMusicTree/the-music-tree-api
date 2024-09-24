@@ -1,0 +1,11 @@
+meta {
+  name: johnny
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}tracks/{{trackJohnnyUuid}}/
+  body: json
+  auth: inherit
+}

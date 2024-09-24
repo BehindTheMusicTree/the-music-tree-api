@@ -9,7 +9,7 @@ from django.db import models
 from bodzify_api import settings
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     UUID = 'uuid'
     USER = 'user'
     CONTENT_TYPE = 'content_type'

@@ -8,7 +8,7 @@ from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 class TestCase(TrackTestCase):
 
     def test_in_library(self):
-        filename_without_extension = self.LIB_TRACK_GENERIC_SAMPLES_FILENAMES_WITHOUT_EXTENSION.TAGS_NONE
+        filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_NONE
         file_extension = 'wav'
         filename_with_extension = f'{filename_without_extension}.{file_extension}'
         response = self.post_lib_track_with_generic_sample_no_tags(extension=file_extension)

@@ -8,7 +8,7 @@ from rest_framework import status
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.playlist.children.simple.output.with_tracks \
-    import FIELDS as SIMPLE_PLAYLIST_GET_FIELDS
+    import Fields as SIMPLE_PLAYLIST_GET_FIELDS
 
 
 class SimplePlaylistTestCase(AppTestCase):

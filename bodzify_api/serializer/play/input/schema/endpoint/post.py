@@ -3,12 +3,12 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
-from bodzify_api.model.Play import Play, ATTRIBUTES_LABEL
+from bodzify_api.model.Play import Play, AttributesLabel
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
 
 
-class FIELDS:
-    CONTENT_OBJECT_UUID = ATTRIBUTES_LABEL.CONTENT_OBJECT + '_uuid'
+class Fields:
+    CONTENT_OBJECT_UUID = AttributesLabel.CONTENT_OBJECT + '_uuid'
 
 
 class PlayPostSerializer(InputEndpointSerializer):
@@ -16,4 +16,4 @@ class PlayPostSerializer(InputEndpointSerializer):
 
     class Meta:
         model = Play
-        fields = [FIELDS.CONTENT_OBJECT_UUID]
+        fields = [Fields.CONTENT_OBJECT_UUID]

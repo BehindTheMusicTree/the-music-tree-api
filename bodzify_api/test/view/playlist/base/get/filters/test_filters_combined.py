@@ -4,13 +4,13 @@ import logging
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID, CRITERIA_TYPES_LABEL
-from bodzify_api.model.playlist.children.CriteriaPlaylist import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL, \
-    SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaTypesLabel
+from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CRITERIA_PLAYLIST_TYPES_LABEL, \
+    SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist \
-    import SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL, SimplePlaylist
-from bodzify_api.serializer.playlist.base.input.query_param import FIELDS as GET_QUERY_PARAM
-from bodzify_api.serializer.playlist.base.output.with_tracks import FIELDS as PLAYLIST_GET_FIELDS
+    import SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL, SimplePlaylist
+from bodzify_api.serializer.playlist.base.input.query_param import Fields as GET_QUERY_PARAM
+from bodzify_api.serializer.playlist.base.output.with_tracks import Fields as PLAYLIST_GET_FIELDS
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 
 
@@ -52,7 +52,7 @@ class TestCase(BasePlaylistTestCase):
         self.model_fixture_factory.create_genre(name=genre2_name)
 
         data_dict = {
-            GET_QUERY_PARAM.TYPE: CRITERIA_TYPES_LABEL.GENRE,
+            GET_QUERY_PARAM.TYPE: CriteriaTypesLabel.GENRE,
             GET_QUERY_PARAM.NAME: 'rock'
         }
         response = self.get_playlists(data_dict=data_dict)

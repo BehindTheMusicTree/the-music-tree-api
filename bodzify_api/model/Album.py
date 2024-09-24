@@ -8,10 +8,10 @@ from django.db import models
 from django.utils import timezone
 
 from bodzify_api import settings
-from bodzify_api.model.Artist import Artist, ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
+from bodzify_api.model.Artist import Artist, AttributesLabel as ARTIST_ATTRIBUTES_LABEL
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     UUID = 'uuid'
     NAME = 'name'
     YEAR = 'year'

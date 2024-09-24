@@ -2,21 +2,21 @@
 
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID, CriteriaType
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaType
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
 
 
-class SPECIAL_NAMES:
+class SpecialNames:
     GENRELESS = 'Genreless'
     TAGLESS = 'Tagless'
 
 
-class TYPES_LABEL:
+class TypesLabel:
     GENRE = 'genre'
     TAG = 'tag'
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     MODEL = 'CriteriaPlaylist'
     BASE_PLAYLIST = 'base_playlist'
     PARENT = 'parent'
@@ -39,11 +39,11 @@ class CriteriaPlaylist(models.Model):
 
     # null must be True because when the root is the criteria playlist itself, we must create it first with a null root
     # and then set the root to itself
-    parent = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+    parent = models.ForeignKey(AttributesLabel.MODEL,
                                on_delete=models.CASCADE,
                                null=True,
                                related_name='child_playlist')
-    root = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+    root = models.ForeignKey(AttributesLabel.MODEL,
                              on_delete=models.CASCADE,
                              null=True,
                              related_name='descendant_playlist')
@@ -57,10 +57,10 @@ class CriteriaPlaylist(models.Model):
     @property
     def name(self):
         if self.criteria is None:
-            if self.type.pk == CRITERIA_TYPES_ID.GENRE:
-                return SPECIAL_NAMES.GENRELESS
-            elif self.type.pk == CRITERIA_TYPES_ID.TAG:
-                return SPECIAL_NAMES.TAGLESS
+            if self.type.pk == CriteriaTypesId.GENRE:
+                return SpecialNames.GENRELESS
+            elif self.type.pk == CriteriaTypesId.TAG:
+                return SpecialNames.TAGLESS
         else:
             return self.criteria.name
 
@@ -84,7 +84,7 @@ class CriteriaPlaylist(models.Model):
     def _create(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self._set_root()
-        super().save(update_fields=[ATTRIBUTES_LABEL.ROOT])
+        super().save(update_fields=[AttributesLabel.ROOT])
 
     def _update(self, old_criteria_playlist: 'CriteriaPlaylist', *args, **kwargs):
         super().save(*args, **kwargs)
@@ -92,7 +92,7 @@ class CriteriaPlaylist(models.Model):
         if self.criteria:
             if self.root.criteria != self.criteria.root:  # type: ignore
                 self._set_root()
-                super().save(update_fields=[ATTRIBUTES_LABEL.ROOT])
+                super().save(update_fields=[AttributesLabel.ROOT])
                 self._update_root_of_children(criteria_playlist=self, new_root=self.root)  # type: ignore
 
     def _update_root_of_children(self, criteria_playlist: 'CriteriaPlaylist', new_root: 'CriteriaPlaylist'):

@@ -5,7 +5,7 @@ from rest_framework import status
 from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 

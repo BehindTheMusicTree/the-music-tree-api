@@ -8,7 +8,7 @@ from rest_framework import status
 
 from bodzify_api.model.Play import Play
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.play.output.detailed import FIELDS as GET_FIELDS
+from bodzify_api.serializer.play.output.detailed import Fields as GET_FIELDS
 
 
 class PlayTestCase(AppTestCase):

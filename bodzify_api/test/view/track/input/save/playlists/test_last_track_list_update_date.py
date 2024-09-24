@@ -2,12 +2,12 @@
 
 import pytest
 from rest_framework import status
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.put import FIELDS as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import Fields as PUT_FIELDS
 from bodzify_api.test.view import criteria
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
@@ -45,7 +45,7 @@ class TestCase(TrackTestCase):
 
     def test_track_newly_linked_to_no_genre_then_update_genreless_playlist_last_track_list_update_date(self):
         genreless_parent_playlist = CriteriaPlaylist.objects.get(
-            type=CRITERIA_TYPES_ID.GENRE, criteria=None).base_playlist
+            type=CriteriaTypesId.GENRE, criteria=None).base_playlist
         genreless_parent_playlist_last_track_list_update_date_before_update = \
             genreless_parent_playlist.last_track_list_update_date
 

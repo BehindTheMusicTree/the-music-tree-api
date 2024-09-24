@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.criteria.input.schema.endpoint.post import FIELDS as POST_FIELDS
+from bodzify_api.serializer.criteria.input.schema.endpoint.post import Fields as POST_FIELDS
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 

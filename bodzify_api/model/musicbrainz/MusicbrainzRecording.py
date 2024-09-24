@@ -10,7 +10,7 @@ from bodzify_api import settings
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     UUID = 'uuid'
     TITLE = 'title'
     SCORE = 'score'
@@ -38,7 +38,7 @@ class MusicbrainzRecording(models.Model):
     release_date = models.DateField(null=True, blank=True, editable=False)
     musicbrainz_artists = models.ManyToManyField(MusicbrainzArtist)
     musicbrainz_link = models.GeneratedField(  # type: ignore
-        expression=ConcatOp(Value(settings.MUSICBRAINZ_RECORDING_URL), F(ATTRIBUTES_LABEL.UUID)),
+        expression=ConcatOp(Value(settings.MUSICBRAINZ_RECORDING_URL), F(AttributesLabel.UUID)),
         output_field=models.CharField(max_length=len(settings.MUSICBRAINZ_RECORDING_URL) + 36),
         db_persist=True)
     created_on = models.DateTimeField(default=timezone.now, editable=False)

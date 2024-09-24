@@ -12,7 +12,7 @@ from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api import settings
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     MODEL = 'Criteria'
     UUID = "uuid"
     USER = "user"
@@ -37,24 +37,24 @@ class Criteria(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
     type = models.ForeignKey('CriteriaType', on_delete=models.CASCADE)
-    parent = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+    parent = models.ForeignKey(AttributesLabel.MODEL,
                                on_delete=models.CASCADE, null=True,
                                related_name='child')
-    ascendants = models.ManyToManyField(ATTRIBUTES_LABEL.MODEL,
+    ascendants = models.ManyToManyField(AttributesLabel.MODEL,
                                         through='CriteriaAscendantRelation',
-                                        related_name=ATTRIBUTES_LABEL.MODEL + 's')
+                                        related_name=AttributesLabel.MODEL + 's')
 
     # null must be True because when the root is the criteria itself, we must create it first with a null root
     # and then set the root to itself
-    root = models.ForeignKey(ATTRIBUTES_LABEL.MODEL,
+    root = models.ForeignKey(AttributesLabel.MODEL,
                              on_delete=models.CASCADE,
                              null=True,
-                             related_name=ATTRIBUTES_LABEL.DESCENDANT)
+                             related_name=AttributesLabel.DESCENDANT)
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
-        unique_together = (ATTRIBUTES_LABEL.USER, ATTRIBUTES_LABEL.NAME)
+        unique_together = (AttributesLabel.USER, AttributesLabel.NAME)
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")]
 
     @staticmethod
@@ -69,7 +69,7 @@ class Criteria(models.Model):
     @ staticmethod
     def _update_playlist_positions_to_fill_deleted_positions(base_playlist: BasePlaylist):
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
+            import PlaylistLibTrackRelation, AttributesLabel as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
         tracks_positions_ordered_asc = (
             PlaylistLibTrackRelation.objects
             .filter(base_playlist=base_playlist)
@@ -116,10 +116,18 @@ class Criteria(models.Model):
             self._update_root_of_children(criteria=self, new_root=self.root)  # type: ignore
 
         if old_criteria.parent != self.parent:
-            self._update_playlists(old_criteria.parent)
+            self._update_playlists_of_ascendants(old_criteria.parent)
             Criteria._update_ascendants_of_criteria_and_children(self)
 
-    def _update_playlists(self, old_parent: Optional['Criteria']):
+            print("ICI")
+            if self.parent is not None:
+                print("PARENR")
+                self.criteria_playlist.parent = self.parent.criteria_playlist  # type: ignore
+            else:
+                self.criteria_playlist.parent = None  # type: ignore
+            self.criteria_playlist.save()  # type: ignore
+
+    def _update_playlists_of_ascendants(self, old_parent: Optional['Criteria']):
         common_criteria = self.get_common_criteria(old_parent)
 
         from bodzify_api.model.track.LibraryTrack import LibraryTrack

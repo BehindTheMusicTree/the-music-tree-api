@@ -1,0 +1,23 @@
+meta {
+  name: token
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}auth/token/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "username": "{{USERNAME}}",
+      "password": "{{PASSWORD}}"
+  }
+}
+
+vars:post-response {
+  jwtAccessToken: res.body.access
+  jwtRefreshToken: res.body.refresh
+}

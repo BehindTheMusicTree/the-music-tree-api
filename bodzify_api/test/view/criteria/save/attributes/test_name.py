@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.serializer.criteria.input.schema.schema import FIELDS as INPUT_FIELDS
+from bodzify_api.serializer.criteria.input.schema.schema import Fields as INPUT_FIELDS
 from bodzify_api import settings
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 

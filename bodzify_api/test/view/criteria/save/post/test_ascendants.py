@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.model.criteria.CriteriaAscendantRelation import ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.CriteriaAscendantRelation import AttributesLabel
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
-from bodzify_api.serializer.criteria.input.schema.endpoint.post import FIELDS as POST_FIELDS
+from bodzify_api.serializer.criteria.input.schema.endpoint.post import Fields as POST_FIELDS
 
 
 class TestCase(CriteriaTestCase):
@@ -33,7 +33,7 @@ class TestCase(CriteriaTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 3
         criteria_ascendant_relations = self.saved_genre.criteria_ascendant_relation_ascendants.all()  # type: ignore
-        criteria_ascendant_relations_ordered = criteria_ascendant_relations.order_by(ATTRIBUTES_LABEL.DEGREE)
+        criteria_ascendant_relations_ordered = criteria_ascendant_relations.order_by(AttributesLabel.DEGREE)
         assert criteria_ascendant_relations_ordered[0].ascendant.uuid == criteria3.uuid
         assert criteria_ascendant_relations_ordered[0].degree == 1
         assert criteria_ascendant_relations_ordered[0].ascendant.uuid == criteria3.uuid

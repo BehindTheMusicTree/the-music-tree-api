@@ -1,0 +1,11 @@
+meta {
+  name: get albums
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}genres/
+  body: json
+  auth: inherit
+}

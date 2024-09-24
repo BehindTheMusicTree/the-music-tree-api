@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 from bodzify_api.model.playlist.children.CriteriaPlaylist \
-    import TYPES_LABEL as CRITERIA_PLAYLIST_TYPES_LABEL, SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
+    import TypesLabel as CRITERIA_PLAYLIST_TYPES_LABEL, SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.serializer.playlist.base.input.query_param \
-    import BasePlaylistQueryParamSerializer, FIELDS as QUERY_PARAM_FIELDS
+    import BasePlaylistQueryParamSerializer, Fields as QUERY_PARAM_FIELDS
 from bodzify_api.service.Service import Service
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.playlist.base.output.with_tracks import BasePlaylistWithTracksSerializer
 
@@ -72,7 +72,7 @@ class PlaylistViewSet(AppModelViewSet):
             genreless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__criteria__isnull=True,
-                criteria_playlist__type_id=CRITERIA_TYPES_ID.GENRE)
+                criteria_playlist__type_id=CriteriaTypesId.GENRE)
 
         tagless_playlist = BasePlaylist.objects.none()
         if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS.lower() \
@@ -80,10 +80,10 @@ class PlaylistViewSet(AppModelViewSet):
             tagless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__criteria__isnull=True,
-                criteria_playlist__type_id=CRITERIA_TYPES_ID.TAG)
+                criteria_playlist__type_id=CriteriaTypesId.TAG)
 
         return simple_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
-            tagless_playlist).order_by(ATTRIBUTES_LABEL.CREATED_ON)
+            tagless_playlist).order_by(AttributesLabel.CREATED_ON)
 
     @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
                                                 type=OpenApiTypes.STR,

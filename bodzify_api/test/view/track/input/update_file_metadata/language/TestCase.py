@@ -2,7 +2,7 @@
 
 from bodzify_api import settings
 import bodzify_api.utils.audio_metadata as audio_metadata
-from bodzify_api.serializer.track.input.schema import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import Fields as SAVE_SCHEMA_FIELDS
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import \
     UpdateFileMetadataStrTestCase
 

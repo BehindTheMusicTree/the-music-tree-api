@@ -3,16 +3,16 @@
 import datetime
 from rest_framework import serializers
 from bodzify_api import settings
-from bodzify_api.model.track.MineTrack import ATTRIBUTES_LABEL
+from bodzify_api.model.track.MineTrack import AttributesLabel
 
 
-class FIELDS:
-    TITLE = ATTRIBUTES_LABEL.TITLE
-    ARTIST_NAME = ATTRIBUTES_LABEL.ARTIST_NAME
-    DURATION_IN_SEC = ATTRIBUTES_LABEL.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = ATTRIBUTES_LABEL.DURATION_STR_IN_HOUR_MIN_SEC
-    RELEASED_ON = ATTRIBUTES_LABEL.RELEASED_ON
-    URL = ATTRIBUTES_LABEL.URL
+class Fields:
+    TITLE = AttributesLabel.TITLE
+    ARTIST_NAME = AttributesLabel.ARTIST_NAME
+    DURATION_IN_SEC = AttributesLabel.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = AttributesLabel.DURATION_STR_IN_HOUR_MIN_SEC
+    RELEASED_ON = AttributesLabel.RELEASED_ON
+    URL = AttributesLabel.URL
 
 
 class MineTrackSerializer(serializers.Serializer):
@@ -24,12 +24,12 @@ class MineTrackSerializer(serializers.Serializer):
     url = serializers.CharField(max_length=settings.MINE_TRACK_URL_LEN_MAX)
 
     class Meta:
-        fields = [FIELDS.TITLE,
-                  FIELDS.ARTIST_NAME,
-                  FIELDS.DURATION_IN_SEC,
-                  FIELDS.DURATION_STR_IN_HOUR_MIN_SEC,
-                  FIELDS.RELEASED_ON,
-                  FIELDS.URL]
+        fields = [Fields.TITLE,
+                  Fields.ARTIST_NAME,
+                  Fields.DURATION_IN_SEC,
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,
+                  Fields.RELEASED_ON,
+                  Fields.URL]
 
     def get_duration_str_in_hour_min_sec(self, obj) -> str:
         return str(datetime.timedelta(seconds=obj.duration_in_sec))

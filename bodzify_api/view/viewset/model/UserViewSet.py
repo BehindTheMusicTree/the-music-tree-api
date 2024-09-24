@@ -7,7 +7,7 @@ from bodzify_api.serializer.user.detailed import UserSerializer
 from rest_framework.permissions import IsAdminUser
 
 
-class PARAMETER_NAME:
+class Fields:
     USERNAME = 'username'
     PASSWORD = 'password'
     EMAIL = 'email'
@@ -22,9 +22,9 @@ class UserViewSet(viewsets.ModelViewSet):
         requestSerializer = UserSerializer(data=request.data)
         requestSerializer.is_valid(raise_exception=True)
         user = User.objects.create_user(
-            username=request.data[PARAMETER_NAME.USERNAME],
-            password=request.data[PARAMETER_NAME.PASSWORD],
-            email=request.data[PARAMETER_NAME.EMAIL])
+            username=request.data[Fields.USERNAME],
+            password=request.data[Fields.PASSWORD],
+            email=request.data[Fields.EMAIL])
         response_serializer = UserSerializer(user)
         headers = self.get_success_headers(response_serializer.data)
         return Response(

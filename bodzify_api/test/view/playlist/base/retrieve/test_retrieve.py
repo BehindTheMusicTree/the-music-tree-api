@@ -2,14 +2,14 @@
 
 from rest_framework import status
 
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.serializer.playlist.base.output.with_tracks import FIELDS as RETRIEVE_FIELDS
+from bodzify_api.serializer.playlist.base.output.with_tracks import Fields as RETRIEVE_FIELDS
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 from bodzify_api.utils.utils import to_camel_case
-from bodzify_api.serializer.track.output.without_playlists_and_album import FIELDS as LIB_TRACK_FIELDS
+from bodzify_api.serializer.track.output.without_playlists_and_album import Fields as LIB_TRACK_FIELDS
 from bodzify_api.serializer.playlist_lib_track_relation.output.without_playlist \
-    import FIELDS as PLAYLIST_LIB_TRACK_RELATION_FIELDS
+    import Fields as PLAYLIST_LIB_TRACK_RELATION_FIELDS
 
 
 class TestCase(BasePlaylistTestCase):
@@ -26,7 +26,7 @@ class TestCase(BasePlaylistTestCase):
         name = 'rock'
         genre = self.model_fixture_factory.create_genre(name=name)
         playlist_uuid = BasePlaylist.objects.get(criteria_playlist__criteria=genre,
-                                                 criteria_playlist__type=CRITERIA_TYPES_ID.GENRE).uuid
+                                                 criteria_playlist__type=CriteriaTypesId.GENRE).uuid
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
@@ -36,7 +36,7 @@ class TestCase(BasePlaylistTestCase):
         name = 'fr'
         genre = self.model_fixture_factory.create_tag(name=name)
         playlist_uuid = BasePlaylist.objects.get(criteria_playlist__criteria=genre,
-                                                 criteria_playlist__type=CRITERIA_TYPES_ID.TAG).uuid
+                                                 criteria_playlist__type=CriteriaTypesId.TAG).uuid
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK

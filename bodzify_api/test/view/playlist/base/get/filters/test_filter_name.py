@@ -4,12 +4,12 @@ import logging
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist \
-    import SimplePlaylist, SPECIAL_NAMES as SIMPLE_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.model.playlist.children.CriteriaPlaylist import SPECIAL_NAMES as CRITERIA_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.serializer.playlist.base.input.query_param import FIELDS as GET_QUERY_PARAM
+    import SimplePlaylist, SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.children.CriteriaPlaylist import SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.serializer.playlist.base.input.query_param import Fields as GET_QUERY_PARAM
 from bodzify_api.test.get_filters.GetFilterWithFreeValuesTestCase import GetFilterWithFreeValuesTestCase
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 

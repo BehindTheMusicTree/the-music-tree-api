@@ -13,18 +13,18 @@ from django.dispatch import receiver
 
 from bodzify_api import settings
 import bodzify_api.utils.audio_metadata as audio_metadata
-from bodzify_api.model.Album import ATTRIBUTES_LABEL as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api.model.Album import AttributesLabel as ALBUM_ATTRIBUTES_LABEL
 from bodzify_api.model.track_file.TrackFile import TrackFile
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.Artist import ATTRIBUTES_LABEL as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.Criteria import Criteria, ATTRIBUTES_LABEL as CRITERIA_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.CriteriaType import CRITERIA_TYPES_ID
+from bodzify_api.model.Artist import AttributesLabel as ARTIST_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 
 
-class ATTRIBUTES_LABEL:
+class AttributesLabel:
     MODEL = 'library_track'
     UUID = "uuid"
     USER = "user"
@@ -85,7 +85,7 @@ class LibraryTrack(models.Model):
     play_count = models.IntegerField(default=0)
     base_playlists = models.ManyToManyField(BasePlaylist,
                                             through='PlaylistLibTrackRelation',
-                                            related_name=ATTRIBUTES_LABEL.MODEL + 's')
+                                            related_name=AttributesLabel.MODEL + 's')
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
@@ -104,16 +104,16 @@ class LibraryTrack(models.Model):
         return "tracks/" + self.uuid + "/"
 
     def __str__(self):
-        album_str = f"{ATTRIBUTES_LABEL.ALBUM}: {str(self.album)} " if self.album else ""
-        genre_str = f"{ATTRIBUTES_LABEL.GENRE}: {str(self.genre)} " if self.genre else ""
+        album_str = f"{AttributesLabel.ALBUM}: {str(self.album)} " if self.album else ""
+        genre_str = f"{AttributesLabel.GENRE}: {str(self.genre)} " if self.genre else ""
         duration_str_in_sec = (
-            f"{ATTRIBUTES_LABEL.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else "")
-        rating_str = f"{ATTRIBUTES_LABEL.RATING}: {str(self.rating)} " if self.rating else ""
-        language_str = f"{ATTRIBUTES_LABEL.LANGUAGE}: {str(self.language)} " if self.language else ""
-        file_str = f"{ATTRIBUTES_LABEL.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
+            f"{AttributesLabel.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else "")
+        rating_str = f"{AttributesLabel.RATING}: {str(self.rating)} " if self.rating else ""
+        language_str = f"{AttributesLabel.LANGUAGE}: {str(self.language)} " if self.language else ""
+        file_str = f"{AttributesLabel.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
                 f"{genre_str}{duration_str_in_sec}{rating_str}{language_str}"
-                f"{ATTRIBUTES_LABEL.CREATED_ON}: {str(self.created_on)} {file_str}")
+                f"{AttributesLabel.CREATED_ON}: {str(self.created_on)} {file_str}")
 
     def save(self, *args, **kwargs):
         try:
@@ -145,7 +145,7 @@ class LibraryTrack(models.Model):
 
             super().save(*args, **kwargs)
 
-            from bodzify_api.model.playlist.BasePlaylist import SPECIAL_NAMES as PLAYLIST_SPECIAL_NAMES
+            from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
             all_simple_playlist = SimplePlaylist.objects.get(base_playlist__user=self.user,
                                                              name=PLAYLIST_SPECIAL_NAMES.ALL)
@@ -180,7 +180,7 @@ class LibraryTrack(models.Model):
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__user=self.user,
-                                                                       type_id=CRITERIA_TYPES_ID.GENRE,
+                                                                       type_id=CriteriaTypesId.GENRE,
                                                                        criteria=None)
             base_playlist = genreless_criteria_playlist.base_playlist
             base_playlist.last_track_list_update_date = update_date
@@ -203,7 +203,7 @@ class LibraryTrack(models.Model):
                 new_genre_tree_item = new_genre_tree_item.parent
         else:
             genreless_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__user=self.user,
-                                                                       type_id=CRITERIA_TYPES_ID.GENRE,
+                                                                       type_id=CriteriaTypesId.GENRE,
                                                                        criteria=None)
             genreless_parent_playlist = genreless_criteria_playlist.base_playlist
             PlaylistLibTrackRelation.objects.create(base_playlist=genreless_parent_playlist, library_track=self)
@@ -212,7 +212,7 @@ class LibraryTrack(models.Model):
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, ATTRIBUTES_LABEL as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
+            import PlaylistLibTrackRelation, AttributesLabel as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
         playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
         return list(playlist_lib_track_relations.values_list(
             PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.BASE_PLAYLIST + '__uuid',

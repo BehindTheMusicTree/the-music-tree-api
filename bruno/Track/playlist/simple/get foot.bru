@@ -1,0 +1,15 @@
+meta {
+  name: get foot
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}simple-playlists/{{simplePlaylistFootUuid}}/
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.serializer.track.input.endpoint.post import FIELDS as POST_FIELDS
+from bodzify_api.serializer.track.input.endpoint.post import Fields as POST_FIELDS
 from rest_framework import status
 from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import NonNullableStrFieldFromDataTestCase
 

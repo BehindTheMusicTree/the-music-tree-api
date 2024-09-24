@@ -10,18 +10,18 @@ from rest_framework.decorators import action
 from rest_framework.serializers import ModelSerializer
 
 import bodzify_api.view.utility as utility
-from bodzify_api.model.track.LibraryTrack import ATTRIBUTES_LABEL as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import AttributesLabel as LIB_TRACK_ATTRIBUTES_LABEL
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.endpoint.extract import LibTrackExtractSerializer
 from bodzify_api.serializer.track.input.endpoint.post import LibTrackPostSerializer
-from bodzify_api.serializer.track.input.schema import FIELDS as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import Fields as SAVE_SCHEMA_FIELDS
 from bodzify_api.serializer.track.input.endpoint.put import LibTrackPutSerializer
 from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
-class GET_FILTER_FIELDS:
+class GetFilterFields:
     TITLE = LIB_TRACK_ATTRIBUTES_LABEL.TITLE
     ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
     ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
@@ -45,11 +45,11 @@ class TrackViewSet(AppModelViewSet):
 
     def get_queryset(self):
         queryset = LibraryTrack.objects.filter(user=self.request.user)
-        title_filter = self.request.GET.get(GET_FILTER_FIELDS.TITLE)
-        artist_name_filter = self.request.GET.get(GET_FILTER_FIELDS.ARTIST_NAME)
-        album_name_filter = self.request.GET.get(GET_FILTER_FIELDS.ALBUM_NAME)
-        genre_name_filter = self.request.GET.get(GET_FILTER_FIELDS.GENRE_NAME)
-        language_filter = self.request.GET.get(GET_FILTER_FIELDS.LANGUAGE)
+        title_filter = self.request.GET.get(GetFilterFields.TITLE)
+        artist_name_filter = self.request.GET.get(GetFilterFields.ARTIST_NAME)
+        album_name_filter = self.request.GET.get(GetFilterFields.ALBUM_NAME)
+        genre_name_filter = self.request.GET.get(GetFilterFields.GENRE_NAME)
+        language_filter = self.request.GET.get(GetFilterFields.LANGUAGE)
 
         if title_filter is not None:
             queryset = queryset.filter(title__icontains=title_filter)
@@ -67,12 +67,12 @@ class TrackViewSet(AppModelViewSet):
         return LibTrackDetailedSerializer(instance=instance)  # type: ignore
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=GET_FILTER_FIELDS.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GET_FILTER_FIELDS.ARTIST_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GET_FILTER_FIELDS.ALBUM_ARTISTS_NAME,
+        OpenApiParameter(name=GetFilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=GetFilterFields.ARTIST_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=GetFilterFields.ALBUM_ARTISTS_NAME,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GET_FILTER_FIELDS.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY)])
+        OpenApiParameter(name=GetFilterFields.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 

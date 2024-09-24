@@ -106,6 +106,14 @@ main() {
     log_with_script_prefixe "Audio fingerprinter container running successfully."
 
     log_with_script_prefixe "Containers running successfully."
+
+    log_with_script_prefixe "Removing unused Docker images..."
+    docker image prune -f
+    if [ $? -ne 0 ]; then
+        log_with_script_prefixe "ERROR: Failed to remove unused Docker images." >&2
+        exit 1
+    fi
+    log_with_script_prefixe "Unused Docker images removed successfully."
 }
 
 main "$@"

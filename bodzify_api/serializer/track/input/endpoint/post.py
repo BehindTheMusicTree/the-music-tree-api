@@ -3,10 +3,10 @@
 from rest_framework import serializers
 
 from bodzify_api.serializer.track.input.endpoint.endpoint \
-    import LibTrackEndPointSerializer, FIELDS as ENDPOINT_FIELDS
+    import LibTrackEndPointSerializer, Fields as ENDPOINT_FIELDS
 
 
-class FIELDS:
+class Fields:
     TRACK_FILE = ENDPOINT_FIELDS.TRACK_FILE
     SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = ENDPOINT_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT
     TITLE = ENDPOINT_FIELDS.TITLE
