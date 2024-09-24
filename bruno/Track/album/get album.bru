@@ -1,11 +1,11 @@
 meta {
-  name: albums--uuid--
+  name: get album
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
   url: {{BASE_URL}}albums/
-  body: none
-  auth: none
+  body: json
+  auth: inherit
 }
