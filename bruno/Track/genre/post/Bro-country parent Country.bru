@@ -1,0 +1,22 @@
+meta {
+  name: Bro-country parent Country
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}genres/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "Bro-country",
+    "parent": "{{genreCountryUuid}}"
+  }
+}

@@ -1,0 +1,26 @@
+meta {
+  name: Cowboy country parent Country
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}genres/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "Cowboy country",
+    "parent": "{{genreCountryUuid}}"
+  }
+}
+
+vars:post-response {
+  ~genreCowboyCountryUuid: res.body.uuid
+}
