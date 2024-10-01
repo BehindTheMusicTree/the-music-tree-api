@@ -3,7 +3,7 @@
 from typing import Optional
 
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
+from bodzify_api.view.viewset.model.AppModelViewSet import PaginatedResponseFields
 
 
 class ApiTestCase(AppTestCase):
@@ -27,8 +27,8 @@ class ApiTestCase(AppTestCase):
         return {k: ('' if v is None else v) for k, v in data_dict.items()}
 
     def _set_results_attributes(self, response):
-        self.results = response.json()[PAGINATED_RESPONSE_FIELDS.RESULTS]
-        self.overall_total = response.json()[PAGINATED_RESPONSE_FIELDS.OVERALL_TOTAL]
+        self.results = response.json()[PaginatedResponseFields.RESULTS]
+        self.overall_total = response.json()[PaginatedResponseFields.OVERALL_TOTAL]
 
     def _set_result(self, response):
         self.result = response.json()

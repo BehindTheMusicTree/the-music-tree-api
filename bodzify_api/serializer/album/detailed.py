@@ -5,7 +5,7 @@ from django.db.models import Sum
 from rest_framework import serializers
 from bodzify_api.utils import utils
 from bodzify_api.model.Album import Album, AttributesLabel as AttributesLabel
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LibTrackAttributesLabels
 from bodzify_api.serializer.track.output.without_playlists_and_album import (
     LibTrackWithoutAlbumAndPlaylistSerializer)
 from bodzify_api.serializer.artist.with_only_name import ArtistWithOnlyNameSerializer
@@ -31,7 +31,7 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
 
     def get_duration_in_sec(self, obj) -> int:
         value = LibraryTrack.objects.filter(album=obj).aggregate(duration_in_sec=Sum(AttributesLabel.DURATION_IN_SEC))
-        return value[LIB_TRACK_ATTRIBUTES_LABEL.DURATION_IN_SEC]
+        return value[LibTrackAttributesLabels.DURATION_IN_SEC]
 
     def get_duration_str_in_hour_min_sec(self, obj) -> str:
         return str(datetime.timedelta(seconds=self.get_duration_in_sec(obj)))

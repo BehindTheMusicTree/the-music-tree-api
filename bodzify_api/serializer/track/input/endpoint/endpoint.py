@@ -5,24 +5,24 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
-from bodzify_api.serializer.track.input.schema import Fields as SAVE_SCHEMA_FIELDS
-from bodzify_api.model.Album import AttributesLabel as ALBUM_SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields
+from bodzify_api.model.Album import AttributesLabel as ALBUM_SaveSchemaFields
 
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
 
 
 class Fields:
-    TRACK_FILE = SAVE_SCHEMA_FIELDS.FILE
-    SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = SAVE_SCHEMA_FIELDS.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT
-    TITLE = SAVE_SCHEMA_FIELDS.TITLE
-    ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
-    ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES_STR = ALBUM_SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS + "_names_string"
-    GENRE_UUID = SAVE_SCHEMA_FIELDS.GENRE_UUID
-    GENRE_NAME = SAVE_SCHEMA_FIELDS.GENRE_NAME
-    RATING = SAVE_SCHEMA_FIELDS.RATING
-    LANGUAGE = SAVE_SCHEMA_FIELDS.LANGUAGE
+    TRACK_FILE = SaveSchemaFields.FILE
+    SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = SaveSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT
+    TITLE = SaveSchemaFields.TITLE
+    ARTIST_NAME = SaveSchemaFields.ARTIST_NAME
+    ALBUM_NAME = SaveSchemaFields.ALBUM_NAME
+    ALBUM_ARTISTS_NAMES_STR = ALBUM_SaveSchemaFields.ALBUM_ARTISTS + "_names_string"
+    GENRE_UUID = SaveSchemaFields.GENRE_UUID
+    GENRE_NAME = SaveSchemaFields.GENRE_NAME
+    RATING = SaveSchemaFields.RATING
+    LANGUAGE = SaveSchemaFields.LANGUAGE
     FORCE_TITLE_GENERATION = "force_title_generation"
 
 

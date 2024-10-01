@@ -4,11 +4,11 @@ import logging
 import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIntTestCase \
     import UpdateFileMetadataIntTestCase
-from bodzify_api.serializer.track.input.schema import Fields as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields
 
 
 class UpdateFileMetadataRatingTestCase(UpdateFileMetadataIntTestCase):
-    save_field = SAVE_SCHEMA_FIELDS.RATING
+    save_field = SaveSchemaFields.RATING
     lib_track_normalized_metadata_key = audio_metadata.NormalizedMetadataKeys.RATING
     value_min = 0
     value_max = 10

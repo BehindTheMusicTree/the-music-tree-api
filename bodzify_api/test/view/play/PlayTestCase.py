@@ -8,13 +8,13 @@ from rest_framework import status
 
 from bodzify_api.model.Play import Play
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.play.output.detailed import Fields as GET_FIELDS
+from bodzify_api.serializer.play.output.detailed import Fields as GetFields
 
 
 class PlayTestCase(AppTestCase):
 
     def _set_saved_play_attribute(self, response):
-        uuid = response.json()[GET_FIELDS.UUID]
+        uuid = response.json()[GetFields.UUID]
         self.saved_play = Play.objects.get(uuid=uuid)
 
     def post_play(self, data_dict):

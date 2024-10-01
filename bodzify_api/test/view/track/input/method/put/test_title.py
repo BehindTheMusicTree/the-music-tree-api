@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.NotNullableFieldTestCase import NotNullableFieldTestCase
 
 
@@ -11,7 +11,7 @@ class TestCase(NotNullableFieldTestCase):
     def test_not_empty_then_ok(self):
         lib_track = self.model_fixture_factory.create_lib_track(title="Love")
         title_new = "a"
-        data = {PUT_FIELDS.TITLE: title_new}
+        data = {PutFields.TITLE: title_new}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.title == title_new
@@ -25,14 +25,14 @@ class TestCase(NotNullableFieldTestCase):
 
     def test_empty_then_error(self):
         lib_track = self.model_fixture_factory.create_lib_track(title="Love")
-        data = {PUT_FIELDS.TITLE: ""}
+        data = {PutFields.TITLE: ""}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_not_none_then_update(self):
         title = "a"
         lib_track = self.model_fixture_factory.create_lib_track(title=title)
-        data = {PUT_FIELDS.TITLE: title}
+        data = {PutFields.TITLE: title}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.title == title

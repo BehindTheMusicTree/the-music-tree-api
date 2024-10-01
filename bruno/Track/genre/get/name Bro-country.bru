@@ -1,0 +1,19 @@
+meta {
+  name: name Bro-country
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}genres/?name=Country
+  body: json
+  auth: inherit
+}
+
+params:query {
+  name: Country
+}
+
+vars:post-response {
+  genreCountryUuid: res.body.results[0].uuid
+}

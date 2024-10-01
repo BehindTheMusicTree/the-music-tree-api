@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from bodzify_api import settings
-from bodzify_api.serializer.track.input.endpoint.extract import Fields as EXTRACT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.extract import Fields as ExtractFields
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
@@ -13,7 +13,7 @@ class TestCase(TrackTestCase):
             "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"
             + "_KN414JidBikY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
-        data = {EXTRACT_FIELDS.URL: track_url}
+        data = {ExtractFields.URL: track_url}
         response = self.extract(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.title.startswith(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE)

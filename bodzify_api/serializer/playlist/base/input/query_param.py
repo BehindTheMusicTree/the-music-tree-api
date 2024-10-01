@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CRITERIA_PLAYLIST_TYPES_LABEL
+from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CriteriaPlaylistTypesLabels
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PlaylistAttributesLabels
 
 
 class Fields:
     TYPE = 'type'
-    NAME = PLAYLIST_ATTRIBUTES_LABEL.NAME
+    NAME = PlaylistAttributesLabels.NAME
 
 
 class BasePlaylistQueryParamSerializer(serializers.Serializer):
-    TYPE_VALID_VALUES = [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,
-                         CRITERIA_PLAYLIST_TYPES_LABEL.TAG,
+    TYPE_VALID_VALUES = [CriteriaPlaylistTypesLabels.GENRE,
+                         CriteriaPlaylistTypesLabels.TAG,
                          SIMPLE_PLAYLIST_TYPE_LABEL]
 
     type = serializers.CharField(required=False, allow_blank=True)

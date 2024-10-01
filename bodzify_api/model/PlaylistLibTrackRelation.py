@@ -4,14 +4,14 @@ from django.db import models
 from django.db.models import F
 from django.utils import timezone
 
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PlaylistAttributesLabels
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LibTrackAttributesLabels
 
 
 class AttributesLabel:
     MODEL = 'playlist_lib_track_relation'
-    BASE_PLAYLIST = PLAYLIST_ATTRIBUTES_LABEL.MODEL
-    LIB_TRACK = LIB_TRACK_ATTRIBUTES_LABEL.MODEL
+    BASE_PLAYLIST = PlaylistAttributesLabels.MODEL
+    LIB_TRACK = LibTrackAttributesLabels.MODEL
     POSITION = 'position'
     CREATED_ON = 'created_on'
 

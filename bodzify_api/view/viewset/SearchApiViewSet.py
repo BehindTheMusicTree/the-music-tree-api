@@ -4,16 +4,16 @@ from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist \
-    import CriteriaPlaylist, SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
+    import CriteriaPlaylist, SpecialNames as CriteriaPlaylistSpecialNames
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.criteria.output.without_tracks import CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.serializer.playlist.children.simple.output.without_tracks import SimplePlaylistWithoutTracksSerializer
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.Album import Album, AttributesLabel as AttributesLabel
-from bodzify_api.model.Artist import Artist, AttributesLabel as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.Artist import Artist, AttributesLabel as ArtistAttributesLabels
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PlaylistAttributesLabels
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LibTrackAttributesLabels
 from bodzify_api.serializer.album.without_track import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.detailed import ArtistDetailedSerializer
 from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
@@ -22,7 +22,7 @@ from rest_framework.permissions import IsAuthenticated
 
 class QueryFields:
     QUERY = "query"
-    TYPE = "type"
+    TYPE = 'type'
 
 
 class QueryFiltersFields:
@@ -57,7 +57,7 @@ def lib_track_filter(queryset, request, *args, **kwargs):
         query = request.query_params[QueryFields.QUERY]
         if query != "":
             queryset = queryset.filter(title__icontains=query)
-    return queryset.order_by(LIB_TRACK_ATTRIBUTES_LABEL.TITLE)
+    return queryset.order_by(LibTrackAttributesLabels.TITLE)
 
 
 def simple_playlist_filter(queryset, request, *args, **kwargs):
@@ -66,7 +66,7 @@ def simple_playlist_filter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
-            ).order_by(PLAYLIST_ATTRIBUTES_LABEL.NAME)
+            ).order_by(PlaylistAttributesLabels.NAME)
     return queryset
 
 
@@ -76,11 +76,11 @@ def criteria_playlist_filter(queryset, request, *args, **kwargs):
         unfiltered_queryset = queryset
         if query != "":
             queryset = unfiltered_queryset.filter(criteria__name__icontains=query)
-            if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS):
+            if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistSpecialNames.GENRELESS):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
                     type_id=CriteriaTypesId.GENRE)
-            if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS):
+            if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistSpecialNames.TAGLESS):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
                     type_id=CriteriaTypesId.TAG)
@@ -99,7 +99,7 @@ def artist_filter(queryset, request, *args, **kwargs):
     if QueryFields.QUERY in request.query_params:
         query = request.query_params[QueryFields.QUERY]
         if query != "":
-            queryset = queryset.filter(name__icontains=query).order_by(ARTIST_ATTRIBUTES_LABEL.NAME)
+            queryset = queryset.filter(name__icontains=query).order_by(ArtistAttributesLabels.NAME)
     return queryset
 
 

@@ -6,7 +6,7 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
 
 
 class TestCase(TrackTestCase):
@@ -15,7 +15,7 @@ class TestCase(TrackTestCase):
         old_genre = self.model_fixture_factory.create_genre(name="Metal")
         new_genre_name = "Rock"
         lib_track = self.model_fixture_factory.create_lib_track(title="Love", genre=old_genre)
-        data = {PUT_FIELDS.GENRE_NAME: new_genre_name}
+        data = {PutFields.GENRE_NAME: new_genre_name}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 

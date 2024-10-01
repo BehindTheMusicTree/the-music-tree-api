@@ -4,7 +4,7 @@ from rest_framework import status
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import NullableFieldTestCase
 
 
@@ -20,7 +20,7 @@ class TestCase(NullableFieldTestCase):
     def test_empty_then_none(self):
         artist_old = self.model_fixture_factory.create_artist(name="a-ha")
         lib_track = self.model_fixture_factory.create_lib_track(title="koko", artist=artist_old)
-        data = {PUT_FIELDS.ARTIST_NAME: ''}
+        data = {PutFields.ARTIST_NAME: ''}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.artist == None
@@ -29,7 +29,7 @@ class TestCase(NullableFieldTestCase):
         artist_old = self.model_fixture_factory.create_artist(name="a-ha")
         lib_track = self.model_fixture_factory.create_lib_track(title="koko", artist=artist_old)
         artist_new = self.model_fixture_factory.create_artist(name="Koko")
-        data = {PUT_FIELDS.ARTIST_NAME: artist_new.name}
+        data = {PutFields.ARTIST_NAME: artist_new.name}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.artist == artist_new
@@ -38,7 +38,7 @@ class TestCase(NullableFieldTestCase):
         artist_name = "a-ha"
         artist = self.model_fixture_factory.create_artist(name=artist_name)
         track = self.model_fixture_factory.create_lib_track(title="Foire", artist=artist)
-        data = {PUT_FIELDS.ARTIST_NAME: "Autre artiste"}
+        data = {PutFields.ARTIST_NAME: "Autre artiste"}
         response = self.put_lib_track(lib_track_uuid=track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert not Artist.objects.filter(name=artist_name).exists()
@@ -48,7 +48,7 @@ class TestCase(NullableFieldTestCase):
         artist = self.model_fixture_factory.create_artist(name=artist_name)
         track = self.model_fixture_factory.create_lib_track(title="Foire", artist=artist)
         self.model_fixture_factory.create_lib_track(title="Josie", artist=artist)
-        data = {PUT_FIELDS.ARTIST_NAME: artist_name}
+        data = {PutFields.ARTIST_NAME: artist_name}
         response = self.put_lib_track(lib_track_uuid=track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(name=artist_name).exists()
@@ -59,7 +59,7 @@ class TestCase(NullableFieldTestCase):
         track = self.model_fixture_factory.create_lib_track(title="Foire", artist=artist)
         album = self.model_fixture_factory.create_album(name="Hunting High and Low", album_artists=[artist])
         self.model_fixture_factory.create_lib_track(title="Josie", album=album)
-        data = {PUT_FIELDS.ARTIST_NAME: artist_name}
+        data = {PutFields.ARTIST_NAME: artist_name}
         response = self.put_lib_track(lib_track_uuid=track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(name=artist_name).exists()

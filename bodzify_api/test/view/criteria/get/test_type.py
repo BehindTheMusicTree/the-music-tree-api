@@ -3,7 +3,7 @@
 from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaTypesLabel
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.criteria.output.detailed import Fields as GET_FIELDS
+from bodzify_api.serializer.criteria.output.detailed import Fields as GetFields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 
@@ -14,5 +14,5 @@ class TestCase(CriteriaTestCase):
         self.model_fixture_factory.create_genre(name=genre_name)
         response = self.get_genres()
         assert response.status_code == status.HTTP_200_OK
-        criteria_type_label = self.results[0][GET_FIELDS.TYPE][GET_FIELDS.TYPE_LABEL]
+        criteria_type_label = self.results[0][GetFields.TYPE][GetFields.TYPE_LABEL]
         assert criteria_type_label == CriteriaTypesLabel.GENRE

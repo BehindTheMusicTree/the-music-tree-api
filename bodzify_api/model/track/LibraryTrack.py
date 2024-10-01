@@ -13,12 +13,12 @@ from django.dispatch import receiver
 
 from bodzify_api import settings
 import bodzify_api.utils.audio_metadata as audio_metadata
-from bodzify_api.model.Album import AttributesLabel as ALBUM_ATTRIBUTES_LABEL
+from bodzify_api.model.Album import AttributesLabel as AlbumAttributesLabels
 from bodzify_api.model.track_file.TrackFile import TrackFile
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.Artist import AttributesLabel as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.Artist import AttributesLabel as ArtistAttributesLabels
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as CriteriaAttributesLabels
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
@@ -26,8 +26,8 @@ from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 
 class AttributesLabel:
     MODEL = 'library_track'
-    UUID = "uuid"
-    USER = "user"
+    UUID = 'uuid'
+    USER = 'user'
     TRACK_FILE = "track_file"
     TRACK_FILE_USER_FRIENDLY = "file"
     DURATION_IN_SEC = "duration_in_sec"
@@ -42,7 +42,7 @@ class AttributesLabel:
     BASE_PLAYLISTS = "base_playlists"
     BASE_PLAYLISTS_USER_FRIENDLY = "playlists"
     LANGUAGE = "language"
-    CREATED_ON = "created_on"
+    CREATED_ON = 'created_on'
     RELATIVE_URL = "relative_url"
     PLAY_COUNT = 'play_count'
 
@@ -66,17 +66,17 @@ class LibraryTrack(models.Model):
                                on_delete=models.CASCADE,
                                default=None,
                                null=True,
-                               related_name=ARTIST_ATTRIBUTES_LABEL.LIB_TRACKS)
+                               related_name=ArtistAttributesLabels.LIB_TRACKS)
     album = models.ForeignKey('bodzify_api.Album',
                               on_delete=models.CASCADE,
                               default=None,
                               null=True,
-                              related_name=ALBUM_ATTRIBUTES_LABEL.LIB_TRACKS)
+                              related_name=AlbumAttributesLabels.LIB_TRACKS)
     genre = models.ForeignKey('bodzify_api.Criteria',
                               on_delete=models.DO_NOTHING,
                               default=None,
                               null=True,
-                              related_name=CRITERIA_ATTRIBUTES_LABEL.LIB_TRACKS)
+                              related_name=CriteriaAttributesLabels.LIB_TRACKS)
     rating = models.IntegerField(
         null=True,
         blank=True,
@@ -212,11 +212,11 @@ class LibraryTrack(models.Model):
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, AttributesLabel as PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL
+            import PlaylistLibTrackRelation, AttributesLabel as PlaylistLibTrackRelAttributesLabels
         playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
         return list(playlist_lib_track_relations.values_list(
-            PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.BASE_PLAYLIST + '__uuid',
-            PLAYLIST_LIB_TRACK_REL_ATTRIBUTES_LABEL.POSITION))
+            PlaylistLibTrackRelAttributesLabels.BASE_PLAYLIST + '__uuid',
+            PlaylistLibTrackRelAttributesLabels.POSITION))
 
     def delete_with_checking_album_and_artist_potential_deletion(self):
         track_artist_uuid = self.artist.uuid if self.artist else None

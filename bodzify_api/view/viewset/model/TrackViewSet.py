@@ -10,11 +10,11 @@ from rest_framework.decorators import action
 from rest_framework.serializers import ModelSerializer
 
 import bodzify_api.view.utility as utility
-from bodzify_api.model.track.LibraryTrack import AttributesLabel as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import AttributesLabel as LibTrackAttributesLabels
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.endpoint.extract import LibTrackExtractSerializer
 from bodzify_api.serializer.track.input.endpoint.post import LibTrackPostSerializer
-from bodzify_api.serializer.track.input.schema import Fields as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields
 from bodzify_api.serializer.track.input.endpoint.put import LibTrackPutSerializer
 from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
@@ -22,12 +22,12 @@ from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class GetFilterFields:
-    TITLE = LIB_TRACK_ATTRIBUTES_LABEL.TITLE
-    ARTIST_NAME = SAVE_SCHEMA_FIELDS.ARTIST_NAME
-    ALBUM_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
-    ALBUM_ARTISTS_NAME = SAVE_SCHEMA_FIELDS.ALBUM_ARTISTS_NAMES_STR
-    GENRE_NAME = SAVE_SCHEMA_FIELDS.GENRE_NAME
-    LANGUAGE = LIB_TRACK_ATTRIBUTES_LABEL.LANGUAGE
+    TITLE = LibTrackAttributesLabels.TITLE
+    ARTIST_NAME = SaveSchemaFields.ARTIST_NAME
+    ALBUM_NAME = SaveSchemaFields.ALBUM_ARTISTS_NAMES_STR
+    ALBUM_ARTISTS_NAME = SaveSchemaFields.ALBUM_ARTISTS_NAMES_STR
+    GENRE_NAME = SaveSchemaFields.GENRE_NAME
+    LANGUAGE = LibTrackAttributesLabels.LANGUAGE
 
 
 class TrackViewSet(AppModelViewSet):
@@ -61,7 +61,7 @@ class TrackViewSet(AppModelViewSet):
             queryset = queryset.filter(genre__name__icontain=genre_name_filter)
         if language_filter is not None:
             queryset = queryset.filter(language__icontains=language_filter)
-        return queryset.order_by(f"-{LIB_TRACK_ATTRIBUTES_LABEL.CREATED_ON}")
+        return queryset.order_by(f"-{LibTrackAttributesLabels.CREATED_ON}")
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return LibTrackDetailedSerializer(instance=instance)  # type: ignore

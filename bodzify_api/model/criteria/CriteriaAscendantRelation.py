@@ -2,13 +2,13 @@
 
 from django.db import models
 
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as CRITERIA_ATTRIBUTES_LABEL
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as CriteriaAttributesLabels
 
 
 class AttributesLabel:
     MODEL = "criteria_ascendant_relation"
-    DESCENDANT = "descendant"
-    ASCENDANT = "ascendant"
+    DESCENDANT = 'descendant'
+    ASCENDANT = 'ascendant'
     DEGREE = "degree"
     ADDED_ON = "added_on"
 
@@ -16,10 +16,10 @@ class AttributesLabel:
 class CriteriaAscendantRelation(models.Model):
     descendant = models.ForeignKey(Criteria,
                                    on_delete=models.CASCADE,
-                                   related_name=CRITERIA_ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_ASCENDANTS)
+                                   related_name=CriteriaAttributesLabels.CRITERIA_ASCENDANT_RELATION_ASCENDANTS)
     ascendant = models.ForeignKey(Criteria,
                                   on_delete=models.CASCADE,
-                                  related_name=CRITERIA_ATTRIBUTES_LABEL.CRITERIA_ASCENDANT_RELATION_DESCENDANTS)
+                                  related_name=CriteriaAttributesLabels.CRITERIA_ASCENDANT_RELATION_DESCENDANTS)
     degree = models.PositiveIntegerField()
     added_on = models.DateTimeField(auto_now_add=True)
 

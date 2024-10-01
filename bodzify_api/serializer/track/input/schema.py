@@ -4,23 +4,23 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.track.input.model import Fields as SAVE_MODEL_FIELDS
+from bodzify_api.serializer.track.input.model import Fields as SaveModelFields
 from bodzify_api.model.Album import AttributesLabel as AttributesLabel
 
 
 class Fields:
-    USER = SAVE_MODEL_FIELDS.USER
+    USER = SaveModelFields.USER
     FILE = "file"
     SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = "should_cancel_if_duplicate_fingerprint"
-    DURATION_IN_SEC = SAVE_MODEL_FIELDS.DURATION_IN_SEC
-    TITLE = SAVE_MODEL_FIELDS.TITLE
-    ARTIST_NAME = SAVE_MODEL_FIELDS.ARTIST + "_name"
-    ALBUM_NAME = SAVE_MODEL_FIELDS.ALBUM + "_name"
+    DURATION_IN_SEC = SaveModelFields.DURATION_IN_SEC
+    TITLE = SaveModelFields.TITLE
+    ARTIST_NAME = SaveModelFields.ARTIST + "_name"
+    ALBUM_NAME = SaveModelFields.ALBUM + "_name"
     ALBUM_ARTISTS_NAMES_STR = AttributesLabel.ALBUM_ARTISTS + "_names_string"
-    GENRE_UUID = SAVE_MODEL_FIELDS.GENRE + "_uuid"
-    GENRE_NAME = SAVE_MODEL_FIELDS.GENRE + "_name"
-    RATING = SAVE_MODEL_FIELDS.RATING
-    LANGUAGE = SAVE_MODEL_FIELDS.LANGUAGE
+    GENRE_UUID = SaveModelFields.GENRE + "_uuid"
+    GENRE_NAME = SaveModelFields.GENRE + "_name"
+    RATING = SaveModelFields.RATING
+    LANGUAGE = SaveModelFields.LANGUAGE
     FORCE_TITLE_GENERATION = "force_title_generation"
 
 
