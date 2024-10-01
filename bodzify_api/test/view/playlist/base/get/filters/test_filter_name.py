@@ -8,7 +8,7 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.model.playlist.children.CriteriaPlaylist import SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.children.CriteriaPlaylist import SpecialNames as CriteriaPlaylistSpecialNames
 from bodzify_api.serializer.playlist.base.input.query_param import Fields as GetQueryParams
 from bodzify_api.test.get_filters.GetFilterWithFreeValuesTestCase import GetFilterWithFreeValuesTestCase
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
@@ -51,14 +51,14 @@ class TestCase(GetFilterWithFreeValuesTestCase, BasePlaylistTestCase):
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][GetQueryParams.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS
+        assert self.results[0][GetQueryParams.NAME] == CriteriaPlaylistSpecialNames.GENRELESS
 
     def test_tagless_special_name_then_results(self):
         data_dict = {GetQueryParams.NAME: 'aGl'}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][GetQueryParams.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS
+        assert self.results[0][GetQueryParams.NAME] == CriteriaPlaylistSpecialNames.TAGLESS
 
     def test_all_special_name_then_results(self):
         data_dict = {GetQueryParams.NAME: 'Al'}
@@ -80,5 +80,5 @@ class TestCase(GetFilterWithFreeValuesTestCase, BasePlaylistTestCase):
         names_lowered = [result[GetQueryParams.NAME].lower() for result in self.results]
         assert simple_playlist_name.lower() in names_lowered
         assert criteria_name.lower() in names_lowered
-        assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS.lower() in names_lowered
-        assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS.lower() in names_lowered
+        assert CriteriaPlaylistSpecialNames.GENRELESS.lower() in names_lowered
+        assert CriteriaPlaylistSpecialNames.TAGLESS.lower() in names_lowered

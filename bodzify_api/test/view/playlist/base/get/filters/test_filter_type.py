@@ -6,7 +6,7 @@ from rest_framework import status
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CriteriaPlaylistTypesLabels, \
-    SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
+    SpecialNames as CriteriaPlaylistSpecialNames
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 from bodzify_api.serializer.playlist.base.input.query_param import Fields as GetQueryParams
@@ -40,8 +40,8 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert rock_criteria_name in names
         assert simple_playlist_name in names
-        assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
-        assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
+        assert CriteriaPlaylistSpecialNames.GENRELESS in names
+        assert CriteriaPlaylistSpecialNames.TAGLESS in names
         assert SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL in names
 
     def test_is_empty_then_error(self):
@@ -58,7 +58,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert rock_criteria_name in names
-        assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
+        assert CriteriaPlaylistSpecialNames.GENRELESS in names
 
     def test_value_is_tag_then_results(self):
         data_dict = {GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.TAG}
@@ -66,7 +66,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         names = [result[PlaylistGetFields.NAME] for result in self.results]
-        assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
+        assert CriteriaPlaylistSpecialNames.TAGLESS in names
 
     def test_value_is_simple_then_results(self):
         simple_playlist_name = "Teuf"
