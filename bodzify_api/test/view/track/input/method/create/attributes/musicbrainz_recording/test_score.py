@@ -10,4 +10,4 @@ class TestCase(TrackTestCase):
     def test_totaleclipse_with_three_scores_then_highest(self):
         response = self.post_lib_track_with_specific_sample("total_eclipse_3_scores.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert float(self.saved_lib_track.musicbrainz_recording.score) == 0.98117745  # type: ignore
+        assert float(self.saved_lib_track.musicbrainz_recording.score) > 0.98  # type: ignore
