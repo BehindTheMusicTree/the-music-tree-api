@@ -6,7 +6,7 @@ from rest_framework import status
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaTypesLabel
 from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CriteriaPlaylistTypesLabels, \
-    SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
+    SpecialNames as CriteriaPlaylistSpecialNames
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL, SimplePlaylist
 from bodzify_api.serializer.playlist.base.input.query_param import Fields as GetQueryParams
@@ -19,7 +19,7 @@ class TestCase(BasePlaylistTestCase):
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {
             GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.GENRE,
-            GetQueryParams.NAME: CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS
+            GetQueryParams.NAME: CriteriaPlaylistSpecialNames.TAGLESS
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
@@ -28,12 +28,12 @@ class TestCase(BasePlaylistTestCase):
     def test_type_genre_and_name_genreless_then_one_result(self):
         data_dict = {
             GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.GENRE,
-            GetQueryParams.NAME: CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS
+            GetQueryParams.NAME: CriteriaPlaylistSpecialNames.GENRELESS
         }
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][PlaylistGetFields.NAME] == CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS
+        assert self.results[0][PlaylistGetFields.NAME] == CriteriaPlaylistSpecialNames.GENRELESS
 
     def test_type_simple_and_name_all_then_one_result(self):
         data_dict = {

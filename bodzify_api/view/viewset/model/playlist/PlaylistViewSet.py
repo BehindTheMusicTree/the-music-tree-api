@@ -4,7 +4,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes 
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 from bodzify_api.model.playlist.children.CriteriaPlaylist \
-    import TypesLabel as CriteriaPlaylistTypesLabels, SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
+    import TypesLabel as CriteriaPlaylistTypesLabels, SpecialNames as CriteriaPlaylistSpecialNames
 from bodzify_api.serializer.playlist.base.input.query_param \
     import BasePlaylistQueryParamSerializer, Fields as QueryParams
 from bodzify_api.service.Service import Service
@@ -67,7 +67,7 @@ class PlaylistViewSet(AppModelViewSet):
                 criteria_playlist__criteria__name__icontains=name_query_param)
 
         genreless_playlist = BasePlaylist.objects.none()
-        if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS.lower() \
+        if name_query_param.lower() in CriteriaPlaylistSpecialNames.GENRELESS.lower() \
                 and type_query_param in [None, CriteriaPlaylistTypesLabels.GENRE]:  # type: ignore
             genreless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,
@@ -75,7 +75,7 @@ class PlaylistViewSet(AppModelViewSet):
                 criteria_playlist__type_id=CriteriaTypesId.GENRE)
 
         tagless_playlist = BasePlaylist.objects.none()
-        if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS.lower() \
+        if name_query_param.lower() in CriteriaPlaylistSpecialNames.TAGLESS.lower() \
                 and type_query_param in [None, CriteriaPlaylistTypesLabels.TAG]:
             tagless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,

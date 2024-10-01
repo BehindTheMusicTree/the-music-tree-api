@@ -4,7 +4,7 @@ from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist \
-    import CriteriaPlaylist, SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
+    import CriteriaPlaylist, SpecialNames as CriteriaPlaylistSpecialNames
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.serializer.playlist.children.criteria.output.without_tracks import CriteriaPlaylistWithoutTracksSerializer
 from bodzify_api.serializer.playlist.children.simple.output.without_tracks import SimplePlaylistWithoutTracksSerializer
@@ -76,11 +76,11 @@ def criteria_playlist_filter(queryset, request, *args, **kwargs):
         unfiltered_queryset = queryset
         if query != "":
             queryset = unfiltered_queryset.filter(criteria__name__icontains=query)
-            if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS):
+            if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistSpecialNames.GENRELESS):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
                     type_id=CriteriaTypesId.GENRE)
-            if is_string1_part_of_string2_regardless_of_case(query, CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS):
+            if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistSpecialNames.TAGLESS):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
                     type_id=CriteriaTypesId.TAG)
