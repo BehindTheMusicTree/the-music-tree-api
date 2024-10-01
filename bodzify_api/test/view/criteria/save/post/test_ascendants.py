@@ -3,20 +3,20 @@
 from rest_framework import status
 from bodzify_api.model.criteria.CriteriaAscendantRelation import AttributesLabel
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
-from bodzify_api.serializer.criteria.input.schema.endpoint.post import Fields as POST_FIELDS
+from bodzify_api.serializer.criteria.input.schema.endpoint.post import Fields as PostFields
 
 
 class TestCase(CriteriaTestCase):
 
     def test_no_parent_provided_then_no_ascendants(self):
-        data = {POST_FIELDS.NAME: "Rock"}
+        data = {PostFields.NAME: "Rock"}
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 0
 
     def test_root_parent_then_one_ascendant_with_degree_1(self):
         root = self.model_fixture_factory.create_genre(name="Rock")
-        data = {POST_FIELDS.NAME: "Punk", POST_FIELDS.PARENT: root.uuid}
+        data = {PostFields.NAME: "Punk", PostFields.PARENT: root.uuid}
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 1
@@ -28,7 +28,7 @@ class TestCase(CriteriaTestCase):
         criteria1 = self.model_fixture_factory.create_genre(name="Rock")
         criteria2 = self.model_fixture_factory.create_genre(name="Soft rock", parent=criteria1)
         criteria3 = self.model_fixture_factory.create_genre(name="Pop rock", parent=criteria2)
-        data = {POST_FIELDS.NAME: "Pop funk rock", POST_FIELDS.PARENT: criteria3.uuid}
+        data = {PostFields.NAME: "Pop funk rock", PostFields.PARENT: criteria3.uuid}
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 3

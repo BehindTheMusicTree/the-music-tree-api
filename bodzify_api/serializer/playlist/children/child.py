@@ -2,9 +2,9 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabel as CRITERIA_PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabel as CRITERIA_PlaylistAttributesLabels
 from bodzify_api.model.playlist.BasePlaylist \
-    import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL, \
+    import AttributesLabel as PlaylistAttributesLabels, \
     ForeignModelRelationsStr as PLAYLIST_FOREIGN_MODEL_RELATIONS_STR
 from bodzify_api.serializer.playlist.base.output.without_tracks \
     import BasePlaylistWithoutTracksSerializer
@@ -13,11 +13,11 @@ from bodzify_api.serializer.track.output.without_playlists_and_album \
 
 
 class Fields:
-    UUID = PLAYLIST_ATTRIBUTES_LABEL.UUID
-    NAME = CRITERIA_PLAYLIST_ATTRIBUTES_LABEL.NAME
-    CREATED_ON = PLAYLIST_ATTRIBUTES_LABEL.CREATED_ON
-    LIB_TRACKS_COUNT = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS_COUNT
-    LIB_TRACKS = PLAYLIST_ATTRIBUTES_LABEL.LIB_TRACKS
+    UUID = PlaylistAttributesLabels.UUID
+    NAME = CRITERIA_PlaylistAttributesLabels.NAME
+    CREATED_ON = PlaylistAttributesLabels.CREATED_ON
+    LIB_TRACKS_COUNT = PlaylistAttributesLabels.LIB_TRACKS_COUNT
+    LIB_TRACKS = PlaylistAttributesLabels.LIB_TRACKS
 
 
 class ChildPlaylistSerializer(BasePlaylistWithoutTracksSerializer):

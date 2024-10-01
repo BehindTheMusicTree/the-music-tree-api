@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPE
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
@@ -19,7 +19,7 @@ class TestCase(TrackTestCase):
         genre_name = "Rock"
         lib_track = self.model_fixture_factory.create_lib_track(title="Love")
 
-        data = {PUT_FIELDS.GENRE_NAME: genre_name}
+        data = {PutFields.GENRE_NAME: genre_name}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
@@ -37,7 +37,7 @@ class TestCase(TrackTestCase):
         genre = self.model_fixture_factory.create_genre(name=genre_name)
         lib_track = self.model_fixture_factory.create_lib_track(title="Love")
 
-        data = {PUT_FIELDS.GENRE_NAME: genre_name}
+        data = {PutFields.GENRE_NAME: genre_name}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
@@ -62,7 +62,7 @@ class TestCase(TrackTestCase):
         self.model_fixture_factory.create_genre(name=emo_genre_name, parent=hardrock_genre)
 
         lib_track = self.model_fixture_factory.create_lib_track(title="Love")
-        data = {PUT_FIELDS.GENRE_NAME: emo_genre_name}
+        data = {PutFields.GENRE_NAME: emo_genre_name}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 

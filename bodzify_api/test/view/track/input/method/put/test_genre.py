@@ -3,7 +3,7 @@
 from rest_framework import status
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import NullableFieldTestCase
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 
@@ -22,7 +22,7 @@ class TestCase(NullableFieldTestCase):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
         lib_track = self.model_fixture_factory.create_lib_track(title="koko", genre=rap_criteria)
         rock_criteria = self.model_fixture_factory.create_genre(name="Rock")
-        data = {PUT_FIELDS.GENRE_NAME: rock_criteria.name}
+        data = {PutFields.GENRE_NAME: rock_criteria.name}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre == rock_criteria
@@ -30,7 +30,7 @@ class TestCase(NullableFieldTestCase):
     def test_empty_then_none(self):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
         lib_track = self.model_fixture_factory.create_lib_track(title="koko", genre=rap_criteria)
-        data = {PUT_FIELDS.GENRE_NAME: ''}
+        data = {PutFields.GENRE_NAME: ''}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre == None
@@ -38,7 +38,7 @@ class TestCase(NullableFieldTestCase):
     def test_not_none_then_update(self):
         genre_name = "rap"
         lib_track = self.model_fixture_factory.create_lib_track(title='lolo')
-        data = {PUT_FIELDS.GENRE_NAME: genre_name}
+        data = {PutFields.GENRE_NAME: genre_name}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre is not None

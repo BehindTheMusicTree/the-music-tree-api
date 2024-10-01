@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.play.input.schema.endpoint.post import PlayPostSerializer, Fields as POST_FIELDS
+from bodzify_api.serializer.play.input.schema.endpoint.post import PlayPostSerializer, Fields as PostFields
 from bodzify_api.serializer.play.input.schema.schema import PlaySchemaSerializer
-from bodzify_api.serializer.play.input.model import PlayModelSerializer, Fields as SAVE_FIELDS
+from bodzify_api.serializer.play.input.model import PlayModelSerializer, Fields as SaveFields
 from bodzify_api.service.Service import Service
 
 
@@ -30,7 +30,7 @@ class PlayService(Service):
                                                                   old_instance=None) -> dict:
         model_data = dict()
 
-        content_object_uuid = schema_data.get(POST_FIELDS.CONTENT_OBJECT_UUID)
+        content_object_uuid = schema_data.get(PostFields.CONTENT_OBJECT_UUID)
 
         content_object = BasePlaylist.objects.filter(user=user, uuid=content_object_uuid).first()
         if not content_object:
@@ -38,9 +38,9 @@ class PlayService(Service):
         content_object.play_count += 1
         content_object.save()
 
-        model_data[SAVE_FIELDS.OBJECT_UUID] = content_object.uuid
+        model_data[SaveFields.OBJECT_UUID] = content_object.uuid
 
         content_type = ContentType.objects.get_for_model(content_object)
-        model_data[SAVE_FIELDS.CONTENT_TYPE] = content_type.pk
+        model_data[SaveFields.CONTENT_TYPE] = content_type.pk
 
         return model_data

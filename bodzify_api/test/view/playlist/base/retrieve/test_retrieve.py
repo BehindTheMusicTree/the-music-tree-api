@@ -4,12 +4,12 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.serializer.playlist.base.output.with_tracks import Fields as RETRIEVE_FIELDS
+from bodzify_api.serializer.playlist.base.output.with_tracks import Fields as RetrieveFields
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 from bodzify_api.utils.utils import to_camel_case
-from bodzify_api.serializer.track.output.without_playlists_and_album import Fields as LIB_TRACK_FIELDS
+from bodzify_api.serializer.track.output.without_playlists_and_album import Fields as LibTrackGetFields
 from bodzify_api.serializer.playlist_lib_track_relation.output.without_playlist \
-    import Fields as PLAYLIST_LIB_TRACK_RELATION_FIELDS
+    import Fields as PlaylistLibTrackRelFields
 
 
 class TestCase(BasePlaylistTestCase):
@@ -20,7 +20,7 @@ class TestCase(BasePlaylistTestCase):
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[RETRIEVE_FIELDS.NAME] == name
+        assert self.result[RetrieveFields.NAME] == name
 
     def test_retrieve_genre_then_ok(self):
         name = 'rock'
@@ -30,7 +30,7 @@ class TestCase(BasePlaylistTestCase):
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[RETRIEVE_FIELDS.NAME] == name
+        assert self.result[RetrieveFields.NAME] == name
 
     def test_retrieve_tag_then_ok(self):
         name = 'fr'
@@ -40,7 +40,7 @@ class TestCase(BasePlaylistTestCase):
 
         response = self.retrieve_playlist(uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[RETRIEVE_FIELDS.NAME] == name
+        assert self.result[RetrieveFields.NAME] == name
 
     def test_retrieve_then_lib_track_ordered_by_position(self):
         genre_name = 'rock'
@@ -52,10 +52,10 @@ class TestCase(BasePlaylistTestCase):
 
         response = self.retrieve_playlist(uuid=genre.criteria_playlist.base_playlist.uuid)  # type: ignore
         assert response.status_code == status.HTTP_200_OK
-        result_tracks = self.result[to_camel_case(RETRIEVE_FIELDS.LIB_TRACKS)]
-        assert result_tracks[0][to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
-            LIB_TRACK_FIELDS.TITLE] == lib_track1.title
-        assert result_tracks[1][to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
-            LIB_TRACK_FIELDS.TITLE] == lib_track2.title
-        assert result_tracks[2][to_camel_case(PLAYLIST_LIB_TRACK_RELATION_FIELDS.LIB_TRACK)][
-            LIB_TRACK_FIELDS.TITLE] == lib_track3.title
+        result_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS)]
+        assert result_tracks[0][to_camel_case(PlaylistLibTrackRelFields.LIB_TRACK)][
+            LibTrackGetFields.TITLE] == lib_track1.title
+        assert result_tracks[1][to_camel_case(PlaylistLibTrackRelFields.LIB_TRACK)][
+            LibTrackGetFields.TITLE] == lib_track2.title
+        assert result_tracks[2][to_camel_case(PlaylistLibTrackRelFields.LIB_TRACK)][
+            LibTrackGetFields.TITLE] == lib_track3.title

@@ -10,13 +10,13 @@ from bodzify_api.model.playlist.children.SimplePlaylist \
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.serializer.track.output.detailed import Fields as LIB_TRACK_FIELDS
+from bodzify_api.serializer.track.output.detailed import Fields as LibTrackGetFields
 from bodzify_api.serializer.playlist.children.simple.output.without_tracks \
-    import Fields as SIMPLE_PLAYLIST_FIELDS
+    import Fields as SimplePlaylistFields
 from bodzify_api.serializer.playlist.children.criteria.output.without_tracks \
-    import Fields as CRITERIA_PLAYLIST_FIELDS
-from bodzify_api.serializer.artist.with_only_name import Fields as ARTIST_FIELDS
-from bodzify_api.serializer.album.without_track import Fields as ALBUM_FIELDS
+    import Fields as CriteriaPlaylistFields
+from bodzify_api.serializer.artist.with_only_name import Fields as ArtistFields
+from bodzify_api.serializer.album.without_track import Fields as AlbumFields
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
 
@@ -31,19 +31,19 @@ class TestCase(SearchTestCase):
         response = self.search("Sum")
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 3
-        title_key = LIB_TRACK_FIELDS.TITLE
+        title_key = LibTrackGetFields.TITLE
         assert self.results[LibraryTrack.__name__][0][title_key] == summerlove_track.title
-        assert self.results[Artist.__name__][0][ARTIST_FIELDS.NAME] == sum41_artist.name
-        assert self.results[Album.__name__][0][ALBUM_FIELDS.NAME] == jailesum_album.name
+        assert self.results[Artist.__name__][0][ArtistFields.NAME] == sum41_artist.name
+        assert self.results[Album.__name__][0][AlbumFields.NAME] == jailesum_album.name
 
     def test_the_all_string_including_a_track(self):
         werealltoblame_track = self.model_fixture_factory.create_lib_track(title="We're All To Blame")
         response = self.search("All")
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 2
-        track_title_key = LIB_TRACK_FIELDS.TITLE
+        track_title_key = LibTrackGetFields.TITLE
         assert self.results[LibraryTrack.__name__][0][track_title_key] == werealltoblame_track.title
-        assert self.results[SimplePlaylist.__name__][0][SIMPLE_PLAYLIST_FIELDS.NAME] == SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
+        assert self.results[SimplePlaylist.__name__][0][SimplePlaylistFields.NAME] == SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
 
     def test_non_sensitiveness(self):
         rap_criteria_name = "Rap"
@@ -54,5 +54,5 @@ class TestCase(SearchTestCase):
         response = self.search("Rap")
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 2
-        assert self.results[CriteriaPlaylist.__name__][0][CRITERIA_PLAYLIST_FIELDS.NAME] == rap_criteria_name
-        assert self.results[CriteriaPlaylist.__name__][1][CRITERIA_PLAYLIST_FIELDS.NAME] == us_rap_criteria_name
+        assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlaylistFields.NAME] == rap_criteria_name
+        assert self.results[CriteriaPlaylist.__name__][1][CriteriaPlaylistFields.NAME] == us_rap_criteria_name

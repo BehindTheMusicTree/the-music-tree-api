@@ -3,7 +3,7 @@
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaType
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PlaylistAttributesLabels
 
 
 class SpecialNames:
@@ -29,12 +29,12 @@ class CriteriaPlaylist(models.Model):
     base_playlist = models.OneToOneField(BasePlaylist,
                                          on_delete=models.CASCADE,
                                          primary_key=True,
-                                         related_name=PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_PLAYLIST)
+                                         related_name=PlaylistAttributesLabels.CRITERIA_PLAYLIST)
     criteria = models.OneToOneField(Criteria,
                                     on_delete=models.CASCADE,
                                     blank=True,
                                     null=True,
-                                    related_name=PLAYLIST_ATTRIBUTES_LABEL.CRITERIA_PLAYLIST)
+                                    related_name=PlaylistAttributesLabels.CRITERIA_PLAYLIST)
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE, blank=True, null=False)
 
     # null must be True because when the root is the criteria playlist itself, we must create it first with a null root

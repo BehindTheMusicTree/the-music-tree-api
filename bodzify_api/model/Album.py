@@ -8,7 +8,7 @@ from django.db import models
 from django.utils import timezone
 
 from bodzify_api import settings
-from bodzify_api.model.Artist import Artist, AttributesLabel as ARTIST_ATTRIBUTES_LABEL
+from bodzify_api.model.Artist import Artist, AttributesLabel as ArtistAttributesLabels
 
 
 class AttributesLabel:
@@ -28,7 +28,7 @@ class Album(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
     name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
-    album_artists = models.ManyToManyField('bodzify_api.Artist', related_name=ARTIST_ATTRIBUTES_LABEL.ALBUMS)
+    album_artists = models.ManyToManyField('bodzify_api.Artist', related_name=ArtistAttributesLabels.ALBUMS)
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 

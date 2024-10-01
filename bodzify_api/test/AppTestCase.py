@@ -16,7 +16,7 @@ from django.core.management import call_command
 from bodzify_api.test.AppApiClient import AppApiClient
 from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
 from bodzify_api.test.TestUser import TestUser
-from bodzify_api.view.viewset.model.AppModelViewSet import PAGINATED_RESPONSE_FIELDS
+from bodzify_api.view.viewset.model.AppModelViewSet import PaginatedResponseFields
 
 
 class AppTestCase(TestCase):
@@ -51,8 +51,8 @@ class AppTestCase(TestCase):
             self.generic_sample_dir_abs_path / self.LIB_TRACK_DEFAULT_FILENAME_WITH_EXTENSION
 
     def _set_results_attributes(self, response):
-        self.results = response.json()[PAGINATED_RESPONSE_FIELDS.RESULTS]
-        self.overall_total = response.json()[PAGINATED_RESPONSE_FIELDS.OVERALL_TOTAL]
+        self.results = response.json()[PaginatedResponseFields.RESULTS]
+        self.overall_total = response.json()[PaginatedResponseFields.OVERALL_TOTAL]
 
     def _set_result(self, response):
         self.result = response.json()

@@ -2,12 +2,12 @@
 
 from bodzify_api import settings
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PlaylistAttributesLabels
 from rest_framework import serializers
 
 
 class Fields:
-    NAME = PLAYLIST_ATTRIBUTES_LABEL.NAME
+    NAME = PlaylistAttributesLabels.NAME
 
 
 class SimplePlaylistSchemaSerializer(serializers.Serializer):

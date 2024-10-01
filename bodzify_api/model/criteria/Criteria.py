@@ -14,22 +14,22 @@ from bodzify_api import settings
 
 class AttributesLabel:
     MODEL = 'Criteria'
-    UUID = "uuid"
-    USER = "user"
-    NAME = "name"
-    TYPE = "type"
-    PARENT = "parent"
-    ASCENDANT = "ascendant"
-    ASCENDANTS = ASCENDANT + "s"
-    DESCENDANT = "descendant"
-    DESCENDANTS = DESCENDANT + "s"
+    UUID = 'uuid'
+    USER = 'user'
+    NAME = 'name'
+    TYPE = 'type'
+    PARENT = 'parent'
+    ASCENDANT = 'ascendant'
+    ASCENDANTS = ASCENDANT + 's'
+    DESCENDANT = 'descandant'
+    DESCENDANTS = DESCENDANT + 's'
     CRITERIA_ASCENDANT_RELATION_ASCENDANTS = 'criteria_ascendant_relation_ascendants'
     CRITERIA_ASCENDANT_RELATION_DESCENDANTS = 'criteria_ascendant_relation_descendants'
-    CHILDREN = "children"
-    ROOT = "root"
-    CREATED_ON = "created_on"
-    LIB_TRACKS = "library_tracks"
-    CRITERIA_PLAYLIST = "criteria_playlist"
+    CHILDREN = 'children'
+    ROOT = 'root'
+    CREATED_ON = 'created_on'
+    LIB_TRACKS = 'library_tracks'
+    CRITERIA_PLAYLIST = 'criteria_playlist'
 
 
 class Criteria(models.Model):
@@ -55,7 +55,7 @@ class Criteria(models.Model):
 
     class Meta:
         unique_together = (AttributesLabel.USER, AttributesLabel.NAME)
-        constraints = [models.CheckConstraint(check=~models.Q(name=""), name="criteria_non_empty_name")]
+        constraints = [models.CheckConstraint(check=~models.Q(name=""), name='criteria_non_empty_name')]
 
     @staticmethod
     def is_criteria1_descendant_of_criteria2(criteria1: 'Criteria', criteria2: 'Criteria'):
@@ -69,11 +69,11 @@ class Criteria(models.Model):
     @ staticmethod
     def _update_playlist_positions_to_fill_deleted_positions(base_playlist: BasePlaylist):
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, AttributesLabel as PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL
+            import PlaylistLibTrackRelation, AttributesLabel as PlaylistLibTrackRelationAttributesLabels
         tracks_positions_ordered_asc = (
             PlaylistLibTrackRelation.objects
             .filter(base_playlist=base_playlist)
-            .order_by(PLAYLIST_LIB_TRACK_RELATION_ATTRIBUTES_LABEL.POSITION)
+            .order_by(PlaylistLibTrackRelationAttributesLabels.POSITION)
         )
         i = 1
         for relation in tracks_positions_ordered_asc:

@@ -16,7 +16,7 @@ from bodzify_api.view import utility
 from bodzify_api.view.viewset.MultiSerializerViewSet import MultiSerializerViewSet
 
 
-class PAGINATED_RESPONSE_FIELDS:
+class PaginatedResponseFields:
     OVERALL_TOTAL = 'overallTotal'
     NEXT = 'next'
     PREVIOUS = 'previous'
@@ -89,10 +89,10 @@ class AppModelViewSet(MultiSerializerViewSet):
     def get_paginated_response(self, data):
         assert self.paginator is not None
         return Response({
-            PAGINATED_RESPONSE_FIELDS.OVERALL_TOTAL: self.paginator.page.paginator.count,
-            PAGINATED_RESPONSE_FIELDS.NEXT: self.paginator.get_next_link(),
-            PAGINATED_RESPONSE_FIELDS.PREVIOUS: self.paginator.get_previous_link(),
-            PAGINATED_RESPONSE_FIELDS.RESULTS: data
+            PaginatedResponseFields.OVERALL_TOTAL: self.paginator.page.paginator.count,
+            PaginatedResponseFields.NEXT: self.paginator.get_next_link(),
+            PaginatedResponseFields.PREVIOUS: self.paginator.get_previous_link(),
+            PaginatedResponseFields.RESULTS: data
         })
 
     def retrieve(self, request, *args, **kwargs):

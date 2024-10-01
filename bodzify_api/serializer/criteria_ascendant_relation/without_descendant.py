@@ -2,12 +2,12 @@
 
 from bodzify_api.model.criteria.CriteriaAscendantRelation import CriteriaAscendantRelation
 from bodzify_api.serializer.criteria_ascendant_relation.detailed \
-    import CriteriaAscendantRelationDetailedSerializer, Fields as DETAILED_FIELDS
+    import CriteriaAscendantRelationDetailedSerializer, Fields as DetailedFields
 
 
 class Fields:
-    ASCENDANT = DETAILED_FIELDS.ASCENDANT
-    DEGREE = DETAILED_FIELDS.DEGREE
+    ASCENDANT = DetailedFields.ASCENDANT
+    DEGREE = DetailedFields.DEGREE
 
 
 class CriteriaAscendantRelationWithoutDescendantSerializer(CriteriaAscendantRelationDetailedSerializer):

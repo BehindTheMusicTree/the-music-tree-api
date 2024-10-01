@@ -2,12 +2,12 @@
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
-from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSchemaSerializer, Fields as SAVE_SCHEMA_FIELDS
+from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSchemaSerializer, Fields as SaveSchemaFields
 
 
 class Fields:
-    NAME = SAVE_SCHEMA_FIELDS.NAME
-    PARENT = SAVE_SCHEMA_FIELDS.PARENT
+    NAME = SaveSchemaFields.NAME
+    PARENT = SaveSchemaFields.PARENT
 
 
 class CriteriaPostSerializer(CriteriaSchemaSerializer, InputEndpointSerializer):

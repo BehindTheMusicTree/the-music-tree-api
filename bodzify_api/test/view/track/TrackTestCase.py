@@ -11,9 +11,9 @@ import bodzify_api.utils.audio_metadata as audio_metadata
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.track.input.endpoint.extract \
-    import Fields as LIB_TRACK_EXTRACT_FIELDS
-from bodzify_api.serializer.track.input.endpoint.post import Fields as LIB_TRACK_POST_FIELDS
-from bodzify_api.serializer.track.output.detailed import Fields as LIB_TRACK_GET_FIELDS
+    import Fields as LibTrackExtractFields
+from bodzify_api.serializer.track.input.endpoint.post import Fields as LibTrackPostFields
+from bodzify_api.serializer.track.output.detailed import Fields as LibTrackGetFields
 
 
 class TrackTestCase(AppTestCase):
@@ -53,7 +53,7 @@ class TrackTestCase(AppTestCase):
             self.skipTest(self.SKIPPING_TEST_DUE_TO_ACOUSTID_UNKNOWN_CONNECTION_ISSUE)
 
     def _set_saved_lib_track_attribute(self, response):
-        lib_track_uuid = response.json()[LIB_TRACK_GET_FIELDS.UUID]
+        lib_track_uuid = response.json()[LibTrackGetFields.UUID]
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
         if self.saved_lib_track.track_file:
             self.saved_lib_track_metadata = audio_metadata.get_normalized_metadata_from_file(
@@ -79,7 +79,7 @@ class TrackTestCase(AppTestCase):
         else:
             raise ValueError(f"Unknown extension: {extension}")
 
-        extract_data_dict = {LIB_TRACK_EXTRACT_FIELDS.URL: url}
+        extract_data_dict = {LibTrackExtractFields.URL: url}
 
         if data_dict is not None:
             extract_data_dict = self._merge_two_dicts(extract_data_dict, data_dict)
@@ -94,7 +94,7 @@ class TrackTestCase(AppTestCase):
 
     def post_lib_track(self, file_abs_path, data_dict=None) -> JsonResponse:
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LIB_TRACK_POST_FIELDS.TRACK_FILE: sample_file}
+            file_field_dict = {LibTrackPostFields.TRACK_FILE: sample_file}
             if data_dict is not None:
                 data_dict = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(data_dict))
             else:

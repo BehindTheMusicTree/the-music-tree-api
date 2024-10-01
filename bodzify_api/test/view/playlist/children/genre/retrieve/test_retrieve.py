@@ -6,7 +6,7 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.playlist.children.criteria.output.with_tracks \
-    import Fields as GET_RESULT_FIELDS
+    import Fields as GetResultFields
 from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 
 
@@ -18,4 +18,4 @@ class TestCase(GenrePlaylistTestCase):
         rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).base_playlist
         response = self.retrieve_genre_playlist(playlist_uuid=rock_playlist.uuid)
         assert response.status_code == status.HTTP_200_OK
-        assert response.json()[GET_RESULT_FIELDS.NAME] == rock_criteria_name  # type: ignore
+        assert response.json()[GetResultFields.NAME] == rock_criteria_name  # type: ignore

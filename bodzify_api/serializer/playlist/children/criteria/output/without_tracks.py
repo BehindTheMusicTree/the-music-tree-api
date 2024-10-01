@@ -3,19 +3,19 @@
 from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabel, CriteriaPlaylist
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root \
-    import Fields as CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS
+    import Fields as CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields
 from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root \
     import CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer
 
 
 class Fields:
-    UUID = CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS.UUID
-    NAME = CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS.NAME
+    UUID = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.UUID
+    NAME = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.NAME
     CRITERIA = AttributesLabel.CRITERIA
-    CREATED_ON = CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS.CREATED_ON
+    CREATED_ON = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.CREATED_ON
     PARENT = AttributesLabel.PARENT
     ROOT = AttributesLabel.ROOT
-    LIB_TRACKS_COUNT = CRITERIA_PLAYLIST_WITHOUT_CRITERIA_TRACKS_PARENT_ROOT_FIELDS.LIB_TRACKS_COUNT
+    LIB_TRACKS_COUNT = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.LIB_TRACKS_COUNT
 
 
 class CriteriaPlaylistWithoutTracksSerializer(CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer):

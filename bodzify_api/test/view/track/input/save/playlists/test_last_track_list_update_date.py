@@ -7,7 +7,7 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view import criteria
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
@@ -21,7 +21,7 @@ class TestCase(TrackTestCase):
         )
         lib_track = self.model_fixture_factory.create_lib_track(title="Love")
 
-        data = {PUT_FIELDS.GENRE_NAME: genre.name}
+        data = {PutFields.GENRE_NAME: genre.name}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         genre.refresh_from_db()
@@ -36,7 +36,7 @@ class TestCase(TrackTestCase):
             genre_parent.criteria_playlist.base_playlist.last_track_list_update_date  # type: ignore
         lib_track = self.model_fixture_factory.create_lib_track(title="Love")
 
-        data = {PUT_FIELDS.GENRE_NAME: genre.name}
+        data = {PutFields.GENRE_NAME: genre.name}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         genre_parent.refresh_from_db()
@@ -52,7 +52,7 @@ class TestCase(TrackTestCase):
         genre = self.model_fixture_factory.create_genre(name='rock')
         lib_track = self.model_fixture_factory.create_lib_track(title="Love", genre=genre)
 
-        data = {PUT_FIELDS.GENRE_NAME: ''}
+        data = {PutFields.GENRE_NAME: ''}
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         genreless_parent_playlist.refresh_from_db()

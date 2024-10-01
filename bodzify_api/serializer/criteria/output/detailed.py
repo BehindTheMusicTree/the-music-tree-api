@@ -4,10 +4,10 @@ from typing import Any, Dict, List
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel
-from bodzify_api.model.track.LibraryTrack import AttributesLabel as LIBRARY_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.track.LibraryTrack import AttributesLabel as LibTrackAttributesLabels
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.criteria.type.detailed \
-    import CriteriaTypeSerializer, Fields as CRITERIA_TYPE_FIELDS
+    import CriteriaTypeSerializer, Fields as CriteriaTypeFields
 from bodzify_api.serializer.criteria_ascendant_relation.detailed import CriteriaAscendantRelationDetailedSerializer
 from bodzify_api.serializer.criteria_ascendant_relation.without_ascendant import CriteriaAscendantRelationWithoutAscendantSerializer
 from bodzify_api.serializer.criteria_ascendant_relation.without_descendant import CriteriaAscendantRelationWithoutDescendantSerializer
@@ -26,10 +26,10 @@ class Fields:
     ROOT = AttributesLabel.ROOT
     CHILDREN = AttributesLabel.CHILDREN
     TYPE = AttributesLabel.TYPE
-    TYPE_LABEL = CRITERIA_TYPE_FIELDS.LABEL
+    TYPE_LABEL = CriteriaTypeFields.LABEL
     CREATED_ON = AttributesLabel.CREATED_ON
     LIB_TRACKS = AttributesLabel.LIB_TRACKS
-    LIB_TRACKS_TITLE = LIBRARY_TRACK_ATTRIBUTES_LABEL.TITLE
+    LIB_TRACKS_TITLE = LibTrackAttributesLabels.TITLE
     CRITERIA_PLAYLIST = AttributesLabel.CRITERIA_PLAYLIST
 
 

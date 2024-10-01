@@ -4,9 +4,9 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes 
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 from bodzify_api.model.playlist.children.CriteriaPlaylist \
-    import TypesLabel as CRITERIA_PLAYLIST_TYPES_LABEL, SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
+    import TypesLabel as CriteriaPlaylistTypesLabels, SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.serializer.playlist.base.input.query_param \
-    import BasePlaylistQueryParamSerializer, Fields as QUERY_PARAM_FIELDS
+    import BasePlaylistQueryParamSerializer, Fields as QueryParams
 from bodzify_api.service.Service import Service
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
@@ -41,13 +41,13 @@ class PlaylistViewSet(AppModelViewSet):
 
         queryset = BasePlaylist.objects.filter(user=self.request.user)
 
-        if QUERY_PARAM_FIELDS.NAME in query_params_validated:  # type: ignore
-            name_query_param = query_params_validated.get(QUERY_PARAM_FIELDS.NAME)  # type: ignore
+        if QueryParams.NAME in query_params_validated:  # type: ignore
+            name_query_param = query_params_validated.get(QueryParams.NAME)  # type: ignore
         else:
             name_query_param = self._get_queryset_str_filter_value_to_filter_nothing()
 
-        if QUERY_PARAM_FIELDS.TYPE in query_params_validated:  # type: ignore
-            type_query_param = query_params_validated.get(QUERY_PARAM_FIELDS.TYPE)  # type: ignore
+        if QueryParams.TYPE in query_params_validated:  # type: ignore
+            type_query_param = query_params_validated.get(QueryParams.TYPE)  # type: ignore
         else:
             type_query_param = None
 
@@ -58,8 +58,8 @@ class PlaylistViewSet(AppModelViewSet):
                 simple_playlist__name__icontains=name_query_param)
 
         criteria_playlist_queryset = BasePlaylist.objects.none()
-        if type_query_param is None or type_query_param.lower() in [CRITERIA_PLAYLIST_TYPES_LABEL.GENRE.lower(),
-                                                                    CRITERIA_PLAYLIST_TYPES_LABEL.TAG.lower()]:
+        if type_query_param is None or type_query_param.lower() in [CriteriaPlaylistTypesLabels.GENRE.lower(),
+                                                                    CriteriaPlaylistTypesLabels.TAG.lower()]:
             criteria_playlist_queryset = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__type__label__icontains=type_query_param.upper()
@@ -68,7 +68,7 @@ class PlaylistViewSet(AppModelViewSet):
 
         genreless_playlist = BasePlaylist.objects.none()
         if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS.lower() \
-                and type_query_param in [None, CRITERIA_PLAYLIST_TYPES_LABEL.GENRE]:  # type: ignore
+                and type_query_param in [None, CriteriaPlaylistTypesLabels.GENRE]:  # type: ignore
             genreless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__criteria__isnull=True,
@@ -76,7 +76,7 @@ class PlaylistViewSet(AppModelViewSet):
 
         tagless_playlist = BasePlaylist.objects.none()
         if name_query_param.lower() in CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS.lower() \
-                and type_query_param in [None, CRITERIA_PLAYLIST_TYPES_LABEL.TAG]:
+                and type_query_param in [None, CriteriaPlaylistTypesLabels.TAG]:
             tagless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__criteria__isnull=True,
@@ -85,10 +85,10 @@ class PlaylistViewSet(AppModelViewSet):
         return simple_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
             tagless_playlist).order_by(AttributesLabel.CREATED_ON)
 
-    @extend_schema(parameters=[OpenApiParameter(name=QUERY_PARAM_FIELDS.NAME,
+    @extend_schema(parameters=[OpenApiParameter(name=QueryParams.NAME,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY),
-                               OpenApiParameter(name=QUERY_PARAM_FIELDS.TYPE,
+                               OpenApiParameter(name=QueryParams.TYPE,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):

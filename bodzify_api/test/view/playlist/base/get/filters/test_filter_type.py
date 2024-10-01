@@ -5,12 +5,12 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CRITERIA_PLAYLIST_TYPES_LABEL, \
+from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CriteriaPlaylistTypesLabels, \
     SpecialNames as CRITERIA_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.playlist.children.SimplePlaylist \
     import SimplePlaylist, SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.serializer.playlist.base.input.query_param import Fields as GET_QUERY_PARAM
-from bodzify_api.serializer.playlist.base.output.with_tracks import Fields as PLAYLIST_GET_FIELDS
+from bodzify_api.serializer.playlist.base.input.query_param import Fields as GetQueryParams
+from bodzify_api.serializer.playlist.base.output.with_tracks import Fields as PlaylistGetFields
 from bodzify_api.test.get_filters.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 
@@ -19,8 +19,8 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
 
     def setUp(self, methods_names_to_implement=None):
         specific_values = [
-            CRITERIA_PLAYLIST_TYPES_LABEL.GENRE,
-            CRITERIA_PLAYLIST_TYPES_LABEL.TAG,
+            CriteriaPlaylistTypesLabels.GENRE,
+            CriteriaPlaylistTypesLabels.TAG,
             SIMPLE_PLAYLIST_SPECIAL_NAMES
         ]
         return super().setUp(specific_values=specific_values,
@@ -37,7 +37,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         response = self.get_playlists()
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 5
-        names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
+        names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert rock_criteria_name in names
         assert simple_playlist_name in names
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
@@ -45,27 +45,27 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         assert SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL in names
 
     def test_is_empty_then_error(self):
-        data_dict = {GET_QUERY_PARAM.TYPE: ''}
+        data_dict = {GetQueryParams.TYPE: ''}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_value_is_genre_then_resultst(self):
         rock_criteria_name = "Rock n roll"
         self.model_fixture_factory.create_genre(name=rock_criteria_name)
-        data_dict = {GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.GENRE}
+        data_dict = {GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.GENRE}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
-        names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
+        names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert rock_criteria_name in names
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.GENRELESS in names
 
     def test_value_is_tag_then_results(self):
-        data_dict = {GET_QUERY_PARAM.TYPE: CRITERIA_PLAYLIST_TYPES_LABEL.TAG}
+        data_dict = {GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.TAG}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
+        names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert CRITERIA_PLAYLIST_SPECIAL_NAMES.TAGLESS in names
 
     def test_value_is_simple_then_results(self):
@@ -73,15 +73,15 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         self.model_fixture_factory.create_simple_playlist(name=simple_playlist_name)
         self.model_fixture_factory.create_genre(name='rock')
 
-        data_dict = {GET_QUERY_PARAM.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL}
+        data_dict = {GetQueryParams.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
-        names = [result[PLAYLIST_GET_FIELDS.NAME] for result in self.results]
+        names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL in names
         assert simple_playlist_name in names
 
     def test_value_is_wrong_then_error(self):
-        data_dict = {GET_QUERY_PARAM.TYPE: 'wrong_value'}
+        data_dict = {GetQueryParams.TYPE: 'wrong_value'}
         response = self.get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

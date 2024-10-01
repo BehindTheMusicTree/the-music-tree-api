@@ -11,9 +11,9 @@ from bodzify_api.serializer.playlist.children.simple.output.without_tracks impor
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.model.Album import Album, AttributesLabel as AttributesLabel
-from bodzify_api.model.Artist import Artist, AttributesLabel as ARTIST_ATTRIBUTES_LABEL
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PLAYLIST_ATTRIBUTES_LABEL
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LIB_TRACK_ATTRIBUTES_LABEL
+from bodzify_api.model.Artist import Artist, AttributesLabel as ArtistAttributesLabels
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PlaylistAttributesLabels
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LibTrackAttributesLabels
 from bodzify_api.serializer.album.without_track import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.detailed import ArtistDetailedSerializer
 from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
@@ -22,7 +22,7 @@ from rest_framework.permissions import IsAuthenticated
 
 class QueryFields:
     QUERY = "query"
-    TYPE = "type"
+    TYPE = 'type'
 
 
 class QueryFiltersFields:
@@ -57,7 +57,7 @@ def lib_track_filter(queryset, request, *args, **kwargs):
         query = request.query_params[QueryFields.QUERY]
         if query != "":
             queryset = queryset.filter(title__icontains=query)
-    return queryset.order_by(LIB_TRACK_ATTRIBUTES_LABEL.TITLE)
+    return queryset.order_by(LibTrackAttributesLabels.TITLE)
 
 
 def simple_playlist_filter(queryset, request, *args, **kwargs):
@@ -66,7 +66,7 @@ def simple_playlist_filter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
-            ).order_by(PLAYLIST_ATTRIBUTES_LABEL.NAME)
+            ).order_by(PlaylistAttributesLabels.NAME)
     return queryset
 
 
@@ -99,7 +99,7 @@ def artist_filter(queryset, request, *args, **kwargs):
     if QueryFields.QUERY in request.query_params:
         query = request.query_params[QueryFields.QUERY]
         if query != "":
-            queryset = queryset.filter(name__icontains=query).order_by(ARTIST_ATTRIBUTES_LABEL.NAME)
+            queryset = queryset.filter(name__icontains=query).order_by(ArtistAttributesLabels.NAME)
     return queryset
 
 

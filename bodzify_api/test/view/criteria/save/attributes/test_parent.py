@@ -2,7 +2,7 @@
 
 from rest_framework import status
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.criteria.input.schema.schema import Fields as INPUT_FIELDS
+from bodzify_api.serializer.criteria.input.schema.schema import Fields as InputFields
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
@@ -11,16 +11,16 @@ class TestCase(CriteriaTestCase):
 
     def test_multiple_values_then_error(self):
         data = {
-            INPUT_FIELDS.NAME: "Punk",
-            INPUT_FIELDS.PARENT: ["value", "value2"]
+            InputFields.NAME: "Punk",
+            InputFields.PARENT: ["value", "value2"]
         }
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_empty_then_none(self):
         data = {
-            INPUT_FIELDS.NAME: "Punk",
-            INPUT_FIELDS.PARENT: ""
+            InputFields.NAME: "Punk",
+            InputFields.PARENT: ""
         }
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
@@ -29,8 +29,8 @@ class TestCase(CriteriaTestCase):
     def test_existing(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         data = {
-            INPUT_FIELDS.NAME: "Punk",
-            INPUT_FIELDS.PARENT: rock_genre.uuid
+            InputFields.NAME: "Punk",
+            InputFields.PARENT: rock_genre.uuid
         }
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
@@ -39,8 +39,8 @@ class TestCase(CriteriaTestCase):
     def test_error_when_not_existing(self):
         self.model_fixture_factory.create_genre(name="Rock")
         data = {
-            INPUT_FIELDS.NAME: "Punk",
-            INPUT_FIELDS.PARENT: "not existing"
+            InputFields.NAME: "Punk",
+            InputFields.PARENT: "not existing"
         }
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

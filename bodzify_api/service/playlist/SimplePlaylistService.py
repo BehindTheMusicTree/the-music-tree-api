@@ -3,7 +3,7 @@
 import re
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.serializer.playlist.children.simple.input.model \
-    import SimplePlaylistModelSerializer, Fields as SAVE_MODEL_FIELDS
+    import SimplePlaylistModelSerializer, Fields as SaveModelFields
 from bodzify_api.serializer.playlist.children.simple.input.endpoint \
     import SimplePlaylistInputEndpointSerializer
 from bodzify_api.serializer.playlist.children.simple.input.schema \
@@ -39,11 +39,11 @@ class SimplePlaylistService(Service):
             playlist_uuid = old_instance.base_playlist.uuid
 
         simple_playlist_model_data = dict()
-        simple_playlist_model_data[SAVE_MODEL_FIELDS.BASE_PLAYLIST] = playlist_uuid
+        simple_playlist_model_data[SaveModelFields.BASE_PLAYLIST] = playlist_uuid
 
         Service._override_data1_with_data2_values_for_each_key_in_data2(
             data1=simple_playlist_model_data,
             data2=schema_data,
-            keys=[SAVE_MODEL_FIELDS.NAME])
+            keys=[SaveModelFields.NAME])
 
         return simple_playlist_model_data

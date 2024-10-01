@@ -10,7 +10,7 @@ from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel
 
 
-class FILTER_FIELDS:
+class FilterFields:
     NAME = AttributesLabel.NAME
     PARENT = AttributesLabel.PARENT
 
@@ -29,11 +29,11 @@ class CriteriaViewSet(AppModelViewSet):
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
 
-        name = self.request.query_params.get(FILTER_FIELDS.NAME)  # type: ignore
+        name = self.request.query_params.get(FilterFields.NAME)  # type: ignore
         if name is not None:
             queryset = queryset.filter(name__contains=name)
 
-        parentParameter = self.request.query_params.get(FILTER_FIELDS.PARENT)  # type: ignore
+        parentParameter = self.request.query_params.get(FilterFields.PARENT)  # type: ignore
         if parentParameter is not None:
             if parentParameter == "":
                 parent = None
@@ -51,10 +51,10 @@ class CriteriaViewSet(AppModelViewSet):
     def create(self, request, *args, **kwargs):
         return self._create(request, *args, **kwargs)
 
-    @extend_schema(parameters=[OpenApiParameter(name=FILTER_FIELDS.NAME,
+    @extend_schema(parameters=[OpenApiParameter(name=FilterFields.NAME,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY),
-                               OpenApiParameter(name=FILTER_FIELDS.PARENT,
+                               OpenApiParameter(name=FilterFields.PARENT,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY,
                                                 required=False)],

@@ -3,7 +3,7 @@
 from rest_framework import status
 from bodzify_api.model.Album import Album
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PUT_FIELDS
+from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import NullableFieldTestCase
 
 
@@ -19,7 +19,7 @@ class TestCase(NullableFieldTestCase):
     def test_empty_then_none(self):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
         lib_track = self.model_fixture_factory.create_lib_track(title="koko", album=album_old)
-        data = {PUT_FIELDS.ALBUM_NAME: ''}
+        data = {PutFields.ALBUM_NAME: ''}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.album == None
@@ -28,7 +28,7 @@ class TestCase(NullableFieldTestCase):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
         lib_track = self.model_fixture_factory.create_lib_track(title="koko", album=album_old)
         album_new = self.model_fixture_factory.create_album(name="koko")
-        data = {PUT_FIELDS.ALBUM_NAME: album_new.name}
+        data = {PutFields.ALBUM_NAME: album_new.name}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.album == album_new
@@ -37,7 +37,7 @@ class TestCase(NullableFieldTestCase):
         album_name = "Le Noir"
         album = self.model_fixture_factory.create_album(name=album_name)
         lib_track = self.model_fixture_factory.create_lib_track(title="Foire", album=album)
-        data = {PUT_FIELDS.ALBUM_NAME: "Paul"}
+        data = {PutFields.ALBUM_NAME: "Paul"}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert not Album.objects.filter(name=album_name).exists()
@@ -47,7 +47,7 @@ class TestCase(NullableFieldTestCase):
         album = self.model_fixture_factory.create_album(name=album_name)
         lib_track = self.model_fixture_factory.create_lib_track(title="Foire", album=album)
         self.model_fixture_factory.create_lib_track(title="Josie", album=album)
-        data = {PUT_FIELDS.ALBUM_NAME: "Paul"}
+        data = {PutFields.ALBUM_NAME: "Paul"}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert Album.objects.filter(name=album_name).exists()
