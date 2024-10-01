@@ -4,7 +4,7 @@ on:
   workflow_call:
   workflow_dispatch:
   push:
-    branches: [main, dev, fix-genre-put-playlist-parent]
+    branches: [main, dev, enhancement/add-criteria-ascendants-to-criteria-playlists-get]
   pull_request:
     branches: [main, dev]
 
