@@ -21,7 +21,7 @@ class AttributesLabel:
     PARENT = 'parent'
     ASCENDANT = 'ascendant'
     ASCENDANTS = ASCENDANT + 's'
-    DESCENDANT = 'descandant'
+    DESCENDANT = 'descendant'
     DESCENDANTS = DESCENDANT + 's'
     CRITERIA_ASCENDANT_RELATION_ASCENDANTS = 'criteria_ascendant_relation_ascendants'
     CRITERIA_ASCENDANT_RELATION_DESCENDANTS = 'criteria_ascendant_relation_descendants'

@@ -7,7 +7,7 @@ from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as Cri
 
 class AttributesLabel:
     MODEL = "criteria_ascendant_relation"
-    DESCENDANT = 'descandant'
+    DESCENDANT = 'descendant'
     ASCENDANT = 'ascendant'
     DEGREE = "degree"
     ADDED_ON = "added_on"
