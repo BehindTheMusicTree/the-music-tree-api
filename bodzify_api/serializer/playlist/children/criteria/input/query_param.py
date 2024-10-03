@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabel as AttributesLabel
+from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabels as AttributesLabels
 
 
 class Fields:
-    NAME = AttributesLabel.NAME
-    PARENT = AttributesLabel.PARENT
+    NAME = AttributesLabels.NAME
+    PARENT = AttributesLabels.PARENT
 
 
 class CriteriaPlaylistQueryParamSerializer(serializers.Serializer):

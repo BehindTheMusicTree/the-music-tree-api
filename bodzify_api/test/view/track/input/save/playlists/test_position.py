@@ -5,7 +5,7 @@ from rest_framework import status
 from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PlaylistSpecialNames
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -25,7 +25,7 @@ class TestCase(TrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).base_playlist
         assert PlaylistLibTrackRelation.objects.get(base_playlist=genre_playlist,
-                                                    library_track=self.saved_lib_track).position == 1
+                                                    library_track=self.lib_track_saved).position == 1
 
     def test_existing_genre_then_first_position_and_other_tracks_after(self):
         genre_name = "Rock"
@@ -37,7 +37,7 @@ class TestCase(TrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).base_playlist
         assert PlaylistLibTrackRelation.objects.get(base_playlist=genre_playlist,
-                                                    library_track=self.saved_lib_track).position == 1
+                                                    library_track=self.lib_track_saved).position == 1
         assert PlaylistLibTrackRelation.objects.get(
             base_playlist=genre_playlist, library_track=lib_track1).position == 3
         assert PlaylistLibTrackRelation.objects.get(

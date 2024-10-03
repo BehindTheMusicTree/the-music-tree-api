@@ -16,7 +16,7 @@ class TestCase(TrackTestCase):
         }
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre == None
+        assert self.lib_track_saved.genre == None
 
     def test_uuid_and_name_fields_not_both_null_then_error(self):
         data = {

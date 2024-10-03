@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.Play import Play, AttributesLabel
+from bodzify_api.model.Play import Play, AttributesLabels
 from rest_framework import serializers
 
 
 class Fields:
-    USER = AttributesLabel.USER
-    CONTENT_TYPE = AttributesLabel.CONTENT_TYPE
-    OBJECT_UUID = AttributesLabel.OBJECT_UUID
+    USER = AttributesLabels.USER
+    CONTENT_TYPE = AttributesLabels.CONTENT_TYPE
+    OBJECT_UUID = AttributesLabels.OBJECT_UUID
 
 
 class PlayModelSerializer(serializers.ModelSerializer):

@@ -16,10 +16,10 @@ class GenreNameTestCase(NullableStrFieldFromDataTestCase):
         data = {PostFields.GENRE_NAME: value}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre.name == value  # type: ignore
+        assert self.lib_track_saved.genre.name == value  # type: ignore
 
     def test_empty_then_none(self):
         data = {PostFields.GENRE_NAME: ""}
         response = self.post_lib_track_with_generic_sample_1_star(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre == None
+        assert self.lib_track_saved.genre == None

@@ -7,7 +7,7 @@ from django.db.models import Value, F
 from bodzify_api import settings
 
 
-class AttributesLabel:
+class AttributesLabels:
     UUID = 'uuid'
     NAME = 'name'
     MUSICBRAINZ_LINK = 'musicbrainz_link'
@@ -26,7 +26,7 @@ class MusicbrainzArtist(models.Model):
     uuid = models.UUIDField(primary_key=True, editable=False)
     name = models.CharField(max_length=settings.MUSICBRAINZ_ARTIST_NAME_LEN_MAX, default=None)
     musicbrainz_link = models.GeneratedField(  # type: ignore
-        expression=ConcatOp(Value(settings.MUSICBRAINZ_ARTIST_URL), F(AttributesLabel.UUID)),
+        expression=ConcatOp(Value(settings.MUSICBRAINZ_ARTIST_URL), F(AttributesLabels.UUID)),
         output_field=models.CharField(max_length=len(settings.MUSICBRAINZ_ARTIST_URL) + 36),
         db_persist=True)
     created_on = models.DateTimeField(default=timezone.now, editable=False)

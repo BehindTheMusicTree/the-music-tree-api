@@ -1,0 +1,18 @@
+meta {
+  name: feu archived
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}tracks/{{trackLoveUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Love archived",
+    "archived": "true"
+  }
+}

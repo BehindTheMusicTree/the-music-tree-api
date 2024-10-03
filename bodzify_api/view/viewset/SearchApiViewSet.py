@@ -10,11 +10,11 @@ from bodzify_api.serializer.playlist.children.criteria.output.without_tracks imp
 from bodzify_api.serializer.playlist.children.simple.output.without_tracks import SimplePlaylistWithoutTracksSerializer
 from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
     DefaultMultipleModelLimitOffsetPagination
-from bodzify_api.model.Album import Album, AttributesLabel as AttributesLabel
-from bodzify_api.model.Artist import Artist, AttributesLabel as ArtistAttributesLabels
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PlaylistAttributesLabels
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LibTrackAttributesLabels
-from bodzify_api.serializer.album.without_track import AlbumWithoutTracksSerializer
+from bodzify_api.model.Album import Album, AttributesLabels as AttributesLabels
+from bodzify_api.model.Artist import Artist, AttributesLabels as ArtistAttributesLabels
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabels as PlaylistAttributesLabels
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabels as LibTrackAttributesLabels
+from bodzify_api.serializer.album.without_tracks import AlbumWithoutTracksSerializer
 from bodzify_api.serializer.artist.detailed import ArtistDetailedSerializer
 from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -91,7 +91,7 @@ def album_filter(queryset, request, *args, **kwargs):
     if QueryFields.QUERY in request.query_params:
         query = request.query_params[QueryFields.QUERY]
         if query != "":
-            queryset = queryset.filter(name__icontains=query).order_by(AttributesLabel.NAME)
+            queryset = queryset.filter(name__icontains=query).order_by(AttributesLabels.NAME)
     return queryset
 
 

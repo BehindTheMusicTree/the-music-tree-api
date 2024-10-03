@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabels
 from rest_framework import serializers
 
 
 class Fields:
-    USER = AttributesLabel.USER
-    TRACK_FILE = AttributesLabel.TRACK_FILE
-    DURATION_IN_SEC = AttributesLabel.DURATION_IN_SEC
-    MUSICBRAINZ_RECORDING = AttributesLabel.MUSICBRAINZ_RECORDING
-    MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR = AttributesLabel.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR
-    TITLE = AttributesLabel.TITLE
-    ARTIST = AttributesLabel.ARTIST
-    ALBUM = AttributesLabel.ALBUM
-    GENRE = AttributesLabel.GENRE
-    RATING = AttributesLabel.RATING
-    LANGUAGE = AttributesLabel.LANGUAGE
+    USER = AttributesLabels.USER
+    TRACK_FILE = AttributesLabels.TRACK_FILE
+    DURATION_IN_SEC = AttributesLabels.DURATION_IN_SEC
+    MUSICBRAINZ_RECORDING = AttributesLabels.MUSICBRAINZ_RECORDING
+    MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR = AttributesLabels.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR
+    TITLE = AttributesLabels.TITLE
+    ARTIST = AttributesLabels.ARTIST
+    ALBUM = AttributesLabels.ALBUM
+    GENRE = AttributesLabels.GENRE
+    RATING = AttributesLabels.RATING
+    LANGUAGE = AttributesLabels.LANGUAGE
+    ARCHIVED = AttributesLabels.ARCHIVED
 
 
 class TrackModelSerializer(serializers.ModelSerializer):
@@ -32,4 +33,5 @@ class TrackModelSerializer(serializers.ModelSerializer):
                   Fields.ALBUM,
                   Fields.GENRE,
                   Fields.RATING,
-                  Fields.LANGUAGE]
+                  Fields.LANGUAGE,
+                  Fields.ARCHIVED]

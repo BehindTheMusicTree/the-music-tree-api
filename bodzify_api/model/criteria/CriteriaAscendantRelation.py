@@ -2,10 +2,10 @@
 
 from django.db import models
 
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as CriteriaAttributesLabels
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels as CriteriaAttributesLabels
 
 
-class AttributesLabel:
+class AttributesLabels:
     MODEL = "criteria_ascendant_relation"
     DESCENDANT = 'descendant'
     ASCENDANT = 'ascendant'

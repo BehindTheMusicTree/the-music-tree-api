@@ -4,7 +4,7 @@ import pytest
 from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PlaylistSpecialNames
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
@@ -23,14 +23,14 @@ class TestCase(TrackTestCase):
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        track_playlists = self.saved_lib_track.base_playlists.all()
+        track_playlists = self.lib_track_saved.base_playlists.all()
         assert len(track_playlists) == 2
 
         criteria_playlists = CriteriaPlaylist.objects.filter(base_playlist__in=track_playlists)
         assert criteria_playlists.filter(criteria__name=genre_name).exists()
 
         simple_playlists = SimplePlaylist.objects.filter(base_playlist__in=track_playlists)
-        assert simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
+        assert simple_playlists.filter(name=PlaylistSpecialNames.ALL).exists()
 
     def test_existing_genre_then_track_in_existing_playlist_and_all_playlist(self):
         genre_name = "Rock"
@@ -41,14 +41,14 @@ class TestCase(TrackTestCase):
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        track_playlists = self.saved_lib_track.base_playlists.all()
+        track_playlists = self.lib_track_saved.base_playlists.all()
         assert len(track_playlists) == 2
 
         genre_playlist = CriteriaPlaylist.objects.get(criteria=genre).base_playlist
         assert lib_track in genre_playlist.library_tracks.all()  # type: ignore
 
-        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
-        assert lib_track in all_playlist.library_tracks.all()  # type: ignore
+        playlist_all = SimplePlaylist.objects.get(name=PlaylistSpecialNames.ALL).base_playlist
+        assert lib_track in playlist_all.library_tracks.all()  # type: ignore
 
     def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
         rock_genre_name = "Rock"
@@ -66,7 +66,7 @@ class TestCase(TrackTestCase):
         response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        lib_track_playlists = self.saved_lib_track.base_playlists.all()
+        lib_track_playlists = self.lib_track_saved.base_playlists.all()
         assert len(lib_track_playlists) == 4
 
         lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(base_playlist__in=lib_track_playlists)
@@ -75,4 +75,4 @@ class TestCase(TrackTestCase):
         assert lib_track_criteria_playlists.filter(criteria__name=rock_genre_name).exists()
 
         lib_track_simple_playlists = SimplePlaylist.objects.filter(base_playlist__in=lib_track_playlists)
-        assert lib_track_simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
+        assert lib_track_simple_playlists.filter(name=PlaylistSpecialNames.ALL).exists()

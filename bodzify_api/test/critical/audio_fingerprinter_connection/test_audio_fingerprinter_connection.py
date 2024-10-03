@@ -15,9 +15,9 @@ class TestCase(TrackTestCase):
         print("test_drown_7m21_mp3_then_ok")
         response = self.post_lib_track_with_specific_sample("oostil - drown (massano remix) - 7m21.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        if self.saved_lib_track.track_file.fingerprinting_error_code is not None:
-            print(self.saved_lib_track.track_file.fingerprinting_error_code)
+        if self.lib_track_saved.track_file.fingerprinting_error_code is not None:
+            print(self.lib_track_saved.track_file.fingerprinting_error_code)
             assert False
         else:
-            assert self.saved_lib_track.musicbrainz_recording.uuid == uuid.UUID(  # type: ignore
+            assert self.lib_track_saved.musicbrainz_recording.uuid == uuid.UUID(  # type: ignore
                 "4a45b00b-273d-40ed-9ecd-42f387f59c22")

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.criteria.CriteriaType import CriteriaType, AttributesLabel
+from bodzify_api.model.criteria.CriteriaType import CriteriaType, AttributesLabels
 
 
 class Fields:
-    LABEL = AttributesLabel.LABEL
+    LABEL = AttributesLabels.LABEL
 
 
 class CriteriaTypeSerializer(serializers.ModelSerializer):

@@ -2,7 +2,6 @@
 
 from rest_framework import status
 from bodzify_api.model.Album import Album
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import NullableFieldTestCase
 
@@ -14,7 +13,7 @@ class TestCase(NullableFieldTestCase):
         lib_track = self.model_fixture_factory.create_lib_track(title="Love", album=album)
         response = self.put_lib_track(lib_track.uuid, data_dict={})
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album == album
+        assert self.lib_track_saved.album == album
 
     def test_empty_then_none(self):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
@@ -22,7 +21,7 @@ class TestCase(NullableFieldTestCase):
         data = {PutFields.ALBUM_NAME: ''}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album == None
+        assert self.lib_track_saved.album == None
 
     def test_not_none_then_update(self):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
@@ -31,7 +30,7 @@ class TestCase(NullableFieldTestCase):
         data = {PutFields.ALBUM_NAME: album_new.name}
         response = self.put_lib_track(lib_track_uuid=lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album == album_new
+        assert self.lib_track_saved.album == album_new
 
     def test_nothing_linked_to_old_album_anymore_then_delete(self):
         album_name = "Le Noir"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-class AttributesLabel:
+class AttributesLabels:
     TITLE = "title"
     ARTIST_NAME = "artist_name"
     DURATION_IN_SEC = "duration_in_sec"

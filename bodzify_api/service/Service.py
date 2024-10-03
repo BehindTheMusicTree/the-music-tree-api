@@ -75,18 +75,6 @@ class Service:
                 del dict2[key]
         return dict2
 
-    def create(self, post_data: dict, request):
-        post_serializer = self._get_post_serializer(post_data=post_data)
-        post_serializer.is_valid(raise_exception=True)
-        schema_data = self._get_schema_data_from_post_data(post_data=post_data)
-        return self._save(schema_data=schema_data, old_instance=None, request=request)
-
-    def update(self, put_data: dict, old_instance, request):
-        put_serializer = self._get_put_serializer(old_instance=old_instance, put_data=put_data)
-        put_serializer.is_valid(raise_exception=True)
-        schema_data = self._get_schema_data_from_put_data(put_data=put_data, old_instance=old_instance)
-        return self._save(schema_data=schema_data, old_instance=old_instance, request=request)
-
     def _save(self, schema_data: dict, old_instance, request):
         schema_serializer = self._get_schema_serializer(
             old_instance=old_instance, schema_data=schema_data, request=request)
@@ -98,3 +86,15 @@ class Service:
         model_serializer = self._get_model_serializer(old_instance=old_instance, model_data=model_data, partial=True)
         model_serializer.is_valid(raise_exception=True)
         return model_serializer.save()
+
+    def create(self, post_data: dict, request):
+        post_serializer = self._get_post_serializer(post_data=post_data)
+        post_serializer.is_valid(raise_exception=True)
+        schema_data = self._get_schema_data_from_post_data(post_data=post_data)
+        return self._save(schema_data=schema_data, old_instance=None, request=request)
+
+    def update(self, put_data: dict, old_instance, request):
+        put_serializer = self._get_put_serializer(old_instance=old_instance, put_data=put_data)
+        put_serializer.is_valid(raise_exception=True)
+        schema_data = self._get_schema_data_from_put_data(put_data=put_data, old_instance=old_instance)
+        return self._save(schema_data=schema_data, old_instance=old_instance, request=request)

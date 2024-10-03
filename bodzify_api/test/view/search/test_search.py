@@ -16,7 +16,7 @@ from bodzify_api.serializer.playlist.children.simple.output.without_tracks \
 from bodzify_api.serializer.playlist.children.criteria.output.without_tracks \
     import Fields as CriteriaPlaylistFields
 from bodzify_api.serializer.artist.with_only_name import Fields as ArtistFields
-from bodzify_api.serializer.album.without_track import Fields as AlbumFields
+from bodzify_api.serializer.album.without_tracks import Fields as AlbumFields
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
 

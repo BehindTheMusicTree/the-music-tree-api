@@ -44,20 +44,20 @@ class TrackTestCase(AppTestCase):
     SAMPLE_LIB_TRACK_MP3_DURATION = 1
     SAMPLE_LIB_TRACK_FLAC_DURATION = 1
 
-    saved_lib_track: LibraryTrack
+    lib_track_saved: LibraryTrack
     saved_lib_track_metadata: dict
 
     def _skip_if_fingerprinting_error_because_of_acoustid_unknown_connection_issue(self):
-        if self.saved_lib_track.track_file.fingerprinting_error_code == (
+        if self.lib_track_saved.track_file.fingerprinting_error_code == (
                 FingerprintingErrorCodes.UNKNOWN_CONNEXION_ERROR):
             self.skipTest(self.SKIPPING_TEST_DUE_TO_ACOUSTID_UNKNOWN_CONNECTION_ISSUE)
 
     def _set_saved_lib_track_attribute(self, response):
         lib_track_uuid = response.json()[LibTrackGetFields.UUID]
-        self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
-        if self.saved_lib_track.track_file:
+        self.lib_track_saved = LibraryTrack.objects.get(uuid=lib_track_uuid)
+        if self.lib_track_saved.track_file:
             self.saved_lib_track_metadata = audio_metadata.get_normalized_metadata_from_file(
-                file=self.saved_lib_track.track_file.file)
+                file=self.lib_track_saved.track_file.file)
 
     def extract(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)

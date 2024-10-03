@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabel, CriteriaPlaylist
+from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabels, CriteriaPlaylist
 from bodzify_api.serializer.criteria.output.with_descendants_and_parent import CriteriaWithDescendantsAndParentSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root \
     import Fields as CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields
@@ -11,10 +11,10 @@ from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_a
 class Fields:
     UUID = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.UUID
     NAME = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.NAME
-    CRITERIA = AttributesLabel.CRITERIA
+    CRITERIA = AttributesLabels.CRITERIA
     CREATED_ON = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.CREATED_ON
-    PARENT = AttributesLabel.PARENT
-    ROOT = AttributesLabel.ROOT
+    PARENT = AttributesLabels.PARENT
+    ROOT = AttributesLabels.ROOT
     LIB_TRACKS_COUNT = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.LIB_TRACKS_COUNT
 
 

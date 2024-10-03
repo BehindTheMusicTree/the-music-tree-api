@@ -4,11 +4,11 @@ from django.db import models
 from django.db.models import F
 from django.utils import timezone
 
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PlaylistAttributesLabels
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabel as LibTrackAttributesLabels
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabels as PlaylistAttributesLabels
+from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabels as LibTrackAttributesLabels
 
 
-class AttributesLabel:
+class AttributesLabels:
     MODEL = 'playlist_lib_track_relation'
     BASE_PLAYLIST = PlaylistAttributesLabels.MODEL
     LIB_TRACK = LibTrackAttributesLabels.MODEL
@@ -17,8 +17,8 @@ class AttributesLabel:
 
 
 class PlaylistLibTrackRelation(models.Model):
-    base_playlist = models.ForeignKey(BasePlaylist, on_delete=models.CASCADE, related_name=AttributesLabel.MODEL + 's')
-    library_track = models.ForeignKey(LibraryTrack, on_delete=models.CASCADE, related_name=AttributesLabel.MODEL + 's')
+    base_playlist = models.ForeignKey(BasePlaylist, on_delete=models.CASCADE, related_name=AttributesLabels.MODEL + 's')
+    library_track = models.ForeignKey(LibraryTrack, on_delete=models.CASCADE, related_name=AttributesLabels.MODEL + 's')
     position = models.PositiveIntegerField()
     created_on = models.DateTimeField(default=timezone.now, editable=False)
 
@@ -34,12 +34,12 @@ class PlaylistLibTrackRelation(models.Model):
         if not self.pk:
             playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(
                 base_playlist=self.base_playlist)
-            playlist_lib_track_relations.update(position=models.F(AttributesLabel.POSITION) + 1)
+            playlist_lib_track_relations.update(position=models.F(AttributesLabels.POSITION) + 1)
             self.position = 1
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(
             base_playlist=self.base_playlist, position__gt=self.position)
-        playlist_lib_track_relations.update(position=F(AttributesLabel.POSITION) - 1)
+        playlist_lib_track_relations.update(position=F(AttributesLabels.POSITION) - 1)
         super().delete(*args, **kwargs)

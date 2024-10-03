@@ -1,43 +1,36 @@
 #!/usr/bin/env python
 
 import binascii
-from calendar import monthrange
 import os
 import stat
 import random
-from typing import Optional
-import acoustid
 import string
 import requests
 import tempfile
-import datetime
 
 from django.contrib.auth.models import User
 from django.db.models import F
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.core.files.base import File as DjangoFile
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api.exception.musicbrainz import MusicbrainzException
 from bodzify_api import settings
-from bodzify_api.utils import audio_fingerprinter_api_client
+from bodzify_api.service.MusicBrainzService import MusicBrainzService
+from bodzify_api.utils import utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
+from bodzify_api.utils import audio_fingerprinter_api_client
 from bodzify_api.utils.audio_fingerprinter_api_client import AudioFingerprinterApiClient, AudioFingerprinterError
 from bodzify_api.utils import audio_metadata
 from bodzify_api.service.Service import Service
 from bodzify_api.model.track_file.FingerprintingErrorCode import FingerprintingErrorCodes
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.musicbrainz.MusicbrainzArtist \
-    import MusicbrainzArtist, AttributesLabel as MUSICBRAINZ_ArtistAttributesLabels
-from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.PlaylistLibTrackRelation \
-    import PlaylistLibTrackRelation, AttributesLabel as PlaylistLibTrackRelAttributesLabels
+    import PlaylistLibTrackRelation, AttributesLabels as PlaylistLibTrackRelAttributesLabels
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.Album import Album
-from bodzify_api.model.track.LibraryTrack import AttributesLabel as LibTrackAttributesLabels
+from bodzify_api.model.track.LibraryTrack import AttributesLabels as LibTrackAttributesLabels
 from bodzify_api.serializer.track.input.endpoint.post import LibTrackPostSerializer, Fields as PostFields
 from bodzify_api.serializer.track.input.model import Fields as SaveModelFields, TrackModelSerializer
 from bodzify_api.serializer.track_file.input.schema import TrackFileSchemaSerializer, Fields as TrackFIleSchemaFields
@@ -48,33 +41,6 @@ from bodzify_api.serializer.mine.track.detailed import Fields as MineTrackFields
 
 
 class TrackService(Service):
-
-    class MusicbrainzApiFields:
-        class Names:
-            RESULTS = 'results'
-            RECORDINGS = 'recordings'
-            ID = 'id'
-            SCORE = 'score'
-            ARTISTS = 'artists'
-            NAME = 'name'
-            TITLE = 'title'
-            DATE = 'date'
-            DURATION_IN_SEC = 'duration'
-            RELEASEGROUPS = 'releasegroups'
-            RELEASES = 'releases'
-            DATE = 'date'
-            DAY = 'day'
-            MONTH = 'month'
-            YEAR = 'year'
-            ERROR = 'error'
-            STATUS = 'status'
-            CODE = 'code'
-            MESSAGE = 'message'
-
-        class Values:
-            class Status:
-                OK = 'ok'
-                ERROR = 'error'
 
     @staticmethod
     def _generate_short_uu(length: int):
@@ -89,15 +55,9 @@ class TrackService(Service):
         return url.split(".")[-1]
 
     @staticmethod
-    def remove_substrings_from_string(string_a: str, substrings: list) -> str:
-        for substring in substrings:
-            string_a = string_a.replace(substring, '')
-        return string_a
-
-    @staticmethod
     def _get_generated_title_from_data(file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
-        filename_without_expressions_to_exclude = TrackService.remove_substrings_from_string(
+        filename_without_expressions_to_exclude = utils.remove_substrings_from_string(
             string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
         if SaveSchemaFields.FORCE_TITLE_GENERATION in data:
             force_title_generation = data[SaveSchemaFields.FORCE_TITLE_GENERATION]
@@ -170,8 +130,13 @@ class TrackService(Service):
                     track_file_schema_data[TrackFIleSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT] = \
                         schema_data[SaveSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT]
 
-                TrackService._update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(
-                    data=save_data, fingerprint=fingerprint, duration_in_sec=duration_in_sec)
+                MusicBrainzService.update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(
+                    data=save_data,
+                    data_recording_key=SaveModelFields.MUSICBRAINZ_RECORDING,
+                    data_lookup_error_key=SaveModelFields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR,
+                    fingerprint=fingerprint,
+                    duration_in_sec=duration_in_sec)
+
             except AudioFingerprinterError as e:
                 fingerprint = None
                 error_class = e.__class__
@@ -245,126 +210,6 @@ class TrackService(Service):
 
         return
 
-    @ staticmethod
-    def get_best_recording_dict_with_score(recordings_grouped_by_score, duration_in_sec):
-        def rate_groupe_of_recordings_by_score(group_of_recordings):
-            return group_of_recordings[TrackService.MusicbrainzApiFields.Names.SCORE]
-
-        def rate_recording_by_similar_duration_and_by_number_of_fields(recording):
-            DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST = 1000000000
-            duration_difference = abs(
-                recording.get(
-                    TrackService.MusicbrainzApiFields.Names.DURATION_IN_SEC,
-                    DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST) - duration_in_sec)
-            fields_count = len(recording)
-            release_groups_count = len(recording.get(TrackService.MusicbrainzApiFields.Names.RELEASEGROUPS, []))
-            return duration_difference, -fields_count, -release_groups_count
-
-        best_group_of_recordings = max(recordings_grouped_by_score, key=rate_groupe_of_recordings_by_score)
-        best_recordings = best_group_of_recordings[TrackService.MusicbrainzApiFields.Names.RECORDINGS]
-        best_recording = min((recording for recording in best_recordings),
-                             key=rate_recording_by_similar_duration_and_by_number_of_fields)
-        best_recording[TrackService.MusicbrainzApiFields.Names.SCORE] = best_group_of_recordings[TrackService.MusicbrainzApiFields.Names.SCORE]
-        return best_recording
-
-    @ staticmethod
-    def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: str,
-                                                                           duration_in_sec: float) -> Optional[dict]:
-        try:
-            lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
-                                     fingerprint=fingerprint,
-                                     duration=duration_in_sec,
-                                     meta=['recordings', 'releasegroups', 'releases', 'compress', 'tracks'])
-            if lookup[TrackService.MusicbrainzApiFields.Names.STATUS] == TrackService.MusicbrainzApiFields.Values.Status.OK:
-                recordings_grouped_by_score = lookup[TrackService.MusicbrainzApiFields.Names.RESULTS]
-                if len(recordings_grouped_by_score) > 0:
-                    return TrackService.get_best_recording_dict_with_score(
-                        recordings_grouped_by_score=recordings_grouped_by_score, duration_in_sec=duration_in_sec)
-                else:
-                    return None
-            elif lookup[TrackService.MusicbrainzApiFields.Names.STATUS] == TrackService.MusicbrainzApiFields.Values.Status.ERROR:
-                error_dict = lookup[TrackService.MusicbrainzApiFields.Names.ERROR]
-                error_code = error_dict[TrackService.MusicbrainzApiFields.Names.CODE]
-                error_message = error_dict[TrackService.MusicbrainzApiFields.Names.MESSAGE]
-                exception_message = f"Error while getting musicbrainz recording ID: {error_code} - {error_message}"
-                raise MusicbrainzException(exception_message)
-            else:
-                raise MusicbrainzException("Unknown error while getting musicbrainz recording ID")
-        except Exception as exception:
-            raise MusicbrainzException(str(exception))
-
-    @ staticmethod
-    def __get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict):
-        earliest_comparison_date = None
-        earliest_release_date = None
-        for releasegroup in musicbrainz_recording_dict.get(TrackService.MusicbrainzApiFields.Names.RELEASEGROUPS, []):
-            for release in releasegroup.get(TrackService.MusicbrainzApiFields.Names.RELEASES, []):
-                current_release_date = release.get(TrackService.MusicbrainzApiFields.Names.DATE, None)
-                if current_release_date:
-                    year = current_release_date.get(TrackService.MusicbrainzApiFields.Names.YEAR)
-                    month_or_12 = current_release_date.get(TrackService.MusicbrainzApiFields.Names.MONTH, 12)
-                    month_or_1 = current_release_date.get(TrackService.MusicbrainzApiFields.Names.MONTH, 1)
-                    _, last_day = monthrange(year, month_or_12)
-                    day_or_last_of_month = current_release_date.get(
-                        TrackService.MusicbrainzApiFields.Names.DAY, last_day)
-                    day_or_first = current_release_date.get(TrackService.MusicbrainzApiFields.Names.DAY, 1)
-
-                    comparison_date_obj = datetime.date(year=year, month=month_or_12, day=day_or_last_of_month)
-
-                    if not earliest_comparison_date or comparison_date_obj < earliest_comparison_date:
-                        earliest_comparison_date = comparison_date_obj
-                        earliest_release_date = datetime.date(year=year, month=month_or_1, day=day_or_first)
-        return earliest_release_date
-
-    @staticmethod
-    def __create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_uuid: str,
-                                                          musicbrainz_recording_dict: dict) -> MusicbrainzRecording:
-        musicbrainz_artists_dict = musicbrainz_recording_dict[TrackService.MusicbrainzApiFields.Names.ARTISTS]
-        musicbrainz_artists = list()
-        for artist_dict in musicbrainz_artists_dict:
-            artist, _ = MusicbrainzArtist.objects.get_or_create(
-                uuid=artist_dict[TrackService.MusicbrainzApiFields.Names.ID],
-                defaults={
-                    MUSICBRAINZ_ArtistAttributesLabels.NAME: artist_dict[TrackService.MusicbrainzApiFields.Names.NAME],
-                })
-            musicbrainz_artists.append(artist)
-
-        earliest_release_date = \
-            TrackService.__get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict)
-
-        musicbrainz_recording = MusicbrainzRecording.objects.create(
-            uuid=musicbrainz_recording_uuid,
-            score=musicbrainz_recording_dict[TrackService.MusicbrainzApiFields.Names.SCORE],
-            title=musicbrainz_recording_dict[TrackService.MusicbrainzApiFields.Names.TITLE],
-            duration_in_sec=musicbrainz_recording_dict[TrackService.MusicbrainzApiFields.Names.DURATION_IN_SEC],
-            release_date=earliest_release_date)
-        musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
-        return musicbrainz_recording
-
-    @staticmethod
-    def _update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(data: dict,
-                                                                                          fingerprint: bytes,
-                                                                                          duration_in_sec: float):
-        if duration_in_sec > 0:  # If the duration is 0, it is not possible to get a musicbrainz recording
-            try:
-                musicbrainz_recording_dict = TrackService._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
-                    fingerprint=fingerprint, duration_in_sec=duration_in_sec)  # type: ignore
-                if musicbrainz_recording_dict:
-                    musicbrainz_recording_uuid = musicbrainz_recording_dict[TrackService.MusicbrainzApiFields.Names.ID]
-                    try:
-                        musicbrainz_recording_pk = MusicbrainzRecording.objects.get(uuid=musicbrainz_recording_uuid).pk
-                    except ObjectDoesNotExist:
-                        musicbrainz_recording = TrackService.__create_musicbrainz_recording_instance_from_dict(
-                            musicbrainz_recording_uuid=musicbrainz_recording_uuid,
-                            musicbrainz_recording_dict=musicbrainz_recording_dict)
-                        musicbrainz_recording_pk = musicbrainz_recording.pk
-
-                    data[SaveModelFields.MUSICBRAINZ_RECORDING] = musicbrainz_recording_pk
-                data[SaveModelFields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = None
-
-            except MusicbrainzException as e:
-                data[SaveModelFields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR] = str(e)
-
     def _get_post_serializer(self, post_data: dict):
         return LibTrackPostSerializer(data=post_data)
 
@@ -416,7 +261,8 @@ class TrackService(Service):
         for key in [SaveSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT,
                     SaveModelFields.TITLE,
                     SaveModelFields.RATING,
-                    SaveModelFields.LANGUAGE]:
+                    SaveModelFields.LANGUAGE,
+                    SaveModelFields.ARCHIVED]:
             self._update_data1_with_key_if_set_in_data2(key=key, data1=model_data, data2=schema_data)
 
         self._update_model_data_with_artist_uuid_if_artist_name_in_schema_data(user=user,

@@ -13,18 +13,18 @@ from django.dispatch import receiver
 
 from bodzify_api import settings
 import bodzify_api.utils.audio_metadata as audio_metadata
-from bodzify_api.model.Album import AttributesLabel as AlbumAttributesLabels
+from bodzify_api.model.Album import AttributesLabels as AlbumAttributesLabels
 from bodzify_api.model.track_file.TrackFile import TrackFile
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.Artist import AttributesLabel as ArtistAttributesLabels
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as CriteriaAttributesLabels
+from bodzify_api.model.Artist import AttributesLabels as ArtistAttributesLabels
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels as CriteriaAttributesLabels
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 
 
-class AttributesLabel:
+class AttributesLabels:
     MODEL = 'library_track'
     UUID = 'uuid'
     USER = 'user'
@@ -42,9 +42,10 @@ class AttributesLabel:
     BASE_PLAYLISTS = "base_playlists"
     BASE_PLAYLISTS_USER_FRIENDLY = "playlists"
     LANGUAGE = "language"
+    PLAY_COUNT = 'play_count'
+    ARCHIVED = 'archived'
     CREATED_ON = 'created_on'
     RELATIVE_URL = "relative_url"
-    PLAY_COUNT = 'play_count'
 
 
 class LibraryTrack(models.Model):
@@ -83,9 +84,10 @@ class LibraryTrack(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     play_count = models.IntegerField(default=0)
+    archived = models.BooleanField(default=False)
     base_playlists = models.ManyToManyField(BasePlaylist,
                                             through='PlaylistLibTrackRelation',
-                                            related_name=AttributesLabel.MODEL + 's')
+                                            related_name=AttributesLabels.MODEL + 's')
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 
@@ -104,16 +106,16 @@ class LibraryTrack(models.Model):
         return "tracks/" + self.uuid + "/"
 
     def __str__(self):
-        album_str = f"{AttributesLabel.ALBUM}: {str(self.album)} " if self.album else ""
-        genre_str = f"{AttributesLabel.GENRE}: {str(self.genre)} " if self.genre else ""
+        album_str = f"{AttributesLabels.ALBUM}: {str(self.album)} " if self.album else ""
+        genre_str = f"{AttributesLabels.GENRE}: {str(self.genre)} " if self.genre else ""
         duration_str_in_sec = (
-            f"{AttributesLabel.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else "")
-        rating_str = f"{AttributesLabel.RATING}: {str(self.rating)} " if self.rating else ""
-        language_str = f"{AttributesLabel.LANGUAGE}: {str(self.language)} " if self.language else ""
-        file_str = f"{AttributesLabel.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
+            f"{AttributesLabels.DURATION_IN_SEC}: {str(self.duration_in_sec)} " if self.duration_in_sec else "")
+        rating_str = f"{AttributesLabels.RATING}: {str(self.rating)} " if self.rating else ""
+        language_str = f"{AttributesLabels.LANGUAGE}: {str(self.language)} " if self.language else ""
+        file_str = f"{AttributesLabels.TRACK_FILE}: {str(self.track_file)} " if self.track_file else ""
         return (f"{self.uuid} {str(self.artist)} - {self.title} {album_str}"
                 f"{genre_str}{duration_str_in_sec}{rating_str}{language_str}"
-                f"{AttributesLabel.CREATED_ON}: {str(self.created_on)} {file_str}")
+                f"{AttributesLabels.CREATED_ON}: {str(self.created_on)} {file_str}")
 
     def save(self, *args, **kwargs):
         try:
@@ -145,10 +147,10 @@ class LibraryTrack(models.Model):
 
             super().save(*args, **kwargs)
 
-            from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
+            from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PlaylistSpecialNames
             from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
             all_simple_playlist = SimplePlaylist.objects.get(base_playlist__user=self.user,
-                                                             name=PLAYLIST_SPECIAL_NAMES.ALL)
+                                                             name=PlaylistSpecialNames.ALL)
             PlaylistLibTrackRelation.objects.create(base_playlist=all_simple_playlist.base_playlist, library_track=self)
             self._add_track_to_genre_playlists_until_genre_limit()
             self._update_file_tags_if_file_exists()
@@ -212,7 +214,7 @@ class LibraryTrack(models.Model):
 
     def _get_lib_track_playlists_with_positions(self) -> list:
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, AttributesLabel as PlaylistLibTrackRelAttributesLabels
+            import PlaylistLibTrackRelation, AttributesLabels as PlaylistLibTrackRelAttributesLabels
         playlist_lib_track_relations = PlaylistLibTrackRelation.objects.filter(library_track=self)
         return list(playlist_lib_track_relations.values_list(
             PlaylistLibTrackRelAttributesLabels.BASE_PLAYLIST + '__uuid',

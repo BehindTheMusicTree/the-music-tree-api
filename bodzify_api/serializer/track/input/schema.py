@@ -5,7 +5,7 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.track.input.model import Fields as SaveModelFields
-from bodzify_api.model.Album import AttributesLabel as AttributesLabel
+from bodzify_api.model.Album import AttributesLabels as AttributesLabels
 
 
 class Fields:
@@ -14,14 +14,15 @@ class Fields:
     SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = "should_cancel_if_duplicate_fingerprint"
     DURATION_IN_SEC = SaveModelFields.DURATION_IN_SEC
     TITLE = SaveModelFields.TITLE
+    FORCE_TITLE_GENERATION = "force_title_generation"
     ARTIST_NAME = SaveModelFields.ARTIST + "_name"
     ALBUM_NAME = SaveModelFields.ALBUM + "_name"
-    ALBUM_ARTISTS_NAMES_STR = AttributesLabel.ALBUM_ARTISTS + "_names_string"
+    ALBUM_ARTISTS_NAMES_STR = AttributesLabels.ALBUM_ARTISTS + "_names_string"
     GENRE_UUID = SaveModelFields.GENRE + "_uuid"
     GENRE_NAME = SaveModelFields.GENRE + "_name"
     RATING = SaveModelFields.RATING
     LANGUAGE = SaveModelFields.LANGUAGE
-    FORCE_TITLE_GENERATION = "force_title_generation"
+    ARCHIVED = SaveModelFields.ARCHIVED
 
 
 class LibTrackSchemaSerializer(serializers.Serializer):
@@ -31,6 +32,7 @@ class LibTrackSchemaSerializer(serializers.Serializer):
                                   required=False,
                                   allow_blank=True,
                                   allow_null=True)
+    force_title_generation = serializers.BooleanField(required=False)
     artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_LEN_MAX,
                                         required=False,
                                         allow_blank=True,
@@ -56,11 +58,11 @@ class LibTrackSchemaSerializer(serializers.Serializer):
                                      required=False,
                                      allow_blank=True,
                                      allow_null=True)
-    force_title_generation = serializers.BooleanField(required=False)
 
     class Meta:
         fields = [Fields.FILE,
                   Fields.TITLE,
+                  Fields.FORCE_TITLE_GENERATION,
                   Fields.ARTIST_NAME,
                   Fields.ALBUM_NAME,
                   Fields.ALBUM_ARTISTS_NAMES_STR,
@@ -68,7 +70,7 @@ class LibTrackSchemaSerializer(serializers.Serializer):
                   Fields.GENRE_NAME,
                   Fields.RATING,
                   Fields.LANGUAGE,
-                  Fields.FORCE_TITLE_GENERATION,]
+                  Fields.ARCHIVED]
 
     def validate(self, attrs):
         if Fields.GENRE_UUID in attrs and attrs[Fields.GENRE_UUID] not in ['', None] and not Criteria.objects.filter(

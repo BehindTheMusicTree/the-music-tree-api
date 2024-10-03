@@ -3,7 +3,7 @@
 from django.db import models
 
 
-class AttributesLabel:
+class AttributesLabels:
     LABEL = "label"
 
 

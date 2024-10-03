@@ -14,8 +14,8 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
         response = \
             self.post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album is not None
-        assert self.saved_lib_track.album.album_artists.count() == 0
+        assert self.lib_track_saved.album is not None
+        assert self.lib_track_saved.album.album_artists.count() == 0
 
     def test_longest(self):
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
@@ -23,8 +23,8 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         expected_name = 'a' * settings.ARTIST_NAME_LEN_MAX
-        assert self.saved_lib_track.album is not None
-        assert self.saved_lib_track.album.album_artists.all().first().name == expected_name
+        assert self.lib_track_saved.album is not None
+        assert self.lib_track_saved.album.album_artists.all().first().name == expected_name
 
 
 class Mp3TestCase(TestCase):

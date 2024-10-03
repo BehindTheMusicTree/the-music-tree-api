@@ -3,7 +3,7 @@
 from django.db import models
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaType
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabel as PlaylistAttributesLabels
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabels as PlaylistAttributesLabels
 
 
 class SpecialNames:
@@ -16,7 +16,7 @@ class TypesLabel:
     TAG = 'tag'
 
 
-class AttributesLabel:
+class AttributesLabels:
     MODEL = 'CriteriaPlaylist'
     BASE_PLAYLIST = 'base_playlist'
     PARENT = 'parent'
@@ -39,11 +39,11 @@ class CriteriaPlaylist(models.Model):
 
     # null must be True because when the root is the criteria playlist itself, we must create it first with a null root
     # and then set the root to itself
-    parent = models.ForeignKey(AttributesLabel.MODEL,
+    parent = models.ForeignKey(AttributesLabels.MODEL,
                                on_delete=models.CASCADE,
                                null=True,
                                related_name='child_playlist')
-    root = models.ForeignKey(AttributesLabel.MODEL,
+    root = models.ForeignKey(AttributesLabels.MODEL,
                              on_delete=models.CASCADE,
                              null=True,
                              related_name='descendant_playlist')
@@ -84,7 +84,7 @@ class CriteriaPlaylist(models.Model):
     def _create(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self._set_root()
-        super().save(update_fields=[AttributesLabel.ROOT])
+        super().save(update_fields=[AttributesLabels.ROOT])
 
     def _update(self, old_criteria_playlist: 'CriteriaPlaylist', *args, **kwargs):
         super().save(*args, **kwargs)
@@ -92,7 +92,7 @@ class CriteriaPlaylist(models.Model):
         if self.criteria:
             if self.root.criteria != self.criteria.root:  # type: ignore
                 self._set_root()
-                super().save(update_fields=[AttributesLabel.ROOT])
+                super().save(update_fields=[AttributesLabels.ROOT])
                 self._update_root_of_children(criteria_playlist=self, new_root=self.root)  # type: ignore
 
     def _update_root_of_children(self, criteria_playlist: 'CriteriaPlaylist', new_root: 'CriteriaPlaylist'):

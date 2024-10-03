@@ -17,10 +17,10 @@ class RatingTestCase(FieldIntFromDataTestCase):
         data = {PostFields.RATING: value}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == value
+        assert self.lib_track_saved.rating == value
 
     def test_empty_then_none(self):
         data = {PostFields.RATING: ""}
         response = self.post_lib_track_with_generic_sample_1_star(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == None
+        assert self.lib_track_saved.rating == None

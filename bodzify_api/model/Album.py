@@ -2,35 +2,34 @@
 
 from typing import Optional
 
-import shortuuid
-from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
+from django.contrib.auth.models import User
 
 from bodzify_api import settings
-from bodzify_api.model.Artist import Artist, AttributesLabel as ArtistAttributesLabels
+from bodzify_api.model.LibraryTrackMixin import LibraryTrackMixin, AttributesLabels as LibTrackMixinAttributesLabels
+from bodzify_api.model.Artist import Artist, AttributesLabels as ArtistAttributesLabels
 
 
-class AttributesLabel:
-    UUID = 'uuid'
+class AttributesLabels:
+    UUID = LibTrackMixinAttributesLabels.UUID
+    USER = LibTrackMixinAttributesLabels.USER
+    CREATED_ON = LibTrackMixinAttributesLabels.CREATED_ON
+    UPDATED_ON = LibTrackMixinAttributesLabels.UPDATED_ON
+    LIB_TRACKS = LibTrackMixinAttributesLabels.LIB_TRACKS
+    LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_NOT_ARCHIVED
+    LIB_TRACKS_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT
+    LIB_TRACKS_COUNT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT_ARCHIVED
+    DURATION_IN_SEC = LibTrackMixinAttributesLabels.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinAttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = 'name'
     YEAR = 'year'
     ALBUM_ARTISTS = 'album_artists'
-    LIB_TRACKS = 'library_tracks'
-    LIB_TRACKS_COUNT = LIB_TRACKS + '_count'
-    DURATION_IN_SEC = 'duration_in_sec'
-    DURATION_STR_IN_HOUR_MIN_SEC = 'duration_str_in_hour_min_sec'
 
 
-class Album(models.Model):
-    # Django's UUIDField won't validate a shortuuid
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
+class Album(LibraryTrackMixin):
     name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
     album_artists = models.ManyToManyField('bodzify_api.Artist', related_name=ArtistAttributesLabels.ALBUMS)
-    created_on = models.DateTimeField(default=timezone.now, editable=False)
-    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
         constraints = [
@@ -43,10 +42,6 @@ class Album(models.Model):
         for artist in list(self.album_artists.all()):
             string = string + " " + str(artist) + " "
         return string
-
-    @property
-    def track_count(self):
-        return self.library_tracks.count()
 
     @staticmethod
     def _get_album_from_name_and_artists_list_after_having_eventually_created_album(
@@ -91,7 +86,7 @@ class Album(models.Model):
         artists_linked_to_album_and_track = list()
         from bodzify_api.model.track.LibraryTrack import LibraryTrack
         for track in LibraryTrack.objects.filter(album=self):
-            if track.artist_id is not None:
+            if track.artist_id is not None:  # type: ignore
                 if track.artist not in artists_linked_to_album_and_track:
                     artists_linked_to_album_and_track.append(track.artist)
             track.delete()

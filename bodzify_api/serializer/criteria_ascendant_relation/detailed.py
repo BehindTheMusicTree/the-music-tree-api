@@ -2,14 +2,14 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.criteria.CriteriaAscendantRelation import AttributesLabel, CriteriaAscendantRelation
+from bodzify_api.model.criteria.CriteriaAscendantRelation import AttributesLabels, CriteriaAscendantRelation
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 
 
 class Fields:
-    DESCENDANT = AttributesLabel.DESCENDANT
-    ASCENDANT = AttributesLabel.ASCENDANT
-    DEGREE = AttributesLabel.DEGREE
+    DESCENDANT = AttributesLabels.DESCENDANT
+    ASCENDANT = AttributesLabels.ASCENDANT
+    DEGREE = AttributesLabels.DEGREE
 
 
 class CriteriaAscendantRelationDetailedSerializer(serializers.ModelSerializer):

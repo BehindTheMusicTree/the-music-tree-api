@@ -17,7 +17,7 @@ class AlbumArtistsTestCase(NullableStrFieldFromDataTestCase):
         }
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album.album_artists.all()[0].name == value  # type: ignore
+        assert self.lib_track_saved.album.album_artists.all()[0].name == value  # type: ignore
 
     def test_empty_then_none(self):
         data = {
@@ -26,4 +26,4 @@ class AlbumArtistsTestCase(NullableStrFieldFromDataTestCase):
         }
         response = self.post_lib_track_with_generic_sample_1_star(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album.album_artists.count() == 0  # type: ignore
+        assert self.lib_track_saved.album.album_artists.count() == 0  # type: ignore

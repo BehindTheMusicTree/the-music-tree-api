@@ -13,7 +13,7 @@ class TestCase(FieldStrNullableTestCase):
         data = {PutFields.LANGUAGE: language}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.language == language
+        assert self.lib_track_saved.language == language
 
     def test_too_long_then_error(self):
         language = "a" * (settings.LIB_TRACK_LANGUAGE_LEN_MAX + 1)
@@ -25,4 +25,4 @@ class TestCase(FieldStrNullableTestCase):
         data = {PutFields.LANGUAGE: ""}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.language == None
+        assert self.lib_track_saved.language == None

@@ -15,8 +15,8 @@ class TestCase(FieldModelStrTestCase):
         data = {PostFields.GENRE_NAME: genre_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.name == genre_name
+        assert self.lib_track_saved.genre is not None
+        assert self.lib_track_saved.genre.name == genre_name
 
     def test_too_long_then_error(self):
         genre_name = "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)
@@ -28,7 +28,7 @@ class TestCase(FieldModelStrTestCase):
         data = {PostFields.GENRE_NAME: ''}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre == None
+        assert self.lib_track_saved.genre == None
 
     def test_existing(self):
         genre_name = "Kopoe"
@@ -36,21 +36,21 @@ class TestCase(FieldModelStrTestCase):
         data = {PostFields.GENRE_NAME: genre_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.name == genre_name
+        assert self.lib_track_saved.genre is not None
+        assert self.lib_track_saved.genre.name == genre_name
 
     def test_not_existing(self):
         genre_name = "hoho"
         data = {PostFields.GENRE_NAME: genre_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.name == genre_name
+        assert self.lib_track_saved.genre is not None
+        assert self.lib_track_saved.genre.name == genre_name
 
     def test_new_so_parent_none(self):
         genre_name = "Rock"
         data = {PostFields.GENRE_NAME: genre_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.parent == None
+        assert self.lib_track_saved.genre is not None
+        assert self.lib_track_saved.genre.parent == None

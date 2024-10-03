@@ -5,7 +5,7 @@ from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PlaylistSpecialNames
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
@@ -15,10 +15,10 @@ class TrackDeleteViewTestCase(TrackTestCase):
 
     def test_delete_then_remove_from_the_all_playlist(self):
         track = self.model_fixture_factory.create_lib_track(title="We're All To Blame")
-        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
+        playlist_all = SimplePlaylist.objects.get(name=PlaylistSpecialNames.ALL).base_playlist
         response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert track not in all_playlist.library_tracks.all()  # type: ignore
+        assert track not in playlist_all.library_tracks.all()  # type: ignore
 
     def test_delete_then_remove_from_the_genre_playlists(self):
         genre1_name = "Rock"

@@ -5,7 +5,7 @@ from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PlaylistSpecialNames
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
@@ -15,12 +15,12 @@ class TrackDeleteViewTestCase(TrackTestCase):
 
     def test_delete_then_update_the_all_playlist_last_track_update_date(self):
         track = self.model_fixture_factory.create_lib_track(title="We're All To Blame")
-        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
-        last_track_list_update_date_before_deletion = all_playlist.last_track_list_update_date
+        playlist_all = SimplePlaylist.objects.get(name=PlaylistSpecialNames.ALL).base_playlist
+        last_track_list_update_date_before_deletion = playlist_all.last_track_list_update_date
         response = self.delete_lib_track(lib_track_uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        all_playlist.refresh_from_db()
-        assert all_playlist.last_track_list_update_date > last_track_list_update_date_before_deletion
+        playlist_all.refresh_from_db()
+        assert playlist_all.last_track_list_update_date > last_track_list_update_date_before_deletion
 
     def test_delete_then_update_genre_playlist_last_track_update_date(self):
         genre = self.model_fixture_factory.create_genre(name='rock')

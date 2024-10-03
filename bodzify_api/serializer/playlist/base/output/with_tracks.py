@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabel, BasePlaylist
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabels, BasePlaylist
 from bodzify_api.serializer.playlist.base.output.without_tracks \
     import BasePlaylistWithoutTracksSerializer, Fields as ParentFields
 from bodzify_api.serializer.playlist_lib_track_relation.output.without_playlist \
@@ -14,14 +14,14 @@ class Fields:
     TYPE = ParentFields.TYPE
     CREATED_ON = ParentFields.CREATED_ON
     LIB_TRACKS_COUNT = ParentFields.LIB_TRACKS_COUNT
-    LIB_TRACKS = AttributesLabel.LIB_TRACKS
-    PLAY_COUNT = AttributesLabel.PLAY_COUNT
-    LAST_TRACK_LIST_UPDATE_DATE = AttributesLabel.LAST_TRACK_LIST_UPDATE_DATE
+    LIB_TRACKS = AttributesLabels.LIB_TRACKS
+    PLAY_COUNT = AttributesLabels.PLAY_COUNT
+    LAST_TRACK_LIST_UPDATE_DATE = AttributesLabels.LAST_TRACK_LIST_UPDATE_DATE
 
 
 class BasePlaylistWithTracksSerializer(BasePlaylistWithoutTracksSerializer):
     library_tracks = PlaylistLibTrackRelationWithoutPlaylist(
-        source=AttributesLabel.PLAYLIST_LIB_TRACK_RELATIONS, many=True)
+        source=AttributesLabels.PLAYLIST_LIB_TRACK_RELATIONS, many=True)
     library_tracks_count = serializers.IntegerField(source=f'{Fields.LIB_TRACKS}.count', read_only=True)
 
     class Meta:

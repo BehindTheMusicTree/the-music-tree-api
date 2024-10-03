@@ -14,8 +14,8 @@ class TestCase(FieldModelStrTestCase):
         data = {ExtractFields.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album is not None
-        assert self.saved_lib_track.album.name == album_name
+        assert self.lib_track_saved.album is not None
+        assert self.lib_track_saved.album.name == album_name
 
     def test_too_long_then_error(self):
         album_name = "a" * (settings.ALBUM_NAME_LEN_MAX + 1)
@@ -27,7 +27,7 @@ class TestCase(FieldModelStrTestCase):
         data = {ExtractFields.ALBUM_NAME: ''}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album == None
+        assert self.lib_track_saved.album == None
 
     def test_existing(self):
         album_name = "Kopoe"
@@ -35,13 +35,13 @@ class TestCase(FieldModelStrTestCase):
         data = {ExtractFields.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album is not None
-        assert self.saved_lib_track.album.name == album_name
+        assert self.lib_track_saved.album is not None
+        assert self.lib_track_saved.album.name == album_name
 
     def test_not_existing(self):
         album_name = "hoho"
         data = {ExtractFields.ALBUM_NAME: album_name}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album is not None
-        assert self.saved_lib_track.album.name == album_name
+        assert self.lib_track_saved.album is not None
+        assert self.lib_track_saved.album.name == album_name

@@ -1,0 +1,26 @@
+meta {
+  name: Feu  artist Joni
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
+  artistName: Joni
+  title: Feu
+}
+
+vars:post-response {
+  artistJoniUuid: res.body.artist.uuid
+  trackFeuUuid: res.body.uuid
+}

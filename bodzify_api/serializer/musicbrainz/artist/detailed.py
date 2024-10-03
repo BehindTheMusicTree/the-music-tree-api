@@ -2,13 +2,13 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist, AttributesLabel
+from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist, AttributesLabels
 
 
 class Fields:
-    UUID = AttributesLabel.UUID
-    NAME = AttributesLabel.NAME
-    MUSICBRAINZ_LINK = AttributesLabel.MUSICBRAINZ_LINK
+    UUID = AttributesLabels.UUID
+    NAME = AttributesLabels.NAME
+    MUSICBRAINZ_LINK = AttributesLabels.MUSICBRAINZ_LINK
 
 
 class MusicbrainzArtistDetailedSerializer(serializers.ModelSerializer):

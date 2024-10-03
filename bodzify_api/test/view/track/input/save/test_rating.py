@@ -11,28 +11,28 @@ class TestCase(TrackTestCase):
         data_dict = {PostFields.RATING: None}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == None
+        assert self.lib_track_saved.rating == None
 
     def test_zero(self):
         rating = 0
         data_dict = {PostFields.RATING: rating}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        assert self.lib_track_saved.rating == rating
 
     def test_four(self):
         rating = 4
         data_dict = {PostFields.RATING: rating}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        assert self.lib_track_saved.rating == rating
 
     def test_ten(self):
         rating = 10
         data_dict = {PostFields.RATING: rating}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        assert self.lib_track_saved.rating == rating
 
     def test_error_when_above_maximum(self):
         data_dict = {PostFields.RATING: 11}

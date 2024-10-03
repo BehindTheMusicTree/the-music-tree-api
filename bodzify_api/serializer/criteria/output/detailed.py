@@ -1,51 +1,56 @@
 #!/usr/bin/env python
 
-from typing import Any, Dict, List
+from dbm.ndbm import library
+from typing import Any, Dict, List, cast
 from rest_framework import serializers
 
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel
-from bodzify_api.model.track.LibraryTrack import AttributesLabel as LibTrackAttributesLabels
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels
+from bodzify_api.model.track.LibraryTrack import AttributesLabels as LibTrackAttributesLabels
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.criteria.type.detailed \
     import CriteriaTypeSerializer, Fields as CriteriaTypeFields
-from bodzify_api.serializer.criteria_ascendant_relation.detailed import CriteriaAscendantRelationDetailedSerializer
 from bodzify_api.serializer.criteria_ascendant_relation.without_ascendant import CriteriaAscendantRelationWithoutAscendantSerializer
 from bodzify_api.serializer.criteria_ascendant_relation.without_descendant import CriteriaAscendantRelationWithoutDescendantSerializer
 from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root import CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer
 
 from bodzify_api.serializer.track.output.without_playlists_and_album_and_genre \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
+from bodzify_api.serializer.track.output.without_playlists_and_genre import LibTrackWithoutPlaylistsAndGenreSerializer
 
 
 class Fields:
-    UUID = AttributesLabel.UUID
-    NAME = AttributesLabel.NAME
-    PARENT = AttributesLabel.PARENT
-    ASCENDANTS = AttributesLabel.ASCENDANTS
-    DESCENDANTS = AttributesLabel.DESCENDANTS
-    ROOT = AttributesLabel.ROOT
-    CHILDREN = AttributesLabel.CHILDREN
-    TYPE = AttributesLabel.TYPE
-    TYPE_LABEL = CriteriaTypeFields.LABEL
-    CREATED_ON = AttributesLabel.CREATED_ON
-    LIB_TRACKS = AttributesLabel.LIB_TRACKS
+    UUID = AttributesLabels.UUID
+    NAME = AttributesLabels.NAME
+    CREATED_ON = AttributesLabels.CREATED_ON
+    UPDATED_ON = AttributesLabels.UPDATED_ON
+    LIB_TRACKS = AttributesLabels.LIB_TRACKS
     LIB_TRACKS_TITLE = LibTrackAttributesLabels.TITLE
-    CRITERIA_PLAYLIST = AttributesLabel.CRITERIA_PLAYLIST
+    LIB_TRACKS_COUNT = AttributesLabels.LIB_TRACKS_COUNT
+    LIB_TRACKS_COUNT_ARCHIVED = AttributesLabels.LIB_TRACKS_COUNT_ARCHIVED
+    TYPE = AttributesLabels.TYPE
+    TYPE_LABEL = CriteriaTypeFields.LABEL
+    ROOT = AttributesLabels.ROOT
+    PARENT = AttributesLabels.PARENT
+    ASCENDANTS = AttributesLabels.ASCENDANTS
+    DESCENDANTS = AttributesLabels.DESCENDANTS
+    CHILDREN = AttributesLabels.CHILDREN
+    CRITERIA_PLAYLIST = AttributesLabels.CRITERIA_PLAYLIST
 
 
 class CriteriaDetailedSerializer(serializers.ModelSerializer):
+    library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(
+        source=AttributesLabels.LIB_TRACKS_NOT_ARCHIVED, many=True)
     type = CriteriaTypeSerializer()
+    root = CriteriaSimpleSerializer()  # type: ignore
     parent = CriteriaSimpleSerializer()
     ascendants = CriteriaAscendantRelationWithoutDescendantSerializer(
-        source=AttributesLabel.CRITERIA_ASCENDANT_RELATION_ASCENDANTS,
+        source=AttributesLabels.CRITERIA_ASCENDANT_RELATION_ASCENDANTS,
         many=True)
     descendants = CriteriaAscendantRelationWithoutAscendantSerializer(
-        source=AttributesLabel.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
+        source=AttributesLabels.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
         many=True)
-    root = CriteriaSimpleSerializer()  # type: ignore
     children = serializers.SerializerMethodField()
     criteria_playlist = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer()
-    library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(many=True)
 
     class Meta:
         model = Criteria
@@ -58,8 +63,9 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
                   Fields.CHILDREN,
                   Fields.TYPE,
                   Fields.CREATED_ON,
+                  Fields.CRITERIA_PLAYLIST,
                   Fields.LIB_TRACKS,
-                  Fields.CRITERIA_PLAYLIST]
+                  Fields.LIB_TRACKS_COUNT_ARCHIVED,]
 
     def get_children(self, obj) -> List[Dict[str, Any]]:
         return CriteriaSimpleSerializer(obj.get_children(), many=True).data  # type: ignore

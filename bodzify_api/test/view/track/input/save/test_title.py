@@ -13,7 +13,7 @@ class TestCase(TrackTestCase):
         data = {PutFields.TITLE: value}
         response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.title == value
+        assert self.lib_track_saved.title == value
 
     def test_too_long_then_error(self):
         value = "a" * (settings.LIB_TRACK_TITLE_LEN_MAX + 1)

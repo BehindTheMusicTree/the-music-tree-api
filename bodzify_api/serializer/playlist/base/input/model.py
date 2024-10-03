@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PlaylistAttributesLabels, BasePlaylist
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabels as PlaylistAttributesLabels, BasePlaylist
 from rest_framework import serializers
 
 

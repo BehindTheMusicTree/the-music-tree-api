@@ -14,7 +14,7 @@ class SpecialNames:
     GENRELESS = 'Genreless'
 
 
-class AttributesLabel:
+class AttributesLabels:
     MODEL = 'base_playlist'
     UUID = 'uuid'
     USER = 'user'
@@ -44,7 +44,7 @@ class ForeignModelAttributesLabel:
     PLAYLIST_LIB_TRACK_RELATIONS = ''
 
 
-for attr, value in vars(AttributesLabel).items():
+for attr, value in vars(AttributesLabels).items():
     if not attr.startswith("__"):
         setattr(ForeignModelAttributesLabel, attr, FOREIGN_MODEL_ATTRIBUTES_PREFIXE + value)
 
@@ -63,7 +63,7 @@ class ForeignModelRelationsStr:
     PLAYLIST_LIB_TRACK_RELATIONS = ''
 
 
-for attr, value in vars(AttributesLabel).items():
+for attr, value in vars(AttributesLabels).items():
     if not attr.startswith("__"):
         setattr(ForeignModelRelationsStr, attr, FOREIGN_MODEL_RELATIONS_PREFIXE + value)
 

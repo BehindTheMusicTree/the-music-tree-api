@@ -8,14 +8,23 @@ from django.db import models
 from django.db.models import QuerySet
 from django.contrib.auth.models import User
 
+from bodzify_api.model.LibraryTrackMixin import LibraryTrackMixin, AttributesLabels as LibTrackMixinAttributesLabels
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api import settings
 
 
-class AttributesLabel:
+class AttributesLabels:
     MODEL = 'Criteria'
-    UUID = 'uuid'
-    USER = 'user'
+    UUID = LibTrackMixinAttributesLabels.UUID
+    USER = LibTrackMixinAttributesLabels.USER
+    CREATED_ON = LibTrackMixinAttributesLabels.CREATED_ON
+    UPDATED_ON = LibTrackMixinAttributesLabels.UPDATED_ON
+    LIB_TRACKS = LibTrackMixinAttributesLabels.LIB_TRACKS
+    LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_NOT_ARCHIVED
+    LIB_TRACKS_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT
+    LIB_TRACKS_COUNT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT_ARCHIVED
+    DURATION_IN_SEC = LibTrackMixinAttributesLabels.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinAttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = 'name'
     TYPE = 'type'
     PARENT = 'parent'
@@ -27,49 +36,34 @@ class AttributesLabel:
     CRITERIA_ASCENDANT_RELATION_DESCENDANTS = 'criteria_ascendant_relation_descendants'
     CHILDREN = 'children'
     ROOT = 'root'
-    CREATED_ON = 'created_on'
-    LIB_TRACKS = 'library_tracks'
     CRITERIA_PLAYLIST = 'criteria_playlist'
 
 
-class Criteria(models.Model):
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+class Criteria(LibraryTrackMixin):
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
     type = models.ForeignKey('CriteriaType', on_delete=models.CASCADE)
-    parent = models.ForeignKey(AttributesLabel.MODEL,
+    parent = models.ForeignKey(AttributesLabels.MODEL,
                                on_delete=models.CASCADE, null=True,
                                related_name='child')
-    ascendants = models.ManyToManyField(AttributesLabel.MODEL,
+    ascendants = models.ManyToManyField(AttributesLabels.MODEL,
                                         through='CriteriaAscendantRelation',
-                                        related_name=AttributesLabel.MODEL + 's')
+                                        related_name=AttributesLabels.MODEL + 's')
 
     # null must be True because when the root is the criteria itself, we must create it first with a null root
     # and then set the root to itself
-    root = models.ForeignKey(AttributesLabel.MODEL,
+    root = models.ForeignKey(AttributesLabels.MODEL,
                              on_delete=models.CASCADE,
                              null=True,
-                             related_name=AttributesLabel.DESCENDANT)
-    created_on = models.DateTimeField(default=timezone.now, editable=False)
-    updated_on = models.DateTimeField(auto_now=True, editable=True)
+                             related_name=AttributesLabels.DESCENDANT)
 
     class Meta:
-        unique_together = (AttributesLabel.USER, AttributesLabel.NAME)
+        unique_together = (AttributesLabels.USER, AttributesLabels.NAME)
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name='criteria_non_empty_name')]
-
-    @staticmethod
-    def is_criteria1_descendant_of_criteria2(criteria1: 'Criteria', criteria2: 'Criteria'):
-        if criteria1.parent == criteria2:
-            return True
-        elif criteria1.parent:
-            return Criteria.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
-        else:
-            return False
 
     @ staticmethod
     def _update_playlist_positions_to_fill_deleted_positions(base_playlist: BasePlaylist):
         from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, AttributesLabel as PlaylistLibTrackRelationAttributesLabels
+            import PlaylistLibTrackRelation, AttributesLabels as PlaylistLibTrackRelationAttributesLabels
         tracks_positions_ordered_asc = (
             PlaylistLibTrackRelation.objects
             .filter(base_playlist=base_playlist)
@@ -96,6 +90,15 @@ class Criteria(models.Model):
 
         for child in criteria.get_children():
             Criteria._update_ascendants_of_criteria_and_children(child)
+
+    @staticmethod
+    def is_criteria1_descendant_of_criteria2(criteria1: 'Criteria', criteria2: 'Criteria'):
+        if criteria1.parent == criteria2:
+            return True
+        elif criteria1.parent:
+            return Criteria.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
+        else:
+            return False
 
     def __str__(self) -> str:
         return str(self.uuid) + " " + self.name

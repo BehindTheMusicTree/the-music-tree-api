@@ -2,7 +2,7 @@
 
 import logging
 from django.contrib.auth.models import User
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabel as AttributesLabel
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels as AttributesLabels
 from bodzify_api.serializer.criteria.input.model import CriteriaModelSerializer
 from bodzify_api.serializer.criteria.input.schema.endpoint.put import CriteriaPutSerializer
 from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSchemaSerializer
@@ -31,14 +31,14 @@ class CriteriaService(Service):
     def _get_schema_data_from_post_data(self, post_data: dict) -> dict:
         schema_data = post_data.copy()
 
-        parent_key = AttributesLabel.PARENT
+        parent_key = AttributesLabels.PARENT
         if parent_key in post_data:
             parent_uuid = post_data[parent_key]
             if parent_uuid in ["", None]:
                 parent_uuid = ""
         else:
             parent_uuid = ""
-        schema_data[AttributesLabel.PARENT] = parent_uuid
+        schema_data[AttributesLabels.PARENT] = parent_uuid
         return schema_data
 
     def _get_schema_data_from_put_data(self, put_data: dict, old_instance) -> dict:
@@ -48,14 +48,14 @@ class CriteriaService(Service):
             self, user: User, schema_data: dict, old_instance) -> dict:
         model_data = dict()
 
-        self._update_data1_with_key_if_set_in_data2(key=AttributesLabel.NAME,
+        self._update_data1_with_key_if_set_in_data2(key=AttributesLabels.NAME,
                                                     data1=model_data,
                                                     data2=schema_data)
 
-        self._update_data1_with_key_if_set_in_data2(key=AttributesLabel.PARENT,
+        self._update_data1_with_key_if_set_in_data2(key=AttributesLabels.PARENT,
                                                     data1=model_data,
                                                     data2=schema_data)
 
-        model_data[AttributesLabel.TYPE] = self.criteria_type_id
+        model_data[AttributesLabels.TYPE] = self.criteria_type_id
 
         return model_data

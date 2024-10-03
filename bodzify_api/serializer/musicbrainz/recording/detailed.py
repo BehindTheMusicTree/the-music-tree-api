@@ -2,22 +2,22 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording, AttributesLabel
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording, AttributesLabels
 from bodzify_api.serializer.musicbrainz.artist.detailed \
     import MusicbrainzArtistDetailedSerializer
 
 
 class Fields:
-    UUID = AttributesLabel.UUID
-    TITLE = AttributesLabel.TITLE
-    SCORE = AttributesLabel.SCORE
-    MUSICBRAINZ_ARTISTS = AttributesLabel.MUSICBRAINZ_ARTISTS
-    MUSICBRAINZ_LINK = AttributesLabel.MUSICBRAINZ_LINK
-    DURATION_IN_SEC = AttributesLabel.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = AttributesLabel.DURATION_STR_IN_HOUR_MIN_SEC
-    RELEASE_DATE = AttributesLabel.RELEASE_DATE
-    CREATED_ON = AttributesLabel.CREATED_ON
-    UPDATED_ON = AttributesLabel.UPDATED_ON
+    UUID = AttributesLabels.UUID
+    TITLE = AttributesLabels.TITLE
+    SCORE = AttributesLabels.SCORE
+    MUSICBRAINZ_ARTISTS = AttributesLabels.MUSICBRAINZ_ARTISTS
+    MUSICBRAINZ_LINK = AttributesLabels.MUSICBRAINZ_LINK
+    DURATION_IN_SEC = AttributesLabels.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = AttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
+    RELEASE_DATE = AttributesLabels.RELEASE_DATE
+    CREATED_ON = AttributesLabels.CREATED_ON
+    UPDATED_ON = AttributesLabels.UPDATED_ON
 
 
 class MusicbrainzRecordingDetailedSerializer(serializers.ModelSerializer):

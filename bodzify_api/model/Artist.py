@@ -1,40 +1,34 @@
 #!/usr/bin/env python
 
 from typing import Optional
-import shortuuid
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
 
-from bodzify_api import settings
+from bodzify_api.model.LibraryTrackMixin import LibraryTrackMixin, AttributesLabels as LibTrackMixinAttributesLabels
 
 
-class AttributesLabel:
-    UUID = 'uuid'
-    USER = 'user'
-    NAME = 'name'
+class AttributesLabels:
+    UUID = LibTrackMixinAttributesLabels.UUID
+    USER = LibTrackMixinAttributesLabels.USER
+    CREATED_ON = LibTrackMixinAttributesLabels.CREATED_ON
+    UPDATED_ON = LibTrackMixinAttributesLabels.UPDATED_ON
+    LIB_TRACKS = LibTrackMixinAttributesLabels.LIB_TRACKS
+    LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_NOT_ARCHIVED
+    LIB_TRACKS_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT
+    LIB_TRACKS_COUNT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT_ARCHIVED
+    DURATION_IN_SEC = LibTrackMixinAttributesLabels.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinAttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
     ALBUMS = 'albums'
-    LIB_TRACKS = 'library_tracks'
-    LIB_TRACKS_COUNT = LIB_TRACKS + '_count'
-    DURATION_IN_SEC = 'duration_in_sec'
-    DURATION_STR_IN_HOUR_MIN_SEC = 'duration_str_in_hour_min_sec'
+    NAME = 'name'
 
 
-class Artist(models.Model):
+class Artist(LibraryTrackMixin):
 
-    # Django's UUIDField won't validate a shortuuid
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=200, default=None)
-    created_on = models.DateTimeField(default=timezone.now, editable=False)
-    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
-        constraints = [
-            models.CheckConstraint(check=~models.Q(
-                name=""), name="artist_non_empty_name")
-        ]
+        constraints = [models.CheckConstraint(check=~models.Q(name=""), name="artist_non_empty_name")]
 
     def __str__(self) -> str:
         return str(self.uuid) + " " + self.name

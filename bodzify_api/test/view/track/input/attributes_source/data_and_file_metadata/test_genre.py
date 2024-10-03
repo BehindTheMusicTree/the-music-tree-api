@@ -14,8 +14,8 @@ class TestCase(TrackTestCase):
         data_dict = {PostFields.GENRE_NAME: data_genre_name}
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.name == data_genre_name
+        assert self.lib_track_saved.genre is not None
+        assert self.lib_track_saved.genre.name == data_genre_name
 
     def test_genre_uuid_in_data_and_genre_name_in_matadata_then_take_data(self):
         data_genre_name = "Rock"
@@ -23,5 +23,5 @@ class TestCase(TrackTestCase):
         data_dict = {PostFields.GENRE_UUID: genre_uuid}
         response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.name == data_genre_name
+        assert self.lib_track_saved.genre is not None
+        assert self.lib_track_saved.genre.name == data_genre_name

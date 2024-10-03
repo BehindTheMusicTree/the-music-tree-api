@@ -8,3 +8,9 @@ def to_camel_case(snake_str):
 
 def print_django(message):
     print(f"[Django] {message}")
+
+
+def remove_substrings_from_string(string_a: str, substrings: list) -> str:
+    for substring in substrings:
+        string_a = string_a.replace(substring, '')
+    return string_a

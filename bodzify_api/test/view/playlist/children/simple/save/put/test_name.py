@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabel as PlaylistAttributesLabels
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabels as PlaylistAttributesLabels
 from bodzify_api.test.view.playlist.children.simple.SimplePlaylistTestCase import SimplePlaylistTestCase
 
 

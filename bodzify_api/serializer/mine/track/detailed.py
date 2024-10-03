@@ -3,16 +3,16 @@
 import datetime
 from rest_framework import serializers
 from bodzify_api import settings
-from bodzify_api.model.track.MineTrack import AttributesLabel
+from bodzify_api.model.track.MineTrack import AttributesLabels
 
 
 class Fields:
-    TITLE = AttributesLabel.TITLE
-    ARTIST_NAME = AttributesLabel.ARTIST_NAME
-    DURATION_IN_SEC = AttributesLabel.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = AttributesLabel.DURATION_STR_IN_HOUR_MIN_SEC
-    RELEASED_ON = AttributesLabel.RELEASED_ON
-    URL = AttributesLabel.URL
+    TITLE = AttributesLabels.TITLE
+    ARTIST_NAME = AttributesLabels.ARTIST_NAME
+    DURATION_IN_SEC = AttributesLabels.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = AttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
+    RELEASED_ON = AttributesLabels.RELEASED_ON
+    URL = AttributesLabels.URL
 
 
 class MineTrackSerializer(serializers.Serializer):

@@ -3,7 +3,7 @@
 from django.db import transaction
 from drf_spectacular.utils import extend_schema
 
-from bodzify_api.model.Play import Play, AttributesLabel
+from bodzify_api.model.Play import Play, AttributesLabels
 from bodzify_api.serializer.play.input.schema.endpoint.post import PlayPostSerializer
 from bodzify_api.serializer.play.output.detailed import PlayDetailedSerializer
 from bodzify_api.service.PlayService import PlayService
@@ -22,7 +22,7 @@ class PlayViewSet(AppModelViewSet):
         super().__init__(PlayService(), **kwargs)
 
     def get_queryset(self):
-        return Play.objects.filter(base_playlist__user=self.request.user).order_by(f"-{AttributesLabel.TIME}")
+        return Play.objects.filter(base_playlist__user=self.request.user).order_by(f"-{AttributesLabels.TIME}")
 
     def _get_detailed_serializer(self, instance):
         return PlayDetailedSerializer(instance=instance)
