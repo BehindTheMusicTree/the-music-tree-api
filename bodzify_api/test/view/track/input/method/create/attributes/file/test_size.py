@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import pytest
+
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 

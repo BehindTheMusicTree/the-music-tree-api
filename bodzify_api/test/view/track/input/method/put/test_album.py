@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 from rest_framework import status
+
 from bodzify_api.model.Album import Album
 from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import NullableFieldTestCase
+from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import \
+    NullableFieldTestCase
 
 
 class TestCase(NullableFieldTestCase):

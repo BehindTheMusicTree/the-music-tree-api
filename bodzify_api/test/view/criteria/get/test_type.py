@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaTypesLabel
-from bodzify_api.model.criteria.Criteria import Criteria
+
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesLabel
 from bodzify_api.serializer.criteria.output.detailed import Fields as GetFields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 

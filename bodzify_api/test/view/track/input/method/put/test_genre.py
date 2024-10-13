@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 from rest_framework import status
+
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import NullableFieldTestCase
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import \
+    NullableFieldTestCase
 
 
 class TestCase(NullableFieldTestCase):

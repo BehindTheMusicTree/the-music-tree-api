@@ -2,10 +2,11 @@
 
 import pytest
 from rest_framework import status
-from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
-from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PlaylistSpecialNames
+
+from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
+from bodzify_api.model.playlist.BasePlaylist import \
+    SpecialNames as PlaylistSpecialNames
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
@@ -18,7 +19,9 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_generic_sample_no_tags()
         assert response.status_code == status.HTTP_201_CREATED
         playlist_all = SimplePlaylist.objects.get(name=PlaylistSpecialNames.ALL).base_playlist
-        assert PlaylistLibTrackRelation.objects.get(base_playlist=playlist_all,
-                                                    library_track=self.lib_track_saved).position == 1
-        assert PlaylistLibTrackRelation.objects.get(base_playlist=playlist_all, library_track=lib_track1).position == 3
-        assert PlaylistLibTrackRelation.objects.get(base_playlist=playlist_all, library_track=lib_track2).position == 2
+        assert LibTrackPlaylistPositionRel.objects.get(base_playlist=playlist_all,
+                                                       library_track=self.lib_track_saved).position == 1
+        assert LibTrackPlaylistPositionRel.objects.get(
+            base_playlist=playlist_all, library_track=lib_track1).position == 3
+        assert LibTrackPlaylistPositionRel.objects.get(
+            base_playlist=playlist_all, library_track=lib_track2).position == 2

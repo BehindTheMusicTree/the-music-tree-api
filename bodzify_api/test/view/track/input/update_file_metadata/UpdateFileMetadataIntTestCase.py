@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-import logging
 from typing import Optional
 
-from bodzify_api.test.AppTestCase import AppTestCase
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
@@ -40,7 +38,7 @@ class UpdateFileMetadataIntTestCase(TrackTestCase):
 
         if value_expected_in_metadata is None:
             if self.lib_track_normalized_metadata_key in self.saved_lib_track_metadata:
-                assert self.saved_lib_track_metadata[self.lib_track_normalized_metadata_key] in ["", None]
+                assert not self.saved_lib_track_metadata[self.lib_track_normalized_metadata_key]
             else:
                 assert True
         else:

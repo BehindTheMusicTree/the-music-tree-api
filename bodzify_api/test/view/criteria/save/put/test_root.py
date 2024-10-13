@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-import logging
+
 from rest_framework import status
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.criteria.input.schema.endpoint.put import Fields as PUT_FIELD
+from bodzify_api.serializer.criteria.input.schema.endpoint.put import \
+    Fields as PUT_FIELD
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 

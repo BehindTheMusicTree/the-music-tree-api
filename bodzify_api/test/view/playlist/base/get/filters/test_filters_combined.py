@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 
-import logging
+
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaTypesLabel
-from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CriteriaPlaylistTypesLabels, \
-    SpecialNames as CriteriaPlaylistSpecialNames
-from bodzify_api.model.playlist.children.SimplePlaylist \
-    import SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL, SimplePlaylist
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesLabel
+from bodzify_api.model.playlist.children.CriteriaPlaylist import SpecialNames as CriteriaPlaylistSpecialNames
+from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CriteriaPlaylistTypesLabels
+from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
+from bodzify_api.model.playlist.children.SimplePlaylist import SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.serializer.playlist.base.input.query_param import Fields as GetQueryParams
-from bodzify_api.serializer.playlist.base.output.with_tracks import Fields as PlaylistGetFields
+from bodzify_api.serializer.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 
 
@@ -21,7 +20,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistSpecialNames.TAGLESS
         }
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 0
 
@@ -30,7 +29,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistSpecialNames.GENRELESS
         }
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][PlaylistGetFields.NAME] == CriteriaPlaylistSpecialNames.GENRELESS
@@ -40,7 +39,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL,
             GetQueryParams.NAME: SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
         }
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][PlaylistGetFields.NAME] == SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
@@ -55,7 +54,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE: CriteriaTypesLabel.GENRE,
             GetQueryParams.NAME: 'rock'
         }
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -70,7 +69,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL,
             GetQueryParams.NAME: 'all'
         }
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]

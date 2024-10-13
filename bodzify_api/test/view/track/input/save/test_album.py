@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from rest_framework import status
+
 from bodzify_api import settings
-from bodzify_api.model.Album import Album
 from bodzify_api.serializer.track.input.endpoint.extract import Fields as ExtractFields
 from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldModelStrTestCase
 

@@ -3,7 +3,8 @@
 from typing import Optional
 
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.view.viewset.model.AppModelViewSet import PaginatedResponseFields
+from bodzify_api.view.viewset.model.AppModelViewSet import \
+    PaginatedResponseFields
 
 
 class ApiTestCase(AppTestCase):

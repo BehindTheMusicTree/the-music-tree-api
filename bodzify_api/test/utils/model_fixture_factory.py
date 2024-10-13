@@ -1,21 +1,23 @@
+#!/usr/bin/env python
+
+import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
-import uuid
-from attr import has
-from ddf import G
 
+from ddf import G
 from django.utils import timezone
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.track_file.TrackFile import TrackFile as TrackFile
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.model.track_file.TrackFile import TrackFile as TrackFile
 from bodzify_api.test.TestUser import TestUser
 
 
@@ -30,47 +32,42 @@ class ModelFixtureFactory:
                           name: str,
                           type: int,
                           parent: Optional[Criteria] = None,
-                          lib_tracks_count_archived: Optional[bool] = False,
                           created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                           updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> Criteria:
         return G(Criteria,
                  user=self.test_user.django_user,
                  name=name, type=type,
                  parent=parent,
-                 lib_tracks_count_archived=lib_tracks_count_archived,
                  created_on=created_on,
                  updated_on=updated_on)  # type: ignore
 
     def create_artist(self,
                       name: str,
-                      lib_tracks_count_archived: Optional[bool] = False,
                       created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                       updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> Artist:
-        return G(
-            Artist,
-            user=self.test_user.django_user,
-            name=name,
-            lib_tracks_count_archived=lib_tracks_count_archived,
-            created_on=created_on, updated_on=updated_on)  # type: ignore
+        return G(Artist,
+                 user=self.test_user.django_user,
+                 created_on=created_on,
+                 updated_on=updated_on,
+                 name=name,)  # type: ignore
 
     def create_album(self,
                      name: str,
                      album_artists: List[Artist] = [],
                      year: Optional[int] = None,
-                     lib_tracks_count_archived: Optional[bool] = False,
                      created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                      updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> Album:
         return G(Album,
                  user=self.test_user.django_user,
+                 created_on=created_on,
+                 updated_on=updated_on,
                  name=name,
                  album_artists=album_artists,
-                 year=year,
-                 lib_tracks_count_archived=lib_tracks_count_archived,
-                 created_on=created_on,
-                 updated_on=updated_on)  # type: ignore
+                 year=year,)
 
-    def create_file(
-            self, filename: str, created_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> TrackFile:
+    def create_file(self,
+                    filename: str,
+                    created_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> TrackFile:
         return G(TrackFile,
                  user=self.test_user.django_user,
                  file=str(Path(self.test_user.lib_abs_path) / filename),
@@ -78,33 +75,33 @@ class ModelFixtureFactory:
                  size_in_mo=None,
                  created_on=created_on)  # type: ignore
 
-    def create_lib_track(
-            self, title: str,
-            track_file: Optional[TrackFile] = None,
-            artist: Optional[Artist] = None,
-            album: Optional[Album] = None,
-            genre: Optional[Criteria] = None,
-            rating: Optional[int] = None,
-            language: Optional[str] = None,
-            play_count: Optional[int] = 0,
-            archived: Optional[bool] = False,
-            created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-            updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> LibraryTrack:
-        if track_file is None:
-            track_file = self.create_file(filename=self.test_user.lib_track_default_filename)
+    def create_lib_track(self,
+                         title: str,
+                         track_file: Optional[TrackFile] = None,
+                         artists: Optional[list[Artist]] = list(),
+                         album: Optional[Album] = None,
+                         position_in_album: Optional[int] = None,
+                         genre: Optional[Criteria] = None,
+                         rating: Optional[int] = None,
+                         language: Optional[str] = None,
+                         play_count: Optional[int] = 0,
+                         archived: Optional[bool] = False,
+                         created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
+                         updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> LibraryTrack:
         return G(LibraryTrack,
                  user=self.test_user.django_user,
+                 created_on=created_on,
+                 updated_on=updated_on,
                  title=title,
                  track_file=track_file,
-                 artist=artist,
+                 artists=artists,
                  album=album,
+                 position_in_album=position_in_album,
                  genre=genre,
                  rating=rating,
                  language=language,
                  play_count=play_count,
-                 archived=archived,
-                 created_on=created_on,
-                 updated_on=updated_on)  # type: ignore
+                 archived=archived,)
 
     def create_musicbrainz_recording(
             self, uuid: uuid.UUID, title: str, duration_in_sec: int,
@@ -113,52 +110,53 @@ class ModelFixtureFactory:
             updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> MusicbrainzRecording:
         return G(MusicbrainzRecording,
                  uuid=uuid,
+                 created_on=created_on,
+                 updated_on=updated_on,
                  title=title,
                  duration_in_sec=duration_in_sec,
                  release_date=release_date,
-                 musicbrainz_artists=musicbrainz_artists,
-                 created_on=created_on,
-                 updated_on=updated_on)  # type: ignore
+                 musicbrainz_artists=musicbrainz_artists,)  # type: ignore
 
     def create_musicbrainz_artist(
-            self, uuid: uuid.UUID, name: str, created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
+            self,
+            uuid: uuid.UUID,
+            name: str,
+            created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
             updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> MusicbrainzArtist:
         return G(MusicbrainzArtist, uuid=uuid, name=name, created_om=created_on, updated_on=updated_on)  # type: ignore
 
     def create_genre(self,
                      name: str,
                      parent: Optional[Criteria] = None,
-                     lib_tracks_count_archived: Optional[bool] = False,
                      created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                      updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> Criteria:
-        return self.__create_criteria(name=name,
+        return self.__create_criteria(created_on=created_on,
+                                      updated_on=updated_on,
+                                      name=name,
                                       type=CriteriaTypesId.GENRE,
-                                      parent=parent,
-                                      lib_tracks_count_archived=lib_tracks_count_archived,
-                                      created_on=created_on,
-                                      updated_on=updated_on)
+                                      parent=parent,)
 
     def create_tag(self,
                    name: str,
                    parent: Optional[Criteria] = None,
-                   lib_tracks_count_archived: Optional[bool] = False,
                    created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                    updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> Criteria:
-        return self.__create_criteria(name=name,
+        return self.__create_criteria(created_on=created_on,
+                                      updated_on=updated_on,
+                                      name=name,
                                       type=CriteriaTypesId.TAG,
-                                      parent=parent,
-                                      lib_tracks_count_archived=lib_tracks_count_archived,
-                                      created_on=created_on,
-                                      updated_on=updated_on)
+                                      parent=parent,)
 
     def create_simple_playlist(self,
                                name,
                                play_count: Optional[int] = 0,
                                created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                                updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> SimplePlaylist:
+        base_playlist = G(BasePlaylist,
+                          user=self.test_user.django_user,
+                          created_on=created_on,
+                          updated_on=updated_on,
+                          play_count=play_count)
         return G(SimplePlaylist,
-                 base_playlist__user=self.test_user.django_user,
-                 name=name,
-                 base_playlist__play_count=play_count,
-                 base_playlist__created_on=created_on,
-                 updated_on=updated_on)  # type: ignore
+                 base_playlist=base_playlist,
+                 name=name,)

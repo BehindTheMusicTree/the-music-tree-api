@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-import logging
-from bodzify_api import settings
-from bodzify_api.test.view.track.input.attributes_source.file_metadata.FieldStrFromFileMetadataTestCase \
-    import FieldStrNullableFromFileMetadataTestCase
+
 from rest_framework import status
+
+from bodzify_api import settings
+from bodzify_api.test.view.track.input.attributes_source.file_metadata.FieldStrFromFileMetadataTestCase import \
+    FieldStrNullableFromFileMetadataTestCase
 
 
 class TestCase(FieldStrNullableFromFileMetadataTestCase):

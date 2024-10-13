@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 from bodzify_api import settings
-import bodzify_api.utils.audio_metadata as audio_metadata
+from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import \
     UpdateFileMetadataStrTestCase
 
 
 class TestCase(UpdateFileMetadataStrTestCase):
-    save_field = SaveSchemaFields.ARTIST_NAME
-    lib_track_normalized_metadata_key = audio_metadata.NormalizedMetadataKeys.ARTIST_NAME
+    save_field = SaveSchemaFields.ARTISTS_NAMES_STR
+    lib_track_normalized_metadata_key = NormalizedMetadataKeys.ARTIST_NAME
     length_max = settings.ARTIST_NAME_LEN_MAX
 
 

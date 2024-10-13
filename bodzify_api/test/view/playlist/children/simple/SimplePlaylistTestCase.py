@@ -6,9 +6,8 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
+from bodzify_api.serializer.playlist.children.simple.output.detailed import Fields as SimplePlaylistGetFields
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.playlist.children.simple.output.with_tracks \
-    import Fields as SimplePlaylistGetFields
 
 
 class SimplePlaylistTestCase(AppTestCase):

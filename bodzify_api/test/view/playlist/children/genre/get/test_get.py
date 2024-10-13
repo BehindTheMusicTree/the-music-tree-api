@@ -2,12 +2,14 @@
 
 from rest_framework import status
 
-from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.playlist.children.criteria.output.with_tracks \
-    import Fields as GetResultFields
-from bodzify_api.serializer.playlist.children.criteria.input.query_param \
-    import Fields as GetQueryParams
-from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
+from bodzify_api.model.playlist.children.CriteriaPlaylist import \
+    CriteriaPlaylist
+from bodzify_api.serializer.playlist.children.criteria.input.query_param import \
+    Fields as GetQueryParams
+from bodzify_api.serializer.playlist.children.criteria.output.detailed import \
+    Fields as GetResultFields
+from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import \
+    GenrePlaylistTestCase
 
 
 class TestCase(GenrePlaylistTestCase):

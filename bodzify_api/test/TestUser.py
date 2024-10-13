@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
+
 from django.contrib.auth.models import User
 
 from bodzify_api import settings

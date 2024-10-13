@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
-import logging
+
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CriteriaPlaylistTypesLabels, \
-    SpecialNames as CriteriaPlaylistSpecialNames
-from bodzify_api.model.playlist.children.SimplePlaylist \
-    import SimplePlaylist, SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES, TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
+from bodzify_api.model.playlist.children.CriteriaPlaylist import SpecialNames as CriteriaPlaylistSpecialNames, \
+    TypesLabel as CriteriaPlaylistTypesLabels
+from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL, \
+    SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.serializer.playlist.base.input.query_param import Fields as GetQueryParams
-from bodzify_api.serializer.playlist.base.output.with_tracks import Fields as PlaylistGetFields
+from bodzify_api.serializer.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.get_filters.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
 
@@ -34,7 +32,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         simple_playlist_name = "Teuf"
         self.model_fixture_factory.create_simple_playlist(name=simple_playlist_name)
 
-        response = self.get_playlists()
+        response = self._get()
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 5
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -46,14 +44,14 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
 
     def test_is_empty_then_error(self):
         data_dict = {GetQueryParams.TYPE: ''}
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_value_is_genre_then_resultst(self):
         rock_criteria_name = "Rock n roll"
         self.model_fixture_factory.create_genre(name=rock_criteria_name)
         data_dict = {GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.GENRE}
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -62,7 +60,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
 
     def test_value_is_tag_then_results(self):
         data_dict = {GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.TAG}
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -74,7 +72,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         self.model_fixture_factory.create_genre(name='rock')
 
         data_dict = {GetQueryParams.TYPE: SIMPLE_PLAYLIST_TYPE_LABEL}
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -83,5 +81,5 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
 
     def test_value_is_wrong_then_error(self):
         data_dict = {GetQueryParams.TYPE: 'wrong_value'}
-        response = self.get_playlists(data_dict=data_dict)
+        response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

@@ -4,7 +4,6 @@ from rest_framework import status
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.track_file.TrackFile import TrackFile
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.album.AlbumViewTestCase import AlbumViewTestCase
 
@@ -32,7 +31,7 @@ class TestCase(AlbumViewTestCase):
         assert self.test_user.does_track_filename_exist_in_lib(assassin_track_filename) == True
         assert self.test_user.does_track_filename_exist_in_lib(starlight_track_filename) == True
 
-        response = self.delete(album_uuid=black_holes_album.uuid)
+        response = self._delete(album_uuid=black_holes_album.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(uuid=black_holes_album.uuid).exists() == False
@@ -60,10 +59,10 @@ class TestCase(AlbumViewTestCase):
         pol_artist = self.model_fixture_factory.create_artist(name="Pol")
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations",
                                                                     album_artists=[matthew_artist, muse_artist])
-        self.model_fixture_factory.create_lib_track(title="Assassin", artist=matthew_artist, album=black_holes_album)
-        self.model_fixture_factory.create_lib_track(title="Blue", artist=pol_artist)
+        self.model_fixture_factory.create_lib_track(title="Assassin", artists=[matthew_artist], album=black_holes_album)
+        self.model_fixture_factory.create_lib_track(title="Blue", artists=[pol_artist])
 
-        response = self.delete(album_uuid=black_holes_album.uuid)
+        response = self._delete(album_uuid=black_holes_album.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(name=matthew_artist.name).exists() == False
         assert Artist.objects.filter(name=muse_artist.name).exists() == False

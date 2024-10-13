@@ -3,20 +3,18 @@
 import inspect
 import os
 from pathlib import Path
-from rest_framework import status
 from typing import Optional
 
-
 from django.contrib.auth.models import User
-from django.test import TestCase
-from django.urls import reverse
-from rest_framework_simplejwt.tokens import AccessToken
 from django.core.management import call_command
+from django.test import TestCase
+from rest_framework_simplejwt.tokens import AccessToken
 
 from bodzify_api.test.AppApiClient import AppApiClient
-from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
 from bodzify_api.test.TestUser import TestUser
-from bodzify_api.view.viewset.model.AppModelViewSet import PaginatedResponseFields
+from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
+from bodzify_api.view.viewset.model.AppModelViewSet import \
+    PaginatedResponseFields
 
 
 class AppTestCase(TestCase):

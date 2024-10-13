@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from bodzify_api import settings
-import bodzify_api.utils.audio_metadata as audio_metadata
+from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import \
     UpdateFileMetadataStrTestCase
@@ -9,7 +9,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataSt
 
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = SaveSchemaFields.TITLE
-    lib_track_normalized_metadata_key = audio_metadata.NormalizedMetadataKeys.TITLE
+    lib_track_normalized_metadata_key = NormalizedMetadataKeys.TITLE
     length_max = settings.LIB_TRACK_TITLE_LEN_MAX
 
 

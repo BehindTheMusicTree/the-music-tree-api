@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 """
 Small files are handled differently by Django. They are stored in memory instead of being written to disk.

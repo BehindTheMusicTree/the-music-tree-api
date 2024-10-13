@@ -2,7 +2,8 @@
 
 from rest_framework import status
 
-from bodzify_api.test.view.playlist.children.simple.SimplePlaylistTestCase import SimplePlaylistTestCase
+from bodzify_api.test.view.playlist.children.simple.SimplePlaylistTestCase import \
+    SimplePlaylistTestCase
 
 
 class TestCase(SimplePlaylistTestCase):

@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
-from bodzify_api.serializer.track.input.endpoint.post import Fields as PostFields
 from rest_framework import status
-from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import NonNullableStrFieldFromDataTestCase
+
+from bodzify_api.serializer.track.input.endpoint.post import \
+    Fields as PostFields
+from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import \
+    NonNullableStrFieldFromDataTestCase
 
 
 class TitleTestCase(NonNullableStrFieldFromDataTestCase):

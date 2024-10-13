@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import logging
+
 from django.urls import reverse
 from rest_framework import status
 

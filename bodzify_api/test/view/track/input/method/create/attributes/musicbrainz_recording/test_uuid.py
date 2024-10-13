@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import uuid
 import logging
+import uuid
 
 from rest_framework import status
 

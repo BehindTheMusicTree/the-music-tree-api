@@ -6,14 +6,13 @@ from django.http import JsonResponse
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.model.track_file.FingerprintingErrorCode import FingerprintingErrorCodes
-import bodzify_api.utils.audio_metadata as audio_metadata
+from bodzify_api.utils import audio_metadata
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.track.input.endpoint.extract \
-    import Fields as LibTrackExtractFields
+from bodzify_api.model.track_file.FingerprintingError import FingerprintingError
+from bodzify_api.serializer.track.input.endpoint.extract import Fields as LibTrackExtractFields
 from bodzify_api.serializer.track.input.endpoint.post import Fields as LibTrackPostFields
 from bodzify_api.serializer.track.output.detailed import Fields as LibTrackGetFields
+from bodzify_api.test.AppTestCase import AppTestCase
 
 
 class TrackTestCase(AppTestCase):
@@ -24,6 +23,7 @@ class TrackTestCase(AppTestCase):
     class LibTrackGenericSamplesFilenameWithoutExtension:
         ONE_STAR = "1 star"
         TAGS_NONE = "tags none"
+        TAGS_3_ARTISTS_AND_2_COMMAS_IN_ARTIST = "tags 3 artists and two commas in artist"
         TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS = "tags album koko without album artists"
         TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM = "tags album artists koko without album"
         TAGS_MAX_LEN_WITH_LETTER_A = "tags max length with letter a"
@@ -48,8 +48,8 @@ class TrackTestCase(AppTestCase):
     saved_lib_track_metadata: dict
 
     def _skip_if_fingerprinting_error_because_of_acoustid_unknown_connection_issue(self):
-        if self.lib_track_saved.track_file.fingerprinting_error_code == (
-                FingerprintingErrorCodes.UNKNOWN_CONNEXION_ERROR):
+        track_file = self.lib_track_saved.track_file
+        if track_file and track_file.fingerprinting_error == FingerprintingError.Codes.UNKNOWN_CONNEXION_ERROR:
             self.skipTest(self.SKIPPING_TEST_DUE_TO_ACOUSTID_UNKNOWN_CONNECTION_ISSUE)
 
     def _set_saved_lib_track_attribute(self, response):
@@ -124,6 +124,15 @@ class TrackTestCase(AppTestCase):
             generic_sample_file_extension=extension,
             data_dict=data_dict)
         return response
+
+    def post_lib_track_with_generic_sample_tag_3_artists_and_two_commas_in_artist(
+            self, extension='mp3', data_dict=None):
+        filename_without_extension = \
+            self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_3_ARTISTS_AND_2_COMMAS_IN_ARTIST
+        return self._post_lib_track_with_generic_sample(
+            generic_sample_filename_without_extension=filename_without_extension,
+            generic_sample_file_extension=extension,
+            data_dict=data_dict)
 
     def post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(self, extension='mp3', data_dict=None):
         filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS

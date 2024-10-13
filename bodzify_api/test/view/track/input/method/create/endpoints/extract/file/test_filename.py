@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 from rest_framework import status
+
 from bodzify_api import settings
-from bodzify_api.serializer.track.input.endpoint.extract import Fields as ExtractFields
+from bodzify_api.serializer.track.input.endpoint.extract import \
+    Fields as ExtractFields
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 
@@ -11,7 +13,7 @@ class FilenameTestCase(TrackTestCase):
     def test_title_and_artist_name_in_data_then_filename_with_artist_and_title(self):
         data_dict = {
             ExtractFields.TITLE: "ImHere",
-            ExtractFields.ARTIST_NAME: "Roméo",
+            ExtractFields.ARTISTS_NAMES_STR: "Roméo",
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
@@ -23,7 +25,7 @@ class FilenameTestCase(TrackTestCase):
         artist_name = "Rom éo"
         data_dict = {
             ExtractFields.TITLE: title,
-            ExtractFields.ARTIST_NAME: artist_name,
+            ExtractFields.ARTISTS_NAMES_STR: artist_name,
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
@@ -35,7 +37,7 @@ class FilenameTestCase(TrackTestCase):
         artist_name = "Rom#éo"
         data_dict = {
             ExtractFields.TITLE: title,
-            ExtractFields.ARTIST_NAME: artist_name,
+            ExtractFields.ARTISTS_NAMES_STR: artist_name,
         }
         response = self.extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED

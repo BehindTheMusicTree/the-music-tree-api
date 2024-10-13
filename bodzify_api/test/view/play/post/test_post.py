@@ -2,13 +2,9 @@
 
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.play.input.schema.endpoint.post import Fields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.utils import to_camel_case
-from bodzify_api.serializer.play.input.schema.endpoint.post import Fields
 
 
 class TestCase(PlayTestCase):

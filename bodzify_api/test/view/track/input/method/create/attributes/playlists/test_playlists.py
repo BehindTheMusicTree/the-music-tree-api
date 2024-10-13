@@ -2,9 +2,12 @@
 
 import pytest
 from rest_framework import status
-from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
+
+from bodzify_api.model.playlist.BasePlaylist import \
+    SpecialNames as PlaylistSpecialNames
+from bodzify_api.model.playlist.children.CriteriaPlaylist import \
+    CriteriaPlaylist
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PlaylistSpecialNames
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 

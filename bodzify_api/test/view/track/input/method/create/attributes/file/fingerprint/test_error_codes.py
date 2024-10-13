@@ -2,14 +2,14 @@
 
 import logging
 from time import sleep
+
 import docker
 import docker.errors
-
 from rest_framework import status
 
-from bodzify_api.model.track_file.FingerprintingErrorCode import FingerprintingErrorCodes
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 from bodzify_api import settings
+from bodzify_api.model.track_file.FingerprintingError import FingerprintingError
+from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s    %(name)s:%(filename)s:%(lineno)d %(message)s')
 
@@ -51,10 +51,10 @@ class TestCase(TrackTestCase):
         response = self.post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m52.mp3")
         restart_docker_container(settings.AFP_CONTAINER_NAME)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.track_file.fingerprinting_error_code.pk in [
-            FingerprintingErrorCodes.SERVICE_NOT_FOUND, FingerprintingErrorCodes.UNKNOWN_CONNEXION_ERROR]
+        assert self.lib_track_saved.track_file.fingerprinting_error.pk in [
+            FingerprintingError.Codes.SERVICE_NOT_FOUND, FingerprintingError.Codes.UNKNOWN_CONNEXION_ERROR]
 
     def test_audio_fingerprinter_service_not_down_then_no_error_code(self):
         response = self.post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m52.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert not self.lib_track_saved.track_file.fingerprinting_error_code
+        assert not self.lib_track_saved.track_file.fingerprinting_error

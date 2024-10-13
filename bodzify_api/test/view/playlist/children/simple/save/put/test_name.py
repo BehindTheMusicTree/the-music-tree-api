@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
 from rest_framework import status
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabels as PlaylistAttributesLabels
-from bodzify_api.test.view.playlist.children.simple.SimplePlaylistTestCase import SimplePlaylistTestCase
+
+from bodzify_api.model.playlist.BasePlaylist import \
+    AttributesLabels as BaseAttributesLabels
+from bodzify_api.test.view.playlist.children.simple.SimplePlaylistTestCase import \
+    SimplePlaylistTestCase
 
 
 class TestCase(SimplePlaylistTestCase):
@@ -10,7 +13,7 @@ class TestCase(SimplePlaylistTestCase):
     def test_value_then_ok(self):
         simpe_playlist = self.model_fixture_factory.create_simple_playlist(name="teuf")
         simple_playlist_name_new = "teuf2"
-        data = {PlaylistAttributesLabels.NAME: simple_playlist_name_new}
+        data = {BaseAttributesLabels.NAME: simple_playlist_name_new}
         response = self.put_simple_playlist(
             simple_playlist_uuid=simpe_playlist.base_playlist.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
@@ -25,6 +28,6 @@ class TestCase(SimplePlaylistTestCase):
 
     def test_empty_then_error(self):
         uuid = self.model_fixture_factory.create_simple_playlist(name='foero').base_playlist.uuid
-        data = {PlaylistAttributesLabels.NAME: ""}
+        data = {BaseAttributesLabels.NAME: ""}
         response = self.put_simple_playlist(simple_playlist_uuid=uuid, data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
