@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
 from datetime import timezone
-import shortuuid
 
-from django.utils import timezone
-from django.db import models
+import shortuuid
 from django.contrib.auth.models import User
+from django.db import models
+from django.utils import timezone
 
 from bodzify_api import settings
 
 
 class AttributesLabels:
+    MODEL = 'base_model'
     UUID = 'uuid'
     USER = 'user'
     CREATED_ON = 'created_on'
