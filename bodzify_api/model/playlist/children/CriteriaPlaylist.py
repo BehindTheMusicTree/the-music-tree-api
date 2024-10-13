@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 from django.db import models
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId, CriteriaType
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabels as PlaylistAttributesLabels
+
+from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels as CriteriaAttributesLabels
+from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, AttributesLabels as BasePlaylistAttributesLabels
+from bodzify_api.model.playlist.children.BasePlaylistChild import BasePlaylistChild, \
+    AttributesLabels as ChildAttributesLabels
 
 
 class SpecialNames:
@@ -17,37 +20,48 @@ class TypesLabel:
 
 
 class AttributesLabels:
-    MODEL = 'CriteriaPlaylist'
-    BASE_PLAYLIST = 'base_playlist'
-    PARENT = 'parent'
+    BASE_PLAYLIST = ChildAttributesLabels.BASE_PLAYLIST
+    UUID = ChildAttributesLabels.UUID
+    USER = ChildAttributesLabels.USER
+    CREATED_ON = ChildAttributesLabels.CREATED_ON
+    UPDATED_ON = ChildAttributesLabels.UPDATED_ON
+    LIB_TRACKS = ChildAttributesLabels.LIB_TRACKS
+    LIB_TRACKS_NOT_ARCHIVED = ChildAttributesLabels.LIB_TRACKS_NOT_ARCHIVED
+    LIB_TRACKS_COUNT = ChildAttributesLabels.LIB_TRACKS_COUNT
+    LIB_TRACKS_ARCHIVED_COUNT = ChildAttributesLabels.LIB_TRACKS_ARCHIVED_COUNT
+    DURATION_IN_SEC = ChildAttributesLabels.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = ChildAttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
+    PLAY_COUNT = ChildAttributesLabels.PLAY_COUNT
+    LAST_TRACK_LIST_UPDATE_DATE = ChildAttributesLabels.LAST_TRACK_LIST_UPDATE_DATE
     CRITERIA = 'criteria'
-    NAME = 'name'
+    TYPE = 'type'
+    PARENT = 'parent'
     ROOT = 'root'
+    NAME = 'name'
 
 
-class CriteriaPlaylist(models.Model):
+class CriteriaPlaylist(BasePlaylistChild):
     base_playlist = models.OneToOneField(BasePlaylist,
                                          on_delete=models.CASCADE,
                                          primary_key=True,
-                                         related_name=PlaylistAttributesLabels.CRITERIA_PLAYLIST)
+                                         related_name=BasePlaylistAttributesLabels.CRITERIA_PLAYLIST_CHILD)
     criteria = models.OneToOneField(Criteria,
                                     on_delete=models.CASCADE,
                                     blank=True,
                                     null=True,
-                                    related_name=PlaylistAttributesLabels.CRITERIA_PLAYLIST)
+                                    related_name=CriteriaAttributesLabels.CRITERIA_PLAYLIST)
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE, blank=True, null=False)
 
     # null must be True because when the root is the criteria playlist itself, we must create it first with a null root
     # and then set the root to itself
-    parent = models.ForeignKey(AttributesLabels.MODEL,
+    parent = models.ForeignKey('self',
                                on_delete=models.CASCADE,
                                null=True,
                                related_name='child_playlist')
-    root = models.ForeignKey(AttributesLabels.MODEL,
+    root = models.ForeignKey('self',
                              on_delete=models.CASCADE,
                              null=True,
                              related_name='descendant_playlist')
-    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     class Meta:
         db_table = 'bodzify_api_criteria_playlist'
@@ -109,7 +123,7 @@ class CriteriaPlaylist(models.Model):
     def save(self, *args, **kwargs):
         self._set_parent()
         try:
-            old_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist__uuid=self.base_playlist.uuid)
+            old_criteria_playlist = CriteriaPlaylist.objects.get(base_playlist=self.base_playlist)
             self._update(old_criteria_playlist, *args, **kwargs)  # type: ignore
         except CriteriaPlaylist.DoesNotExist:
             self._create(*args, **kwargs)
