@@ -6,9 +6,8 @@ from typing import Optional
 
 from .id3.Mp3MetadataManager import Mp3MetadataManager
 from .id3.WavMetadataManager import WavMetadataManager
+from .MetadataManager import MetadataManager
 from .vorbis.VorbisManager import VorbisManager
-from .MetadataManager import NormalizedMetadataKeys, MetadataManager, METADATA_ARTISTS_SEPARATION_CHAR
-
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 

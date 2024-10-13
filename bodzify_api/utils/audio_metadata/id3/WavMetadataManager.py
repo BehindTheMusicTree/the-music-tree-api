@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import wave
 import os
+import wave
+
 from mutagen._file import File as MutagenFile
 from mutagen._file import FileType as MutagenFileMetadata
 

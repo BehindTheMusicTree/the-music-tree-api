@@ -3,14 +3,14 @@
 import io
 from typing import Optional
 
-from mutagen.flac import FLAC
-from mutagen._file import FileType as MutagenFileMetadata
-
-from django.core.files.uploadedfile import TemporaryUploadedFile
+from django.core.files.uploadedfile import (InMemoryUploadedFile,
+                                            TemporaryUploadedFile)
 from django.db.models.fields.files import FieldFile
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from mutagen._file import FileType as MutagenFileMetadata
+from mutagen.flac import FLAC
 
-from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.MetadataManager import (
+    MetadataManager, NormalizedMetadataKeys)
 
 
 # Flac files

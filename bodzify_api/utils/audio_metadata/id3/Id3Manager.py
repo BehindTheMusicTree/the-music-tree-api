@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 from typing import Optional
-from mutagen.id3 import ID3
+
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
 
-from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
-
+from ..NormalizedMetadataKeys import NormalizedMetadataKeys
+from ..MetadataManager import MetadataManager
 
 ID3_RATING_APP_EMAIL = 'bodzify'
 

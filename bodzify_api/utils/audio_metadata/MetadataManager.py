@@ -1,28 +1,18 @@
 #!/usr/bin/env python
 
-from contextlib import redirect_stderr, redirect_stdout
 import os
-from pydub.utils import mediainfo
-from abc import abstractmethod
-from typing import Optional
-from tinytag import TinyTag, TinyTagException
 import tempfile
-from mutagen._file import FileType as MutagenFileMetadata
+from abc import abstractmethod
+from contextlib import redirect_stderr, redirect_stdout
+from typing import Optional
 
-from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
+from mutagen._file import FileType as MutagenFileMetadata
+from pydub.utils import mediainfo
+from tinytag import TinyTag, TinyTagException
 
-
-class NormalizedMetadataKeys:
-    TITLE = 'title'
-    ARTIST_NAME = 'artist_name'
-    ALBUM_NAME = 'album_name'
-    ALBUM_ARTISTS_NAMES = 'album_artists_names_string'
-    GENRE_NAME = 'genre_name'
-    DURATION_IN_SEC = 'duration_in_sec'
-    RATING = 'rating'
-    LANGUAGE = 'language'
-
+from .NormalizedMetadataKeys import NormalizedMetadataKeys
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
 

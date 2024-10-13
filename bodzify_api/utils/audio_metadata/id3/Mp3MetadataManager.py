@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
-from mutagen.mp4 import MP4StreamInfoError
-from mutagen.mp3 import MP3
+from django.db.models.fields.files import FieldFile
 from mutagen._file import File as MutagenFile
 from mutagen._file import FileType as MutagenFileMetadata
 from mutagen.id3 import ID3
 from mutagen.id3._util import ID3NoHeaderError
-
-from django.db.models.fields.files import FieldFile
+from mutagen.mp3 import MP3
+from mutagen.mp4 import MP4StreamInfoError
 
 from bodzify_api.utils.audio_metadata.id3.Id3Manager import Id3Manager
 
