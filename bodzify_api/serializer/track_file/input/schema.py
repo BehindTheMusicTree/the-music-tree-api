@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import binascii
+
 from rest_framework import serializers
 
-from bodzify_api.model.track_file.TrackFile import AttributesLabels as AttributesLabels, TrackFile
+from bodzify_api.model.track_file.TrackFile import \
+    AttributesLabels as AttributesLabels
+from bodzify_api.model.track_file.TrackFile import TrackFile
 
 
 class Fields:
@@ -19,7 +22,7 @@ class TrackFileSchemaSerializer(serializers.Serializer):
     # Django serializers don't support binary fields. We pass the fingerprint as a string and convert it to binary
     # creating the instance of the model.
     fingerprint = serializers.CharField(required=False)
-    fingerprinting_error_code = serializers.IntegerField(required=False)
+    fingerprinting_error = serializers.IntegerField(required=False)
     should_cancel_if_duplicate_fingerprint = serializers.BooleanField(required=False)
 
     def validate(self, attrs):

@@ -2,10 +2,11 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels
-from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
-from bodzify_api.serializer.criteria_ascendant_relation.without_ascendant \
-    import CriteriaAscendantRelationWithoutAscendantSerializer
+from bodzify_api.model.criteria.Criteria import AttributesLabels, Criteria
+from bodzify_api.serializer.criteria.output.simple import \
+    CriteriaSimpleSerializer
+from bodzify_api.serializer.criteria_ascendant_relation.without_ascendant import \
+    CriteriaAscendantRelationWithoutAscendantSerializer
 
 
 class Fields:

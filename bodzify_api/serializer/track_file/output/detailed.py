@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.track_file.TrackFile import AttributesLabels as AttributesLabels, TrackFile
-from bodzify_api.serializer.fingerprinting_error_code.detailed import FingerprintingErrorCodeDetailedSerializer
+from bodzify_api.serializer.fingerprinting_error.detailed import FingerprintingErrorDetailedSerializer
 
 
 class Fields:
@@ -19,7 +19,7 @@ class Fields:
 
 class FileDetailedSerializer(serializers.ModelSerializer):
 
-    fingerprinting_error_code = FingerprintingErrorCodeDetailedSerializer()
+    fingerprinting_error = FingerprintingErrorDetailedSerializer()
 
     class Meta:
         model = TrackFile

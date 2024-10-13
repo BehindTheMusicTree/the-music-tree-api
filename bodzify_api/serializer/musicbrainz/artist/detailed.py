@@ -2,7 +2,8 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist, AttributesLabels
+from bodzify_api.model.musicbrainz.MusicbrainzArtist import (AttributesLabels,
+                                                             MusicbrainzArtist)
 
 
 class Fields:

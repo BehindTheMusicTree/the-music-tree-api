@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
-from bodzify_api.model.Play import Play, AttributesLabels
+from bodzify_api.model.Play import AttributesLabels, Play
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
 
 

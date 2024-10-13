@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 
 from rest_framework import serializers
-from bodzify_api.model.playlist.children.CriteriaPlaylist import TypesLabel as CriteriaPlaylistTypesLabels
-from bodzify_api.model.playlist.children.SimplePlaylist import TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabels as PlaylistAttributesLabels
+
+from bodzify_api.model.playlist.BasePlaylist import \
+    AttributesLabels as BaseAttributesLabels
+from bodzify_api.model.playlist.children.CriteriaPlaylist import \
+    TypesLabel as CriteriaPlaylistTypesLabels
+from bodzify_api.model.playlist.children.SimplePlaylist import \
+    TYPE_LABEL as SIMPLE_PLAYLIST_TYPE_LABEL
 
 
 class Fields:
     TYPE = 'type'
-    NAME = PlaylistAttributesLabels.NAME
+    NAME = BaseAttributesLabels.NAME
 
 
 class BasePlaylistQueryParamSerializer(serializers.Serializer):

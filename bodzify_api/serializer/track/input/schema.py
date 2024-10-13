@@ -4,8 +4,8 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.Artist import AttributesLabels as ArtistAttributesLabels
 from bodzify_api.serializer.track.input.model import Fields as SaveModelFields
-from bodzify_api.model.Album import AttributesLabels as AttributesLabels
 
 
 class Fields:
@@ -15,11 +15,12 @@ class Fields:
     DURATION_IN_SEC = SaveModelFields.DURATION_IN_SEC
     TITLE = SaveModelFields.TITLE
     FORCE_TITLE_GENERATION = "force_title_generation"
-    ARTIST_NAME = SaveModelFields.ARTIST + "_name"
-    ALBUM_NAME = SaveModelFields.ALBUM + "_name"
-    ALBUM_ARTISTS_NAMES_STR = AttributesLabels.ALBUM_ARTISTS + "_names_string"
-    GENRE_UUID = SaveModelFields.GENRE + "_uuid"
-    GENRE_NAME = SaveModelFields.GENRE + "_name"
+    ARTISTS_NAMES_STR = f"{SaveModelFields.ARTISTS}_{ArtistAttributesLabels.NAME}s_str"
+    ALBUM_NAME = f"{SaveModelFields.ALBUM}_name"
+    ALBUM_ARTISTS_NAMES_STR = f"{SaveModelFields.ALBUM}_artists_names_str"
+    POSITION_IN_ALBUM = SaveModelFields.POSITION_IN_ALBUM
+    GENRE_UUID = f"{SaveModelFields.GENRE}_uuid"
+    GENRE_NAME = f"{SaveModelFields.GENRE}_name"
     RATING = SaveModelFields.RATING
     LANGUAGE = SaveModelFields.LANGUAGE
     ARCHIVED = SaveModelFields.ARCHIVED
@@ -33,14 +34,15 @@ class LibTrackSchemaSerializer(serializers.Serializer):
                                   allow_blank=True,
                                   allow_null=True)
     force_title_generation = serializers.BooleanField(required=False)
-    artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_LEN_MAX,
-                                        required=False,
-                                        allow_blank=True,
-                                        allow_null=True)
+    artists_names_str = serializers.CharField(max_length=settings.ARTISTS_NAMES_LEN_MAX,
+                                              required=False,
+                                              allow_blank=True,
+                                              allow_null=True)
     album_name = serializers.CharField(max_length=settings.ALBUM_NAME_LEN_MAX,
                                        required=False,
                                        allow_blank=True,
                                        allow_null=True)
+    position_in_album = serializers.IntegerField(required=False, allow_null=True)
     album_artists_names_string = serializers.CharField(max_length=settings.ALBUM_ARTISTS_FIELD_LEN_MAX,
                                                        required=False,
                                                        allow_blank=True,
@@ -63,7 +65,7 @@ class LibTrackSchemaSerializer(serializers.Serializer):
         fields = [Fields.FILE,
                   Fields.TITLE,
                   Fields.FORCE_TITLE_GENERATION,
-                  Fields.ARTIST_NAME,
+                  Fields.ARTISTS_NAMES_STR,
                   Fields.ALBUM_NAME,
                   Fields.ALBUM_ARTISTS_NAMES_STR,
                   Fields.GENRE_UUID,

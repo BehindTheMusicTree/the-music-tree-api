@@ -1,24 +1,27 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.children.CriteriaPlaylist import AttributesLabels, CriteriaPlaylist
-from bodzify_api.serializer.criteria.output.with_descendants_and_parent import CriteriaWithDescendantsAndParentSerializer
-from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root \
-    import Fields as CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields
-from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root \
-    import CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer
+from bodzify_api.model.playlist.children.CriteriaPlaylist import (
+    CriteriaPlaylist)
+from bodzify_api.serializer.criteria.output.with_descendants_and_parent import \
+    CriteriaWithDescendantsAndParentSerializer
+from bodzify_api.serializer.playlist.children.criteria.output.base import \
+    CriteriaBaseSerializer
+from bodzify_api.serializer.playlist.children.criteria.output.base import \
+    Fields as BaseFields
+from bodzify_api.serializer.playlist.children.criteria.output.without_criteria_and_tracks_and_parent_and_root import \
+    CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer
 
 
 class Fields:
-    UUID = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.UUID
-    NAME = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.NAME
-    CRITERIA = AttributesLabels.CRITERIA
-    CREATED_ON = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.CREATED_ON
-    PARENT = AttributesLabels.PARENT
-    ROOT = AttributesLabels.ROOT
-    LIB_TRACKS_COUNT = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootFields.LIB_TRACKS_COUNT
+    UUID = BaseFields.UUID
+    LIB_TRACKS_COUNT = BaseFields.LIB_TRACKS_COUNT
+    NAME = BaseFields.NAME
+    CRITERIA = BaseFields.CRITERIA
+    PARENT = BaseFields.PARENT
+    ROOT = BaseFields.ROOT
 
 
-class CriteriaPlaylistWithoutTracksSerializer(CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer):
+class CriteriaPlaylistWithoutTracksSerializer(CriteriaBaseSerializer):
     criteria = CriteriaWithDescendantsAndParentSerializer()
     parent = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer()
     root = CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer()
@@ -35,7 +38,6 @@ class CriteriaPlaylistWithoutTracksSerializer(CriteriaPlaylistWithoutCriteriaAnd
         fields = [Fields.UUID,
                   Fields.NAME,
                   Fields.CRITERIA,
-                  Fields.CREATED_ON,
                   Fields.PARENT,
                   Fields.ROOT,
                   Fields.LIB_TRACKS_COUNT]

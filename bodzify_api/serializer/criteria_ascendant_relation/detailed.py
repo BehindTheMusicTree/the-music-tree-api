@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.criteria.CriteriaAscendantRelation import AttributesLabels, CriteriaAscendantRelation
+from bodzify_api.model.criteria.CriteriaAscendantRel import AttributesLabels, CriteriaAscendantRel
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
 
 
@@ -17,5 +17,5 @@ class CriteriaAscendantRelationDetailedSerializer(serializers.ModelSerializer):
     ascendant = CriteriaSimpleSerializer()
 
     class Meta:
-        model = CriteriaAscendantRelation
+        model = CriteriaAscendantRel
         fields = [Fields.DESCENDANT, Fields.ASCENDANT, Fields.DEGREE]

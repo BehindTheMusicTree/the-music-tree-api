@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.children.SimplePlaylist \
-    import SimplePlaylist, AttributesLabels as SIMPLE_PlaylistAttributesLabels
-from bodzify_api.model.playlist.BasePlaylist import AttributesLabels as PlaylistAttributesLabels
 from rest_framework import serializers
+
+from bodzify_api.model.playlist.BasePlaylist import AttributesLabels as BaseAttributesLabels
+from bodzify_api.model.playlist.children.SimplePlaylist import AttributesLabels, SimplePlaylist
 
 
 class Fields:
-    BASE_PLAYLIST = SIMPLE_PlaylistAttributesLabels.BASE_PLAYLIST
-    NAME = SIMPLE_PlaylistAttributesLabels.NAME
-    USER = PlaylistAttributesLabels.USER
+    BASE_PLAYLIST = AttributesLabels.BASE_PLAYLIST
+    NAME = AttributesLabels.NAME
+    USER = BaseAttributesLabels.USER
 
 
 class SimplePlaylistModelSerializer(serializers.ModelSerializer):

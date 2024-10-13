@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.track.LibraryTrack import LibraryTrack, AttributesLabels
 from rest_framework import serializers
+from bodzify_api.model.track.LibraryTrack import AttributesLabels, LibraryTrack
 
 
 class Fields:
@@ -11,8 +11,9 @@ class Fields:
     MUSICBRAINZ_RECORDING = AttributesLabels.MUSICBRAINZ_RECORDING
     MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR = AttributesLabels.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR
     TITLE = AttributesLabels.TITLE
-    ARTIST = AttributesLabels.ARTIST
+    ARTISTS = AttributesLabels.ARTISTS
     ALBUM = AttributesLabels.ALBUM
+    POSITION_IN_ALBUM = "position_in_album"
     GENRE = AttributesLabels.GENRE
     RATING = AttributesLabels.RATING
     LANGUAGE = AttributesLabels.LANGUAGE
@@ -29,8 +30,9 @@ class TrackModelSerializer(serializers.ModelSerializer):
                   Fields.MUSICBRAINZ_RECORDING,
                   Fields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR,
                   Fields.TITLE,
-                  Fields.ARTIST,
+                  Fields.ARTISTS,
                   Fields.ALBUM,
+                  Fields.POSITION_IN_ALBUM,
                   Fields.GENRE,
                   Fields.RATING,
                   Fields.LANGUAGE,

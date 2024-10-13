@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.album.detailed import AlbumDetailedSerializer
-from bodzify_api.serializer.album.with_only_name import AlbumWithOnlyNameSerializer
+from bodzify_api.serializer.album.with_only_name_and_artists import AlbumWithOnlyNameAndArtistsSerializer
 from bodzify_api.serializer.criteria.output.simple import CriteriaSimpleSerializer
-from bodzify_api.serializer.artist.with_only_name import ArtistWithOnlyNameSerializer
-from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer, Fields as LibTrackDetailedFields
+from bodzify_api.serializer.track.output.detailed import Fields as LibTrackDetailedFields
+from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
 
 
 class Fields:
@@ -14,6 +13,7 @@ class Fields:
     FILE = LibTrackDetailedFields.FILE
     TITLE = LibTrackDetailedFields.TITLE
     ALBUM = LibTrackDetailedFields.ALBUM
+    POSITION_IN_ALBUM = LibTrackDetailedFields.POSITION_IN_ALBUM
     GENRE = LibTrackDetailedFields.GENRE
     DURATION_IN_SEC = LibTrackDetailedFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackDetailedFields.DURATION_STR_IN_HOUR_MIN_SEC
@@ -22,26 +22,18 @@ class Fields:
     RATING = LibTrackDetailedFields.RATING
     LANGUAGE = LibTrackDetailedFields.LANGUAGE
     PLAY_COUNT = LibTrackDetailedFields.PLAY_COUNT
-    CREATED_ON = LibTrackDetailedFields.CREATED_ON
 
 
-class LibTrackWithoutArtistAndPlaylistSerializer(LibTrackDetailedSerializer):
+class LibTrackSimpleWithoutPlaylistAndArtistSerializer(LibTrackDetailedSerializer):
     genre = CriteriaSimpleSerializer()
-    album = AlbumWithOnlyNameSerializer()
+    album = AlbumWithOnlyNameAndArtistsSerializer()
 
     class Meta:
         model = LibraryTrack
         fields = [Fields.UUID,
-                  Fields.RELATIVE_URL,
-                  Fields.FILE,
                   Fields.TITLE,
                   Fields.ALBUM,
                   Fields.GENRE,
-                  Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
-                  Fields.MUSICBRAINZ_RECORDING,
-                  Fields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_CODE,
                   Fields.RATING,
-                  Fields.LANGUAGE,
-                  Fields.PLAY_COUNT,
-                  Fields.CREATED_ON,]
+                  Fields.LANGUAGE,]

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels
 from rest_framework import serializers
+
+from bodzify_api.model.criteria.Criteria import AttributesLabels, Criteria
 
 
 class Fields:

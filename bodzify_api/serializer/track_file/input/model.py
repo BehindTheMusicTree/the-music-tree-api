@@ -2,7 +2,9 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.track_file.TrackFile import AttributesLabels as AttributesLabels, TrackFile
+from bodzify_api.model.track_file.TrackFile import \
+    AttributesLabels as AttributesLabels
+from bodzify_api.model.track_file.TrackFile import TrackFile
 
 
 class Fields:

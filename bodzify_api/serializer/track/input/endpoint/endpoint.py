@@ -5,10 +5,9 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.serializer.endpoint import InputEndpointSerializer
 from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields
-from bodzify_api.model.Album import AttributesLabels as ALBUM_SaveSchemaFields
-
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
+position_in_album_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album position is."""
 
 
 class Fields:
@@ -16,13 +15,15 @@ class Fields:
     SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT = SaveSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT
     TITLE = SaveSchemaFields.TITLE
     FORCE_TITLE_GENERATION = "force_title_generation"
-    ARTIST_NAME = SaveSchemaFields.ARTIST_NAME
+    ARTISTS_NAMES_STR = SaveSchemaFields.ARTISTS_NAMES_STR
     ALBUM_NAME = SaveSchemaFields.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES_STR = ALBUM_SaveSchemaFields.ALBUM_ARTISTS + "_names_string"
+    ALBUM_ARTISTS_NAMES_STR = SaveSchemaFields.ALBUM_ARTISTS_NAMES_STR
+    POSITION_IN_ALBUM = SaveSchemaFields.POSITION_IN_ALBUM
     GENRE_UUID = SaveSchemaFields.GENRE_UUID
     GENRE_NAME = SaveSchemaFields.GENRE_NAME
     RATING = SaveSchemaFields.RATING
     LANGUAGE = SaveSchemaFields.LANGUAGE
+    ARCHIVED = SaveSchemaFields.ARCHIVED
 
 
 class LibTrackEndPointSerializer(InputEndpointSerializer):
@@ -32,10 +33,10 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
                                   allow_blank=True,
                                   allow_null=True)
     force_title_generation = serializers.BooleanField(required=False)
-    artist_name = serializers.CharField(max_length=settings.ARTIST_NAME_LEN_MAX,
-                                        required=False,
-                                        allow_blank=True,
-                                        allow_null=True)
+    artists_names_str = serializers.CharField(max_length=settings.ARTISTS_NAMES_LEN_MAX,
+                                              required=False,
+                                              allow_blank=True,
+                                              allow_null=True)
     album_name = serializers.CharField(max_length=settings.ALBUM_NAME_LEN_MAX,
                                        required=False,
                                        allow_blank=True,
@@ -44,6 +45,7 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
                                                        required=False,
                                                        allow_blank=True,
                                                        allow_null=True)
+    position_in_album = serializers.IntegerField(required=False, allow_null=True)
     genre_uuid = serializers.CharField(max_length=settings.UUID_LEN,
                                        required=False,
                                        allow_blank=True,
@@ -57,6 +59,7 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
                                      required=False,
                                      allow_blank=True,
                                      allow_null=True)
+    archived = serializers.BooleanField(required=False)
 
     def validate(self, data):
         if Fields.GENRE_UUID in data and Fields.GENRE_NAME in data:
@@ -74,6 +77,16 @@ class LibTrackEndPointSerializer(InputEndpointSerializer):
 
             if error_message:
                 raise serializers.ValidationError({Fields.ALBUM_ARTISTS_NAMES_STR: error_message})
+
+        if Fields.POSITION_IN_ALBUM in data:
+            error_message = None
+            if Fields.ALBUM_NAME not in data:
+                error_message = position_in_album_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+            elif data[Fields.ALBUM_NAME] in [None, ""]:
+                error_message = position_in_album_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+
+            if error_message:
+                raise serializers.ValidationError({Fields.ALBUM_NAME: error_message})
 
         if Fields.RATING in data:
             value = data[Fields.RATING]

@@ -2,29 +2,24 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.Artist import Artist, AttributesLabels
-from bodzify_api.serializer.album.with_only_name_and_artists import AlbumWithOnlyNameAndArtistsSerializer
+from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin, AttributesLabels
 
 
 class Fields:
     UUID = AttributesLabels.UUID
-    NAME = AttributesLabels.NAME
-    ALBUMS = AttributesLabels.ALBUMS
+    LIB_TRACKS = AttributesLabels.LIB_TRACKS
     LIB_TRACKS_COUNT = AttributesLabels.LIB_TRACKS_COUNT
     LIB_TRACKS_ARCHIVED_COUNT = AttributesLabels.LIB_TRACKS_ARCHIVED_COUNT
     DURATION_IN_SEC = AttributesLabels.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = AttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
 
 
-class ArtistWithoutTracksSerializer(serializers.ModelSerializer):
-    albums = AlbumWithOnlyNameAndArtistsSerializer(many=True)
-
+class LibTrackMixinSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Artist
+        model = LibTrackMixin
         fields = [Fields.UUID,
-                  Fields.NAME,
-                  Fields.ALBUMS,
+                  Fields.LIB_TRACKS,
                   Fields.LIB_TRACKS_COUNT,
                   Fields.LIB_TRACKS_ARCHIVED_COUNT,
                   Fields.DURATION_IN_SEC,
-                  Fields.DURATION_STR_IN_HOUR_MIN_SEC]
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,]

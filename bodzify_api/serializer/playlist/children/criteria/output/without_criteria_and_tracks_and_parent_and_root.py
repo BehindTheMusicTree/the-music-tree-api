@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.playlist.children.child \
-    import ChildPlaylistSerializer, Fields as ChildPlaylistFields
+from bodzify_api.model.playlist.children.CriteriaPlaylist import \
+    CriteriaPlaylist
+from bodzify_api.serializer.playlist.children.criteria.output.base import \
+    CriteriaBaseSerializer
+from bodzify_api.serializer.playlist.children.criteria.output.base import \
+    Fields as BaseFields
 
 
 class Fields:
-    UUID = ChildPlaylistFields.UUID
-    NAME = ChildPlaylistFields.NAME
-    CREATED_ON = ChildPlaylistFields.CREATED_ON
-    LIB_TRACKS_COUNT = ChildPlaylistFields.LIB_TRACKS_COUNT
+    UUID = BaseFields.UUID
+    NAME = BaseFields.NAME
+    LIB_TRACKS_COUNT = BaseFields.LIB_TRACKS_COUNT
 
 
-class CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer(ChildPlaylistSerializer):
+class CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer(CriteriaBaseSerializer):
 
     def get_name(self, obj) -> str:
         return obj.name
@@ -21,5 +23,4 @@ class CriteriaPlaylistWithoutCriteriaAndTracksAndParentAndRootSerializer(ChildPl
         model = CriteriaPlaylist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.CREATED_ON,
                   Fields.LIB_TRACKS_COUNT]

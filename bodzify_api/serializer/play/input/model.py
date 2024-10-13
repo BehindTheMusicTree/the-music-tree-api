@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.Play import Play, AttributesLabels
 from rest_framework import serializers
+
+from bodzify_api.model.Play import AttributesLabels, Play
 
 
 class Fields:

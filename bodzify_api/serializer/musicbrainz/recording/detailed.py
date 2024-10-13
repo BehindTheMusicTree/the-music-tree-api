@@ -2,9 +2,10 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording, AttributesLabels
-from bodzify_api.serializer.musicbrainz.artist.detailed \
-    import MusicbrainzArtistDetailedSerializer
+from bodzify_api.model.musicbrainz.MusicbrainzRecording import (
+    AttributesLabels, MusicbrainzRecording)
+from bodzify_api.serializer.musicbrainz.artist.detailed import \
+    MusicbrainzArtistDetailedSerializer
 
 
 class Fields:

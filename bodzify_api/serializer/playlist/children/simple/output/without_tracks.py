@@ -3,8 +3,10 @@
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.serializer.playlist.children.child \
-    import ChildPlaylistSerializer, Fields as ChildPlaylistFields
+from bodzify_api.serializer.playlist.children.child import \
+    ChildPlaylistSerializer
+from bodzify_api.serializer.playlist.children.child import \
+    Fields as ChildPlaylistFields
 
 
 class Fields:

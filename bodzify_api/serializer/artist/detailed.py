@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
-import datetime
-from typing import Any, Dict, List, cast
-from django.db.models import Sum
 from rest_framework import serializers
-from bodzify_api.serializer.album.without_tracks import AlbumWithoutTracksSerializer
+
 from bodzify_api.model.Artist import Artist, AttributesLabels
-from bodzify_api.serializer.track.output.without_playlists_and_artist import LibTrackWithoutArtistAndPlaylistSerializer
+from bodzify_api.serializer.album.with_only_name_and_artists import AlbumWithOnlyNameAndArtistsSerializer
+from bodzify_api.serializer.track.output.simple_without_playlists_and_artist import LibTrackSimpleWithoutPlaylistAndArtistSerializer
 
 
 class Fields:
@@ -17,12 +15,12 @@ class Fields:
     LIB_TRACKS_COUNT = AttributesLabels.LIB_TRACKS_COUNT
     DURATION_IN_SEC = AttributesLabels.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = AttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
-    LIB_TRACKS_COUNT_ARCHIVED = AttributesLabels.LIB_TRACKS_COUNT_ARCHIVED
+    LIB_TRACKS_ARCHIVED_COUNT = AttributesLabels.LIB_TRACKS_ARCHIVED_COUNT
 
 
 class ArtistDetailedSerializer(serializers.ModelSerializer):
-    albums = AlbumWithoutTracksSerializer(many=True)
-    library_tracks = LibTrackWithoutArtistAndPlaylistSerializer(
+    albums = AlbumWithOnlyNameAndArtistsSerializer(many=True)
+    library_tracks = LibTrackSimpleWithoutPlaylistAndArtistSerializer(
         source=AttributesLabels.LIB_TRACKS_NOT_ARCHIVED, many=True)
 
     class Meta:
@@ -32,7 +30,7 @@ class ArtistDetailedSerializer(serializers.ModelSerializer):
                   Fields.ALBUMS,
                   Fields.LIB_TRACKS,
                   Fields.LIB_TRACKS_COUNT,
-                  Fields.LIB_TRACKS_COUNT_ARCHIVED,
+                  Fields.LIB_TRACKS_ARCHIVED_COUNT,
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
-                  Fields.LIB_TRACKS_COUNT_ARCHIVED]
+                  Fields.LIB_TRACKS_ARCHIVED_COUNT]
