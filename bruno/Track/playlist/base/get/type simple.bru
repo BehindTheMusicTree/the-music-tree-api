@@ -1,0 +1,15 @@
+meta {
+  name: type simple
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}playlists?type=simple
+  body: json
+  auth: inherit
+}
+
+params:query {
+  type: simple
+}

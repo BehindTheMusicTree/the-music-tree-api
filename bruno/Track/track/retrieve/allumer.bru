@@ -1,11 +1,11 @@
 meta {
-  name: Joni
+  name: allumer
   type: http
   seq: 1
 }
 
 get {
-  url: {{BASE_URL}}artists/
+  url: {{BASE_URL}}tracks/{{trackAllumerUuid}}/
   body: json
   auth: inherit
 }

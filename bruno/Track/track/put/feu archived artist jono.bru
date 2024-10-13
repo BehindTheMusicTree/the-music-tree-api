@@ -1,0 +1,19 @@
+meta {
+  name: feu archived artist jono
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}tracks/{{trackFeuUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Love archived",
+    "artists_names_str": "Jono",
+    "archived": "true"
+  }
+}

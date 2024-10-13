@@ -1,5 +1,5 @@
 meta {
-  name: johnny
+  name: allumer
   type: http
   seq: 2
 }
@@ -16,4 +16,8 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/view/track/input/method/create/attributes/musicbrainz_recording/sample/input/allumerlefeu_2_matches_but_one_with_more_release_groups.mp3)
+}
+
+vars:post-response {
+  trackAllumerUuid: res.body.uuid
 }

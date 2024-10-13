@@ -1,0 +1,21 @@
+meta {
+  name: play on allumer
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}plays/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "contentObjectUuid": "{{trackAllumerUuid}}"
+  }
+}
