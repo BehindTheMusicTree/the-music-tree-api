@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-import re
+
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.serializer.playlist.children.simple.input.model \
-    import SimplePlaylistModelSerializer, Fields as SaveModelFields
-from bodzify_api.serializer.playlist.children.simple.input.endpoint \
-    import SimplePlaylistInputEndpointSerializer
-from bodzify_api.serializer.playlist.children.simple.input.schema \
-    import SimplePlaylistSchemaSerializer
+from bodzify_api.serializer.playlist.children.simple.input.endpoint import SimplePlaylistInputEndpointSerializer
+from bodzify_api.serializer.playlist.children.simple.input.model import Fields as SaveModelFields
+from bodzify_api.serializer.playlist.children.simple.input.model import SimplePlaylistModelSerializer
+from bodzify_api.serializer.playlist.children.simple.input.schema import SimplePlaylistSchemaSerializer
 from bodzify_api.service.Service import Service
 
 

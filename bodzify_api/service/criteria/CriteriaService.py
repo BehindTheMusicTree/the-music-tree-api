@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import logging
+
 from django.contrib.auth.models import User
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels as AttributesLabels
+
+from bodzify_api.model.criteria.Criteria import AttributesLabels as AttributesLabels
 from bodzify_api.serializer.criteria.input.model import CriteriaModelSerializer
 from bodzify_api.serializer.criteria.input.schema.endpoint.put import CriteriaPutSerializer
 from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSchemaSerializer
-
 from bodzify_api.service.Service import Service
 
 
@@ -34,7 +34,7 @@ class CriteriaService(Service):
         parent_key = AttributesLabels.PARENT
         if parent_key in post_data:
             parent_uuid = post_data[parent_key]
-            if parent_uuid in ["", None]:
+            if parent_uuid is None:
                 parent_uuid = ""
         else:
             parent_uuid = ""

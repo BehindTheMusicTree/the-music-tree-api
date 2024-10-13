@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
 from typing import Optional
-import shortuuid
 
-from django.utils import timezone
 from django.db import models
 from django.db.models import QuerySet
-from django.contrib.auth.models import User
 
-from bodzify_api.model.LibraryTrackMixin import LibraryTrackMixin, AttributesLabels as LibTrackMixinAttributesLabels
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api import settings
+from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin, \
+    AttributesLabels as LibTrackMixinAttributesLabels
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 
 
 class AttributesLabels:
@@ -22,7 +20,7 @@ class AttributesLabels:
     LIB_TRACKS = LibTrackMixinAttributesLabels.LIB_TRACKS
     LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_NOT_ARCHIVED
     LIB_TRACKS_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT
-    LIB_TRACKS_COUNT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT_ARCHIVED
+    LIB_TRACKS_ARCHIVED_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_ARCHIVED_COUNT
     DURATION_IN_SEC = LibTrackMixinAttributesLabels.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinAttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = 'name'
@@ -39,14 +37,14 @@ class AttributesLabels:
     CRITERIA_PLAYLIST = 'criteria_playlist'
 
 
-class Criteria(LibraryTrackMixin):
+class Criteria(LibTrackMixin):
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
     type = models.ForeignKey('CriteriaType', on_delete=models.CASCADE)
     parent = models.ForeignKey(AttributesLabels.MODEL,
                                on_delete=models.CASCADE, null=True,
                                related_name='child')
     ascendants = models.ManyToManyField(AttributesLabels.MODEL,
-                                        through='CriteriaAscendantRelation',
+                                        through='CriteriaAscendantRel',
                                         related_name=AttributesLabels.MODEL + 's')
 
     # null must be True because when the root is the criteria itself, we must create it first with a null root
@@ -56,18 +54,21 @@ class Criteria(LibraryTrackMixin):
                              null=True,
                              related_name=AttributesLabels.DESCENDANT)
 
+    @property
+    def criteria_playlist(self) -> 'CriteriaPlaylist':  # type: ignore
+        return self.criteria_playlist
+
     class Meta:
-        unique_together = (AttributesLabels.USER, AttributesLabels.NAME)
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name='criteria_non_empty_name')]
 
-    @ staticmethod
+    @staticmethod
     def _update_playlist_positions_to_fill_deleted_positions(base_playlist: BasePlaylist):
-        from bodzify_api.model.PlaylistLibTrackRelation \
-            import PlaylistLibTrackRelation, AttributesLabels as PlaylistLibTrackRelationAttributesLabels
+        from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
+            AttributesLabels as LibTrackPlaylistPositionRelAttributesLabels
         tracks_positions_ordered_asc = (
-            PlaylistLibTrackRelation.objects
+            LibTrackPlaylistPositionRel.objects
             .filter(base_playlist=base_playlist)
-            .order_by(PlaylistLibTrackRelationAttributesLabels.POSITION)
+            .order_by(LibTrackPlaylistPositionRelAttributesLabels.POSITION)
         )
         i = 1
         for relation in tracks_positions_ordered_asc:
@@ -81,10 +82,10 @@ class Criteria(LibraryTrackMixin):
         current_degree = 1
         current_parent = criteria.parent
         while current_parent:
-            from bodzify_api.model.criteria.CriteriaAscendantRelation import CriteriaAscendantRelation
-            CriteriaAscendantRelation.objects.create(descendant=criteria,
-                                                     ascendant=current_parent,
-                                                     degree=current_degree)
+            from bodzify_api.model.criteria.CriteriaAscendantRel import CriteriaAscendantRel
+            CriteriaAscendantRel.objects.create(descendant=criteria,
+                                                ascendant=current_parent,
+                                                degree=current_degree)
             current_parent = current_parent.parent
             current_degree = current_degree + 1
 
@@ -101,14 +102,13 @@ class Criteria(LibraryTrackMixin):
             return False
 
     def __str__(self) -> str:
-        return str(self.uuid) + " " + self.name
+        return f"{self.uuid} {self.name}"
 
     def _create(self, *args, **kwargs):
         super().save(*args, **kwargs)
         from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-        CriteriaPlaylist.objects.create(base_playlist=BasePlaylist.objects.create(user=self.user),
-                                        type=self.type,
-                                        criteria=self)
+        base_playlist = BasePlaylist.objects.create(user=self.user)
+        CriteriaPlaylist.objects.create(base_playlist=base_playlist, type=self.type, criteria=self)
         Criteria._update_ascendants_of_criteria_and_children(self)
 
     def _update(self, old_criteria: 'Criteria', *args, **kwargs):
@@ -122,9 +122,7 @@ class Criteria(LibraryTrackMixin):
             self._update_playlists_of_ascendants(old_criteria.parent)
             Criteria._update_ascendants_of_criteria_and_children(self)
 
-            print("ICI")
             if self.parent is not None:
-                print("PARENR")
                 self.criteria_playlist.parent = self.parent.criteria_playlist  # type: ignore
             else:
                 self.criteria_playlist.parent = None  # type: ignore
@@ -135,7 +133,7 @@ class Criteria(LibraryTrackMixin):
 
         from bodzify_api.model.track.LibraryTrack import LibraryTrack
         lib_tracks = LibraryTrack.objects.filter(
-            playlist_lib_track_relations__base_playlist=self.criteria_playlist.base_playlist)  # type: ignore
+            lib_track_position_relations__base_playlist=self.criteria_playlist.base_playlist)  # type: ignore
 
         if self.parent is not None:
             self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
@@ -152,19 +150,19 @@ class Criteria(LibraryTrackMixin):
         if self != criteria_limit:
             base_playlist = self.criteria_playlist.base_playlist  # type: ignore
 
-            from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
+            from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
             for lib_track in lib_tracks:
-                PlaylistLibTrackRelation.objects.create(base_playlist=base_playlist, library_track=lib_track)
+                LibTrackPlaylistPositionRel.objects.create(base_playlist=base_playlist, library_track=lib_track)
             if self.parent is not None:
                 self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
                     lib_tracks=lib_tracks,
                     criteria_limit=criteria_limit)
 
-    @ staticmethod
+    @staticmethod
     def _remove_tracks_from_playlist(base_playlist: BasePlaylist, lib_tracks: QuerySet):
-        from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
+        from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
         (
-            PlaylistLibTrackRelation.objects
+            LibTrackPlaylistPositionRel.objects
             .filter(base_playlist=base_playlist, library_track__in=lib_tracks)  # type: ignore
             .delete()
         )
