@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import datetime
-from django.utils import timezone
+
 from django.db import models
 from django.db.models import F, Value
 from django.db.models.expressions import Value
+from django.utils import timezone
 
 from bodzify_api import settings
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist

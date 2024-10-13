@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from django.utils import timezone
 from django.db import models
-from django.db.models import Value, F
+from django.db.models import F, Value
+from django.utils import timezone
 
 from bodzify_api import settings
 
