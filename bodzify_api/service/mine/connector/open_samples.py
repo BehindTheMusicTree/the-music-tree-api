@@ -3,7 +3,9 @@
 import io
 import json
 import sys
+
 from loader import load
+
 from bodzify_api.model.track.MineTrack import MineTrack
 
 
