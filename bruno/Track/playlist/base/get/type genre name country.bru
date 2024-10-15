@@ -1,0 +1,15 @@
+meta {
+  name: type genre name country
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}playlists?type=simple
+  body: json
+  auth: inherit
+}
+
+params:query {
+  type: simple
+}
