@@ -49,7 +49,7 @@ class VorbisManager(MetadataManager):
         if file_rating is None:
             file_rating = self._get_first_value_int_if_exists_in_file_metadata_or_none(
                 key=self.VorbisTagKeys.RATING_TRAKTOR)
-            if file_rating is not None:
+            if file_rating:
                 is_rating_from_traktor = True
 
         if file_rating is None or file_rating == "":
@@ -63,7 +63,7 @@ class VorbisManager(MetadataManager):
     def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.TITLE)
 
-    def get_artist_name(self) -> Optional[str]:
+    def get_artists_names(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.ARTIST_NAME)
 
     def get_album_name(self) -> Optional[str]:
@@ -72,7 +72,7 @@ class VorbisManager(MetadataManager):
     def get_album_artists_name_str(self) -> Optional[str]:
         album_artists_name_str_raw = self._get_first_value_str_if_exists_in_file_metadata_or_none(
             key=self.VorbisTagKeys.ALBUM_ARTISTS_NAMES)
-        if album_artists_name_str_raw is not None:
+        if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
         return None
 
@@ -95,7 +95,7 @@ class VorbisManager(MetadataManager):
             normalized_rating_max_value: Optional[int] = None):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             vorbis_tag_key = self.VorbisTagKeys.TITLE
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES:
             vorbis_tag_key = self.VorbisTagKeys.ARTIST_NAME
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
             vorbis_tag_key = self.VorbisTagKeys.ALBUM_NAME
@@ -106,7 +106,7 @@ class VorbisManager(MetadataManager):
         elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
             app_rating = normalized_metadata_value
             vorbis_tag_key = self.VorbisTagKeys.RATING
-            if app_rating is not None:
+            if app_rating:
                 vorbis_rating = self._get_file_rating_from_normalized_rating(
                     normalized_rating=app_rating,
                     normalized_rating_max_value=normalized_rating_max_value,  # type: ignore
@@ -117,7 +117,7 @@ class VorbisManager(MetadataManager):
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
-        if normalized_metadata_value is not None:
+        if normalized_metadata_value:
             if vorbis_tag_key not in self.file_metadata:
                 self.file_metadata[vorbis_tag_key] = [1]
             self.file_metadata[vorbis_tag_key] = normalized_metadata_value
