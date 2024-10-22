@@ -1,15 +1,15 @@
 [
     {
         "model": "bodzify_api.user", 
-        "pk": 1, 
+        "pk": 3, 
         "fields": {
-            "password": "pbkdf2_sha256$720000$ES1EzZcF6wYKrUyFbCeXnP$yc0T1C+rpuPCBlUwB8hsSCoQUTnGJwbpLrmCx8Gpeec=", 
+            "password": "pbkdf2_sha256$720000$QKH7lKDkqTVZOMmggsKEad$TNA8zoAgE5AGbnbv3SUPfyZIXQZISda/knyZL+tb+18=", 
             "last_login": null, 
             "is_superuser": true, 
-            "username": "admin", 
-            "first_name": "", 
-            "last_name": "", 
-            "email": "admin@bodzify.com", 
+            "username": "pytest_admin", 
+            "first_name": "pytest", 
+            "last_name": "admin", 
+            "email": "pytest_admin@bodzify.com", 
             "is_staff": true, 
             "is_active": true, 
             "date_joined": "2022-11-30T10:45:27.189Z", 

@@ -1,9 +1,9 @@
 [
     {
         "model": "bodzify_api.user", 
-        "pk": 4, 
+        "pk": 2, 
         "fields": {
-            "password": "pbkdf2_sha256$390000$Efx3vrtD9WjfGGuUR1INSZ$Lrw6/3gBbBjnJYv0tPIfI1RoPH52GrQmBK2pm9TPM8k=", 
+            "password": "pbkdf2_sha256$720000$nuIG0CXMkoFqde1VC0uMiI$EupSzDq05vHKRvs75bkpSPWfHA+tGfsVEwdvQLW9AmE=", 
             "last_login": null, 
             "is_superuser": false, 
             "username": "pytest_user", 

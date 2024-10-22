@@ -8,7 +8,6 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from bodzify_api import settings
-from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
 from bodzify_api.view.viewset.model.AlbumViewSet import AlbumViewSet
 from bodzify_api.view.viewset.model.ArtistViewSet import ArtistViewSet
 from bodzify_api.view.viewset.model.criteria.GenreViewSet import GenreViewSet
