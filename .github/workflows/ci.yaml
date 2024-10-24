@@ -107,7 +107,6 @@ jobs:
           FIXTURES_DIR: ${{ vars.APP_NAME }}/fixtures/
         run: |
           cp ${{ env.FIXTURES_DIR }}app/*.json ${{ env.FIXTURES_DIR }}
-          cp ${{ env.FIXTURES_DIR }}users/ci_test/*.json ${{ env.FIXTURES_DIR }}
 
       - name: Init django data
         run: bash scripts/init-django-data.sh
