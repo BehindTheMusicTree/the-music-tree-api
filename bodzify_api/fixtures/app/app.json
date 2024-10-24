@@ -14,84 +14,165 @@
         }
     },
     
+    
     {
-        "model": "bodzify_api.fingerprintingerror",
+        "model": "bodzify_api.fingerprintmissingcausecode",
         "pk": 0,
         "fields": {
             "code": 0,
+            "label": "The audio meta analysis is disabled."
+        }
+    },
+    {
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 1,
+        "fields": {
+            "code": 1,
             "label": "The Audio Fingerprinter service was not found."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 1,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 2,
         "fields": {
-            "code": 1,
+            "code": 2,
             "label": "The use of the fpcalc software in the Audio Fingerprinter service failed with status 2. The file may be corrupted."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 2,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 3,
         "fields": {
-            "code": 2,
+            "code": 3,
             "label": "The Audio Fingerprinter service does not support the files's extension."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 3,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 4,
         "fields": {
-            "code": 3,
+            "code": 4,
             "label": "The Audio Fingerprinter service does not handle the files's type."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 4,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 5,
         "fields": {
-            "code": 4,
+            "code": 5,
             "label": "The Audio Fingerprinter could not find the specified file in the pool directory."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 5,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 6,
         "fields": {
-            "code": 5,
+            "code": 6,
             "label": "The Audio Fingerprinter returned a 400 Bad Request response that could not be analysed."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 6,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 7,
         "fields": {
-            "code": 6,
+            "code": 7,
             "label": "The Audio Fingerprinter returned a 500 Internal Error."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 7,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 8,
         "fields": {
-            "code": 7,
+            "code": 8,
             "label": "The Audio Fingerprinter returned a 504 timeout error."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 8,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 9,
         "fields": {
-            "code": 8,
+            "code": 9,
             "label": "The connexion to the Audio Fingerprinter could not be established for an unknown reason."
         }
     },
     {
-        "model": "bodzify_api.fingerprintingerror",
-        "pk": 9,
+        "model": "bodzify_api.fingerprintmissingcausecode",
+        "pk": 10,
         "fields": {
-            "code": 9,
+            "code": 10,
             "label": "The Audio Fingerprinter service returned an unknown 422 Unprocessable Entity error."
+        }
+    },
+    
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 0,
+        "fields": {
+            "code": 0,
+            "label": "The audio meta analysis is disabled."
+        }
+    },
+
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 1,
+        "fields": {
+            "code": 1,
+            "label": "The track's file is missing."
+        }
+    },
+    
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 2,
+        "fields": {
+            "code": 2,
+            "label": "The track's file's fingerprinting failed making it unavailable for lookup."
+        }
+    },
+    
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 3,
+        "fields": {
+            "code": 3,
+            "label": "The track's duration is below 1 so MusicBrainz won't lookup."
+        }
+    },
+    
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 4,
+        "fields": {
+            "code": 4,
+            "label": "The Musicbrainz lookup did not find a matching recording."
+        }
+    },
+    
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 5,
+        "fields": {
+            "code": 5,
+            "label": "The MusicBrainz lookup failed with an error status code."
+        }
+    },
+    
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 6,
+        "fields": {
+            "code": 6,
+            "label": "The MusicBrainz lookup failed with an unknown status code."
+        }
+    },
+    
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 7,
+        "fields": {
+            "code": 7,
+            "label": "The MusicBrainz lookup failed for an unknown reason."
         }
     }
 ]
