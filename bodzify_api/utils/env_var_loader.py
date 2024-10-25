@@ -1,9 +1,11 @@
 
 
 import os
-from pathlib import Path
 import subprocess
+from pathlib import Path
+
 import dotenv
+
 from bodzify_api.utils.utils import print_django
 
 

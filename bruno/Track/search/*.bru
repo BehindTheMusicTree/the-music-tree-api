@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}tracks/
-  body: json
+  url: {{BASE_URL}}search/
+  body: multipartForm
   auth: inherit
+}
+
+body:multipart-form {
+  type: genre
 }

@@ -3,19 +3,13 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 
-from bodzify_api.model.criteria.Criteria import \
-    AttributesLabels as CriteriaAttributesLabels
+from bodzify_api.model.criteria.Criteria import Fields as ModelFields
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.children.CriteriaPlaylist import (
-    AttributesLabels, CriteriaPlaylist)
-from bodzify_api.serializer.playlist.children.criteria.input.query_param import \
-    CriteriaPlaylistQueryParamSerializer
-from bodzify_api.serializer.playlist.children.criteria.input.query_param import \
-    Fields as QueryParams
-from bodzify_api.serializer.playlist.children.criteria.output.detailed import \
-    CriteriaPlaylistDetailedSerializer
-from bodzify_api.serializer.playlist.children.criteria.output.without_tracks import \
-    CriteriaPlaylistWithoutTracksSerializer
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import Fields, CriteriaPlaylist
+from bodzify_api.serializer.schema.playlist.children.criteria.input.query_param \
+    import CriteriaPlaylistQueryParamSerializer, Fields as QueryParams
+from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import CriteriaPlaylistDetailedSerializer
+from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import CriteriaPlaylistSimpleSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
@@ -23,7 +17,7 @@ class GenrePlaylistViewSet(AppModelViewSet):
     queryset = CriteriaPlaylist.objects.filter(type_id=CriteriaTypesId.GENRE)
     serializers = {
         'default': CriteriaPlaylistDetailedSerializer,
-        'list':  CriteriaPlaylistWithoutTracksSerializer,
+        'list':  CriteriaPlaylistSimpleSerializer,
         'retrieve':  CriteriaPlaylistDetailedSerializer,
     }
 
@@ -35,22 +29,22 @@ class GenrePlaylistViewSet(AppModelViewSet):
         serializer.is_valid(raise_exception=True)
         validated_query_params = serializer.validated_data
 
-        queryset = CriteriaPlaylist.objects.filter(base_playlist__user=self.request.user, type_id=CriteriaTypesId.GENRE)
+        queryset = CriteriaPlaylist.objects.filter(user=self.request.user, type_id=CriteriaTypesId.GENRE)
 
         name_query_param = validated_query_params.get(QueryParams.NAME)  # type: ignore
-        if name_query_param is not None:
+        if name_query_param:
             queryset = queryset.filter(criteria__name__icontains=name_query_param)
 
         parent_uuid_query_param = validated_query_params.get(QueryParams.PARENT)  # type: ignore
-        if parent_uuid_query_param is not None:
+        if parent_uuid_query_param:
             if parent_uuid_query_param == "":
                 parent_uuid_query_param = None
             else:
                 parent_uuid_query_param = parent_uuid_query_param
-            queryset = queryset.filter(base_playlist__user=self.request.user,
+            queryset = queryset.filter(user=self.request.user,
                                        criteria__parent__uuid=parent_uuid_query_param)
 
-        return queryset.order_by(f"{AttributesLabels.CRITERIA}__{CriteriaAttributesLabels.NAME}")
+        return queryset.order_by(f"{Fields.CRITERIA}__{ModelFields.NAME}")
 
     @extend_schema(parameters=[OpenApiParameter(name=QueryParams.NAME,
                                                 type=OpenApiTypes.STR,

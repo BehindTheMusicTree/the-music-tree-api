@@ -47,8 +47,8 @@ class MetadataManager:
         raise NotImplementedError(f"{self.get_title.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_artist_name(self) -> Optional[str]:
-        raise NotImplementedError(f"{self.get_artist_name.__name__} method must be implemented.")
+    def get_artists_names(self) -> Optional[str]:
+        raise NotImplementedError(f"{self.get_artists_names.__name__} method must be implemented.")
 
     @abstractmethod
     def get_album_name(self) -> Optional[str]:
@@ -101,8 +101,8 @@ class MetadataManager:
                                                            file_rating: int,
                                                            normalized_rating_max_value: Optional[int] = None,
                                                            is_rating_from_traktor: bool = False):
-        if file_rating is not None:
-            if normalized_rating_max_value is not None:
+        if file_rating:
+            if normalized_rating_max_value:
                 if file_rating == 0 and is_rating_from_traktor:
                     return None
                 for star_rating_base_10 in range(11):
@@ -202,7 +202,7 @@ class MetadataManager:
     def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> dict:
         normalized_metadata = dict()
         normalized_metadata[NormalizedMetadataKeys.TITLE] = self.get_title()
-        normalized_metadata[NormalizedMetadataKeys.ARTIST_NAME] = self.get_artist_name()
+        normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES] = self.get_artists_names()
         normalized_metadata[NormalizedMetadataKeys.ALBUM_NAME] = self.get_album_name()
         normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES] = self.get_album_artists_name_str()
         normalized_metadata[NormalizedMetadataKeys.GENRE_NAME] = self.get_genre_name()
@@ -216,8 +216,8 @@ class MetadataManager:
                                    normalized_rating_max_value: Optional[int] = None):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             return self.get_title()
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
-            return self.get_artist_name()
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES:
+            return self.get_artists_names()
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
             return self.get_album_name()
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:

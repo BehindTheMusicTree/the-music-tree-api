@@ -3,8 +3,6 @@
 import requests
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api.model.track.MineTrack import AttributesLabels
-
 
 def check_if_url_contains_two_strings(url, string1, string2):
     return string1 in url and string2 in url
@@ -18,15 +16,15 @@ def check_if_remote_file_exists_using_get_request_with_range_header(url):
         else:
             return False
     except Exception as e:
-        raise ValidationError(f"There was an issue requesting ${AttributesLabels.URL}")
+        raise ValidationError(f"There was an issue requesting the url {url}")
 
 
-def validate_url(value):
+def validate_url(value: str):
     if not value.startswith('http'):
-        raise ValidationError({AttributesLabels.URL: f"{value} is not a valid url."})
+        raise ValidationError(f"url: {value} is not a valid url.")
     if (not value.lower().endswith('.mp3')
         and not value.lower().endswith('.wav')
             and not value.lower().endswith('.flac')):
-        raise ValidationError({AttributesLabels.URL: f"{value} is not a valid audio file."})
+        raise ValidationError(f"url: {value} is not a valid audio file.")
     if not check_if_remote_file_exists_using_get_request_with_range_header(value):
-        raise ValidationError({AttributesLabels.URL: f"{value} does not exist."})
+        raise ValidationError(f"url: {value} does not exist.")

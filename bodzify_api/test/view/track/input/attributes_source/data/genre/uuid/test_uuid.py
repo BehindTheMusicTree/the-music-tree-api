@@ -3,10 +3,10 @@
 import pytest
 
 from bodzify_api.test import conftest
-from bodzify_api.test.view.track.input.attributes_source.data.genre.uuid.GenreUuidTestCase import \
-    GenreUuidTestCase
+from bodzify_api.test.view.track.input.attributes_source.data.genre.uuid.TestCase import \
+    TestCase
 
 
-@pytest.fixture(params=[GenreUuidTestCase])
-def child_instance(request, db):
-    yield from conftest.base_child_instance(request, db)
+@pytest.fixture(params=[TestCase])
+def childinstance(request, db):
+    yield from conftest.base_childinstance(request, db)

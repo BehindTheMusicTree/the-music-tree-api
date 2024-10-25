@@ -2,16 +2,13 @@
 
 import os
 
-from rest_framework import status
-from rest_framework import exceptions
-from rest_framework.pagination import PageNumberPagination
-
-from django.db import IntegrityError
 import django.views.defaults
-from django.http import FileResponse
-from rest_framework.response import Response
 from django.core.paginator import Paginator
-
+from django.db import IntegrityError
+from django.http import FileResponse
+from rest_framework import exceptions, status
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 INTEGRITY_ERROR_MESSAGE = "There is an issue with the object sent"
 

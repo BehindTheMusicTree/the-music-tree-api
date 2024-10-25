@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
-from abc import abstractmethod
 import re
+from abc import abstractmethod
 
 from django.db import IntegrityError
 from django.http import QueryDict
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.serializers import ModelSerializer
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.serializers import ModelSerializer
+from rest_framework.exceptions import APIException
 
 from bodzify_api.service.Service import Service
 from bodzify_api.view import utility
@@ -25,6 +26,14 @@ class PaginatedResponseFields:
 
 class AppModelViewSet(MultiSerializerViewSet):
     permission_classes = [IsAuthenticated]
+
+    @abstractmethod
+    def _get_detailed_serializer(self, instance) -> ModelSerializer:
+        raise NotImplementedError("This method must be implemented in the subclass")
+
+    @abstractmethod
+    def _get_service(self) -> Service:
+        raise NotImplementedError("This method must be implemented in the subclass")
 
     @staticmethod
     def camel_to_snake(name):
@@ -47,7 +56,7 @@ class AppModelViewSet(MultiSerializerViewSet):
                 snake_case_dict[snake_case_key] = value
         return snake_case_dict
 
-    def __init__(self, service, **kwargs):
+    def __init__(self, service: Service, **kwargs):
         super().__init__(**kwargs)
         self.service = service
 
@@ -64,10 +73,10 @@ class AppModelViewSet(MultiSerializerViewSet):
 
     def _update(self, request, *args, **kwargs):
         request_data_snake_case = self.get_dict_with_snake_case_keys_from_form_data(request.data)
-        updated_instance = self.service.update(put_data=request_data_snake_case,
-                                               old_instance=self.get_object(),
-                                               request=request)
-        response_serializer_data = self._get_detailed_serializer(updated_instance).data
+        updatedinstance = self.service.update(put_data=request_data_snake_case,
+                                              oldinstance=self.get_object(),
+                                              request=request)
+        response_serializer_data = self._get_detailed_serializer(updatedinstance).data
         headers = self.get_success_headers(response_serializer_data)
         return Response(data=response_serializer_data, status=status.HTTP_200_OK, headers=headers)
 
@@ -75,35 +84,38 @@ class AppModelViewSet(MultiSerializerViewSet):
         queryset = self.get_queryset()
 
         page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        if page:
+            data = self.get_serializer(page, many=True).data
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        if not queryset.exists():
+            data = []
+
+        return self.get_paginated_response(data)
 
     def _destroy(self, request, *args, **kwargs):
         self.service.delete(user=request.user, instance=self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_paginated_response(self, data):
-        assert self.paginator is not None
-        return Response({
-            PaginatedResponseFields.OVERALL_TOTAL: self.paginator.page.paginator.count,
-            PaginatedResponseFields.NEXT: self.paginator.get_next_link(),
-            PaginatedResponseFields.PREVIOUS: self.paginator.get_previous_link(),
-            PaginatedResponseFields.RESULTS: data
-        })
+        if not self.paginator:
+            raise APIException("Pagination not set", code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        if data:
+            return Response({
+                PaginatedResponseFields.OVERALL_TOTAL: self.paginator.page.paginator.count,
+                PaginatedResponseFields.NEXT: self.paginator.get_next_link(),
+                PaginatedResponseFields.PREVIOUS: self.paginator.get_previous_link(),
+                PaginatedResponseFields.RESULTS: data
+            })
+        else:
+            return Response({
+                PaginatedResponseFields.OVERALL_TOTAL: 0,
+                PaginatedResponseFields.NEXT: None,
+                PaginatedResponseFields.PREVIOUS: None,
+                PaginatedResponseFields.RESULTS: []
+            })
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
-
-    @abstractmethod
-    def _get_detailed_serializer(self, instance) -> ModelSerializer:
-        raise NotImplementedError("This method must be implemented in the subclass")
-
-    @abstractmethod
-    def _get_service(self) -> Service:
-        raise NotImplementedError("This method must be implemented in the subclass")

@@ -27,7 +27,7 @@ class Id3Manager(MetadataManager):
     def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
 
-    def get_artist_name(self) -> Optional[str]:
+    def get_artists_names(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.ARTIST_NAME)
 
     def get_album_name(self) -> Optional[str]:
@@ -36,7 +36,7 @@ class Id3Manager(MetadataManager):
     def get_album_artists_name_str(self) -> Optional[str]:
         album_artists_name_str_raw = (self._get_first_value_str_if_exists_in_file_metadata_or_none(
             self.Id3TextFrames.ALBUM_ARTISTS_NAMES))
-        if album_artists_name_str_raw is not None:
+        if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
         return None
 
@@ -73,7 +73,7 @@ class Id3Manager(MetadataManager):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             id3_key = self.Id3TextFrames.TITLE
             text_frame_class = TIT2
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTIST_NAME:
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES:
             id3_key = self.Id3TextFrames.ARTIST_NAME
             text_frame_class = TPE1
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
@@ -88,7 +88,7 @@ class Id3Manager(MetadataManager):
         elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
             normalized_rating = normalized_metadata_value
             self.file_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
-            if normalized_rating is not None:
+            if normalized_rating:
                 id3_rating = self._get_file_rating_from_normalized_rating(
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,

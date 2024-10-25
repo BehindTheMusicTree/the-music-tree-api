@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-
+from uuid import UUID
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.test.AppTestCase import AppTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class BasePlaylistTestCase(AppTestCase):
+class BasePlaylistTestCase(ApiTestCase):
 
     def _get(self, data_dict=None):
         response = self.api_client.get(path=reverse('playlist-list'),
@@ -16,7 +16,7 @@ class BasePlaylistTestCase(AppTestCase):
             self._set_results_attributes(response)
         return response
 
-    def _retrieve(self, base_playlist_uuid: str):
+    def _retrieve(self, base_playlist_uuid: UUID):
         response = self.api_client.get(path=reverse('playlist-detail', kwargs={'pk': base_playlist_uuid}))
         if response.status_code == status.HTTP_200_OK:
             self._set_result(response=response)

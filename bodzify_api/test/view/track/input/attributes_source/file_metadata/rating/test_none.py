@@ -10,16 +10,16 @@ from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 class TestCase(TrackTestCase):
 
     def test_mp3_then_none(self):
-        response = self.post_lib_track_with_generic_sample_no_tags(extension="mp3")
+        response = self._post_lib_track_with_generic_sample_no_tags(extension="mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.rating == None
+        assert self.saved_lib_track.rating == None
 
     def test_wav_then_none(self):
-        response = self.post_lib_track_with_generic_sample_no_tags(extension="wav")
+        response = self._post_lib_track_with_generic_sample_no_tags(extension="wav")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.rating == None
+        assert self.saved_lib_track.rating == None
 
     def test_flac_then_none(self):
-        response = self.post_lib_track_with_generic_sample_no_tags(extension="flac")
+        response = self._post_lib_track_with_generic_sample_no_tags(extension="flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.rating == None
+        assert self.saved_lib_track.rating == None

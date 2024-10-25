@@ -3,7 +3,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.criteria.input.schema.schema import \
+from bodzify_api.serializer.schema.criteria.input.schema.schema import \
     Fields as InputFields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
@@ -24,5 +24,12 @@ class TestCase(CriteriaTestCase):
 
     def test_multiple_values_then_error(self):
         data = {InputFields.NAME: ["value", "value2"]}
+        response = self.post_genre(data_dict=data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_already_exists_then_error(self):
+        genre_name = "Rock"
+        self.model_fixture_factory.create_genre(name=genre_name)
+        data = {InputFields.NAME: genre_name}
         response = self.post_genre(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

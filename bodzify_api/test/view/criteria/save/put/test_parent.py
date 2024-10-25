@@ -2,8 +2,8 @@
 
 from rest_framework import status
 
-from bodzify_api.serializer.criteria.input.schema.endpoint.put import \
-    Fields as PUT_FIELD
+from bodzify_api.serializer.schema.criteria.input.schema.endpoint.put import \
+    Fields as PutFields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 
@@ -21,12 +21,12 @@ class TestCase(CriteriaTestCase):
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
 
-        data = {PUT_FIELD.PARENT: punkhardcore_genre.uuid}
+        data = {PutFields.PARENT: punkhardcore_genre.uuid}
         response = self.put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_error_when_parent_is_itself(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        data = {PUT_FIELD.PARENT: rock_genre.uuid}
+        data = {PutFields.PARENT: rock_genre.uuid}
         response = self.put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

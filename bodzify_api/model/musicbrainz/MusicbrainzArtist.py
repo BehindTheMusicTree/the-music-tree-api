@@ -1,41 +1,29 @@
 #!/usr/bin/env python
 
+from re import M
 from django.db import models
 from django.db.models import F, Value
-from django.utils import timezone
 
 from bodzify_api import settings
+from bodzify_api.model.musicbrainz.MusicbrainzResource import MusicbrainzResource, Fields as MusicbrainzResourceFields
 
 
-class AttributesLabels:
-    UUID = 'uuid'
+class Fields:
+    CREATED_ON = MusicbrainzResourceFields.CREATED_ON
+    UPDATED_ON = MusicbrainzResourceFields.UPDATED_ON
+    MUSICBRAINZ_ID = MusicbrainzResourceFields.MUSICBRAINZ_ID
+    MUSICBRAINZ_LINK = MusicbrainzResourceFields.MUSICBRAINZ_LINK
     NAME = 'name'
-    MUSICBRAINZ_LINK = 'musicbrainz_link'
-    CREATED_ON = 'created_on'
-    UPDATED_ON = 'updated_on'
 
 
-class ConcatOp(models.Func):
-    arg_joiner = " || "
-    function = None
-    output_field = models.TextField()
-    template = "%(expressions)s"
-
-
-class MusicbrainzArtist(models.Model):
-    uuid = models.UUIDField(primary_key=True, editable=False)
+class MusicbrainzArtist(MusicbrainzResource):
     name = models.CharField(max_length=settings.MUSICBRAINZ_ARTIST_NAME_LEN_MAX, default=None)
-    musicbrainz_link = models.GeneratedField(  # type: ignore
-        expression=ConcatOp(Value(settings.MUSICBRAINZ_ARTIST_URL), F(AttributesLabels.UUID)),
-        output_field=models.CharField(max_length=len(settings.MUSICBRAINZ_ARTIST_URL) + 36),
-        db_persist=True)
-    created_on = models.DateTimeField(default=timezone.now, editable=False)
-    updated_on = models.DateTimeField(auto_now=True, editable=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
         db_table = 'bodzify_api_musicbrainz_artist'
-        verbose_name = 'MusicBrainz Artist'
-        verbose_name_plural = 'MusicBrainz Artists'
+        verbose_name = 'Musicbrainz Artist'
+        verbose_name_plural = 'Musicbrainz Artists'
+        indexes = [models.Index(fields=[Fields.MUSICBRAINZ_ID], name='mb_artist_id_idx')]

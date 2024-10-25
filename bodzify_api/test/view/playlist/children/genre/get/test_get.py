@@ -2,11 +2,11 @@
 
 from rest_framework import status
 
-from bodzify_api.model.playlist.children.CriteriaPlaylist import \
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
     CriteriaPlaylist
-from bodzify_api.serializer.playlist.children.criteria.input.query_param import \
+from bodzify_api.serializer.schema.playlist.children.criteria.input.query_param import \
     Fields as GetQueryParams
-from bodzify_api.serializer.playlist.children.criteria.output.detailed import \
+from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import \
     Fields as GetResultFields
 from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import \
     GenrePlaylistTestCase
@@ -25,9 +25,9 @@ class TestCase(GenrePlaylistTestCase):
 
     def test_get_two_by_parent_none(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        rock_playlist = CriteriaPlaylist.objects.get(criteria=rock_genre).base_playlist
+        rock_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rock_genre).base_playlist
         rap_genre = self.model_fixture_factory.create_genre(name="Rap")
-        rap_playlist = CriteriaPlaylist.objects.get(criteria=rap_genre).base_playlist
+        rap_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rap_genre).base_playlist
         data_dict = {GetQueryParams.PARENT: ""}
         response = self.get_genre_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK

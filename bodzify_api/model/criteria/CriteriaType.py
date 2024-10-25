@@ -13,7 +13,7 @@ class CriteriaTypesLabel:
     TAG = "tag"
 
 
-class AttributesLabels:
+class Fields:
     LABEL = "label"
 
 
@@ -24,9 +24,7 @@ class CriteriaType(models.Model):
         return str(self.pk) + " " + self.label
 
     class Meta:
-        constraints = [
-            models.CheckConstraint(check=~models.Q(label=""), name="criteria_non_empty_label")
-        ]
+        constraints = [models.CheckConstraint(check=~models.Q(label=""), name="criteria_non_empty_label")]
         db_table = 'bodzify_api_criteria_type'
         verbose_name = 'Criteria Type'
         verbose_name_plural = 'Criteria Types'

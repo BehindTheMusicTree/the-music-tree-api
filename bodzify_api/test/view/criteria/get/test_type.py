@@ -3,7 +3,7 @@
 from rest_framework import status
 
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesLabel
-from bodzify_api.serializer.criteria.output.detailed import Fields as GetFields
+from bodzify_api.serializer.schema.criteria.output.fields import Fields as GetFields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 

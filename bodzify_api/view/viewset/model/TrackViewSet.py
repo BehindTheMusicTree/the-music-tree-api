@@ -1,33 +1,34 @@
 #!/usr/bin/env python
 
 from django.db import transaction
-from django.http import HttpResponse
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 
-import bodzify_api.view.utility as utility
-from bodzify_api.model.track.LibraryTrack import AttributesLabels as LibTrackAttributesLabels
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.extract import LibTrackExtractSerializer
-from bodzify_api.serializer.track.input.endpoint.post import LibTrackPostSerializer
-from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields
-from bodzify_api.serializer.track.input.endpoint.put import LibTrackPutSerializer
-from bodzify_api.serializer.track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.service.TrackService import TrackService
+import bodzify_api.view.utility as utility
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
+from bodzify_api.model.track.lib.Fields import Fields as ModelFields
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.schema.track.input.endpoint.extract import LibTrackExtractSerializer
+from bodzify_api.serializer.schema.track.input.endpoint.post import LibTrackPostSerializer
+from bodzify_api.serializer.schema.track.input.endpoint.put import LibTrackPutSerializer
+from bodzify_api.serializer.schema.track.input.schema import Fields as SaveSchemaFields
+from bodzify_api.serializer.schema.track.output.detailed import LibTrackDetailedSerializer
+
+
 class GetFilterFields:
-    TITLE = LibTrackAttributesLabels.TITLE
-    ARTIST_NAME = SaveSchemaFields.ARTIST_NAME
-    ALBUM_NAME = SaveSchemaFields.ALBUM_ARTISTS_NAMES_STR
-    ALBUM_ARTISTS_NAME = SaveSchemaFields.ALBUM_ARTISTS_NAMES_STR
+    TITLE = ModelFields.TITLE
+    ARTIST_NAME = SaveSchemaFields.ARTISTS_NAMES
+    ALBUM_NAME = SaveSchemaFields.ALBUM_ARTISTS_NAMES
+    ALBUM_ARTISTS_NAME = SaveSchemaFields.ALBUM_ARTISTS_NAMES
     GENRE_NAME = SaveSchemaFields.GENRE_NAME
-    LANGUAGE = LibTrackAttributesLabels.LANGUAGE
+    LANGUAGE = ModelFields.LANGUAGE
 
 
 class TrackViewSet(AppModelViewSet):
@@ -51,17 +52,17 @@ class TrackViewSet(AppModelViewSet):
         genre_name_filter = self.request.GET.get(GetFilterFields.GENRE_NAME)
         language_filter = self.request.GET.get(GetFilterFields.LANGUAGE)
 
-        if title_filter is not None:
+        if title_filter:
             queryset = queryset.filter(title__icontains=title_filter)
-        if artist_name_filter is not None:
+        if artist_name_filter:
             queryset = queryset.filter(artist__name__icontains=artist_name_filter)
-        if album_name_filter is not None:
+        if album_name_filter:
             queryset = queryset.filter(album__name__icontains=album_name_filter)
-        if genre_name_filter is not None:
+        if genre_name_filter:
             queryset = queryset.filter(genre__name__icontain=genre_name_filter)
-        if language_filter is not None:
+        if language_filter:
             queryset = queryset.filter(language__icontains=language_filter)
-        return queryset.order_by(f"-{LibTrackAttributesLabels.CREATED_ON}")
+        return queryset.order_by(f"-{ModelFields.CREATED_ON}")
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return LibTrackDetailedSerializer(instance=instance)  # type: ignore
@@ -142,11 +143,8 @@ class TrackViewSet(AppModelViewSet):
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
-        track = LibraryTrack.objects.get(uuid=pk)
-        if track.track_file:
-            return utility.get_file_response(filePath=track.track_file.file.path, filename=track.track_file.file.name)
-        else:
-            return Response(data={"detail": "The requested track's file is missing."}, status=status.HTTP_410_GONE)
+        track: LibraryTrack = LibraryTrack.objects.get(uuid=pk)
+        return utility.get_file_response(filePath=track.track_file.file.path, filename=track.track_file.file.name)
 
     @transaction.atomic
     @extend_schema(request=LibTrackExtractSerializer,
@@ -181,11 +179,11 @@ class TrackViewSet(AppModelViewSet):
         serializer = LibTrackExtractSerializer(data=request_data_snake_case)
         serializer.is_valid(raise_exception=True)
 
-        track = self.service.extract(extract_data=request_data_snake_case, request=request)
+        track_service: TrackService = self.service  # type: ignore
+        track = track_service.extract(extract_data=request_data_snake_case, request=request)
         response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
-        return Response(
-            data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):

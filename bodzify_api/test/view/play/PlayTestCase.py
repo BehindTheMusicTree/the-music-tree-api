@@ -6,11 +6,11 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.model.Play import Play
-from bodzify_api.serializer.play.output.detailed import Fields as GetFields
-from bodzify_api.test.AppTestCase import AppTestCase
+from bodzify_api.serializer.schema.play.output.detailed import Fields as GetFields
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class PlayTestCase(AppTestCase):
+class PlayTestCase(ApiTestCase):
 
     def _set_saved_play_attribute(self, response):
         uuid = response.json()[GetFields.UUID]

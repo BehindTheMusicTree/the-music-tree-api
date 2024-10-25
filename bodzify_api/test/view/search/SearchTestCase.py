@@ -4,10 +4,10 @@
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.test.AppTestCase import AppTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class SearchTestCase(AppTestCase):
+class SearchTestCase(ApiTestCase):
 
     def _search(self, query):
         response = self.api_client.get(path=reverse('search-list'), data={'query': query})

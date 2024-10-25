@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+from bodzify_api.model.user.User import User
 from rest_framework import status, viewsets
-from django.contrib.auth.models import User
-from rest_framework.response import Response
-from bodzify_api.serializer.user.detailed import UserSerializer
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+
+from bodzify_api.serializer.schema.user.detailed import UserSerializer
 
 
 class Fields:

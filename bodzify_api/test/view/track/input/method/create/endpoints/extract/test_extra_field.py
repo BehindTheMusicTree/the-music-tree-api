@@ -9,5 +9,5 @@ class TestCase(TrackTestCase):
 
     def test_extra_field_then_error(self):
         data = {"field_not_handled": "pofkefposkfwp"}
-        response = self.extract_default_mine_track(data_dict=data)
+        response = self._extract_default_mine_track(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

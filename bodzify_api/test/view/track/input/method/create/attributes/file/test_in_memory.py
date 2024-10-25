@@ -13,5 +13,5 @@ Thus the python file object is not available. This test case is to ensure that t
 class TestCase(TrackTestCase):
 
     def test_in_memory(self):
-        response = self.post_lib_track_with_specific_sample("in_memory.flac")
+        response = self._post_lib_track_with_specific_sample("in_memory.flac")
         assert response.status_code == status.HTTP_201_CREATED

@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
+from uuid import UUID
+
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.test.AppTestCase import AppTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class ArtistViewTestCase(AppTestCase):
+class ArtistViewTestCase(ApiTestCase):
 
-    def _delete(self, artistUuid: str):
+    def _delete_artist(self, artistUuid: UUID):
         return self.api_client.delete(path=reverse('artist-detail', kwargs={'pk': artistUuid}))
 
     def _get(self):
@@ -17,5 +19,5 @@ class ArtistViewTestCase(AppTestCase):
             self._set_results_attributes(response)
         return response
 
-    def _retrieve(self, artistUuid: str):
+    def _retrieve(self, artistUuid: UUID):
         return self.api_client.get(path=reverse('artist-detail', kwargs={'pk': artistUuid}))

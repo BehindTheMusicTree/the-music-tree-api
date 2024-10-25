@@ -21,7 +21,7 @@ class FieldStrFromDataTestCase(FieldFromDataTestCase):
         if not self.post_field_key:
             raise NotImplementedError("post_field_key is not set")
         data = {self.post_field_key: ["value", "value2"], }
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -31,7 +31,7 @@ class FieldIntFromDataTestCase(FieldFromDataTestCase):
         if not self.post_field_key:
             raise NotImplementedError("post_field_key is not set")
         data = {self.post_field_key: [1, 2]}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -57,5 +57,5 @@ class NonNullableStrFieldFromDataTestCase(FieldStrFromDataTestCase):
 
     def test_empty_then_error(self):
         data = {self.post_field_key: ""}
-        response = self.post_lib_track_with_generic_sample_no_tags(extension='mp3', data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(extension='mp3', data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

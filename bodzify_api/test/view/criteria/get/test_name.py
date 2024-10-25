@@ -2,7 +2,7 @@
 
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import AttributesLabels
+from bodzify_api.model.criteria.Criteria import Fields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 
@@ -15,4 +15,4 @@ class TestCase(CriteriaTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 1
         rock_genre_json = self.results[0]
-        assert rock_genre_json[AttributesLabels.NAME] == genre_name
+        assert rock_genre_json[Fields.NAME] == genre_name

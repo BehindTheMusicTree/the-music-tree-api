@@ -11,11 +11,11 @@ class TestCase(TrackTestCase):
         source_filename_without_extension = "sample"
         source_filename_extension = ".mp3"
         source_filename_with_extension = source_filename_without_extension + source_filename_extension
-        self.post_lib_track_with_specific_sample(specific_sample_filename=source_filename_with_extension)
-        track1 = self.lib_track_saved
+        self._post_lib_track_with_specific_sample(specific_sample_filename=source_filename_with_extension)
+        track1 = self.saved_lib_track
 
-        response = self.post_lib_track_with_specific_sample(specific_sample_filename=source_filename_with_extension)
-        track2 = self.lib_track_saved
+        response = self._post_lib_track_with_specific_sample(specific_sample_filename=source_filename_with_extension)
+        track2 = self.saved_lib_track
 
         assert response.status_code == status.HTTP_201_CREATED
         assert track1.track_file

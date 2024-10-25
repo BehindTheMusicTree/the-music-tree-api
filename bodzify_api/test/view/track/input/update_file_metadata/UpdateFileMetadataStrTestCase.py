@@ -28,10 +28,10 @@ class UpdateFileMetadataStrTestCase(TrackTestCase):
             data.update(additional_data_dict)
 
         if file_has_tags:
-            response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension,
-                                                                                    data_dict=data)
+            response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension,
+                                                                                     data_dict=data)
         else:
-            response = self.post_lib_track_with_generic_sample_no_tags(extension=self.file_extension, data_dict=data)
+            response = self._post_lib_track_with_generic_sample_no_tags(extension=self.file_extension, data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
 
         if value_expected_in_metadata == self.VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED:

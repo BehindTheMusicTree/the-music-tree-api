@@ -1,0 +1,23 @@
+meta {
+  name: massano 7m21 mp3
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/critical/audio_fingerprinter_connection/sample/input/oostil - drown (massano remix) - 7m21.mp3)
+}
+
+vars:post-response {
+  trackAllumerUuid: res.body.uuid
+}

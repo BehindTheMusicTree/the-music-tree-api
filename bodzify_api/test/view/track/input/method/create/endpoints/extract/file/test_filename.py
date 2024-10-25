@@ -3,7 +3,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.track.input.endpoint.extract import \
+from bodzify_api.serializer.schema.track.input.endpoint.extract import \
     Fields as ExtractFields
 from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
 
@@ -15,9 +15,9 @@ class FilenameTestCase(TrackTestCase):
             ExtractFields.TITLE: "ImHere",
             ExtractFields.ARTISTS_NAMES_STR: "Roméo",
         }
-        response = self.extract_default_mine_track(data_dict=data_dict)
+        response = self._extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.track_file.filename == \
+        assert self.saved_lib_track.track_file.filename == \
             f"Roméo - ImHere.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_title_and_artist_with_spaces_then_filename_with_spaces(self):
@@ -27,9 +27,9 @@ class FilenameTestCase(TrackTestCase):
             ExtractFields.TITLE: title,
             ExtractFields.ARTISTS_NAMES_STR: artist_name,
         }
-        response = self.extract_default_mine_track(data_dict=data_dict)
+        response = self._extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.track_file.filename == \
+        assert self.saved_lib_track.track_file.filename == \
             f"{artist_name} - {title}.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_title_and_artist_with_special_characters_then_filename_with_them(self):
@@ -39,17 +39,17 @@ class FilenameTestCase(TrackTestCase):
             ExtractFields.TITLE: title,
             ExtractFields.ARTISTS_NAMES_STR: artist_name,
         }
-        response = self.extract_default_mine_track(data_dict=data_dict)
+        response = self._extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.track_file.filename == \
+        assert self.saved_lib_track.track_file.filename == \
             f"{artist_name} - {title}.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_only_title_in_data_then_filename_with_title(self):
         title = "Hellö"
         data_dict = {ExtractFields.TITLE: title}
-        response = self.extract_default_mine_track(data_dict=data_dict)
+        response = self._extract_default_mine_track(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.track_file.filename == \
+        assert self.saved_lib_track.track_file.filename == \
             f"{title}.{TrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_filename(self):
@@ -58,7 +58,7 @@ class FilenameTestCase(TrackTestCase):
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"
             + "_KN414JidBikY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
         data_dict = {ExtractFields.URL: track_url}
-        response = self.extract(data_dict=data_dict)
+        response = self._extract(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert len(self.lib_track_saved.track_file.filename) == \
+        assert len(self.saved_lib_track.track_file.filename) == \
             settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH

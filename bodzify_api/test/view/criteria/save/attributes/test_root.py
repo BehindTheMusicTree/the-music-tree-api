@@ -2,7 +2,7 @@
 
 from rest_framework import status
 
-from bodzify_api.serializer.criteria.input.schema.schema import \
+from bodzify_api.serializer.schema.criteria.input.schema.schema import \
     Fields as InputFields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 

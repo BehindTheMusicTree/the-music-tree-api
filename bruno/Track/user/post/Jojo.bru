@@ -1,0 +1,21 @@
+meta {
+  name: Jojo
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}users/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  username: jojo
+  password: jojo
+  email: jojo@jojo.com
+}
+
+vars:post-response {
+  userJojoId: res.body.id
+}

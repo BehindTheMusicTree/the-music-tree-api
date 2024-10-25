@@ -8,5 +8,5 @@ from bodzify_api.test.view.track.input.attributes_source.data.album.AlbumTestCas
 
 
 @pytest.fixture(params=[AlbumTestCase])
-def child_instance(request, db):
-    yield from conftest.base_child_instance(request, db)
+def childinstance(request, db):
+    yield from conftest.base_childinstance(request, db)

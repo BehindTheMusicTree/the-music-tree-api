@@ -1,0 +1,20 @@
+meta {
+  name: celinkinpark mb duration null
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/Documents/Music/Sets/Interactif/2/09 - Celinekin Park (Linkin Park vs. Celine Dion).mp3)
+  genreName: mashup
+}

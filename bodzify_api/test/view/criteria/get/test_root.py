@@ -2,7 +2,7 @@
 
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import AttributesLabels
+from bodzify_api.model.criteria.Criteria import Fields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 
 
@@ -13,7 +13,7 @@ class TestCase(CriteriaTestCase):
         response = self.get_genres()
         assert response.status_code == status.HTTP_200_OK
         genre_json = self.results[0]
-        assert genre_json[AttributesLabels.ROOT][AttributesLabels.UUID] == genre.uuid
+        assert genre_json[Fields.ROOT][Fields.UUID] == genre.uuid
 
     def test_root_of_first_descandant(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
@@ -21,8 +21,8 @@ class TestCase(CriteriaTestCase):
         response = self.get_genres()
         assert response.status_code == status.HTTP_200_OK
         for json_element in self.results:
-            if json_element[AttributesLabels.UUID] == punk_genre.uuid:
-                assert json_element[AttributesLabels.ROOT][AttributesLabels.UUID] == rock_genre.uuid
+            if json_element[Fields.UUID] == punk_genre.uuid:
+                assert json_element[Fields.ROOT][Fields.UUID] == rock_genre.uuid
 
     def test_root_of_second_descandant(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
@@ -31,5 +31,5 @@ class TestCase(CriteriaTestCase):
         response = self.get_genres()
         assert response.status_code == status.HTTP_200_OK
         for json_element in self.results:
-            if json_element[AttributesLabels.UUID] == punkhardcore_genre.uuid:
-                assert json_element[AttributesLabels.ROOT][AttributesLabels.UUID] == rock_genre.uuid
+            if json_element[Fields.UUID] == punkhardcore_genre.uuid:
+                assert json_element[Fields.ROOT][Fields.UUID] == rock_genre.uuid

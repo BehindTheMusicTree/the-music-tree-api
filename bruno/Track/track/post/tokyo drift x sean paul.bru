@@ -1,0 +1,20 @@
+meta {
+  name: tokyo drift x sean paul
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/Documents/Music/mariage/Tokyo Drift x Temperature x You Little Beauty (BENNE BOOM Mashup).mp3)
+  language: fr
+}

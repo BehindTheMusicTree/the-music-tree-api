@@ -1,7 +1,7 @@
 [
     {
         "model": "bodzify_api.user", 
-        "pk": 2, 
+        "id": 2, 
         "fields": {
             "password": "pbkdf2_sha256$390000$JQoWgc4WW31EnUMwGIbLM7$iuexguktNsS6KQ8fkq5/EK7Hjq0qbm+Nr4ucmUwsxUU=", 
             "last_login": null, 

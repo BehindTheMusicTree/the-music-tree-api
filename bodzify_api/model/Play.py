@@ -6,21 +6,21 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from bodzify_api import settings
+from bodzify_api.model.base.PrivateStandardResource \
+    import PrivateStandardResource, Fields as PrivateStandardResourceFields
 
 
-class AttributesLabels:
-    UUID = 'uuid'
-    USER = 'user'
+class Fields:
+    CREATED_ON = PrivateStandardResourceFields.CREATED_ON
+    UPDATED_ON = PrivateStandardResourceFields.UPDATED_ON
+    USER = PrivateStandardResourceFields.USER
     CONTENT_TYPE = 'content_type'
     OBJECT_UUID = 'object_uuid'
     CONTENT_OBJECT = 'content_object'
     TIME = 'time'
 
 
-class Play(models.Model):
-    uuid = models.CharField(primary_key=True, default=shortuuid.uuid, max_length=settings.UUID_LEN, editable=False)
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+class Play(PrivateStandardResource):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_uuid = models.CharField(max_length=settings.UUID_LEN)
+    object_uuid = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_uuid')
-    time = models.DateTimeField(auto_now_add=True)

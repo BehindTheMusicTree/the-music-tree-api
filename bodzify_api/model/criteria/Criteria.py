@@ -1,31 +1,35 @@
 #!/usr/bin/env python
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from django.db import models
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Manager
 
 from bodzify_api import settings
-from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin, \
-    AttributesLabels as LibTrackMixinAttributesLabels
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.model.LibTrackMixin import LibTrackMixin, Fields as LibTrackMixinFields
+from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
+from bodzify_api.model.criteria.CriteriaType import CriteriaType
+
+if TYPE_CHECKING:
+    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
 
-class AttributesLabels:
+class Fields:
     MODEL = 'Criteria'
-    UUID = LibTrackMixinAttributesLabels.UUID
-    USER = LibTrackMixinAttributesLabels.USER
-    CREATED_ON = LibTrackMixinAttributesLabels.CREATED_ON
-    UPDATED_ON = LibTrackMixinAttributesLabels.UPDATED_ON
-    LIB_TRACKS = LibTrackMixinAttributesLabels.LIB_TRACKS
-    LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_NOT_ARCHIVED
-    LIB_TRACKS_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT
-    LIB_TRACKS_ARCHIVED_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_ARCHIVED_COUNT
-    DURATION_IN_SEC = LibTrackMixinAttributesLabels.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinAttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
+    CREATED_ON = LibTrackMixinFields.CREATED_ON
+    UPDATED_ON = LibTrackMixinFields.UPDATED_ON
+    USER = LibTrackMixinFields.USER
+    UUID = LibTrackMixinFields.UUID
+    LIB_TRACKS = LibTrackMixinFields.LIB_TRACKS
+    LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinFields.LIB_TRACKS_NOT_ARCHIVED
+    LIB_TRACKS_COUNT = LibTrackMixinFields.LIB_TRACKS_COUNT
+    LIB_TRACKS_ARCHIVED_COUNT = LibTrackMixinFields.LIB_TRACKS_ARCHIVED_COUNT
+    DURATION_IN_SEC = LibTrackMixinFields.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = 'name'
     TYPE = 'type'
     PARENT = 'parent'
+    CHILD = 'child'
     ASCENDANT = 'ascendant'
     ASCENDANTS = ASCENDANT + 's'
     DESCENDANT = 'descendant'
@@ -39,179 +43,64 @@ class AttributesLabels:
 
 class Criteria(LibTrackMixin):
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
-    type = models.ForeignKey('CriteriaType', on_delete=models.CASCADE)
-    parent = models.ForeignKey(AttributesLabels.MODEL,
-                               on_delete=models.CASCADE, null=True,
-                               related_name='child')
-    ascendants = models.ManyToManyField(AttributesLabels.MODEL,
+    type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self',
+                               on_delete=models.CASCADE,
+                               null=True,
+                               related_name=Fields.CHILD)
+    ascendants = models.ManyToManyField(Fields.MODEL,
                                         through='CriteriaAscendantRel',
-                                        related_name=AttributesLabels.MODEL + 's')
-
-    # null must be True because when the root is the criteria itself, we must create it first with a null root
-    # and then set the root to itself
-    root = models.ForeignKey(AttributesLabels.MODEL,
+                                        related_name=Fields.MODEL + 's')
+    root = models.ForeignKey('self',
                              on_delete=models.CASCADE,
-                             null=True,
-                             related_name=AttributesLabels.DESCENDANT)
+                             related_name=Fields.DESCENDANT)
 
-    @property
-    def criteria_playlist(self) -> 'CriteriaPlaylist':  # type: ignore
-        return self.criteria_playlist
+    objects: CriteriaManager = CriteriaManager()
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name='criteria_non_empty_name')]
+        indexes = [
+            models.Index(fields=[Fields.USER, Fields.NAME], name='criteria_user_name_idx'),
+            models.Index(fields=[Fields.USER, Fields.UUID], name='criteria_user_uuid_idx')
+        ]
 
-    @staticmethod
-    def _update_playlist_positions_to_fill_deleted_positions(base_playlist: BasePlaylist):
-        from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
-            AttributesLabels as LibTrackPlaylistPositionRelAttributesLabels
-        tracks_positions_ordered_asc = (
-            LibTrackPlaylistPositionRel.objects
-            .filter(base_playlist=base_playlist)
-            .order_by(LibTrackPlaylistPositionRelAttributesLabels.POSITION)
-        )
-        i = 1
-        for relation in tracks_positions_ordered_asc:
-            relation.position = i
-            relation.save()
-            i += 1
+    @property
+    def criteria_playlist(self) -> 'CriteriaPlaylist':
+        return self.criteria_playlist
 
-    @staticmethod
-    def _update_ascendants_of_criteria_and_children(criteria: 'Criteria'):
-        criteria.ascendants.clear()
-        current_degree = 1
-        current_parent = criteria.parent
-        while current_parent:
-            from bodzify_api.model.criteria.CriteriaAscendantRel import CriteriaAscendantRel
-            CriteriaAscendantRel.objects.create(descendant=criteria,
-                                                ascendant=current_parent,
-                                                degree=current_degree)
-            current_parent = current_parent.parent
-            current_degree = current_degree + 1
+    @property
+    def children(self) -> QuerySet['Criteria']:
+        return Criteria.objects.filter(user=self.user, parent=self)
 
-        for child in criteria.get_children():
-            Criteria._update_ascendants_of_criteria_and_children(child)
+    @property
+    def criteria_ascendant_relation_ascendants(self) -> Manager:
+        return self.criteria_ascendant_relation_ascendants
 
-    @staticmethod
-    def is_criteria1_descendant_of_criteria2(criteria1: 'Criteria', criteria2: 'Criteria'):
-        if criteria1.parent == criteria2:
+    def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
+        if self.parent == other_criteria:
             return True
-        elif criteria1.parent:
-            return Criteria.is_criteria1_descendant_of_criteria2(criteria1.parent, criteria2)
-        else:
-            return False
+        elif self.parent:
+            return self.parent.is_descendant_of(other_criteria)
+        return False
 
-    def __str__(self) -> str:
-        return f"{self.uuid} {self.name}"
+    @ staticmethod
+    def get_common_criteria(criteria_a: Optional['Criteria'], criteria_b: Optional['Criteria']) -> Optional['Criteria']:
+        if not criteria_a or not criteria_b:
+            return None
 
-    def _create(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-        base_playlist = BasePlaylist.objects.create(user=self.user)
-        CriteriaPlaylist.objects.create(base_playlist=base_playlist, type=self.type, criteria=self)
-        Criteria._update_ascendants_of_criteria_and_children(self)
-
-    def _update(self, old_criteria: 'Criteria', *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        if old_criteria.root != self.root:
-            self.criteria_playlist.save()  # type: ignore
-            self._update_root_of_children(criteria=self, new_root=self.root)  # type: ignore
-
-        if old_criteria.parent != self.parent:
-            self._update_playlists_of_ascendants(old_criteria.parent)
-            Criteria._update_ascendants_of_criteria_and_children(self)
-
-            if self.parent is not None:
-                self.criteria_playlist.parent = self.parent.criteria_playlist  # type: ignore
-            else:
-                self.criteria_playlist.parent = None  # type: ignore
-            self.criteria_playlist.save()  # type: ignore
-
-    def _update_playlists_of_ascendants(self, old_parent: Optional['Criteria']):
-        common_criteria = self.get_common_criteria(old_parent)
-
-        from bodzify_api.model.track.LibraryTrack import LibraryTrack
-        lib_tracks = LibraryTrack.objects.filter(
-            lib_track_position_relations__base_playlist=self.criteria_playlist.base_playlist)  # type: ignore
-
-        if self.parent is not None:
-            self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
-                lib_tracks=lib_tracks,
-                criteria_limit=common_criteria)
-
-        if old_parent is not None:
-            old_parent._remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
-                lib_tracks=lib_tracks,
-                criteria_limit=common_criteria)
-
-    def _add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
-            self, lib_tracks: QuerySet, criteria_limit: Optional['Criteria'] = None):
-        if self != criteria_limit:
-            base_playlist = self.criteria_playlist.base_playlist  # type: ignore
-
-            from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
-            for lib_track in lib_tracks:
-                LibTrackPlaylistPositionRel.objects.create(base_playlist=base_playlist, library_track=lib_track)
-            if self.parent is not None:
-                self.parent._add_tracks_to_playlist_of_criteria_and_ascendants_until_criteria_limit(
-                    lib_tracks=lib_tracks,
-                    criteria_limit=criteria_limit)
-
-    @staticmethod
-    def _remove_tracks_from_playlist(base_playlist: BasePlaylist, lib_tracks: QuerySet):
-        from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
-        (
-            LibTrackPlaylistPositionRel.objects
-            .filter(base_playlist=base_playlist, library_track__in=lib_tracks)  # type: ignore
-            .delete()
-        )
-
-    def _remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
-            self, lib_tracks: QuerySet, criteria_limit: Optional['Criteria'] = None):
-        if self != criteria_limit:
-            Criteria._remove_tracks_from_playlist(
-                base_playlist=self.criteria_playlist.base_playlist, lib_tracks=lib_tracks)  # type: ignore
-            Criteria._update_playlist_positions_to_fill_deleted_positions(
-                self.criteria_playlist.base_playlist)  # type: ignore
-            if self.parent is not None:
-                self.parent._remove_tracks_from_playlists_of_criteria_and_ascendants_until_criteria_limit(
-                    lib_tracks=lib_tracks,
-                    criteria_limit=criteria_limit)
-
-    def _update_root_of_children(self, criteria: 'Criteria', new_root: 'Criteria'):
-        children = criteria.get_children()
-        if children.exists():
-            for child in children:
-                child.root = new_root
-                child.save()
-
-    def get_common_criteria(self, criteriaB):
         visited = set()
+        current = criteria_a
+        while current:
+            visited.add(current)
+            current = current.parent
 
-        criteriaATreeItem = self
-        while criteriaATreeItem is not None:
-            visited.add(criteriaATreeItem)
-            criteriaATreeItem = criteriaATreeItem.parent
-
-        criteriaBTreeItem = criteriaB
-        while criteriaBTreeItem is not None:
-            if criteriaBTreeItem in visited:
-                return criteriaBTreeItem
-            criteriaBTreeItem = criteriaBTreeItem.parent
+        current = criteria_b
+        while current:
+            if current in visited:
+                return current
+            current = current.parent
 
         return None
 
-    def is_descendant_of(self, other_criteria):
-        return Criteria.is_criteria1_descendant_of_criteria2(self, other_criteria)
-
-    def get_children(self) -> QuerySet['Criteria']:
-        return Criteria.objects.filter(parent=self)
-
-    def save(self, *args, **kwargs):
-        self.root = self.parent.root if self.parent else self
-        try:
-            old_criteria = Criteria.objects.get(uuid=self.uuid)
-            self._update(old_criteria, *args, **kwargs)
-        except Criteria.DoesNotExist:
-            self._create(*args, **kwargs)
+    def __str__(self) -> str:
+        return f"{self.uuid} {self.name}"

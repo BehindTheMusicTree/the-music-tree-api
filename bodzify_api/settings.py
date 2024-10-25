@@ -2,11 +2,13 @@
 
 import datetime
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 
-from bodzify_api.utils.env_var_loader import load_calculated_env_paths, load_env_vars_from_file_if_exists, \
-    load_required_bool_env_var, load_required_path_env_var, load_required_secret_env_var, load_required_str_env_var
+from bodzify_api.utils.env_var_loader import (
+    load_calculated_env_paths, load_env_vars_from_file_if_exists,
+    load_required_bool_env_var, load_required_path_env_var,
+    load_required_secret_env_var, load_required_str_env_var)
 from bodzify_api.utils.utils import print_django
 
 
@@ -255,13 +257,15 @@ def setup_app_constants():
     global DEBUG
     DEBUG = load_required_bool_env_var('DEBUG')
 
-    global UUID_LEN
-    UUID_LEN = 22
-
     global USER_LIBRARIES_DIR_NAME_PREFIXE
     USER_LIBRARIES_DIR_NAME_PREFIXE = "user_"
+    global TEST_USER_LIBRARIES_DIR_NAME_PREFIXE
+    TEST_USER_LIBRARIES_DIR_NAME_PREFIXE = "test_user_"
     global USER_MAX_NUMBER
     USER_MAX_NUMBER = "10000000"  # hehe
+
+    global UUID_LEN
+    UUID_LEN = 36
 
     global FILE_PATH_MAX_LENGTH
     FILE_PATH_MAX_LENGTH = 255
@@ -279,6 +283,8 @@ def setup_app_constants():
     LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH = 20
     global LIB_TRACK_TITLE_LEN_MAX
     LIB_TRACK_TITLE_LEN_MAX = 200
+    global LIB_TRACK_POSITION_IN_ALBUM_MAX
+    LIB_TRACK_POSITION_IN_ALBUM_MAX = 1000
     global LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE
     LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE = ['myfreemp3.vip', 'myfreemp3']  # The order matters
     global LIB_TRACK_GENERATED_TITLE_LENGTH
@@ -298,27 +304,37 @@ def setup_app_constants():
     MINE_TRACK_URL_LEN_MAX = 1000
     global ALBUM_NAME_LEN_MAX
     ALBUM_NAME_LEN_MAX = 200
-    global ALBUM_ARTISTS_FIELD_LEN_MAX
-    ALBUM_ARTISTS_FIELD_LEN_MAX = 200
+    global ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX
+    ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX = 200
     global ARTIST_NAME_LEN_MAX
     ARTIST_NAME_LEN_MAX = 200
+    global ARTISTS_NAMES_LEN_MAX
+    ARTISTS_NAMES_LEN_MAX = 200
     global CRITERIA_NAME_LEN_MAX
     CRITERIA_NAME_LEN_MAX = 200
-    global SIMPLE_PLAYLIST_NAME_LEN_MAX
-    SIMPLE_PLAYLIST_NAME_LEN_MAX = 200
+    global MANUAL_PLAYLIST_NAME_LEN_MAX
+    MANUAL_PLAYLIST_NAME_LEN_MAX = 200
+
+    global FINGERPRINTING_ERROR_MESSAGE_LEN_MAX
+    FINGERPRINTING_ERROR_MESSAGE_LEN_MAX = 200
+    global FINGERPRINTING_ERROR_CODE_LABEL_LEN_MAX
+    FINGERPRINTING_ERROR_CODE_LABEL_LEN_MAX = 200
 
     MUSICBRAINZ_BASE_URL = "https://musicbrainz.org/"
+    global MUSICBRAINZ_ID_LEN_MAX
+    MUSICBRAINZ_ID_LEN_MAX = 36
     global MUSICBRAINZ_RECORDING_URL
     MUSICBRAINZ_RECORDING_URL = MUSICBRAINZ_BASE_URL + "recording/"
     global MUSICBRAINZ_RECORDING_TITLE_LEN_MAX
     MUSICBRAINZ_RECORDING_TITLE_LEN_MAX = 200
-    global MUSICBRAINZ_LOOKUP_ERROR_STR_LEN_MAX
-    MUSICBRAINZ_LOOKUP_ERROR_STR_LEN_MAX = 255
+    global MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX
+    MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX = 255
+    global MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX
+    MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX = 255
     global MUSICBRAINZ_ARTIST_URL
     MUSICBRAINZ_ARTIST_URL = MUSICBRAINZ_BASE_URL + "artist/"
     global MUSICBRAINZ_ARTIST_NAME_LEN_MAX
     MUSICBRAINZ_ARTIST_NAME_LEN_MAX = 200
-
     global PAGINATION_LIMIT_OFFSET_DEFAULT
     PAGINATION_LIMIT_OFFSET_DEFAULT = 30
 
@@ -355,7 +371,7 @@ def setup_static_files():
     # STATICFILES_DIRS = [] # No additional static files directories are needed.
 
 
-def setup_installed_apps():
+def setup_installed_apps_and_caches():
     global INSTALLED_APPS
     INSTALLED_APPS = ['django.contrib.admin',
                       'django.contrib.auth',
@@ -377,6 +393,14 @@ def setup_installed_apps():
 
     if STATIC_FILES_STATE in [StaticFileState.COLLECTING, StaticFileState.SERVING]:
         INSTALLED_APPS.append('django.contrib.staticfiles')
+
+    global CACHES
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
 
 
 def setup_middlewares():
@@ -444,6 +468,9 @@ def setup_templates():
 def setup_django_constants():
     global WSGI_APPLICATION
     WSGI_APPLICATION = f'{APP_NAME}.wsgi.application'
+
+    global AUTH_USER_MODEL
+    AUTH_USER_MODEL = f'{APP_NAME}.User'
 
     global AUTH_PASSWORD_VALIDATORS
     AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
@@ -542,15 +569,30 @@ FILE_UPLOAD_ENABLED = None
 
 set_secret_key()
 
+if 'pytest' in sys.argv[0]:
+    print_django("settings.py is being executed because of a pytest command.")
+
+    if os.environ.get('AUDIO_META_ANALYSIS_ENABLED', 'False').lower() == 'true':
+        AUDIO_META_ANALYSIS_ENABLED = True
+        print_django("The audio meta analysis is enabled.")
+    else:
+        AUDIO_META_ANALYSIS_ENABLED = False
+        print_django("The audio meta analysis is disabled.")
+else:
+    AUDIO_META_ANALYSIS_ENABLED = True
+    print_django("settings.py is not being executed because of a pytest command. The audio meta analysis is enabled.")
+
 if 'loaddata' in sys.argv:
     print_django("settings.py is being executed because of a loaddata command.")
+    load_calculated_env_paths(BASE_DIR)
     STATIC_FILES_STATE = StaticFileState.NOT_NEEDED
     setup_app_constants()
-    setup_installed_apps()
+    setup_installed_apps_and_caches()
     setup_middlewares()
     setup_django_constants()
     setup_db_connection()
     setup_templates()  # Needed to use the admin application
+    setup_media_dirs()  # Needed for the User model library path field
 else:
     load_calculated_env_paths(BASE_DIR)
     setup_app_exposure_if_needed()
@@ -569,7 +611,7 @@ else:
             STATIC_FILES_STATE = StaticFileState.SERVING
             setup_static_files()
 
-    setup_installed_apps()
+    setup_installed_apps_and_caches()
     setup_middlewares()
     setup_templates()
     setup_django_constants()

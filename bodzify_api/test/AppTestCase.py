@@ -5,38 +5,20 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from django.contrib.auth.models import User
 from django.core.management import call_command
 from django.test import TestCase
-from rest_framework_simplejwt.tokens import AccessToken
 
-from bodzify_api.test.AppApiClient import AppApiClient
-from bodzify_api.test.TestUser import TestUser
+from bodzify_api import settings
+from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
-from bodzify_api.view.viewset.model.AppModelViewSet import \
-    PaginatedResponseFields
 
 
 class AppTestCase(TestCase):
-    TEST_USERNAME = "pytest_user"
     SAMPLE_DIR_NAME = "sample"
+    DEFAULT_SAMPLE_FILENAME = "default.mp3"
     LIB_SAMPLE_DIR_NAME = "library"
     INPUT_SAMPLE_DIR_NAME = "input"
     GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR = Path("utils/generic_file_sample")
-    LIB_TRACK_DEFAULT_FILENAME_WITH_EXTENSION = "default.mp3"
-
-    api_client: AppApiClient
-
-    @staticmethod
-    def _merge_two_dicts(dict1, dict2):
-        dict1.update(dict2)
-        return dict1
-
-    @staticmethod
-    def _replace_none_values_by_empty_string(data_dict):
-        if data_dict is None:
-            return {}
-        return {k: ('' if v is None else v) for k, v in data_dict.items()}
 
     def _set_up_test_directories_and_variables(self):
         specific_test_dir_abs_path = Path(os.path.dirname(inspect.getfile(self.__class__)))
@@ -45,36 +27,33 @@ class AppTestCase(TestCase):
         self.specific_sample_dir_abs_path = specific_test_sample_dir_abs_path / self.INPUT_SAMPLE_DIR_NAME
         self.generic_sample_dir_abs_path = Path(os.path.dirname(os.path.abspath(__file__))) \
             / self.GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR
-        self.lib_track_default_file_abs_path = \
-            self.generic_sample_dir_abs_path / self.LIB_TRACK_DEFAULT_FILENAME_WITH_EXTENSION
-
-    def _set_results_attributes(self, response):
-        self.results = response.json()[PaginatedResponseFields.RESULTS]
-        self.overall_total = response.json()[PaginatedResponseFields.OVERALL_TOTAL]
-
-    def _set_result(self, response):
-        self.result = response.json()
-
-    def __login(self, user: User):
-        self.api_client.force_authenticate(user=user)
-        AccessToken.for_user(user)
-        self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
-        call_command('loaddata', 'app', 'pytest_user')
-        self.api_client = AppApiClient()
+        call_command('loaddata', 'app')
+        self.test_admin_user = User.objects.create_superuser(username='test_admin',
+                                                             password='test_admin',
+                                                             email='test_admin@example.com',
+                                                             is_test_user=True)
+
+        self.test_user1 = User.objects.create_user(username='pytest_user1',
+                                                   password='pytest_user1',
+                                                   email='pytest@user1.com',
+                                                   is_test_user=True)
+
+        self.test_user2 = User.objects.create_user(username='pytest_user2',
+                                                   password='pytest_user2',
+                                                   email='pytest@user2.com',
+                                                   is_test_user=True)
+
         self._set_up_test_directories_and_variables()
-        self.test_user = TestUser(username=self.TEST_USERNAME,
-                                  lib_track_default_file_abs_path=self.lib_track_default_file_abs_path)
-        self.model_fixture_factory = ModelFixtureFactory(test_user=self.test_user)
-        if os.path.isdir(self.lib_sample_dir_abs_path):
-            for file_relative_path in os.listdir(self.lib_sample_dir_abs_path):
-                self.test_user.copy_file_to_lib(self.lib_sample_dir_abs_path / file_relative_path)
-        self.__login(self.test_user.django_user)
+        generic_sample_path = self.generic_sample_dir_abs_path / self.DEFAULT_SAMPLE_FILENAME
+        self.model_fixture_factory = ModelFixtureFactory(default_test_user=self.test_user1,
+                                                         lib_samples_dir=self.lib_sample_dir_abs_path,
+                                                         generic_sample_path=generic_sample_path)
 
         super().setUp()
 
-        if methods_names_to_implement is not None:
+        if methods_names_to_implement:
             for method_name in methods_names_to_implement:
                 if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
                     raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")

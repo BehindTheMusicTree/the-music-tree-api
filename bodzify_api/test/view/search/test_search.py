@@ -4,15 +4,15 @@ from rest_framework import status
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.playlist.children.SimplePlaylist import SpecialNames as SIMPLE_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.album.with_only_name_and_artists import Fields as AlbumFields
-from bodzify_api.serializer.artist.with_only_name import Fields as ArtistFields
-from bodzify_api.serializer.playlist.children.criteria.output.without_tracks import Fields as CriteriaPlaylistFields
-from bodzify_api.serializer.playlist.children.simple.output.without_tracks import Fields as SimplePlaylistFields
-from bodzify_api.serializer.track.output.detailed import Fields as LibTrackGetFields
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.children.ManualPlaylist import SpecialNames as MANUAL_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.schema.album.minimum import Fields as AlbumFields
+from bodzify_api.serializer.schema.artist.minimum import Fields as ArtistFields
+from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import Fields as CriteriaPlaylistFields
+from bodzify_api.serializer.schema.playlist.children.simple.output.simple import Fields as ManualPlaylistFields
+from bodzify_api.serializer.schema.track.output.detailed import Fields as LibTrackGetFields
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
 
@@ -21,7 +21,7 @@ class TestCase(SearchTestCase):
     def test_query_in_track_artist_and_album(self):
         sum41_artist = self.model_fixture_factory.create_artist(name="Sum 41")
         jailesum_album = self.model_fixture_factory.create_album(name="J'ai le Sum")
-        summerlove_track = self.model_fixture_factory.create_lib_track(title="Summer Love")
+        summerlove_track = self.model_fixture_factory.create_lib_track_with_file(title="Summer Love")
 
         response = self._search("Sum")
         assert response.status_code == status.HTTP_200_OK
@@ -32,13 +32,13 @@ class TestCase(SearchTestCase):
         assert self.results[Album.__name__][0][AlbumFields.NAME] == jailesum_album.name
 
     def test_the_all_string_including_a_track(self):
-        werealltoblame_track = self.model_fixture_factory.create_lib_track(title="We're All To Blame")
+        werealltoblame_track = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame")
         response = self._search("All")
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 2
         track_title_key = LibTrackGetFields.TITLE
         assert self.results[LibraryTrack.__name__][0][track_title_key] == werealltoblame_track.title
-        assert self.results[SimplePlaylist.__name__][0][SimplePlaylistFields.NAME] == SIMPLE_PLAYLIST_SPECIAL_NAMES.ALL
+        assert self.results[ManualPlaylist.__name__][0][ManualPlaylistFields.NAME] == MANUAL_PLAYLIST_SPECIAL_NAMES.ALL
 
     def test_non_sensitiveness(self):
         rap_criteria_name = "Rap"

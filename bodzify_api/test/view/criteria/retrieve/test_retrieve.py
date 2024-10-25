@@ -3,8 +3,7 @@
 
 from rest_framework import status
 
-from bodzify_api.serializer.criteria.output.detailed import \
-    Fields as RetrieveFields
+from bodzify_api.serializer.schema.criteria.output.fields import Fields as RetrieveFields
 from bodzify_api.test.view.criteria.CriteriaTestCase import CriteriaTestCase
 from bodzify_api.utils.utils import to_camel_case
 
@@ -22,10 +21,10 @@ class TestCase(CriteriaTestCase):
         criteria = self.model_fixture_factory.create_genre(name='rock')
 
         title1 = 'stylax'
-        track1_uuid = self.model_fixture_factory.create_lib_track(title=title1, genre=criteria).uuid
+        track1_uuid = self.model_fixture_factory.create_lib_track_with_file(title=title1, genre=criteria).uuid
 
         title2 = 'bien'
-        track2_uuid = self.model_fixture_factory.create_lib_track(title=title2, genre=criteria).uuid
+        track2_uuid = self.model_fixture_factory.create_lib_track_with_file(title=title2, genre=criteria).uuid
 
         response = self.retrieve_genre(uuid=criteria.uuid)
         assert response.status_code == status.HTTP_200_OK

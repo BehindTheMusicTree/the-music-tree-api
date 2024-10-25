@@ -20,21 +20,21 @@ class UpdateFileMetadataIntTestCase(TrackTestCase):
                     value_expected_in_metadata: Optional[int] = None,
                     additional_data_dict=None,
                     file_has_tags=False):
-        value_str = str(value) if value is not None else ''
+        value_str = str(value) if value else ''
         data = {self.save_field: value_str}
         if additional_data_dict:
             data.update(additional_data_dict)
 
         if file_has_tags:
-            response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(
+            response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(
                 extension=self.file_extension, data_dict=data)
         else:
-            response = self.post_lib_track_with_generic_sample_no_tags(
+            response = self._post_lib_track_with_generic_sample_no_tags(
                 extension=self.file_extension, data_dict=data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
-        value_expected_in_metadata = value_expected_in_metadata if value_expected_in_metadata is not None else value
+        value_expected_in_metadata = value_expected_in_metadata if value_expected_in_metadata else value
 
         if value_expected_in_metadata is None:
             if self.lib_track_normalized_metadata_key in self.saved_lib_track_metadata:

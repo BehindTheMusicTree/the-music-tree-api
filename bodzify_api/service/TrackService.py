@@ -1,42 +1,36 @@
 #!/usr/bin/env python
 
-import binascii
 import os
 import random
 import stat
 import string
-import tempfile
-from django.template import Library
 import requests
+import tempfile
 
-from django.contrib.auth.models import User
+from bodzify_api.model.user.User import User
 from django.core.files.base import File as DjangoFile
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.db.models import F
 from rest_framework.exceptions import ValidationError
+from rest_framework.request import Request
 
 from bodzify_api import settings
-from bodzify_api.service.Service import Service
-from bodzify_api.utils import audio_fingerprinter_api_client, audio_metadata, utils
+from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.utils import audio_metadata, utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
-from bodzify_api.utils.audio_fingerprinter_api_client import AudioFingerprinterApiClient, AudioFingerprinterError
+from bodzify_api.service.Service import Service
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
-    AttributesLabels as LibTrackPlaylistRelAttributesLabels
-from bodzify_api.model.track.LibraryTrack import AttributesLabels as LibTrackAttributesLabels, LibraryTrack
-from bodzify_api.model.track_file.FingerprintingError import FingerprintingError
-from bodzify_api.serializer.mine.track.detailed import Fields as MineTrackFields
-from bodzify_api.serializer.track.input.endpoint.post import Fields as PostFields, LibTrackPostSerializer
-from bodzify_api.serializer.track.input.endpoint.put import LibTrackPutSerializer
-from bodzify_api.serializer.track.input.model import Fields as SaveModelFields, TrackModelSerializer
-from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields, LibTrackSchemaSerializer
-from bodzify_api.serializer.track_file.input.model import Fields as TrackFileModelFields, TrackFileModelSerializer
-from bodzify_api.serializer.track_file.input.schema import Fields as TrackFIleSchemaFields, TrackFileSchemaSerializer
-from bodzify_api.service.MusicBrainzService import MusicBrainzService
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+    Fields as LibTrackPlaylistRelFields
+from bodzify_api.model.track.lib.Fields import Fields as ModelFields
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields, LibTrackPostSerializer
+from bodzify_api.serializer.schema.track.input.endpoint.put import LibTrackPutSerializer
+from bodzify_api.serializer.schema.track.input.endpoint.extract import Fields as ExtractFields
+from bodzify_api.serializer.schema.track.input.model import Fields as SaveModelFields, TrackModelSerializer
+from bodzify_api.serializer.schema.track.input.schema import Fields as SaveSchemaFields, LibTrackSchemaSerializer
 
 
 class TrackService(Service):
@@ -72,116 +66,12 @@ class TrackService(Service):
         return title
 
     @staticmethod
-    def _decrease_position_of_next_tracks_in_old_track_playlists(playlists_with_old_position: list):
+    def _decrease_position_of_next_tracks_in_old_track_playlists(user: User, playlists_with_old_position: list):
         for playlist_uuid, old_position in playlists_with_old_position:
             lib_track_position_relations_to_update = LibTrackPlaylistPositionRel.objects.filter(
-                base_playlist__uuid=playlist_uuid, position__gt=old_position)
+                user=user, base_playlist=playlist_uuid, position__gt=old_position)
             lib_track_position_relations_to_update.update(
-                position=F(LibTrackPlaylistRelAttributesLabels.POSITION) - 1)
-
-    @staticmethod
-    def _get_fingerprint_and_duration_from_file(user_id: str, file, title: str) -> tuple[bytes, int]:
-        if isinstance(file, InMemoryUploadedFile):
-            with tempfile.NamedTemporaryFile(delete=False, dir=settings.FILE_UPLOAD_TEMP_DIR) as tmp_file:
-                for chunk in file.chunks():
-                    tmp_file.write(chunk)
-                file_path = tmp_file.name
-                filename = os.path.basename(file_path)
-                fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(filename=filename,
-                                                                                                  title=title,
-                                                                                                  user_id=user_id)
-                os.remove(file_path)
-        elif isinstance(file, TemporaryUploadedFile):
-            file_path = file.file.name
-            filename = os.path.basename(file_path)
-            fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(user_id=user_id,
-                                                                                              filename=filename,
-                                                                                              title=title)
-        elif isinstance(file, AppDjangoFile):
-            filename = os.path.basename(file.file_abs_path)
-            fingerprint, duration_in_sec = AudioFingerprinterApiClient.post_fingerprint_audio(user_id=user_id,
-                                                                                              filename=filename,
-                                                                                              title=title)
-
-        return fingerprint, int(duration_in_sec)
-
-    @staticmethod
-    def _update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
-            user: User, save_data: dict, schema_data: dict):
-        schema_file_key = SaveSchemaFields.FILE
-        if schema_file_key in schema_data:
-            track_file = schema_data[schema_file_key]
-            track_file_schema_data = dict()
-            track_file_schema_data[TrackFIleSchemaFields.FILE] = track_file
-
-            duration_in_sec = None
-            fingerprinting_error_code = None
-            try:
-                # It could have been done in the TrackFile model but as duration_in_sec is a fields from the LibraryTrack
-                # model, doing it here enables to calculate it only once.
-                fingerprint, duration_in_sec = TrackService._get_fingerprint_and_duration_from_file(
-                    user_id=user.pk, file=track_file, title=schema_data.get(SaveSchemaFields.TITLE, None))
-                save_data[SaveModelFields.DURATION_IN_SEC] = duration_in_sec
-
-                track_file_schema_data[TrackFIleSchemaFields.FINGERPRINT_CHAR] = binascii.hexlify(fingerprint).decode()
-
-                schema_should_cancel_if_duplicate_fingerprint_key = \
-                    SaveSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT
-                if schema_should_cancel_if_duplicate_fingerprint_key in schema_data:
-                    track_file_schema_data[TrackFIleSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT] = \
-                        schema_data[SaveSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT]
-
-                MusicBrainzService.update_data_with_musicbrainz_recording_pk_from_fingerprint_and_duration_if_found(
-                    data=save_data,
-                    data_recording_key=SaveModelFields.MUSICBRAINZ_RECORDING,
-                    data_lookup_error_key=SaveModelFields.MUSICBRAINZ_RECORDING_LOOKUP_ERROR_STR,
-                    fingerprint=fingerprint,
-                    duration_in_sec=duration_in_sec)
-
-            except AudioFingerprinterError as e:
-                fingerprint = None
-                error_class = e.__class__
-                if error_class == audio_fingerprinter_api_client.WrongFileExtension:
-                    fingerprinting_error_code = FingerprintingError.Codes.WRONG_FILE_EXTENSION
-                elif error_class == audio_fingerprinter_api_client.WrongFileType:
-                    fingerprinting_error_code = FingerprintingError.Codes.WRONG_FILE_TYPE
-                elif error_class == audio_fingerprinter_api_client.FileNotInPool:
-                    fingerprinting_error_code = FingerprintingError.Codes.FILE_NOT_FOUND_IN_POOL
-                elif error_class == audio_fingerprinter_api_client.BadRequestError:
-                    fingerprinting_error_code = FingerprintingError.Codes.UNKNOWN_BAD_REQUEST
-                elif error_class == audio_fingerprinter_api_client.InternalServerError:
-                    fingerprinting_error_code = FingerprintingError.Codes.INTERNAL_ERROR
-                elif error_class == audio_fingerprinter_api_client.TimeoutError:
-                    fingerprinting_error_code = FingerprintingError.Codes.TIMEOUT_ERROR
-                elif error_class == audio_fingerprinter_api_client.FpcalcStatusError:
-                    fingerprinting_error_code = FingerprintingError.Codes.FPCALC_ERROR_WITH_STATUS_2
-                elif error_class == audio_fingerprinter_api_client.UnknownUnprocessableEntityError:
-                    fingerprinting_error_code = FingerprintingError.Codes.UNKNOWN_UNPROCESSABLE_ENTITY_ERROR
-                elif error_class == audio_fingerprinter_api_client.ServiceNotFoundError:
-                    fingerprinting_error_code = FingerprintingError.Codes.SERVICE_NOT_FOUND
-                elif error_class == audio_fingerprinter_api_client.ConnectionError:
-                    fingerprinting_error_code = FingerprintingError.Codes.UNKNOWN_CONNEXION_ERROR
-                track_file_schema_data[TrackFIleSchemaFields.FINGERPRINTING_ERROR_CODE] = fingerprinting_error_code
-
-            track_file_schema_serializer = TrackFileSchemaSerializer(
-                data=track_file_schema_data, context={'user': user})
-            track_file_schema_serializer.is_valid(raise_exception=True)
-
-            track_file_model_data = dict()
-            track_file_model_data[TrackFileModelFields.USER] = user.pk
-            track_file_model_data[TrackFileModelFields.FILE] = track_file_schema_data[TrackFIleSchemaFields.FILE]
-            if fingerprint:
-                track_file_model_data[TrackFileModelFields.FINGERPRINT] = fingerprint
-            if fingerprinting_error_code is not None:
-                track_file_model_data[TrackFileModelFields.FINGERPRINTING_ERROR_CODE] = fingerprinting_error_code
-
-            track_file_model_serializer = TrackFileModelSerializer(data=track_file_model_data)
-            track_file_model_serializer.is_valid(raise_exception=True)
-            track_file = track_file_model_serializer.save(user=user)
-            save_data[SaveModelFields.TRACK_FILE] = track_file.pk  # type: ignore
-
-            if duration_in_sec:
-                save_data[SaveModelFields.DURATION_IN_SEC] = duration_in_sec
+                position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
     @staticmethod
     def _update_model_data_with_genre_uuid_if_genre_in_schema_data(user: User, model_data: dict, schema_data: dict):
@@ -209,25 +99,28 @@ class TrackService(Service):
 
         return
 
-    def _get_post_serializer(self, post_data: dict):
-        return LibTrackPostSerializer(data=post_data)
+    def _get_post_serializer(self, post_data: dict, request: Request):
+        return LibTrackPostSerializer(data=post_data, context={'request': request})
 
-    def _get_put_serializer(self, old_instance, put_data: dict):
-        return LibTrackPutSerializer(instance=old_instance, data=put_data)
+    def _get_put_serializer(self, oldinstance, put_data: dict, request: Request):
+        return LibTrackPutSerializer(instance=oldinstance, data=put_data, context={'request': request})
 
-    def _get_schema_serializer(self, old_instance, schema_data: dict, request):
+    def _get_schema_serializer(self, oldinstance, schema_data: dict, request: Request):
         return LibTrackSchemaSerializer(data=schema_data, context={'request': request})
 
-    def _get_model_serializer(self, old_instance, model_data: dict, partial: bool):
-        return TrackModelSerializer(instance=old_instance, data=model_data, partial=True)
+    def _get_model_serializer(self, oldinstance, model_data: dict, partial: bool, request: Request):
+        return TrackModelSerializer(instance=oldinstance,
+                                    data=model_data,
+                                    context={'request': request},
+                                    partial=partial)
 
     def _get_schema_data_from_post_data(self, post_data: dict) -> dict:
-        file = post_data[PostFields.TRACK_FILE]
+        file = post_data[PostFields.FILE]
         schema_data_from_file = self._get_schema_data_from_file(file=file)
 
         schema_data = schema_data_from_file.copy()
         keys = [SaveSchemaFields.FILE,
-                SaveSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT,
+                SaveSchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 SaveSchemaFields.TITLE,
                 SaveSchemaFields.ARTISTS_NAMES,
                 SaveSchemaFields.ALBUM_NAME,
@@ -248,17 +141,18 @@ class TrackService(Service):
         Service._update_data1_converting_str_to_int_value_if_set(key=SaveSchemaFields.RATING, data1=schema_data)
         return schema_data
 
-    def _get_schema_data_from_put_data(self, put_data: dict, old_instance=None) -> dict:
+    def _get_schema_data_from_put_data(self, put_data: dict, oldinstance=None) -> dict:
         schema_data = put_data.copy()
         Service._update_data1_converting_str_to_int_value_if_set(key=SaveSchemaFields.RATING, data1=schema_data)
         return schema_data
 
     def _get_model_data_from_schema_data_not_including_user_field(self, user: User,
                                                                   schema_data: dict,
-                                                                  old_instance) -> dict:
+                                                                  oldinstance) -> dict:
         model_data = dict()
 
-        for key in [SaveSchemaFields.SHOULD_CANCEL_IF_DUPLICATE_FINGERPRINT,
+        for key in [SaveSchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
+                    SaveModelFields.FILE,
                     SaveModelFields.TITLE,
                     SaveModelFields.RATING,
                     SaveModelFields.LANGUAGE,
@@ -266,16 +160,15 @@ class TrackService(Service):
                     SaveModelFields.POSITION_IN_ALBUM]:
             self._update_data1_with_key_if_set_in_data2(key=key, data1=model_data, data2=schema_data)
 
-        self._update_model_data_with_artist_uuids_if_artists_names_str_in_schema_data(user=user,
-                                                                                      model_data=model_data,
-                                                                                      schema_data=schema_data)
-        self._update_model_data_with_album_uuid_if_album_name_in_schema_data(
+        self._update_model_data_with_artists_uuids_if_artists_names_str_in_schema_data_or_empty_list(
             user=user, model_data=model_data, schema_data=schema_data)
+        self._update_model_data_with_album_uuid_if_album_name_in_schema_data(user=user,
+                                                                             model_data=model_data,
+                                                                             schema_data=schema_data)
         self._update_model_data_with_genre_uuid_if_genre_in_schema_data(user=user,
                                                                         model_data=model_data,
                                                                         schema_data=schema_data)
-        self._update_model_data_with_track_file_id_and_duration_and_music_brainz_recording_id_if_file_in_schema_data(
-            user=user, save_data=model_data, schema_data=schema_data)
+
         return model_data
 
     def _update_model_data_with_album_uuid_if_album_name_in_schema_data(self,
@@ -285,37 +178,35 @@ class TrackService(Service):
         if SaveSchemaFields.ALBUM_NAME in schema_data:
             album_name = schema_data[SaveSchemaFields.ALBUM_NAME]
 
+            if not album_name:
+                return None
+
             if SaveSchemaFields.ALBUM_ARTISTS_NAMES in schema_data:
                 album_artists_names_str = schema_data[SaveSchemaFields.ALBUM_ARTISTS_NAMES]
                 if album_artists_names_str:
                     album_artists_name_list = Artist._get_artists_names_list_from_str(names_str=album_artists_names_str)
                 else:
-                    album_artists_name_list = None
+                    album_artists_name_list = []
             else:
-                album_artists_name_list = None
-
-            if not album_name:
-                return None
+                album_artists_name_list = []
 
             album = Album.get_album_from_name_and_album_artists_names_list_after_eventual_creations(
                 user=user, album_name=album_name, album_artists_names_list=album_artists_name_list)
 
-            model_data[SaveModelFields.ALBUM] = album.uuid if album is not None else None
+            model_data[SaveModelFields.ALBUM] = album.uuid if album else None
 
     def _get_post_data_from_extract_data(self, extract_data: dict):
         save_data = extract_data.copy()
-        del save_data[MineTrackFields.URL]
+        del save_data[ExtractFields.URL]
         return save_data
 
     def _get_track_filename_with_extension(self, mine_track_url: str, data: dict):
         file_extension = self._get_file_extension_from_url(mine_track_url)
         is_filename_randomly_generated = False
-        title_key = SaveSchemaFields.TITLE
-        if title_key in data:
-            title = data[title_key]
-            artist_name_key = SaveSchemaFields.ARTISTS_NAMES
-            if artist_name_key in data:
-                artist_name = data[artist_name_key]
+        if SaveSchemaFields.TITLE in data:
+            title = data[SaveSchemaFields.TITLE]
+            if SaveSchemaFields.ARTISTS_NAMES in data:
+                artist_name = data[SaveSchemaFields.ARTISTS_NAMES]
                 if artist_name is None or artist_name == "":
                     filename_without_extension = title
                 else:
@@ -338,7 +229,7 @@ class TrackService(Service):
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
-            raise ValidationError({LibTrackAttributesLabels.TRACK_FILE_USER_FRIENDLY: [
+            raise ValidationError({ModelFields.TRACK_FILE_USER_FRIENDLY: [
                 f"Error while extracting metadata from file: {error}"]})
 
         save_data_with_potential_none = self._get_copy_of_dict_including_only_specified_keys(
@@ -356,21 +247,26 @@ class TrackService(Service):
 
         return save_data_clean
 
-    def _update_model_data_with_artist_uuids_if_artists_names_str_in_schema_data(
+    def _update_model_data_with_artists_uuids_if_artists_names_str_in_schema_data_or_empty_list(
             self, user: User, model_data: dict, schema_data: dict):
         if SaveSchemaFields.ARTISTS_NAMES in schema_data:
             artists_names_str = schema_data[SaveSchemaFields.ARTISTS_NAMES]
             if artists_names_str:
                 artists = Artist.get_artists_list_from_names_str_after_eventual_creation(
                     user=user, artists_names_str=artists_names_str)
-                model_data[SaveModelFields.ARTISTS] = [artist.uuid for artist in artists]
+                artists_uuids = [artist.uuid for artist in artists]
+            else:
+                artists_uuids = []
+        else:
+            artists_uuids = []
+        model_data[SaveModelFields.ARTISTS] = artists_uuids
 
     def extract(self, extract_data: dict, request):
-        mine_track_url = extract_data[MineTrackFields.URL]
+        mine_track_url = extract_data[ExtractFields.URL]
         track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
             mine_track_url=mine_track_url, data=extract_data)
 
-        # stream=True more effective for large files
+        # stream=True makes it more effective for large files.
         track_file_streamed = requests.get(mine_track_url, stream=True)
 
         with tempfile.NamedTemporaryFile(delete=True, dir=settings.FILE_UPLOAD_TEMP_DIR) as track_temp_file:
@@ -384,9 +280,9 @@ class TrackService(Service):
             os.chmod(track_temp_file.name, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
             post_data = self._get_post_data_from_extract_data(extract_data)
-            post_data[PostFields.TRACK_FILE] = AppDjangoFile(file=track_temp_file,
-                                                             name=track_filename,
-                                                             file_abs_path=track_temp_file.name)
+            post_data[PostFields.FILE] = AppDjangoFile(file=track_temp_file,
+                                                       name=track_filename,
+                                                       file_abs_path=track_temp_file.name)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[SaveSchemaFields.FORCE_TITLE_GENERATION] = force_title_generation_str
             library_track = self.create(post_data=post_data, request=request)
@@ -395,5 +291,45 @@ class TrackService(Service):
 
     def delete(self, user: User, instance: LibraryTrack):
         old_lib_tracks_playlists_with_positions = instance._get_lib_track_playlists_with_positions()
-        instance.delete_with_checking_album_and_artist_potential_deletion()
-        TrackService._decrease_position_of_next_tracks_in_old_track_playlists(old_lib_tracks_playlists_with_positions)
+        instance.delete_with_checking_album_and_artists_potential_deletion()
+        TrackService._decrease_position_of_next_tracks_in_old_track_playlists(
+            user=user, playlists_with_old_position=old_lib_tracks_playlists_with_positions)
+
+    def create(self, post_data: dict, request: Request):
+        user = request.user
+        post_serializer = self._get_post_serializer(post_data=post_data, request=request)
+        post_serializer.is_valid(raise_exception=True)
+
+        schema_data = self._get_schema_data_from_post_data(post_data=post_data)
+        schema_serializer = self._get_schema_serializer(oldinstance=None, schema_data=schema_data, request=request)
+        schema_serializer.is_valid(raise_exception=True)
+
+        model_data = self._get_model_data_from_schema_data_not_including_user_field(
+            user=user, schema_data=schema_data, oldinstance=None)
+        model_data[SaveModelFields.USER] = user.pk
+
+        model_serializer = self._get_model_serializer(oldinstance=None,
+                                                      model_data=model_data,
+                                                      request=request,
+                                                      partial=False,)
+        model_serializer.is_valid(raise_exception=True)
+        return model_serializer.save()
+
+    def update(self, instance: LibraryTrack, put_data: dict, request: Request):
+        user = request.user
+        put_serializer = self._get_put_serializer(oldinstance=instance, put_data=put_data, request=request)
+        put_serializer.is_valid(raise_exception=True)
+
+        schema_data = self._get_schema_data_from_put_data(put_data=put_data, oldinstance=instance)
+        schema_serializer = self._get_schema_serializer(oldinstance=instance, schema_data=schema_data, request=request)
+        schema_serializer.is_valid(raise_exception=True)
+
+        model_data = self._get_model_data_from_schema_data_not_including_user_field(
+            user=user, schema_data=schema_data, oldinstance=instance)
+
+        model_serializer = self._get_model_serializer(oldinstance=instance,
+                                                      model_data=model_data,
+                                                      request=request,
+                                                      partial=True)
+        model_serializer.is_valid(raise_exception=True)
+        return model_serializer.save()

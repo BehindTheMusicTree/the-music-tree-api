@@ -1,29 +1,26 @@
 #!/usr/bin/env python
 
 from typing import Optional
-
-from django.contrib.auth.models import User
 from django.db import models
 
 from bodzify_api import settings
-from bodzify_api.model.Artist import Artist, AttributesLabels as ArtistAttributesLabels
-from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin, \
-    AttributesLabels as LibTrackMixinAttributesLabels
+from bodzify_api.model.user.User import User
+from bodzify_api.model.Artist import Artist, Fields as ArtistFields
+from bodzify_api.model.LibTrackMixin import LibTrackMixin, Fields as LibTrackMixinFields
 
 
-class AttributesLabels:
+class Fields:
     MODEL = 'album'
-    LIB_TRACK_MIXIN_RELATED_NAME = 'album_related'
-    UUID = LibTrackMixinAttributesLabels.UUID
-    USER = LibTrackMixinAttributesLabels.USER
-    CREATED_ON = LibTrackMixinAttributesLabels.CREATED_ON
-    UPDATED_ON = LibTrackMixinAttributesLabels.UPDATED_ON
-    LIB_TRACKS = LibTrackMixinAttributesLabels.LIB_TRACKS
-    LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinAttributesLabels.LIB_TRACKS_NOT_ARCHIVED
-    LIB_TRACKS_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_COUNT
-    LIB_TRACKS_ARCHIVED_COUNT = LibTrackMixinAttributesLabels.LIB_TRACKS_ARCHIVED_COUNT
-    DURATION_IN_SEC = LibTrackMixinAttributesLabels.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinAttributesLabels.DURATION_STR_IN_HOUR_MIN_SEC
+    CREATED_ON = LibTrackMixinFields.CREATED_ON
+    UPDATED_ON = LibTrackMixinFields.UPDATED_ON
+    UUID = LibTrackMixinFields.UUID
+    USER = LibTrackMixinFields.USER
+    LIB_TRACKS = LibTrackMixinFields.LIB_TRACKS
+    LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinFields.LIB_TRACKS_NOT_ARCHIVED
+    LIB_TRACKS_COUNT = LibTrackMixinFields.LIB_TRACKS_COUNT
+    LIB_TRACKS_ARCHIVED_COUNT = LibTrackMixinFields.LIB_TRACKS_ARCHIVED_COUNT
+    DURATION_IN_SEC = LibTrackMixinFields.DURATION_IN_SEC
+    DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = 'name'
     YEAR = 'year'
     ALBUM_ARTISTS = 'album_artists'
@@ -32,7 +29,7 @@ class AttributesLabels:
 class Album(LibTrackMixin):
     name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)
     year = models.CharField(max_length=4, default=None, null=True)
-    album_artists = models.ManyToManyField('bodzify_api.Artist', related_name=ArtistAttributesLabels.ALBUMS)
+    album_artists = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)
 
     @property
     def library_tracks(self) -> models.QuerySet:
@@ -42,16 +39,32 @@ class Album(LibTrackMixin):
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")]
 
     def __str__(self) -> str:
-        string = f"{self.uuid} {self.name} by "
-        for artist in list(self.album_artists.all()):
-            string = string + f" {artist} "
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+
+        string = f"{self.uuid} {self.name}"
+
+        artists = list(self.album_artists.all())
+        artist_names = " ".join(str(artist) for artist in artists) if artists else "[No Artist]"
+        string += f" by {artist_names}"
+
+        tracks: list[LibraryTrack] = list(self.library_tracks.all())
+        if tracks:
+            track_details = []
+            for track in tracks:
+                track_position = f"{track.position_in_album}." if track.position_in_album else "--."
+                track_artists = ", ".join(str(artist) for artist in track.artists.all())
+                track_artists = f"{track_artists} - " if track_artists else "[No Artist] - "
+                track_details.append(f"{track_position}{track_artists}{track.title}")
+            track_details_str = "; ".join(track_details)
+            string += f" | Tracks: {track_details_str}"
+
         return string
 
     @staticmethod
-    def create_with_album_artists(user: User, album_name: str, album_artists: list) -> 'Album':
+    def create_with_album_artists_list(user: User, album_name: str, album_artists_list: list[Artist]) -> 'Album':
         album = Album.objects.create(user=user, name=album_name)
-        if album_artists is not None:
-            album.album_artists.set(album_artists)
+        if album_artists_list:
+            album.album_artists.set(album_artists_list)
         return album
 
     @staticmethod
@@ -61,26 +74,24 @@ class Album(LibTrackMixin):
         album_queryset = Album.objects.filter(user=user, name=album_name)
         if len(album_artists) > 0:
             for album_artist in album_artists:
-                album_queryset = album_queryset.filter(
-                    album_artists__in=[album_artist])
+                album_queryset = album_queryset.filter(album_artists__in=[album_artist])
         else:
             album_queryset = album_queryset.filter(album_artists=None)
 
         if album_queryset.count() == 0:
-            album = Album.create_with_album_artists(user=user, album_name=album_name, album_artists=album_artists)
+            album = Album.create_with_album_artists_list(user=user,
+                                                         album_name=album_name,
+                                                         album_artists_list=album_artists)
         else:
             album = album_queryset.first()
         return album
 
     @staticmethod
     def get_album_from_name_and_album_artists_names_list_after_eventual_creations(
-            user: User, album_name: str, album_artists_names_list: Optional[list]) -> Optional['Album']:
-        if album_artists_names_list:
-            if len(album_artists_names_list) > 0:
-                album_artists = [Artist.get_artist_from_name_after_eventual_creation(
-                    user=user, artist_name=artist_name) for artist_name in album_artists_names_list]
-            else:
-                album_artists = []
+            user: User, album_name: str, album_artists_names_list: list) -> Optional['Album']:
+        if album_artists_names_list and len(album_artists_names_list) > 0:
+            album_artists = [Artist.objects.get_or_create(user=user, name=artist_name)[0]
+                             for artist_name in album_artists_names_list]
         else:
             album_artists = []
 
@@ -88,9 +99,10 @@ class Album(LibTrackMixin):
             user=user, album_name=album_name, album_artists=album_artists)
 
     def delete_with_tracks_and_eventually_artists(self):
-        artists_linked_to_album_and_track: list[Artist] = list()
-        from bodzify_api.model.track.LibraryTrack import LibraryTrack
-        for track in LibraryTrack.objects.filter(album=self):
+        artists_linked_to_album_and_track: list[Artist] = []
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+        lib_tracks: list[LibraryTrack] = list(self.library_tracks.all())
+        for track in lib_tracks:
             if track.artists.exists():
                 for artist in track.artists.all():
                     if artist not in artists_linked_to_album_and_track:
@@ -107,8 +119,8 @@ class Album(LibTrackMixin):
             artist.delete_if_nothing_linked()
 
     def delete_if_no_track_linked_with_eventual_album_artist_deletion(self):
-        from bodzify_api.model.track.LibraryTrack import LibraryTrack
-        if LibraryTrack.objects.filter(album=self).count() == 0:
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+        if self.library_tracks.count() == 0:
             album_artists: list[Artist] = list(self.album_artists.all())
             self.delete()
             for album_artist in album_artists:

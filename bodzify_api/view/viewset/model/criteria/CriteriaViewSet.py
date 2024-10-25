@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 
 from django.db import transaction
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
 from rest_framework.serializers import ModelSerializer
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 
-from bodzify_api.serializer.criteria.input.schema.schema import CriteriaSchemaSerializer
-from bodzify_api.serializer.criteria.output.detailed import CriteriaDetailedSerializer
+from bodzify_api.model.criteria.Criteria import Fields, Criteria
+from bodzify_api.serializer.schema.criteria.input.schema.schema import CriteriaSchemaSerializer
+from bodzify_api.serializer.schema.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
-from bodzify_api.model.criteria.Criteria import Criteria, AttributesLabels
 
 
 class FilterFields:
-    NAME = AttributesLabels.NAME
-    PARENT = AttributesLabels.PARENT
+    NAME = Fields.NAME
+    PARENT = Fields.PARENT
 
 
 class CriteriaViewSet(AppModelViewSet):
@@ -30,18 +30,18 @@ class CriteriaViewSet(AppModelViewSet):
         queryset = self.queryset.filter(user=self.request.user)
 
         name = self.request.query_params.get(FilterFields.NAME)  # type: ignore
-        if name is not None:
+        if name:
             queryset = queryset.filter(name__contains=name)
 
         parentParameter = self.request.query_params.get(FilterFields.PARENT)  # type: ignore
-        if parentParameter is not None:
+        if parentParameter:
             if parentParameter == "":
                 parent = None
             else:
                 parent = parentParameter
             queryset = queryset.filter(parent=parent)
 
-        return queryset.order_by(AttributesLabels.NAME)
+        return queryset.order_by(Fields.NAME)
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return CriteriaDetailedSerializer(instance=instance)  # type: ignore

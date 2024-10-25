@@ -4,10 +4,10 @@
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.test.AppTestCase import AppTestCase
+from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class GenrePlaylistTestCase(AppTestCase):
+class GenrePlaylistTestCase(ApiTestCase):
 
     def retrieve_genre_playlist(self, playlist_uuid):
         return self.api_client.get(path=reverse('genre-playlist-detail', kwargs={'pk': playlist_uuid}))

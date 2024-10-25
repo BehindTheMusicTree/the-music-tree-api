@@ -12,15 +12,15 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
     file_extension: str
 
     def test_none_then_none(self):
-        response = self.post_lib_track_with_generic_sample_no_tags(extension=self.file_extension)
+        response = self._post_lib_track_with_generic_sample_no_tags(extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.album == None
+        assert self.saved_lib_track.album == None
 
     def test_longest(self):
-        response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension)
+        response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.lib_track_saved.album is not None
-        assert self.lib_track_saved.album.name == 'a' * settings.ALBUM_NAME_LEN_MAX
+        assert self.saved_lib_track.album
+        assert self.saved_lib_track.album.name == 'a' * settings.ALBUM_NAME_LEN_MAX
 
 
 class Mp3TestCase(TestCase):
