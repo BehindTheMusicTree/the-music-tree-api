@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 
-from typing import Optional
+from typing import List, Optional, TYPE_CHECKING
 from django.db import models
+from django.db.models import Q, QuerySet
 
 from bodzify_api import settings
 from bodzify_api.model.user.User import User
 from bodzify_api.model.Artist import Artist, Fields as ArtistFields
 from bodzify_api.model.LibTrackMixin import LibTrackMixin, Fields as LibTrackMixinFields
+
+if TYPE_CHECKING:
+    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
 
 class Fields:
@@ -32,8 +36,14 @@ class Album(LibTrackMixin):
     album_artists = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)
 
     @property
-    def library_tracks(self) -> models.QuerySet:
+    def library_tracks(self) -> models.QuerySet['LibraryTrack']:
         return self.album_library_tracks  # type: ignore
+
+    def get_sorted_tracks(self) -> models.QuerySet['LibraryTrack']:
+        from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
+        return self.library_tracks.annotate(
+            null_position=Q(position_in_album__isnull=True)).order_by(
+            'null_position', LibraryTrackFields.POSITION_IN_ALBUM, LibraryTrackFields.TITLE)
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")]
@@ -99,9 +109,10 @@ class Album(LibTrackMixin):
             user=user, album_name=album_name, album_artists=album_artists)
 
     def delete_with_tracks_and_eventually_artists(self):
-        artists_linked_to_album_and_track: list[Artist] = []
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-        lib_tracks: list[LibraryTrack] = list(self.library_tracks.all())
+
+        artists_linked_to_album_and_track: List[Artist] = []
+        lib_tracks: QuerySet[LibraryTrack] = self.library_tracks.all()
         for track in lib_tracks:
             if track.artists.exists():
                 for artist in track.artists.all():
@@ -109,7 +120,7 @@ class Album(LibTrackMixin):
                         artists_linked_to_album_and_track.append(artist)
             track.delete()
 
-        for album_artist in list(self.album_artists.all()):
+        for album_artist in self.album_artists.all():
             if album_artist not in artists_linked_to_album_and_track:
                 artists_linked_to_album_and_track.append(album_artist)
 

@@ -53,6 +53,4 @@ class TrackModelSerializer(serializers.ModelSerializer):
             library_track_data=library_track_data
         )
 
-        library_track._update_file_tags()
-
         return library_track
