@@ -4,8 +4,8 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, Fields as BasePlaylistFields
-from bodzify_api.model.playlist.children.ChildPlaylist import ChildPlaylist, \
-    Fields as ChildFields
+from bodzify_api.model.playlist.children.ChildPlaylist import ChildPlaylist
+from bodzify_api.model.playlist.children.Fields import Fields as ChildFields
 
 TYPE_LABEL = "simple"
 

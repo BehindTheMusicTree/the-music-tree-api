@@ -6,7 +6,6 @@ from bodzify_api.model.criteria.Criteria import Fields, Criteria
 
 
 class CriteriaModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Criteria
         fields = [Fields.USER,
