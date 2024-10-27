@@ -3,29 +3,14 @@
 from uuid import UUID
 from django.db import models
 from django.utils import timezone
+from bodzify_api.model.base.utils.BaseModel import BaseModel
 from bodzify_api.model.user.User import User
 
-from bodzify_api.model.playlist.BasePlaylist import Fields as BasePlaylistFields, BasePlaylist
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.ChildPlaylistManager import ChildPlaylistManager
 
 
-class Fields:
-    BASE_PLAYLIST = BasePlaylistFields.MODEL
-    UUID = BasePlaylistFields.UUID
-    USER = BasePlaylistFields.USER
-    CREATED_ON = BasePlaylistFields.CREATED_ON
-    UPDATED_ON = BasePlaylistFields.UPDATED_ON
-    LIB_TRACKS = BasePlaylistFields.LIB_TRACKS
-    LIB_TRACKS_NOT_ARCHIVED = BasePlaylistFields.LIB_TRACKS_NOT_ARCHIVED
-    LIB_TRACKS_COUNT = BasePlaylistFields.LIB_TRACKS_COUNT
-    LIB_TRACKS_ARCHIVED_COUNT = BasePlaylistFields.LIB_TRACKS_ARCHIVED_COUNT
-    DURATION_IN_SEC = BasePlaylistFields.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = BasePlaylistFields.DURATION_STR_IN_HOUR_MIN_SEC
-    PLAY_COUNT = BasePlaylistFields.PLAY_COUNT
-    LAST_TRACK_LIST_UPDATE_DATE = BasePlaylistFields.LAST_TRACK_LIST_UPDATE_DATE
-
-
-class ChildPlaylist(models.Model):
+class ChildPlaylist(BaseModel):
     # This fields must be overriden in each child class so that the related_name is unique.
     base_playlist = models.OneToOneField(BasePlaylist,
                                          on_delete=models.CASCADE,

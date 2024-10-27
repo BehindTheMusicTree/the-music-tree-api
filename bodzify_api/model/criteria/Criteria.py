@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING, Optional
 
+from attr import has
 from django.db import models
 from django.db.models import QuerySet, Manager
 
@@ -76,6 +77,9 @@ class Criteria(LibTrackMixin):
     def criteria_ascendant_relation_ascendants(self) -> Manager:
         return self.criteria_ascendant_relation_ascendants
 
+    def calculate_root(self):
+        self.root = self.parent.root if self.parent else self
+
     def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
         if self.parent == other_criteria:
             return True
@@ -104,3 +108,14 @@ class Criteria(LibTrackMixin):
 
     def __str__(self) -> str:
         return f"{self.uuid} {self.name}"
+
+    def _is_creating(self) -> bool:
+        return getattr(self, f"{Fields.ROOT}_id", None) is None
+
+    def save(self, *args, **kwargs):
+        if self._is_creating():
+            if self.parent:
+                self.root = self.parent.root
+            else:
+                self.root = self
+        super().save(*args, **kwargs)

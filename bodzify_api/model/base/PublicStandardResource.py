@@ -4,13 +4,15 @@
 from django.db import models
 from django.utils import timezone
 
+from bodzify_api.model.base.utils.BaseModel import BaseModel
+
 
 class Fields:
     CREATED_ON = 'created_on'
     UPDATED_ON = 'updated_on'
 
 
-class PublicStandardResource(models.Model):
+class PublicStandardResource(BaseModel):
     created_on = models.DateTimeField(default=timezone.now, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=True)
 

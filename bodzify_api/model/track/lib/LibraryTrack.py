@@ -15,6 +15,8 @@ from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.TrackablePlayCountModel import TrackablePlayCountModel
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
+from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 
 
 class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
@@ -87,6 +89,42 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
                 f"{genre_str} | {rating_str} | {language_str} | "
                 + f"{Fields.CREATED_ON}: {self.created_on} | {file_str}")
 
+    def update_file_tags_from_lib_track_instance_values(self):
+        normalized_metadata = dict()
+        normalized_metadata[NormalizedMetadataKeys.TITLE] = self.title
+
+        if self.artists.count() > 0:
+            artists_names_tag = ""
+            artists_list: list[Artist] = list(self.artists.all())
+            for artist in artists_list:
+                if artists_names_tag != "":
+                    artists_names_tag = artists_names_tag + METADATA_ARTISTS_SEPARATION_CHAR
+                artists_names_tag = artists_names_tag + artist.name
+        else:
+            artists_names_tag = ""
+        normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES] = artists_names_tag
+
+        album_artists_tag = ""
+        if self.album:
+            album_name_tag = self.album.name
+            album_artists_name_index = 0
+            album_artists_list: list[Artist] = list(self.album.album_artists.all())
+            for album_artist in album_artists_list:
+                if album_artists_name_index != 0:
+                    album_artists_tag = album_artists_tag + METADATA_ARTISTS_SEPARATION_CHAR
+                album_artists_tag = album_artists_tag + album_artist.name
+                album_artists_name_index = album_artists_name_index + 1
+        else:
+            album_name_tag = ""
+
+        normalized_metadata[NormalizedMetadataKeys.ALBUM_NAME] = album_name_tag
+        normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES] = album_artists_tag
+        normalized_metadata[NormalizedMetadataKeys.GENRE_NAME] = self.genre.name if self.genre else ""
+        normalized_metadata[NormalizedMetadataKeys.RATING] = self.rating
+        normalized_metadata[NormalizedMetadataKeys.LANGUAGE] = self.language if self.language else ""
+
+        self.track_file.update_file_tags(normalized_metadata=normalized_metadata)
+
     def delete_with_checking_album_and_artists_potential_deletion(self):
         artists: QuerySet[Artist] = self.artists.all()
         self.delete()
@@ -110,5 +148,5 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
 
 
 @receiver(pre_delete, sender=LibraryTrack)
-def handle_pre_delete(sender, instance: 'LibraryTrack', using, **kwargs):
-    instance.objects.handle_pre_delete(instance)
+def handle_pre_delete(sender, self: 'LibraryTrack', using, **kwargs):
+    self.objects.handle_pre_delete(self)
