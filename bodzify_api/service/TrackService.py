@@ -290,7 +290,7 @@ class TrackService(Service):
         return library_track
 
     def delete(self, user: User, instance: LibraryTrack):
-        old_lib_tracks_playlists_with_positions = instance._get_lib_track_playlists_with_positions()
+        old_lib_tracks_playlists_with_positions = instance.get_lib_track_playlists_with_positions()
         instance.delete_with_checking_album_and_artists_potential_deletion()
         TrackService._decrease_position_of_next_tracks_in_old_track_playlists(
             user=user, playlists_with_old_position=old_lib_tracks_playlists_with_positions)

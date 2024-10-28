@@ -11,9 +11,9 @@ class Fields:
     UUID = ModelFields.UUID
     NAME = ModelFields.NAME
     LIB_TRACKS = ModelFields.LIB_TRACKS
-    LIB_TRACKS_TITLE = LibTrackFields.TITLE
     LIB_TRACKS_COUNT = ModelFields.LIB_TRACKS_COUNT
     LIB_TRACKS_ARCHIVED_COUNT = ModelFields.LIB_TRACKS_ARCHIVED_COUNT
+    LIB_TRACKS_TITLE = LibTrackFields.TITLE
     TYPE = ModelFields.TYPE
     TYPE_LABEL = CriteriaTypeFields.LABEL
     ROOT = ModelFields.ROOT

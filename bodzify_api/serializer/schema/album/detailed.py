@@ -29,7 +29,7 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance: Album):
         representation = super().to_representation(instance)
-        sorted_tracks = LibraryTrack.get_sorted_tracks(instance.library_tracks.all())
+        sorted_tracks = instance.get_sorted_tracks()
         representation[Fields.LIB_TRACKS] = LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(
             sorted_tracks, many=True).data
         return representation

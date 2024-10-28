@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
+from typing import List, Tuple
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.db.models import QuerySet
+from django.utils import timezone
 
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.lib.LibraryTrackManager import LibraryTrackManager
 from bodzify_api import settings
 from bodzify_api.model.base.PrivateUniqueResource import PrivateUniqueResource
@@ -125,6 +128,15 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
 
         self.track_file.update_file_tags(normalized_metadata=normalized_metadata)
 
+    def get_lib_track_playlists_with_positions(self) -> List[Tuple[str, int]]:
+        from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
+            Fields as LibTrackPlaylistPositionRelFields
+        lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(user=self.user, library_track=self)
+        return list(lib_track_position_relations.values_list(
+            LibTrackPlaylistPositionRelFields.BASE_PLAYLIST + '__uuid',
+            LibTrackPlaylistPositionRelFields.POSITION
+        ))
+
     def delete_with_checking_album_and_artists_potential_deletion(self):
         artists: QuerySet[Artist] = self.artists.all()
         self.delete()
@@ -148,5 +160,9 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
 
 
 @receiver(pre_delete, sender=LibraryTrack)
-def handle_pre_delete(sender, self: 'LibraryTrack', using, **kwargs):
-    self.objects.handle_pre_delete(self)
+def handle_pre_delete(sender, instance: LibraryTrack, using, **kwargs):
+    now = timezone.now()
+    base_playlists: List[BasePlaylist] = list(instance.base_playlists.all())
+    for base_playlist in base_playlists:
+        base_playlist.last_track_list_update_date = now
+        base_playlist.save()

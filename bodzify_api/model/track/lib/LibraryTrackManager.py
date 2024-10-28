@@ -3,16 +3,13 @@
 from typing import List, TYPE_CHECKING, Optional
 from django.db import models, transaction
 from django.utils import timezone
-from django.db.models import Q
-
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
+from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 from bodzify_api.model.Artist import Artist
-from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+
 
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -87,7 +84,7 @@ class LibraryTrackManager(models.Manager['LibraryTrack']):
         from bodzify_api.model.track.file.TrackFile import TrackFile, Fields as TrackFileFields
 
         with transaction.atomic():
-            artists = library_track_data.pop(LibTrackFields.ARTISTS, None)
+            artists = library_track_data.pop(ModelFields.ARTISTS, None)
             library_track: LibraryTrack = self.model(**library_track_data)
             library_track.save()
             if artists:
@@ -100,11 +97,6 @@ class LibraryTrackManager(models.Manager['LibraryTrack']):
 
         return library_track
 
-    def get_sorted_tracks(self, queryset):
-        return queryset.annotate(
-            null_position=Q(position_in_album__isnull=True)
-        ).order_by('null_position', 'position_in_album', 'title')
-
     def update_genre_playlists(self, instance: 'LibraryTrack', old_genre: Optional[Criteria]):
         if old_genre and instance.genre:
             common_genre = Criteria.get_common_criteria(instance.genre, old_genre)
@@ -114,18 +106,6 @@ class LibraryTrackManager(models.Manager['LibraryTrack']):
         self._add_track_to_genre_playlists_until_genre_limit(instance, genre_limit=common_genre)
         self._remove_track_from_old_genre_ascendants_playlists_until_genre_limit(
             instance, old_genre=old_genre, genre_limit=common_genre)
-
-    def get_lib_track_playlists_with_positions(self, instance: 'LibraryTrack') -> list:
-        from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
-            Fields as LibTrackPlaylistPositionRelFields
-        lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(
-            user=instance.user,
-            library_track=instance
-        )
-        return list(lib_track_position_relations.values_list(
-            LibTrackPlaylistPositionRelFields.BASE_PLAYLIST + '__uuid',
-            LibTrackPlaylistPositionRelFields.POSITION
-        ))
 
     def save(self, instance: 'LibraryTrack', *args, **kwargs):
         try:
@@ -157,10 +137,3 @@ class LibraryTrackManager(models.Manager['LibraryTrack']):
         except self.model.DoesNotExist:
             instance.save(*args, **kwargs)
             self._add_track_to_genre_playlists_until_genre_limit(instance)
-
-    def handle_pre_delete(self, instance: 'LibraryTrack'):
-        now = timezone.now()
-        base_playlists: List[BasePlaylist] = list(instance.base_playlists.all())
-        for base_playlist in base_playlists:
-            base_playlist.last_track_list_update_date = now
-            base_playlist.save()
