@@ -1,0 +1,11 @@
+meta {
+  name: mat
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{BASE_URL}}artists/{{artistMatUuid}}/
+  body: json
+  auth: inherit
+}

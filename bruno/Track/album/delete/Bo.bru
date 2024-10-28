@@ -1,0 +1,11 @@
+meta {
+  name: Bo
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{BASE_URL}}albums/{{albumJoUuid}}/
+  body: json
+  auth: inherit
+}

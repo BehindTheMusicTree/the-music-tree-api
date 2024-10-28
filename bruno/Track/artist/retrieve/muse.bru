@@ -1,0 +1,11 @@
+meta {
+  name: muse
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}artists/{{artistJulUuid}}/
+  body: json
+  auth: inherit
+}
