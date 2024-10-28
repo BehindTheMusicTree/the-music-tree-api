@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
 from abc import abstractmethod
+from typing import TYPE_CHECKING
+
 from django.db import models
 
 from bodzify_api.model.base.PrivateUniqueResource import PrivateUniqueResource, Fields as PrivateResourceFields
+
+if TYPE_CHECKING:
+    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
 
 class SpecialNames:
@@ -64,3 +69,7 @@ class LibTrackMixin(PrivateUniqueResource):
         minutes = (total_seconds % 3600) // 60
         seconds = total_seconds % 60
         return f"{hours:02}:{minutes:02}:{seconds:02}"
+
+    @abstractmethod
+    def get_sorted_tracks(self) -> models.QuerySet['LibraryTrack']:
+        pass
