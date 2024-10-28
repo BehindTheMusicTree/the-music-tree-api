@@ -61,17 +61,21 @@ class Artist(LibTrackMixin):
             return []
 
     def delete(self):
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
         from bodzify_api.model.Album import Album
-        albums: QuerySet[Album] = self.albums
-        albums.delete()
 
-        self.library_tracks.delete()
+        albums: QuerySet[Album] = self.albums.all()
+        for album in albums:
+            album.delete()
+
+        lib_tracks: QuerySet[LibraryTrack] = self.library_tracks.all()
+        for lib_track in lib_tracks:
+            lib_track.delete()
+
         return super(Artist, self).delete()
 
     def delete_if_nothing_linked(self):
-        from bodzify_api.model.Album import Album
-        albums: QuerySet[Album] = self.albums
-        if albums == 0:
+        if self.albums.count() == 0:
             if self.library_tracks.count() == 0:
                 self.delete()
 
@@ -79,7 +83,7 @@ class Artist(LibTrackMixin):
         from bodzify_api.model.Album import Album
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
-        albums: QuerySet[Album] = self.albums
+        albums: QuerySet[Album] = self.albums.all()
         for album in albums:
             album.delete_with_tracks_and_eventually_artists()
 
