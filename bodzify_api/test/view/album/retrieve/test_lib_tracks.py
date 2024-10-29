@@ -5,13 +5,13 @@ from rest_framework import status
 
 from bodzify_api.model.Album import Album
 from bodzify_api.utils.utils import to_camel_case
-from bodzify_api.test.view.album.AlbumViewTestCase import AlbumViewTestCase
+from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.serializer.schema.album.detailed import Fields as RetrieveFields
 from bodzify_api.serializer.schema.track.output.simple.simple_without_album import Fields as LibTrackGetFields
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as LibTrackPostFields
 
 
-class TestCase(AlbumViewTestCase):
+class TestCase(AlbumTestCase):
 
     def test_all_lib_tracks_with_positions_then_order_by_position_asc(self):
         album = self.model_fixture_factory.create_album(name="Chuck")

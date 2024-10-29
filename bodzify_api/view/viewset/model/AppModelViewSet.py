@@ -2,6 +2,7 @@
 
 import re
 from abc import abstractmethod
+import stat
 
 from django.db import IntegrityError
 from django.http import QueryDict
@@ -54,6 +55,14 @@ class AppModelViewSet(MultiSerializerViewSet):
             for key, value in form_data.items():
                 snake_case_key = AppModelViewSet.camel_to_snake(key)
                 snake_case_dict[snake_case_key] = value
+        return snake_case_dict
+
+    @staticmethod
+    def get_dict_in_snake_case_keys_from_dict_in_camel_case_keys(dict_in_camel_case_keys):
+        snake_case_dict = {}
+        for key, value in dict_in_camel_case_keys.items():
+            snake_case_key = AppModelViewSet.camel_to_snake(key)
+            snake_case_dict[snake_case_key] = value
         return snake_case_dict
 
     def __init__(self, service: Service, **kwargs):

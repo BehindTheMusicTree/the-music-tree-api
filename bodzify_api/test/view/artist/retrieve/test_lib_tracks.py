@@ -4,12 +4,12 @@ from rest_framework import status
 
 
 from bodzify_api.serializer.schema.artist.detailed import Fields as ArtistFields
-from bodzify_api.test.view.artist.ArtistViewTestCase import ArtistViewTestCase
+from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
 from bodzify_api.utils.utils import to_camel_case
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as LibTrackPostFields
 
 
-class TestCase(ArtistViewTestCase):
+class TestCase(ArtistTestCase):
 
     def test_duration(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")

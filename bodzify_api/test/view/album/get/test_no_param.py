@@ -2,10 +2,10 @@
 
 from rest_framework import status
 
-from bodzify_api.test.view.album.AlbumViewTestCase import AlbumViewTestCase
+from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 
 
-class TestCase(AlbumViewTestCase):
+class TestCase(AlbumTestCase):
 
     def test_get(self):
         sum41_artist = self.model_fixture_factory.create_artist(name="Sum 41")

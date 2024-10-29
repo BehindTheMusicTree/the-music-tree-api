@@ -5,16 +5,18 @@ import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, cast
 
 from ddf import G, N
+from django_dynamic_fixture import global_settings
 from django.utils import timezone
 from django.db import transaction
+from django.contrib.auth import get_user_model
 
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
 from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
@@ -23,17 +25,34 @@ from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.file.TrackFile import TrackFile as TrackFile
 from bodzify_api.model.user.User import User
 
+# Configure DDF to handle generated fields
+global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None
 
-# Primarily used to obtain correct type hinting, as opposed to unknown return types in DDF.
+
 class ModelFixtureFactory:
-    default_test_user: User
+    default_test_user: 'User'
     lib_samples_dir: Path
     generic_sample_path: Path
 
-    def __init__(self, default_test_user: User, lib_samples_dir: Path, generic_sample_path: Path) -> None:
+    def __init__(self, default_test_user: 'User', lib_samples_dir: Path, generic_sample_path: Path) -> None:
         self.default_test_user = default_test_user
         self.lib_samples_dir = lib_samples_dir
         self.generic_sample_path = generic_sample_path
+
+    @staticmethod
+    def create_user(username=None, email=None, password='password123', **kwargs) -> 'User':
+        """Create a test user without recursive dependencies"""
+        UserModel = get_user_model()
+        unique_id = str(uuid.uuid4())[:8]
+        # Use N() to create without recursion, then save manually
+        user = N(UserModel,
+                 username=username or f'testuser_{unique_id}',
+                 email=email or f'testuser_{unique_id}@example.com',
+                 is_test_user=True,
+                 **kwargs)
+        user.set_password(password)
+        user.save()
+        return cast('User', user)
 
     def __create_criteria(self,
                           name: str,
@@ -41,65 +60,25 @@ class ModelFixtureFactory:
                           parent: Optional[Criteria] = None,
                           created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                           updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                          user: Optional[User] = None) -> Criteria:
-        return G(Criteria,
-                 user=user or self.default_test_user,
-                 name=name, type=type,
-                 parent=parent,
-                 created_on=created_on,
-                 updated_on=updated_on)
-
-    @staticmethod
-    def create_user(username=None, email=None, password='password123', **kwargs) -> User:
-        ''' 
-        Create a user using User.objects instead of ddf G() not to skip playlists creation in 
-        UserManager.create_user() 
-        '''
-
-        from django.contrib.auth import get_user_model
-        import uuid
-
-        User = get_user_model()
-        unique_id = str(uuid.uuid4())[:8]
-        user = User.objects.create_user(
-            username=username or f'testuser_{unique_id}',
-            email=email or f'testuser_{unique_id}@example.com',
-            password=password,
-            **kwargs
+                          user: Optional['User'] = None) -> Criteria:
+        # Create criteria instance directly to avoid recursion
+        criteria = Criteria.objects.create(
+            created_on=created_on,
+            updated_on=updated_on,
+            user=user or self.default_test_user,
+            name=name,
+            parent=parent,
+            type_id=type
         )
-        return user  # type: ignore
 
-    def create_artist(self,
-                      name: str,
-                      created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                      updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                      user: Optional[User] = None) -> Artist:
-        return G(Artist,
-                 user=user or self.default_test_user,
-                 created_on=created_on,
-                 updated_on=updated_on,
-                 name=name,)
-
-    def create_album(self,
-                     name: str,
-                     album_artists: List[Artist] = [],
-                     year: Optional[int] = None,
-                     created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     user: Optional[User] = None) -> Album:
-        return G(Album,
-                 user=user or self.default_test_user,
-                 created_on=created_on,
-                 updated_on=updated_on,
-                 name=name,
-                 album_artists=album_artists,
-                 year=year,)
+        return criteria
 
     def _create_file(self,
                      lib_track: LibraryTrack,
                      filename: Optional[str],
                      created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     user: Optional[User] = None) -> TrackFile:
+                     updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
+                     user: Optional['User'] = None) -> TrackFile:
 
         user = user or self.default_test_user
 
@@ -112,12 +91,13 @@ class ModelFixtureFactory:
         shutil.copy(file_path, track_file_path_in_lib)
 
         return G(TrackFile,
-                 user=user or self.default_test_user,
+                 created_on=created_on,
+                 updated_on=updated_on,
+                 user=user,
                  library_track=lib_track,
-                 file=str(track_file_path_in_lib),  # Does not work with Path object
+                 file=str(track_file_path_in_lib),
                  size_in_ko=None,
-                 size_in_mo=None,
-                 created_on=created_on)
+                 size_in_mo=None,)
 
     def _create_lib_track(self,
                           title: str,
@@ -131,7 +111,7 @@ class ModelFixtureFactory:
                           archived: Optional[bool] = False,
                           created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                           updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                          user: Optional[User] = None) -> LibraryTrack:
+                          user: Optional['User'] = None) -> LibraryTrack:
         library_track = G(LibraryTrack,
                           user=user or self.default_test_user,
                           created_on=created_on,
@@ -148,6 +128,32 @@ class ModelFixtureFactory:
             library_track.artists.set(artists)
         return library_track
 
+    def create_artist(self,
+                      name: str,
+                      created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
+                      updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
+                      user: Optional['User'] = None) -> Artist:
+        return G(Artist,
+                 created_on=created_on,
+                 updated_on=updated_on,
+                 user=user or self.default_test_user,
+                 name=name,)
+
+    def create_album(self,
+                     name: str,
+                     album_artists: List[Artist] = [],
+                     year: Optional[int] = None,
+                     created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
+                     updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
+                     user: Optional['User'] = None) -> Album:
+        return G(Album,
+                 created_on=created_on,
+                 updated_on=updated_on,
+                 user=user or self.default_test_user,
+                 name=name,
+                 album_artists=album_artists,
+                 year=year,)
+
     def create_lib_track_with_file(self,
                                    title: str,
                                    filename: Optional[str] = None,
@@ -161,7 +167,7 @@ class ModelFixtureFactory:
                                    archived: Optional[bool] = False,
                                    created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                                    updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                                   user: Optional[User] = None) -> LibraryTrack:
+                                   user: Optional['User'] = None) -> LibraryTrack:
 
         with transaction.atomic():
             library_track = self._create_lib_track(title=title,
@@ -218,10 +224,10 @@ class ModelFixtureFactory:
                      parent: Optional[Criteria] = None,
                      created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                      updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     user: Optional[User] = None) -> Criteria:
+                     user: Optional['User'] = None) -> Criteria:
         return self.__create_criteria(created_on=created_on,
                                       updated_on=updated_on,
-                                      user=user or self.default_test_user,
+                                      user=user,
                                       name=name,
                                       type=CriteriaTypesId.GENRE,
                                       parent=parent,)
@@ -231,7 +237,7 @@ class ModelFixtureFactory:
                    parent: Optional[Criteria] = None,
                    created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                    updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                   user: Optional[User] = None) -> Criteria:
+                   user: Optional['User'] = None) -> Criteria:
         return self.__create_criteria(created_on=created_on,
                                       updated_on=updated_on,
                                       user=user,
@@ -244,7 +250,7 @@ class ModelFixtureFactory:
                                play_count: Optional[int] = 0,
                                created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
                                updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                               user: Optional[User] = None) -> ManualPlaylist:
+                               user: Optional['User'] = None) -> ManualPlaylist:
         base_playlist = G(BasePlaylist,
                           created_on=created_on,
                           updated_on=updated_on,

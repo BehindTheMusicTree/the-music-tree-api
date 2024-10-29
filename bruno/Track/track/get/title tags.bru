@@ -1,0 +1,15 @@
+meta {
+  name: title tags
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}tracks/?title=tags
+  body: json
+  auth: inherit
+}
+
+params:query {
+  title: tags
+}

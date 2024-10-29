@@ -5,10 +5,10 @@ from rest_framework import status
 from bodzify_api.model.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.album.AlbumViewTestCase import AlbumViewTestCase
+from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 
 
-class TestCase(AlbumViewTestCase):
+class TestCase(AlbumTestCase):
 
     def test_delete_then_ok(self):
 

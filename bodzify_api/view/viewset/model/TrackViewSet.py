@@ -7,28 +7,18 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
+from rest_framework.exceptions import ValidationError
 
-from bodzify_api.service.TrackService import TrackService
 import bodzify_api.view.utility as utility
+from bodzify_api.filter.LibraryTrackFilter import LibraryTrackFilter, Fields as FilterFields
+from bodzify_api.service.TrackService import TrackService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
-
-
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.track.input.endpoint.extract import LibTrackExtractSerializer
 from bodzify_api.serializer.schema.track.input.endpoint.post import LibTrackPostSerializer
 from bodzify_api.serializer.schema.track.input.endpoint.put import LibTrackPutSerializer
-from bodzify_api.serializer.schema.track.input.schema import Fields as SaveSchemaFields
 from bodzify_api.serializer.schema.track.output.detailed import LibTrackDetailedSerializer
-
-
-class GetFilterFields:
-    TITLE = ModelFields.TITLE
-    ARTIST_NAME = SaveSchemaFields.ARTISTS_NAMES
-    ALBUM_NAME = SaveSchemaFields.ALBUM_ARTISTS_NAMES
-    ALBUM_ARTISTS_NAME = SaveSchemaFields.ALBUM_ARTISTS_NAMES
-    GENRE_NAME = SaveSchemaFields.GENRE_NAME
-    LANGUAGE = ModelFields.LANGUAGE
 
 
 class TrackViewSet(AppModelViewSet):
@@ -45,37 +35,32 @@ class TrackViewSet(AppModelViewSet):
         super().__init__(service=TrackService(), **kwargs)
 
     def get_queryset(self):
-        queryset = LibraryTrack.objects.filter(user=self.request.user)
-        title_filter = self.request.GET.get(GetFilterFields.TITLE)
-        artist_name_filter = self.request.GET.get(GetFilterFields.ARTIST_NAME)
-        album_name_filter = self.request.GET.get(GetFilterFields.ALBUM_NAME)
-        genre_name_filter = self.request.GET.get(GetFilterFields.GENRE_NAME)
-        language_filter = self.request.GET.get(GetFilterFields.LANGUAGE)
-
-        if title_filter:
-            queryset = queryset.filter(title__icontains=title_filter)
-        if artist_name_filter:
-            queryset = queryset.filter(artist__name__icontains=artist_name_filter)
-        if album_name_filter:
-            queryset = queryset.filter(album__name__icontains=album_name_filter)
-        if genre_name_filter:
-            queryset = queryset.filter(genre__name__icontain=genre_name_filter)
-        if language_filter:
-            queryset = queryset.filter(language__icontains=language_filter)
-        return queryset.order_by(f"-{ModelFields.CREATED_ON}")
+        try:
+            snake_case_params = self.get_dict_in_snake_case_keys_from_dict_in_camel_case_keys(self.request.GET)
+            queryset = LibraryTrack.objects.filter(user=self.request.user)
+            filtered_queryset = LibraryTrackFilter(snake_case_params, queryset=queryset).qs
+            return filtered_queryset.order_by(f"-{ModelFields.CREATED_ON}")
+        except ValidationError as e:
+            raise ValidationError(e.detail)
 
     def _get_detailed_serializer(self, instance) -> ModelSerializer:
         return LibTrackDetailedSerializer(instance=instance)  # type: ignore
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=GetFilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GetFilterFields.ARTIST_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GetFilterFields.ALBUM_ARTISTS_NAME,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=GetFilterFields.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY)])
+        OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.ARTISTS_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.ALBUM_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.LANGUAGE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+    ])
     def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+        try:
+            return super().list(request, *args, **kwargs)
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e.detail[0])},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     @transaction.atomic
     @extend_schema(request=LibTrackPutSerializer,
@@ -184,7 +169,3 @@ class TrackViewSet(AppModelViewSet):
         response_serializer = LibTrackDetailedSerializer(track)
         headers = self.get_success_headers(response_serializer.data)
         return Response(data=response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    @transaction.atomic
-    def destroy(self, request, *args, **kwargs):
-        return self._destroy(request, *args, **kwargs)

@@ -1,0 +1,15 @@
+meta {
+  name: genre country
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}tracks/?albumName=bo
+  body: json
+  auth: inherit
+}
+
+params:query {
+  albumName: bo
+}

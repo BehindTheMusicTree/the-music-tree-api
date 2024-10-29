@@ -132,3 +132,9 @@ class TrackTestCase(ApiTestCase):
 
     def _retrieve_lib_track(self, lib_track_uuid: UUID):
         return self.api_client.get(path=reverse('librarytrack-detail', kwargs={'pk': lib_track_uuid}))
+
+    def _get_lib_tracks(self, **kwargs):
+        response = self.api_client.get(path=reverse('librarytrack-list'), data=kwargs)
+        if response.status_code == status.HTTP_200_OK:
+            self._set_results_attributes(response)
+        return response
