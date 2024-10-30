@@ -4,7 +4,7 @@ import uuid
 from django.db import models
 
 from bodzify_api.model.base.utils.PrivateModel import PrivateModel, Fields as PrivateFields
-from bodzify_api.model.base.PublicStandardResource import PublicStandardResource, Fields as PublicRelationFields
+from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResource import PublicStandardResource, Fields as PublicRelationFields
 from bodzify_api.model.base.utils.UuidModel import UuidModel, Fields as UuidFields
 
 

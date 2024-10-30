@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from bodzify_api.model.base.PublicStandardResource import PublicStandardResource, Fields as PublicRelationFields
+from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResource import PublicStandardResource, Fields as PublicRelationFields
 from bodzify_api.model.base.utils.UuidModel import UuidModel, Fields as UuidFields
 
 

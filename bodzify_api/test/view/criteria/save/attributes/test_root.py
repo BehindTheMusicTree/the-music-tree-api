@@ -13,7 +13,7 @@ class TestCase(CriteriaTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
         data = {InputFields.PARENT: None}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.root == self.saved_genre
 
@@ -23,7 +23,7 @@ class TestCase(CriteriaTestCase):
             InputFields.NAME: "Punk",
             InputFields.PARENT: rock.uuid
         }
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rock
 
@@ -34,7 +34,7 @@ class TestCase(CriteriaTestCase):
             InputFields.NAME: "Punk hardcore",
             InputFields.PARENT: punk_genre.uuid
         }
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rock_genre
 
@@ -46,6 +46,6 @@ class TestCase(CriteriaTestCase):
             InputFields.NAME: "Punk hardcore japonais",
             InputFields.PARENT: hardcorepunk_genre.uuid
         }
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == rock_genre

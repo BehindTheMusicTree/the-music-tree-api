@@ -25,7 +25,7 @@ class TestCase(CriteriaTestCase):
             genre=punk_genre, title="loul")
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(user=self.test_user2,
@@ -56,7 +56,7 @@ class TestCase(CriteriaTestCase):
             genre=punk_genre, title="punk1")
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(user=self.test_user2,
@@ -84,7 +84,7 @@ class TestCase(CriteriaTestCase):
         self.model_fixture_factory.create_lib_track_with_file(genre=punk_genre, title="Punk song")
 
         data = {PutFields.PARENT: ''}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(user=self.test_user2,
@@ -105,7 +105,7 @@ class TestCase(CriteriaTestCase):
         self.model_fixture_factory.create_lib_track_with_file(genre=punk_fr_genre, title="punk fr song")
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         lib_track_playlist_rel = LibTrackPlaylistPositionRel.objects.get(user=self.test_user2,
                                                                          base_playlist=punk_playlist.base_playlist,

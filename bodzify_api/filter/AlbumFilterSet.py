@@ -13,7 +13,7 @@ class Fields:
     ALBUM_ARTISTS_NAME = f'{AlbumFields.ALBUM_ARTISTS}__{ArtistFields.NAME}'
 
 
-class AlbumFilter(AppFilterSet):
+class AlbumFilterSet(AppFilterSet):
     name = CharFilter(field_name=Fields.NAME, lookup_expr='icontains')
     album_artists_name = CharFilter(method=f'{AlbumFields.ALBUM_ARTISTS}_{ArtistFields.NAME}_filter')
 

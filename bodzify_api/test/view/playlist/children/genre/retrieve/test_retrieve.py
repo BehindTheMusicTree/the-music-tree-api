@@ -13,6 +13,6 @@ class TestCase(GenrePlaylistTestCase):
         rock_criteria_name = "Rock"
         rock_genre = self.model_fixture_factory.create_genre(name=rock_criteria_name)
         rock_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rock_genre).base_playlist
-        response = self.retrieve_genre_playlist(playlist_uuid=rock_playlist.uuid)
+        response = self._retrieve_genre_playlist(playlist_uuid=rock_playlist.uuid)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()[GetResultFields.NAME] == rock_criteria_name

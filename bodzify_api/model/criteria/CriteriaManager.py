@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 from typing import Optional, TYPE_CHECKING
-from django.db import models
 from django.db.models import QuerySet
+
+from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResourceManager \
+    import PublicStandardResourceManager
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
@@ -14,7 +16,7 @@ if TYPE_CHECKING:
         Fields as LibTrackPlaylistPositionRelFields
 
 
-class CriteriaManager(models.Manager['Criteria']):
+class CriteriaManager(PublicStandardResourceManager['Criteria']):
     model: type['Criteria']
 
     @staticmethod

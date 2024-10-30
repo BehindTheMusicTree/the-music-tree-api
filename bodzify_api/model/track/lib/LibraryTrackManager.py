@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 from typing import List, TYPE_CHECKING, Optional
-from django.db import models, transaction
+from django.db import transaction
 from django.utils import timezone
+from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResourceManager \
+    import PublicStandardResourceManager
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
@@ -15,12 +17,13 @@ if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
 
-class LibraryTrackManager(models.Manager['LibraryTrack']):
+class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
     model: type['LibraryTrack']
 
-    def _remove_track_from_old_genre_ascendants_playlists_until_genre_limit(
-            self, instance: 'LibraryTrack', old_genre: Optional[Criteria],
-            genre_limit=None):
+    def _remove_track_from_old_genre_ascendants_playlists_until_genre_limit(self,
+                                                                            instance: 'LibraryTrack',
+                                                                            old_genre: Optional[Criteria],
+                                                                            genre_limit=None):
         from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
 
         update_date = timezone.now()

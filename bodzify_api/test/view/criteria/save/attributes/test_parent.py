@@ -14,7 +14,7 @@ class TestCase(CriteriaTestCase):
             InputFields.NAME: "Punk",
             InputFields.PARENT: ["value", "value2"]
         }
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_empty_then_none(self):
@@ -22,7 +22,7 @@ class TestCase(CriteriaTestCase):
             InputFields.NAME: "Punk",
             InputFields.PARENT: ""
         }
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.parent == None
 
@@ -32,7 +32,7 @@ class TestCase(CriteriaTestCase):
             InputFields.NAME: "Punk",
             InputFields.PARENT: rock_genre.uuid
         }
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.parent == rock_genre
 
@@ -42,5 +42,5 @@ class TestCase(CriteriaTestCase):
             InputFields.NAME: "Punk",
             InputFields.PARENT: "not existing"
         }
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

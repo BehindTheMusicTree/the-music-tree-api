@@ -10,14 +10,14 @@ from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import 
 
 class TestCase(GenrePlaylistTestCase):
 
-    def test_get_by_name_of_criteria(self):
-        rock_criteria_name = "Rock"
-        self.model_fixture_factory.create_genre(name=rock_criteria_name)
-        data_dict = {GetQueryParams.NAME: rock_criteria_name}
-        response = self.get_genre_playlists(data_dict=data_dict)
+    def test_filter_empty_then_return_genre_without_parent(self):
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        self.model_fixture_factory.create_genre(name="Koko", parent=genre_rock)
+
+        response = self._get_genre_playlists(parent='')
+
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 1
-        assert self.results[0][GetResultFields.NAME] == rock_criteria_name
 
     def test_get_two_by_parent_none(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
@@ -25,7 +25,9 @@ class TestCase(GenrePlaylistTestCase):
         rap_genre = self.model_fixture_factory.create_genre(name="Rap")
         rap_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rap_genre).base_playlist
         data_dict = {GetQueryParams.PARENT: ""}
-        response = self.get_genre_playlists(data_dict=data_dict)
+
+        response = self._get_genre_playlists(data_dict=data_dict)
+
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 3
 

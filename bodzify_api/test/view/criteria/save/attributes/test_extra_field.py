@@ -9,5 +9,5 @@ class TestCase(CriteriaTestCase):
 
     def test_extra_field_then_error(self):
         data_dict = {"notExistingField": "Koko"}
-        response = self.post_genre(data_dict=data_dict)
+        response = self._post_genre(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

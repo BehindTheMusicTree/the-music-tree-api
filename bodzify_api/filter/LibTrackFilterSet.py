@@ -19,7 +19,7 @@ class Fields:
     LANGUAGE = ModelFields.LANGUAGE
 
 
-class LibraryTrackFilter(AppFilterSet):
+class LibTrackFilterSet(AppFilterSet):
     title = CharFilter(field_name=Fields.TITLE, lookup_expr='icontains')
     artists_name = CharFilter(method=f'{ModelFields.ARTISTS}_{ArtistFields.NAME}_filter')
     album_name = CharFilter(method=f'{ModelFields.ALBUM}_{AlbumFields.NAME}_filter')

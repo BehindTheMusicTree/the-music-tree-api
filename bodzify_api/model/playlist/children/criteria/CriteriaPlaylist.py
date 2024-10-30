@@ -47,31 +47,17 @@ class Fields:
 
 
 class CriteriaPlaylist(ChildPlaylist):
-    base_playlist = models.OneToOneField(
-        BasePlaylist,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name=BasePlaylistFields.CRITERIA_CHILD_PLAYLIST
-    )
-    criteria = models.OneToOneField(
-        Criteria,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        related_name=ModelFields.CRITERIA_PLAYLIST
-    )
-    type = models.ForeignKey(
-        CriteriaType,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=False
-    )
-    parent = models.ForeignKey(
-        'self',
-        on_delete=models.CASCADE,
-        null=True,
-        related_name='child_playlist'
-    )
+    base_playlist = models.OneToOneField(BasePlaylist,
+                                         on_delete=models.CASCADE,
+                                         primary_key=True,
+                                         related_name=BasePlaylistFields.CRITERIA_CHILD_PLAYLIST)
+    criteria = models.OneToOneField(Criteria,
+                                    on_delete=models.CASCADE,
+                                    blank=True,
+                                    null=True,
+                                    related_name=ModelFields.CRITERIA_PLAYLIST)
+    type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE, blank=True, null=False)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='child_playlist')
     root = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
@@ -84,12 +70,7 @@ class CriteriaPlaylist(ChildPlaylist):
         db_table = 'bodzify_api_criteria_playlist'
         verbose_name = 'Criteria Playlist'
         verbose_name_plural = 'Criteria Playlists'
-        indexes = [
-            models.Index(
-                fields=[Fields.BASE_PLAYLIST, Fields.CRITERIA],
-                name='criteria_playlist_idx'
-            ),
-        ]
+        indexes = [models.Index(fields=[Fields.BASE_PLAYLIST, Fields.CRITERIA], name='criteria_playlist_idx'),]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -163,14 +144,9 @@ class CriteriaPlaylist(ChildPlaylist):
     def _is_creating(self) -> bool:
         return getattr(self, f"{Fields.ROOT}_id", None) is None
 
-    def _post_save(self, created: bool):
-        if created:
-            self._post_create()
-        else:
+    def _post_save(self, is_creating: bool):
+        if not is_creating:
             self._post_update()
-
-    def _post_create(self):
-        pass
 
     def _post_update(self):
         current_root_id = getattr(self, f"{Fields.ROOT}_id", None)
@@ -183,10 +159,10 @@ class CriteriaPlaylist(ChildPlaylist):
             child.save(update_fields=[Fields.ROOT])
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        created = self._is_creating()
-        if created:
+        is_creating = self._is_creating()
+        if is_creating:
             self.root = self
 
         kwargs = self._prepare_save(**kwargs)
         super().save(force_insert=force_insert, force_update=force_update, *args, **kwargs)
-        self._post_save(created=created)
+        self._post_save(is_creating=is_creating)

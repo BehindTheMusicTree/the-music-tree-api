@@ -12,7 +12,7 @@ class TestCase(CriteriaTestCase):
     def test_not_provided_then_unchanged(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict={})
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict={})
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.parent == rock_genre
 
@@ -22,11 +22,11 @@ class TestCase(CriteriaTestCase):
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
 
         data = {PutFields.PARENT: punkhardcore_genre.uuid}
-        response = self.put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_error_when_parent_is_itself(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

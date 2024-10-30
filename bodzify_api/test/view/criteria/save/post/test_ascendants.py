@@ -12,14 +12,14 @@ class TestCase(CriteriaTestCase):
 
     def test_no_parent_provided_then_no_ascendants(self):
         data = {PostFields.NAME: "Rock"}
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 0
 
     def test_root_parent_then_one_ascendant_with_degree_1(self):
         root = self.model_fixture_factory.create_genre(name="Rock")
         data = {PostFields.NAME: "Punk", PostFields.PARENT: root.uuid}
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 1
         criteria_ascendant_relation: CriteriaAscendantRel = \
@@ -32,7 +32,7 @@ class TestCase(CriteriaTestCase):
         criteria2 = self.model_fixture_factory.create_genre(name="Soft rock", parent=criteria1)
         criteria3 = self.model_fixture_factory.create_genre(name="Pop rock", parent=criteria2)
         data = {PostFields.NAME: "Pop funk rock", PostFields.PARENT: criteria3.uuid}
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 3
         criteria_ascendant_relations: QuerySet[CriteriaAscendantRel] = \

@@ -17,7 +17,7 @@ class TestCase(CriteriaTestCase):
                                                                        parent=punkhardcore_genre)
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         root_playlist = rock_genre.criteria_playlist

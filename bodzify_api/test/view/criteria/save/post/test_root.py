@@ -11,6 +11,6 @@ class TestCase(CriteriaTestCase):
 
     def test_parent_not_provided_then_root_itself(self):
         data_dict = {PostFields.NAME: "Rock"}
-        response = self.post_genre(data_dict=data_dict)
+        response = self._post_genre(data_dict=data_dict)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.root == self.saved_genre

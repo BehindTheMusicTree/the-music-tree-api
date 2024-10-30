@@ -18,19 +18,19 @@ class CriteriaTestCase(ApiTestCase):
         uuid = response.json()[ManualPlaylistGetFields.UUID]
         self.saved_genre = Criteria.objects.get(user=self.test_user1, uuid=uuid)
 
-    def retrieve_genre(self, uuid: UUID):
+    def _retrieve_genre(self, uuid: UUID):
         response = self.api_client.get(path=reverse('genre-detail', kwargs={'pk': uuid}))
         if response.status_code == status.HTTP_200_OK:
             self._set_result(response=response)
         return response
 
-    def get_genres(self):
-        response = self.api_client.get(path=reverse('genre-list'))
+    def _get_genres(self, **kwargs):
+        response = self.api_client.get(path=reverse('genre-list'), data=kwargs)
         if response.status_code == status.HTTP_200_OK:
             self._set_results_attributes(response)
         return response
 
-    def post_genre(self, data_dict):
+    def _post_genre(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
         response = self.api_client.post(path=reverse('genre-list'),
                                         data=data_url_encoded,
@@ -39,7 +39,7 @@ class CriteriaTestCase(ApiTestCase):
             self._set_saved_genre_attribute(response)
         return response
 
-    def put_genre(self, genre_uuid: UUID, data_dict):
+    def _put_genre(self, genre_uuid: UUID, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
         response = self.api_client.put(path=reverse('genre-detail', kwargs={'pk': genre_uuid}),
                                        data=data_url_encoded,

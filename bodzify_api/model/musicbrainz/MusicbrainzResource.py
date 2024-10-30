@@ -2,11 +2,10 @@
 
 from django.db import models
 from django.db.models import F, Value
-# from django.db.models.expressions import Value
 
 from bodzify_api import settings
 from bodzify_api.model.function.ConcatOp import ConcatOp
-from bodzify_api.model.base.PublicStandardResource import PublicStandardResource, Fields as PublicStandardResourceFields
+from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResource import PublicStandardResource, Fields as PublicStandardResourceFields
 
 
 class Fields:

@@ -7,8 +7,13 @@ from bodzify_api.view.viewset.model.criteria.CriteriaViewSet import CriteriaView
 
 
 class TagViewSet(CriteriaViewSet):
-
-    queryset = Criteria.objects.filter(type_id=CriteriaTypesId.TAG)
-
     def __init__(self, **kwargs):
-        super().__init__(TagService(), **kwargs)
+        super().__init__(
+            service=TagService(),
+            model_class=Criteria,
+            **kwargs
+        )
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(type_id=CriteriaTypesId.TAG)

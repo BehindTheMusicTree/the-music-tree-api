@@ -3,7 +3,7 @@
 from uuid import UUID
 from django.db import models
 from django.utils import timezone
-from bodzify_api.model.base.utils.BaseModel import BaseModel
+from bodzify_api.model.base.utils.base_model.BaseModel import BaseModel
 from bodzify_api.model.user.User import User
 
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist

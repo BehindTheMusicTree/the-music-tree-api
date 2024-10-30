@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
 from typing import TYPE_CHECKING
-from django.db import models, transaction
+from django.db import models
 from django.db.models import QuerySet
 from typing import Optional
 
 from bodzify_api.model.playlist.children.ChildPlaylistManager import ChildPlaylistManager
 
 if TYPE_CHECKING:
-    from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-    from bodzify_api.model.criteria.Criteria import Criteria
-    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist, Fields as ModelFields
+    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
     from bodzify_api.model.LibTrackMixin import SpecialNames
 
 

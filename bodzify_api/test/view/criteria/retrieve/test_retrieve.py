@@ -13,7 +13,7 @@ class TestCase(CriteriaTestCase):
     def test_name(self):
         name = 'rock'
         uuid = self.model_fixture_factory.create_genre(name=name).uuid
-        response = self.retrieve_genre(uuid=uuid)
+        response = self._retrieve_genre(uuid=uuid)
         assert response.status_code == status.HTTP_200_OK
         assert self.result[RetrieveFields.NAME] == name
 
@@ -26,7 +26,7 @@ class TestCase(CriteriaTestCase):
         title2 = 'bien'
         track2_uuid = self.model_fixture_factory.create_lib_track_with_file(title=title2, genre=criteria).uuid
 
-        response = self.retrieve_genre(uuid=criteria.uuid)
+        response = self._retrieve_genre(uuid=criteria.uuid)
         assert response.status_code == status.HTTP_200_OK
         lib_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS)]
         assert len(lib_tracks) == 2

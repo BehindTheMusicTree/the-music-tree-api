@@ -3,7 +3,6 @@
 from rest_framework import serializers
 
 from bodzify_api.model.Album import Album
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.album.fields import Fields
 from bodzify_api.serializer.schema.artist.minimum import ArtistMinimumSerializer
 from bodzify_api.serializer.schema.track.output.simple.simple_without_album_with_position_in_album \

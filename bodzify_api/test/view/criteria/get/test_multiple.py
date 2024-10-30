@@ -10,6 +10,6 @@ class TestCase(CriteriaTestCase):
     def test_two(self):
         self.model_fixture_factory.create_genre(name="rock")
         self.model_fixture_factory.create_genre(name="rap")
-        response = self.get_genres()
+        response = self._get_genres()
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 2

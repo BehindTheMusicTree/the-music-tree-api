@@ -10,7 +10,7 @@ class TestCase(CriteriaTestCase):
 
     def test_root(self):
         genre = self.model_fixture_factory.create_genre(name="Rock")
-        response = self.get_genres()
+        response = self._get_genres()
         assert response.status_code == status.HTTP_200_OK
         genre_json = self.results[0]
         assert genre_json[Fields.ROOT][Fields.UUID] == genre.uuid
@@ -18,7 +18,7 @@ class TestCase(CriteriaTestCase):
     def test_root_of_first_descandant(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        response = self.get_genres()
+        response = self._get_genres()
         assert response.status_code == status.HTTP_200_OK
         for json_element in self.results:
             if json_element[Fields.UUID] == punk_genre.uuid:
@@ -28,7 +28,7 @@ class TestCase(CriteriaTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk Hardcore", parent=punk_genre)
-        response = self.get_genres()
+        response = self._get_genres()
         assert response.status_code == status.HTTP_200_OK
         for json_element in self.results:
             if json_element[Fields.UUID] == punkhardcore_genre.uuid:

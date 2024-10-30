@@ -13,7 +13,7 @@ class TestCase(CriteriaTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         genre_new_name = "Punk"
         data = {PutFields.NAME: genre_new_name}
-        response = self.put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         playlist = self.saved_genre
         assert playlist.name == genre_new_name
@@ -23,7 +23,7 @@ class TestCase(CriteriaTestCase):
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
         hardcore_genre = self.model_fixture_factory.create_genre(name="Hardcore")
         data = {PutFields.PARENT: hardcore_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         punk_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=punk_genre)
         hardcore_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=hardcore_genre)
@@ -34,7 +34,7 @@ class TestCase(CriteriaTestCase):
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
         hardcore_genre = self.model_fixture_factory.create_genre(name="Hardcore")
         data = {PutFields.PARENT: hardcore_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         punk_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=punk_genre)
         hardcore_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=hardcore_genre)
@@ -46,7 +46,7 @@ class TestCase(CriteriaTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rock_genre).base_playlist
         assert playlist.library_tracks.first() == track
@@ -57,7 +57,7 @@ class TestCase(CriteriaTestCase):
         track = self.model_fixture_factory.create_lib_track_with_file(genre=punk_genre, title="Rock song")
 
         data = {PutFields.PARENT: ''}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rock_genre).base_playlist
         assert playlist.library_tracks.first() != track
@@ -72,7 +72,7 @@ class TestCase(CriteriaTestCase):
         self.model_fixture_factory.create_lib_track_with_file(genre=punk_fr_genre, title="punk fr song")
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert punk_playlist.library_tracks.count() == 1
         assert punk_playlist.library_tracks.first() == track_punk

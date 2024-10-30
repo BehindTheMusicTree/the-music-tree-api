@@ -22,12 +22,12 @@ from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
-router.register(r'tracks', TrackViewSet)
-router.register(r'artists', ArtistViewSet)
-router.register(r'albums', AlbumViewSet)
-router.register(r'tags', TagViewSet)
-router.register(r'genres', GenreViewSet, basename='genre')  # Do not remove basename as the model name is Criteria
-router.register(r'plays', PlayViewSet)
+router.register(r'tracks', TrackViewSet, basename='library-track')
+router.register(r'artists', ArtistViewSet, basename='artist')
+router.register(r'albums', AlbumViewSet, basename='album')
+router.register(r'tags', TagViewSet, basename='tag')
+router.register(r'genres', GenreViewSet, basename='genre')
+router.register(r'plays', PlayViewSet, basename='play')
 
 # Do not move PlaylistViewSet after GenrePlaylistViewSet or ManualPlaylistViewSet or it will cause confusion resolving
 # reverse urls.

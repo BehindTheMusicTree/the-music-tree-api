@@ -4,7 +4,7 @@ import uuid
 
 from django.db import models
 
-from bodzify_api.model.base.utils.BaseModel import BaseModel
+from bodzify_api.model.base.utils.base_model.BaseModel import BaseModel
 
 
 class Fields:

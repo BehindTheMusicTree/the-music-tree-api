@@ -11,7 +11,7 @@ class TestCase(CriteriaTestCase):
 
     def test_not_provided_then_none(self):
         data = {PostFields.NAME: "Rock"}
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.parent == None
 
@@ -20,6 +20,6 @@ class TestCase(CriteriaTestCase):
             PostFields.NAME: "Rock",
             PostFields.PARENT: ""
         }
-        response = self.post_genre(data_dict=data)
+        response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.parent == None

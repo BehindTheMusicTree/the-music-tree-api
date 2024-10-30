@@ -18,7 +18,7 @@ class TestCase(CriteriaTestCase):
         punk_genre = self.model_fixture_factory.create_genre(name="Punk")
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         updated_punk_genre = Criteria.objects.get(user=self.test_user1, uuid=punk_genre.uuid)
         ascendant_relations: QuerySet[CriteriaAscendantRel] = \
@@ -31,7 +31,7 @@ class TestCase(CriteriaTestCase):
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
 
         data = {PutFields.PARENT: ""}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         updated_punk_genre = Criteria.objects.get(user=self.test_user1, uuid=punk_genre.uuid)
         assert updated_punk_genre.criteria_ascendant_relation_ascendants.count() == 0
@@ -42,7 +42,7 @@ class TestCase(CriteriaTestCase):
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         updated_punkhardcore_genre = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
@@ -65,10 +65,10 @@ class TestCase(CriteriaTestCase):
                                                                            parent=frenchpunkhardcore_genre)
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        updated_bretonpunkhardcore_genre = Criteria.objects.get(user=self.test_user1, 
+        updated_bretonpunkhardcore_genre = Criteria.objects.get(user=self.test_user1,
                                                                 uuid=bretonpunkhardcore_genre.uuid)
         bretonpunkhardcore_ascendants_unordered: QuerySet[CriteriaAscendantRel] = \
             updated_bretonpunkhardcore_genre.criteria_ascendant_relation_ascendants.all()
@@ -90,7 +90,7 @@ class TestCase(CriteriaTestCase):
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
 
         data = {PutFields.PARENT: ""}
-        response = self.put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         assert self.saved_genre.root == punk_genre

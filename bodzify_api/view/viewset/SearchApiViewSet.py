@@ -109,7 +109,7 @@ class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
     pagination_class = DefaultMultipleModelLimitOffsetPagination
 
     # Only used by drf spectacular to generate the schema
-    def get_serializer_class(self):
+    def get_detailed_serializer_class(self):
         return LibTrackDetailedSerializer
 
     @extend_schema(description=("""

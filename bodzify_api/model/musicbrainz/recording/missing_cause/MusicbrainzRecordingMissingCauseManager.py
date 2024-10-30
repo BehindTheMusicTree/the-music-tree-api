@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
-from django.db import models
+from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResourceManager \
+    import PublicStandardResourceManager
 
 
-class MusicbrainzRecordingMissingCauseManager(models.Manager):
+class MusicbrainzRecordingMissingCauseManager(PublicStandardResourceManager):
 
     def create(self, *args, **kwargs):
-        from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCause \
-            import Fields
+        from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCause import Fields
         from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCauseCode \
             import MusicbrainzRecordingMissingCauseCode
+
         code = kwargs.pop(Fields.CODE, None)
         if code is None:
             raise ValueError("The code parameter must be provided when creating an entry.")

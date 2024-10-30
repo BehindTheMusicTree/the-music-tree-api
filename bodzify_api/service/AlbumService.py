@@ -9,7 +9,7 @@ from bodzify_api.service.Service import Service
 
 class AlbumService(Service):
 
-    def _get_detailed_serializer(self, instance) -> AlbumDetailedSerializer:
+    def _get_detailed_serializer_instance(self, instance) -> AlbumDetailedSerializer:
         return AlbumDetailedSerializer(instance=instance)  # type: ignore
 
     def delete(self, user: User, instance: Album):

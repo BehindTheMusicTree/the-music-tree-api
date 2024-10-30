@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 
 
+from typing import Self
 from django.db import models
+
+from bodzify_api.model.base.utils.base_model.BaseManager import BaseManager
 
 
 class BaseModel(models.Model):
+
+    objects: BaseManager[Self]
 
     class Meta:
         abstract = True

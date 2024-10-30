@@ -16,18 +16,16 @@ class FilterFields:
 
 
 class CriteriaViewSet(AppModelViewSet):
-
-    queryset = Criteria.objects.all()
-    serializers = {
-        'default': CriteriaDetailedSerializer,
-        'list':  CriteriaDetailedSerializer,
-        'retrieve':  CriteriaDetailedSerializer,
-        'create':  CriteriaSchemaSerializer,
-        'update':  CriteriaSchemaSerializer,
-    }
+    def __init__(self, **kwargs):
+        super().__init__(
+            service=None,
+            model_class=Criteria,
+            detailed_serializer_class=CriteriaDetailedSerializer,
+            **kwargs
+        )
 
     def get_queryset(self):
-        queryset = self.queryset.filter(user=self.request.user)
+        queryset = self.model_class.objects.filter(user=self.request.user)
 
         name = self.request.query_params.get(FilterFields.NAME)  # type: ignore
         if name:
@@ -42,9 +40,6 @@ class CriteriaViewSet(AppModelViewSet):
             queryset = queryset.filter(parent=parent)
 
         return queryset.order_by(Fields.NAME)
-
-    def _get_detailed_serializer(self, instance) -> ModelSerializer:
-        return CriteriaDetailedSerializer(instance=instance)  # type: ignore
 
     @transaction.atomic
     @extend_schema(request=CriteriaSchemaSerializer, responses=CriteriaDetailedSerializer)
