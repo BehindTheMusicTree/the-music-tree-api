@@ -13,7 +13,7 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 
 from bodzify_api.model.album.Album import Album
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist

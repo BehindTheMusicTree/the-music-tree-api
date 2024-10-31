@@ -1,7 +1,8 @@
 from django_filters import CharFilter
 
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
-from bodzify_api.model.Artist import Fields as ArtistFields, Artist
+from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
 
 
 class Fields:

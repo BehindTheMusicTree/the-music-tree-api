@@ -14,7 +14,7 @@ from bodzify_api.model.base.PrivateUniqueResource import PrivateUniqueResource
 from bodzify_api.model.track.lib.Fields import Fields
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.model.album.Album import Album
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.TrackablePlayCountModel import TrackablePlayCountModel
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR

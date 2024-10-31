@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
-from bodzify_api.model.Artist import Artist, Fields as ArtistFields
+from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import Fields as BasePlaylistFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist \

@@ -6,7 +6,7 @@ from .model.user.User import User
 
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.AllLibTrackMixin import AllLibTrackMixin
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaAscendantRel import CriteriaAscendantRel
 from bodzify_api.model.criteria.CriteriaType import CriteriaType

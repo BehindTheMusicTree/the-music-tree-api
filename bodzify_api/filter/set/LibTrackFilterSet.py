@@ -4,7 +4,7 @@ from django.db.models import Q, QuerySet
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
-from bodzify_api.model.Artist import Fields as ArtistFields
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 

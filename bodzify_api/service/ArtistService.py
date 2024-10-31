@@ -1,5 +1,5 @@
 
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.user.User import User
 
 from bodzify_api.service.Service import Service

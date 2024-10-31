@@ -18,7 +18,7 @@ from bodzify_api.utils import audio_metadata, utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.service.Service import Service
 from bodzify_api.model.album.Album import Album
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \

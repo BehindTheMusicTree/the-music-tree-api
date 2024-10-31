@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.schema.artist.fields import Fields as AvailableFields
 from bodzify_api.serializer.schema.album.minimum import AlbumMinimumSerializer
 

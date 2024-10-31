@@ -1,5 +1,5 @@
 
-from bodzify_api.model.Artist import Fields as ArtistFields
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
 
 
 class Fields:

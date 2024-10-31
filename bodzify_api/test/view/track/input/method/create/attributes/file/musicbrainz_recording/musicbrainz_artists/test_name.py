@@ -2,7 +2,7 @@
 from rest_framework import status
 from django.db.models import QuerySet
 
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 

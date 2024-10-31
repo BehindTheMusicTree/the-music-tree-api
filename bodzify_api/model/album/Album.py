@@ -5,7 +5,8 @@ from django.db.models import Q, QuerySet
 from bodzify_api import settings
 from bodzify_api.model.album.AlbumManager import AlbumManager
 from bodzify_api.model.user.User import User
-from bodzify_api.model.Artist import Artist, Fields as ArtistFields
+from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.LibTrackMixin import LibTrackMixin
 
 if TYPE_CHECKING:

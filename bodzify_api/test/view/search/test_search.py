@@ -2,7 +2,7 @@
 from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.playlist.children.ManualPlaylist import SpecialNames as MANUAL_PLAYLIST_SPECIAL_NAMES

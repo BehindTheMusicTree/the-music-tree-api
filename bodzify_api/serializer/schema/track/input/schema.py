@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.Artist import Fields as ArtistFields
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.serializer.field.UserFilteredUUIDField import UserFilteredUUIDField
 from bodzify_api.serializer.schema.track.input.model import Fields as SaveModelFields
 

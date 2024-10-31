@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from bodzify_api.filter.set.ArtistFilterSet import ArtistFilterSet, Fields as FilterFields
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.service.ArtistService import ArtistService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.schema.artist.detailed import ArtistDetailedSerializer

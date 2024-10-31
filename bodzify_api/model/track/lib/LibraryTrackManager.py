@@ -9,7 +9,7 @@ from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
-from bodzify_api.model.Artist import Artist
+from bodzify_api.model.artist.Artist import Artist
 
 
 if TYPE_CHECKING:
