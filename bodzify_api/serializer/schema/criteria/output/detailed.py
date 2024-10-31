@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-
-from typing import Any, Dict, List
 
 from rest_framework import serializers
 
@@ -12,7 +9,7 @@ from bodzify_api.serializer.schema.criteria_ascendant_relation.without_ascendant
     CriteriaAscendantRelationWithoutAscendantSerializer
 from bodzify_api.serializer.schema.criteria_ascendant_relation.without_descendant import \
     CriteriaAscendantRelationWithoutDescendantSerializer
-from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import CriteriaPlaylistSimpleSerializer
+from bodzify_api.serializer.schema.playlist.children.criteria.output.minumum import CriteriaPlaylistMinimumSerializer
 from bodzify_api.serializer.schema.track.output.simple.simple_without_album_and_genre import \
     LibTrackWithoutAlbumPlaylistGenreSerializer
 
@@ -29,7 +26,7 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
         source=ModelFields.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
         many=True)
     children = CriteriaMinimumSerializer(many=True)
-    criteria_playlist = CriteriaPlaylistSimpleSerializer()
+    criteria_playlist = CriteriaPlaylistMinimumSerializer()
 
     class Meta:
         model = Criteria

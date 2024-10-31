@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.criteria.Criteria import Fields as ModelFields
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields

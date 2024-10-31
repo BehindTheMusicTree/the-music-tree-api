@@ -1,5 +1,5 @@
-#!/usr/bin/env python
 
+from logging import root
 from django.db import models, transaction
 from typing import Dict, Any, Optional, TYPE_CHECKING
 
@@ -94,17 +94,19 @@ class CriteriaPlaylist(ChildPlaylist):
     def __str__(self) -> str:
         return f'{self.base_playlist.uuid} | {self.name}'
 
-    def _prepare_save(self, **kwargs) -> Dict[str, Any]:
+    def _prepare_save(self, is_creating, **kwargs) -> Dict[str, Any]:
         ctx = SaveContext(
             kwargs=kwargs,
             modified_fields=[],
             update_fields=kwargs.get('update_fields')
         )
 
-        if self._set_parent():
+        parent_has_changed = self._set_parent()
+        if parent_has_changed and not is_creating:
             ctx.add_modified_field(Fields.PARENT)
 
-        if self._set_root():
+        root_has_changed = self._set_root()
+        if root_has_changed and not is_creating:
             ctx.add_modified_field(Fields.ROOT)
 
         if ctx.modified_fields and not ctx.should_track_fields:
@@ -113,28 +115,25 @@ class CriteriaPlaylist(ChildPlaylist):
         return ctx.kwargs
 
     def _set_parent(self) -> bool:
-        current_parent_id = getattr(self, f"{Fields.PARENT}_id", None)
+        current_parent_pk = getattr(self, f"{Fields.PARENT}_id", None)
 
         if self.criteria and self.criteria.parent:
-            try:
-                parent = CriteriaPlaylist.objects.get(criteria=self.criteria.parent)
-                if current_parent_id != parent.id:
-                    self.parent = parent
-                    return True
-            except CriteriaPlaylist.DoesNotExist:
-                pass
-        elif current_parent_id is not None:
+            parent = CriteriaPlaylist.objects.get(criteria=self.criteria.parent)
+            if current_parent_pk != parent.pk:
+                self.parent = parent
+                return True
+        elif current_parent_pk is not None:
             self.parent = None
             return True
         return False
 
     def _set_root(self) -> bool:
-        current_root_id = getattr(self, f"{Fields.ROOT}_id", None)
+        current_root_pk = getattr(self, f"{Fields.ROOT}_id", None)
 
         if self.criteria and self.criteria.root:
             try:
                 root = CriteriaPlaylist.objects.get(criteria=self.criteria.root)
-                if current_root_id != root.id:
+                if current_root_pk != root.pk:
                     self.root = root
                     return True
             except CriteriaPlaylist.DoesNotExist:
@@ -158,11 +157,11 @@ class CriteriaPlaylist(ChildPlaylist):
             child.root = self.root
             child.save(update_fields=[Fields.ROOT])
 
-    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+    def save(self, *args, **kwargs):
         is_creating = self._is_creating()
         if is_creating:
             self.root = self
 
-        kwargs = self._prepare_save(**kwargs)
-        super().save(force_insert=force_insert, force_update=force_update, *args, **kwargs)
+        kwargs = self._prepare_save(is_creating, **kwargs)
+        super().save(*args, **kwargs)
         self._post_save(is_creating=is_creating)

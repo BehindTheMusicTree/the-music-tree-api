@@ -1,11 +1,8 @@
-#!/usr/bin/env python
 
 from typing import TypeVar, Generic
 from django.db import models
 
-from bodzify_api.model.base.utils.base_model.BaseModel import BaseModel
-
-T = TypeVar('T', bound=BaseModel)
+T = TypeVar('T', bound='bodzify_api.model.base.utils.base_model.BaseModel.BaseModel')
 
 
 class BaseManager(models.Manager, Generic[T]):

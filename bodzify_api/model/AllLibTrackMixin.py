@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from django.db import models
 from bodzify_api.model.LibTrackMixin \

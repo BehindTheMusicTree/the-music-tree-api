@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
@@ -6,11 +5,11 @@ from rest_framework import status
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
     def test_track_newly_linked_to_genre_then_update_genre_playlist_last_track_list_update_date(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
         criteria_playlist: CriteriaPlaylist = genre.criteria_playlist

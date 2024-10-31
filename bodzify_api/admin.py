@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 
 from django.contrib import admin
 
 from bodzify_api.model.user.UserAdmin import UserAdmin
 from .model.user.User import User
 
-from bodzify_api.model.Album import Album
+from bodzify_api.model.album.Album import Album
 from bodzify_api.model.AllLibTrackMixin import AllLibTrackMixin
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria

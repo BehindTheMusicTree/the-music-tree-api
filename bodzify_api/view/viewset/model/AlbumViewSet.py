@@ -1,8 +1,10 @@
+
 from django.db import transaction
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 
-from bodzify_api.filter.AlbumFilterSet import AlbumFilterSet, Fields as FilterFields
-from bodzify_api.model.Album import Album
+from bodzify_api.filter.set.AlbumFilterSet import AlbumFilterSet, Fields as FilterFields
+from bodzify_api.model.album.Album import Album
+from bodzify_api.serializer.schema.album.simple import AlbumSimpleSerializer
 from bodzify_api.service.AlbumService import AlbumService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.schema.album.detailed import AlbumDetailedSerializer
@@ -14,6 +16,7 @@ class AlbumViewSet(AppModelViewSet):
             service=AlbumService(),
             model_class=Album,
             filter_class=AlbumFilterSet,
+            simple_serializer_class=AlbumSimpleSerializer,
             detailed_serializer_class=AlbumDetailedSerializer,
             **kwargs
         )
@@ -23,7 +26,7 @@ class AlbumViewSet(AppModelViewSet):
         OpenApiParameter(name=FilterFields.ALBUM_ARTISTS_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+        return super()._list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)

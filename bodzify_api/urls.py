@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -16,13 +15,13 @@ from bodzify_api.view.viewset.model.playlist.GenrePlaylistViewSet import GenrePl
 from bodzify_api.view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from bodzify_api.view.viewset.model.playlist.ManualPlaylistViewSet import ManualPlaylistViewSet
 from bodzify_api.view.viewset.model.PlayViewSet import PlayViewSet
-from bodzify_api.view.viewset.model.TrackViewSet import TrackViewSet
+from bodzify_api.view.viewset.model.TrackViewSet import LibTrackViewSet
 from bodzify_api.view.viewset.model.UserViewSet import UserViewSet
 from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'tracks', TrackViewSet, basename='library-track')
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'tracks', LibTrackViewSet, basename='library-track')
 router.register(r'artists', ArtistViewSet, basename='artist')
 router.register(r'albums', AlbumViewSet, basename='album')
 router.register(r'tags', TagViewSet, basename='tag')

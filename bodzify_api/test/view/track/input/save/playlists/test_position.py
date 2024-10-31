@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
@@ -6,11 +5,11 @@ from rest_framework import status
 from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_new_genre_then_first_position(self):
         genre_name = "Rock"

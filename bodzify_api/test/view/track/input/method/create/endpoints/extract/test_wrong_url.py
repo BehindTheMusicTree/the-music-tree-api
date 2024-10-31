@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
 from bodzify_api.serializer.schema.track.input.endpoint.extract import \
     Fields as ExtractFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test(self):
         data = {ExtractFields.URL: "https://wrong-url_OIJOIEFHPOEIHFEPOFIHEOFIH.mp3"}

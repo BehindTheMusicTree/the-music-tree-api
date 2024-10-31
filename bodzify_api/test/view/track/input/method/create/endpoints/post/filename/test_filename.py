@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_ok_when_max_length(self):
         sample_150_char_long_char_name = ("kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2" +

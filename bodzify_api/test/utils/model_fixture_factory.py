@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import os
 import shutil
@@ -13,7 +12,7 @@ from django.utils import timezone
 from django.db import transaction
 from django.contrib.auth import get_user_model
 
-from bodzify_api.model.Album import Album
+from bodzify_api.model.album.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId

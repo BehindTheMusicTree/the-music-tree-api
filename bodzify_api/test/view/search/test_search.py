@@ -1,8 +1,7 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
-from bodzify_api.model.Album import Album
+from bodzify_api.model.album.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist

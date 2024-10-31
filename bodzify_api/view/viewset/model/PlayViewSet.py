@@ -1,7 +1,7 @@
-#!/usr/bin/env python
 
 from django.db import transaction
 from drf_spectacular.utils import extend_schema
+from rest_framework import serializers
 
 from bodzify_api.model.Play import Fields, Play
 from bodzify_api.serializer.schema.play.input.schema.endpoint.post import PlayPostSerializer
@@ -16,6 +16,7 @@ class PlayViewSet(AppModelViewSet):
             service=PlayService(),
             model_class=Play,
             detailed_serializer_class=PlayDetailedSerializer,
+            create_serializer_class=PlayPostSerializer,
             **kwargs
         )
 
@@ -27,4 +28,4 @@ class PlayViewSet(AppModelViewSet):
     @transaction.atomic
     @extend_schema(request=PlayPostSerializer, responses=PlayDetailedSerializer)
     def create(self, request, *args, **kwargs):
-        return self._create(request, *args, **kwargs)
+        return self._post(request, *args, **kwargs)

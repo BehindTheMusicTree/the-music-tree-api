@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_totaleclipse_with_three_scores_then_highest(self):
         response = self._post_lib_track_with_specific_sample("total_eclipse_3_scores.flac")

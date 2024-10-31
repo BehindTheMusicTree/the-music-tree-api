@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from .service import get_fingerprinting_result
 

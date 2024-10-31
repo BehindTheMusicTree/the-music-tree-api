@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.base.PrivateUniqueResource import Fields as PrivateUniqueResourceFields
 from bodzify_api.model.TrackablePlayCountModel import Fields as TrackablePlayCountFields

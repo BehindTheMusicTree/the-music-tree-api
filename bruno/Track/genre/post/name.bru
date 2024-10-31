@@ -1,0 +1,25 @@
+meta {
+  name: name
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}genres/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "Rock"
+  }
+}
+
+vars:post-response {
+  genreRockUuid: res.body.uuid
+}

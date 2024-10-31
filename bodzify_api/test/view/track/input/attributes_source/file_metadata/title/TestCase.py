@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
     file_extension: str
 
     def test_none_then_ok_because_generated(self):

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from typing import Optional, TYPE_CHECKING
 from django.db.models import QuerySet
@@ -11,7 +10,6 @@ if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
     from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
     from bodzify_api.model.criteria.Criteria import Criteria
-    from bodzify_api.model.criteria.CriteriaAscendantRel import CriteriaAscendantRel
     from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
         Fields as LibTrackPlaylistPositionRelFields
 
@@ -88,6 +86,8 @@ class CriteriaManager(PublicStandardResourceManager['Criteria']):
                 lib_track.update_file_tags_from_lib_track_instance_values()
 
     def update_ascendants_of_criteria_and_children(self, criteria: 'Criteria'):
+        from bodzify_api.model.criteria.CriteriaAscendantRel import CriteriaAscendantRel
+
         criteria.ascendants.clear()
         current_degree = 1
         current_parent = criteria.parent

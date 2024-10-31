@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}tracks/
+  url: {{BASE_URL}}tracks/?ratig=d
   body: multipartForm
   auth: inherit
+}
+
+params:query {
+  ratig: d
 }
 
 headers {

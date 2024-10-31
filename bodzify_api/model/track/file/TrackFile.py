@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import binascii
 import datetime
@@ -133,8 +132,7 @@ class TrackFile(PrivateStandardResource):
         return ""
 
     def _manage_fingerprint(self) -> Optional[FingerprintingResult]:
-        audio_meta_analysis_enabled_override_env_var = os.environ.get(
-            'AUDIO_META_ANALYSIS_ENABLED_OVERRIDE', None)
+        audio_meta_analysis_enabled_override_env_var = os.environ.get('AUDIO_META_ANALYSIS_ENABLED_OVERRIDE', None)
         if audio_meta_analysis_enabled_override_env_var:
             is_audio_meta_analysis_enabled_override = audio_meta_analysis_enabled_override_env_var.lower()
         else:

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
 

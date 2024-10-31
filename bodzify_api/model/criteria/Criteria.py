@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from typing import TYPE_CHECKING, Optional
 
@@ -107,7 +106,8 @@ class Criteria(LibTrackMixin):
         return None
 
     def __str__(self) -> str:
-        return f"{self.uuid} {self.name}"
+        parent_str = f'parent: {self.parent.name}' if self.parent else "No parent"
+        return f"{self.uuid} | {self.name} | {parent_str}"
 
     def _is_creating(self) -> bool:
         return getattr(self, f"{Fields.ROOT}_id", None) is None

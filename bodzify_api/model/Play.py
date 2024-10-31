@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import shortuuid
 from django.contrib.contenttypes.fields import GenericForeignKey

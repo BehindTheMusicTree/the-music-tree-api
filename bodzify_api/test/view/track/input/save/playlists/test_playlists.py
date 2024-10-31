@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
@@ -7,11 +6,11 @@ from bodzify_api.model.LibTrackMixin import SpecialNames as LibTrackMixinSpecial
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
 from bodzify_api.serializer.schema.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_new_genre_then_in_new_genre_playlist_and_all_playlist(self):
         genre_name = "Rock"

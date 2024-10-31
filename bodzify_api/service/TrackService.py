@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import os
 import random
@@ -18,7 +17,7 @@ from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMe
 from bodzify_api.utils import audio_metadata, utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.service.Service import Service
-from bodzify_api.model.Album import Album
+from bodzify_api.model.album.Album import Album
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
@@ -98,12 +97,6 @@ class TrackService(Service):
         model_data[SaveModelFields.GENRE] = genre_uuid
 
         return
-
-    def _get_post_serializer(self, post_data: dict, request: Request):
-        return LibTrackPostSerializer(data=post_data, context={'request': request})
-
-    def _get_put_serializer(self, oldinstance, put_data: dict, request: Request):
-        return LibTrackPutSerializer(instance=oldinstance, data=put_data, context={'request': request})
 
     def _get_schema_serializer(self, oldinstance, schema_data: dict, request: Request):
         return LibTrackSchemaSerializer(data=schema_data, context={'request': request})
@@ -261,10 +254,10 @@ class TrackService(Service):
             artists_uuids = []
         model_data[SaveModelFields.ARTISTS] = artists_uuids
 
-    def extract(self, extract_data: dict, request):
-        mine_track_url = extract_data[ExtractFields.URL]
+    def extract(self, request: Request, extract_data_validated: dict):
+        mine_track_url = extract_data_validated[ExtractFields.URL]
         track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
-            mine_track_url=mine_track_url, data=extract_data)
+            mine_track_url=mine_track_url, data=extract_data_validated)
 
         # stream=True makes it more effective for large files.
         track_file_streamed = requests.get(mine_track_url, stream=True)
@@ -279,33 +272,26 @@ class TrackService(Service):
 
             os.chmod(track_temp_file.name, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
-            post_data = self._get_post_data_from_extract_data(extract_data)
+            post_data = self._get_post_data_from_extract_data(extract_data_validated)
             post_data[PostFields.FILE] = AppDjangoFile(file=track_temp_file,
                                                        name=track_filename,
                                                        file_abs_path=track_temp_file.name)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[SaveSchemaFields.FORCE_TITLE_GENERATION] = force_title_generation_str
-            library_track = self.create(post_data=post_data, request=request)
+            library_track = self.post(post_data_validated=post_data, request=request)
 
         return library_track
 
-    def delete(self, user: User, instance: LibraryTrack):
-        old_lib_tracks_playlists_with_positions = instance.get_lib_track_playlists_with_positions()
-        instance.delete_with_checking_album_and_artists_potential_deletion()
-        TrackService._decrease_position_of_next_tracks_in_old_track_playlists(
-            user=user, playlists_with_old_position=old_lib_tracks_playlists_with_positions)
-
-    def create(self, post_data: dict, request: Request):
+    def post(self, request: Request, post_data_validated: dict):
         user = request.user
-        post_serializer = self._get_post_serializer(post_data=post_data, request=request)
-        post_serializer.is_valid(raise_exception=True)
 
-        schema_data = self._get_schema_data_from_post_data(post_data=post_data)
+        schema_data = self._get_schema_data_from_post_data(post_data=post_data_validated)
         schema_serializer = self._get_schema_serializer(oldinstance=None, schema_data=schema_data, request=request)
         schema_serializer.is_valid(raise_exception=True)
 
-        model_data = self._get_model_data_from_schema_data_not_including_user_field(
-            user=user, schema_data=schema_data, oldinstance=None)
+        model_data = self._get_model_data_from_schema_data_not_including_user_field(user=user,
+                                                                                    schema_data=schema_data,
+                                                                                    oldinstance=None)
         model_data[SaveModelFields.USER] = user.pk
 
         model_serializer = self._get_model_serializer(oldinstance=None,
@@ -317,8 +303,6 @@ class TrackService(Service):
 
     def update(self, instance: LibraryTrack, put_data: dict, request: Request):
         user = request.user
-        put_serializer = self._get_put_serializer(oldinstance=instance, put_data=put_data, request=request)
-        put_serializer.is_valid(raise_exception=True)
 
         schema_data = self._get_schema_data_from_put_data(put_data=put_data, oldinstance=instance)
         schema_serializer = self._get_schema_serializer(oldinstance=instance, schema_data=schema_data, request=request)
@@ -333,3 +317,9 @@ class TrackService(Service):
                                                       partial=True)
         model_serializer.is_valid(raise_exception=True)
         return model_serializer.save()
+
+    def delete(self, user: User, instance: LibraryTrack):
+        old_lib_tracks_playlists_with_positions = instance.get_lib_track_playlists_with_positions()
+        instance.delete_with_checking_album_and_artists_potential_deletion()
+        TrackService._decrease_position_of_next_tracks_in_old_track_playlists(
+            user=user, playlists_with_old_position=old_lib_tracks_playlists_with_positions)

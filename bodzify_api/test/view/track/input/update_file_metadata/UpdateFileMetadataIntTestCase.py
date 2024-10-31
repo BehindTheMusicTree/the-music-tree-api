@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 from typing import Optional
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class UpdateFileMetadataIntTestCase(TrackTestCase):
+class UpdateFileMetadataIntTestCase(LibTrackTestCase):
     save_field = None
     lib_track_normalized_metadata_key = None
     file_extension: str

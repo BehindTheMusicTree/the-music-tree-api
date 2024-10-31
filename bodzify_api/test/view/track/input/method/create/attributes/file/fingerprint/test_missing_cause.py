@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import logging
 from time import sleep
@@ -10,7 +9,7 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCauseCode import FingerprintMissingCauseCode
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s    %(name)s:%(filename)s:%(lineno)d %(message)s')
 
@@ -44,7 +43,7 @@ def restart_docker_container(container_id_or_name):
 
 
 @pytest.mark.parametrize('enable_metadata_analysis', [True], indirect=True)
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_audio_meta_analysis_not_enabled_then_corresponding_missing_cause(self):
         response = self._post_lib_track_with_queenshowmustgoon()

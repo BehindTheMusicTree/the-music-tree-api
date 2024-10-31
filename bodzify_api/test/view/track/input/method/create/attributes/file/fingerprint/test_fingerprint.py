@@ -1,16 +1,15 @@
-#!/usr/bin/env python
 
 import logging
 import os
 import pytest
 from rest_framework import status
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_mp3(self):
         response = self._post_lib_track_with_specific_sample("Y do i - Carmina Burana Remix - 7m52.mp3")

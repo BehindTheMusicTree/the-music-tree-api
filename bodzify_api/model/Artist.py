@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.user.User import User
 from django.db import models
@@ -62,7 +61,7 @@ class Artist(LibTrackMixin):
 
     def delete(self):
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-        from bodzify_api.model.Album import Album
+        from bodzify_api.model.album.Album import Album
 
         albums: QuerySet[Album] = self.albums.all()
         for album in albums:
@@ -80,7 +79,7 @@ class Artist(LibTrackMixin):
                 self.delete()
 
     def delete_with_albums_and_tracks(self):
-        from bodzify_api.model.Album import Album
+        from bodzify_api.model.album.Album import Album
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
         albums: QuerySet[Album] = self.albums.all()

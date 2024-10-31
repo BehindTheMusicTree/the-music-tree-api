@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.test.view.user.UserViewTestCase import UserViewTestCase
 

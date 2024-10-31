@@ -1,6 +1,5 @@
-#!/usr/bin/env python
 
-from bodzify_api.model.Album import Fields as ModelFields
+from bodzify_api.model.album.Fields import Fields as ModelFields
 
 
 class Fields:

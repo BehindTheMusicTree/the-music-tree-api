@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from django.core.files.base import File as DjangoFile
 

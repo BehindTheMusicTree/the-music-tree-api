@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_ok(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(

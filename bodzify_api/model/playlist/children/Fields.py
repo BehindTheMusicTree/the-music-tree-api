@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.playlist.BasePlaylist import Fields as BasePlaylistFields
 

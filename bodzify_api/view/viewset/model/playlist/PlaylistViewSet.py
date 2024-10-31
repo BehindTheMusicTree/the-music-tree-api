@@ -1,34 +1,34 @@
-#!/usr/bin/env python
 
 from typing import Dict, Any
+from urllib import request
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
+from rest_framework.request import Request
 
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import Fields, BasePlaylist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist \
     import SpecialNames as LibTrackMixinSpecialNames, TypesLabel as CriteriaPlaylistTypesLabels
 from bodzify_api.model.playlist.children.ManualPlaylist import TYPE_LABEL as MANUAL_PLAYLIST_TYPE_LABEL
-from bodzify_api.serializer.schema.playlist.base.input.query_param \
-    import BasePlaylistQueryParamSerializer, Fields as QueryParams
 from bodzify_api.serializer.schema.playlist.base.output.detailed import BasePlaylistDetailedSerializer
+from bodzify_api.serializer.schema.playlist.base.output.simple import BasePlaylistSimpleSerializer
 from bodzify_api.service.Service import Service
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.filter.set.PlaylistParamFilterSet import PlaylistParamFilterSet
+from bodzify_api.serializer.schema.playlist.base.input.query_param import Fields as QueryParams
 
 
 class PlaylistViewSet(AppModelViewSet):
-    queryset = BasePlaylist.objects.all()
-    serializers = {
-        'default': BasePlaylistDetailedSerializer,
-        'list':  BasePlaylistDetailedSerializer,
-        'retrieve':  BasePlaylistDetailedSerializer,
-    }
+
+    def __init__(self, **kwargs):
+        super().__init__(service=Service(),
+                         model_class=BasePlaylist,
+                         filter_class=PlaylistParamFilterSet,
+                         simple_serializer_class=BasePlaylistSimpleSerializer,
+                         **kwargs)
 
     @staticmethod
     def _get_queryset_str_filter_value_to_filter_nothing():
         return ''
-
-    def __init__(self, **kwargs):
-        super().__init__(service=Service(), **kwargs)
 
     def _get_detailed_serializer(self, instance):
         return BasePlaylistDetailedSerializer(instance=instance)
@@ -37,21 +37,22 @@ class PlaylistViewSet(AppModelViewSet):
         if self.action == 'retrieve':
             return BasePlaylist.objects.filter(user=self.request.user, uuid=self.kwargs[self.lookup_field])
 
-        serializer = BasePlaylistQueryParamSerializer(data=self.request.query_params)  # type: ignore
-        serializer.is_valid(raise_exception=True)
-        query_params_validated: Dict[str, Any] = serializer.validated_data  # type: ignore
+        request: Request = self.request  # type: ignore
+        if not self.filter_class:
+            raise Exception('Filter class is not defined')
+        self.filterset = self.filter_class(data=request.query_params, queryset=self.queryset)
+        query_params_validated = request.query_params
+
+        name_query_param = query_params_validated.get(QueryParams.NAME,
+                                                      self._get_queryset_str_filter_value_to_filter_nothing())
+        type_query_param = query_params_validated.get(QueryParams.TYPE)
 
         queryset = BasePlaylist.objects.filter(user=self.request.user)
 
-        name_query_param = query_params_validated.get(
-            QueryParams.NAME, self._get_queryset_str_filter_value_to_filter_nothing())
-        type_query_param = query_params_validated.get(QueryParams.TYPE)
-
         manual_playlist_queryset = BasePlaylist.objects.none()
         if type_query_param is None or type_query_param.lower() == MANUAL_PLAYLIST_TYPE_LABEL.lower():
-            manual_playlist_queryset = queryset.filter(
-                simple_child_playlist__isnull=False,
-                simple_child_playlist__name__icontains=name_query_param)
+            manual_playlist_queryset = queryset.filter(simple_child_playlist__isnull=False,
+                                                       simple_child_playlist__name__icontains=name_query_param)
 
         criteria_playlist_queryset = BasePlaylist.objects.none()
         if type_query_param is None or type_query_param.lower() in [CriteriaPlaylistTypesLabels.GENRE.lower(),

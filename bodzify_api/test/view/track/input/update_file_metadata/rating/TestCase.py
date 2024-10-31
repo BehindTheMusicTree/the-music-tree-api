@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys

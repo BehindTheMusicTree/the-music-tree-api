@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 from pathlib import Path
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_in_library(self):
         filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_NONE

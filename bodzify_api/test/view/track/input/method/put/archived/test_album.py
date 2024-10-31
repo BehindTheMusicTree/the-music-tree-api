@@ -1,12 +1,11 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
 from bodzify_api.serializer.schema.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_archived_lib_track_then_album_has_plus_1_archived_lib_tracks(self):
         album = self.model_fixture_factory.create_album(name="Jojo")

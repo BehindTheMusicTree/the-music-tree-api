@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.criteria.CriteriaAscendantRel import CriteriaAscendantRel
 from bodzify_api.serializer.schema.criteria_ascendant_relation.fields import Fields as AvailableFields

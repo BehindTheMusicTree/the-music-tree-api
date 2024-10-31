@@ -1,12 +1,11 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 from bodzify_api.utils import audio_metadata
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_flac_md5_not_valid_then_corrected(self):
         response = self._post_lib_track_with_specific_sample("md5_not_valid.flac")

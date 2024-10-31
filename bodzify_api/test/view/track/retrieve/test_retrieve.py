@@ -1,16 +1,15 @@
-#!/usr/bin/env python
 
 
 import pytest
 from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields
 
 
 @pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_retrieve_track_then_ok(self):
         title = "We're All To Blame"

@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 import datetime
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_multiple_release_dates_then_earliest(self):
         response = self._post_lib_track_with_specific_sample("queen_multiple_release_dates.mp3")

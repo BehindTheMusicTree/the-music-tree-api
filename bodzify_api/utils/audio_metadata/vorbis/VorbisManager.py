@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import io
 from typing import Optional

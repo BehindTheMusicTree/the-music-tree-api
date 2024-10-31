@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from multiprocessing import context
 from rest_framework.request import Request
@@ -10,12 +9,6 @@ from bodzify_api.service.Service import Service
 
 
 class ManualPlaylistService(Service):
-
-    def _get_post_serializer(self, post_data: dict, request: Request):
-        return ManualPlaylistInputEndpointSerializer(data=post_data, context={'request': request})
-
-    def _get_put_serializer(self, oldinstance, put_data: dict, request: Request):
-        return ManualPlaylistInputEndpointSerializer(data=put_data, context={'request': request})
 
     def _get_schema_serializer(self, oldinstance, schema_data: dict, request: Request):
         return ManualPlaylistSchemaSerializer(data=schema_data, context={'request': request})

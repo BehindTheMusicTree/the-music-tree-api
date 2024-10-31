@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 
-from bodzify_api.filter.ArtistFilterSet import ArtistFilterSet, Fields as FilterFields
+from bodzify_api.filter.set.ArtistFilterSet import ArtistFilterSet, Fields as FilterFields
 from bodzify_api.model.Artist import Artist
 from bodzify_api.service.ArtistService import ArtistService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
@@ -24,4 +24,4 @@ class ArtistViewSet(AppModelViewSet):
         OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+        return super()._list(request, *args, **kwargs)

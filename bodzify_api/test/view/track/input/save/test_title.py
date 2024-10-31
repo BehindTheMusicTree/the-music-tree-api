@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_longest_then_ok(self):
         value = "a" * settings.LIB_TRACK_TITLE_LEN_MAX

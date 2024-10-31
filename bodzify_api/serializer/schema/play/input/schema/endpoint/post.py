@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.Play import Play, Fields as ModelFields
 from bodzify_api.serializer.field.UserFilteredContentObjectUUIDField import UserFilteredPlayContentObjectUUIDField

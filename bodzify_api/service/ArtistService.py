@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.Artist import Artist
 from bodzify_api.model.user.User import User

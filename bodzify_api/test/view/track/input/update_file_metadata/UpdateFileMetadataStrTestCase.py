@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 from typing import Optional
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class UpdateFileMetadataStrTestCase(TrackTestCase):
+class UpdateFileMetadataStrTestCase(LibTrackTestCase):
 
     VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
 

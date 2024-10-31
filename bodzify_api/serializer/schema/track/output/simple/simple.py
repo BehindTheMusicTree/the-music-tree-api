@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.serializer.schema.track.output.fields import Fields as AvailableFields
 

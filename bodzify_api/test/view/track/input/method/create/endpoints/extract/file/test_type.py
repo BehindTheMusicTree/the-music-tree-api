@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_wav(self):
         response = self._extract_default_mine_track(extension='wav')

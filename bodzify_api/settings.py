@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import datetime
 import os
@@ -78,8 +77,8 @@ def init_logs_if_needed():
             'disable_existing_loggers': False,
             'formatters': {
                 'standard': {
-                    'format': '%(asctime)s [%(levelname)s]- %(message)s'}
-
+                    'format': '%(asctime)s [%(levelname)s]- %(message)s'
+                }
             },
             'handlers': {
                 'general': {
@@ -578,6 +577,8 @@ if 'pytest' in sys.argv[0]:
     else:
         AUDIO_META_ANALYSIS_ENABLED = False
         print_django("The audio meta analysis is disabled.")
+
+    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']  # Less secured to speed up tests
 else:
     AUDIO_META_ANALYSIS_ENABLED = True
     print_django("settings.py is not being executed because of a pytest command. The audio meta analysis is enabled.")

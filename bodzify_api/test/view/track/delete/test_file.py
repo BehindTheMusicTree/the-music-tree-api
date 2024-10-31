@@ -1,15 +1,14 @@
-#!/usr/bin/env python
 
 
 import pytest
 from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TrackDeleteViewTestCase(TrackTestCase):
+class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_delete_then_delete_file(self):
         filename = "sample.mp3"

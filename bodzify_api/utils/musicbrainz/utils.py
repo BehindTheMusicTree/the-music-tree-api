@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import datetime
 from calendar import monthrange

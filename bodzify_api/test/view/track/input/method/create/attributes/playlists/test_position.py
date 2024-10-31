@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
@@ -6,11 +5,11 @@ from rest_framework import status
 from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
 from bodzify_api.model.AllLibTrackMixin import AllLibTrackMixin
 from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_create_then_in_first_position_of_all_playlist_and_other_tracks_after(self):
         lib_track1 = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame")

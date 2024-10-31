@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from django.http import HttpResponse
 from rest_framework.test import APIClient

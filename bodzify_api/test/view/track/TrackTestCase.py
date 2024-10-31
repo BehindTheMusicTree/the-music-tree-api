@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from urllib.parse import urlencode
 from uuid import UUID
@@ -10,7 +9,7 @@ from bodzify_api.serializer.schema.track.input.endpoint.extract import Fields as
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class TrackTestCase(ApiTestCase):
+class LibTrackTestCase(ApiTestCase):
 
     LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION = "queen_showmustgoon.mp3"
     SKIPPING_TEST_DUE_TO_ACOUSTID_UNKNOWN_CONNECTION_ISSUE = "Skipping test due to Acoustid unknown connection issue."
@@ -33,7 +32,7 @@ class TrackTestCase(ApiTestCase):
 
     def _extract(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
-        response = self.api_client.post(path=reverse('librarytrack-extract'),
+        response = self.api_client.post(path=reverse('library-track-extract'),
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
 
@@ -60,7 +59,7 @@ class TrackTestCase(ApiTestCase):
         return response
 
     def _post_lib_track_without_file(self, data_dict=None):
-        return self.api_client.post(path=reverse('librarytrack-list'),
+        return self.api_client.post(path=reverse('library-track-list'),
                                     data=self._replace_none_values_by_empty_string(data_dict),
                                     format='json')
 
@@ -117,7 +116,7 @@ class TrackTestCase(ApiTestCase):
 
     def _put_lib_track(self, lib_track_uuid, data_dict):
         response = self.api_client.put(
-            path=reverse('librarytrack-detail', kwargs={'pk': lib_track_uuid}),
+            path=reverse('library-track-detail', kwargs={'pk': lib_track_uuid}),
             data=self._replace_none_values_by_empty_string(data_dict),
             format='json')
         if response.status_code == status.HTTP_200_OK:
@@ -125,16 +124,16 @@ class TrackTestCase(ApiTestCase):
         return response
 
     def _download_lib_track(self, lib_track_uuid):
-        return self.api_client.get(path=reverse('librarytrack-download', kwargs={'pk': lib_track_uuid}))
+        return self.api_client.get(path=reverse('library-track-download', kwargs={'pk': lib_track_uuid}))
 
     def _delete_lib_track(self, lib_track_uuid):
-        return self.api_client.delete(path=reverse('librarytrack-detail', kwargs={'pk': lib_track_uuid}))
+        return self.api_client.delete(path=reverse('library-track-detail', kwargs={'pk': lib_track_uuid}))
 
     def _retrieve_lib_track(self, lib_track_uuid: UUID):
-        return self.api_client.get(path=reverse('librarytrack-detail', kwargs={'pk': lib_track_uuid}))
+        return self.api_client.get(path=reverse('library-track-detail', kwargs={'pk': lib_track_uuid}))
 
     def _get_lib_tracks(self, **kwargs):
-        response = self.api_client.get(path=reverse('librarytrack-list'), data=kwargs)
+        response = self.api_client.get(path=reverse('library-track-list'), data=kwargs)
         if response.status_code == status.HTTP_200_OK:
             self._set_results_attributes(response)
         return response

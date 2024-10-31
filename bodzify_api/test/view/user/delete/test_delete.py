@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import os
 import pytest
@@ -6,7 +5,7 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.model.Artist import Artist
-from bodzify_api.model.Album import Album
+from bodzify_api.model.album.Album import Album
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording

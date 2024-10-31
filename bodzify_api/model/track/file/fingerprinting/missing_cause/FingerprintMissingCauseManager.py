@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResourceManager \
     import PublicStandardResourceManager

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from typing import Optional
 from rest_framework import status

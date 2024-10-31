@@ -1,15 +1,14 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
 
-from bodzify_api.model.Album import Album
+from bodzify_api.model.album.Album import Album
 from bodzify_api.model.Artist import Artist
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TrackDeleteViewTestCase(TrackTestCase):
+class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_linked_album_then_delete_it_as_nothing_linked_to_it_anymore(self):
         album_name = "Chuck"

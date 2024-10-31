@@ -1,14 +1,13 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TrackDeleteViewTestCase(TrackTestCase):
+class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_delete_then_not_in_the_all_playlist(self):
         track = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame")

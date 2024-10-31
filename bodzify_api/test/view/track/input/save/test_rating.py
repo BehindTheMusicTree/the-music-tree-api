@@ -1,12 +1,11 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_empty_then_none(self):
         data_dict = {PostFields.RATING: None}

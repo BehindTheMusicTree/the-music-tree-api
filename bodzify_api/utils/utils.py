@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 
 def to_camel_case(snake_str):

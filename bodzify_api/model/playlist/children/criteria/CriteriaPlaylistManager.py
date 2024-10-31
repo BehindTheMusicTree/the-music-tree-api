@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from typing import TYPE_CHECKING
 from django.db import models

@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_mp3_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(extension="mp3")

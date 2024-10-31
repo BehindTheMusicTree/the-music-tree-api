@@ -1,15 +1,11 @@
-#!/usr/bin/env python
 
-from rest_framework import serializers
-
-from bodzify_api.model.Album import Album
+from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.schema.album.fields import Fields
 from bodzify_api.serializer.schema.artist.minimum import ArtistMinimumSerializer
-from bodzify_api.serializer.schema.track.output.simple.simple_without_album_with_position_in_album \
-    import LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer
+from bodzify_api.serializer.schema.lib_track_mixin.detailed import LibTrackMixinDetailedSerializer
 
 
-class AlbumDetailedSerializer(serializers.ModelSerializer):
+class AlbumDetailedSerializer(LibTrackMixinDetailedSerializer):
     album_artists = ArtistMinimumSerializer(many=True)
 
     class Meta:
@@ -25,10 +21,3 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]
-
-    def to_representation(self, instance: Album):
-        representation = super().to_representation(instance)
-        sorted_tracks = instance.get_sorted_tracks()
-        representation[Fields.LIB_TRACKS] = LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(
-            sorted_tracks, many=True).data
-        return representation

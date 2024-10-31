@@ -1,14 +1,13 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist, SpecialNames
 from bodzify_api.serializer.schema.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_archived_lib_track_then_manual_playlist_has_plus_1_archived_lib_tracks(self):
         manual_playlist_name = "simple playlist"

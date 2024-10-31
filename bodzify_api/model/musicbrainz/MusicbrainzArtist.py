@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from re import M
 from django.db import models

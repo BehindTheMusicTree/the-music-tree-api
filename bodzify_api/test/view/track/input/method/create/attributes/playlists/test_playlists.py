@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
@@ -6,11 +5,11 @@ from rest_framework import status
 from bodzify_api.model.LibTrackMixin import SpecialNames as LibTrackMixinSpecialNames
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_no_genre_then_in_the_all_and_genreless_playlists(self):
         response = self._post_lib_track_with_generic_sample_no_tags()

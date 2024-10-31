@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.serializer.schema.playlist.children.detailed import Fields as ChildPlaylistFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import Fields as ModelFields

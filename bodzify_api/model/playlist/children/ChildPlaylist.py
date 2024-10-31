@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from uuid import UUID
 from django.db import models

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from bodzify_api.model.user.User import User
 from rest_framework.request import Request
@@ -16,12 +15,6 @@ class CriteriaService(Service):
     def __init__(self, criteria_type_id) -> None:
         self.criteria_type_id = criteria_type_id
         super().__init__()
-
-    def _get_post_serializer(self, post_data: dict, request: Request):
-        return CriteriaPostSerializer(data=post_data, context={'request': request})
-
-    def _get_put_serializer(self, oldinstance, put_data: dict, request: Request):
-        return CriteriaPutSerializer(instance=oldinstance, data=put_data, context={'request': request})
 
     def _get_schema_serializer(self, oldinstance, schema_data: dict, request: Request):
         return CriteriaSchemaSerializer(data=schema_data, context={'request': request})

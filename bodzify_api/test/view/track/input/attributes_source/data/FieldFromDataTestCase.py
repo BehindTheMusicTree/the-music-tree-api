@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class FieldFromDataTestCase(TrackTestCase):
+class FieldFromDataTestCase(LibTrackTestCase):
     post_field_key = None
 
     def setUp(self, methods_names_to_implement: list[str] | None = None):

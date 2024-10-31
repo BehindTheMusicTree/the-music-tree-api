@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from multiprocessing import context
 from bodzify_api.model.user.User import User
@@ -16,9 +15,6 @@ from bodzify_api.service.Service import Service
 
 
 class PlayService(Service):
-
-    def _get_post_serializer(self, post_data: dict, request: Request):
-        return PlayPostSerializer(data=post_data, context={'request': request})
 
     def _get_schema_serializer(self, oldinstance, schema_data: dict, request: Request):
         return PlaySchemaSerializer(data=schema_data, context={'request': request})

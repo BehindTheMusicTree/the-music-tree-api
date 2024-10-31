@@ -1,12 +1,11 @@
-#!/usr/bin/env python
 
 import pytest
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     """
     As the file is too big to be uploaded on Github, the pytest won't work during Github's

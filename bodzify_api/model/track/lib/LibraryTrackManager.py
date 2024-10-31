@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from typing import List, TYPE_CHECKING, Optional
 from django.db import transaction

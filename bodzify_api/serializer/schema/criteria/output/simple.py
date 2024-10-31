@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from rest_framework import serializers
 
@@ -10,8 +9,6 @@ from bodzify_api.serializer.schema.criteria_ascendant_relation.without_ascendant
 
 
 class Fields:
-    CREATED_ON = AvailableFields.CREATED_ON
-    UPDATED_ON = AvailableFields.UPDATED_ON
     UUID = AvailableFields.UUID
     NAME = AvailableFields.NAME
     PARENT = AvailableFields.PARENT
@@ -29,6 +26,4 @@ class CriteriaSimpleSerializer(serializers.ModelSerializer):
         fields = [Fields.UUID,
                   Fields.NAME,
                   Fields.PARENT,
-                  Fields.DESCENDANTS,
-                  Fields.CREATED_ON,
-                  Fields.UPDATED_ON,]
+                  Fields.DESCENDANTS]

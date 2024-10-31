@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from typing import Optional
 from django.db import models
@@ -22,6 +21,7 @@ class Fields:
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
     PLAY_COUNT = TrackablePlayCountFields.PLAY_COUNT
     NAME = 'name'
+    TYPE = 'type'
     TYPE_LABEL = 'type_label'
     CRITERIA_CHILD_PLAYLIST = 'criteria_child_playlist'
     SIMPLE_CHILD_PLAYLIST = 'simple_child_playlist'

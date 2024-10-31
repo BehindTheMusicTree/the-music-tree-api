@@ -1,14 +1,9 @@
-#!/usr/bin/env python
-
-from isort import file
 from rest_framework import status
 
-from bodzify_api.model.Album import Album
 from bodzify_api.utils.utils import to_camel_case
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.serializer.schema.album.detailed import Fields as RetrieveFields
 from bodzify_api.serializer.schema.track.output.simple.simple_without_album import Fields as LibTrackGetFields
-from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as LibTrackPostFields
 
 
 class TestCase(AlbumTestCase):
@@ -23,6 +18,7 @@ class TestCase(AlbumTestCase):
             title="Lovdddde", album=album, position_in_album=1)
 
         response = self._retrieve_album(album_uuid=album.uuid)
+
         assert response.status_code == status.HTTP_200_OK
         result_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS)]
 

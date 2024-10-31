@@ -1,8 +1,7 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 """
 Small files are handled differently by Django. They are stored in memory instead of being written to disk.
@@ -10,7 +9,7 @@ Thus the python file object is not available. This test case is to ensure that t
 """
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_in_memory(self):
         response = self._post_lib_track_with_specific_sample("in_memory.flac")

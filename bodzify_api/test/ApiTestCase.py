@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from typing import Optional
 
@@ -103,7 +102,7 @@ class ApiTestCase(AppTestCase):
                 data_dict = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(data_dict))
             else:
                 data_dict = file_field_dict
-            response = self.api_client.post(path=reverse('librarytrack-list'), data=data_dict, format='multipart')
+            response = self.api_client.post(path=reverse('library-track-list'), data=data_dict, format='multipart')
             if response.status_code == status.HTTP_201_CREATED:
                 self._set_saved_lib_track_attribute(response)
                 self._set_result(response)

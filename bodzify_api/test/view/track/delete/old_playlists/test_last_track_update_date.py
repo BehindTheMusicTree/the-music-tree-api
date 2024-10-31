@@ -1,14 +1,13 @@
-#!/usr/bin/env python
 
 import pytest
 from rest_framework import status
 
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
-class TrackDeleteViewTestCase(TrackTestCase):
+class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_delete_then_update_genre_playlist_last_track_update_date(self):
         genre = self.model_fixture_factory.create_genre(name='rock')

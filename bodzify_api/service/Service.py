@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from abc import abstractmethod
 from rest_framework.request import Request
@@ -11,14 +10,6 @@ from bodzify_api.model.base.utils.PrivateModel import Fields
 
 
 class Service:
-
-    @abstractmethod
-    def _get_post_serializer(self, post_data: dict, request: Request) -> Serializer:
-        raise NotImplementedError("You should implement this method in a subclass")
-
-    @abstractmethod
-    def _get_put_serializer(self, oldinstance, put_data: dict, request: Request) -> Serializer:
-        raise NotImplementedError("You should implement this method in a subclass")
 
     @abstractmethod
     def _get_schema_serializer(self, oldinstance, schema_data: dict, request: Request) -> Serializer:
@@ -103,14 +94,10 @@ class Service:
 
         return model_serializer.save()
 
-    def create(self, post_data: dict, request):
-        post_serializer = self._get_post_serializer(post_data=post_data, request=request)
-        post_serializer.is_valid(raise_exception=True)
-        schema_data = self._get_schema_data_from_post_data(post_data=post_data)
+    def post(self, create_data_validated: dict, request: Request):
+        schema_data = self._get_schema_data_from_post_data(post_data=create_data_validated)
         return self._save(schema_data=schema_data, oldinstance=None, request=request, partial=False)
 
-    def update(self, put_data: dict, oldinstance, request):
-        put_serializer = self._get_put_serializer(oldinstance=oldinstance, put_data=put_data, request=request)
-        put_serializer.is_valid(raise_exception=True)
+    def update(self, put_data: dict, oldinstance, request: Request):
         schema_data = self._get_schema_data_from_put_data(put_data=put_data, oldinstance=oldinstance)
         return self._save(schema_data=schema_data, oldinstance=oldinstance, request=request, partial=True)

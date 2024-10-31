@@ -1,12 +1,18 @@
-#!/usr/bin/env python
 
-from bodzify_api.model.LibTrackMixin import Fields as ModelFields
+from rest_framework import serializers
+
+from bodzify_api.serializer.schema.lib_track_mixin.fields import Fields
+from bodzify_api.model.LibTrackMixin import LibTrackMixin
+from bodzify_api.serializer.schema.track.output.simple.simple_without_album_with_position_in_album \
+    import LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer
 
 
-class Fields:
-    UUID = ModelFields.UUID
-    LIB_TRACKS = ModelFields.LIB_TRACKS
-    LIB_TRACKS_COUNT = ModelFields.LIB_TRACKS_COUNT
-    LIB_TRACKS_ARCHIVED_COUNT = ModelFields.LIB_TRACKS_ARCHIVED_COUNT
-    DURATION_IN_SEC = ModelFields.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = ModelFields.DURATION_STR_IN_HOUR_MIN_SEC
+class LibTrackMixinDetailedSerializer(serializers.ModelSerializer):
+    library_tracks = serializers.SerializerMethodField()
+
+    class Meta:
+        model = LibTrackMixin
+
+    def get_library_tracks(self, instance: LibTrackMixin):
+        sorted_tracks = instance.get_sorted_tracks()
+        return LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(sorted_tracks, many=True).data

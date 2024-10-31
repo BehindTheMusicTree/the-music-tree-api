@@ -1,13 +1,12 @@
-#!/usr/bin/env python
 
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_new_criteria_then_not_in_old_criteria_playlist_anymore(self):
         old_genre = self.model_fixture_factory.create_genre(name="Metal")

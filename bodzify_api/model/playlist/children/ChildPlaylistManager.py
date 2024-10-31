@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from django.core.exceptions import ValidationError
 from bodzify_api.model.base.utils.base_model.BaseManager import BaseManager

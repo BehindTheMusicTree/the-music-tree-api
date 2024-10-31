@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from django.db.models.fields.files import FieldFile
 from mutagen._file import File as MutagenFile
