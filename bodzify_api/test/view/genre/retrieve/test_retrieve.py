@@ -1,5 +1,6 @@
 
 
+from uuid import UUID
 from rest_framework import status
 
 from bodzify_api.serializer.schema.criteria.output.fields import Fields as RetrieveFields
@@ -32,6 +33,6 @@ class TestCase(GenreTestCase):
         titles = [track[RetrieveFields.LIB_TRACKS_TITLE] for track in lib_tracks]
         assert title1 in titles
         assert title2 in titles
-        uuids = [track[RetrieveFields.UUID] for track in lib_tracks]
+        uuids = [UUID(track[RetrieveFields.UUID]) for track in lib_tracks]
         assert track1_uuid in uuids
         assert track2_uuid in uuids

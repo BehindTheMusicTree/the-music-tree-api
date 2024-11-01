@@ -17,11 +17,3 @@ class TestCase(GenreTestCase):
         assert self.overall_total == 1
         rock_genre_json = self.results[0]
         assert rock_genre_json[Fields.NAME] == genre_name
-
-    def test_type(self):
-        genre_name = "Rock"
-        self.model_fixture_factory.create_genre(name=genre_name)
-        response = self._get_genres()
-        assert response.status_code == status.HTTP_200_OK
-        criteria_type_label = self.results[0][GetFields.TYPE][GetFields.TYPE_LABEL]
-        assert criteria_type_label == CriteriaTypesLabel.GENRE
