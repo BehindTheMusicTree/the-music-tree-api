@@ -26,7 +26,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
     @transaction.atomic
     @extend_schema(request=CriteriaSchemaSerializer, responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
-        return self._post(request, *args, **kwargs)
+        return self._handle_post(request, *args, **kwargs)
 
     @extend_schema(parameters=[OpenApiParameter(name=FilterFields.NAME,
                                                 type=OpenApiTypes.STR,
@@ -44,4 +44,4 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                    responses=CriteriaDetailedSerializer,
                    description=("""Updates a criteria"""))
     def update(self, request, *args, **kwargs):
-        return self._update(request, *args, **kwargs)
+        return self._handle_update(request, *args, **kwargs)

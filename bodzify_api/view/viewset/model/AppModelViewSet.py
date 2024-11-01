@@ -146,7 +146,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return super().get_object()
 
     def get_queryset(self):
-        request = cast(Request, self.request)
+        request: Request = cast(Request, self.request)
 
         queryset = self.model_class.objects.filter(user=request.user)
 

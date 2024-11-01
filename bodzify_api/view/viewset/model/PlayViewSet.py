@@ -28,4 +28,4 @@ class PlayViewSet(AppModelViewSet[Play]):
     @transaction.atomic
     @extend_schema(request=PlayPostSerializer, responses=PlayDetailedSerializer)
     def create(self, request, *args, **kwargs):
-        return self._post(request, *args, **kwargs)
+        return self._handle_post(request, *args, **kwargs)

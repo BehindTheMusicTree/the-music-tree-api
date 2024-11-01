@@ -1,9 +1,8 @@
-from django_filters import CharFilter, UUIDFilter
-from django.db.models.query import QuerySet
 import logging
-from django_filters import FilterSet
 
-from bodzify_api.filter.AllValuesFilter import ForeignKeyFilter
+from django_filters import CharFilter
+
+from bodzify_api.filter.ForeignKeyFilter import ForeignKeyFilter
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.criteria.Criteria import Fields as ModelFields, Criteria
 

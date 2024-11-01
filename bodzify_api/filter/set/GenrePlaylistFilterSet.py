@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters  # type: ignore
 
-from bodzify_api.filter.AllValuesFilter import ForeignKeyFilter
+from bodzify_api.filter.ForeignKeyFilter import ForeignKeyFilter
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.criteria.Criteria import Fields as ModelFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist, Fields as ModelFields
