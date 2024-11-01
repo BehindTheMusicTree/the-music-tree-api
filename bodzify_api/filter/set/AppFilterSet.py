@@ -2,15 +2,10 @@
 from django_filters import FilterSet
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api.model.user.User import User
 from bodzify_api.utils.utils import to_camel_case
 
 
 class AppFilterSet(FilterSet):
-
-    def __init__(self, data=None, *args, **kwargs):
-        print(f"[DEBUG] AppFilterSet.__init__ data={data}")
-        super().__init__(data=data, *args, **kwargs)
 
     @property
     def qs(self):
@@ -20,8 +15,6 @@ class AppFilterSet(FilterSet):
         """
         # Get all declared filters
         valid_filters = set(self.filters.keys())
-        print(f"[DEBUG] Valid filters: {valid_filters}")
-        print(f"[DEBUG] Data keys: {self.data.keys() if self.data else 'None'}")
 
         # Check received parameters against valid filters
         invalid_filters = []

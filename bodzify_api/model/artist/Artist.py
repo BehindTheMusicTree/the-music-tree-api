@@ -74,6 +74,6 @@ class Artist(LibTrackMixin):
 
         lib_tracks: list[LibraryTrack] = list(self.library_tracks.all())
         for track in lib_tracks:
-            track.delete_with_checking_album_potential_deletion()
+            track.delete_with_checking_album_and_artists_potential_deletion()
 
         self.delete()

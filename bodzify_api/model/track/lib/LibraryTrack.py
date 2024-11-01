@@ -137,25 +137,20 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
         ))
 
     def delete_with_checking_album_and_artists_potential_deletion(self):
-        artists: QuerySet[Artist] = self.artists.all()
+        artists: List[Artist] = list(self.artists.all())  # list() makes a copy of the QuerySet before the deletion
+
         self.delete()
+
         if self.album:
             self.album.delete_if_no_track_linked_with_eventual_album_artist_deletion()
-        if artists.count() > 0:
-            for artist in artists:
-                artist.delete_if_nothing_linked()
+        for artist in artists:
+            artist.delete_if_nothing_linked()
 
     def delete_with_checking_artists_potential_deletion(self):
         track_artists: QuerySet[Artist] = self.artists.all()
         self.delete()
         for artist in track_artists:
             artist.delete_if_nothing_linked()
-
-    def delete_with_checking_album_potential_deletion(self):
-        track_album = self.album
-        self.delete()
-        if track_album:
-            track_album.delete_if_no_track_linked_with_eventual_album_artist_deletion()
 
 
 @receiver(pre_delete, sender=LibraryTrack)
