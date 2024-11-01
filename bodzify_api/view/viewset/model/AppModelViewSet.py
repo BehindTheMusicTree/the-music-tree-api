@@ -7,7 +7,7 @@ from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework.exceptions import ValidationError, APIException
 from rest_framework import viewsets, status
 from django.core.exceptions import ValidationError as DjangoValidationError
-from rest_framework.exceptions import ValidationError as DRFValidationError
+from rest_framework.exceptions import ValidationError as DRFValidationError, MethodNotAllowed
 from django.http import FileResponse
 
 from bodzify_api.model.base.utils.base_model.BaseModel import BaseModel
@@ -192,4 +192,4 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return Response(serializer.data)
 
     def destroy(self, request: Request, *args, **kwargs) -> Response:
-        raise NotImplementedError("destroy not implemented in viewset")
+        raise MethodNotAllowed('DELETE', detail='Delete operation not allowed for this resource')
