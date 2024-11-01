@@ -183,8 +183,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             PaginatedResponseFields.RESULTS: data
         })
 
-    def get_file_response(self, file_path: str, filename: str) -> FileResponse:
-        return APIFileResponse.from_file(file_path, filename)
+    def get_file_response(self, file_path: str) -> FileResponse:
+        return APIFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
 
     def retrieve(self, request: Request, *args, **kwargs) -> Response:
         instance = self.get_object()

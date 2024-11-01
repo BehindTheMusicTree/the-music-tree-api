@@ -2,7 +2,7 @@
 from typing import TypeVar, Generic
 from django.db import models
 
-T = TypeVar('T', bound='bodzify_api.model.base.utils.base_model.BaseModel.BaseModel')
+T = TypeVar('T', bound='bodzify_api.model.base.utils.base_model.BaseModel.BaseModel')  # type: ignore
 
 
 class BaseManager(models.Manager, Generic[T]):
