@@ -76,15 +76,9 @@ class Criteria(LibTrackMixin):
     def criteria_ascendant_relation_ascendants(self) -> Manager:
         return self.criteria_ascendant_relation_ascendants
 
-    def calculate_root(self):
-        self.root = self.parent.root if self.parent else self
-
-    def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
-        if self.parent == other_criteria:
-            return True
-        elif self.parent:
-            return self.parent.is_descendant_of(other_criteria)
-        return False
+    def __str__(self) -> str:
+        parent_str = f'{Fields.PARENT}: {self.parent.name}' if self.parent else f"[no {Fields.PARENT}]"
+        return f"{self.uuid} | {self.name} | {parent_str}"
 
     @ staticmethod
     def get_common_criteria(criteria_a: Optional['Criteria'], criteria_b: Optional['Criteria']) -> Optional['Criteria']:
@@ -105,9 +99,15 @@ class Criteria(LibTrackMixin):
 
         return None
 
-    def __str__(self) -> str:
-        parent_str = f'parent: {self.parent.name}' if self.parent else "No parent"
-        return f"{self.uuid} | {self.name} | {parent_str}"
+    def calculate_root(self):
+        self.root = self.parent.root if self.parent else self
+
+    def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
+        if self.parent == other_criteria:
+            return True
+        elif self.parent:
+            return self.parent.is_descendant_of(other_criteria)
+        return False
 
     def _is_creating(self) -> bool:
         return getattr(self, f"{Fields.ROOT}_id", None) is None
