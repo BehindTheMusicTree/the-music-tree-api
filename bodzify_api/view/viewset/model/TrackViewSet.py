@@ -1,10 +1,12 @@
 
+from typing import Type
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from django.db import transaction
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.serializers import Serializer
 
 from bodzify_api.serializer.schema.track.input.endpoint.extract import LibTrackExtractSerializer
 from bodzify_api.serializer.schema.track.input.endpoint.post import LibTrackPostSerializer
@@ -46,6 +48,11 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 raise  # Re-raise the exception if it's not the specific error
+
+    def get_serializer_class(self) -> Type[Serializer]:
+        if self.action == 'extract':
+            return LibTrackExtractSerializer
+        return super().get_serializer_class()
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
