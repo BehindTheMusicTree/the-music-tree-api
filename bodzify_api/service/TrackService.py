@@ -317,9 +317,3 @@ class TrackService(Service):
                                                       partial=True)
         model_serializer.is_valid(raise_exception=True)
         return model_serializer.save()
-
-    def delete(self, user: User, instance: LibraryTrack):
-        old_lib_tracks_playlists_with_positions = instance.get_lib_track_playlists_with_positions()
-        instance.delete_with_checking_album_and_artists_potential_deletion()
-        TrackService._decrease_position_of_next_tracks_in_old_track_playlists(
-            user=user, playlists_with_old_position=old_lib_tracks_playlists_with_positions)

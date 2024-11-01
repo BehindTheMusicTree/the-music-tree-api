@@ -1,6 +1,7 @@
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from django.db import transaction
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -156,5 +157,15 @@ class LibTrackViewSet(AppModelViewSet):
     def update(self, request, *args, **kwargs):
         return self._update(request, *args, **kwargs)
 
-    def destroy(self, request, *args, **kwargs):
-        return self._destroy(request, *args, **kwargs)
+    # Only for type hinting
+    def get_object(self) -> LibraryTrack:
+        return super().get_object()
+
+    @transaction.atomic
+    def destroy(self, request: Request, *args, **kwargs):
+        instance = self.get_object()
+        old_lib_tracks_playlists_with_positions = instance.get_lib_track_playlists_with_positions()
+        instance.delete_with_checking_album_and_artists_potential_deletion()
+        TrackService._decrease_position_of_next_tracks_in_old_track_playlists(
+            user=request.user,
+            playlists_with_old_position=old_lib_tracks_playlists_with_positions)

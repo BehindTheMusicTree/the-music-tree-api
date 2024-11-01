@@ -200,3 +200,6 @@ class AppModelViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.detailed_serializer_class(instance)
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        raise NotImplementedError("destroy not implemented in viewset")

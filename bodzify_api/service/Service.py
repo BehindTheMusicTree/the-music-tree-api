@@ -34,10 +34,6 @@ class Service:
                                                                   oldinstance=None) -> dict:
         raise NotImplementedError("You should implement this method in a subclass")
 
-    @abstractmethod
-    def delete(self, user: User, instance):
-        raise NotImplementedError("You should implement this method in a subclass")
-
     @staticmethod
     def _update_data1_with_key_if_set_in_data2(key: str, data1: dict, data2: dict):
         if key in data2:
