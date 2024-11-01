@@ -17,6 +17,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
+from bodzify_api.model.criteria.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist, Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
@@ -56,13 +57,13 @@ class ModelFixtureFactory:
         user.save()
         return cast('User', user)
 
-    def __create_criteria(self, name: str, type: int, user: Optional[User] = None, **kwargs) -> Criteria:
+    def __create_criteria(self, name: str, type_pk: int, user: Optional[User] = None, **kwargs) -> Criteria:
         model_fields = {
             CriteriaFields.CREATED_ON: timezone.make_aware(datetime.now()),
             CriteriaFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             CriteriaFields.USER: user or self.default_test_user,
             CriteriaFields.NAME: name,
-            CriteriaFields.TYPE: type,
+            CriteriaFields.TYPE: CriteriaType.objects.get(pk=type_pk),
             CriteriaFields.PARENT: None,
         }
         return Criteria.objects.create(**model_fields)
@@ -123,7 +124,7 @@ class ModelFixtureFactory:
 
         return library_track
 
-    def create_artist(self, name: str, user: Optional[User], **kwargs) -> Artist:
+    def create_artist(self, name: str, user: Optional[User] = None, **kwargs) -> Artist:
         model_fields = {
             ArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
             ArtistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -133,7 +134,7 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return G(Artist, **model_fields)
 
-    def create_album(self, name: str, user: Optional[User], **kwargs) -> Album:
+    def create_album(self, name: str, user: Optional[User] = None, **kwargs) -> Album:
         model_fields = {
             AlbumFields.CREATED_ON: timezone.make_aware(datetime.now()),
             AlbumFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -146,12 +147,12 @@ class ModelFixtureFactory:
         return G(Album, **model_fields)
 
     def create_genre(self, name: str, **kwargs) -> Criteria:
-        return self.__create_criteria(name=name, type=CriteriaTypesId.GENRE, **kwargs)
+        return self.__create_criteria(name=name, type_pk=CriteriaTypesId.GENRE, **kwargs)
 
     def create_tag(self, name: str, **kwargs) -> Criteria:
-        return self.__create_criteria(name=name, type=CriteriaTypesId.TAG, **kwargs)
+        return self.__create_criteria(name=name, type_pk=CriteriaTypesId.TAG, **kwargs)
 
-    def create_manual_playlist(self, name: str, user: Optional[User], **kwargs) -> ManualPlaylist:
+    def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> ManualPlaylist:
         model_fields = {
             BasePlaylistFields.CREATED_ON: timezone.make_aware(datetime.now()),
             BasePlaylistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
