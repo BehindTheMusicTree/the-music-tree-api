@@ -11,7 +11,7 @@ from bodzify_api.serializer.schema.criteria.output.simple import CriteriaSimpleS
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
-class CriteriaViewSet(AppModelViewSet):
+class CriteriaViewSet(AppModelViewSet[Criteria]):
     def __init__(self, **kwargs):
         super().__init__(
             model_class=Criteria,

@@ -10,7 +10,7 @@ from bodzify_api.serializer.schema.album.simple import AlbumSimpleSerializer
 from bodzify_api.serializer.schema.album.detailed import AlbumDetailedSerializer
 
 
-class AlbumViewSet(AppModelViewSet):
+class AlbumViewSet(AppModelViewSet[Album]):
     def __init__(self, **kwargs):
         super().__init__(
             model_class=Album,
@@ -29,10 +29,6 @@ class AlbumViewSet(AppModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
-
-    # Only for type hinting
-    def get_object(self) -> Album:
-        return super().get_object()
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):

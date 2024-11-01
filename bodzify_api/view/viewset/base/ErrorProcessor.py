@@ -1,0 +1,49 @@
+from typing import Dict, Any, Union
+from rest_framework.exceptions import ErrorDetail, ValidationError as DRFValidationError
+from django.core.exceptions import ValidationError as DjangoValidationError
+from bodzify_api.view.errors import APIErrorMessages
+from bodzify_api import settings
+import logging
+
+
+class ErrorProcessor:
+    @staticmethod
+    def format_error_message(message: Union[str, ErrorDetail]) -> str:
+        message_str = str(message)
+        return APIErrorMessages.INVALID_UUID if 'UUID' in message_str else message_str
+
+    def process_validation_errors(self, exc: Union[DRFValidationError, DjangoValidationError]) -> Dict[str, Any]:
+        custom_errors: Dict[str, Any] = {}
+
+        if isinstance(exc, DRFValidationError):
+            detail = getattr(exc, 'detail', None)
+            if isinstance(detail, dict):
+                custom_errors = {
+                    field: [self.format_error_message(msg) for msg in messages]
+                    if isinstance(messages, (list, tuple))
+                    else self.format_error_message(messages)
+                    for field, messages in detail.items()
+                }
+            elif detail:
+                custom_errors['non_field_errors'] = (
+                    [self.format_error_message(msg) for msg in detail]
+                    if isinstance(detail, (list, tuple))
+                    else self.format_error_message(detail)
+                )
+        elif isinstance(exc, DjangoValidationError):
+            message_dict = getattr(exc, 'message_dict', None)
+            if message_dict:
+                custom_errors = {
+                    field: [self.format_error_message(msg) for msg in messages]
+                    for field, messages in message_dict.items()
+                }
+            else:
+                custom_errors['non_field_errors'] = [
+                    self.format_error_message(msg) for msg in exc.messages
+                ]
+        else:
+            logging.getLogger(settings.LOGGERS_NAME.EXCEPTIONS).warning(
+                "Unhandled exception type: %s", type(exc)
+            )
+
+        return custom_errors

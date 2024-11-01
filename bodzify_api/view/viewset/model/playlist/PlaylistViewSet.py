@@ -17,11 +17,10 @@ from bodzify_api.filter.set.PlaylistParamFilterSet import PlaylistParamFilterSet
 from bodzify_api.serializer.schema.playlist.base.input.query_param import Fields as QueryParams
 
 
-class PlaylistViewSet(AppModelViewSet):
+class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
 
     def __init__(self, **kwargs):
-        super().__init__(service=Service(),
-                         model_class=BasePlaylist,
+        super().__init__(model_class=BasePlaylist,
                          filter_class=PlaylistParamFilterSet,
                          simple_serializer_class=BasePlaylistSimpleSerializer,
                          **kwargs)
@@ -29,9 +28,6 @@ class PlaylistViewSet(AppModelViewSet):
     @staticmethod
     def _get_queryset_str_filter_value_to_filter_nothing():
         return ''
-
-    def _get_detailed_serializer(self, instance):
-        return BasePlaylistDetailedSerializer(instance=instance)
 
     def get_queryset(self):
         if self.action == 'retrieve':
@@ -90,6 +86,3 @@ class PlaylistViewSet(AppModelViewSet):
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super()._list(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)

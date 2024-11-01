@@ -12,7 +12,7 @@ from bodzify_api.service.playlist.ManualPlaylistService import ManualPlaylistSer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
-class ManualPlaylistViewSet(AppModelViewSet):
+class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
 
     def __init__(self, **kwargs):
         super().__init__(

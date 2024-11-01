@@ -9,7 +9,6 @@ from rest_framework.decorators import action
 from bodzify_api.serializer.schema.track.input.endpoint.extract import LibTrackExtractSerializer
 from bodzify_api.serializer.schema.track.input.endpoint.post import LibTrackPostSerializer
 from bodzify_api.serializer.schema.track.input.endpoint.put import LibTrackPutSerializer
-from bodzify_api.view import utils
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.serializer.schema.track.output.detailed import LibTrackDetailedSerializer
@@ -17,7 +16,7 @@ from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.filter.set.LibTrackFilterSet import LibTrackFilterSet, Fields as FilterFields
 
 
-class LibTrackViewSet(AppModelViewSet):
+class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
     def __init__(self, **kwargs):
         super().__init__(
             service=TrackService(),

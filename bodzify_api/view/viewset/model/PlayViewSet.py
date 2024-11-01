@@ -10,7 +10,7 @@ from bodzify_api.service.PlayService import PlayService
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
-class PlayViewSet(AppModelViewSet):
+class PlayViewSet(AppModelViewSet[Play]):
     def __init__(self, **kwargs):
         super().__init__(
             service=PlayService(),
