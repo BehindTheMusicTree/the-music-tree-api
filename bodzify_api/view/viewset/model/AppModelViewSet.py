@@ -29,14 +29,15 @@ class PaginatedResponseFields:
 class AppModelViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_class: Optional[Type[AppFilterSet]] = None
+    simple_serializer_class: Optional[Type[ModelSerializer]] = None
     detailed_serializer_class: Optional[Type[ModelSerializer]] = None
     create_serializer_class: Optional[Type[Serializer]] = None
     update_serializer_class: Optional[Type[Serializer]] = None
 
     def __init__(
             self,
-            service: Optional[Service],
             model_class: type[BaseModel],
+            service: Optional[Service] = None,
             filter_class: Optional[Type[AppFilterSet]] = None,
             simple_serializer_class: Optional[Type[ModelSerializer]] = None,
             detailed_serializer_class: Optional[Type[ModelSerializer]] = None,
@@ -44,8 +45,8 @@ class AppModelViewSet(viewsets.ModelViewSet):
             create_serializer_class: Optional[Type[Serializer]] = None,
             **kwargs):
         super().__init__(**kwargs)
-        self.service = service
         self.model_class = model_class
+        self.service = service
         self.filter_class = filter_class
         self.simple_serializer_class = simple_serializer_class
         self.detailed_serializer_class = detailed_serializer_class
@@ -148,13 +149,6 @@ class AppModelViewSet(viewsets.ModelViewSet):
             return self.get_paginated_response(data)
         except RestValidationError as e:
             return Response(data={"detail": str(e.detail[0])}, status=status.HTTP_400_BAD_REQUEST)
-
-    def _destroy(self, request, *args, **kwargs):
-        if not self.service:
-            raise NotImplementedError("Service not defined in viewset")
-
-        self.service.delete(user=request.user, instance=self.get_object())
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_queryset(self):
         request: Request = self.request  # type: ignore
