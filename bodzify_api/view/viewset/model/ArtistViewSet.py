@@ -23,7 +23,7 @@ class ArtistViewSet(AppModelViewSet[Artist]):
         OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, request, *args, **kwargs):
-        return super()._list(request, *args, **kwargs)
+        return super()._handle_list(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):

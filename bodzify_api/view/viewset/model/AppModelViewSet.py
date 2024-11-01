@@ -74,7 +74,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             self._require_service()
             if self.service is None:  # This will never happen due to _require_service, but needed for type checking
                 raise NotImplementedError(APIErrorMessages.SERVICE_NOT_DEFINED)
-            return self.service.post(request=request, create_data_validated=create_data)
+            return self.service.post(request=request, data_validated=create_data)
         raise NotImplementedError(f"No action defined for action {self.action}")
 
     def _handle_post(self, request: Request, *args, **kwargs) -> Response:
@@ -105,7 +105,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             if self.service is None:  # This will never happen due to _require_service, but needed for type checking
                 raise NotImplementedError(APIErrorMessages.SERVICE_NOT_DEFINED)
             self.service.update(
-                put_data=update_data,
+                data_validated=update_data,
                 oldinstance=instance,
                 request=request
             )

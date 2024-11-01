@@ -37,7 +37,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                                                 required=False)],
                    responses=CriteriaSimpleSerializer)
     def list(self, request, *args, **kwargs):
-        return self._list(request, *args, **kwargs)
+        return self._handle_list(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=CriteriaSchemaSerializer,

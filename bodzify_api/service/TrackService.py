@@ -254,10 +254,10 @@ class TrackService(Service):
             artists_uuids = []
         model_data[SaveModelFields.ARTISTS] = artists_uuids
 
-    def extract(self, request: Request, extract_data_validated: dict):
-        mine_track_url = extract_data_validated[ExtractFields.URL]
+    def extract(self, request: Request, data_validated: dict):
+        mine_track_url = data_validated[ExtractFields.URL]
         track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
-            mine_track_url=mine_track_url, data=extract_data_validated)
+            mine_track_url=mine_track_url, data=data_validated)
 
         # stream=True makes it more effective for large files.
         track_file_streamed = requests.get(mine_track_url, stream=True)
@@ -272,20 +272,20 @@ class TrackService(Service):
 
             os.chmod(track_temp_file.name, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
-            post_data = self._get_post_data_from_extract_data(extract_data_validated)
+            post_data = self._get_post_data_from_extract_data(data_validated)
             post_data[PostFields.FILE] = AppDjangoFile(file=track_temp_file,
                                                        name=track_filename,
                                                        file_abs_path=track_temp_file.name)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[SaveSchemaFields.FORCE_TITLE_GENERATION] = force_title_generation_str
-            library_track = self.post(post_data_validated=post_data, request=request)
+            library_track = self.post(data_validated=post_data, request=request)
 
         return library_track
 
-    def post(self, request: Request, post_data_validated: dict):
+    def post(self, request: Request, data_validated: dict):
         user = request.user
 
-        schema_data = self._get_schema_data_from_post_data(post_data=post_data_validated)
+        schema_data = self._get_schema_data_from_post_data(post_data=data_validated)
         schema_serializer = self._get_schema_serializer(oldinstance=None, schema_data=schema_data, request=request)
         schema_serializer.is_valid(raise_exception=True)
 

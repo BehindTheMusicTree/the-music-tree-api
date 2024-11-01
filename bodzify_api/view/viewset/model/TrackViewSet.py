@@ -26,7 +26,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             **kwargs
         )
 
-    def _get_create_serializer_class_eventually_depending_on_action(self):
+    def _get_create_serializer(self):
         if self.action == 'create':
             return LibTrackPostSerializer
         elif self.action == 'extract':
@@ -35,21 +35,17 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
 
     def _post_depending_on_action(self, request, request_data_validated):
         try:
+            track_service: TrackService = self.service  # type: ignore
             if self.action == 'create':
-                return self._create(request, request_data_validated)
+                return track_service.post(data_validated=request_data_validated, request=request)
             elif self.action == 'extract':
-                track_service: TrackService = self.service  # type: ignore
-                return track_service.extract(extract_data_validated=request_data_validated, request=request)
+                return track_service.extract(data_validated=request_data_validated, request=request)
         except OSError as e:
             if e.errno == 28:  # No space left on device
                 return Response(data={"detail": "No space left on device."},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 raise  # Re-raise the exception if it's not the specific error
-
-    def _create(self, request, request_data_snake_case):
-        track_service: TrackService = self.service  # type: ignore
-        return track_service.post(post_data_validated=request_data_snake_case, request=request)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),

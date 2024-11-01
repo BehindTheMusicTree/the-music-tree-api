@@ -1,6 +1,3 @@
-
-from typing import Dict, Any
-from urllib import request
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
 from rest_framework.request import Request
 
@@ -9,7 +6,6 @@ from bodzify_api.model.playlist.BasePlaylist import Fields, BasePlaylist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist \
     import SpecialNames as LibTrackMixinSpecialNames, TypesLabel as CriteriaPlaylistTypesLabels
 from bodzify_api.model.playlist.children.ManualPlaylist import TYPE_LABEL as MANUAL_PLAYLIST_TYPE_LABEL
-from bodzify_api.serializer.schema.playlist.base.output.detailed import BasePlaylistDetailedSerializer
 from bodzify_api.serializer.schema.playlist.base.output.simple import BasePlaylistSimpleSerializer
 from bodzify_api.service.Service import Service
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
@@ -85,4 +81,4 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
-        return super()._list(request, *args, **kwargs)
+        return super()._handle_list(request, *args, **kwargs)

@@ -33,14 +33,14 @@ class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
         OpenApiParameter(name=Fields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, request, *args, **kwargs):
-        return super()._list(request, *args, **kwargs)
+        return super()._handle_list(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=ManualPlaylistInputEndpointSerializer, responses=ManualPlaylistDetailedSerializer)
     def create(self, request, *args, **kwargs):
-        return self._post(request, *args, **kwargs)
+        return self._handle_post(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=ManualPlaylistInputEndpointSerializer, responses=ManualPlaylistDetailedSerializer)
     def update(self, request, *args, **kwargs):
-        return self._update(request, *args, **kwargs)
+        return self._handle_update(request, *args, **kwargs)
