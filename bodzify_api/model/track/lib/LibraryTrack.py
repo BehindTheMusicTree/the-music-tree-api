@@ -79,13 +79,13 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
         position_str = f"#{self.position_in_album}" if self.position_in_album else "#--"
 
         artists: QuerySet[Artist] = self.artists.all()
-        artists_str = ", ".join(artist.name for artist in artists) if self.artists.exists() else "[No Artist]"
-        album_str = str(self.album) if self.album else "[No Album]"
+        artists_str = ", ".join(artist.name for artist in artists) if self.artists.exists() else f"[no {Fields.ARTISTS}]"
+        album_str = str(self.album) if self.album else f"[no {Fields.ALBUM}]"
 
         genre_str = f"{Fields.GENRE}: {self.genre}" if self.genre else f"{Fields.GENRE}: --"
         rating_str = f"{Fields.RATING}: {self.rating}" if self.rating else f"{Fields.RATING}: --"
         language_str = f"{Fields.LANGUAGE}: {self.language}" if self.language else f"{Fields.LANGUAGE}: --"
-        file_str = f"{Fields.TRACK_FILE_DB}: {self.track_file}" if self.track_file else "No track file"
+        file_str = f"{Fields.TRACK_FILE_DB}: {self.track_file}" if self.track_file else "no track file"
 
         return (f"{self.uuid} | {position_str} | {artists_str} - {self.title} | {album_str} | "
                 f"{genre_str} | {rating_str} | {language_str} | "
