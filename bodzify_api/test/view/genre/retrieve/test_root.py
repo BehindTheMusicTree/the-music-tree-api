@@ -1,4 +1,4 @@
-
+from uuid import UUID
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Fields
@@ -9,26 +9,23 @@ class TestCase(GenreTestCase):
 
     def test_root(self):
         genre = self.model_fixture_factory.create_genre(name="Rock")
-        response = self._get_genres()
+        response = self._retrieve_genre(uuid=genre.uuid)
         assert response.status_code == status.HTTP_200_OK
-        genre_json = self.results[0]
-        assert genre_json[Fields.ROOT][Fields.UUID] == genre.uuid
+        assert UUID(self.result[Fields.ROOT][Fields.UUID]) == genre.uuid
 
-    def test_root_of_first_descandant(self):
+    def test_root_of_first_descendant(self):
+        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        print(f"Rock Genre - UUID: {rock_genre.uuid}, Root: {rock_genre.root.uuid}")
+        punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
+        print(f"Punk Genre - UUID: {punk_genre.uuid}, Root: {punk_genre.root.uuid}")
+        response = self._retrieve_genre(uuid=punk_genre.uuid)
+        assert response.status_code == status.HTTP_200_OK
+        assert UUID(self.result[Fields.ROOT][Fields.UUID]) == rock_genre.uuid
+
+    def test_root_of_second_descendant(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        response = self._get_genres()
+        ska_genre = self.model_fixture_factory.create_genre(name="Ska", parent=punk_genre)
+        response = self._retrieve_genre(uuid=ska_genre.uuid)
         assert response.status_code == status.HTTP_200_OK
-        for json_element in self.results:
-            if json_element[Fields.UUID] == punk_genre.uuid:
-                assert json_element[Fields.ROOT][Fields.UUID] == rock_genre.uuid
-
-    def test_root_of_second_descandant(self):
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk Hardcore", parent=punk_genre)
-        response = self._get_genres()
-        assert response.status_code == status.HTTP_200_OK
-        for json_element in self.results:
-            if json_element[Fields.UUID] == punkhardcore_genre.uuid:
-                assert json_element[Fields.ROOT][Fields.UUID] == rock_genre.uuid
+        assert UUID(self.result[Fields.ROOT][Fields.UUID]) == rock_genre.uuid
