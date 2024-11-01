@@ -1,10 +1,9 @@
-
 import os
 import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional, cast
+from typing import Optional, cast
 
 from ddf import G, N
 from django_dynamic_fixture import global_settings
@@ -13,19 +12,25 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 
 from bodzify_api.model.album.Album import Album
+from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
-from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
+from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist, Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import Fields as MusicbrainzRecordingFields
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.model.playlist.BasePlaylist import Fields as BasePlaylistFields
 from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.model.track.file.TrackFile import TrackFile as TrackFile
+from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
+from bodzify_api.model.track.file.TrackFile import TrackFile
+from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
 
-# Configure DDF to handle generated fields
-global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None
+global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
 
 
 class ModelFixtureFactory:
@@ -40,10 +45,8 @@ class ModelFixtureFactory:
 
     @staticmethod
     def create_user(username=None, email=None, password='password123', **kwargs) -> 'User':
-        """Create a test user without recursive dependencies"""
         UserModel = get_user_model()
         unique_id = str(uuid.uuid4())[:8]
-        # Use N() to create without recursion, then save manually
         user = N(UserModel,
                  username=username or f'testuser_{unique_id}',
                  email=email or f'testuser_{unique_id}@example.com',
@@ -53,33 +56,18 @@ class ModelFixtureFactory:
         user.save()
         return cast('User', user)
 
-    def __create_criteria(self,
-                          name: str,
-                          type: int,
-                          parent: Optional[Criteria] = None,
-                          created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                          updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                          user: Optional['User'] = None) -> Criteria:
-        # Create criteria instance directly to avoid recursion
-        criteria = Criteria.objects.create(
-            created_on=created_on,
-            updated_on=updated_on,
-            user=user or self.default_test_user,
-            name=name,
-            parent=parent,
-            type_id=type
-        )
+    def __create_criteria(self, name: str, type: int, user: Optional[User] = None, **kwargs) -> Criteria:
+        model_fields = {
+            CriteriaFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            CriteriaFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            CriteriaFields.USER: user or self.default_test_user,
+            CriteriaFields.NAME: name,
+            CriteriaFields.TYPE: type,
+            CriteriaFields.PARENT: None,
+        }
+        return Criteria.objects.create(**model_fields)
 
-        return criteria
-
-    def _create_file(self,
-                     lib_track: LibraryTrack,
-                     filename: Optional[str],
-                     created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     user: Optional['User'] = None) -> TrackFile:
-
-        user = user or self.default_test_user
+    def _create_file(self, user: User, lib_track: LibraryTrack, filename: Optional[str], **kwargs) -> TrackFile:
 
         if not os.path.exists(user.lib_abs_path):
             os.makedirs(user.lib_abs_path)
@@ -89,172 +77,115 @@ class ModelFixtureFactory:
         track_file_path_in_lib = user.lib_abs_path / os.path.basename(file_path)
         shutil.copy(file_path, track_file_path_in_lib)
 
-        return G(TrackFile,
-                 created_on=created_on,
-                 updated_on=updated_on,
-                 user=user,
-                 library_track=lib_track,
-                 file=str(track_file_path_in_lib),
-                 size_in_ko=None,
-                 size_in_mo=None,)
+        model_fields = {
+            TrackFileFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            TrackFileFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            TrackFileFields.USER: user,
+            TrackFileFields.LIBRARY_TRACK: lib_track,
+            TrackFileFields.FILE: str(track_file_path_in_lib)
+        }
+        model_fields.update(kwargs)
+        return G(TrackFile, **model_fields)
 
-    def _create_lib_track(self,
-                          title: str,
-                          artists: Optional[list[Artist]] = [],
-                          album: Optional[Album] = None,
-                          position_in_album: Optional[int] = None,
-                          genre: Optional[Criteria] = None,
-                          rating: Optional[int] = None,
-                          language: Optional[str] = None,
-                          play_count: Optional[int] = 0,
-                          archived: Optional[bool] = False,
-                          created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                          updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                          user: Optional['User'] = None) -> LibraryTrack:
-        library_track = G(LibraryTrack,
-                          user=user or self.default_test_user,
-                          created_on=created_on,
-                          updated_on=updated_on,
-                          title=title,
-                          album=album,
-                          position_in_album=position_in_album,
-                          genre=genre,
-                          rating=rating,
-                          language=language,
-                          play_count=play_count,
-                          archived=archived,)
-        if artists:
-            library_track.artists.set(artists)
+    def _create_lib_track(self, user: User, title: str, **kwargs) -> LibraryTrack:
+        model_fields = {
+            LibraryTrackFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            LibraryTrackFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            LibraryTrackFields.USER: user,
+            LibraryTrackFields.TITLE: title,
+            LibraryTrackFields.ARTISTS: [],
+            LibraryTrackFields.ALBUM: None,
+            LibraryTrackFields.POSITION_IN_ALBUM: None,
+            LibraryTrackFields.GENRE: None,
+            LibraryTrackFields.RATING: None,
+            LibraryTrackFields.LANGUAGE: None,
+            LibraryTrackFields.PLAY_COUNT: 0,
+            LibraryTrackFields.ARCHIVED: False
+        }
+        model_fields.update(kwargs)
+        library_track = G(LibraryTrack, **model_fields)
+
+        if kwargs.get(LibraryTrackFields.ARTISTS):
+            library_track.artists.set(kwargs[LibraryTrackFields.ARTISTS])
+
         return library_track
-
-    def create_artist(self,
-                      name: str,
-                      created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                      updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                      user: Optional['User'] = None) -> Artist:
-        return G(Artist,
-                 created_on=created_on,
-                 updated_on=updated_on,
-                 user=user or self.default_test_user,
-                 name=name,)
-
-    def create_album(self,
-                     name: str,
-                     album_artists: List[Artist] = [],
-                     year: Optional[int] = None,
-                     created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     user: Optional['User'] = None) -> Album:
-        return G(Album,
-                 created_on=created_on,
-                 updated_on=updated_on,
-                 user=user or self.default_test_user,
-                 name=name,
-                 album_artists=album_artists,
-                 year=year,)
 
     def create_lib_track_with_file(self,
                                    title: str,
                                    filename: Optional[str] = None,
-                                   artists: Optional[list[Artist]] = None,
-                                   album: Optional[Album] = None,
-                                   position_in_album: Optional[int] = None,
-                                   genre: Optional[Criteria] = None,
-                                   rating: Optional[int] = None,
-                                   language: Optional[str] = None,
-                                   play_count: Optional[int] = 0,
-                                   archived: Optional[bool] = False,
-                                   created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                                   updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                                   user: Optional['User'] = None) -> LibraryTrack:
-
+                                   user: Optional[User] = None,
+                                   **kwargs) -> LibraryTrack:
+        user = user or self.default_test_user
         with transaction.atomic():
-            library_track = self._create_lib_track(title=title,
-                                                   artists=artists,
-                                                   album=album,
-                                                   position_in_album=position_in_album,
-                                                   genre=genre,
-                                                   rating=rating,
-                                                   language=language,
-                                                   play_count=play_count,
-                                                   archived=archived,
-                                                   created_on=created_on,
-                                                   updated_on=updated_on,
-                                                   user=user)
+            library_track = self._create_lib_track(user=user, title=title, **kwargs)
 
-            self._create_file(lib_track=library_track,
-                              filename=filename,
-                              created_on=created_on,
-                              user=user)
+            self._create_file(user=user, lib_track=library_track, filename=filename)
 
         return library_track
 
-    def create_musicbrainz_recording(
-            self, uuid: uuid.UUID,
-            title: str,
-            duration_in_sec: int,
-            musicbrainz_artists: Optional[list[MusicbrainzArtist]] = None,
-            release_date: Optional[datetime] = None,
-            created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-            updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> MusicbrainzRecording:
-        return G(MusicbrainzRecording,
-                 uuid=uuid,
-                 created_on=created_on,
-                 updated_on=updated_on,
-                 title=title,
-                 duration_in_sec=duration_in_sec,
-                 release_date=release_date,
-                 musicbrainz_artists=musicbrainz_artists,)
+    def create_artist(self, name: str, user: Optional[User], **kwargs) -> Artist:
+        model_fields = {
+            ArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            ArtistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            ArtistFields.USER: user or self.default_test_user,
+            ArtistFields.NAME: name
+        }
+        model_fields.update(kwargs)
+        return G(Artist, **model_fields)
 
-    def create_musicbrainz_artist(
-            self,
-            musicbrainz_id: str,
-            name: str,
-            created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-            updated_on: Optional[datetime] = timezone.make_aware(datetime.now())) -> MusicbrainzArtist:
-        return G(MusicbrainzArtist,
-                 musicbrainz_id=musicbrainz_id,
-                 name=name,
-                 created_om=created_on,
-                 updated_on=updated_on)
+    def create_album(self, name: str, user: Optional[User], **kwargs) -> Album:
+        model_fields = {
+            AlbumFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            AlbumFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            AlbumFields.USER: user or self.default_test_user,
+            AlbumFields.ALBUM_ARTISTS: [],
+            AlbumFields.YEAR: None,
+            AlbumFields.NAME: name
+        }
+        model_fields.update(kwargs)
+        return G(Album, **model_fields)
 
-    def create_genre(self,
-                     name: str,
-                     parent: Optional[Criteria] = None,
-                     created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                     user: Optional['User'] = None) -> Criteria:
-        return self.__create_criteria(created_on=created_on,
-                                      updated_on=updated_on,
-                                      user=user,
-                                      name=name,
-                                      type=CriteriaTypesId.GENRE,
-                                      parent=parent,)
+    def create_genre(self, name: str, **kwargs) -> Criteria:
+        return self.__create_criteria(name=name, type=CriteriaTypesId.GENRE, **kwargs)
 
-    def create_tag(self,
-                   name: str,
-                   parent: Optional[Criteria] = None,
-                   created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                   updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                   user: Optional['User'] = None) -> Criteria:
-        return self.__create_criteria(created_on=created_on,
-                                      updated_on=updated_on,
-                                      user=user,
-                                      name=name,
-                                      type=CriteriaTypesId.TAG,
-                                      parent=parent,)
+    def create_tag(self, name: str, **kwargs) -> Criteria:
+        return self.__create_criteria(name=name, type=CriteriaTypesId.TAG, **kwargs)
 
-    def create_manual_playlist(self,
-                               name,
-                               play_count: Optional[int] = 0,
-                               created_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                               updated_on: Optional[datetime] = timezone.make_aware(datetime.now()),
-                               user: Optional['User'] = None) -> ManualPlaylist:
-        base_playlist = G(BasePlaylist,
-                          created_on=created_on,
-                          updated_on=updated_on,
-                          user=user or self.default_test_user,
-                          play_count=play_count)
+    def create_manual_playlist(self, name: str, user: Optional[User], **kwargs) -> ManualPlaylist:
+        model_fields = {
+            BasePlaylistFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            BasePlaylistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            BasePlaylistFields.USER: user or self.default_test_user,
+            BasePlaylistFields.PLAY_COUNT: 0
+        }
+        model_fields.update(kwargs)
+
+        base_playlist = G(BasePlaylist, **model_fields)
+
         return G(ManualPlaylist,
                  base_playlist=base_playlist,
-                 name=name,)
+                 name=name)
+
+    def create_musicbrainz_recording(self, musicbrainz_id: str, title: str, **kwargs) -> MusicbrainzRecording:
+        model_fields = {
+            MusicbrainzRecordingFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            MusicbrainzRecordingFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            MusicbrainzRecordingFields.MUSICBRAINZ_ARTISTS: None,
+            MusicbrainzRecordingFields.SCORE: 1.0,
+            MusicbrainzRecordingFields.DURATION_IN_SEC: 200,
+            MusicbrainzRecordingFields.RELEASE_DATE: None,
+            MusicbrainzRecordingFields.MUSICBRAINZ_ID: musicbrainz_id,
+            MusicbrainzRecordingFields.TITLE: title
+        }
+        model_fields.update(kwargs)
+        return G(MusicbrainzRecording, **model_fields)
+
+    def create_musicbrainz_artist(self, musicbrainz_id: str, name: str, **kwargs) -> MusicbrainzArtist:
+        model_fields = {
+            MusicbrainzArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            MusicbrainzArtistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            MusicbrainzArtistFields.MUSICBRAINZ_ID: musicbrainz_id,
+            MusicbrainzArtistFields.NAME: name
+        }
+        model_fields.update(kwargs)
+        return G(MusicbrainzArtist, **model_fields)
