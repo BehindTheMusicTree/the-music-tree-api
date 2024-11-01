@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria, Fields as ModelFields
@@ -16,7 +15,6 @@ from bodzify_api.serializer.schema.track.output.simple.simple_without_album_and_
 
 class CriteriaDetailedSerializer(serializers.ModelSerializer):
     library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(many=True)
-    type = CriteriaTypeSerializer()
     root = CriteriaMinimumSerializer()  # type: ignore
     parent = CriteriaMinimumSerializer()
     ascendants = CriteriaAscendantRelationWithoutDescendantSerializer(
@@ -37,7 +35,6 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
                   AvailableFields.DESCENDANTS,
                   AvailableFields.ROOT,
                   AvailableFields.CHILDREN,
-                  AvailableFields.TYPE,
                   AvailableFields.CRITERIA_PLAYLIST,
                   AvailableFields.LIB_TRACKS,
                   AvailableFields.LIB_TRACKS_COUNT,

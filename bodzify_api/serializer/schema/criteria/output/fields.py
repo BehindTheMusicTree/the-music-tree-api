@@ -1,4 +1,3 @@
-
 from bodzify_api.model.criteria.Criteria import Fields as ModelFields
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
 from bodzify_api.serializer.schema.criteria.type.detailed import Fields as CriteriaTypeFields
@@ -13,7 +12,6 @@ class Fields:
     LIB_TRACKS_COUNT = ModelFields.LIB_TRACKS_COUNT
     LIB_TRACKS_ARCHIVED_COUNT = ModelFields.LIB_TRACKS_ARCHIVED_COUNT
     LIB_TRACKS_TITLE = LibTrackFields.TITLE
-    TYPE = ModelFields.TYPE
     TYPE_LABEL = CriteriaTypeFields.LABEL
     ROOT = ModelFields.ROOT
     PARENT = ModelFields.PARENT
