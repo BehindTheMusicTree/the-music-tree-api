@@ -1,4 +1,3 @@
-
 import inspect
 import os
 from pathlib import Path
@@ -7,7 +6,6 @@ from typing import Optional
 from django.core.management import call_command
 from django.test import TestCase
 
-from bodzify_api import settings
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
 

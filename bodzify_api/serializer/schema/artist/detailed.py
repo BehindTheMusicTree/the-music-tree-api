@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 
 from bodzify_api.model.artist.Artist import Artist
