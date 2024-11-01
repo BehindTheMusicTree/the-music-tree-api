@@ -71,6 +71,16 @@ def init_logs_if_needed():
             raise EnvironmentError(f"The log app file {LOG_APP_FILE} does not exist.")
         print_django(f"The log info file {LOG_APP_FILE} exists.")
 
+        global LOGGERS_NAME
+
+        class LOGGERS_NAME:
+            INFO = 'info'
+            REQUEST = 'request'
+            REQUEST_DJANGO = 'django.request'
+            EXCEPTIONS = 'exceptions'
+            DJANGO = 'django'
+            APP = APP_NAME
+
         global LOGGING
         LOGGING = {
             'version': 1,
@@ -149,32 +159,32 @@ def init_logs_if_needed():
                     'level': 'DEBUG',
                     'propagate': True
                 },
-                'info': {
+                LOGGERS_NAME.INFO: {
                     'handlers': ['info'],
                     'level': 'DEBUG',
                     'propagate': True
                 },
-                'django.request': {
-                    'handlers': ['requests_with_trace'],
-                    'level': 'DEBUG',
-                    'propagate': False,
-                },
-                'exceptions': {
-                    'handlers': ['exceptions', 'console'],
-                    'level': 'DEBUG',
-                    'propagate': False,
-                },
-                'request': {
+                LOGGERS_NAME.REQUEST: {
                     'handlers': ['requests', 'console'],
                     'level': 'INFO',
                     'propagate': True,
                 },
-                'django': {
+                LOGGERS_NAME.REQUEST_DJANGO: {
+                    'handlers': ['requests_with_trace'],
+                    'level': 'DEBUG',
+                    'propagate': False,
+                },
+                LOGGERS_NAME.EXCEPTIONS: {
+                    'handlers': ['exceptions', 'console'],
+                    'level': 'DEBUG',
+                    'propagate': False,
+                },
+                LOGGERS_NAME.DJANGO: {
                     'handlers': ['django'],
                     'level': 'INFO',
                     'propagate': True
                 },
-                APP_NAME: {
+                LOGGERS_NAME.APP: {
                     'handlers': [APP_NAME, 'console'],
                     'level': 'DEBUG',
                     'propagate': True
