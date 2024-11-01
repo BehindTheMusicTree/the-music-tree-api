@@ -1,8 +1,7 @@
 
 from rest_framework import status
 
-from bodzify_api.serializer.schema.criteria.input.schema.schema import \
-    Fields as InputFields
+from bodzify_api.serializer.schema.criteria.input.schema.schema import Fields as InputFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 
