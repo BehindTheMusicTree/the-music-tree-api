@@ -109,13 +109,9 @@ class Criteria(LibTrackMixin):
             return self.parent.is_descendant_of(other_criteria)
         return False
 
-    def _is_creating(self) -> bool:
-        return getattr(self, f"{Fields.ROOT}_id", None) is None
-
     def save(self, *args, **kwargs):
-        if self._is_creating():
-            if self.parent:
-                self.root = self.parent.root
-            else:
-                self.root = self
+        if self.parent:
+            self.root = self.parent.root
+        else:
+            self.root = self
         super().save(*args, **kwargs)
