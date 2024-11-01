@@ -154,7 +154,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             """)
                    )
     def update(self, request, *args, **kwargs):
-        return self._update(request, *args, **kwargs)
+        return self._handle_update(request, *args, **kwargs)
 
     # Only for type hinting
     def get_object(self) -> LibraryTrack:
