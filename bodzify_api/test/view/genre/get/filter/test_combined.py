@@ -1,46 +1,19 @@
-
 from rest_framework import status
 
-
-from bodzify_api.serializer.schema.track.output.fields import Fields as LibTrackFields
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 from bodzify_api.utils.utils import to_camel_case
+from bodzify_api.serializer.schema.criteria.output.fields import Fields as GenreFields
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(GenreTestCase):
 
-    def test_language_and_genre_name_then_ok(self):
-        genre = self.model_fixture_factory.create_genre(name="Rock")
-        track = self.model_fixture_factory.create_lib_track_with_file(title="Life", language="en", genre=genre)
-        self.model_fixture_factory.create_lib_track_with_file(title="Hey", language="fr")
-        self.model_fixture_factory.create_lib_track_with_file(title="Rockaille", language="en")
-        response = self._get_lib_tracks(language='en', genre_name='Roc')
+    def test_name_and_parent_name_then_ok(self):
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        self.model_fixture_factory.create_genre(name="Pure Pop")
+        genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
+
+        response = self._get_genres(name='pu', parent=genre_rock.uuid)
+
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 1
-        assert self.results[0][to_camel_case(LibTrackFields.TITLE)] == track.title
-
-    def test_title_and_album_name_and_artists_name_ok(self):
-        genre = self.model_fixture_factory.create_genre(name="Heyaa")
-        album_best = self.model_fixture_factory.create_album(name="Best ok")
-        album_besto = self.model_fixture_factory.create_album(name="Besto")
-        artist_john = self.model_fixture_factory.create_artist(name="John")
-        artist_jony = self.model_fixture_factory.create_artist(name="Jony")
-
-        self.model_fixture_factory.create_lib_track_with_file(title="Life", language="en", genre=genre)
-        track_pascalito = self.model_fixture_factory.create_lib_track_with_file(
-            title="Pascalito", album=album_best, artists=[artist_john])
-        track_mapasa = self.model_fixture_factory.create_lib_track_with_file(
-            title="mapasa", album=album_besto, artists=[artist_john, artist_jony])
-        self.model_fixture_factory.create_lib_track_with_file(title="Hey", album=album_best, artists=[artist_john])
-        self.model_fixture_factory.create_lib_track_with_file(title="sd", album=album_besto, artists=[artist_jony])
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Hey", album=album_best, artists=[artist_john, artist_jony])
-
-        response = self._get_lib_tracks(title='pas', album_name='Best', artists_name='Joh')
-        assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
-        titles = self.results[0][
-            to_camel_case(LibTrackFields.TITLE)], self.results[1][
-            to_camel_case(LibTrackFields.TITLE)]
-        assert track_pascalito.title in titles
-        assert track_mapasa.title in titles
+        assert self.results[0][to_camel_case(GenreFields.NAME)] == genre_punk.name

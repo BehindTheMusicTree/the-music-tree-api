@@ -66,6 +66,7 @@ class ModelFixtureFactory:
             CriteriaFields.TYPE: CriteriaType.objects.get(pk=type_pk),
             CriteriaFields.PARENT: None,
         }
+        model_fields.update(kwargs)
         return Criteria.objects.create(**model_fields)
 
     def _create_file(self, user: User, lib_track: LibraryTrack, filename: Optional[str], **kwargs) -> TrackFile:
