@@ -59,10 +59,12 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         OpenApiParameter(name=FilterFields.LANGUAGE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, request, *args, **kwargs):
-        return super()._list(request, *args, **kwargs)
+        return super()._handle_list(request, *args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+    @action(detail=True, methods=['get'])
+    def download(self, request, pk=None):
+        track: LibraryTrack = LibraryTrack.objects.get(uuid=pk)
+        return self.get_file_response(file_path=track.track_file.file.path)
 
     @extend_schema(request=LibTrackPostSerializer,
                    responses=LibTrackDetailedSerializer,
@@ -83,12 +85,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         """)
                    )
     def create(self, request, *args, **kwargs):
-        return self._post(request, *args, **kwargs)
-
-    @action(detail=True, methods=['get'])
-    def download(self, request, pk=None):
-        track: LibraryTrack = LibraryTrack.objects.get(uuid=pk)
-        return utils.get_file_response(filePath=track.track_file.file.path, filename=track.track_file.file.name)
+        return self._handle_post(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=LibTrackExtractSerializer,
@@ -119,7 +116,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        return self._post(request, *args, **kwargs)
+        return self._handle_post(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=LibTrackPutSerializer,
