@@ -1,8 +1,8 @@
-
 from django.db import models
 from django.db.models import F
 from django.contrib.auth import get_user_model
 
+from bodzify_api import settings
 from bodzify_api.model.base.PrivateStandardResource \
     import PrivateStandardResource, Fields as PrivateStandardResourceFields
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
@@ -32,19 +32,19 @@ class LibTrackPlaylistPositionRel(PrivateStandardResource):
     position = models.PositiveIntegerField()
 
     class Meta:
-        db_table = 'bodzify_api_lib_track_playlist_position_relation'
+        db_table = f'{settings.APP_NAME}_lib_track_playlist_position_relation'
         verbose_name = 'Library Track Playlist Position Relation'
         verbose_name_plural = 'Library Track Playlist Position Relations'
         indexes = [
-            models.Index(fields=['user', 'base_playlist']),
-            models.Index(fields=['user', 'library_track']),
+            models.Index(fields=[Fields.USER, Fields.BASE_PLAYLIST]),
+            models.Index(fields=[Fields.USER, Fields.LIB_TRACK]),
         ]
 
     def __str__(self):
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
         library_track: LibraryTrack = self.library_track
-        return f'User {self.user} - Playlist {self.base_playlist} - Track title {library_track.title} - ' \
-            f'Position {self.position}'
+        return f'user {self.user} | playlist {self.base_playlist} | track title {library_track.title} | ' \
+            f'position {self.position}'
 
     def save(self, *args, **kwargs):
         if not self.pk:

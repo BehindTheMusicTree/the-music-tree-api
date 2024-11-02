@@ -25,7 +25,7 @@ class MusicbrainzRecordingMissingCause(PrivateStandardResource):
     objects = MusicbrainzRecordingMissingCauseManager()
 
     class Meta:
-        db_table = 'bodzify_api_musicbrainz_recording_missing_cause'
+        db_table = f'{settings.APP_NAME}_musicbrainz_recording_missing_cause'
         verbose_name = 'MusicBrainz Recording Missing Cause'
         verbose_name_plural = 'MusicBrainz Recording Missing Causes'
 

@@ -22,7 +22,7 @@ class MusicbrainzArtist(MusicbrainzResource):
         return self.name
 
     class Meta:
-        db_table = 'bodzify_api_musicbrainz_artist'
+        db_table = f'{settings.APP_NAME}_musicbrainz_artist'
         verbose_name = 'Musicbrainz Artist'
         verbose_name_plural = 'Musicbrainz Artists'
         indexes = [models.Index(fields=[Fields.MUSICBRAINZ_ID], name='mb_artist_id_idx')]

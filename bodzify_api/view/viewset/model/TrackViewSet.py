@@ -11,7 +11,7 @@ from rest_framework.serializers import Serializer
 from bodzify_api.serializer.schema.track.input.endpoint.extract import LibTrackExtractSerializer
 from bodzify_api.serializer.schema.track.input.endpoint.post import LibTrackPostSerializer
 from bodzify_api.serializer.schema.track.input.endpoint.put import LibTrackPutSerializer
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.service.TrackService import TrackService
 from bodzify_api.serializer.schema.track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -28,7 +28,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             **kwargs
         )
 
-    def _get_create_serializer(self):
+    def _get_create_serializer_class(self):
         if self.action == 'create':
             return LibTrackPostSerializer
         elif self.action == 'extract':

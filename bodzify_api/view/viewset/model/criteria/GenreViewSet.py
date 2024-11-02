@@ -7,15 +7,4 @@ from django.db.models import Q
 
 class GenreViewSet(CriteriaViewSet):
     def __init__(self, **kwargs):
-        super().__init__(service=GenreService(), **kwargs)
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        filtered_queryset = queryset.filter(type_id=CriteriaTypesId.GENRE)
-        return filtered_queryset
-
-    def get_object(self):
-        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-        filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
-        queryset = self.model_class.objects.filter(user=self.request.user, type_id=CriteriaTypesId.GENRE)
-        return queryset.get(**filter_kwargs)
+        super().__init__(criteria_type_id=CriteriaTypesId.GENRE, **kwargs)

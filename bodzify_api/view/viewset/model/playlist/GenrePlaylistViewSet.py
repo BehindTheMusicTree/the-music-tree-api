@@ -6,7 +6,7 @@ from bodzify_api.filter.set.GenrePlaylistFilterSet import GenrePlaylistFilterSet
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import CriteriaPlaylistDetailedSerializer
 from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import CriteriaPlaylistSimpleSerializer
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 
 
 class GenrePlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):

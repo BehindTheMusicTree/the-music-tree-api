@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from django.db.models import QuerySet
 from django.utils import timezone
 
+from bodzify_api.model.criteria.Genre import Genre
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.lib.LibraryTrackManager import LibraryTrackManager
 from bodzify_api import settings
@@ -15,8 +16,7 @@ from bodzify_api.model.track.lib.Fields import Fields
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.TrackablePlayCountModel import TrackablePlayCountModel
-from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.base.TrackablePlayCountModel import TrackablePlayCountModel
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 
@@ -36,7 +36,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
         validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)]
     )
     artists = models.ManyToManyField(Artist, blank=True, related_name=f'{Fields.MODEL}s')
-    genre = models.ForeignKey(Criteria,
+    genre = models.ForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
                               null=True,
                               blank=True,
@@ -54,7 +54,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
     objects: LibraryTrackManager = LibraryTrackManager()
 
     class Meta:
-        db_table = 'bodzify_api_library_track'
+        db_table = f'{settings.APP_NAME}_library_track'
         verbose_name = 'Library Track'
         verbose_name_plural = 'Library Tracks'
         indexes = [

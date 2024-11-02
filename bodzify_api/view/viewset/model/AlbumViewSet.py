@@ -3,7 +3,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes 
 from rest_framework.response import Response
 from rest_framework import status
 
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filter.set.AlbumFilterSet import AlbumFilterSet, Fields as FilterFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.schema.album.simple import AlbumSimpleSerializer

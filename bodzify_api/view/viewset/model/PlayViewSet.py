@@ -7,7 +7,7 @@ from bodzify_api.model.Play import Fields, Play
 from bodzify_api.serializer.schema.play.input.schema.endpoint.post import PlayPostSerializer
 from bodzify_api.serializer.schema.play.output.detailed import PlayDetailedSerializer
 from bodzify_api.service.PlayService import PlayService
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 
 
 class PlayViewSet(AppModelViewSet[Play]):

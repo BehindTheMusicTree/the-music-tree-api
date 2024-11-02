@@ -5,7 +5,7 @@ from django.db import transaction
 
 from bodzify_api.filter.set.ArtistFilterSet import ArtistFilterSet, Fields as FilterFields
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.schema.artist.detailed import ArtistDetailedSerializer
 
 

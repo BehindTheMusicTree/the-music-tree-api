@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from bodzify_api import settings
 from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCause \
     import MusicbrainzRecordingMissingCause
@@ -11,6 +12,11 @@ from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingM
 class MusicbrainzRecordingLookupResult:
     _recording: Optional[MusicbrainzRecording] = None
     _missing_cause: Optional[MusicbrainzRecordingMissingCause] = None
+    
+    class Meta:
+        db_table = f'{settings.APP_NAME}_musicbrainz_recording_lookup_result'
+        verbose_name = 'MusicBrainz Recording Lookup Result'
+        verbose_name_plural = 'MusicBrainz Recording Lookup Results'
 
     def __init__(self, recording: Optional[MusicbrainzRecording],
                  missing_cause: Optional[MusicbrainzRecordingMissingCause]):

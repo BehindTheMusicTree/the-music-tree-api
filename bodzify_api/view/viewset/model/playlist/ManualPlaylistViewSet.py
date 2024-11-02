@@ -9,7 +9,7 @@ from bodzify_api.serializer.schema.playlist.children.simple.input.endpoint impor
 from bodzify_api.serializer.schema.playlist.children.simple.output.detailed import ManualPlaylistDetailedSerializer
 from bodzify_api.serializer.schema.playlist.children.simple.output.simple import ManualPlaylistSimpleSerializer
 from bodzify_api.service.playlist.ManualPlaylistService import ManualPlaylistService
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 
 
 class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):

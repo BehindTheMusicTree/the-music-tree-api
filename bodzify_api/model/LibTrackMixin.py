@@ -1,4 +1,3 @@
-
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
@@ -11,7 +10,6 @@ if TYPE_CHECKING:
 
 
 class SpecialNames:
-    ALL = 'All'
     GENRELESS = 'Genreless'
     TAGLESS = 'Tagless'
 

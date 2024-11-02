@@ -1,49 +1,14 @@
+from abc import abstractmethod
+from typing import Dict, Any
 
-from logging import root
-from django.db import models, transaction
-from typing import Dict, Any, Optional, TYPE_CHECKING
+from django.db import models
 
 from bodzify_api.model.criteria.Criteria import Criteria, Fields as ModelFields
-from bodzify_api.model.criteria.CriteriaType import CriteriaType, CriteriaTypesId
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, Fields as BasePlaylistFields
 from bodzify_api.model.playlist.children.ChildPlaylist import ChildPlaylist
-from bodzify_api.model.playlist.children.Fields import Fields as ChildFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistManager import CriteriaPlaylistManager
-from bodzify_api.utils.model import SaveContext, ensure_update_field
-
-if TYPE_CHECKING:
-    from django.db.models.manager import Manager
-
-
-class SpecialNames:
-    GENRELESS = 'Genreless'
-    TAGLESS = 'Tagless'
-
-
-class TypesLabel:
-    GENRE = 'genre'
-    TAG = 'tag'
-
-
-class Fields:
-    BASE_PLAYLIST = ChildFields.BASE_PLAYLIST
-    UUID = ChildFields.UUID
-    USER = ChildFields.USER
-    CREATED_ON = ChildFields.CREATED_ON
-    UPDATED_ON = ChildFields.UPDATED_ON
-    LIB_TRACKS = ChildFields.LIB_TRACKS
-    LIB_TRACKS_NOT_ARCHIVED = ChildFields.LIB_TRACKS_NOT_ARCHIVED
-    LIB_TRACKS_COUNT = ChildFields.LIB_TRACKS_COUNT
-    LIB_TRACKS_ARCHIVED_COUNT = ChildFields.LIB_TRACKS_ARCHIVED_COUNT
-    DURATION_IN_SEC = ChildFields.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = ChildFields.DURATION_STR_IN_HOUR_MIN_SEC
-    PLAY_COUNT = ChildFields.PLAY_COUNT
-    LAST_TRACK_LIST_UPDATE_DATE = ChildFields.LAST_TRACK_LIST_UPDATE_DATE
-    CRITERIA = 'criteria'
-    TYPE = 'type'
-    PARENT = 'parent'
-    ROOT = 'root'
-    NAME = 'name'
+from bodzify_api.model.playlist.children.criteria.Fields import Fields
+from bodzify_api.utils.model import SaveContext
 
 
 class CriteriaPlaylist(ChildPlaylist):
@@ -56,7 +21,6 @@ class CriteriaPlaylist(ChildPlaylist):
                                     blank=True,
                                     null=True,
                                     related_name=ModelFields.CRITERIA_PLAYLIST)
-    type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE, blank=True, null=False)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='child_playlist')
     root = models.ForeignKey(
         'self',
@@ -67,25 +31,21 @@ class CriteriaPlaylist(ChildPlaylist):
     objects: CriteriaPlaylistManager = CriteriaPlaylistManager()
 
     class Meta:
-        db_table = 'bodzify_api_criteria_playlist'
-        verbose_name = 'Criteria Playlist'
-        verbose_name_plural = 'Criteria Playlists'
-        indexes = [models.Index(fields=[Fields.BASE_PLAYLIST, Fields.CRITERIA], name='criteria_playlist_idx'),]
+        abstract = True
+        indexes = [models.Index(fields=[Fields.BASE_PLAYLIST, Fields.CRITERIA], name='%(class)s_idx'),]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._original_parent = getattr(self, f"{Fields.PARENT}_id", None)
         self._original_root = getattr(self, f"{Fields.ROOT}_id", None)
 
+    @abstractmethod
+    def name_when_no_criteria() -> str:
+        raise NotImplementedError()
+
     @property
     def name(self):
-        if self.criteria is None:
-            if self.type.pk == CriteriaTypesId.GENRE:
-                return SpecialNames.GENRELESS
-            elif self.type.pk == CriteriaTypesId.TAG:
-                return SpecialNames.TAGLESS
-        else:
-            return self.criteria.name
+        return self.criteria.name if self.criteria else self.name_when_no_criteria
 
     @property
     def children(self) -> models.QuerySet['CriteriaPlaylist']:

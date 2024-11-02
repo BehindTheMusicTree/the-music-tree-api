@@ -34,6 +34,6 @@ class FingerprintMissingCauseCode(models.Model):
             models.CheckConstraint(
                 check=~models.Q(label=""),
                 name="fingerprint_missing_cause_non_empty_label")]
-        db_table = 'bodzify_api_fingerprint_missing_cause_code'
-        verbose_name = 'Fingerprinting Error Codes'
+        db_table = f'{settings.APP_NAME}_fingerprint_missing_cause_code'
+        verbose_name = 'Fingerprinting Error Code'
         verbose_name_plural = 'Fingerprinting Error Codes'

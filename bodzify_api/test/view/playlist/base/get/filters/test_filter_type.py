@@ -2,11 +2,6 @@
 
 from rest_framework import status
 
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import SpecialNames as LibTrackMixinSpecialNames, \
-    TypesLabel as CriteriaPlaylistTypesLabels
-from bodzify_api.model.playlist.children.ManualPlaylist import TYPE_LABEL as MANUAL_PLAYLIST_TYPE_LABEL, \
-    SpecialNames as MANUAL_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.serializer.schema.playlist.base.input.query_param import Fields as GetQueryParams
 from bodzify_api.serializer.schema.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.get_filters.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase

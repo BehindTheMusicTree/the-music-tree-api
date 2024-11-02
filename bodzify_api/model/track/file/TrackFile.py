@@ -8,7 +8,7 @@ from django.core.files.base import File as DjangoFile
 from django.core.validators import FileExtensionValidator
 from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
-from django.db import models, transaction
+from django.db import models
 from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -69,10 +69,6 @@ class PreserveSpacesStorage(FileSystemStorage):
 
 class TrackFile(PrivateStandardResource):
 
-    class Meta:
-        app_label = 'bodzify_api'
-        db_table = 'track_file'
-
     library_track = models.OneToOneField('LibraryTrack',
                                          on_delete=models.CASCADE,
                                          related_name=LibraryTrackFields.TRACK_FILE_PROPERTY,
@@ -112,6 +108,11 @@ class TrackFile(PrivateStandardResource):
                                               null=True)
     musicbrainz_recording_missing_cause = models.OneToOneField(
         MusicbrainzRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
+
+    class Meta:
+        db_table = f'{settings.APP_NAME}_track_file'
+        verbose_name = 'Track File'
+        verbose_name_plural = 'Track Files'
 
     @property
     def file_path_temp_or_not(self) -> DjangoFile:

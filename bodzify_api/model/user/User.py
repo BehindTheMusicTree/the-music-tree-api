@@ -1,4 +1,3 @@
-
 import os
 from pathlib import Path
 import shutil
@@ -13,7 +12,6 @@ from bodzify_api import settings
 from bodzify_api.model.function.ConcatOp import ConcatOp
 from bodzify_api.model.function.ConditionalExpression import ConditionalExpression
 from bodzify_api.model.user.UserManager import UserManager
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 
 if TYPE_CHECKING:
     from bodzify_api.model.AllLibTrackMixin import AllLibTrackMixin
@@ -66,22 +64,14 @@ class User(AbstractUser):
 
     @cached_property
     def genre_criteria_playlist(self) -> 'CriteriaPlaylist':
-        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-        playlist, _ = CriteriaPlaylist.objects.get_or_create(
-            user=self,
-            type_id=CriteriaTypesId.GENRE,
-            criteria=None
-        )
+        from bodzify_api.model.playlist.children.criteria.children.GenrePlaylist import GenrePlaylist
+        playlist, _ = GenrePlaylist.objects.get_or_create(user=self, criteria=None)
         return playlist
 
     @cached_property
     def tag_criteria_playlist(self) -> 'CriteriaPlaylist':
-        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-        playlist, _ = CriteriaPlaylist.objects.get_or_create(
-            user=self,
-            type_id=CriteriaTypesId.TAG,
-            criteria=None
-        )
+        from bodzify_api.model.playlist.children.criteria.children.TagPlaylist import TagPlaylist
+        playlist, _ = TagPlaylist.objects.get_or_create(user=self, criteria=None)
         return playlist
 
     @property

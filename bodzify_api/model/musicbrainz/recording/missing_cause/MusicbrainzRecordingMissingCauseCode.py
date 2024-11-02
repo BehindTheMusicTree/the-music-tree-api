@@ -24,6 +24,6 @@ class MusicbrainzRecordingMissingCauseCode(models.Model):
     label = models.CharField(unique=True, max_length=settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX)
 
     class Meta:
-        db_table = 'bodzify_api_musicbrainz_recording_missing_cause_code'
+        db_table = f'{settings.APP_NAME}_musicbrainz_recording_missing_cause_code'
         verbose_name = 'MusicBrainz Recording Missing Cause Code'
         verbose_name_plural = 'MusicBrainz Recording Missing Causes Codes'

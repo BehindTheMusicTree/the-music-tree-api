@@ -3,20 +3,19 @@ from typing import Dict, Generic, Type, Optional, TypeVar, Any, List, Union, cas
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.serializers import ModelSerializer, Serializer, BaseSerializer
 from rest_framework.exceptions import ValidationError, APIException
 from rest_framework import viewsets, status
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DRFValidationError, MethodNotAllowed
-from django.http import FileResponse
+from django.http import FileResponse, QueryDict
 
 from bodzify_api.model.base.utils.base_model.BaseModel import BaseModel
+from bodzify_api.model.base.utils.PrivateModel import Fields as PrivateFields
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
-from bodzify_api.service.Service import Service
 from bodzify_api.view.errors import APIErrorResponse, APIErrorMessages, APIFileResponse
-from bodzify_api.view.viewset.base.RequestHandler import RequestHandler
-from bodzify_api.view.viewset.base.ErrorProcessor import ErrorProcessor
-from bodzify_api.view.viewset.base.DataTransformer import DataTransformer
+from .RequestHandler import RequestHandler
+from .ErrorProcessor import ErrorProcessor
 from .enums import SerializerType, HttpMethod, PaginatedResponseFields
 
 
@@ -35,7 +34,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def __init__(
             self,
             model_class: Type[T],
-            service: Optional[Service] = None,
             filter_class: Optional[Type[AppFilterSet]] = None,
             simple_serializer_class: Optional[Type[ModelSerializer]] = None,
             detailed_serializer_class: Optional[Type[ModelSerializer]] = None,
@@ -44,7 +42,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
-        self.service = service
         self.filter_class = filter_class
         self.simple_serializer_class = simple_serializer_class
         self.detailed_serializer_class = detailed_serializer_class
@@ -52,7 +49,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         self.create_serializer_class = create_serializer_class
         self.request_handler = RequestHandler()
         self.error_processor = ErrorProcessor()
-        self.data_transformer = DataTransformer()
 
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
@@ -60,65 +56,65 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             raise NotImplementedError(APIErrorMessages.SERIALIZER_NOT_DEFINED[serializer_type])
         return serializer
 
-    def _get_create_serializer(self) -> Type[Serializer]:
+    def _get_create_serializer_class(self) -> Type[Serializer]:
         if self.create_serializer_class:
             return self.create_serializer_class
         raise NotImplementedError(APIErrorMessages.SERIALIZER_NOT_DEFINED[SerializerType.CREATE])
 
-    def _require_service(self) -> None:
-        if not self.service:
-            raise NotImplementedError(APIErrorMessages.SERVICE_NOT_DEFINED)
+    def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
+        serializer.is_valid(raise_exception=True)
+        validated_data_dict = getattr(serializer, 'validated_data', {})
+        if not validated_data_dict:
+            raise ValidationError("Serializer validation failed - no validated data available")
+        validated_data_dict = {str(k): v for k, v in validated_data_dict.items()}
+        if PrivateFields.USER not in validated_data_dict:
+            validated_data_dict[PrivateFields.USER] = self.request.user
+        return validated_data_dict
+
+    def _convert_to_dict(self, data: Union[QueryDict, Dict[str, Any], Any]) -> Dict[str, Any]:
+        if isinstance(data, QueryDict):
+            return data.dict()
+        elif isinstance(data, dict):
+            return data
+        else:
+            return {k: v for k, v in data.items()}
+
+    def _inject_user(self, data: Dict[str, Any], request: Request) -> Dict[str, Any]:
+        if PrivateFields.USER not in data:
+            data[PrivateFields.USER] = request.user
+        return data
 
     def _create_instance(self, request: Request, create_data: Dict[str, Any]) -> T:
-        if self.action == 'create':
-            self._require_service()
-            if self.service is None:  # This will never happen due to _require_service, but needed for type checking
-                raise NotImplementedError(APIErrorMessages.SERVICE_NOT_DEFINED)
-            return self.service.post(request=request, data_validated=create_data)
-        raise NotImplementedError(f"No action defined for action {self.action}")
+        if self.action != 'create':
+            raise NotImplementedError(f"No action defined for action {self.action}")
+
+        serializer_class = self._get_create_serializer_class()
+        serializer = serializer_class(data=create_data, context={'request': request})
+        validated_data = self._get_validated_data(serializer)
+        instance = self.model_class.objects.create_instance(**validated_data)
+        instance.save()
+        return instance
+
+    def _update_instance(self, request: Request, instance: T, update_data: Dict[str, Any]) -> T:
+        serializer_class = self._require_serializer(SerializerType.UPDATE)
+        serializer = serializer_class(data=update_data, partial=True, context={'request': request})
+        validated_data = self._get_validated_data(serializer)
+        instance = self.model_class.objects.update_instance(instance, **validated_data)
+        return instance
 
     def _handle_post(self, request: Request, *args, **kwargs) -> Response:
-        self._require_service()
-        create_data = self.data_transformer.form_data_to_snake_case(request.data)
-        serializer_class = self.get_serializer_class()
-
-        def perform_post() -> Response:
-            instance = self._create_instance(request, create_data)
-            serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
-            headers = self.get_success_headers(serializer.data)
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_201_CREATED,
-                headers=headers
-            )
-
-        return self.request_handler.handle_validated_request(
-            create_data, perform_post, serializer_class, request)
+        create_data = self._convert_to_dict(request.data)
+        instance = self._create_instance(request, create_data)
+        serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
+        headers = self.get_success_headers(serializer.data)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def _handle_update(self, request: Request, *args, **kwargs) -> Response:
-        self._require_service()
-        update_data = self.data_transformer.form_data_to_snake_case(request.data)
-        serializer_class = self.get_serializer_class()
-
-        def perform_update() -> Response:
-            instance = self.get_object()
-            if self.service is None:  # This will never happen due to _require_service, but needed for type checking
-                raise NotImplementedError(APIErrorMessages.SERVICE_NOT_DEFINED)
-            self.service.update(
-                data_validated=update_data,
-                oldinstance=instance,
-                request=request
-            )
-            serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
-            headers = self.get_success_headers(serializer.data)
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK,
-                headers=headers
-            )
-
-        return self.request_handler.handle_validated_request(
-            update_data, perform_update, serializer_class, request)
+        instance = self.get_object()
+        update_data = self._convert_to_dict(request.data)
+        updated_instance = self._update_instance(request, instance, update_data)
+        serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def _handle_list(self, request: Request, *args, **kwargs) -> Response:
         try:
@@ -147,13 +143,11 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def get_queryset(self):
         request: Request = cast(Request, self.request)
-
         queryset = self.model_class.objects.filter(user=request.user)
 
         if request.method == HttpMethod.GET and self.filter_class:
             try:
-                snake_case_params = self.data_transformer.dict_to_snake_case(request.query_params)
-                queryset = self.filter_class(snake_case_params, queryset=queryset).qs
+                queryset = self.filter_class(request.query_params, queryset=queryset).qs
             except DjangoValidationError:
                 raise ValidationError(detail=APIErrorMessages.INVALID_QUERY_PARAMS)
 
@@ -164,7 +158,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         if self.action == 'retrieve':
             return self._require_serializer(SerializerType.DETAILED)
         elif self.action == 'create':
-            return self._get_create_serializer()
+            return self._get_create_serializer_class()
         elif self.action in ['update', 'partial_update']:
             return self._require_serializer(SerializerType.UPDATE)
         raise NotImplementedError(f"Action {self.action} not defined in viewset")

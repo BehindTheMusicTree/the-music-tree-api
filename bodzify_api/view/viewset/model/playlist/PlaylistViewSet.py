@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist \
 from bodzify_api.model.playlist.children.ManualPlaylist import TYPE_LABEL as MANUAL_PLAYLIST_TYPE_LABEL
 from bodzify_api.serializer.schema.playlist.base.output.simple import BasePlaylistSimpleSerializer
 from bodzify_api.service.Service import Service
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filter.set.PlaylistParamFilterSet import PlaylistParamFilterSet
 from bodzify_api.serializer.schema.playlist.base.input.query_param import Fields as QueryParams
 

@@ -32,6 +32,7 @@ class Album(LibTrackMixin):
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")]
+        db_table = f"{settings.APP_NAME}_album"
 
     def __str__(self) -> str:
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack

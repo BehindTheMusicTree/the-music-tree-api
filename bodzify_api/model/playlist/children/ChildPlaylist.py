@@ -1,4 +1,3 @@
-
 from uuid import UUID
 from django.db import models
 from django.utils import timezone
@@ -11,9 +10,7 @@ from bodzify_api.model.playlist.children.ChildPlaylistManager import ChildPlayli
 
 class ChildPlaylist(BaseModel):
     # This fields must be overriden in each child class so that the related_name is unique.
-    base_playlist = models.OneToOneField(BasePlaylist,
-                                         on_delete=models.CASCADE,
-                                         primary_key=True)
+    base_playlist = models.OneToOneField(BasePlaylist, on_delete=models.CASCADE, primary_key=True)
 
     objects = ChildPlaylistManager()
 

@@ -1,4 +1,3 @@
-
 from django.db import models
 
 from bodzify_api import settings
@@ -6,11 +5,7 @@ from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, Fields as Base
 from bodzify_api.model.playlist.children.ChildPlaylist import ChildPlaylist
 from bodzify_api.model.playlist.children.Fields import Fields as ChildFields
 
-TYPE_LABEL = "simple"
-
-
-class SpecialNames:
-    ALL = "All"
+TYPE_LABEL = "manual"
 
 
 class Fields:
@@ -39,7 +34,7 @@ class ManualPlaylist(ChildPlaylist):
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="manual_playlist_non_empty_name")]
-        db_table = 'bodzify_api_manual_playlist'
+        db_table = f'{settings.APP_NAME}_manual_playlist'
         verbose_name = 'Manual Playlist'
         verbose_name_plural = 'Manual Playlists'
         indexes = [models.Index(fields=[Fields.BASE_PLAYLIST, Fields.NAME], name='manual_playlist_name_idx'),]

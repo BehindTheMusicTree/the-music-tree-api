@@ -1,9 +1,9 @@
-
 from typing import Optional
 from django.db import models
 from django.utils import timezone
 
-from bodzify_api.model.TrackablePlayCountModel import TrackablePlayCountModel, Fields as TrackablePlayCountFields
+from bodzify_api import settings
+from bodzify_api.model.base.TrackablePlayCountModel import TrackablePlayCountModel, Fields as TrackablePlayCountFields
 from bodzify_api.model.LibTrackMixin import LibTrackMixin, Fields as LibTrackMixinFields
 
 
@@ -21,8 +21,6 @@ class Fields:
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
     PLAY_COUNT = TrackablePlayCountFields.PLAY_COUNT
     NAME = 'name'
-    TYPE = 'type'
-    TYPE_LABEL = 'type_label'
     CRITERIA_CHILD_PLAYLIST = 'criteria_child_playlist'
     SIMPLE_CHILD_PLAYLIST = 'simple_child_playlist'
     PLAYLIST_LIB_TRACK_RELATIONS = 'lib_track_position_relations'
@@ -33,12 +31,10 @@ class BasePlaylist(LibTrackMixin, TrackablePlayCountModel):
     last_track_list_update_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'bodzify_api_base_playlist'
+        db_table = f'{settings.APP_NAME}_base_playlist'
         verbose_name = 'Base Playlist'
         verbose_name_plural = 'Base Playlists'
-        indexes = [
-            models.Index(fields=[Fields.USER, Fields.UUID], name='base_playlist_user_uuid_idx')
-        ]
+        indexes = [models.Index(fields=[Fields.USER, Fields.UUID], name='base_playlist_user_uuid_idx')]
 
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:  # type: ignore

@@ -1,4 +1,3 @@
-
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
@@ -6,18 +5,18 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from bodzify_api import settings
-from bodzify_api.view.viewset.model.AlbumViewSet import AlbumViewSet
-from bodzify_api.view.viewset.model.ArtistViewSet import ArtistViewSet
-from bodzify_api.view.viewset.model.criteria.GenreViewSet import GenreViewSet
-from bodzify_api.view.viewset.model.criteria.TagViewSet import TagViewSet
-from bodzify_api.view.viewset.model.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
-from bodzify_api.view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
-from bodzify_api.view.viewset.model.playlist.ManualPlaylistViewSet import ManualPlaylistViewSet
-from bodzify_api.view.viewset.model.PlayViewSet import PlayViewSet
-from bodzify_api.view.viewset.model.TrackViewSet import LibTrackViewSet
-from bodzify_api.view.viewset.model.UserViewSet import UserViewSet
-from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet
+from . import settings
+from .view.viewset.model.AlbumViewSet import AlbumViewSet
+from .view.viewset.model.ArtistViewSet import ArtistViewSet
+from .view.viewset.model.criteria.GenreViewSet import GenreViewSet
+from .view.viewset.model.criteria.TagViewSet import TagViewSet
+from .view.viewset.model.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
+from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
+from .view.viewset.model.playlist.ManualPlaylistViewSet import ManualPlaylistViewSet
+from .view.viewset.model.PlayViewSet import PlayViewSet
+from .view.viewset.model.TrackViewSet import LibTrackViewSet
+from .view.viewset.model.UserViewSet import UserViewSet
+from .view.viewset.SearchApiViewSet import SearchApiViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
