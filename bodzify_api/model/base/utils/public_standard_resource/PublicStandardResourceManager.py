@@ -1,4 +1,3 @@
-
 from typing import Generic, TypeVar
 
 from bodzify_api.model.base.utils.base_model.BaseManager import BaseManager

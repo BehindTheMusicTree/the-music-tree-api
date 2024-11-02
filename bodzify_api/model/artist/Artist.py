@@ -15,6 +15,7 @@ class Artist(LibTrackMixin):
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="artist_non_empty_name")]
+        db_table = f"{settings.APP_NAME}_artist"
 
     @property
     def library_tracks(self) -> models.QuerySet:

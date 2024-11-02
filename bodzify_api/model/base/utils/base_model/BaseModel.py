@@ -1,13 +1,11 @@
-
-
-from typing import Self
+from typing import Self, TypeVar, Generic
 from django.db import models
 
 from bodzify_api.model.base.utils.base_model.BaseManager import BaseManager
 
+T = TypeVar('T', bound='BaseModel')
 
 class BaseModel(models.Model):
-
     objects: BaseManager[Self]
 
     class Meta:

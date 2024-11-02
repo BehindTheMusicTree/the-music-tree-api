@@ -1,5 +1,5 @@
-
 from django.db import models
+from bodzify_api import settings
 from bodzify_api.model.LibTrackMixin \
     import LibTrackMixin, Fields as LibTrackMixinFields, SpecialNames as LibTrackMixinSpecialNames
 
@@ -20,16 +20,18 @@ class Fields:
 
 
 class AllLibTrackMixin(LibTrackMixin):
-    name = models.CharField(max_length=255, default=LibTrackMixinSpecialNames.ALL, editable=False)
-
     class Meta:
-        db_table = f'bodzify_api_{Fields.MODEL}'
+        db_table = f'{settings.APP_NAME}_{Fields.MODEL}'
         verbose_name = 'All Library Track Mixin'
         verbose_name_plural = 'All Library Track Mixins'
         constraints = [models.UniqueConstraint(fields=[Fields.USER], name=f'unique_{Fields.USER}_{Fields.MODEL}')]
 
     def __str__(self):
-        return f"{self.name} - {self.user}"
+        return f"{self.name} | {self.user}"
+
+    @property
+    def name(self):
+        return 'All Tracks'
 
     @property
     def library_tracks(self):

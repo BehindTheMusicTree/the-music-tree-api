@@ -1,14 +1,10 @@
-
 from typing import TYPE_CHECKING, Optional
 
-from attr import has
 from django.db import models
 from django.db.models import QuerySet, Manager
 
 from bodzify_api import settings
 from bodzify_api.model.LibTrackMixin import LibTrackMixin, Fields as LibTrackMixinFields
-from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
-from bodzify_api.model.criteria.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
@@ -27,7 +23,6 @@ class Fields:
     DURATION_IN_SEC = LibTrackMixinFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = 'name'
-    TYPE = 'type'
     PARENT = 'parent'
     CHILD = 'child'
     ASCENDANT = 'ascendant'
@@ -43,25 +38,19 @@ class Fields:
 
 class Criteria(LibTrackMixin):
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
-    type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
-    parent = models.ForeignKey('self',
-                               on_delete=models.CASCADE,
-                               null=True,
-                               related_name=Fields.CHILD)
-    ascendants = models.ManyToManyField(Fields.MODEL,
-                                        through='CriteriaAscendantRel',
-                                        related_name=Fields.MODEL + 's')
-    root = models.ForeignKey('self',
-                             on_delete=models.CASCADE,
-                             related_name=Fields.DESCENDANT)
-
-    objects: CriteriaManager = CriteriaManager()
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name=Fields.CHILD)
+    ascendants = models.ManyToManyField('self', through='CriteriaAscendantRel',
+                                        through_fields=('descendant', 'ascendant'),
+                                        related_name=Fields.DESCENDANTS,
+                                        symmetrical=False)
+    root = models.ForeignKey('self', on_delete=models.CASCADE, related_name=Fields.DESCENDANT)
 
     class Meta:
-        constraints = [models.CheckConstraint(check=~models.Q(name=""), name='criteria_non_empty_name')]
+        abstract = True
+        constraints = [models.CheckConstraint(check=~models.Q(name=""), name='%(class)s_non_empty_name')]
         indexes = [
-            models.Index(fields=[Fields.USER, Fields.NAME], name='criteria_user_name_idx'),
-            models.Index(fields=[Fields.USER, Fields.UUID], name='criteria_user_uuid_idx')
+            models.Index(fields=[Fields.USER, Fields.NAME], name='%(class)s_user_name_idx'),
+            models.Index(fields=[Fields.USER, Fields.UUID], name='%(class)s_user_uuid_idx')
         ]
 
     @property
@@ -70,7 +59,7 @@ class Criteria(LibTrackMixin):
 
     @property
     def children(self) -> QuerySet['Criteria']:
-        return Criteria.objects.filter(user=self.user, parent=self)
+        return self.__class__.objects.filter(user=self.user, parent=self)
 
     @property
     def criteria_ascendant_relation_ascendants(self) -> Manager:
@@ -80,8 +69,9 @@ class Criteria(LibTrackMixin):
         parent_str = f'{Fields.PARENT}: {self.parent.name}' if self.parent else f"[no {Fields.PARENT}]"
         return f"{self.uuid} | {self.name} | {parent_str}"
 
-    @ staticmethod
-    def get_common_criteria(criteria_a: Optional['Criteria'], criteria_b: Optional['Criteria']) -> Optional['Criteria']:
+    @staticmethod
+    def get_common_criteria(criteria_a: Optional['Criteria'],
+                            criteria_b: Optional['Criteria']) -> Optional['Criteria']:
         if not criteria_a or not criteria_b:
             return None
 

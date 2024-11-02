@@ -1,4 +1,3 @@
-
 from typing import Optional, TYPE_CHECKING
 from django.db.models import QuerySet
 
@@ -16,6 +15,47 @@ if TYPE_CHECKING:
 
 class CriteriaManager(PublicStandardResourceManager['Criteria']):
     model: type['Criteria']
+    
+    def create_instance(self, **kwargs) -> 'Criteria':
+        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+        instance = self.create(**kwargs)
+        CriteriaPlaylist.objects.create(user=instance.user, criteria=instance, type=instance.type)
+        self.update_ascendants_of_criteria_and_children(instance)
+        return instance
+        
+    def update_instance(self, instance: 'Criteria', **kwargs) -> 'Criteria':
+        from bodzify_api.model.criteria.Criteria import Fields as ModelFields
+        old_root = instance.root
+        old_parent = instance.parent
+        old_name = instance.name
+
+        for key, value in kwargs.items():
+            setattr(instance, key, value)
+        instance.save()
+        
+        if old_root != instance.root:
+            instance.criteria_playlist.save()
+            self.update_root_of_children(criteria=instance, new_root=instance.root)
+
+        if old_parent != instance.parent:
+            instance.root = instance.calculate_root()
+            instance.save(update_fields=[ModelFields.ROOT])
+
+            self._update_playlists_of_ascendants(instance, old_parent)
+            self.update_ascendants_of_criteria_and_children(instance)
+
+            if instance.parent:
+                instance.criteria_playlist.parent = instance.parent.criteria_playlist
+            else:
+                instance.criteria_playlist.parent = None
+            instance.criteria_playlist.save()
+
+        if old_name != instance.name:
+            lib_tracks: list['LibraryTrack'] = list(instance.library_tracks)
+            for lib_track in lib_tracks:
+                lib_track.update_file_tags_from_lib_track_instance_values()
+                
+        return instance
 
     @staticmethod
     def update_playlist_positions_to_fill_deleted_positions(base_playlist: 'BasePlaylist'):
@@ -30,8 +70,8 @@ class CriteriaManager(PublicStandardResourceManager['Criteria']):
             relation.save()
 
     def _update_playlists_of_ascendants(self, criteria: 'Criteria', old_parent: Optional['Criteria']):
-
-        common_criteria = Criteria.get_common_criteria(criteria, old_parent)
+        from bodzify_api.model.criteria.Criteria import Criteria as CriteriaModel
+        common_criteria = CriteriaModel.get_common_criteria(criteria, old_parent)
         lib_tracks = LibraryTrack.objects.filter(
             lib_track_position_relations__base_playlist=criteria.criteria_playlist.base_playlist
         )
@@ -52,38 +92,6 @@ class CriteriaManager(PublicStandardResourceManager['Criteria']):
 
     def get_roots(self, user: 'User') -> QuerySet['Criteria']:
         return self.filter(user=user, parent__isnull=True)
-
-    def create(self, *args, **kwargs):
-        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-        criteria: Criteria = self.model(**kwargs)
-        criteria.save()
-        CriteriaPlaylist.objects.create(user=criteria.user, criteria=criteria, type=criteria.type)
-        self.update_ascendants_of_criteria_and_children(criteria)
-        return criteria
-
-    def update(self, criteria: 'Criteria', old_criteria: 'Criteria', *args, **kwargs):
-        from bodzify_api.model.criteria.Criteria import Fields as ModelFields
-        if old_criteria.root != criteria.root:
-            criteria.criteria_playlist.save()
-            self.update_root_of_children(criteria=criteria, new_root=criteria.root)
-
-        if old_criteria.parent != criteria.parent:
-            criteria.root = criteria.calculate_root()
-            criteria.save(update_fields=[ModelFields.ROOT])
-
-            self._update_playlists_of_ascendants(criteria, old_criteria.parent)
-            self.update_ascendants_of_criteria_and_children(criteria)
-
-            if criteria.parent:
-                criteria.criteria_playlist.parent = criteria.parent.criteria_playlist
-            else:
-                criteria.criteria_playlist.parent = None
-            criteria.criteria_playlist.save()
-
-        if old_criteria.name != criteria.name:
-            lib_tracks: list['LibraryTrack'] = list(criteria.library_tracks)
-            for lib_track in lib_tracks:
-                lib_track.update_file_tags_from_lib_track_instance_values()
 
     def update_ascendants_of_criteria_and_children(self, criteria: 'Criteria'):
         from bodzify_api.model.criteria.CriteriaAscendantRel import CriteriaAscendantRel
