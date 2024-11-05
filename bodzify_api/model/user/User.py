@@ -11,20 +11,12 @@ from django.db.models import F, Value
 from bodzify_api import settings
 from bodzify_api.model.function.ConcatOp import ConcatOp
 from bodzify_api.model.function.ConditionalExpression import ConditionalExpression
-from bodzify_api.model.user.UserManager import UserManager
+from .UserManager import UserManager
+from .Fields import Fields
 
 if TYPE_CHECKING:
-    from bodzify_api.model.AllLibTrackMixin import AllLibTrackMixin
+    from bodzify_api.model.all_lib_track_mixin.AllLibTrackMixin import AllLibTrackMixin
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-
-
-class Fields:
-    ID = 'id'
-    USERNAME = 'username'
-    PASSWORD = 'password'
-    EMAIL = 'email'
-    IS_TEST_USER = 'is_test_user'
-    ALL_LIB_TRACK_MIXIN = 'all_lib_track_mixin'
 
 
 class User(AbstractUser):
@@ -64,13 +56,13 @@ class User(AbstractUser):
 
     @cached_property
     def genre_criteria_playlist(self) -> 'CriteriaPlaylist':
-        from bodzify_api.model.playlist.children.criteria.children.GenrePlaylist import GenrePlaylist
+        from bodzify_api.model.playlist.children.criteria.children.genre.GenrePlaylist import GenrePlaylist
         playlist, _ = GenrePlaylist.objects.get_or_create(user=self, criteria=None)
         return playlist
 
     @cached_property
     def tag_criteria_playlist(self) -> 'CriteriaPlaylist':
-        from bodzify_api.model.playlist.children.criteria.children.TagPlaylist import TagPlaylist
+        from bodzify_api.model.playlist.children.criteria.children.tag.TagPlaylist import TagPlaylist
         playlist, _ = TagPlaylist.objects.get_or_create(user=self, criteria=None)
         return playlist
 

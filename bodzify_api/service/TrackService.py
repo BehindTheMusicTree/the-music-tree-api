@@ -1,4 +1,3 @@
-
 import os
 import random
 import stat
@@ -6,6 +5,7 @@ import string
 import requests
 import tempfile
 
+from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.user.User import User
 from django.core.files.base import File as DjangoFile
 from django.db.models import F
@@ -19,14 +19,11 @@ from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.service.Service import Service
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
 from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
     Fields as LibTrackPlaylistRelFields
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields, LibTrackPostSerializer
-from bodzify_api.serializer.schema.track.input.endpoint.put import LibTrackPutSerializer
+from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields
 from bodzify_api.serializer.schema.track.input.endpoint.extract import Fields as ExtractFields
 from bodzify_api.serializer.schema.track.input.model import Fields as SaveModelFields, TrackModelSerializer
 from bodzify_api.serializer.schema.track.input.schema import Fields as SaveSchemaFields, LibTrackSchemaSerializer
@@ -87,9 +84,7 @@ class TrackService(Service):
                 if not genre_name or genre_name == "":
                     genre_uuid = None
                 else:
-                    criteria, _ = Criteria.objects.get_or_create(user=user,
-                                                                 type_id=CriteriaTypesId.GENRE,
-                                                                 name=genre_name)
+                    criteria, _ = Genre.objects.get_or_create(user=user, name=genre_name)
                     genre_uuid = criteria.uuid
             else:
                 return

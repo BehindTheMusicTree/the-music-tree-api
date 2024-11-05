@@ -1,20 +1,15 @@
-
-from typing import Any, Dict
+from typing import Any
+from typing import Dict as ReturnDict
+from typing import List as ReturnList
 
 from rest_framework import serializers
 
-from bodzify_api.model.Play import Play, Fields as ModelFields
+from bodzify_api.model.play.Play import Play
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.serializer.schema.playlist.base.output.detailed import BasePlaylistDetailedSerializer
 from bodzify_api.serializer.schema.track.output.simple.simple_without_album_and_genre import \
     LibTrackWithoutAlbumPlaylistGenreSerializer
-
-
-class Fields:
-    CREATED_ON = ModelFields.CREATED_ON
-    UPDATED_ON = ModelFields.UPDATED_ON
-    CONTENT_TYPE = ModelFields.CONTENT_TYPE
-    CONTENT_OBJECT = ModelFields.CONTENT_OBJECT
+from .Fields import Fields
 
 
 class PlayDetailedSerializer(serializers.ModelSerializer):
@@ -28,8 +23,8 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]
 
-    def get_content_object(self, obj) -> Dict[str, Any]:
+    def get_content_object(self, obj: Play) -> ReturnList | Any | ReturnDict:
         if isinstance(obj.content_object, BasePlaylist):
-            return BasePlaylistDetailedSerializer(obj.content_object).data  # type: ignore
+            return BasePlaylistDetailedSerializer(obj.content_object).data
         else:
-            return LibTrackWithoutAlbumPlaylistGenreSerializer(obj.content_object).data  # type: ignore
+            return LibTrackWithoutAlbumPlaylistGenreSerializer(obj.content_object).data

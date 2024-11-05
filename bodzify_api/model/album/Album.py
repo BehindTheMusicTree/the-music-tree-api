@@ -7,7 +7,7 @@ from bodzify_api.model.album.AlbumManager import AlbumManager
 from bodzify_api.model.user.User import User
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
-from bodzify_api.model.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack

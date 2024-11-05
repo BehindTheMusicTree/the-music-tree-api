@@ -5,7 +5,7 @@ from django.db.models import QuerySet
 
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
-from bodzify_api.model.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 
 
 class Artist(LibTrackMixin):

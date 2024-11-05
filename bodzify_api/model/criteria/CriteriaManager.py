@@ -15,14 +15,14 @@ if TYPE_CHECKING:
 
 class CriteriaManager(PublicStandardResourceManager['Criteria']):
     model: type['Criteria']
-    
+
     def create_instance(self, **kwargs) -> 'Criteria':
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
         instance = self.create(**kwargs)
         CriteriaPlaylist.objects.create(user=instance.user, criteria=instance, type=instance.type)
         self.update_ascendants_of_criteria_and_children(instance)
         return instance
-        
+
     def update_instance(self, instance: 'Criteria', **kwargs) -> 'Criteria':
         from bodzify_api.model.criteria.Criteria import Fields as ModelFields
         old_root = instance.root
@@ -32,7 +32,7 @@ class CriteriaManager(PublicStandardResourceManager['Criteria']):
         for key, value in kwargs.items():
             setattr(instance, key, value)
         instance.save()
-        
+
         if old_root != instance.root:
             instance.criteria_playlist.save()
             self.update_root_of_children(criteria=instance, new_root=instance.root)
@@ -54,7 +54,7 @@ class CriteriaManager(PublicStandardResourceManager['Criteria']):
             lib_tracks: list['LibraryTrack'] = list(instance.library_tracks)
             for lib_track in lib_tracks:
                 lib_track.update_file_tags_from_lib_track_instance_values()
-                
+
         return instance
 
     @staticmethod
@@ -94,7 +94,7 @@ class CriteriaManager(PublicStandardResourceManager['Criteria']):
         return self.filter(user=user, parent__isnull=True)
 
     def update_ascendants_of_criteria_and_children(self, criteria: 'Criteria'):
-        from bodzify_api.model.criteria.CriteriaAscendantRel import CriteriaAscendantRel
+        from bodzify_api.model.criteria_acendant_rel.CriteriaAscendantRel import CriteriaAscendantRel
 
         criteria.ascendants.clear()
         current_degree = 1

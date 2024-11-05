@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import SpecialNames as LibTrackMixinSpecialNames
-from bodzify_api.model.playlist.children.ManualPlaylist import SpecialNames as MANUAL_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import SpecialNames as MANUAL_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.serializer.schema.playlist.base.input.query_param import Fields as GetQueryParams
 from bodzify_api.test.get_filters.GetFilterWithFreeValuesTestCase import GetFilterWithFreeValuesTestCase
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase

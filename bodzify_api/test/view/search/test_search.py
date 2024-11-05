@@ -4,8 +4,8 @@ from rest_framework import status
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
-from bodzify_api.model.playlist.children.ManualPlaylist import SpecialNames as MANUAL_PLAYLIST_SPECIAL_NAMES
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import SpecialNames as MANUAL_PLAYLIST_SPECIAL_NAMES
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.album.minimum import Fields as AlbumFields
 from bodzify_api.serializer.schema.artist.minimum import Fields as ArtistFields

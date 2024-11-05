@@ -1,4 +1,3 @@
-
 from bodzify_api.model.playlist.BasePlaylist import Fields as ModelFields
 
 

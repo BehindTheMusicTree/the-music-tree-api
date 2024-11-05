@@ -1,4 +1,3 @@
-
 from typing import List, TYPE_CHECKING, Optional
 
 from django.db import transaction
@@ -6,15 +5,15 @@ from django.utils import timezone
 
 from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResourceManager \
     import PublicStandardResourceManager
-from bodzify_api.model.criteria.Genre import Genre
+from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.playlist.children.criteria.children.GenrePlaylist import GenrePlaylist
-from bodzify_api.model.track.lib.Fields import Fields as ModelFields
+from bodzify_api.model.playlist.children.criteria.children.genre.GenrePlaylist import GenrePlaylist
 from bodzify_api.model.artist.Artist import Artist
+from .Fields import Fields as ModelFields
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from .LibraryTrack import LibraryTrack
 
 
 class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):

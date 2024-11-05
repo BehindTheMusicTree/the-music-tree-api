@@ -1,4 +1,3 @@
-
 import os
 import tempfile
 
@@ -10,7 +9,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUpload
 
 from bodzify_api import settings
 from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
-from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCauseCode import FingerprintMissingCauseCode
+from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
 from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import FingerprintingResult
 from bodzify_api.utils.app_django_file import AppDjangoFile
 from .utils import error as audio_fingerprinter_error

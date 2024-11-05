@@ -1,7 +1,6 @@
-
 from rest_framework import serializers
 
-from bodzify_api.model.Play import Play, Fields as ModelFields
+from bodzify_api.model.play.Play import Play, Fields as ModelFields
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
@@ -17,10 +16,10 @@ class PlaySchemaSerializer(serializers.ModelSerializer):
         model = Play
         fields = [Fields.CONTENT_OBJECT_UUID]
 
-    def validate_content_object_uuid(self, object_id):
+    def validate_content_object_uuid(self, object_pk):
         user = self.context['request'].user
-        if not BasePlaylist.objects.filter(user=user, uuid=object_id).exists() \
-                and not LibraryTrack.objects.filter(user=user, uuid=object_id).exists():
+        if not BasePlaylist.objects.filter(user=user, uuid=object_pk).exists() \
+                and not LibraryTrack.objects.filter(user=user, uuid=object_pk).exists():
             raise serializers.ValidationError(
                 {Fields.CONTENT_OBJECT_UUID: "Object with this ID does not exist or does not belong to the user."})
-        return object_id
+        return object_pk

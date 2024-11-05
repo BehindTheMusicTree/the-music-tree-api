@@ -1,12 +1,4 @@
-from django.db import models
-from typing import Dict, Any, TYPE_CHECKING
-
-from bodzify_api.model.criteria.Criteria import Criteria, Fields as ModelFields
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, Fields as BasePlaylistFields
-from bodzify_api.model.playlist.children.ChildPlaylist import ChildPlaylist
 from bodzify_api.model.playlist.children.Fields import Fields as ChildFields
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistManager import CriteriaPlaylistManager
-from bodzify_api.utils.model import SaveContext
 
 
 class Fields:
@@ -27,3 +19,5 @@ class Fields:
     PARENT = 'parent'
     ROOT = 'root'
     NAME = 'name'
+    CHILD_PLAYLIST = 'child_playlist'
+    DESCENDANT_PLAYLIST = 'descendant_playlist'

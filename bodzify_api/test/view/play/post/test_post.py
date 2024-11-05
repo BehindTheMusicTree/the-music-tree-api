@@ -4,7 +4,7 @@ from rest_framework import status
 from django.db.models import QuerySet
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.play.input.schema.endpoint.post import Fields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase

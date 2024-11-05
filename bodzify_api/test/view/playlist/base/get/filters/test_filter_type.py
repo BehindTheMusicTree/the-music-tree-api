@@ -65,7 +65,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
         self.model_fixture_factory.create_genre(name='rock')
 
-        data_dict = {GetQueryParams.TYPE: MANUAL_PLAYLIST_TYPE_LABEL}
+        data_dict = {GetQueryParams.TYPE: MANUAL_PLAYLIST_TYPE}
         response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2

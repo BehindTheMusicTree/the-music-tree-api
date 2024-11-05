@@ -1,9 +1,7 @@
-
 from django.db import transaction
 from drf_spectacular.utils import extend_schema
-from rest_framework import serializers
 
-from bodzify_api.model.Play import Fields, Play
+from bodzify_api.model.play.Play import Fields, Play
 from bodzify_api.serializer.schema.play.input.schema.endpoint.post import PlayPostSerializer
 from bodzify_api.serializer.schema.play.output.detailed import PlayDetailedSerializer
 from bodzify_api.service.PlayService import PlayService

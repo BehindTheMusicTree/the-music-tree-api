@@ -2,7 +2,7 @@
 
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.serializer.schema.endpoint import InputEndpointSerializer
 from bodzify_api.serializer.schema.playlist.children.simple.input.schema \
     import Fields as SaveSchemaFields, ManualPlaylistSchemaSerializer

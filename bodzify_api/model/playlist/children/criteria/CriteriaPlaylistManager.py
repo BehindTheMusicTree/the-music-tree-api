@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING
 from django.db import models
 from django.db.models import QuerySet
@@ -8,7 +7,7 @@ from bodzify_api.model.playlist.children.ChildPlaylistManager import ChildPlayli
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-    from bodzify_api.model.LibTrackMixin import SpecialNames
+    from .CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
 
 
 class CriteriaPlaylistManager(ChildPlaylistManager):
@@ -21,8 +20,8 @@ class CriteriaPlaylistManager(ChildPlaylistManager):
             models.Q(
                 criteria__isnull=True,
                 type__in=[
-                    models.Q(name=SpecialNames.GENRELESS) |
-                    models.Q(name=SpecialNames.TAGLESS)
+                    models.Q(name=CriteriaPlaylistWithoutCriteriaNames.GENRE) |
+                    models.Q(name=CriteriaPlaylistWithoutCriteriaNames.TAG)
                 ]
             )
         ).first()

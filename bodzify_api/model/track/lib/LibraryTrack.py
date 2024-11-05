@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.db.models import QuerySet
 from django.utils import timezone
 
-from bodzify_api.model.criteria.Genre import Genre
+from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.lib.LibraryTrackManager import LibraryTrackManager
 from bodzify_api import settings

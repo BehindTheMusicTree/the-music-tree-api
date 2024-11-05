@@ -2,7 +2,7 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.schema.criteria.input.schema.endpoint.post import Fields as PostFields
+from bodzify_api.serializer.schema.criteria.input.endpoint.post import Fields as PostFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 

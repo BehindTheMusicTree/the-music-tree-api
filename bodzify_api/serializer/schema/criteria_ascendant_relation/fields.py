@@ -1,7 +1,4 @@
-
-from rest_framework import serializers
-
-from bodzify_api.model.criteria.CriteriaAscendantRel import Fields as ModelFields
+from bodzify_api.model.criteria_acendant_rel.Fields import Fields as ModelFields
 
 
 class Fields:

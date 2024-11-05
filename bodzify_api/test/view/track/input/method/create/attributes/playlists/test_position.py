@@ -1,10 +1,9 @@
-
 import pytest
 from rest_framework import status
 
 from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
-from bodzify_api.model.AllLibTrackMixin import AllLibTrackMixin
-from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.lib_track_mixin.AllLibTrackMixin import AllLibTrackMixin
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 

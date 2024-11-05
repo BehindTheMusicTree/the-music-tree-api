@@ -1,21 +1,30 @@
 from uuid import UUID
+from typing import TYPE_CHECKING
+
 from django.db import models
 from django.utils import timezone
-from bodzify_api.model.base.utils.base_model.BaseModel import BaseModel
+
+from bodzify_api.model.base.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.user.User import User
+from .ChildPlaylistManager import ChildPlaylistManager
 
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.playlist.children.ChildPlaylistManager import ChildPlaylistManager
+if TYPE_CHECKING:
+    from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 
 
-class ChildPlaylist(BaseModel):
-    # This fields must be overriden in each child class so that the related_name is unique.
-    base_playlist = models.OneToOneField(BasePlaylist, on_delete=models.CASCADE, primary_key=True)
-
+class ChildPlaylist(PrivateStandardResource):
     objects = ChildPlaylistManager()
 
     class Meta:
         abstract = True
+
+    @property
+    def base_playlist(self) -> 'BasePlaylist':
+        return self.base_playlist
+
+    @property
+    def type_label(self) -> str:
+        raise NotImplementedError()
 
     @property
     def uuid(self) -> UUID:
@@ -64,3 +73,7 @@ class ChildPlaylist(BaseModel):
     @property
     def last_track_list_update_date(self) -> timezone.datetime:
         return self.base_playlist.last_track_list_update_date
+
+    @property
+    def name(self) -> str:
+        raise NotImplementedError()

@@ -8,10 +8,10 @@ from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.BasePlaylist import Fields as BasePlaylistFields
+from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist \
     import CriteriaPlaylist, SpecialNames as LibTrackMixinSpecialNames
-from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack, Fields as LibTrackFields
 from bodzify_api.serializer.schema.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.schema.artist.simple import ArtistSimpleSerializer

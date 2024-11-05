@@ -1,4 +1,3 @@
-
 from django.core.exceptions import ValidationError
 from bodzify_api.model.base.utils.base_model.BaseManager import BaseManager
 from bodzify_api.model.playlist.children.Fields import Fields as ModelFields
@@ -47,10 +46,14 @@ class ChildPlaylistManager(BaseManager):
         if base_playlist:
             raise ValidationError("base_playlist must not be provided when creating a ChildPlaylist")
 
-        base_playlist = BasePlaylist.objects.create(user=user)
         kwargs[ModelFields.BASE_PLAYLIST] = base_playlist
 
-        return super().create(*args, **kwargs)
+        instance = super().create(*args, **kwargs)
+
+        base_playlist = BasePlaylist.objects.create(
+            user=user, object_pk=instance.pk, content_type=instance.content_type)
+
+        return instance
 
     def order_by(self, *args):
         updated_args = []

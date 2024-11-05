@@ -17,14 +17,14 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
-from bodzify_api.model.criteria.CriteriaType import CriteriaType
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.children.genre.Genre import Genre
+from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist, Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import Fields as MusicbrainzRecordingFields
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.playlist.BasePlaylist import Fields as BasePlaylistFields
-from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.track.file.TrackFile import TrackFile
@@ -57,17 +57,19 @@ class ModelFixtureFactory:
         user.save()
         return cast('User', user)
 
-    def __create_criteria(self, name: str, type_pk: int, user: Optional[User] = None, **kwargs) -> Criteria:
+    def __create_criteria(self,
+                          name: str,
+                          model_class: type[Criteria],
+                          user: Optional[User] = None, **kwargs) -> Criteria:
         model_fields = {
             CriteriaFields.CREATED_ON: timezone.make_aware(datetime.now()),
             CriteriaFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             CriteriaFields.USER: user or self.default_test_user,
             CriteriaFields.NAME: name,
-            CriteriaFields.TYPE: CriteriaType.objects.get(pk=type_pk),
             CriteriaFields.PARENT: None,
         }
         model_fields.update(kwargs)
-        return Criteria.objects.create(**model_fields)
+        return model_class.objects.create(**model_fields)
 
     def _create_file(self, user: User, lib_track: LibraryTrack, filename: Optional[str], **kwargs) -> TrackFile:
 
@@ -148,25 +150,23 @@ class ModelFixtureFactory:
         return G(Album, **model_fields)
 
     def create_genre(self, name: str, **kwargs) -> Criteria:
-        return self.__create_criteria(name=name, type_pk=CriteriaTypesId.GENRE, **kwargs)
+        return self.__create_criteria(name=name, model_class=Genre, **kwargs)
 
     def create_tag(self, name: str, **kwargs) -> Criteria:
-        return self.__create_criteria(name=name, type_pk=CriteriaTypesId.TAG, **kwargs)
+        return self.__create_criteria(name=name, model_class=Tag, **kwargs)
 
     def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> ManualPlaylist:
-        model_fields = {
+        base_playlist_model_fields = {
             BasePlaylistFields.CREATED_ON: timezone.make_aware(datetime.now()),
             BasePlaylistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             BasePlaylistFields.USER: user or self.default_test_user,
             BasePlaylistFields.PLAY_COUNT: 0
         }
-        model_fields.update(kwargs)
+        base_playlist_model_fields.update(kwargs)
 
-        base_playlist = G(BasePlaylist, **model_fields)
+        base_playlist = G(BasePlaylist, **base_playlist_model_fields)
 
-        return G(ManualPlaylist,
-                 base_playlist=base_playlist,
-                 name=name)
+        return G(ManualPlaylist, base_playlist=base_playlist, name=name)
 
     def create_musicbrainz_recording(self, musicbrainz_id: str, title: str, **kwargs) -> MusicbrainzRecording:
         model_fields = {

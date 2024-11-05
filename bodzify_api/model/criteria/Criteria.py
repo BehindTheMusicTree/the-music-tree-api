@@ -4,44 +4,20 @@ from django.db import models
 from django.db.models import QuerySet, Manager
 
 from bodzify_api import settings
-from bodzify_api.model.LibTrackMixin import LibTrackMixin, Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.criteria_acendant_rel.Fields import Fields as CriteriaAscendantRelFields
+from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-
-
-class Fields:
-    MODEL = 'Criteria'
-    CREATED_ON = LibTrackMixinFields.CREATED_ON
-    UPDATED_ON = LibTrackMixinFields.UPDATED_ON
-    USER = LibTrackMixinFields.USER
-    UUID = LibTrackMixinFields.UUID
-    LIB_TRACKS = LibTrackMixinFields.LIB_TRACKS
-    LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinFields.LIB_TRACKS_NOT_ARCHIVED
-    LIB_TRACKS_COUNT = LibTrackMixinFields.LIB_TRACKS_COUNT
-    LIB_TRACKS_ARCHIVED_COUNT = LibTrackMixinFields.LIB_TRACKS_ARCHIVED_COUNT
-    DURATION_IN_SEC = LibTrackMixinFields.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
-    NAME = 'name'
-    PARENT = 'parent'
-    CHILD = 'child'
-    ASCENDANT = 'ascendant'
-    ASCENDANTS = ASCENDANT + 's'
-    DESCENDANT = 'descendant'
-    DESCENDANTS = DESCENDANT + 's'
-    CRITERIA_ASCENDANT_RELATION_ASCENDANTS = 'criteria_ascendant_relation_ascendants'
-    CRITERIA_ASCENDANT_RELATION_DESCENDANTS = 'criteria_ascendant_relation_descendants'
-    CHILDREN = 'children'
-    ROOT = 'root'
-    CRITERIA_PLAYLIST = 'criteria_playlist'
 
 
 class Criteria(LibTrackMixin):
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name=Fields.CHILD)
     ascendants = models.ManyToManyField('self', through='CriteriaAscendantRel',
-                                        through_fields=('descendant', 'ascendant'),
-                                        related_name=Fields.DESCENDANTS,
+                                        through_fields=(CriteriaAscendantRelFields.DESCENDANT,
+                                                        CriteriaAscendantRelFields.ASCENDANT),
                                         symmetrical=False)
     root = models.ForeignKey('self', on_delete=models.CASCADE, related_name=Fields.DESCENDANT)
 

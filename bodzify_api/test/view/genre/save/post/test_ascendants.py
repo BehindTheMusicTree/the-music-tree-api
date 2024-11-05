@@ -2,8 +2,9 @@
 from rest_framework import status
 from django.db.models import QuerySet
 
-from bodzify_api.model.criteria.CriteriaAscendantRel import Fields, CriteriaAscendantRel
-from bodzify_api.serializer.schema.criteria.input.schema.endpoint.post import Fields as PostFields
+from bodzify_api.model.criteria_acendant_rel.CriteriaAscendantRel import CriteriaAscendantRel
+from bodzify_api.model.criteria_acendant_rel.Fields import Fields
+from bodzify_api.serializer.schema.criteria.input.endpoint.post import Fields as PostFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 

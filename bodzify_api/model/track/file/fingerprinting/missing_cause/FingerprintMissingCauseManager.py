@@ -1,4 +1,3 @@
-
 from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResourceManager \
     import PublicStandardResourceManager
 
@@ -7,7 +6,7 @@ class FingerprintMissingCauseManager(PublicStandardResourceManager):
 
     def create(self, *args, **kwargs):
         from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import Fields
-        from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCauseCode \
+        from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode \
             import FingerprintMissingCauseCode
 
         code = kwargs.pop(Fields.CODE, None)

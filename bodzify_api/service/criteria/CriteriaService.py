@@ -4,8 +4,8 @@ from rest_framework.request import Request
 
 from bodzify_api.model.criteria.Criteria import Fields as ModelFields
 from bodzify_api.serializer.schema.criteria.input.model import CriteriaModelSerializer
-from bodzify_api.serializer.schema.criteria.input.schema.endpoint.post import CriteriaPostSerializer
-from bodzify_api.serializer.schema.criteria.input.schema.endpoint.put import CriteriaPutSerializer
+from bodzify_api.serializer.schema.criteria.input.endpoint.post import CriteriaPostSerializer
+from bodzify_api.serializer.schema.criteria.input.endpoint.put import CriteriaPutSerializer
 from bodzify_api.serializer.schema.criteria.input.schema.schema import CriteriaSchemaSerializer
 from bodzify_api.service.Service import Service
 

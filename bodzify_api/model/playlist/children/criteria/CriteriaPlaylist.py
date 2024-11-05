@@ -3,35 +3,23 @@ from typing import Dict, Any
 
 from django.db import models
 
-from bodzify_api.model.criteria.Criteria import Criteria, Fields as ModelFields
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist, Fields as BasePlaylistFields
-from bodzify_api.model.playlist.children.ChildPlaylist import ChildPlaylist
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistManager import CriteriaPlaylistManager
-from bodzify_api.model.playlist.children.criteria.Fields import Fields
+from bodzify_api import settings
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.utils.model import SaveContext
+from ..ChildPlaylist import ChildPlaylist
+from .CriteriaPlaylistManager import CriteriaPlaylistManager
+from .Fields import Fields
 
 
 class CriteriaPlaylist(ChildPlaylist):
-    base_playlist = models.OneToOneField(BasePlaylist,
-                                         on_delete=models.CASCADE,
-                                         primary_key=True,
-                                         related_name=BasePlaylistFields.CRITERIA_CHILD_PLAYLIST)
-    criteria = models.OneToOneField(Criteria,
-                                    on_delete=models.CASCADE,
-                                    blank=True,
-                                    null=True,
-                                    related_name=ModelFields.CRITERIA_PLAYLIST)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name='child_playlist')
-    root = models.ForeignKey(
-        'self',
-        on_delete=models.CASCADE,
-        related_name='descendant_playlist'
-    )
+    criteria = models.OneToOneField(Criteria, on_delete=models.CASCADE, blank=True, null=True)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILD_PLAYLIST)
+    root = models.ForeignKey('self', on_delete=models.SET_NULL, related_name=Fields.DESCENDANT_PLAYLIST)
 
     objects: CriteriaPlaylistManager = CriteriaPlaylistManager()
 
     class Meta:
-        abstract = True
+        db_table = f'{settings.APP_NAME}_criteria_playlist'
         indexes = [models.Index(fields=[Fields.BASE_PLAYLIST, Fields.CRITERIA], name='%(class)s_idx'),]
 
     def __init__(self, *args, **kwargs):
@@ -45,14 +33,14 @@ class CriteriaPlaylist(ChildPlaylist):
 
     @property
     def name(self):
-        return self.criteria.name if self.criteria else self.name_when_no_criteria
+        return self.criteria.name if self.criteria else self.name_when_no_criteria()
 
     @property
     def children(self) -> models.QuerySet['CriteriaPlaylist']:
         return CriteriaPlaylist.objects.get_children(self.user, self)
 
     def __str__(self) -> str:
-        return f'{self.base_playlist.uuid} | {self.name}'
+        return f'{self.name}'
 
     def _prepare_save(self, is_creating, **kwargs) -> Dict[str, Any]:
         ctx = SaveContext(

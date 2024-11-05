@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.playlist.BasePlaylist import Fields as BasePlaylistFields
+from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
 
 
 class ChildPlaylistModelSerializer(serializers.ModelSerializer):

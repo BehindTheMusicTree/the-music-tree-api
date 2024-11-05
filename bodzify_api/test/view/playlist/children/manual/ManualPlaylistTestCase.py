@@ -5,7 +5,7 @@ from uuid import UUID
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.model.playlist.children.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.serializer.schema.playlist.children.simple.output.detailed import Fields as ManualPlaylistGetFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 

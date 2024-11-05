@@ -1,8 +1,7 @@
-
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.schema.criteria.output.fields import Fields as AvailableFields
+from .Fields import Fields as AvailableFields
 
 
 class Fields:

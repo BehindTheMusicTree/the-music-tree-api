@@ -1,11 +1,7 @@
-
-from bodzify_api.model.Play import Play, Fields as ModelFields
+from bodzify_api.model.play.Play import Play
 from bodzify_api.serializer.field.UserFilteredContentObjectUUIDField import UserFilteredPlayContentObjectUUIDField
 from bodzify_api.serializer.schema.endpoint import InputEndpointSerializer
-
-
-class Fields:
-    CONTENT_OBJECT_UUID = ModelFields.CONTENT_OBJECT + '_uuid'
+from .Fields import Fields
 
 
 class PlayPostSerializer(InputEndpointSerializer):

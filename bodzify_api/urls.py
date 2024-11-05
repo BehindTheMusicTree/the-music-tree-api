@@ -8,8 +8,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
 from .view.viewset.model.ArtistViewSet import ArtistViewSet
-from .view.viewset.model.criteria.GenreViewSet import GenreViewSet
-from .view.viewset.model.criteria.TagViewSet import TagViewSet
+from .view.viewset.model.criteria.children.GenreViewSet import GenreViewSet
+from .view.viewset.model.criteria.children.TagViewSet import TagViewSet
 from .view.viewset.model.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
 from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from .view.viewset.model.playlist.ManualPlaylistViewSet import ManualPlaylistViewSet

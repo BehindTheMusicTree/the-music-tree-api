@@ -1,9 +1,0 @@
-
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.service.criteria.CriteriaService import CriteriaService
-
-
-class GenreService(CriteriaService):
-
-    def __init__(self) -> None:
-        super().__init__(CriteriaTypesId.GENRE)

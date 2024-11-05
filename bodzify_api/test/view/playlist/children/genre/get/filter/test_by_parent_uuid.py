@@ -2,7 +2,7 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import Fields as GetResultFields
-from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
+from bodzify_api.test.view.playlist.children.genre.Genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 
 
 class TestCase(GenrePlaylistTestCase):

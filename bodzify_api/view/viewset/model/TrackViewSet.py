@@ -21,7 +21,6 @@ from bodzify_api.filter.set.LibTrackFilterSet import LibTrackFilterSet, Fields a
 class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
     def __init__(self, **kwargs):
         super().__init__(
-            service=TrackService(),
             model_class=LibraryTrack,
             filter_class=LibTrackFilterSet,
             detailed_serializer_class=LibTrackDetailedSerializer,

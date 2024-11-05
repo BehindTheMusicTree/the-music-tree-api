@@ -39,7 +39,7 @@ class PlayService(Service):
         content_object.play_count += 1
         content_object.save()
 
-        model_data[SaveFields.OBJECT_UUID] = content_object.uuid
+        model_data[SaveFields.OBJECT_PK] = content_object.uuid
 
         content_type = ContentType.objects.get_for_model(content_object)
         model_data[SaveFields.CONTENT_TYPE] = content_type.pk

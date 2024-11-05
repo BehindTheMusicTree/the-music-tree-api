@@ -534,7 +534,7 @@ def setup_media_dirs():
     print_django("FILE_UPLOAD_TEMP_DIR is set. Setting up the media variables...")
 
     global ACOUSTID_API_KEY
-    ACOUSTID_API_KEY = load_required_str_env_var('ACOUSTID_API_KEY')
+    ACOUSTID_API_KEY = load_required_secret_env_var('ACOUSTID_API_KEY')
 
     global MEDIA_ROOT  # Django constant, do not rename.
     MEDIA_ROOT = load_required_path_env_var('MEDIA_DIR')

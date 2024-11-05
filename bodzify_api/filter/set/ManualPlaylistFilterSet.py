@@ -1,7 +1,7 @@
 from django_filters import CharFilter
 
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
-from bodzify_api.model.playlist.children.ManualPlaylist import Fields
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import Fields
 
 
 class ManualPlaylistFilterSet(AppFilterSet):

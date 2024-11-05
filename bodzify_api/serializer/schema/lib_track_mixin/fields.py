@@ -1,7 +1,4 @@
-
-from rest_framework import serializers
-
-from bodzify_api.model.LibTrackMixin import Fields as ModelFields, LibTrackMixin
+from bodzify_api.model.lib_track_mixin.Fields import Fields as ModelFields
 
 
 class Fields:
