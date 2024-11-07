@@ -10,9 +10,9 @@ from .view.viewset.model.AlbumViewSet import AlbumViewSet
 from .view.viewset.model.ArtistViewSet import ArtistViewSet
 from .view.viewset.model.criteria.children.GenreViewSet import GenreViewSet
 from .view.viewset.model.criteria.children.TagViewSet import TagViewSet
-from .view.viewset.model.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
 from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
-from .view.viewset.model.playlist.ManualPlaylistViewSet import ManualPlaylistViewSet
+from .view.viewset.model.playlist.children.GenrePlaylistViewSet import GenrePlaylistViewSet
+from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPlaylistViewSet
 from .view.viewset.model.PlayViewSet import PlayViewSet
 from .view.viewset.model.TrackViewSet import LibTrackViewSet
 from .view.viewset.model.UserViewSet import UserViewSet

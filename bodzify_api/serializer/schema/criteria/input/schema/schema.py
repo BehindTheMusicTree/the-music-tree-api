@@ -11,6 +11,7 @@ class Fields:
 
 
 class CriteriaSchemaSerializer(serializers.ModelSerializer):
+    parent = serializers.PrimaryKeyRelatedField(queryset=Criteria.objects.all(), required=False)
 
     class Meta:
         model = Criteria

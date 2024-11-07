@@ -1,13 +1,12 @@
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
 from rest_framework.request import Request
-from django.contrib.contenttypes.models import ContentType
 
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.Fields import Fields
 from bodzify_api.model.playlist.children.ChildPlaylistTypes import ChildPlaylistTypes
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
     import CriteriaPlaylistWithoutCriteriaNames
-from bodzify_api.model.playlist.children.criteria.children.genre.GenrePlaylist import GenrePlaylist
 from bodzify_api.serializer.schema.playlist.base.output.simple import BasePlaylistSimpleSerializer
 from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filter.set.playlist.PlaylistParamFilterSet import PlaylistParamFilterSet
@@ -38,7 +37,7 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
 
         name_query_param = query_params_validated.get(QueryParamsFields.NAME,
                                                       self._get_queryset_str_filter_value_to_filter_nothing())
-        type_query_param = query_params_validated.get(QueryParamsFields.TYPE)
+        type_query_param = query_params_validated.get(QueryParamsFields.TYPE_LABEL)
 
         queryset = BasePlaylist.objects.filter(user=self.request.user)
 
@@ -62,7 +61,7 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
             genreless_playlist = queryset.filter(
                 criteria_child_playlist__isnull=False,
                 criteria_child_playlist__criteria__isnull=True,
-                criteria_child_playlist__type_id=ChildPlaylistTypes.GENRE)
+                criteria_child_playlist__type_pk=ChildPlaylistTypes.GENRE)
 
         tagless_playlist = BasePlaylist.objects.none()
         if (not name_query_param or name_query_param.lower() in CriteriaPlaylistWithoutCriteriaNames.TAG.lower()) \
@@ -70,7 +69,7 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
             tagless_playlist = queryset.filter(
                 criteria_child_playlist__isnull=False,
                 criteria_child_playlist__criteria__isnull=True,
-                criteria_child_playlist__type_id=CriteriaTypesId.TAG)
+                criteria_child_playlist__type_pk=CriteriaTypesPks.TAG)
 
         return manual_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
             tagless_playlist).order_by(Fields.CREATED_ON)
@@ -78,7 +77,7 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
     @extend_schema(parameters=[OpenApiParameter(name=QueryParamsFields.NAME,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY),
-                               OpenApiParameter(name=QueryParamsFields.TYPE,
+                               OpenApiParameter(name=QueryParamsFields.TYPE_LABEL,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):

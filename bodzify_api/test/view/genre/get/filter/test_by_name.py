@@ -2,7 +2,7 @@
 from rest_framework import status
 
 
-from bodzify_api.serializer.schema.criteria.output.fields import Fields as ModelFields
+from bodzify_api.serializer.schema.criteria.output.Fields import Fields as ModelFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 from bodzify_api.utils.utils import to_camel_case
 

@@ -5,15 +5,15 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}artists/?name=mat
+  url: {{BASE_URL}}artists/?name=muse
   body: json
   auth: inherit
 }
 
 params:query {
-  name: mat
+  name: muse
 }
 
 vars:post-response {
-  artistMatUuid: res.body.results[0]
+  artistMuseUuid: res.body.results[0].uuid
 }

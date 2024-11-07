@@ -2,7 +2,7 @@ from bodzify_api.model.base.PrivateStandardResource import Fields as PrivateRela
 
 
 class Fields:
-    MODEL = "criteria_ascendant_relation"
+    MODEL = "criteria_lineage_rel"
     CREATED_ON = PrivateRelationFields.CREATED_ON
     UPDATED_ON = PrivateRelationFields.UPDATED_ON
     USER = PrivateRelationFields.USER

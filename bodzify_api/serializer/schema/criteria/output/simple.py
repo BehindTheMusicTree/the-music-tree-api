@@ -3,7 +3,7 @@ from rest_framework import serializers
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.schema.criteria.output.minimum import CriteriaMinimumSerializer
 from bodzify_api.serializer.schema.criteria_ascendant_relation.without_ascendant import \
-    CriteriaAscendantRelationWithoutAscendantSerializer
+    CriteriaLineageRelationWithoutAscendantSerializer
 from .Fields import Fields as AvailableFields
 
 
@@ -16,7 +16,7 @@ class Fields:
 
 class CriteriaSimpleSerializer(serializers.ModelSerializer):
     parent = CriteriaMinimumSerializer()
-    descendants = CriteriaAscendantRelationWithoutAscendantSerializer(
+    descendants = CriteriaLineageRelationWithoutAscendantSerializer(
         source=AvailableFields.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
         many=True)
 

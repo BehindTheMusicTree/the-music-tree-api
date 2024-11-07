@@ -1,6 +1,6 @@
-from bodzify_api.model.criteria_acendant_rel.CriteriaAscendantRel import CriteriaAscendantRel
+from bodzify_api.model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 from bodzify_api.serializer.schema.criteria_ascendant_relation.Fields import Fields as AvailableFields
-from bodzify_api.serializer.schema.criteria_ascendant_relation.detailed import CriteriaAscendantRelationDetailedSerializer
+from bodzify_api.serializer.schema.criteria_ascendant_relation.detailed import CriteriaLineageRelationDetailedSerializer
 
 
 class Fields:
@@ -8,8 +8,8 @@ class Fields:
     DEGREE = AvailableFields.DEGREE
 
 
-class CriteriaAscendantRelationWithoutAscendantSerializer(CriteriaAscendantRelationDetailedSerializer):
+class CriteriaLineageRelationWithoutAscendantSerializer(CriteriaLineageRelationDetailedSerializer):
 
     class Meta:
-        model = CriteriaAscendantRel
+        model = CriteriaLineageRel
         fields = [Fields.DESCENDANT, Fields.DEGREE]

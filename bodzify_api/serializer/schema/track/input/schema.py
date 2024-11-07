@@ -3,7 +3,6 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
-from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.serializer.field.UserFilteredUUIDField import UserFilteredUUIDField
 from bodzify_api.serializer.schema.track.input.model import Fields as SaveModelFields
 
@@ -46,7 +45,7 @@ class LibTrackSchemaSerializer(serializers.Serializer):
                                                 required=False,
                                                 allow_blank=True,
                                                 allow_null=True)
-    genre_uuid = UserFilteredUUIDField(queryset=Genre.objects, required=False, allow_null=True)
+    genre_uuid = UserFilteredUUIDField(queryset=Criteria.objects, required=False, allow_null=True)
     genre_name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
                                        required=False,
                                        allow_blank=True,

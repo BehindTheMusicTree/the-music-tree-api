@@ -1,4 +1,3 @@
-
 from typing import Type
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from django.db import transaction

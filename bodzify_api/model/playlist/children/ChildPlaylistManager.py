@@ -17,9 +17,6 @@ class ChildPlaylistManager(BaseManager):
             if field in kwargs:
                 kwargs[f'{ModelFields.BASE_PLAYLIST}__{field}'] = kwargs.pop(field)
 
-    def get_default_ordering(self):
-        return [f'{ModelFields.BASE_PLAYLIST}__{ModelFields.CREATED_ON}']
-
     def filter(self, *args, **kwargs):
         self._update_base_playlist_kwargs(kwargs)
         return super().filter(*args, **kwargs)

@@ -11,11 +11,11 @@ from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 
 
 class CriteriaViewSet(AppModelViewSet[Criteria]):
-    def __init__(self, **kwargs):
+    def __init__(self, model_class: type[Criteria], **kwargs):
         # Filtersets must be imported after Django is loaded
         from bodzify_api.filter.set.criteria.CriteriaFilterSet import CriteriaFilterSet
         super().__init__(
-            model_class=Criteria,
+            model_class=model_class,
             filter_class=CriteriaFilterSet,
             simple_serializer_class=CriteriaSimpleSerializer,
             detailed_serializer_class=CriteriaDetailedSerializer,
@@ -29,15 +29,14 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
     def create(self, request, *args, **kwargs):
         return self._handle_post(request, *args, **kwargs)
 
-    @extend_schema(parameters=[
-        OpenApiParameter(name=FilterFields.NAME,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=FilterFields.PARENT,
-                         type=OpenApiTypes.STR,
-                         location=OpenApiParameter.QUERY,
-                         required=False)
-    ], responses=CriteriaSimpleSerializer)
+    @extend_schema(parameters=[OpenApiParameter(name=FilterFields.NAME,
+                                                type=OpenApiTypes.STR,
+                                                location=OpenApiParameter.QUERY),
+                               OpenApiParameter(name=FilterFields.PARENT,
+                                                type=OpenApiTypes.STR,
+                                                location=OpenApiParameter.QUERY,
+                                                required=False)],
+                   responses=CriteriaSimpleSerializer)
     def list(self, request, *args, **kwargs):
         return self._handle_list(request, *args, **kwargs)
 

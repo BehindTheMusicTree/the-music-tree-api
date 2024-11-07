@@ -2,7 +2,6 @@ from bodzify_api.model.playlist.children.Fields import Fields as ChildFields
 
 
 class Fields:
-    BASE_PLAYLIST = ChildFields.BASE_PLAYLIST
     UUID = ChildFields.UUID
     USER = ChildFields.USER
     CREATED_ON = ChildFields.CREATED_ON
@@ -19,5 +18,5 @@ class Fields:
     PARENT = 'parent'
     ROOT = 'root'
     NAME = 'name'
-    CHILD_PLAYLIST = 'child_playlist'
-    DESCENDANT_PLAYLIST = 'descendant_playlist'
+    CHILDREN = 'children'
+    DESCENDANTS = 'descendants'

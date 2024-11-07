@@ -1,12 +1,8 @@
 from rest_framework import serializers
 
 from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode \
-    import FingerprintMissingCauseCode, Fields as ModelFields
-
-
-class Fields:
-    CODE = ModelFields.CODE
-    LABEL = ModelFields.LABEL
+    import FingerprintMissingCauseCode
+from .Fields import Fields
 
 
 class FingerprintMissingCauseCodeDetailedSerializer(serializers.ModelSerializer):

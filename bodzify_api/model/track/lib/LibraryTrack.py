@@ -1,4 +1,3 @@
-
 from typing import List, Tuple
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -7,7 +6,7 @@ from django.dispatch import receiver
 from django.db.models import QuerySet
 from django.utils import timezone
 
-from bodzify_api.model.criteria.children.genre.Genre import Genre
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.lib.LibraryTrackManager import LibraryTrackManager
 from bodzify_api import settings
@@ -36,7 +35,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
         validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)]
     )
     artists = models.ManyToManyField(Artist, blank=True, related_name=f'{Fields.MODEL}s')
-    genre = models.ForeignKey(Genre,
+    genre = models.ForeignKey(Criteria,
                               on_delete=models.DO_NOTHING,
                               null=True,
                               blank=True,

@@ -3,14 +3,14 @@ from django.db import models
 from django.db.models import QuerySet
 from typing import Optional
 
-from bodzify_api.model.playlist.children.ChildPlaylistManager import ChildPlaylistManager
+from bodzify_api.model.base.utils.base_model.BaseManager import BaseManager
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
     from .CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
 
 
-class CriteriaPlaylistManager(ChildPlaylistManager):
+class CriteriaPlaylistManager(BaseManager):
     def get_children(self, user, parent) -> QuerySet['CriteriaPlaylist']:
         return self.filter(user=user, parent=parent)
 

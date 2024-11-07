@@ -5,7 +5,8 @@ import string
 import requests
 import tempfile
 
-from bodzify_api.model.criteria.children.genre.Genre import Genre
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
 from bodzify_api.model.user.User import User
 from django.core.files.base import File as DjangoFile
 from django.db.models import F
@@ -84,7 +85,10 @@ class TrackService(Service):
                 if not genre_name or genre_name == "":
                     genre_uuid = None
                 else:
-                    criteria, _ = Genre.objects.get_or_create(user=user, name=genre_name)
+                    criteria: Criteria
+                    criteria, _ = Criteria.objects.get_or_create(user=user,
+                                                                 type_pk=CriteriaTypesPks.GENRE,
+                                                                 name=genre_name)
                     genre_uuid = criteria.uuid
             else:
                 return

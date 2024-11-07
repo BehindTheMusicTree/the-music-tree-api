@@ -12,8 +12,8 @@ from bodzify_api.service.Service import Service
 
 class CriteriaService(Service):
 
-    def __init__(self, criteria_type_id) -> None:
-        self.criteria_type_id = criteria_type_id
+    def __init__(self, criteria_type_pk) -> None:
+        self.criteria_type_pk = criteria_type_pk
         super().__init__()
 
     def _get_schema_serializer(self, oldinstance, schema_data: dict, request: Request):
@@ -53,6 +53,6 @@ class CriteriaService(Service):
                                                     data1=model_data,
                                                     data2=schema_data)
 
-        model_data[ModelFields.TYPE] = self.criteria_type_id
+        model_data[ModelFields.TYPE] = self.criteria_type_pk
 
         return model_data

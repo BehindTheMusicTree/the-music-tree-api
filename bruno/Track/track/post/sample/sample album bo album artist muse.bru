@@ -19,3 +19,8 @@ body:multipart-form {
   albumName: bo
   albumArtistsNames: muse
 }
+
+vars:post-response {
+  artistMuseUuid: res.body.album.albumArtists[0].uuid
+  albumBoUuid: res.body.album.uuid
+}

@@ -1,7 +1,6 @@
-
 from rest_framework import serializers
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack, Fields as ModelFields
-from bodzify_api.model.track.file.TrackFile import TrackFile, Fields as TrackFileFields
+from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
 
 
 class Fields:

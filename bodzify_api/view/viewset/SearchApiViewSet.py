@@ -1,30 +1,26 @@
-
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 
+from bodzify_api.filter.set.search.Fields import Fields as QueryFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
 from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist \
-    import CriteriaPlaylist, SpecialNames as LibTrackMixinSpecialNames
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
+    import CriteriaPlaylistWithoutCriteriaNames
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack, Fields as LibTrackFields
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
 from bodzify_api.serializer.schema.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.schema.artist.simple import ArtistSimpleSerializer
 from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.schema.playlist.children.simple.output.simple import ManualPlaylistSimpleSerializer
 from bodzify_api.serializer.schema.track.output.detailed import LibTrackDetailedSerializer
-from bodzify_api.view.pagination.DefaultMultipleModelLimitOffsetPagination import \
-    DefaultMultipleModelLimitOffsetPagination
-
-
-class QueryFields:
-    QUERY = "query"
-    TYPE = 'type'
+from ..pagination.DefaultMultipleModelLimitOffsetPagination import DefaultMultipleModelLimitOffsetPagination
 
 
 class QueryFiltersFields:
@@ -78,14 +74,14 @@ def criteria_playlist_filter(queryset, request, *args, **kwargs):
         unfiltered_queryset = queryset
         if query != "":
             queryset = unfiltered_queryset.filter(criteria__name__icontains=query)
-            if is_string1_part_of_string2_regardless_of_case(query, LibTrackMixinSpecialNames.GENRELESS):
+            if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistWithoutCriteriaNames.GENRE):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
-                    type_id=CriteriaTypesId.GENRE)
-            if is_string1_part_of_string2_regardless_of_case(query, LibTrackMixinSpecialNames.TAGLESS):
+                    type_pk=CriteriaTypesPks.GENRE)
+            if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistWithoutCriteriaNames.TAG):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
-                    type_id=CriteriaTypesId.TAG)
+                    type_pk=CriteriaTypesPks.TAG)
     return queryset
 
 

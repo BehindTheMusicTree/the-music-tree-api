@@ -13,7 +13,7 @@ class TestCase(BasePlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {
-            GetQueryParams.TYPE: CriteriaPlaylistTypes.GENRE,
+            GetQueryParams.TYPE_LABEL: CriteriaPlaylistTypes.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.TAG
         }
         response = self._get(data_dict=data_dict)
@@ -22,7 +22,7 @@ class TestCase(BasePlaylistTestCase):
 
     def test_type_genre_and_name_genreless_then_one_result(self):
         data_dict = {
-            GetQueryParams.TYPE: CriteriaPlaylistTypes.GENRE,
+            GetQueryParams.TYPE_LABEL: CriteriaPlaylistTypes.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.GENRE
         }
         response = self._get(data_dict=data_dict)
@@ -37,7 +37,7 @@ class TestCase(BasePlaylistTestCase):
         self.model_fixture_factory.create_genre(name=genre2_name)
 
         data_dict = {
-            GetQueryParams.TYPE: CriteriaPlaylistTypes.GENRE,
+            GetQueryParams.TYPE_LABEL: CriteriaPlaylistTypes.GENRE,
             GetQueryParams.NAME: 'rock'
         }
         response = self._get(data_dict=data_dict)

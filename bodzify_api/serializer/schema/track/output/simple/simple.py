@@ -1,5 +1,4 @@
-
-from bodzify_api.serializer.schema.track.output.fields import Fields as AvailableFields
+from bodzify_api.serializer.schema.track.output.Fields import Fields as AvailableFields
 
 
 class Fields:

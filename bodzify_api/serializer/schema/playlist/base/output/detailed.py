@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 from django.db import models
 
@@ -18,7 +17,7 @@ class BasePlaylistDetailedSerializer(serializers.ModelSerializer):
         model = BasePlaylist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.TYPE,
+                  Fields.TYPE_LABEL,
                   Fields.LIB_TRACKS_COUNT,
                   Fields.LIB_TRACKS,
                   Fields.LIB_TRACKS_ARCHIVED_COUNT,

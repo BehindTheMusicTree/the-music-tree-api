@@ -1,19 +1,10 @@
-from django.db import models
-
-from bodzify_api import settings
-from ....criteria_acendant_rel.Fields import Fields as CriteriaAscendantRelFields
-from ...Criteria import Criteria
-from .Fields import Fields
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.children.genre.GenreManager import GenreManager
 
 
 class Genre(Criteria):
 
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, related_name=Fields.CHILD)
-    ascendants = models.ManyToManyField('self', through='GenreAscendantRel',
-                                        through_fields=(CriteriaAscendantRelFields.DESCENDANT,
-                                                        CriteriaAscendantRelFields.ASCENDANT),
-                                        related_name=Fields.DESCENDANTS,
-                                        symmetrical=False)
+    objects: 'GenreManager' = GenreManager()
 
-    class Meta(Criteria.Meta):
-        db_table = f'{settings.APP_NAME}_genre'
+    class Meta:
+        proxy = True

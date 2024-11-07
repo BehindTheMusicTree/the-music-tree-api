@@ -2,7 +2,6 @@ from bodzify_api.model.playlist.children.Fields import Fields as ChildFields
 
 
 class Fields:
-    BASE_PLAYLIST = ChildFields.BASE_PLAYLIST
     CREATED_ON = ChildFields.CREATED_ON
     UPDATED_ON = ChildFields.UPDATED_ON
     UUID = ChildFields.UUID
@@ -15,4 +14,5 @@ class Fields:
     DURATION_STR_IN_HOUR_MIN_SEC = ChildFields.DURATION_STR_IN_HOUR_MIN_SEC
     PLAY_COUNT = ChildFields.PLAY_COUNT
     LAST_TRACK_LIST_UPDATE_DATE = ChildFields.LAST_TRACK_LIST_UPDATE_DATE
+    NAME_DB = '_name'
     NAME = 'name'

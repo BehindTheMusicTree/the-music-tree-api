@@ -6,8 +6,8 @@ from .Fields import Fields
 
 class PlaylistParamFilterSet(AppFilterSet):
     name = filters.CharFilter()
-    type = filters.CharFilter()
+    type_label = filters.CharFilter()
 
     class Meta:
         model = BasePlaylist
-        fields = [Fields.NAME, Fields.TYPE]
+        fields = [Fields.NAME, Fields.TYPE_LABEL]

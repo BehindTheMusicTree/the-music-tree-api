@@ -2,7 +2,6 @@ from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
 
 
 class Fields:
-    BASE_PLAYLIST = BasePlaylistFields.MODEL
     UUID = BasePlaylistFields.UUID
     USER = BasePlaylistFields.USER
     CREATED_ON = BasePlaylistFields.CREATED_ON

@@ -1,7 +1,7 @@
 
 from rest_framework import status
 
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
+from bodzify_api.model.criteria.CriteriaType import CriteriaTypesPks
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.serializer.schema.playlist.base.output.detailed import Fields as RetrieveFields
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
@@ -22,7 +22,7 @@ class TestCase(BasePlaylistTestCase):
         name = 'rock'
         genre = self.model_fixture_factory.create_genre(name=name)
         playlist_uuid = BasePlaylist.objects.get(criteria_child_playlist__criteria=genre,
-                                                 criteria_child_playlist__type=CriteriaTypesId.GENRE).uuid
+                                                 criteria_child_playlist__type=CriteriaTypesPks.GENRE).uuid
 
         response = self._retrieve(base_playlist_uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK
@@ -33,7 +33,7 @@ class TestCase(BasePlaylistTestCase):
         name = 'fr'
         genre = self.model_fixture_factory.create_tag(name=name)
         playlist_uuid = BasePlaylist.objects.get(criteria_child_playlist__criteria=genre,
-                                                 criteria_child_playlist__type=CriteriaTypesId.TAG).uuid
+                                                 criteria_child_playlist__type=CriteriaTypesPks.TAG).uuid
 
         response = self._retrieve(base_playlist_uuid=playlist_uuid)
         assert response.status_code == status.HTTP_200_OK

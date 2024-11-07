@@ -1,4 +1,20 @@
-[   
+[
+    {
+        "model": "bodzify_api.criteriatype",
+        "pk": 0,
+        "fields": {
+            "label": "genre"
+        }
+    },
+    {
+        "model": "bodzify_api.criteriatype",
+        "pk": 1,
+        "fields": {
+            "label": "tag"
+        }
+    },
+    
+    
     {
         "model": "bodzify_api.fingerprintmissingcausecode",
         "pk": 0,

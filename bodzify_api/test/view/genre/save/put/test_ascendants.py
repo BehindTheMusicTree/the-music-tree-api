@@ -2,8 +2,8 @@ from django.db.models import QuerySet
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria_acendant_rel.CriteriaAscendantRel import CriteriaAscendantRel
-from bodzify_api.model.criteria_acendant_rel.Fields import Fields
+from bodzify_api.model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
+from bodzify_api.model.criteria.lineage_rel.Fields import Fields
 from bodzify_api.serializer.schema.criteria.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
@@ -17,9 +17,9 @@ class TestCase(GenreTestCase):
         data = {PutFields.PARENT: rock_genre.uuid}
         response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
-        updated_punk_genre = Criteria.objects.get(user=self.test_user1, uuid=punk_genre.uuid)
-        ascendant_relations: QuerySet[CriteriaAscendantRel] = \
-            updated_punk_genre.criteria_ascendant_relation_ascendants.all()
+        updated_punk_genre: Criteria = Criteria.objects.get(user=self.test_user1, uuid=punk_genre.uuid)
+        ascendant_relations: QuerySet[CriteriaLineageRel] = \
+            updated_punk_genre.ascendants_rel.all()
         assert ascendant_relations[0].ascendant.uuid == rock_genre.uuid
         assert ascendant_relations[0].degree == 1
 
@@ -31,7 +31,7 @@ class TestCase(GenreTestCase):
         response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         updated_punk_genre = Criteria.objects.get(user=self.test_user1, uuid=punk_genre.uuid)
-        assert updated_punk_genre.criteria_ascendant_relation_ascendants.count() == 0
+        assert updated_punk_genre.criteria_lineage_rel_ascendants.count() == 0
 
     def test_new_root_then_update_ascendants_of_descendants(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
@@ -43,8 +43,8 @@ class TestCase(GenreTestCase):
         assert response.status_code == status.HTTP_200_OK
 
         updated_punkhardcore_genre = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
-        punkhardcore_ascendants_unordered: QuerySet[CriteriaAscendantRel] = \
-            updated_punkhardcore_genre.criteria_ascendant_relation_ascendants.all()
+        punkhardcore_ascendants_unordered: QuerySet[CriteriaLineageRel] = \
+            updated_punkhardcore_genre.criteria_lineage_rel_ascendants.all()
         punkhardcore_ascendants_ordered = punkhardcore_ascendants_unordered.order_by(Fields.DEGREE)
         assert len(punkhardcore_ascendants_ordered) == 2
         assert punkhardcore_ascendants_ordered[0].ascendant.uuid == punk_genre.uuid
@@ -67,8 +67,8 @@ class TestCase(GenreTestCase):
 
         updated_bretonpunkhardcore_genre = Criteria.objects.get(user=self.test_user1,
                                                                 uuid=bretonpunkhardcore_genre.uuid)
-        bretonpunkhardcore_ascendants_unordered: QuerySet[CriteriaAscendantRel] = \
-            updated_bretonpunkhardcore_genre.criteria_ascendant_relation_ascendants.all()
+        bretonpunkhardcore_ascendants_unordered: QuerySet[CriteriaLineageRel] = \
+            updated_bretonpunkhardcore_genre.criteria_lineage_rel_ascendants.all()
         bretonpunkhardcore_ascendants_ordered = \
             bretonpunkhardcore_ascendants_unordered.order_by(Fields.DEGREE)
         assert len(bretonpunkhardcore_ascendants_ordered) == 4
@@ -92,8 +92,8 @@ class TestCase(GenreTestCase):
 
         assert self.saved_genre.root == punk_genre
         updated_punkhardcore_genre = Criteria.objects.get(user=self.test_user1, uuid=punkhardcore_genre.uuid)
-        punkhardcore_ascendants_unordered: QuerySet[CriteriaAscendantRel] = \
-            updated_punkhardcore_genre.criteria_ascendant_relation_ascendants.all()
+        punkhardcore_ascendants_unordered: QuerySet[CriteriaLineageRel] = \
+            updated_punkhardcore_genre.criteria_lineage_rel_ascendants.all()
         punkhardcore_ascendants_ordered = punkhardcore_ascendants_unordered.order_by(Fields.DEGREE)
         assert len(punkhardcore_ascendants_ordered) == 1
         assert punkhardcore_ascendants_ordered[0].ascendant.uuid == punk_genre.uuid

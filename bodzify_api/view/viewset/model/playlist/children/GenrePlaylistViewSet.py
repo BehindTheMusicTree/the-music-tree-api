@@ -1,8 +1,8 @@
-
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 
-from bodzify_api.filter.set.GenrePlaylistFilterSet import GenrePlaylistFilterSet, Fields as FilterFields
+from bodzify_api.filter.set.playlist.children.CriteriaPlaylistFilterSet import CriteriaPlaylistFilterSet
+from bodzify_api.filter.set.playlist.children.Fields import Fields as FilterFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import CriteriaPlaylistDetailedSerializer
 from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import CriteriaPlaylistSimpleSerializer
@@ -14,7 +14,7 @@ class GenrePlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
         super().__init__(
             service=None,
             model_class=CriteriaPlaylist,
-            filter_class=GenrePlaylistFilterSet,
+            filter_class=CriteriaPlaylistFilterSet,
             simple_serializer_class=CriteriaPlaylistSimpleSerializer,
             detailed_serializer_class=CriteriaPlaylistDetailedSerializer,
             **kwargs

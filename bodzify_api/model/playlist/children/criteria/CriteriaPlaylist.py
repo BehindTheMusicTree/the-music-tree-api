@@ -1,26 +1,35 @@
 from abc import abstractmethod
-from typing import Dict, Any
+from typing import Dict, Any, TYPE_CHECKING
 
 from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.utils.model import SaveContext
-from ..ChildPlaylist import ChildPlaylist
+from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from .CriteriaPlaylistManager import CriteriaPlaylistManager
 from .Fields import Fields
 
 
-class CriteriaPlaylist(ChildPlaylist):
-    criteria = models.OneToOneField(Criteria, on_delete=models.CASCADE, blank=True, null=True)
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILD_PLAYLIST)
-    root = models.ForeignKey('self', on_delete=models.SET_NULL, related_name=Fields.DESCENDANT_PLAYLIST)
+class CriteriaPlaylist(BasePlaylist):
+    criteria = models.OneToOneField(Criteria,
+                                    on_delete=models.CASCADE,
+                                    blank=True,
+                                    null=True,
+                                    related_name=CriteriaFields.CRITERIA_PLAYLIST_DB)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)
+    root = models.ForeignKey('self', on_delete=models.DO_NOTHING, related_name=Fields.DESCENDANTS)
+    type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     objects: CriteriaPlaylistManager = CriteriaPlaylistManager()
 
     class Meta:
         db_table = f'{settings.APP_NAME}_criteria_playlist'
-        indexes = [models.Index(fields=[Fields.BASE_PLAYLIST, Fields.CRITERIA], name='%(class)s_idx'),]
+        verbose_name = 'Criteria Playlist'
+        verbose_name_plural = 'Criteria Playlists'
+        indexes = [models.Index(fields=[Fields.CRITERIA], name='crit_playlist_criteria_idx'),]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,7 +51,7 @@ class CriteriaPlaylist(ChildPlaylist):
     def __str__(self) -> str:
         return f'{self.name}'
 
-    def _prepare_save(self, is_creating, **kwargs) -> Dict[str, Any]:
+    def _prepare_save(self, **kwargs) -> Dict[str, Any]:
         ctx = SaveContext(
             kwargs=kwargs,
             modified_fields=[],
@@ -50,11 +59,11 @@ class CriteriaPlaylist(ChildPlaylist):
         )
 
         parent_has_changed = self._set_parent()
-        if parent_has_changed and not is_creating:
+        if parent_has_changed and not self._state.adding:
             ctx.add_modified_field(Fields.PARENT)
 
         root_has_changed = self._set_root()
-        if root_has_changed and not is_creating:
+        if root_has_changed and not self._state.adding:
             ctx.add_modified_field(Fields.ROOT)
 
         if ctx.modified_fields and not ctx.should_track_fields:
@@ -88,11 +97,8 @@ class CriteriaPlaylist(ChildPlaylist):
                 pass
         return False
 
-    def _is_creating(self) -> bool:
-        return getattr(self, f"{Fields.ROOT}_id", None) is None
-
-    def _post_save(self, is_creating: bool):
-        if not is_creating:
+    def _post_save(self):
+        if not self._state.adding:
             self._post_update()
 
     def _post_update(self):
@@ -106,10 +112,11 @@ class CriteriaPlaylist(ChildPlaylist):
             child.save(update_fields=[Fields.ROOT])
 
     def save(self, *args, **kwargs):
-        is_creating = self._is_creating()
-        if is_creating:
+        if self._state.adding:
+            super().save(*args, **kwargs)
             self.root = self
+            super().save(update_fields=['root'])
 
-        kwargs = self._prepare_save(is_creating, **kwargs)
+        kwargs = self._prepare_save(**kwargs)
         super().save(*args, **kwargs)
-        self._post_save(is_creating=is_creating)
+        self._post_save()

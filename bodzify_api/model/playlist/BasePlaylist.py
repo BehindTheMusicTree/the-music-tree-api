@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 class BasePlaylist(LibTrackMixin, TrackablePlayCountModel):
     last_track_list_update_date = models.DateTimeField(auto_now_add=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_pk = models.PositiveIntegerField()
 
     class Meta:
         db_table = f'{settings.APP_NAME}_base_playlist'
@@ -38,12 +37,8 @@ class BasePlaylist(LibTrackMixin, TrackablePlayCountModel):
         return model_class  # type: ignore
 
     @property
-    def object(self) -> ChildPlaylist:
-        return self.object_model_class.objects.get(user=self.user, id=self.object_pk)
-
-    @property
     def name(self) -> Optional[str]:
-        return self.object.name
+        raise NotImplementedError()
 
     def update_last_track_list_update_date(self):
         self.last_track_list_update_date = timezone.now()
