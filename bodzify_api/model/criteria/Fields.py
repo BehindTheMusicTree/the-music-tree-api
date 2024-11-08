@@ -2,7 +2,6 @@ from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFiel
 
 
 class Fields:
-    MODEL = 'Criteria'
     CREATED_ON = LibTrackMixinFields.CREATED_ON
     UPDATED_ON = LibTrackMixinFields.UPDATED_ON
     USER = LibTrackMixinFields.USER
@@ -13,6 +12,7 @@ class Fields:
     LIB_TRACKS_ARCHIVED_COUNT = LibTrackMixinFields.LIB_TRACKS_ARCHIVED_COUNT
     DURATION_IN_SEC = LibTrackMixinFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
+    LIB_TRACKS_DB = 'genre_lib_tracks'
     NAME = 'name'
     ASCENDANT = 'ascendant'
     ASCENDANTS = ASCENDANT + 's'
@@ -22,8 +22,9 @@ class Fields:
     DESCENDANTS = DESCENDANT + 's'
     DESCENDANTS_REL_DB = '_descendants_rel'
     DESCENDANTS_REL = 'descendants_rel'
-    ROOT_DEGREE = 'root_degree'
+    ROOT_DB = '_root'
     ROOT = 'root'
+    PARENT_DB = '_parent'
     PARENT = 'parent'
     CHILD = 'child'
     CHILDREN = 'children'

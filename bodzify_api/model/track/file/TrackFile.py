@@ -1,4 +1,3 @@
-
 import binascii
 import datetime
 import os
@@ -6,7 +5,6 @@ from typing import Optional, TYPE_CHECKING
 
 from django.core.files.base import File as DjangoFile
 from django.core.validators import FileExtensionValidator
-from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F
@@ -14,57 +12,32 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 
-from bodzify_api.model.base.PrivateStandardResource \
-    import PrivateStandardResource, Fields as PrivateStandardResourceFields
-from bodzify_api.model.musicbrainz.recording.MusicBrainzRecordingLookupResult import MusicbrainzRecordingLookupResult
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCause \
+from bodzify_api import settings
+from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult import MusicbrainzRecordingLookupResult
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause \
     import MusicbrainzRecordingMissingCause
-from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCauseCode import MusicbrainzRecordingMissingCauseCode
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
+    import MusicbrainzRecordingMissingCauseCode
 from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import FingerprintingResult
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 from bodzify_api.model.user.User import User
-from bodzify_api import settings
+from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.validator.track_file_validator \
     import validate_content_type_is_audio, validate_filename_length, validate_size
+from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
 
-class Fields:
-    CREATED_ON = PrivateStandardResourceFields.CREATED_ON
-    UPDATED_ON = PrivateStandardResourceFields.UPDATED_ON
-    USER = PrivateStandardResourceFields.USER
-    LIBRARY_TRACK = 'library_track'
-    FILE = 'file'
-    FILENAME = 'filename'
-    EXTENSION = 'extension'
-    DURATION_IN_SEC = 'duration_in_sec'
-    DURATION_STR_IN_HOUR_MIN_SEC = 'duration_str_in_hour_min_sec'
-    FINGERPRINT_MEMORY = 'fingerprint_memory'
-    FINGERPRINT_BYTES = 'fingerprint_bytes'
-    FINGERPRINT_MISSING_CAUSE = 'fingerprint_missing_cause'
-    FLAC_MD5_HAS_BEEN_CORRECTED = 'flac_md5_has_been_corrected'
-    SIZE_IN_BYTES = 'size_in_bytes'
-    SIZE_IN_KO = 'size_in_ko'
-    SIZE_IN_MO = 'size_in_mo'
-    BITRATE_IN_KBPS = 'bitrate_in_kbps'
-    MUSICBRAINZ_RECORDING = 'musicbrainz_recording'
-    MUSICBRAINZ_RECORDING_MISSING_CAUSE = 'musicbrainz_recording_missing_cause'
-
-
 def _get_user_lib_path(instance: 'TrackFile', filename):
     user: User = instance.user
     return user.lib_path_relative_to_media + '/' + filename
-
-
-class PreserveSpacesStorage(FileSystemStorage):
-    def get_valid_name(self, name):
-        return name
 
 
 class TrackFile(PrivateStandardResource):
@@ -110,7 +83,6 @@ class TrackFile(PrivateStandardResource):
         MusicbrainzRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
-        db_table = f'{settings.APP_NAME}_track_file'
         verbose_name = 'Track File'
         verbose_name_plural = 'Track Files'
 

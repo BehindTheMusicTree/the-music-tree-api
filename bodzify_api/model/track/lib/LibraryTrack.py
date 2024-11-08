@@ -1,4 +1,5 @@
 from typing import List, Tuple
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -6,21 +7,24 @@ from django.dispatch import receiver
 from django.db.models import QuerySet
 from django.utils import timezone
 
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.track.lib.LibraryTrackManager import LibraryTrackManager
 from bodzify_api import settings
-from bodzify_api.model.base.PrivateUniqueResource import PrivateUniqueResource
-from bodzify_api.model.track.lib.Fields import Fields
-from bodzify_api.model.track.file.TrackFile import TrackFile
+from bodzify_api.model.criteria.children.genre.Genre import Genre
+from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
+from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
+from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 from bodzify_api.model.album.Album import Album
+from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.base.TrackablePlayCountModel import TrackablePlayCountModel
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from ..file.TrackFile import TrackFile
+from .Fields import Fields
+from .LibraryTrackManager import LibraryTrackManager
 
-
-class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
+class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
 
@@ -28,51 +32,48 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
                               on_delete=models.CASCADE,
                               null=True,
                               blank=True,
-                              related_name=f"album_{Fields.MODEL}s",)
+                              related_name=AlbumFields.LIB_TRACKS_DB,)
     position_in_album = models.PositiveIntegerField(
         null=True,
         blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)]
-    )
-    artists = models.ManyToManyField(Artist, blank=True, related_name=f'{Fields.MODEL}s')
-    genre = models.ForeignKey(Criteria,
+        validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)])
+    artists = models.ManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_DB)
+    genre = models.ForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
                               null=True,
                               blank=True,
-                              related_name=f"{Fields.MODEL}s")
+                              related_name=CriteriaFields.LIB_TRACKS_DB)
     rating = models.IntegerField(
         null=True,
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
-    base_playlists = models.ManyToManyField('BasePlaylist',
-                                            through='LibTrackPlaylistPositionRel',
-                                            related_name=f"playlist_{Fields.MODEL}s")
+    base_playlists = models.ManyToManyField(BasePlaylist, 
+                                            through='LibTrackPlaylistRel', 
+                                            related_name=BasePlaylistFields.LIB_TRACKS_DB)
 
     objects: LibraryTrackManager = LibraryTrackManager()
 
     class Meta:
-        db_table = f'{settings.APP_NAME}_library_track'
         verbose_name = 'Library Track'
         verbose_name_plural = 'Library Tracks'
-        indexes = [
-            models.Index(fields=[Fields.USER, Fields.TITLE]),
-            models.Index(fields=[Fields.USER, Fields.GENRE]),
-            models.Index(fields=[Fields.USER, Fields.ALBUM]),
-        ]
+        indexes = [models.Index(fields=[Fields.USER, Fields.TITLE]),
+                   models.Index(fields=[Fields.USER, Fields.GENRE]),
+                   models.Index(fields=[Fields.USER, Fields.ALBUM]),]
 
     @property
     def track_file(self) -> TrackFile:
-        return self._track_file  # type: ignore
+        return getattr(self, Fields.TRACK_FILE_DB)
 
     @property
     def lib_track_playlist_relations(self) -> models.QuerySet:
-        return self.lib_track_position_relations  # type: ignore
+        return getattr(self, Fields.LIB_TRACK_PLAYLIST_RELS_DB)
 
     @property
     def relative_url(self) -> str:
         return f"tracks/{self.uuid}/"
+        
 
     def __str__(self):
         position_str = f"#{self.position_in_album}" if self.position_in_album else "#--"
@@ -127,12 +128,12 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCountModel):
         self.track_file.update_file_tags(normalized_metadata=normalized_metadata)
 
     def get_lib_track_playlists_with_positions(self) -> List[Tuple[str, int]]:
-        from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
-            Fields as LibTrackPlaylistPositionRelFields
-        lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(user=self.user, library_track=self)
-        return list(lib_track_position_relations.values_list(
-            LibTrackPlaylistPositionRelFields.BASE_PLAYLIST + '__uuid',
-            LibTrackPlaylistPositionRelFields.POSITION
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel, \
+            Fields as LibTrackPlaylistRelFields
+        lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, library_track=self)
+        return list(lib_track_playlist_rels.values_list(
+            LibTrackPlaylistRelFields.BASE_PLAYLIST + '__uuid',
+            LibTrackPlaylistRelFields.POSITION
         ))
 
     def delete_with_checking_album_and_artists_potential_deletion(self):

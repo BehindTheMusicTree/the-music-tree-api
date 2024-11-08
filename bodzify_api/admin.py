@@ -7,11 +7,11 @@ from .model.criteria.Criteria import Criteria
 from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 from .model.all_lib_track_mixin.AllLibTrackMixin import AllLibTrackMixin
 from .model.artist.Artist import Artist
-from .model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
-from .model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
-from .model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
-from .model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCause import MusicbrainzRecordingMissingCause
-from .model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCauseCode \
+from .model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from .model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
+from .model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
+from .model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import MusicbrainzRecordingMissingCause
+from .model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
     import MusicbrainzRecordingMissingCauseCode
 from .model.playlist.BasePlaylist import BasePlaylist
 from .model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
@@ -35,7 +35,7 @@ admin.site.register(CriteriaLineageRel)
 admin.site.register(BasePlaylist)
 admin.site.register(ManualPlaylist)
 admin.site.register(CriteriaPlaylist)
-admin.site.register(LibTrackPlaylistPositionRel)
+admin.site.register(LibTrackPlaylistRel)
 admin.site.register(MusicbrainzRecording)
 admin.site.register(MusicbrainzRecordingMissingCause)
 admin.site.register(MusicbrainzRecordingMissingCauseCode)

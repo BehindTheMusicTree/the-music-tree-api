@@ -1,9 +1,8 @@
 from django.db import models
 
-from bodzify_api import settings
-from bodzify_api.model.base.PrivateStandardResource import PrivateStandardResource
-from ..Criteria import Criteria
+from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from ..Fields import Fields as CriteriaFields
+from ..Criteria import Criteria
 from .Fields import Fields
 
 
@@ -16,7 +15,6 @@ class CriteriaLineageRel(PrivateStandardResource):
         return f'Descendant {self.descendant.uuid} | Degree {self.degree} | Ascendant {self.ascendant.uuid}'
 
     class Meta:
-        db_table = f'{settings.APP_NAME}_criteria_lineage_rel'
         verbose_name = 'Criteria Lineage Relation'
         verbose_name_plural = 'Criteria Lineage Relations'
         indexes = [models.Index(fields=[Fields.USER], name='crit_lineage_rel_user_idx')]

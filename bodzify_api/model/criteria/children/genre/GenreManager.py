@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 class GenreManager(CriteriaManager):
     model: type['Genre']
 
-    def create_instance(self, **kwargs) -> 'Genre':
-        return super().create_instance(type_pk=CriteriaTypesPks.GENRE, **kwargs)
+    def create_single(self, **kwargs) -> 'Genre':
+        return super().create_single(type_pk=CriteriaTypesPks.GENRE, **kwargs)
 
     def filter(self, *args: Any, **kwargs: Any) -> Self:
         return super().filter(type_id=CriteriaTypesPks.GENRE, *args, **kwargs)

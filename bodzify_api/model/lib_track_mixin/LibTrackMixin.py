@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 
-from bodzify_api.model.base.PrivateUniqueResource import PrivateUniqueResource
+from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack

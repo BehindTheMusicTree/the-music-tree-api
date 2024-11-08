@@ -1,7 +1,7 @@
 
 from rest_framework import status
 
-from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCauseCode \
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
     import MusicbrainzRecordingMissingCauseCode
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 

@@ -2,39 +2,33 @@ from typing import Optional, TYPE_CHECKING
 
 from django.db import models
 from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
 
 
 from bodzify_api import settings
-from bodzify_api.model.base.TrackablePlayCountModel import TrackablePlayCountModel
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
-from bodzify_api.model.playlist.children.ChildPlaylist import ChildPlaylist
 from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
 
-class BasePlaylist(LibTrackMixin, TrackablePlayCountModel):
+class BasePlaylist(LibTrackMixin, TrackablePlayCount):
     last_track_list_update_date = models.DateTimeField(auto_now_add=True)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = f'{settings.APP_NAME}_base_playlist'
         verbose_name = 'Base Playlist'
         verbose_name_plural = 'Base Playlists'
         indexes = [models.Index(fields=[Fields.USER, Fields.UUID], name='base_playlist_user_uuid_idx')]
 
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
-        return self.playlist_library_tracks  # type: ignore
+        return getattr(self, Fields.LIB_TRACKS_DB)
 
     @property
-    def object_model_class(self) -> type[ChildPlaylist]:
-        model_class = self.content_type.model_class()
-        if not model_class:
-            raise Exception('Model class is not set')
-        return model_class  # type: ignore
+    def lib_track_playlist_rels(self) -> models.QuerySet['LibTrackPlaylistRel']:
+        return getattr(self, Fields.LIB_TRACK_PLAYLIST_RELS_DB)
 
     @property
     def name(self) -> Optional[str]:

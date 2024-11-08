@@ -1,9 +1,10 @@
 from django.db import models
 
 from bodzify_api import settings
+from bodzify_api.model.base.BaseModel import BaseModel
 
 
-class FingerprintMissingCauseCode(models.Model):
+class FingerprintMissingCauseCode(BaseModel):
     class Codes(models.IntegerChoices):
         AUDIO_META_AMALYSIS_DISABLED = 0
         SERVICE_NOT_FOUND = 1
@@ -26,6 +27,5 @@ class FingerprintMissingCauseCode(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(check=~models.Q(label=""), name="fingerprint_missing_cause_non_empty_label")]
-        db_table = f'{settings.APP_NAME}_fingerprint_missing_cause_code'
         verbose_name = 'Fingerprinting Error Code'
         verbose_name_plural = 'Fingerprinting Error Codes'

@@ -1,4 +1,4 @@
-from bodzify_api.model.base.PrivateUniqueResource import Fields as PrivateStandardResourceFields
+from bodzify_api.model.private_unique_resource.Fields import Fields as PrivateStandardResourceFields
 
 
 class Fields:

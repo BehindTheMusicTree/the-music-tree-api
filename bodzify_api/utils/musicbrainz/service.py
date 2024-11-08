@@ -9,12 +9,12 @@ from bodzify_api.exception.musicbrainz import ApiErrorMusicbrainzRecordingLookup
     MusicbrainzRecordingLookupException, \
     UnknownErrorMusicbrainzRecordingLookupException, \
     UnknownStatusCodeMusicbrainzRecordingLookupException
-from bodzify_api.model.musicbrainz.recording.MusicBrainzRecordingLookupResult import MusicbrainzRecordingLookupResult
-from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCause \
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult import MusicbrainzRecordingLookupResult
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause \
     import MusicbrainzRecordingMissingCause
-from bodzify_api.model.musicbrainz.recording.missing_cause.MusicbrainzRecordingMissingCauseCode \
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
     import MusicbrainzRecordingMissingCauseCode
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.user.User import User
 from .utils import ApiFields, get_best_recording_dict_with_score, create_musicbrainz_recordinginstance_from_dict
 

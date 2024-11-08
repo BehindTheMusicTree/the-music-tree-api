@@ -2,7 +2,6 @@ from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFiel
 
 
 class Fields:
-    MODEL = 'all_lib_track_mixin'
     UUID = LibTrackMixinFields.UUID
     USER = LibTrackMixinFields.USER
     CREATED_ON = LibTrackMixinFields.CREATED_ON

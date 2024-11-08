@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording, Fields as ModelFields
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording, Fields as ModelFields
 from bodzify_api.serializer.schema.musicbrainz.artist.detailed import MusicbrainzArtistDetailedSerializer
 
 

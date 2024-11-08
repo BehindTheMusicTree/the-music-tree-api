@@ -20,7 +20,7 @@ from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.service.Service import Service
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel, \
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel, \
     Fields as LibTrackPlaylistRelFields
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -65,9 +65,9 @@ class TrackService(Service):
     @staticmethod
     def _decrease_position_of_next_tracks_in_old_track_playlists(user: User, playlists_with_old_position: list):
         for playlist_uuid, old_position in playlists_with_old_position:
-            lib_track_position_relations_to_update = LibTrackPlaylistPositionRel.objects.filter(
+            lib_track_playlist_rels_to_update = LibTrackPlaylistRel.objects.filter(
                 user=user, base_playlist=playlist_uuid, position__gt=old_position)
-            lib_track_position_relations_to_update.update(
+            lib_track_playlist_rels_to_update.update(
                 position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
     @staticmethod

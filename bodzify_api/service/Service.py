@@ -6,7 +6,7 @@ from bodzify_api.model.user.User import User
 from rest_framework.request import Request
 from rest_framework.serializers import Serializer
 
-from bodzify_api.model.base.utils.PrivateModel import Fields
+from bodzify_api.model.private.Fields import Fields
 
 
 class Service:

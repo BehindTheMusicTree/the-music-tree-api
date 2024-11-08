@@ -46,7 +46,7 @@ class TrackModelSerializer(serializers.ModelSerializer):
         library_track_data = validated_data.copy()
         library_track_data.pop(Fields.FILE, None)
 
-        library_track: LibraryTrack = LibraryTrack.objects.create_with_track_file(
+        library_track: LibraryTrack = LibraryTrack.objects.create_single_with_track_file(
             track_file_data=track_file_data,
             library_track_data=library_track_data
         )

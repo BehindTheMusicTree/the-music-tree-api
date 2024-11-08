@@ -8,6 +8,7 @@ from bodzify_api.model.user.User import User
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -22,7 +23,7 @@ class Album(LibTrackMixin):
 
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
-        return self.album_library_tracks  # type: ignore
+        return getattr(self, Fields.LIB_TRACKS_DB)
 
     def get_sorted_tracks(self) -> models.QuerySet['LibraryTrack']:
         from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
@@ -32,7 +33,6 @@ class Album(LibTrackMixin):
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")]
-        db_table = f"{settings.APP_NAME}_album"
 
     def __str__(self) -> str:
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -49,7 +49,7 @@ class Album(LibTrackMixin):
             for track in tracks:
                 track_position = f"{track.position_in_album}." if track.position_in_album else "--."
                 track_artists = ", ".join(str(artist) for artist in track.artists.all())
-                track_artists = f"{track_artists} - " if track_artists else "[No Artist] - "
+                track_artists = f"{track_artists} | " if track_artists else "[No Artist] | "
                 track_details.append(f"{track_position}{track_artists}{track.title}")
             track_details_str = "; ".join(track_details)
             string += f" | Tracks: {track_details_str}"

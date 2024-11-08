@@ -1,8 +1,7 @@
-from bodzify_api.model.base.PrivateUniqueResource import Fields as PrivateResourceFields
+from bodzify_api.model.private_unique_resource.Fields import Fields as PrivateResourceFields
 
 
 class Fields:
-    MODEL = 'library_track_mixin_child'
     UUID = PrivateResourceFields.UUID
     USER = PrivateResourceFields.USER
     CREATED_ON = PrivateResourceFields.CREATED_ON

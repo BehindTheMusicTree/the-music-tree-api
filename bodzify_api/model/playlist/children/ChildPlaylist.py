@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from django.db import models
 from django.utils import timezone
 
-from bodzify_api.model.base.PrivateStandardResource import PrivateStandardResource
+from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.user.User import User
 from .ChildPlaylistManager import ChildPlaylistManager
 

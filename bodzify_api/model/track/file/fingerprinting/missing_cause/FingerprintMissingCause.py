@@ -1,7 +1,7 @@
 from django.db import models
 
 from bodzify_api import settings
-from bodzify_api.model.base.PrivateUniqueResource import PrivateUniqueResource
+from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 from .code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
 from .FingerprintMissingCauseManager import FingerprintMissingCauseManager
 
@@ -17,6 +17,5 @@ class FingerprintMissingCause(PrivateUniqueResource):
         return f"{self.code} | {self.message}"
 
     class Meta:
-        db_table = f'{settings.APP_NAME}_fingerprint_missing_cause'
         verbose_name = 'Fingerprinting Error'
         verbose_name_plural = 'Fingerprinting Errors'

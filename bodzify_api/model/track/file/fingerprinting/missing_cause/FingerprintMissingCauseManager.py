@@ -1,4 +1,4 @@
-from bodzify_api.model.base.utils.public_standard_resource.PublicStandardResourceManager \
+from bodzify_api.model.public_standard_resource.PublicStandardResourceManager \
     import PublicStandardResourceManager
 
 

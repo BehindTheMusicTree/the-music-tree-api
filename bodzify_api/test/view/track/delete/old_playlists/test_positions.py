@@ -1,7 +1,7 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
@@ -22,7 +22,7 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         response = self._delete_lib_track(lib_track_uuid=track_old_position_1.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        playlist_relations = LibTrackPlaylistPositionRel.objects.filter(base_playlist=base_playlist)
+        playlist_relations = LibTrackPlaylistRel.objects.filter(base_playlist=base_playlist)
         assert len(playlist_relations) == 2
         assert playlist_relations.get(library_track=track_old_position_2).position == 1
         assert playlist_relations.get(library_track=track_old_position_3).position == 2

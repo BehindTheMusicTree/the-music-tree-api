@@ -1,10 +1,8 @@
-
-from bodzify_api.model.base.PrivateUniqueResource import Fields as PrivateUniqueResourceFields
-from bodzify_api.model.base.TrackablePlayCountModel import Fields as TrackablePlayCountFields
+from bodzify_api.model.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
+from bodzify_api.model.trackable_play_count.Fields import Fields as TrackablePlayCountFields
 
 
 class Fields:
-    MODEL = 'library_track'
     UUID = PrivateUniqueResourceFields.UUID
     USER = PrivateUniqueResourceFields.USER
     CREATED_ON = PrivateUniqueResourceFields.CREATED_ON
@@ -21,6 +19,8 @@ class Fields:
     GENRE = "genre"
     RATING = "rating"
     BASE_PLAYLISTS = "base_playlists"
+    LIB_TRACK_PLAYLIST_RELS_DB = "_base_playlists_rels"
+    LIB_TRACK_PLAYLIST_RELS = "base_playlists_rels"
     BASE_PLAYLISTS_USER_FRIENDLY = "playlists"
     LANGUAGE = "language"
     ARCHIVED = 'archived'

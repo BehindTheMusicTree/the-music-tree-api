@@ -71,9 +71,9 @@ def init_logs_if_needed():
             raise EnvironmentError(f"The log app file {LOG_APP_FILE} does not exist.")
         print_django(f"The log info file {LOG_APP_FILE} exists.")
 
-        global LOGGERS_NAME
+        global LOGGER_NAMES
 
-        class LOGGERS_NAME:
+        class LOGGER_NAMES:
             INFO = 'info'
             REQUEST = 'request'
             REQUEST_DJANGO = 'django.request'
@@ -159,32 +159,32 @@ def init_logs_if_needed():
                     'level': 'DEBUG',
                     'propagate': True
                 },
-                LOGGERS_NAME.INFO: {
+                LOGGER_NAMES.INFO: {
                     'handlers': ['info'],
                     'level': 'DEBUG',
                     'propagate': True
                 },
-                LOGGERS_NAME.REQUEST: {
+                LOGGER_NAMES.REQUEST: {
                     'handlers': ['requests', 'console'],
                     'level': 'INFO',
                     'propagate': True,
                 },
-                LOGGERS_NAME.REQUEST_DJANGO: {
+                LOGGER_NAMES.REQUEST_DJANGO: {
                     'handlers': ['requests_with_trace'],
                     'level': 'DEBUG',
                     'propagate': False,
                 },
-                LOGGERS_NAME.EXCEPTIONS: {
+                LOGGER_NAMES.EXCEPTIONS: {
                     'handlers': ['exceptions', 'console'],
                     'level': 'DEBUG',
                     'propagate': False,
                 },
-                LOGGERS_NAME.DJANGO: {
+                LOGGER_NAMES.DJANGO: {
                     'handlers': ['django'],
                     'level': 'INFO',
                     'propagate': True
                 },
-                LOGGERS_NAME.APP: {
+                LOGGER_NAMES.APP: {
                     'handlers': [APP_NAME, 'console'],
                     'level': 'DEBUG',
                     'propagate': True

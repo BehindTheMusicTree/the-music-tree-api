@@ -1,11 +1,12 @@
-from bodzify_api.model.artist.ArtistManager import ArtistManager
-from bodzify_api.model.user.User import User
 from django.db import models
-from django.db.models import QuerySet
 
 from bodzify_api import settings
-from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.user.User import User
+from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
+
+from .Fields import Fields
+from .ArtistManager import ArtistManager
 
 
 class Artist(LibTrackMixin):
@@ -15,20 +16,19 @@ class Artist(LibTrackMixin):
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(name=""), name="artist_non_empty_name")]
-        db_table = f"{settings.APP_NAME}_artist"
 
     @property
     def library_tracks(self) -> models.QuerySet:
-        return self.artist_library_tracks  # type: ignore
+        return getattr(self, Fields.LIB_TRACKS_DB)
 
-    @property
+    @ property
     def albums(self) -> models.QuerySet['Album']:  # type: ignore
         return self.albums
 
     def __str__(self) -> str:
         return f"{self.uuid} {self.name}"
 
-    @staticmethod
+    @ staticmethod
     def _get_artists_names_list_from_str(names_str: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_str.split(METADATA_ARTISTS_SEPARATION_CHAR)
         names = []
@@ -38,7 +38,7 @@ class Artist(LibTrackMixin):
                 names.append(name)
         return names
 
-    @staticmethod
+    @ staticmethod
     def get_artists_list_from_names_str_after_eventual_creation(user: User, artists_names_str: str) -> list['Artist']:
         artists_names_list = Artist._get_artists_names_list_from_str(artists_names_str)
         if len(artists_names_list) > 0:
@@ -50,11 +50,11 @@ class Artist(LibTrackMixin):
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
         from bodzify_api.model.album.Album import Album
 
-        albums: QuerySet[Album] = self.albums.all()
+        albums: models.QuerySet[Album] = self.albums.all()
         for album in albums:
             album.delete()
 
-        lib_tracks: QuerySet[LibraryTrack] = self.library_tracks.all()
+        lib_tracks: models.QuerySet[LibraryTrack] = self.library_tracks.all()
         for lib_track in lib_tracks:
             lib_track.delete()
 
@@ -69,7 +69,7 @@ class Artist(LibTrackMixin):
         from bodzify_api.model.album.Album import Album
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
-        albums: QuerySet[Album] = self.albums.all()
+        albums: models.QuerySet[Album] = self.albums.all()
         for album in albums:
             album.delete_with_tracks_and_eventually_artists()
 

@@ -10,8 +10,8 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DRFValidationError, MethodNotAllowed
 from django.http import FileResponse, QueryDict
 
-from bodzify_api.model.base.utils.base_model.BaseModel import BaseModel
-from bodzify_api.model.base.utils.PrivateModel import Fields as PrivateFields
+from bodzify_api.model.base.BaseModel import BaseModel
+from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from bodzify_api.view.errors import APIErrorResponse, APIErrorMessages, APIFileResponse
 from .RequestHandler import RequestHandler
@@ -91,7 +91,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._get_create_serializer_class()
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-        instance = self.model_class.objects.create_instance(**validated_data)
+        instance = self.model_class.objects.create_single(**validated_data)
         instance.save()
         return instance
 
@@ -99,7 +99,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._require_serializer(SerializerType.UPDATE)
         serializer = serializer_class(data=update_data, partial=True, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-        instance = self.model_class.objects.update_instance(instance, **validated_data)
+        instance = self.model_class.objects.update_single(instance, **validated_data)
         return instance
 
     def _handle_post(self, request: Request, *args, **kwargs) -> Response:

@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from django.db import models
 
-from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.schema.lib_track_playlist_position_rel.output.without_lib_track_mixin \
+from bodzify_api.serializer.schema.lib_track_playlist_rel.output.without_lib_track_mixin \
     import Fields as LibTrackPositionRelFields
 from bodzify_api.serializer.schema.track.output.simple.simple_without_album \
     import LibTrackSimpleWithoutPlaylistAndAlbumSerializer
@@ -34,7 +34,7 @@ class BasePlaylistDetailedSerializer(serializers.ModelSerializer):
         serialized_tracks = []
         for track in library_tracks:
             serialized_track = LibTrackSimpleWithoutPlaylistAndAlbumSerializer(track).data
-            lib_track_playlist_relation: LibTrackPlaylistPositionRel
+            lib_track_playlist_relation: LibTrackPlaylistRel
             lib_track_playlist_relation = track.lib_track_playlist_relations.filter(base_playlist=instance).first()
             position = lib_track_playlist_relation.position
             serialized_track[LibTrackPositionRelFields.POSITION] = position

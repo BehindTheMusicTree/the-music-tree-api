@@ -4,11 +4,10 @@ from typing import Dict, Any, TYPE_CHECKING
 from django.db import models
 
 from bodzify_api import settings
-from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.utils.model import SaveContext
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
+from bodzify_api.model.criteria.Criteria import Criteria
 from .CriteriaPlaylistManager import CriteriaPlaylistManager
 from .Fields import Fields
 
@@ -20,13 +19,12 @@ class CriteriaPlaylist(BasePlaylist):
                                     null=True,
                                     related_name=CriteriaFields.CRITERIA_PLAYLIST_DB)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)
-    root = models.ForeignKey('self', on_delete=models.DO_NOTHING, related_name=Fields.DESCENDANTS)
+    root = models.ForeignKey('self', on_delete=models.DO_NOTHING, related_name=Fields.ROOT_DESCENDANTS)
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     objects: CriteriaPlaylistManager = CriteriaPlaylistManager()
 
     class Meta:
-        db_table = f'{settings.APP_NAME}_criteria_playlist'
         verbose_name = 'Criteria Playlist'
         verbose_name_plural = 'Criteria Playlists'
         indexes = [models.Index(fields=[Fields.CRITERIA], name='crit_playlist_criteria_idx'),]
@@ -48,28 +46,12 @@ class CriteriaPlaylist(BasePlaylist):
     def children(self) -> models.QuerySet['CriteriaPlaylist']:
         return CriteriaPlaylist.objects.get_children(self.user, self)
 
+    @property
+    def is_root(self) -> bool:
+        return self.root == self
+
     def __str__(self) -> str:
         return f'{self.name}'
-
-    def _prepare_save(self, **kwargs) -> Dict[str, Any]:
-        ctx = SaveContext(
-            kwargs=kwargs,
-            modified_fields=[],
-            update_fields=kwargs.get('update_fields')
-        )
-
-        parent_has_changed = self._set_parent()
-        if parent_has_changed and not self._state.adding:
-            ctx.add_modified_field(Fields.PARENT)
-
-        root_has_changed = self._set_root()
-        if root_has_changed and not self._state.adding:
-            ctx.add_modified_field(Fields.ROOT)
-
-        if ctx.modified_fields and not ctx.should_track_fields:
-            ctx.kwargs['update_fields'] = ctx.modified_fields
-
-        return ctx.kwargs
 
     def _set_parent(self) -> bool:
         current_parent_pk = getattr(self, f"{Fields.PARENT}_id", None)
@@ -85,38 +67,42 @@ class CriteriaPlaylist(BasePlaylist):
         return False
 
     def _set_root(self) -> bool:
-        current_root_pk = getattr(self, f"{Fields.ROOT}_id", None)
+        current_root_pk = getattr(self, f"{Fields.ROOT}_pk", None)
 
-        if self.criteria and self.criteria.root:
-            try:
-                root = CriteriaPlaylist.objects.get(criteria=self.criteria.root)
-                if current_root_pk != root.pk:
-                    self.root = root
-                    return True
-            except CriteriaPlaylist.DoesNotExist:
-                pass
-        return False
+        if not self.criteria or self.criteria.is_root:
+            new_root_pk = self.pk
+        else:
+            new_root_pk = self.criteria.root.criteria_playlist.pk
+
+        if current_root_pk != new_root_pk:
+            self.root_id = new_root_pk
+            return True
+        else:
+            return False
+
+    def _prepare_save(self, **kwargs) -> Dict[str, Any]:
+        self._set_pk_if_necessary()
+        ctx = __class__._create_save_context(**kwargs)
+
+        parent_has_changed = self._set_parent()
+        if not self._state.adding and parent_has_changed:
+            ctx.add_modified_field(Fields.PARENT)
+
+        root_has_changed = self._set_root()
+        if not self._state.adding and root_has_changed:
+            ctx.add_modified_field(f'{Fields.ROOT}_pk')
+
+        if ctx.modified_fields and not ctx.should_track_fields:
+            ctx.kwargs['update_fields'] = ctx.modified_fields
+
+        return ctx.kwargs
 
     def _post_save(self):
-        if not self._state.adding:
-            self._post_update()
-
-    def _post_update(self):
-        current_root_id = getattr(self, f"{Fields.ROOT}_id", None)
-        if self._original_root != current_root_id:
-            self._update_children_root()
-
-    def _update_children_root(self):
-        for child in self.children:
-            child.root = self.root
-            child.save(update_fields=[Fields.ROOT])
+        if self._state.adding and not self.root:
+            self.root_id = self.pk
+            super().save(update_fields=[f'{Fields.ROOT}_pk'])
 
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            super().save(*args, **kwargs)
-            self.root = self
-            super().save(update_fields=['root'])
-
         kwargs = self._prepare_save(**kwargs)
         super().save(*args, **kwargs)
         self._post_save()

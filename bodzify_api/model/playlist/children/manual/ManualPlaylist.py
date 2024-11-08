@@ -11,7 +11,6 @@ class ManualPlaylist(BasePlaylist):
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="manual_playlist_non_empty_name")]
-        db_table = f'{settings.APP_NAME}_manual_playlist'
         verbose_name = 'Manual Playlist'
         verbose_name_plural = 'Manual Playlists'
         indexes = [models.Index(fields=[Fields.NAME_DB], name='manual_playlist_name_idx'),]

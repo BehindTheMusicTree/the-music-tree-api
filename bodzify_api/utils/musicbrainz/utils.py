@@ -3,8 +3,8 @@ import datetime
 from calendar import monthrange
 from uuid import UUID
 
-from bodzify_api.model.musicbrainz.MusicbrainzArtist import Fields as MusicbrainzArtistFields, MusicbrainzArtist
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import \
+from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import Fields as MusicbrainzArtistFields, MusicbrainzArtist
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
     MusicbrainzRecording, Fields as MusicbrainzRecordingFields
 
 

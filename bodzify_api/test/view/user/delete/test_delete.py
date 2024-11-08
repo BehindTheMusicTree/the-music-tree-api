@@ -8,7 +8,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesPks
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as TrackPostFields

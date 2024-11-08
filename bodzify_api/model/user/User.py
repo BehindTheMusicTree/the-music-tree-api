@@ -9,8 +9,8 @@ from django.db import models
 from django.db.models import F, Value
 
 from bodzify_api import settings
-from bodzify_api.model.function.ConcatOp import ConcatOp
-from bodzify_api.model.function.ConditionalExpression import ConditionalExpression
+from bodzify_api.model.utils.ConcatOp import ConcatOp
+from bodzify_api.model.utils.ConditionalExpression import ConditionalExpression
 from .UserManager import UserManager
 from .Fields import Fields
 

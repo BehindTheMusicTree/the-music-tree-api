@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from bodzify_api.model.base.utils.base_model.BaseManager import BaseManager
+from bodzify_api.model.base.BaseManager import BaseManager
 from bodzify_api.model.playlist.children.Fields import Fields as ModelFields
 
 

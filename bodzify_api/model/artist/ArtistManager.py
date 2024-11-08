@@ -1,4 +1,4 @@
-from bodzify_api.model.base.utils.base_model.BaseManager import BaseManager
+from bodzify_api.model.base.BaseManager import BaseManager
 from bodzify_api.model.artist.Fields import Fields as ModelFields
 
 

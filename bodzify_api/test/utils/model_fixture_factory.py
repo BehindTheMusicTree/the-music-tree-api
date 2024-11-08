@@ -19,9 +19,9 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.children.tag.Tag import Tag
-from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist, Fields as MusicbrainzArtistFields
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz.recording.MusicbrainzRecording import Fields as MusicbrainzRecordingFields
+from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist, Fields as MusicbrainzArtistFields
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import Fields as MusicbrainzRecordingFields
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist

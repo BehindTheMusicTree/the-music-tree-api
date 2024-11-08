@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Self
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from django.db import models
 from django.db.models import QuerySet
@@ -12,53 +12,43 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
     from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 
 
 class Criteria(LibTrackMixin):
     name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)
-    ascendants = models.ManyToManyField('self',
-                                        through='CriteriaLineageRel',
-                                        through_fields=(CriteriaLineageRelFields.DESCENDANT,
-                                                        CriteriaLineageRelFields.ASCENDANT),
-                                        symmetrical=False,)
-
-    root_degree = models.PositiveIntegerField(default=0)
+    _ascendants = models.ManyToManyField('self',
+                                         through='CriteriaLineageRel',
+                                         through_fields=(CriteriaLineageRelFields.DESCENDANT,
+                                                         CriteriaLineageRelFields.ASCENDANT),
+                                         symmetrical=False,)
+    _parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)
+    _root = models.ForeignKey('self', on_delete=models.DO_NOTHING, related_name=Fields.DESCENDANTS)
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     objects: CriteriaManager = CriteriaManager()
 
-    class Meta:
-        db_table = f'{settings.APP_NAME}_criteria'
-        verbose_name = 'Criteria'
-        verbose_name_plural = 'Criterias'
-        constraints = [models.CheckConstraint(check=~models.Q(name=""), name='%(class)s_non_empty_name')]
-        indexes = [
-            models.Index(fields=[Fields.USER, Fields.NAME], name='%(class)s_user_name_idx'),
-            models.Index(fields=[Fields.USER, Fields.UUID], name='%(class)s_user_uuid_idx')
-        ]
+    @property
+    def library_tracks(self) -> models.QuerySet['LibraryTrack']:
+        return getattr(self, Fields.LIB_TRACKS_DB)
 
-    @ property
-    def root(self) -> 'Criteria':
-        if self.root_degree == 0:
-            return self
-        root_ascendant_rel = self.ascendants_rel.filter(degree=self.root_degree).first()
-        if not root_ascendant_rel:
-            raise ValueError(f'Root not well set for {self}')
-        return root_ascendant_rel.ascendant
+    # Only for type hinting
+    @property
+    def ascendants(self) -> QuerySet['Criteria']:
+        return self._ascendants
 
     @ property
     def parent(self) -> Optional['Criteria']:
-        from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
-        try:
-            ascendant_rel = self.ascendants_rel.get(degree=1)
-            return ascendant_rel.ascendant
-        except CriteriaLineageRel.DoesNotExist:
-            return None
+        return self._parent
+
+    @ property
+    def root(self) -> 'Criteria':
+        return self._root
 
     @ property
     def criteria_playlist(self) -> 'CriteriaPlaylist':
-        return self._criteria_playlist  # type: ignore
+        return getattr(self, Fields.CRITERIA_PLAYLIST_DB)
 
     @ property
     def children(self) -> QuerySet['Criteria']:
@@ -72,33 +62,45 @@ class Criteria(LibTrackMixin):
     def descendants_rel(self) -> QuerySet['CriteriaLineageRel']:
         return self._descendants_rel.all()  # type: ignore
 
+    @property
+    def is_root(self) -> bool:
+        return self.root == self
+
+    class Meta:
+        verbose_name = 'Criteria'
+        verbose_name_plural = 'Criterias'
+        constraints = [models.CheckConstraint(check=~models.Q(name=""), name='%(class)s_non_empty_name')]
+        indexes = [
+            models.Index(fields=[Fields.USER, Fields.NAME], name='%(class)s_user_name_idx'),
+            models.Index(fields=[Fields.USER, Fields.UUID], name='%(class)s_user_uuid_idx')
+        ]
+
     def __str__(self) -> str:
         parent_str = f'{Fields.PARENT}: {self.parent.name}' if self.parent else f"[no {Fields.PARENT}]"
         return f"{self.uuid} | {self.name} | {parent_str}"
 
-    @ staticmethod
-    def get_common_criteria(criteria_a: Optional['Criteria'],
-                            criteria_b: Optional['Criteria']) -> Optional['Criteria']:
-        if not criteria_a or not criteria_b:
-            return None
+    def _set_root(self):
+        current_root_pk = getattr(self, f"{Fields.ROOT_DB}_pk", None)
+        new_root_pk = self.parent.root.pk if self.parent else None
 
-        visited = set()
-        current = criteria_a
-        while current:
-            visited.add(current)
-            current = current.parent
+        if current_root_pk != new_root_pk:
+            self.root_id = new_root_pk
+            return True
+        else:
+            return False
 
-        current = criteria_b
-        while current:
-            if current in visited:
-                return current
-            current = current.parent
+    def _prepare_save(self, **kwargs) -> Dict[str, Any]:
+        self._set_pk_if_necessary()
+        ctx = __class__._create_save_context(**kwargs)
 
-        return None
+        root_has_changed = self._set_root()
+        if not self._state.adding and root_has_changed:
+            ctx.add_modified_field(f'{Fields.ROOT_DB}_pk')
 
-    def calculate_root_degree(self):
-        parent = self.parent
-        self.root_degree = parent.root_degree + 1 if parent else 0
+        if ctx.modified_fields and not ctx.should_track_fields:
+            ctx.kwargs['update_fields'] = ctx.modified_fields
+
+        return ctx.kwargs
 
     def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
         if self.parent == other_criteria:
@@ -108,6 +110,5 @@ class Criteria(LibTrackMixin):
         return False
 
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            self.calculate_root_degree()
+        kwargs = self._prepare_save(**kwargs)
         super().save(*args, **kwargs)

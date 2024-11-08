@@ -2,7 +2,7 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
@@ -17,8 +17,8 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).base_playlist
-        assert LibTrackPlaylistPositionRel.objects.get(base_playlist=genre_playlist,
-                                                       library_track=self.saved_lib_track).position == 1
+        assert LibTrackPlaylistRel.objects.get(base_playlist=genre_playlist,
+                                               library_track=self.saved_lib_track).position == 1
 
     def test_existing_genre_then_first_position_and_other_tracks_after(self):
         genre_name = "Rock"
@@ -29,9 +29,9 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist = CriteriaPlaylist.objects.get(criteria__name=genre_name).base_playlist
-        assert LibTrackPlaylistPositionRel.objects.get(base_playlist=genre_playlist,
-                                                       library_track=self.saved_lib_track).position == 1
-        assert LibTrackPlaylistPositionRel.objects.get(
+        assert LibTrackPlaylistRel.objects.get(base_playlist=genre_playlist,
+                                               library_track=self.saved_lib_track).position == 1
+        assert LibTrackPlaylistRel.objects.get(
             base_playlist=genre_playlist, library_track=lib_track1).position == 3
-        assert LibTrackPlaylistPositionRel.objects.get(
+        assert LibTrackPlaylistRel.objects.get(
             base_playlist=genre_playlist, library_track=lib_track2).position == 2

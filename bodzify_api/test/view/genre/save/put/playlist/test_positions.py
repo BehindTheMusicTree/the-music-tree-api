@@ -1,7 +1,7 @@
 
 from rest_framework import status
 
-from bodzify_api.model.LibTrackPlaylistPositionRel import LibTrackPlaylistPositionRel
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.criteria.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
@@ -27,12 +27,12 @@ class TestCase(GenreTestCase):
         response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(user=self.test_user2,
-                                                                                  base_playlist=rock_playlist)
-        assert lib_track_position_relations.get(library_track=lib_track_previously_first_in_punk).position == 1
-        assert lib_track_position_relations.get(library_track=lib_track_previously_second_in_punk).position == 2
-        assert lib_track_position_relations.get(library_track=lib_track_previously_first_in_rock).position == 3
-        assert lib_track_position_relations.get(library_track=lib_track_previously_second_in_rock).position == 4
+        lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.test_user2,
+                                                                     base_playlist=rock_playlist)
+        assert lib_track_playlist_rels.get(library_track=lib_track_previously_first_in_punk).position == 1
+        assert lib_track_playlist_rels.get(library_track=lib_track_previously_second_in_punk).position == 2
+        assert lib_track_playlist_rels.get(library_track=lib_track_previously_first_in_rock).position == 3
+        assert lib_track_playlist_rels.get(library_track=lib_track_previously_second_in_rock).position == 4
 
     def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning_of_parent_of_parent(self):
         guitare_genre = self.model_fixture_factory.create_genre(name="Guitare")
@@ -58,10 +58,10 @@ class TestCase(GenreTestCase):
         response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(user=self.test_user2,
-                                                                                  base_playlist=guitare_playlist)
+        lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.test_user2,
+                                                                     base_playlist=guitare_playlist)
         tracks_positions = {relation.library_track.uuid: relation.position
-                            for relation in lib_track_position_relations}
+                            for relation in lib_track_playlist_rels}
         assert tracks_positions[lib_track_previously_first_in_punk.uuid] == 1
         assert tracks_positions[lib_track_previously_second_in_punk.uuid] == 2
         assert tracks_positions[lib_track_previously_first_in_rock.uuid] == 3
@@ -86,10 +86,10 @@ class TestCase(GenreTestCase):
         response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
-        lib_track_position_relations = LibTrackPlaylistPositionRel.objects.filter(user=self.test_user2,
-                                                                                  base_playlist=rock_playlist)
+        lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.test_user2,
+                                                                     base_playlist=rock_playlist)
         tracks_positions = {relation.library_track.uuid: relation.position
-                            for relation in lib_track_position_relations}
+                            for relation in lib_track_playlist_rels}
         assert tracks_positions[track_second_in_rock.uuid] == 1
         assert tracks_positions[track_fourth_in_rock.uuid] == 2
 
@@ -106,7 +106,7 @@ class TestCase(GenreTestCase):
         data = {PutFields.PARENT: rock_genre.uuid}
         response = self._put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
-        lib_track_playlist_rel = LibTrackPlaylistPositionRel.objects.get(user=self.test_user2,
-                                                                         base_playlist=punk_playlist.base_playlist,
-                                                                         library_track=track_second_in_punk)
+        lib_track_playlist_rel = LibTrackPlaylistRel.objects.get(user=self.test_user2,
+                                                                 base_playlist=punk_playlist.base_playlist,
+                                                                 library_track=track_second_in_punk)
         assert lib_track_playlist_rel.position == 1
