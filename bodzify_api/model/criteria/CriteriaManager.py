@@ -1,8 +1,8 @@
 from typing import Generic, Optional, TYPE_CHECKING, TypeVar
+
 from django.db.models import QuerySet
 
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager \
-    import PublicStandardResourceManager
+from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
 from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='Criteria')
 
 
-class CriteriaManager(PublicStandardResourceManager[T], Generic[T]):
+class CriteriaManager(LibTrackMixinManager[T], Generic[T]):
     model: T
 
     def create_single(self, type_pk: int, **kwargs) -> T:
@@ -82,17 +82,15 @@ class CriteriaManager(PublicStandardResourceManager[T], Generic[T]):
     def update_ascendants_of_criteria_and_children(self, criteria: T):
         from bodzify_api.model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 
-        criteria._ascendants.clear()
+        criteria.ascendants.clear()
         current_degree = 1
         current_parent = criteria.parent
 
         while current_parent:
-            CriteriaLineageRel.objects.create(
-                user=criteria.user,
-                descendant=criteria,
-                ascendant=current_parent,
-                degree=current_degree
-            )
+            CriteriaLineageRel.objects.create(user=criteria.user,
+                                              descendant=criteria,
+                                              ascendant=current_parent,
+                                              degree=current_degree)
             current_parent = current_parent.parent
             current_degree = current_degree + 1
 

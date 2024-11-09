@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import TYPE_CHECKING, List, Tuple
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -24,6 +24,9 @@ from ..file.TrackFile import TrackFile
 from .Fields import Fields
 from .LibraryTrackManager import LibraryTrackManager
 
+if TYPE_CHECKING:
+    from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+
 class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
@@ -32,17 +35,17 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
                               on_delete=models.CASCADE,
                               null=True,
                               blank=True,
-                              related_name=AlbumFields.LIB_TRACKS_DB,)
+                              related_name=AlbumFields.LIB_TRACKS_RELATED_NAME,)
     position_in_album = models.PositiveIntegerField(
         null=True,
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)])
-    artists = models.ManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_DB)
+    artists = models.ManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_RELATED_NAME)
     genre = models.ForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
                               null=True,
                               blank=True,
-                              related_name=CriteriaFields.LIB_TRACKS_DB)
+                              related_name=CriteriaFields.LIB_TRACKS_RELATED_NAME)
     rating = models.IntegerField(
         null=True,
         blank=True,
@@ -51,7 +54,11 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
     archived = models.BooleanField(default=False)
     base_playlists = models.ManyToManyField(BasePlaylist, 
                                             through='LibTrackPlaylistRel', 
-                                            related_name=BasePlaylistFields.LIB_TRACKS_DB)
+                                            related_name=BasePlaylistFields.LIB_TRACKS_RELATED_NAME)
+    
+    if TYPE_CHECKING:
+        track_file: TrackFile
+        lib_track_playlist_rels: models.QuerySet['LibTrackPlaylistRel']
 
     objects: LibraryTrackManager = LibraryTrackManager()
 
@@ -61,14 +68,6 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
         indexes = [models.Index(fields=[Fields.USER, Fields.TITLE]),
                    models.Index(fields=[Fields.USER, Fields.GENRE]),
                    models.Index(fields=[Fields.USER, Fields.ALBUM]),]
-
-    @property
-    def track_file(self) -> TrackFile:
-        return getattr(self, Fields.TRACK_FILE_DB)
-
-    @property
-    def lib_track_playlist_relations(self) -> models.QuerySet:
-        return getattr(self, Fields.LIB_TRACK_PLAYLIST_RELS_DB)
 
     @property
     def relative_url(self) -> str:

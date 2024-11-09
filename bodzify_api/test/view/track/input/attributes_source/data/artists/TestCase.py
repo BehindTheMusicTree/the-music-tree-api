@@ -1,4 +1,3 @@
-
 from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
@@ -10,7 +9,7 @@ from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestC
 class TestCase(NullableStrFieldFromDataTestCase):
     post_field_key = PostFields.ARTISTS_NAMES
 
-    def test_value_then_ok(self):
+    def test_value_then_ok(self) -> None:
         value = 'rovk'
         data = {PostFields.ARTISTS_NAMES: value}
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
@@ -19,7 +18,7 @@ class TestCase(NullableStrFieldFromDataTestCase):
         assert len(artists_list) > 0
         assert artists_list[0].name == value
 
-    def test_empty_then_none(self):
+    def test_empty_then_none(self) -> None:
         data = {PostFields.ARTISTS_NAMES: ""}
         response = self._post_lib_track_with_generic_sample_1_star(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED

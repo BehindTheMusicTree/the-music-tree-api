@@ -25,7 +25,3 @@ class AllLibTrackMixin(LibTrackMixin):
     @property
     def type(self):
         return "All Tracks"
-
-    @classmethod
-    def get_for_user(cls, user):
-        return cls.objects.get(user=user)

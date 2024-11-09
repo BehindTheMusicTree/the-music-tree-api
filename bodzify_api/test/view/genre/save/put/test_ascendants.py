@@ -19,7 +19,7 @@ class TestCase(GenreTestCase):
         assert response.status_code == status.HTTP_200_OK
         updated_punk_genre: Criteria = Criteria.objects.get(user=self.test_user1, uuid=punk_genre.uuid)
         ascendant_relations: QuerySet[CriteriaLineageRel] = \
-            updated_punk_genre.ascendants_rel.all()
+            updated_punk_genre.lineage_rels.all()
         assert ascendant_relations[0].ascendant.uuid == rock_genre.uuid
         assert ascendant_relations[0].degree == 1
 

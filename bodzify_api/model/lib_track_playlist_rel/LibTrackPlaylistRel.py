@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from django.db import models
 from django.db.models import F
 from django.contrib.auth import get_user_model
@@ -17,10 +18,10 @@ User = get_user_model()
 class LibTrackPlaylistRel(PrivateStandardResource):
     base_playlist = models.ForeignKey(BasePlaylist,
                                       on_delete=models.CASCADE,
-                                      related_name=BasePlaylistFields.LIB_TRACK_PLAYLIST_RELS_DB)
+                                      related_name=BasePlaylistFields.LIB_TRACK_PLAYLIST_RELS)
     library_track = models.ForeignKey(LibraryTrack,
                                       on_delete=models.CASCADE,
-                                      related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS_DB)
+                                      related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
     position = models.PositiveIntegerField()
 
     objects: LibTrackPlaylistRelManager = LibTrackPlaylistRelManager()

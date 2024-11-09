@@ -3,18 +3,123 @@ import datetime
 import os
 import sys
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
+from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.utils.env_var_loader import (
     load_calculated_env_paths, load_env_vars_from_file_if_exists,
     load_required_bool_env_var, load_required_path_env_var,
     load_required_secret_env_var, load_required_str_env_var)
 from bodzify_api.utils.utils import print_django
 
+# Environment Variables
+DB_BODZIFY_API_DB_NAME: str
+DB_BODZIFY_API_USERNAME: str
+DB_BODZIFY_API_USER_PASSWORD: str
+DB_HOST: str
+DB_PORT: str
 
-class StaticFileState:
-    SERVING = "SERVING"
-    COLLECTING = "COLLECTING"
-    NOT_NEEDED = "NOT_NEEDED"
+# Django Settings
+DATABASES: Dict[str, Dict[str, Any]]
+LOGGER_NAMES: Any  # Consider defining a proper class or TypedDict for logger names
+LOGGING: Dict[str, Any]
+
+# Application Exposure
+ALLOWED_HOSTS: List[str] = []
+API_ROOT_BASE: str
+ROOT_URLCONF: str
+SECURE_SSL_REDIRECT: bool
+SESSION_COOKIE_SECURE: bool
+CSRF_COOKIE_SECURE: bool
+CSRF_TRUSTED_ORIGINS: List[str] = []
+CORS_ALLOW_ALL_ORIGINS: bool
+
+# Application Constants
+ATOMIC_REQUESTS: bool
+DEBUG: bool
+USER_LIBRARIES_DIR_NAME_PREFIXE: str
+TEST_USER_LIBRARIES_DIR_NAME_PREFIXE: str
+USER_MAX_NUMBER: str
+UUID_LEN: int
+FILE_PATH_MAX_LENGTH: int
+LIB_TRACK_FILE_SIZE_MIN_IN_MO: int
+LIB_TRACK_FILE_SIZE_MAX_IN_MO: int
+LIB_TRACK_FILE_EXTENSIONS: List[str] = []
+LIB_TRACK_FILE_CONTENT_TYPES: List[str] = []
+LIB_TRACK_FILENAME_LEN_MAX: int
+LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH: int
+LIB_TRACK_TITLE_LEN_MAX: int
+LIB_TRACK_POSITION_IN_ALBUM_MAX: int
+LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE: List[str] = []
+LIB_TRACK_GENERATED_TITLE_LENGTH: int
+LIB_TRACK_GENERATED_TITLE_PREFIXE: int
+LIB_TRACK_RATING_VALUE_MAX: int
+LIB_TRACK_LANGUAGE_LEN_MAX: int
+MINE_TRACK_TITLE_LEN_MAX: int
+MINE_TRACK_RELEASED_ON_LEN_MAX: int
+MINE_TRACK_URL_LEN_MAX: int
+ALBUM_NAME_LEN_MAX: int
+ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX: int
+ARTIST_NAME_LEN_MAX: int
+ARTISTS_NAMES_LEN_MAX: int
+CRITERIA_TYPE_LABEL_LEN_MAX: int
+CRITERIA_NAME_LEN_MAX: int
+MANUAL_PLAYLIST_NAME_LEN_MAX: int
+FINGERPRINTING_ERROR_MESSAGE_LEN_MAX: int
+FINGERPRINTING_ERROR_CODE_LABEL_LEN_MAX: int
+MUSICBRAINZ_BASE_URL: str
+MUSICBRAINZ_ID_LEN_MAX: int
+MUSICBRAINZ_RECORDING_URL: str
+MUSICBRAINZ_RECORDING_TITLE_LEN_MAX: int
+MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX: int
+MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX: int
+MUSICBRAINZ_ARTIST_URL: str
+MUSICBRAINZ_ARTIST_NAME_LEN_MAX: int
+PAGINATION_LIMIT_OFFSET_DEFAULT: int
+
+# AFP Connection
+AFP_POST_FULL_URL: str
+
+# Static Files
+STATIC_ROOT: Path
+STATIC_URL: str
+
+# Installed Apps and Caches
+INSTALLED_APPS: List[str] = []
+CACHES: Dict[str, Any] = {}
+
+# Middleware
+MIDDLEWARE: List[str] = []
+
+# Templates
+TEMPLATES: List[Dict[str, Any]] = []
+
+# Django Constants
+WSGI_APPLICATION: str
+AUTH_USER_MODEL: str
+AUTH_PASSWORD_VALIDATORS: List[Dict[str, Any]] = []
+LANGUAGE_CODE: str
+TIME_ZONE: str
+USE_I18N: bool
+USE_TZ: bool
+DEFAULT_AUTO_FIELD: str
+REST_FRAMEWORK: Dict[str, Any] = {}
+SPECTACULAR_SETTINGS: Dict[str, Any] = {}
+SIMPLE_JWT: Dict[str, Any] = {}
+
+# Media
+ACOUSTID_API_KEY: str
+MEDIA_ROOT: Path
+MEDIA_URL: str
+LIBRARIES_DIR_NAME: str
+LIBRARIES_DIR: Path
+
+# Secret Key
+SECRET_KEY: str
+
+# File Upload
+FILE_UPLOAD_TEMP_DIR: str
+FILE_UPLOAD_ENABLED: bool
 
 
 def init_logs_if_needed():
@@ -402,7 +507,7 @@ def setup_installed_apps_and_caches():
     if APP_IS_EXPOSED == True:
         INSTALLED_APPS.append('rest_framework_simplejwt')
 
-    if STATIC_FILES_STATE in [StaticFileState.COLLECTING, StaticFileState.SERVING]:
+    if STATIC_FILES_STATE in [StaticFileStates.COLLECTING, StaticFileStates.SERVING]:
         INSTALLED_APPS.append('django.contrib.staticfiles')
 
     global CACHES
@@ -598,7 +703,7 @@ else:
 if 'loaddata' in sys.argv:
     print_django("settings.py is being executed because of a loaddata command.")
     load_calculated_env_paths(BASE_DIR)
-    STATIC_FILES_STATE = StaticFileState.NOT_NEEDED
+    STATIC_FILES_STATE = StaticFileStates.NOT_NEEDED
     setup_app_constants()
     setup_installed_apps_and_caches()
     setup_middlewares()
@@ -613,15 +718,15 @@ else:
 
     STATIC_FILES = os.getenv('STATIC_FILES')
     if ENV == 'COLLECT_STATIC':
-        STATIC_FILES_STATE = StaticFileState.COLLECTING
+        STATIC_FILES_STATE = StaticFileStates.COLLECTING
         setup_static_files()
     else:
         if not STATIC_FILES:
             print_django("Static files are not needed.")
-            STATIC_FILES_STATE = StaticFileState.NOT_NEEDED
+            STATIC_FILES_STATE = StaticFileStates.NOT_NEEDED
         else:
             print_django("Static files are being served.")
-            STATIC_FILES_STATE = StaticFileState.SERVING
+            STATIC_FILES_STATE = StaticFileStates.SERVING
             setup_static_files()
 
     setup_installed_apps_and_caches()

@@ -7,6 +7,7 @@ class Fields:
     USER = LibTrackMixinFields.USER
     CREATED_ON = LibTrackMixinFields.CREATED_ON
     UPDATED_ON = LibTrackMixinFields.UPDATED_ON
+    NAME = LibTrackMixinFields.NAME
     LIB_TRACKS = LibTrackMixinFields.LIB_TRACKS
     LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinFields.LIB_TRACKS_NOT_ARCHIVED
     LIB_TRACKS_COUNT = LibTrackMixinFields.LIB_TRACKS_COUNT
@@ -14,11 +15,9 @@ class Fields:
     DURATION_IN_SEC = LibTrackMixinFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
     PLAY_COUNT = TrackablePlayCountFields.PLAY_COUNT
-    LIB_TRACKS_DB = 'base_playlist_lib_tracks'
-    LIB_TRACK_PLAYLIST_RELS_DB = '_lib_tracks_playlist_rels'
+    LIB_TRACKS_RELATED_NAME = 'lib_tracks_of_playlist'
     LIB_TRACK_PLAYLIST_RELS = 'lib_tracks_playlist_rels'
     TYPE_LABEL = 'type_label'
-    NAME = 'name'
     CRITERIA_CHILD_PLAYLIST = 'criteria_child_playlist'
     MANUAL_CHILD_PLAYLIST = 'manual_child_playlist'
     PLAYLIST_LIB_TRACK_RELATIONS = 'lib_track_playlist_rels'

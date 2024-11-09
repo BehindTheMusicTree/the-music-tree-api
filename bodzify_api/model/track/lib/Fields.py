@@ -19,8 +19,7 @@ class Fields:
     GENRE = "genre"
     RATING = "rating"
     BASE_PLAYLISTS = "base_playlists"
-    LIB_TRACK_PLAYLIST_RELS_DB = "_base_playlists_rels"
-    LIB_TRACK_PLAYLIST_RELS = "base_playlists_rels"
+    LIB_TRACK_PLAYLIST_RELS = "lib_track_playlist_rels"
     BASE_PLAYLISTS_USER_FRIENDLY = "playlists"
     LANGUAGE = "language"
     ARCHIVED = 'archived'

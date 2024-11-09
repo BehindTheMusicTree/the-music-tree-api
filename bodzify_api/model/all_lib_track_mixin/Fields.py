@@ -4,6 +4,7 @@ from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFiel
 class Fields:
     UUID = LibTrackMixinFields.UUID
     USER = LibTrackMixinFields.USER
+    NAME = LibTrackMixinFields.NAME
     CREATED_ON = LibTrackMixinFields.CREATED_ON
     UPDATED_ON = LibTrackMixinFields.UPDATED_ON
     LIB_TRACKS = LibTrackMixinFields.LIB_TRACKS
@@ -12,4 +13,3 @@ class Fields:
     LIB_TRACKS_ARCHIVED_COUNT = LibTrackMixinFields.LIB_TRACKS_ARCHIVED_COUNT
     DURATION_IN_SEC = LibTrackMixinFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
-    NAME = 'name'

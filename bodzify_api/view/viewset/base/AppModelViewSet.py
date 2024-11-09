@@ -165,10 +165,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def get_paginated_response(self, data: List[Any]) -> Response:
         if not self.paginator:
-            raise APIException(
-                APIErrorMessages.PAGINATION_NOT_SET,
-                code=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            raise APIException(detail=APIErrorMessages.PAGINATION_NOT_SET,
+                               code=str(status.HTTP_500_INTERNAL_SERVER_ERROR))
 
         return Response({
             PaginatedResponseFields.OVERALL_TOTAL: self.paginator.page.paginator.count if data else 0,

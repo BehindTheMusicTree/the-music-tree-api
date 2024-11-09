@@ -35,7 +35,7 @@ class BasePlaylistDetailedSerializer(serializers.ModelSerializer):
         for track in library_tracks:
             serialized_track = LibTrackSimpleWithoutPlaylistAndAlbumSerializer(track).data
             lib_track_playlist_relation: LibTrackPlaylistRel
-            lib_track_playlist_relation = track.lib_track_playlist_relations.filter(base_playlist=instance).first()
+            lib_track_playlist_relation = track.lib_track_playlist_rels.filter(base_playlist=instance).first()
             position = lib_track_playlist_relation.position
             serialized_track[LibTrackPositionRelFields.POSITION] = position
             serialized_tracks.append(serialized_track)

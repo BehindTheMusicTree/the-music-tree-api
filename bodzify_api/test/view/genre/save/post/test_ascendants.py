@@ -22,7 +22,7 @@ class TestCase(GenreTestCase):
         response = self._post_genre(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 1
-        criteria_ascendant_relation: CriteriaLineageRel = self.saved_genre.ascendants_rel.all()[0]
+        criteria_ascendant_relation: CriteriaLineageRel = self.saved_genre.lineage_rels.all()[0]
         assert criteria_ascendant_relation.ascendant.uuid == root.uuid
         assert criteria_ascendant_relation.degree == 1
 
@@ -35,7 +35,7 @@ class TestCase(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 3
         criteria_ascendant_relations: QuerySet[CriteriaLineageRel] = \
-            self.saved_genre.ascendants_rel.all()
+            self.saved_genre.lineage_rels.all()
         criteria_ascendant_relations_ordered = criteria_ascendant_relations.order_by(Fields.DEGREE)
         assert criteria_ascendant_relations_ordered[0].ascendant.uuid == criteria3.uuid
         assert criteria_ascendant_relations_ordered[0].degree == 1

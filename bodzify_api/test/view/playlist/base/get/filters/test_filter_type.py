@@ -32,8 +32,8 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert rock_criteria_name in names
         assert manual_playlist_name in names
-        assert LibTrackMixinSpecialNames.GENRELESS in names
-        assert LibTrackMixinSpecialNames.TAGLESS in names
+        assert CriteriaPlaylistWithoutCriteriaNames.GENRE in names
+        assert CriteriaPlaylistWithoutCriteriaNames.TAG in names
         assert MANUAL_PLAYLIST_SPECIAL_NAMES.ALL in names
 
     def test_is_empty_then_error(self):
@@ -50,7 +50,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert rock_criteria_name in names
-        assert LibTrackMixinSpecialNames.GENRELESS in names
+        assert CriteriaPlaylistWithoutCriteriaNames.GENRE in names
 
     def test_value_is_tag_then_results(self):
         data_dict = {GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.TAG}
@@ -58,7 +58,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         names = [result[PlaylistGetFields.NAME] for result in self.results]
-        assert LibTrackMixinSpecialNames.TAGLESS in names
+        assert CriteriaPlaylistWithoutCriteriaNames.TAG in names
 
     def test_value_is_simple_then_results(self):
         manual_playlist_name = "Teuf"

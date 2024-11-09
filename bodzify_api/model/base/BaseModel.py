@@ -1,5 +1,4 @@
 from typing import Self, TypeVar
-import uuid
 
 from django.db import models
 
@@ -34,12 +33,6 @@ class BaseModel(models.Model, metaclass=DynamicTableNameModelBase):
                 if field not in kwargs['update_fields']:
                     kwargs['update_fields'].append(field)
         return kwargs
-
-    def _set_pk_if_necessary(self):
-        if self._state.adding and not self.pk:
-            self.pk = uuid.uuid4()
-            while self.__class__.objects.filter(pk=self.pk).exists():
-                self.pk = uuid.uuid4()
 
     @staticmethod
     def _create_save_context(**kwargs):

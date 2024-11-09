@@ -16,7 +16,12 @@ class LibTrackMixin(PrivateUniqueResource):
 
     @property
     @abstractmethod
-    def library_tracks(self) -> models.QuerySet:
+    def name(self):
+        pass
+
+    @property
+    @abstractmethod
+    def library_tracks(self) -> models.QuerySet['LibraryTrack']:
         pass
 
     @property
@@ -47,7 +52,3 @@ class LibTrackMixin(PrivateUniqueResource):
         minutes = (total_seconds % 3600) // 60
         seconds = total_seconds % 60
         return f"{hours:02}:{minutes:02}:{seconds:02}"
-
-    @abstractmethod
-    def get_sorted_tracks(self) -> models.QuerySet['LibraryTrack']:
-        pass

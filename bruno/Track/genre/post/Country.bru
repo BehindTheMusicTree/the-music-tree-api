@@ -7,11 +7,11 @@ meta {
 post {
   url: {{BASE_URL}}genres/
   body: json
-  auth: inherit
+  auth: none
 }
 
 headers {
-  Authorization: Bearer {{tokenAccess}}
+  Authorization: Bearer {{jwtAccessToken}}
 }
 
 body:json {

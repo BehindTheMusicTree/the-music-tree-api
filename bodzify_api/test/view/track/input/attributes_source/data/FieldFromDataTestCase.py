@@ -1,11 +1,11 @@
-
+from typing import Optional
 from rest_framework import status
 
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 class FieldFromDataTestCase(LibTrackTestCase):
-    post_field_key = None
+    post_field_key: Optional[str] = None
 
     def setUp(self, methods_names_to_implement: list[str] | None = None):
         class_methods_names_to_implement = ['test_value_then_ok']

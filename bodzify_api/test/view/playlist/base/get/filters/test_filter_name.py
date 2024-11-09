@@ -1,26 +1,26 @@
-
+from typing import Optional
 
 from rest_framework import status
 
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import SpecialNames as LibTrackMixinSpecialNames
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import SpecialNames as MANUAL_PLAYLIST_SPECIAL_NAMES
-from bodzify_api.serializer.schema.playlist.base.input.query_param import Fields as GetQueryParams
 from bodzify_api.test.get_filters.GetFilterWithFreeValuesTestCase import GetFilterWithFreeValuesTestCase
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
+from bodzify_api.filter.set.playlist.Fields import Fields as GetQueryParams
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
+    import CriteriaPlaylistWithoutCriteriaNames
 
 
 class TestCase(GetFilterWithFreeValuesTestCase, BasePlaylistTestCase):
 
-    def setUp(self, methods_names_to_implement=None):
-        return super().setUp(allow_empty_value=False, methods_names_to_implement=methods_names_to_implement)
+    def setUp(self, allow_empty_value: bool = False, methods_names_to_implement: Optional[list[str]] = None) -> None:
+        super().setUp(allow_empty_value=allow_empty_value, methods_names_to_implement=methods_names_to_implement)
 
-    def test_is_empty_then_error(self):
+    def test_is_empty_then_error(self) -> None:
         data_dict = {GetQueryParams.NAME: ''}
         response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_is_not_provided_then_results(self):
+    def test_is_not_provided_then_results(self) -> None:
         self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_manual_playlist(name="Teuf")
 
@@ -28,7 +28,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, BasePlaylistTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == BasePlaylist.objects.filter(user=self.test_user1).count()
 
-    def test_different_case_then_results(self):
+    def test_different_case_then_results(self) -> None:
         manual_playlist_name = "Teuf"
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
 
@@ -39,28 +39,21 @@ class TestCase(GetFilterWithFreeValuesTestCase, BasePlaylistTestCase):
         names_lowered = [result[GetQueryParams.NAME].lower() for result in self.results]
         assert manual_playlist_name.lower() in names_lowered
 
-    def test_genreless_special_name_then_results(self):
+    def test_genreless_special_name_then_results(self) -> None:
         data_dict = {GetQueryParams.NAME: 'geNr'}
         response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][GetQueryParams.NAME] == LibTrackMixinSpecialNames.GENRELESS
+        assert self.results[0][GetQueryParams.NAME] == CriteriaPlaylistWithoutCriteriaNames.GENRE
 
-    def test_tagless_special_name_then_results(self):
+    def test_tagless_special_name_then_results(self) -> None:
         data_dict = {GetQueryParams.NAME: 'aGl'}
         response = self._get(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][GetQueryParams.NAME] == LibTrackMixinSpecialNames.TAGLESS
+        assert self.results[0][GetQueryParams.NAME] == CriteriaPlaylistWithoutCriteriaNames.TAG
 
-    def test_all_special_name_then_results(self):
-        data_dict = {GetQueryParams.NAME: 'Al'}
-        response = self._get(data_dict=data_dict)
-        assert response.status_code == status.HTTP_200_OK
-        assert len(self.results) == 1
-        assert self.results[0][GetQueryParams.NAME] == MANUAL_PLAYLIST_SPECIAL_NAMES.ALL
-
-    def test_value_in_simple_criteria_and_special_names_then_results(self):
+    def test_value_in_simple_criteria_and_special_names_then_results(self) -> None:
         manual_playlist_name = "lEsson"
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
         criteria_name = "leSsa"
@@ -73,5 +66,5 @@ class TestCase(GetFilterWithFreeValuesTestCase, BasePlaylistTestCase):
         names_lowered = [result[GetQueryParams.NAME].lower() for result in self.results]
         assert manual_playlist_name.lower() in names_lowered
         assert criteria_name.lower() in names_lowered
-        assert LibTrackMixinSpecialNames.GENRELESS.lower() in names_lowered
-        assert LibTrackMixinSpecialNames.TAGLESS.lower() in names_lowered
+        assert CriteriaPlaylistWithoutCriteriaNames.GENRE.lower() in names_lowered
+        assert CriteriaPlaylistWithoutCriteriaNames.TAG.lower() in names_lowered

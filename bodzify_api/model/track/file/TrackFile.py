@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING, cast
 import binascii
 import datetime
 import os
@@ -23,9 +25,9 @@ from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.cod
 from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import FingerprintingResult
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
-from bodzify_api.model.user.User import User
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
-from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
+from bodzify_api.model.utils import utils as model_utils
+from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz, utils as app_utils
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.validator.track_file_validator \
     import validate_content_type_is_audio, validate_filename_length, validate_size
@@ -35,11 +37,6 @@ if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
 
-def _get_user_lib_path(instance: 'TrackFile', filename):
-    user: User = instance.user
-    return user.lib_path_relative_to_media + '/' + filename
-
-
 class TrackFile(PrivateStandardResource):
 
     library_track = models.OneToOneField('LibraryTrack',
@@ -47,7 +44,7 @@ class TrackFile(PrivateStandardResource):
                                          related_name=LibraryTrackFields.TRACK_FILE_PROPERTY,
                                          unique=True)  # Makes the track file unique for a library track
 
-    file = models.FileField(upload_to=_get_user_lib_path,
+    file = models.FileField(upload_to=model_utils.get_user_lib_path,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
                             validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
@@ -104,6 +101,9 @@ class TrackFile(PrivateStandardResource):
             return self.file.name + " (" + str(self.size_in_bytes) + " bytes)"
         return ""
 
+    def _get_bitrate(self) -> Optional[int]:
+        return audio_metadata.get_bitrate_from_file(self.file_path_temp_or_not)
+
     def _manage_fingerprint(self) -> Optional[FingerprintingResult]:
         audio_meta_analysis_enabled_override_env_var = os.environ.get('AUDIO_META_ANALYSIS_ENABLED_OVERRIDE', None)
         if audio_meta_analysis_enabled_override_env_var:
@@ -123,14 +123,13 @@ class TrackFile(PrivateStandardResource):
                 fingerprint = binascii.hexlify(fingerprinting_result.fingerprint)
 
                 if library_track.track_file_fingerprint_must_be_unique:
-                    from bodzify_api.model.track.file.TrackFile import TrackFile
-                    existing_track_file = TrackFile.objects.filter(user=self.user,
-                                                                   fingerprint_memory=fingerprint).first()
+                    existing_track_file = cast(
+                        'Optional[TrackFile]',
+                        self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first()
+                    )
                     if existing_track_file:
-                        raise ValidationError(
-                            {'file': [f"The file '{self.filename}' has the same fingerprint as "
-                                      f"the file '{existing_track_file.filename}'."]}
-                        )
+                        raise ValidationError({'file': [f"The file '{self.filename}' has the same fingerprint as "
+                                                        f"the file '{existing_track_file.filename}'."]})
                 self.fingerprint_memory = fingerprint
             else:
                 self.fingerprint_missing_cause = fingerprinting_result.missing_cause
@@ -141,9 +140,8 @@ class TrackFile(PrivateStandardResource):
 
         return fingerprinting_result
 
-    def manage_musicbrainz_recording(
-        self, fingerprinting_result_nullable: Optional[FingerprintingResult]
-    ) -> Optional[MusicbrainzRecordingLookupResult]:
+    def manage_musicbrainz_recording(self, fingerprinting_result_nullable: Optional[FingerprintingResult]
+                                     ) -> Optional[MusicbrainzRecordingLookupResult]:
         musicbrainz_recording_lookup_result = None
 
         if self.fingerprint_missing_cause:
@@ -171,14 +169,9 @@ class TrackFile(PrivateStandardResource):
         return musicbrainz_recording_lookup_result
 
     def update_file_tags(self, normalized_metadata: dict):
-        audio_metadata.update_file_metadata(
-            file=self.file,
-            normalized_metadata=normalized_metadata,
-            normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX
-        )
-
-    def get_bitrate(self) -> Optional[int]:
-        return audio_metadata.get_bitrate_from_file(self.file_path_temp_or_not)
+        audio_metadata.update_file_metadata(file=self.file,
+                                            normalized_metadata=normalized_metadata,
+                                            normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:
         if not self.file or self.extension != '.flac':
@@ -189,10 +182,8 @@ class TrackFile(PrivateStandardResource):
                 audio_metadata.replace_flac_file_with_corrected_md5(self.file.path)
                 self.flac_md5_has_been_corrected = True
             except Exception:
-                raise ValidationError(
-                    {'file': ["The Flac file md5 check failed and could not be corrected. The " +
-                              "file is probably corrupted."]}
-                )
+                raise ValidationError({'file': ["The Flac file md5 check failed and could not be corrected. The " +
+                                                "file is probably corrupted."]})
         else:
             self.flac_md5_has_been_corrected = False
 
@@ -210,7 +201,7 @@ class TrackFile(PrivateStandardResource):
             file=temp_file_path,
             normalized_metadata_key=NormalizedMetadataKeys.DURATION_IN_SEC)  # type: ignore
         self.duration_in_sec = int(duration_in_sec)
-        self.bitrate_in_kbps = self.get_bitrate()
+        self.bitrate_in_kbps = self._get_bitrate()
         self.handle_flac_md5()
 
         fingerprinting_result = self._manage_fingerprint()

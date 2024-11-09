@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Any, TYPE_CHECKING
+from typing import Dict, Any, TYPE_CHECKING, Optional
 
 from django.db import models
 
@@ -17,10 +17,15 @@ class CriteriaPlaylist(BasePlaylist):
                                     on_delete=models.CASCADE,
                                     blank=True,
                                     null=True,
-                                    related_name=CriteriaFields.CRITERIA_PLAYLIST_DB)
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)
-    root = models.ForeignKey('self', on_delete=models.DO_NOTHING, related_name=Fields.ROOT_DESCENDANTS)
+                                    related_name=CriteriaFields.CRITERIA_PLAYLIST)
+    parent: Optional['CriteriaPlaylist'] = models.ForeignKey(
+        'self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)  # type: ignore
+    root: 'CriteriaPlaylist' = models.ForeignKey(
+        'self', on_delete=models.DO_NOTHING, related_name=Fields.ROOT_DESCENDANTS)  # type: ignore
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
+
+    if TYPE_CHECKING:
+        children: models.QuerySet['CriteriaPlaylist']
 
     objects: CriteriaPlaylistManager = CriteriaPlaylistManager()
 
@@ -41,10 +46,6 @@ class CriteriaPlaylist(BasePlaylist):
     @property
     def name(self):
         return self.criteria.name if self.criteria else self.name_when_no_criteria()
-
-    @property
-    def children(self) -> models.QuerySet['CriteriaPlaylist']:
-        return CriteriaPlaylist.objects.get_children(self.user, self)
 
     @property
     def is_root(self) -> bool:
@@ -81,7 +82,7 @@ class CriteriaPlaylist(BasePlaylist):
             return False
 
     def _prepare_save(self, **kwargs) -> Dict[str, Any]:
-        self._set_pk_if_necessary()
+        self._set_uuid_if_necessary()
         ctx = __class__._create_save_context(**kwargs)
 
         parent_has_changed = self._set_parent()

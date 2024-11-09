@@ -12,5 +12,5 @@ class LibTrackMixinDetailedSerializer(serializers.ModelSerializer):
         model = LibTrackMixin
 
     def get_library_tracks(self, instance: LibTrackMixin):
-        sorted_tracks = instance.get_sorted_tracks()
+        sorted_tracks = instance.lib_tracks_sorted()
         return LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(sorted_tracks, many=True).data

@@ -1,4 +1,3 @@
-
 from rest_framework import status
 
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields

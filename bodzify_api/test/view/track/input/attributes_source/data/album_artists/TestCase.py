@@ -1,6 +1,7 @@
 
 from rest_framework import status
 
+from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields
 from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase \
     import NullableStrFieldFromDataTestCase
@@ -18,7 +19,7 @@ class TestCase(NullableStrFieldFromDataTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.album
-        artists: QuerySet[Artist] = self.saved_lib_track.album.album_artists.all()[0].name == value
+        assert self.saved_lib_track.album.album_artists.all()[0].name == value
 
     def test_empty_then_none(self):
         data = {

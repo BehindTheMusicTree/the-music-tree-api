@@ -9,7 +9,7 @@ from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldMo
 
 class TestCase(FieldModelStrTestCase):
 
-    def test_longest_then_ok(self):
+    def test_longest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
@@ -30,7 +30,7 @@ class TestCase(FieldModelStrTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.artists.count() == 0
 
-    def test_existing(self):
+    def test_existing(self) -> None:
         artist_name = "Kopoe"
         self.model_fixture_factory.create_artist(name=artist_name)
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
@@ -40,7 +40,7 @@ class TestCase(FieldModelStrTestCase):
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
-    def test_not_existing(self):
+    def test_not_existing(self) -> None:
         artist_name = "hoho"
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)

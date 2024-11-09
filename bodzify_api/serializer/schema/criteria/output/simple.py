@@ -16,9 +16,7 @@ class Fields:
 
 class CriteriaSimpleSerializer(serializers.ModelSerializer):
     parent = CriteriaMinimumSerializer()
-    descendants = CriteriaLineageRelationWithoutAscendantSerializer(
-        source=AvailableFields.CRITERIA_ASCENDANT_RELATION_DESCENDANTS,
-        many=True)
+    descendants = CriteriaLineageRelationWithoutAscendantSerializer(source=AvailableFields.DESCENDANTS, many=True)
 
     class Meta:
         model = Criteria

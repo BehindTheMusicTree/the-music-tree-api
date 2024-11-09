@@ -1,7 +1,10 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
+from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.serializer.field.UserFilteredUUIDField import UserFilteredUUIDField
 from bodzify_api.serializer.schema.track.input.model import Fields as SaveModelFields
@@ -14,11 +17,11 @@ class Fields:
     TITLE = SaveModelFields.TITLE
     FORCE_TITLE_GENERATION = "force_title_generation"
     ARTISTS_NAMES = f"{SaveModelFields.ARTISTS}_{ArtistFields.NAME}s"
-    ALBUM_NAME = f"{SaveModelFields.ALBUM}_name"
-    ALBUM_ARTISTS_NAMES = f"{SaveModelFields.ALBUM}_artists_names"
+    ALBUM_NAME = f"{SaveModelFields.ALBUM}_{AlbumFields.NAME}"
+    ALBUM_ARTISTS_NAMES = f"{SaveModelFields.ALBUM}_artists_{ArtistFields.NAME}s"
     POSITION_IN_ALBUM = SaveModelFields.POSITION_IN_ALBUM
-    GENRE_UUID = f"{SaveModelFields.GENRE}_uuid"
-    GENRE_NAME = f"{SaveModelFields.GENRE}_name"
+    GENRE_UUID = f"{SaveModelFields.GENRE}_{CriteriaFields.UUID}"
+    GENRE_NAME = f"{SaveModelFields.GENRE}_{CriteriaFields.NAME}"
     RATING = SaveModelFields.RATING
     LANGUAGE = SaveModelFields.LANGUAGE
     ARCHIVED = SaveModelFields.ARCHIVED

@@ -15,8 +15,6 @@ if TYPE_CHECKING:
 
 
 class CriteriaPlaylistManager(BaseManager):
-    def get_children(self, user, parent) -> QuerySet['CriteriaPlaylist']:
-        return self.filter(user=user, parent=parent)
 
     def get_by_name(self, user, name: str) -> Optional['CriteriaPlaylist']:
         return self.filter(user=user).filter(

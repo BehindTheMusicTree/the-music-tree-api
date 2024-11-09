@@ -1,5 +1,4 @@
-from typing import Any, Optional, TYPE_CHECKING, Self
-from django.db.models import QuerySet
+from typing import Any, TYPE_CHECKING, Self
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
 

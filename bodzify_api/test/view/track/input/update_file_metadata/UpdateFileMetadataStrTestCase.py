@@ -10,8 +10,8 @@ class UpdateFileMetadataStrTestCase(LibTrackTestCase):
 
     VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
 
-    save_field = None
-    lib_track_normalized_metadata_key = None
+    save_field: Optional[str] = None
+    lib_track_normalized_metadata_key: Optional[str] = None
     file_extension: str
     length_max: int
 

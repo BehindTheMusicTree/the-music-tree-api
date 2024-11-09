@@ -7,13 +7,13 @@ from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 class UpdateFileMetadataIntTestCase(LibTrackTestCase):
-    save_field = None
-    lib_track_normalized_metadata_key = None
+    save_field: Optional[str] = None
+    lib_track_normalized_metadata_key: Optional[str] = None
     file_extension: str
-    value_min = None
-    value_max = None
-    value_min_expected_in_metadata = None
-    value_max_expected_in_metadata = None
+    value_min: Optional[int] = None
+    value_max: Optional[int] = None
+    value_min_expected_in_metadata: Optional[int] = None
+    value_max_expected_in_metadata: Optional[int] = None
 
     def _test_value(self, value: Optional[int],
                     value_expected_in_metadata: Optional[int] = None,

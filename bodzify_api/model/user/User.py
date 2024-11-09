@@ -54,18 +54,6 @@ class User(AbstractUser):
         all_lib_track_mixin, _ = AllLibTrackMixin.objects.get_or_create(user=self)
         return all_lib_track_mixin
 
-    @cached_property
-    def genre_criteria_playlist(self) -> 'CriteriaPlaylist':
-        from bodzify_api.model.playlist.children.criteria.children.genre.GenrePlaylist import GenrePlaylist
-        playlist, _ = GenrePlaylist.objects.get_or_create(user=self, criteria=None)
-        return playlist
-
-    @cached_property
-    def tag_criteria_playlist(self) -> 'CriteriaPlaylist':
-        from bodzify_api.model.playlist.children.criteria.children.tag.TagPlaylist import TagPlaylist
-        playlist, _ = TagPlaylist.objects.get_or_create(user=self, criteria=None)
-        return playlist
-
     @property
     def default_lib_track_file_abs_path(self):
         return self.lib_abs_path / self.DEFAULT_LIB_TRACK_FILENAME_WITH_EXTENSION

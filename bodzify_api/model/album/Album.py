@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class Album(LibTrackMixin):
-    name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)
+    name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)  # type: ignore
     year = models.CharField(max_length=4, default=None, null=True)
     album_artists = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)
 
@@ -23,9 +23,9 @@ class Album(LibTrackMixin):
 
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
-        return getattr(self, Fields.LIB_TRACKS_DB)
+        return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
-    def get_sorted_tracks(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks_sorted(self) -> models.QuerySet['LibraryTrack']:
         from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
         return self.library_tracks.annotate(
             null_position=Q(position_in_album__isnull=True)).order_by(
@@ -55,44 +55,6 @@ class Album(LibTrackMixin):
             string += f" | Tracks: {track_details_str}"
 
         return string
-
-    @staticmethod
-    def create_with_album_artists_list(user: User, album_name: str, album_artists_list: list[Artist]) -> 'Album':
-        album = Album.objects.create(user=user, name=album_name)
-        if album_artists_list:
-            album.album_artists.set(album_artists_list)
-        return album
-
-    @staticmethod
-    def _get_album_from_name_and_artists_list_after_having_eventually_created_album(
-            user: User, album_name: str, album_artists: list) -> Optional['Album']:
-
-        album_queryset = Album.objects.filter(user=user, name=album_name)
-        if len(album_artists) > 0:
-            for album_artist in album_artists:
-                album_queryset = album_queryset.filter(album_artists__in=[album_artist])
-        else:
-            album_queryset = album_queryset.filter(album_artists=None)
-
-        if album_queryset.count() == 0:
-            album = Album.create_with_album_artists_list(user=user,
-                                                         album_name=album_name,
-                                                         album_artists_list=album_artists)
-        else:
-            album = album_queryset.first()
-        return album
-
-    @staticmethod
-    def get_album_from_name_and_album_artists_names_list_after_eventual_creations(
-            user: User, album_name: str, album_artists_names_list: list) -> Optional['Album']:
-        if album_artists_names_list and len(album_artists_names_list) > 0:
-            album_artists = [Artist.objects.get_or_create(user=user, name=artist_name)[0]
-                             for artist_name in album_artists_names_list]
-        else:
-            album_artists = []
-
-        return Album._get_album_from_name_and_artists_list_after_having_eventually_created_album(
-            user=user, album_name=album_name, album_artists=album_artists)
 
     def delete_with_tracks_and_eventually_artists(self):
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack

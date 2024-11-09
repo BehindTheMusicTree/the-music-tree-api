@@ -7,8 +7,8 @@ from .Fields import Fields
 
 
 class CriteriaLineageRel(PrivateStandardResource):
-    descendant = models.ForeignKey(Criteria, on_delete=models.CASCADE, related_name=CriteriaFields.ASCENDANTS_REL)
-    ascendant = models.ForeignKey(Criteria, on_delete=models.CASCADE, related_name=CriteriaFields.DESCENDANTS_REL)
+    descendant = models.ForeignKey(Criteria, on_delete=models.CASCADE, related_name=CriteriaFields.ASCENDANTS_RELS)
+    ascendant = models.ForeignKey(Criteria, on_delete=models.CASCADE, related_name=CriteriaFields.DESCENDANTS_RELS)
     degree = models.PositiveIntegerField()
 
     def __str__(self):

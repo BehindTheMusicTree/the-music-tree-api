@@ -9,7 +9,7 @@ from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 class TestCase(GenreTestCase):
 
-    def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning(self):
+    def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning(self) -> None:
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         rock_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rock_genre).base_playlist
         lib_track_previously_second_in_rock = self.model_fixture_factory.create_lib_track_with_file(
@@ -34,7 +34,7 @@ class TestCase(GenreTestCase):
         assert lib_track_playlist_rels.get(library_track=lib_track_previously_first_in_rock).position == 3
         assert lib_track_playlist_rels.get(library_track=lib_track_previously_second_in_rock).position == 4
 
-    def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning_of_parent_of_parent(self):
+    def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning_of_parent_of_parent(self) -> None:
         guitare_genre = self.model_fixture_factory.create_genre(name="Guitare")
         guitare_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=guitare_genre).base_playlist
         lib_track_previously_second_in_guitare = self.model_fixture_factory.create_lib_track_with_file(
@@ -69,7 +69,7 @@ class TestCase(GenreTestCase):
         assert tracks_positions[lib_track_previously_first_in_guitare.uuid] == 5
         assert tracks_positions[lib_track_previously_second_in_guitare.uuid] == 6
 
-    def test_new_parent_not_acendant_of_old_parent_then_update_positions_in_old_parent(self):
+    def test_new_parent_not_acendant_of_old_parent_then_update_positions_in_old_parent(self) -> None:
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         rock_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rock_genre).base_playlist
 
@@ -93,7 +93,7 @@ class TestCase(GenreTestCase):
         assert tracks_positions[track_second_in_rock.uuid] == 1
         assert tracks_positions[track_fourth_in_rock.uuid] == 2
 
-    def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self):
+    def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self) -> None:
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
         punk_playlist: CriteriaPlaylist = punk_genre.criteria_playlist
