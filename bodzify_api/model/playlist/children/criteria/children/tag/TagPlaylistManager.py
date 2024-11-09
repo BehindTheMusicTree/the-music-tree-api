@@ -1,17 +1,16 @@
 from typing import Any, TYPE_CHECKING, Self
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
-
-from ...CriteriaManager import CriteriaManager
+from ...CriteriaPlaylistManager import CriteriaPlaylistManager
 
 if TYPE_CHECKING:
-    from .Tag import Tag
+    from .TagPlaylist import TagPlaylist
 
 
-class TagManager(CriteriaManager):
-    model: type['Tag']
+class TagPlaylistManager(CriteriaPlaylistManager):
+    model: type['TagPlaylist']
 
-    def create(self, **kwargs) -> 'Tag':
+    def create(self, **kwargs) -> 'TagPlaylist':
         return super().create(type_pk=CriteriaTypesPks.TAG, **kwargs)
 
     def filter(self, *args: Any, **kwargs: Any) -> Self:

@@ -28,9 +28,9 @@ class CriteriaPlaylistManager(BaseManager):
             )
         ).first()
 
-    def update_single(self, instance: 'CriteriaPlaylist', **kwargs) -> 'CriteriaPlaylist':
+    def update(self, instance: 'CriteriaPlaylist', **kwargs) -> 'CriteriaPlaylist':
         original_root = instance.root
-        updated_instance: CriteriaPlaylist = super().update_single(instance, **kwargs)
+        updated_instance: CriteriaPlaylist = super().update(instance, **kwargs)
         if original_root != updated_instance.root:
             self.update_descendants_root(instance=updated_instance, root=updated_instance.root)
         return updated_instance

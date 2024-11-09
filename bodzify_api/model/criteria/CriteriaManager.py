@@ -4,6 +4,7 @@ from django.db.models import QuerySet
 
 from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
 from .type.CriteriaType import CriteriaType
+from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
@@ -17,45 +18,43 @@ T = TypeVar('T', bound='Criteria')
 class CriteriaManager(LibTrackMixinManager[T], Generic[T]):
     model: T
 
-    def create_single(self, type_pk: int, **kwargs) -> T:
+    def create(self, type_pk: int, **kwargs) -> T:
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
         type = CriteriaType.objects.get(pk=type_pk)
-        instance = self.create(type=type, **kwargs)
+        instance: T = super().create(type=type, **kwargs)
         CriteriaPlaylist.objects.create(user=instance.user, criteria=instance, type=type)
-        self.update_ascendants_of_criteria_and_children(instance)
+        self.refresh_ascendants_of_criteria_and_children(instance)
         return instance
 
-    def update_single(self, instance: T, **kwargs) -> T:
-        from bodzify_api.model.criteria.Criteria import Fields as ModelFields
+    def update(self, instance: T, **kwargs) -> T:
         old_root = instance.root
         old_parent = instance.parent
         old_name = instance.name
 
-        instance.save(**kwargs)
+        updated_instance: T = super().update(instance, **kwargs)
 
-        if old_parent != instance.parent:
-            instance.save(update_fields=[ModelFields.ROOT])
+        if old_parent != updated_instance.parent:
+            instance.save(update_fields=[Fields.ROOT])
 
-            common_criteria = self.get_common_ascendant(instance, old_parent)
-            CriteriaPlaylist.objects.update_ascendants_tracks(instance=instance.criteria_playlist,
+            common_criteria = self.get_common_ascendant(updated_instance, old_parent)
+            CriteriaPlaylist.objects.update_ascendants_tracks(instance=updated_instance.criteria_playlist,
                                                               old_parent=old_parent,
                                                               common_criteria=common_criteria)
-            self.update_ascendants_of_criteria_and_children(instance)
+            self.refresh_ascendants_of_criteria_and_children(updated_instance)
 
-            playlist_parent = instance.parent.criteria_playlist if instance.parent else None
-            CriteriaPlaylist.objects.update_single(instance=instance.criteria_playlist, parent=playlist_parent)
+            playlist_parent = updated_instance.parent.criteria_playlist if updated_instance.parent else None
+            CriteriaPlaylist.objects.update(instance=instance.criteria_playlist, parent=playlist_parent)
 
-            if old_root != instance.root:
-                self.update_children_root(criteria=instance, new_root=instance.root)
-                CriteriaPlaylist.objects.update_instance_and_children_root(instance=instance.criteria_playlist,
-                                                                           root=instance.root.criteria_playlist)
+            if old_root != updated_instance.root:
+                self.update_children_root(criteria=updated_instance, new_root=updated_instance.root)
+                CriteriaPlaylist.objects.update_instance_and_children_root(instance=updated_instance.criteria_playlist,
+                                                                           root=updated_instance.root.criteria_playlist)
 
-        if old_name != instance.name:
-            lib_tracks: list['LibraryTrack'] = list(instance.library_tracks)
-            for lib_track in lib_tracks:
+        if old_name != updated_instance.name and updated_instance.library_tracks:
+            for lib_track in updated_instance.library_tracks:
                 lib_track.update_file_tags_from_lib_track_instance_values()
 
-        return instance
+        return updated_instance
 
     def get_common_ascendant(
             self, criteria_a: Optional['Criteria'], criteria_b: Optional['Criteria']) -> Optional['Criteria']:
@@ -79,10 +78,10 @@ class CriteriaManager(LibTrackMixinManager[T], Generic[T]):
     def get_roots(self, user: 'User') -> QuerySet[T]:
         return self.filter(user=user, parent__isnull=True)
 
-    def update_ascendants_of_criteria_and_children(self, criteria: T):
-        from bodzify_api.model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
+    def refresh_ascendants_of_criteria_and_children(self, criteria: T):
+        from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 
-        criteria.ascendants.clear()
+        criteria.ascendants.all().delete()
         current_degree = 1
         current_parent = criteria.parent
 
@@ -95,7 +94,7 @@ class CriteriaManager(LibTrackMixinManager[T], Generic[T]):
             current_degree = current_degree + 1
 
         for child in self.filter(parent=criteria):
-            self.update_ascendants_of_criteria_and_children(child)
+            self.refresh_ascendants_of_criteria_and_children(child)
 
     def update_children_root(self, criteria: 'Criteria', new_root: 'Criteria'):
         children = criteria.children.all()

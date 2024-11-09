@@ -16,10 +16,10 @@ class BaseManager(models.Manager, Generic[T]):
     def get_default_ordering(self):
         raise NotImplementedError()
 
-    def create_single(self, **kwargs) -> T:
+    def create(self, **kwargs) -> T:
         return super().create(**kwargs)
 
-    def update_single(self, instance: T, **kwargs) -> T:
+    def update(self, instance: T, **kwargs) -> T:
         for key, value in kwargs.items():
             setattr(instance, key, value)
         instance.save()

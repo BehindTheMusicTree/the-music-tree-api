@@ -55,8 +55,8 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
                 LibTrackPlaylistRel.objects.create(user=instance.user,
                                                    base_playlist=criteria_playlist,
                                                    library_track=instance)
-                CriteriaPlaylist.objects.update_single(instance=criteria_playlist,
-                                                       last_track_list_update_date=update_date)
+                CriteriaPlaylist.objects.update(instance=criteria_playlist,
+                                                last_track_list_update_date=update_date)
 
                 # The loop will stop before genre_tree_item is None
                 genre_tree_item = genre_tree_item.parent  # type: ignore
@@ -67,8 +67,8 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
             LibTrackPlaylistRel.objects.create(user=instance.user,
                                                base_playlist=genreless_criteria_playlist,
                                                library_track=instance)
-            CriteriaPlaylist.objects.update_single(instance=genreless_criteria_playlist,
-                                                   last_track_list_update_date=update_date)
+            CriteriaPlaylist.objects.update(instance=genreless_criteria_playlist,
+                                            last_track_list_update_date=update_date)
 
     def update_genre_playlists(self, instance: 'LibraryTrack', old_genre: Optional['Genre']):
         common_genre = \

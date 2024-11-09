@@ -1,28 +1,32 @@
-from typing import Dict, Generic, Type, Optional, TypeVar, Any, List, Union, cast
+from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.serializers import ModelSerializer, Serializer, BaseSerializer
-from rest_framework.exceptions import ValidationError, APIException
+from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets, status
-from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DRFValidationError, MethodNotAllowed
 from django.http import FileResponse, QueryDict
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models import QuerySet
 
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
+from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.view.errors import APIErrorResponse, APIErrorMessages, APIFileResponse
+from bodzify_api.view.viewset.base.HttpMethod import HttpMethod
+from ...pagination.AppPagination import AppPagination
 from .RequestHandler import RequestHandler
 from .ErrorProcessor import ErrorProcessor
-from .enums import SerializerType, HttpMethod, PaginatedResponseFields
 
 
 T = TypeVar('T', bound=BaseModel)
 
 
 class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
+    pagination_class = AppPagination
     permission_classes = [IsAuthenticated]
     model_class: Type[T]
     filter_class: Optional[Type[AppFilterSet]] = None
@@ -31,15 +35,14 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     create_serializer_class: Optional[Type[Serializer]] = None
     update_serializer_class: Optional[Type[Serializer]] = None
 
-    def __init__(
-            self,
-            model_class: Type[T],
-            filter_class: Optional[Type[AppFilterSet]] = None,
-            simple_serializer_class: Optional[Type[ModelSerializer]] = None,
-            detailed_serializer_class: Optional[Type[ModelSerializer]] = None,
-            update_serializer_class: Optional[Type[Serializer]] = None,
-            create_serializer_class: Optional[Type[Serializer]] = None,
-            **kwargs):
+    def __init__(self,
+                 model_class: Type[T],
+                 filter_class: Optional[Type[AppFilterSet]] = None,
+                 simple_serializer_class: Optional[Type[ModelSerializer]] = None,
+                 detailed_serializer_class: Optional[Type[ModelSerializer]] = None,
+                 update_serializer_class: Optional[Type[Serializer]] = None,
+                 create_serializer_class: Optional[Type[Serializer]] = None,
+                 **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
         self.filter_class = filter_class
@@ -91,7 +94,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._get_create_serializer_class()
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-        instance = self.model_class.objects.create_single(**validated_data)
+        instance = self.model_class.objects.create(**validated_data)
         instance.save()
         return instance
 
@@ -99,7 +102,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._require_serializer(SerializerType.UPDATE)
         serializer = serializer_class(data=update_data, partial=True, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-        instance = self.model_class.objects.update_single(instance, **validated_data)
+        instance = self.model_class.objects.update(instance, **validated_data)
         return instance
 
     def _handle_post(self, request: Request, *args, **kwargs) -> Response:
@@ -133,6 +136,13 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         except (DRFValidationError, ValidationError) as e:
             return APIErrorResponse.from_validation_error(e)
 
+    def paginate_queryset(self, queryset) -> Optional[Union[List[T], QuerySet[T]]]:
+        if self.paginator is None:
+            return None
+        if isinstance(queryset, Sequence) and not isinstance(queryset, QuerySet):
+            queryset = self.model_class.objects.filter(id__in=[obj.id for obj in queryset])
+        return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
+
     def handle_exception(self, exc: Exception) -> Response:
         if isinstance(exc, (DRFValidationError, DjangoValidationError)):
             return APIErrorResponse.from_validation_error(exc)
@@ -162,18 +172,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         elif self.action in ['update', 'partial_update']:
             return self._require_serializer(SerializerType.UPDATE)
         raise NotImplementedError(f"Action {self.action} not defined in viewset")
-
-    def get_paginated_response(self, data: List[Any]) -> Response:
-        if not self.paginator:
-            raise APIException(detail=APIErrorMessages.PAGINATION_NOT_SET,
-                               code=str(status.HTTP_500_INTERNAL_SERVER_ERROR))
-
-        return Response({
-            PaginatedResponseFields.OVERALL_TOTAL: self.paginator.page.paginator.count if data else 0,
-            PaginatedResponseFields.NEXT: self.paginator.get_next_link() if data else None,
-            PaginatedResponseFields.PREVIOUS: self.paginator.get_previous_link() if data else None,
-            PaginatedResponseFields.RESULTS: data
-        })
 
     def get_file_response(self, file_path: str) -> FileResponse:
         return APIFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 class Criteria(LibTrackMixin):
-    name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, default=None)  # type: ignore
+    name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX)  # type: ignore
     ascendants: QuerySet['Criteria'] = models.ManyToManyField('self',
                                                               through='CriteriaLineageRel',
                                                               through_fields=(CriteriaLineageRelFields.DESCENDANT,
@@ -35,6 +35,7 @@ class Criteria(LibTrackMixin):
         ascendants_rels: QuerySet['CriteriaLineageRel']
         descendants: QuerySet['Criteria']
         descendants_rels: QuerySet['CriteriaLineageRel']
+        children: QuerySet['Criteria']
         criteria_playlist: 'CriteriaPlaylist'
 
     objects: CriteriaManager = CriteriaManager()

@@ -3,7 +3,6 @@ from typing import Dict, Any, TYPE_CHECKING, Optional
 
 from django.db import models
 
-from bodzify_api import settings
 from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
@@ -52,7 +51,7 @@ class CriteriaPlaylist(BasePlaylist):
         return self.root == self
 
     def __str__(self) -> str:
-        return f'{self.name}'
+        return f'{self.uuid} | {self.name} | {self.parent} | {self.root}'
 
     def _set_parent(self) -> bool:
         current_parent_pk = getattr(self, f"{Fields.PARENT}_id", None)
@@ -98,12 +97,13 @@ class CriteriaPlaylist(BasePlaylist):
 
         return ctx.kwargs
 
-    def _post_save(self):
-        if self._state.adding and not self.root:
+    def _post_save(self, adding: bool):
+        if adding:
             self.root_id = self.pk
-            super().save(update_fields=[f'{Fields.ROOT}_pk'])
+            super().save(update_fields=[f'{Fields.ROOT}_id'])
 
     def save(self, *args, **kwargs):
+        adding = self._state.adding
         kwargs = self._prepare_save(**kwargs)
         super().save(*args, **kwargs)
-        self._post_save()
+        self._post_save(adding=adding)
