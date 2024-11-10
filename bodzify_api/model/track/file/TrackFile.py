@@ -41,7 +41,7 @@ class TrackFile(PrivateStandardResource):
 
     library_track = models.OneToOneField('LibraryTrack',
                                          on_delete=models.CASCADE,
-                                         related_name=LibraryTrackFields.TRACK_FILE_PROPERTY,
+                                         related_name=LibraryTrackFields.TRACK_FILE,
                                          unique=True)  # Makes the track file unique for a library track
 
     file = models.FileField(upload_to=model_utils.get_user_lib_path,

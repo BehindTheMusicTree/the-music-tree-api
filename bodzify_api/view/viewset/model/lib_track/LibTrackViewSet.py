@@ -1,30 +1,34 @@
 from typing import Type
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
+
 from django.db import transaction
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.serializers import Serializer
 
-from bodzify_api.serializer.schema.track.input.endpoint.extract import LibTrackExtractSerializer
-from bodzify_api.serializer.schema.track.input.endpoint.post import LibTrackPostSerializer
-from bodzify_api.serializer.schema.track.input.endpoint.put import LibTrackPutSerializer
+from bodzify_api.serializer.schema.lib_track.input.endpoint.extract import LibTrackExtractSerializer
+from bodzify_api.serializer.schema.lib_track.input.endpoint.post import LibTrackPostSerializer
+from bodzify_api.serializer.schema.lib_track.input.endpoint.put import LibTrackPutSerializer
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album_and_genre \
+    import LibTrackWithoutAlbumPlaylistGenreSerializer
 from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
-from bodzify_api.service.TrackService import TrackService
-from bodzify_api.serializer.schema.track.output.detailed import LibTrackDetailedSerializer
+from bodzify_api.serializer.schema.lib_track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.filter.set.LibTrackFilterSet import LibTrackFilterSet, Fields as FilterFields
+from bodzify_api.filter.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
+from bodzify_api.filter.set.lib_track.Fields import Fields as FilterFields
+from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 
 class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
     def __init__(self, **kwargs):
-        super().__init__(
-            model_class=LibraryTrack,
-            filter_class=LibTrackFilterSet,
-            detailed_serializer_class=LibTrackDetailedSerializer,
-            **kwargs
-        )
+        super().__init__(model_class=LibraryTrack,
+                         filter_class=LibTrackFilterSet,
+                         simple_serializer_class=LibTrackWithoutAlbumPlaylistGenreSerializer,
+                         detailed_serializer_class=LibTrackDetailedSerializer,
+                         update_serializer_class=LibTrackPutSerializer,
+                         **kwargs)
 
     def _get_create_serializer_class(self):
         if self.action == 'create':
@@ -86,7 +90,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         """)
                    )
     def create(self, request, *args, **kwargs):
-        return self._handle_post(request, *args, **kwargs)
+        return self._handle_post(request=request, creation_type=LibTrackCreationType.POST, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=LibTrackExtractSerializer,
@@ -117,7 +121,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        return self._handle_post(request, *args, **kwargs)
+        return self._handle_post(request, creation_type=LibTrackCreationType.EXTRACT, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=LibTrackPutSerializer,
@@ -160,9 +164,4 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
 
     @transaction.atomic
     def destroy(self, request: Request, *args, **kwargs):
-        instance = self.get_object()
-        old_lib_tracks_playlists_with_positions = instance.get_lib_track_playlists_with_positions()
-        instance.delete_with_checking_album_and_artists_potential_deletion()
-        TrackService._decrease_position_of_next_tracks_in_old_track_playlists(
-            user=request.user,
-            playlists_with_old_position=old_lib_tracks_playlists_with_positions)
+        self._handle_destroy(request, *args, **kwargs)

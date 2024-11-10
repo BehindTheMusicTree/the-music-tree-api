@@ -8,8 +8,7 @@ class Fields:
     CREATED_ON = PrivateUniqueResourceFields.CREATED_ON
     UPDATED_ON = PrivateUniqueResourceFields.UPDATED_ON
     PLAY_COUNT = TrackablePlayCountFields.PLAY_COUNT
-    TRACK_FILE_DB = "_track_file"
-    TRACK_FILE_PROPERTY = "track_file"
+    TRACK_FILE = "track_file"
     TRACK_FILE_USER_FRIENDLY = "file"
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = "track_file_fingerprint_must_be_unique"
     TITLE = "title"

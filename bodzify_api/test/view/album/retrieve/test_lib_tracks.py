@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api.utils.utils import to_camel_case
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.serializer.schema.album.detailed import Fields as RetrieveFields
-from bodzify_api.serializer.schema.track.output.simple.simple_without_album import Fields as LibTrackGetFields
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album import Fields as LibTrackGetFields
 
 
 class TestCase(AlbumTestCase):

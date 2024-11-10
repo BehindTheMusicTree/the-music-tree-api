@@ -35,7 +35,7 @@ class Service:
         raise NotImplementedError("You should implement this method in a subclass")
 
     @staticmethod
-    def _update_data1_with_key_if_set_in_data2(key: str, data1: dict, data2: dict):
+    def update_data1_with_key_if_set_in_data2(key: str, data1: dict, data2: dict):
         if key in data2:
             value = data2[key]
             if value == "":
@@ -43,28 +43,14 @@ class Service:
             data1[key] = value
 
     @staticmethod
-    def _update_data1_converting_str_to_int_value_if_set(key: str, data1: dict):
-        if key in data1:
-            if data1[key] and data1[key] != '':
-                rating = int(data1[key])
-            else:
-                rating = None
-            data1[key] = rating
-
-    @staticmethod
-    def _remove_none_or_empty_key_from_dict(dict):
+    def remove_none_or_empty_key_from_dict(dict):
         for key in list(dict.keys()):
             if dict[key] is None or dict[key] == "":
                 del dict[key]
         return dict
 
     @staticmethod
-    def _override_data1_with_data2_values_for_each_key_in_data2(data1: dict, data2: dict, keys: list[str]):
-        for key in keys:
-            Service._update_data1_with_key_if_set_in_data2(key=key, data1=data1, data2=data2)
-
-    @staticmethod
-    def _get_copy_of_dict_including_only_specified_keys(dict, keys):
+    def get_copy_of_dict_including_only_specified_keys(dict, keys):
         dict2 = dict.copy()
         for key in list(dict2.keys()):
             if key not in keys:

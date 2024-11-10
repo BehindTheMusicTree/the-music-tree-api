@@ -1,8 +1,7 @@
 
 from rest_framework import serializers
 
-from bodzify_api.serializer.schema.track.input.endpoint.endpoint \
-    import Fields as EndpointFields, LibTrackEndPointSerializer
+from .endpoint import LibTrackEndPointSerializer, Fields as EndpointFields
 
 
 class Fields:
@@ -17,7 +16,9 @@ class Fields:
     GENRE_NAME = EndpointFields.GENRE_NAME
     RATING = EndpointFields.RATING
     LANGUAGE = EndpointFields.LANGUAGE
+    ARCHIVED = EndpointFields.ARCHIVED
 
 
-class LibTrackPostSerializer(LibTrackEndPointSerializer):
-    file = serializers.FileField(required=True)
+class LibTrackPutSerializer(LibTrackEndPointSerializer):
+    file = serializers.FileField(required=False)
+    archived = serializers.BooleanField(required=False)

@@ -7,7 +7,7 @@ from rest_framework import serializers
 from bodzify_api.model.play.Play import Play
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.serializer.schema.playlist.base.output.detailed import BasePlaylistDetailedSerializer
-from bodzify_api.serializer.schema.track.output.simple.simple_without_album_and_genre import \
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album_and_genre import \
     LibTrackWithoutAlbumPlaylistGenreSerializer
 from .Fields import Fields
 

@@ -11,7 +11,7 @@ from bodzify_api.serializer.schema.album.minimum import Fields as AlbumFields
 from bodzify_api.serializer.schema.artist.minimum import Fields as ArtistFields
 from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import Fields as CriteriaPlaylistFields
 from bodzify_api.serializer.schema.playlist.children.simple.output.simple import Fields as ManualPlaylistFields
-from bodzify_api.serializer.schema.track.output.detailed import Fields as LibTrackGetFields
+from bodzify_api.serializer.schema.lib_track.output.detailed import Fields as LibTrackGetFields
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
 

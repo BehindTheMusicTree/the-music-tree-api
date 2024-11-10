@@ -1,0 +1,17 @@
+from ..Fields import Fields as SchemaFields
+
+
+class Fields:
+    FILE = SchemaFields.FILE
+    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = SchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
+    TITLE = SchemaFields.TITLE
+    FORCE_TITLE_GENERATION = "force_title_generation"
+    ARTISTS_NAMES = SchemaFields.ARTISTS_NAMES
+    ALBUM_NAME = SchemaFields.ALBUM_NAME
+    ALBUM_ARTISTS_NAMES = SchemaFields.ALBUM_ARTISTS_NAMES
+    POSITION_IN_ALBUM = SchemaFields.POSITION_IN_ALBUM
+    GENRE_UUID = SchemaFields.GENRE_UUID
+    GENRE_NAME = SchemaFields.GENRE_NAME
+    RATING = SchemaFields.RATING
+    LANGUAGE = SchemaFields.LANGUAGE
+    ARCHIVED = SchemaFields.ARCHIVED

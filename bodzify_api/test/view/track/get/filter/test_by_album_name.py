@@ -1,7 +1,7 @@
 
 from rest_framework import status
 
-from bodzify_api.serializer.schema.track.output.Fields import Fields as LibTrackFields
+from bodzify_api.serializer.schema.lib_track.output.Fields import Fields as LibTrackFields
 from bodzify_api.serializer.schema.album.fields import Fields as AlbumFields
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 from bodzify_api.utils.utils import to_camel_case

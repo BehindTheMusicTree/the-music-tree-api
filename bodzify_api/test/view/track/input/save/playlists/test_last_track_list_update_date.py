@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.CriteriaType import CriteriaTypesPks
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.schema.track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 

@@ -20,14 +20,14 @@ class AlbumManager(LibTrackMixinManager):
         else:
             album_queryset = album_queryset.filter(album_artists=None)
 
-        return self.create_single_with_album_artists_list(
+        return self.create_instance_with_album_artists_list(
             user=user, album_name=album_name, album_artists_list=album_artists) \
             if album_queryset.count() == 0 else album_queryset.first()
 
     def get_default_ordering(self) -> list[str]:
         return [Fields.NAME]
 
-    def create_single_with_album_artists_list(
+    def create_instance_with_album_artists_list(
             self, user: User, album_name: str, album_artists_list: list['Artist']) -> 'Album':
         album: Album = self.create(user=user, name=album_name)
         if album_artists_list:

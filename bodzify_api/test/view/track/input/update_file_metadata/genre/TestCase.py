@@ -1,13 +1,12 @@
-
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
-from bodzify_api.serializer.schema.track.input.schema import Fields as SaveSchemaFields
+from bodzify_api.serializer.schema.lib_track.input.Fields import Fields as Fields
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import \
     UpdateFileMetadataStrTestCase
 
 
 class TestCase(UpdateFileMetadataStrTestCase):
-    save_field = SaveSchemaFields.GENRE_NAME
+    save_field = Fields.GENRE_NAME
     lib_track_normalized_metadata_key = NormalizedMetadataKeys.GENRE_NAME
     length_max = settings.CRITERIA_NAME_LEN_MAX
 

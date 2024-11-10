@@ -2,7 +2,7 @@
 from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
-from bodzify_api.serializer.schema.track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.NullableFieldTestCase import \
     NullableFieldTestCase
 

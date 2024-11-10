@@ -45,13 +45,13 @@ class CriteriaService(Service):
             self, user: User, schema_data: dict, oldinstance) -> dict:
         model_data = dict()
 
-        self._update_data1_with_key_if_set_in_data2(key=ModelFields.NAME,
-                                                    data1=model_data,
-                                                    data2=schema_data)
+        self.update_data1_with_key_if_set_in_data2(key=ModelFields.NAME,
+                                                   data1=model_data,
+                                                   data2=schema_data)
 
-        self._update_data1_with_key_if_set_in_data2(key=ModelFields.PARENT,
-                                                    data1=model_data,
-                                                    data2=schema_data)
+        self.update_data1_with_key_if_set_in_data2(key=ModelFields.PARENT,
+                                                   data1=model_data,
+                                                   data2=schema_data)
 
         model_data[ModelFields.TYPE] = self.criteria_type_pk
 

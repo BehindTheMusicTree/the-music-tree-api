@@ -7,22 +7,20 @@ from bodzify_api.serializer.schema.criteria.input.endpoint.post import CriteriaP
 from bodzify_api.serializer.schema.criteria.input.endpoint.put import CriteriaPutSerializer
 from bodzify_api.serializer.schema.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.serializer.schema.criteria.output.simple import CriteriaSimpleSerializer
-from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
+from ...base.AppModelViewSet import AppModelViewSet
 
 
 class CriteriaViewSet(AppModelViewSet[Criteria]):
     def __init__(self, model_class: type[Criteria], **kwargs):
         # Filtersets must be imported after Django is loaded
         from bodzify_api.filter.set.criteria.CriteriaFilterSet import CriteriaFilterSet
-        super().__init__(
-            model_class=model_class,
-            filter_class=CriteriaFilterSet,
-            simple_serializer_class=CriteriaSimpleSerializer,
-            detailed_serializer_class=CriteriaDetailedSerializer,
-            create_serializer_class=CriteriaPostSerializer,
-            update_serializer_class=CriteriaPutSerializer,
-            **kwargs
-        )
+        super().__init__(model_class=model_class,
+                         filter_class=CriteriaFilterSet,
+                         simple_serializer_class=CriteriaSimpleSerializer,
+                         detailed_serializer_class=CriteriaDetailedSerializer,
+                         create_serializer_class=CriteriaPostSerializer,
+                         update_serializer_class=CriteriaPutSerializer,
+                         **kwargs)
 
     @transaction.atomic
     @extend_schema(request=CriteriaPostSerializer, responses=CriteriaDetailedSerializer)

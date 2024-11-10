@@ -4,7 +4,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.serializer.schema.artist.fields import Fields
 from bodzify_api.serializer.schema.album.minimum import AlbumMinimumSerializer
-from bodzify_api.serializer.schema.track.output.simple.simple_without_artist \
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_artist \
     import LibTrackSimpleWithoutPlaylistAndArtistSerializer
 
 

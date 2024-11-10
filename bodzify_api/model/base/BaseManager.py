@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from typing import TypeVar, Generic, TYPE_CHECKING
 
 from django.db import models
@@ -19,8 +20,12 @@ class BaseManager(models.Manager, Generic[T]):
     def create(self, **kwargs) -> T:
         return super().create(**kwargs)
 
-    def update(self, instance: T, **kwargs) -> T:
+    def update_instance(self, instance: T, **kwargs) -> T:
         for key, value in kwargs.items():
             setattr(instance, key, value)
         instance.save()
         return instance
+
+    @ abstractmethod
+    def delete_instance(self, instance: T):
+        pass

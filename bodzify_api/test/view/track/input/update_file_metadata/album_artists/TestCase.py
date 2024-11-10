@@ -1,7 +1,7 @@
 
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
-from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as PostFields
+from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as PostFields
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import \
     UpdateFileMetadataStrTestCase
 

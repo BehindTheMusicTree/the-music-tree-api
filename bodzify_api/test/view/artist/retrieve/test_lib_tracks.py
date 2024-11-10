@@ -5,7 +5,7 @@ from rest_framework import status
 from bodzify_api.serializer.schema.artist.detailed import Fields as ArtistFields
 from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
 from bodzify_api.utils.utils import to_camel_case
-from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as LibTrackPostFields
+from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as LibTrackPostFields
 
 
 class TestCase(ArtistTestCase):

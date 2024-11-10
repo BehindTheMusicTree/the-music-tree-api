@@ -19,7 +19,7 @@ from bodzify_api.serializer.schema.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.schema.artist.simple import ArtistSimpleSerializer
 from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.schema.playlist.children.simple.output.simple import ManualPlaylistSimpleSerializer
-from bodzify_api.serializer.schema.track.output.detailed import LibTrackDetailedSerializer
+from bodzify_api.serializer.schema.lib_track.output.detailed import LibTrackDetailedSerializer
 from ..pagination.DefaultMultipleModelLimitOffsetPagination import DefaultMultipleModelLimitOffsetPagination
 
 

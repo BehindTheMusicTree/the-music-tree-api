@@ -6,7 +6,7 @@ from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.lib_track_playlist_rel.output.without_lib_track_mixin \
     import Fields as LibTrackPositionRelFields
-from bodzify_api.serializer.schema.track.output.simple.simple_without_album \
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album \
     import LibTrackSimpleWithoutPlaylistAndAlbumSerializer
 from .Fields import Fields
 

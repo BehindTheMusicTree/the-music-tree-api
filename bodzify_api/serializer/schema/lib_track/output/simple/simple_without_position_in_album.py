@@ -4,7 +4,8 @@ from rest_framework import serializers
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.schema.artist.minimum import ArtistMinimumSerializer
-from bodzify_api.serializer.schema.track.output.simple.simple import Fields as SimpleFields
+from bodzify_api.serializer.schema.criteria.output.minimum import CriteriaMinimumSerializer
+from bodzify_api.serializer.schema.lib_track.output.simple.Fields import Fields as SimpleFields
 
 
 class Fields:
@@ -17,9 +18,10 @@ class Fields:
     LANGUAGE = SimpleFields.LANGUAGE
 
 
-class LibTrackSimpleWithoutGenreSerializer(serializers.ModelSerializer):
+class LibTrackSimpleWithoutPositionInAlbumSerializer(serializers.ModelSerializer):
     artists = ArtistMinimumSerializer(many=True)
     album = AlbumMinimumSerializer()
+    genre = CriteriaMinimumSerializer()
 
     class Meta:
         model = LibraryTrack
@@ -27,5 +29,6 @@ class LibTrackSimpleWithoutGenreSerializer(serializers.ModelSerializer):
                   Fields.TITLE,
                   Fields.ARTISTS,
                   Fields.ALBUM,
+                  Fields.GENRE,
                   Fields.RATING,
                   Fields.LANGUAGE,]

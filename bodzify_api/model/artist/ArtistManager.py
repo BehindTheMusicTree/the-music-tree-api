@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class ArtistManager(LibTrackMixinManager):
 
-    def _get_artists_names_list_from_str(self, names_str: str) -> list:
+    def get_artists_names_list_from_str(self, names_str: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_str.split(METADATA_ARTISTS_SEPARATION_CHAR)
         names = []
         for name_with_eventual_spaces_around in names_with_eventual_spaces_around_and_duplicates:
@@ -25,6 +25,6 @@ class ArtistManager(LibTrackMixinManager):
 
     def get_artists_list_from_names_str_after_eventual_creation(
             self, user: User, artists_names_str: str) -> list['Artist']:
-        artists_names_list = self._get_artists_names_list_from_str(artists_names_str)
+        artists_names_list = self.get_artists_names_list_from_str(artists_names_str)
         return [self.get_or_create(user=user, name=artist_name)[0] for artist_name in artists_names_list] \
             if len(artists_names_list) > 0 else []

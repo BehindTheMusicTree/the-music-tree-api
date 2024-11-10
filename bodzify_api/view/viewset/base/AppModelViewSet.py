@@ -7,14 +7,17 @@ from rest_framework.serializers import ModelSerializer, Serializer, BaseSerializ
 from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets, status
 from rest_framework.exceptions import ValidationError as DRFValidationError, MethodNotAllowed
-from django.http import FileResponse, QueryDict
+from django.http import FileResponse
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db.models import QuerySet
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth import get_user_model
 
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
+from bodzify_api.utils import utils
 from bodzify_api.view.errors import APIErrorResponse, APIErrorMessages, APIFileResponse
 from bodzify_api.view.viewset.base.HttpMethod import HttpMethod
 from ...pagination.AppPagination import AppPagination
@@ -74,27 +77,23 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             validated_data_dict[PrivateFields.USER] = self.request.user
         return validated_data_dict
 
-    def _convert_to_dict(self, data: Union[QueryDict, Dict[str, Any], Any]) -> Dict[str, Any]:
-        if isinstance(data, QueryDict):
-            return data.dict()
-        elif isinstance(data, dict):
-            return data
-        else:
-            return {k: v for k, v in data.items()}
-
     def _inject_user(self, data: Dict[str, Any], request: Request) -> Dict[str, Any]:
         if PrivateFields.USER not in data:
             data[PrivateFields.USER] = request.user
         return data
 
-    def _create_instance(self, request: Request, create_data: Dict[str, Any]) -> T:
+    def _create_instance(
+            self, request: Request, create_data: Dict[str, Any], creation_type: Optional[str]) -> T:
         if self.action != 'create':
             raise NotImplementedError(f"No action defined for action {self.action}")
 
         serializer_class = self._get_create_serializer_class()
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-        instance = self.model_class.objects.create(**validated_data)
+        if creation_type:
+            instance = self.model_class.objects.create(**validated_data, creation_type=creation_type)
+        else:
+            instance = self.model_class.objects.create(**validated_data)
         instance.save()
         return instance
 
@@ -102,24 +101,10 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._require_serializer(SerializerType.UPDATE)
         serializer = serializer_class(data=update_data, partial=True, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-        instance = self.model_class.objects.update(instance, **validated_data)
+        instance = self.model_class.objects.update_instance(instance, **validated_data)
         return instance
 
-    def _handle_post(self, request: Request, *args, **kwargs) -> Response:
-        create_data = self._convert_to_dict(request.data)
-        instance = self._create_instance(request, create_data)
-        serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
-        headers = self.get_success_headers(serializer.data)
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def _handle_update(self, request: Request, *args, **kwargs) -> Response:
-        instance = self.get_object()
-        update_data = self._convert_to_dict(request.data)
-        updated_instance = self._update_instance(request, instance, update_data)
-        serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-    def _handle_list(self, request: Request, *args, **kwargs) -> Response:
+    def _handle_list(self, *args, **kwargs) -> Response:
         try:
             queryset = self.get_queryset()
             page = self.paginate_queryset(queryset)
@@ -135,6 +120,25 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return self.get_paginated_response(data)
         except (DRFValidationError, ValidationError) as e:
             return APIErrorResponse.from_validation_error(e)
+
+    def _handle_post(self, request: Request, creation_type: str, *args, **kwargs) -> Response:
+        create_data = utils.convert_data_to_dict(request.data)
+        instance = self._create_instance(request=request, create_data=create_data, creation_type=creation_type)
+        serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
+        headers = self.get_success_headers(serializer.data)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def _handle_update(self, request: Request, *args, **kwargs) -> Response:
+        instance = self.get_object()
+        update_data = utils.convert_data_to_dict(request.data)
+        updated_instance = self._update_instance(request, instance, update_data)
+        serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def _handle_destroy(self, request: Request, *args, **kwargs) -> Response:
+        instance = self.get_object()
+        self.model_class.objects.delete_instance(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def paginate_queryset(self, queryset) -> Optional[Union[List[T], QuerySet[T]]]:
         if self.paginator is None:

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.schema.playlist.children.criteria.output.minumum import CriteriaPlaylistMinimumSerializer
-from bodzify_api.serializer.schema.track.output.simple.simple_without_album_and_genre import \
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album_and_genre import \
     LibTrackWithoutAlbumPlaylistGenreSerializer
 from .Fields import Fields as Fields
 from .minimum import CriteriaMinimumSerializer

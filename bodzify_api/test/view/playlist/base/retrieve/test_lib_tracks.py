@@ -4,8 +4,8 @@ from rest_framework import status
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.utils.utils import to_camel_case
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
-from bodzify_api.serializer.schema.track.input.endpoint.post import Fields as LibTrackPostFields
-from bodzify_api.serializer.schema.track.output.simple.simple_without_album import Fields as LibTrackGetFields
+from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as LibTrackPostFields
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album import Fields as LibTrackGetFields
 from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import Fields as CriteriaPlaylistFields
 
 

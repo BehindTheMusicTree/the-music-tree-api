@@ -16,7 +16,7 @@ from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from .view.viewset.model.playlist.children.GenrePlaylistViewSet import GenrePlaylistViewSet
 from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPlaylistViewSet
 from .view.viewset.model.PlayViewSet import PlayViewSet
-from .view.viewset.model.TrackViewSet import LibTrackViewSet
+from .view.viewset.model.lib_track.LibTrackViewSet import LibTrackViewSet
 from .view.viewset.model.UserViewSet import UserViewSet
 from .view.viewset.SearchApiViewSet import SearchApiViewSet
 

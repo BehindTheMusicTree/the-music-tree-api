@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-from bodzify_api.serializer.schema.track.output.simple.simple_without_album \
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album \
     import LibTrackSimpleWithoutPlaylistAndAlbumSerializer
 from .Fields import Fields
 

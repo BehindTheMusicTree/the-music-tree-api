@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 
-from bodzify_api.serializer.schema.track.input.endpoint.endpoint \
+from bodzify_api.serializer.schema.lib_track.input.endpoint.endpoint \
     import LibTrackEndPointSerializer, Fields as EndpointFields
 from bodzify_api.validator.mine_track_validators import validate_url
 

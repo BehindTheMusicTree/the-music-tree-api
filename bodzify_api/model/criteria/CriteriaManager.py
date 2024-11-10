@@ -26,12 +26,12 @@ class CriteriaManager(LibTrackMixinManager[T], Generic[T]):
         self.refresh_ascendants_of_criteria_and_children(instance)
         return instance
 
-    def update(self, instance: T, **kwargs) -> T:
+    def update_instance(self, instance: T, **kwargs) -> T:
         old_root = instance.root
         old_parent = instance.parent
         old_name = instance.name
 
-        updated_instance: T = super().update(instance, **kwargs)
+        updated_instance: T = super().update_instance(instance, **kwargs)
 
         if old_parent != updated_instance.parent:
             instance.save(update_fields=[Fields.ROOT])
@@ -43,7 +43,7 @@ class CriteriaManager(LibTrackMixinManager[T], Generic[T]):
             self.refresh_ascendants_of_criteria_and_children(updated_instance)
 
             playlist_parent = updated_instance.parent.criteria_playlist if updated_instance.parent else None
-            CriteriaPlaylist.objects.update(instance=instance.criteria_playlist, parent=playlist_parent)
+            CriteriaPlaylist.objects.update_instance(instance=instance.criteria_playlist, parent=playlist_parent)
 
             if old_root != updated_instance.root:
                 self.update_children_root(criteria=updated_instance, new_root=updated_instance.root)
