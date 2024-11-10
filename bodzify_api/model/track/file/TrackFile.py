@@ -2,7 +2,6 @@ from typing import Optional, TYPE_CHECKING, cast
 import binascii
 import datetime
 import os
-from typing import Optional, TYPE_CHECKING
 
 from django.core.files.base import File as DjangoFile
 from django.core.validators import FileExtensionValidator
@@ -12,24 +11,24 @@ from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-
 from bodzify_api import settings
+from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
+from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.validator.track_file_validator \
+    import validate_content_type_is_audio, validate_filename_length, validate_size
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult import MusicbrainzRecordingLookupResult
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
+    import MusicbrainzRecordingLookupResult
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause \
     import MusicbrainzRecordingMissingCause
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
     import MusicbrainzRecordingMissingCauseCode
-from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import FingerprintingResult
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
-from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.model.utils import utils as model_utils
-from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
-from bodzify_api.validator.track_file_validator \
-    import validate_content_type_is_audio, validate_filename_length, validate_size
+from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
+from .fingerprinting.FingerprintingResult import FingerprintingResult
 from .Fields import Fields
 
 if TYPE_CHECKING:
@@ -37,12 +36,10 @@ if TYPE_CHECKING:
 
 
 class TrackFile(PrivateStandardResource):
-
     library_track = models.OneToOneField('LibraryTrack',
                                          on_delete=models.CASCADE,
                                          related_name=LibraryTrackFields.TRACK_FILE,
                                          unique=True)  # Makes the track file unique for a library track
-
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
@@ -51,16 +48,12 @@ class TrackFile(PrivateStandardResource):
                                         validate_size,
                                         validate_content_type_is_audio],
                             max_length=settings.FILE_PATH_MAX_LENGTH)
-
-    filename = models.CharField(max_length=settings.LIB_TRACK_FILENAME_LEN_MAX, blank=True)
-    extension = models.CharField(max_length=5, blank=True)
     duration_in_sec = models.PositiveIntegerField()
     fingerprint_memory = models.BinaryField(null=True, blank=True, default=None, editable=True)
     fingerprint_missing_cause = models.ForeignKey(FingerprintMissingCause,
                                                   on_delete=models.DO_NOTHING,
                                                   null=True,
                                                   blank=True)
-
     flac_md5_has_been_corrected = models.BooleanField(null=True, default=None, blank=True)
     size_in_bytes = models.DecimalField(null=True, blank=True, max_digits=11, decimal_places=2)
     size_in_ko = models.GeneratedField(expression=F(Fields.SIZE_IN_BYTES) / 1024,  # type: ignore
@@ -81,6 +74,14 @@ class TrackFile(PrivateStandardResource):
     class Meta:
         verbose_name = 'Track File'
         verbose_name_plural = 'Track Files'
+
+    @property
+    def filename(self) -> str:
+        return os.path.basename(self.file.name)
+
+    @property
+    def extension(self) -> str:
+        return os.path.splitext(self.filename)[1]
 
     @property
     def file_path_temp_or_not(self) -> DjangoFile:
@@ -195,17 +196,14 @@ class TrackFile(PrivateStandardResource):
 
     def save(self, *args, **kwargs):
         temp_file_path = self.file.file
-
         duration_in_sec: int = audio_metadata.get_specific_metadata_from_file(
             file=temp_file_path,
             normalized_metadata_key=NormalizedMetadataKeys.DURATION_IN_SEC)  # type: ignore
         self.duration_in_sec = int(duration_in_sec)
         self.bitrate_in_kbps = self._get_bitrate()
         self.handle_flac_md5()
-
         fingerprinting_result = self._manage_fingerprint()
         self.manage_musicbrainz_recording(fingerprinting_result)
-
         super().save(*args, **kwargs)
 
 

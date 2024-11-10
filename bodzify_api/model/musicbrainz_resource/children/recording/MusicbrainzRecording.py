@@ -2,14 +2,20 @@ import datetime
 from typing import Optional
 
 from django.db import models
+from django.db.models import F, Value
 
 from bodzify_api import settings
-from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
-from bodzify_api.model.musicbrainz_resource.MusicbrainzResource import MusicbrainzResource
+from bodzify_api.model.utils.ConcatOp import ConcatOp
+from ...MusicbrainzResource import MusicbrainzResource
+from ..artist.MusicbrainzArtist import MusicbrainzArtist
 from .Fields import Fields
 
 
 class MusicbrainzRecording(MusicbrainzResource):
+    musicbrainz_link = models.GeneratedField(  # type: ignore
+        expression=ConcatOp(Value(settings.MUSICBRAINZ_RECORDING_URL), F(Fields.MUSICBRAINZ_ID)),
+        output_field=models.CharField(max_length=len(settings.MUSICBRAINZ_RECORDING_URL) + settings.UUID_LEN),
+        db_persist=True)
     title = models.CharField(max_length=settings.MUSICBRAINZ_RECORDING_TITLE_LEN_MAX, editable=False)
     score = models.DecimalField(max_digits=9, decimal_places=8, editable=False)
     duration_in_sec = models.IntegerField(editable=False, null=True)
