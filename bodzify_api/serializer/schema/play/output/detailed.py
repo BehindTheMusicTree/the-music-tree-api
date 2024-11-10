@@ -18,7 +18,8 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Play
-        fields = [Fields.CONTENT_TYPE,
+        fields = [Fields.UUID,
+                  Fields.CONTENT_TYPE,
                   Fields.CONTENT_OBJECT,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]

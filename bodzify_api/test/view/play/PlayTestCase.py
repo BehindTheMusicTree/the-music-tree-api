@@ -4,17 +4,17 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.model.play.Play import Play
-from bodzify_api.serializer.schema.play.output.detailed import Fields as GetFields
+from bodzify_api.serializer.schema.play.output.detailed import Fields as OutputFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 class PlayTestCase(ApiTestCase):
 
     def _set_saved_play_attribute(self, response):
-        uuid = response.json()[GetFields.UUID]
-        self.saved_play = Play.objects.get(uuid=uuid)
+        uuid = response.json()[OutputFields.UUID]
+        self.saved_play: Play = Play.objects.get(uuid=uuid)
 
-    def post_play(self, data_dict):
+    def _post_play(self, data_dict):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
         response = self.api_client.post(path=reverse('play-list'),
                                         data=data_url_encoded,

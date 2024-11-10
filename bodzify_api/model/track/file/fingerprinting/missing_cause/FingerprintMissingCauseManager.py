@@ -1,13 +1,12 @@
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager \
-    import PublicStandardResourceManager
+from typing import Any
+from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+from .Fields import Fields
 
 
 class FingerprintMissingCauseManager(PublicStandardResourceManager):
 
     def create(self, *args, **kwargs):
-        from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import Fields
-        from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode \
-            import FingerprintMissingCauseCode
+        from .code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
 
         code = kwargs.pop(Fields.CODE, None)
         if code is None:
@@ -17,3 +16,6 @@ class FingerprintMissingCauseManager(PublicStandardResourceManager):
         kwargs[Fields.CODE] = fingerprint_missing_cause_code
 
         return super().create(*args, **kwargs)
+
+    def delete_instance(self, instance: Any):
+        raise NotImplementedError()

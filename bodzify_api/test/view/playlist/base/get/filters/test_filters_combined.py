@@ -1,7 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import TYPE as MANUAL_PLAYLIST_TYPE
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistTypes import CriteriaPlaylistTypes
+from bodzify_api.model.playlist.PlaylistTypes import PlaylistTypes
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
     import CriteriaPlaylistWithoutCriteriaNames
 from bodzify_api.serializer.schema.playlist.base.output.detailed import Fields as PlaylistGetFields
@@ -13,7 +12,7 @@ class TestCase(BasePlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {
-            GetQueryParams.TYPE_LABEL: CriteriaPlaylistTypes.GENRE,
+            GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.TAG
         }
         response = self._get(data_dict=data_dict)
@@ -22,7 +21,7 @@ class TestCase(BasePlaylistTestCase):
 
     def test_type_genre_and_name_genreless_then_one_result(self):
         data_dict = {
-            GetQueryParams.TYPE_LABEL: CriteriaPlaylistTypes.GENRE,
+            GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.GENRE
         }
         response = self._get(data_dict=data_dict)
@@ -37,7 +36,7 @@ class TestCase(BasePlaylistTestCase):
         self.model_fixture_factory.create_genre(name=genre2_name)
 
         data_dict = {
-            GetQueryParams.TYPE_LABEL: CriteriaPlaylistTypes.GENRE,
+            GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: 'rock'
         }
         response = self._get(data_dict=data_dict)

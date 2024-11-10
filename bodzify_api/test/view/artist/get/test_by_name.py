@@ -1,10 +1,8 @@
-
 from rest_framework import status
-
 
 from bodzify_api.serializer.schema.artist.fields import Fields as ArtistFields
 from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
-from bodzify_api.utils.utils import to_camel_case
+from bodzify_api.utils.data_transformer import to_camel_case
 
 
 class TestCase(ArtistTestCase):
