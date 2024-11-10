@@ -7,7 +7,7 @@ from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 
 class Fields:
     USER = ModelFields.USER
-    FILE = ModelFields.TRACK_FILE
+    TRACK_FILE_USER_FRIENDLY = ModelFields.TRACK_FILE_USER_FRIENDLY
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = ModelFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = ModelFields.TITLE
     FORCE_TITLE_GENERATION = "force_title_generation"

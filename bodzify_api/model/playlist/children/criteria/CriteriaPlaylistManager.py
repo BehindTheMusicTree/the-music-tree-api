@@ -3,6 +3,8 @@ from django.db import models
 from django.db.models import QuerySet
 from typing import Optional
 
+from requests import delete
+
 from bodzify_api.model.base.BaseManager import BaseManager
 from .Fields import Fields
 
@@ -83,3 +85,6 @@ class CriteriaPlaylistManager(BaseManager):
                 self.remove_tracks_from_instance_and_ascendants_until_criteria_limit(instance=instance.parent,
                                                                                      lib_tracks=lib_tracks,
                                                                                      criteria_limit=criteria_limit)
+
+    def delete_instance(self, instance: 'CriteriaPlaylist'):
+        raise NotImplementedError()

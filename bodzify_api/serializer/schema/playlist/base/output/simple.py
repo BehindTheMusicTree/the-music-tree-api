@@ -9,7 +9,7 @@ class Fields:
     LIB_TRACKS_COUNT = AvailableFields.LIB_TRACKS_COUNT
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = AvailableFields.NAME
-    TYPE = AvailableFields.TYPE_LABEL
+    TYPE_LABEL = AvailableFields.TYPE_LABEL
 
 
 class BasePlaylistSimpleSerializer(serializers.ModelSerializer):
@@ -18,6 +18,6 @@ class BasePlaylistSimpleSerializer(serializers.ModelSerializer):
         model = BasePlaylist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.TYPE,
+                  Fields.TYPE_LABEL,
                   Fields.LIB_TRACKS_COUNT,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC]

@@ -2,9 +2,9 @@ from typing import TYPE_CHECKING, List, Tuple
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import QuerySet
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from django.db.models import QuerySet
 from django.utils import timezone
 
 from bodzify_api import settings
@@ -84,7 +84,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
         genre_str = f"{Fields.GENRE}: {self.genre}" if self.genre else f"{Fields.GENRE}: --"
         rating_str = f"{Fields.RATING}: {self.rating}" if self.rating else f"{Fields.RATING}: --"
         language_str = f"{Fields.LANGUAGE}: {self.language}" if self.language else f"{Fields.LANGUAGE}: --"
-        file_str = f"{Fields.TRACK_FILE_DB}: {self.track_file}" if self.track_file else "no track file"
+        file_str = f"{Fields.TRACK_FILE}: {self.track_file}" if self.track_file else "no track file"
 
         return (f"{self.uuid} | {position_str} | {artists_str} - {self.title} | {album_str} | "
                 f"{genre_str} | {rating_str} | {language_str} | "

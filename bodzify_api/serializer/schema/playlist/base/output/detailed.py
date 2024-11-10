@@ -4,6 +4,7 @@ from django.db import models
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.schema.criteria_type.output.detailed import CriteriaTypeDetailedSerializer
 from bodzify_api.serializer.schema.lib_track_playlist_rel.output.without_lib_track_mixin \
     import Fields as LibTrackPositionRelFields
 from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album \
@@ -12,6 +13,7 @@ from .Fields import Fields
 
 
 class BasePlaylistDetailedSerializer(serializers.ModelSerializer):
+    type = CriteriaTypeDetailedSerializer()
 
     class Meta:
         model = BasePlaylist

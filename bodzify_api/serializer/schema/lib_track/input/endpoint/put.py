@@ -5,7 +5,7 @@ from .endpoint import LibTrackEndPointSerializer, Fields as EndpointFields
 
 
 class Fields:
-    FILE = EndpointFields.FILE
+    TRACK_FILE = EndpointFields.TRACK_FILE_USER_FRIENDLY
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = EndpointFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = EndpointFields.TITLE
     ARTISTS_NAMES = EndpointFields.ARTISTS_NAMES

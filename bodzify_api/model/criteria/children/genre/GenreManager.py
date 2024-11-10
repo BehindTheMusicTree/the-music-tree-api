@@ -1,7 +1,6 @@
 from typing import Any, TYPE_CHECKING, Self
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
-
 from ...CriteriaManager import CriteriaManager
 
 if TYPE_CHECKING:
@@ -9,10 +8,22 @@ if TYPE_CHECKING:
 
 
 class GenreManager(CriteriaManager):
-    model: type['Genre']
+    model: 'Genre'
+
+    def get_or_create(self, **kwargs) -> tuple[Any, bool]:
+        try:
+            instance = self.get(**kwargs)
+            created = False
+        except self.model.DoesNotExist:
+            instance = self.create(**kwargs)
+            created = True
+        return instance, created
 
     def create(self, **kwargs) -> 'Genre':
-        return super().create(type_pk=CriteriaTypesPks.GENRE, **kwargs)
+        return super().create(type_id=CriteriaTypesPks.GENRE, **kwargs)
 
     def filter(self, *args: Any, **kwargs: Any) -> Self:
         return super().filter(type_id=CriteriaTypesPks.GENRE, *args, **kwargs)
+
+    def delete_instance(self, instance: Any):
+        raise NotImplementedError("You can't delete a genre instance.")

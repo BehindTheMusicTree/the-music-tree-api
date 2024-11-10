@@ -38,6 +38,10 @@ class CriteriaPlaylist(BasePlaylist):
         self._original_parent = getattr(self, f"{Fields.PARENT}_id", None)
         self._original_root = getattr(self, f"{Fields.ROOT}_id", None)
 
+    @property
+    def type_label(self) -> str:
+        return self.type.label
+
     @abstractmethod
     def name_when_no_criteria() -> str:
         raise NotImplementedError()

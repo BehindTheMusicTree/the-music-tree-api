@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import List, TYPE_CHECKING, Optional
+from typing import Any, List, TYPE_CHECKING, Optional
 
 from django.db import transaction
 from django.db.models import F
@@ -10,11 +10,12 @@ import requests
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api import settings
+from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.user.User import User
-from bodzify_api.utils import audio_metadata, utils
+from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
@@ -62,25 +63,21 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
         if instance.genre:
             genre_tree_item: Genre = instance.genre
             while genre_tree_item != genre_limit:
-                criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=instance.user,
-                                                                                   criteria=genre_tree_item)
                 LibTrackPlaylistRel.objects.create(user=instance.user,
-                                                   base_playlist=criteria_playlist,
+                                                   base_playlist=genre_tree_item.criteria_playlist,
                                                    library_track=instance)
-                CriteriaPlaylist.objects.update_instance(instance=criteria_playlist,
-                                                         last_track_list_update_date=update_date)
+                genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
 
                 # The loop will stop before genre_tree_item is None
                 genre_tree_item = genre_tree_item.parent  # type: ignore
         else:
-            genreless_criteria_playlist = CriteriaPlaylist.objects.get(user=instance.user,
-                                                                       type=CriteriaTypesPks.GENRE,
-                                                                       criteria=None)
+            genreless_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=instance.user,
+                                                                                         type=CriteriaTypesPks.GENRE,
+                                                                                         criteria=None)
             LibTrackPlaylistRel.objects.create(user=instance.user,
                                                base_playlist=genreless_criteria_playlist,
                                                library_track=instance)
-            CriteriaPlaylist.objects.update_instance(instance=genreless_criteria_playlist,
-                                                     last_track_list_update_date=update_date)
+            genreless_criteria_playlist.last_track_list_update_date = update_date
 
     def decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
@@ -92,7 +89,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
-        filename_without_expressions_to_exclude = utils.remove_substrings_from_string(
+        filename_without_expressions_to_exclude = data_transformer.remove_substrings_from_string(
             string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
         if SchemaFields.FORCE_TITLE_GENERATION in data:
             force_title_generation = data[SchemaFields.FORCE_TITLE_GENERATION]
@@ -107,30 +104,26 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
             title = filename_without_expressions_to_exclude
         return title
 
-    def _update_model_data_with_genre_uuid_if_genre_in_schema_data(
-            self, user: User, model_data: dict, schema_data: dict):
+    def _update_model_data_with_genre_if_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
         if SchemaFields.GENRE_UUID in schema_data:
             genre_uuid = schema_data[SchemaFields.GENRE_UUID]
 
             if genre_uuid == "":
-                genre_uuid = None
+                genre = None
         else:
-            genre_uuid = None
+            genre = None
             if SchemaFields.GENRE_NAME in schema_data:
                 genre_name = schema_data[SchemaFields.GENRE_NAME]
 
                 if not genre_name or genre_name == "":
-                    genre_uuid = None
+                    genre = None
                 else:
-                    genre: Genre
-                    genre, _ = Genre.objects.get_or_create(user=user, name=genre_name)
-                    genre_uuid = genre.uuid
+                    genre, _ = Genre.objects.get_or_create(user=schema_data[SchemaFields.USER], name=genre_name)
             else:
                 return
 
-        model_data[Fields.GENRE] = genre_uuid
-        return
+        model_data[Fields.GENRE] = genre
 
     def _get_schema_data_from_file(self, file):
         try:
@@ -141,7 +134,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
             raise ValidationError({Fields.TRACK_FILE_USER_FRIENDLY: [
                 f"Error while extracting metadata from file: {error}"]})
 
-        save_data_with_potential_none = utils.get_copy_of_dict_including_only_specified_keys(
+        save_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
             dict=normalized_metadata,
             keys=[NormalizedMetadataKeys.TITLE,
                   NormalizedMetadataKeys.ARTISTS_NAMES,
@@ -151,15 +144,12 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
                   NormalizedMetadataKeys.RATING,
                   NormalizedMetadataKeys.LANGUAGE])
 
-        schema_data_clean = utils.remove_none_or_empty_key_from_dict(save_data_with_potential_none)
-        schema_data_clean[SchemaFields.FILE] = file
+        schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(save_data_with_potential_none)
+        schema_data_clean[SchemaFields.TRACK_FILE_USER_FRIENDLY] = file
 
         return schema_data_clean
 
-    def _update_model_data_with_album_uuid_if_album_name_in_schema_data(self,
-                                                                        user: User,
-                                                                        model_data: dict,
-                                                                        schema_data: dict):
+    def _update_model_data_with_album_if_name_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.album.Album import Album
         if SchemaFields.ALBUM_NAME in schema_data:
             album_name = schema_data[SchemaFields.ALBUM_NAME]
@@ -178,23 +168,25 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
                 album_artists_name_list = []
 
             album = Album.objects.get_album_from_name_and_album_artists_names_list_after_eventual_creations(
-                user=user, album_name=album_name, album_artists_names_list=album_artists_name_list)
+                user=schema_data[SchemaFields.USER],
+                album_name=album_name,
+                album_artists_names_list=album_artists_name_list)
 
-            model_data[Fields.ALBUM] = album.uuid if album else None
+            model_data[Fields.ALBUM] = album
 
-    def _update_model_data_with_artists_uuids_if_artists_names_str_in_schema_data_or_empty_list(
-            self, user: User, model_data: dict, schema_data: dict):
+    def _update_model_data_with_artists_if_names_str_in_schema_data_or_empty_list(
+            self, model_data: dict, schema_data: dict) -> None:
         if SchemaFields.ARTISTS_NAMES in schema_data:
             artists_names_str = schema_data[SchemaFields.ARTISTS_NAMES]
             if artists_names_str:
                 artists = Artist.objects.get_artists_list_from_names_str_after_eventual_creation(
-                    user=user, artists_names_str=artists_names_str)
-                artists_uuids = [artist.uuid for artist in artists]
+                    user=schema_data[SchemaFields.USER],
+                    artists_names_str=artists_names_str)
             else:
-                artists_uuids = []
+                artists = []
         else:
-            artists_uuids = []
-        model_data[Fields.ARTISTS] = artists_uuids
+            artists = []
+        model_data[Fields.ARTISTS] = artists
 
     def _get_track_filename_with_extension(self, mine_track_url: str, data: dict):
         file_extension = utils.get_file_extension_from_url(mine_track_url)
@@ -219,40 +211,42 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
                 is_filename_randomly_generated = True
         return filename_with_extension, is_filename_randomly_generated
 
-    def _get_model_data_from_schema_data(self, user: User, **kwargs) -> dict:
+    def _get_model_data_from_schema_data(self, schema_data: dict[str, str]) -> dict:
         model_data = dict()
 
-        for key in [Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
+        for key in [Fields.USER,
+                    Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                     Fields.TRACK_FILE,
                     Fields.TITLE,
                     Fields.RATING,
                     Fields.LANGUAGE,
                     Fields.ARCHIVED,
                     Fields.POSITION_IN_ALBUM]:
-            utils.update_data1_with_key_if_set_in_data2(key=key, data1=model_data, data2=kwargs)
+            data_transformer.update_data1_with_key_if_set_in_data2(key=key, data1=model_data, data2=schema_data)
 
-        self._update_model_data_with_artists_uuids_if_artists_names_str_in_schema_data_or_empty_list(
-            user=user, model_data=model_data, schema_data=kwargs)
-        self._update_model_data_with_album_uuid_if_album_name_in_schema_data(user=user,
-                                                                             model_data=model_data,
-                                                                             schema_data=kwargs)
-        self._update_model_data_with_genre_uuid_if_genre_in_schema_data(user=user,
-                                                                        model_data=model_data,
-                                                                        schema_data=kwargs)
+        model_data[Fields.TRACK_FILE] = schema_data[SchemaFields.TRACK_FILE_USER_FRIENDLY]
+
+        self._update_model_data_with_artists_if_names_str_in_schema_data_or_empty_list(
+            model_data=model_data, schema_data=schema_data)
+        self._update_model_data_with_album_if_name_in_schema_data(model_data=model_data,
+                                                                  schema_data=schema_data)
+        self._update_model_data_with_genre_if_in_schema_data(model_data=model_data,
+                                                             schema_data=schema_data)
 
         return model_data
 
-    def _get_schema_data_from_put_data(self, put_data: dict, oldinstance=None) -> dict:
-        schema_data = put_data.copy()
-        utils.update_data1_converting_str_to_int_value_if_set(key=Fields.RATING, data1=schema_data)
+    def _get_schema_data_from_put_data(self, update_data: dict) -> dict:
+        schema_data = update_data.copy()
+        data_transformer.update_data1_converting_str_to_int_value_if_set(key=Fields.RATING, data1=schema_data)
         return schema_data
 
-    def _get_schema_data_from_post_data(self, **kwargs) -> dict:
-        file = kwargs[PostFields.FILE]
+    def _get_schema_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
+        file = post_data[PostFields.TRACK_FILE_USER_FRIENDLY]
         schema_data_from_file = self._get_schema_data_from_file(file=file)
 
         schema_data = schema_data_from_file.copy()
-        keys = [SchemaFields.FILE,
+        keys = [SchemaFields.USER,
+                SchemaFields.TRACK_FILE_USER_FRIENDLY,
                 SchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 SchemaFields.TITLE,
                 SchemaFields.ARTISTS_NAMES,
@@ -262,21 +256,22 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
                 SchemaFields.GENRE_UUID,
                 SchemaFields.RATING,
                 SchemaFields.LANGUAGE]
-        utils.override_data1_with_data2_values_for_each_key_in_data2(data1=schema_data, data2=kwargs, keys=keys)
+        data_transformer.override_data1_with_data2_values_for_each_key_in_data2(
+            data1=schema_data, data2=post_data, keys=keys)
 
         if SchemaFields.TITLE not in schema_data:
-            schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, **kwargs)
-        if SchemaFields.GENRE_UUID not in kwargs:
-            utils.override_data1_with_data2_values_for_each_key_in_data2(data1=schema_data,
-                                                                         data2=kwargs,
-                                                                         keys=[SchemaFields.GENRE_NAME])
+            schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
+        if SchemaFields.GENRE_UUID not in post_data:
+            data_transformer.override_data1_with_data2_values_for_each_key_in_data2(data1=schema_data,
+                                                                                    data2=post_data,
+                                                                                    keys=[SchemaFields.GENRE_NAME])
 
-        utils.update_data1_converting_str_to_int_value_if_set(key=Fields.RATING, data1=schema_data)
+        data_transformer.update_data1_converting_str_to_int_value_if_set(key=Fields.RATING, data1=schema_data)
         return schema_data
 
-    def _get_model_data_from_post_data(self, **kwargs):
-        kwargs = self._get_schema_data_from_post_data(**kwargs)
-        return self._get_model_data_from_schema_data(**kwargs)
+    def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
+        model_data = self._get_schema_data_from_post_data(post_data)
+        return self._get_model_data_from_schema_data(model_data)
 
     def _get_post_data_from_extract_data(self, **kwargs):
         save_data = kwargs.copy()
@@ -302,40 +297,54 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
             os.chmod(track_temp_file.name, os.stat.S_IRWXU | os.stat.S_IRWXG | os.stat.S_IROTH | os.stat.S_IXOTH)
 
             post_data = self._get_post_data_from_extract_data(**kwargs)
-            post_data[PostFields.FILE] = AppDjangoFile(file=track_temp_file,
-                                                       name=track_filename,
-                                                       file_abs_path=track_temp_file.name)
+            post_data[PostFields.TRACK_FILE_USER_FRIENDLY] = AppDjangoFile(file=track_temp_file,
+                                                                           name=track_filename,
+                                                                           file_abs_path=track_temp_file.name)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
-            return self._get_model_data_from_post_data(data_validated=post_data)
+            return self._get_model_data_from_post_data(post_data=post_data)
 
-    def _get_model_data_from_update_data(self, instance: 'LibraryTrack', **kwargs):
-        schema_data = self._get_schema_data_from_put_data(oldinstance=instance, **kwargs)
-        return self._get_model_data_from_schema_data(oldinstance=instance, **schema_data)
+    def _get_model_data_from_update_data(self, update_data: dict[str, str]):
+        schema_data = self._get_schema_data_from_put_data(update_data=update_data)
+        return self._get_model_data_from_schema_data(schema_data=schema_data)
 
     def update_genre_playlists(self, instance: 'LibraryTrack', old_genre: Optional['Genre']):
         common_genre = \
             Genre.objects.get_common_ascendant(instance.genre, old_genre) if old_genre and instance.genre else None
 
-        self._add_to_genre_playlists(instance, genre_limit=common_genre)
-        self._remove_from_genre_playlists(
-            instance, old_genre=old_genre, genre_limit=common_genre)
+        self._add_to_genre_playlists(instance=instance, genre_limit=common_genre)
+        self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
 
     def create(self, creation_type: str, **kwargs) -> 'LibraryTrack':
+        from ..file.TrackFile import TrackFile
+
         model_data: dict
         if creation_type == LibTrackCreationType.POST:
-            model_data = self._get_model_data_from_post_data(**kwargs)
+            model_data = self._get_model_data_from_post_data(post_data=kwargs)
         elif creation_type == LibTrackCreationType.EXTRACT:
-            model_data = self._get_model_data_from_extract_data(data=kwargs)
+            model_data = self._get_model_data_from_extract_data(extract_data=kwargs)
         else:
             raise NotImplementedError(f"Creation type {creation_type} is not implemented")
 
-        instance = super().create(**model_data)
+        artists = model_data.pop(Fields.ARTISTS, None)
+        track_file_model_data = dict()
+        track_file_model_data[TrackFileFields.FILE] = model_data.pop(Fields.TRACK_FILE)
+
+        instance: LibraryTrack = super().create(**model_data)
+        if artists:
+            instance.artists.set(artists)
+
+        track_file_model_data[TrackFileFields.USER] = instance.user
+        track_file_model_data[TrackFileFields.LIB_TRACK] = instance
+        TrackFile.objects.create(**track_file_model_data)
+
         self._add_to_genre_playlists(instance)
+        instance.update_file_tags_from_lib_track_instance_values()
         return instance
 
-    def create_instance_with_track_file(self, track_file_data, library_track_data: dict):
-        from bodzify_api.model.track.file.TrackFile import TrackFile, Fields as TrackFileFields
+    def create_instance_with_track_file(
+            self, track_file_data: dict[str, Any], library_track_data: dict[str, Any]) -> 'LibraryTrack':
+        from ..file.TrackFile import TrackFile
 
         with transaction.atomic():
             artists = library_track_data.pop(Fields.ARTISTS, None)
@@ -344,7 +353,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
             if artists:
                 library_track.artists.set(artists)
 
-            track_file_data[TrackFileFields.LIBRARY_TRACK] = library_track
+            track_file_data[TrackFileFields.LIB_TRACK] = library_track
             TrackFile.objects.create(**track_file_data)
 
         library_track.update_file_tags_from_lib_track_instance_values()

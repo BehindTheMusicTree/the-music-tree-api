@@ -9,11 +9,12 @@ if TYPE_CHECKING:
 
 
 class AlbumManager(LibTrackMixinManager):
+    model: 'Album'
 
     def _get_instance_from_name_and_artists_list_after_having_eventually_created_instance(
             self, user: User, album_name: str, album_artists: list) -> Optional['Album']:
 
-        album_queryset = Album.objects.filter(user=user, name=album_name)
+        album_queryset = self.model.objects.filter(user=user, name=album_name)
         if len(album_artists) > 0:
             for album_artist in album_artists:
                 album_queryset = album_queryset.filter(album_artists__in=[album_artist])

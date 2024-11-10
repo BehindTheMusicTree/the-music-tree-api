@@ -2,7 +2,7 @@ from ..Fields import Fields as SchemaFields
 
 
 class Fields:
-    FILE = SchemaFields.FILE
+    TRACK_FILE_USER_FRIENDLY = SchemaFields.TRACK_FILE_USER_FRIENDLY
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = SchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = SchemaFields.TITLE
     FORCE_TITLE_GENERATION = "force_title_generation"

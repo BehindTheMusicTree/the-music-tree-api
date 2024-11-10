@@ -10,14 +10,12 @@ from rest_framework.exceptions import ValidationError as DRFValidationError, Met
 from django.http import FileResponse
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db.models import QuerySet
-from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth import get_user_model
 
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
-from bodzify_api.utils import utils
+from bodzify_api.utils import data_transformer
 from bodzify_api.view.errors import APIErrorResponse, APIErrorMessages, APIFileResponse
 from bodzify_api.view.viewset.base.HttpMethod import HttpMethod
 from ...pagination.AppPagination import AppPagination
@@ -91,7 +89,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
         if creation_type:
-            instance = self.model_class.objects.create(**validated_data, creation_type=creation_type)
+            instance = self.model_class.objects.create(creation_type=creation_type, **validated_data)
         else:
             instance = self.model_class.objects.create(**validated_data)
         instance.save()
@@ -122,16 +120,22 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return APIErrorResponse.from_validation_error(e)
 
     def _handle_post(self, request: Request, creation_type: str, *args, **kwargs) -> Response:
-        create_data = utils.convert_data_to_dict(request.data)
-        instance = self._create_instance(request=request, create_data=create_data, creation_type=creation_type)
+        create_data_in_camel_case = data_transformer.convert_data_to_dict(request.data)
+        create_data_in_snake_case = data_transformer.dict_to_snake_case(create_data_in_camel_case)
+        instance = self._create_instance(request=request,
+                                         create_data=create_data_in_snake_case,
+                                         creation_type=creation_type)
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
         headers = self.get_success_headers(serializer.data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def _handle_update(self, request: Request, *args, **kwargs) -> Response:
         instance = self.get_object()
-        update_data = utils.convert_data_to_dict(request.data)
-        updated_instance = self._update_instance(request, instance, update_data)
+        update_data_in_camel_case = data_transformer.convert_data_to_dict(request.data)
+        update_data_in_snake_case = data_transformer.dict_to_snake_case(update_data_in_camel_case)
+        updated_instance = self._update_instance(request=request,
+                                                 instance=instance,
+                                                 update_data=update_data_in_snake_case)
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -155,6 +159,15 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def get_object(self) -> T:
         return super().get_object()
 
+    def get_serializer_class(self) -> Type[Serializer]:
+        if self.action == 'retrieve':
+            return self._require_serializer(SerializerType.DETAILED)
+        elif self.action == 'create':
+            return self._get_create_serializer_class()
+        elif self.action in ['update', 'partial_update']:
+            return self._require_serializer(SerializerType.UPDATE)
+        raise NotImplementedError(f"Action {self.action} not defined in viewset")
+
     def get_queryset(self):
         request: Request = cast(Request, self.request)
         queryset = self.model_class.objects.filter(user=request.user)
@@ -167,15 +180,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
         return queryset.order_by(*ordering_fields)
-
-    def get_serializer_class(self) -> Type[Serializer]:
-        if self.action == 'retrieve':
-            return self._require_serializer(SerializerType.DETAILED)
-        elif self.action == 'create':
-            return self._get_create_serializer_class()
-        elif self.action in ['update', 'partial_update']:
-            return self._require_serializer(SerializerType.UPDATE)
-        raise NotImplementedError(f"Action {self.action} not defined in viewset")
 
     def get_file_response(self, file_path: str) -> FileResponse:
         return APIFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])

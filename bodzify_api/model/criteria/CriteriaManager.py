@@ -8,7 +8,6 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
     from .Criteria import Criteria
 
@@ -18,9 +17,9 @@ T = TypeVar('T', bound='Criteria')
 class CriteriaManager(LibTrackMixinManager[T], Generic[T]):
     model: T
 
-    def create(self, type_pk: int, **kwargs) -> T:
+    def create(self, type_id: int, **kwargs) -> T:
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-        type = CriteriaType.objects.get(pk=type_pk)
+        type = CriteriaType.objects.get(pk=type_id)
         instance: T = super().create(type=type, **kwargs)
         CriteriaPlaylist.objects.create(user=instance.user, criteria=instance, type=type)
         self.refresh_ascendants_of_criteria_and_children(instance)

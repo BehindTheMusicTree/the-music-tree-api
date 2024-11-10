@@ -97,7 +97,7 @@ class ApiTestCase(AppTestCase):
     # (testing metadata updates for example)
     def _post_lib_track(self, file_abs_path, data_dict=None) -> JsonResponse:
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LibTrackPostFields.FILE: sample_file}
+            file_field_dict = {LibTrackPostFields.TRACK_FILE_USER_FRIENDLY: sample_file}
             if data_dict:
                 data_dict = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(data_dict))
             else:

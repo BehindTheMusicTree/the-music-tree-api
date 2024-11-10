@@ -16,7 +16,7 @@ class LibTrackMixin(PrivateUniqueResource):
 
     @property
     @abstractmethod
-    def name(self):
+    def name(self) -> str:
         pass
 
     @property

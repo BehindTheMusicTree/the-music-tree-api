@@ -4,7 +4,6 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
-
 from .Fields import Fields
 from .ArtistManager import ArtistManager
 

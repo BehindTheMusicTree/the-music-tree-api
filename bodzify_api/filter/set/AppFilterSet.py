@@ -1,8 +1,7 @@
-
 from django_filters import FilterSet
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api.utils.utils import to_camel_case
+from bodzify_api.utils import data_transformer
 
 
 class AppFilterSet(FilterSet):
@@ -20,7 +19,7 @@ class AppFilterSet(FilterSet):
         invalid_filters = []
         for param in self.data.keys():
             if param not in valid_filters:
-                invalid_filters.append(to_camel_case(param))
+                invalid_filters.append(data_transformer.to_camel_case(param))
 
         if invalid_filters:
             invalid_filters_str = ', '.join(invalid_filters)

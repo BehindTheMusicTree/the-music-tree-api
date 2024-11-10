@@ -30,7 +30,7 @@ class BasePlaylist(LibTrackMixin, TrackablePlayCount):
 
     @property
     @abstractmethod
-    def name(self) -> Optional[str]:
+    def type_label(self) -> str:
         pass
 
     def update_last_track_list_update_date(self):

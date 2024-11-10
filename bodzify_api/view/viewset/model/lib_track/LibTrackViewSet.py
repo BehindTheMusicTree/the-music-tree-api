@@ -37,20 +37,6 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             return LibTrackExtractSerializer
         raise NotImplementedError(f"No serializer defined for action {self.action}")
 
-    def _post_depending_on_action(self, request, request_data_validated):
-        try:
-            track_service: TrackService = self.service  # type: ignore
-            if self.action == 'create':
-                return track_service.post(data_validated=request_data_validated, request=request)
-            elif self.action == 'extract':
-                return track_service.extract(data_validated=request_data_validated, request=request)
-        except OSError as e:
-            if e.errno == 28:  # No space left on device
-                return Response(data={"detail": "No space left on device."},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                raise  # Re-raise the exception if it's not the specific error
-
     def get_serializer_class(self) -> Type[Serializer]:
         if self.action == 'extract':
             return LibTrackExtractSerializer
@@ -71,6 +57,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         track: LibraryTrack = LibraryTrack.objects.get(uuid=pk)
         return self.get_file_response(file_path=track.track_file.file.path)
 
+    @transaction.atomic
     @extend_schema(request=LibTrackPostSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=(
@@ -157,10 +144,6 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
                    )
     def update(self, request, *args, **kwargs):
         return self._handle_update(request, *args, **kwargs)
-
-    # Only for type hinting
-    def get_object(self) -> LibraryTrack:
-        return super().get_object()
 
     @transaction.atomic
     def destroy(self, request: Request, *args, **kwargs):

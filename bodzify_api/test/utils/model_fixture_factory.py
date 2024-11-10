@@ -19,9 +19,11 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.children.tag.Tag import Tag
-from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist, Fields as MusicbrainzArtistFields
+from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
+from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import Fields as MusicbrainzRecordingFields
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording \
+    import Fields as MusicbrainzRecordingFields
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
@@ -85,7 +87,7 @@ class ModelFixtureFactory:
             TrackFileFields.CREATED_ON: timezone.make_aware(datetime.now()),
             TrackFileFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             TrackFileFields.USER: user,
-            TrackFileFields.LIBRARY_TRACK: lib_track,
+            TrackFileFields.LIB_TRACK: lib_track,
             TrackFileFields.FILE: str(track_file_path_in_lib)
         }
         model_fields.update(kwargs)
@@ -122,7 +124,6 @@ class ModelFixtureFactory:
         user = user or self.default_test_user
         with transaction.atomic():
             library_track = self._create_lib_track(user=user, title=title, **kwargs)
-
             self._create_file(user=user, lib_track=library_track, filename=filename)
 
         return library_track

@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 
 from bodzify_api.serializer.schema.lib_track.input.endpoint.endpoint \
@@ -6,7 +5,7 @@ from bodzify_api.serializer.schema.lib_track.input.endpoint.endpoint \
 
 
 class Fields:
-    FILE = EndpointFields.FILE
+    TRACK_FILE_USER_FRIENDLY = EndpointFields.TRACK_FILE_USER_FRIENDLY
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = EndpointFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = EndpointFields.TITLE
     FORCE_TITLE_GENERATION = EndpointFields.FORCE_TITLE_GENERATION

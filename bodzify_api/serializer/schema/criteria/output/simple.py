@@ -2,8 +2,6 @@ from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.schema.criteria.output.minimum import CriteriaMinimumSerializer
-from bodzify_api.serializer.schema.criteria_ascendant_relation.without_ascendant import \
-    CriteriaLineageRelationWithoutAscendantSerializer
 from .Fields import Fields as AvailableFields
 
 
@@ -11,16 +9,13 @@ class Fields:
     UUID = AvailableFields.UUID
     NAME = AvailableFields.NAME
     PARENT = AvailableFields.PARENT
-    DESCENDANTS = AvailableFields.DESCENDANTS
 
 
 class CriteriaSimpleSerializer(serializers.ModelSerializer):
     parent = CriteriaMinimumSerializer()
-    descendants = CriteriaLineageRelationWithoutAscendantSerializer(source=AvailableFields.DESCENDANTS, many=True)
 
     class Meta:
         model = Criteria
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.PARENT,
-                  Fields.DESCENDANTS]
+                  Fields.PARENT]

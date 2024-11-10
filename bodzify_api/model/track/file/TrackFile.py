@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import Optional, TYPE_CHECKING, cast
 import binascii
 import datetime
@@ -27,14 +26,14 @@ from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.model.utils import utils as model_utils
-from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz, utils as app_utils
+from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.validator.track_file_validator \
     import validate_content_type_is_audio, validate_filename_length, validate_size
 from .Fields import Fields
 
 if TYPE_CHECKING:
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from ..lib.LibraryTrack import LibraryTrack
 
 
 class TrackFile(PrivateStandardResource):

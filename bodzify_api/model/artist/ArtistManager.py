@@ -20,7 +20,7 @@ class ArtistManager(LibTrackMixinManager):
                 names.append(name)
         return names
 
-    def get_default_ordering(self):
+    def get_default_ordering(self) -> list[str]:
         return [Fields.NAME]
 
     def get_artists_list_from_names_str_after_eventual_creation(
@@ -28,3 +28,6 @@ class ArtistManager(LibTrackMixinManager):
         artists_names_list = self.get_artists_names_list_from_str(artists_names_str)
         return [self.get_or_create(user=user, name=artist_name)[0] for artist_name in artists_names_list] \
             if len(artists_names_list) > 0 else []
+
+    def delete_instance(self, instance: 'Artist'):
+        instance.delete_with_albums_and_tracks()
