@@ -55,7 +55,7 @@ class TrackFile(PrivateStandardResource):
                                                   null=True,
                                                   blank=True)
     flac_md5_has_been_corrected = models.BooleanField(null=True, default=None, blank=True)
-    size_in_bytes = models.DecimalField(null=True, blank=True, max_digits=11, decimal_places=2)
+    size_in_bytes = models.DecimalField(max_digits=11, decimal_places=2)
     size_in_ko = models.GeneratedField(expression=F(Fields.SIZE_IN_BYTES) / 1024,  # type: ignore
                                        output_field=models.DecimalField(max_digits=8, decimal_places=2),
                                        db_persist=True)
@@ -202,6 +202,7 @@ class TrackFile(PrivateStandardResource):
         self.duration_in_sec = int(duration_in_sec)
         self.bitrate_in_kbps = self._get_bitrate()
         self.handle_flac_md5()
+        self.size_in_bytes = self.file.size
         fingerprinting_result = self._manage_fingerprint()
         self.manage_musicbrainz_recording(fingerprinting_result)
         super().save(*args, **kwargs)
