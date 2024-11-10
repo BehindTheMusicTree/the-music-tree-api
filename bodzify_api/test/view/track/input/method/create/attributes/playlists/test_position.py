@@ -1,24 +1,24 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-from bodzify_api.model.lib_track_mixin.AllLibTrackMixin import AllLibTrackMixin
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
 class TestCase(LibTrackTestCase):
 
-    def test_create_then_in_first_position_of_all_playlist_and_other_tracks_after(self):
-        lib_track1 = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame")
-        lib_track2 = self.model_fixture_factory.create_lib_track_with_file(title="We're All To lol")
+    def test_create_then_in_first_position_of_genre_playlist_and_other_tracks_after(self):
+        genre = self.model_fixture_factory.create_genre(name="Rock")
+        lib_track1 = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame", genre=genre)
+        lib_track2 = self.model_fixture_factory.create_lib_track_with_file(title="We're All To lol", genre=genre)
+
         response = self._post_lib_track_with_generic_sample_no_tags()
+
         assert response.status_code == status.HTTP_201_CREATED
-        all_tracks_mixin = AllLibTrackMixin.objects.get(user=self.test_user1)
-        assert LibTrackPlaylistRel.objects.get(base_playlist=all_tracks_mixin,
-                                               library_track=self.saved_lib_track).position == 1
-        assert LibTrackPlaylistRel.objects.get(
-            base_playlist=all_tracks_mixin, library_track=lib_track1).position == 3
-        assert LibTrackPlaylistRel.objects.get(
-            base_playlist=all_tracks_mixin, library_track=lib_track2).position == 2
+
+        genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre)
+
+        assert genre_playlist.lib_track_playlist_rels.get(library_track=self.saved_lib_track).position == 1
+        assert genre_playlist.lib_track_playlist_rels.get(library_track=lib_track1).position == 2
+        assert genre_playlist.lib_track_playlist_rels.get(library_track=lib_track2).position == 3
