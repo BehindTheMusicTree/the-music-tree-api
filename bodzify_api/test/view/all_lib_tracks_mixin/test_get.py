@@ -11,7 +11,7 @@ class TestCase(AllLibTracksMixinTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="test")
         self.model_fixture_factory.create_lib_track_with_file(title="test2")
 
-        response = self._get_all_lib_track_mixin()
+        response = self._get_all_lib_tracks_mixin()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 2
@@ -24,7 +24,7 @@ class TestCase(AllLibTracksMixinTestCase):
         self._post_lib_track_with_generic_sample_no_tags()
         track_uuid_3 = self.saved_lib_track.uuid
 
-        response = self._get_all_lib_track_mixin()
+        response = self._get_all_lib_tracks_mixin()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 3

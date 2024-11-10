@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from django.db import models
 
 from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
+from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -23,6 +24,10 @@ class LibTrackMixin(PrivateUniqueResource):
     @abstractmethod
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
         pass
+
+    @property
+    def lib_tracks_sorted(self) -> models.QuerySet['LibraryTrack']:
+        return self.library_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
 
     @property
     def library_tracks_not_archived(self) -> models.QuerySet['LibraryTrack']:  # type: ignore

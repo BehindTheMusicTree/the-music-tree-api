@@ -5,12 +5,13 @@ from .model.user.User import User
 from .model.album.Album import Album
 from .model.criteria.Criteria import Criteria
 from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
-from .model.all_lib_track_mixin.AllLibTrackMixin import AllLibTrackMixin
+from .model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from .model.artist.Artist import Artist
 from .model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from .model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
 from .model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
-from .model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import MusicbrainzRecordingMissingCause
+from .model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause \
+    import MusicbrainzRecordingMissingCause
 from .model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
     import MusicbrainzRecordingMissingCauseCode
 from .model.playlist.BasePlaylist import BasePlaylist
@@ -27,7 +28,7 @@ admin.site.register(LibraryTrack)
 admin.site.register(TrackFile)
 admin.site.register(FingerprintMissingCause)
 admin.site.register(FingerprintMissingCauseCode)
-admin.site.register(AllLibTrackMixin)
+admin.site.register(AllLibTracksMixin)
 admin.site.register(Artist)
 admin.site.register(Album)
 admin.site.register(Criteria)

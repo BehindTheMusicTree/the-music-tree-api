@@ -14,5 +14,5 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track_uuid=track_love.uuid, data_dict={Fields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.test_user1.all_lib_track_mixin.library_tracks_archived_count == 2
-        assert self.test_user1.all_lib_track_mixin.library_tracks_count == 0
+        assert self.test_user1.all_lib_tracks_mixin.library_tracks_archived_count == 2
+        assert self.test_user1.all_lib_tracks_mixin.library_tracks_count == 0

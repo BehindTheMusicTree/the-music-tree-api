@@ -1,13 +1,13 @@
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 from django.db import models
 from django.db.models import Q, QuerySet
 
 from bodzify_api import settings
 from bodzify_api.model.album.AlbumManager import AlbumManager
-from bodzify_api.model.user.User import User
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from .Fields import Fields
 
 if TYPE_CHECKING:
@@ -25,8 +25,8 @@ class Album(LibTrackMixin):
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
+    @property
     def lib_tracks_sorted(self) -> models.QuerySet['LibraryTrack']:
-        from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
         return self.library_tracks.annotate(
             null_position=Q(position_in_album__isnull=True)).order_by(
             'null_position', LibraryTrackFields.POSITION_IN_ALBUM, LibraryTrackFields.TITLE)

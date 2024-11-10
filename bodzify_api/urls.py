@@ -34,7 +34,8 @@ router.register(r'plays', PlayViewSet, basename='play')
 router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
-router.register(r'search', SearchApiViewSet, basename='search')
+router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
+router.register(r'all-library-tracks', All, basename='search')
 
 urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
 

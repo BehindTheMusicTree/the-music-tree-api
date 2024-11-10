@@ -1,14 +1,12 @@
-
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager \
-    import PublicStandardResourceManager
+from typing import Any
+from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+from .Fields import Fields
 
 
 class MusicbrainzRecordingMissingCauseManager(PublicStandardResourceManager):
 
     def create(self, *args, **kwargs):
-        from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import Fields
-        from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
-            import MusicbrainzRecordingMissingCauseCode
+        from .code.MusicbrainzRecordingMissingCauseCode import MusicbrainzRecordingMissingCauseCode
 
         code = kwargs.pop(Fields.CODE, None)
         if code is None:
@@ -18,3 +16,6 @@ class MusicbrainzRecordingMissingCauseManager(PublicStandardResourceManager):
         kwargs[Fields.CODE] = musicbrainz_recording_missing_cause_code
 
         return super().create(*args, **kwargs)
+
+    def delete_instance(self, instance: Any):
+        raise NotImplementedError()

@@ -15,8 +15,7 @@ from .UserManager import UserManager
 from .Fields import Fields
 
 if TYPE_CHECKING:
-    from bodzify_api.model.all_lib_track_mixin.AllLibTrackMixin import AllLibTrackMixin
-    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+    from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 
 
 class User(AbstractUser):
@@ -50,9 +49,9 @@ class User(AbstractUser):
         return settings.MEDIA_ROOT / self.lib_path_relative_to_media
 
     @cached_property
-    def all_lib_track_mixin(self) -> 'AllLibTrackMixin':
-        all_lib_track_mixin, _ = AllLibTrackMixin.objects.get_or_create(user=self)
-        return all_lib_track_mixin
+    def all_lib_tracks_mixin(self) -> 'AllLibTracksMixin':
+        all_lib_tracks_mixin, _ = AllLibTracksMixin.objects.get_or_create(user=self)
+        return all_lib_tracks_mixin
 
     @property
     def default_lib_track_file_abs_path(self):

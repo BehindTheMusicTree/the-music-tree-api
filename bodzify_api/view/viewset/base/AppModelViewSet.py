@@ -119,7 +119,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         except (DRFValidationError, ValidationError) as e:
             return APIErrorResponse.from_validation_error(e)
 
-    def _handle_post(self, request: Request, creation_type: str, *args, **kwargs) -> Response:
+    def _handle_post(self, request: Request, creation_type: Optional[str] = None, *args, **kwargs) -> Response:
         create_data_in_camel_case = data_transformer.convert_data_to_dict(request.data)
         create_data_in_snake_case = data_transformer.dict_to_snake_case(create_data_in_camel_case)
         instance = self._create_instance(request=request,
