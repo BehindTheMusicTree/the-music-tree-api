@@ -1,10 +1,8 @@
-
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.utils.utils import to_camel_case
+from bodzify_api.utils import data_transformer
 from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
-from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as LibTrackPostFields
 from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album import Fields as LibTrackGetFields
 from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import Fields as CriteriaPlaylistFields
 
@@ -19,13 +17,13 @@ class TestCase(BasePlaylistTestCase):
         lib_track2 = self.model_fixture_factory.create_lib_track_with_file(title="Love2", genre=genre)
         lib_track1 = self.model_fixture_factory.create_lib_track_with_file(title="Love1", genre=genre)
 
-        response = self._retrieve(base_playlist_uuid=genre.criteria_playlist.base_playlist.uuid)
+        response = self._retrieve(base_playlist_uuid=genre.criteria_playlist.uuid)
+
         assert response.status_code == status.HTTP_200_OK
-        result = response.json()
-        result_tracks = result[to_camel_case(CriteriaPlaylistFields.LIB_TRACKS)]
-        assert result_tracks[0][to_camel_case(LibTrackGetFields.TITLE)] == lib_track1.title
-        assert result_tracks[1][to_camel_case(LibTrackGetFields.TITLE)] == lib_track2.title
-        assert result_tracks[2][to_camel_case(LibTrackGetFields.TITLE)] == lib_track3.title
+        result_tracks = self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.LIB_TRACKS)]
+        assert result_tracks[0][data_transformer.to_camel_case(LibTrackGetFields.TITLE)] == lib_track1.title
+        assert result_tracks[1][data_transformer.to_camel_case(LibTrackGetFields.TITLE)] == lib_track2.title
+        assert result_tracks[2][data_transformer.to_camel_case(LibTrackGetFields.TITLE)] == lib_track3.title
 
     def test_duration(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -38,9 +36,9 @@ class TestCase(BasePlaylistTestCase):
                                                               genre=genre)
 
         response = self._retrieve(genre_criteria_playlist.uuid)
+
         assert response.status_code == status.HTTP_200_OK
-        result = response.json()
-        assert result[to_camel_case(CriteriaPlaylistFields.DURATION_IN_SEC)] == 284 + 152
+        assert self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.DURATION_IN_SEC)] == 284 + 152
 
     def test_count(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -48,9 +46,10 @@ class TestCase(BasePlaylistTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Summer", genre=genre)
         self.model_fixture_factory.create_lib_track_with_file(title="Winter", genre=genre, archived=True)
         response = self._retrieve(genre.criteria_playlist.uuid)
+
         assert response.status_code == status.HTTP_200_OK
-        result = response.json()
-        assert result[to_camel_case(CriteriaPlaylistFields.LIB_TRACKS_COUNT)] == 2
+
+        assert self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.LIB_TRACKS_COUNT)] == 2
 
     def test_archived_count(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -59,6 +58,7 @@ class TestCase(BasePlaylistTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Summer2", genre=genre, archived=True)
         self.model_fixture_factory.create_lib_track_with_file(title="Summer3", genre=genre, archived=True)
         response = self._retrieve(genre.criteria_playlist.uuid)
+
         assert response.status_code == status.HTTP_200_OK
-        result = response.json()
-        assert result[to_camel_case(CriteriaPlaylistFields.LIB_TRACKS_ARCHIVED_COUNT)] == 3
+
+        assert self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.LIB_TRACKS_ARCHIVED_COUNT)] == 3

@@ -3,7 +3,7 @@ import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, cast
+from typing import Optional, TypeVar, cast
 
 from ddf import G, N
 from django_dynamic_fixture import global_settings
@@ -15,6 +15,7 @@ from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
+from bodzify_api.model.base.BaseModel import T
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.criteria.children.genre.Genre import Genre
@@ -59,10 +60,12 @@ class ModelFixtureFactory:
         user.save()
         return cast('User', user)
 
+    T = TypeVar('T', bound='Criteria')
+
     def __create_criteria(self,
                           name: str,
-                          model_class: type[Criteria],
-                          user: Optional[User] = None, **kwargs) -> Criteria:
+                          model_class: type[T],
+                          user: Optional[User] = None, **kwargs) -> T:
         model_fields = {
             CriteriaFields.CREATED_ON: timezone.make_aware(datetime.now()),
             CriteriaFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -150,10 +153,10 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return G(Album, **model_fields)
 
-    def create_genre(self, name: str, **kwargs) -> Criteria:
+    def create_genre(self, name: str, **kwargs) -> Genre:
         return self.__create_criteria(name=name, model_class=Genre, **kwargs)
 
-    def create_tag(self, name: str, **kwargs) -> Criteria:
+    def create_tag(self, name: str, **kwargs) -> Tag:
         return self.__create_criteria(name=name, model_class=Tag, **kwargs)
 
     def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> ManualPlaylist:

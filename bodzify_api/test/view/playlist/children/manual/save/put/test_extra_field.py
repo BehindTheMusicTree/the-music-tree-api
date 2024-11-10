@@ -10,5 +10,7 @@ class TestCase(ManualPlaylistTestCase):
     def test_extra_field_then_error(self):
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name="teuf")
         data = {'nonExistingField': 'oifjqoif'}
-        response = self.put_manual_playlist(manual_playlist_uuid=manual_playlist.base_playlist.uuid, data_dict=data)
+
+        response = self._put_manual_playlist(manual_playlist_uuid=manual_playlist.uuid, data_dict=data)
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST

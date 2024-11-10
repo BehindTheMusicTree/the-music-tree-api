@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
@@ -17,3 +17,6 @@ class LibTrackPlaylistRelManager(PublicStandardResourceManager):
             relation: LibTrackPlaylistRel = relation  # for type hinting
             relation.position = i
             relation.save()
+
+    def delete_instance(self, instance: Any):
+        raise NotImplementedError()

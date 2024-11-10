@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from django.db import models
 from django.utils import timezone

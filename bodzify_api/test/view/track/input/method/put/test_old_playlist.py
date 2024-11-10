@@ -12,9 +12,10 @@ class TestCase(LibTrackTestCase):
         old_genre = self.model_fixture_factory.create_genre(name="Metal")
         new_genre_name = "Rock"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=old_genre)
-        data = {PutFields.GENRE_NAME: new_genre_name}
-        response = self._put_lib_track(lib_track.uuid, data_dict=data)
-        assert response.status_code == status.HTTP_200_OK
+        assert lib_track in old_genre.criteria_playlist.library_tracks.all()
 
-        old_genre_playlist = CriteriaPlaylist.objects.get(criteria=old_genre).base_playlist
+        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: new_genre_name})
+
+        assert response.status_code == status.HTTP_200_OK
+        old_genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria=old_genre)
         assert lib_track not in old_genre_playlist.library_tracks.all()

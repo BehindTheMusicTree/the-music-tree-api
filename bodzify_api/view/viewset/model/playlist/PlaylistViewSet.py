@@ -1,7 +1,7 @@
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
 from rest_framework.request import Request
 
-from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.playlist.Fields import Fields
 from bodzify_api.model.playlist.PlaylistTypes import PlaylistTypes
@@ -69,7 +69,7 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
             tagless_playlist = queryset.filter(
                 criteria_child_playlist__isnull=False,
                 criteria_child_playlist__criteria__isnull=True,
-                criteria_child_playlist__type_pk=CriteriaTypesPks.TAG)
+                criteria_child_playlist__type_pk=CriteriaTypePks.TAG)
 
         return manual_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
             tagless_playlist).order_by(Fields.CREATED_ON)

@@ -7,7 +7,7 @@ from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
-from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
@@ -77,11 +77,11 @@ def criteria_playlist_filter(queryset, request, *args, **kwargs):
             if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistWithoutCriteriaNames.GENRE):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
-                    type_pk=CriteriaTypesPks.GENRE)
+                    type_pk=CriteriaTypePks.GENRE)
             if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistWithoutCriteriaNames.TAG):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
-                    type_pk=CriteriaTypesPks.TAG)
+                    type_pk=CriteriaTypePks.TAG)
     return queryset
 
 

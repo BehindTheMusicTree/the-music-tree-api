@@ -12,7 +12,7 @@ from rest_framework.exceptions import ValidationError
 from bodzify_api import settings
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
-from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypesPks
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.user.User import User
 from bodzify_api.utils import audio_metadata, data_transformer, utils
@@ -49,7 +49,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
                     old_genre_tree_item = old_genre_tree_item.parent
         else:
             genreless_criteria_playlist: CriteriaPlaylist = \
-                CriteriaPlaylist.objects.get(user=instance.user, type=CriteriaTypesPks.GENRE, criteria=None)
+                CriteriaPlaylist.objects.get(user=instance.user, type=CriteriaTypePks.GENRE, criteria=None)
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save()
             LibTrackPlaylistRel.objects.filter(
@@ -72,7 +72,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
                 genre_tree_item = genre_tree_item.parent  # type: ignore
         else:
             genreless_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=instance.user,
-                                                                                         type=CriteriaTypesPks.GENRE,
+                                                                                         type=CriteriaTypePks.GENRE,
                                                                                          criteria=None)
             LibTrackPlaylistRel.objects.create(user=instance.user,
                                                base_playlist=genreless_criteria_playlist,

@@ -1,4 +1,3 @@
-
 from rest_framework import status
 
 from bodzify_api import settings
@@ -13,6 +12,7 @@ class TestCase(FieldModelStrTestCase):
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
         assert len(artists_list) > 0
@@ -22,19 +22,22 @@ class TestCase(FieldModelStrTestCase):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_empty_then_none(self):
-        data = {ExtractFields.ARTISTS_NAMES_STR: ''}
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(data_dict={ExtractFields.ARTISTS_NAMES_STR: ''})
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.artists.count() == 0
 
     def test_existing(self) -> None:
         artist_name = "Kopoe"
         self.model_fixture_factory.create_artist(name=artist_name)
+
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
         assert len(artists_list) > 0
@@ -44,6 +47,7 @@ class TestCase(FieldModelStrTestCase):
         artist_name = "hoho"
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
         assert len(artists_list) > 0

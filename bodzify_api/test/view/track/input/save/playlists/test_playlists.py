@@ -13,13 +13,11 @@ class TestCase(LibTrackTestCase):
         genre_name = "Rock"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        data = {PutFields.GENRE_NAME: genre_name}
-        response = self._put_lib_track(lib_track.uuid, data_dict=data)
-        assert response.status_code == status.HTTP_200_OK
+        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: genre_name})
 
+        assert response.status_code == status.HTTP_200_OK
         track_playlists = self.saved_lib_track.base_playlists.all()
         assert len(track_playlists) == 2
-
         criteria_playlists = CriteriaPlaylist.objects.filter(user=self.test_user1, base_playlist__in=track_playlists)
         assert criteria_playlists.filter(criteria__name=genre_name).exists()
 
@@ -28,8 +26,7 @@ class TestCase(LibTrackTestCase):
         genre = self.model_fixture_factory.create_genre(name=genre_name)
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        data = {PutFields.GENRE_NAME: genre_name}
-        response = self._put_lib_track(lib_track.uuid, data_dict=data)
+        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: genre_name})
         assert response.status_code == status.HTTP_200_OK
 
         track_playlists = self.saved_lib_track.base_playlists.all()
@@ -44,21 +41,18 @@ class TestCase(LibTrackTestCase):
         emo_genre_name = "Emo"
 
         rock_genre = self.model_fixture_factory.create_genre(name=rock_genre_name)
-
         hardrock_genre = self.model_fixture_factory.create_genre(name=hardrock_genre_name, parent=rock_genre)
-
         self.model_fixture_factory.create_genre(name=emo_genre_name, parent=hardrock_genre)
-
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
-        data = {PutFields.GENRE_NAME: emo_genre_name}
-        response = self._put_lib_track(lib_track.uuid, data_dict=data)
-        assert response.status_code == status.HTTP_200_OK
 
+        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: emo_genre_name})
+
+        assert response.status_code == status.HTTP_200_OK
         lib_track_playlists = self.saved_lib_track.base_playlists.all()
         assert len(lib_track_playlists) == 4
 
-        lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(
-            user=self.test_user1, base_playlist__in=lib_track_playlists)
+        lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(user=self.test_user1,
+                                                                       base_playlist__in=lib_track_playlists)
         assert lib_track_criteria_playlists.filter(criteria__name=emo_genre_name).exists()
         assert lib_track_criteria_playlists.filter(criteria__name=hardrock_genre_name).exists()
         assert lib_track_criteria_playlists.filter(criteria__name=rock_genre_name).exists()
