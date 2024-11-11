@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.schema.playlist.children.simple.output.detailed import Fields as ManualPlaylistGetFields
+from bodzify_api.serializer.schema.playlist.children.manual.output.detailed import Fields as ManualPlaylistGetFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 

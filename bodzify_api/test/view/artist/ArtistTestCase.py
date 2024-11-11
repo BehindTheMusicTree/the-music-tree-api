@@ -25,8 +25,11 @@ class ArtistTestCase(ApiTestCase):
             self._set_results_attributes(response)
         return response
 
-    def _retrieve(self, artistUuid: UUID):
-        return self.api_client.get(path=reverse('artist-detail', kwargs={'pk': artistUuid}))
+    def _retrieve_artist(self, uuid: UUID):
+        response = self.api_client.get(path=reverse('artist-detail', kwargs={'pk': uuid}))
+        if response.status_code == status.HTTP_200_OK:
+            self._set_result(response)
+        return response
 
     def _put_artist(self, uuid: UUID, **kwargs):
         data_url_encoded = urlencode(query=self._replace_none_values_by_empty_string(kwargs), doseq=True)
@@ -37,5 +40,5 @@ class ArtistTestCase(ApiTestCase):
             self._set_result(response)
         return response
 
-    def _delete_artist(self, artistUuid: UUID):
-        return self.api_client.delete(path=reverse('artist-detail', kwargs={'pk': artistUuid}))
+    def _delete_artist(self, uuid: UUID):
+        return self.api_client.delete(path=reverse('artist-detail', kwargs={'pk': uuid}))

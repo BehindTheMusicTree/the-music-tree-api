@@ -5,9 +5,9 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from bodzify_api.filter.set.ManualPlaylistFilterSet import Fields, ManualPlaylistFilterSet
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.serializer.schema.playlist.children.simple.input.endpoint import ManualPlaylistInputEndpointSerializer
-from bodzify_api.serializer.schema.playlist.children.simple.output.detailed import ManualPlaylistDetailedSerializer
-from bodzify_api.serializer.schema.playlist.children.simple.output.simple import ManualPlaylistSimpleSerializer
+from bodzify_api.serializer.schema.playlist.children.manual.input.endpoint import ManualPlaylistInputEndpointSerializer
+from bodzify_api.serializer.schema.playlist.children.manual.output.detailed import ManualPlaylistDetailedSerializer
+from bodzify_api.serializer.schema.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
 from bodzify_api.service.playlist.ManualPlaylistService import ManualPlaylistService
 from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 

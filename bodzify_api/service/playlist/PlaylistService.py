@@ -1,7 +1,7 @@
 
 from rest_framework.request import Request
 
-from bodzify_api.serializer.schema.playlist.children.simple.input.model import ManualPlaylistModelSerializer
+from bodzify_api.serializer.schema.playlist.children.manual.input.model import ManualPlaylistModelSerializer
 from bodzify_api.service.Service import Service
 
 
