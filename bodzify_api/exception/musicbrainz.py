@@ -18,6 +18,17 @@ class UnknownStatusCodeMusicbrainzRecordingLookupException(MusicbrainzRecordingL
         super().__init__(f"Unknown lookup status code: {status_code}")
 
 
-class UnknownErrorMusicbrainzRecordingLookupException(MusicbrainzRecordingLookupException):
+class ErrorStatusMusicbrainzRecordingLookupException(MusicbrainzRecordingLookupException):
+    def __init__(self, exception_message: str):
+        super().__init__(exception_message)
+
+
+class InvalidFingerprintErrorStatusErrorMusicbrainzRecordingLookupException(
+        ErrorStatusMusicbrainzRecordingLookupException):
+    def __init__(self, exception_message: str):
+        super().__init__(exception_message)
+
+
+class UnknownErrorStatusMusicbrainzRecordingLookupException(ErrorStatusMusicbrainzRecordingLookupException):
     def __init__(self, exception_message: str):
         super().__init__(exception_message)

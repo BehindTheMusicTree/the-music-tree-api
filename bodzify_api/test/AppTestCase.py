@@ -32,15 +32,15 @@ class AppTestCase(TestCase):
                                                              email='test_admin@example.com',
                                                              is_test_user=True)
 
-        self.test_user1 = User.objects.create_user(username='pytest_user1',
-                                                   password='pytest_user1',
-                                                   email='pytest@user1.com',
-                                                   is_test_user=True)
+        self.test_user1 = User.objects.create_instance(username='pytest_user1',
+                                                       password='pytest_user1',
+                                                       email='pytest@user1.com',
+                                                       is_test_user=True)
 
-        self.test_user2 = User.objects.create_user(username='pytest_user2',
-                                                   password='pytest_user2',
-                                                   email='pytest@user2.com',
-                                                   is_test_user=True)
+        self.test_user2 = User.objects.create_instance(username='pytest_user2',
+                                                       password='pytest_user2',
+                                                       email='pytest@user2.com',
+                                                       is_test_user=True)
 
         self._set_up_test_directories_and_variables()
         generic_sample_path = self.generic_sample_dir_abs_path / self.DEFAULT_SAMPLE_FILENAME

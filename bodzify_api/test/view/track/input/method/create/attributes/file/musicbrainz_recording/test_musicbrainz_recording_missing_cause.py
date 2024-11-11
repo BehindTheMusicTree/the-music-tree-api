@@ -1,4 +1,3 @@
-
 from rest_framework import status
 
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
@@ -27,3 +26,10 @@ class TestCase(LibTrackTestCase):
         assert self.saved_lib_track.track_file.musicbrainz_recording_missing_cause
         assert self.saved_lib_track.track_file.musicbrainz_recording_missing_cause.code.code == \
             MusicbrainzRecordingMissingCauseCode.Codes.DURATION_BELOW_1_SEC
+
+    def test_invalid_fingerprint_then_corresponding_missing_cause(self):
+        response = self._post_lib_track_with_generic_sample_no_tags()
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track.track_file.musicbrainz_recording_missing_cause
+        assert self.saved_lib_track.track_file.musicbrainz_recording_missing_cause.code.code == \
+            MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INVALID_FINGERPRINT_RESPONSE_ERROR_CODE
