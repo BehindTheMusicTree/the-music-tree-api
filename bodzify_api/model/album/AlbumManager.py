@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Optional
-from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
+from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
+from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
 from bodzify_api.model.user.User import User
 from .Fields import Fields
 
@@ -8,7 +9,7 @@ if TYPE_CHECKING:
     from .Album import Album
 
 
-class AlbumManager(LibTrackMixinManager):
+class AlbumManager(PublicStandardResourceManager):
     model: 'Album'
 
     def _get_instance_from_name_and_artists_list_after_having_eventually_created_instance(
@@ -44,3 +45,6 @@ class AlbumManager(LibTrackMixinManager):
 
         return self._get_instance_from_name_and_artists_list_after_having_eventually_created_instance(
             user=user, album_name=album_name, album_artists=album_artists)
+
+    def delete_instance(self, instance: 'Album') -> None:
+        instance.delete_with_tracks_and_eventually_artists()

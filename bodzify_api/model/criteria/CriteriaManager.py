@@ -2,7 +2,8 @@ from typing import Generic, Optional, TYPE_CHECKING, TypeVar
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
+from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+
 from .type.CriteriaType import CriteriaType
 from .Fields import Fields
 
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='Criteria')
 
 
-class CriteriaManager(LibTrackMixinManager[T], Generic[T]):
+class CriteriaManager(PublicStandardResourceManager[T], Generic[T]):
     model: T
 
     def create(self, type_id: int, **kwargs) -> T:

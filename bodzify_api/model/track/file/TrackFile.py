@@ -140,12 +140,13 @@ class TrackFile(PrivateStandardResource):
 
         return fingerprinting_result
 
-    def manage_musicbrainz_recording(self, fingerprinting_result_nullable: Optional[FingerprintingResult]
-                                     ) -> Optional[MusicbrainzRecordingLookupResult]:
+    def _manage_musicbrainz_recording(self, fingerprinting_result_nullable: Optional[FingerprintingResult]
+                                      ) -> Optional[MusicbrainzRecordingLookupResult]:
         musicbrainz_recording_lookup_result = None
 
         if self.fingerprint_missing_cause:
-            if self.fingerprint_missing_cause.code == MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED:
+            if self.fingerprint_missing_cause.code == \
+                    MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED:
                 self.musicbrainz_recording_missing_cause = MusicbrainzRecordingMissingCause.objects.create(
                     user=self.user,
                     code=MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED)
@@ -156,10 +157,10 @@ class TrackFile(PrivateStandardResource):
                     message=f"Fingerprinting failed.")
         else:
             fingerprinting_result: FingerprintingResult = fingerprinting_result_nullable  # type: ignore
-            musicbrainz_recording_lookup_result = musicbrainz.get_musicbrainz_recording_lookup_result(
-                user=self.user,
-                fingerprint=fingerprinting_result.fingerprint,
-                duration_in_sec=self.duration_in_sec)
+            musicbrainz_recording_lookup_result = \
+                musicbrainz.get_musicbrainz_recording_lookup_result(user=self.user,
+                                                                    fingerprint=fingerprinting_result.fingerprint,
+                                                                    duration_in_sec=self.duration_in_sec)
 
             if musicbrainz_recording_lookup_result.is_success:
                 self.musicbrainz_recording = musicbrainz_recording_lookup_result.recording
@@ -204,7 +205,7 @@ class TrackFile(PrivateStandardResource):
         self.handle_flac_md5()
         self.size_in_bytes = self.file.size
         fingerprinting_result = self._manage_fingerprint()
-        self.manage_musicbrainz_recording(fingerprinting_result)
+        self._manage_musicbrainz_recording(fingerprinting_result)
         super().save(*args, **kwargs)
 
 

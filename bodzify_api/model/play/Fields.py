@@ -9,4 +9,3 @@ class Fields:
     CONTENT_TYPE = 'content_type'
     OBJECT_PK = 'object_pk'
     CONTENT_OBJECT = 'content_object'
-    TIME = 'time'

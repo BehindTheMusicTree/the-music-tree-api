@@ -29,6 +29,4 @@ class AlbumViewSet(AppModelViewSet[Album]):
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete_with_tracks_and_eventually_artists()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        self._handle_destroy(request, *args, **kwargs)

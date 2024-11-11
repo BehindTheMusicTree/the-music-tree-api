@@ -9,6 +9,7 @@ from django.db import models
 from django.db.models import F, Value
 
 from bodzify_api import settings
+from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.utils.ConditionalExpression import ConditionalExpression
 from .UserManager import UserManager
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 
 
-class User(AbstractUser):
+class User(AbstractUser, BaseModel):
     DEFAULT_LIB_TRACK_FILENAME_WITH_EXTENSION = "default.mp3"
 
     is_test_user = models.BooleanField(default=False)
@@ -42,7 +43,7 @@ class User(AbstractUser):
         output_field=models.CharField(max_length=255),
         db_persist=True)
 
-    objects: UserManager['User'] = UserManager()
+    objects: UserManager = UserManager()
 
     @property
     def lib_abs_path(self) -> Path:

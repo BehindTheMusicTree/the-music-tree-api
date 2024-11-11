@@ -1,5 +1,3 @@
-from rest_framework.response import Response
-from rest_framework import status
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from django.db import transaction
 
@@ -11,13 +9,11 @@ from bodzify_api.serializer.schema.artist.detailed import ArtistDetailedSerializ
 
 class ArtistViewSet(AppModelViewSet[Artist]):
     def __init__(self, **kwargs):
-        super().__init__(
-            model_class=Artist,
-            filter_class=ArtistFilterSet,
-            simple_serializer_class=ArtistDetailedSerializer,
-            detailed_serializer_class=ArtistDetailedSerializer,
-            **kwargs
-        )
+        super().__init__(model_class=Artist,
+                         filter_class=ArtistFilterSet,
+                         simple_serializer_class=ArtistDetailedSerializer,
+                         detailed_serializer_class=ArtistDetailedSerializer,
+                         **kwargs)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),

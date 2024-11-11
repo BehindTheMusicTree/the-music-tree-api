@@ -10,18 +10,14 @@ from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 
 class PlayViewSet(AppModelViewSet[Play]):
     def __init__(self, **kwargs):
-        super().__init__(
-            service=PlayService(),
-            model_class=Play,
-            detailed_serializer_class=PlayDetailedSerializer,
-            create_serializer_class=PlayPostSerializer,
-            **kwargs
-        )
+        super().__init__(service=PlayService(),
+                         model_class=Play,
+                         detailed_serializer_class=PlayDetailedSerializer,
+                         create_serializer_class=PlayPostSerializer,
+                         **kwargs)
 
     def get_queryset(self):
-        return Play.objects.filter(
-            user=self.request.user).order_by(
-            f"-{Fields.TIME} ")
+        return Play.objects.filter(user=self.request.user).order_by(f"-{Fields.CREATED_ON} ")
 
     @transaction.atomic
     @extend_schema(request=PlayPostSerializer, responses=PlayDetailedSerializer)

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
+from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
 from bodzify_api.model.user.User import User
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
 from .Fields import Fields
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from .Artist import Artist
 
 
-class ArtistManager(LibTrackMixinManager):
+class ArtistManager(PublicStandardResourceManager):
 
     def get_artists_names_list_from_str(self, names_str: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_str.split(METADATA_ARTISTS_SEPARATION_CHAR)
