@@ -3,9 +3,7 @@ from django.db import models
 from django.db.models import QuerySet
 from typing import Optional
 
-from requests import delete
-
-from bodzify_api.model.base.BaseManager import BaseManager
+from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
 from .Fields import Fields
 
 if TYPE_CHECKING:
@@ -16,17 +14,15 @@ if TYPE_CHECKING:
     from .CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
 
 
-class CriteriaPlaylistManager(BaseManager):
+class CriteriaPlaylistManager(PublicStandardResourceManager):
 
     def get_by_name(self, user, name: str) -> Optional['CriteriaPlaylist']:
         return self.filter(user=user).filter(
             models.Q(criteria__name=name) |
             models.Q(
                 criteria__isnull=True,
-                type__in=[
-                    models.Q(name=CriteriaPlaylistWithoutCriteriaNames.GENRE) |
-                    models.Q(name=CriteriaPlaylistWithoutCriteriaNames.TAG)
-                ]
+                type__in=[models.Q(name=CriteriaPlaylistWithoutCriteriaNames.GENRE) |
+                          models.Q(name=CriteriaPlaylistWithoutCriteriaNames.TAG)]
             )
         ).first()
 

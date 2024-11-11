@@ -1,8 +1,7 @@
-
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.serializer.schema.playlist.children.simple.output.detailed import Fields as AvailableFields
+from .Fields import Fields as AvailableFields
 
 
 class Fields:
@@ -12,7 +11,7 @@ class Fields:
 
 
 class ManualPlaylistSimpleSerializer(serializers.ModelSerializer):
-    name = serializers.CharField()  # only to override the mother's one
+    name = serializers.CharField()
 
     class Meta:
         model = ManualPlaylist

@@ -1,12 +1,13 @@
-from abc import abstractmethod
 from typing import Dict, Any, TYPE_CHECKING, Optional
 
 from django.db import models
 
 from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
 from .CriteriaPlaylistManager import CriteriaPlaylistManager
 from .Fields import Fields
 
@@ -42,13 +43,18 @@ class CriteriaPlaylist(BasePlaylist):
     def type_label(self) -> str:
         return self.type.label
 
-    @abstractmethod
-    def name_when_no_criteria() -> str:
-        raise NotImplementedError()
+    @property
+    def name_when_no_criteria(self) -> str:
+        if self.type.pk == CriteriaTypePks.GENRE:
+            return CriteriaPlaylistWithoutCriteriaNames.GENRE
+        if self.type.pk == CriteriaTypePks.TAG:
+            return CriteriaPlaylistWithoutCriteriaNames.TAG
+        else:
+            raise ValueError(f'Unknown criteria type: {self.type.pk}')
 
     @property
     def name(self):
-        return self.criteria.name if self.criteria else self.name_when_no_criteria()
+        return self.criteria.name if self.criteria else self.name_when_no_criteria
 
     @property
     def is_root(self) -> bool:

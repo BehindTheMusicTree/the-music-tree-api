@@ -33,6 +33,11 @@ class BasePlaylist(LibTrackMixin, TrackablePlayCount):
     def type_label(self) -> str:
         pass
 
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        pass
+
     def update_last_track_list_update_date(self):
         self.last_track_list_update_date = timezone.now()
         self.save()
