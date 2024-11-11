@@ -9,27 +9,11 @@ from bodzify_api.serializer.schema.playlist.base.output.minimum import PlaylistM
 from bodzify_api.serializer.schema.track_file.output.detailed import FileDetailedSerializer
 
 
-class LibTrackDetailedSerializer(serializers.ModelSerializer):
-    file = FileDetailedSerializer(source=ModelFields.TRACK_FILE)
+class LibTrackMinimumSerializer(serializers.ModelSerializer):
     artists = ArtistMinimumSerializer(many=True)
-    album = AlbumMinimumSerializer()
-    genre = CriteriaMinimumSerializer()
-    playlists = PlaylistMinimumSerializer(many=True)
 
     class Meta:
         model = LibraryTrack
         fields = [Fields.UUID,
-                  Fields.RELATIVE_URL,
                   Fields.TITLE,
-                  Fields.FILE,
-                  Fields.ARTISTS,
-                  Fields.ALBUM,
-                  Fields.POSITION_IN_ALBUM,
-                  Fields.GENRE,
-                  Fields.RATING,
-                  Fields.LANGUAGE,
-                  Fields.PLAYLISTS_USER_FRIENDLY,
-                  Fields.PLAY_COUNT,
-                  Fields.ARCHIVED,
-                  Fields.CREATED_ON,
-                  Fields.UPDATED_ON,]
+                  Fields.ARTISTS]

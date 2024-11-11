@@ -1,4 +1,4 @@
 class PlaylistTypes:
-    GENRE: str = 'genre'
-    TAG: str = 'tag'
-    MANUAL: str = 'manual'
+    GENRE = 'genre'
+    TAG = 'tag'
+    MANUAL = 'manual'

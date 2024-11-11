@@ -2,23 +2,25 @@ from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema 
 from rest_framework.request import Request
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields
 from bodzify_api.model.playlist.PlaylistTypes import PlaylistTypes
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
     import CriteriaPlaylistWithoutCriteriaNames
-from bodzify_api.serializer.schema.playlist.base.output.simple import BasePlaylistSimpleSerializer
+from bodzify_api.serializer.schema.playlist.base.output.detailed import PlaylistDetailedSerializer
+from bodzify_api.serializer.schema.playlist.base.output.simple import PlaylistSimpleSerializer
 from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filter.set.playlist.PlaylistParamFilterSet import PlaylistParamFilterSet
 from bodzify_api.filter.set.playlist.Fields import Fields as QueryParamsFields
 
 
-class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
+class PlaylistViewSet(AppModelViewSet[Playlist]):
 
     def __init__(self, **kwargs):
-        super().__init__(model_class=BasePlaylist,
+        super().__init__(model_class=Playlist,
                          filter_class=PlaylistParamFilterSet,
-                         simple_serializer_class=BasePlaylistSimpleSerializer,
+                         simple_serializer_class=PlaylistSimpleSerializer,
+                         detailed_serializer_class=PlaylistDetailedSerializer,
                          **kwargs)
 
     @staticmethod
@@ -27,7 +29,7 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
 
     def get_queryset(self):
         if self.action == 'retrieve':
-            return BasePlaylist.objects.filter(user=self.request.user, uuid=self.kwargs[self.lookup_field])
+            return Playlist.objects.filter(user=self.request.user, uuid=self.kwargs[self.lookup_field])
 
         request: Request = self.request  # type: ignore
         if not self.filter_class:
@@ -39,37 +41,34 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
                                                       self._get_queryset_str_filter_value_to_filter_nothing())
         type_query_param = query_params_validated.get(QueryParamsFields.TYPE_LABEL)
 
-        queryset = BasePlaylist.objects.filter(user=self.request.user)
+        queryset = Playlist.objects.filter(user=self.request.user)
 
-        manual_playlist_queryset = BasePlaylist.objects.none()
+        manual_playlist_queryset = Playlist.objects.none()
         if type_query_param is None or type_query_param.lower() == PlaylistTypes.MANUAL.lower():
-            manual_playlist_queryset = queryset.filter(simple_child_playlist__isnull=False,
-                                                       simple_child_playlist__name__icontains=name_query_param)
+            manual_playlist_queryset = queryset.filter(manual_playlist__isnull=False,
+                                                       manual_playlist__name__icontains=name_query_param)
 
-        criteria_playlist_queryset = BasePlaylist.objects.none()
+        criteria_playlist_queryset = Playlist.objects.none()
         if type_query_param is None or type_query_param.lower() in [PlaylistTypes.GENRE.lower(),
                                                                     PlaylistTypes.TAG.lower()]:
             criteria_playlist_queryset = queryset.filter(
-                criteria_child_playlist__isnull=False,
-                criteria_child_playlist__type__label__icontains=type_query_param.upper()
-                if type_query_param else '',
-                criteria_child_playlist__criteria__name__icontains=name_query_param)
+                criteria_playlist__isnull=False,
+                criteria_playlist__type__label__icontains=type_query_param.upper()
+                if type_query_param else '', criteria_playlist__criteria__name__icontains=name_query_param)
 
-        genreless_playlist = BasePlaylist.objects.none()
+        genreless_playlist = Playlist.objects.none()
         if (not name_query_param or name_query_param.lower() in CriteriaPlaylistWithoutCriteriaNames.GENRE.lower()) \
                 and type_query_param in [None, PlaylistTypes.GENRE]:
-            genreless_playlist = queryset.filter(
-                criteria_child_playlist__isnull=False,
-                criteria_child_playlist__criteria__isnull=True,
-                criteria_child_playlist__type_pk=PlaylistTypes.GENRE)
+            genreless_playlist = queryset.filter(criteria_playlist__isnull=False,
+                                                 criteria_playlist__criteria__isnull=True,
+                                                 criteria_playlist__type_id=CriteriaTypePks.GENRE)
 
-        tagless_playlist = BasePlaylist.objects.none()
+        tagless_playlist = Playlist.objects.none()
         if (not name_query_param or name_query_param.lower() in CriteriaPlaylistWithoutCriteriaNames.TAG.lower()) \
                 and type_query_param in [None, PlaylistTypes.TAG]:
-            tagless_playlist = queryset.filter(
-                criteria_child_playlist__isnull=False,
-                criteria_child_playlist__criteria__isnull=True,
-                criteria_child_playlist__type_pk=CriteriaTypePks.TAG)
+            tagless_playlist = queryset.filter(criteria_playlist__isnull=False,
+                                               criteria_playlist__criteria__isnull=True,
+                                               criteria_playlist__type_id=CriteriaTypePks.TAG)
 
         return manual_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
             tagless_playlist).order_by(Fields.CREATED_ON)
@@ -82,3 +81,6 @@ class PlaylistViewSet(AppModelViewSet[BasePlaylist]):
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
         return super()._handle_list(request, *args, **kwargs)
+
+    def retrieve(self, request: Request, *args, **kwargs):
+        return super()._handle_retrieve(request, *args, **kwargs)

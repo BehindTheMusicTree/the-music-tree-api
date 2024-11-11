@@ -16,6 +16,3 @@ class MusicbrainzRecordingMissingCauseManager(PublicStandardResourceManager):
         kwargs[Fields.CODE] = musicbrainz_recording_missing_cause_code
 
         return super().create(*args, **kwargs)
-
-    def delete_instance(self, instance: Any):
-        raise NotImplementedError()

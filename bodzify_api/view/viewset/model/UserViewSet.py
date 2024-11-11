@@ -1,3 +1,5 @@
+from typing import Any
+from rest_framework.response import Response
 from bodzify_api.model.user.User import User
 from rest_framework.permissions import IsAdminUser
 from rest_framework.request import Request
@@ -15,3 +17,15 @@ class UserViewSet(AppModelViewSet[User]):
 
     def create(self, request: Request, *args, **kwargs):
         return self._handle_post(request, *args, **kwargs)
+
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return self._handle_list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return self._handle_retrieve(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        return self._handle_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        return self._handle_destroy(request, *args, **kwargs)

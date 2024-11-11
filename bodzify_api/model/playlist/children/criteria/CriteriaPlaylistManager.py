@@ -60,7 +60,7 @@ class CriteriaPlaylistManager(PublicStandardResourceManager):
                                                                    criteria_limit: Optional['Criteria'] = None):
         if instance.criteria != criteria_limit:
             for lib_track in lib_tracks:
-                LibTrackPlaylistRel.objects.create(user=instance.user, base_playlist=instance, library_track=lib_track)
+                LibTrackPlaylistRel.objects.create(user=instance.user, playlist=instance, library_track=lib_track)
 
             if instance.parent:
                 self.add_tracks_to_instance_and_ascendants_until_criteria_limit(instance=instance.parent,
@@ -81,6 +81,3 @@ class CriteriaPlaylistManager(PublicStandardResourceManager):
                 self.remove_tracks_from_instance_and_ascendants_until_criteria_limit(instance=instance.parent,
                                                                                      lib_tracks=lib_tracks,
                                                                                      criteria_limit=criteria_limit)
-
-    def delete_instance(self, instance: 'CriteriaPlaylist'):
-        raise NotImplementedError()

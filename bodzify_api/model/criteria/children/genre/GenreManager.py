@@ -24,6 +24,3 @@ class GenreManager(CriteriaManager):
 
     def filter(self, *args: Any, **kwargs: Any) -> Self:
         return super().filter(type_id=CriteriaTypePks.GENRE, *args, **kwargs)
-
-    def delete_instance(self, instance: Any):
-        raise NotImplementedError("You can't delete a genre instance.")

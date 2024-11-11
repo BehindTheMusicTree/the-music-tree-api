@@ -1,9 +1,9 @@
 from rest_framework import status
 
-from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 
 
-class TestCase(BasePlaylistTestCase):
+class TestCase(PlaylistTestCase):
 
     def test_put_then_error(self):
         genre = self.model_fixture_factory.create_genre(name='genre')

@@ -2,12 +2,12 @@ from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.utils import data_transformer
-from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album import Fields as LibTrackGetFields
 from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import Fields as CriteriaPlaylistFields
 
 
-class TestCase(BasePlaylistTestCase):
+class TestCase(PlaylistTestCase):
 
     def test_retrieve_then_lib_track_ordered_by_date_added_desc(self):
         genre_name = 'rock'

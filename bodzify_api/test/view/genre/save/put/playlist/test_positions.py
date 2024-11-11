@@ -27,7 +27,7 @@ class TestCase(GenreTestCase):
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_playlist_rels = \
-            LibTrackPlaylistRel.objects.filter(user=self.test_user2, base_playlist=rock_playlist)
+            LibTrackPlaylistRel.objects.filter(user=self.test_user2, playlist=rock_playlist)
         lib_track_playlist_rel: LibTrackPlaylistRel = lib_track_playlist_rels.get(
             library_track=lib_track_previously_first_in_punk)
         assert lib_track_playlist_rel.position == 1
@@ -66,7 +66,7 @@ class TestCase(GenreTestCase):
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
-            list(LibTrackPlaylistRel.objects.filter(user=self.test_user2, base_playlist=guitare_playlist))
+            list(LibTrackPlaylistRel.objects.filter(user=self.test_user2, playlist=guitare_playlist))
         tracks_positions = {relation.library_track.uuid: relation.position for relation in lib_track_playlist_rels}
         assert tracks_positions[lib_track_previously_first_in_punk.uuid] == 1
         assert tracks_positions[lib_track_previously_second_in_punk.uuid] == 2
@@ -89,7 +89,7 @@ class TestCase(GenreTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
-            list(LibTrackPlaylistRel.objects.filter(user=self.test_user2, base_playlist=rock_genre.criteria_playlist))
+            list(LibTrackPlaylistRel.objects.filter(user=self.test_user2, playlist=rock_genre.criteria_playlist))
         tracks_positions = {relation.library_track.uuid: relation.position for relation in lib_track_playlist_rels}
         assert tracks_positions[track_second_in_rock.uuid] == 1
         assert tracks_positions[track_fourth_in_rock.uuid] == 2
@@ -109,6 +109,6 @@ class TestCase(GenreTestCase):
         assert response.status_code == status.HTTP_200_OK
         lib_track_playlist_rel: LibTrackPlaylistRel = \
             LibTrackPlaylistRel.objects.get(user=self.test_user2,
-                                            base_playlist=punk_genre.criteria_playlist,
+                                            playlist=punk_genre.criteria_playlist,
                                             library_track=track_second_in_punk)
         assert lib_track_playlist_rel.position == 1

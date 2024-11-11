@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from .Fields import Fields
 
@@ -9,5 +9,5 @@ class PlaylistParamFilterSet(AppFilterSet):
     type_label = filters.CharFilter()
 
     class Meta:
-        model = BasePlaylist
+        model = Playlist
         fields = [Fields.NAME, Fields.TYPE_LABEL]

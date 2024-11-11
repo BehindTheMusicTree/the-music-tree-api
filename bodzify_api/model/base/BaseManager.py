@@ -26,6 +26,5 @@ class BaseManager(models.Manager, Generic[T]):
         instance.save()
         return instance
 
-    @ abstractmethod
     def delete_instance(self, instance: T):
-        pass
+        raise NotImplementedError()

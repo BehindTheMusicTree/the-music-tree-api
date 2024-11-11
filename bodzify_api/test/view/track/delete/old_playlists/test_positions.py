@@ -20,7 +20,7 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         response = self._delete_lib_track(lib_track_uuid=track_old_position_1.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        playlist_relations = LibTrackPlaylistRel.objects.filter(base_playlist=genre_rock.criteria_playlist)
+        playlist_relations = LibTrackPlaylistRel.objects.filter(playlist=genre_rock.criteria_playlist)
         assert len(playlist_relations) == 2
         playlist_relation: LibTrackPlaylistRel = playlist_relations.get(library_track=track_old_position_2)
         assert playlist_relation.position == 1

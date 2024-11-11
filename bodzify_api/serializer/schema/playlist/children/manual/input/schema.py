@@ -2,12 +2,12 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
-from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
+from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 
 
 class Fields:
-    NAME = BasePlaylistFields.NAME
+    NAME = PlaylistFields.NAME
 
 
 class ManualPlaylistSchemaSerializer(serializers.ModelSerializer):

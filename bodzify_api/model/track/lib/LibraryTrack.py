@@ -10,8 +10,8 @@ from django.utils import timezone
 from bodzify_api import settings
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
@@ -52,9 +52,9 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
-    base_playlists = models.ManyToManyField(BasePlaylist, 
+    playlists = models.ManyToManyField(Playlist, 
                                             through='LibTrackPlaylistRel', 
-                                            related_name=BasePlaylistFields.LIB_TRACKS_RELATED_NAME)
+                                            related_name=PlaylistFields.LIB_TRACKS_RELATED_NAME)
     
     if TYPE_CHECKING:
         track_file: TrackFile
@@ -131,7 +131,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
             Fields as LibTrackPlaylistRelFields
         lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, library_track=self)
         return list(lib_track_playlist_rels.values_list(
-            LibTrackPlaylistRelFields.BASE_PLAYLIST + '__uuid',
+            LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
             LibTrackPlaylistRelFields.POSITION
         ))
 
@@ -155,7 +155,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
 @receiver(pre_delete, sender=LibraryTrack)
 def handle_pre_delete(sender, instance: LibraryTrack, using, **kwargs):
     now = timezone.now()
-    base_playlists: List[BasePlaylist] = list(instance.base_playlists.all())
-    for base_playlist in base_playlists:
-        base_playlist.last_track_list_update_date = now
-        base_playlist.save()
+    playlists: List[Playlist] = list(instance.playlists.all())
+    for playlist in playlists:
+        playlist.last_track_list_update_date = now
+        playlist.save()

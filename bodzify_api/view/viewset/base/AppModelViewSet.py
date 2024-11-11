@@ -129,6 +129,11 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         headers = self.get_success_headers(serializer.data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def _handle_retrieve(self, request: Request, *args, **kwargs) -> Response:
+        instance = self.get_object()
+        serializer = self._require_serializer(SerializerType.DETAILED)(instance)
+        return Response(serializer.data)
+
     def _handle_update(self, request: Request, *args, **kwargs) -> Response:
         instance = self.get_object()
         update_data_in_camel_case = data_transformer.convert_data_to_dict(request.data)
@@ -185,9 +190,16 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return APIFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
 
     def retrieve(self, request: Request, *args, **kwargs) -> Response:
-        instance = self.get_object()
-        serializer = self._require_serializer(SerializerType.DETAILED)(instance)
-        return Response(serializer.data)
+        raise MethodNotAllowed('GET', detail='Retrieve operation not allowed for this resource')
+
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        raise MethodNotAllowed('POST', detail='Create operation not allowed for this resource')
+
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        raise MethodNotAllowed('GET', detail='List operation not allowed for this resource')
+
+    def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        raise MethodNotAllowed('PUT', detail='Update operation not allowed for this resource')
 
     def destroy(self, request: Request, *args, **kwargs) -> Response:
         raise MethodNotAllowed('DELETE', detail='Delete operation not allowed for this resource')

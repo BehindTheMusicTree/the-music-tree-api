@@ -7,9 +7,9 @@ from rest_framework import status
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class BasePlaylistTestCase(ApiTestCase):
+class PlaylistTestCase(ApiTestCase):
 
-    def _post_base_playlist(self, **kwargs):
+    def _post_playlist(self, **kwargs):
         data_url_encoded = urlencode(self._replace_none_values_by_empty_string(kwargs), doseq=True)
         response = self.api_client.post(path=reverse('playlist-list'),
                                         data=data_url_encoded,
@@ -18,7 +18,7 @@ class BasePlaylistTestCase(ApiTestCase):
             self._set_result(response)
         return response
 
-    def _get_base_playlists(self, **kwargs):
+    def _get_playlists(self, **kwargs):
         response = self.api_client.get(path=reverse('playlist-list'),
                                        data=self._replace_none_values_by_empty_string(kwargs))
         if response.status_code == status.HTTP_200_OK:

@@ -17,9 +17,9 @@ class Fields:
     POSITION_IN_ALBUM = "position_in_album"
     GENRE = "genre"
     RATING = "rating"
-    BASE_PLAYLISTS = "base_playlists"
+    PLAYLISTS = "playlists"
     LIB_TRACK_PLAYLIST_RELS = "lib_track_playlist_rels"
-    BASE_PLAYLISTS_USER_FRIENDLY = "playlists"
+    PLAYLISTS = "playlists"
     LANGUAGE = "language"
     ARCHIVED = 'archived'
     RELATIVE_URL = "relative_url"

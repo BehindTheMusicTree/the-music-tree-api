@@ -14,7 +14,7 @@ from .model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRec
     import MusicbrainzRecordingMissingCause
 from .model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
     import MusicbrainzRecordingMissingCauseCode
-from .model.playlist.BasePlaylist import BasePlaylist
+from .model.playlist.Playlist import Playlist
 from .model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from .model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from .model.track.lib.LibraryTrack import LibraryTrack
@@ -33,7 +33,7 @@ admin.site.register(Artist)
 admin.site.register(Album)
 admin.site.register(Criteria)
 admin.site.register(CriteriaLineageRel)
-admin.site.register(BasePlaylist)
+admin.site.register(Playlist)
 admin.site.register(ManualPlaylist)
 admin.site.register(CriteriaPlaylist)
 admin.site.register(LibTrackPlaylistRel)

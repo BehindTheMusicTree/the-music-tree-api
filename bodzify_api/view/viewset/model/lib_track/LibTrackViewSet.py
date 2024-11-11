@@ -3,8 +3,6 @@ from typing import Type
 from django.db import transaction
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.serializers import Serializer
 
@@ -41,16 +39,6 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         if self.action == 'extract':
             return LibTrackExtractSerializer
         return super().get_serializer_class()
-
-    @extend_schema(parameters=[
-        OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=FilterFields.ARTISTS_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=FilterFields.ALBUM_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=FilterFields.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=FilterFields.LANGUAGE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-    ])
-    def list(self, request, *args, **kwargs):
-        return super()._handle_list(request, *args, **kwargs)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
@@ -110,6 +98,18 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
     def extract(self, request, *args, **kwargs):
         return self._handle_post(request, creation_type=LibTrackCreationType.EXTRACT, *args, **kwargs)
 
+    @extend_schema(parameters=[
+        OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.ARTISTS_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.ALBUM_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.LANGUAGE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),])
+    def list(self, request, *args, **kwargs):
+        return super()._handle_list(request, *args, **kwargs)
+
+    def retrieve(self, request: Request, *args, **kwargs):
+        return super()._handle_retrieve(request, *args, **kwargs)
+
     @transaction.atomic
     @extend_schema(request=LibTrackPutSerializer,
                    responses=LibTrackDetailedSerializer,
@@ -140,8 +140,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             the track's album has no artist.\n
                - if 'album_name' is empty or missing and 'album_artists_name' is specified, bodzify
             will reject the request.
-            """)
-                   )
+            """))
     def update(self, request, *args, **kwargs):
         return self._handle_update(request, *args, **kwargs)
 

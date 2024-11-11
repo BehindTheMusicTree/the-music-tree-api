@@ -16,9 +16,9 @@ class Fields:
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
     PLAY_COUNT = TrackablePlayCountFields.PLAY_COUNT
     LIB_TRACKS_RELATED_NAME = 'lib_tracks_of_playlist'
-    LIB_TRACK_PLAYLIST_RELS = 'lib_tracks_playlist_rels'
+    LIB_TRACK_PLAYLIST_RELS = 'lib_track_playlist_rels'
     TYPE_LABEL = 'type_label'
-    CRITERIA_CHILD_PLAYLIST = 'criteria_child_playlist'
-    MANUAL_CHILD_PLAYLIST = 'manual_child_playlist'
     PLAYLIST_LIB_TRACK_RELATIONS = 'lib_track_playlist_rels'
     LAST_TRACK_LIST_UPDATE_DATE = 'last_track_list_update_date'
+    MANUAL_PLAYLIST = 'manual_playlist'
+    CRITERIA_PLAYLIST = 'criteria_playlist'

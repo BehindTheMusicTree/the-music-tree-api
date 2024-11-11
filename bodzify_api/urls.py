@@ -19,7 +19,7 @@ from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPl
 from .view.viewset.model.PlayViewSet import PlayViewSet
 from .view.viewset.model.lib_track.LibTrackViewSet import LibTrackViewSet
 from .view.viewset.model.UserViewSet import UserViewSet
-from .view.viewset.SearchApiViewSet import SearchApiViewSet
+from .view.viewset.SearchViewSet import SearchViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
@@ -36,7 +36,7 @@ router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'all-tracks', AllLibTracksViewSet, basename='all-library-tracks')
-router.register(r'search', SearchApiViewSet, basename='search')
+router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
 

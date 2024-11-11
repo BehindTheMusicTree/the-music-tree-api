@@ -4,15 +4,21 @@ from django.db import models
 
 from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from .CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
 from .CriteriaPlaylistManager import CriteriaPlaylistManager
 from .Fields import Fields
 
 
-class CriteriaPlaylist(BasePlaylist):
+class CriteriaPlaylist(Playlist):
+    playlist = models.OneToOneField(Playlist,
+                                    on_delete=models.CASCADE,
+                                    parent_link=True,
+                                    related_name=PlaylistFields.CRITERIA_PLAYLIST)
+
     criteria = models.OneToOneField(Criteria,
                                     on_delete=models.CASCADE,
                                     blank=True,
@@ -67,7 +73,7 @@ class CriteriaPlaylist(BasePlaylist):
         current_parent_pk = getattr(self, f"{Fields.PARENT}_id", None)
 
         if self.criteria and self.criteria.parent:
-            parent = CriteriaPlaylist.objects.get(criteria=self.criteria.parent)
+            parent: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria=self.criteria.parent)
             if current_parent_pk != parent.pk:
                 self.parent = parent
                 return True
@@ -78,11 +84,7 @@ class CriteriaPlaylist(BasePlaylist):
 
     def _set_root(self) -> bool:
         current_root_pk = getattr(self, f"{Fields.ROOT}_pk", None)
-
-        if not self.criteria or self.criteria.is_root:
-            new_root_pk = self.pk
-        else:
-            new_root_pk = self.criteria.root.criteria_playlist.pk
+        new_root_pk = self.pk if not self.criteria or self.criteria.is_root else self.criteria.root.criteria_playlist.pk
 
         if current_root_pk != new_root_pk:
             self.root_id = new_root_pk

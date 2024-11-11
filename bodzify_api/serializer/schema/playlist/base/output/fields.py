@@ -1,4 +1,4 @@
-from bodzify_api.model.playlist.BasePlaylist import Fields as ModelFields
+from bodzify_api.model.playlist.Playlist import Fields as ModelFields
 
 
 class Fields:
@@ -6,7 +6,7 @@ class Fields:
     UPDATED_ON = ModelFields.UPDATED_ON
     UUID = ModelFields.UUID
     NAME = ModelFields.NAME
-    LIB_TRACKS = ModelFields.LIB_TRACKS
+    LIB_TRACK_PLAYLIST_RELS = ModelFields.LIB_TRACK_PLAYLIST_RELS
     LIB_TRACKS_COUNT = ModelFields.LIB_TRACKS_COUNT
     LIB_TRACKS_ARCHIVED_COUNT = ModelFields.LIB_TRACKS_ARCHIVED_COUNT
     DURATION_IN_SEC = ModelFields.DURATION_IN_SEC

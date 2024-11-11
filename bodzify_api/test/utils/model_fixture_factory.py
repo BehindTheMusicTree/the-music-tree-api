@@ -27,8 +27,8 @@ from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecord
     import Fields as MusicbrainzRecordingFields
 from bodzify_api.model.play.Play import Play
 from bodzify_api.model.play.Fields import Fields as PlayFields
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
@@ -170,17 +170,17 @@ class ModelFixtureFactory:
         return self.__create_criteria(name=name, model_class=Tag, **kwargs)
 
     def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> ManualPlaylist:
-        base_playlist_model_fields = {
-            BasePlaylistFields.CREATED_ON: timezone.make_aware(datetime.now()),
-            BasePlaylistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
-            BasePlaylistFields.USER: user or self.default_test_user,
-            BasePlaylistFields.PLAY_COUNT: 0
+        playlist_model_fields = {
+            PlaylistFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            PlaylistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            PlaylistFields.USER: user or self.default_test_user,
+            PlaylistFields.PLAY_COUNT: 0
         }
-        base_playlist_model_fields.update(kwargs)
+        playlist_model_fields.update(kwargs)
 
-        base_playlist = G(BasePlaylist, **base_playlist_model_fields)
+        playlist = G(Playlist, **playlist_model_fields)
 
-        return G(ManualPlaylist, base_playlist=base_playlist, name=name)
+        return G(ManualPlaylist, playlist=playlist, name=name)
 
     def create_musicbrainz_recording(self, musicbrainz_id: str, title: str, **kwargs) -> MusicbrainzRecording:
         model_fields = {

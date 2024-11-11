@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 from bodzify_api import settings
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from uuid import UUID
 
@@ -19,7 +19,7 @@ class UserFilteredPlayContentObjectUUIDField(serializers.CharField):
             raise serializers.ValidationError("Invalid UUID format.")
 
         user = self.context['request'].user
-        if not BasePlaylist.objects.filter(user=user, uuid=uuid_obj).exists() \
+        if not Playlist.objects.filter(user=user, uuid=uuid_obj).exists() \
                 and not LibraryTrack.objects.filter(user=user, uuid=uuid_obj).exists():
             raise serializers.ValidationError("Object with this ID does not exist or does not belong to the user.")
 

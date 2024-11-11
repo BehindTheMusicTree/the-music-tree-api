@@ -12,13 +12,11 @@ from bodzify_api.serializer.schema.album.detailed import AlbumDetailedSerializer
 
 class AlbumViewSet(AppModelViewSet[Album]):
     def __init__(self, **kwargs):
-        super().__init__(
-            model_class=Album,
-            filter_class=AlbumFilterSet,
-            simple_serializer_class=AlbumSimpleSerializer,
-            detailed_serializer_class=AlbumDetailedSerializer,
-            **kwargs
-        )
+        super().__init__(model_class=Album,
+                         filter_class=AlbumFilterSet,
+                         simple_serializer_class=AlbumSimpleSerializer,
+                         detailed_serializer_class=AlbumDetailedSerializer,
+                         **kwargs)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
@@ -26,6 +24,9 @@ class AlbumViewSet(AppModelViewSet[Album]):
     ])
     def list(self, request, *args, **kwargs):
         return super()._handle_list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return super()._handle_retrieve(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):

@@ -12,9 +12,9 @@ class TestCase(LibTrackTestCase):
         manual_playlist_name = "simple playlist"
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
         track = self.model_fixture_factory.create_lib_track_with_file(title="not archived 1")
-        track.base_playlists.add(manual_playlist)
+        track.playlists.add(manual_playlist)
         track_archived = self.model_fixture_factory.create_lib_track_with_file(title="archived 1", archived=True)
-        track_archived.base_playlists.add(manual_playlist)
+        track_archived.playlists.add(manual_playlist)
 
         response = self._put_lib_track(lib_track_uuid=track.uuid, data_dict={PutFields.ARCHIVED: "true"})
 

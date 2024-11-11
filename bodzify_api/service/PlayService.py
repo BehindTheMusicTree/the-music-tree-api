@@ -4,7 +4,7 @@ from bodzify_api.model.user.User import User
 from django.contrib.contenttypes.models import ContentType
 from requests import Request
 
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
+from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.play.input.model import Fields as SaveFields
 from bodzify_api.serializer.schema.play.input.model import PlayModelSerializer
@@ -33,7 +33,7 @@ class PlayService(Service):
 
         content_object_uuid = schema_data.get(PostFields.CONTENT_OBJECT_UUID)
 
-        content_object = BasePlaylist.objects.filter(user=user, uuid=content_object_uuid).first()
+        content_object = Playlist.objects.filter(user=user, uuid=content_object_uuid).first()
         if not content_object:
             content_object = LibraryTrack.objects.get(user=user, uuid=content_object_uuid)
         content_object.play_count += 1

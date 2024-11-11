@@ -4,10 +4,10 @@ from rest_framework import status
 
 from bodzify_api.serializer.schema.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.get_filters.GetFilterWithSpecificValuesTestCase import GetFilterWithSpecificValuesTestCase
-from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 
 
-class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
+class TestCase(GetFilterWithSpecificValuesTestCase, PlaylistTestCase):
 
     def setUp(self, methods_names_to_implement=None):
         specific_values = [
@@ -26,7 +26,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         manual_playlist_name = "Teuf"
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
 
-        response = self._get_base_playlists()
+        response = self._get_playlists()
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 5
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -38,14 +38,14 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
 
     def test_is_empty_then_error(self):
         data_dict = {GetQueryParams.TYPE: ''}
-        response = self._get_base_playlists(data_dict=data_dict)
+        response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_value_is_genre_then_resultst(self):
         rock_criteria_name = "Rock n roll"
         self.model_fixture_factory.create_genre(name=rock_criteria_name)
         data_dict = {GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.GENRE}
-        response = self._get_base_playlists(data_dict=data_dict)
+        response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -54,7 +54,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
 
     def test_value_is_tag_then_results(self):
         data_dict = {GetQueryParams.TYPE: CriteriaPlaylistTypesLabels.TAG}
-        response = self._get_base_playlists(data_dict=data_dict)
+        response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -66,7 +66,7 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
         self.model_fixture_factory.create_genre(name='rock')
 
         data_dict = {GetQueryParams.TYPE: MANUAL_PLAYLIST_TYPE}
-        response = self._get_base_playlists(data_dict=data_dict)
+        response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -75,5 +75,5 @@ class TestCase(GetFilterWithSpecificValuesTestCase, BasePlaylistTestCase):
 
     def test_value_is_wrong_then_error(self):
         data_dict = {GetQueryParams.TYPE: 'wrong_value'}
-        response = self._get_base_playlists(data_dict=data_dict)
+        response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

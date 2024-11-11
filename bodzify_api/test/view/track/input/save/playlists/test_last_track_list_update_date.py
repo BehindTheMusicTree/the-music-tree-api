@@ -35,14 +35,14 @@ class TestCase(LibTrackTestCase):
         assert genre.criteria_playlist.last_track_list_update_date < parent_criteria_playlist.last_track_list_update_date
 
     def test_track_newly_linked_to_no_genre_then_update_genreless_playlist_last_track_list_update_date(self):
-        genreless_base_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1,
-                                                                                 type=CriteriaTypePks.GENRE,
-                                                                                 criteria=None)
+        genreless_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1,
+                                                                            type=CriteriaTypePks.GENRE,
+                                                                            criteria=None)
 
         genre = self.model_fixture_factory.create_genre(name='rock')
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=genre)
 
         response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: ''})
         assert response.status_code == status.HTTP_200_OK
-        genreless_base_playlist.refresh_from_db()
-        assert genreless_base_playlist.last_track_list_update_date > genreless_base_playlist.last_track_list_update_date
+        genreless_playlist.refresh_from_db()
+        assert genreless_playlist.last_track_list_update_date > genreless_playlist.last_track_list_update_date

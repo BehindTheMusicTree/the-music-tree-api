@@ -4,18 +4,18 @@ from bodzify_api.model.playlist.PlaylistTypes import PlaylistTypes
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
     import CriteriaPlaylistWithoutCriteriaNames
 from bodzify_api.serializer.schema.playlist.base.output.detailed import Fields as PlaylistGetFields
-from bodzify_api.test.view.playlist.base.BasePlaylistTestCase import BasePlaylistTestCase
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.filter.set.playlist.Fields import Fields as GetQueryParams
 
 
-class TestCase(BasePlaylistTestCase):
+class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {
             GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.TAG
         }
-        response = self._get_base_playlists(data_dict=data_dict)
+        response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 0
 
@@ -24,7 +24,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.GENRE
         }
-        response = self._get_base_playlists(data_dict=data_dict)
+        response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][PlaylistGetFields.NAME] == CriteriaPlaylistWithoutCriteriaNames.GENRE
@@ -39,7 +39,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: 'rock'
         }
-        response = self._get_base_playlists(data_dict=data_dict)
+        response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]

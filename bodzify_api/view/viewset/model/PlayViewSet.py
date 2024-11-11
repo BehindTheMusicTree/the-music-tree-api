@@ -1,5 +1,7 @@
 from django.db import transaction
 from drf_spectacular.utils import extend_schema
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 from bodzify_api.model.play.Play import Fields, Play
 from bodzify_api.serializer.schema.play.input.schema.endpoint.post import PlayPostSerializer
@@ -18,6 +20,12 @@ class PlayViewSet(AppModelViewSet[Play]):
 
     def get_queryset(self):
         return Play.objects.filter(user=self.request.user).order_by(f"-{Fields.CREATED_ON} ")
+
+    def list(self, request: Request, *args, **kwargs) -> Response:
+        return self._handle_list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return self._handle_retrieve(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=PlayPostSerializer, responses=PlayDetailedSerializer)

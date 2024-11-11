@@ -41,7 +41,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
         if old_genre:
             old_genre_tree_item = old_genre
             while old_genre_tree_item != genre_limit:
-                LibTrackPlaylistRel.objects.filter(base_playlist=old_genre_tree_item.criteria_playlist,
+                LibTrackPlaylistRel.objects.filter(playlist=old_genre_tree_item.criteria_playlist,
                                                    library_track=instance).delete()
                 old_genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
                 old_genre_tree_item.criteria_playlist.save()
@@ -53,7 +53,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save()
             LibTrackPlaylistRel.objects.filter(
-                base_playlist=genreless_criteria_playlist, library_track=instance).delete()
+                playlist=genreless_criteria_playlist, library_track=instance).delete()
 
     def _add_to_genre_playlists(self, instance: 'LibraryTrack', genre_limit=None):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
@@ -64,7 +64,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
             genre_tree_item: Genre = instance.genre
             while genre_tree_item != genre_limit:
                 LibTrackPlaylistRel.objects.create(user=instance.user,
-                                                   base_playlist=genre_tree_item.criteria_playlist,
+                                                   playlist=genre_tree_item.criteria_playlist,
                                                    library_track=instance)
                 genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
 
@@ -75,7 +75,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
                                                                                          type=CriteriaTypePks.GENRE,
                                                                                          criteria=None)
             LibTrackPlaylistRel.objects.create(user=instance.user,
-                                               base_playlist=genreless_criteria_playlist,
+                                               playlist=genreless_criteria_playlist,
                                                library_track=instance)
             genreless_criteria_playlist.last_track_list_update_date = update_date
 
@@ -84,7 +84,7 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
         for playlist_uuid, old_position in playlists_with_old_position:
             lib_track_playlist_rels_to_update = \
-                LibTrackPlaylistRel.objects.filter(user=user, base_playlist=playlist_uuid, position__gt=old_position)
+                LibTrackPlaylistRel.objects.filter(user=user, playlist=playlist_uuid, position__gt=old_position)
             lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):

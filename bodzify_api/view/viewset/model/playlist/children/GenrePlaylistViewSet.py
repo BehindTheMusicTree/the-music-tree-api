@@ -11,14 +11,12 @@ from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 
 class GenrePlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
     def __init__(self, **kwargs):
-        super().__init__(
-            service=None,
-            model_class=CriteriaPlaylist,
-            filter_class=CriteriaPlaylistFilterSet,
-            simple_serializer_class=CriteriaPlaylistSimpleSerializer,
-            detailed_serializer_class=CriteriaPlaylistDetailedSerializer,
-            **kwargs
-        )
+        super().__init__(service=None,
+                         model_class=CriteriaPlaylist,
+                         filter_class=CriteriaPlaylistFilterSet,
+                         simple_serializer_class=CriteriaPlaylistSimpleSerializer,
+                         detailed_serializer_class=CriteriaPlaylistDetailedSerializer,
+                         **kwargs)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.NAME,
@@ -30,3 +28,6 @@ class GenrePlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
     ])
     def list(self, request, *args, **kwargs):
         return super()._handle_list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return super()._handle_retrieve(request, *args, **kwargs)

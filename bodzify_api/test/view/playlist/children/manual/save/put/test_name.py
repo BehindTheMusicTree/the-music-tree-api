@@ -1,8 +1,8 @@
 
 from rest_framework import status
 
-from bodzify_api.model.playlist.BasePlaylist import \
-    Fields as BasePlaylistFields
+from bodzify_api.model.playlist.Playlist import \
+    Fields as PlaylistFields
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import \
     ManualPlaylistTestCase
 
@@ -12,7 +12,7 @@ class TestCase(ManualPlaylistTestCase):
     def test_value_then_ok(self):
         simpe_playlist = self.model_fixture_factory.create_manual_playlist(name="teuf")
         manual_playlist_name_new = "teuf2"
-        data = {BasePlaylistFields.NAME: manual_playlist_name_new}
+        data = {PlaylistFields.NAME: manual_playlist_name_new}
 
         response = self._put_manual_playlist(uuid=simpe_playlist.uuid, data_dict=data)
 
@@ -30,7 +30,7 @@ class TestCase(ManualPlaylistTestCase):
 
     def test_empty_then_error(self):
         uuid = self.model_fixture_factory.create_manual_playlist(name='foero').uuid
-        data = {BasePlaylistFields.NAME: ""}
+        data = {PlaylistFields.NAME: ""}
 
         response = self._put_manual_playlist(uuid=uuid, data_dict=data)
 

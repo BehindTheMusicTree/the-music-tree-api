@@ -1,4 +1,3 @@
-
 from django.db import transaction
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -15,19 +14,22 @@ from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
 
     def __init__(self, **kwargs):
-        super().__init__(
-            service=ManualPlaylistService(),
-            model_class=ManualPlaylist,
-            filter_class=ManualPlaylistFilterSet,
-            simple_serializer_class=ManualPlaylistSimpleSerializer,
-            detailed_serializer_class=ManualPlaylistDetailedSerializer,
-            create_serializer_class=ManualPlaylistInputEndpointSerializer,
-            update_serializer_class=ManualPlaylistInputEndpointSerializer,
-            ** kwargs
-        )
+        super().__init__(service=ManualPlaylistService(),
+                         model_class=ManualPlaylist,
+                         filter_class=ManualPlaylistFilterSet,
+                         simple_serializer_class=ManualPlaylistSimpleSerializer,
+                         detailed_serializer_class=ManualPlaylistDetailedSerializer,
+                         create_serializer_class=ManualPlaylistInputEndpointSerializer,
+                         update_serializer_class=ManualPlaylistInputEndpointSerializer,
+                         ** kwargs)
 
     def get_queryset(self):
         return ManualPlaylist.objects.filter(user=self.request.user).order_by(Fields.NAME)
+
+    @transaction.atomic
+    @extend_schema(request=ManualPlaylistInputEndpointSerializer, responses=ManualPlaylistDetailedSerializer)
+    def create(self, request, *args, **kwargs):
+        return self._handle_post(request, *args, **kwargs)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=Fields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
@@ -35,10 +37,8 @@ class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
     def list(self, request, *args, **kwargs):
         return super()._handle_list(request, *args, **kwargs)
 
-    @transaction.atomic
-    @extend_schema(request=ManualPlaylistInputEndpointSerializer, responses=ManualPlaylistDetailedSerializer)
-    def create(self, request, *args, **kwargs):
-        return self._handle_post(request, *args, **kwargs)
+    def retrieve(self, request, *args, **kwargs):
+        return super()._handle_retrieve(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=ManualPlaylistInputEndpointSerializer, responses=ManualPlaylistDetailedSerializer)

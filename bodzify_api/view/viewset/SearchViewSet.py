@@ -8,7 +8,7 @@ from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.playlist.Fields import Fields as BasePlaylistFields
+from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
     import CriteriaPlaylistWithoutCriteriaNames
@@ -64,7 +64,7 @@ def manual_playlist_filter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
-            ).order_by(BasePlaylistFields.NAME)
+            ).order_by(PlaylistFields.NAME)
     return queryset
 
 
@@ -101,7 +101,7 @@ def artist_filter(queryset, request, *args, **kwargs):
     return queryset
 
 
-class SearchApiViewSet(ObjectMultipleModelAPIViewSet):
+class SearchViewSet(ObjectMultipleModelAPIViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = DefaultMultipleModelLimitOffsetPagination
 

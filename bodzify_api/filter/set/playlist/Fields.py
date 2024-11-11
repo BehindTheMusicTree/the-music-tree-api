@@ -1,4 +1,4 @@
-from bodzify_api.model.playlist.BasePlaylist import Fields as ModelFields
+from bodzify_api.model.playlist.Playlist import Fields as ModelFields
 
 
 class Fields:

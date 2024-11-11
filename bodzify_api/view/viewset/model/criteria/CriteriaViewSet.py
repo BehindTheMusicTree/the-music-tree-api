@@ -1,5 +1,7 @@
 from django.db import transaction
-from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
+from rest_framework.request import Request
+from rest_framework.response import Response  # type: ignore
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.filter.set.criteria.Fields import Fields as FilterFields
@@ -37,6 +39,9 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                    responses=CriteriaSimpleSerializer)
     def list(self, request, *args, **kwargs):
         return self._handle_list(request, *args, **kwargs)
+
+    def retrieve(self, request: Request, *args, **kwargs) -> Response:
+        return super()._handle_retrieve(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=CriteriaPutSerializer,

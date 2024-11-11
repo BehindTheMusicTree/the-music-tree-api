@@ -16,9 +16,9 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
-        track_playlists = self.saved_lib_track.base_playlists.all()
+        track_playlists = self.saved_lib_track.playlists.all()
         assert len(track_playlists) == 2
-        criteria_playlists = CriteriaPlaylist.objects.filter(user=self.test_user1, base_playlist__in=track_playlists)
+        criteria_playlists = CriteriaPlaylist.objects.filter(user=self.test_user1, playlist__in=track_playlists)
         assert criteria_playlists.filter(criteria__name=genre_name).exists()
 
     def test_existing_genre_then_track_in_existing_playlist(self):
@@ -29,7 +29,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: genre_name})
         assert response.status_code == status.HTTP_200_OK
 
-        track_playlists = self.saved_lib_track.base_playlists.all()
+        track_playlists = self.saved_lib_track.playlists.all()
         assert len(track_playlists) == 2
 
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre)
@@ -48,11 +48,11 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: emo_genre_name})
 
         assert response.status_code == status.HTTP_200_OK
-        lib_track_playlists = self.saved_lib_track.base_playlists.all()
+        lib_track_playlists = self.saved_lib_track.playlists.all()
         assert len(lib_track_playlists) == 4
 
         lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(user=self.test_user1,
-                                                                       base_playlist__in=lib_track_playlists)
+                                                                       playlist__in=lib_track_playlists)
         assert lib_track_criteria_playlists.filter(criteria__name=emo_genre_name).exists()
         assert lib_track_criteria_playlists.filter(criteria__name=hardrock_genre_name).exists()
         assert lib_track_criteria_playlists.filter(criteria__name=rock_genre_name).exists()
