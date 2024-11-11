@@ -20,7 +20,8 @@ class TestCase(UserViewTestCase):
     def test_delete_then_ok(self):
         user = self.model_fixture_factory.create_user('jojo')
 
-        response = self._login_as_test_admin_and_delete_user(user.pk)
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
@@ -31,7 +32,8 @@ class TestCase(UserViewTestCase):
         user_lib_abs_path = settings.LIBRARIES_DIR / (settings.USER_LIBRARIES_DIR_NAME_PREFIXE + str(user.pk))
         assert os.path.exists(user_lib_abs_path)
 
-        response = self._login_as_test_admin_and_delete_user(user.pk)
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not os.path.exists(user_lib_abs_path)
@@ -45,7 +47,8 @@ class TestCase(UserViewTestCase):
         assert Criteria.objects.filter(user=user, name=criteria_name).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
 
-        response = self._login_as_test_admin_and_delete_user(user.pk)
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Criteria.objects.filter(user=user, name=criteria_name).count() == 0
@@ -58,7 +61,8 @@ class TestCase(UserViewTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert MusicbrainzRecording.objects.filter(musicbrainz_id="4a45b00b-273d-40ed-9ecd-42f387f59c22").count() == 1
 
-        response = self._login_as_test_admin_and_delete_user(user.pk)
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert MusicbrainzRecording.objects.filter(musicbrainz_id="4a45b00b-273d-40ed-9ecd-42f387f59c22").count() == 1
@@ -68,7 +72,8 @@ class TestCase(UserViewTestCase):
         assert CriteriaPlaylist.objects.filter(user=user, type=CriteriaTypePks.GENRE, criteria=None).count() == 1
         self._login_as_user(user)
 
-        response = self._login_as_test_admin_and_delete_user(user.pk)
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert CriteriaPlaylist.objects.filter(user=user, type=CriteriaTypePks.GENRE).count() == 0
@@ -81,7 +86,8 @@ class TestCase(UserViewTestCase):
         assert LibraryTrack.objects.filter(user=user, title=title).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
 
-        response = self._login_as_test_admin_and_delete_user(user.pk)
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert LibraryTrack.objects.filter(user=user, title=title).count() == 0
@@ -95,7 +101,10 @@ class TestCase(UserViewTestCase):
 
         assert Album.objects.filter(user=user, name=album_name).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
-        response = self._login_as_test_admin_and_delete_user(user.pk)
+
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Album.objects.filter(user=user, name=album_name).count() == 0
 
@@ -109,6 +118,9 @@ class TestCase(UserViewTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert Artist.objects.filter(user=user, name=artist_name).count() == 1
-        response = self._login_as_test_admin_and_delete_user(user.pk)
+
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Artist.objects.filter(user=user, name=artist_name).count() == 0

@@ -11,7 +11,7 @@ class TestCase(GenreTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
         data = {InputFields.PARENT: None}
-        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.root == self.saved_genre
 

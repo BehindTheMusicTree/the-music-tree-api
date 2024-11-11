@@ -9,23 +9,29 @@ class TestCase(ArtistTestCase):
 
     def test_filter_empty_then_return_all(self):
         self.model_fixture_factory.create_artist(name="Muse")
+        self.model_fixture_factory.create_artist(name="Museum")
         self.model_fixture_factory.create_artist(name="Sum")
         response = self._get_artists(name='')
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.overall_total == 3
 
-    def test_a_name_contains_the_filter_then_return_the_artist(self):
-        artist = self.model_fixture_factory.create_artist(name="Muse")
-        self.model_fixture_factory.create_artist(name="Jon")
+    def test_names_contain_the_filter_then_return_the_instances(self):
+        artist1 = self.model_fixture_factory.create_artist(name="Muse")
+        artist2 = self.model_fixture_factory.create_artist(name="Museum")
         response = self._get_artists(name='Mus')
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 1
-        assert self.results[0][to_camel_case(ArtistFields.NAME)] == artist.name
+        assert self.overall_total == 2
+        result_names = [result[to_camel_case(ArtistFields.NAME)] for result in self.results]
+        assert artist1.name in result_names
+        assert artist2.name in result_names
 
-    def test_a_name_contains_the_filter_then_return_it(self):
-        artist = self.model_fixture_factory.create_artist(name="Muse")
+    def test_a_name_contains_the_filter_in_another_case_then_return_the_instance(self):
+        artist1 = self.model_fixture_factory.create_artist(name="Muse")
+        artist2 = self.model_fixture_factory.create_artist(name="Museum")
         self.model_fixture_factory.create_artist(name="Jon")
         response = self._get_artists(name='MUs')
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 1
-        assert self.results[0][to_camel_case(ArtistFields.NAME)] == artist.name
+        assert self.overall_total == 2
+        result_names = [result[to_camel_case(ArtistFields.NAME)] for result in self.results]
+        assert artist1.name in result_names
+        assert artist2.name in result_names

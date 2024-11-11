@@ -23,7 +23,7 @@ class TestCase(GenreTestCase):
                                                                                                    title="loul")
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_playlist_rels = \
@@ -62,7 +62,7 @@ class TestCase(GenreTestCase):
                                                                                                    title="punk1")
 
         data = {PutFields.PARENT: rock_genre.uuid}
-        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict=data)
+        response = self._put_genre(uuid=punk_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
@@ -85,7 +85,7 @@ class TestCase(GenreTestCase):
                                                                                      title="Rock song")
         self.model_fixture_factory.create_lib_track_with_file(genre=punk_genre, title="Punk song")
 
-        response = self._put_genre(genre_uuid=punk_genre.uuid, data_dict={PutFields.PARENT: ''})
+        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
         lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
@@ -104,7 +104,7 @@ class TestCase(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(genre=punk_fr_genre, title="punk fr song")
         data = {PutFields.PARENT: rock_genre.uuid}
 
-        response = self._put_genre(genre_uuid=punk_fr_genre.uuid, data_dict=data)
+        response = self._put_genre(uuid=punk_fr_genre.uuid, data_dict=data)
 
         assert response.status_code == status.HTTP_200_OK
         lib_track_playlist_rel: LibTrackPlaylistRel = \

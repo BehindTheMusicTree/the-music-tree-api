@@ -15,7 +15,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.TAG
         }
-        response = self._get(data_dict=data_dict)
+        response = self._get_base_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 0
 
@@ -24,7 +24,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.GENRE
         }
-        response = self._get(data_dict=data_dict)
+        response = self._get_base_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][PlaylistGetFields.NAME] == CriteriaPlaylistWithoutCriteriaNames.GENRE
@@ -39,7 +39,7 @@ class TestCase(BasePlaylistTestCase):
             GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
             GetQueryParams.NAME: 'rock'
         }
-        response = self._get(data_dict=data_dict)
+        response = self._get_base_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]

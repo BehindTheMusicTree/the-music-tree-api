@@ -1,4 +1,5 @@
 from urllib.parse import urlencode
+from uuid import UUID
 
 from django.urls import reverse
 from rest_framework import status
@@ -22,3 +23,21 @@ class PlayTestCase(ApiTestCase):
         if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_play_attribute(response)
         return response
+
+    def _get_plays(self, **kwargs):
+        response = self.api_client.get(path=reverse('play-list'), data=kwargs)
+        if response.status_code == status.HTTP_200_OK:
+            self._set_results_attributes(response)
+        return response
+
+    def _put_play(self, genre_uuid: UUID, data_dict):
+        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
+        response = self.api_client.put(path=reverse('play-detail', kwargs={'pk': genre_uuid}),
+                                       data=data_url_encoded,
+                                       content_type='application/x-www-form-urlencoded')
+        if response.status_code == status.HTTP_200_OK:
+            self._set_result(response)
+        return response
+
+    def _delete_play(self, uuid: UUID):
+        return self.api_client.delete(path=reverse('play-detail', kwargs={'pk': uuid}))

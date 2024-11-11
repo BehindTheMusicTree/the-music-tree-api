@@ -16,21 +16,21 @@ class TestCase(GenreTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         genre_new_name = "Punk"
         data = {PutFields.NAME: genre_new_name}
-        response = self._put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
+        response = self._put_genre(uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.name == genre_new_name
 
     def test_error_when_name_is_empty(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         data = {PutFields.NAME: ""}
-        response = self._put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
+        response = self._put_genre(uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.saved_genre.name == "Rock"
 
     def test_not_provided_then_unchanged(self):
         genre_name = "Rock"
         genre = self.model_fixture_factory.create_genre(name=genre_name)
-        response = self._put_genre(genre_uuid=genre.uuid, data_dict={})
+        response = self._put_genre(uuid=genre.uuid, data_dict={})
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.name == genre_name
 
@@ -42,7 +42,7 @@ class TestCase(GenreTestCase):
         track_uuid = self.saved_lib_track.uuid
         genre_new_name = "Punk"
         data = {PutFields.NAME: genre_new_name}
-        response = self._put_genre(genre_uuid=rock_genre.uuid, data_dict=data)
+        response = self._put_genre(uuid=rock_genre.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
 
         updated_track = LibraryTrack.objects.get(uuid=track_uuid)

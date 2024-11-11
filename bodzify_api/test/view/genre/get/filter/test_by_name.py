@@ -16,22 +16,28 @@ class TestCase(GenreTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 2
 
-    def test_a_genre_name_contains_the_filter_then_return_it(self):
-        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+    def test_genre_names_contain_the_filter_then_return_the_instances(self):
+        genre_rock1 = self.model_fixture_factory.create_genre(name="Rock")
+        genre_rock2 = self.model_fixture_factory.create_genre(name="Rockabilly")
         self.model_fixture_factory.create_genre(name="Pop")
 
         response = self._get_genres(name='Roc')
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 1
-        assert self.results[0][to_camel_case(ModelFields.NAME)] == genre_rock.name
+        assert self.overall_total == 2
+        result_names = [result[to_camel_case(ModelFields.NAME)] for result in self.results]
+        assert genre_rock1.name in result_names
+        assert genre_rock2.name in result_names
 
-    def test_a_genre_name_contains_the_filter_in_another_case_then_return_it(self):
-        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+    def test_genre_names_contains_the_filter_in_another_case_then_return_the_instances(self):
+        genre_rock1 = self.model_fixture_factory.create_genre(name="Rock")
+        genre_rock2 = self.model_fixture_factory.create_genre(name="Rockabilly")
         self.model_fixture_factory.create_genre(name="Pop")
 
         response = self._get_genres(name='RoC')
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 1
-        assert self.results[0][to_camel_case(ModelFields.NAME)] == genre_rock.name
+        assert self.overall_total == 2
+        result_names = [result[to_camel_case(ModelFields.NAME)] for result in self.results]
+        assert genre_rock1.name in result_names
+        assert genre_rock2.name in result_names

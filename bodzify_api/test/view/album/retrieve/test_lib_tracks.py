@@ -17,7 +17,7 @@ class TestCase(AlbumTestCase):
         lib_track_1st_position = self.model_fixture_factory.create_lib_track_with_file(
             title="Lovdddde", album=album, position_in_album=1)
 
-        response = self._retrieve_album(album_uuid=album.uuid)
+        response = self._retrieve_album(uuid=album.uuid)
 
         assert response.status_code == status.HTTP_200_OK
         result_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS)]
@@ -37,7 +37,7 @@ class TestCase(AlbumTestCase):
         lib_track_no_position_2 = self.model_fixture_factory.create_lib_track_with_file(title="Jooove", album=album)
         lib_track_no_position_1 = self.model_fixture_factory.create_lib_track_with_file(title="Ave", album=album)
 
-        response = self._retrieve_album(album_uuid=album.uuid)
+        response = self._retrieve_album(uuid=album.uuid)
         assert response.status_code == status.HTTP_200_OK
         result_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS)]
 

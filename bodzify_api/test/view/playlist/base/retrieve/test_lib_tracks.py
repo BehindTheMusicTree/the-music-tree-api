@@ -17,7 +17,7 @@ class TestCase(BasePlaylistTestCase):
         lib_track2 = self.model_fixture_factory.create_lib_track_with_file(title="Love2", genre=genre)
         lib_track1 = self.model_fixture_factory.create_lib_track_with_file(title="Love1", genre=genre)
 
-        response = self._retrieve(base_playlist_uuid=genre.criteria_playlist.uuid)
+        response = self._retrieve_playlist(uuid=genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
         result_tracks = self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.LIB_TRACKS)]
@@ -35,7 +35,7 @@ class TestCase(BasePlaylistTestCase):
                                                               filename="tokyo drift x sean paul 152 sec.mp3",
                                                               genre=genre)
 
-        response = self._retrieve(genre_criteria_playlist.uuid)
+        response = self._retrieve_playlist(genre_criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.DURATION_IN_SEC)] == 284 + 152
@@ -45,7 +45,7 @@ class TestCase(BasePlaylistTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="In Too Deep", genre=genre)
         self.model_fixture_factory.create_lib_track_with_file(title="Summer", genre=genre)
         self.model_fixture_factory.create_lib_track_with_file(title="Winter", genre=genre, archived=True)
-        response = self._retrieve(genre.criteria_playlist.uuid)
+        response = self._retrieve_playlist(genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
 
@@ -57,7 +57,7 @@ class TestCase(BasePlaylistTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Summer", genre=genre, archived=True)
         self.model_fixture_factory.create_lib_track_with_file(title="Summer2", genre=genre, archived=True)
         self.model_fixture_factory.create_lib_track_with_file(title="Summer3", genre=genre, archived=True)
-        response = self._retrieve(genre.criteria_playlist.uuid)
+        response = self._retrieve_playlist(genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
 

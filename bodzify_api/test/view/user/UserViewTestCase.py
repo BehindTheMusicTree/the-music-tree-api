@@ -8,25 +8,36 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 
 class UserViewTestCase(ApiTestCase):
 
-    def _login_as_test_admin_and_delete_user(self, user_pk: str):
+    def _post_user(self, **kwargs):
         self._login_as_test_admin()
-        response = self.api_client.delete(path=reverse('user-detail', kwargs={'pk': user_pk}))
+        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(kwargs), doseq=True)
+        response = self.api_client.post(path=reverse('user-list'),
+                                        data=data_url_encoded,
+                                        content_type='application/x-www-form-urlencoded')
+        if response.status_code == status.HTTP_201_CREATED:
+            self._set_result(response)
         return response
 
-    def _login_as_test_admin_and_get_user(self):
+    def _get_users(self):
         response = self.api_client.get(path=reverse('user-list'))
         if response.status_code == status.HTTP_200_OK:
             self._set_results_attributes(response)
         return response
 
-    def _login_as_test_admin_and_retrieve_user(self, user_pk: str):
-        response = self.api_client.get(path=reverse('user-detail', kwargs={'pk': user_pk}))
+    def _retrieve_user(self, pk: int):
+        response = self.api_client.get(path=reverse('user-detail', kwargs={'pk': pk}))
+        if response.status_code == status.HTTP_200_OK:
+            self._set_result(response)
         return response
 
-    def _login_as_test_admin_and_post_user(self, data_dict):
-        self._login_as_test_admin()
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
-        response = self.api_client.post(path=reverse('user-list'),
-                                        data=data_url_encoded,
-                                        content_type='application/x-www-form-urlencoded')
+    def _put_user(self, pk: int, **kwargs):
+        data_url_encoded = urlencode(query=self._replace_none_values_by_empty_string(kwargs), doseq=True)
+        response = self.api_client.put(path=reverse('user-detail', kwargs={'pk': pk}),
+                                       data=data_url_encoded,
+                                       content_type='application/x-www-form-urlencoded')
+        if response.status_code == status.HTTP_200_OK:
+            self._set_result(response)
         return response
+
+    def _delete_user(self, pk: int):
+        return self.api_client.delete(path=reverse('user-detail', kwargs={'pk': pk}))

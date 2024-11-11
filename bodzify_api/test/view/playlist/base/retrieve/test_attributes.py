@@ -13,7 +13,7 @@ class TestCase(BasePlaylistTestCase):
         name = 'cuisine'
         playlist_uuid = self.model_fixture_factory.create_manual_playlist(name=name).uuid
 
-        response = self._retrieve(base_playlist_uuid=playlist_uuid)
+        response = self._retrieve_playlist(uuid=playlist_uuid)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.result[RetrieveFields.NAME] == name
@@ -25,7 +25,7 @@ class TestCase(BasePlaylistTestCase):
                                                                   criteria=genre,
                                                                   type=CriteriaTypePks.GENRE)
 
-        response = self._retrieve(base_playlist_uuid=playlist.uuid)
+        response = self._retrieve_playlist(uuid=playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.result[RetrieveFields.NAME] == name
@@ -37,7 +37,7 @@ class TestCase(BasePlaylistTestCase):
                                                                   criteria=tag,
                                                                   type=CriteriaTypePks.TAG)
 
-        response = self._retrieve(base_playlist_uuid=playlist.uuid)
+        response = self._retrieve_playlist(uuid=playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.result[RetrieveFields.NAME] == name

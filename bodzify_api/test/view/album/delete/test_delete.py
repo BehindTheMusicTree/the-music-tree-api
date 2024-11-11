@@ -11,7 +11,7 @@ class TestCase(AlbumTestCase):
     def test_delete_then_ok(self):
 
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
-        response = self._delete_album(album_uuid=black_holes_album.uuid)
+        response = self._delete_album(uuid=black_holes_album.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
     def test_2_tracks_linked_then_delete_them(self):
@@ -30,7 +30,7 @@ class TestCase(AlbumTestCase):
         assert self.test_user1.does_track_filename_exist_in_lib(assassin_track_filename)
         assert self.test_user1.does_track_filename_exist_in_lib(starlight_track_filename)
 
-        response = self._delete_album(album_uuid=black_holes_album.uuid)
+        response = self._delete_album(uuid=black_holes_album.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Album.objects.filter(user=self.test_user2, uuid=black_holes_album.uuid).exists()
@@ -46,7 +46,7 @@ class TestCase(AlbumTestCase):
                                                               artists=[muse_artist],
                                                               album=black_holes_album)
 
-        response = self._delete_album(album_uuid=black_holes_album.uuid)
+        response = self._delete_album(uuid=black_holes_album.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Artist.objects.filter(user=self.test_user1, name=muse_artist.name).exists()
@@ -60,7 +60,7 @@ class TestCase(AlbumTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Supermassive Black Hole",
                                                               artists=[muse_artist])
 
-        response = self._delete_album(album_uuid=album.uuid)
+        response = self._delete_album(uuid=album.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Artist.objects.filter(user=self.test_user1, name=muse_artist.name).exists()
@@ -69,7 +69,7 @@ class TestCase(AlbumTestCase):
         matthew_artist = self.model_fixture_factory.create_artist(name="Matthew Bellamy")
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations",
                                                                     album_artists=[matthew_artist])
-        response = self._delete_album(album_uuid=black_holes_album.uuid)
+        response = self._delete_album(uuid=black_holes_album.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Artist.objects.filter(user=self.test_user1, name=matthew_artist.name).exists()
@@ -80,7 +80,7 @@ class TestCase(AlbumTestCase):
                                                                     album_artists=[matthew_artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Supermassive Black Hole",
                                                               artists=[matthew_artist])
-        response = self._delete_album(album_uuid=black_holes_album.uuid)
+        response = self._delete_album(uuid=black_holes_album.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Artist.objects.filter(user=self.test_user1, name=matthew_artist.name).exists()
