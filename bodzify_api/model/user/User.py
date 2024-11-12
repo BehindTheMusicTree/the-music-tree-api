@@ -7,18 +7,13 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.functional import cached_property
 from django.db import models
 from django.db.models import F, Value
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from bodzify_api import settings
 from bodzify_api.model.base.BaseModel import BaseModel
-from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
-from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.utils.ConcatOp import ConcatOp  
+from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.utils.ConditionalExpression import ConditionalExpression
 from .UserManager import UserManager
 from .Fields import Fields
-from ..playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
 if TYPE_CHECKING:
     from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
@@ -31,20 +26,15 @@ class User(AbstractUser, BaseModel):
     lib_path_relative_to_media = models.GeneratedField(  # type: ignore
         expression=ConditionalExpression(
             condition_field=Fields.IS_TEST_USER,
-            when_true=ConcatOp(
-                Value(str(settings.LIBRARIES_DIR_NAME)),
-                Value('/'),
-                Value(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE),
-                F(Fields.ID)
-            ),
-            when_false=ConcatOp(
-                Value(str(settings.LIBRARIES_DIR_NAME)),
-                Value('/'),
-                Value(settings.USER_LIBRARIES_DIR_NAME_PREFIXE),
-                F(Fields.ID)
-            ),
-            output_field=models.CharField(max_length=255)
-        ),
+            when_true=ConcatOp(Value(str(settings.LIBRARIES_DIR_NAME)),
+                               Value('/'),
+                               Value(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE),
+                               F(Fields.ID)),
+            when_false=ConcatOp(Value(str(settings.LIBRARIES_DIR_NAME)),
+                                Value('/'),
+                                Value(settings.USER_LIBRARIES_DIR_NAME_PREFIXE),
+                                F(Fields.ID)),
+            output_field=models.CharField(max_length=255)),
         output_field=models.CharField(max_length=255),
         db_persist=True)
 
@@ -85,11 +75,3 @@ class User(AbstractUser, BaseModel):
             shutil.rmtree(self.lib_abs_path)
 
         super().delete(*args, **kwargs)
-
-        
-@receiver(post_save, sender=User)
-def create_user_criterialess_playlists(sender, instance, created, **kwargs):
-    if created:
-        for criteria_type in [CriteriaTypePks.GENRE, CriteriaTypePks.TAG]:
-            type = CriteriaType.objects.get(pk=criteria_type)
-            CriteriaPlaylist.objects.create(user=instance, type=type, criteria=None)

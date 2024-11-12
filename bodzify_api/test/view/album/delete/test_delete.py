@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
@@ -9,13 +10,24 @@ from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 class TestCase(AlbumTestCase):
 
     def test_delete_then_ok(self):
-
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
         response = self._delete_album(uuid=black_holes_album.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    def test_2_tracks_linked_then_delete_them(self):
+    @patch("bodzify_api.model.artist.Artist", side_effect=Exception)
+    def test_exception_then_nothing_deleted(self):
+        muse_artist = self.model_fixture_factory.create_artist(name="Muse")
+        black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
+        self.model_fixture_factory.create_lib_track_with_file(title="Assassin",
+                                                              artists=[muse_artist],
+                                                              album=black_holes_album)
 
+        response = self._delete_album(uuid=black_holes_album.uuid)
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        assert not Artist.objects.filter(user=self.test_user1, name=muse_artist.name).exists()
+
+    def test_2_tracks_linked_then_delete_them(self):
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
         assassin_track_filename = "Assassin.mp3"
         assassin_track = self.model_fixture_factory.create_lib_track_with_file(title="Assassin",

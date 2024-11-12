@@ -30,4 +30,23 @@ class ArtistManager(PublicStandardResourceManager):
             if len(artists_names_list) > 0 else []
 
     def delete_instance(self, instance: 'Artist'):
-        instance.delete_with_albums_and_tracks()
+        self.delete_instance_with_albums_and_tracks(instance)
+
+    def delete_instance_with_albums_and_tracks(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+        from bodzify_api.model.album.Album import Album
+
+        for album in instance.albums:
+            Album.objects.delete_instance_with_tracks_and_eventually_artists(album)
+
+        lib_tracks: list[LibraryTrack] = list(instance.library_tracks.all())
+        for lib_track in lib_tracks:
+            LibraryTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(lib_track)
+
+        return self.delete()
+
+    def delete_instance_if_nothing_linked(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
+        if instance.albums.count() == 0:
+            if instance.library_tracks.count() == 0:
+                return self.delete()
+        return 0, {}

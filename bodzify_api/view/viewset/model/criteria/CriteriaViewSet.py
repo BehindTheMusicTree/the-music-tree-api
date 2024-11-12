@@ -41,7 +41,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
         return self._handle_list(request, *args, **kwargs)
 
     def retrieve(self, request: Request, *args, **kwargs) -> Response:
-        return super()._handle_retrieve(request, *args, **kwargs)
+        return self._handle_retrieve(request, *args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=CriteriaPutSerializer,

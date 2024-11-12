@@ -79,7 +79,7 @@ class PlaylistViewSet(AppModelViewSet[Playlist]):
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY)])
     def list(self, request, *args, **kwargs):
-        return super()._handle_list(request, *args, **kwargs)
+        return self._handle_list(request, *args, **kwargs)
 
     def retrieve(self, request: Request, *args, **kwargs):
-        return super()._handle_retrieve(request, *args, **kwargs)
+        return self._handle_retrieve(request, *args, **kwargs)

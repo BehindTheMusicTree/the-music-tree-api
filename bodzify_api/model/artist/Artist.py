@@ -29,21 +29,3 @@ class Artist(LibTrackMixin):
 
     def __str__(self) -> str:
         return f"{self.uuid} | {self.name}"
-
-    def delete_with_albums_and_tracks(self) -> tuple[int, dict[str, int]]:
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-
-        for album in self.albums:
-            album.delete_with_tracks_and_eventually_artists()
-
-        lib_tracks: list[LibraryTrack] = list(self.library_tracks.all())
-        for track in lib_tracks:
-            track.delete_with_checking_album_and_artists_potential_deletion()
-
-        return self.delete()
-
-    def delete_if_nothing_linked(self) -> tuple[int, dict[str, int]]:
-        if self.albums.count() == 0:
-            if self.library_tracks.count() == 0:
-                return self.delete()
-        return 0, {}

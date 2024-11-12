@@ -1,7 +1,11 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
+
+from django.db.models import QuerySet
+
 from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
 from bodzify_api.model.user.User import User
+from bodzify_api.test.view import album
 from .Fields import Fields
 
 if TYPE_CHECKING:
@@ -14,7 +18,6 @@ class AlbumManager(PublicStandardResourceManager):
 
     def _get_instance_from_name_and_artists_list_after_having_eventually_created_instance(
             self, user: User, album_name: str, album_artists: list) -> Optional['Album']:
-
         album_queryset = self.model.objects.filter(user=user, name=album_name)
         if len(album_artists) > 0:
             for album_artist in album_artists:
@@ -47,4 +50,33 @@ class AlbumManager(PublicStandardResourceManager):
             user=user, album_name=album_name, album_artists=album_artists)
 
     def delete_instance(self, instance: 'Album') -> None:
-        instance.delete_with_tracks_and_eventually_artists()
+        self.delete_instance_with_tracks_and_eventually_artists(instance)
+
+    def delete_instance_with_tracks_and_eventually_artists(self, instance: 'Album'):
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+        from bodzify_api.model.artist.Artist import Artist
+
+        artists_linked_to_album_and_track: List[Artist] = []
+        lib_tracks: QuerySet[LibraryTrack] = instance.library_tracks.all()
+        for track in lib_tracks:
+            if track.artists.exists():
+                for artist in track.artists.all():
+                    if artist not in artists_linked_to_album_and_track:
+                        artists_linked_to_album_and_track.append(artist)
+            track.delete()
+
+        for album_artist in instance.album_artists.all():
+            if album_artist not in artists_linked_to_album_and_track:
+                artists_linked_to_album_and_track.append(album_artist)
+
+        self.delete()
+
+        for artist in artists_linked_to_album_and_track:
+            Artist.objects.delete_instance_if_nothing_linked(artist)
+
+    def delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(self, instance: 'Album'):
+        if instance.library_tracks.count() == 0:
+            album_artists: list[Artist] = list(instance.album_artists.all())
+            self.delete()
+            for album_artist in album_artists:
+                Artist.objects.delete_instance_if_nothing_linked(album_artist)

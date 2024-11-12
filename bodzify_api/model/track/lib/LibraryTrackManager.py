@@ -1,12 +1,14 @@
 import os
 import tempfile
 from typing import Any, List, TYPE_CHECKING, Optional
+import requests
 
 from django.db import transaction
 from django.db.models import F
+from django.db.models.signals import pre_delete
 from django.utils import timezone
 from django.core.files.base import File as DjangoFile
-import requests
+from django.dispatch import receiver
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api import settings
@@ -394,3 +396,31 @@ class LibraryTrackManager(PublicStandardResourceManager['LibraryTrack']):
         self.decrease_position_of_next_tracks_in_old_track_playlists(
             user=user,
             playlists_with_old_position=old_lib_tracks_playlists_with_positions)
+
+    def delete_instance_with_checking_album_and_artists_potential_deletion(self, instance: 'LibraryTrack'):
+        from bodzify_api.model.album.Album import Album
+        from bodzify_api.model.artist.Artist import Artist
+        artists: List[Artist] = list(instance.artists.all())  # list() makes a copy of the QuerySet before the deletion
+
+        self.delete()
+
+        if instance.album:
+            Album.objects.delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(instance.album)
+        for artist in artists:
+            Artist.objects.delete_instance_if_nothing_linked()
+
+    def delete_with_checking_artists_potential_deletion(self, instance: 'LibraryTrack'):
+        track_artists: QuerySet[Artist] = self.artists.all()
+        self.delete()
+        for artist in track_artists:
+            artist.delete_if_nothing_linked()
+
+
+@receiver(pre_delete, sender=LibraryTrack)
+def handle_pre_delete(sender, instance: LibraryTrack, using, **kwargs):
+    from bodzify_api.model.playlist.Playlist import Playlist
+    now = timezone.now()
+    playlists: List[Playlist] = list(instance.playlists.all())
+    for playlist in playlists:
+        playlist.last_track_list_update_date = now
+        playlist.save()

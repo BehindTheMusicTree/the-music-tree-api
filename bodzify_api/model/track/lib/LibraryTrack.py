@@ -3,9 +3,6 @@ from typing import TYPE_CHECKING, List, Tuple
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import QuerySet
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
-from django.utils import timezone
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.children.genre.Genre import Genre
@@ -30,7 +27,6 @@ if TYPE_CHECKING:
 class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
     title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
-
     album = models.ForeignKey(Album,
                               on_delete=models.CASCADE,
                               null=True,
@@ -53,8 +49,8 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
     language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
     playlists = models.ManyToManyField(Playlist, 
-                                            through='LibTrackPlaylistRel', 
-                                            related_name=PlaylistFields.LIB_TRACKS_RELATED_NAME)
+                                       through='LibTrackPlaylistRel', 
+                                       related_name=PlaylistFields.LIB_TRACKS_RELATED_NAME)
     
     if TYPE_CHECKING:
         track_file: TrackFile
@@ -130,32 +126,5 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel, \
             Fields as LibTrackPlaylistRelFields
         lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, library_track=self)
-        return list(lib_track_playlist_rels.values_list(
-            LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
-            LibTrackPlaylistRelFields.POSITION
-        ))
-
-    def delete_with_checking_album_and_artists_potential_deletion(self):
-        artists: List[Artist] = list(self.artists.all())  # list() makes a copy of the QuerySet before the deletion
-
-        self.delete()
-
-        if self.album:
-            self.album.delete_if_no_track_linked_with_eventual_album_artist_deletion()
-        for artist in artists:
-            artist.delete_if_nothing_linked()
-
-    def delete_with_checking_artists_potential_deletion(self):
-        track_artists: QuerySet[Artist] = self.artists.all()
-        self.delete()
-        for artist in track_artists:
-            artist.delete_if_nothing_linked()
-
-
-@receiver(pre_delete, sender=LibraryTrack)
-def handle_pre_delete(sender, instance: LibraryTrack, using, **kwargs):
-    now = timezone.now()
-    playlists: List[Playlist] = list(instance.playlists.all())
-    for playlist in playlists:
-        playlist.last_track_list_update_date = now
-        playlist.save()
+        return list(lib_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
+                                                        LibTrackPlaylistRelFields.POSITION))

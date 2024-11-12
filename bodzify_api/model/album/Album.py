@@ -55,32 +55,3 @@ class Album(LibTrackMixin):
             string += f" | Tracks: {track_details_str}"
 
         return string
-
-    def delete_with_tracks_and_eventually_artists(self):
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-
-        artists_linked_to_album_and_track: List[Artist] = []
-        lib_tracks: QuerySet[LibraryTrack] = self.library_tracks.all()
-        for track in lib_tracks:
-            if track.artists.exists():
-                for artist in track.artists.all():
-                    if artist not in artists_linked_to_album_and_track:
-                        artists_linked_to_album_and_track.append(artist)
-            track.delete()
-
-        for album_artist in self.album_artists.all():
-            if album_artist not in artists_linked_to_album_and_track:
-                artists_linked_to_album_and_track.append(album_artist)
-
-        self.delete()
-
-        for artist in artists_linked_to_album_and_track:
-            artist.delete_if_nothing_linked()
-
-    def delete_if_no_track_linked_with_eventual_album_artist_deletion(self):
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-        if self.library_tracks.count() == 0:
-            album_artists: list[Artist] = list(self.album_artists.all())
-            self.delete()
-            for album_artist in album_artists:
-                album_artist.delete_if_nothing_linked()

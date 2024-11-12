@@ -23,11 +23,11 @@ class AlbumViewSet(AppModelViewSet[Album]):
         OpenApiParameter(name=FilterFields.ALBUM_ARTISTS_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, request, *args, **kwargs):
-        return super()._handle_list(request, *args, **kwargs)
+        return self._handle_list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
-        return super()._handle_retrieve(request, *args, **kwargs)
+        return self._handle_retrieve(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
-        self._handle_destroy(request, *args, **kwargs)
+        return self._handle_destroy(request, *args, **kwargs)

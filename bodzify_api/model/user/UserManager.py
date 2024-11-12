@@ -1,9 +1,13 @@
-from dataclasses import Field
-from queue import Empty
-from typing import Any, Dict, Generic, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from django.contrib.auth.models import BaseUserManager
-from django.http import QueryDict
+
+from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from .Fields import Fields
 
 if TYPE_CHECKING:
@@ -15,15 +19,6 @@ class UserManager(BaseUserManager):
 
     def create_instance(self, **kwargs) -> 'User':
         from bodzify_api.model.user.User import User
-        # data = kwargs
-        # if kwargs is Empty:
-        #     data: Dict[str, Any] = {}
-        # elif isinstance(kwargs, dict):
-        #     data: Dict[str, Any] = kwargs
-        # elif isinstance(kwargs, QueryDict):
-        #     data: Dict[str, Any] = kwargs.dict()
-        # else:
-        #     data: Dict[str, Any] = {}
         if not kwargs[Fields.EMAIL]:
             raise ValueError('The Email field must be set')
 
@@ -45,3 +40,11 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self.create_instance(username=username, email=email, password=password, **extra_fields)
+
+
+@receiver(post_save, sender=User)
+def create_user_criterialess_playlists(sender, instance, created, **kwargs):
+    if created:
+        for criteria_type in [CriteriaTypePks.GENRE, CriteriaTypePks.TAG]:
+            type = CriteriaType.objects.get(pk=criteria_type)
+            CriteriaPlaylist.objects.create(user=instance, type=type, criteria=None)
