@@ -1,8 +1,8 @@
 from bodzify_api.model.criteria.type.CriteriaTypesLabel import CriteriaTypesLabel
-from bodzify_api.model.playlist.children.manual import ManualPlaylist
+from bodzify_api.model.playlist.children.manual import ManualPlaylistTypeLabel
 
 
 class PlaylistTypesLabel:
     GENRE = CriteriaTypesLabel.GENRE
     TAG = CriteriaTypesLabel.TAG
-    MANUAL = ManualPlaylist.TYPE_LABEL
+    MANUAL = ManualPlaylistTypeLabel.VALUE
