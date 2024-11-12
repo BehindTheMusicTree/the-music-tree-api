@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class Album(LibTrackMixin):
     name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)  # type: ignore
     year = models.CharField(max_length=4, default=None, null=True)
-    album_artists = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)
+    album_artists: QuerySet[Artist] = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
 
     objects: AlbumManager = AlbumManager()
 

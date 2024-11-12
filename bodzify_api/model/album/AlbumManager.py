@@ -56,6 +56,8 @@ class AlbumManager(PublicStandardResourceManager):
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
         from bodzify_api.model.artist.Artist import Artist
 
+        # Keep this deletion order for rollback tests: first delete tracks, then delete album, then delete artists
+
         artists_linked_to_album_and_track: List[Artist] = []
         lib_tracks: QuerySet[LibraryTrack] = instance.library_tracks.all()
         for track in lib_tracks:
@@ -69,14 +71,15 @@ class AlbumManager(PublicStandardResourceManager):
             if album_artist not in artists_linked_to_album_and_track:
                 artists_linked_to_album_and_track.append(album_artist)
 
-        self.delete()
+        instance.delete()
 
         for artist in artists_linked_to_album_and_track:
             Artist.objects.delete_instance_if_nothing_linked(artist)
 
     def delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(self, instance: 'Album'):
+        from bodzify_api.model.artist.Artist import Artist
         if instance.library_tracks.count() == 0:
             album_artists: list[Artist] = list(instance.album_artists.all())
-            self.delete()
+            instance.delete()
             for album_artist in album_artists:
                 Artist.objects.delete_instance_if_nothing_linked(album_artist)

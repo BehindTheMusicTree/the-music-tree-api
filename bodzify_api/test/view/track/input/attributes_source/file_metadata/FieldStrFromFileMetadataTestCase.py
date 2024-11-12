@@ -1,6 +1,6 @@
 import pytest
 
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db

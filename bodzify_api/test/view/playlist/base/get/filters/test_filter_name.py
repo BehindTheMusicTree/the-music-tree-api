@@ -16,8 +16,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         super().setUp(allow_empty_value=allow_empty_value, methods_names_to_implement=methods_names_to_implement)
 
     def test_is_empty_then_error(self) -> None:
-        data_dict = {GetQueryParams.NAME: ''}
-        response = self._get_playlists(data_dict=data_dict)
+        response = self._get_playlists(kwargs={GetQueryParams.NAME: ''})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_is_not_provided_then_results(self) -> None:
@@ -25,6 +24,7 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         self.model_fixture_factory.create_manual_playlist(name="Teuf")
 
         response = self._get_playlists()
+
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == Playlist.objects.filter(user=self.test_user1).count()
 
@@ -32,23 +32,23 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         manual_playlist_name = "Teuf"
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
 
-        data_dict = {GetQueryParams.NAME: manual_playlist_name.upper()}
-        response = self._get_playlists(data_dict=data_dict)
+        response = self._get_playlists(kwargs={GetQueryParams.NAME: manual_playlist_name.upper()})
+
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         names_lowered = [result[GetQueryParams.NAME].lower() for result in self.results]
         assert manual_playlist_name.lower() in names_lowered
 
     def test_genreless_special_name_then_results(self) -> None:
-        data_dict = {GetQueryParams.NAME: 'geNr'}
-        response = self._get_playlists(data_dict=data_dict)
+        response = self._get_playlists(kwargs={GetQueryParams.NAME: 'geNr'})
+
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][GetQueryParams.NAME] == CriterialessPlaylistNames.GENRE
 
     def test_tagless_special_name_then_results(self) -> None:
-        data_dict = {GetQueryParams.NAME: 'aGl'}
-        response = self._get_playlists(data_dict=data_dict)
+        response = self._get_playlists(kwargs={GetQueryParams.NAME: 'aGl'})
+
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
         assert self.results[0][GetQueryParams.NAME] == CriterialessPlaylistNames.TAG
@@ -59,8 +59,8 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         criteria_name = "leSsa"
         self.model_fixture_factory.create_genre(name=criteria_name)
 
-        data_dict = {GetQueryParams.NAME: 'Less'}
-        response = self._get_playlists(data_dict=data_dict)
+        response = self._get_playlists(kwargs={GetQueryParams.NAME: 'Less'})
+
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 4
         names_lowered = [result[GetQueryParams.NAME].lower() for result in self.results]

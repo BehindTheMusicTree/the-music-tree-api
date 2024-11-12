@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
@@ -14,7 +14,9 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         album_name = "Chuck"
         album = self.model_fixture_factory.create_album(name=album_name)
         track = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame", album=album)
-        response = self._delete_lib_track(lib_track_uuid=track.uuid)
+
+        response = self._delete_lib_track(uuid=track.uuid)
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Album.objects.filter(user=self.test_user1, name=album_name).exists()
 
@@ -22,7 +24,9 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         green_artist = self.model_fixture_factory.create_artist(name="Green")
         album = self.model_fixture_factory.create_album(name="Chuck", album_artists=[green_artist])
         track = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame", album=album)
-        response = self._delete_lib_track(lib_track_uuid=track.uuid)
+
+        response = self._delete_lib_track(uuid=track.uuid)
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Artist.objects.filter(user=self.test_user1, name=green_artist.name).exists()
 
@@ -30,6 +34,8 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         artist_name = "Sum 41"
         artist = self.model_fixture_factory.create_artist(name=artist_name)
         track = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame", artists=[artist])
-        response = self._delete_lib_track(lib_track_uuid=track.uuid)
+
+        response = self._delete_lib_track(uuid=track.uuid)
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Artist.objects.filter(user=self.test_user1, name=artist_name).exists()

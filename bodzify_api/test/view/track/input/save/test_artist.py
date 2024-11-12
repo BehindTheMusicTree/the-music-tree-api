@@ -11,7 +11,7 @@ class TestCase(FieldModelStrTestCase):
     def test_longest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
@@ -21,12 +21,12 @@ class TestCase(FieldModelStrTestCase):
     def test_too_long_then_error(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_empty_then_none(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict={ExtractFields.ARTISTS_NAMES_STR: ''})
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs={ExtractFields.ARTISTS_NAMES_STR: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.artists.count() == 0
@@ -36,7 +36,7 @@ class TestCase(FieldModelStrTestCase):
         self.model_fixture_factory.create_artist(name=artist_name)
 
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
@@ -46,7 +46,7 @@ class TestCase(FieldModelStrTestCase):
     def test_not_existing(self) -> None:
         artist_name = "hoho"
         data = {ExtractFields.ARTISTS_NAMES_STR: artist_name}
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())

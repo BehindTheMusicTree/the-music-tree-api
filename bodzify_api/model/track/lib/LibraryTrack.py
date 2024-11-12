@@ -3,6 +3,9 @@ from typing import TYPE_CHECKING, List, Tuple
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import QuerySet
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+from django.utils import timezone
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.children.genre.Genre import Genre
@@ -19,7 +22,7 @@ from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SE
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from ..file.TrackFile import TrackFile
 from .Fields import Fields
-from .LibraryTrackManager import LibraryTrackManager
+from .LibTrackManager import LibTrackManager
 
 if TYPE_CHECKING:
     from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
@@ -56,7 +59,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
         track_file: TrackFile
         lib_track_playlist_rels: models.QuerySet['LibTrackPlaylistRel']
 
-    objects: LibraryTrackManager = LibraryTrackManager()
+    objects: LibTrackManager = LibTrackManager()
 
     class Meta:
         verbose_name = 'Library Track'
@@ -122,9 +125,20 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
 
         self.track_file.update_file_tags(normalized_metadata=normalized_metadata)
 
-    def get_lib_track_playlists_with_positions(self) -> List[Tuple[str, int]]:
+    @property
+    def playlists_with_positions(self) -> List[Tuple[str, int]]:
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel, \
             Fields as LibTrackPlaylistRelFields
         lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, library_track=self)
         return list(lib_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
                                                         LibTrackPlaylistRelFields.POSITION))
+
+
+@receiver(pre_delete, sender=settings.APP_NAME + '.LibraryTrack')
+def handle_pre_delete(sender, instance: LibraryTrack, using, **kwargs):
+    from bodzify_api.model.playlist.Playlist import Playlist
+    now = timezone.now()
+    playlists: List[Playlist] = list(instance.playlists.all())
+    for playlist in playlists:
+        playlist.last_track_list_update_date = now
+        playlist.save()

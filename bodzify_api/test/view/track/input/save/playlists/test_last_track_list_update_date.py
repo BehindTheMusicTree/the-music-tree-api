@@ -1,10 +1,11 @@
 import pytest
+
 from rest_framework import status
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db

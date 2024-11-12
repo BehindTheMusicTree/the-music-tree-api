@@ -1,0 +1,17 @@
+meta {
+  name: show genre stadium
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{BASE_URL}}tracks/{{trackJohnnyUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Noir cest noir"
+  }
+}

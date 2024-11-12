@@ -2,7 +2,7 @@ import pytest
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
@@ -12,7 +12,7 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         genre = self.model_fixture_factory.create_genre(name='rock')
         track = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame", genre=genre)
         genre_playlist_last_track_list_update_date_before_deletion = genre.criteria_playlist.last_track_list_update_date
-        response = self._delete_lib_track(lib_track_uuid=track.uuid)
+        response = self._delete_lib_track(uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         genre.criteria_playlist.refresh_from_db()
         assert genre.criteria_playlist.last_track_list_update_date > \
@@ -26,7 +26,7 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         track = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame", genre=genre3)
         genre1_playlist_last_track_list_update_date_before_deletion = \
             genre1.criteria_playlist.last_track_list_update_date
-        response = self._delete_lib_track(lib_track_uuid=track.uuid)
+        response = self._delete_lib_track(uuid=track.uuid)
         assert response.status_code == status.HTTP_204_NO_CONTENT
         genre1.criteria_playlist.refresh_from_db()
         assert genre1.criteria_playlist.last_track_list_update_date > \

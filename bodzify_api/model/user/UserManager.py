@@ -5,6 +5,7 @@ from django.dispatch import receiver
 
 from django.contrib.auth.models import BaseUserManager
 
+from bodzify_api import settings
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
@@ -42,7 +43,7 @@ class UserManager(BaseUserManager):
         return self.create_instance(username=username, email=email, password=password, **extra_fields)
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=settings.APP_NAME + '.User')
 def create_user_criterialess_playlists(sender, instance, created, **kwargs):
     if created:
         for criteria_type in [CriteriaTypePks.GENRE, CriteriaTypePks.TAG]:

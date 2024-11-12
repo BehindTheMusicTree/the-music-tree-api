@@ -163,7 +163,7 @@
         "pk": 6,
         "fields": {
             "code": 6,
-            "label": "The MusicBrainz lookup failed with an unknown error status code."
+            "label": "The MusicBrainz lookup failed with status code 5 (internal error)."
         }
     },
     
@@ -172,7 +172,7 @@
         "pk": 7,
         "fields": {
             "code": 7,
-            "label": "The MusicBrainz lookup failed with an unknown status code."
+            "label": "The MusicBrainz lookup failed with an unknown error status code."
         }
     },
     
@@ -181,6 +181,15 @@
         "pk": 8,
         "fields": {
             "code": 8,
+            "label": "The MusicBrainz lookup failed with an unknown status code."
+        }
+    },
+    
+    {
+        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
+        "pk": 9,
+        "fields": {
+            "code": 9,
             "label": "The MusicBrainz lookup failed for an unknown reason."
         }
     }

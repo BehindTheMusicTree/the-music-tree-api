@@ -61,6 +61,7 @@ class Criteria(LibTrackMixin):
         current_root = getattr(self, f"{Fields.ROOT}", None)
         new_root = self.parent.root if self.parent else None
 
+        new_root_pk = None
         if not new_root:
             new_root_pk = self.pk
         elif current_root != new_root:

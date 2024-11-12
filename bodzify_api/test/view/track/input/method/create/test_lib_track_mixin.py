@@ -4,14 +4,14 @@ from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase):
 
     def test_create_then_in_lib_track_mixin(self):
         title = "test"
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict={Fields.TITLE: title})
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs={Fields.TITLE: title})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.test_user1.all_lib_tracks_mixin.library_tracks.count() == 1

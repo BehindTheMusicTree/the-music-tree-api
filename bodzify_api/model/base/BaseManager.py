@@ -22,7 +22,14 @@ class BaseManager(models.Manager, Generic[T]):
 
     def update_instance(self, instance: T, **kwargs) -> T:
         for key, value in kwargs.items():
-            setattr(instance, key, value)
+            if hasattr(instance, key):
+                field = instance._meta.get_field(key)
+                if isinstance(field, models.ManyToManyField):
+                    getattr(instance, key).set(value)
+                else:
+                    setattr(instance, key, value)
+            else:
+                raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
         instance.save()
         return instance
 

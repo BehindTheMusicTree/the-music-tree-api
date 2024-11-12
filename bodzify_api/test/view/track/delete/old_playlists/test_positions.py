@@ -3,7 +3,7 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 @pytest.mark.django_db
@@ -18,7 +18,7 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         track_old_position_1 = self.model_fixture_factory.create_lib_track_with_file(title="The Hell Song",
                                                                                      genre=genre_rock)
 
-        response = self._delete_lib_track(lib_track_uuid=track_old_position_1.uuid)
+        response = self._delete_lib_track(uuid=track_old_position_1.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         playlist_relations = LibTrackPlaylistRel.objects.filter(playlist=genre_rock.criteria_playlist)

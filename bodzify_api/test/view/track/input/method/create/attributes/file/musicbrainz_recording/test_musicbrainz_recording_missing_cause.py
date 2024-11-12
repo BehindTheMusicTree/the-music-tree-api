@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
     import MusicbrainzRecordingMissingCauseCode
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase):
@@ -13,8 +13,7 @@ class TestCase(LibTrackTestCase):
         assert not self.saved_lib_track.track_file.musicbrainz_recording_missing_cause
 
     def test_no_matching_recording_then_corresponding_missing_cause(self):
-        response = self._post_lib_track_with_specific_sample(
-            "Tokyo Drift x Temperature - no musicbrainz recording.mp3")
+        response = self._post_lib_track_with_specific_sample("Tokyo Drift x Temperature - no musicbrainz recording.mp3")
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.track_file.musicbrainz_recording_missing_cause
         assert self.saved_lib_track.track_file.musicbrainz_recording_missing_cause.code.code == \

@@ -29,6 +29,11 @@ class InvalidFingerprintErrorStatusErrorMusicbrainzRecordingLookupException(
         super().__init__(exception_message)
 
 
+class InternalErrorStatusErrorMusicbrainzRecordingLookupException(ErrorStatusMusicbrainzRecordingLookupException):
+    def __init__(self, exception_message: str):
+        super().__init__(exception_message)
+
+
 class UnknownErrorStatusMusicbrainzRecordingLookupException(ErrorStatusMusicbrainzRecordingLookupException):
     def __init__(self, exception_message: str):
         super().__init__(exception_message)

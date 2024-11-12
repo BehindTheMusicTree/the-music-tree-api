@@ -15,9 +15,7 @@ class TestCase(GenreTestCase):
 
     def test_root_of_first_descendant(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        print(f"Rock Genre - UUID: {rock_genre.uuid}, Root: {rock_genre.root.uuid}")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
-        print(f"Punk Genre - UUID: {punk_genre.uuid}, Root: {punk_genre.root.uuid}")
         response = self._retrieve_genre(uuid=punk_genre.uuid)
         assert response.status_code == status.HTTP_200_OK
         assert UUID(self.result[Fields.ROOT][Fields.UUID]) == rock_genre.uuid

@@ -26,4 +26,4 @@ class ArtistViewSet(AppModelViewSet[Artist]):
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
-        self._handle_destroy(request, *args, **kwargs)
+        return self._handle_destroy(request, *args, **kwargs)

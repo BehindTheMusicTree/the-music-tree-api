@@ -14,7 +14,7 @@ class TestCase(NullableStrFieldFromDataTestCase):
             PostFields.ALBUM_NAME: 'albumito',
             PostFields.ALBUM_ARTISTS_NAMES: value
         }
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.album
         assert self.saved_lib_track.album.album_artists.all()[0].name == value
@@ -24,7 +24,7 @@ class TestCase(NullableStrFieldFromDataTestCase):
             PostFields.ALBUM_NAME: "albumito",
             PostFields.ALBUM_ARTISTS_NAMES: ""
         }
-        response = self._post_lib_track_with_generic_sample_1_star(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_1_star(kwargs=data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.album
         assert self.saved_lib_track.album.album_artists.count() == 0

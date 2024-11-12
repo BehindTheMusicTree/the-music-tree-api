@@ -6,6 +6,5 @@ from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase impor
 class TestCase(ManualPlaylistTestCase):
 
     def test_extra_field_then_error(self):
-        data = {'nonExistingField': 'oifjqoif'}
-        response = self._post_manual_playlist(data_dict=data)
+        response = self._post_manual_playlist(kwargs={'nonExistingField': 'oifjqoif'})
         assert response.status_code == status.HTTP_400_BAD_REQUEST

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase):

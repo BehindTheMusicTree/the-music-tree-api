@@ -18,8 +18,8 @@ class CriteriaPutSerializer(CriteriaSchemaSerializer, InputEndpointSerializer):
         model = Criteria
         fields = [Fields.NAME, Fields.PARENT]
 
-    def validate(self, data):
-        instance = self.instance
+    def validate(self, data: dict):
+        instance: Criteria = self.instance  # type: ignore
         value = data.get(Fields.PARENT)
 
         if instance and value:

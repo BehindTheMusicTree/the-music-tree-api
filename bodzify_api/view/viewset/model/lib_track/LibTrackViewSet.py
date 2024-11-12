@@ -146,4 +146,4 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
 
     @transaction.atomic
     def destroy(self, request: Request, *args, **kwargs):
-        self._handle_destroy(request, *args, **kwargs)
+        return self._handle_destroy(request, *args, **kwargs)

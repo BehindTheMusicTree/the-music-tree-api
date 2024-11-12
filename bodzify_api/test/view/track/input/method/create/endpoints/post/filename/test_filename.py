@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase):
@@ -11,6 +11,7 @@ class TestCase(LibTrackTestCase):
                                           "RnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd5.mp3")
         response = self._post_lib_track_with_specific_sample(
             specific_sample_filename=sample_150_char_long_char_name, data_dict={})
+
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_error_when_too_long(self):
@@ -19,4 +20,5 @@ class TestCase(LibTrackTestCase):
                                           "RnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd51.mp3")
         response = self._post_lib_track_with_specific_sample(
             specific_sample_filename=sample_151_char_long_char_name, data_dict={})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST

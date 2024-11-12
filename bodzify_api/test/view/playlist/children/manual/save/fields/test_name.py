@@ -8,23 +8,20 @@ from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase impor
 class TestCase(ManualPlaylistTestCase):
 
     def test_multiple_values_then_error(self):
-        data = {Fields.NAME: ["value", "value2"]}
-        response = self._post_manual_playlist(data_dict=data)
+        response = self._post_manual_playlist(kwargs={Fields.NAME: ["value", "value2"]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_longest(self):
-        data = {Fields.NAME: "a" * settings.MANUAL_PLAYLIST_NAME_LEN_MAX}
-        response = self._post_manual_playlist(data_dict=data)
+        response = self._post_manual_playlist(kwargs={Fields.NAME: "a" * settings.MANUAL_PLAYLIST_NAME_LEN_MAX})
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_error_when_too_long(self):
-        data = {Fields.NAME: "a" * (settings.MANUAL_PLAYLIST_NAME_LEN_MAX + 1)}
-        response = self._post_manual_playlist(data_dict=data)
+        response = self._post_manual_playlist(
+            data_dict={Fields.NAME: "a" * (settings.MANUAL_PLAYLIST_NAME_LEN_MAX + 1)})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def text_already_exists_then_error(self):
-        data = {Fields.NAME: "value"}
-        response = self._post_manual_playlist(data_dict=data)
+        response = self._post_manual_playlist(kwargs={Fields.NAME: "value"})
         assert response.status_code == status.HTTP_201_CREATED
-        response = self._post_manual_playlist(data_dict=data)
+        response = self._post_manual_playlist(kwargs={Fields.NAME: "value"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST

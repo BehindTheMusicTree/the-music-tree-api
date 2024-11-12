@@ -35,10 +35,10 @@ class ApiTestCase(AppTestCase):
         return dict1
 
     @staticmethod
-    def _replace_none_values_by_empty_string(data_dict):
-        if data_dict is None:
+    def _replace_none_values_by_empty_string(**kwargs):
+        if kwargs is None:
             return {}
-        return {k: ('' if v is None else v) for k, v in data_dict.items()}
+        return {k: ('' if v is None else v) for k, v in kwargs.items()}
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
@@ -71,36 +71,36 @@ class ApiTestCase(AppTestCase):
     def _post_lib_track_with_generic_sample(self,
                                             generic_sample_filename_without_extension,
                                             generic_sample_file_extension,
-                                            data_dict=None):
+                                            **kwargs):
         filename_with_extension = generic_sample_filename_without_extension + '.' + generic_sample_file_extension
         generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
-        return self._post_lib_track(file_abs_path=generic_sample_abs_path, data_dict=data_dict)
+        return self._post_lib_track(file_abs_path=generic_sample_abs_path, **kwargs)
 
-    def _post_lib_track_with_generic_sample_no_tags(self, extension='mp3', data_dict=None):
+    def _post_lib_track_with_generic_sample_no_tags(self, extension='mp3', **kwargs):
         filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_NONE
         response = self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
             generic_sample_file_extension=extension,
-            data_dict=data_dict)
+            **kwargs)
         return response
 
-    def _post_lib_track_with_specific_sample(self, specific_sample_filename=None, data_dict=None):
+    def _post_lib_track_with_specific_sample(self, specific_sample_filename=None, **kwargs):
         if specific_sample_filename is None:
-            return self._post_lib_track(file_abs_path=None, data_dict=data_dict)
+            return self._post_lib_track(file_abs_path=None, **kwargs)
         else:
             file_abs_path = self.specific_sample_dir_abs_path / specific_sample_filename
-            return self._post_lib_track(file_abs_path=file_abs_path, data_dict=data_dict)
+            return self._post_lib_track(file_abs_path=file_abs_path, **kwargs)
 
     # Defined here and not in TrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
-    def _post_lib_track(self, file_abs_path, data_dict=None) -> JsonResponse:
+    def _post_lib_track(self, file_abs_path, **kwargs) -> JsonResponse:
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LibTrackPostFields.TRACK_FILE_USER_FRIENDLY: sample_file}
-            if data_dict:
-                data_dict = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(data_dict))
+            if kwargs:
+                kwargs = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(kwargs))
             else:
-                data_dict = file_field_dict
-            response = self.api_client.post(path=reverse('library-track-list'), data=data_dict, format='multipart')
+                kwargs = file_field_dict
+            response = self.api_client.post(path=reverse('library-track-list'), data=kwargs, format='multipart')
             if response.status_code == status.HTTP_201_CREATED:
                 self._set_saved_lib_track_attribute(response)
                 self._set_result(response)

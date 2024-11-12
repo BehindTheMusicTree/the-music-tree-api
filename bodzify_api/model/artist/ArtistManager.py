@@ -36,17 +36,19 @@ class ArtistManager(PublicStandardResourceManager):
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
         from bodzify_api.model.album.Album import Album
 
-        for album in instance.albums:
+        # Keep deletion order for rollback tests
+
+        for album in instance.albums.all():
             Album.objects.delete_instance_with_tracks_and_eventually_artists(album)
 
         lib_tracks: list[LibraryTrack] = list(instance.library_tracks.all())
         for lib_track in lib_tracks:
             LibraryTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(lib_track)
 
-        return self.delete()
+        return instance.delete()
 
     def delete_instance_if_nothing_linked(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
         if instance.albums.count() == 0:
             if instance.library_tracks.count() == 0:
-                return self.delete()
+                return instance.delete()
         return 0, {}

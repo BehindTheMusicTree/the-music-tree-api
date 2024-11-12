@@ -1,8 +1,9 @@
 from rest_framework import status
+from django.db.models.query import QuerySet
 
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as PostFields
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase):
@@ -10,8 +11,10 @@ class TestCase(LibTrackTestCase):
     def test_artist_in_both_then_take_data(self):
         data_artist_name = "Rock"
         data_dict = {PostFields.ARTISTS_NAMES: data_artist_name}
-        response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(data_dict=data_dict)
+        response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(kwargs=data_dict)
+
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
-        assert len(artists_list) > 0
-        assert artists_list[0].name == data_artist_name
+        artists = self.saved_lib_track.artists.all()
+        artist = artists.first()
+        assert artist
+        assert artist.name == data_artist_name

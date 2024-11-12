@@ -1,7 +1,7 @@
 from typing import Optional
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class FieldFromDataTestCase(LibTrackTestCase):
@@ -19,8 +19,8 @@ class FieldStrFromDataTestCase(FieldFromDataTestCase):
     def test_multiple_values_then_error(self):
         if not self.post_field_key:
             raise NotImplementedError("post_field_key is not set")
-        data = {self.post_field_key: ["value", "value2"], }
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        data = {self.post_field_key: ["value", "value2"]}
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -29,8 +29,7 @@ class FieldIntFromDataTestCase(FieldFromDataTestCase):
     def test_field_twice_then_error(self):
         if not self.post_field_key:
             raise NotImplementedError("post_field_key is not set")
-        data = {self.post_field_key: [1, 2]}
-        response = self._post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(kwargs={self.post_field_key: [1, 2]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 

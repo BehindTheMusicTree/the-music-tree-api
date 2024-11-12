@@ -18,8 +18,8 @@ from .LookupMetaFields import LookupMetaFields
 from . import utils
 
 
-def get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: bytes,
-                                                                      duration_in_sec: float) -> Optional[dict]:
+def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: bytes,
+                                                                       duration_in_sec: float) -> Optional[dict]:
     try:
         lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
                                  fingerprint=fingerprint,
@@ -45,6 +45,9 @@ def get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprin
             if error_code == 3:
                 raise musicbrainz_exception.InvalidFingerprintErrorStatusErrorMusicbrainzRecordingLookupException(
                     f"Musicbrainz original lookup error message: \"{error_message}\"")
+            elif error_code == 5:
+                raise musicbrainz_exception.InternalErrorStatusErrorMusicbrainzRecordingLookupException(
+                    f"Musicbrainz original lookup error message: \"{error_message}\"")
             else:
                 exception_message = f"Error while getting MusicBrainz recording ID: {error_code} - {error_message}"
                 raise musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(exception_message)
@@ -68,7 +71,7 @@ def get_musicbrainz_recording_lookup_result(user: User,
         musicbrainz_recording_missing_cause_message = None
     else:
         try:
-            musicbrainz_recording_dict = get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
+            musicbrainz_recording_dict = _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
                 fingerprint=fingerprint, duration_in_sec=duration_in_sec)
             if not musicbrainz_recording_dict:
                 musicbrainz_recording_missing_cause_code = \
@@ -87,6 +90,8 @@ def get_musicbrainz_recording_lookup_result(user: User,
             exception_mapping: dict[type, MusicbrainzRecordingMissingCauseCode.Codes] = {
                 musicbrainz_exception.InvalidFingerprintErrorStatusErrorMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INVALID_FINGERPRINT_RESPONSE_ERROR_CODE,
+                musicbrainz_exception.InternalErrorStatusErrorMusicbrainzRecordingLookupException:
+                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INTERNAL_ERROR_RESPONSE_ERROR_CODE,
                 musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_ERROR_CODE,
                 musicbrainz_exception.UnknownStatusCodeMusicbrainzRecordingLookupException:

@@ -40,11 +40,6 @@ class CriteriaPlaylist(Playlist):
         verbose_name_plural = 'Criteria Playlists'
         indexes = [models.Index(fields=[Fields.CRITERIA], name='crit_playlist_criteria_idx'),]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._original_parent = getattr(self, f"{Fields.PARENT}_id", None)
-        self._original_root = getattr(self, f"{Fields.ROOT}_id", None)
-
     @property
     def type_label(self) -> str:
         return self.type.label
@@ -102,7 +97,7 @@ class CriteriaPlaylist(Playlist):
 
         root_has_changed = self._set_root()
         if not self._state.adding and root_has_changed:
-            ctx.add_modified_field(f'{Fields.ROOT}_pk')
+            ctx.add_modified_field(f'{Fields.ROOT}_id')
 
         if ctx.modified_fields and not ctx.should_track_fields:
             ctx.kwargs['update_fields'] = ctx.modified_fields
