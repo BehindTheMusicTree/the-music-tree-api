@@ -17,7 +17,7 @@ class UserViewSet(AppModelViewSet[User]):
     def __init__(self, **kwargs):
         super().__init__(model_class=User, detailed_serializer_class=UserDetailedSerializer, **kwargs)
 
-    @transaction.atomic
+    # @transaction.atomic not needed
     def create(self, request: Request, *args, **kwargs):
         return self._handle_post(request, *args, **kwargs)
 
@@ -27,7 +27,7 @@ class UserViewSet(AppModelViewSet[User]):
     def retrieve(self, request, *args, **kwargs):
         return self._handle_retrieve(request, *args, **kwargs)
 
-    @transaction.atomic
+    # @transaction.atomic not needed
     def update(self, request, *args, **kwargs):
         return self._handle_update(request, *args, **kwargs)
 

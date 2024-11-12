@@ -6,7 +6,7 @@ from rest_framework import status
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
-class UserViewTestCase(ApiTestCase):
+class UserTestCase(ApiTestCase):
 
     def _post_user(self, **kwargs):
         self._login_as_test_admin()

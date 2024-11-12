@@ -12,10 +12,10 @@ from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecord
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as TrackPostFields
-from bodzify_api.test.view.user.UserViewTestCase import UserViewTestCase
+from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
 
-class TestCase(UserViewTestCase):
+class TestCase(UserTestCase):
 
     def test_delete_then_ok(self):
         user = self.model_fixture_factory.create_user('jojo')

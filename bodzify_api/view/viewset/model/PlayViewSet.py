@@ -27,7 +27,7 @@ class PlayViewSet(AppModelViewSet[Play]):
     def retrieve(self, request, *args, **kwargs):
         return self._handle_retrieve(request, *args, **kwargs)
 
-    @transaction.atomic
+    # @transaction.atomic not needed
     @extend_schema(request=PlayPostSerializer, responses=PlayDetailedSerializer)
     def create(self, request, *args, **kwargs):
         return self._handle_post(request, *args, **kwargs)

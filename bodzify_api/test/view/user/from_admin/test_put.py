@@ -1,9 +1,9 @@
 from rest_framework import status
 
-from bodzify_api.test.view.user.UserViewTestCase import UserViewTestCase
+from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
 
-class TestCase(UserViewTestCase):
+class TestCase(UserTestCase):
 
     def test_put_then_ok(self):
         new_email = 'newemail@whatever.com'

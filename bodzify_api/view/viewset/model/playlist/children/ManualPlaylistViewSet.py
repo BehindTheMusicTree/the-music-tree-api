@@ -26,7 +26,7 @@ class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
     def get_queryset(self):
         return ManualPlaylist.objects.filter(user=self.request.user).order_by(Fields.NAME)
 
-    @transaction.atomic
+    # @transaction.atomic not needed
     @extend_schema(request=ManualPlaylistInputEndpointSerializer, responses=ManualPlaylistDetailedSerializer)
     def create(self, request, *args, **kwargs):
         return self._handle_post(request, *args, **kwargs)
@@ -40,7 +40,7 @@ class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
     def retrieve(self, request, *args, **kwargs):
         return self._handle_retrieve(request, *args, **kwargs)
 
-    @transaction.atomic
+    # @transaction.atomic not needed
     @extend_schema(request=ManualPlaylistInputEndpointSerializer, responses=ManualPlaylistDetailedSerializer)
     def update(self, request, *args, **kwargs):
         return self._handle_update(request, *args, **kwargs)

@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+from django.forms import CharField
 from django_filters import CharFilter
 from django.db.models import Q, QuerySet
 
