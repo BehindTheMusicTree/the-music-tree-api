@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from rest_framework import status
 
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase

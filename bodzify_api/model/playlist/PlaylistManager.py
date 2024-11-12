@@ -1,8 +1,8 @@
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
+from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
 from .PlaylistQuerySet import PlaylistQuerySet
-from .PlaylistTypes import PlaylistTypes
-from .children.criteria.CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
+from .children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from .Fields import Fields
 
 
@@ -18,28 +18,28 @@ class PlaylistManager(PublicStandardResourceManager):
         queryset = super().filter(*args, **kwargs)
 
         manual_playlist_queryset = self.none()
-        if type_filter is None or type_filter.lower() == PlaylistTypes.MANUAL.lower():
+        if type_filter is None or type_filter.lower() == PlaylistTypesLabel.MANUAL.lower():
             manual_playlist_queryset = queryset.filter(manual_playlist__isnull=False,
                                                        manual_playlist__name__icontains=name_filter)
 
         criteria_playlist_queryset = self.none()
-        if type_filter is None or type_filter.lower() in [PlaylistTypes.GENRE.lower(),
-                                                          PlaylistTypes.TAG.lower()]:
+        if type_filter is None or type_filter.lower() in [PlaylistTypesLabel.GENRE.lower(),
+                                                          PlaylistTypesLabel.TAG.lower()]:
             criteria_playlist_queryset = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__type__label__icontains=type_filter.upper() if type_filter else '',
                 criteria_playlist__criteria__name__icontains=name_filter)
 
         genreless_playlist = self.none()
-        if (not name_filter or name_filter.lower() in CriteriaPlaylistWithoutCriteriaNames.GENRE.lower()) \
-                and type_filter in [None, PlaylistTypes.GENRE]:
+        if (not name_filter or name_filter.lower() in CriterialessPlaylistNames.GENRE.lower()) \
+                and type_filter in [None, PlaylistTypesLabel.GENRE]:
             genreless_playlist = queryset.filter(criteria_playlist__isnull=False,
                                                  criteria_playlist__criteria__isnull=True,
                                                  criteria_playlist__type_id=CriteriaTypePks.GENRE)
 
         tagless_playlist = self.none()
-        if (not name_filter or name_filter.lower() in CriteriaPlaylistWithoutCriteriaNames.TAG.lower()) \
-                and type_filter in [None, PlaylistTypes.TAG]:
+        if (not name_filter or name_filter.lower() in CriterialessPlaylistNames.TAG.lower()) \
+                and type_filter in [None, PlaylistTypesLabel.TAG]:
             tagless_playlist = queryset.filter(criteria_playlist__isnull=False,
                                                criteria_playlist__criteria__isnull=True,
                                                criteria_playlist__type_id=CriteriaTypePks.TAG)

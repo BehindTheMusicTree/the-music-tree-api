@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from bodzify_api.model.criteria.Criteria import Criteria
     from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
     from .CriteriaPlaylist import CriteriaPlaylist
-    from .CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
+    from .CriterialessPlaylistNames import CriterialessPlaylistNames
 
 
 class CriteriaPlaylistManager(PublicStandardResourceManager):
@@ -19,11 +19,9 @@ class CriteriaPlaylistManager(PublicStandardResourceManager):
     def get_by_name(self, user, name: str) -> Optional['CriteriaPlaylist']:
         return self.filter(user=user).filter(
             models.Q(criteria__name=name) |
-            models.Q(
-                criteria__isnull=True,
-                type__in=[models.Q(name=CriteriaPlaylistWithoutCriteriaNames.GENRE) |
-                          models.Q(name=CriteriaPlaylistWithoutCriteriaNames.TAG)]
-            )
+            models.Q(criteria__isnull=True,
+                     type__in=[models.Q(name=CriterialessPlaylistNames.GENRE) |
+                               models.Q(name=CriterialessPlaylistNames.TAG)])
         ).first()
 
     def update_instance(self, instance: 'CriteriaPlaylist', **kwargs) -> 'CriteriaPlaylist':

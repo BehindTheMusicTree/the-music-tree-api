@@ -1,3 +1,3 @@
-class CriteriaPlaylistWithoutCriteriaNames:
+class CriterialessPlaylistNames:
     GENRE = 'genreless'
     TAG = 'tagless'

@@ -4,9 +4,8 @@ from rest_framework.request import Request
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields
-from bodzify_api.model.playlist.PlaylistTypes import PlaylistTypes
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
-    import CriteriaPlaylistWithoutCriteriaNames
+from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import PlaylistTypesLabel
+from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.serializer.schema.playlist.base.output.detailed import PlaylistDetailedSerializer
 from bodzify_api.serializer.schema.playlist.base.output.simple import PlaylistSimpleSerializer
 from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
@@ -44,28 +43,28 @@ class PlaylistViewSet(AppModelViewSet[Playlist]):
         queryset = Playlist.objects.filter(user=self.request.user)
 
         manual_playlist_queryset = Playlist.objects.none()
-        if type_query_param is None or type_query_param.lower() == PlaylistTypes.MANUAL.lower():
+        if type_query_param is None or type_query_param.lower() == PlaylistTypesLabel.MANUAL.lower():
             manual_playlist_queryset = queryset.filter(manual_playlist__isnull=False,
                                                        manual_playlist__name__icontains=name_query_param)
 
         criteria_playlist_queryset = Playlist.objects.none()
-        if type_query_param is None or type_query_param.lower() in [PlaylistTypes.GENRE.lower(),
-                                                                    PlaylistTypes.TAG.lower()]:
+        if type_query_param is None or type_query_param.lower() in [PlaylistTypesLabel.GENRE.lower(),
+                                                                    PlaylistTypesLabel.TAG.lower()]:
             criteria_playlist_queryset = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__type__label__icontains=type_query_param.upper()
                 if type_query_param else '', criteria_playlist__criteria__name__icontains=name_query_param)
 
         genreless_playlist = Playlist.objects.none()
-        if (not name_query_param or name_query_param.lower() in CriteriaPlaylistWithoutCriteriaNames.GENRE.lower()) \
-                and type_query_param in [None, PlaylistTypes.GENRE]:
+        if (not name_query_param or name_query_param.lower() in CriterialessPlaylistNames.GENRE.lower()) \
+                and type_query_param in [None, PlaylistTypesLabel.GENRE]:
             genreless_playlist = queryset.filter(criteria_playlist__isnull=False,
                                                  criteria_playlist__criteria__isnull=True,
                                                  criteria_playlist__type_id=CriteriaTypePks.GENRE)
 
         tagless_playlist = Playlist.objects.none()
-        if (not name_query_param or name_query_param.lower() in CriteriaPlaylistWithoutCriteriaNames.TAG.lower()) \
-                and type_query_param in [None, PlaylistTypes.TAG]:
+        if (not name_query_param or name_query_param.lower() in CriterialessPlaylistNames.TAG.lower()) \
+                and type_query_param in [None, PlaylistTypesLabel.TAG]:
             tagless_playlist = queryset.filter(criteria_playlist__isnull=False,
                                                criteria_playlist__criteria__isnull=True,
                                                criteria_playlist__type_id=CriteriaTypePks.TAG)

@@ -10,5 +10,9 @@
     "editor.codeActionsOnSave": {
 		"source.fixAll": "explicit"
 	},
-    "files.autoSave": "onFocusChange",
+	"files.autoSave": "onFocusChange",
+	"python.testing.pytestArgs": [
+		"bodzify_api"
+	],
+	"python.testing.unittestEnabled": false,
 }

@@ -6,8 +6,8 @@ from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.test.get_filters.GetFilterWithFreeValuesTestCase import GetFilterWithFreeValuesTestCase
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.filter.set.playlist.Fields import Fields as GetQueryParams
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
-    import CriteriaPlaylistWithoutCriteriaNames
+from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames \
+    import CriterialessPlaylistNames
 
 
 class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
@@ -44,14 +44,14 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][GetQueryParams.NAME] == CriteriaPlaylistWithoutCriteriaNames.GENRE
+        assert self.results[0][GetQueryParams.NAME] == CriterialessPlaylistNames.GENRE
 
     def test_tagless_special_name_then_results(self) -> None:
         data_dict = {GetQueryParams.NAME: 'aGl'}
         response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][GetQueryParams.NAME] == CriteriaPlaylistWithoutCriteriaNames.TAG
+        assert self.results[0][GetQueryParams.NAME] == CriterialessPlaylistNames.TAG
 
     def test_value_in_simple_criteria_and_special_names_then_results(self) -> None:
         manual_playlist_name = "lEsson"
@@ -66,5 +66,5 @@ class TestCase(GetFilterWithFreeValuesTestCase, PlaylistTestCase):
         names_lowered = [result[GetQueryParams.NAME].lower() for result in self.results]
         assert manual_playlist_name.lower() in names_lowered
         assert criteria_name.lower() in names_lowered
-        assert CriteriaPlaylistWithoutCriteriaNames.GENRE.lower() in names_lowered
-        assert CriteriaPlaylistWithoutCriteriaNames.TAG.lower() in names_lowered
+        assert CriterialessPlaylistNames.GENRE.lower() in names_lowered
+        assert CriterialessPlaylistNames.TAG.lower() in names_lowered

@@ -1,8 +1,8 @@
 from rest_framework import status
 
-from bodzify_api.model.playlist.PlaylistTypes import PlaylistTypes
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
-    import CriteriaPlaylistWithoutCriteriaNames
+from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
+from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames \
+    import CriterialessPlaylistNames
 from bodzify_api.serializer.schema.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.filter.set.playlist.Fields import Fields as GetQueryParams
@@ -12,8 +12,8 @@ class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {
-            GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
-            GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.TAG
+            GetQueryParams.TYPE_LABEL: PlaylistTypesLabel.GENRE,
+            GetQueryParams.NAME: CriterialessPlaylistNames.TAG
         }
         response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
@@ -21,13 +21,13 @@ class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_genreless_then_one_result(self):
         data_dict = {
-            GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
-            GetQueryParams.NAME: CriteriaPlaylistWithoutCriteriaNames.GENRE
+            GetQueryParams.TYPE_LABEL: PlaylistTypesLabel.GENRE,
+            GetQueryParams.NAME: CriterialessPlaylistNames.GENRE
         }
         response = self._get_playlists(data_dict=data_dict)
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][PlaylistGetFields.NAME] == CriteriaPlaylistWithoutCriteriaNames.GENRE
+        assert self.results[0][PlaylistGetFields.NAME] == CriterialessPlaylistNames.GENRE
 
     def test_type_genre_and_genre_name_then_results(self):
         genre1_name = "Rock"
@@ -36,7 +36,7 @@ class TestCase(PlaylistTestCase):
         self.model_fixture_factory.create_genre(name=genre2_name)
 
         data_dict = {
-            GetQueryParams.TYPE_LABEL: PlaylistTypes.GENRE,
+            GetQueryParams.TYPE_LABEL: PlaylistTypesLabel.GENRE,
             GetQueryParams.NAME: 'rock'
         }
         response = self._get_playlists(data_dict=data_dict)

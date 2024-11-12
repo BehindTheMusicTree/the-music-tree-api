@@ -1,7 +1,5 @@
-
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.criteria.input.endpoint.put import Fields as PutFields
 from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as LibTrackPostFields

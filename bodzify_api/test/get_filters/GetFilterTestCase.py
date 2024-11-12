@@ -1,6 +1,4 @@
-
-
-from typing import List, Optional
+from typing import Optional
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 

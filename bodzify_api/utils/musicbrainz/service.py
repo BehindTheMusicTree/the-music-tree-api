@@ -44,7 +44,7 @@ def get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprin
             error_message = error_dict[ApiFields.Names.MESSAGE]
             if error_code == 3:
                 raise musicbrainz_exception.InvalidFingerprintErrorStatusErrorMusicbrainzRecordingLookupException(
-                    f"Original lookup error message: \"{error_message}\"")
+                    f"Musicbrainz original lookup error message: \"{error_message}\"")
             else:
                 exception_message = f"Error while getting MusicBrainz recording ID: {error_code} - {error_message}"
                 raise musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(exception_message)

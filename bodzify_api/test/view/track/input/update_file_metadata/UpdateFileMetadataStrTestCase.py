@@ -1,4 +1,3 @@
-
 from typing import Optional
 
 from rest_framework import status
@@ -15,12 +14,11 @@ class UpdateFileMetadataStrTestCase(LibTrackTestCase):
     file_extension: str
     length_max: int
 
-    def _test_value(
-            self,
-            value: Optional[str],
-            additional_data_dict,
-            value_expected_in_metadata=VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED,
-            file_has_tags=False):
+    def _test_value(self,
+                    value: Optional[str],
+                    additional_data_dict,
+                    value_expected_in_metadata=VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED,
+                    file_has_tags=False):
         data = {self.save_field: value}
 
         if additional_data_dict:

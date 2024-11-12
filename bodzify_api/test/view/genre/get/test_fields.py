@@ -2,7 +2,6 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Fields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
-from bodzify_api.serializer.schema.criteria.output.Fields import Fields as GetFields
 
 
 class TestCase(GenreTestCase):

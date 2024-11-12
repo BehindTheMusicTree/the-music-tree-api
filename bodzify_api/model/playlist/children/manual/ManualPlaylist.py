@@ -3,8 +3,9 @@ from django.db import models
 from bodzify_api import settings
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
-from ...PlaylistTypes import PlaylistTypes
 from .Fields import Fields
+
+TYPE_LABEL = 'manual'
 
 
 class ManualPlaylist(Playlist):
@@ -23,4 +24,4 @@ class ManualPlaylist(Playlist):
 
     @property
     def type_label(self):
-        return PlaylistTypes.MANUAL
+        return TYPE_LABEL

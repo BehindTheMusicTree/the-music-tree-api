@@ -1,10 +1,7 @@
-
-
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.schema.criteria.input.endpoint.put import \
-    Fields as PutFields
+from bodzify_api.serializer.schema.criteria.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 

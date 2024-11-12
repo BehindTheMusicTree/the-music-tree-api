@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from rest_framework import status
 
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase

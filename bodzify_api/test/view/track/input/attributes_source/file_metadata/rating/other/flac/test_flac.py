@@ -1,5 +1,5 @@
-
 import pytest
+
 from rest_framework import status
 
 from bodzify_api.test.view.track.input.attributes_source.file_metadata.rating.RatingNotNoneWithHalfValuesAndZeroTestCase \

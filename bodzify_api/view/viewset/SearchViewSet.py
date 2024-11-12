@@ -10,8 +10,8 @@ from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylistWithoutCriteriaNames \
-    import CriteriaPlaylistWithoutCriteriaNames
+from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames \
+    import CriterialessPlaylistNames
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
@@ -74,11 +74,11 @@ def criteria_playlist_filter(queryset, request, *args, **kwargs):
         unfiltered_queryset = queryset
         if query != "":
             queryset = unfiltered_queryset.filter(criteria__name__icontains=query)
-            if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistWithoutCriteriaNames.GENRE):
+            if is_string1_part_of_string2_regardless_of_case(query, CriterialessPlaylistNames.GENRE):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
                     type_pk=CriteriaTypePks.GENRE)
-            if is_string1_part_of_string2_regardless_of_case(query, CriteriaPlaylistWithoutCriteriaNames.TAG):
+            if is_string1_part_of_string2_regardless_of_case(query, CriterialessPlaylistNames.TAG):
                 queryset = queryset | unfiltered_queryset.filter(
                     criteria__isnull=True,
                     type_pk=CriteriaTypePks.TAG)

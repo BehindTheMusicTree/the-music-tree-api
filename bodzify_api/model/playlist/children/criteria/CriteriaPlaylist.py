@@ -8,7 +8,7 @@ from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
-from .CriteriaPlaylistWithoutCriteriaNames import CriteriaPlaylistWithoutCriteriaNames
+from .CriterialessPlaylistNames import CriterialessPlaylistNames
 from .CriteriaPlaylistManager import CriteriaPlaylistManager
 from .Fields import Fields
 
@@ -52,9 +52,9 @@ class CriteriaPlaylist(Playlist):
     @property
     def name_when_no_criteria(self) -> str:
         if self.type.pk == CriteriaTypePks.GENRE:
-            return CriteriaPlaylistWithoutCriteriaNames.GENRE
+            return CriterialessPlaylistNames.GENRE
         if self.type.pk == CriteriaTypePks.TAG:
-            return CriteriaPlaylistWithoutCriteriaNames.TAG
+            return CriterialessPlaylistNames.TAG
         else:
             raise ValueError(f'Unknown criteria type: {self.type.pk}')
 

@@ -1,4 +1,3 @@
-
 import pytest
 
 from bodzify_api.test.view.track.TrackTestCase import LibTrackTestCase
@@ -17,5 +16,5 @@ class TestCase(LibTrackTestCase):
     assert response.status_code == status.HTTP_201_CREATED
     """
 
-    def test_errorWhenTooBig(self):
+    def test_too_big_then_error(self):
         ""

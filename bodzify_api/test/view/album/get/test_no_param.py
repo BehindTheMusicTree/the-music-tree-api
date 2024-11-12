@@ -1,4 +1,3 @@
-
 from rest_framework import status
 
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase

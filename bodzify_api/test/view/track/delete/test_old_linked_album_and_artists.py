@@ -1,5 +1,5 @@
-
 import pytest
+
 from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
