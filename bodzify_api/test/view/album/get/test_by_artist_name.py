@@ -9,7 +9,9 @@ class TestCase(AlbumTestCase):
     def test_filter_empty_then_return_all(self):
         self.model_fixture_factory.create_album(name="None")
         self.model_fixture_factory.create_album(name="Kill")
+
         response = self._get_albums(album_artists_name='')
+
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 2
 
@@ -17,7 +19,9 @@ class TestCase(AlbumTestCase):
         artist = self.model_fixture_factory.create_artist(name="Muse")
         album = self.model_fixture_factory.create_album(name="Dark", album_artists=[artist])
         self.model_fixture_factory.create_album(name="Jon")
+
         response = self._get_albums(album_artists_name='Mus')
+
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 1
         assert self.results[0][AlbumFields.NAME] == album.name
@@ -26,7 +30,9 @@ class TestCase(AlbumTestCase):
         artist = self.model_fixture_factory.create_artist(name="Muse")
         album = self.model_fixture_factory.create_album(name="Dark", album_artists=[artist])
         self.model_fixture_factory.create_album(name="Jon")
+
         response = self._get_albums(album_artists_name='MUs')
+
         assert response.status_code == status.HTTP_200_OK
         assert self.overall_total == 1
         assert self.results[0][AlbumFields.NAME] == album.name

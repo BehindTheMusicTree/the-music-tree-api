@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class Album(LibTrackMixin):
     name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)  # type: ignore
     year = models.CharField(max_length=4, default=None, null=True)
-    album_artists: QuerySet[Artist] = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
+    album_artists = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
 
     objects: AlbumManager = AlbumManager()
 
@@ -39,7 +39,7 @@ class Album(LibTrackMixin):
 
         string = f"{self.uuid} {self.name}"
 
-        artists = list(self.album_artists.all())
+        artists = self.album_artists.all()
         artist_names = " ".join(str(artist) for artist in artists) if artists else "[No Artist]"
         string += f" by {artist_names}"
 

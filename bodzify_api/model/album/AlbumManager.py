@@ -2,13 +2,11 @@ from typing import TYPE_CHECKING, List, Optional
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
-from bodzify_api.model.user.User import User
-from bodzify_api.test.view import album
 from .Fields import Fields
 
 if TYPE_CHECKING:
+    from bodzify_api.model.user.User import User
     from bodzify_api.model.artist.Artist import Artist
     from .Album import Album
 
@@ -17,7 +15,7 @@ class AlbumManager(PublicStandardResourceManager):
     model: 'Album'
 
     def _get_instance_from_name_and_artists_list_after_having_eventually_created_instance(
-            self, user: User, album_name: str, album_artists: list) -> Optional['Album']:
+            self, user: 'User', album_name: str, album_artists: list) -> Optional['Album']:
         album_queryset = self.model.objects.filter(user=user, name=album_name)
         if len(album_artists) > 0:
             for album_artist in album_artists:
@@ -25,22 +23,23 @@ class AlbumManager(PublicStandardResourceManager):
         else:
             album_queryset = album_queryset.filter(album_artists=None)
 
-        return self.create_instance_with_album_artists_list(
-            user=user, album_name=album_name, album_artists_list=album_artists) \
+        return self.create_instance_with_album_artists_list(user=user,
+                                                            album_name=album_name,
+                                                            album_artists_list=album_artists) \
             if album_queryset.count() == 0 else album_queryset.first()
 
     def get_default_ordering(self) -> list[str]:
         return [Fields.NAME]
 
     def create_instance_with_album_artists_list(
-            self, user: User, album_name: str, album_artists_list: list['Artist']) -> 'Album':
+            self, user: 'User', album_name: str, album_artists_list: list['Artist']) -> 'Album':
         album: Album = self.create(user=user, name=album_name)
         if album_artists_list:
             album.album_artists.set(album_artists_list)
         return album
 
     def get_album_from_name_and_album_artists_names_list_after_eventual_creations(
-            self, user: User, album_name: str, album_artists_names_list: list) -> Optional['Album']:
+            self, user: 'User', album_name: str, album_artists_names_list: list) -> Optional['Album']:
         from bodzify_api.model.artist.Artist import Artist
         album_artists = \
             [Artist.objects.get_or_create(user=user, name=artist_name)[0] for artist_name in album_artists_names_list] \
@@ -79,7 +78,7 @@ class AlbumManager(PublicStandardResourceManager):
     def delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(self, instance: 'Album'):
         from bodzify_api.model.artist.Artist import Artist
         if instance.library_tracks.count() == 0:
-            album_artists: list[Artist] = list(instance.album_artists.all())
+            album_artists = instance.album_artists.all()
             instance.delete()
             for album_artist in album_artists:
                 Artist.objects.delete_instance_if_nothing_linked(album_artist)

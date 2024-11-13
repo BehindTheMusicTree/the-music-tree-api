@@ -49,3 +49,6 @@ def create_user_criterialess_playlists(sender, instance, created, **kwargs):
         for criteria_type in [CriteriaTypePks.GENRE, CriteriaTypePks.TAG]:
             type = CriteriaType.objects.get(pk=criteria_type)
             CriteriaPlaylist.objects.create(user=instance, type=type, criteria=None)
+
+        from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+        AllLibTracksMixin.objects.create(user=instance)

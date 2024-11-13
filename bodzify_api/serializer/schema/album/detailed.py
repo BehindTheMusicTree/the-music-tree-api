@@ -1,11 +1,14 @@
+from rest_framework import serializers
 
 from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.schema.album.fields import Fields
 from bodzify_api.serializer.schema.artist.minimum import ArtistMinimumSerializer
-from bodzify_api.serializer.schema.lib_track_mixin.detailed import LibTrackMixinDetailedSerializer
+from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album_with_position_in_album \
+    import LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer
 
 
-class AlbumDetailedSerializer(LibTrackMixinDetailedSerializer):
+class AlbumDetailedSerializer(serializers.ModelSerializer):
+    library_tracks = serializers.SerializerMethodField()
     album_artists = ArtistMinimumSerializer(many=True)
 
     class Meta:
@@ -21,3 +24,7 @@ class AlbumDetailedSerializer(LibTrackMixinDetailedSerializer):
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]
+
+    def get_library_tracks(self, instance: Album):
+        sorted_tracks = instance.lib_tracks_sorted
+        return LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(sorted_tracks, many=True).data

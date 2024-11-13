@@ -1,4 +1,4 @@
-from bodzify_api.model.lib_track_mixin.Fields import Fields as ModelFields
+from bodzify_api.model.all_lib_tracks_mixin.Fields import Fields as ModelFields
 
 
 class Fields:

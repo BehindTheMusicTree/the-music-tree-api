@@ -108,7 +108,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
         if self.album:
             album_name_tag = self.album.name
             album_artists_name_index = 0
-            album_artists_list: list[Artist] = list(self.album.album_artists.all())
+            album_artists_list = self.album.album_artists.all()
             for album_artist in album_artists_list:
                 if album_artists_name_index != 0:
                     album_artists_tag = album_artists_tag + METADATA_ARTISTS_SEPARATION_CHAR

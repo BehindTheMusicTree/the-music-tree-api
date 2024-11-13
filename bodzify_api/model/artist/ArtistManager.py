@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
 
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
-from bodzify_api.model.user.User import User
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
 from .Fields import Fields
 
 if TYPE_CHECKING:
+    from bodzify_api.model.user.User import User
     from .Artist import Artist
 
 
@@ -24,7 +24,7 @@ class ArtistManager(PublicStandardResourceManager):
         return [Fields.NAME]
 
     def get_artists_list_from_names_str_after_eventual_creation(
-            self, user: User, artists_names_str: str) -> list['Artist']:
+            self, user: 'User', artists_names_str: str) -> list['Artist']:
         artists_names_list = self.get_artists_names_list_from_str(artists_names_str)
         return [self.get_or_create(user=user, name=artist_name)[0] for artist_name in artists_names_list] \
             if len(artists_names_list) > 0 else []
