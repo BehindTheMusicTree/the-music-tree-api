@@ -1,7 +1,7 @@
 meta {
-  name: Feu  artist Joni Jona
+  name: love  album Jo artist steeve
   type: http
-  seq: 6
+  seq: 9
 }
 
 post {
@@ -16,11 +16,12 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  artistsNamesStr: Joni, jona
-  title: Feus
+  albumName: Jo
+  artistsNames: steeve
+  positionInAlbum: 2
 }
 
 vars:post-response {
-  artistJoniUuid: res.body.artist.uuid
-  trackFeuUuid: res.body.uuid
+  albumJoUuid: res.body.album.uuid
+  artistSteeveUuid: res.body.artists[0].uuid
 }

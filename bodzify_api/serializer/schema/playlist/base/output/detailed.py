@@ -14,7 +14,7 @@ class PlaylistDetailedSerializer(serializers.ModelSerializer):
         model = Playlist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.TYPE_LABEL,
+                  Fields.TYPE_LABEL_USER_FRIENDLY,
                   Fields.LIB_TRACKS_COUNT,
                   Fields.LIB_TRACK_PLAYLIST_RELS,
                   Fields.LIB_TRACKS_ARCHIVED_COUNT,

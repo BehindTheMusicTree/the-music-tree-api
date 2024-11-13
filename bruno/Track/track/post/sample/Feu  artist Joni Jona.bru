@@ -1,7 +1,7 @@
 meta {
-  name: title Beer to Bro-country
+  name: Feu  artist Joni Jona
   type: http
-  seq: 4
+  seq: 12
 }
 
 post {
@@ -16,6 +16,11 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  title: Beer
-  genreName: Bro-country
+  artistsNamesStr: Joni, jona
+  title: Feus
+}
+
+vars:post-response {
+  artistJoniUuid: res.body.artist.uuid
+  trackFeuUuid: res.body.uuid
 }

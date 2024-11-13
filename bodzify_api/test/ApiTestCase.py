@@ -97,7 +97,7 @@ class ApiTestCase(AppTestCase):
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LibTrackPostFields.TRACK_FILE_USER_FRIENDLY: sample_file}
             if kwargs:
-                kwargs = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(kwargs))
+                kwargs = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(**kwargs))
             else:
                 kwargs = file_field_dict
             response = self.api_client.post(path=reverse('library-track-list'), data=kwargs, format='multipart')

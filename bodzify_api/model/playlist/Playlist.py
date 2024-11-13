@@ -37,9 +37,13 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
 
     @property
     def type_label(self) -> str:
-        if self.manual_playlist:
+        if hasattr(self, Fields.MANUAL_PLAYLIST):
+            if not self.manual_playlist:
+                raise ValueError('Playlist has no manual playlist')
             return self.manual_playlist.type_label
-        elif self.criteria_playlist:
+        elif hasattr(self, Fields.CRITERIA_PLAYLIST):
+            if not self.criteria_playlist:
+                raise ValueError('Playlist has no criteria playlist')
             return self.criteria_playlist.type_label
         else:
             raise ValueError('Playlist has no type')
@@ -47,9 +51,13 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
     @property
     @abstractmethod
     def name(self) -> str:
-        if self.manual_playlist:
+        if hasattr(self, Fields.MANUAL_PLAYLIST):
+            if not self.manual_playlist:
+                raise ValueError('Playlist has no manual playlist')
             return self.manual_playlist.name
-        elif self.criteria_playlist:
+        elif hasattr(self, Fields.CRITERIA_PLAYLIST):
+            if not self.criteria_playlist:
+                raise ValueError('Playlist has no criteria playlist')
             return self.criteria_playlist.name
         else:
             raise ValueError('Playlist has no name')

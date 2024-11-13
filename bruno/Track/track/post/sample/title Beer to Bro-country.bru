@@ -1,7 +1,7 @@
 meta {
-  name: bande album artists jul sch
+  name: title Beer to Bro-country
   type: http
-  seq: 3
+  seq: 15
 }
 
 post {
@@ -16,11 +16,6 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  albumArtistsNames: jul,sch,kofs
-  albumName: bande organisee
-}
-
-vars:post-response {
-  artistJulUuid: res.body.album.albumArtists[0].uuid
-  artistSchUuid: res.body.album.albumArtists[1].uuid
+  title: Beer
+  genreName: Bro-country
 }
