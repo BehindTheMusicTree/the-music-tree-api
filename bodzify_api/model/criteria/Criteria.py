@@ -11,6 +11,7 @@ from .type.CriteriaType import CriteriaType
 from .Fields import Fields
 
 if TYPE_CHECKING:
+    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
     from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 
@@ -39,6 +40,10 @@ class Criteria(LibTrackMixin):
         criteria_playlist: 'CriteriaPlaylist'
 
     objects: CriteriaManager = CriteriaManager()
+
+    @property
+    def library_tracks(self) -> models.QuerySet['LibraryTrack']:
+        return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     @property
     def is_root(self) -> bool:
