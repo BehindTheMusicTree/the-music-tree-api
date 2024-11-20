@@ -1,0 +1,27 @@
+meta {
+  name: sample album bo artist none
+  type: http
+  seq: 17
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
+  artistsNames: mat
+  albumName: bo
+  albumArtistsNames: muse
+}
+
+vars:post-response {
+  artistMatUuid: res.body.artists[0].uuid
+  albumBoUuid: res.body.album.uuid
+}

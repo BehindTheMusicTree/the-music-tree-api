@@ -21,6 +21,6 @@ class EmptiableCharFilter(CharFilter):
             method = getattr(parent, self.method_name, None)
             if not method:
                 raise AttributeError(f'{parent} object has no attribute {self.method_name}')
-            if value:
+            if value is not None:
                 qs = method(qs, self.field_name, value)
         return qs
