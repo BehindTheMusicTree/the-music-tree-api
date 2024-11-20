@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -15,7 +15,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="archived 1", artists=[artist], archived=True)
         track_love = self.model_fixture_factory.create_lib_track_with_file(title="Love", artists=[artist])
 
-        response = self._put_lib_track(uuid=track_love.uuid, data_dict={PutFields.ARCHIVED: "true"})
+        response = self._put_lib_track(uuid=track_love.uuid, **{PutFields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
@@ -30,7 +30,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="archived 1", artists=[artist], archived=True)
         track = self.model_fixture_factory.create_lib_track_with_file(title="Love", artists=[artist], archived=True)
 
-        response = self._put_lib_track(uuid=track.uuid, data_dict={PutFields.ARCHIVED: "false"})
+        response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: "false"})
 
         assert response.status_code == status.HTTP_200_OK
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())

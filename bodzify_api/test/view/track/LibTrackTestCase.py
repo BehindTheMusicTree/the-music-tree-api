@@ -4,7 +4,7 @@ from uuid import UUID
 from django.urls import reverse
 from rest_framework import status
 
-from bodzify_api.serializer.schema.lib_track.input.endpoint.extract import Fields as LibTrackExtractFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.extract import Fields as LibTrackExtractFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
@@ -30,7 +30,7 @@ class LibTrackTestCase(ApiTestCase):
     SAMPLE_LIB_TRACK_FLAC_DURATION = 1
 
     def _extract(self, **kwargs):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(**kwargs), doseq=True)
+        data_url_encoded = urlencode(replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.post(path=reverse('library-track-extract'),
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
@@ -52,14 +52,14 @@ class LibTrackTestCase(ApiTestCase):
         extract_data_dict = {LibTrackExtractFields.URL: url}
 
         if kwargs:
-            extract_data_dict = self._merge_two_dicts(extract_data_dict, kwargs)
+            extract_data_dict = merge_two_dicts(extract_data_dict, kwargs)
 
-        response = self._extract(kwargs=self._replace_none_values_by_empty_string(kwargs=extract_data_dict))
+        response = self._extract(**replace_none_values_by_empty_string(**extract_data_dict))
         return response
 
     def _post_lib_track_without_file(self, **kwargs):
         return self.api_client.post(path=reverse('library-track-list'),
-                                    data=self._replace_none_values_by_empty_string(**kwargs),
+                                    data=replace_none_values_by_empty_string(**kwargs),
                                     format='json')
 
     def _post_lib_track_with_queenshowmustgoon(self, **kwargs):
@@ -115,7 +115,7 @@ class LibTrackTestCase(ApiTestCase):
     def _put_lib_track(self, uuid, **kwargs):
         response = self.api_client.put(
             path=reverse('library-track-detail', kwargs={'pk': uuid}),
-            data=self._replace_none_values_by_empty_string(**kwargs),
+            data=replace_none_values_by_empty_string(**kwargs),
             format='json')
         if response.status_code == status.HTTP_200_OK:
             self._set_saved_lib_track_attribute(response)

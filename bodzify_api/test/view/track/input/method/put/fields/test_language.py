@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
 
 
@@ -10,7 +10,7 @@ class TestCase(NullableFieldTestCase):
         language = "a"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.LANGUAGE: language})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: language})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.language == language
@@ -19,7 +19,7 @@ class TestCase(NullableFieldTestCase):
         language = "French"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language=language)
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={})
+        response = self._put_lib_track(lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.language == language
@@ -27,7 +27,7 @@ class TestCase(NullableFieldTestCase):
     def test_empty_then_none(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language="French")
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.LANGUAGE: ""})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: ""})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.language == None
@@ -36,7 +36,7 @@ class TestCase(NullableFieldTestCase):
         language = "a"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language="French")
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.LANGUAGE: language})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: language})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.language == language

@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
 
 
@@ -11,7 +11,7 @@ class TestCase(NullableFieldTestCase):
         artist = self.model_fixture_factory.create_artist(name="a-ha")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", artists=[artist])
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={})
+        response = self._put_lib_track(lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.artists.count() == 1
@@ -21,7 +21,7 @@ class TestCase(NullableFieldTestCase):
         artist_old = self.model_fixture_factory.create_artist(name="a-ha")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", artists=[artist_old])
 
-        response = self._put_lib_track(uuid=lib_track.uuid, data_dict={PutFields.ARTISTS_NAMES: ''})
+        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.ARTISTS_NAMES: ''})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.artists.count() == 0
@@ -32,7 +32,7 @@ class TestCase(NullableFieldTestCase):
         artist_new = self.model_fixture_factory.create_artist(name="Koko")
 
         data = {PutFields.ARTISTS_NAMES: artist_new.name}
-        response = self._put_lib_track(uuid=lib_track.uuid, data_dict=data)
+        response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.artists.count() == 1
@@ -45,7 +45,7 @@ class TestCase(NullableFieldTestCase):
         artist_new_2 = self.model_fixture_factory.create_artist(name="Lopato")
 
         data = {PutFields.ARTISTS_NAMES: f"{artist_new_1.name}, {artist_new_2.name}"}
-        response = self._put_lib_track(uuid=lib_track.uuid, data_dict=data)
+        response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.artists.count() == 2
@@ -59,7 +59,7 @@ class TestCase(NullableFieldTestCase):
         track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", artists=[artist])
 
         data = {PutFields.ARTISTS_NAMES: "Autre artiste"}
-        response = self._put_lib_track(uuid=track.uuid, data_dict=data)
+        response = self._put_lib_track(uuid=track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
         assert not Artist.objects.filter(user=self.test_user1, name=artist_name).exists()
@@ -70,7 +70,7 @@ class TestCase(NullableFieldTestCase):
         track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", artists=[artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", artists=[artist])
 
-        response = self._put_lib_track(uuid=track.uuid, data_dict={PutFields.ARTISTS_NAMES: artist_name})
+        response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARTISTS_NAMES: artist_name})
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(user=self.test_user1, name=artist_name).exists()
 
@@ -81,7 +81,7 @@ class TestCase(NullableFieldTestCase):
         album = self.model_fixture_factory.create_album(name="Hunting High and Low", album_artists=[artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album)
 
-        response = self._put_lib_track(uuid=track.uuid, data_dict={PutFields.ARTISTS_NAMES: artist_name})
+        response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARTISTS_NAMES: artist_name})
 
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(user=self.test_user1, name=artist_name).exists()

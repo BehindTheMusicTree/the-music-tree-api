@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.fields.NotNullableFieldTestCase import NotNullableFieldTestCase
 
 
@@ -10,7 +10,7 @@ class TestCase(NotNullableFieldTestCase):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
         title_new = "a"
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.TITLE: title_new})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.TITLE: title_new})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.title == title_new
@@ -19,7 +19,7 @@ class TestCase(NotNullableFieldTestCase):
         old_title = "Love"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title=old_title)
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={})
+        response = self._put_lib_track(lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.title == old_title
@@ -27,7 +27,7 @@ class TestCase(NotNullableFieldTestCase):
     def test_empty_then_error(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.TITLE: ""}
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.TITLE: ""}
                                        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -35,7 +35,7 @@ class TestCase(NotNullableFieldTestCase):
         title = "a"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title=title)
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.TITLE: title})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.TITLE: title})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.title == title

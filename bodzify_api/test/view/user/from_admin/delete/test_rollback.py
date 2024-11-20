@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.schema.lib_track.input.Fields import Fields
+from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
 

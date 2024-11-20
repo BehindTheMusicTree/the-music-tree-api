@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.schema.lib_track.input.endpoint.extract import Fields as ExtractFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.extract import Fields as ExtractFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -12,7 +12,7 @@ class FilenameTestCase(LibTrackTestCase):
             ExtractFields.TITLE: "ImHere",
             ExtractFields.ARTISTS_NAMES_STR: "Roméo",
         }
-        response = self._extract_default_mine_track(kwargs=data_dict)
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.track_file.filename == \
@@ -25,7 +25,7 @@ class FilenameTestCase(LibTrackTestCase):
             ExtractFields.TITLE: title,
             ExtractFields.ARTISTS_NAMES_STR: artist_name,
         }
-        response = self._extract_default_mine_track(kwargs=data_dict)
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.track_file.filename == \
@@ -38,7 +38,7 @@ class FilenameTestCase(LibTrackTestCase):
             ExtractFields.TITLE: title,
             ExtractFields.ARTISTS_NAMES_STR: artist_name,
         }
-        response = self._extract_default_mine_track(kwargs=data_dict)
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.track_file.filename == \
@@ -47,7 +47,7 @@ class FilenameTestCase(LibTrackTestCase):
     def test_only_title_in_data_then_filename_with_title(self):
         title = "Hellö"
         data_dict = {ExtractFields.TITLE: title}
-        response = self._extract_default_mine_track(kwargs=data_dict)
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.track_file.filename == \
@@ -59,7 +59,7 @@ class FilenameTestCase(LibTrackTestCase):
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"
             + "_KN414JidBikY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
         data_dict = {ExtractFields.URL: track_url}
-        response = self._extract(kwargs=data_dict)
+        response = self._extract(**data_dict)
         assert response.status_code == status.HTTP_201_CREATED
         assert len(self.saved_lib_track.track_file.filename) == \
             settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH

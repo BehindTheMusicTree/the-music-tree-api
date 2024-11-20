@@ -15,11 +15,11 @@ from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames \
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
-from bodzify_api.serializer.schema.album.minimum import AlbumMinimumSerializer
-from bodzify_api.serializer.schema.artist.simple import ArtistSimpleSerializer
-from bodzify_api.serializer.schema.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
-from bodzify_api.serializer.schema.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
-from bodzify_api.serializer.schema.lib_track.output.detailed import LibTrackDetailedSerializer
+from bodzify_api.serializer.schema.model.album.minimum import AlbumMinimumSerializer
+from bodzify_api.serializer.schema.model.artist.simple import ArtistSimpleSerializer
+from bodzify_api.serializer.schema.model.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
+from bodzify_api.serializer.schema.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
+from bodzify_api.serializer.schema.model.lib_track.output.detailed import LibTrackDetailedSerializer
 from ..pagination.DefaultMultipleModelLimitOffsetPagination import DefaultMultipleModelLimitOffsetPagination
 
 

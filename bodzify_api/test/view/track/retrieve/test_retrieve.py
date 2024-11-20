@@ -2,7 +2,7 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as PostFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as PostFields
 
 
 @pytest.mark.django_db
@@ -11,7 +11,7 @@ class TestCase(LibTrackTestCase):
     def test_retrieve_track_then_ok(self):
         title = "We're All To Blame"
         data = {PostFields.TITLE: title}
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_201_CREATED
         track_uuid = self.saved_lib_track.uuid
 
@@ -21,7 +21,7 @@ class TestCase(LibTrackTestCase):
     def test_retrieve_track_of_other_user_then_error(self):
         title = "We're All To Blame"
         data = {PostFields.TITLE: title}
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_201_CREATED
         track_uuid = self.saved_lib_track.uuid
 

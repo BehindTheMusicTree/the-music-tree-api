@@ -25,10 +25,10 @@ class UpdateFileMetadataIntTestCase(LibTrackTestCase):
 
         if file_has_tags:
             response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(
-                extension=self.file_extension, data_dict=data)
+                extension=self.file_extension, **data)
         else:
             response = self._post_lib_track_with_generic_sample_no_tags(
-                extension=self.file_extension, data_dict=data)
+                extension=self.file_extension, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
 

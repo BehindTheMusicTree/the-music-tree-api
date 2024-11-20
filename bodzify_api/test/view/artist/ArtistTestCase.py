@@ -10,7 +10,7 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 class ArtistTestCase(ApiTestCase):
 
     def _post_artist(self, **kwargs):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(kwargs), doseq=True)
+        data_url_encoded = urlencode(replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.post(path=reverse('artist-list'),
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
@@ -31,7 +31,7 @@ class ArtistTestCase(ApiTestCase):
         return response
 
     def _put_artist(self, uuid: UUID, **kwargs):
-        data_url_encoded = urlencode(query=self._replace_none_values_by_empty_string(kwargs), doseq=True)
+        data_url_encoded = urlencode(query=replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.put(path=reverse('artist-detail', kwargs={'pk': uuid}),
                                        data=data_url_encoded,
                                        content_type='application/x-www-form-urlencoded')

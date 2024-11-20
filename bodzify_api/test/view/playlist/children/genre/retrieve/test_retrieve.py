@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import Fields as GetResultFields
+from bodzify_api.serializer.schema.model.playlist.children.criteria.output.detailed import Fields as GetResultFields
 from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 
 

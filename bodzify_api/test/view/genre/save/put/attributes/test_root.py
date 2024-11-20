@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.schema.criteria.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.criteria.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 
@@ -11,7 +11,7 @@ class TestCase(GenreTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk")
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.root == rock_genre
@@ -20,7 +20,7 @@ class TestCase(GenreTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: ""})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: ""})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.root == punk_genre
@@ -30,7 +30,7 @@ class TestCase(GenreTestCase):
         punk_genre = self.model_fixture_factory.create_genre(name="Punk")
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.root == rock_genre
@@ -46,7 +46,7 @@ class TestCase(GenreTestCase):
         bretonpunkhardcore_genre = self.model_fixture_factory.create_genre(name="Breton punk hardcore",
                                                                            parent=frenchpunkhardcore_genre)
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.root == rock_genre
@@ -64,7 +64,7 @@ class TestCase(GenreTestCase):
         punk_genre = self.model_fixture_factory.create_genre(name="Punk", parent=rock_genre)
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: ""})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: ""})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.root == punk_genre

@@ -1,4 +1,4 @@
-from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
+from typing import Counter, Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -38,7 +38,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def __init__(self,
                  model_class: Type[T],
-                 filter_class: Optional[Type[AppFilterSet]] = None,
+                 filterset_class: Optional[Type[AppFilterSet]] = None,
                  simple_serializer_class: Optional[Type[ModelSerializer]] = None,
                  detailed_serializer_class: Optional[Type[ModelSerializer]] = None,
                  update_serializer_class: Optional[Type[Serializer]] = None,
@@ -46,7 +46,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
                  **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
-        self.filter_class = filter_class
+        self.filter_class = filterset_class
         self.simple_serializer_class = simple_serializer_class
         self.detailed_serializer_class = detailed_serializer_class
         self.update_serializer_class = update_serializer_class
@@ -120,8 +120,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return APIErrorResponse.from_validation_error(e)
 
     def _handle_post(self, request: Request, creation_type: Optional[str] = None, *args, **kwargs) -> Response:
-        create_data_in_camel_case = data_transformer.convert_data_to_dict(request.data)
-        create_data_in_snake_case = data_transformer.dict_to_snake_case(create_data_in_camel_case)
+        create_data_in_snake_case = data_transformer.dict_to_snake_case(request.data)
+        print('create_data_in_snake_case', create_data_in_snake_case)
         instance = self._create_instance(request=request,
                                          create_data=create_data_in_snake_case,
                                          creation_type=creation_type)
@@ -135,6 +135,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return Response(serializer.data)
 
     def _handle_update(self, request: Request, *args, **kwargs) -> Response:
+        print(request.data)
         instance = self.get_object()
         update_data_in_camel_case = data_transformer.convert_data_to_dict(request.data)
         update_data_in_snake_case = data_transformer.dict_to_snake_case(update_data_in_camel_case)

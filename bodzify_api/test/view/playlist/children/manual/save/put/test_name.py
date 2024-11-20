@@ -11,7 +11,7 @@ class TestCase(ManualPlaylistTestCase):
         manual_playlist_name_new = "teuf2"
         data = {PlaylistFields.NAME: manual_playlist_name_new}
 
-        response = self._put_manual_playlist(uuid=simpe_playlist.uuid, data_dict=data)
+        response = self._put_manual_playlist(uuid=simpe_playlist.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_manual_playlist.name == manual_playlist_name_new
@@ -20,7 +20,7 @@ class TestCase(ManualPlaylistTestCase):
         manual_playlist_name = "cuisine"
         simpe_playlist = self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
 
-        response = self._put_manual_playlist(uuid=simpe_playlist.uuid, data_dict={})
+        response = self._put_manual_playlist(uuid=simpe_playlist.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_manual_playlist.name == manual_playlist_name
@@ -29,6 +29,6 @@ class TestCase(ManualPlaylistTestCase):
         uuid = self.model_fixture_factory.create_manual_playlist(name='foero').uuid
         data = {PlaylistFields.NAME: ""}
 
-        response = self._put_manual_playlist(uuid=uuid, data_dict=data)
+        response = self._put_manual_playlist(uuid=uuid, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

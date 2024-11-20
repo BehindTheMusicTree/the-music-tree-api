@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -14,7 +14,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="archived 1", album=album, archived=True)
         track_love = self.model_fixture_factory.create_lib_track_with_file(title="Love", album=album)
 
-        response = self._put_lib_track(uuid=track_love.uuid, data_dict={PutFields.ARCHIVED: "true"})
+        response = self._put_lib_track(uuid=track_love.uuid, **{PutFields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.album and self.saved_lib_track.album.library_tracks_archived_count == 2
@@ -27,7 +27,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="archived 1", album=album, archived=True)
         track = self.model_fixture_factory.create_lib_track_with_file(title="Love", album=album, archived=True)
 
-        response = self._put_lib_track(uuid=track.uuid, data_dict={PutFields.ARCHIVED: "false"})
+        response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: "false"})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.album and self.saved_lib_track.album.library_tracks_archived_count == 1

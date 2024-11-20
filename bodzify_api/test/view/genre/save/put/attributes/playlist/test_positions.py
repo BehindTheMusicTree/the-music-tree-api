@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.schema.criteria.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.criteria.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 
@@ -22,7 +22,7 @@ class TestCase(GenreTestCase):
         lib_track_previously_first_in_punk = self.model_fixture_factory.create_lib_track_with_file(genre=punk_genre,
                                                                                                    title="loul")
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_playlist_rels = \
@@ -60,7 +60,7 @@ class TestCase(GenreTestCase):
         lib_track_previously_first_in_punk = self.model_fixture_factory.create_lib_track_with_file(genre=punk_genre,
                                                                                                    title="punk1")
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
 
         assert response.status_code == status.HTTP_200_OK
 
@@ -84,7 +84,7 @@ class TestCase(GenreTestCase):
                                                                                      title="Rock song")
         self.model_fixture_factory.create_lib_track_with_file(genre=punk_genre, title="Punk song")
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: ''})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
         lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
@@ -102,7 +102,7 @@ class TestCase(GenreTestCase):
                                                                                      title="Punk song")
         self.model_fixture_factory.create_lib_track_with_file(genre=punk_fr_genre, title="punk fr song")
 
-        response = self._put_genre(uuid=punk_fr_genre.uuid, data_dict={PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=punk_fr_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
 
         assert response.status_code == status.HTTP_200_OK
         lib_track_playlist_rel: LibTrackPlaylistRel = \

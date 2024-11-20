@@ -10,7 +10,7 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 class PlaylistTestCase(ApiTestCase):
 
     def _post_playlist(self, **kwargs):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(kwargs), doseq=True)
+        data_url_encoded = urlencode(replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.post(path=reverse('playlist-list'),
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
@@ -20,7 +20,7 @@ class PlaylistTestCase(ApiTestCase):
 
     def _get_playlists(self, **kwargs):
         response = self.api_client.get(path=reverse('playlist-list'),
-                                       data=self._replace_none_values_by_empty_string(kwargs))
+                                       data=replace_none_values_by_empty_string(**kwargs))
         if response.status_code == status.HTTP_200_OK:
             self._set_results_attributes(response)
         return response
@@ -32,7 +32,7 @@ class PlaylistTestCase(ApiTestCase):
         return response
 
     def _put_playlist(self, uuid: UUID, **kwargs):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(kwargs), doseq=True)
+        data_url_encoded = urlencode(replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.put(path=reverse('playlist-detail', kwargs={'pk': uuid}),
                                        data=data_url_encoded,
                                        content_type='application/x-www-form-urlencoded')

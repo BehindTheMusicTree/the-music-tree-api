@@ -9,6 +9,6 @@ class TestCase(ManualPlaylistTestCase):
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name="teuf")
         data = {'nonExistingField': 'oifjqoif'}
 
-        response = self._put_manual_playlist(uuid=manual_playlist.uuid, data_dict=data)
+        response = self._put_manual_playlist(uuid=manual_playlist.uuid, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

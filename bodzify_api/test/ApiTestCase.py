@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework import status
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -10,8 +10,9 @@ from bodzify_api.test.AppApiClient import AppApiClient
 from bodzify_api.utils import audio_metadata
 from bodzify_api.model.user.User import User
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as LibTrackPostFields
-from bodzify_api.serializer.schema.lib_track.output.detailed import Fields as LibTrackGetFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as LibTrackPostFields
+from bodzify_api.serializer.schema.model.lib_track.output.detailed import Fields as LibTrackGetFields
+from bodzify_api.utils.data_transformer import merge_two_dicts, replace_none_values_by_empty_string
 from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
 
 
@@ -28,17 +29,6 @@ class ApiTestCase(AppTestCase):
     api_client: AppApiClient
     saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict
-
-    @staticmethod
-    def _merge_two_dicts(dict1, dict2):
-        dict1.update(dict2)
-        return dict1
-
-    @staticmethod
-    def _replace_none_values_by_empty_string(**kwargs):
-        if kwargs is None:
-            return {}
-        return {k: ('' if v is None else v) for k, v in kwargs.items()}
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
@@ -65,18 +55,21 @@ class ApiTestCase(AppTestCase):
     def _set_saved_lib_track_attribute(self, response):
         lib_track_uuid = response.json()[LibTrackGetFields.UUID]
         self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
-        self.saved_lib_track_metadata = audio_metadata.get_normalized_metadata_from_file(
-            file=self.saved_lib_track.track_file.file)
+        self.saved_lib_track_metadata = \
+            audio_metadata.get_normalized_metadata_from_file(file=self.saved_lib_track.track_file.file)
 
     def _post_lib_track_with_generic_sample(self,
                                             generic_sample_filename_without_extension,
                                             generic_sample_file_extension,
-                                            **kwargs):
+                                            **kwargs) -> Union[JsonResponse, HttpResponse]:
         filename_with_extension = generic_sample_filename_without_extension + '.' + generic_sample_file_extension
         generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
         return self._post_lib_track(file_abs_path=generic_sample_abs_path, **kwargs)
 
-    def _post_lib_track_with_generic_sample_no_tags(self, extension='mp3', **kwargs):
+    def _post_lib_track_with_generic_sample_no_tags(self,
+                                                    extension: str = 'mp3',
+                                                    /,
+                                                    **kwargs) -> Union[JsonResponse, HttpResponse]:
         filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_NONE
         response = self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
@@ -84,7 +77,9 @@ class ApiTestCase(AppTestCase):
             **kwargs)
         return response
 
-    def _post_lib_track_with_specific_sample(self, specific_sample_filename=None, **kwargs):
+    def _post_lib_track_with_specific_sample(self,
+                                             specific_sample_filename=None,
+                                             **kwargs) -> Union[JsonResponse, HttpResponse]:
         if specific_sample_filename is None:
             return self._post_lib_track(file_abs_path=None, **kwargs)
         else:
@@ -93,18 +88,18 @@ class ApiTestCase(AppTestCase):
 
     # Defined here and not in TrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
-    def _post_lib_track(self, file_abs_path, **kwargs) -> JsonResponse:
+    def _post_lib_track(self, file_abs_path, **kwargs) -> Union[JsonResponse, HttpResponse]:
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LibTrackPostFields.TRACK_FILE_USER_FRIENDLY: sample_file}
             if kwargs:
-                kwargs = self._merge_two_dicts(file_field_dict, self._replace_none_values_by_empty_string(**kwargs))
+                kwargs = merge_two_dicts(file_field_dict, replace_none_values_by_empty_string(**kwargs))
             else:
                 kwargs = file_field_dict
             response = self.api_client.post(path=reverse('library-track-list'), data=kwargs, format='multipart')
             if response.status_code == status.HTTP_201_CREATED:
                 self._set_saved_lib_track_attribute(response)
                 self._set_result(response)
-            return response  # type: ignore
+            return response
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
         super().setUp(methods_names_to_implement=methods_names_to_implement)

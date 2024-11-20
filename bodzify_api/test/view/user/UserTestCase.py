@@ -9,7 +9,7 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 class UserTestCase(ApiTestCase):
 
     def _post_user(self, **kwargs):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(**kwargs), doseq=True)
+        data_url_encoded = urlencode(replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.post(path=reverse('user-list'),
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
@@ -30,7 +30,7 @@ class UserTestCase(ApiTestCase):
         return response
 
     def _put_user(self, pk: int, **kwargs):
-        data_url_encoded = urlencode(query=self._replace_none_values_by_empty_string(**kwargs), doseq=True)
+        data_url_encoded = urlencode(query=replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.put(path=reverse('user-detail', kwargs={'pk': pk}),
                                        data=data_url_encoded,
                                        content_type='application/x-www-form-urlencoded')

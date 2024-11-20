@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.schema.play.input.schema.endpoint.post import Fields
+from bodzify_api.serializer.schema.model.play.input.schema.endpoint.post import Fields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
@@ -12,7 +12,7 @@ from bodzify_api.utils.data_transformer import to_camel_case
 class TestCase(PlayTestCase):
 
     def test_extra_field_then_error(self) -> None:
-        response = self._post_play(kwargs={'nonExistingField': 'oifjqoif'})
+        response = self._post_play(**{'nonExistingField': 'oifjqoif'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -21,19 +21,19 @@ class TestCase(PlayTestCase):
         playlist2_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
 
         data = {to_camel_case(Fields.CONTENT_OBJECT_UUID): [playlist1_uuid, playlist2_uuid]}
-        response = self._post_play(kwargs=data)
+        response = self._post_play(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_non_existant_content_object_uuid_then_error(self):
-        response = self._post_play(kwargs={to_camel_case(Fields.CONTENT_OBJECT_UUID): 'oifjqoif'})
+        response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): 'oifjqoif'})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_playlist_play(self) -> None:
         current_play_count = 42
         playlist_uuid = self.model_fixture_factory.create_manual_playlist(name='test', play_count=current_play_count)
 
-        response = self._post_play(kwargs={to_camel_case(Fields.CONTENT_OBJECT_UUID): playlist_uuid})
+        response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): playlist_uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
         playlist: Playlist = self.saved_play.content_object  # type: ignore
@@ -45,7 +45,7 @@ class TestCase(PlayTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title='track', genre=criteria)
 
         data = {to_camel_case(Fields.CONTENT_OBJECT_UUID): criteria.criteria_playlist.uuid}
-        response = self._post_play(kwargs=data)
+        response = self._post_play(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         playlist: Playlist = self.saved_play.content_object  # type: ignore
@@ -58,7 +58,7 @@ class TestCase(PlayTestCase):
         current_play_count = 455
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title='test', play_count=current_play_count)
 
-        response = self._post_play(kwargs={to_camel_case(Fields.CONTENT_OBJECT_UUID): lib_track.uuid})
+        response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): lib_track.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
         lib_track: LibraryTrack = self.saved_play.content_object  # type: ignore

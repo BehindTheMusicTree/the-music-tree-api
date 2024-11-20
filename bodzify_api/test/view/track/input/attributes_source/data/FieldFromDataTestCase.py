@@ -1,4 +1,5 @@
-from typing import Optional
+from typing import Optional, Union
+from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
@@ -18,9 +19,8 @@ class FieldStrFromDataTestCase(FieldFromDataTestCase):
 
     def test_multiple_values_then_error(self):
         if not self.post_field_key:
-            raise NotImplementedError("post_field_key is not set")
-        data = {self.post_field_key: ["value", "value2"]}
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
+            raise ValueError("post_field_key is not set")
+        response = self._post_lib_track_with_generic_sample_no_tags(**{self.post_field_key: ["value", "value2"]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -28,8 +28,8 @@ class FieldIntFromDataTestCase(FieldFromDataTestCase):
 
     def test_field_twice_then_error(self):
         if not self.post_field_key:
-            raise NotImplementedError("post_field_key is not set")
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs={self.post_field_key: [1, 2]})
+            raise ValueError("post_field_key is not set")
+        response = self._post_lib_track_with_generic_sample_no_tags(**{self.post_field_key: [1, 2]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -54,6 +54,8 @@ class NullableUuidFieldFromDataTestCase(NullableStrFieldFromDataTestCase):
 class NonNullableStrFieldFromDataTestCase(FieldStrFromDataTestCase):
 
     def test_empty_then_error(self):
-        data = {self.post_field_key: ""}
-        response = self._post_lib_track_with_generic_sample_no_tags(extension='mp3', data_dict=data)
+        if not self.post_field_key:
+            raise ValueError("post_field_key is not set")
+        response: Union[JsonResponse, HttpResponse] = \
+            self._post_lib_track_with_generic_sample_no_tags(extension='mp3', **{self.post_field_key: ""})
         assert response.status_code == status.HTTP_400_BAD_REQUEST

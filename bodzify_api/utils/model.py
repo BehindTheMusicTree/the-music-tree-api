@@ -8,7 +8,16 @@ class SaveContext:
     kwargs: Dict[str, Any]
     modified_fields: List[str]
     update_fields: Optional[List[str]]
-    
+
+    @staticmethod
+    def create(**kwargs) -> 'SaveContext':
+        """Factory method to create SaveContext instances"""
+        return SaveContext(
+            kwargs=kwargs,
+            modified_fields=[],
+            update_fields=kwargs.get('update_fields')
+        )
+
     @property
     def should_track_fields(self) -> bool:
         return self.update_fields is not None
@@ -23,11 +32,11 @@ class SaveContext:
 def ensure_update_field(kwargs: dict, field_name: str) -> dict:
     """
     Ensures a field is included in update_fields if update_fields is being used.
-    
+
     Args:
         kwargs: The kwargs dict passed to save()
         field_name: The field name to ensure is included
-        
+
     Returns:
         Modified kwargs dict with field_name added to update_fields if needed
     """
@@ -42,11 +51,11 @@ def ensure_update_field(kwargs: dict, field_name: str) -> dict:
 def ensure_update_fields(kwargs: dict, field_names: list[str]) -> dict:
     """
     Ensures multiple fields are included in update_fields if update_fields is being used.
-    
+
     Args:
         kwargs: The kwargs dict passed to save()
         field_names: List of field names to ensure are included
-        
+
     Returns:
         Modified kwargs dict with field_names added to update_fields if needed
     """

@@ -3,21 +3,21 @@ from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 from bodzify_api.model.criteria.lineage_rel.Fields import Fields
-from bodzify_api.serializer.schema.criteria.input.endpoint.post import Fields as PostFields
+from bodzify_api.serializer.schema.model.criteria.input.endpoint.post import Fields as PostFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 
 class TestCase(GenreTestCase):
 
     def test_no_parent_provided_then_no_ascendants(self):
-        response = self._post_genre(kwargs={PostFields.NAME: "Rock"})
+        response = self._post_genre(**{PostFields.NAME: "Rock"})
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 0
 
     def test_root_parent_then_one_ascendant_with_degree_1(self):
         root = self.model_fixture_factory.create_genre(name="Rock")
 
-        response = self._post_genre(kwargs={PostFields.NAME: "Punk", PostFields.PARENT: root.uuid})
+        response = self._post_genre(**{PostFields.NAME: "Punk", PostFields.PARENT: root.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 1
@@ -30,7 +30,7 @@ class TestCase(GenreTestCase):
         criteria2 = self.model_fixture_factory.create_genre(name="Soft rock", parent=criteria1)
         criteria3 = self.model_fixture_factory.create_genre(name="Pop rock", parent=criteria2)
 
-        response = self._post_genre(kwargs={PostFields.NAME: "Pop funk rock", PostFields.PARENT: criteria3.uuid})
+        response = self._post_genre(**{PostFields.NAME: "Pop funk rock", PostFields.PARENT: criteria3.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.ascendants.count() == 3

@@ -42,8 +42,7 @@ class CriteriaManager(PublicStandardResourceManager[T], Generic[T]):
             self.refresh_ascendants_of_instance_and_children(updated_instance)
 
             playlist_parent = updated_instance.parent.criteria_playlist if updated_instance.parent else None
-            CriteriaPlaylist.objects.update_instance(
-                instance=instance.criteria_playlist, parent=playlist_parent)
+            CriteriaPlaylist.objects.update_instance(instance=instance.criteria_playlist, parent=playlist_parent)
 
             if old_root != updated_instance.root:
                 self.update_children_root(criteria=updated_instance, new_root=updated_instance.root)
@@ -51,7 +50,7 @@ class CriteriaManager(PublicStandardResourceManager[T], Generic[T]):
                                                                            root=updated_instance.root.criteria_playlist)
 
         if old_name != updated_instance.name and updated_instance.library_tracks:
-            for lib_track in updated_instance.library_tracks:
+            for lib_track in updated_instance.library_tracks.all():
                 lib_track.update_file_tags_from_lib_track_instance_values()
 
         return updated_instance

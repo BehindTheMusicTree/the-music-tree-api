@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -11,7 +11,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="archived 1", archived=True)
         track_love = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        response = self._put_lib_track(uuid=track_love.uuid, data_dict={Fields.ARCHIVED: "true"})
+        response = self._put_lib_track(uuid=track_love.uuid, **{Fields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.test_user1.all_lib_tracks_mixin.library_tracks_archived_count == 2

@@ -1,0 +1,17 @@
+meta {
+  name: Rock name Rock2
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{BASE_URL}}genres/{{genreBroCountryUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "parent": "{{genreCountryUuid}}"
+  }
+}

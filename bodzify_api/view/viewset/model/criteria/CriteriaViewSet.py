@@ -1,14 +1,14 @@
 from django.db import transaction
-from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
 from rest_framework.request import Request
 from rest_framework.response import Response  # type: ignore
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.filter.set.criteria.Fields import Fields as FilterFields
-from bodzify_api.serializer.schema.criteria.input.endpoint.post import CriteriaPostSerializer
-from bodzify_api.serializer.schema.criteria.input.endpoint.put import CriteriaPutSerializer
-from bodzify_api.serializer.schema.criteria.output.detailed import CriteriaDetailedSerializer
-from bodzify_api.serializer.schema.criteria.output.simple import CriteriaSimpleSerializer
+from bodzify_api.serializer.schema.model.criteria.input.post import CriteriaPostSerializer
+from bodzify_api.serializer.schema.model.criteria.input.put import CriteriaPutSerializer
+from bodzify_api.serializer.schema.model.criteria.output.detailed import CriteriaDetailedSerializer
+from bodzify_api.serializer.schema.model.criteria.output.simple import CriteriaSimpleSerializer
 from ...base.AppModelViewSet import AppModelViewSet
 
 
@@ -17,7 +17,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
         # Filtersets must be imported after Django is loaded
         from bodzify_api.filter.set.criteria.CriteriaFilterSet import CriteriaFilterSet
         super().__init__(model_class=model_class,
-                         filter_class=CriteriaFilterSet,
+                         filterset_class=CriteriaFilterSet,
                          simple_serializer_class=CriteriaSimpleSerializer,
                          detailed_serializer_class=CriteriaDetailedSerializer,
                          create_serializer_class=CriteriaPostSerializer,

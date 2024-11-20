@@ -6,7 +6,7 @@ from rest_framework.request import Request
 from django.db import transaction
 
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.schema.user.output.detailed import UserDetailedSerializer
+from bodzify_api.serializer.schema.model.user.output.detailed import UserDetailedSerializer
 from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 
 

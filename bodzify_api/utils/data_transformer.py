@@ -91,3 +91,14 @@ def update_data1_with_key_if_set_in_data2(key: str, data1: dict, data2: dict):
 def override_data1_with_data2_values_for_each_key_in_data2(data1: dict, data2: dict, keys: list[str]):
     for key in keys:
         update_data1_with_key_if_set_in_data2(key=key, data1=data1, data2=data2)
+
+
+def merge_two_dicts(dict1, dict2):
+    dict1.update(dict2)
+    return dict1
+
+
+def replace_none_values_by_empty_string(**kwargs):
+    if kwargs is None:
+        return {}
+    return {k: ('' if v is None else v) for k, v in kwargs.items()}

@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as PostFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as PostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -12,7 +12,7 @@ class TestCase(LibTrackTestCase):
             PostFields.GENRE_NAME: None,
             PostFields.GENRE_UUID: None,
         }
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.genre == None
 
@@ -21,5 +21,5 @@ class TestCase(LibTrackTestCase):
             PostFields.GENRE_NAME: 'd',
             PostFields.GENRE_UUID: 'k' * settings.UUID_LEN,
         }
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

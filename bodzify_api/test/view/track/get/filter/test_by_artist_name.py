@@ -1,12 +1,12 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.lib_track.output.Fields import Fields as LibTrackFields
+from bodzify_api.serializer.schema.model.lib_track.output.Fields import Fields as LibTrackFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase):
 
-    def test_filter_empty_then_return_all(self):
+    def test_empty_then_return_all(self):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
         response = self._get_lib_tracks(artists_name='')

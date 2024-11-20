@@ -3,8 +3,8 @@ from rest_framework import status
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.utils import data_transformer
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
-from bodzify_api.serializer.schema.lib_track.output.simple.simple_without_album import Fields as LibTrackGetFields
-from bodzify_api.serializer.schema.playlist.children.criteria.output.detailed import Fields as CriteriaPlaylistFields
+from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album import Fields as LibTrackGetFields
+from bodzify_api.serializer.schema.model.playlist.children.criteria.output.detailed import Fields as CriteriaPlaylistFields
 
 
 class TestCase(PlaylistTestCase):

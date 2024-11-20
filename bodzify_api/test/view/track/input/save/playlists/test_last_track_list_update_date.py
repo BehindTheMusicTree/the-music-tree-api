@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -16,7 +16,7 @@ class TestCase(LibTrackTestCase):
         genre_playlist_last_track_list_update_date_before_update = criteria_playlist.last_track_list_update_date
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: genre.name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre.name})
 
         assert response.status_code == status.HTTP_200_OK
         genre.refresh_from_db()
@@ -28,7 +28,7 @@ class TestCase(LibTrackTestCase):
         genre = self.model_fixture_factory.create_genre(name='rock hard', parent=genre_parent)
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: genre.name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre.name})
 
         assert response.status_code == status.HTTP_200_OK
         genre_parent.refresh_from_db()
@@ -43,7 +43,7 @@ class TestCase(LibTrackTestCase):
         genre = self.model_fixture_factory.create_genre(name='rock')
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=genre)
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: ''})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: ''})
         assert response.status_code == status.HTTP_200_OK
         genreless_playlist.refresh_from_db()
         assert genreless_playlist.last_track_list_update_date > genreless_playlist.last_track_list_update_date

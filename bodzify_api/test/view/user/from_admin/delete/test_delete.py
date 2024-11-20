@@ -11,7 +11,7 @@ from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as TrackPostFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as TrackPostFields
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
 
@@ -43,7 +43,7 @@ class TestCase(UserTestCase):
         self._login_as_user(user)
         criteria_name = 'Rock'
         data = {TrackPostFields.GENRE_NAME: criteria_name}
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert Criteria.objects.filter(user=user, name=criteria_name).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -82,7 +82,7 @@ class TestCase(UserTestCase):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
         title = 'Dr mo'
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs={TrackPostFields.TITLE: title})
+        response = self._post_lib_track_with_generic_sample_no_tags(**{TrackPostFields.TITLE: title})
         assert LibraryTrack.objects.filter(user=user, title=title).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -97,7 +97,7 @@ class TestCase(UserTestCase):
         self._login_as_user(user)
         album_name = 'Skyfall'
 
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs={TrackPostFields.ALBUM_NAME: album_name})
+        response = self._post_lib_track_with_generic_sample_no_tags(**{TrackPostFields.ALBUM_NAME: album_name})
 
         assert Album.objects.filter(user=user, name=album_name).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
@@ -114,7 +114,7 @@ class TestCase(UserTestCase):
         artist_name = 'Adele'
 
         data = {TrackPostFields.ARTISTS_NAMES: artist_name}
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs=data)
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert Artist.objects.filter(user=user, name=artist_name).count() == 1

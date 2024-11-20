@@ -36,4 +36,4 @@ class BaseModel(models.Model, metaclass=DynamicTableNameModelBase):
 
     @staticmethod
     def _create_save_context(**kwargs):
-        return SaveContext(kwargs=kwargs, modified_fields=[], update_fields=kwargs.get('update_fields'))
+        return SaveContext.create(**kwargs)

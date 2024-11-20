@@ -2,7 +2,7 @@ from drf_spectacular.utils import extend_schema
 
 from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.schema.all_lib_tracks_mixin.detailed import AllLibTracksMixinDetailedSerializer
+from bodzify_api.serializer.schema.model.all_lib_tracks_mixin.detailed import AllLibTracksMixinDetailedSerializer
 from ..base.AppModelViewSet import AppModelViewSet
 
 

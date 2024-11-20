@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.model.play.Play import Play
-from bodzify_api.serializer.schema.play.output.detailed import Fields as OutputFields
+from bodzify_api.serializer.schema.model.play.output.detailed import Fields as OutputFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
@@ -16,7 +16,7 @@ class PlayTestCase(ApiTestCase):
         self.saved_play: Play = Play.objects.get(uuid=uuid)
 
     def _post_play(self, data_dict):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(data_dict), doseq=True)
+        data_url_encoded = urlencode(replace_none_values_by_empty_string(data_dict), doseq=True)
         response = self.api_client.post(path=reverse('play-list'),
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
@@ -31,7 +31,7 @@ class PlayTestCase(ApiTestCase):
         return response
 
     def _put_play(self, genre_uuid: UUID, data_dict):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(**kwargs), doseq=True)
+        data_url_encoded = urlencode(replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.put(path=reverse('play-detail', kwargs={'pk': genre_uuid}),
                                        data=data_url_encoded,
                                        content_type='application/x-www-form-urlencoded')

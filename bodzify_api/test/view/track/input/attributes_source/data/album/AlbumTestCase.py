@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.lib_track.input.endpoint.post import Fields as PostFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as PostFields
 from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase \
     import NullableStrFieldFromDataTestCase
 
@@ -10,12 +10,12 @@ class AlbumTestCase(NullableStrFieldFromDataTestCase):
 
     def test_value_then_ok(self):
         value = 'fofof'
-        response = self._post_lib_track_with_generic_sample_no_tags(kwargs={PostFields.ALBUM_NAME: value})
+        response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.ALBUM_NAME: value})
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.album
         assert self.saved_lib_track.album.name == value
 
     def test_empty_then_none(self):
-        response = self._post_lib_track_with_generic_sample_1_star(kwargs={PostFields.ALBUM_NAME: ""})
+        response = self._post_lib_track_with_generic_sample_1_star(**{PostFields.ALBUM_NAME: ""})
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.album == None

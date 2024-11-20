@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
 
 
@@ -11,7 +11,7 @@ class TestCase(NullableFieldTestCase):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=rap_criteria)
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={})
+        response = self._put_lib_track(lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
         updated_lib_track = LibraryTrack.objects.get(uuid=lib_track.uuid)
@@ -23,7 +23,7 @@ class TestCase(NullableFieldTestCase):
         rock_criteria = self.model_fixture_factory.create_genre(name="Rock")
 
         data = {PutFields.GENRE_NAME: rock_criteria.name}
-        response = self._put_lib_track(uuid=lib_track.uuid, data_dict=data)
+        response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre == rock_criteria
@@ -32,7 +32,7 @@ class TestCase(NullableFieldTestCase):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", genre=rap_criteria)
 
-        response = self._put_lib_track(uuid=lib_track.uuid, data_dict={PutFields.GENRE_NAME: ''})
+        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.GENRE_NAME: ''})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre == None
@@ -41,7 +41,7 @@ class TestCase(NullableFieldTestCase):
         genre_name = "rap"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title='lolo')
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: genre_name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre

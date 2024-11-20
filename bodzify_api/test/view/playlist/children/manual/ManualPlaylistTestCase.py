@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.serializer.schema.playlist.children.manual.output.detailed import Fields as ManualPlaylistGetFields
+from bodzify_api.serializer.schema.model.playlist.children.manual.output.detailed import Fields as ManualPlaylistGetFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
@@ -17,7 +17,7 @@ class ManualPlaylistTestCase(ApiTestCase):
         self.saved_manual_playlist = ManualPlaylist.objects.get(uuid=uuid)
 
     def _post_manual_playlist(self, **kwargs):
-        data_url_encoded = urlencode(self._replace_none_values_by_empty_string(kwargs), doseq=True)
+        data_url_encoded = urlencode(replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.post(path=reverse('manual-playlist-list'),
                                         data=data_url_encoded,
                                         content_type='application/x-www-form-urlencoded')
@@ -38,7 +38,7 @@ class ManualPlaylistTestCase(ApiTestCase):
         return response
 
     def _put_manual_playlist(self, uuid: UUID, **kwargs):
-        data_url_encoded = urlencode(query=self._replace_none_values_by_empty_string(kwargs), doseq=True)
+        data_url_encoded = urlencode(query=replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.put(path=reverse('manual-playlist-detail', kwargs={'pk': uuid}),
                                        data=data_url_encoded,
                                        content_type='application/x-www-form-urlencoded')

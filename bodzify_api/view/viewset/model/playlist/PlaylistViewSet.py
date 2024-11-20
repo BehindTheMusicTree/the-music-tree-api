@@ -6,8 +6,8 @@ from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields
 from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
-from bodzify_api.serializer.schema.playlist.base.output.detailed import PlaylistDetailedSerializer
-from bodzify_api.serializer.schema.playlist.base.output.simple import PlaylistSimpleSerializer
+from bodzify_api.serializer.schema.model.playlist.base.output.detailed import PlaylistDetailedSerializer
+from bodzify_api.serializer.schema.model.playlist.base.output.simple import PlaylistSimpleSerializer
 from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filter.set.playlist.PlaylistParamFilterSet import PlaylistParamFilterSet
 from bodzify_api.filter.set.playlist.Fields import Fields as QueryParamsFields
@@ -17,7 +17,7 @@ class PlaylistViewSet(AppModelViewSet[Playlist]):
 
     def __init__(self, **kwargs):
         super().__init__(model_class=Playlist,
-                         filter_class=PlaylistParamFilterSet,
+                         filterset_class=PlaylistParamFilterSet,
                          simple_serializer_class=PlaylistSimpleSerializer,
                          detailed_serializer_class=PlaylistDetailedSerializer,
                          **kwargs)

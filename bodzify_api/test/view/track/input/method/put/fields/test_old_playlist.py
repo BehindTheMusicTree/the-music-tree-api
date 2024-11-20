@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.schema.lib_track.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -13,7 +13,7 @@ class TestCase(LibTrackTestCase):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=old_genre)
         assert lib_track in old_genre.criteria_playlist.library_tracks.all()
 
-        response = self._put_lib_track(lib_track.uuid, data_dict={PutFields.GENRE_NAME: new_genre_name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: new_genre_name})
 
         assert response.status_code == status.HTTP_200_OK
         old_genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria=old_genre)

@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.schema.criteria.input.endpoint.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.criteria.input.endpoint.put import Fields as PutFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 
@@ -14,7 +14,7 @@ class TestCase(GenreTestCase):
         frenchhardcore_genre = self.model_fixture_factory.create_genre(name="French hardcore",
                                                                        parent=punkhardcore_genre)
 
-        response = self._put_genre(uuid=punk_genre.uuid, data_dict={PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
         assert response.status_code == status.HTTP_200_OK
 
         root_playlist = rock_genre.criteria_playlist
