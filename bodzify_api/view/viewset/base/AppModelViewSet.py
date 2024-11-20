@@ -179,8 +179,9 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         queryset = self.model_class.objects.filter(user=request.user)
 
         if request.method == HttpMethod.GET and self.filter_class:
+            query_params_snake_case = data_transformer.dict_to_snake_case(request.query_params)
             try:
-                queryset = self.filter_class(request.query_params, queryset=queryset).qs
+                queryset = self.filter_class(query_params_snake_case, queryset=queryset).qs
             except DjangoValidationError:
                 raise ValidationError(detail=APIErrorMessages.INVALID_QUERY_PARAMS)
 

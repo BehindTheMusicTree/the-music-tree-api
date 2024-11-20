@@ -1,10 +1,11 @@
-from django_filters import FilterSet
-from rest_framework.exceptions import ValidationError
-
+from django_filters import FilterSet, Filter
+from django.core.exceptions import ValidationError
+from bodzify_api.filter.EmptiableCharFilter import EmptiableCharFilter
 from bodzify_api.utils import data_transformer
 
 
 class AppFilterSet(FilterSet):
+    strict = False
 
     @property
     def qs(self):

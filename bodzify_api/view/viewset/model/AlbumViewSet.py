@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
-from bodzify_api.filter.set.album.AlbumFilterSet import AlbumFilterSet, Fields as FilterFields
+from bodzify_api.filter.set.album.AlbumFilterSet import AlbumFilterSet
+from bodzify_api.filter.set.album.Fields import Fields as FilterFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.schema.model.album.simple import AlbumSimpleSerializer
 from bodzify_api.serializer.schema.model.album.detailed import AlbumDetailedSerializer
@@ -20,7 +21,7 @@ class AlbumViewSet(AppModelViewSet[Album]):
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
-        OpenApiParameter(name=FilterFields.ALBUM_ARTISTS_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.ALBUM_ARTIST_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, request, *args, **kwargs):
         return self._handle_list(request, *args, **kwargs)
