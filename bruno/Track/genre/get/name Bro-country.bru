@@ -5,15 +5,15 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}genres/?name=Country
+  url: {{BASE_URL}}genres/?name=Bro-Country
   body: json
   auth: inherit
 }
 
 params:query {
-  name: Country
+  name: Bro-Country
 }
 
 vars:post-response {
-  genreCountryUuid: res.body.results[0].uuid
+  genreBroCountryUuid: res.body.results[0].uuid
 }
