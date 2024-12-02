@@ -20,7 +20,7 @@ class TestCase(SearchTestCase):
 
         response = self._search("Sum")
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 3
+        assert self.results_overall_total == 3
         title_key = LibTrackGetFields.TITLE
         assert self.results[LibraryTrack.__name__][0][title_key] == summerlove_track.title
         assert self.results[Artist.__name__][0][ArtistFields.NAME] == sum41_artist.name
@@ -34,6 +34,6 @@ class TestCase(SearchTestCase):
 
         response = self._search("Rap")
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2
         assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlaylistFields.NAME] == rap_criteria_name
         assert self.results[CriteriaPlaylist.__name__][1][CriteriaPlaylistFields.NAME] == us_rap_criteria_name

@@ -7,12 +7,11 @@ from django.urls import reverse
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.test.AppApiClient import AppApiClient
-from bodzify_api.utils import audio_metadata
+from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.model.user.User import User
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as LibTrackPostFields
 from bodzify_api.serializer.schema.model.lib_track.output.detailed import Fields as LibTrackGetFields
-from bodzify_api.utils.data_transformer import merge_two_dicts, replace_none_values_by_empty_string
 from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
 
 
@@ -50,7 +49,7 @@ class ApiTestCase(AppTestCase):
     def _set_results_attributes(self, response):
         response_json = response.json()
         self.results = response_json[PaginatedResponseFields.RESULTS]
-        self.overall_total = response_json[PaginatedResponseFields.OVERALL_TOTAL]
+        self.results_overall_total = response_json[PaginatedResponseFields.OVERALL_TOTAL]
 
     def _set_saved_lib_track_attribute(self, response):
         lib_track_uuid = response.json()[LibTrackGetFields.UUID]
@@ -92,7 +91,8 @@ class ApiTestCase(AppTestCase):
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LibTrackPostFields.TRACK_FILE_USER_FRIENDLY: sample_file}
             if kwargs:
-                kwargs = merge_two_dicts(file_field_dict, replace_none_values_by_empty_string(**kwargs))
+                kwargs = data_transformer.merge_two_dicts(
+                    file_field_dict, data_transformer.replace_none_values_by_empty_string(**kwargs))
             else:
                 kwargs = file_field_dict
             response = self.api_client.post(path=reverse('library-track-list'), data=kwargs, format='multipart')

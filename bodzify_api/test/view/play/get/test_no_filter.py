@@ -11,4 +11,4 @@ class TestCase(PlayTestCase):
         self.model_fixture_factory.create_play(content_object=track)
         response = self._get_plays()
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2

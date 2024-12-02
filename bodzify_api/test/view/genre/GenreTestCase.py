@@ -22,6 +22,7 @@ class GenreTestCase(ApiTestCase):
         return response
 
     def _get_genres(self, **kwargs):
+        print(kwargs)
         response = self.api_client.get(path=reverse('genre-list'), data=kwargs)
         if response.status_code == status.HTTP_200_OK:
             self._set_results_attributes(response)

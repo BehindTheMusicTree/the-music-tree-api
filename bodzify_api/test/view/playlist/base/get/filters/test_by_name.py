@@ -1,16 +1,13 @@
-from typing import Optional
-
 from rest_framework import status
 
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.test.get_filters.FreeCharFilterTestCase import FreeCharFilterTestCase
+from bodzify_api.test.get_filters.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.filter.set.playlist.Fields import Fields as GetQueryParams
-from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames \
-    import CriterialessPlaylistNames
+from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 
 
-class TestCase(FreeCharFilterTestCase, PlaylistTestCase):
+class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
 
     def setUp(self) -> None:
         super().setUp(allow_empty_value=False, methods_names_to_implement=None)

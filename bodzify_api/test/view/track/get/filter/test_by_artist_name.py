@@ -11,13 +11,13 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
         response = self._get_lib_tracks(artists_name='')
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2
 
     def test_filter_not_empty_then_dont_return_track_with_no_artist(self):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         response = self._get_lib_tracks(artists_name='jo')
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 0
+        assert self.results_overall_total == 0
 
     def test_an_artist_name_contains_the_filter_then_return_its_track(self):
         artist_john = self.model_fixture_factory.create_artist(name="John")
@@ -28,7 +28,7 @@ class TestCase(LibTrackTestCase):
 
         response = self._get_lib_tracks(artists_name='Joh')
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 1
+        assert self.results_overall_total == 1
         assert self.results[0][LibTrackFields.TITLE] == track_life.title
 
     def test_an_artist_name_contains_the_filter_in_a_different_case_then_return_its_track(self):
@@ -40,5 +40,5 @@ class TestCase(LibTrackTestCase):
 
         response = self._get_lib_tracks(artists_name='JoH')
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 1
+        assert self.results_overall_total == 1
         assert self.results[0][LibTrackFields.TITLE] == track_life.title

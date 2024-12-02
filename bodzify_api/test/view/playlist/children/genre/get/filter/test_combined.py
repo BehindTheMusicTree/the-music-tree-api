@@ -14,7 +14,7 @@ class TestCase(GenrePlaylistTestCase):
         response = self._get_genre_playlists(name='PU', parent=genre_rock.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2
         result_names = [result[GetResultFields.NAME] for result in self.results]
         assert genre_punk.name in result_names
         assert genre_punky.name in result_names

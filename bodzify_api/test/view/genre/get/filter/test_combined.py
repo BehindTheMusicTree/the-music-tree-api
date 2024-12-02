@@ -16,7 +16,7 @@ class TestCase(GenreTestCase):
         response = self._get_genres(name='pu', parent=genre_rock.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2
         result_names = [result[to_camel_case(GenreFields.NAME)] for result in self.results]
         assert genre_punk.name in result_names
         assert genre_punky.name in result_names

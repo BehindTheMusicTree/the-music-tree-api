@@ -11,6 +11,6 @@ class TestCase(GenreTestCase):
         self.model_fixture_factory.create_genre(name=genre_name)
         response = self._get_genres()
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 1
+        assert self.results_overall_total == 1
         rock_genre_json = self.results[0]
         assert rock_genre_json[Fields.NAME] == genre_name

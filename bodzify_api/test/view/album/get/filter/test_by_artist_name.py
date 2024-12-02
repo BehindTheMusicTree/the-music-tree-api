@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.test.get_filters.NullableFreeCharFilterTestCase import NullableFreeCharFilterTestCase
+from bodzify_api.test.get_filters.char.NullableFreeCharFilterTestCase import NullableFreeCharFilterTestCase
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.serializer.schema.model.album.fields import Fields as AlbumFields
 
@@ -16,7 +16,7 @@ class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):
         response = self._get_albums(album_artist_name='')
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2
         names = [result[AlbumFields.NAME] for result in self.results]
         assert album1.name in names
         assert album2.name in names
@@ -29,7 +29,7 @@ class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):
         response = self._get_albums(album_artist_name='MUs')
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 1
+        assert self.results_overall_total == 1
         assert self.results[0][AlbumFields.NAME] == album.name
 
     def test_not_provided_then_results(self):

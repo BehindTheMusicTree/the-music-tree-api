@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.utils.data_transformer import to_camel_case
 
-from .AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
+from ..AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
 
 from bodzify_api.serializer.schema.model.all_lib_tracks_mixin.Fields import Fields as AllLibTracksMixinOutputFields
 from bodzify_api.serializer.schema.model.lib_track.output.Fields import Fields as LibTrackOutputFields

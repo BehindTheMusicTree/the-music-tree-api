@@ -1,21 +1,37 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.model.criteria.output.Fields import Fields as ModelFields
+from bodzify_api.test.get_filters.foreign_key.PrivateForeignKeyFilterTestCase import PrivateForeignKeyFilterTestCase
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
+from bodzify_api.filter.set.criteria.Fields import Fields as FilterfFields
+from bodzify_api.model.criteria.Fields import Fields as ModelFields
 
 
-class TestCase(GenreTestCase):
+class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
 
-    def test_filter_missing_then_return_all_instances(self):
+    def test_of_another_user_then_empty(self):
+        test_user1_genre = self.model_fixture_factory.create_genre(name="Rock")
+        self.model_fixture_factory.create_genre(name="Pop", parent=test_user1_genre)
+
+        self._login_as_test_user2()
+        response = self._get_genres(kwargs={FilterfFields.PARENT: test_user1_genre.uuid})
+        print(response.json())
+        assert response.status_code == status.HTTP_200_OK
+        assert self.results_overall_total == 0
+
+    def test_empty_then_error(self):
+        response = self._get_genres(kwargs={FilterfFields.PARENT: ''})
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_not_provided_then_results(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop", parent=genre_rock)
 
         response = self._get_genres()
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2
 
-    def test_filter_empty_then_return_instances_with_no_parent(self):
+    def test_empty_then_results_with_no_foreign_object(self):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop", parent=genre_rock)
@@ -23,7 +39,7 @@ class TestCase(GenreTestCase):
         response = self._get_genres(parent='')
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2
         result_names = [result[ModelFields.NAME] for result in self.results]
         assert genre_punk.name in result_names
         assert genre_rock.name in result_names
@@ -36,7 +52,7 @@ class TestCase(GenreTestCase):
         response = self._get_genres(parent=genre_rock.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 2
+        assert self.results_overall_total == 2
         result_names = [result[ModelFields.NAME] for result in self.results]
         assert genre_punk.name in result_names
         assert genre_slow.name in result_names
@@ -48,4 +64,4 @@ class TestCase(GenreTestCase):
         response = self._get_genres(parent=genre_punk.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.overall_total == 0
+        assert self.results_overall_total == 0
