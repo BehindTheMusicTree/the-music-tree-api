@@ -122,7 +122,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _handle_post(self, request: Request, creation_type: Optional[str] = None, *args, **kwargs) -> Response:
         create_data_in_snake_case = data_transformer.dict_to_snake_case(request.data)
-        print('create_data_in_snake_case', create_data_in_snake_case)
         instance = self._create_instance(request=request,
                                          create_data=create_data_in_snake_case,
                                          creation_type=creation_type)

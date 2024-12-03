@@ -1,8 +1,9 @@
 from typing import Optional
+import uuid
+import re
 
 from django_filters import CharFilter, FilterSet
-from django.http import HttpRequest
-from rest_framework.request import Request
+from rest_framework.exceptions import ValidationError
 
 
 class ForeignKeyFilter(CharFilter):
@@ -17,4 +18,22 @@ class ForeignKeyFilter(CharFilter):
 
         if value == '':  # Empty string explicitly provided
             return queryset.filter(**{f"{self.field_name}__isnull": True})
+
+        # Check if value is a template variable
+        if re.match(r'{{.*}}', str(value)):
+            raise ValidationError({
+                'message': f'{value} is not a valid UUID',
+                'code': 'validation_invalid_input'
+            })
+
+        # Custom UUID validation
+        try:
+            if value and not isinstance(value, uuid.UUID):
+                uuid.UUID(str(value))
+        except (TypeError, ValueError):
+            raise ValidationError({
+                'message': f'{value} is not a valid UUID',
+                'code': 'validation_invalid_input'
+            })
+
         return super().filter(queryset, value)

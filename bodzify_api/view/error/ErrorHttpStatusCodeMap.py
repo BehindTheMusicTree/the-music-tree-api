@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api.view.error.ErrorCode import ErrorCode
 
 
-class HTTPStatusCodeMap:
+class ErrorHTTPStatusCodeMap:
     STATUS_MESSAGES = {
         status.HTTP_400_BAD_REQUEST: "Bad Request",
         status.HTTP_401_UNAUTHORIZED: "Unauthorized",
