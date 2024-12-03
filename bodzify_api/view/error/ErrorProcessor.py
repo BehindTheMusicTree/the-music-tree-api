@@ -1,16 +1,18 @@
 from typing import Dict, Any, Union
 from rest_framework.exceptions import ErrorDetail, ValidationError as DRFValidationError
 from django.core.exceptions import ValidationError as DjangoValidationError
-from bodzify_api.view.errors import APIErrorMessages
-from bodzify_api import settings
 import logging
+
+from bodzify_api import settings
+from bodzify_api.view.error.ErrorMessages import AppErrorMessages
+from bodzify_api.view.error.ErrorCode import ErrorCode
 
 
 class ErrorProcessor:
     @staticmethod
     def format_error_message(message: Union[str, ErrorDetail]) -> str:
         message_str = str(message)
-        return APIErrorMessages.INVALID_UUID if 'UUID' in message_str else message_str
+        return AppErrorMessages.MESSAGES[ErrorCode.VALIDATION_INVALID_UUID] if 'UUID' in message_str else message_str
 
     def process_validation_errors(self, exc: Union[DRFValidationError, DjangoValidationError]) -> Dict[str, Any]:
         custom_errors: Dict[str, Any] = {}

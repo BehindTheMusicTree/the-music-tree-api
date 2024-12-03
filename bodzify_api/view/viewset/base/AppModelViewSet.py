@@ -16,11 +16,12 @@ from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
-from bodzify_api.view.errors import APIErrorResponse, APIErrorMessages, APIFileResponse
+from bodzify_api.view.error.ErrorMessages import AppErrorMessages
+from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.viewset.base.HttpMethod import HttpMethod
 from ...pagination.AppPagination import AppPagination
 from .RequestHandler import RequestHandler
-from .ErrorProcessor import ErrorProcessor
+from ...error.ErrorProcessor import ErrorProcessor
 
 
 T = TypeVar('T', bound=BaseModel)
@@ -57,13 +58,13 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
         if not serializer:
-            raise NotImplementedError(APIErrorMessages.SERIALIZER_NOT_DEFINED[serializer_type])
+            raise NotImplementedError(AppErrorMessages.MESSAGES[ErrorCode.SERIALIZER_NOT_DEFINED][serializer_type])
         return serializer
 
     def _get_create_serializer_class(self) -> Type[Serializer]:
         if self.create_serializer_class:
             return self.create_serializer_class
-        raise NotImplementedError(APIErrorMessages.SERIALIZER_NOT_DEFINED[SerializerType.CREATE])
+        raise NotImplementedError(AppErrorMessages.SERIALIZER_NOT_DEFINED[SerializerType.CREATE])
 
     def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
         serializer.is_valid(raise_exception=True)
@@ -117,7 +118,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
             return self.get_paginated_response(data)
         except (DRFValidationError, ValidationError) as e:
-            return APIErrorResponse.from_validation_error(e)
+            return ErrorResponse.from_validation_error(e)
 
     def _handle_post(self, request: Request, creation_type: Optional[str] = None, *args, **kwargs) -> Response:
         create_data_in_snake_case = data_transformer.dict_to_snake_case(request.data)
@@ -159,7 +160,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def handle_exception(self, exc: Exception) -> Response:
         if isinstance(exc, (DRFValidationError, DjangoValidationError)):
-            return APIErrorResponse.from_validation_error(exc)
+            return ErrorResponse.from_validation_error(exc)
         return super().handle_exception(exc)
 
     def get_object(self) -> T:
@@ -182,8 +183,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             query_params_snake_case = data_transformer.dict_to_snake_case(request.query_params)
             try:
                 queryset = self.filter_class(query_params_snake_case, queryset=queryset).qs
-            except DjangoValidationError:
-                raise ValidationError(detail=APIErrorMessages.INVALID_QUERY_PARAMS)
+            except DjangoValidationError as e:
+                raise ValidationError(detail=e.message)
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
         return queryset.order_by(*ordering_fields)

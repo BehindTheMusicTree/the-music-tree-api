@@ -1,0 +1,48 @@
+from enum import Enum
+
+
+class ErrorCode(Enum):
+    """
+    Enumerated error codes organized by domain.
+    Format: CATEGORY_SPECIFIC_ERROR
+    Ranges:
+    1000-1999: Authentication/Authorization errors
+    2000-2999: Validation errors
+    3000-3999: Resource errors
+    4000-4999: Business logic errors
+    5000-5999: External service errors
+    9000-9999: System/Internal errors
+    """
+    # Authentication/Authorization (1000-1999)
+    AUTH_INVALID_CREDENTIALS = 1001
+    AUTH_TOKEN_EXPIRED = 1002
+    AUTH_TOKEN_INVALID = 1003
+    AUTH_INSUFFICIENT_PERMISSIONS = 1004
+
+    # Validation (2000-2999)
+    VALIDATION_INVALID_INPUT = 2001
+    VALIDATION_MISSING_FIELD = 2002
+    VALIDATION_INVALID_FORMAT = 2003
+    VALIDATION_INVALID_UUID = 2004
+    VALIDATION_INTEGRITY_ERROR = 2005
+
+    # Resource (3000-3999)
+    RESOURCE_NOT_FOUND = 3001
+    RESOURCE_ALREADY_EXISTS = 3002
+    RESOURCE_FILE_NOT_FOUND = 3003
+    RESOURCE_INVALID_STATE = 3004
+
+    # Business Logic (4000-4999)
+    BUSINESS_INVALID_OPERATION = 4001
+    BUSINESS_DEPENDENCY_ERROR = 4002
+    BUSINESS_LIMIT_EXCEEDED = 4003
+
+    # External Service (5000-5999)
+    EXTERNAL_SERVICE_ERROR = 5001
+    EXTERNAL_SERVICE_TIMEOUT = 5002
+    EXTERNAL_SERVICE_UNAVAILABLE = 5003
+
+    # System/Internal (9000-9999)
+    SYSTEM_INTERNAL_ERROR = 9001
+    SYSTEM_NOT_IMPLEMENTED = 9002
+    SYSTEM_SERVICE_UNAVAILABLE = 9003
