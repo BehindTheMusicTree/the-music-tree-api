@@ -142,7 +142,6 @@ class ErrorResponse:
                     exc.message_dict,
                     ErrorCode.VALIDATION_INVALID_INPUT
                 )
-            # Convert messages to a list of dicts with message and code
             error_list = [
                 {'message': str(msg), 'code': ErrorCode.VALIDATION_INVALID_INPUT.name.lower()}
                 for msg in exc.messages
