@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}genres/
+  url: {{BASE_URL}}genres/?dsf=dfs
   body: json
   auth: inherit
+}
+
+params:query {
+  dsf: dfs
 }

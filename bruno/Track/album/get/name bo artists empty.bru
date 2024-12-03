@@ -5,11 +5,12 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}albums/?name=bo
+  url: {{BASE_URL}}albums/?name=bo&albumArtistName
   body: json
   auth: inherit
 }
 
 params:query {
   name: bo
+  albumArtistName: 
 }
