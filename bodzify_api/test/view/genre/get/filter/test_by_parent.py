@@ -8,19 +8,18 @@ from bodzify_api.model.criteria.Fields import Fields as ModelFields
 
 class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
 
+    def setUp(self):
+        super().setUp(allow_empty_value=True)
+
     def test_of_another_user_then_empty(self):
         test_user1_genre = self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop", parent=test_user1_genre)
 
         self._login_as_test_user2()
-        response = self._get_genres(kwargs={FilterfFields.PARENT: test_user1_genre.uuid})
+        response = self._get_genres(**{FilterfFields.PARENT: test_user1_genre.uuid})
         print(response.json())
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 0
-
-    def test_empty_then_error(self):
-        response = self._get_genres(kwargs={FilterfFields.PARENT: ''})
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_not_provided_then_results(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
@@ -31,12 +30,12 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
 
-    def test_empty_then_results_with_no_foreign_object(self):
+    def test_empty_then_results(self):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop", parent=genre_rock)
 
-        response = self._get_genres(parent='')
+        response = self._get_genres(**{FilterfFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -44,12 +43,12 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         assert genre_punk.name in result_names
         assert genre_rock.name in result_names
 
-    def test_a_parent_uuid_corresponds_then_return_the_children(self):
+    def test_exists_then_ok(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         genre_slow = self.model_fixture_factory.create_genre(name="Slow", parent=genre_rock)
 
-        response = self._get_genres(parent=genre_rock.uuid)
+        response = self._get_genres(**{FilterfFields.PARENT: genre_rock.uuid})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -61,7 +60,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
 
-        response = self._get_genres(parent=genre_punk.uuid)
+        response = self._get_genres(**{FilterfFields.PARENT: genre_punk.uuid})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 0
