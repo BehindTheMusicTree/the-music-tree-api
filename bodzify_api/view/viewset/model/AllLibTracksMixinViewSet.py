@@ -1,11 +1,14 @@
+from typing import Optional
 from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models.query import QuerySet
 
 from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.SerializerType import SerializerType
-from bodzify_api.serializer.schema.model.all_lib_tracks_mixin.detailed import AllLibTracksMixinDetailedSerializer
+from bodzify_api.serializer.schema.model.lib_track.output.minimum import LibTrackMinimumSerializer
+from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album import LibTrackSimpleWithoutPlaylistAndAlbumSerializer
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from .base.AppModelViewSet import AppModelViewSet
 
@@ -13,7 +16,7 @@ from .base.AppModelViewSet import AppModelViewSet
 class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
     def __init__(self, **kwargs):
         super().__init__(model_class=AllLibTracksMixin,
-                         simple_serializer_class=AllLibTracksMixinDetailedSerializer,
+                         simple_serializer_class=LibTrackMinimumSerializer,
                          **kwargs)
 
     def get_object(self):
@@ -22,15 +25,15 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
             raise ValueError('User is not instance of User')
         return user.all_lib_tracks_mixin
 
-    @extend_schema(responses=AllLibTracksMixinDetailedSerializer)
-    def list(self, request, *args, **kwargs):
+    @extend_schema(responses=LibTrackMinimumSerializer(many=True))
+    def list(self, args, **kwargs):
         try:
-            queryset = self.get_queryset()
-            page = self.paginate_queryset(queryset)
+            allLibTracksMixin: Optional[QuerySet[AllLibTracksMixin]] = self.get_queryset().first()
+            if not allLibTracksMixin:
+                raise DrfValidationError('No AllLibTracksMixin object found for user')
+            page = self.paginate_queryset(allLibTracksMixin.library_tracks)
 
-            if not queryset.exists():
-                data = []
-            elif page is not None:
+            if page is not None:
                 serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)
                 data = list(serializer.data)
             else:

@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from bodzify_api.logging.LoggersName import LoggersName
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.utils.env_var_loader import (
     load_calculated_env_paths, load_env_vars_from_file_if_exists,
@@ -122,6 +121,8 @@ FILE_UPLOAD_ENABLED: bool
 
 
 def init_logs_if_needed():
+    from bodzify_api.logging.LoggersName import LoggersName
+
     LOG_DIR_STR = os.getenv('DJANGO_LOG_DIR')
     if not LOG_DIR_STR:
         print_django("The DJANGO_LOG_DIR variable is not set. Logs will not be set up.")

@@ -199,7 +199,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('POST', detail='Create operation not allowed for this resource')
 
-    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+    def list(self, args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('GET', detail='List operation not allowed for this resource')
 
     def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
