@@ -9,9 +9,8 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 class GenrePlaylistTestCase(ApiTestCase):
 
     def _post_genre_playlist(self, **kwargs):
-        data_url_encoded = urlencode(replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.post(path=reverse('genre-playlist-list'),
-                                        data=data_url_encoded,
+                                        data=kwargs,
                                         content_type='application/x-www-form-urlencoded')
         if response.status_code == status.HTTP_201_CREATED:
             self._set_result(response)
@@ -27,9 +26,8 @@ class GenrePlaylistTestCase(ApiTestCase):
         return response
 
     def _put_genre_playlist(self, manual_playlist_uuid: UUID, **kwargs):
-        data_url_encoded = urlencode(query=replace_none_values_by_empty_string(**kwargs), doseq=True)
         response = self.api_client.put(path=reverse('genre-playlist-detail', kwargs={'pk': manual_playlist_uuid}),
-                                       data=data_url_encoded,
+                                       data=kwargs,
                                        content_type='application/x-www-form-urlencoded')
         return response
 

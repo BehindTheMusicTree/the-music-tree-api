@@ -30,7 +30,7 @@ class GenreTestCase(ApiTestCase):
 
     def _post_genre(self, **kwargs):
         response = self.api_client.post(path=reverse('genre-list'),
-                                        data=replace_none_values_by_empty_string(**kwargs),
+                                        data=kwargs,
                                         content_type='application/x-www-form-urlencoded')
         if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_genre_attribute(response)
@@ -38,7 +38,7 @@ class GenreTestCase(ApiTestCase):
 
     def _put_genre(self, uuid: UUID, **kwargs):
         response = self.api_client.put(path=reverse('genre-detail', kwargs={'pk': uuid}),
-                                       data=replace_none_values_by_empty_string(**kwargs),
+                                       data=kwargs,
                                        content_type='application/x-www-form-urlencoded')
         if response.status_code == status.HTTP_200_OK:
             self._set_saved_genre_attribute(response)
