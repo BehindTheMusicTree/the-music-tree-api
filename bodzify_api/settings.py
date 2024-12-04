@@ -1,10 +1,10 @@
-
 import datetime
 import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from bodzify_api.logging.LoggersName import LoggersName
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.utils.env_var_loader import (
     load_calculated_env_paths, load_env_vars_from_file_if_exists,
@@ -21,7 +21,6 @@ DB_PORT: str
 
 # Django Settings
 DATABASES: Dict[str, Dict[str, Any]]
-LOGGER_NAMES: Any  # Consider defining a proper class or TypedDict for logger names
 LOGGING: Dict[str, Any]
 
 # Application Exposure
@@ -118,7 +117,7 @@ LIBRARIES_DIR: Path
 SECRET_KEY: str
 
 # File Upload
-FILE_UPLOAD_TEMP_DIR: str
+FILE_UPLOAD_TEMP_DIR: Optional[str]
 FILE_UPLOAD_ENABLED: bool
 
 
@@ -175,16 +174,6 @@ def init_logs_if_needed():
         if not LOG_APP_FILE.exists():
             raise EnvironmentError(f"The log app file {LOG_APP_FILE} does not exist.")
         print_django(f"The log info file {LOG_APP_FILE} exists.")
-
-        global LOGGER_NAMES
-
-        class LOGGER_NAMES:
-            INFO = 'info'
-            REQUEST = 'request'
-            REQUEST_DJANGO = 'django.request'
-            EXCEPTIONS = 'exceptions'
-            DJANGO = 'django'
-            APP = APP_NAME
 
         global LOGGING
         LOGGING = {
@@ -264,32 +253,32 @@ def init_logs_if_needed():
                     'level': 'DEBUG',
                     'propagate': True
                 },
-                LOGGER_NAMES.INFO: {
+                LoggersName.INFO: {
                     'handlers': ['info'],
                     'level': 'DEBUG',
                     'propagate': True
                 },
-                LOGGER_NAMES.REQUEST: {
+                LoggersName.REQUEST: {
                     'handlers': ['requests', 'console'],
                     'level': 'INFO',
                     'propagate': True,
                 },
-                LOGGER_NAMES.REQUEST_DJANGO: {
+                LoggersName.REQUEST_DJANGO: {
                     'handlers': ['requests_with_trace'],
                     'level': 'DEBUG',
                     'propagate': False,
                 },
-                LOGGER_NAMES.EXCEPTIONS: {
+                LoggersName.EXCEPTIONS: {
                     'handlers': ['exceptions', 'console'],
                     'level': 'DEBUG',
                     'propagate': False,
                 },
-                LOGGER_NAMES.DJANGO: {
+                LoggersName.DJANGO: {
                     'handlers': ['django'],
                     'level': 'INFO',
                     'propagate': True
                 },
-                LOGGER_NAMES.APP: {
+                LoggersName.APP: {
                     'handlers': [APP_NAME, 'console'],
                     'level': 'DEBUG',
                     'propagate': True
@@ -681,7 +670,6 @@ load_env_vars_from_file_if_exists(APP_ENV_FILE)
 ENV = load_required_str_env_var('ENV')
 APP_NAME = load_required_str_env_var('APP_NAME')
 APP_IS_EXPOSED = load_required_bool_env_var('APP_IS_EXPOSED')
-FILE_UPLOAD_ENABLED = None
 
 set_secret_key()
 
