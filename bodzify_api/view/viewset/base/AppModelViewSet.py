@@ -1,12 +1,11 @@
-from typing import Counter, Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
+from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.serializers import ModelSerializer, Serializer, BaseSerializer
-from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets, status
-from rest_framework.exceptions import ValidationError as DRFValidationError, MethodNotAllowed
+from rest_framework.exceptions import ValidationError as DrfValidationError, MethodNotAllowed
 from django.http import FileResponse
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db.models import QuerySet
@@ -16,8 +15,10 @@ from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
+from bodzify_api.view.error.ErrorCode import ErrorCode
 from bodzify_api.view.error.ErrorMessages import AppErrorMessages
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
+from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.viewset.base.HttpMethod import HttpMethod
 from ...pagination.AppPagination import AppPagination
 from .RequestHandler import RequestHandler
@@ -31,7 +32,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     pagination_class = AppPagination
     permission_classes = [IsAuthenticated]
     model_class: Type[T]
-    filter_class: Optional[Type[AppFilterSet]] = None
+    filter_class: Type[AppFilterSet] = AppFilterSet
     simple_serializer_class: Optional[Type[ModelSerializer]] = None
     detailed_serializer_class: Optional[Type[ModelSerializer]] = None
     create_serializer_class: Optional[Type[Serializer]] = None
@@ -39,7 +40,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def __init__(self,
                  model_class: Type[T],
-                 filterset_class: Optional[Type[AppFilterSet]] = None,
+                 filterset_class: Type[AppFilterSet] = AppFilterSet,
                  simple_serializer_class: Optional[Type[ModelSerializer]] = None,
                  detailed_serializer_class: Optional[Type[ModelSerializer]] = None,
                  update_serializer_class: Optional[Type[Serializer]] = None,
@@ -58,19 +59,21 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
         if not serializer:
-            raise NotImplementedError(AppErrorMessages.MESSAGES[ErrorCode.SERIALIZER_NOT_DEFINED][serializer_type])
+            raise NotImplementedError(
+                AppErrorMessages.MESSAGES[ErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED])
         return serializer
 
     def _get_create_serializer_class(self) -> Type[Serializer]:
         if self.create_serializer_class:
             return self.create_serializer_class
-        raise NotImplementedError(AppErrorMessages.SERIALIZER_NOT_DEFINED[SerializerType.CREATE])
+        raise NotImplementedError(
+            AppErrorMessages.MESSAGES[ErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED])
 
     def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
         serializer.is_valid(raise_exception=True)
         validated_data_dict = getattr(serializer, 'validated_data', {})
         if not validated_data_dict:
-            raise ValidationError("Serializer validation failed - no validated data available")
+            raise DrfValidationError("Serializer validation failed - no validated data available")
         validated_data_dict = {str(k): v for k, v in validated_data_dict.items()}
         if PrivateFields.USER not in validated_data_dict:
             validated_data_dict[PrivateFields.USER] = self.request.user
@@ -103,7 +106,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         instance = self.model_class.objects.update_instance(instance, **validated_data)
         return instance
 
-    def _handle_list(self, *args, **kwargs) -> Response:
+    def _handle_list(self) -> Response:
         try:
             queryset = self.get_queryset()
             page = self.paginate_queryset(queryset)
@@ -117,10 +120,10 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
                 data = []
 
             return self.get_paginated_response(data)
-        except (DRFValidationError, ValidationError) as e:
+        except (DrfValidationError, DjangoValidationError) as e:
             return ErrorResponse.from_validation_error(e)
 
-    def _handle_post(self, request: Request, creation_type: Optional[str] = None, *args, **kwargs) -> Response:
+    def _handle_post(self, request: Request, creation_type: Optional[str] = None) -> Response:
         create_data_in_snake_case = data_transformer.dict_to_snake_case(request.data)
         instance = self._create_instance(request=request,
                                          create_data=create_data_in_snake_case,
@@ -129,13 +132,12 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         headers = self.get_success_headers(serializer.data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def _handle_retrieve(self, request: Request, *args, **kwargs) -> Response:
+    def _handle_retrieve(self) -> Response:
         instance = self.get_object()
         serializer = self._require_serializer(SerializerType.DETAILED)(instance)
         return Response(serializer.data)
 
-    def _handle_update(self, request: Request, *args, **kwargs) -> Response:
-        print(request.data)
+    def _handle_update(self, request: Request) -> Response:
         instance = self.get_object()
         update_data_in_camel_case = data_transformer.convert_data_to_dict(request.data)
         update_data_in_snake_case = data_transformer.dict_to_snake_case(update_data_in_camel_case)
@@ -145,7 +147,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    def _handle_destroy(self, request: Request, *args, **kwargs) -> Response:
+    def _handle_destroy(self) -> Response:
         instance = self.get_object()
         self.model_class.objects.delete_instance(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -158,7 +160,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def handle_exception(self, exc: Exception) -> Response:
-        if isinstance(exc, (DRFValidationError, DjangoValidationError)):
+        if isinstance(exc, (DrfValidationError, DjangoValidationError)):
             return ErrorResponse.from_validation_error(exc)
         return super().handle_exception(exc)
 
@@ -178,18 +180,18 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         request: Request = cast(Request, self.request)
         queryset = self.model_class.objects.filter(user=request.user)
 
-        if request.method == HttpMethod.GET and self.filter_class:
+        if request.method == HttpMethod.GET:
             query_params_snake_case = data_transformer.dict_to_snake_case(request.query_params)
             try:
                 queryset = self.filter_class(query_params_snake_case, queryset=queryset).qs
             except DjangoValidationError as e:
-                raise ValidationError(detail=e.message)
+                raise DrfValidationError(detail=e.message)
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
         return queryset.order_by(*ordering_fields)
 
     def get_file_response(self, file_path: str) -> FileResponse:
-        return APIFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
+        return AppFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
 
     def retrieve(self, request: Request, *args, **kwargs) -> Response:
         raise MethodNotAllowed('GET', detail='Retrieve operation not allowed for this resource')

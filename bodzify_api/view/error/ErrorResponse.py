@@ -2,7 +2,7 @@ from typing import Dict, Union, Any, Sequence, cast
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
-from rest_framework.exceptions import ValidationError as DRFValidationError, ErrorDetail as DRFErrorDetail
+from rest_framework.exceptions import ValidationError as DrfValidationError, ErrorDetail as DRFErrorDetail
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -93,14 +93,14 @@ class ErrorResponse:
         )
 
     @staticmethod
-    def from_validation_error(exc: Union[DRFValidationError, DjangoValidationError, IntegrityError]) -> Response:
+    def from_validation_error(exc: Union[DrfValidationError, DjangoValidationError, IntegrityError]) -> Response:
         if isinstance(exc, IntegrityError):
             return ErrorResponse.create_error_response(
                 {'message': AppErrorMessages.MESSAGES[ErrorCode.VALIDATION_INTEGRITY_ERROR]},
                 ErrorCode.VALIDATION_INTEGRITY_ERROR
             )
 
-        if isinstance(exc, DRFValidationError):
+        if isinstance(exc, DrfValidationError):
             if isinstance(exc.detail, dict):
                 error_dict = {}
                 for field, errors in exc.detail.items():

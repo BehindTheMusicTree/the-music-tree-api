@@ -1,5 +1,5 @@
 from typing import Dict, Any, Union
-from rest_framework.exceptions import ErrorDetail, ValidationError as DRFValidationError
+from rest_framework.exceptions import ErrorDetail, ValidationError as DrfValidationError
 from django.core.exceptions import ValidationError as DjangoValidationError
 import logging
 
@@ -14,10 +14,10 @@ class ErrorProcessor:
         message_str = str(message)
         return AppErrorMessages.MESSAGES[ErrorCode.VALIDATION_INVALID_UUID] if 'UUID' in message_str else message_str
 
-    def process_validation_errors(self, exc: Union[DRFValidationError, DjangoValidationError]) -> Dict[str, Any]:
+    def process_validation_errors(self, exc: Union[DrfValidationError, DjangoValidationError]) -> Dict[str, Any]:
         custom_errors: Dict[str, Any] = {}
 
-        if isinstance(exc, DRFValidationError):
+        if isinstance(exc, DrfValidationError):
             detail = getattr(exc, 'detail', None)
             if isinstance(detail, dict):
                 custom_errors = {
@@ -44,8 +44,6 @@ class ErrorProcessor:
                     self.format_error_message(msg) for msg in exc.messages
                 ]
         else:
-            logging.getLogger(settings.LOGGERS_NAME.EXCEPTIONS).warning(
-                "Unhandled exception type: %s", type(exc)
-            )
+            logging.getLogger(settings.LOGGERS_NAME.EXCEPTIONS).warning("Unhandled exception type: %s", type(exc))
 
         return custom_errors
