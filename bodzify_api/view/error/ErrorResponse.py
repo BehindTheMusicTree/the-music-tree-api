@@ -35,6 +35,18 @@ class ErrorResponse:
         return default_code
 
     @staticmethod
+    def _format_validation_message(message: str, field: str) -> str:
+        if message.startswith("{'message': '") and message.endswith("'}"):
+            try:
+                import json
+                parsed = json.loads(message.replace("'", '"'))
+                message = parsed.get('message', message)
+            except:
+                pass
+
+        return message
+
+    @staticmethod
     def create_error_response(error_data: ErrorDataType, error_code: ErrorCode = ErrorCode.VALIDATION_INVALID_INPUT
                               ) -> Response:
         http_status = ErrorHTTPStatusCodeMap.ERROR_TO_HTTP_STATUS.get(error_code, status.HTTP_400_BAD_REQUEST)
@@ -57,9 +69,12 @@ class ErrorResponse:
 
                 # Extract field name if present
                 field = next((k for k in error_dict.keys() if k not in {'message', 'code', 'details'}), None)
+                message = str(error_dict['message'])
+                if field:
+                    message = ErrorResponse._format_validation_message(message, field)
 
                 details = [{
-                    'message': str(error_dict['message']),
+                    'message': message,
                     'code': str(error_dict['code']),
                     'field': field
                 }]
@@ -69,6 +84,7 @@ class ErrorResponse:
                     if isinstance(errors, (list, tuple)):
                         for error in errors:
                             error_msg = str(error.message if isinstance(error, ErrorDetail) else error)
+                            error_msg = ErrorResponse._format_validation_message(error_msg, field)
                             error_code_value = ErrorResponse._get_error_code(error) if isinstance(
                                 error, DRFErrorDetail) else error_code.name.lower()
                             details.append({
@@ -78,6 +94,7 @@ class ErrorResponse:
                             })
                     else:
                         error_msg = str(errors)
+                        error_msg = ErrorResponse._format_validation_message(error_msg, field)
                         error_code_value = ErrorResponse._get_error_code(errors) if isinstance(
                             errors, DRFErrorDetail) else error_code.name.lower()
                         details.append({
