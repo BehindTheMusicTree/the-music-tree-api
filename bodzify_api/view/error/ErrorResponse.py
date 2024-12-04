@@ -1,4 +1,4 @@
-from typing import Dict, Union, Any, Sequence, cast
+from typing import Dict, Union, Any, Sequence, cast, List
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
@@ -42,52 +42,62 @@ class ErrorResponse:
 
         # Format error_data into a consistent structure
         if isinstance(error_data, str):
-            details = [ErrorDetail(message=error_data, code=error_code.name.lower()).to_dict()]
+            details = [{'message': error_data, 'code': error_code.name.lower()}]
         elif isinstance(error_data, (list, tuple)):
             if all(isinstance(item, str) for item in error_data):
-                details = [ErrorDetail(message=str(msg), code=error_code.name.lower()).to_dict() for msg in error_data]
+                details = [{'message': str(msg), 'code': error_code.name.lower()} for msg in error_data]
             else:
-                details = [ErrorDetail(
-                    message=str(error.message if isinstance(error, ErrorDetail) else error),
-                    code=error_code.name.lower()
-                ).to_dict() for error in error_data]
+                details = [{'message': str(error.message if isinstance(error, ErrorDetail) else error),
+                            'code': error_code.name.lower()} for error in error_data]
         elif isinstance(error_data, dict):
             if 'message' in error_data:
                 error_dict = error_data.copy()
                 if 'code' not in error_dict:
                     error_dict['code'] = error_code.name.lower()
-                details = [ErrorDetail(
-                    message=str(error_dict['message']),
-                    code=str(error_dict['code']),
-                    details=error_dict.get('details')
-                ).to_dict()]
+
+                # Extract field name if present
+                field = next((k for k in error_dict.keys() if k not in {'message', 'code', 'details'}), None)
+
+                details = [{
+                    'message': str(error_dict['message']),
+                    'code': str(error_dict['code']),
+                    'field': field
+                }]
             else:
                 details = []
                 for field, errors in error_data.items():
                     if isinstance(errors, (list, tuple)):
-                        details.extend([
-                            ErrorDetail(
-                                message=str(error.message if isinstance(error, ErrorDetail) else error),
-                                code=error_code.name.lower()
-                            ).to_dict()
-                            for error in errors
-                        ])
+                        for error in errors:
+                            error_msg = str(error.message if isinstance(error, ErrorDetail) else error)
+                            error_code_value = ErrorResponse._get_error_code(error) if isinstance(
+                                error, DRFErrorDetail) else error_code.name.lower()
+                            details.append({
+                                'message': error_msg,
+                                'code': error_code_value,
+                                'field': field
+                            })
                     else:
-                        details.append(ErrorDetail(message=str(errors), code=error_code.name.lower()).to_dict())
+                        error_msg = str(errors)
+                        error_code_value = ErrorResponse._get_error_code(errors) if isinstance(
+                            errors, DRFErrorDetail) else error_code.name.lower()
+                        details.append({
+                            'message': error_msg,
+                            'code': error_code_value,
+                            'field': field
+                        })
         else:
-            details = [ErrorDetail(message=str(error_data), code=error_code.name.lower()).to_dict()]
+            details = [{'message': str(error_data), 'code': error_code.name.lower()}]
 
         # Create response data dictionary
         response_data = {
             'code': error_code.value,
-            'status': str(http_status),
             'message': status_message,
             'success': False,
             'details': details
         }
 
         return Response(
-            data=response_data,  # Pass the dictionary directly, let DRF handle the JSON encoding
+            data=response_data,
             status=http_status,
             content_type='application/json'
         )
@@ -106,29 +116,22 @@ class ErrorResponse:
                 for field, errors in exc.detail.items():
                     if isinstance(errors, (list, tuple)):
                         error_dict[field] = [
-                            ErrorDetail(
-                                message=str(error),
-                                code=ErrorResponse._get_error_code(error)
-                            ) for error in errors
+                            {'message': str(error), 'code': ErrorResponse._get_error_code(error), 'field': field}
+                            for error in errors
                         ]
                     else:
-                        error_dict[field] = ErrorDetail(
-                            message=str(errors),
-                            code=ErrorResponse._get_error_code(errors)
-                        )
+                        error_dict[field] = {
+                            'message': str(errors),
+                            'code': ErrorResponse._get_error_code(errors),
+                            'field': field
+                        }
                 return ErrorResponse.create_error_response(error_dict, ErrorCode.VALIDATION_INVALID_INPUT)
 
             if isinstance(exc.detail, (list, tuple)):
-                error_details = []
-                for error in exc.detail:
-                    code = ErrorResponse._get_error_code(error)
-                    detail = ErrorDetail(
-                        message=str(error),
-                        code=code
-                    )
-                    if code == 'invalid':
-                        detail.details = AppErrorMessages.MESSAGES[ErrorCode.VALIDATION_INVALID_INPUT]
-                    error_details.append(detail)
+                error_details = [
+                    {'message': str(error), 'code': ErrorResponse._get_error_code(error)}
+                    for error in exc.detail
+                ]
                 return ErrorResponse.create_error_response(error_details, ErrorCode.VALIDATION_INVALID_INPUT)
 
             return ErrorResponse.create_error_response(
@@ -138,17 +141,18 @@ class ErrorResponse:
 
         if isinstance(exc, DjangoValidationError):
             if hasattr(exc, 'message_dict'):
-                return ErrorResponse.create_error_response(
-                    exc.message_dict,
-                    ErrorCode.VALIDATION_INVALID_INPUT
-                )
+                error_dict = {}
+                for field, messages in exc.message_dict.items():
+                    error_dict[field] = [
+                        {'message': str(msg), 'code': ErrorCode.VALIDATION_INVALID_INPUT.name.lower(), 'field': field}
+                        for msg in messages
+                    ]
+                return ErrorResponse.create_error_response(error_dict, ErrorCode.VALIDATION_INVALID_INPUT)
+
             error_list = [
                 {'message': str(msg), 'code': ErrorCode.VALIDATION_INVALID_INPUT.name.lower()}
                 for msg in exc.messages
             ]
-            return ErrorResponse.create_error_response(
-                cast(ErrorDataType, error_list),
-                ErrorCode.VALIDATION_INVALID_INPUT
-            )
+            return ErrorResponse.create_error_response(error_list, ErrorCode.VALIDATION_INVALID_INPUT)
 
         return ErrorResponse.create_error_response({'message': str(exc)})
