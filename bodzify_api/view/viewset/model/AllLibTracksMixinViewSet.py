@@ -8,9 +8,8 @@ from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTrack
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.serializer.schema.model.lib_track.output.minimum import LibTrackMinimumSerializer
-from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album import LibTrackSimpleWithoutPlaylistAndAlbumSerializer
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
-from .base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
 class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):

@@ -1,3 +1,4 @@
+
 from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
 
 from rest_framework.permissions import IsAuthenticated
@@ -20,9 +21,7 @@ from bodzify_api.view.error.ErrorMessages import AppErrorMessages
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
-from ....RequestHandler import RequestHandler
 from ....pagination.AppPagination import AppPagination
-from ....error.ErrorProcessor import ErrorProcessor
 
 
 T = TypeVar('T', bound=BaseModel)
@@ -53,8 +52,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         self.detailed_serializer_class = detailed_serializer_class
         self.update_serializer_class = update_serializer_class
         self.create_serializer_class = create_serializer_class
-        self.request_handler = RequestHandler()
-        self.error_processor = ErrorProcessor()
 
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
@@ -103,25 +100,21 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._require_serializer(SerializerType.UPDATE)
         serializer = serializer_class(data=update_data, partial=True, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-        instance = self.model_class.objects.update_instance(instance, **validated_data)
-        return instance
+        return self.model_class.objects.update_instance(instance, **validated_data)
 
-    def _handle_list(self) -> Response:
-        try:
-            queryset = self.get_queryset()
-            page = self.paginate_queryset(queryset)
+    def _handle_list(self, request: Request, *args, **kwargs) -> Response:
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
 
-            if not queryset.exists():
-                data = []
-            elif page is not None:
-                serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)
-                data = list(serializer.data)
-            else:
-                data = []
+        if not queryset.exists():
+            data = []
+        elif page is not None:
+            serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)
+            data = list(serializer.data)
+        else:
+            data = []
 
-            return self.get_paginated_response(data)
-        except (DrfValidationError, DjangoValidationError) as e:
-            return ErrorResponse.from_validation_error(e)
+        return self.get_paginated_response(data)
 
     def _handle_post(self, request: Request, creation_type: Optional[str] = None) -> Response:
         create_data_in_snake_case = data_transformer.dict_to_snake_case(request.data)
@@ -132,7 +125,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         headers = self.get_success_headers(serializer.data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def _handle_retrieve(self) -> Response:
+    def _handle_retrieve(self, *args, **kwargs) -> Response:
         instance = self.get_object()
         serializer = self._require_serializer(SerializerType.DETAILED)(instance)
         return Response(serializer.data)
@@ -147,7 +140,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    def _handle_destroy(self) -> Response:
+    def _handle_destroy(self, request: Request) -> Response:
         instance = self.get_object()
         self.model_class.objects.delete_instance(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -199,11 +192,14 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('POST', detail='Create operation not allowed for this resource')
 
-    def list(self, args: Any, **kwargs: Any) -> Response:
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('GET', detail='List operation not allowed for this resource')
 
     def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('PUT', detail='Update operation not allowed for this resource')
+
+    def destroy(self, request: Request, *args, **kwargs) -> Response:
+        raise MethodNotAllowed('DELETE', detail='Delete operation not allowed for this resource')
 
     def destroy(self, request: Request, *args, **kwargs) -> Response:
         raise MethodNotAllowed('DELETE', detail='Delete operation not allowed for this resource')

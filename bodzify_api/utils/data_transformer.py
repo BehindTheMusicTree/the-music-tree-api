@@ -98,7 +98,7 @@ def merge_two_dicts(dict1, dict2):
     return dict1
 
 
-def replace_none_values_by_empty_string(**kwargs):
+def replace_none_with_empty_string(**kwargs):
     if kwargs is None:
         return {}
     return {k: ('' if v is None else v) for k, v in kwargs.items()}

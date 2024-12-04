@@ -176,6 +176,14 @@ def init_logs_if_needed():
             raise EnvironmentError(f"The log app file {LOG_APP_FILE} does not exist.")
         print_django(f"The log info file {LOG_APP_FILE} exists.")
 
+        class LOGGERS_NAME:
+            INFO = 'info'
+            REQUEST = 'request'
+            REQUEST_DJANGO = 'django.request'
+            EXCEPTIONS = 'exceptions'
+            DJANGO = 'django'
+            APP = APP_NAME
+
         global LOGGING
         LOGGING = {
             'version': 1,
