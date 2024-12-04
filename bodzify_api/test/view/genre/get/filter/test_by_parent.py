@@ -21,11 +21,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 0
 
-    def test_test_empty_then_results_with_no_foreign_object):
-        response = self._get_genres(**{FilterfFields.PARENT: ''})
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-        def test_not_provided_then_results(self):
+    def test_not_provided_then_results(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop", parent=genre_rock)
 
@@ -34,7 +30,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
 
-        def test_empty_then_results(self):
+    def test_empty_then_results(self):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop", parent=genre_rock)
@@ -47,7 +43,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         assert genre_punk.name in result_names
         assert genre_rock.name in result_names
 
-        def test_exists_then_ok(self):
+    def test_exists_then_ok(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         genre_slow = self.model_fixture_factory.create_genre(name="Slow", parent=genre_rock)
@@ -60,7 +56,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         assert genre_punk.name in result_names
         assert genre_slow.name in result_names
 
-        def test_no_parent_uuid_corresponds_then_return_nothing(self):
+    def test_no_parent_uuid_corresponds_then_return_nothing(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
 
