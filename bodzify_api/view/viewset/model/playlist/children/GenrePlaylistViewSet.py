@@ -6,7 +6,7 @@ from bodzify_api.filter.set.playlist.children.criteria.Fields import Fields as F
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.model.playlist.children.criteria.output.detailed import CriteriaPlaylistDetailedSerializer
 from bodzify_api.serializer.schema.model.playlist.children.criteria.output.simple import CriteriaPlaylistSimpleSerializer
-from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
 class GenrePlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
@@ -26,8 +26,8 @@ class GenrePlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY)
     ])
-    def list(self, request, *args, **kwargs):
-        return self._handle_list(request, *args, **kwargs)
+    def list(self, *args, **kwargs):
+        return self._handle_list(*args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
-        return self._handle_retrieve(request, *args, **kwargs)
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve(*args, **kwargs)

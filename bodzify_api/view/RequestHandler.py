@@ -1,9 +1,11 @@
 from typing import Dict, Any, Callable
+
+from django.db import IntegrityError
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.serializers import Serializer
-from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError as DrfValidationError
+
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 

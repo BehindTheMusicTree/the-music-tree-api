@@ -11,7 +11,7 @@ from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Li
 from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import LibTrackPutSerializer
 from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album_and_genre \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
-from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.schema.model.lib_track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.filter.set.lib_track.Fields import Fields as FilterFields
@@ -104,11 +104,11 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         OpenApiParameter(name=FilterFields.ALBUM_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.LANGUAGE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),])
-    def list(self, request, *args, **kwargs):
-        return self._handle_list(request, *args, **kwargs)
+    def list(self, *args, **kwargs):
+        return self._handle_list(*args, **kwargs)
 
-    def retrieve(self, request: Request, *args, **kwargs):
-        return self._handle_retrieve(request, *args, **kwargs)
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve(*args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=LibTrackPutSerializer,
@@ -145,5 +145,5 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         return self._handle_update(request, *args, **kwargs)
 
     @transaction.atomic
-    def destroy(self, request: Request, *args, **kwargs):
-        return self._handle_destroy(request, *args, **kwargs)
+    def destroy(self, *args, **kwargs):
+        return self._handle_destroy(*args, **kwargs)

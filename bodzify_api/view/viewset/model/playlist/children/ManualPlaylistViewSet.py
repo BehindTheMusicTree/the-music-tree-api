@@ -8,7 +8,7 @@ from bodzify_api.serializer.schema.model.playlist.children.manual.input.endpoint
 from bodzify_api.serializer.schema.model.playlist.children.manual.output.detailed \
     import ManualPlaylistDetailedSerializer
 from bodzify_api.serializer.schema.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
-from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
 class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
@@ -34,10 +34,10 @@ class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
         OpenApiParameter(name=Fields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, request, *args, **kwargs):
-        return self._handle_list(request, *args, **kwargs)
+        return self._handle_list(*args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
-        return self._handle_retrieve(request, *args, **kwargs)
+        return self._handle_retrieve(*args, **kwargs)
 
     # @transaction.atomic not needed
     @extend_schema(request=ManualPlaylistBaseInputSerializer, responses=ManualPlaylistDetailedSerializer)

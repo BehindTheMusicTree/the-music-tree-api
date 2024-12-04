@@ -7,7 +7,7 @@ from django.db import transaction
 
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.schema.model.user.output.detailed import UserDetailedSerializer
-from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
 class UserViewSet(AppModelViewSet[User]):
@@ -21,16 +21,16 @@ class UserViewSet(AppModelViewSet[User]):
     def create(self, request: Request, *args, **kwargs):
         return self._handle_post(request, *args, **kwargs)
 
-    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        return self._handle_list(request, *args, **kwargs)
+    def list(self, *args: Any, **kwargs: Any) -> Response:
+        return self._handle_list(*args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
-        return self._handle_retrieve(request, *args, **kwargs)
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve(*args, **kwargs)
 
     # @transaction.atomic not needed
     def update(self, request, *args, **kwargs):
         return self._handle_update(request, *args, **kwargs)
 
     @transaction.atomic
-    def destroy(self, request, *args, **kwargs):
-        return self._handle_destroy(request, *args, **kwargs)
+    def destroy(self, *args, **kwargs):
+        return self._handle_destroy(*args, **kwargs)

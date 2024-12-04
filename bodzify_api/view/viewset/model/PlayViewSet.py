@@ -6,7 +6,7 @@ from bodzify_api.filter.set.private_unique_resource.PrivateUniqueResourceFilterS
 from bodzify_api.model.play.Play import Fields, Play
 from bodzify_api.serializer.schema.model.play.input.schema.endpoint.post import PlayPostSerializer
 from bodzify_api.serializer.schema.model.play.output.detailed import PlayDetailedSerializer
-from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
 class PlayViewSet(AppModelViewSet[Play]):
@@ -20,11 +20,11 @@ class PlayViewSet(AppModelViewSet[Play]):
     def get_queryset(self):
         return Play.objects.filter(user=self.request.user).order_by(f"-{Fields.CREATED_ON} ")
 
-    def list(self, request: Request, *args, **kwargs) -> Response:
-        return self._handle_list(request, *args, **kwargs)
+    def list(self, *args, **kwargs) -> Response:
+        return self._handle_list(*args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
-        return self._handle_retrieve(request, *args, **kwargs)
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve(*args, **kwargs)
 
     # @transaction.atomic not needed
     @extend_schema(request=PlayPostSerializer, responses=PlayDetailedSerializer)

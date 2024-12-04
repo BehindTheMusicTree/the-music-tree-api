@@ -3,7 +3,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes 
 from rest_framework.response import Response
 from rest_framework import status
 
-from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filter.set.album.AlbumFilterSet import AlbumFilterSet
 from bodzify_api.filter.set.album.Fields import Fields as FilterFields
 from bodzify_api.model.album.Album import Album
@@ -23,12 +23,12 @@ class AlbumViewSet(AppModelViewSet[Album]):
         OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.ALBUM_ARTIST_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
-    def list(self, request, *args, **kwargs):
-        return self._handle_list(request, *args, **kwargs)
+    def list(self, *args, **kwargs):
+        return self._handle_list(*args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
-        return self._handle_retrieve(request, *args, **kwargs)
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve(*args, **kwargs)
 
     @transaction.atomic
-    def destroy(self, request, *args, **kwargs):
-        return self._handle_destroy(request, *args, **kwargs)
+    def destroy(self, *args, **kwargs):
+        return self._handle_destroy(*args, **kwargs)

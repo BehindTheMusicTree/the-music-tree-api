@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.serializer.schema.model.playlist.base.output.detailed import PlaylistDetailedSerializer
 from bodzify_api.serializer.schema.model.playlist.base.output.simple import PlaylistSimpleSerializer
-from bodzify_api.view.viewset.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filter.set.playlist.PlaylistParamFilterSet import PlaylistParamFilterSet
 from bodzify_api.filter.set.playlist.Fields import Fields as QueryParamsFields
 
@@ -78,8 +78,8 @@ class PlaylistViewSet(AppModelViewSet[Playlist]):
                                OpenApiParameter(name=QueryParamsFields.TYPE_LABEL,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY)])
-    def list(self, request, *args, **kwargs):
-        return self._handle_list(request, *args, **kwargs)
+    def list(self, *args, **kwargs):
+        return self._handle_list(*args, **kwargs)
 
-    def retrieve(self, request: Request, *args, **kwargs):
-        return self._handle_retrieve(request, *args, **kwargs)
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve(*args, **kwargs)

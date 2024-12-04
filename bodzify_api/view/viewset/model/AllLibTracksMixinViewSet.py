@@ -1,11 +1,13 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import ValidationError as DrfValidationError
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.serializer.schema.model.all_lib_tracks_mixin.detailed import AllLibTracksMixinDetailedSerializer
-from ..base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.error.ErrorResponse import ErrorResponse
+from .base.AppModelViewSet import AppModelViewSet
 
 
 class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
@@ -35,5 +37,5 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
                 data = []
 
             return self.get_paginated_response(data)
-        except (DrfValidationError, ValidationError) as e:
+        except (DrfValidationError, DjangoValidationError) as e:
             return ErrorResponse.from_validation_error(e)

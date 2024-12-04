@@ -9,7 +9,7 @@ from bodzify_api.serializer.schema.model.criteria.input.post import CriteriaPost
 from bodzify_api.serializer.schema.model.criteria.input.put import CriteriaPutSerializer
 from bodzify_api.serializer.schema.model.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.serializer.schema.model.criteria.output.simple import CriteriaSimpleSerializer
-from ...base.AppModelViewSet import AppModelViewSet
+from ..base.AppModelViewSet import AppModelViewSet
 
 
 class CriteriaViewSet(AppModelViewSet[Criteria]):
@@ -37,11 +37,11 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                                                 location=OpenApiParameter.QUERY,
                                                 required=False)],
                    responses=CriteriaSimpleSerializer)
-    def list(self, request, *args, **kwargs):
-        return self._handle_list(request, *args, **kwargs)
+    def list(self, *args, **kwargs):
+        return self._handle_list(*args, **kwargs)
 
-    def retrieve(self, request: Request, *args, **kwargs) -> Response:
-        return self._handle_retrieve(request, *args, **kwargs)
+    def retrieve(self, *args, **kwargs) -> Response:
+        return self._handle_retrieve(*args, **kwargs)
 
     @transaction.atomic
     @extend_schema(request=CriteriaPutSerializer,
