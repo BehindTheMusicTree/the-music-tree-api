@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models import QuerySet
+from django.core.exceptions import ValidationError
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
@@ -52,7 +53,10 @@ class Criteria(LibTrackMixin):
     class Meta:
         verbose_name = 'Criteria'
         verbose_name_plural = 'Criterias'
-        constraints = [models.CheckConstraint(check=~models.Q(name=""), name='%(class)s_non_empty_name')]
+        constraints = [
+            models.CheckConstraint(check=~models.Q(name=""), name='%(class)s_non_empty_name'),
+            models.UniqueConstraint(fields=[Fields.USER, 'name'], name='unique_name_per_user')
+        ]
         indexes = [
             models.Index(fields=[Fields.USER, Fields.NAME], name='%(class)s_user_name_idx'),
             models.Index(fields=[Fields.USER, Fields.UUID], name='%(class)s_user_uuid_idx')
@@ -99,4 +103,7 @@ class Criteria(LibTrackMixin):
 
     def save(self, *args, **kwargs):
         kwargs = self._prepare_save(**kwargs)
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
+        except IntegrityError as e:
+            raise ValidationError(f"Duplicate name for user: {e}")
