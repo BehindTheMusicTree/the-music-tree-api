@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.extract import Fields as ExtractFields
+from bodzify_api.serializer.schema.model.lib_track.input.extract import Fields as ExtractFields
 from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldModelStrTestCase
 
 

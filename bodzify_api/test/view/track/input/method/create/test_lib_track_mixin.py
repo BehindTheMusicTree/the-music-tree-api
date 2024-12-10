@@ -3,7 +3,7 @@ from typing import Optional, cast
 from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

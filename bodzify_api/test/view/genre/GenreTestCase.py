@@ -4,7 +4,8 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.schema.model.playlist.children.manual.output.detailed import Fields as ManualPlaylistGetFields
+from bodzify_api.serializer.schema.model.playlist.children.manual.output.detailed \
+    import Fields as ManualPlaylistGetFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
@@ -22,7 +23,6 @@ class GenreTestCase(ApiTestCase):
         return response
 
     def _get_genres(self, **kwargs):
-        print(kwargs)
         response = self.api_client.get(path=reverse('genre-list'), data=kwargs)
         if response.status_code == status.HTTP_200_OK:
             self._set_results_attributes(response)
@@ -31,7 +31,7 @@ class GenreTestCase(ApiTestCase):
     def _post_genre(self, **kwargs):
         response = self.api_client.post(path=reverse('genre-list'),
                                         data=kwargs,
-                                        content_type='application/x-www-form-urlencoded')
+                                        content_type='application/json')
         if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_genre_attribute(response)
         return response

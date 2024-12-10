@@ -10,7 +10,7 @@ from bodzify_api.test.AppApiClient import AppApiClient
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.model.user.User import User
 from bodzify_api.test.AppTestCase import AppTestCase
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as LibTrackPostFields
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.serializer.schema.model.lib_track.output.detailed import Fields as LibTrackGetFields
 from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
 

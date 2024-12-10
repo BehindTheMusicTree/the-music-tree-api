@@ -1,8 +1,8 @@
 from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.schema.model.criteria.input.endpoint.put import Fields as PutFields
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as LibTrackPostFields
+from bodzify_api.serializer.schema.model.criteria.input.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
@@ -14,6 +14,7 @@ class TestCase(GenreTestCase):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         genre_new_name = "Punk"
         response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: genre_new_name})
+        print(response.json())
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.name == genre_new_name
 

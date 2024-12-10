@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.extract import Fields as ExtractFields
+from bodzify_api.serializer.schema.model.lib_track.input.extract import Fields as ExtractFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

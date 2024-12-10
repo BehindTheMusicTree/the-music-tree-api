@@ -2,7 +2,7 @@ from typing import Optional
 from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import Fields as PostFields
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as PostFields
 from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase \
     import NullableStrFieldFromDataTestCase
 
