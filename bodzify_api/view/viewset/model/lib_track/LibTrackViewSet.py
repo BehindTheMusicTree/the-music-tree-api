@@ -6,9 +6,9 @@ from rest_framework.request import Request
 from rest_framework.decorators import action
 from rest_framework.serializers import Serializer
 
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.extract import LibTrackExtractSerializer
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.post import LibTrackPostSerializer
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.put import LibTrackPutSerializer
+from bodzify_api.serializer.schema.model.lib_track.input.extract import LibTrackExtractSerializer
+from bodzify_api.serializer.schema.model.lib_track.input.post import LibTrackPostSerializer
+from bodzify_api.serializer.schema.model.lib_track.input.put import LibTrackPutSerializer
 from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album_and_genre \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
@@ -65,7 +65,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         """)
                    )
     def create(self, request, *args, **kwargs):
-        return self._handle_post(request=request, creation_type=LibTrackCreationType.POST, *args, **kwargs)
+        return self._handle_post(request=request, creation_type=LibTrackCreationType.POST)
 
     @transaction.atomic
     @extend_schema(request=LibTrackExtractSerializer,
@@ -96,7 +96,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             """))
     @action(detail=False, methods=['post'])
     def extract(self, request, *args, **kwargs):
-        return self._handle_post(request, creation_type=LibTrackCreationType.EXTRACT, *args, **kwargs)
+        return self._handle_post(request, creation_type=LibTrackCreationType.EXTRACT)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
@@ -108,7 +108,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         return self._handle_list(*args, **kwargs)
 
     def retrieve(self, *args, **kwargs):
-        return self._handle_retrieve(*args, **kwargs)
+        return self._handle_retrieve()
 
     @transaction.atomic
     @extend_schema(request=LibTrackPutSerializer,

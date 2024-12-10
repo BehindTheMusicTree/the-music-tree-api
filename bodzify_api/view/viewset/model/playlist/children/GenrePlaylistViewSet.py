@@ -27,7 +27,7 @@ class GenrePlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
                          location=OpenApiParameter.QUERY)
     ])
     def list(self, *args, **kwargs):
-        return self._handle_list(*args, **kwargs)
+        return self._handle_list()
 
     def retrieve(self, *args, **kwargs):
-        return self._handle_retrieve(*args, **kwargs)
+        return self._handle_retrieve()

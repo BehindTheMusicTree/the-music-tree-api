@@ -19,17 +19,17 @@ class UserViewSet(AppModelViewSet[User]):
 
     # @transaction.atomic not needed
     def create(self, request: Request, *args, **kwargs):
-        return self._handle_post(request, *args, **kwargs)
+        return self._handle_post(request)
 
     def list(self, *args: Any, **kwargs: Any) -> Response:
-        return self._handle_list(*args, **kwargs)
+        return self._handle_list()
 
     def retrieve(self, *args, **kwargs):
-        return self._handle_retrieve(*args, **kwargs)
+        return self._handle_retrieve()
 
     # @transaction.atomic not needed
     def update(self, request, *args, **kwargs):
-        return self._handle_update(request, *args, **kwargs)
+        return self._handle_update(request)
 
     @transaction.atomic
     def destroy(self, *args, **kwargs):

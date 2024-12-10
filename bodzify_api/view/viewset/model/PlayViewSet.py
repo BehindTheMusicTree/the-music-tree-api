@@ -21,12 +21,12 @@ class PlayViewSet(AppModelViewSet[Play]):
         return Play.objects.filter(user=self.request.user).order_by(f"-{Fields.CREATED_ON} ")
 
     def list(self, *args, **kwargs) -> Response:
-        return self._handle_list(*args, **kwargs)
+        return self._handle_list()
 
     def retrieve(self, *args, **kwargs):
-        return self._handle_retrieve(*args, **kwargs)
+        return self._handle_retrieve()
 
     # @transaction.atomic not needed
     @extend_schema(request=PlayPostSerializer, responses=PlayDetailedSerializer)
     def create(self, request, *args, **kwargs):
-        return self._handle_post(request, *args, **kwargs)
+        return self._handle_post(request)
