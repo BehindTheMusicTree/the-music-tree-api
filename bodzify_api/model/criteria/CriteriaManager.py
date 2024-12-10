@@ -9,7 +9,6 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
-    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
     from .Criteria import Criteria
 
 T = TypeVar('T', bound='Criteria')
