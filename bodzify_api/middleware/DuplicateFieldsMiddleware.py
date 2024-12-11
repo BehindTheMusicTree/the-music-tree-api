@@ -1,27 +1,23 @@
 
 import json
-import re
-from typing import List, Dict, Any
-from rest_framework import serializers
+from django.http import HttpRequest, HttpResponse
 from rest_framework.exceptions import ValidationError
-from bodzify_api.utils.validation_error_utils import raise_duplicate_fields_error
 
 
-def find_duplicate_fields(json_str: str) -> List[str]:
+def find_duplicate_fields(json_str: str) -> list[str]:
     """Find duplicate fields in a JSON string."""
     try:
-        # Try to parse the JSON string multiple times to detect duplicates
         decoder = json.JSONDecoder()
         pos = 0
         fields = []
-        
+
         while pos < len(json_str):
             # Skip whitespace
             while pos < len(json_str) and json_str[pos].isspace():
                 pos += 1
             if pos >= len(json_str):
                 break
-                
+
             # If we find a field name (starts with ")
             if json_str[pos] == '"':
                 end = json_str.find('"', pos + 1)
@@ -33,21 +29,24 @@ def find_duplicate_fields(json_str: str) -> List[str]:
                     pos = end + 1
             else:
                 pos += 1
-                
+
         return []
     except json.JSONDecodeError:
         return []
 
 
-class AppInputSerializer(serializers.Serializer):
-    """Base serializer that checks for duplicate fields in the input data."""
+class DuplicateFieldsMiddleware:
+    """Middleware to preserve raw request body for duplicate field detection."""
 
-    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate the input data, checking for duplicate fields."""
-        request = self.context.get('request')
-        if request and hasattr(request, '_raw_body'):
-            duplicates = find_duplicate_fields(request._raw_body)
-            if duplicates:
-                raise_duplicate_fields_error(duplicates)
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-        return super().validate(attrs)
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        if request.method in ['POST', 'PUT', 'PATCH'] and request.content_type == 'application/json':
+            try:
+                # Store the raw body content for later use
+                setattr(request, '_raw_body', request.body.decode('utf-8'))
+            except UnicodeDecodeError:
+                pass
+
+        return self.get_response(request)

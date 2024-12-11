@@ -1,5 +1,5 @@
-from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
 
+from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request

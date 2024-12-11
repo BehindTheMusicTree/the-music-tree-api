@@ -1,41 +1,20 @@
-import datetime
+
 import os
 import sys
+import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-
-from bodzify_api.utils.AppStaticFileStates import StaticFileStates
+from typing import Dict, List, Any, Optional
 from bodzify_api.utils.env_var_loader import (
-    load_calculated_env_paths, load_env_vars_from_file_if_exists,
-    load_required_bool_env_var, load_required_path_env_var,
-    load_required_secret_env_var, load_required_str_env_var)
-from bodzify_api.utils.utils import print_django
+    load_required_str_env_var,
+    load_required_bool_env_var,
+    load_required_secret_env_var,
+    load_required_path_env_var,
+    load_env_vars_from_file_if_exists,
+    load_calculated_env_paths,
+)
+from bodzify_api.utils.app_django_file import print_django
+from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 
-# Environment Variables
-DB_BODZIFY_API_DB_NAME: str
-DB_BODZIFY_API_USERNAME: str
-DB_BODZIFY_API_USER_PASSWORD: str
-DB_HOST: str
-DB_PORT: str
-
-# Django Settings
-DATABASES: Dict[str, Dict[str, Any]]
-LOGGING: Dict[str, Any]
-
-# Application Exposure
-ALLOWED_HOSTS: List[str] = []
-API_ROOT_BASE: str
-ROOT_URLCONF: str
-SECURE_SSL_REDIRECT: bool
-SESSION_COOKIE_SECURE: bool
-CSRF_COOKIE_SECURE: bool
-CSRF_TRUSTED_ORIGINS: List[str] = []
-CORS_ALLOW_ALL_ORIGINS: bool
-
-# Application Constants
-ATOMIC_REQUESTS: bool
-DEBUG: bool
-USER_LIBRARIES_DIR_NAME_PREFIXE: str
 TEST_USER_LIBRARIES_DIR_NAME_PREFIXE: str
 USER_MAX_NUMBER: str
 UUID_LEN: int
@@ -518,17 +497,21 @@ def setup_installed_apps_and_caches():
 
 
 def setup_middlewares():
+    """Setup Django middleware classes."""
     global MIDDLEWARE
-    MIDDLEWARE = [f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
-                  f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
-                  'django.middleware.security.SecurityMiddleware',
-                  'corsheaders.middleware.CorsMiddleware',
-                  'django.contrib.sessions.middleware.SessionMiddleware',
-                  'django.middleware.common.CommonMiddleware',
-                  'django.middleware.csrf.CsrfViewMiddleware',
-                  'django.contrib.auth.middleware.AuthenticationMiddleware',
-                  'django.contrib.messages.middleware.MessageMiddleware',
-                  'django.middleware.clickjacking.XFrameOptionsMiddleware']
+    MIDDLEWARE = [
+        f'{APP_NAME}.middleware.DuplicateFieldsMiddleware.DuplicateFieldsMiddleware',
+        f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
+        f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
+        'django.middleware.security.SecurityMiddleware',
+        'corsheaders.middleware.CorsMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    ]
 
 
 def setup_db_connection():
