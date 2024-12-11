@@ -1,11 +1,11 @@
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.schema.base_input.BaseInputModelSerializer import BaseInputModelSerializer
+from bodzify_api.serializer.schema.base_input.AppInputModelSerializer import AppInputModelSerializer
 from .Fields import Fields
 
 
-class CriteriaPutSerializer(BaseInputModelSerializer):
+class CriteriaPutSerializer(AppInputModelSerializer):
 
     class Meta:
         model = Criteria

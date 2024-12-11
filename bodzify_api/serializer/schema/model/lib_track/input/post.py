@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.endpoint import LibTrackEndPointSerializer
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint.endpoint import Fields as EndpointFields
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint import LibTrackEndPointSerializer
+from bodzify_api.serializer.schema.model.lib_track.input.endpoint import Fields as EndpointFields
 
 
 class Fields:

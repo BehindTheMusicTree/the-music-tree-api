@@ -3,14 +3,14 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.field.UserFilteredUUIDField import UserFilteredUUIDField
-from bodzify_api.serializer.schema.base_input.BaseInputSerializer import BaseInputSerializer
+from bodzify_api.serializer.schema.base_input.AppInputSerializer import AppInputSerializer
 from .Fields import Fields
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
 position_in_album_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album position is."""
 
 
-class LibTrackEndPointSerializer(BaseInputSerializer):
+class LibTrackEndPointSerializer(AppInputSerializer):
     track_file_fingerprint_must_be_unique = serializers.BooleanField(required=False)
     title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                                   required=False,
