@@ -1,4 +1,3 @@
-
 from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
 
 from rest_framework.permissions import IsAuthenticated
@@ -19,6 +18,7 @@ from bodzify_api.utils import data_transformer
 from bodzify_api.view.error.ErrorCode import ErrorCode
 from bodzify_api.view.error.ErrorMessages import AppErrorMessages
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
+from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
 from ....pagination.AppPagination import AppPagination
@@ -56,21 +56,34 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
         if not serializer:
-            raise NotImplementedError(
-                AppErrorMessages.MESSAGES[ErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED])
+            raise DrfValidationError(
+                detail={
+                    'message': AppErrorMessages.MESSAGES[ErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED],
+                    'code': 'serializer_not_defined'
+                }
+            )
         return serializer
 
     def _get_create_serializer_class(self) -> Type[Serializer]:
         if self.create_serializer_class:
             return self.create_serializer_class
-        raise NotImplementedError(
-            AppErrorMessages.MESSAGES[ErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED])
+        raise DrfValidationError(
+            detail={
+                'message': AppErrorMessages.MESSAGES[ErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED],
+                'code': 'serializer_not_defined'
+            }
+        )
 
     def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
         serializer.is_valid(raise_exception=True)
         validated_data_dict = getattr(serializer, 'validated_data', {})
         if not validated_data_dict:
-            raise DrfValidationError("Serializer validation failed - no validated data available")
+            raise DrfValidationError(
+                detail={
+                    'message': "Serializer validation failed - no validated data available",
+                    'code': "validation_error"
+                }
+            )
         validated_data_dict = {str(k): v for k, v in validated_data_dict.items()}
         if PrivateFields.USER not in validated_data_dict:
             validated_data_dict[PrivateFields.USER] = self.request.user
@@ -102,7 +115,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         validated_data = self._get_validated_data(serializer)
         return self.model_class.objects.update_instance(instance, **validated_data)
 
-    def _handle_list(self, request: Request, *args, **kwargs) -> Response:
+    def _handle_list(self) -> Response:
         queryset = self.get_queryset()
         page = self.paginate_queryset(queryset)
 
@@ -125,7 +138,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         headers = self.get_success_headers(serializer.data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def _handle_retrieve(self, *args, **kwargs) -> Response:
+    def _handle_retrieve(self) -> Response:
         instance = self.get_object()
         serializer = self._require_serializer(SerializerType.DETAILED)(instance)
         return Response(serializer.data)
@@ -140,7 +153,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    def _handle_destroy(self, request: Request) -> Response:
+    def _handle_destroy(self) -> Response:
         instance = self.get_object()
         self.model_class.objects.delete_instance(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -178,7 +191,12 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             try:
                 queryset = self.filter_class(query_params_snake_case, queryset=queryset).qs
             except DjangoValidationError as e:
-                raise DrfValidationError(detail=e.message)
+                raise DrfValidationError(
+                    detail={
+                        'message': str(e.message),
+                        'code': 'invalid_filter'
+                    }
+                )
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
         return queryset.order_by(*ordering_fields)
@@ -186,20 +204,17 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def get_file_response(self, file_path: str) -> FileResponse:
         return AppFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
 
-    def retrieve(self, request: Request, *args, **kwargs) -> Response:
+    def retrieve(self, *args, **kwargs) -> Response:
         raise MethodNotAllowed('GET', detail='Retrieve operation not allowed for this resource')
 
-    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+    def create(self, *args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('POST', detail='Create operation not allowed for this resource')
 
-    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+    def list(self, *args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('GET', detail='List operation not allowed for this resource')
 
-    def update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+    def update(self, *args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('PUT', detail='Update operation not allowed for this resource')
 
-    def destroy(self, request: Request, *args, **kwargs) -> Response:
-        raise MethodNotAllowed('DELETE', detail='Delete operation not allowed for this resource')
-
-    def destroy(self, request: Request, *args, **kwargs) -> Response:
+    def destroy(self, *args, **kwargs) -> Response:
         raise MethodNotAllowed('DELETE', detail='Delete operation not allowed for this resource')
