@@ -3,12 +3,11 @@ from django.db import models
 from bodzify_api.model.all_lib_tracks_mixin.AllLibTrackMixinManager import AllLibTrackMixinManager
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
-
 from ..lib_track_mixin.LibTrackMixin import LibTrackMixin
 from .Fields import Fields
 
 
-# Singleton
+# One per user
 class AllLibTracksMixin(LibTrackMixin):
 
     objects: AllLibTrackMixinManager = AllLibTrackMixinManager()
@@ -26,12 +25,11 @@ class AllLibTracksMixin(LibTrackMixin):
         return 'All Tracks'
 
     @property
-    def library_tracks(self):
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    def library_tracks(self) -> models.QuerySet[LibraryTrack]:
         return LibraryTrack.objects.filter(user=self.user)
 
     @property
-    def lib_tracks_sorted(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks_sorted(self) -> models.QuerySet[LibraryTrack]:
         return self.library_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
 
     @property
