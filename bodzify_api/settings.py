@@ -422,8 +422,13 @@ def setup_app_constants():
     MUSICBRAINZ_RECORDING_TITLE_LEN_MAX = 200
     global MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX
     MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX = 255
+
+    # Needs a large text for messages like:
+    # "HTTP request failed: HTTPConnectionPool(host='api.acoustid.org', port=80): Max retries exceeded with url:
+    # /v2/lookup (Caused by NameResolutionError(\"<urllib3.connection.HTTPConnection object at 0x10a884170>: Failed to
+    # resolve 'api.acoustid.org' ([Errno 8] nodename nor servname provided, or not known)\"))"
     global MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX
-    MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX = 255
+    MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX = 400
     global MUSICBRAINZ_ARTIST_URL
     MUSICBRAINZ_ARTIST_URL = MUSICBRAINZ_BASE_URL + "artist/"
     global MUSICBRAINZ_ARTIST_NAME_LEN_MAX
