@@ -124,10 +124,6 @@ class Criteria(LibTrackMixin):
                     'name': ['Name cannot be empty']
                 })
             elif 'unique_name_per_user' in error_message:
-                raise ValidationError({
-                    'name': ['A criteria with this name already exists for this user']
-                })
+                raise ValidationError({'name': ['A criteria with this name already exists for this user']})
             else:
-                raise ValidationError({
-                    'non_field_errors': ['Database integrity error occurred']
-                })
+                raise ValidationError({'non_field_errors': ['Database integrity error occurred']})
