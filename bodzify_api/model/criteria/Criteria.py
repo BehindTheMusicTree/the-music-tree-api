@@ -48,11 +48,7 @@ class Criteria(LibTrackMixin):
 
     @name.setter
     def name(self, value: str) -> None:
-        old_name = self._name
         self._name = value
-        # If this is a root node, ensure the name change is propagated
-        if self.is_root and old_name != value:
-            self._set_root()
 
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
