@@ -188,15 +188,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
         if request.method == HttpMethod.GET:
             query_params_snake_case = data_transformer.dict_to_snake_case(request.query_params)
-            try:
-                queryset = self.filter_class(query_params_snake_case, queryset=queryset).qs
-            except DjangoValidationError as e:
-                raise DrfValidationError(
-                    detail={
-                        'message': str(e.message),
-                        'code': 'invalid_filter'
-                    }
-                )
+            queryset = self.filter_class(query_params_snake_case, queryset=queryset).qs
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
         return queryset.order_by(*ordering_fields)

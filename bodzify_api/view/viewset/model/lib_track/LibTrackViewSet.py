@@ -105,7 +105,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         OpenApiParameter(name=FilterFields.GENRE_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.LANGUAGE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),])
     def list(self, *args, **kwargs):
-        return self._handle_list(*args, **kwargs)
+        return self._handle_list()
 
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()

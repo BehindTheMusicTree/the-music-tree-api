@@ -2,7 +2,6 @@ from typing import Optional
 from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db.models.query import QuerySet
 
 from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from bodzify_api.model.user.User import User
@@ -27,10 +26,10 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
     @extend_schema(responses=LibTrackMinimumSerializer(many=True))
     def list(self, args, **kwargs):
         try:
-            allLibTracksMixin: Optional[QuerySet[AllLibTracksMixin]] = self.get_queryset().first()
+            allLibTracksMixin: Optional[AllLibTracksMixin] = self.get_queryset().first()
             if not allLibTracksMixin:
                 raise DrfValidationError('No AllLibTracksMixin object found for user')
-            page = self.paginate_queryset(allLibTracksMixin.library_tracks)
+            page = self.paginate_queryset(allLibTracksMixin.lib_tracks_sorted)
 
             if page is not None:
                 serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)

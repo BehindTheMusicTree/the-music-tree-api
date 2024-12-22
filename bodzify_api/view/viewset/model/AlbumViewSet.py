@@ -27,8 +27,8 @@ class AlbumViewSet(AppModelViewSet[Album]):
         return self._handle_list()
 
     def retrieve(self, *args, **kwargs):
-        return self._handle_retrieve(*args, **kwargs)
+        return self._handle_retrieve()
 
     @transaction.atomic
     def destroy(self, *args, **kwargs):
-        return self._handle_destroy(*args, **kwargs)
+        return self._handle_destroy()
