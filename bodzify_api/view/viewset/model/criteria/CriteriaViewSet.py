@@ -38,7 +38,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                                                 required=False)],
                    responses=CriteriaSimpleSerializer)
     def list(self, *args, **kwargs):
-        return self._handle_list(*args, **kwargs)
+        return self._handle_list()
 
     def retrieve(self, *args, **kwargs) -> Response:
         return self._handle_retrieve()
