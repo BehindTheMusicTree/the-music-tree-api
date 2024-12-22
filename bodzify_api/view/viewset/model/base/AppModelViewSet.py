@@ -1,4 +1,3 @@
-
 from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -111,7 +110,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _update_instance(self, request: Request, instance: T, update_data: Dict[str, Any]) -> T:
         serializer_class = self._require_serializer(SerializerType.UPDATE)
-        serializer = serializer_class(data=update_data, partial=True, context={'request': request})
+        serializer = serializer_class(instance=instance, data=update_data, partial=True, context={'request': request})
         validated_data = self._get_validated_data(serializer)
         return self.model_class.objects.update_instance(instance, **validated_data)
 
@@ -145,8 +144,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _handle_update(self, request: Request) -> Response:
         instance = self.get_object()
-        update_data_in_camel_case = data_transformer.convert_data_to_dict(request.data)
-        update_data_in_snake_case = data_transformer.dict_to_snake_case(update_data_in_camel_case)
+        update_data_in_snake_case = data_transformer.dict_to_snake_case(request.data)
         updated_instance = self._update_instance(request=request,
                                                  instance=instance,
                                                  update_data=update_data_in_snake_case)
