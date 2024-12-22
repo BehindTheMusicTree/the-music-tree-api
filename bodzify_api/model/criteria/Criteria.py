@@ -18,19 +18,24 @@ if TYPE_CHECKING:
 
 
 class Criteria(LibTrackMixin):
-    name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX)  # type: ignore
-    ascendants: QuerySet['Criteria'] = models.ManyToManyField('self',
-                                                              through='CriteriaLineageRel',
-                                                              through_fields=(CriteriaLineageRelFields.DESCENDANT,
-                                                                              CriteriaLineageRelFields.ASCENDANT),
-                                                              symmetrical=False,)  # type: ignore
-    parent: Optional['Criteria'] = models.ForeignKey('self',
-                                                     on_delete=models.SET_NULL,
-                                                     null=True,
-                                                     related_name=Fields.CHILDREN)  # type: ignore
-    root: 'Criteria' = models.ForeignKey('self',
-                                         on_delete=models.DO_NOTHING,
-                                         related_name=Fields.DESCENDANTS)  # type: ignore
+    _name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, db_column=Fields.NAME)  # type: ignore
+    ascendants: QuerySet['Criteria'] = models.ManyToManyField(
+        'self',
+        through='CriteriaLineageRel',
+        through_fields=(CriteriaLineageRelFields.DESCENDANT, CriteriaLineageRelFields.ASCENDANT),
+        symmetrical=False,
+    )  # type: ignore
+    parent: Optional['Criteria'] = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name=Fields.CHILDREN
+    )  # type: ignore
+    root: 'Criteria' = models.ForeignKey(
+        'self',
+        on_delete=models.DO_NOTHING,
+        related_name=Fields.DESCENDANTS
+    )  # type: ignore
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     if TYPE_CHECKING:
@@ -41,6 +46,18 @@ class Criteria(LibTrackMixin):
         criteria_playlist: 'CriteriaPlaylist'
 
     objects: CriteriaManager = CriteriaManager()
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value: str) -> None:
+        old_name = self._name
+        self._name = value
+        # If this is a root node, ensure the name change is propagated
+        if self.is_root and old_name != value:
+            self._set_root()
 
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
@@ -54,11 +71,11 @@ class Criteria(LibTrackMixin):
         verbose_name = 'Criteria'
         verbose_name_plural = 'Criterias'
         constraints = [
-            models.CheckConstraint(check=~models.Q(name=""), name='%(class)s_non_empty_name'),
-            models.UniqueConstraint(fields=[Fields.USER, 'name'], name='unique_name_per_user')
+            models.CheckConstraint(check=~models.Q(_name=""), name='%(class)s_non_empty_name'),
+            models.UniqueConstraint(fields=[Fields.USER, '_name'], name='unique_name_per_user')
         ]
         indexes = [
-            models.Index(fields=[Fields.USER, Fields.NAME], name='%(class)s_user_name_idx'),
+            models.Index(fields=[Fields.USER, '_name'], name='%(class)s_user_name_idx'),
             models.Index(fields=[Fields.USER, Fields.UUID], name='%(class)s_user_uuid_idx')
         ]
 
@@ -68,7 +85,7 @@ class Criteria(LibTrackMixin):
 
     def _set_root(self):
         current_root = getattr(self, f"{Fields.ROOT}", None)
-        new_root = self.parent.root if self.parent else None
+        new_root = self.parent.root if self.parent else self
 
         new_root_pk = None
         if not new_root:

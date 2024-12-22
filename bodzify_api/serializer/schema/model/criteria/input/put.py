@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria
@@ -13,6 +12,7 @@ class CriteriaPutSerializer(AppInputModelSerializer):
         required=False,
         allow_null=True
     )
+    name = serializers.CharField(source='_name')
 
     class Meta:
         model = Criteria

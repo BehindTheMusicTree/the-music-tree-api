@@ -10,6 +10,7 @@ class Fields:
 
 
 class CriteriaMinimumSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='_name')
 
     class Meta:
         model = Criteria
