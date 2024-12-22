@@ -99,7 +99,12 @@ def get_musicbrainz_recording_lookup_result(user: User,
                 musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_FOR_UNKNOWN_REASON}
             musicbrainz_recording_missing_cause_code = exception_mapping[type(e)]
-            musicbrainz_recording_missing_cause_message = str(e)
+            error_message = str(e)
+            if len(error_message) > settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX:
+                musicbrainz_recording_missing_cause_message = error_message[
+                    :settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX - 3] + "..."
+            else:
+                musicbrainz_recording_missing_cause_message = error_message
 
     if musicbrainz_recording_missing_cause_code:
         musicbrainz_recording_missing_cause = MusicbrainzRecordingMissingCause.objects.create(
