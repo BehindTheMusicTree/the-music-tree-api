@@ -7,12 +7,10 @@ from .Fields import Fields
 
 
 class CriteriaPutSerializer(AppInputModelSerializer):
-    parent: serializers.Field = DescendantAwareUserUuidField(
-        queryset=Criteria.objects.all(),
-        required=False,
-        allow_null=True
-    )
-    name = serializers.CharField(source='_name')
+    parent: serializers.Field = DescendantAwareUserUuidField(queryset=Criteria.objects.all(),
+                                                             required=False,
+                                                             allow_null=True)
+    name = serializers.CharField(source=Fields.NAME_INTERNAL)
 
     class Meta:
         model = Criteria

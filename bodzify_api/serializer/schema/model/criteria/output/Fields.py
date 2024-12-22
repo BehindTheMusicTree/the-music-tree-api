@@ -7,6 +7,7 @@ class Fields:
     UPDATED_ON = ModelFields.UPDATED_ON
     UUID = ModelFields.UUID
     NAME = ModelFields.NAME
+    NAME_INTERNAL = ModelFields.NAME_INTERNAL
     LIB_TRACKS = ModelFields.LIB_TRACKS
     LIB_TRACKS_COUNT = ModelFields.LIB_TRACKS_COUNT
     LIB_TRACKS_ARCHIVED_COUNT = ModelFields.LIB_TRACKS_ARCHIVED_COUNT

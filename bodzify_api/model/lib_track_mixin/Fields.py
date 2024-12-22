@@ -7,6 +7,7 @@ class Fields:
     CREATED_ON = PrivateResourceFields.CREATED_ON
     UPDATED_ON = PrivateResourceFields.UPDATED_ON
     NAME = 'name'
+    NAME_INTERNAL = f'_{NAME}'
     LIB_TRACKS = 'library_tracks'
     LIB_TRACKS_NOT_ARCHIVED = LIB_TRACKS + '_not_archived'
     LIB_TRACKS_COUNT = LIB_TRACKS + '_count'

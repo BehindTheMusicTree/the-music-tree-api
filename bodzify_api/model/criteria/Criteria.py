@@ -63,10 +63,10 @@ class Criteria(LibTrackMixin):
         verbose_name_plural = 'Criterias'
         constraints = [
             models.CheckConstraint(check=~models.Q(_name=""), name='%(class)s_non_empty_name'),
-            models.UniqueConstraint(fields=[Fields.USER, '_name'], name='unique_name_per_user')
+            models.UniqueConstraint(fields=[Fields.USER, Fields.NAME_INTERNAL], name='unique_name_per_user')
         ]
         indexes = [
-            models.Index(fields=[Fields.USER, '_name'], name='%(class)s_user_name_idx'),
+            models.Index(fields=[Fields.USER, Fields.NAME_INTERNAL], name='%(class)s_user_name_idx'),
             models.Index(fields=[Fields.USER, Fields.UUID], name='%(class)s_user_uuid_idx')
         ]
 
@@ -116,9 +116,7 @@ class Criteria(LibTrackMixin):
         except IntegrityError as e:
             error_message = str(e)
             if 'non_empty_name' in error_message:
-                raise ValidationError({
-                    'name': ['Name cannot be empty']
-                })
+                raise ValidationError({'name': ['Name cannot be empty']})
             elif 'unique_name_per_user' in error_message:
                 raise ValidationError({'name': ['A criteria with this name already exists for this user']})
             else:

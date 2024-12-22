@@ -22,7 +22,7 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
     root = CriteriaMinimumSerializer()  # type: ignore
     children = CriteriaMinimumSerializer(many=True)
     criteria_playlist = CriteriaPlaylistMinimumSerializer()
-    name = serializers.CharField(source='_name')
+    name = serializers.CharField(source=ModelFields.NAME_INTERNAL)
 
     class Meta:
         model = Criteria

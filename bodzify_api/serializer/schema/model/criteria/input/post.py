@@ -7,7 +7,7 @@ from .Fields import Fields
 
 
 class CriteriaPostSerializer(AppInputModelSerializer):
-    name = serializers.CharField(source='_name')
+    name = serializers.CharField(source=Fields.NAME_INTERNAL)
 
     class Meta:
         model = Criteria
