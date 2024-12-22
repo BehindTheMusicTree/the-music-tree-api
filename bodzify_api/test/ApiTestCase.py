@@ -94,6 +94,7 @@ class ApiTestCase(AppTestCase):
                 kwargs = data_transformer.merge_two_dicts(file_field_dict, kwargs)
             else:
                 kwargs = file_field_dict
+
             response = self.api_client.post(path=reverse('library-track-list'), data=kwargs, format='multipart')
             if response.status_code == status.HTTP_201_CREATED:
                 self._set_saved_lib_track_attribute(response)

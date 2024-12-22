@@ -20,7 +20,7 @@ class AllLibTracksMixinTestCase(ApiTestCase):
     def _get_all_lib_tracks_mixin(self, **kwargs):
         response = self.api_client.get(path=reverse('all-library-tracks-list'), data=kwargs)
         if response.status_code == status.HTTP_200_OK:
-            self._set_result(response)
+            self._set_results_attributes(response)
         return response
 
     def _retrieve_all_lib_tracks_mixin(self, uuid: UUID):

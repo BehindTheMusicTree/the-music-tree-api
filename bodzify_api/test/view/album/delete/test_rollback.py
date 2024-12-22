@@ -1,8 +1,4 @@
 from unittest.mock import patch
-from rest_framework import status
-
-from bodzify_api.model.album.Album import Album
-from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 

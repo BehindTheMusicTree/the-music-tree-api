@@ -10,7 +10,7 @@ from bodzify_api.utils import data_transformer
 
 class LibTrackTestCase(ApiTestCase):
 
-    LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION = "queen_showmustgoon.mp3"
+    LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION = "queen_showmustgoon 177s.mp3"
     SKIPPING_TEST_DUE_TO_ACOUSTID_UNKNOWN_CONNECTION_ISSUE = "Skipping test due to Acoustid unknown connection issue."
 
     class LibTrackGenericSamplesTagsNoneSizeInMo:

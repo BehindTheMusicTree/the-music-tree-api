@@ -9,7 +9,7 @@ from bodzify_api.serializer.schema.model.lib_track.output.Fields import Fields a
 
 class TestCase(AllLibTracksMixinTestCase):
 
-    def test_get_then_one_result(self):
+    def test_get_then_results(self):
         self.model_fixture_factory.create_lib_track_with_file(title="test")
         self.model_fixture_factory.create_lib_track_with_file(title="test2")
 
