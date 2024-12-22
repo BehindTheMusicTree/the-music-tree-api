@@ -22,6 +22,8 @@ class AppApiClient(APIClient):
             data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
             if format != 'multipart':
                 data_url_encoded = json.dumps(data_url_encoded)
+                if not content_type:
+                    content_type = 'application/json'
         return super().post(path, data_url_encoded, content_type=content_type, follow=follow, format=format, **extra)
 
     def put(self, path, data: Optional[dict] = None, format=None, content_type=None, follow=False, **extra
@@ -31,6 +33,8 @@ class AppApiClient(APIClient):
             data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
             if format != 'multipart':
                 data_url_encoded = json.dumps(data_url_encoded)
+                if not content_type:
+                    content_type = 'application/json'
         return super().put(path, data_url_encoded, format, content_type, follow, **extra)
 
     def delete(self, path, data: Optional[dict] = None, format=None, content_type=None, follow=False, **extra
@@ -40,4 +44,6 @@ class AppApiClient(APIClient):
             data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
             if format != 'multipart':
                 data_url_encoded = json.dumps(data_url_encoded)
+                if not content_type:
+                    content_type = 'application/json'
         return super().delete(path, data_url_encoded, format, content_type, follow, **extra)
