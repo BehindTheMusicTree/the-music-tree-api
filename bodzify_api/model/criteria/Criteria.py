@@ -19,23 +19,18 @@ if TYPE_CHECKING:
 
 class Criteria(LibTrackMixin):
     _name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, db_column=Fields.NAME)  # type: ignore
-    ascendants: QuerySet['Criteria'] = models.ManyToManyField(
-        'self',
-        through='CriteriaLineageRel',
-        through_fields=(CriteriaLineageRelFields.DESCENDANT, CriteriaLineageRelFields.ASCENDANT),
-        symmetrical=False,
-    )  # type: ignore
-    parent: Optional['Criteria'] = models.ForeignKey(
-        'self',
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name=Fields.CHILDREN
-    )  # type: ignore
-    root: 'Criteria' = models.ForeignKey(
-        'self',
-        on_delete=models.DO_NOTHING,
-        related_name=Fields.DESCENDANTS
-    )  # type: ignore
+    ascendants: QuerySet['Criteria'] = models.ManyToManyField('self',
+                                                              through='CriteriaLineageRel',
+                                                              through_fields=(CriteriaLineageRelFields.DESCENDANT,
+                                                                              CriteriaLineageRelFields.ASCENDANT),
+                                                              symmetrical=False,)  # type: ignore
+    parent: Optional['Criteria'] = models.ForeignKey('self',
+                                                     on_delete=models.SET_NULL,
+                                                     null=True,
+                                                     related_name=Fields.CHILDREN)  # type: ignore
+    root: 'Criteria' = models.ForeignKey('self',
+                                         on_delete=models.DO_NOTHING,
+                                         related_name=Fields.DESCENDANTS)  # type: ignore
     type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     if TYPE_CHECKING:
