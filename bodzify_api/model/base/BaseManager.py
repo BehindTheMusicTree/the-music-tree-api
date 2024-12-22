@@ -31,6 +31,7 @@ class BaseManager(models.Manager, Generic[T]):
             else:
                 raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
         instance.save()
+        instance.refresh_from_db()  # Otherwise, foreign objects' fields may not be updated
         return instance
 
     def delete_instance(self, instance: T):

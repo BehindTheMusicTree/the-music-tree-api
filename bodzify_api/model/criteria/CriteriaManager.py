@@ -31,7 +31,6 @@ class CriteriaManager(PublicStandardResourceManager[T], Generic[T]):
         old_name = instance.name
 
         updated_instance: T = super().update_instance(instance, **kwargs)
-        updated_instance.refresh_from_db()
 
         if old_parent != updated_instance.parent:
             common_criteria = self.get_common_ascendant(updated_instance, old_parent)
