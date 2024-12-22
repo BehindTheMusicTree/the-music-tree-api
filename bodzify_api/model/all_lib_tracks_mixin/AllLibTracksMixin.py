@@ -2,6 +2,7 @@ from django.db import models
 
 from bodzify_api.model.all_lib_tracks_mixin.AllLibTrackMixinManager import AllLibTrackMixinManager
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from ..lib_track_mixin.LibTrackMixin import LibTrackMixin
 from .Fields import Fields
