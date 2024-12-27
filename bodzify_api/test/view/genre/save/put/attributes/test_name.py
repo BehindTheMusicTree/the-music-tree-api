@@ -14,8 +14,6 @@ class TestCase(GenreTestCase):
         genre_new_name = "Punk"
         response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: genre_new_name})
         assert response.status_code == status.HTTP_200_OK
-        print('self.saved_genre')
-        print(self.saved_genre)
         assert self.saved_genre.name == genre_new_name
 
     def test_root_name_update(self):
