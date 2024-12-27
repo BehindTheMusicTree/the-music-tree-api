@@ -73,7 +73,7 @@ class ModelFixtureFactory:
             CriteriaFields.CREATED_ON: timezone.make_aware(datetime.now()),
             CriteriaFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             CriteriaFields.USER: user or self.default_test_user,
-            CriteriaFields.NAME: name,
+            CriteriaFields.NAME_INTERNAL: name,
             CriteriaFields.PARENT: None,
         }
         model_fields.update(kwargs)
