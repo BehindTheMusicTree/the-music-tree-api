@@ -119,7 +119,7 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
                 if not genre_name or genre_name == "":
                     genre = None
                 else:
-                    genre, _ = Genre.objects.get_or_create(user=schema_data[Fields.USER], name=genre_name)
+                    genre, _ = Genre.objects.get_or_create(user=schema_data[Fields.USER], _name=genre_name)
             else:
                 return
 
