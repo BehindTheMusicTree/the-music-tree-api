@@ -1,7 +1,9 @@
-
 import os
 import shutil
+from pathlib import Path
+from typing import List
 import pytest
+from _pytest.main import Session
 
 from bodzify_api import settings
 
@@ -25,7 +27,7 @@ def pytest_runtest_makereport(item, call):
     if call.when == "call" and critical_marker:
         if call.excinfo:
             critical_test_failed = True
-            print(f"CRITICAL TEST FAILED: {item.name}")
+            print(f"\nCRITICAL TEST FAILED: {item.name}")
             print(f"Output: {call.excinfo}")
 
 
@@ -60,14 +62,55 @@ def enable_audio_metadata_analysis():
     os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = 'false'
 
 
-def pytest_sessionfinish(session, exitstatus):
+def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
     """
-    Called after whole test run finished, right before returning the exit status to the system.
-    """
-    print("\nExecuting post-test operations...")
+    Cleanup test user libraries after test run completion.
 
-    for entry in os.listdir(settings.LIBRARIES_DIR):
-        entry_path = os.path.join(settings.LIBRARIES_DIR, entry)
-        if os.path.isdir(entry_path) and entry.startswith(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE):
-            shutil.rmtree(entry_path)
-            print(f"Removed directory: {entry_path}")
+    This function is called after the entire test suite has finished executing.
+    It performs cleanup operations by removing test user library directories
+    to ensure a clean state for subsequent test runs.
+
+    Args:
+        session: The pytest Session object containing test run information
+        exitstatus: The exit status code of the test run
+
+    Returns:
+        None
+    """
+    print("Executing post-test cleanup operations...")
+
+    libraries_path = Path(settings.LIBRARIES_DIR)
+    removed_dirs: List[str] = []
+    failed_dirs: List[str] = []
+
+    try:
+        # Ensure the libraries directory exists
+        if not libraries_path.exists():
+            print(f"Warning: Libraries directory not found: {libraries_path}")
+            return
+
+        # Iterate through directory entries
+        for entry in libraries_path.iterdir():
+            if entry.is_dir() and entry.name.startswith(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE):
+                try:
+                    shutil.rmtree(entry)
+                    removed_dirs.append(str(entry))
+                except (OSError, shutil.Error) as e:
+                    failed_dirs.append(str(entry))
+                    print(f"Error: Failed to remove directory {entry}: {str(e)}")
+
+        # Print summary
+        if removed_dirs:
+            print(f"\nSuccessfully removed {len(removed_dirs)} test directories:")
+            for dir_path in removed_dirs:
+                print(f"- {dir_path}")
+
+        if failed_dirs:
+            print(f"\nFailed to remove {len(failed_dirs)} test directories:")
+            for dir_path in failed_dirs:
+                print(f"- {dir_path}")
+
+        print("Cleanup complete.")
+
+    except Exception as e:
+        print(f"Error: Unexpected error during cleanup: {str(e)}")
