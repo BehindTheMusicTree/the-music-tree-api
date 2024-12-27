@@ -8,5 +8,5 @@ class Fields:
     TITLE = ModelFields.TITLE
     ARTISTS_NAME = f'{ModelFields.ARTISTS}__{ArtistFields.NAME}'
     ALBUM_NAME = f'{ModelFields.ALBUM}__{AlbumFields.NAME}'
-    GENRE_NAME = f'{ModelFields.GENRE}__{CriteriaFields.NAME}'
+    GENRE_NAME = f'{ModelFields.GENRE}__{CriteriaFields.NAME_INTERNAL}'
     LANGUAGE = ModelFields.LANGUAGE
