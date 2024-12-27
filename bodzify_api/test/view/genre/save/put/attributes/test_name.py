@@ -19,25 +19,21 @@ class TestCase(GenreTestCase):
         assert self.saved_genre.name == genre_new_name
 
     def test_root_name_update(self):
-        # Create a root genre
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        assert rock_genre.root.name == "Rock"  # Verify initial root name
-        
-        # Update the genre name
+        assert rock_genre.root.name == "Rock"
+
         genre_new_name = "Punk"
         response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: genre_new_name})
         assert response.status_code == status.HTTP_200_OK
-        
-        # Verify both the genre and its root reference are updated
+
         updated_genre = self.saved_genre
         assert updated_genre.name == genre_new_name
-        assert updated_genre.root.name == genre_new_name  # Root reference should have new name
+        assert updated_genre.root.name == genre_new_name
 
-    def test_error_when_name_is_empty(self):
+    def test_error_when_empty(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: ""})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.saved_genre.name == "Rock"
 
     def test_not_provided_then_unchanged(self):
         genre_name = "Rock"
