@@ -1,6 +1,6 @@
 from typing import Optional
 
-from bodzify_api.test.get_filters.FreeCharFilterTestCase import FreeCharFilterTestCase
+from bodzify_api.test.get_filters.char.FreeCharFilterTestCase import FreeCharFilterTestCase
 
 
 class NullableFreeCharFilterTestCase(FreeCharFilterTestCase):

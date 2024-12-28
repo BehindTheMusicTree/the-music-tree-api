@@ -1,4 +1,4 @@
-from django_filters import rest_framework as filters  # type: ignore
+from django_filters import rest_framework as filters
 
 from bodzify_api.filter.ForeignKeyFilter import ForeignKeyFilter
 from bodzify_api.filter.set.AppFilterSet import AppFilterSet
