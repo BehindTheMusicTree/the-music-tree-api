@@ -91,13 +91,17 @@ def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
 
         # Iterate through directory entries
         for entry in libraries_path.iterdir():
+            print(f'Entry: {entry}')
             if entry.is_dir() and entry.name.startswith(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE):
+                print(f"Removing test directory: {entry}")
                 try:
                     shutil.rmtree(entry)
                     removed_dirs.append(str(entry))
                 except (OSError, shutil.Error) as e:
                     failed_dirs.append(str(entry))
                     print(f"Error: Failed to remove directory {entry}: {str(e)}")
+            else:
+                print(f"Skipping non-test directory: {entry}")
 
         # Print summary
         if removed_dirs:

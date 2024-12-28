@@ -2,10 +2,10 @@ import logging
 
 from rest_framework import status
 
-from bodzify_api import settings
+from bodzify_api.logging.LoggersName import LoggersName
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
-logger = logging.getLogger(settings.LOGGERS_NAME.INFO)
+logger = logging.getLogger(LoggersName.INFO)
 
 
 class TestCase(LibTrackTestCase):

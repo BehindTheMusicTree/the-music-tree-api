@@ -2,9 +2,9 @@ from rest_framework import status
 
 from bodzify_api.filter.set.playlist.Fields import Fields as FilterSetFields
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
-from bodzify_api.model.playlist.children.manual import ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import VALUE as MANUAL_PLAYLIST_TYPE_LABEL
 from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistGetFields
-from bodzify_api.test.get_filters.EnumCharFilterTestCase import EnumCharFilterTestCase
+from bodzify_api.test.get_filters.char.EnumCharFilterTestCase import EnumCharFilterTestCase
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 
 
@@ -61,7 +61,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
         self.model_fixture_factory.create_genre(name='rock')
 
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL: ManualPlaylist.TYPE_LABEL})
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL: MANUAL_PLAYLIST_TYPE_LABEL})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
