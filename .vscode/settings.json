@@ -4,6 +4,9 @@
 		120
 	],
 	"python.testing.pytestEnabled": true,
+	"python.testing.pytestArgs": [
+		"bodzify_api"
+	],
 	"python.analysis.autoImportCompletions": true,
 	"editor.defaultFormatter": "ms-python.autopep8",
     "editor.formatOnSave": true,
@@ -11,8 +14,5 @@
 		"source.fixAll": "explicit"
 	},
 	"files.autoSave": "onFocusChange",
-	"python.testing.pytestArgs": [
-		"bodzify_api"
-	],
 	"python.testing.unittestEnabled": false,
 }
