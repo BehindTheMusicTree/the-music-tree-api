@@ -6,7 +6,9 @@ from .Fields import Fields
 
 
 class CriteriaFilterSet(AppFilterSet):
-    name = NonEmptiableCharFilter(field_name=Fields.NAME, lookup_expr='icontains')
+    name = NonEmptiableCharFilter(field_name=Fields.NAME_INTERNAL,
+                                  lookup_expr='icontains',
+                                  field_name_user_friendly=Fields.NAME)
     parent = ForeignKeyFilter(field_name=Fields.PARENT)
 
     class Meta:

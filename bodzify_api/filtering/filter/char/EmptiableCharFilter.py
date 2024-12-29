@@ -1,13 +1,14 @@
 from typing import TYPE_CHECKING
 
 from django_filters import CharFilter
-from django_filters.constants import EMPTY_VALUES
+
+from bodzify_api.filtering.filter.AppFilter import AppFilter
 
 if TYPE_CHECKING:
     from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 
 
-class EmptiableCharFilter(CharFilter):
+class EmptiableCharFilter(CharFilter, AppFilter):
     def __init__(self, *args, **kwargs):
         self.method_name = kwargs.pop('method', None)
         super().__init__(*args, **kwargs)

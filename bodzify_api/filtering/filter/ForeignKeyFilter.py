@@ -5,8 +5,10 @@ import re
 from django_filters import CharFilter, FilterSet
 from rest_framework.exceptions import ValidationError
 
+from bodzify_api.filtering.filter.AppFilter import AppFilter
 
-class ForeignKeyFilter(CharFilter):
+
+class ForeignKeyFilter(CharFilter, AppFilter):
 
     def filter(self, queryset, value):
         parent: Optional[FilterSet] = getattr(self, 'parent', None)
