@@ -11,12 +11,11 @@ from bodzify_api.view.error.ErrorResponseDetail import ErrorResponseDetail
 from bodzify_api.view.error.ErrorHttpStatusCodeMap import ErrorHTTPStatusCodeMap
 
 
-def convert_error_detail(obj: Any) -> Any:
-    """Convert error details to dictionary format."""
+def convert_error_detail_to_dict(obj: Any) -> Any:
     if isinstance(obj, ErrorResponseDetail):
         return obj.to_dict()
     elif isinstance(obj, list):
-        return [convert_error_detail(item) for item in obj]
+        return [convert_error_detail_to_dict(item) for item in obj]
     elif isinstance(obj, dict):
         if 'unknown_fields' in obj:
             unknown_fields = obj['unknown_fields']
@@ -25,7 +24,7 @@ def convert_error_detail(obj: Any) -> Any:
                 'code': str(unknown_fields['code']),
                 'fields': [str(f) for f in unknown_fields['fields']]
             }
-        return {key: convert_error_detail(value) for key, value in obj.items()}
+        return {key: convert_error_detail_to_dict(value) for key, value in obj.items()}
     elif isinstance(obj, DRFErrorDetail):
         return str(obj)
     return obj
@@ -92,7 +91,7 @@ class ErrorResponse:
             )
 
         if isinstance(exception, DrfValidationError):
-            error_detail = convert_error_detail(exception.detail)
+            error_detail = convert_error_detail_to_dict(exception.detail)
             if isinstance(error_detail, dict) and 'message' in error_detail:
                 return ErrorResponse._create_error_response(
                     error_detail,
