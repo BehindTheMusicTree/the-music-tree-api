@@ -8,13 +8,9 @@ from bodzify_api.utils.data_transformer import to_camel_case
 
 class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_return_all(self):
-        self.model_fixture_factory.create_artist(name="Muse")
-        self.model_fixture_factory.create_artist(name="Museum")
-        self.model_fixture_factory.create_artist(name="Sum")
+    def test_empty_then_error(self):
         response = self._get_artists(name='')
-        assert response.status_code == status.HTTP_200_OK
-        assert self.results_overall_total == 3
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_contains_in_another_case_then_results(self):
         artist1 = self.model_fixture_factory.create_artist(name="Muse")

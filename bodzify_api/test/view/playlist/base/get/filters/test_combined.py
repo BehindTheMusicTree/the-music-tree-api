@@ -5,7 +5,7 @@ from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames \
     import CriterialessPlaylistNames
 from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
-from bodzify_api.filter.set.playlist.Fields import Fields as GetQueryParams
+from bodzify_api.filtering.set.playlist.Fields import Fields as GetQueryParams
 
 
 class TestCase(PlaylistTestCase):

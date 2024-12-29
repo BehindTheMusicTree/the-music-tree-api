@@ -2,9 +2,10 @@ from rest_framework import status
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as Fields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
+from bodzify_api.test.view.track.input.method.put.fields.NotNullableFieldTestCase import NotNullableFieldTestCase
 
 
-class TestCase(GenreTestCase):
+class TestCase(GenreTestCase, NotNullableFieldTestCase):
 
     def test_parent_none_then_root_itself(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")

@@ -2,10 +2,11 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields
+from bodzify_api.test.get_filters.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 
-class TestCase(GenreTestCase):
+class TestCase(GenreTestCase, NotNullableFreeCharFilterTestCase):
 
     def test_longest(self):
         genre_name = "a" * settings.CRITERIA_NAME_LEN_MAX

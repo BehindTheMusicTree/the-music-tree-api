@@ -2,9 +2,10 @@ from rest_framework import status
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as Fields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
+from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
 
 
-class TestCase(GenreTestCase):
+class TestCase(GenreTestCase, NullableFieldTestCase):
 
     def test_multiple_values_then_error(self):
         response = self._post_genre(**{Fields.NAME: "Punk", Fields.PARENT: ["value", "value2"]})
