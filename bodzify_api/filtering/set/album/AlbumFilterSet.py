@@ -1,8 +1,8 @@
 from django_filters import CharFilter
 from django.db.models import Q, QuerySet
 
-from bodzify_api.filter.EmptiableCharFilter import EmptiableCharFilter
-from bodzify_api.filter.set.AppFilterSet import AppFilterSet
+from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
+from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as ModelFields
 from bodzify_api.model.artist.Fields import Fields as ArtistFields

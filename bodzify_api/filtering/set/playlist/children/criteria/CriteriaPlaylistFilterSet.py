@@ -1,7 +1,7 @@
 from django_filters import rest_framework as filters
 
-from bodzify_api.filter.ForeignKeyFilter import ForeignKeyFilter
-from bodzify_api.filter.set.AppFilterSet import AppFilterSet
+from bodzify_api.filtering.filter.ForeignKeyFilter import ForeignKeyFilter
+from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.criteria.Fields import Fields as ModelFields
 from .Fields import Fields

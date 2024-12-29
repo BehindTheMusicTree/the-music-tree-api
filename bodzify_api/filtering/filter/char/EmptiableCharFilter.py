@@ -4,7 +4,7 @@ from django_filters import CharFilter
 from django_filters.constants import EMPTY_VALUES
 
 if TYPE_CHECKING:
-    from bodzify_api.filter.set.AppFilterSet import AppFilterSet
+    from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 
 
 class EmptiableCharFilter(CharFilter):

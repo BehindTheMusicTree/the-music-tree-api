@@ -1,6 +1,6 @@
 from django_filters import CharFilter
 
-from bodzify_api.filter.set.AppFilterSet import AppFilterSet
+from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from .Fields import Fields
 
 

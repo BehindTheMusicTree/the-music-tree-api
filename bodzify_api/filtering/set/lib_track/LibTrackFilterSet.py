@@ -1,7 +1,7 @@
 from django_filters import CharFilter
 from django.db.models import Q, QuerySet
 
-from bodzify_api.filter.set.AppFilterSet import AppFilterSet
+from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
