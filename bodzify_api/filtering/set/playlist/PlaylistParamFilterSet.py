@@ -1,10 +1,12 @@
 from django_filters import rest_framework as filters
+
+from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet \
+    import PrivateUniqueResourceFilterSet
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from .Fields import Fields
 
 
-class PlaylistParamFilterSet(AppFilterSet):
+class PlaylistParamFilterSet(PrivateUniqueResourceFilterSet):
     name = filters.CharFilter()
     type_label = filters.CharFilter()
 

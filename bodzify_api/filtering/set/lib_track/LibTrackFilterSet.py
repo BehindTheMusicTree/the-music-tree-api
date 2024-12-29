@@ -1,7 +1,7 @@
 from django_filters import CharFilter
 from django.db.models import Q, QuerySet
 
-from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
+from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import PrivateUniqueResourceFilterSet
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
@@ -10,7 +10,7 @@ from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from .Fields import Fields
 
 
-class LibTrackFilterSet(AppFilterSet):
+class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
     title = CharFilter(field_name=ModelFields.TITLE, lookup_expr='icontains')
     artists_name = CharFilter(method=f'filter_{ModelFields.ARTISTS}_{ArtistFields.NAME}')
     album_name = CharFilter(method=f'filter_{ModelFields.ALBUM}_{AlbumFields.NAME}')
