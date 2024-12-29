@@ -11,7 +11,7 @@ from django.db.models import QuerySet
 
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
-from bodzify_api.filter.set.AppFilterSet import AppFilterSet
+from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
 from bodzify_api.view.error.ErrorCode import ErrorCode

@@ -14,13 +14,13 @@ from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.schema.model.lib_track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.filter.set.lib_track.Fields import Fields as FilterFields
+from bodzify_api.filtering.set.lib_track.Fields import Fields as FilterFields
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 
 class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
     def __init__(self, **kwargs):
-        from bodzify_api.filter.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
+        from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
         super().__init__(model_class=LibraryTrack,
                          filterset_class=LibTrackFilterSet,
                          simple_serializer_class=LibTrackWithoutAlbumPlaylistGenreSerializer,

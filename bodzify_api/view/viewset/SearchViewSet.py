@@ -2,7 +2,7 @@ from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 
-from bodzify_api.filter.set.search.Fields import Fields as QueryFields
+from bodzify_api.filtering.set.search.Fields import Fields as QueryFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist

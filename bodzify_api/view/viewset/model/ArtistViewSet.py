@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
 from django.db import transaction
 
-from bodzify_api.filter.set.artist.ArtistFilterSet import ArtistFilterSet, Fields as FilterFields
+from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet, Fields as FilterFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.serializer.schema.model.artist.detailed import ArtistDetailedSerializer

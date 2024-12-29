@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
-from bodzify_api.filter.set.album.AlbumFilterSet import AlbumFilterSet
-from bodzify_api.filter.set.album.Fields import Fields as FilterFields
+from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet
+from bodzify_api.filtering.set.album.Fields import Fields as FilterFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.schema.model.album.simple import AlbumSimpleSerializer
 from bodzify_api.serializer.schema.model.album.detailed import AlbumDetailedSerializer
