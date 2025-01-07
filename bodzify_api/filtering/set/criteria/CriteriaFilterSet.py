@@ -1,6 +1,8 @@
 from bodzify_api.filtering.filter.ForeignKeyFilter import ForeignKeyFilter
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
-from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import PrivateUniqueResourceFilterSet
+from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import \
+    PrivateUniqueResourceFilterSet
+from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 from bodzify_api.model.criteria.Criteria import Criteria
 from .Fields import Fields
 
@@ -13,5 +15,4 @@ class CriteriaFilterSet(PrivateUniqueResourceFilterSet):
 
     class Meta:
         model = Criteria
-
         fields = [Fields.NAME, Fields.PARENT]
