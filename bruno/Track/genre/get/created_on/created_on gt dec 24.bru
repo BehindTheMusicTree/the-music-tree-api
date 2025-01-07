@@ -5,14 +5,13 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}genres/?name=Rock&parent
+  url: {{BASE_URL}}genres/?createdOnLt=2024-12-20T10:00:00Z
   body: json
   auth: inherit
 }
 
 params:query {
-  name: Rock
-  parent: 
+  createdOnLt: 2024-12-20T10:00:00Z
 }
 
 vars:post-response {
