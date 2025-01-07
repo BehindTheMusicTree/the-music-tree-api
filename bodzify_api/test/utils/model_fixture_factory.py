@@ -69,9 +69,10 @@ class ModelFixtureFactory:
                           name: str,
                           model_class: type[T],
                           user: Optional[User] = None, **kwargs) -> T:
+        now = timezone.make_aware(datetime.now())
         model_fields = {
-            CriteriaFields.CREATED_ON: timezone.make_aware(datetime.now()),
-            CriteriaFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            CriteriaFields.CREATED_ON: kwargs.get(CriteriaFields.CREATED_ON, now),
+            CriteriaFields.UPDATED_ON: kwargs.get(CriteriaFields.UPDATED_ON, now),
             CriteriaFields.USER: user or self.default_test_user,
             CriteriaFields.NAME_INTERNAL: name,
             CriteriaFields.PARENT: None,
