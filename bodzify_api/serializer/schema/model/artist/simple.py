@@ -14,6 +14,7 @@ class Fields:
     LIB_TRACKS_ARCHIVED_COUNT = AvailableFields.LIB_TRACKS_ARCHIVED_COUNT
     DURATION_IN_SEC = AvailableFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
+    CREATED_ON = AvailableFields.CREATED_ON
 
 
 class ArtistSimpleSerializer(serializers.ModelSerializer):
@@ -27,4 +28,5 @@ class ArtistSimpleSerializer(serializers.ModelSerializer):
                   Fields.LIB_TRACKS_COUNT,
                   Fields.LIB_TRACKS_ARCHIVED_COUNT,
                   Fields.DURATION_IN_SEC,
-                  Fields.DURATION_STR_IN_HOUR_MIN_SEC]
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,
+                  Fields.CREATED_ON]

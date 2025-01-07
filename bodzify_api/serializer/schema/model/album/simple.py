@@ -16,4 +16,5 @@ class AlbumSimpleSerializer(serializers.ModelSerializer):
                   Fields.YEAR,
                   Fields.ALBUM_ARTISTS,
                   Fields.LIB_TRACKS_COUNT,
-                  Fields.DURATION_STR_IN_HOUR_MIN_SEC]
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,
+                  Fields.CREATED_ON]

@@ -1,3 +1,4 @@
+from http.client import CREATED
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria
@@ -9,6 +10,7 @@ class Fields:
     UUID = AvailableFields.UUID
     NAME = AvailableFields.NAME
     PARENT = AvailableFields.PARENT
+    CREATED_ON = AvailableFields.CREATED_ON
 
 
 class CriteriaSimpleSerializer(serializers.ModelSerializer):
@@ -18,4 +20,5 @@ class CriteriaSimpleSerializer(serializers.ModelSerializer):
         model = Criteria
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.PARENT]
+                  Fields.PARENT,
+                  Fields.CREATED_ON]

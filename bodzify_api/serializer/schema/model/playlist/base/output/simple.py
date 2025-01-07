@@ -11,6 +11,7 @@ class Fields:
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = AvailableFields.NAME
     TYPE_LABEL_USER_FRIENDLY = AvailableFields.TYPE_LABEL_USER_FRIENDLY
+    CREATED_ON = AvailableFields.CREATED_ON
 
 
 class PlaylistSimpleSerializer(serializers.ModelSerializer):
@@ -22,4 +23,5 @@ class PlaylistSimpleSerializer(serializers.ModelSerializer):
                   Fields.NAME,
                   Fields.TYPE_LABEL_USER_FRIENDLY,
                   Fields.LIB_TRACKS_COUNT,
-                  Fields.DURATION_STR_IN_HOUR_MIN_SEC]
+                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,
+                  Fields.CREATED_ON]

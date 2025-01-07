@@ -8,6 +8,7 @@ class Fields:
     UUID = AvailableFields.UUID
     NAME = AvailableFields.NAME
     LIB_TRACKS_COUNT = AvailableFields.LIB_TRACKS_COUNT
+    CREATED_ON = AvailableFields.CREATED_ON
 
 
 class ManualPlaylistSimpleSerializer(serializers.ModelSerializer):
@@ -17,4 +18,5 @@ class ManualPlaylistSimpleSerializer(serializers.ModelSerializer):
         model = ManualPlaylist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.LIB_TRACKS_COUNT]
+                  Fields.LIB_TRACKS_COUNT,
+                  Fields.CREATED_ON]
