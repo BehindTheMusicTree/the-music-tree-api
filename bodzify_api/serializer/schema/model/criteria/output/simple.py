@@ -1,4 +1,4 @@
-from http.client import CREATED
+
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria
