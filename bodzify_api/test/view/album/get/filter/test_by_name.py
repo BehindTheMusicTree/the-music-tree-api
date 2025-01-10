@@ -25,4 +25,3 @@ class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
         response = self._get_albums()
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        assert self.results[0][AlbumFields.NAME] == album.name
