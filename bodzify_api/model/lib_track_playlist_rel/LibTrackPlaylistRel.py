@@ -3,7 +3,6 @@ from django.db import models
 from django.db.models import F
 from django.contrib.auth import get_user_model
 
-from bodzify_api import settings
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRelManager import LibTrackPlaylistRelManager
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -40,13 +39,12 @@ class LibTrackPlaylistRel(PrivateStandardResource):
         return f'user {self.user} | playlist {self.playlist} | track title {library_track.title} | ' \
             f'position {self.position}'
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
+    def _perform_save(self, adding: bool, ctx) -> None:
+        if adding:
             lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(
                 user=self.user, playlist=self.playlist)
             lib_track_playlist_rels.update(position=models.F(Fields.POSITION) + 1)
             self.position = 1
-        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(

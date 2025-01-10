@@ -169,6 +169,21 @@ class TrackFile(PrivateStandardResource):
 
         return musicbrainz_recording_lookup_result
 
+    def _prepare_save(self, ctx) -> dict:
+        temp_file_path = self.file.file
+        duration_in_sec: int = audio_metadata.get_specific_metadata_from_file(
+            file=temp_file_path,
+            normalized_metadata_key=NormalizedMetadataKeys.DURATION_IN_SEC)  # type: ignore
+        self.duration_in_sec = int(duration_in_sec)
+        self.bitrate_in_kbps = self._get_bitrate()
+        self.handle_flac_md5()
+        self.size_in_bytes = self.file.size
+        return ctx.kwargs
+
+    def _perform_save(self, adding: bool, ctx) -> None:
+        fingerprinting_result = self._manage_fingerprint()
+        self._manage_musicbrainz_recording(fingerprinting_result)
+
     def update_file_tags(self, normalized_metadata: dict):
         audio_metadata.update_file_metadata(file=self.file,
                                             normalized_metadata=normalized_metadata,
@@ -194,19 +209,6 @@ class TrackFile(PrivateStandardResource):
         if self.file:
             if os.path.isfile(self.file.path):
                 os.remove(self.file.path)
-
-    def save(self, *args, **kwargs):
-        temp_file_path = self.file.file
-        duration_in_sec: int = audio_metadata.get_specific_metadata_from_file(
-            file=temp_file_path,
-            normalized_metadata_key=NormalizedMetadataKeys.DURATION_IN_SEC)  # type: ignore
-        self.duration_in_sec = int(duration_in_sec)
-        self.bitrate_in_kbps = self._get_bitrate()
-        self.handle_flac_md5()
-        self.size_in_bytes = self.file.size
-        fingerprinting_result = self._manage_fingerprint()
-        self._manage_musicbrainz_recording(fingerprinting_result)
-        super().save(*args, **kwargs)
 
 
 @receiver(pre_delete, sender=TrackFile)
