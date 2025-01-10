@@ -17,6 +17,7 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 
 class TestFilterInheritance(ApiTestCase):
     def setUp(self):
+        super().setUp()
         self.expected_filters = {
             PrivateUniqueResourceFields.CREATED_ON,
             PrivateUniqueResourceFields.CREATED_ON_GT,
@@ -62,16 +63,9 @@ class TestFilterInheritance(ApiTestCase):
     def test_playlist_param_filter_inheritance(self):
         self.assert_datetime_inherited_filters(PlaylistParamFilterSet)
 
-    def test_filter_functionality(self):
-        """
-        Test that the inherited filters actually work with a concrete model.
-        Using Criteria model as it's one of the simpler ones to set up.
-        """
-        # Create test data
-        criteria_type = CriteriaType.objects.create(label="Test Type")
+    def test_filter_functionality_using_a_concrete_model(self):
         now = timezone.now()
 
-        # Create test criteria with specific timestamps
         past = now - timedelta(days=5)
         future = now + timedelta(days=5)
 
