@@ -17,6 +17,7 @@ class Fields:
     PARENT = AvailableFields.PARENT
     ROOT = AvailableFields.ROOT
     CREATED_ON = AvailableFields.CREATED_ON
+    UPDATED_ON = AvailableFields.UPDATED_ON
 
 
 class CriteriaPlaylistSimpleSerializer(serializers.ModelSerializer):
@@ -37,4 +38,5 @@ class CriteriaPlaylistSimpleSerializer(serializers.ModelSerializer):
                   Fields.PARENT,
                   Fields.ROOT,
                   Fields.LIB_TRACKS_COUNT,
-                  Fields.CREATED_ON]
+                  Fields.CREATED_ON,
+                  Fields.UPDATED_ON,]
