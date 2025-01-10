@@ -101,12 +101,11 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._get_create_serializer_class()
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
+
         if creation_type:
-            instance = self.model_class.objects.create(creation_type=creation_type, **validated_data)
+            return self.model_class.objects.create(creation_type=creation_type, **validated_data)
         else:
-            instance = self.model_class.objects.create(**validated_data)
-        instance.save()
-        return instance
+            return self.model_class.objects.create(**validated_data)
 
     def _update_instance(self, request: Request, instance: T, update_data: Dict[str, Any]) -> T:
         serializer_class = self._require_serializer(SerializerType.UPDATE)
