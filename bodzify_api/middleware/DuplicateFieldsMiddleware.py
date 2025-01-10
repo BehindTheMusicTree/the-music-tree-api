@@ -44,8 +44,15 @@ class DuplicateFieldsMiddleware:
     def __call__(self, request: HttpRequest) -> HttpResponse:
         if request.method in ['POST', 'PUT', 'PATCH'] and request.content_type == 'application/json':
             try:
-                # Store the raw body content for later use
-                setattr(request, '_raw_body', request.body.decode('utf-8'))
+                raw_body = request.body.decode('utf-8')
+                duplicate_fields = find_duplicate_fields(raw_body)
+                if duplicate_fields:
+                    raise ValidationError({
+                        'duplicate_fields': {
+                            'code': 'duplicate_fields',
+                            'fields': duplicate_fields
+                        }
+                    })
             except UnicodeDecodeError:
                 pass
 

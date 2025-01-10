@@ -1,10 +1,12 @@
 
+from typing import cast, Dict, Any
+
 from django.test import TestCase, RequestFactory
 from django.http import HttpResponse
-import json
-from typing import cast, Dict, Any
-from bodzify_api.middleware.DuplicateFieldsMiddleware import DuplicateFieldsMiddleware
 from rest_framework.exceptions import ValidationError
+
+from bodzify_api import settings
+from bodzify_api.middleware.DuplicateFieldsMiddleware import DuplicateFieldsMiddleware
 
 
 class DuplicateFieldsMiddlewareTest(TestCase):
@@ -13,19 +15,15 @@ class DuplicateFieldsMiddlewareTest(TestCase):
         self.middleware = DuplicateFieldsMiddleware(lambda req: HttpResponse())
 
     def test_duplicate_fields_detection(self):
-        # Create a request with duplicate fields in JSON
-        json_data = '{"name": "a", "name": "b"}'
         request = self.factory.put(
-            '/api/v0.1.1/genres/72271809-6325-4efb-a7ce-3ecfeb16940c/',
-            data=json_data,
+            f'/{settings.API_ROOT_BASE}genres/72271809-6325-4efb-a7ce-3ecfeb16940c/',
+            data='{"name": "a", "name": "b"}',
             content_type='application/json'
         )
 
-        # Test that middleware raises ValidationError for duplicate fields
         with self.assertRaises(ValidationError) as context:
             self.middleware(request)
 
-        # Verify the error message
         error_detail = cast(Dict[str, Any], context.exception.detail)
         self.assertIn('duplicate_fields', error_detail)
 
