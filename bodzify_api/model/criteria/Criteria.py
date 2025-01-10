@@ -1,3 +1,4 @@
+from dataclasses import Field
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from django.db import models, IntegrityError
@@ -8,6 +9,7 @@ from bodzify_api import settings
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.criteria.lineage_rel.Fields import Fields as CriteriaLineageRelFields
+from bodzify_api.utils.model import SaveContext
 from .type.CriteriaType import CriteriaType
 from .Fields import Fields
 
@@ -72,7 +74,10 @@ class Criteria(LibTrackMixin):
 
     def __str__(self) -> str:
         parent_str = f'{Fields.PARENT}: {self.parent.name}' if self.parent else f"[no {Fields.PARENT}]"
-        return f"{self.uuid} | {self.name} | {parent_str}"
+        created_on_str = f"{Fields.CREATED_ON}: {self.created_on}"
+        updated_on_str = f"{Fields.UPDATED_ON}: {self.updated_on}"
+
+        return f"{self.uuid} | {self.name} | {parent_str} | {created_on_str} | {updated_on_str}"
 
     def _set_root(self):
         current_root = getattr(self, f"{Fields.ROOT}", None)
@@ -89,28 +94,14 @@ class Criteria(LibTrackMixin):
             return True
         return False
 
-    def _prepare_save(self, **kwargs) -> Dict[str, Any]:
+    def _prepare_save(self, ctx: SaveContext) -> dict:
         self._set_uuid_if_necessary()
-        ctx = __class__._create_save_context(**kwargs)
-
         root_has_changed = self._set_root()
         if not self._state.adding and root_has_changed:
             ctx.add_modified_field(f'{Fields.ROOT}_id')
-
-        if ctx.modified_fields and not ctx.should_track_fields:
-            ctx.kwargs['update_fields'] = ctx.modified_fields
-
         return ctx.kwargs
 
-    def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
-        if self.parent == other_criteria:
-            return True
-        elif self.parent:
-            return self.parent.is_descendant_of(other_criteria)
-        return False
-
-    def save(self, *args, **kwargs):
-        kwargs = self._prepare_save(**kwargs)
+    def save(self, *args: Any, **kwargs: Any) -> None:
         try:
             super().save(*args, **kwargs)
         except IntegrityError as e:
@@ -121,3 +112,10 @@ class Criteria(LibTrackMixin):
                 raise ValidationError({'name': ['A criteria with this name already exists for this user']})
             else:
                 raise ValidationError({'non_field_errors': ['Database integrity error occurred']})
+
+    def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
+        if self.parent == other_criteria:
+            return True
+        elif self.parent:
+            return self.parent.is_descendant_of(other_criteria)
+        return False

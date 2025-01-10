@@ -8,6 +8,7 @@ from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from bodzify_api.utils.model import SaveContext
 from .CriterialessPlaylistNames import CriterialessPlaylistNames
 from .CriteriaPlaylistManager import CriteriaPlaylistManager
 from .Fields import Fields
@@ -87,30 +88,22 @@ class CriteriaPlaylist(Playlist):
         else:
             return False
 
-    def _prepare_save(self, **kwargs) -> Dict[str, Any]:
+    def _prepare_save(self, ctx: SaveContext) -> dict:
         self._set_uuid_if_necessary()
-        ctx = __class__._create_save_context(**kwargs)
+        return ctx.kwargs
 
+    def _perform_save(self, adding: bool, ctx: SaveContext) -> None:
         parent_has_changed = self._set_parent()
-        if not self._state.adding and parent_has_changed:
+        if not adding and parent_has_changed:
             ctx.add_modified_field(Fields.PARENT)
 
         root_has_changed = self._set_root()
-        if not self._state.adding and root_has_changed:
+        if not adding and root_has_changed:
             ctx.add_modified_field(f'{Fields.ROOT}_id')
 
-        if ctx.modified_fields and not ctx.should_track_fields:
-            ctx.kwargs['update_fields'] = ctx.modified_fields
+        super()._perform_save(adding=adding, ctx=ctx)
 
-        return ctx.kwargs
-
-    def _post_save(self, adding: bool):
+    def _post_save(self, adding: bool) -> None:
         if adding:
             self.root_id = self.pk
             super().save(update_fields=[f'{Fields.ROOT}_id'])
-
-    def save(self, *args, **kwargs):
-        adding = self._state.adding
-        kwargs = self._prepare_save(**kwargs)
-        super().save(*args, **kwargs)
-        self._post_save(adding=adding)

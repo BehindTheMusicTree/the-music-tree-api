@@ -3,7 +3,6 @@ from typing import Generic, Optional, TYPE_CHECKING, TypeVar
 from django.db.models import QuerySet
 
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
-
 from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
