@@ -79,8 +79,53 @@ class TestPrivateUniqueResourceFilterSet(ApiTestCase):
                                                    queryset=Genre.objects.all())
         assert set(filterset.qs) == {self.past_record, self.present_record}
 
-    def test_invalid_datetime_format(self):
+    def test_created_on_invalid_datetime_format(self):
         filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.CREATED_ON: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_created_on_gt_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.CREATED_ON_GT: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_created_on_gte_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.CREATED_ON_GTE: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_created_on_lt_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.CREATED_ON_LT: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_created_on_lte_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.CREATED_ON_LTE: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_updated_on_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.UPDATED_ON: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_updated_on_gt_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.UPDATED_ON_GT: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_updated_on_gte_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.UPDATED_ON_GTE: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_updated_on_lt_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.UPDATED_ON_LT: 'invalid-datetime'},
+                                                   queryset=Genre.objects.all())
+        assert not filterset.is_valid()
+
+    def test_updated_on_lte_invalid_datetime_format(self):
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.UPDATED_ON_LTE: 'invalid-datetime'},
                                                    queryset=Genre.objects.all())
         assert not filterset.is_valid()
 
