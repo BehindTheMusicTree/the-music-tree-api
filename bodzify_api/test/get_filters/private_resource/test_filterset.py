@@ -65,7 +65,7 @@ class TestPrivateUniqueResourceFilterSet(ApiTestCase):
         assert list(filterset.qs) == [self.future_record]
 
     def test_updated_on_lt_filter(self):
-        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.CREATED_ON_LT: self.now.isoformat()},
+        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.UPDATED_ON_LT: self.now.isoformat()},
                                                    queryset=Genre.objects.all())
         assert list(filterset.qs) == [self.past_record]
 
@@ -91,17 +91,6 @@ class TestPrivateUniqueResourceFilterSet(ApiTestCase):
             PrivateUniqueResourceFields.UPDATED_ON_GTE: self.past.isoformat(),
             PrivateUniqueResourceFields.UPDATED_ON_LTE: self.now.isoformat()
         }
-        print("Filter params:", filter_params)
-        print("Past:", self.past.isoformat())
-        print("Now:", self.now.isoformat())
-        print("Past record created_on:", self.past_record.created_on)
-        print("Past record updated_on:", self.past_record.updated_on)
-        print("Present record created_on:", self.present_record.created_on)
-        print("Present record updated_on:", self.present_record.updated_on)
 
         filterset = PrivateUniqueResourceFilterSet(filter_params, queryset=Genre.objects.all())
-        print("Is bound:", filterset.is_bound)
-        print("Form is valid:", filterset.is_valid())
-        print("Form errors:", filterset.errors)
-        print("Form cleaned data:", filterset.form.cleaned_data if filterset.is_valid() else None)
         assert set(filterset.qs) == {self.past_record, self.present_record}
