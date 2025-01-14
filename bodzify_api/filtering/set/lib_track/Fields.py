@@ -6,7 +6,7 @@ from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 
 class Fields:
     TITLE = ModelFields.TITLE
-    ARTISTS_NAME = f'{ModelFields.ARTISTS}__{ArtistFields.NAME}'
-    ALBUM_NAME = f'{ModelFields.ALBUM}__{AlbumFields.NAME}'
+    ARTISTS_NAME = f'{ModelFields.ARTISTS}__{ArtistFields.NAME_INTERNAL}'
+    ALBUM_NAME = f'{ModelFields.ALBUM}__{AlbumFields.NAME_INTERNAL}'
     GENRE_NAME = f'{ModelFields.GENRE}__{CriteriaFields.NAME_INTERNAL}'
     LANGUAGE = ModelFields.LANGUAGE
