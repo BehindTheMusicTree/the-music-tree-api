@@ -14,8 +14,18 @@ class EmptiableCharFilter(CharFilter, AppFilter):
         super().__init__(*args, **kwargs)
 
     def filter(self, qs, value):
+        print("\n=== EmptiableCharFilter Debug ===")
+        print(f"Field name: {self.field_name}")
+        print(f"Lookup expr: {self.lookup_expr}")
+        print(f"Method name: {self.method_name}")
+        print(f"Value: {value}")
+        print(f"Initial queryset: {qs}")
+
         if not self.method_name:
-            return super().filter(qs, value)
+            print("Using CharFilter's filter method")
+            result = super().filter(qs, value)
+            print(f"Result from CharFilter: {result}")
+            return result
 
         if hasattr(self, 'parent'):
             parent: AppFilterSet = self.parent  # type: ignore
@@ -23,5 +33,8 @@ class EmptiableCharFilter(CharFilter, AppFilter):
             if not method:
                 raise AttributeError(f'{parent} object has no attribute {self.method_name}')
             if value is not None:
+                print(f"Using method {self.method_name}")
                 qs = method(qs, self.field_name, value)
+                print(f"Result from method: {qs}")
+        print("=========================\n")
         return qs
