@@ -17,7 +17,6 @@ from bodzify_api.utils import data_transformer
 from bodzify_api.view.error.ErrorCode import ErrorCode
 from bodzify_api.view.error.ErrorMessages import AppErrorMessages
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
-from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
 from ....pagination.AppPagination import AppPagination
@@ -183,7 +182,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         request: Request = cast(Request, self.request)
         queryset = self.model_class.objects.filter(user=request.user)
 
-        if request.method == HttpMethod.GET:
+        if request.method == HttpMethod.GET and request.query_params:
             query_params_snake_case = data_transformer.dict_to_snake_case(request.query_params)
             queryset = self.filter_class(query_params_snake_case, queryset=queryset).qs
 
