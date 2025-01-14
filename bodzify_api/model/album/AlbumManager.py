@@ -31,6 +31,9 @@ class AlbumManager(PublicStandardResourceManager):
     def create(self, name: str, *args: Any, **kwargs: Any) -> 'Album':
         return super().create(_name=name, *args, **kwargs)
 
+    def update_instance(self, instance: 'Album', name: str, *args: Any, **kwargs: Any) -> 'Album':
+        return super().update_instance(instance, _name=name, *args, **kwargs)
+
     def filter(self, *args: Any, **kwargs: Any) -> QuerySet['Album']:
         if Fields.NAME in kwargs:
             kwargs[Fields.NAME_INTERNAL] = kwargs[Fields.NAME]
