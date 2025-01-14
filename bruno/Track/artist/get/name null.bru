@@ -1,0 +1,19 @@
+meta {
+  name: name null
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}artists/?name=muse
+  body: json
+  auth: inherit
+}
+
+params:query {
+  name: muse
+}
+
+vars:post-response {
+  artistMuseUuid: res.body.results[0].uuid
+}
