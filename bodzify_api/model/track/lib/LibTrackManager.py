@@ -169,7 +169,7 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
 
             album = Album.objects.get_album_from_name_and_album_artists_names_list_after_eventual_creations(
                 user=schema_data[Fields.USER],
-                album_name=album_name,
+                name=album_name,
                 album_artists_names_list=album_artists_name_list)
 
             model_data[Fields.ALBUM] = album

@@ -7,6 +7,7 @@ class Fields:
     UUID = BaseFields.UUID
     USER = BaseFields.USER
     NAME = BaseFields.NAME
+    NAME_INTERNAL = BaseFields.NAME_INTERNAL
     LIB_TRACKS = BaseFields.LIB_TRACKS
     LIB_TRACKS_COUNT = BaseFields.LIB_TRACKS_COUNT
     LIB_TRACKS_NOT_ARCHIVED = BaseFields.LIB_TRACKS_NOT_ARCHIVED

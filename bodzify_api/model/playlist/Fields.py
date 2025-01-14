@@ -8,6 +8,7 @@ class Fields:
     CREATED_ON = LibTrackMixinFields.CREATED_ON
     UPDATED_ON = LibTrackMixinFields.UPDATED_ON
     NAME = LibTrackMixinFields.NAME
+    NAME_INTERNAL = LibTrackMixinFields.NAME_INTERNAL
     LIB_TRACKS = LibTrackMixinFields.LIB_TRACKS
     LIB_TRACKS_NOT_ARCHIVED = LibTrackMixinFields.LIB_TRACKS_NOT_ARCHIVED
     LIB_TRACKS_COUNT = LibTrackMixinFields.LIB_TRACKS_COUNT

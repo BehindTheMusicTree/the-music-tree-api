@@ -13,7 +13,11 @@ if TYPE_CHECKING:
 
 
 class Artist(LibTrackMixin):
-    name = models.CharField(max_length=settings.ARTIST_NAME_LEN_MAX, default=None)  # type: ignore
+    _name = models.CharField(max_length=settings.ARTIST_NAME_LEN_MAX, default=None, db_column=Fields.NAME)
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     if TYPE_CHECKING:
         albums: models.QuerySet['Album']
@@ -25,7 +29,7 @@ class Artist(LibTrackMixin):
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     class Meta:
-        constraints = [models.CheckConstraint(check=~models.Q(name=""), name="artist_non_empty_name")]
+        constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="artist_non_empty_name")]
 
     def __str__(self) -> str:
-        return f"{self.uuid} | {self.name}"
+        return f"{self.uuid} | {self._name}"

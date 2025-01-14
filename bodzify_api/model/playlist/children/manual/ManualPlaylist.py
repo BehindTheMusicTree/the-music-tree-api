@@ -13,13 +13,18 @@ class ManualPlaylist(Playlist):
                                     parent_link=True,
                                     related_name=PlaylistFields.MANUAL_PLAYLIST)
 
-    name = models.CharField(max_length=settings.MANUAL_PLAYLIST_NAME_LEN_MAX, blank=False, null=False)  # type: ignore
+    _name = models.CharField(max_length=settings.MANUAL_PLAYLIST_NAME_LEN_MAX,
+                             blank=False, null=False, db_column=Fields.NAME)  # type: ignore
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     class Meta:
-        constraints = [models.CheckConstraint(check=~models.Q(name=""), name="manual_playlist_non_empty_name")]
+        constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="manual_playlist_non_empty_name")]
         verbose_name = 'Manual Playlist'
         verbose_name_plural = 'Manual Playlists'
-        indexes = [models.Index(fields=[Fields.NAME], name='manual_playlist_name_idx')]
+        indexes = [models.Index(fields=[Fields.NAME_INTERNAL], name='manual_playlist_name_idx')]
 
     @property
     def type_label(self):

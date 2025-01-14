@@ -1,6 +1,7 @@
+
 from typing import List, TYPE_CHECKING
 from django.db import models
-from django.db.models import Q, QuerySet
+from django.db.models import Q
 
 from bodzify_api import settings
 from bodzify_api.model.album.AlbumManager import AlbumManager
@@ -15,11 +16,16 @@ if TYPE_CHECKING:
 
 
 class Album(LibTrackMixin):
-    name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None)  # type: ignore
+    _name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX,
+                             default=None, db_column=Fields.NAME)  # type: ignore
     year = models.CharField(max_length=4, default=None, null=True)
     album_artists = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
 
     objects: AlbumManager = AlbumManager()
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
@@ -32,12 +38,12 @@ class Album(LibTrackMixin):
             'null_position', LibraryTrackFields.POSITION_IN_ALBUM, LibraryTrackFields.TITLE)
 
     class Meta:
-        constraints = [models.CheckConstraint(check=~models.Q(name=""), name="album_non_empty_name")]
+        constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="album_non_empty_name")]
 
     def __str__(self) -> str:
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
-        string = f"{self.uuid} {self.name}"
+        string = f"{self.uuid} {self._name}"
 
         artists = self.album_artists.all()
         artist_names = " ".join(str(artist) for artist in artists) if artists else "[No Artist]"
