@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.playlist.children.manual.output.Fields import Fields
-from bodzify_api.test.get_filters.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
+from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
 
 

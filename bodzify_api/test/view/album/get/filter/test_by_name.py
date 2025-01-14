@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.test.get_filters.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
+from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.serializer.schema.model.album.fields import Fields as AlbumFields
 

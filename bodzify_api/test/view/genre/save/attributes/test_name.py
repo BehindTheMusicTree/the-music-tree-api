@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields
-from bodzify_api.test.get_filters.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
+from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 
@@ -26,4 +26,8 @@ class TestCase(GenreTestCase, NotNullableFreeCharFilterTestCase):
         genre_name = "Rock"
         self.model_fixture_factory.create_genre(name=genre_name)
         response = self._post_genre(**{Fields.NAME: genre_name})
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_empty_then_error(self):
+        response = self._post_genre(**{Fields.NAME: ''})
         assert response.status_code == status.HTTP_400_BAD_REQUEST

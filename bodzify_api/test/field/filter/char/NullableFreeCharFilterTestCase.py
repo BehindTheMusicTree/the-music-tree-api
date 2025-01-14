@@ -1,13 +1,13 @@
 from typing import Optional
 
-from bodzify_api.test.get_filters.char.FreeCharFilterTestCase import FreeCharFilterTestCase
+from bodzify_api.test.field.filter.char.FreeCharFilterTestCase import FreeCharFilterTestCase
 
 
-class NotNullableFreeCharFilterTestCase(FreeCharFilterTestCase):
+class NullableFreeCharFilterTestCase(FreeCharFilterTestCase):
     filter_field = None
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
         class_methods_names_to_implement = ['test_contains_in_another_case_then_results']
         if methods_names_to_implement:
             class_methods_names_to_implement += methods_names_to_implement
-        super().setUp(allow_empty_value=False, methods_names_to_implement=class_methods_names_to_implement)
+        super().setUp(allow_empty_value=True, methods_names_to_implement=class_methods_names_to_implement)
