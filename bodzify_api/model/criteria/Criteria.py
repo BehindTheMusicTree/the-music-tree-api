@@ -1,5 +1,5 @@
-from dataclasses import Field
-from typing import TYPE_CHECKING, Any, Dict, Optional
+
+from typing import TYPE_CHECKING, Any, Optional
 
 from django.db import models, IntegrityError
 from django.db.models import QuerySet
