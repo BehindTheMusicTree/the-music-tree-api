@@ -6,7 +6,9 @@ from .Fields import Fields
 
 
 class ArtistFilterSet(PrivateUniqueResourceFilterSet):
-    name = NonEmptiableCharFilter(field_name=Fields.NAME, lookup_expr='icontains')
+    name = NonEmptiableCharFilter(field_name=Fields.NAME_INTERNAL,
+                                  field_name_user_friendly=Fields.NAME,
+                                  lookup_expr='icontains')
 
     class Meta:
         model = Artist
