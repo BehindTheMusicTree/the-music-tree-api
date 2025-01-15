@@ -1,8 +1,8 @@
-from typing import Generic, Optional, TYPE_CHECKING, TypeVar
+from typing import Optional, TYPE_CHECKING, TypeVar
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='Criteria')
 
 
-class CriteriaManager(PublicStandardResourceManager[T], Generic[T]):
-    model: T
+class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
+    model: type[T]
 
     def create(self, type_id: int, **kwargs) -> T:
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
