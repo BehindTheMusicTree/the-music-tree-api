@@ -11,7 +11,7 @@ class TestCase(ManualPlaylistTestCase):
         response = self._post_manual_playlist(**{Fields.NAME: ["value", "value2"]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_longest(self):
+    def test_longest_then_ok(self):
         response = self._post_manual_playlist(**{Fields.NAME: "a" * settings.MANUAL_PLAYLIST_NAME_LEN_MAX})
         assert response.status_code == status.HTTP_201_CREATED
 

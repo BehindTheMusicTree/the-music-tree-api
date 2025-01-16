@@ -2,7 +2,6 @@ from rest_framework import status
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as Fields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
-from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
 
 
 class TestCase(GenreTestCase, NullableFieldTestCase):
