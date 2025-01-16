@@ -11,7 +11,7 @@ class CriteriaFilterSet(PrivateUniqueResourceFilterSet):
     name = NonEmptiableCharFilter(field_name=Fields.NAME_INTERNAL,
                                   lookup_expr='icontains',
                                   field_name_user_friendly=Fields.NAME)
-    parent = ForeignKeyFilter(field_name=Fields.PARENT)
+    parent = ForeignKeyFilter()
 
     class Meta:
         model = Criteria
