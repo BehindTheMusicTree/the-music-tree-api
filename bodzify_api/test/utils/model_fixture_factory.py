@@ -74,7 +74,7 @@ class ModelFixtureFactory:
             CriteriaFields.CREATED_ON: kwargs.get(CriteriaFields.CREATED_ON, now),
             CriteriaFields.UPDATED_ON: kwargs.get(CriteriaFields.UPDATED_ON, now),
             CriteriaFields.USER: user or self.default_test_user,
-            CriteriaFields.NAME_INTERNAL: name,
+            CriteriaFields.NAME: name,
             CriteriaFields.PARENT: None,
         }
         model_fields.update(kwargs)
@@ -147,7 +147,7 @@ class ModelFixtureFactory:
             ArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
             ArtistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             ArtistFields.USER: user or self.default_test_user,
-            ArtistFields.NAME_INTERNAL: name
+            ArtistFields.NAME: name
         }
         model_fields.update(kwargs)
         return G(Artist, **model_fields)
@@ -159,7 +159,7 @@ class ModelFixtureFactory:
             AlbumFields.USER: user or self.default_test_user,
             AlbumFields.ALBUM_ARTISTS: [],
             AlbumFields.YEAR: None,
-            AlbumFields.NAME_INTERNAL: name
+            AlbumFields.NAME: name
         }
         model_fields.update(kwargs)
         return G(Album, **model_fields)
