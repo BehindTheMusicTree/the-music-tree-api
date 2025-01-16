@@ -18,6 +18,9 @@ class LibTrackMixinWithInternalNameManager(PublicStandardResourceManager[T]):
     def create(self, name: str, *args: Any, **kwargs: Any) -> T:
         return super().create(_name=name, *args, **kwargs)
 
+    def get_or_create(self, name: str, *args: Any, **kwargs: Any) -> tuple[T, bool]:
+        return super().get_or_create(_name=name, *args, **kwargs)
+
     def update_instance(self, instance: T, name: str, *args: Any, **kwargs: Any) -> T:
         return super().update_instance(instance, _name=name, *args, **kwargs)
 
