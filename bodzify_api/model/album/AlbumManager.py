@@ -1,9 +1,9 @@
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
-from .Fields import Fields
+from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
+from bodzify_api.model.lib_track_mixin.Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
@@ -11,8 +11,11 @@ if TYPE_CHECKING:
     from .Album import Album
 
 
-class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
+class AlbumManager(LibTrackMixinManager['Album']):
     model: type['Album']
+
+    def get_default_ordering(self) -> list[str]:
+        return [Fields.NAME_INTERNAL]
 
     def _get_instance_from_name_and_artists_list_after_having_eventually_created_instance(
             self, user: 'User', name: str, album_artists: list) -> Optional['Album']:

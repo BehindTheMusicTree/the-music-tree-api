@@ -2,7 +2,8 @@ from typing import Optional, TYPE_CHECKING, TypeVar
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
+from bodzify_api.model.lib_track_mixin.Fields import Fields
 from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
@@ -12,8 +13,11 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='Criteria')
 
 
-class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
+class CriteriaManager(LibTrackMixinManager[T]):
     model: type[T]
+
+    def get_default_ordering(self) -> list[str]:
+        return [Fields.NAME_INTERNAL]
 
     def create(self, type_id: int, **kwargs) -> T:
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist

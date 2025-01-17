@@ -1,16 +1,19 @@
 from typing import TYPE_CHECKING
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
+from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
-from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
     from .Artist import Artist
 
 
-class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
+class ArtistManager(LibTrackMixinManager['Artist']):
     model: type['Artist']
+
+    def get_default_ordering(self) -> list[str]:
+        return [LibTrackMixinFields.NAME_INTERNAL]
 
     def get_artists_names_list_from_str(self, names_str: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_str.split(METADATA_ARTISTS_SEPARATION_CHAR)
