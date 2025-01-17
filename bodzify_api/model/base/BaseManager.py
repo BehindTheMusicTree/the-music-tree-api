@@ -33,15 +33,6 @@ class BaseManager(models.Manager, Generic[T]):
         return super().filter(*args, **transformed_kwargs)
 
     def update_instance(self, instance: T, **kwargs) -> T:
-
-        # Handle name field directly without transformation
-        if 'name' in kwargs:
-            value = kwargs['name']
-            # Update the database directly to ensure consistency
-            type(instance).objects.filter(pk=instance.pk).update(_name=value)
-            # Remove from kwargs since we handled it
-            kwargs.pop('name')
-
         for key, value in kwargs.items():
             if hasattr(instance, key):
                 field = instance._meta.get_field(key)

@@ -45,3 +45,30 @@ def transform_name_fields(model: Type[models.Model], **kwargs: Any) -> Dict[str,
             transformed[key] = value
 
     return transformed
+
+
+def update_name_field(instance: models.Model, name_value: str) -> None:
+    """
+    Update the name field directly in the database, handling both the instance
+    and any self-referential root records.
+
+    Args:
+        instance: The model instance to update
+        name_value: The new name value to set
+    """
+    if not uses_internal_name(instance.__class__):
+        return
+
+    # Update the instance's name in the database
+    type(instance).objects.filter(pk=instance.pk).update(**{
+        LibTrackMixinFields.NAME_INTERNAL: name_value
+    })
+
+    # Handle self-referential root records
+    root = getattr(instance, 'root', None)
+    if root is not None and root == instance:
+        root_pk = getattr(root, 'pk', None)
+        if root_pk is not None:
+            type(instance).objects.filter(pk=root_pk).update(**{
+                LibTrackMixinFields.NAME_INTERNAL: name_value
+            })
