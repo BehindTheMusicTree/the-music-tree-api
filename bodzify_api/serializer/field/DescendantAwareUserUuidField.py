@@ -1,3 +1,4 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 
 from bodzify_api.serializer.field.NonSelfReferencingUserUuidField import NonSelfReferencingUserUuidField
@@ -23,4 +24,4 @@ class DescendantAwareUserUuidField(NonSelfReferencingUserUuidField):
                 if obj.is_descendant_of(instance):
                     self.fail('descendant_reference')
             else:
-                raise ValueError("Instance must have is_descendant_of method.")
+                raise ImproperlyConfigured("Instance must have is_descendant_of method.")

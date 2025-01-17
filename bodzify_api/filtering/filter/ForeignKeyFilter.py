@@ -2,6 +2,7 @@ from typing import Optional
 import uuid
 import re
 
+from django.core.exceptions import ImproperlyConfigured
 from django_filters import CharFilter, FilterSet
 from rest_framework.exceptions import ValidationError
 
@@ -13,7 +14,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
     def filter(self, queryset, value):
         parent: Optional[FilterSet] = getattr(self, 'parent', None)
         if not parent:
-            raise ValueError('ForeignKeyFilter must be used within a FilterSet')
+            raise ImproperlyConfigured('ForeignKeyFilter must be used within a FilterSet')
 
         if self.field_name not in parent.data:
             return queryset

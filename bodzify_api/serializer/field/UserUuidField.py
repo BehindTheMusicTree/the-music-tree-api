@@ -1,4 +1,5 @@
 
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import QuerySet
 from rest_framework import serializers
 from rest_framework.request import Request
@@ -14,12 +15,12 @@ class UserUuidField(serializers.UUIDField):
         request = self.context['request']
 
         if not isinstance(request, Request):  # For linting purposes
-            raise ValueError("request must be an Request instance.")
+            raise ImproperlyConfigured("request must be a Request instance.")
 
         user = request.user
 
         if not isinstance(self.queryset, QuerySet):  # For linting purposes
-            raise ValueError("queryset must be a QuerySet instance.")
+            raise ImproperlyConfigured("queryset must be a QuerySet instance.")
 
         if not self.queryset.filter(uuid=uuid, user=user).exists():
             raise serializers.ValidationError("Does not exist.")
