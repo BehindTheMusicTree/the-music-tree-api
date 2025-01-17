@@ -48,10 +48,6 @@ class Criteria(LibTrackMixin):
     def name(self) -> str:
         return self._name
 
-    @name.setter
-    def name(self, value: str) -> None:
-        self._name = value
-
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
