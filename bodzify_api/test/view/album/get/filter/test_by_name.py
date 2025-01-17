@@ -20,7 +20,7 @@ class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
         assert self.results[0][AlbumFields.NAME] == album.name
 
     def test_not_provided_then_results(self):
-        album = self.model_fixture_factory.create_album(name="Muse")
+        self.model_fixture_factory.create_album(name="Muse")
         self.model_fixture_factory.create_album(name="Jon")
         response = self._get_albums()
         assert response.status_code == status.HTTP_200_OK

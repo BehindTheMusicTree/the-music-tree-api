@@ -159,7 +159,7 @@ class ModelFixtureFactory:
             AlbumFields.USER: user or self.default_test_user,
             AlbumFields.ALBUM_ARTISTS: [],
             AlbumFields.YEAR: None,
-            AlbumFields.NAME: name
+            AlbumFields.NAME_INTERNAL: name
         }
         model_fields.update(kwargs)
         return G(Album, **model_fields)
