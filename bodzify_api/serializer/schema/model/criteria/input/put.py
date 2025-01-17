@@ -1,4 +1,6 @@
+from django.conf import Settings
 from rest_framework import serializers
+from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.field.DescendantAwareUserUuidField import DescendantAwareUserUuidField
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
@@ -9,7 +11,7 @@ class CriteriaPutSerializer(AppValidationSerializer, serializers.ModelSerializer
     parent: serializers.Field = DescendantAwareUserUuidField(queryset=Criteria.objects.all(),
                                                              required=False,
                                                              allow_null=True)
-    name = serializers.CharField()
+    name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, required=False)
 
     class Meta:
         model = Criteria
