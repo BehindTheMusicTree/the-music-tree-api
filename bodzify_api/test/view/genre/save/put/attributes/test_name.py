@@ -2,14 +2,16 @@ from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.model.criteria.input.put import Fields as PutFields
+from bodzify_api.test.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
+from bodzify_api.test.field.body_data.type.not_nullable.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 
 
-class TestCase(GenreTestCase):
+class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
 
-    def test_ok(self):
+    def test_not_none_then_update(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
         genre_new_name = "Punk"
         response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: genre_new_name})
