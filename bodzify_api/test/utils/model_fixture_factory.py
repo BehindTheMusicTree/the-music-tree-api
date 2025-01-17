@@ -147,7 +147,7 @@ class ModelFixtureFactory:
             ArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
             ArtistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             ArtistFields.USER: user or self.default_test_user,
-            ArtistFields.NAME: name
+            ArtistFields.NAME_INTERNAL: name
         }
         model_fields.update(kwargs)
         return G(Artist, **model_fields)
