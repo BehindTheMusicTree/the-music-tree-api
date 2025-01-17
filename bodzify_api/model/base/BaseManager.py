@@ -33,7 +33,20 @@ class BaseManager(models.Manager, Generic[T]):
         return super().filter(*args, **transformed_kwargs)
 
     def update_instance(self, instance: T, **kwargs) -> T:
+        print('instance before update', instance)
+
+        # Separate model field updates from save kwargs
+        save_kwargs = {}
+        field_updates = {}
+
         for key, value in kwargs.items():
+            if key in ['update_fields', 'force_insert', 'force_update', 'using']:
+                save_kwargs[key] = value
+            else:
+                field_updates[key] = value
+
+        # Update instance fields
+        for key, value in field_updates.items():
             if hasattr(instance, key):
                 field = instance._meta.get_field(key)
                 if isinstance(field, models.ManyToManyField):
@@ -43,8 +56,11 @@ class BaseManager(models.Manager, Generic[T]):
             else:
                 raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
 
-        instance.save()
+        print('instance after update', instance)
+        instance.save(**save_kwargs)
+        print('instance after save', instance)
         instance.refresh_from_db()
+        print('instance after refresh', instance)
         return instance
 
     def delete_instance(self, instance: T):

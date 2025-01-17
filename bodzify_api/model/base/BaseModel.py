@@ -42,10 +42,20 @@ class BaseModel(models.Model, metaclass=DynamicTableNameModelBase):
     def save(self, *args, **kwargs):
         adding = self._state.adding
         ctx = self._create_save_context(**kwargs)
+
+        # Get any existing update_fields
+        existing_update_fields = set(kwargs.get('update_fields', []))
+
+        # Run prepare save and get modified kwargs
         kwargs = self._prepare_save(ctx)
         self._perform_save(adding=adding, ctx=ctx)
+
+        # Merge update_fields from context with existing ones
         if ctx.modified_fields and not ctx.should_track_fields:
-            kwargs['update_fields'] = ctx.modified_fields
+            all_update_fields = existing_update_fields.union(ctx.modified_fields)
+            if all_update_fields:
+                kwargs['update_fields'] = list(all_update_fields)
+
         super().save(*args, **kwargs)
         self._post_save(adding=adding)
 

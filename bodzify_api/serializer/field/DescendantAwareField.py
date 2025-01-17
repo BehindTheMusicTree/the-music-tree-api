@@ -15,13 +15,14 @@ class DescendantAwareField(NonSelfReferencingField):
     }
 
     def to_internal_value(self, data):
-        uuid = super().to_internal_value(data)
+        value = super().to_internal_value(data)
         instance = self.parent.instance
 
         if instance:
-            if hasattr(instance, 'is_descendant_of'):
-                obj = self.queryset.get(uuid=uuid)
-                if obj.is_descendant_of(instance):
-                    self.fail('descendant_reference')
-            else:
+            if not hasattr(instance, 'is_descendant_of'):
                 raise ImproperlyConfigured("Instance must have is_descendant_of method.")
+
+            if value and value.is_descendant_of(instance):
+                self.fail('descendant_reference')
+
+        return value

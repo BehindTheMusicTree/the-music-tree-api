@@ -7,9 +7,9 @@ from .Fields import Fields
 
 
 class CriteriaPutSerializer(AppValidationSerializer, serializers.ModelSerializer):
-    parent: serializers.Field = DescendantAwareField(queryset=Criteria.objects.all(),
-                                                     required=False,
-                                                     allow_null=True)
+    parent: DescendantAwareField = DescendantAwareField(queryset=Criteria.objects.all(),
+                                                        required=False,
+                                                        allow_null=True)
     name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, required=False)
 
     class Meta:
