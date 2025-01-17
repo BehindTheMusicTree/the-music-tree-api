@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 
-class UserUuidField(serializers.UUIDField):
+class PrivateUuidField(serializers.UUIDField):
     def __init__(self, queryset, *args, **kwargs):
         self.queryset = queryset
         super().__init__(*args, **kwargs)

@@ -1,9 +1,9 @@
 from django.utils.translation import gettext_lazy as _
 
-from bodzify_api.serializer.field.UserUuidField import UserUuidField
+from bodzify_api.serializer.field.PrivateUuidField import PrivateUuidField
 
 
-class NonSelfReferencingUserUuidField(UserUuidField):
+class NonSelfReferencingField(PrivateUuidField):
     """
     A custom field that prevents self-referential relationships in foreign keys.
     """

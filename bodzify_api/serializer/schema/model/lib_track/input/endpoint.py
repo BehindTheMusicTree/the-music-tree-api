@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.field.UserUuidField import UserUuidField
+from bodzify_api.serializer.field.PrivateUuidField import PrivateUuidField
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from .Fields import Fields
 
@@ -29,7 +29,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                                                 allow_blank=True,
                                                 allow_null=True)
     position_in_album = serializers.IntegerField(required=False, allow_null=True)
-    genre_uuid = UserUuidField(queryset=Criteria.objects, required=False, allow_null=False)
+    genre_uuid = PrivateUuidField(queryset=Criteria.objects, required=False, allow_null=False)
     genre_name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
                                        required=False,
                                        allow_blank=True,

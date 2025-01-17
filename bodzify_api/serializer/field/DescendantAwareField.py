@@ -1,10 +1,10 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 
-from bodzify_api.serializer.field.NonSelfReferencingUserUuidField import NonSelfReferencingUserUuidField
+from bodzify_api.serializer.field.NonSelfReferencingField import NonSelfReferencingField
 
 
-class DescendantAwareUserUuidField(NonSelfReferencingUserUuidField):
+class DescendantAwareField(NonSelfReferencingField):
     """
     A custom field that always checks for descendant relationships.
     This is a specialized version of NonSelfReferencingUserUuidField that enforces
