@@ -1,7 +1,10 @@
-from abc import abstractmethod
-from typing import TypeVar, Generic, TYPE_CHECKING
+
+from typing import TypeVar, Generic, TYPE_CHECKING, Any
 
 from django.db import models
+from django.db.models import QuerySet
+
+from bodzify_api.model.lib_track_mixin.query_utils import transform_name_fields
 
 
 if TYPE_CHECKING:
@@ -17,8 +20,17 @@ class BaseManager(models.Manager, Generic[T]):
     def get_default_ordering(self):
         raise NotImplementedError()
 
+    def get(self, *args: Any, **kwargs: Any) -> Any:
+        transformed_kwargs = transform_name_fields(self.model, **kwargs)
+        return super().get(*args, **transformed_kwargs)
+
     def create(self, **kwargs) -> T:
-        return super().create(**kwargs)
+        transformed_kwargs = transform_name_fields(self.model, **kwargs)
+        return super().create(**transformed_kwargs)
+
+    def filter(self, *args: Any, **kwargs: Any) -> QuerySet[T]:
+        transformed_kwargs = transform_name_fields(self.model, **kwargs)
+        return super().filter(*args, **transformed_kwargs)
 
     def update_instance(self, instance: T, **kwargs) -> T:
         for key, value in kwargs.items():

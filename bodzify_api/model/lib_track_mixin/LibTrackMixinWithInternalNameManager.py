@@ -16,19 +16,16 @@ class LibTrackMixinWithInternalNameManager(PublicStandardResourceManager[T]):
     model: type[T]
 
     def create(self, name: str, *args: Any, **kwargs: Any) -> T:
-        return super().create(_name=name, *args, **kwargs)
+        # Use name parameter directly, BaseManager will transform it
+        return super().create(name=name, *args, **kwargs)
 
     def get_or_create(self, name: str, *args: Any, **kwargs: Any) -> tuple[T, bool]:
-        return super().get_or_create(_name=name, *args, **kwargs)
+        # Use name parameter directly, BaseManager will transform it
+        return super().get_or_create(name=name, *args, **kwargs)
 
     def update_instance(self, instance: T, name: str, *args: Any, **kwargs: Any) -> T:
-        return super().update_instance(instance, _name=name, *args, **kwargs)
-
-    def filter(self, *args: Any, **kwargs: Any) -> QuerySet[T]:
-        if Fields.NAME in kwargs:
-            kwargs[Fields.NAME_INTERNAL] = kwargs[Fields.NAME]
-            del kwargs[Fields.NAME]
-        return super().filter(*args, **kwargs)
+        # Use name parameter directly, BaseManager will transform it
+        return super().update_instance(instance, name=name, *args, **kwargs)
 
     def get_default_ordering(self) -> list[str]:
         return [Fields.NAME_INTERNAL]

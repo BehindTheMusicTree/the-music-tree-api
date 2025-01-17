@@ -4,6 +4,7 @@ from django.db import models
 
 from bodzify_api.model.base.BaseManager import BaseManager
 from bodzify_api.model.base.DynamicTableNameModelBase import DynamicTableNameModelBase
+from bodzify_api.model.lib_track_mixin.query_utils import transform_name_fields
 from bodzify_api.utils.model import SaveContext
 
 T = TypeVar('T', bound='BaseModel')
@@ -49,6 +50,9 @@ class BaseModel(models.Model, metaclass=DynamicTableNameModelBase):
         self._post_save(adding=adding)
 
     def _prepare_save(self, ctx: SaveContext) -> dict:
+        # Transform name fields if needed
+        transformed_kwargs = transform_name_fields(self.__class__, **ctx.kwargs)
+        ctx.kwargs = transformed_kwargs
         return ctx.kwargs
 
     def _perform_save(self, adding: bool, ctx: SaveContext) -> None:
