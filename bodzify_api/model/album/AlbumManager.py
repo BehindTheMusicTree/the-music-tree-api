@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING, List, Optional
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
 from bodzify_api.model.lib_track_mixin.Fields import Fields
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from .Album import Album
 
 
-class AlbumManager(LibTrackMixinManager['Album']):
+class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
     model: type['Album']
 
     def get_default_ordering(self) -> list[str]:

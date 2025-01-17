@@ -1,6 +1,7 @@
 from django.db import models
 
 from bodzify_api import settings
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.children.manual import ManualPlaylistTypeLabel
@@ -15,6 +16,8 @@ class ManualPlaylist(Playlist):
 
     _name = models.CharField(max_length=settings.MANUAL_PLAYLIST_NAME_LEN_MAX,
                              blank=False, null=False, db_column=Fields.NAME)  # type: ignore
+
+    objects: LibTrackMixinWithInternalNameManager = LibTrackMixinWithInternalNameManager()
 
     @property
     def name(self) -> str:

@@ -2,8 +2,8 @@ from typing import Optional, TYPE_CHECKING, TypeVar
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
 from bodzify_api.model.lib_track_mixin.Fields import Fields
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='Criteria')
 
 
-class CriteriaManager(LibTrackMixinManager[T]):
+class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
     model: type[T]
 
     def get_default_ordering(self) -> list[str]:

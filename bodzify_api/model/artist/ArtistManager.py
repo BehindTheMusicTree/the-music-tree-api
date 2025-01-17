@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
 from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
 
 if TYPE_CHECKING:
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from .Artist import Artist
 
 
-class ArtistManager(LibTrackMixinManager['Artist']):
+class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
     model: type['Artist']
 
     def get_default_ordering(self) -> list[str]:
