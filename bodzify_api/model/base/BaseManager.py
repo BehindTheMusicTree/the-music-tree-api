@@ -33,6 +33,17 @@ class BaseManager(models.Manager, Generic[T]):
         return super().filter(*args, **transformed_kwargs)
 
     def update_instance(self, instance: T, **kwargs) -> T:
+        print('instance before update', instance)
+
+        # Handle name field directly without transformation
+        if 'name' in kwargs:
+            value = kwargs['name']
+            # Update the database directly to ensure consistency
+            type(instance).objects.filter(pk=instance.pk).update(_name=value)
+            # Remove from kwargs since we handled it
+            kwargs.pop('name')
+
+        # Transform remaining fields
         transformed_kwargs = transform_name_fields(instance.__class__, **kwargs)
 
         for key, value in transformed_kwargs.items():
@@ -45,8 +56,14 @@ class BaseManager(models.Manager, Generic[T]):
             else:
                 raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
 
+        print('instance after update', instance)
         instance.save()
-        instance.refresh_from_db()  # Otherwise, foreign objects' fields may not be updated
+        print('instance after save', instance)
+
+        # Refresh to get the latest state
+        instance.refresh_from_db()
+        print('instance after refresh', instance)
+
         return instance
 
     def delete_instance(self, instance: T):
