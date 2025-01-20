@@ -42,15 +42,15 @@ class TestCase(GenreTestCase):
         assert punk_playlist.root == hardcore_playlist
 
     def test_new_parent_then_update_new_parent_playlist(self):
-        punk_genre = self.model_fixture_factory.create_genre(name="Punk")
-        track = self.model_fixture_factory.create_lib_track_with_file(genre=punk_genre, title="Rock song")
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        genre_punk = self.model_fixture_factory.create_genre(name="Punk")
+        track = self.model_fixture_factory.create_lib_track_with_file(genre=genre_punk, title="Rock song")
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
 
-        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
 
         assert response.status_code == status.HTTP_200_OK
-        playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rock_genre)
-        assert playlist.library_tracks.first() == track
+        playlist_rock: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre_rock)
+        assert playlist_rock.library_tracks.first() == track
 
     def test_new_parent_not_acendant_of_old_parent_then_remove_criteria_playlist_tracks_from_old_criteria_ascendants_playlist(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
