@@ -1,17 +1,13 @@
 meta {
-  name: sample mp3
+  name: album bo artist mat
   type: http
-  seq: 1
+  seq: 11
 }
 
 post {
-  url: {{BASE_URL}}tracks/?ratig=d
+  url: {{BASE_URL}}tracks/
   body: multipartForm
   auth: inherit
-}
-
-params:query {
-  ratig: d
 }
 
 headers {
@@ -20,9 +16,12 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  album_name: Jo
+  artistsNames: mat
+  albumName: bo
+  albumArtistsNames: muse
 }
 
 vars:post-response {
-  albumJoUuid: res.body.album.uuid
+  artistMatUuid: res.body.artists[0].uuid
+  albumBoUuid: res.body.album.uuid
 }
