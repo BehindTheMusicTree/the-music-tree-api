@@ -1,6 +1,8 @@
+from re import L
 from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.serializer.schema.model.criteria.input.put import Fields as PutFields
 from bodzify_api.test.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
 from bodzify_api.test.field.body_data.type.not_nullable.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
@@ -38,18 +40,17 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
     def test_not_provided_then_unchanged(self):
         genre_name = "Rock"
         genre = self.model_fixture_factory.create_genre(name=genre_name)
-        response = self._put_genre(uuid=genre.uuid)
+        response = self._put_genre(uuid=genre.uuid, **{PutFields.PARENT: None})
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.name == genre_name
 
     def test_ok_then_update_linked_lib_track(self):
         rock_genre = self.model_fixture_factory.create_genre(name="Rock")
 
-        track = self.model_fixture_factory.create_lib_track_with_file(
-            title='polo',
-            genre_name=rock_genre.name,
-            user=self.test_user1
-        )
+        track = self.model_fixture_factory.create_lib_track_with_file(**{
+            LibraryTrackFields.TITLE: "Track",
+            LibraryTrackFields.GENRE: rock_genre,
+        })
 
         genre_new_name = "Punk"
         response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: genre_new_name})
@@ -57,4 +58,4 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
 
         updated_track: LibraryTrack = LibraryTrack.objects.get(uuid=track.uuid)
         metadata = audio_metadata.get_normalized_metadata_from_file(file=updated_track.track_file.file)
-        assert metadata[NormalizedMetadataKeys.GENRE_NAME] == gen
+        assert metadata[NormalizedMetadataKeys.GENRE_NAME] == genre_new_name
