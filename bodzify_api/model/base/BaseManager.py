@@ -33,38 +33,37 @@ class BaseManager(models.Manager, Generic[T]):
         return super().filter(*args, **transformed_kwargs)
 
     def update_instance(self, instance: T, **kwargs) -> T:
-        print('instance before update', instance)
-
-        # Separate model field updates from save kwargs
+        # Initialize dictionaries for different types of updates
         save_kwargs = {}
-        field_updates = {}
+        many_to_many_updates = {}
+        regular_updates = {}
 
-        print('kwargs', kwargs)
+        # Separate fields based on their type and purpose
         for key, value in kwargs.items():
             if key in ['update_fields', 'force_insert', 'force_update', 'using']:
                 save_kwargs[key] = value
             else:
-                field_updates[key] = value
-        print('field updates', field_updates)
-
-        # Update instance fields
-        for key, value in field_updates.items():
-            if hasattr(instance, key):
-                field = instance._meta.get_field(key)
-                if isinstance(field, models.ManyToManyField):
-                    getattr(instance, key).set(value)
+                if hasattr(instance, key):
+                    field = instance._meta.get_field(key)
+                    if isinstance(field, models.ManyToManyField):
+                        many_to_many_updates[key] = value
+                    else:
+                        regular_updates[key] = value
                 else:
-                    setattr(instance, key, value)
-            else:
-                raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
+                    raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
 
-        print('instance after update', instance)
-        save_kwargs['update_fields'] = list(field_updates.keys())
+        # Update regular fields
+        for key, value in regular_updates.items():
+            setattr(instance, key, value)
+
+        # Save the instance with regular updates
+        save_kwargs['update_fields'] = list(regular_updates.keys())
         instance.save(**save_kwargs)
-        print('save kwargs', save_kwargs)
-        print('instance after save', instance)
-        instance.refresh_from_db()
-        print('instance after refresh', instance)
+
+        # Handle M2M fields after save
+        for key, value in many_to_many_updates.items():
+            getattr(instance, key).set(value)
+        instance.refresh_from_db()  # Refresh the instance to get the updated M2M fields
         return instance
 
     def delete_instance(self, instance: T):
