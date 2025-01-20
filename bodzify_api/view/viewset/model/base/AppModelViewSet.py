@@ -78,7 +78,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         if not validated_data_dict:
             raise DrfValidationError(
                 detail={
-                    'message': "Serializer validation failed - no validated data available",
+                    'message': "PUT request requires at least one field to update. Please specify the fields you want \
+to modify in the request body.",
                     'code': "validation_error"
                 }
             )
