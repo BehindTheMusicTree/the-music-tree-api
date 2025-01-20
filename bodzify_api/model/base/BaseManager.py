@@ -39,11 +39,13 @@ class BaseManager(models.Manager, Generic[T]):
         save_kwargs = {}
         field_updates = {}
 
+        print('kwargs', kwargs)
         for key, value in kwargs.items():
             if key in ['update_fields', 'force_insert', 'force_update', 'using']:
                 save_kwargs[key] = value
             else:
                 field_updates[key] = value
+        print('field updates', field_updates)
 
         # Update instance fields
         for key, value in field_updates.items():
@@ -57,7 +59,9 @@ class BaseManager(models.Manager, Generic[T]):
                 raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
 
         print('instance after update', instance)
+        save_kwargs['update_fields'] = list(field_updates.keys())
         instance.save(**save_kwargs)
+        print('save kwargs', save_kwargs)
         print('instance after save', instance)
         instance.refresh_from_db()
         print('instance after refresh', instance)

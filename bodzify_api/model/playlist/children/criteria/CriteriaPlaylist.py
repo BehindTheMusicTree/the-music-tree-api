@@ -63,7 +63,8 @@ class CriteriaPlaylist(Playlist):
         return self.root == self
 
     def __str__(self) -> str:
-        return f'{self.uuid} | {self.name} | {self.parent} | {self.root}'
+        root_str = f'Root: {self.root.name}' if self.root else 'Root: None'
+        return f'{self.uuid} | {self.name} | {self.parent} | {root_str}'
 
     def _set_parent(self) -> bool:
         current_parent_pk = getattr(self, f"{Fields.PARENT}_id", None)
