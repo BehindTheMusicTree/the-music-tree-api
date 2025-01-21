@@ -111,6 +111,8 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
 
             if genre_uuid == "":
                 genre = None
+            else:
+                genre = Genre.objects.get(user=schema_data[Fields.USER], uuid=genre_uuid)
         else:
             genre = None
             if InputFields.GENRE_NAME in schema_data:
