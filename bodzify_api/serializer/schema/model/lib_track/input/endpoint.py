@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.field.NullablePrivateUuidField import NullablePrivateUuidField
+from bodzify_api.serializer.field.PrivateUuidField import PrivateUuidField
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
+from bodzify_api.serializer.field.criteria.GenreField import GenreField
 from .Fields import Fields
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
@@ -29,7 +30,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                                                 allow_blank=True,
                                                 allow_null=True)
     position_in_album = serializers.IntegerField(required=False, allow_null=True)
-    genre_uuid = NullablePrivateUuidField(queryset=Criteria.objects, required=False)
+    genre_uuid = GenreField(required=False)
     genre_name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
                                        required=False,
                                        allow_blank=True,
