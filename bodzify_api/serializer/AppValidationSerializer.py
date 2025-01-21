@@ -60,10 +60,17 @@ class AppValidationSerializer(serializers.Serializer):
         if request:
             # Try to get raw body from different possible locations
             raw_body = getattr(request, '_raw_body', None)
-            if not raw_body:
-                request_obj = getattr(request, '_request', None)
-                if request_obj:
-                    raw_body = getattr(request_obj, 'body', None)
+
+            # If we don't have the raw body stored, try to get it from the request
+            # and store it before it's consumed
+            if not raw_body and hasattr(request, '_request'):
+                try:
+                    raw_body = request._request.body
+                    # Store the raw body for future access
+                    setattr(request, '_raw_body', raw_body)
+                except Exception:
+                    # If we can't access the body, it might have been consumed
+                    pass
 
             if raw_body:
                 try:
