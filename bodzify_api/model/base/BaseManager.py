@@ -1,5 +1,5 @@
 
-from typing import TypeVar, Generic, TYPE_CHECKING, Any
+from typing import MutableMapping, TypeVar, Generic, TYPE_CHECKING, Any
 
 from django.db import models
 from django.db.models import QuerySet
@@ -23,6 +23,10 @@ class BaseManager(models.Manager, Generic[T]):
     def get(self, *args: Any, **kwargs: Any) -> Any:
         transformed_kwargs = transform_name_fields(self.model, **kwargs)
         return super().get(*args, **transformed_kwargs)
+
+    def get_or_create(self, *args, **kwargs) -> Any:
+        transformed_kwargs = transform_name_fields(self.model, **kwargs)
+        return super().get_or_create(*args, **transformed_kwargs)
 
     def create(self, **kwargs) -> T:
         transformed_kwargs = transform_name_fields(self.model, **kwargs)
