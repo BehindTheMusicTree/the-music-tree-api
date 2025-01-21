@@ -2,9 +2,10 @@ from typing import Optional, TYPE_CHECKING, TypeVar
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.Fields import Fields
+from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from .type.CriteriaType import CriteriaType
+from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
@@ -17,7 +18,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
     model: type[T]
 
     def get_default_ordering(self) -> list[str]:
-        return [Fields.NAME_INTERNAL]
+        return [LibTrackMixinFields.NAME_INTERNAL]
 
     def create(self, type_id: int, **kwargs) -> T:
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
@@ -36,14 +37,16 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         updated_instance: T = super().update_instance(instance, **kwargs)
 
         if old_parent != updated_instance.parent:
+            self.refresh_ascendants_of_instance_and_children(updated_instance)
+
+            playlist_parent = updated_instance.parent.criteria_playlist if updated_instance.parent else None
+            CriteriaPlaylist.objects.update_instance(instance=instance.criteria_playlist,
+                                                     **{Fields.PARENT: playlist_parent})
+
             common_criteria = self.get_common_ascendant(updated_instance, old_parent)
             CriteriaPlaylist.objects.update_ascendants_lib_tracks(instance=updated_instance.criteria_playlist,
                                                                   old_parent=old_parent,
                                                                   common_criteria=common_criteria)
-            self.refresh_ascendants_of_instance_and_children(updated_instance)
-
-            playlist_parent = updated_instance.parent.criteria_playlist if updated_instance.parent else None
-            CriteriaPlaylist.objects.update_instance(instance=instance.criteria_playlist, parent=playlist_parent)
 
             if old_root != updated_instance.root:
                 self.update_children_root(criteria=updated_instance, new_root=updated_instance.root)
