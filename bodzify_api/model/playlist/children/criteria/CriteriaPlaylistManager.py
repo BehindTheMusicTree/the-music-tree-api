@@ -59,6 +59,7 @@ class CriteriaPlaylistManager(PublicStandardResourceManager):
                                                                        lib_tracks: QuerySet['LibraryTrack'],
                                                                        criteria_limit: Optional['Criteria'] = None):
         if instance.criteria != criteria_limit:
+            from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
             for lib_track in lib_tracks:
                 LibTrackPlaylistRel.objects.create(user=instance.user, playlist=instance, library_track=lib_track)
 
