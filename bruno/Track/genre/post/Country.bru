@@ -1,0 +1,25 @@
+meta {
+  name: Country
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{BASE_URL}}genres/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "Rock"
+  }
+}
+
+vars:post-response {
+  genreRockUuid: res.body.uuid
+}
