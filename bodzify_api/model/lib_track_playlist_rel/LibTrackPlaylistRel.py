@@ -34,9 +34,8 @@ class LibTrackPlaylistRel(PrivateStandardResource):
         ]
 
     def __str__(self):
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-        library_track: LibraryTrack = self.library_track
-        return f'user {self.user} | playlist {self.playlist} | track title {library_track.title} | ' \
+        playlist_str = f'playlist {self.playlist}' if self.playlist else 'no playlist'
+        return f'user {self.user} | playlist {self.playlist.name} | track title {self.library_track.title} | ' \
             f'position {self.position}'
 
     def _perform_save(self, adding: bool, ctx) -> None:
