@@ -5,12 +5,10 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 
-class NullablePrivateUuidField(serializers.UUIDField):
-    def __init__(self, queryset, *args, **kwargs):
+class PrivateUuidField(serializers.UUIDField):
+    def __init__(self, queryset, **kwargs):
         self.queryset = queryset
-        if 'allow_null' not in kwargs:
-            kwargs['allow_null'] = True
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def to_internal_value(self, data):
         if data in [None, ''] and self.allow_null:

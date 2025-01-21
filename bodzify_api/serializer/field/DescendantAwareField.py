@@ -5,11 +5,7 @@ from bodzify_api.serializer.field.NonSelfReferencingField import NonSelfReferenc
 
 
 class DescendantAwareField(NonSelfReferencingField):
-    """
-    A custom field that always checks for descendant relationships.
-    This is a specialized version of NonSelfReferencingUserUuidField that enforces
-    descendant checking by default.
-    """
+
     default_error_messages = {
         'descendant_reference': _('Cannot reference a descendant of the object.')
     }
