@@ -10,6 +10,7 @@ from django_dynamic_fixture import global_settings
 from django.utils import timezone
 from django.db import transaction
 from django.contrib.auth import get_user_model
+from django.core.files import File
 
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
@@ -38,6 +39,7 @@ from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
+from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
 
@@ -82,16 +84,9 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return model_class.objects.create(**model_fields)
 
-    def _create_file(self, user: User, lib_track: LibraryTrack, filename: Optional[str], **kwargs) -> TrackFile:
-
-        if not os.path.exists(user.lib_abs_path):
-            os.makedirs(user.lib_abs_path)
-
-        file_path = self.lib_samples_dir / filename if filename else self.generic_sample_path
-
-        track_file_path_in_lib = user.lib_abs_path / os.path.basename(file_path)
-        shutil.copy(file_path, track_file_path_in_lib)
-
+    def _create_file(
+            self, user: User, lib_track: LibraryTrack, track_file_path_in_lib: Optional[Path],
+            **kwargs) -> TrackFile:
         model_fields = {
             TrackFileFields.CREATED_ON: timezone.make_aware(datetime.now()),
             TrackFileFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -103,41 +98,55 @@ class ModelFixtureFactory:
         return G(TrackFile, **model_fields)
 
     def _create_lib_track(self, user: User, title: str, **kwargs) -> LibraryTrack:
+        now = timezone.make_aware(datetime.now())
         model_fields = {
-            LibraryTrackFields.CREATED_ON: timezone.make_aware(datetime.now()),
-            LibraryTrackFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            LibraryTrackFields.CREATED_ON: kwargs.get(LibraryTrackFields.CREATED_ON, now),
+            LibraryTrackFields.UPDATED_ON: kwargs.get(LibraryTrackFields.UPDATED_ON, now),
             LibraryTrackFields.USER: user,
             LibraryTrackFields.TITLE: title,
-            LibraryTrackFields.ARTISTS: [],
-            LibraryTrackFields.ALBUM: None,
-            LibraryTrackFields.POSITION_IN_ALBUM: None,
-            LibraryTrackFields.GENRE: None,
-            LibraryTrackFields.RATING: None,
-            LibraryTrackFields.LANGUAGE: None,
-            LibraryTrackFields.PLAY_COUNT: 0,
-            LibraryTrackFields.ARCHIVED: False
         }
         model_fields.update(kwargs)
         library_track = G(LibraryTrack, **model_fields)
-
-        if LibraryTrackFields.GENRE in kwargs:
-            genre_playlist = CriteriaPlaylist.objects.get(user=user, criteria=kwargs[LibraryTrackFields.GENRE])
-            LibTrackPlaylistRel(user=user, playlist=genre_playlist, library_track=library_track).save()
 
         if kwargs.get(LibraryTrackFields.ARTISTS):
             library_track.artists.set(kwargs[LibraryTrackFields.ARTISTS])
 
         return library_track
 
-    def create_lib_track_with_file(self,
-                                   title: str,
-                                   filename: Optional[str] = None,
-                                   user: Optional[User] = None,
-                                   **kwargs) -> LibraryTrack:
+    def create_lib_track_with_file(
+        self,
+        title: str,
+        filename: Optional[str] = None,
+        user: Optional[User] = None,
+        use_manager_for_genre_playlist_adding: bool = False,
+        **kwargs
+    ) -> LibraryTrack:
         user = user or self.default_test_user
-        with transaction.atomic():
-            library_track = self._create_lib_track(user=user, title=title, **kwargs)
-            self._create_file(user=user, lib_track=library_track, filename=filename)
+
+        now = timezone.make_aware(datetime.now())
+        model_fields = {
+            LibraryTrackFields.CREATED_ON: kwargs.get(LibraryTrackFields.CREATED_ON, now),
+            LibraryTrackFields.UPDATED_ON: kwargs.get(LibraryTrackFields.UPDATED_ON, now),
+            LibraryTrackFields.USER: user,
+            LibraryTrackFields.TITLE: title,
+        }
+        model_fields.update(kwargs)
+
+        if not os.path.exists(user.lib_abs_path):
+            os.makedirs(user.lib_abs_path)
+        file_path = self.lib_samples_dir / filename if filename else self.generic_sample_path
+        track_file_path_in_lib = user.lib_abs_path / os.path.basename(file_path)
+        shutil.copy(file_path, track_file_path_in_lib)
+
+        if use_manager_for_genre_playlist_adding:
+            with open(track_file_path_in_lib, 'rb') as f:
+                django_file = File(f, name=os.path.basename(track_file_path_in_lib))
+                model_fields.update({LibraryTrackFields.TRACK_FILE_PUBLIC: django_file})
+                library_track = LibraryTrack.objects.create(**model_fields, creation_type=LibTrackCreationType.POST)
+        else:
+            with transaction.atomic():
+                library_track = self._create_lib_track(user=user, title=title, **kwargs)
+                self._create_file(user=user, lib_track=library_track, track_file_path_in_lib=track_file_path_in_lib)
 
         return library_track
 
