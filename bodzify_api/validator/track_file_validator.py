@@ -49,7 +49,7 @@ def validate_content_type_is_audio(file):
 
     error = audio is None
     if error:
-        raise ValidationError({Fields.TRACK_FILE_USER_FRIENDLY: 'Invalid file format. Only audio files are allowed.'})
+        raise ValidationError({Fields.TRACK_FILE_PUBLIC: 'Invalid file format. Only audio files are allowed.'})
 
 
 def validate_filename_length(value):
@@ -62,7 +62,7 @@ def validate_filename_length(value):
     if len(filename) > settings.LIB_TRACK_FILENAME_LEN_MAX:
         raise ValidationError(
             {
-                Fields.TRACK_FILE_USER_FRIENDLY:
+                Fields.TRACK_FILE_PUBLIC:
                 f"Ensure this filename has at most {settings.LIB_TRACK_FILENAME_LEN_MAX} characters" +
                 f"it has {len(filename)})."
             })

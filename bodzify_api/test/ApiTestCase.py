@@ -89,7 +89,7 @@ class ApiTestCase(AppTestCase):
     # (testing metadata updates for example)
     def _post_lib_track(self, file_abs_path, **kwargs) -> Union[JsonResponse, HttpResponse]:
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LibTrackPostFields.TRACK_FILE_USER_FRIENDLY: sample_file}
+            file_field_dict = {LibTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
             if kwargs:
                 kwargs = data_transformer.merge_two_dicts(file_field_dict, kwargs)
             else:

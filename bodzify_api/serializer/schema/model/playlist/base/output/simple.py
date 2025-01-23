@@ -10,7 +10,7 @@ class Fields:
     LIB_TRACKS_COUNT = AvailableFields.LIB_TRACKS_COUNT
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = AvailableFields.NAME
-    TYPE_LABEL_USER_FRIENDLY = AvailableFields.TYPE_LABEL_USER_FRIENDLY
+    TYPE_LABEL_PUBLIC = AvailableFields.TYPE_LABEL_PUBLIC
     CREATED_ON = AvailableFields.CREATED_ON
 
 
@@ -21,7 +21,7 @@ class PlaylistSimpleSerializer(serializers.ModelSerializer):
         model = Playlist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.TYPE_LABEL_USER_FRIENDLY,
+                  Fields.TYPE_LABEL_PUBLIC,
                   Fields.LIB_TRACKS_COUNT,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.CREATED_ON]

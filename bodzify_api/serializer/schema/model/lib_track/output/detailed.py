@@ -28,7 +28,7 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
                   Fields.GENRE,
                   Fields.RATING,
                   Fields.LANGUAGE,
-                  Fields.PLAYLISTS_USER_FRIENDLY,
+                  Fields.PLAYLISTS_PUBLIC,
                   Fields.PLAY_COUNT,
                   Fields.ARCHIVED,
                   Fields.CREATED_ON,

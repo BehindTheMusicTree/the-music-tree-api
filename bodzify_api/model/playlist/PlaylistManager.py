@@ -12,7 +12,7 @@ class PlaylistManager(PublicStandardResourceManager):
         return PlaylistQuerySet(self.model, using=self._db)
 
     def filter(self, *args, **kwargs):
-        type_filter = kwargs.pop(Fields.TYPE_LABEL_USER_FRIENDLY, None)
+        type_filter = kwargs.pop(Fields.TYPE_LABEL_PUBLIC, None)
         name_filter = kwargs.pop(Fields.NAME, None)
 
         queryset = super().filter(*args, **kwargs)

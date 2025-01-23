@@ -5,7 +5,7 @@ from bodzify_api.serializer.schema.model.lib_track.input.endpoint import Fields 
 
 
 class Fields:
-    TRACK_FILE_USER_FRIENDLY = EndpointFields.TRACK_FILE_USER_FRIENDLY
+    TRACK_FILE_PUBLIC = EndpointFields.TRACK_FILE_PUBLIC
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = EndpointFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = EndpointFields.TITLE
     FORCE_TITLE_GENERATION = EndpointFields.FORCE_TITLE_GENERATION

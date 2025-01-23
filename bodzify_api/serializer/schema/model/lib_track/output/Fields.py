@@ -7,7 +7,7 @@ class Fields:
     UPDATED_ON = ModelFields.UPDATED_ON
     UUID = ModelFields.UUID
     RELATIVE_URL = ModelFields.RELATIVE_URL
-    FILE = ModelFields.TRACK_FILE_USER_FRIENDLY
+    FILE = ModelFields.TRACK_FILE_PUBLIC
     TITLE = ModelFields.TITLE
     ARTISTS = ModelFields.ARTISTS
     ALBUM = ModelFields.ALBUM
@@ -15,6 +15,6 @@ class Fields:
     GENRE = ModelFields.GENRE
     RATING = ModelFields.RATING
     LANGUAGE = ModelFields.LANGUAGE
-    PLAYLISTS_USER_FRIENDLY = ModelFields.PLAYLISTS
+    PLAYLISTS_PUBLIC = ModelFields.PLAYLISTS
     PLAY_COUNT = ModelFields.PLAY_COUNT
     ARCHIVED = ModelFields.ARCHIVED
