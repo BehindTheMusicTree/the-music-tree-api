@@ -12,5 +12,5 @@ class TestCase(GenreTestCase):
         response = self._get_genres()
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
-        rock_genre_json = self.results[0]
-        assert rock_genre_json[Fields.NAME] == genre_name
+        genre_rock_json = self.results[0]
+        assert genre_rock_json[Fields.NAME] == genre_name

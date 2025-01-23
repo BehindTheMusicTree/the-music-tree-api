@@ -8,20 +8,20 @@ from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 class TestCase(GenreTestCase):
 
     def test_new_root_then_update_root_of_descendants(self):
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        punk_genre = self.model_fixture_factory.create_genre(name="Punk")
-        punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=punk_genre)
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        genre_punk = self.model_fixture_factory.create_genre(name="Punk")
+        punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=genre_punk)
         frenchhardcore_genre = self.model_fixture_factory.create_genre(name="French hardcore",
                                                                        parent=punkhardcore_genre)
 
-        response = self._put_genre(uuid=punk_genre.uuid, **{PutFields.PARENT: rock_genre.uuid})
+        response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
         assert response.status_code == status.HTTP_200_OK
 
-        root_playlist = rock_genre.criteria_playlist
+        root_playlist = genre_rock.criteria_playlist
 
-        updated_punk_genre_playlist: CriteriaPlaylist = \
-            CriteriaPlaylist.objects.get(user=self.test_user1, criteria=punk_genre)
-        assert updated_punk_genre_playlist.root == root_playlist
+        updated_genre_punk_playlist: CriteriaPlaylist = \
+            CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre_punk)
+        assert updated_genre_punk_playlist.root == root_playlist
 
         updated_punkhardcore_genre_playlist: CriteriaPlaylist =\
             CriteriaPlaylist.objects.get(user=self.test_user1, criteria=punkhardcore_genre)

@@ -16,10 +16,10 @@ class TestCase(GenreTestCase, NullableFieldTestCase):
         assert self.saved_genre.parent == None
 
     def test_existing(self):
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        response = self._post_genre(**{Fields.NAME: "Punk", Fields.PARENT: rock_genre.uuid})
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        response = self._post_genre(**{Fields.NAME: "Punk", Fields.PARENT: genre_rock.uuid})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.parent == rock_genre
+        assert self.saved_genre.parent == genre_rock
 
     def test_error_when_not_existing(self):
         self.model_fixture_factory.create_genre(name="Rock")

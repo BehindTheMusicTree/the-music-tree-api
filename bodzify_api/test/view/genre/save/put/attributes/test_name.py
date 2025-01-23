@@ -14,18 +14,18 @@ from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMe
 class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
 
     def test_not_none_then_update(self):
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_new_name = "Punk"
-        response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: genre_new_name})
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: genre_new_name})
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.name == genre_new_name
 
     def test_root_name_update(self):
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        assert rock_genre.root.name == "Rock"
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        assert genre_rock.root.name == "Rock"
 
         genre_new_name = "Punk"
-        response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: genre_new_name})
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: genre_new_name})
         assert response.status_code == status.HTTP_200_OK
 
         updated_genre = self.saved_genre
@@ -33,8 +33,8 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
         assert updated_genre.root.name == genre_new_name
 
     def test_error_when_empty(self):
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
-        response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: ""})
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: ""})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_not_provided_then_unchanged(self):
@@ -45,15 +45,15 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
         assert self.saved_genre.name == genre_name
 
     def test_ok_then_update_linked_lib_track(self):
-        rock_genre = self.model_fixture_factory.create_genre(name="Rock")
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
 
         track = self.model_fixture_factory.create_lib_track_with_file(**{
             LibraryTrackFields.TITLE: "Track",
-            LibraryTrackFields.GENRE: rock_genre,
+            LibraryTrackFields.GENRE: genre_rock,
         })
 
         genre_new_name = "Punk"
-        response = self._put_genre(uuid=rock_genre.uuid, **{PutFields.NAME: genre_new_name})
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: genre_new_name})
         assert response.status_code == status.HTTP_200_OK
 
         updated_track: LibraryTrack = LibraryTrack.objects.get(uuid=track.uuid)

@@ -37,13 +37,13 @@ class TestCase(LibTrackTestCase):
         assert lib_track in genre_playlist.library_tracks.all()
 
     def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
-        rock_genre_name = "Rock"
-        hardrock_genre_name = "Hard rock"
+        genre_rock_name = "Rock"
+        hardgenre_rock_name = "Hard rock"
         emo_genre_name = "Emo"
 
-        rock_genre = self.model_fixture_factory.create_genre(name=rock_genre_name)
-        hardrock_genre = self.model_fixture_factory.create_genre(name=hardrock_genre_name, parent=rock_genre)
-        self.model_fixture_factory.create_genre(name=emo_genre_name, parent=hardrock_genre)
+        genre_rock = self.model_fixture_factory.create_genre(name=genre_rock_name)
+        hardgenre_rock = self.model_fixture_factory.create_genre(name=hardgenre_rock_name, parent=genre_rock)
+        self.model_fixture_factory.create_genre(name=emo_genre_name, parent=hardgenre_rock)
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: emo_genre_name})
@@ -55,5 +55,5 @@ class TestCase(LibTrackTestCase):
         lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(user=self.test_user1,
                                                                        playlist__in=lib_track_playlists)
         assert lib_track_criteria_playlists.filter(criteria__name=emo_genre_name).exists()
-        assert lib_track_criteria_playlists.filter(criteria__name=hardrock_genre_name).exists()
-        assert lib_track_criteria_playlists.filter(criteria__name=rock_genre_name).exists()
+        assert lib_track_criteria_playlists.filter(criteria__name=hardgenre_rock_name).exists()
+        assert lib_track_criteria_playlists.filter(criteria__name=genre_rock_name).exists()

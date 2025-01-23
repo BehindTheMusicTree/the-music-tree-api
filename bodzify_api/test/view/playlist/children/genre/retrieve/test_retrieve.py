@@ -9,8 +9,8 @@ class TestCase(GenrePlaylistTestCase):
 
     def test_retrieve_then_ok(self):
         rock_criteria_name = "Rock"
-        rock_genre = self.model_fixture_factory.create_genre(name=rock_criteria_name)
-        rock_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=rock_genre)
+        genre_rock = self.model_fixture_factory.create_genre(name=rock_criteria_name)
+        rock_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre_rock)
 
         response = self._retrieve_genre_playlist(uuid=rock_playlist.uuid)
 
