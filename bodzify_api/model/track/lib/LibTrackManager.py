@@ -79,14 +79,6 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
                                                library_track=instance)
             genreless_criteria_playlist.last_track_list_update_date = update_date
 
-    def decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
-        for playlist_uuid, old_position in playlists_with_old_position:
-            lib_track_playlist_rels_to_update = \
-                LibTrackPlaylistRel.objects.filter(user=user, playlist=playlist_uuid, position__gt=old_position)
-            lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
-
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
         filename_without_expressions_to_exclude = data_transformer.remove_substrings_from_string(
@@ -133,7 +125,7 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
-            raise ValidationError({Fields.TRACK_FILE_USER_FRIENDLY: [
+            raise ValidationError({Fields.TRACK_FILE_PUBLIC: [
                 f"Error while extracting metadata from file: {error}"]})
 
         save_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
@@ -147,7 +139,7 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
                   NormalizedMetadataKeys.LANGUAGE])
 
         schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(save_data_with_potential_none)
-        schema_data_clean[InputFields.TRACK_FILE_USER_FRIENDLY] = file
+        schema_data_clean[InputFields.TRACK_FILE_PUBLIC] = file
 
         return schema_data_clean
 
@@ -241,12 +233,12 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
         return schema_data
 
     def _get_schema_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
-        file = post_data[PostFields.TRACK_FILE_USER_FRIENDLY]
+        file = post_data[PostFields.TRACK_FILE_PUBLIC]
         schema_data_from_file = self._get_schema_data_from_file(file=file)
 
         schema_data = schema_data_from_file.copy()
         keys = [Fields.USER,
-                InputFields.TRACK_FILE_USER_FRIENDLY,
+                InputFields.TRACK_FILE_PUBLIC,
                 InputFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 InputFields.TITLE,
                 InputFields.ARTISTS_NAMES,
@@ -272,7 +264,7 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
     def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         schema_data = self._get_schema_data_from_post_data(post_data)
         model_data = self._get_model_data_from_common_schema_data(schema_data)
-        model_data[Fields.TRACK_FILE] = schema_data[InputFields.TRACK_FILE_USER_FRIENDLY]
+        model_data[Fields.TRACK_FILE] = schema_data[InputFields.TRACK_FILE_PUBLIC]
         return model_data
 
     def _get_post_data_from_extract_data(self, **kwargs):
@@ -299,9 +291,9 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
             os.chmod(track_temp_file.name, os.stat.S_IRWXU | os.stat.S_IRWXG | os.stat.S_IROTH | os.stat.S_IXOTH)
 
             post_data = self._get_post_data_from_extract_data(**kwargs)
-            post_data[PostFields.TRACK_FILE_USER_FRIENDLY] = AppDjangoFile(file=track_temp_file,
-                                                                           name=track_filename,
-                                                                           file_abs_path=track_temp_file.name)
+            post_data[PostFields.TRACK_FILE_PUBLIC] = AppDjangoFile(file=track_temp_file,
+                                                                    name=track_filename,
+                                                                    file_abs_path=track_temp_file.name)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
             return self._get_model_data_from_post_data(post_data=post_data)
@@ -309,6 +301,14 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
     def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
         return self._get_model_data_from_common_schema_data(schema_data=schema_data)
+
+    def decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        for playlist_uuid, old_position in playlists_with_old_position:
+            lib_track_playlist_rels_to_update = \
+                LibTrackPlaylistRel.objects.filter(user=user, playlist=playlist_uuid, position__gt=old_position)
+            lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
     def update_genre_playlists(self, instance: 'LibraryTrack', old_genre: Optional['Genre']):
         common_genre = \
