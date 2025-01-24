@@ -1,0 +1,19 @@
+meta {
+  name: parent none
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}genres/?parent
+  body: json
+  auth: inherit
+}
+
+params:query {
+  parent: 
+}
+
+vars:post-response {
+  genreCountryUuid: res.body.results[0].uuid
+}
