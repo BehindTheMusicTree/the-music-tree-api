@@ -7,7 +7,7 @@ from .Fields import Fields
 T = TypeVar('T', bound=PublicStandardResource)
 
 
-class PublicStandardResourceManager(BaseManager, Generic[T]):
+class StandardResourceManager(BaseManager, Generic[T]):
     model: type[T]
 
     def get_default_ordering(self):

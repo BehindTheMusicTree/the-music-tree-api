@@ -1,8 +1,8 @@
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from .Fields import Fields
 
 
-class MusicbrainzRecordingMissingCauseManager(PublicStandardResourceManager):
+class MusicbrainzRecordingMissingCauseManager(StandardResourceManager):
 
     def create(self, *args, **kwargs):
         from .code.MusicbrainzRecordingMissingCauseCode import MusicbrainzRecordingMissingCauseCode

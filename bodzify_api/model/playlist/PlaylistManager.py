@@ -1,12 +1,12 @@
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from .PlaylistQuerySet import PlaylistQuerySet
 from .children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from .Fields import Fields
 
 
-class PlaylistManager(PublicStandardResourceManager):
+class PlaylistManager(StandardResourceManager):
 
     def get_queryset(self):
         return PlaylistQuerySet(self.model, using=self._db)

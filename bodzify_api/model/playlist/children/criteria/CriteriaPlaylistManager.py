@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import QuerySet
 from typing import Optional
 
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from .Fields import Fields
 
 if TYPE_CHECKING:
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .CriterialessPlaylistNames import CriterialessPlaylistNames
 
 
-class CriteriaPlaylistManager(PublicStandardResourceManager):
+class CriteriaPlaylistManager(StandardResourceManager):
 
     def get_by_name(self, user, name: str) -> Optional['CriteriaPlaylist']:
         return self.filter(user=user).filter(

@@ -1,6 +1,6 @@
 from typing import TypeVar, TYPE_CHECKING
 
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from .Fields import Fields
 
 if TYPE_CHECKING:
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='LibTrackMixin')
 
 
-class LibTrackMixinManager(PublicStandardResourceManager[T]):
+class LibTrackMixinManager(StandardResourceManager[T]):
     model: type[T]
 
     def get_default_ordering(self) -> list[str]:

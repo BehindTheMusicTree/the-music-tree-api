@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 
 from bodzify_api import settings
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
-from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.user.User import User
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from .LibraryTrack import LibraryTrack
 
 
-class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
+class LibTrackManager(StandardResourceManager['LibraryTrack']):
     model: type['LibraryTrack']
 
     def _remove_from_genre_playlists(self, instance: 'LibraryTrack', old_genre: Optional['Genre'], genre_limit=None):
