@@ -98,24 +98,18 @@ class LibTrackManager(PublicStandardResourceManager['LibraryTrack']):
 
     def _update_model_data_with_genre_if_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
+
         if InputFields.GENRE_UUID in schema_data:
             genre_uuid = schema_data[InputFields.GENRE_UUID]
-
-            if genre_uuid == "":
-                genre = None
-            else:
-                genre = Genre.objects.get(user=schema_data[Fields.USER], uuid=genre_uuid)
+            genre = None if not genre_uuid else Genre.objects.get(user=schema_data[Fields.USER], uuid=genre_uuid)
+        elif InputFields.GENRE_NAME in schema_data:
+            genre_name = schema_data[InputFields.GENRE_NAME]
+            genre = None if not genre_name else Genre.objects.get_or_create(
+                name=genre_name,
+                user=schema_data[Fields.USER]
+            )[0]
         else:
-            genre = None
-            if InputFields.GENRE_NAME in schema_data:
-                genre_name = schema_data[InputFields.GENRE_NAME]
-
-                if not genre_name or genre_name == "":
-                    genre = None
-                else:
-                    genre, _ = Genre.objects.get_or_create(user=schema_data[Fields.USER], name=genre_name)
-            else:
-                return
+            return
 
         model_data[Fields.GENRE] = genre
 

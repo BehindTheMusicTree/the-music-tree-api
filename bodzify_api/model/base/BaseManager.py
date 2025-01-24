@@ -26,7 +26,10 @@ class BaseManager(models.Manager, Generic[T]):
 
     def get_or_create(self, *args, **kwargs) -> Any:
         transformed_kwargs = transform_name_fields(self.model, **kwargs)
-        return super().get_or_create(*args, **transformed_kwargs)
+        try:
+            return self.get(*args, **transformed_kwargs), False
+        except self.model.DoesNotExist:
+            return self.create(**transformed_kwargs), True
 
     def create(self, **kwargs) -> T:
         transformed_kwargs = transform_name_fields(self.model, **kwargs)
