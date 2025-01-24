@@ -2,6 +2,7 @@ from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.model.lib_track.input.put import Fields as PutFields
+from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
 from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
 
 
@@ -9,7 +10,8 @@ class TestCase(NullableFieldTestCase):
 
     def test_not_provided_then_unchanged(self):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=rap_criteria)
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+            **{LibTrackFields.TITLE: "Love", LibTrackFields.GENRE: rap_criteria.uuid})
 
         response = self._put_lib_track(lib_track.uuid, **{})
 
@@ -19,7 +21,8 @@ class TestCase(NullableFieldTestCase):
 
     def test_ok_when_updating_to_not_none(self):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", genre=rap_criteria)
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+            **{LibTrackFields.TITLE: "koko", LibTrackFields.GENRE: rap_criteria.uuid})
         rock_criteria = self.model_fixture_factory.create_genre(name="Rock")
 
         data = {PutFields.GENRE_NAME: rock_criteria.name}
@@ -30,7 +33,8 @@ class TestCase(NullableFieldTestCase):
 
     def test_empty_then_none(self):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", genre=rap_criteria)
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+            **{LibTrackFields.TITLE: "koko", LibTrackFields.GENRE: rap_criteria.uuid})
 
         response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.GENRE_NAME: ''})
 
@@ -39,7 +43,8 @@ class TestCase(NullableFieldTestCase):
 
     def test_not_none_then_update(self):
         genre_name = "rap"
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title='lolo')
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+            **{LibTrackFields.TITLE: 'lolo'})
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
 

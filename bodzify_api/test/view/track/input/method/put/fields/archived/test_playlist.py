@@ -3,6 +3,7 @@ from rest_framework import status
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.serializer.schema.model.lib_track.input.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -26,9 +27,12 @@ class TestCase(LibTrackTestCase):
 
     def test_archived_lib_track_then_criteria_playlist_has_plus_1_archived_lib_tracks(self):
         criteria = self.model_fixture_factory.create_genre(name="rock")
-        self.model_fixture_factory.create_lib_track_with_file(title="not archived 1", genre=criteria)
-        self.model_fixture_factory.create_lib_track_with_file(title="archived 1", archived=True, genre=criteria)
-        track_love = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=criteria)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="not archived 1", genre=criteria)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="archived 1", genre=criteria, archived=True)
+        track_love = self.model_fixture_factory.create_lib_track_with_file(
+            title="Love", genre=criteria)
 
         response = self._put_lib_track(uuid=track_love.uuid, **{PutFields.ARCHIVED: "true"})
 

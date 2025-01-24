@@ -3,7 +3,6 @@ from rest_framework import status
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.model.criteria.input.put import Fields as PutFields
-from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 
 
@@ -12,16 +11,16 @@ class TestCase(GenreTestCase):
     def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning(self) -> None:
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         rock_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre_rock)
-        lib_track_previously_second_in_rock = self.model_fixture_factory.create_lib_track_with_file(genre=genre_rock,
-                                                                                                    title="kok")
-        lib_track_previously_first_in_rock = self.model_fixture_factory.create_lib_track_with_file(genre=genre_rock,
-                                                                                                   title="lkdw")
+        lib_track_previously_second_in_rock = self.model_fixture_factory.create_lib_track_with_file(
+            title="kok", genre=genre_rock)
+        lib_track_previously_first_in_rock = self.model_fixture_factory.create_lib_track_with_file(
+            title="lkdw", genre=genre_rock)
 
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
-        lib_track_previously_second_in_punk = self.model_fixture_factory.create_lib_track_with_file(genre=genre_punk,
-                                                                                                    title="punk song")
-        lib_track_previously_first_in_punk = self.model_fixture_factory.create_lib_track_with_file(genre=genre_punk,
-                                                                                                   title="loul")
+        lib_track_previously_second_in_punk = self.model_fixture_factory.create_lib_track_with_file(
+            title="punk song", genre=genre_punk)
+        lib_track_previously_first_in_punk = self.model_fixture_factory.create_lib_track_with_file(
+            title="loul", genre=genre_punk)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
         assert response.status_code == status.HTTP_200_OK
@@ -44,10 +43,10 @@ class TestCase(GenreTestCase):
     def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning_of_parent_of_parent(self) -> None:
         genre_guitare = self.model_fixture_factory.create_genre(name="Guitare")
         lib_track_previously_second_in_guitare = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_guitare.uuid, LibTrackPostFields.TITLE: "guitare2"},
+            title="guitare2", genre=genre_guitare,
             use_manager_for_genre_playlist_adding=True)
         lib_track_previously_first_in_guitare = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_guitare.uuid, LibTrackPostFields.TITLE: "guitare1"},
+            title="guitare1", genre=genre_guitare,
             use_manager_for_genre_playlist_adding=True)
 
         assert genre_guitare.criteria_playlist.library_tracks.count() == 2
@@ -61,18 +60,18 @@ class TestCase(GenreTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock", parent=genre_guitare)
 
         lib_track_previously_second_in_rock = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_rock.uuid, LibTrackPostFields.TITLE: "rock2"},
+            title="rock2", genre=genre_rock,
             use_manager_for_genre_playlist_adding=True)
         lib_track_previously_first_in_rock = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_rock.uuid, LibTrackPostFields.TITLE: "rock1"},
+            title="rock1", genre=genre_rock,
             use_manager_for_genre_playlist_adding=True)
 
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
         lib_track_previously_second_in_punk = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_punk.uuid, LibTrackPostFields.TITLE: "punk2"},
+            title="punk2", genre=genre_punk,
             use_manager_for_genre_playlist_adding=True)
         lib_track_previously_first_in_punk = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_punk.uuid, LibTrackPostFields.TITLE: "punk1"},
+            title="punk1", genre=genre_punk,
             use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
@@ -92,17 +91,13 @@ class TestCase(GenreTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         track_fourth_in_rock = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_rock.uuid, LibTrackPostFields.TITLE: "Rock song 2"},
-            use_manager_for_genre_playlist_adding=True)
+            title="Rock song 2", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_rock.uuid, LibTrackPostFields.TITLE: "Punk song 2"},
-            use_manager_for_genre_playlist_adding=True)
+            title="Punk song 2", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
         track_second_in_rock = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_rock.uuid, LibTrackPostFields.TITLE: "Rock song 1"},
-            use_manager_for_genre_playlist_adding=True)
+            title="Rock song 1", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.GENRE_UUID: genre_punk.uuid, LibTrackPostFields.TITLE: "Punk song 1"},
-            use_manager_for_genre_playlist_adding=True)
+            title="Punk song 1", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ''})
 
@@ -118,9 +113,10 @@ class TestCase(GenreTestCase):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         punk_fr_genre = self.model_fixture_factory.create_genre(name="Punk FR", parent=genre_punk)
 
-        track_second_in_punk = self.model_fixture_factory.create_lib_track_with_file(genre=genre_punk,
-                                                                                     title="Punk song")
-        self.model_fixture_factory.create_lib_track_with_file(genre=punk_fr_genre, title="punk fr song")
+        track_second_in_punk = self.model_fixture_factory.create_lib_track_with_file(
+            title="Punk song", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="punk fr song", genre=punk_fr_genre, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=punk_fr_genre.uuid, **{PutFields.PARENT: genre_rock.uuid})
 

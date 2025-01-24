@@ -142,7 +142,8 @@ class ModelFixtureFactory:
                 django_file = File(f, name=os.path.basename(track_file_path_in_lib))
                 model_fields.update({LibraryTrackFields.TRACK_FILE_PUBLIC: django_file})
                 if LibraryTrackFields.GENRE in model_fields:
-                    model_fields[LibTrackPostFields.GENRE_UUID] = kwargs[LibraryTrackFields.GENRE]
+                    genre: Genre = model_fields[LibraryTrackFields.GENRE]
+                    model_fields[LibTrackPostFields.GENRE_UUID] = genre.uuid
                     model_fields.pop(LibraryTrackFields.GENRE)
                 library_track = LibraryTrack.objects.create(**model_fields, creation_type=LibTrackCreationType.POST)
         else:

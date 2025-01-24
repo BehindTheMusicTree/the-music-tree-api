@@ -9,9 +9,13 @@ class TestCase(LibTrackTestCase):
 
     def test_new_criteria_then_decrease_positions_of_following_tracks_in_old_criteria(self):
         old_genre = self.model_fixture_factory.create_genre(name="Metal")
-        lib_track_following2 = self.model_fixture_factory.create_lib_track_with_file(title="Lodwdw", genre=old_genre)
-        lib_track_following1 = self.model_fixture_factory.create_lib_track_with_file(title="cdss", genre=old_genre)
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=old_genre)
+        lib_track_following2 = self.model_fixture_factory.create_lib_track_with_file(
+            title="Lodwdw", genre=old_genre, use_manager_for_genre_playlist_adding=True)
+        lib_track_following1 = self.model_fixture_factory.create_lib_track_with_file(
+            title="cdss", genre=old_genre, use_manager_for_genre_playlist_adding=True)
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+            title="Love", genre=old_genre,
+            use_manager_for_genre_playlist_adding=True)
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: "Rock"})
 

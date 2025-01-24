@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.lib_track.output.Fields import Fields as LibTrackFields
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.test.field.filter.char.NullableFreeCharFilterTestCase import NullableFreeCharFilterTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
@@ -22,10 +23,12 @@ class TestCase(LibTrackTestCase, NullableFreeCharFilterTestCase):
 
     def test_contains_in_another_case_then_results(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
-        track_life = self.model_fixture_factory.create_lib_track_with_file(title="Life", genre=genre_rock)
+        track_life = self.model_fixture_factory.create_lib_track_with_file(
+            title="Life", genre=genre_rock)
 
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
-        self.model_fixture_factory.create_lib_track_with_file(title="Hey", genre=genre_punk)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="Hey", genre=genre_punk)
 
         response = self._get_lib_tracks(genre_name='RoC')
         assert response.status_code == status.HTTP_200_OK

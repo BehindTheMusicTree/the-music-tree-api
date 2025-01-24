@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.lib_track.output.Fields import Fields as LibTrackFields
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils import data_transformer
 
@@ -9,7 +10,8 @@ class TestCase(LibTrackTestCase):
 
     def test_language_and_genre_name_then_ok(self):
         genre = self.model_fixture_factory.create_genre(name="Rock")
-        track = self.model_fixture_factory.create_lib_track_with_file(title="Life", language="en", genre=genre)
+        track = self.model_fixture_factory.create_lib_track_with_file(
+            title="Life", language="en", genre=genre)
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", language="fr")
         self.model_fixture_factory.create_lib_track_with_file(title="Rockaille", language="en")
         response = self._get_lib_tracks(language='en', genre_name='Roc')
@@ -24,7 +26,8 @@ class TestCase(LibTrackTestCase):
         artist_john = self.model_fixture_factory.create_artist(name="John")
         artist_jony = self.model_fixture_factory.create_artist(name="Jony")
 
-        self.model_fixture_factory.create_lib_track_with_file(title="Life", language="en", genre=genre)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="Life", language="en", genre=genre)
         track_pascalito = self.model_fixture_factory.create_lib_track_with_file(title="Pascalito",
                                                                                 album=album_best,
                                                                                 artists=[artist_john])

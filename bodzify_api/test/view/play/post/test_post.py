@@ -5,6 +5,7 @@ from rest_framework import status
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.model.play.input.schema.endpoint.post import Fields
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
@@ -42,7 +43,8 @@ class TestCase(PlayTestCase):
 
     def test_playlist_play_then_returns_lib_tracks(self) -> None:
         criteria = self.model_fixture_factory.create_genre(name='criteria1')
-        self.model_fixture_factory.create_lib_track_with_file(title='track', genre=criteria)
+        self.model_fixture_factory.create_lib_track_with_file(
+            **{LibTrackPostFields.TITLE: "track", LibTrackPostFields.GENRE_UUID: criteria.uuid})
 
         data = {to_camel_case(Fields.CONTENT_OBJECT_UUID): criteria.criteria_playlist.uuid}
         response = self._post_play(**data)

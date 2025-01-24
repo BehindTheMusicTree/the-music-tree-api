@@ -2,6 +2,7 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -16,7 +17,8 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         genre3_name = "Emo"
         genre3 = self.model_fixture_factory.create_genre(name=genre3_name, parent=genre2)
 
-        track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=genre3)
+        track = self.model_fixture_factory.create_lib_track_with_file(
+            title="Love", genre=genre3)
 
         response = self._delete_lib_track(uuid=track.uuid)
 

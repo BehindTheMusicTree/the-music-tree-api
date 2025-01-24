@@ -19,10 +19,14 @@ class TestCase(GenreTestCase):
         criteria = self.model_fixture_factory.create_genre(name='rock')
 
         title1 = 'stylax'
-        track1_uuid = self.model_fixture_factory.create_lib_track_with_file(title=title1, genre=criteria).uuid
+        track1_uuid = self.model_fixture_factory.create_lib_track_with_file(
+            title=title1, genre=criteria,
+            use_manager_for_genre_playlist_adding=True).uuid
 
         title2 = 'bien'
-        track2_uuid = self.model_fixture_factory.create_lib_track_with_file(title=title2, genre=criteria).uuid
+        track2_uuid = self.model_fixture_factory.create_lib_track_with_file(
+            title=title2, genre=criteria,
+            use_manager_for_genre_playlist_adding=True).uuid
 
         response = self._retrieve_genre(uuid=criteria.uuid)
         assert response.status_code == status.HTTP_200_OK
