@@ -5,6 +5,7 @@ from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilt
 from bodzify_api.model.play.Play import Fields, Play
 from bodzify_api.serializer.schema.model.play.input.schema.endpoint.post import PlayPostSerializer
 from bodzify_api.serializer.schema.model.play.output.detailed import PlayDetailedSerializer
+from bodzify_api.serializer.schema.model.playlist.base.output.simple import PlaylistSimpleSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
@@ -12,6 +13,7 @@ class PlayViewSet(AppModelViewSet[Play]):
     def __init__(self, **kwargs):
         super().__init__(model_class=Play,
                          filterset_class=PrivateUniqueResourceFilterSet,
+                         simple_serializer_class=PlayDetailedSerializer,
                          detailed_serializer_class=PlayDetailedSerializer,
                          create_serializer_class=PlayPostSerializer,
                          **kwargs)

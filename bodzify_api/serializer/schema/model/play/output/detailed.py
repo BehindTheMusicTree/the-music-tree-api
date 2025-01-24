@@ -6,9 +6,9 @@ from rest_framework import serializers
 
 from bodzify_api.model.play.Play import Play
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.serializer.schema.model.playlist.base.output.detailed import PlaylistDetailedSerializer
 from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album_and_genre import \
     LibTrackWithoutAlbumPlaylistGenreSerializer
+from bodzify_api.serializer.schema.model.playlist.base.output.simple import PlaylistSimpleSerializer
 from .Fields import Fields
 
 
@@ -26,6 +26,6 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
 
     def get_content_object(self, obj: Play) -> ReturnList | Any | ReturnDict:
         if isinstance(obj.content_object, Playlist):
-            return PlaylistDetailedSerializer(obj.content_object).data
+            return PlaylistSimpleSerializer(obj.content_object).data
         else:
             return LibTrackWithoutAlbumPlaylistGenreSerializer(obj.content_object).data
