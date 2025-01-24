@@ -1,6 +1,7 @@
 
 from uuid import UUID
 
+from django.core.exceptions import ImproperlyConfigured
 from rest_framework import serializers
 from rest_framework.request import Request
 
@@ -23,7 +24,7 @@ class UserContentObjectUuidField(serializers.CharField):
 
         request = self.context['request']
         if not isinstance(request, Request):  # For linting purposes
-            raise ValueError("request must be an Request instance.")
+            raise ImproperlyConfigured("request must be a Request instance.")
         user = request.user
 
         if not Playlist.objects.filter(user=user, uuid=uuid_obj).exists() \
