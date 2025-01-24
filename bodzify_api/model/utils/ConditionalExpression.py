@@ -1,4 +1,4 @@
-from django.db.models import Case, When, Expression, Value, F
+from django.db.models import Case, When, Expression, F
 
 class ConditionalExpression(Expression):
     def __init__(self, condition_field, when_true, when_false, output_field):

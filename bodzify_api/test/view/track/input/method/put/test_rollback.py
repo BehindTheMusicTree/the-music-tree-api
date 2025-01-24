@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields
-from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 
 
 class TestCase(LibTrackTestCase):

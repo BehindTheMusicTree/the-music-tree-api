@@ -1,4 +1,3 @@
-from attr import field
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
 from bodzify_api.filtering.filter.char.PrimaryFieldCharFilter import PrimaryFieldCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet \

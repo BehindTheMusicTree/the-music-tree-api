@@ -1,4 +1,3 @@
-from urllib.parse import urlencode
 from uuid import UUID
 from django.urls import reverse
 from rest_framework import status

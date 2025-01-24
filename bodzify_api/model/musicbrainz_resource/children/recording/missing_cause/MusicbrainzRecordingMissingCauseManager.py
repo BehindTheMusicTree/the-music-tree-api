@@ -1,4 +1,3 @@
-from typing import Any
 from bodzify_api.model.public_standard_resource.PublicStandardResourceManager import PublicStandardResourceManager
 from .Fields import Fields
 

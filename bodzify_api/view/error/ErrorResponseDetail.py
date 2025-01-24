@@ -157,8 +157,7 @@ Usage Examples:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, Union, List, Optional
-from rest_framework.utils.serializer_helpers import ReturnDict
+from typing import Any, Dict, List, Optional
 
 
 @dataclass

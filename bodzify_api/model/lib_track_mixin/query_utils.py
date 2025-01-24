@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Type
 
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models

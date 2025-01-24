@@ -2,7 +2,6 @@ from typing import Type
 
 from django.db import transaction
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
-from rest_framework.request import Request
 from rest_framework.decorators import action
 from rest_framework.serializers import Serializer
 

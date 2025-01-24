@@ -9,7 +9,6 @@ from .Fields import Fields
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
     from bodzify_api.model.criteria.Criteria import Criteria
-    from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
     from .CriteriaPlaylist import CriteriaPlaylist
     from .CriterialessPlaylistNames import CriterialessPlaylistNames
 

@@ -1,7 +1,6 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.lib_track.output.Fields import Fields as LibTrackFields
-from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.test.field.filter.char.NullableFreeCharFilterTestCase import NullableFreeCharFilterTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 

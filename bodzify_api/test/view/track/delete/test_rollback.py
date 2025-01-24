@@ -1,9 +1,6 @@
 from unittest.mock import patch
 
-from bodzify_api.model.album.Album import Album
-from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

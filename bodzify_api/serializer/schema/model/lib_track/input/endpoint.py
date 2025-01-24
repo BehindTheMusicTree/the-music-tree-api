@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from bodzify_api import settings
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.field.PrivateUuidField import PrivateUuidField
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
 from .Fields import Fields

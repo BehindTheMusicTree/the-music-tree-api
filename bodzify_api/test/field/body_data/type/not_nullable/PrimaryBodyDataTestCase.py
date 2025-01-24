@@ -1,4 +1,3 @@
-from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.test.field.body_data.type.not_nullable.NotNullableBodyDataTestCase import NotNullableBodyDataTestCase
 
 

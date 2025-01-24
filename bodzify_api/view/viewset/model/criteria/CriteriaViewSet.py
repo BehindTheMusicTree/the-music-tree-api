@@ -1,6 +1,5 @@
 from django.db import transaction
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
-from rest_framework.request import Request
 from rest_framework.response import Response  # type: ignore
 
 from bodzify_api.model.criteria.Criteria import Criteria

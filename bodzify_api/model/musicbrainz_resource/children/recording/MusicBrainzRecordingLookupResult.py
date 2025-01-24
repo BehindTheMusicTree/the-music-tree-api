@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from bodzify_api import settings
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause \
     import MusicbrainzRecordingMissingCause

@@ -1,7 +1,5 @@
 from django.db import transaction
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
-from rest_framework.response import Response
-from rest_framework import status
 
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet

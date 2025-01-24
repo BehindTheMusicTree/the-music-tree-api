@@ -1,5 +1,5 @@
 
-from typing import MutableMapping, TypeVar, Generic, TYPE_CHECKING, Any
+from typing import TypeVar, Generic, TYPE_CHECKING, Any
 
 from django.db import models
 from django.db.models import QuerySet

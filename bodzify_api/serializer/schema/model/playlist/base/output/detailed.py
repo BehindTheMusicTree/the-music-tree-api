@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.serializer.schema.model.lib_track_playlist_rel.output.without_playlist \
     import LibTrackPlaylistRelWithoutPlaylist
 from .Fields import Fields
