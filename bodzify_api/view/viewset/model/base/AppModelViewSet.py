@@ -29,7 +29,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     pagination_class = AppPagination
     permission_classes = [IsAuthenticated]
     model_class: Type[T]
-    filter_class: Type[AppFilterSet] = AppFilterSet
+    filterset_class: Type[AppFilterSet] = AppFilterSet
     simple_serializer_class: Optional[Type[ModelSerializer]] = None
     detailed_serializer_class: Optional[Type[ModelSerializer]] = None
     create_serializer_class: Optional[Type[Serializer]] = None
@@ -45,7 +45,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
                  **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
-        self.filter_class = filterset_class
+        self.filterset_class = filterset_class
         self.simple_serializer_class = simple_serializer_class
         self.detailed_serializer_class = detailed_serializer_class
         self.update_serializer_class = update_serializer_class
@@ -185,7 +185,7 @@ to modify in the request body.",
 
         if request.method == HttpMethod.GET and request.query_params:
             query_params_snake_case = data_transformer.dict_to_snake_case(request.query_params)
-            queryset = self.filter_class(query_params_snake_case, queryset=queryset).qs
+            queryset = self.filterset_class(query_params_snake_case, queryset=queryset).qs
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
         return queryset.order_by(*ordering_fields)

@@ -3,6 +3,7 @@ import uuid
 import re
 
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import QuerySet
 from django_filters import CharFilter, FilterSet
 from rest_framework.exceptions import ValidationError
 
@@ -10,6 +11,10 @@ from bodzify_api.filtering.filter.AppFilter import AppFilter
 
 
 class ForeignKeyFilter(CharFilter, AppFilter):
+    def __init__(self, queryset=None, **kwargs):
+        self._queryset = queryset
+        kwargs.pop('queryset', None)  # Remove queryset from kwargs before passing to parent
+        super().__init__(**kwargs)
 
     def filter(self, queryset, value):
         parent: Optional[FilterSet] = getattr(self, 'parent', None)

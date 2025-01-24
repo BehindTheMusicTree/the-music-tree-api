@@ -31,9 +31,9 @@ class PlaylistViewSet(AppModelViewSet[Playlist]):
             return Playlist.objects.filter(user=self.request.user, uuid=self.kwargs[self.lookup_field])
 
         request: Request = self.request  # type: ignore
-        if not self.filter_class:
+        if not self.filterset_class:
             raise Exception('Filter class is not defined')
-        self.filterset = self.filter_class(data=request.query_params, queryset=self.queryset)
+        self.filterset = self.filterset_class(data=request.query_params, queryset=self.queryset)
         query_params_validated = request.query_params
 
         name_query_param = query_params_validated.get(QueryParamsFields.NAME,

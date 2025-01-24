@@ -48,12 +48,10 @@ class TestCase(GenreTestCase):
             title="guitare1", genre=genre_guitare, use_manager_for_genre_playlist_adding=True)
 
         assert genre_guitare.criteria_playlist.library_tracks.count() == 2
-        first_track_in_guitare_playlist = genre_guitare.criteria_playlist.library_tracks.first()
-        assert first_track_in_guitare_playlist
-        assert first_track_in_guitare_playlist == lib_track_previously_first_in_guitare
-        second_track_in_guitare_playlist = genre_guitare.criteria_playlist.library_tracks.last()
-        assert second_track_in_guitare_playlist
-        assert second_track_in_guitare_playlist == lib_track_previously_second_in_guitare
+        assert genre_guitare.criteria_playlist.lib_track_playlist_rels.get(
+            library_track=lib_track_previously_first_in_guitare).position == 1
+        assert genre_guitare.criteria_playlist.lib_track_playlist_rels.get(
+            library_track=lib_track_previously_second_in_guitare).position == 2
 
         genre_rock = self.model_fixture_factory.create_genre(name="Rock", parent=genre_guitare)
 
