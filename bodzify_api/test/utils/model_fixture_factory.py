@@ -12,6 +12,7 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.core.files import File
 
+from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
@@ -21,7 +22,6 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.children.tag.Tag import Tag
-from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
@@ -31,7 +31,6 @@ from bodzify_api.model.play.Play import Play
 from bodzify_api.model.play.Fields import Fields as PlayFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
@@ -142,6 +141,9 @@ class ModelFixtureFactory:
             with open(track_file_path_in_lib, 'rb') as f:
                 django_file = File(f, name=os.path.basename(track_file_path_in_lib))
                 model_fields.update({LibraryTrackFields.TRACK_FILE_PUBLIC: django_file})
+                if LibraryTrackFields.GENRE in model_fields:
+                    model_fields[LibTrackPostFields.GENRE_UUID] = kwargs[LibraryTrackFields.GENRE]
+                    model_fields.pop(LibraryTrackFields.GENRE)
                 library_track = LibraryTrack.objects.create(**model_fields, creation_type=LibTrackCreationType.POST)
         else:
             with transaction.atomic():
