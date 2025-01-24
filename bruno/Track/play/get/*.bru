@@ -1,10 +1,10 @@
 meta {
-  name: play on allumer
+  name: *
   type: http
   seq: 1
 }
 
-post {
+get {
   url: {{BASE_URL}}plays/
   body: json
   auth: inherit
@@ -12,10 +12,4 @@ post {
 
 headers {
   Authorization: Bearer {{tokenAccess}}
-}
-
-body:json {
-  {
-    "contentObjectUuid": "{{trackAllumerUuid}}"
-  }
 }
