@@ -16,10 +16,11 @@ headers {
 
 body:json {
   {
-    "name": "Rock"
+    "name": "Country"
   }
 }
 
 vars:post-response {
-  genreRockUuid: res.body.uuid
+  genreCountryUuid: res.body.uuid
+  genreCountryPlaylistUuid: res.body.criteriaPlaylist.uuid
 }
