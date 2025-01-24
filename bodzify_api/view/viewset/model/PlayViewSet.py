@@ -17,7 +17,7 @@ class PlayViewSet(AppModelViewSet[Play]):
                          **kwargs)
 
     def get_queryset(self):
-        return Play.objects.filter(user=self.request.user).order_by(f"-{Fields.CREATED_ON} ")
+        return Play.objects.filter(user=self.request.user).order_by(f"-{Fields.CREATED_ON}")
 
     def list(self, *args, **kwargs) -> Response:
         return self._handle_list()
