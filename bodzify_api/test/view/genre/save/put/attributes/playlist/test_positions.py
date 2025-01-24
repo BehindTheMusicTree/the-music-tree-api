@@ -12,15 +12,15 @@ class TestCase(GenreTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         rock_playlist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre_rock)
         lib_track_previously_second_in_rock = self.model_fixture_factory.create_lib_track_with_file(
-            title="kok", genre=genre_rock)
+            title="kok", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
         lib_track_previously_first_in_rock = self.model_fixture_factory.create_lib_track_with_file(
-            title="lkdw", genre=genre_rock)
+            title="lkdw", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
 
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
         lib_track_previously_second_in_punk = self.model_fixture_factory.create_lib_track_with_file(
-            title="punk song", genre=genre_punk)
+            title="punk song", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
         lib_track_previously_first_in_punk = self.model_fixture_factory.create_lib_track_with_file(
-            title="loul", genre=genre_punk)
+            title="loul", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
         assert response.status_code == status.HTTP_200_OK
@@ -43,11 +43,9 @@ class TestCase(GenreTestCase):
     def test_new_parent_then_tracks_in_same_order_and_added_at_the_beginning_of_parent_of_parent(self) -> None:
         genre_guitare = self.model_fixture_factory.create_genre(name="Guitare")
         lib_track_previously_second_in_guitare = self.model_fixture_factory.create_lib_track_with_file(
-            title="guitare2", genre=genre_guitare,
-            use_manager_for_genre_playlist_adding=True)
+            title="guitare2", genre=genre_guitare, use_manager_for_genre_playlist_adding=True)
         lib_track_previously_first_in_guitare = self.model_fixture_factory.create_lib_track_with_file(
-            title="guitare1", genre=genre_guitare,
-            use_manager_for_genre_playlist_adding=True)
+            title="guitare1", genre=genre_guitare, use_manager_for_genre_playlist_adding=True)
 
         assert genre_guitare.criteria_playlist.library_tracks.count() == 2
         first_track_in_guitare_playlist = genre_guitare.criteria_playlist.library_tracks.first()
@@ -92,18 +90,23 @@ class TestCase(GenreTestCase):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         track_fourth_in_rock = self.model_fixture_factory.create_lib_track_with_file(
             title="Rock song 2", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Punk song 2", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
+        track_third_in_rock = self.model_fixture_factory.create_lib_track_with_file(
+            title="Punk song 2", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
         track_second_in_rock = self.model_fixture_factory.create_lib_track_with_file(
             title="Rock song 1", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        track_first_in_rock = self.model_fixture_factory.create_lib_track_with_file(
             title="Punk song 1", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
+        assert track_fourth_in_rock.lib_track_playlist_rels.get(playlist=genre_rock.criteria_playlist).position == 4
+        assert track_third_in_rock.lib_track_playlist_rels.get(playlist=genre_rock.criteria_playlist).position == 3
+        assert track_second_in_rock.lib_track_playlist_rels.get(playlist=genre_rock.criteria_playlist).position == 2
+        assert track_first_in_rock.lib_track_playlist_rels.get(playlist=genre_rock.criteria_playlist).position == 1
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
         lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
             list(LibTrackPlaylistRel.objects.filter(user=self.test_user1, playlist=genre_rock.criteria_playlist))
+        assert len(lib_track_playlist_rels) == 2
         tracks_positions = {relation.library_track.uuid: relation.position for relation in lib_track_playlist_rels}
         assert tracks_positions[track_second_in_rock.uuid] == 1
         assert tracks_positions[track_fourth_in_rock.uuid] == 2
