@@ -1,4 +1,4 @@
-from bodzify_api.model.play.Play import Fields as ModelFields
+from bodzify_api.model.play.Fields import Fields as ModelFields
 
 
 class Fields:
