@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet \
     import PrivateUniqueResourceFilterSet
-from bodzify_api.model.play.Play import Fields, Play
+from bodzify_api.model.play.Play import Play
 from bodzify_api.serializer.schema.model.play.input.schema.endpoint.post import PlayPostSerializer
 from bodzify_api.serializer.schema.model.play.output.detailed import PlayDetailedSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet

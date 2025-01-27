@@ -3,7 +3,6 @@ import uuid
 import re
 
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import QuerySet
 from django_filters import CharFilter, FilterSet
 from rest_framework.exceptions import ValidationError
 

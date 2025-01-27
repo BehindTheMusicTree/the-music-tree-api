@@ -1,6 +1,5 @@
 from typing import Optional
 
-from django.db.models import QuerySet
 from django_filters import FilterSet
 from rest_framework.exceptions import ValidationError
 

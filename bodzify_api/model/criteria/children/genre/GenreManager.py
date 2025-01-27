@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, Tuple
+from typing import Any, TYPE_CHECKING
 
 from django.db.models import QuerySet
 
