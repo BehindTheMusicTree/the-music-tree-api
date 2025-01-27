@@ -11,7 +11,7 @@ def uses_internal_name(model: Type[models.Model]) -> bool:
         field = model._meta.get_field(Fields.NAME_INTERNAL)
         # Verify it's a CharField with db_column='name'
         return (isinstance(field, models.CharField) and
-                field.db_column == Fields.NAME)
+                field.db_column == Fields.NAME_PUBLIC)
     except FieldDoesNotExist:
         return False
 
@@ -27,12 +27,12 @@ def transform_name_fields(model: Type[models.Model], **kwargs: Any) -> Dict[str,
 
     for key, value in kwargs.items():
         # Handle direct name field references
-        if key == Fields.NAME and uses_internal_name(model):
+        if key == Fields.NAME_PUBLIC and uses_internal_name(model):
             transformed[Fields.NAME_INTERNAL] = value
         # Handle relationship traversals and lookups containing __name
-        elif '__' + Fields.NAME in key:
+        elif '__' + Fields.NAME_PUBLIC in key:
             # Split on __name to preserve any lookups that come after
-            parts = key.split('__' + Fields.NAME)
+            parts = key.split('__' + Fields.NAME_PUBLIC)
             if len(parts) == 2:
                 # parts[0] is the relationship path
                 # parts[1] is either empty or contains lookups (like __icontains)

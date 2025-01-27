@@ -17,7 +17,7 @@ class LibTrackMixinWithInternalNameManager(LibTrackMixinManager[T]):
         return [Fields.NAME_INTERNAL]
 
     def update_instance(self, instance: T, **kwargs) -> T:
-        if Fields.NAME in kwargs:
-            update_name_field(instance, kwargs.pop(Fields.NAME))
+        if Fields.NAME_PUBLIC in kwargs:
+            update_name_field(instance, kwargs.pop(Fields.NAME_PUBLIC))
 
         return super().update_instance(instance, **kwargs)

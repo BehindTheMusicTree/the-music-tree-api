@@ -13,4 +13,4 @@ class LibTrackMixinManager(StandardResourceManager[T]):
     model: type[T]
 
     def get_default_ordering(self) -> list[str]:
-        return [Fields.NAME]
+        return [Fields.NAME_PUBLIC]

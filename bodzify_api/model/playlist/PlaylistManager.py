@@ -13,7 +13,7 @@ class PlaylistManager(StandardResourceManager):
 
     def filter(self, *args, **kwargs):
         type_filter = kwargs.pop(Fields.TYPE_LABEL_PUBLIC, None)
-        name_filter = kwargs.pop(Fields.NAME, None)
+        name_filter = kwargs.pop(Fields.NAME_PUBLIC, None)
 
         queryset = super().filter(*args, **kwargs)
 
