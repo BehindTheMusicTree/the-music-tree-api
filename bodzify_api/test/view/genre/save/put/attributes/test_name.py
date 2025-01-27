@@ -15,7 +15,7 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
     def test_not_none_then_update(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_new_name = "Punk"
-        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: genre_new_name})
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.name == genre_new_name
 
@@ -24,7 +24,7 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
         assert genre_rock.root.name == "Rock"
 
         genre_new_name = "Punk"
-        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: genre_new_name})
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})
         assert response.status_code == status.HTTP_200_OK
 
         updated_genre = self.saved_genre
@@ -33,7 +33,7 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
 
     def test_error_when_empty(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
-        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: ""})
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: ""})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_not_provided_then_unchanged(self):
@@ -52,7 +52,7 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
         })
 
         genre_new_name = "Punk"
-        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: genre_new_name})
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})
         assert response.status_code == status.HTTP_200_OK
 
         updated_track: LibraryTrack = LibraryTrack.objects.get(uuid=track.uuid)

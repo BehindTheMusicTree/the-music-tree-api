@@ -38,7 +38,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        result_names = [result[ModelFields.NAME] for result in self.results]
+        result_names = [result[ModelFields.NAME_PUBLIC] for result in self.results]
         assert genre_punk.name in result_names
         assert genre_rock.name in result_names
 
@@ -51,7 +51,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        result_names = [result[ModelFields.NAME] for result in self.results]
+        result_names = [result[ModelFields.NAME_PUBLIC] for result in self.results]
         assert genre_punk.name in result_names
         assert genre_slow.name in result_names
 

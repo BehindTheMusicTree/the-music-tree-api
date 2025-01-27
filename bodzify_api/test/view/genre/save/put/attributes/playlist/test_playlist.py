@@ -11,7 +11,7 @@ class TestCase(GenreTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_new_name = "Punk"
 
-        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME: genre_new_name})
+        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})
 
         assert response.status_code == status.HTTP_200_OK
         playlist = self.saved_genre

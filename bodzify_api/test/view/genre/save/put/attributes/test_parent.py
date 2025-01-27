@@ -9,7 +9,7 @@ class TestCase(GenreTestCase):
     def test_not_provided_then_unchanged(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
-        response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.NAME: "New Punk"})
+        response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.NAME_PUBLIC: "New Punk"})
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.parent == genre_rock
 

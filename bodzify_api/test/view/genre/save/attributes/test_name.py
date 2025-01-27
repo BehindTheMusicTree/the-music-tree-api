@@ -12,24 +12,24 @@ class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCa
 
     def test_longest_then_ok(self):
         genre_name = "a" * settings.CRITERIA_NAME_LEN_MAX
-        response = self._post_genre(**{Fields.NAME: genre_name})
+        response = self._post_genre(**{Fields.NAME_PUBLIC: genre_name})
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_genre.name == genre_name
 
     def test_too_long_then_error(self):
-        response = self._post_genre(**{Fields.NAME: "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)})
+        response = self._post_genre(**{Fields.NAME_PUBLIC: "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_multiple_values_then_error(self):
-        response = self._post_genre(**{Fields.NAME: ["value", "value2"]})
+        response = self._post_genre(**{Fields.NAME_PUBLIC: ["value", "value2"]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_already_exists_then_error(self):
         genre_name = "Rock"
         self.model_fixture_factory.create_genre(name=genre_name)
-        response = self._post_genre(**{Fields.NAME: genre_name})
+        response = self._post_genre(**{Fields.NAME_PUBLIC: genre_name})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_empty_then_error(self):
-        response = self._post_genre(**{Fields.NAME: ''})
+        response = self._post_genre(**{Fields.NAME_PUBLIC: ''})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
