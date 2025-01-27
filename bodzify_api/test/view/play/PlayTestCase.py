@@ -17,7 +17,7 @@ class PlayTestCase(ApiTestCase):
     def _post_play(self, **kwargs):
         response = self.api_client.post(path=reverse('play-list'),
                                         data=kwargs,
-                                        content_type='application/x-www-form-urlencoded')
+                                        content_type='application/json')
         if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_play_attribute(response)
         return response
@@ -31,7 +31,7 @@ class PlayTestCase(ApiTestCase):
     def _put_play(self, genre_uuid: UUID, **kwargs):
         response = self.api_client.put(path=reverse('play-detail', kwargs={'pk': genre_uuid}),
                                        data=kwargs,
-                                       content_type='application/x-www-form-urlencoded')
+                                       content_type='application/json')
         if response.status_code == status.HTTP_200_OK:
             self._set_result(response)
         return response
