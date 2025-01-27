@@ -9,7 +9,7 @@ class TestCase(ManualPlaylistTestCase):
     def test_value_then_ok(self):
         simpe_playlist = self.model_fixture_factory.create_manual_playlist(name="teuf")
         manual_playlist_name_new = "teuf2"
-        data = {PlaylistFields.NAME: manual_playlist_name_new}
+        data = {PlaylistFields.NAME_PUBLIC: manual_playlist_name_new}
 
         response = self._put_manual_playlist(uuid=simpe_playlist.uuid, **data)
 
@@ -27,7 +27,7 @@ class TestCase(ManualPlaylistTestCase):
 
     def test_empty_then_error(self):
         uuid = self.model_fixture_factory.create_manual_playlist(name='foero').uuid
-        data = {PlaylistFields.NAME: ""}
+        data = {PlaylistFields.NAME_PUBLIC: ""}
 
         response = self._put_manual_playlist(uuid=uuid, **data)
 

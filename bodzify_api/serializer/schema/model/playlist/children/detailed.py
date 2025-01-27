@@ -5,7 +5,7 @@ from bodzify_api.serializer.schema.model.playlist.base.output.simple import Play
 
 class Fields:
     UUID = PlaylistFields.UUID
-    NAME = PlaylistFields.NAME
+    NAME = PlaylistFields.NAME_PUBLIC
     CREATED_ON = PlaylistFields.CREATED_ON
     UPDATED_ON = PlaylistFields.UPDATED_ON
     LIB_TRACKS = PlaylistFields.LIB_TRACKS

@@ -64,7 +64,7 @@ def manual_playlist_filter(queryset, request, *args, **kwargs):
         if query != "":
             queryset = queryset.filter(
                 name__icontains=query
-            ).order_by(PlaylistFields.NAME)
+            ).order_by(PlaylistFields.NAME_PUBLIC)
     return queryset
 
 

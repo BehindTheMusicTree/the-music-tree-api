@@ -7,7 +7,7 @@ from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlay
 
 
 class Fields:
-    NAME = PlaylistFields.NAME
+    NAME = PlaylistFields.NAME_PUBLIC
 
 
 class ManualPlaylistSchemaSerializer(serializers.ModelSerializer):

@@ -4,7 +4,7 @@ from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFiel
 class Fields:
     UUID = LibTrackMixinFields.UUID
     USER = LibTrackMixinFields.USER
-    NAME = LibTrackMixinFields.NAME
+    NAME = LibTrackMixinFields.NAME_PUBLIC
     CREATED_ON = LibTrackMixinFields.CREATED_ON
     UPDATED_ON = LibTrackMixinFields.UPDATED_ON
     LIB_TRACKS = LibTrackMixinFields.LIB_TRACKS
