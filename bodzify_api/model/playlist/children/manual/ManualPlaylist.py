@@ -15,7 +15,7 @@ class ManualPlaylist(Playlist):
                                     related_name=PlaylistFields.MANUAL_PLAYLIST)
 
     _name = models.CharField(max_length=settings.MANUAL_PLAYLIST_NAME_LEN_MAX,
-                             blank=False, null=False, db_column=Fields.NAME)  # type: ignore
+                             blank=False, null=False, db_column=Fields.NAME_PUBLIC)  # type: ignore
 
     objects: LibTrackMixinWithInternalNameManager = LibTrackMixinWithInternalNameManager()
 

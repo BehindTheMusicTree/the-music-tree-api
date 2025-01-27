@@ -8,11 +8,8 @@ from .Fields import Fields
 
 
 class CriteriaPostSerializer(AppValidationSerializer, serializers.ModelSerializer):
-    name = serializers.CharField(
-        max_length=settings.CRITERIA_NAME_LEN_MAX,
-        allow_blank=False
-    )
+    name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, allow_blank=False)
 
     class Meta:
         model = Criteria
-        fields = [Fields.NAME, Fields.PARENT]
+        fields = [Fields.NAME_PUBLIC, Fields.PARENT]

@@ -14,4 +14,4 @@ class CriteriaPutSerializer(AppValidationSerializer, serializers.ModelSerializer
 
     class Meta:
         model = Criteria
-        fields = [Fields.NAME, Fields.PARENT]
+        fields = [Fields.NAME_PUBLIC, Fields.PARENT]

@@ -6,7 +6,7 @@ class Fields:
     UPDATED_ON = BaseFields.UPDATED_ON
     UUID = BaseFields.UUID
     USER = BaseFields.USER
-    NAME = BaseFields.NAME_PUBLIC
+    NAME_PUBLIC = BaseFields.NAME_PUBLIC
     NAME_INTERNAL = BaseFields.NAME_INTERNAL
     LIB_TRACKS = BaseFields.LIB_TRACKS
     LIB_TRACKS_COUNT = BaseFields.LIB_TRACKS_COUNT
