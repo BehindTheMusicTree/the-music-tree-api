@@ -21,8 +21,7 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
         fields = [Fields.UUID,
                   Fields.CONTENT_TYPE,
                   Fields.CONTENT_OBJECT,
-                  Fields.CREATED_ON,
-                  Fields.UPDATED_ON]
+                  Fields.CREATED_ON]
 
     def get_content_object(self, obj: Play) -> ReturnList | Any | ReturnDict:
         if isinstance(obj.content_object, Playlist):
