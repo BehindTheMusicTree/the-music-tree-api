@@ -14,6 +14,7 @@ class Fields:
     GENRE = SimpleFields.GENRE
     RATING = SimpleFields.RATING
     LANGUAGE = SimpleFields.LANGUAGE
+    PLAY_COUNT = SimpleFields.PLAY_COUNT
 
 
 class LibTrackSimpleWithoutPlaylistAndArtistSerializer(serializers.ModelSerializer):
@@ -27,4 +28,5 @@ class LibTrackSimpleWithoutPlaylistAndArtistSerializer(serializers.ModelSerializ
                   Fields.ALBUM,
                   Fields.GENRE,
                   Fields.RATING,
-                  Fields.LANGUAGE,]
+                  Fields.LANGUAGE,
+                  Fields.PLAY_COUNT]

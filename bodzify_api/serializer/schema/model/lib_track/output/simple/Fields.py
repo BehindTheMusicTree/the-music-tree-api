@@ -10,3 +10,4 @@ class Fields:
     GENRE = AvailableFields.GENRE
     RATING = AvailableFields.RATING
     LANGUAGE = AvailableFields.LANGUAGE
+    PLAY_COUNT = AvailableFields.PLAY_COUNT
