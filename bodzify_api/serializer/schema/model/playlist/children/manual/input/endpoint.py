@@ -7,7 +7,7 @@ from bodzify_api.serializer.schema.model.playlist.children.manual.input.schema \
     import Fields as SaveSchemaFields
 
 
-class ManualPlaylistBaseInputSerializer(AppValidationSerializer, serializers.ModelSerializer):
+class ManualPlaylistInputSerializer(AppValidationSerializer, serializers.ModelSerializer):
     class Meta:
         model = ManualPlaylist
         fields = [SaveSchemaFields.NAME]
