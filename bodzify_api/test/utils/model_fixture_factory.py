@@ -76,7 +76,7 @@ class ModelFixtureFactory:
             CriteriaFields.CREATED_ON: kwargs.get(CriteriaFields.CREATED_ON, now),
             CriteriaFields.UPDATED_ON: kwargs.get(CriteriaFields.UPDATED_ON, now),
             CriteriaFields.USER: user or self.default_test_user,
-            CriteriaFields.NAME: name,
+            CriteriaFields.NAME_PUBLIC: name,
             CriteriaFields.PARENT: None,
         }
         model_fields.update(kwargs)
@@ -190,7 +190,6 @@ class ModelFixtureFactory:
     def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> ManualPlaylist:
         playlist_model_fields = {
             PlaylistFields.CREATED_ON: timezone.make_aware(datetime.now()),
-            PlaylistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             PlaylistFields.USER: user or self.default_test_user,
             PlaylistFields.PLAY_COUNT: 0
         }
@@ -198,7 +197,7 @@ class ModelFixtureFactory:
 
         playlist = G(Playlist, **playlist_model_fields)
 
-        return G(ManualPlaylist, playlist=playlist, name=name)
+        return G(ManualPlaylist, playlist=playlist, _name=name)
 
     def create_musicbrainz_recording(self, musicbrainz_id: str, title: str, **kwargs) -> MusicbrainzRecording:
         model_fields = {
