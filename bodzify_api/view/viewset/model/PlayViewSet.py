@@ -1,7 +1,8 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 
-from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import PrivateUniqueResourceFilterSet
+from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet \
+    import PrivateUniqueResourceFilterSet
 from bodzify_api.model.play.Play import Fields, Play
 from bodzify_api.serializer.schema.model.play.input.schema.endpoint.post import PlayPostSerializer
 from bodzify_api.serializer.schema.model.play.output.detailed import PlayDetailedSerializer
@@ -18,7 +19,7 @@ class PlayViewSet(AppModelViewSet[Play]):
                          **kwargs)
 
     def get_queryset(self):
-        return Play.objects.filter(user=self.request.user).order_by(f"-{Fields.CREATED_ON}")
+        return Play.objects.filter(user=self.request.user)
 
     def list(self, *args, **kwargs) -> Response:
         return self._handle_list()

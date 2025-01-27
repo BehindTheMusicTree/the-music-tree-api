@@ -23,3 +23,6 @@ class PlayManager(StandardResourceManager):
         kwargs[Fields.CONTENT_TYPE] = content_type
         kwargs[Fields.OBJECT_PK] = content_object_uuid
         return super().create(**kwargs)
+
+    def get_default_ordering(self):
+        return super().get_default_ordering() + (Fields.CREATED_ON,)
