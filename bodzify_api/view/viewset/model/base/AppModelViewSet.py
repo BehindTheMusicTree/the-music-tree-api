@@ -75,14 +75,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
         serializer.is_valid(raise_exception=True)
         validated_data_dict = getattr(serializer, 'validated_data', {})
-        if not validated_data_dict:
-            raise DrfValidationError(
-                detail={
-                    'message': "PUT request requires at least one field to update. Please specify the fields you want \
-to modify in the request body.",
-                    'code': "validation_error"
-                }
-            )
         validated_data_dict = {str(k): v for k, v in validated_data_dict.items()}
         if PrivateFields.USER not in validated_data_dict:
             validated_data_dict[PrivateFields.USER] = self.request.user
@@ -111,6 +103,14 @@ to modify in the request body.",
         serializer_class = self._require_serializer(SerializerType.UPDATE)
         serializer = serializer_class(instance=instance, data=update_data, partial=True, context={'request': request})
         validated_data = self._get_validated_data(serializer)
+        if not validated_data:
+            raise DrfValidationError(
+                detail={
+                    'message': "PUT request requires at least one field to update. Please specify the fields you want \
+to modify in the request body.",
+                    'code': "validation_error"
+                }
+            )
         return self.model_class.objects.update_instance(instance, **validated_data)
 
     def _handle_list(self) -> Response:
