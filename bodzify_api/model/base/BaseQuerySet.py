@@ -66,15 +66,15 @@ class BaseQuerySet(models.QuerySet):
 
         for key, value in kwargs.items():
             # Handle direct name field
-            if key == LibTrackMixinFields.NAME_PUBLIC:
+            if key == 'name':
                 if uses_internal_name(self.model):
-                    transformed[LibTrackMixinFields.NAME_INTERNAL] = value
+                    transformed['_name'] = value
                 else:
                     transformed[key] = value
             # Handle related name fields
-            elif f'__{LibTrackMixinFields.NAME_PUBLIC}' in key:
+            elif '__name' in key:
                 # Split on __name to preserve any lookups that come after
-                parts = key.split(f'__{LibTrackMixinFields.NAME_PUBLIC}')
+                parts = key.split('__name')
                 field_path = parts[0]  # The path to the related model
                 lookups = parts[1]     # Any trailing lookups (e.g., __icontains)
 
@@ -84,7 +84,7 @@ class BaseQuerySet(models.QuerySet):
                 # Check if this model uses internal name fields
                 if uses_internal_name(related_model):
                     # Transform name to _name while preserving the path and lookups
-                    transformed_key = f"{field_path}__{LibTrackMixinFields.NAME_INTERNAL}{lookups}"
+                    transformed_key = f"{field_path}__{'_name'}{lookups}"
                     transformed[transformed_key] = value
                 else:
                     transformed[key] = value

@@ -28,7 +28,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
     def create(self, request, *args, **kwargs):
         return self._handle_post(request)
 
-    @extend_schema(parameters=[OpenApiParameter(name=FilterFields.NAME,
+    @extend_schema(parameters=[OpenApiParameter(name=FilterFields.NAME_PUBLIC,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY),
                                OpenApiParameter(name=FilterFields.PARENT,

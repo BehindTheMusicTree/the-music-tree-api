@@ -12,24 +12,21 @@ from .Fields import Fields
 
 
 class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
-    name = NonEmptiableCharFilter()
+    name = NonEmptiableCharFilter(method='filter_by_name')
     type_label = filters.CharFilter()
 
     class Meta:
         model = Playlist
         fields = [Fields.NAME, Fields.TYPE_LABEL]
 
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-
-        name = self.data.get(Fields.NAME, '')
+    def filter_by_name(self, queryset, name, value):
         type_label = self.data.get(Fields.TYPE_LABEL)
 
         manual_playlist_queryset = Playlist.objects.none()
         if type_label is None or type_label.lower() == PlaylistTypesLabel.MANUAL.lower():
             manual_playlist_queryset = queryset.filter(
                 manual_playlist__isnull=False,
-                manual_playlist__name__icontains=name
+                manual_playlist__name__icontains=value
             )
 
         criteria_playlist_queryset = Playlist.objects.none()
@@ -38,11 +35,11 @@ class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
             criteria_playlist_queryset = queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__type__label__icontains=type_label.upper() if type_label else '',
-                criteria_playlist__criteria__name__icontains=name
+                criteria_playlist__criteria__name__icontains=value
             )
 
         genreless_playlist = Playlist.objects.none()
-        if (not name or name.lower() in CriterialessPlaylistNames.GENRE.lower()) \
+        if (not value or value.lower() in CriterialessPlaylistNames.GENRE.lower()) \
                 and type_label in [None, PlaylistTypesLabel.GENRE]:
             genreless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,
@@ -51,7 +48,7 @@ class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
             )
 
         tagless_playlist = Playlist.objects.none()
-        if (not name or name.lower() in CriterialessPlaylistNames.TAG.lower()) \
+        if (not value or value.lower() in CriterialessPlaylistNames.TAG.lower()) \
                 and type_label in [None, PlaylistTypesLabel.TAG]:
             tagless_playlist = queryset.filter(
                 criteria_playlist__isnull=False,

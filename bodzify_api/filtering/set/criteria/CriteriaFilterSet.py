@@ -7,11 +7,9 @@ from .Fields import Fields
 
 
 class CriteriaFilterSet(PrivateUniqueResourceFilterSet):
-    name = NonEmptiableCharFilter(field_name=Fields.NAME_INTERNAL,
-                                  lookup_expr='icontains',
-                                  field_name_user_friendly=Fields.NAME)
+    name = NonEmptiableCharFilter(lookup_expr='icontains')
     parent = DescendantAwareFilter(queryset=Criteria.objects.all(),)
 
     class Meta:
         model = Criteria
-        fields = [Fields.NAME, Fields.PARENT]
+        fields = [Fields.NAME_PUBLIC, Fields.PARENT]
