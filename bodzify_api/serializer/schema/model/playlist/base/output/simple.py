@@ -15,7 +15,7 @@ class Fields:
 
 
 class PlaylistSimpleSerializer(serializers.ModelSerializer):
-    type = serializers.CharField(source=ModelFields.TYPE_LABEL)
+    type = serializers.CharField(source=ModelFields.TYPE_LABEL_INTERNAL)
 
     class Meta:
         model = Playlist

@@ -8,6 +8,7 @@ from .Fields import Fields
 
 class PlaylistDetailedSerializer(serializers.ModelSerializer):
     lib_track_playlist_rels = LibTrackPlaylistRelWithoutPlaylist(many=True)
+    type = serializers.CharField(source=Fields.TYPE_LABEL_INTERNAL)
 
     class Meta:
         model = Playlist

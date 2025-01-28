@@ -18,7 +18,7 @@ class Fields:
     PLAY_COUNT = TrackablePlayCountFields.PLAY_COUNT
     LIB_TRACKS_RELATED_NAME = 'lib_tracks_of_playlist'
     LIB_TRACK_PLAYLIST_RELS = 'lib_track_playlist_rels'
-    TYPE_LABEL = 'type_label'
+    TYPE_LABEL_INTERNAL = 'type_label'
     TYPE_LABEL_PUBLIC = 'type'
     PLAYLIST_LIB_TRACK_RELATIONS = 'lib_track_playlist_rels'
     LAST_TRACK_LIST_UPDATE_DATE = 'last_track_list_update_date'
