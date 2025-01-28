@@ -38,12 +38,12 @@ class TestCase(PlayTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         playlist: Playlist = self.saved_play.content_object  # type: ignore
-        assert playlist.uuid == playlist.uuid
+        assert playlist.uuid == playlist_uuid
         assert playlist.play_count == current_play_count + 1
 
     def test_playlist_play_then_returns_lib_tracks(self) -> None:
         criteria = self.model_fixture_factory.create_genre(name='criteria1')
-        self.model_fixture_factory.create_lib_track_with_file(
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
             **{LibTrackPostFields.TITLE: "track", LibTrackPostFields.GENRE_UUID: criteria.uuid})
 
         data = {to_camel_case(Fields.CONTENT_OBJECT_UUID): criteria.criteria_playlist.uuid}
@@ -52,9 +52,9 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         playlist: Playlist = self.saved_play.content_object  # type: ignore
         assert playlist.library_tracks.count() == 1
-        lib_track: Optional[LibraryTrack] = playlist.library_tracks.first()
-        assert lib_track
-        assert lib_track.uuid == lib_track.uuid
+        playlist_lib_track: Optional[LibraryTrack] = playlist.library_tracks.first()
+        assert playlist_lib_track
+        assert playlist_lib_track.uuid == lib_track.uuid
 
     def test_lib_track_play(self) -> None:
         current_play_count = 455
@@ -63,6 +63,6 @@ class TestCase(PlayTestCase):
         response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): lib_track.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        lib_track: LibraryTrack = self.saved_play.content_object  # type: ignore
-        assert lib_track.uuid == lib_track.uuid
+        saved_lib_track: LibraryTrack = self.saved_play.content_object  # type: ignore
+        assert saved_lib_track.uuid == lib_track.uuid  # Compare with original UUID
         assert self.saved_play.content_object.play_count == current_play_count + 1
