@@ -1,7 +1,8 @@
 
 import json
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from rest_framework.exceptions import ValidationError
+from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 
 def find_duplicate_fields(json_str: str) -> list[str]:
@@ -47,12 +48,18 @@ class DuplicateFieldsMiddleware:
                 raw_body = request.body.decode('utf-8')
                 duplicate_fields = find_duplicate_fields(raw_body)
                 if duplicate_fields:
-                    raise ValidationError({
+                    validation_error = ValidationError({
                         'duplicate_fields': {
                             'code': 'duplicate_fields',
-                            'fields': duplicate_fields
+                            'field': duplicate_fields[0]  # Show the field name that has duplicates
                         }
                     })
+                    error_response = ErrorResponse.from_validation_error(validation_error)
+                    return JsonResponse(
+                        error_response.data,
+                        status=error_response.status_code,
+                        content_type='application/json'
+                    )
             except UnicodeDecodeError:
                 pass
 
