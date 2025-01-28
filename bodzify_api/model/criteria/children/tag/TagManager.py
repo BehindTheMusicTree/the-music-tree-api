@@ -9,10 +9,10 @@ if TYPE_CHECKING:
 
 
 class TagManager(CriteriaManager):
-    model: type['Tag']
+    model: 'Tag'
 
     def create(self, **kwargs) -> 'Tag':
-        return super().create(type_pk=CriteriaTypePks.TAG, **kwargs)
+        return super().create(type_id=CriteriaTypePks.TAG, **kwargs)
 
     def filter(self, *args: Any, **kwargs: Any) -> Self:
         return super().filter(type_id=CriteriaTypePks.TAG, *args, **kwargs)
