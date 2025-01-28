@@ -12,7 +12,7 @@ class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {
-            QueryParams.TYPE_LABEL: PlaylistTypesLabel.GENRE,
+            QueryParams.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
             QueryParams.NAME: CriterialessPlaylistNames.TAG
         }
         response = self._get_playlists(**data_dict)
@@ -22,7 +22,7 @@ class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_genreless_then_one_result(self):
         data_dict = {
-            QueryParams.TYPE_LABEL: PlaylistTypesLabel.GENRE,
+            QueryParams.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
             QueryParams.NAME: CriterialessPlaylistNames.GENRE
         }
         response = self._get_playlists(**data_dict)
@@ -38,7 +38,7 @@ class TestCase(PlaylistTestCase):
         self.model_fixture_factory.create_genre(name=genre2_name)
 
         data_dict = {
-            QueryParams.TYPE_LABEL: PlaylistTypesLabel.GENRE,
+            QueryParams.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
             QueryParams.NAME: 'rock'
         }
         response = self._get_playlists(**data_dict)

@@ -25,7 +25,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         response = self._get_playlists()
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(self.results) == 5
+        assert len(self.results) == 4
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert rock_criteria_name in names
         assert manual_playlist_name in names
@@ -33,14 +33,14 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert CriterialessPlaylistNames.TAG in names
 
     def test_empty_then_error(self):
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL: ''})
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: ''})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"
         self.model_fixture_factory.create_genre(name=rock_criteria_name)
 
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL: CriterialessPlaylistNames.GENRE})
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: 'genre'})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
@@ -49,7 +49,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert CriterialessPlaylistNames.GENRE in names
 
     def test_value_is_tag_then_results(self):
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL: CriterialessPlaylistNames.TAG})
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: CriterialessPlaylistNames.TAG})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
@@ -61,7 +61,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
         self.model_fixture_factory.create_genre(name='rock')
 
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL: MANUAL_PLAYLIST_TYPE_LABEL})
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: MANUAL_PLAYLIST_TYPE_LABEL})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
@@ -69,5 +69,5 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert manual_playlist_name in names
 
     def test_value_is_wrong_then_error(self):
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL: 'wrong_value'})
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: 'wrong_value'})
         assert response.status_code == status.HTTP_400_BAD_REQUEST

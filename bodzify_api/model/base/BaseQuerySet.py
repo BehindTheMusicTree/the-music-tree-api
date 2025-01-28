@@ -106,7 +106,5 @@ class BaseQuerySet(models.QuerySet):
         return super().get(*args, **transformed_kwargs)
 
     def create(self, **kwargs: Any) -> Any:
-        print('kwargs', kwargs)
         transformed_kwargs = self.transform_related_fields(**kwargs)
-        print('transformed_kwargs', transformed_kwargs)
         return super().create(**transformed_kwargs)

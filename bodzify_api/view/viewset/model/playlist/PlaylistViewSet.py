@@ -30,7 +30,7 @@ class PlaylistViewSet(AppModelViewSet[Playlist]):
     @extend_schema(parameters=[OpenApiParameter(name=QueryParamsFields.NAME,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY),
-                               OpenApiParameter(name=QueryParamsFields.TYPE_LABEL,
+                               OpenApiParameter(name=QueryParamsFields.TYPE_LABEL_INTERNAL,
                                                 type=OpenApiTypes.STR,
                                                 location=OpenApiParameter.QUERY)])
     def list(self, *args, **kwargs):
