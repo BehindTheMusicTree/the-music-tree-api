@@ -1,4 +1,4 @@
-from typing import Any, Dict, Type
+from typing import Any, Dict, MutableMapping, Type
 
 from django.db import models
 from django.db.models import QuerySet
@@ -108,3 +108,7 @@ class BaseQuerySet(models.QuerySet):
     def create(self, **kwargs: Any) -> Any:
         transformed_kwargs = self.transform_related_fields(**kwargs)
         return super().create(**transformed_kwargs)
+
+    def get_or_create(self, **kwargs: Any) -> Any:
+        transformed_kwargs = self.transform_related_fields(**kwargs)
+        return super().get_or_create(**transformed_kwargs)
