@@ -39,22 +39,20 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
     def test_not_provided_then_unchanged(self):
         genre_name = "Rock"
         genre = self.model_fixture_factory.create_genre(name=genre_name)
+
         response = self._put_genre(uuid=genre.uuid, **{PutFields.PARENT: None})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_genre.name == genre_name
 
     def test_ok_then_update_linked_lib_track(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
-
-        track = self.model_fixture_factory.create_lib_track_with_file(**{
-            LibraryTrackFields.TITLE: "Track",
-            LibraryTrackFields.GENRE: genre_rock,
-        })
+        track = self.model_fixture_factory.create_lib_track_with_file(title="Track", genre=genre_rock)
 
         genre_new_name = "Punk"
         response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})
-        assert response.status_code == status.HTTP_200_OK
 
+        assert response.status_code == status.HTTP_200_OK
         updated_track: LibraryTrack = LibraryTrack.objects.get(uuid=track.uuid)
         metadata = audio_metadata.get_normalized_metadata_from_file(file=updated_track.track_file.file)
         assert metadata[NormalizedMetadataKeys.GENRE_NAME] == genre_new_name

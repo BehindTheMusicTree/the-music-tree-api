@@ -45,7 +45,7 @@ class TestCase(PlayTestCase):
     def test_playlist_play_then_returns_lib_tracks(self) -> None:
         criteria = self.model_fixture_factory.create_genre(name='criteria1')
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackPostFields.TITLE: "track", LibTrackPostFields.GENRE_UUID: criteria.uuid})
+            title="track", genre=criteria, use_manager_for_genre_playlist_adding=True)
 
         data = {to_camel_case(Fields.CONTENT_OBJECT_UUID): criteria.criteria_playlist.uuid}
         response = self._post_play(**data)
