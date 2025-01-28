@@ -1,0 +1,11 @@
+meta {
+  name: Country
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}playlists/{{genreBroCountryPlaylistUuid}}/
+  body: json
+  auth: inherit
+}
