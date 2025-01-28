@@ -6,7 +6,7 @@ from bodzify_api.model.playlist.Playlist import Playlist
 from .Fields import Fields
 
 
-class PlaylistParamFilterSet(PrivateUniqueResourceFilterSet):
+class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
     name = filters.CharFilter()
     type_label = filters.CharFilter()
 

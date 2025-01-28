@@ -10,7 +10,7 @@ from bodzify_api.filtering.set.search.SearchParamFilterSet import SearchParamFil
 from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet
 from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
 from bodzify_api.filtering.set.criteria.CriteriaFilterSet import CriteriaFilterSet
-from bodzify_api.filtering.set.playlist.PlaylistParamFilterSet import PlaylistParamFilterSet
+from bodzify_api.filtering.set.playlist.PlaylistFilterSet import PlaylistFilterSet
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
@@ -60,7 +60,7 @@ class TestFilterInheritance(ApiTestCase):
         self.assert_datetime_inherited_filters(CriteriaFilterSet)
 
     def test_playlist_param_filter_inheritance(self):
-        self.assert_datetime_inherited_filters(PlaylistParamFilterSet)
+        self.assert_datetime_inherited_filters(PlaylistFilterSet)
 
     def test_filter_functionality_using_a_concrete_model(self):
         now = timezone.now()
