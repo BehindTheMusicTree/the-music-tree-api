@@ -6,31 +6,34 @@ from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 
 def find_duplicate_fields(json_str: str) -> list[str]:
-    """Find duplicate fields in a JSON string."""
+    """Find duplicate fields in a JSON object, only considering field names at the same level."""
     try:
-        decoder = json.JSONDecoder()
-        pos = 0
-        fields = []
+        # Parse the JSON string into a Python object
+        data = json.loads(json_str)
 
-        while pos < len(json_str):
-            # Skip whitespace
-            while pos < len(json_str) and json_str[pos].isspace():
-                pos += 1
-            if pos >= len(json_str):
-                break
+        def check_dict_duplicates(obj: dict) -> list[str]:
+            # Convert keys to list to check for duplicates in raw JSON
+            keys_list = list(obj.keys())
+            # If the number of unique keys is less than total keys, we have duplicates
+            if len(set(keys_list)) < len(keys_list):
+                # Find the first duplicate key
+                seen = set()
+                for key in keys_list:
+                    if key in seen:
+                        return [key]
+                    seen.add(key)
 
-            # If we find a field name (starts with ")
-            if json_str[pos] == '"':
-                end = json_str.find('"', pos + 1)
-                if end != -1:
-                    field = json_str[pos + 1:end]
-                    if field in fields:
-                        return [field]  # Found a duplicate
-                    fields.append(field)
-                    pos = end + 1
-            else:
-                pos += 1
+            # Recursively check nested dictionaries
+            for value in obj.values():
+                if isinstance(value, dict):
+                    result = check_dict_duplicates(value)
+                    if result:
+                        return result
+            return []
 
+        # Only check for duplicates if the root is a dictionary
+        if isinstance(data, dict):
+            return check_dict_duplicates(data)
         return []
     except json.JSONDecodeError:
         return []
