@@ -2,9 +2,8 @@
 from typing import TypeVar, Generic, TYPE_CHECKING, Any
 
 from django.db import models
-from django.db.models import QuerySet
 
-from bodzify_api.model.utils.query import transform_name_fields
+from .BaseQuerySet import BaseQuerySet
 
 
 if TYPE_CHECKING:
@@ -20,24 +19,8 @@ class BaseManager(models.Manager, Generic[T]):
     def get_default_ordering(self):
         raise NotImplementedError()
 
-    def get(self, *args: Any, **kwargs: Any) -> Any:
-        transformed_kwargs = transform_name_fields(self.model, **kwargs)
-        return super().get(*args, **transformed_kwargs)
-
-    def get_or_create(self, *args, **kwargs) -> Any:
-        transformed_kwargs = transform_name_fields(self.model, **kwargs)
-        try:
-            return self.get(*args, **transformed_kwargs), False
-        except self.model.DoesNotExist:
-            return self.create(**transformed_kwargs), True
-
-    def create(self, **kwargs) -> T:
-        transformed_kwargs = transform_name_fields(self.model, **kwargs)
-        return super().create(**transformed_kwargs)
-
-    def filter(self, *args: Any, **kwargs: Any) -> QuerySet[T]:
-        transformed_kwargs = transform_name_fields(self.model, **kwargs)
-        return super().filter(*args, **transformed_kwargs)
+    def get_queryset(self) -> BaseQuerySet:
+        return BaseQuerySet(self.model, using=self._db)
 
     def update_instance(self, instance: T, **kwargs) -> T:
         # Initialize dictionaries for different types of updates

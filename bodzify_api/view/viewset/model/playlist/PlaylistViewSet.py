@@ -1,3 +1,4 @@
+from django.core.exceptions import ImproperlyConfigured
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
 from rest_framework.request import Request
 
@@ -32,7 +33,8 @@ class PlaylistViewSet(AppModelViewSet[Playlist]):
 
         request: Request = self.request  # type: ignore
         if not self.filterset_class:
-            raise Exception('Filter class is not defined')
+            raise ImproperlyConfigured('Filter class is not defined')
+
         self.filterset = self.filterset_class(data=request.query_params, queryset=self.queryset)
         query_params_validated = request.query_params
 

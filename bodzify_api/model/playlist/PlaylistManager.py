@@ -1,3 +1,7 @@
+from typing import Any, Type, cast
+
+from django.db.models import QuerySet
+
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
@@ -7,11 +11,10 @@ from .Fields import Fields
 
 
 class PlaylistManager(StandardResourceManager):
+    def get_queryset(self) -> PlaylistQuerySet:
+        return cast(PlaylistQuerySet, PlaylistQuerySet(self.model, using=self._db))
 
-    def get_queryset(self):
-        return PlaylistQuerySet(self.model, using=self._db)
-
-    def filter(self, *args, **kwargs):
+    def filter(self, *args: Any, **kwargs: Any) -> QuerySet:
         type_filter = kwargs.pop(Fields.TYPE_LABEL_PUBLIC, None)
         name_filter = kwargs.pop(Fields.NAME_PUBLIC, None)
 
@@ -20,8 +23,10 @@ class PlaylistManager(StandardResourceManager):
         if type_filter or name_filter:
             manual_playlist_queryset = self.none()
             if type_filter is None or type_filter.lower() == PlaylistTypesLabel.MANUAL.lower():
-                manual_playlist_queryset = queryset.filter(manual_playlist__isnull=False,
-                                                           manual_playlist__name__icontains=name_filter)
+                manual_playlist_queryset = queryset.filter(
+                    manual_playlist__isnull=False,
+                    manual_playlist__name__icontains=name_filter
+                )
 
             criteria_playlist_queryset = self.none()
             if type_filter is None or type_filter.lower() in [PlaylistTypesLabel.GENRE.lower(),
@@ -29,7 +34,8 @@ class PlaylistManager(StandardResourceManager):
                 criteria_playlist_queryset = queryset.filter(
                     criteria_playlist__isnull=False,
                     criteria_playlist__type__label__icontains=type_filter.upper() if type_filter else '',
-                    criteria_playlist__criteria__name__icontains=name_filter)
+                    criteria_playlist__criteria__name__icontains=name_filter
+                )
 
             genreless_playlist = self.none()
             if (not name_filter or name_filter.lower() in CriterialessPlaylistNames.GENRE.lower()) \
