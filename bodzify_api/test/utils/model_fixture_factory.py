@@ -31,6 +31,7 @@ from bodzify_api.model.play.Fields import Fields as PlayFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlaylistFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.track.file.TrackFile import TrackFile
@@ -187,17 +188,28 @@ class ModelFixtureFactory:
     def create_tag(self, name: str, **kwargs) -> Tag:
         return self.__create_criteria(name=name, model_class=Tag, **kwargs)
 
-    def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> ManualPlaylist:
-        playlist_model_fields = {
-            PlaylistFields.CREATED_ON: timezone.make_aware(datetime.now()),
+    def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> uuid.UUID:
+        """Create a manual playlist with proper inheritance handling.
+
+        ManualPlaylist inherits from Playlist and uses multi-table inheritance with a
+        OneToOneField parent_link. The type_label property returns 'manual' for serialization.
+        """
+        now = timezone.make_aware(datetime.now())
+        model_fields = {
+            # Base Playlist fields
+            PlaylistFields.CREATED_ON: kwargs.get(PlaylistFields.CREATED_ON, now),
+            PlaylistFields.UPDATED_ON: kwargs.get(PlaylistFields.UPDATED_ON, now),
             PlaylistFields.USER: user or self.default_test_user,
-            PlaylistFields.PLAY_COUNT: 0
+            PlaylistFields.PLAY_COUNT: kwargs.get(PlaylistFields.PLAY_COUNT, 0),
+            PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE: kwargs.get(PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE, now),
+            # ManualPlaylist specific field
+            ManualPlaylistFields.NAME_PUBLIC: name,  # Maps to _name in the model
         }
-        playlist_model_fields.update(kwargs)
 
-        playlist = G(Playlist, **playlist_model_fields)
-
-        return G(ManualPlaylist, playlist=playlist, _name=name)
+        with transaction.atomic():
+            # Let Django's ORM handle the inheritance
+            playlist = ManualPlaylist.objects.create(**model_fields)
+            return playlist.uuid
 
     def create_musicbrainz_recording(self, musicbrainz_id: str, title: str, **kwargs) -> MusicbrainzRecording:
         model_fields = {
