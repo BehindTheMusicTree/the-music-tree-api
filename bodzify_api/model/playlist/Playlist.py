@@ -31,6 +31,9 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
         verbose_name_plural = 'Playlists'
         indexes = [models.Index(fields=[Fields.USER, Fields.UUID], name='playlist_user_uuid_idx')]
 
+    def __str__(self) -> str:
+        return f'{self.uuid} | {self.name}'
+
     @property
     def library_tracks(self) -> models.QuerySet['LibraryTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
