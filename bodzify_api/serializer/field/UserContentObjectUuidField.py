@@ -19,7 +19,7 @@ class UserContentObjectUuidField(serializers.CharField):
     def to_internal_value(self, data):
         try:
             uuid_obj = UUID(data)
-        except ValueError:
+        except (ValueError, AttributeError):
             raise serializers.ValidationError("Invalid UUID format.")
 
         request = self.context['request']
