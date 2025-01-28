@@ -202,9 +202,9 @@ class ModelFixtureFactory:
         }
 
         with transaction.atomic():
-            # Let Django's ORM handle the inheritance
-            playlist = ManualPlaylist.objects.create(**model_fields)
-            return playlist
+            # Let Django's ORM handle the inheritance. G() doesn't handle inheritance well.
+            manual_playlist = ManualPlaylist.objects.create(**model_fields)
+            return manual_playlist
 
     def create_musicbrainz_recording(self, musicbrainz_id: str, title: str, **kwargs) -> MusicbrainzRecording:
         model_fields = {
