@@ -49,10 +49,11 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert CriterialessPlaylistNames.GENRE in names
 
     def test_value_is_tag_then_results(self):
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: CriterialessPlaylistNames.TAG})
+        self.model_fixture_factory.create_tag(name='teuf')
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: 'tag'})
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(self.results) == 1
+        assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert CriterialessPlaylistNames.TAG in names
 
@@ -64,7 +65,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: MANUAL_PLAYLIST_TYPE_LABEL})
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(self.results) == 2
+        assert len(self.results) == 1
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert manual_playlist_name in names
 
