@@ -32,14 +32,15 @@ class TestCase(PlayTestCase):
 
     def test_playlist_play(self) -> None:
         current_play_count = 42
-        playlist_uuid = self.model_fixture_factory.create_manual_playlist(name='test', play_count=current_play_count)
+        db_playlist: Playlist = self.model_fixture_factory.create_manual_playlist(name='test',
+                                                                                  play_count=current_play_count)
 
-        response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): playlist_uuid})
+        response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): db_playlist.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        playlist: Playlist = self.saved_play.content_object  # type: ignore
-        assert playlist.uuid == playlist_uuid
-        assert playlist.play_count == current_play_count + 1
+        response_playlist: Playlist = self.saved_play.content_object  # type: ignore
+        assert response_playlist.uuid == db_playlist.uuid
+        assert response_playlist.play_count == current_play_count + 1
 
     def test_playlist_play_then_returns_lib_tracks(self) -> None:
         criteria = self.model_fixture_factory.create_genre(name='criteria1')

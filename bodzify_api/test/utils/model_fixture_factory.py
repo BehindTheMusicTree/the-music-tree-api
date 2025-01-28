@@ -188,12 +188,7 @@ class ModelFixtureFactory:
     def create_tag(self, name: str, **kwargs) -> Tag:
         return self.__create_criteria(name=name, model_class=Tag, **kwargs)
 
-    def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> uuid.UUID:
-        """Create a manual playlist with proper inheritance handling.
-
-        ManualPlaylist inherits from Playlist and uses multi-table inheritance with a
-        OneToOneField parent_link. The type_label property returns 'manual' for serialization.
-        """
+    def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> ManualPlaylist:
         now = timezone.make_aware(datetime.now())
         model_fields = {
             # Base Playlist fields
@@ -209,7 +204,7 @@ class ModelFixtureFactory:
         with transaction.atomic():
             # Let Django's ORM handle the inheritance
             playlist = ManualPlaylist.objects.create(**model_fields)
-            return playlist.uuid
+            return playlist
 
     def create_musicbrainz_recording(self, musicbrainz_id: str, title: str, **kwargs) -> MusicbrainzRecording:
         model_fields = {
