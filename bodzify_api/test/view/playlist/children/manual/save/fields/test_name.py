@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.schema.model.playlist.children.manual.input.schema import Fields
+from bodzify_api.serializer.schema.model.criteria.input.post import Fields
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
 
 
