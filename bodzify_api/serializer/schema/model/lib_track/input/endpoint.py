@@ -38,7 +38,6 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                                      required=False,
                                      allow_blank=True,
                                      allow_null=True)
-    archived = serializers.BooleanField(required=False)
 
     def validate(self, data):
         if Fields.GENRE_UUID in data and Fields.GENRE_NAME in data:
