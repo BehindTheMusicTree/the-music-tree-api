@@ -3,14 +3,15 @@ from rest_framework import status
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.utils import data_transformer
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
-from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album import Fields as LibTrackGetFields
-from bodzify_api.serializer.schema.model.playlist.children.criteria.output.detailed \
-    import Fields as CriteriaPlaylistFields
+from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album \
+    import Fields as LibTrackOutputFields
+from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
+from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistOutputFields
 
 
 class TestCase(PlaylistTestCase):
 
-    def test_retrieve_then_lib_track_ordered_by_date_added_desc(self):
+    def test_retrieve_then_lib_track_ordered_by_created_on_desc(self):
         genre_name = 'rock'
         genre = self.model_fixture_factory.create_genre(name=genre_name)
         lib_track3 = self.model_fixture_factory.create_lib_track_with_file(
@@ -23,10 +24,13 @@ class TestCase(PlaylistTestCase):
         response = self._retrieve_playlist(uuid=genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        result_tracks = self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.LIB_TRACKS)]
-        assert result_tracks[0][LibTrackGetFields.TITLE] == lib_track1.title
-        assert result_tracks[1][LibTrackGetFields.TITLE] == lib_track2.title
-        assert result_tracks[2][LibTrackGetFields.TITLE] == lib_track3.title
+        result_tracks_raw = self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACK_PLAYLIST_RELS)]
+        result_tracks_sorted = sorted(
+            result_tracks_raw, key=lambda x: x[data_transformer.to_camel_case(LibTrackPlaylistRelFields.POSITION)])
+        lib_track_field_name = data_transformer.to_camel_case(LibTrackPlaylistRelFields.LIB_TRACK)
+        assert result_tracks_sorted[0][lib_track_field_name][LibTrackOutputFields.TITLE] == lib_track1.title
+        assert result_tracks_sorted[1][lib_track_field_name][LibTrackOutputFields.TITLE] == lib_track2.title
+        assert result_tracks_sorted[2][lib_track_field_name][LibTrackOutputFields.TITLE] == lib_track3.title
 
     def test_duration(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -45,7 +49,7 @@ class TestCase(PlaylistTestCase):
         response = self._retrieve_playlist(genre_criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.DURATION_IN_SEC)] == 284 + 152
+        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.DURATION_IN_SEC)] == 284 + 152
 
     def test_count(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -55,11 +59,11 @@ class TestCase(PlaylistTestCase):
             title="Summer", genre=genre, use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_lib_track_with_file(
             title="Winter", genre=genre, archived=True, use_manager_for_genre_playlist_adding=True)
+
         response = self._retrieve_playlist(genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-
-        assert self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.LIB_TRACKS_COUNT)] == 3
+        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACKS_COUNT)] == 3
 
     def test_archived_count(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -75,4 +79,4 @@ class TestCase(PlaylistTestCase):
         response = self._retrieve_playlist(genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(CriteriaPlaylistFields.LIB_TRACKS_ARCHIVED_COUNT)] == 3
+        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACKS_ARCHIVED_COUNT)] == 3
