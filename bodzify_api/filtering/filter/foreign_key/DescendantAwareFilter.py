@@ -1,9 +1,11 @@
 from typing import Optional
 
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 from django_filters import FilterSet
-from rest_framework.exceptions import ValidationError
 
 from bodzify_api.filtering.filter.foreign_key.NonSelfReferencingFilter import NonSelfReferencingFilter
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
 class DescendantAwareFilter(NonSelfReferencingFilter):
@@ -32,8 +34,7 @@ class DescendantAwareFilter(NonSelfReferencingFilter):
             target = queryset.model.objects.filter(pk=value).first()
             if target is not None and instance.is_descendant_of(target):
                 raise ValidationError({
-                    'message': 'Cannot reference an ancestor',
-                    'code': 'validation_ancestor_reference'
-                })
+                    str(self.field_name): [_('Cannot reference an ancestor')]
+                }, code=ValidationResponseCode.FIELD_ANCESTOR_REFERENCE.value)
 
         return filtered_queryset

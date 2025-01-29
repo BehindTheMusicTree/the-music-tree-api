@@ -1,6 +1,9 @@
 
 import requests
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
+
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
 def check_if_url_contains_two_strings(url, string1, string2):
@@ -15,15 +18,23 @@ def check_if_remote_file_exists_using_get_request_with_range_header(url):
         else:
             return False
     except Exception as e:
-        raise ValidationError(f"There was an issue requesting the url {url}")
+        raise ValidationError({
+            'url': [_('There was an issue requesting the URL %(url)s') % {'url': url}]
+        }, code=ValidationResponseCode.FIELD_URL_REQUEST_FAILED.value)
 
 
 def validate_url(value: str):
     if not value.startswith('http'):
-        raise ValidationError(f"url: {value} is not a valid url.")
+        raise ValidationError({
+            'url': [_('%(url)s is not a valid URL') % {'url': value}]
+        }, code=ValidationResponseCode.FIELD_INVALID_URL.value)
     if (not value.lower().endswith('.mp3')
         and not value.lower().endswith('.wav')
             and not value.lower().endswith('.flac')):
-        raise ValidationError(f"url: {value} is not a valid audio file.")
+        raise ValidationError({
+            'url': [_('%(url)s is not a valid audio file') % {'url': value}]
+        }, code=ValidationResponseCode.FIELD_INVALID_FILE_TYPE.value)
     if not check_if_remote_file_exists_using_get_request_with_range_header(value):
-        raise ValidationError(f"url: {value} does not exist.")
+        raise ValidationError({
+            'url': [_('%(url)s does not exist') % {'url': value}]
+        }, code=ValidationResponseCode.FIELD_URL_NOT_FOUND.value)

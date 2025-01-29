@@ -1,9 +1,11 @@
 
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
+from django.utils.translation import gettext as _
 from django_filters.filterset import FilterSet
 
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
 class NonEmptiableCharFilter(EmptiableCharFilter):
@@ -14,7 +16,9 @@ class NonEmptiableCharFilter(EmptiableCharFilter):
 
         if (self.field_name_user_friendly or self.field_name) in parent_data:
             if value == '':
-                raise ValidationError({self.field_name_user_friendly or self.field_name: "The field cannot be empty"})
+                raise ValidationError({
+                    str(self.field_name_user_friendly or self.field_name): [_('This field may not be blank.')]
+                }, code=ValidationResponseCode.FIELD_BLANK.value)
 
         result = super().filter(qs, value)
         return result

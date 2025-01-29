@@ -21,17 +21,20 @@ class EnumCharFilter(EmptiableCharFilter):
     def filter(self, qs, value):
         if value == '':
             raise ValidationError({
-                str(self.field_name): [_('This field may not be blank.')]
+                str(self.field_name): [str(_('This field may not be blank.'))]
             }, code=ValidationResponseCode.FIELD_BLANK.value)
 
         if value is not None:
             normalized_value = str(value).lower()
             if normalized_value not in self.valid_values:
-                raise ValidationError(
-                    _('%(value)s is not a valid value. Allowed values are: %(valid_values)s'),
-                    params={'value': value, 'valid_values': ', '.join(self.valid_values)},
-                    code=ValidationResponseCode.FIELD_INVALID_ENUM.value
-                )
+                raise ValidationError({
+                    str(self.field_name): [
+                        str(_('%(value)s is not a valid value. Allowed values are: %(valid_values)s') % {
+                            'value': value,
+                            'valid_values': ', '.join(self.valid_values)
+                        })
+                    ]
+                }, code=ValidationResponseCode.FIELD_INVALID_ENUM.value)
 
             # If we have a method defined, use it for filtering
             if self.method_name:
