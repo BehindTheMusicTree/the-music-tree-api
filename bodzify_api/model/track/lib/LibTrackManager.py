@@ -7,9 +7,11 @@ from django.db import transaction
 from django.db.models import F, QuerySet
 from django.core.files.base import File as DjangoFile
 from django.utils import timezone
-from rest_framework.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 from bodzify_api import settings
+from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
@@ -119,8 +121,11 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
-            raise ValidationError({Fields.TRACK_FILE_PUBLIC: [
-                f"Error while extracting metadata from file: {error}"]})
+            raise_validation_error(
+                message=_('Error while extracting metadata from file: %(error)s') % {'error': str(error)},
+                code=ValidationResponseCode.FIELD_METADATA_EXTRACTION_FAILED.value,
+                field=Fields.TRACK_FILE_PUBLIC
+            )
 
         save_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
             dict=normalized_metadata,

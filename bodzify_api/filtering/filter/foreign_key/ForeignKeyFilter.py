@@ -2,9 +2,11 @@ from typing import Optional
 import uuid
 import re
 
-from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext as _
 from django_filters import CharFilter, FilterSet
+
+from bodzify_api.utils.validation_error_utils import raise_validation_error
 
 from bodzify_api.filtering.filter.AppFilter import AppFilter
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
@@ -29,17 +31,21 @@ class ForeignKeyFilter(CharFilter, AppFilter):
 
         # Check if value is a template variable
         if re.match(r'{{.*}}', str(value)):
-            raise ValidationError({
-                str(self.field_name): [_('%(value)s is not a valid UUID') % {'value': value}]
-            }, code=ValidationResponseCode.FIELD_INVALID_FORMAT.value)
+            raise_validation_error(
+                message=_('%(value)s is not a valid UUID') % {'value': value},
+                code=ValidationResponseCode.FIELD_INVALID_FORMAT.value,
+                field=str(self.field_name)
+            )
 
         # Custom UUID validation
         try:
             if value and not isinstance(value, uuid.UUID):
                 uuid.UUID(str(value))
         except (TypeError, ValueError):
-            raise ValidationError({
-                str(self.field_name): [_('%(value)s is not a valid UUID') % {'value': value}]
-            }, code=ValidationResponseCode.FIELD_INVALID_FORMAT.value)
+            raise_validation_error(
+                message=_('%(value)s is not a valid UUID') % {'value': value},
+                code=ValidationResponseCode.FIELD_INVALID_FORMAT.value,
+                field=str(self.field_name)
+            )
 
         return super().filter(queryset, value)

@@ -24,6 +24,12 @@ class ValidationResponseCode(Enum):
     FIELD_URL_NOT_FOUND = 2113
     FIELD_URL_REQUEST_FAILED = 2114
     FIELD_INVALID_FILTER = 2115
+    FIELD_DUPLICATE_FINGERPRINT = 2116
+    FIELD_FILE_CORRUPTED = 2117
+    FIELD_METADATA_EXTRACTION_FAILED = 2118
+    FIELD_NAME_EMPTY = 2119
+    FIELD_NAME_DUPLICATE = 2120
+    FIELD_DB_INTEGRITY_ERROR = 2121
     """
     # Field validation (conceptually 2100-2199)
     FIELD_BLANK = 'blank'
@@ -41,3 +47,10 @@ class ValidationResponseCode(Enum):
     FIELD_URL_NOT_FOUND = 'url_not_found'
     FIELD_URL_REQUEST_FAILED = 'url_request_failed'
     FIELD_INVALID_FILTER = 'invalid_filter'
+    FIELD_DUPLICATE_FINGERPRINT = 'duplicate_fingerprint'
+    FIELD_FILE_CORRUPTED = 'file_corrupted'
+    FIELD_METADATA_EXTRACTION_FAILED = 'metadata_extraction_failed'
+    FIELD_NAME_EMPTY = 'name_empty'
+    FIELD_NAME_DUPLICATE = 'name_duplicate'
+    FIELD_DB_INTEGRITY_ERROR = 'db_integrity_error'
+    FIELD_PLAYLIST_NAME_DUPLICATE = 'playlist_name_duplicate'

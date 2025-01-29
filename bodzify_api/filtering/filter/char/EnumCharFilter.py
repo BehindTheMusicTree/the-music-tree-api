@@ -1,10 +1,10 @@
 from typing import Type
 
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
+from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
@@ -20,21 +20,23 @@ class EnumCharFilter(EmptiableCharFilter):
 
     def filter(self, qs, value):
         if value == '':
-            raise ValidationError({
-                str(self.field_name): [str(_('This field may not be blank.'))]
-            }, code=ValidationResponseCode.FIELD_BLANK.value)
+            raise_validation_error(
+                message=_('This field may not be blank.'),
+                code=ValidationResponseCode.FIELD_BLANK.value,
+                field=str(self.field_name)
+            )
 
         if value is not None:
             normalized_value = str(value).lower()
             if normalized_value not in self.valid_values:
-                raise ValidationError({
-                    str(self.field_name): [
-                        str(_('%(value)s is not a valid value. Allowed values are: %(valid_values)s') % {
-                            'value': value,
-                            'valid_values': ', '.join(self.valid_values)
-                        })
-                    ]
-                }, code=ValidationResponseCode.FIELD_INVALID_ENUM.value)
+                raise_validation_error(
+                    message=_('%(value)s is not a valid value. Allowed values are: %(valid_values)s') % {
+                        'value': value,
+                        'valid_values': ', '.join(self.valid_values)
+                    },
+                    code=ValidationResponseCode.FIELD_INVALID_ENUM.value,
+                    field=str(self.field_name)
+                )
 
             # If we have a method defined, use it for filtering
             if self.method_name:

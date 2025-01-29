@@ -3,9 +3,11 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from django.db import models, IntegrityError
 from django.db.models import QuerySet
-from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 from bodzify_api import settings
+from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.criteria.lineage_rel.Fields import Fields as CriteriaLineageRelFields
@@ -103,11 +105,23 @@ class Criteria(LibTrackMixin):
         except IntegrityError as e:
             error_message = str(e)
             if 'non_empty_name' in error_message:
-                raise ValidationError({'name': ['Name cannot be empty']})
+                raise_validation_error(
+                    message=_('Name cannot be empty'),
+                    code=ValidationResponseCode.FIELD_NAME_EMPTY.value,
+                    field='name'
+                )
             elif 'unique_name_per_user' in error_message:
-                raise ValidationError({'name': ['A criteria with this name already exists for this user']})
+                raise_validation_error(
+                    message=_('A criteria with this name already exists for this user'),
+                    code=ValidationResponseCode.FIELD_NAME_DUPLICATE.value,
+                    field='name'
+                )
             else:
-                raise ValidationError({'non_field_errors': ['Database integrity error occurred']})
+                raise_validation_error(
+                    message=_('Database integrity error occurred'),
+                    code=ValidationResponseCode.FIELD_DB_INTEGRITY_ERROR.value,
+                    field='non_field_errors'
+                )
 
     def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
         if self.parent == other_criteria:

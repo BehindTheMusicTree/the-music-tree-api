@@ -1,10 +1,10 @@
 from typing import Optional
 
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from django_filters import FilterSet
 
 from bodzify_api.filtering.filter.foreign_key.ForeignKeyFilter import ForeignKeyFilter
+from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
@@ -23,8 +23,10 @@ class NonSelfReferencingFilter(ForeignKeyFilter):
             # If we have an instance and a value, check for self-reference
             instance = getattr(parent, 'instance', None)
             if instance and str(instance.pk) == str(value):
-                raise ValidationError({
-                    str(self.field_name): [_('Self-referencing is not allowed')]
-                }, code=ValidationResponseCode.FIELD_SELF_REFERENCE.value)
+                raise_validation_error(
+                    message=_('Self-referencing is not allowed'),
+                    code=ValidationResponseCode.FIELD_SELF_REFERENCE.value,
+                    field=str(self.field_name)
+                )
 
         return filtered_queryset

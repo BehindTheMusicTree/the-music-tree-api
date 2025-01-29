@@ -1,12 +1,12 @@
 
 import os
 
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from mutagen import File  # type: ignore
 
 from bodzify_api import settings
 from bodzify_api.model.track.lib.Fields import Fields
+from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
@@ -16,14 +16,16 @@ def validate_size(file):
         message = _('File too large. Size should not exceed %(size).3f Mo.') % {
             'size': settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO
         }
-        raise ValidationError({Fields.TRACK_FILE: [message]}, code=ValidationResponseCode.FIELD_FILE_TOO_LARGE.value)
+        raise_validation_error(
+            message=message, code=ValidationResponseCode.FIELD_FILE_TOO_LARGE.value, field=Fields.TRACK_FILE)
 
     track_size_min = settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
     if file.size < track_size_min:
         message = _('File too small. Size should be at least %(size).3f Mo.') % {
             'size': settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO
         }
-        raise ValidationError({Fields.TRACK_FILE: [message]}, code=ValidationResponseCode.FIELD_FILE_TOO_SMALL.value)
+        raise_validation_error(
+            message=message, code=ValidationResponseCode.FIELD_FILE_TOO_SMALL.value, field=Fields.TRACK_FILE)
 
 
 def validate_content_type_is_audio(file):
@@ -47,9 +49,8 @@ def validate_content_type_is_audio(file):
     error = audio is None
     if error:
         message = 'Invalid file format. Only audio files are allowed.'
-        raise ValidationError(
-            {Fields.TRACK_FILE_PUBLIC: [message]},
-            code=ValidationResponseCode.FIELD_INVALID_FILE_TYPE.value)
+        raise_validation_error(
+            message=message, code=ValidationResponseCode.FIELD_INVALID_FILE_TYPE.value, field=Fields.TRACK_FILE_PUBLIC)
 
 
 def validate_filename_length(value):
@@ -64,6 +65,5 @@ def validate_filename_length(value):
             'max_length': settings.LIB_TRACK_FILENAME_LEN_MAX,
             'current_length': len(filename)
         }
-        raise ValidationError(
-            {Fields.TRACK_FILE_PUBLIC: [message]},
-            code=ValidationResponseCode.FIELD_INVALID_FILENAME.value)
+        raise_validation_error(
+            message=message, code=ValidationResponseCode.FIELD_INVALID_FILENAME.value, field=Fields.TRACK_FILE_PUBLIC)

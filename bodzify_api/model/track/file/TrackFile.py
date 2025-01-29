@@ -5,14 +5,16 @@ import os
 
 from django.core.files.base import File as DjangoFile
 from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.translation import gettext as _
 from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api import settings
+from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.validator.track_file_validator \
     import validate_content_type_is_audio, validate_filename_length, validate_size
@@ -128,8 +130,14 @@ class TrackFile(PrivateStandardResource):
                         self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first()
                     )
                     if existing_track_file:
-                        raise ValidationError({'file': [f"The file '{self.filename}' has the same fingerprint as "
-                                                        f"the file '{existing_track_file.filename}'."]})
+                        raise_validation_error(
+                            message=_('The file "%(current)s" has the same fingerprint as the file "%(existing)s"') % {
+                                'current': self.filename,
+                                'existing': existing_track_file.filename
+                            },
+                            code=ValidationResponseCode.FIELD_DUPLICATE_FINGERPRINT.value,
+                            field='file'
+                        )
                 self.fingerprint_memory = fingerprint
             else:
                 self.fingerprint_missing_cause = fingerprinting_result.missing_cause
@@ -198,8 +206,10 @@ class TrackFile(PrivateStandardResource):
                 audio_metadata.replace_flac_file_with_corrected_md5(self.file.path)
                 self.flac_md5_has_been_corrected = True
             except Exception:
-                raise ValidationError({'file': ["The Flac file md5 check failed and could not be corrected. The " +
-                                                "file is probably corrupted."]})
+                raise_validation_error(
+                    message=_(
+                        'The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.'),
+                    code=ValidationResponseCode.FIELD_FILE_CORRUPTED.value, field='file')
         else:
             self.flac_md5_has_been_corrected = False
 
