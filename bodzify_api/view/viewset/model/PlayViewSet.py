@@ -18,9 +18,6 @@ class PlayViewSet(AppModelViewSet[Play]):
                          create_serializer_class=PlayPostSerializer,
                          **kwargs)
 
-    def get_queryset(self):
-        return Play.objects.filter(user=self.request.user)
-
     def list(self, *args, **kwargs) -> Response:
         return self._handle_list()
 

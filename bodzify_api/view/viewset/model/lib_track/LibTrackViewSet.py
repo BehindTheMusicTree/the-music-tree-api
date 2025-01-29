@@ -141,8 +141,8 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
             will reject the request.
             """))
     def update(self, request, *args, **kwargs):
-        return self._handle_update(request, *args, **kwargs)
+        return self._handle_update(request)
 
     @transaction.atomic
     def destroy(self, *args, **kwargs):
-        return self._handle_destroy(*args, **kwargs)
+        return self._handle_destroy()
