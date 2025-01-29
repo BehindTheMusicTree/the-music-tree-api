@@ -23,6 +23,7 @@ class ValidationResponseCode(Enum):
     FIELD_INVALID_URL = 2112
     FIELD_URL_NOT_FOUND = 2113
     FIELD_URL_REQUEST_FAILED = 2114
+    FIELD_INVALID_FILTER = 2115
     """
     # Field validation (conceptually 2100-2199)
     FIELD_BLANK = 'blank'
@@ -39,3 +40,4 @@ class ValidationResponseCode(Enum):
     FIELD_INVALID_URL = 'invalid_url'
     FIELD_URL_NOT_FOUND = 'url_not_found'
     FIELD_URL_REQUEST_FAILED = 'url_request_failed'
+    FIELD_INVALID_FILTER = 'invalid_filter'
