@@ -15,7 +15,7 @@ from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 class ForeignKeyFilter(CharFilter, AppFilter):
     def __init__(self, queryset=None, **kwargs):
         self._queryset = queryset
-        kwargs.pop('queryset', None)  # Remove queryset from kwargs before passing to parent
+        kwargs.pop('queryset', None)
         super().__init__(**kwargs)
 
     def filter(self, queryset, value):
@@ -29,7 +29,6 @@ class ForeignKeyFilter(CharFilter, AppFilter):
         if value == '':  # Empty string explicitly provided
             return queryset.filter(**{f"{self.field_name}__isnull": True})
 
-        # Check if value is a template variable
         if re.match(r'{{.*}}', str(value)):
             raise_validation_error(
                 message=_('%(value)s is not a valid UUID') % {'value': value},
@@ -37,7 +36,6 @@ class ForeignKeyFilter(CharFilter, AppFilter):
                 field=str(self.field_name)
             )
 
-        # Custom UUID validation
         try:
             if value and not isinstance(value, uuid.UUID):
                 uuid.UUID(str(value))
