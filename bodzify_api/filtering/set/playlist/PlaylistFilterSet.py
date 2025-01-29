@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 
 from typing import Optional
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
@@ -20,7 +21,7 @@ class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
         model = Playlist
         fields = [Fields.NAME, Fields.TYPE_LABEL_INTERNAL]
 
-    def filter_by_name_and_type(self, queryset, name, value):
+    def filter_by_name_and_type(self, queryset: QuerySet, name, value):
         type_label: Optional[str] = self.data.get(Fields.TYPE_LABEL_INTERNAL)
 
         manual_playlist_queryset = Playlist.objects.none()
