@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
 class EnumCharFilter(EmptiableCharFilter):
@@ -21,7 +22,7 @@ class EnumCharFilter(EmptiableCharFilter):
         if value == '':
             raise ValidationError({
                 str(self.field_name): [_('This field may not be blank.')]
-            }, code='blank')
+            }, code=ValidationResponseCode.FIELD_BLANK.value)
 
         if value is not None:
             normalized_value = str(value).lower()
@@ -29,7 +30,7 @@ class EnumCharFilter(EmptiableCharFilter):
                 raise ValidationError(
                     _('%(value)s is not a valid value. Allowed values are: %(valid_values)s'),
                     params={'value': value, 'valid_values': ', '.join(self.valid_values)},
-                    code='invalid_enum'
+                    code=ValidationResponseCode.FIELD_INVALID_ENUM.value
                 )
 
             # If we have a method defined, use it for filtering
