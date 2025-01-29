@@ -14,15 +14,14 @@ class EnumCharFilter(EmptiableCharFilter):
 
     @property
     def valid_values(self) -> list[str]:
-        return [str(value).lower() for value in vars(self.enum_class).values() 
+        return [str(value).lower() for value in vars(self.enum_class).values()
                 if isinstance(value, str) and not value.startswith('_')]
 
     def filter(self, qs, value):
         if value == '':
-            raise ValidationError(
-                _('This field may not be empty.'),
-                code='empty'
-            )
+            raise ValidationError({
+                str(self.field_name): [_('This field may not be blank.')]
+            }, code='blank')
 
         if value is not None:
             normalized_value = str(value).lower()
