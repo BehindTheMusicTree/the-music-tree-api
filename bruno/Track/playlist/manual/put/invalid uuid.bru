@@ -1,10 +1,10 @@
 meta {
-  name: post foot
+  name: invalid uuid
   type: http
-  seq: 1
+  seq: 2
 }
 
-post {
+put {
   url: {{BASE_URL}}manual-playlists/
   body: json
   auth: inherit
@@ -16,10 +16,6 @@ headers {
 
 body:json {
   {
-    "name": "foot"
+    "content_object_uuid": "{{trackJohnnyUuid}}"
   }
-}
-
-vars:post-response {
-  ManualPlaylistFootUuid: res.body.uuid
 }
