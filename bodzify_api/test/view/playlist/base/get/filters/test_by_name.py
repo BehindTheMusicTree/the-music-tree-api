@@ -29,7 +29,7 @@ class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
         manual_playlist_name = "Teuf"
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
 
-        response = self._get_playlists(**{QueryParams.NAME: manual_playlist_name.upper()})
+        response = self._get_playlists(**{QueryParams.NAME: "tEUFEU"})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
