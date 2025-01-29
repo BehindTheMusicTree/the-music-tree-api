@@ -1,6 +1,7 @@
 
-from bodzify_api.filtering.filter.char.EnumCharFilter import EnumCharFilter
+from typing import Optional
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
+from bodzify_api.filtering.filter.char.OptionalEnumCharFilter import OptionalEnumCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet \
     import PrivateUniqueResourceFilterSet
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -13,14 +14,14 @@ from .Fields import Fields
 
 class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
     name = NonEmptiableCharFilter(method='filter_by_name_and_type')
-    type_label = EnumCharFilter(enum_class=PlaylistTypesLabel)
+    type_label = OptionalEnumCharFilter(enum_class=PlaylistTypesLabel)
 
     class Meta:
         model = Playlist
         fields = [Fields.NAME, Fields.TYPE_LABEL_INTERNAL]
 
     def filter_by_name_and_type(self, queryset, name, value):
-        type_label = self.data.get(Fields.TYPE_LABEL_INTERNAL)
+        type_label: Optional[str] = self.data.get(Fields.TYPE_LABEL_INTERNAL)
 
         manual_playlist_queryset = Playlist.objects.none()
         if type_label is None or type_label.lower() == PlaylistTypesLabel.MANUAL.lower():
