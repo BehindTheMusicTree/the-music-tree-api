@@ -79,16 +79,18 @@ class ErrorResponse:
         )
 
     @staticmethod
-    def from_validation_error(exception: Union[DrfValidationError, DjangoValidationError, IntegrityError]) -> Response:
-        if isinstance(exception, IntegrityError):
-            error_detail = {
-                'message': str(exception),
-                'code': ErrorCode.VALIDATION_INTEGRITY_ERROR.name.lower()
-            }
-            return ErrorResponse._create_error_response(
-                error_detail=error_detail,
-                error_code=ErrorCode.VALIDATION_INTEGRITY_ERROR
-            )
+    def from_unhandled_integrity_error(exception: IntegrityError) -> Response:
+        error_detail = {
+            'message': 'An internal error occurred',
+            'code': ErrorCode.SYSTEM_INTERNAL_ERROR.name.lower()
+        }
+        return ErrorResponse._create_error_response(
+            error_detail=error_detail,
+            error_code=ErrorCode.SYSTEM_INTERNAL_ERROR
+        )
+
+    @staticmethod
+    def from_validation_error(exception: Union[DrfValidationError, DjangoValidationError]) -> Response:
 
         if isinstance(exception, DrfValidationError):
             error_detail = convert_error_detail_to_dict(exception.detail)

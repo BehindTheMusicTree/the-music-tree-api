@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 from bodzify_api import settings
 from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.ErrorCode import ErrorCode
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.criteria.lineage_rel.Fields import Fields as CriteriaLineageRelFields
@@ -116,12 +117,8 @@ class Criteria(LibTrackMixin):
                     code=ValidationResponseCode.FIELD_NAME_DUPLICATE.value,
                     field='name'
                 )
-            else:
-                raise_validation_error(
-                    message=_('Database integrity error occurred'),
-                    code=ValidationResponseCode.FIELD_DB_INTEGRITY_ERROR.value,
-                    field='non_field_errors'
-                )
+            # Let other database integrity errors propagate to be handled as system errors
+            raise e
 
     def is_descendant_of(self, other_criteria: 'Criteria') -> bool:
         if self.parent == other_criteria:

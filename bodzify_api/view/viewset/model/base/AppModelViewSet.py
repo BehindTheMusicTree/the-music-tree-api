@@ -1,4 +1,5 @@
 from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
+from django.db import IntegrityError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -165,6 +166,8 @@ to modify in the request body.",
     def handle_exception(self, exc: Exception) -> Response:
         if isinstance(exc, (DrfValidationError, DjangoValidationError)):
             return ErrorResponse.from_validation_error(exc)
+        elif isinstance(exc, IntegrityError):
+            return ErrorResponse.from_unhandled_integrity_error(exc)
         return super().handle_exception(exc)
 
     def get_object(self) -> T:
