@@ -30,24 +30,24 @@ class LibTrackMixin(PrivateUniqueResource):
         return self.lib_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
 
     @property
-    def library_tracks_not_archived(self) -> models.QuerySet['LibraryTrack']:  # type: ignore
+    def lib_tracks_not_archived(self) -> models.QuerySet['LibraryTrack']:  # type: ignore
         return self.lib_tracks.filter(archived=False)
 
     @property
-    def library_tracks_count(self) -> int:
+    def lib_tracks_not_archived_count(self) -> int:
         return self.lib_tracks.filter(archived=False).count()
 
     @property
-    def library_tracks_archived_count(self) -> int:
+    def lib_tracks_archived_count(self) -> int:
         return self.lib_tracks.filter(archived=True).count()
 
     @property
     def duration_in_sec(self) -> int:
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-        lib_tracks_not_archived: models.QuerySet[LibraryTrack] = self.library_tracks_not_archived
+        lib_tracks_not_archived: models.QuerySet[LibraryTrack] = self.lib_tracks_not_archived
         return sum(
-            int(library_track.track_file.duration_in_sec or 0) if library_track.track_file else 0
-            for library_track in lib_tracks_not_archived
+            int(lib_track.track_file.duration_in_sec or 0) if lib_track.track_file else 0
+            for lib_track in lib_tracks_not_archived
         )
 
     @property

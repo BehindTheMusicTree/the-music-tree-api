@@ -17,7 +17,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track_love.uuid, **{PutFields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album and self.saved_lib_track.album.library_tracks_archived_count == 2
+        assert self.saved_lib_track.album and self.saved_lib_track.album.lib_tracks_archived_count == 2
 
     def test_unarchived_then_album_has_minus_1_archived_lib_tracks(self):
         album = self.model_fixture_factory.create_album(name="Jojo")
@@ -30,4 +30,4 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: "false"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album and self.saved_lib_track.album.library_tracks_archived_count == 1
+        assert self.saved_lib_track.album and self.saved_lib_track.album.lib_tracks_archived_count == 1

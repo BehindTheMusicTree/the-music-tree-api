@@ -20,7 +20,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_200_OK
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
         assert len(artists_list) > 0
-        assert artists_list[0].library_tracks_archived_count == 2
+        assert artists_list[0].lib_tracks_archived_count == 2
 
     def test_unarchived_then_artist_has_minus_1_archived_lib_tracks(self):
         artist = self.model_fixture_factory.create_artist(name="Jojo")
@@ -35,4 +35,4 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_200_OK
         artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
         assert len(artists_list) > 0
-        assert artists_list[0].library_tracks_archived_count == 1
+        assert artists_list[0].lib_tracks_archived_count == 1

@@ -33,7 +33,7 @@ class Album(LibTrackMixin):
 
     @property
     def lib_tracks_not_archived_sorted(self) -> models.QuerySet['LibraryTrack']:
-        return self.library_tracks_not_archived.annotate(
+        return self.lib_tracks_not_archived.annotate(
             null_position=Q(position_in_album__isnull=True)).order_by(
             'null_position', LibraryTrackFields.POSITION_IN_ALBUM, LibraryTrackFields.TITLE)
 

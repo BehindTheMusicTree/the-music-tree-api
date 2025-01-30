@@ -21,8 +21,8 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_200_OK
         manual_playlist_base_saved: ManualPlaylist = \
             ManualPlaylist.objects.get(user=self.test_user1, name=manual_playlist_name)
-        assert manual_playlist_base_saved.library_tracks_archived_count == 2
-        assert manual_playlist_base_saved.library_tracks_count == 0
+        assert manual_playlist_base_saved.lib_tracks_archived_count == 2
+        assert manual_playlist_base_saved.lib_tracks_not_archived_count == 0
 
     def test_archived_lib_track_then_criteria_playlist_has_plus_1_archived_lib_tracks(self):
         criteria = self.model_fixture_factory.create_genre(name="rock")
@@ -38,5 +38,5 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre
         criteria_playlist_saved: CriteriaPlaylist = self.saved_lib_track.genre.criteria_playlist
-        assert criteria_playlist_saved.library_tracks_archived_count == 2
-        assert criteria_playlist_saved.library_tracks_count == 0
+        assert criteria_playlist_saved.lib_tracks_archived_count == 2
+        assert criteria_playlist_saved.lib_tracks_not_archived_count == 0

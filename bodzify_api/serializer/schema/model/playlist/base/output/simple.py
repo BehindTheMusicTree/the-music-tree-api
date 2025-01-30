@@ -7,7 +7,7 @@ from bodzify_api.serializer.schema.model.playlist.base.output.Fields import Fiel
 
 class Fields:
     UUID = AvailableFields.UUID
-    LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
+    LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
     LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = AvailableFields.NAME
