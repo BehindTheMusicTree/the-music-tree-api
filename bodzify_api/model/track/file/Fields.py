@@ -5,7 +5,7 @@ class Fields:
     CREATED_ON = PrivateStandardResourceFields.CREATED_ON
     UPDATED_ON = PrivateStandardResourceFields.UPDATED_ON
     USER = PrivateStandardResourceFields.USER
-    LIB_TRACK = 'library_track'
+    LIB_TRACK = 'lib_track'
     FILE = 'file'
     FILENAME = 'filename'
     EXTENSION = 'extension'
