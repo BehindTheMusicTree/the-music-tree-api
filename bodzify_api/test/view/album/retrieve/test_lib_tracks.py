@@ -38,9 +38,9 @@ class TestCase(AlbumTestCase):
         lib_track_no_position_1 = self.model_fixture_factory.create_lib_track_with_file(title="Ave", album=album)
 
         response = self._retrieve_album(uuid=album.uuid)
+
         assert response.status_code == status.HTTP_200_OK
         result_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS_NOT_ARCHIVED_SORTED_PUBLIC)]
-
         assert result_tracks[0][to_camel_case(LibTrackOutputFields.TITLE)] == lib_track_4th_position.title
         assert result_tracks[1][to_camel_case(LibTrackOutputFields.TITLE)] == lib_track_112th_position.title
         assert result_tracks[2][to_camel_case(LibTrackOutputFields.TITLE)] == lib_track_no_position_1.title
@@ -58,6 +58,7 @@ class TestCase(AlbumTestCase):
                                                               filename="tokyo drift x sean paul 152 sec.mp3")
 
         response = self._retrieve_album(album.uuid)
+
         assert response.status_code == status.HTTP_200_OK
         assert self.result[to_camel_case(RetrieveFields.DURATION_IN_SEC)] == 284 + 152
 
@@ -65,7 +66,9 @@ class TestCase(AlbumTestCase):
         album = self.model_fixture_factory.create_album(name="Chuck")
         self.model_fixture_factory.create_lib_track_with_file(title="In Too Deep", album=album)
         self.model_fixture_factory.create_lib_track_with_file(title="Summer", album=album)
+
         response = self._retrieve_album(album.uuid)
+
         assert response.status_code == status.HTTP_200_OK
         assert self.result[to_camel_case(RetrieveFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 2
 
@@ -75,6 +78,8 @@ class TestCase(AlbumTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Summer", album=album, archived=True)
         self.model_fixture_factory.create_lib_track_with_file(title="Summer2", album=album, archived=True)
         self.model_fixture_factory.create_lib_track_with_file(title="Summer3", album=album, archived=True)
+
         response = self._retrieve_album(album.uuid)
+
         assert response.status_code == status.HTTP_200_OK
         assert self.result[to_camel_case(RetrieveFields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 3
