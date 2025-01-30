@@ -16,7 +16,7 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria__name=genre_name)
-        assert genre_playlist.lib_track_playlist_rels.get(library_track=self.saved_lib_track).position == 1
+        assert genre_playlist.lib_track_playlist_rels.get(lib_track=self.saved_lib_track).position == 1
 
     def test_existing_genre_then_first_position_and_other_tracks_after(self):
         genre_name = "Rock"
@@ -30,6 +30,6 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria__name=genre_name)
-        assert genre_playlist.lib_track_playlist_rels.get(library_track=self.saved_lib_track).position == 1
-        assert genre_playlist.lib_track_playlist_rels.get(library_track=lib_track1).position == 3
-        assert genre_playlist.lib_track_playlist_rels.get(library_track=lib_track2).position == 2
+        assert genre_playlist.lib_track_playlist_rels.get(lib_track=self.saved_lib_track).position == 1
+        assert genre_playlist.lib_track_playlist_rels.get(lib_track=lib_track1).position == 3
+        assert genre_playlist.lib_track_playlist_rels.get(lib_track=lib_track2).position == 2

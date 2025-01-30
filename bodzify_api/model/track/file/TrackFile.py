@@ -38,10 +38,10 @@ if TYPE_CHECKING:
 
 
 class TrackFile(PrivateStandardResource):
-    library_track = models.OneToOneField('LibraryTrack',
-                                         on_delete=models.CASCADE,
-                                         related_name=LibraryTrackFields.TRACK_FILE,
-                                         unique=True)  # Makes the track file unique for a library track
+    lib_track = models.OneToOneField('LibraryTrack',
+                                     on_delete=models.CASCADE,
+                                     related_name=LibraryTrackFields.TRACK_FILE,
+                                     unique=True)  # Makes the track file unique for a library track
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
@@ -116,15 +116,15 @@ class TrackFile(PrivateStandardResource):
         fingerprinting_result: Optional[FingerprintingResult] = None
 
         if is_audio_meta_analysis_enabled_override == 'true' or settings.AUDIO_META_ANALYSIS_ENABLED:
-            library_track: LibraryTrack = self.library_track
+            lib_track: LibraryTrack = self.lib_track
             fingerprinting_result = audio_fingerprinter.get_fingerprinting_result(user=self.user,
                                                                                   track_file=self.file_path_temp_or_not,
-                                                                                  title=library_track.title)
+                                                                                  title=lib_track.title)
 
             if fingerprinting_result.is_success:
                 fingerprint = binascii.hexlify(fingerprinting_result.fingerprint)
 
-                if library_track.track_file_fingerprint_must_be_unique:
+                if lib_track.track_file_fingerprint_must_be_unique:
                     existing_track_file = cast(
                         'Optional[TrackFile]',
                         self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first()

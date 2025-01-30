@@ -129,7 +129,7 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
     def playlists_with_positions(self) -> List[Tuple[str, int]]:
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel, \
             Fields as LibTrackPlaylistRelFields
-        lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, library_track=self)
+        lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, lib_track=self)
         return list(lib_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
                                                         LibTrackPlaylistRelFields.POSITION))
 

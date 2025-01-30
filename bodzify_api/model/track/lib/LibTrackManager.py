@@ -55,7 +55,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save()
             LibTrackPlaylistRel.objects.filter(
-                playlist=genreless_criteria_playlist, library_track=instance).delete()
+                playlist=genreless_criteria_playlist, lib_track=instance).delete()
 
     def _add_to_genre_playlists(self, instance: 'LibraryTrack', genre_limit=None):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
@@ -67,7 +67,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             while genre_tree_item != genre_limit:
                 LibTrackPlaylistRel.objects.create(user=instance.user,
                                                    playlist=genre_tree_item.criteria_playlist,
-                                                   library_track=instance)
+                                                   lib_track=instance)
                 genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
 
                 # The loop will stop before genre_tree_item is None
@@ -78,7 +78,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                                                                                          criteria=None)
             LibTrackPlaylistRel.objects.create(user=instance.user,
                                                playlist=genreless_criteria_playlist,
-                                               library_track=instance)
+                                               lib_track=instance)
             genreless_criteria_playlist.last_track_list_update_date = update_date
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
@@ -349,17 +349,17 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         with transaction.atomic():
             artists = library_track_data.pop(Fields.ARTISTS, None)
-            library_track: LibraryTrack = self.model(**library_track_data)
-            library_track.save()
+            lib_track: LibraryTrack = self.model(**library_track_data)
+            lib_track.save()
             if artists:
-                library_track.artists.set(artists)
+                lib_track.artists.set(artists)
 
-            track_file_data[TrackFileFields.LIB_TRACK] = library_track
+            track_file_data[TrackFileFields.LIB_TRACK] = lib_track
             TrackFile.objects.create(**track_file_data)
 
-        library_track.update_file_tags_from_lib_track_instance_values()
+        lib_track.update_file_tags_from_lib_track_instance_values()
 
-        return library_track
+        return lib_track
 
     def update_instance(self, old_instance: 'LibraryTrack', **kwargs) -> 'LibraryTrack':
         from bodzify_api.model.album.Album import Album

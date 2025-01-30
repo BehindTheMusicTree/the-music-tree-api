@@ -104,12 +104,12 @@ class ModelFixtureFactory:
             LibraryTrackFields.TITLE: title,
         }
         model_fields.update(kwargs)
-        library_track = G(LibraryTrack, **model_fields)
+        lib_track = G(LibraryTrack, **model_fields)
 
         if kwargs.get(LibraryTrackFields.ARTISTS):
-            library_track.artists.set(kwargs[LibraryTrackFields.ARTISTS])
+            lib_track.artists.set(kwargs[LibraryTrackFields.ARTISTS])
 
-        return library_track
+        return lib_track
 
     def create_lib_track_with_file(
         self,
@@ -144,13 +144,13 @@ class ModelFixtureFactory:
                     genre: Genre = model_fields[LibraryTrackFields.GENRE]
                     model_fields[LibTrackPostFields.GENRE_UUID] = genre.uuid
                     model_fields.pop(LibraryTrackFields.GENRE)
-                library_track = LibraryTrack.objects.create(**model_fields, creation_type=LibTrackCreationType.POST)
+                lib_track = LibraryTrack.objects.create(**model_fields, creation_type=LibTrackCreationType.POST)
         else:
             with transaction.atomic():
-                library_track = self._create_lib_track(user=user, title=title, **kwargs)
-                self._create_file(user=user, lib_track=library_track, track_file_path_in_lib=track_file_path_in_lib)
+                lib_track = self._create_lib_track(user=user, title=title, **kwargs)
+                self._create_file(user=user, lib_track=lib_track, track_file_path_in_lib=track_file_path_in_lib)
 
-        return library_track
+        return lib_track
 
     def create_play(self, content_object: TrackablePlayCount, **kwargs) -> Play:
         model_fields = {PlayFields.CREATED_ON: timezone.make_aware(datetime.now()),

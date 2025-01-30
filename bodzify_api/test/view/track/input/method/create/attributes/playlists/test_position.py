@@ -21,6 +21,6 @@ class TestCase(LibTrackTestCase):
 
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre)
 
-        assert genre_playlist.lib_track_playlist_rels.get(library_track=self.saved_lib_track).position == 1
-        assert genre_playlist.lib_track_playlist_rels.get(library_track=lib_track1).position == 2
-        assert genre_playlist.lib_track_playlist_rels.get(library_track=lib_track2).position == 3
+        assert genre_playlist.lib_track_playlist_rels.get(lib_track=self.saved_lib_track).position == 1
+        assert genre_playlist.lib_track_playlist_rels.get(lib_track=lib_track1).position == 2
+        assert genre_playlist.lib_track_playlist_rels.get(lib_track=lib_track2).position == 3
