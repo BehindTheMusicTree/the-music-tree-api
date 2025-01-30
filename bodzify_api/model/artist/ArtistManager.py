@@ -42,8 +42,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
         for album in instance.albums.all():
             Album.objects.delete_instance_with_tracks_and_eventually_artists(album)
 
-        lib_tracks: list[LibraryTrack] = list(instance.lib_tracks.all())
-        for lib_track in lib_tracks:
+        for lib_track in instance.lib_tracks.all():
             LibraryTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(lib_track)
 
         return instance.delete()

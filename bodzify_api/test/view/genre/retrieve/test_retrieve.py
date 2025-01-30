@@ -30,7 +30,7 @@ class TestCase(GenreTestCase):
 
         response = self._retrieve_genre(uuid=criteria.uuid)
         assert response.status_code == status.HTTP_200_OK
-        lib_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS)]
+        lib_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC)]
         assert len(lib_tracks) == 2
         titles = [track[RetrieveFields.LIB_TRACKS_TITLE] for track in lib_tracks]
         assert title1 in titles

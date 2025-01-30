@@ -44,11 +44,9 @@ class LibTrackMixin(PrivateUniqueResource):
 
     @property
     def duration_in_sec(self) -> int:
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-        lib_tracks_not_archived: models.QuerySet[LibraryTrack] = self.lib_tracks
         return sum(
             int(lib_track.track_file.duration_in_sec or 0) if lib_track.track_file else 0
-            for lib_track in lib_tracks_not_archived
+            for lib_track in self.lib_tracks_not_archived.all()
         )
 
     @property

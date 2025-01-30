@@ -10,5 +10,5 @@ class LibTrackPlaylistRelWithoutPlaylist(serializers.ModelSerializer):
 
     class Meta:
         model = LibTrackPlaylistRel
-        fields = [Fields.LIB_TRACK,
+        fields = [Fields.LIB_TRACK_PUBLIC,
                   Fields.POSITION,]

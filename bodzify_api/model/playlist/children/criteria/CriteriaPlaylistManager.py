@@ -62,7 +62,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
         if instance.criteria != criteria_limit:
             from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
             for lib_track in lib_tracks:
-                LibTrackPlaylistRel(user=instance.user, playlist=instance, library_track=lib_track).save()
+                LibTrackPlaylistRel(user=instance.user, playlist=instance, lib_track=lib_track).save()
 
             if instance.parent:
                 self.add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(instance=instance.parent,
@@ -76,7 +76,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
         if instance.criteria != criteria_limit:
-            instance.lib_track_playlist_rels.filter(library_track__in=lib_tracks).delete()
+            instance.lib_track_playlist_rels.filter(lib_track__in=lib_tracks).delete()
             LibTrackPlaylistRel.objects.update_positions_to_fill_deleted_ones(instance)
 
             if instance.parent:

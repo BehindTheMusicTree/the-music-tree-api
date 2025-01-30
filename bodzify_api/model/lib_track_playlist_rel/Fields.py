@@ -6,5 +6,6 @@ class Fields:
     UPDATED_ON = PrivateStandardResourceFields.UPDATED_ON
     USER = PrivateStandardResourceFields.USER
     PLAYLIST = 'playlist'
-    LIB_TRACK = 'library_track'
+    LIB_TRACK_INTERNAL = 'lib_track'
+    LIB_TRACK_PUBLIC = 'library_track'
     POSITION = 'position'

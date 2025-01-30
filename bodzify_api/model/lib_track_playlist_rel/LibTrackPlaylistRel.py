@@ -17,9 +17,9 @@ class LibTrackPlaylistRel(PrivateStandardResource):
     playlist = models.ForeignKey(Playlist,
                                  on_delete=models.CASCADE,
                                  related_name=PlaylistFields.LIB_TRACK_PLAYLIST_RELS_INTERNAL)
-    library_track = models.ForeignKey(LibraryTrack,
-                                      on_delete=models.CASCADE,
-                                      related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
+    lib_track = models.ForeignKey(LibraryTrack,
+                                  on_delete=models.CASCADE,
+                                  related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
     position = models.PositiveIntegerField()
 
     objects: LibTrackPlaylistRelManager = LibTrackPlaylistRelManager()
@@ -29,13 +29,12 @@ class LibTrackPlaylistRel(PrivateStandardResource):
         verbose_name_plural = 'Library Track Playlist Relations'
         indexes = [
             models.Index(fields=[Fields.USER, Fields.PLAYLIST]),
-            models.Index(fields=[Fields.USER, Fields.LIB_TRACK]),
+            models.Index(fields=[Fields.USER, Fields.LIB_TRACK_INTERNAL]),
         ]
 
     def __str__(self):
-        playlist_str = f'playlist {self.playlist}' if self.playlist else 'no playlist'
-        return f'user {self.user} | playlist {self.playlist.name} | track title {self.library_track.title} | ' \
-            f'position {self.position}'
+        return f'User {self.user} | Playlist {self.playlist.name} | Track title {self.lib_track.title} | ' \
+            f'Position {self.position}'
 
     def _perform_save(self, adding: bool, ctx) -> None:
         if adding:

@@ -49,7 +49,7 @@ class Album(LibTrackMixin):
         artist_names = " ".join(str(artist) for artist in artists) if artists else "[No Artist]"
         string += f" by {artist_names}"
 
-        tracks: list[LibraryTrack] = list(self.lib_tracks.all())
+        tracks: list[LibraryTrack] = list(self.lib_tracks_not_archived.all())
         if tracks:
             track_details = []
             for track in tracks:
@@ -58,6 +58,6 @@ class Album(LibTrackMixin):
                 track_artists = f"{track_artists} | " if track_artists else "[No Artist] | "
                 track_details.append(f"{track_position}{track_artists}{track.title}")
             track_details_str = "; ".join(track_details)
-            string += f" | Tracks: {track_details_str}"
+            string += f" | Tracks not archived: {track_details_str}"
 
         return string
