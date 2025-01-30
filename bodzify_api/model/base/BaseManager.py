@@ -1,5 +1,5 @@
 
-from typing import TypeVar, Generic, TYPE_CHECKING
+from typing import Any, MutableMapping, TypeVar, Generic, TYPE_CHECKING
 
 from django.db import models
 
@@ -15,6 +15,17 @@ T = TypeVar('T', bound='BaseModel')  # type: ignore
 
 class BaseManager(models.Manager, Generic[T]):
     model: type[T]
+
+    def get_or_create(self, defaults: MutableMapping[str, Any] | None = None, **kwargs: Any) -> tuple[T, bool]:
+        try:
+            instance = self.get_queryset().get(**kwargs)
+            return instance, False
+        except self.model.DoesNotExist:
+            params = {**kwargs}
+            if defaults is not None:
+                params.update(defaults)
+            instance = self.create(**params)
+            return instance, True
 
     def get_default_ordering(self):
         raise NotImplementedError()
