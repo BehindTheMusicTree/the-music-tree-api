@@ -35,16 +35,12 @@ class TestCase(ArtistTestCase):
 
     def test_archived_count(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="In Too Deep", artists=[artist])
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Summer", artists=[artist], archived=True)
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Summer2", artists=[artist], archived=True)
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Summer3", artists=[artist], archived=True)
+        self.model_fixture_factory.create_lib_track_with_file(title="In Too Deep", artists=[artist])
+        self.model_fixture_factory.create_lib_track_with_file(title="Summer", artists=[artist], archived=True)
+        self.model_fixture_factory.create_lib_track_with_file(title="Summer2", artists=[artist], archived=True)
+        self.model_fixture_factory.create_lib_track_with_file(title="Summer3", artists=[artist], archived=True)
 
         response = self._retrieve_artist(artist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(ArtistFields.LIB_TRACKS_ARCHIVED_COUNT)] == 3
+        assert self.result[data_transformer.to_camel_case(ArtistFields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 3
