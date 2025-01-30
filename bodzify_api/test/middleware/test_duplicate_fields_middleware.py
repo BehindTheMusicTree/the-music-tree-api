@@ -7,6 +7,8 @@ from rest_framework.exceptions import ValidationError
 
 from bodzify_api import settings
 from bodzify_api.middleware.DuplicateFieldsMiddleware import DuplicateFieldsMiddleware
+from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields as TrackFields
+from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as CriteriaFields
 
 
 class DuplicateFieldsMiddlewareTest(TestCase):
@@ -14,10 +16,10 @@ class DuplicateFieldsMiddlewareTest(TestCase):
         self.factory = RequestFactory()
         self.middleware = DuplicateFieldsMiddleware(lambda req: HttpResponse())
 
-    def test_duplicate_fields_detection(self):
+    def test_duplicate_fields_detection_on_content_type_json(self):
         request = self.factory.put(
             f'/{settings.API_ROOT_BASE}genres/72271809-6325-4efb-a7ce-3ecfeb16940c/',
-            data='{"name": "a", "name": "b"}',
+            data='{"' + CriteriaFields.NAME_PUBLIC + '": "a", "' + CriteriaFields.NAME_PUBLIC + '": "b"}',
             content_type='application/json'
         )
 
@@ -30,11 +32,29 @@ class DuplicateFieldsMiddlewareTest(TestCase):
         duplicate_fields = error_detail.get('duplicate_fields', {})
         self.assertIsInstance(duplicate_fields, dict)
         self.assertEqual(duplicate_fields.get('code'), 'duplicate_fields')
-        self.assertIn('name', duplicate_fields.get('fields', []))
+        self.assertIn(CriteriaFields.NAME_PUBLIC, duplicate_fields.get('fields', []))
+
+    def test_duplicate_fields_detection_on_content_type_multipart(self):
+        request = self.factory.put(
+            f'/{settings.API_ROOT_BASE}tracks/72271809-6325-4efb-a7ce-3ecfeb16940c/',
+            data='{"' + TrackFields.TITLE + '": "a", "' + TrackFields.TITLE + '": "b"}',
+            content_type='multipart/form-data'
+        )
+
+        with self.assertRaises(ValidationError) as context:
+            self.middleware(request)
+
+        error_detail = cast(Dict[str, Any], context.exception.detail)
+        self.assertIn('duplicate_fields', error_detail)
+
+        duplicate_fields = error_detail.get('duplicate_fields', {})
+        self.assertIsInstance(duplicate_fields, dict)
+        self.assertEqual(duplicate_fields.get('code'), 'duplicate_fields')
+        self.assertIn(TrackFields.TITLE, duplicate_fields.get('fields', []))
 
     def test_valid_json_passes(self):
         # Create a request with valid JSON (no duplicates)
-        json_data = '{"name": "test", "description": "test description"}'
+        json_data = '{' + CriteriaFields.NAME_PUBLIC + ': "test", "description": "test description"}'
         request = self.factory.put(
             '/api/v0.1.1/genres/72271809-6325-4efb-a7ce-3ecfeb16940c/',
             data=json_data,
