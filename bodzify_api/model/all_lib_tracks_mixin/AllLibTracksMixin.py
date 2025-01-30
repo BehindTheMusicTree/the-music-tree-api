@@ -29,9 +29,5 @@ class AllLibTracksMixin(LibTrackMixin):
         return LibraryTrack.objects.filter(user=self.user)
 
     @property
-    def lib_tracks_not_archived_sorted(self) -> models.QuerySet[LibraryTrack]:
-        return self.lib_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
-
-    @property
     def type(self):
         return "All Tracks"

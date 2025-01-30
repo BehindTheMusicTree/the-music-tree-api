@@ -15,6 +15,6 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.test_user1.all_lib_tracks_mixin.lib_tracks.count() == 1
-        lib_track = cast(Optional[LibraryTrack], self.test_user1.all_lib_tracks_mixin.lib_tracks.first())
+        lib_track = cast(Optional[LibraryTrack], self.test_user1.all_lib_tracks_mixin.lib_tracks_not_archived.first())
         assert lib_track
         assert lib_track.title == title

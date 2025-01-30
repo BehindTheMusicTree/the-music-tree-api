@@ -14,9 +14,6 @@ if TYPE_CHECKING:
 class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
     model: type['Album']
 
-    def get_default_ordering(self) -> list[str]:
-        return [Fields.NAME_INTERNAL]
-
     def _get_instance_from_name_and_artists_list_after_having_eventually_created_instance(
             self, user: 'User', name: str, album_artists: list) -> Optional['Album']:
         album_queryset = self.filter(user=user, name=name)
@@ -30,6 +27,9 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
                                                             name=name,
                                                             album_artists_list=album_artists) \
             if album_queryset.count() == 0 else album_queryset.first()
+
+    def get_default_ordering(self) -> list[str]:
+        return [Fields.NAME_INTERNAL]
 
     def create_instance_with_album_artists_list(
             self, user: 'User', name: str, album_artists_list: list['Artist']) -> 'Album':
