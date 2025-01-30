@@ -30,12 +30,12 @@ class LibTrackMixin(PrivateUniqueResource):
         return self.lib_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
 
     @property
-    def lib_tracks_not_archived(self) -> models.QuerySet['LibraryTrack']:  # type: ignore
+    def lib_tracks_not_archived(self) -> models.QuerySet['LibraryTrack']:
         return self.lib_tracks.filter(archived=False)
 
     @property
     def lib_tracks_not_archived_count(self) -> int:
-        return self.lib_tracks.filter(archived=False).count()
+        return self.lib_tracks_not_archived.count()
 
     @property
     def lib_tracks_archived_count(self) -> int:
