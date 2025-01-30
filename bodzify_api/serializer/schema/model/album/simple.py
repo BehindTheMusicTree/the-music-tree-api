@@ -1,5 +1,4 @@
 
-from dbm.ndbm import library
 from rest_framework import serializers
 
 from bodzify_api.model.album.Album import Album

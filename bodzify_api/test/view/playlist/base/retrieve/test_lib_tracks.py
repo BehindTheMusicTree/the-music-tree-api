@@ -28,7 +28,7 @@ class TestCase(PlaylistTestCase):
             PlaylistOutputFields.LIB_TRACK_PLAYLIST_RELS_PUBLIC)]
         result_tracks_sorted = sorted(
             result_tracks_raw, key=lambda x: x[data_transformer.to_camel_case(LibTrackPlaylistRelFields.POSITION)])
-        lib_track_field_name = data_transformer.to_camel_case(LibTrackPlaylistRelFields.LIB_TRACK)
+        lib_track_field_name = data_transformer.to_camel_case(LibTrackPlaylistRelFields.LIB_TRACK_PUBLIC)
         assert result_tracks_sorted[0][lib_track_field_name][LibTrackOutputFields.TITLE] == lib_track1.title
         assert result_tracks_sorted[1][lib_track_field_name][LibTrackOutputFields.TITLE] == lib_track2.title
         assert result_tracks_sorted[2][lib_track_field_name][LibTrackOutputFields.TITLE] == lib_track3.title

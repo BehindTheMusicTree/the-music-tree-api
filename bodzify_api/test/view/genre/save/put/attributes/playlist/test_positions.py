@@ -75,7 +75,7 @@ class TestCase(GenreTestCase):
         lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
             list(LibTrackPlaylistRel.objects.filter(user=self.test_user1, playlist=genre_guitare.criteria_playlist))
         tracks_uuids_positions = {
-            relation.library_track.uuid: relation.position for relation in lib_track_playlist_rels}
+            relation.lib_track.uuid: relation.position for relation in lib_track_playlist_rels}
         assert tracks_uuids_positions[lib_track_previously_first_in_punk.uuid] == 1
         assert tracks_uuids_positions[lib_track_previously_second_in_punk.uuid] == 2
         assert tracks_uuids_positions[lib_track_previously_first_in_rock.uuid] == 3
@@ -105,7 +105,7 @@ class TestCase(GenreTestCase):
         lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
             list(LibTrackPlaylistRel.objects.filter(user=self.test_user1, playlist=genre_rock.criteria_playlist))
         assert len(lib_track_playlist_rels) == 2
-        tracks_positions = {relation.library_track.uuid: relation.position for relation in lib_track_playlist_rels}
+        tracks_positions = {relation.lib_track.uuid: relation.position for relation in lib_track_playlist_rels}
         assert tracks_positions[track_second_in_rock.uuid] == 1
         assert tracks_positions[track_fourth_in_rock.uuid] == 2
 

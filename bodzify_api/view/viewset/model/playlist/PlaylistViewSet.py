@@ -1,12 +1,6 @@
-from django.core.exceptions import ImproperlyConfigured
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema  # type: ignore
-from rest_framework.request import Request
 
-from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.playlist.Fields import Fields
-from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
-from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.serializer.schema.model.playlist.base.output.detailed import PlaylistDetailedSerializer
 from bodzify_api.serializer.schema.model.playlist.base.output.simple import PlaylistSimpleSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet

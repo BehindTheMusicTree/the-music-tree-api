@@ -28,7 +28,6 @@ from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecord
     import Fields as MusicbrainzRecordingFields
 from bodzify_api.model.play.Play import Play
 from bodzify_api.model.play.Fields import Fields as PlayFields
-from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlaylistFields

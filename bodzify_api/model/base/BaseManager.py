@@ -1,5 +1,5 @@
 
-from typing import TypeVar, Generic, TYPE_CHECKING, Any
+from typing import TypeVar, Generic, TYPE_CHECKING
 
 from django.db import models
 
