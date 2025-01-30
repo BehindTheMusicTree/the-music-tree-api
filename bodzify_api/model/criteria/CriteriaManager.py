@@ -53,8 +53,8 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                 CriteriaPlaylist.objects.update_instance_and_children_root(instance=updated_instance.criteria_playlist,
                                                                            root=updated_instance.root.criteria_playlist)
 
-        if old_name != updated_instance.name and updated_instance.library_tracks:
-            for lib_track in updated_instance.library_tracks.all():
+        if old_name != updated_instance.name and updated_instance.lib_tracks:
+            for lib_track in updated_instance.lib_tracks.all():
                 lib_track.update_file_tags_from_lib_track_instance_values()
 
         return updated_instance

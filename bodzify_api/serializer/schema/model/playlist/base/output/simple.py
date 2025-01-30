@@ -7,21 +7,24 @@ from bodzify_api.serializer.schema.model.playlist.base.output.Fields import Fiel
 
 class Fields:
     UUID = AvailableFields.UUID
-    LIB_TRACKS_COUNT = AvailableFields.LIB_TRACKS_COUNT
+    LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
+    LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = AvailableFields.NAME
+    TYPE_LABEL_INTERNAL = AvailableFields.TYPE_LABEL_INTERNAL
     TYPE_LABEL_PUBLIC = AvailableFields.TYPE_LABEL_PUBLIC
     CREATED_ON = AvailableFields.CREATED_ON
 
 
 class PlaylistSimpleSerializer(serializers.ModelSerializer):
-    type = serializers.CharField(source=ModelFields.TYPE_LABEL_INTERNAL)
+    type = serializers.CharField(source=Fields.TYPE_LABEL_INTERNAL)
+    library_tracks_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
 
     class Meta:
         model = Playlist
         fields = [Fields.UUID,
                   Fields.NAME,
                   Fields.TYPE_LABEL_PUBLIC,
-                  Fields.LIB_TRACKS_COUNT,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.CREATED_ON]

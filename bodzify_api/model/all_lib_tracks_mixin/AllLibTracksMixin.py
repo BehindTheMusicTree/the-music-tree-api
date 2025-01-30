@@ -25,12 +25,12 @@ class AllLibTracksMixin(LibTrackMixin):
         return 'All Tracks'
 
     @property
-    def library_tracks(self) -> models.QuerySet[LibraryTrack]:
+    def lib_tracks(self) -> models.QuerySet[LibraryTrack]:
         return LibraryTrack.objects.filter(user=self.user)
 
     @property
-    def lib_tracks_sorted(self) -> models.QuerySet[LibraryTrack]:
-        return self.library_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
+    def lib_tracks_not_archived_sorted(self) -> models.QuerySet[LibraryTrack]:
+        return self.lib_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
 
     @property
     def type(self):

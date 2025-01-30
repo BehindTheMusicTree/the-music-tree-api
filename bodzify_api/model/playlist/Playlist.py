@@ -35,7 +35,7 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
         return f'{self.uuid} | {self.name}'
 
     @property
-    def library_tracks(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     @property

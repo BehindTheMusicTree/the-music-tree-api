@@ -28,12 +28,12 @@ class Album(LibTrackMixin):
         return self._name
 
     @property
-    def library_tracks(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     @property
-    def lib_tracks_sorted(self) -> models.QuerySet['LibraryTrack']:
-        return self.library_tracks.annotate(
+    def lib_tracks_not_archived_sorted(self) -> models.QuerySet['LibraryTrack']:
+        return self.library_tracks_not_archived.annotate(
             null_position=Q(position_in_album__isnull=True)).order_by(
             'null_position', LibraryTrackFields.POSITION_IN_ALBUM, LibraryTrackFields.TITLE)
 
@@ -49,7 +49,7 @@ class Album(LibTrackMixin):
         artist_names = " ".join(str(artist) for artist in artists) if artists else "[No Artist]"
         string += f" by {artist_names}"
 
-        tracks: list[LibraryTrack] = list(self.library_tracks.all())
+        tracks: list[LibraryTrack] = list(self.lib_tracks.all())
         if tracks:
             track_details = []
             for track in tracks:

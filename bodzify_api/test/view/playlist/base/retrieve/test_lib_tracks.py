@@ -24,7 +24,8 @@ class TestCase(PlaylistTestCase):
         response = self._retrieve_playlist(uuid=genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        result_tracks_raw = self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACK_PLAYLIST_RELS)]
+        result_tracks_raw = self.result[data_transformer.to_camel_case(
+            PlaylistOutputFields.LIB_TRACK_PLAYLIST_RELS_PUBLIC)]
         result_tracks_sorted = sorted(
             result_tracks_raw, key=lambda x: x[data_transformer.to_camel_case(LibTrackPlaylistRelFields.POSITION)])
         lib_track_field_name = data_transformer.to_camel_case(LibTrackPlaylistRelFields.LIB_TRACK)

@@ -8,7 +8,10 @@ from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_
 
 
 class AlbumDetailedSerializer(serializers.ModelSerializer):
-    library_tracks = serializers.SerializerMethodField()
+    library_tracks_sorted = LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(
+        source=Fields.LIB_TRACKS_NOT_ARCHIVED_SORTED_INTERNAL, many=True)
+    library_tracks_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    library_tracks_archived_count = serializers.IntegerField(source=Fields.LIB_TRACKS_ARCHIVED_COUNT_INTERNAL)
     album_artists = ArtistMinimumSerializer(many=True)
 
     class Meta:
@@ -17,14 +20,10 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
                   Fields.NAME,
                   Fields.YEAR,
                   Fields.ALBUM_ARTISTS,
-                  Fields.LIB_TRACKS,
-                  Fields.LIB_TRACKS_COUNT,
-                  Fields.LIB_TRACKS_ARCHIVED_COUNT,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_SORTED_PUBLIC,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]
-
-    def get_library_tracks(self, instance: Album):
-        sorted_tracks = instance.lib_tracks_sorted
-        return LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(sorted_tracks, many=True).data

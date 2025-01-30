@@ -19,4 +19,4 @@ class TestCase(LibTrackTestCase):
                 self._put_lib_track(uuid=track.uuid, **{Fields.GENRE_NAME: new_genre_name})
             except Exception as e:
                 assert str(e) == exception_message
-                assert track in original_genre.library_tracks.all()
+                assert track in original_genre.lib_tracks.all()

@@ -22,24 +22,24 @@ class LibTrackMixin(PrivateUniqueResource):
 
     @property
     @abstractmethod
-    def library_tracks(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
         pass
 
     @property
-    def lib_tracks_sorted(self) -> models.QuerySet['LibraryTrack']:
-        return self.library_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
+    def lib_tracks_not_archived_sorted(self) -> models.QuerySet['LibraryTrack']:
+        return self.lib_tracks.order_by(f'-{LibraryTrackFields.CREATED_ON}')
 
     @property
     def library_tracks_not_archived(self) -> models.QuerySet['LibraryTrack']:  # type: ignore
-        return self.library_tracks.filter(archived=False)
+        return self.lib_tracks.filter(archived=False)
 
     @property
     def library_tracks_count(self) -> int:
-        return self.library_tracks.filter(archived=False).count()
+        return self.lib_tracks.filter(archived=False).count()
 
     @property
     def library_tracks_archived_count(self) -> int:
-        return self.library_tracks.filter(archived=True).count()
+        return self.lib_tracks.filter(archived=True).count()
 
     @property
     def duration_in_sec(self) -> int:

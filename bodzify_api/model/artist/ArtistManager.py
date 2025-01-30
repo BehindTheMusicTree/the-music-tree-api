@@ -42,7 +42,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
         for album in instance.albums.all():
             Album.objects.delete_instance_with_tracks_and_eventually_artists(album)
 
-        lib_tracks: list[LibraryTrack] = list(instance.library_tracks.all())
+        lib_tracks: list[LibraryTrack] = list(instance.lib_tracks.all())
         for lib_track in lib_tracks:
             LibraryTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(lib_track)
 
@@ -50,6 +50,6 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
 
     def delete_instance_if_nothing_linked(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
         if instance.albums.count() == 0:
-            if instance.library_tracks.count() == 0:
+            if instance.lib_tracks.count() == 0:
                 return instance.delete()
         return 0, {}

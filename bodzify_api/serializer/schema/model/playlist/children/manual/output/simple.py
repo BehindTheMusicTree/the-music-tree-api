@@ -7,7 +7,7 @@ from .Fields import Fields as AvailableFields
 class Fields:
     UUID = AvailableFields.UUID
     NAME = AvailableFields.NAME
-    LIB_TRACKS_COUNT = AvailableFields.LIB_TRACKS_COUNT
+    LIB_TRACKS_COUNT = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
     CREATED_ON = AvailableFields.CREATED_ON
 
 

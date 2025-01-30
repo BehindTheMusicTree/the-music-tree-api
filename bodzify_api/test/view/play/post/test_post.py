@@ -52,8 +52,8 @@ class TestCase(PlayTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         playlist: Playlist = self.saved_play.content_object  # type: ignore
-        assert playlist.library_tracks.count() == 1
-        playlist_lib_track: Optional[LibraryTrack] = playlist.library_tracks.first()
+        assert playlist.lib_tracks.count() == 1
+        playlist_lib_track: Optional[LibraryTrack] = playlist.lib_tracks.first()
         assert playlist_lib_track
         assert playlist_lib_track.uuid == lib_track.uuid
 

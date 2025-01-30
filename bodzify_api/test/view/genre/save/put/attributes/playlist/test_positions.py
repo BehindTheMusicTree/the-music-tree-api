@@ -47,7 +47,7 @@ class TestCase(GenreTestCase):
         lib_track_previously_first_in_guitare = self.model_fixture_factory.create_lib_track_with_file(
             title="guitare1", genre=genre_guitare, use_manager_for_genre_playlist_adding=True)
 
-        assert genre_guitare.criteria_playlist.library_tracks.count() == 2
+        assert genre_guitare.criteria_playlist.lib_tracks.count() == 2
         assert genre_guitare.criteria_playlist.lib_track_playlist_rels.get(
             library_track=lib_track_previously_first_in_guitare).position == 1
         assert genre_guitare.criteria_playlist.lib_track_playlist_rels.get(

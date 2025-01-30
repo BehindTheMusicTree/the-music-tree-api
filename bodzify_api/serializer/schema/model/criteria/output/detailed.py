@@ -15,7 +15,10 @@ from .minimum import CriteriaMinimumSerializer
 
 
 class CriteriaDetailedSerializer(serializers.ModelSerializer):
-    library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(many=True)
+    library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(
+        source=Fields.LIB_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
+    library_tracks_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    library_tracks_archived_count = serializers.IntegerField(source=Fields.LIB_TRACKS_ARCHIVED_COUNT_INTERNAL)
     parent = CriteriaMinimumSerializer()
     ascendants = CriteriaLineageRelWithoutDescendantSerializer(source=ModelFields.ASCENDANTS_RELS, many=True)
     descendants = CriteriaLineageRelWithoutAscendantSerializer(source=ModelFields.DESCENDANTS_RELS, many=True)
@@ -34,8 +37,8 @@ class CriteriaDetailedSerializer(serializers.ModelSerializer):
                   Fields.ROOT,
                   Fields.CHILDREN,
                   Fields.CRITERIA_PLAYLIST,
-                  Fields.LIB_TRACKS,
-                  Fields.LIB_TRACKS_COUNT,
-                  Fields.LIB_TRACKS_ARCHIVED_COUNT,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON,]

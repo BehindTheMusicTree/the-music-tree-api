@@ -24,10 +24,10 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
         criteria_playlist1: CriteriaPlaylist = genre1.criteria_playlist
-        assert track not in criteria_playlist1.library_tracks.all()
+        assert track not in criteria_playlist1.lib_tracks.all()
 
         criteria_playlist2: CriteriaPlaylist = genre2.criteria_playlist
-        assert track not in criteria_playlist2.library_tracks.all()
+        assert track not in criteria_playlist2.lib_tracks.all()
 
         criteria_playlist3: CriteriaPlaylist = genre3.criteria_playlist
-        assert track not in criteria_playlist3.library_tracks.all()
+        assert track not in criteria_playlist3.lib_tracks.all()

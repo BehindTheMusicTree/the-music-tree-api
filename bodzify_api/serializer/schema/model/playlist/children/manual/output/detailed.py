@@ -15,8 +15,8 @@ class ManualPlaylistDetailedSerializer(serializers.ModelSerializer):
         model = ManualPlaylist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.LIB_TRACKS_COUNT,
-                  Fields.LIB_TRACKS,
-                  Fields.LIB_TRACKS_ARCHIVED_COUNT,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_INTERNAL,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON,]

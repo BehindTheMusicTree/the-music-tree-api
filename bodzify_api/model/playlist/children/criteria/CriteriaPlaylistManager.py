@@ -45,12 +45,12 @@ class CriteriaPlaylistManager(StandardResourceManager):
                                      common_criteria: Optional['Criteria']):
         if instance.parent:
             self.add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(
-                instance=instance.parent, lib_tracks=instance.library_tracks.all(), criteria_limit=common_criteria)
+                instance=instance.parent, lib_tracks=instance.lib_tracks.all(), criteria_limit=common_criteria)
 
         if old_parent:
             self.remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
                 instance=old_parent.criteria_playlist,
-                lib_tracks=instance.library_tracks.all(),
+                lib_tracks=instance.lib_tracks.all(),
                 criteria_limit=common_criteria)
 
     def add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(self,

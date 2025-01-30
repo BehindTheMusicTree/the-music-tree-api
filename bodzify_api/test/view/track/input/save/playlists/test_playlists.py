@@ -34,7 +34,7 @@ class TestCase(LibTrackTestCase):
         assert len(track_playlists) == 2
 
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre)
-        assert lib_track in genre_playlist.library_tracks.all()
+        assert lib_track in genre_playlist.lib_tracks.all()
 
     def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
         genre_rock_name = "Rock"

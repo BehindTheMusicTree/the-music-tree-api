@@ -16,7 +16,7 @@ User = get_user_model()
 class LibTrackPlaylistRel(PrivateStandardResource):
     playlist = models.ForeignKey(Playlist,
                                  on_delete=models.CASCADE,
-                                 related_name=PlaylistFields.LIB_TRACK_PLAYLIST_RELS)
+                                 related_name=PlaylistFields.LIB_TRACK_PLAYLIST_RELS_INTERNAL)
     library_track = models.ForeignKey(LibraryTrack,
                                       on_delete=models.CASCADE,
                                       related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
