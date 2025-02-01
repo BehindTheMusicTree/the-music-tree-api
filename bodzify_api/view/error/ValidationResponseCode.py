@@ -54,3 +54,6 @@ class ValidationResponseCode(Enum):
     FIELD_NAME_DUPLICATE = 'name_duplicate'
     FIELD_DB_INTEGRITY_ERROR = 'db_integrity_error'
     FIELD_PLAYLIST_NAME_DUPLICATE = 'playlist_name_duplicate'
+    FIELD_MUTUALLY_EXCLUSIVE = 'mutually_exclusive'
+    FIELD_DEPENDENCY_MISSING = 'dependency_missing'
+    FIELD_RESOURCE_NOT_OWNED = 'resource_not_owned'

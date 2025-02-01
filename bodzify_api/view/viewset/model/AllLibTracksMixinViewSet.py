@@ -1,8 +1,7 @@
 from typing import Optional
 from drf_spectacular.utils import extend_schema
-from rest_framework.exceptions import ValidationError as DrfValidationError, NotFound
+from rest_framework.exceptions import ValidationError as DrfValidationError, APIException
 from django.core.exceptions import ValidationError as DjangoValidationError
-
 from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.SerializerType import SerializerType
@@ -28,8 +27,7 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
         try:
             allLibTracksMixin: Optional[AllLibTracksMixin] = self.get_queryset().first()
             if not allLibTracksMixin:
-                raise NotFound('All tracks collection not found for this user')
-
+                raise APIException('System initialization error: User data is corrupted')
             page = self.paginate_queryset(allLibTracksMixin.lib_tracks_not_archived_sorted)
 
             if page is not None:

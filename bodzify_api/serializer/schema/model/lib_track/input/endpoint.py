@@ -2,6 +2,8 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
+from bodzify_api.utils.validation_error_utils import raise_validation_error, raise_duplicate_fields_error
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 from .Fields import Fields
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
@@ -42,8 +44,10 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
     def validate(self, data):
         if Fields.GENRE_UUID in data and Fields.GENRE_NAME in data:
             if data[Fields.GENRE_UUID] not in ['', None] and data[Fields.GENRE_NAME] not in ['', None]:
-                raise serializers.ValidationError(
-                    {Fields.GENRE_NAME: "Genre name and genre uuid cannot be specified at the same time."}
+                raise_validation_error(
+                    message='Genre name and genre uuid cannot be specified at the same time',
+                    code=ValidationResponseCode.FIELD_MUTUALLY_EXCLUSIVE.value,
+                    field=Fields.GENRE_NAME
                 )
 
         if Fields.ALBUM_ARTISTS_NAMES in data:
@@ -54,7 +58,11 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                 error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
-                raise serializers.ValidationError({Fields.ALBUM_ARTISTS_NAMES: error_message})
+                raise_validation_error(
+                    message=error_message,
+                    code=ValidationResponseCode.FIELD_DEPENDENCY_MISSING.value,
+                    field=Fields.ALBUM_ARTISTS_NAMES
+                )
 
         if Fields.POSITION_IN_ALBUM in data:
             error_message = None
@@ -64,7 +72,11 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                 error_message = position_in_album_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
-                raise serializers.ValidationError({Fields.ALBUM_NAME: error_message})
+                raise_validation_error(
+                    message=error_message,
+                    code=ValidationResponseCode.FIELD_DEPENDENCY_MISSING.value,
+                    field=Fields.ALBUM_NAME
+                )
 
         if Fields.RATING in data:
             value = data[Fields.RATING]
@@ -72,6 +84,10 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                 try:
                     value = int(value)
                 except ValueError:
-                    raise serializers.ValidationError({Fields.RATING: "Rating must be an integer."})
+                    raise_validation_error(
+                        message='Rating must be an integer',
+                        code=ValidationResponseCode.FIELD_INVALID_FORMAT.value,
+                        field=Fields.RATING
+                    )
 
         return super().validate(data)

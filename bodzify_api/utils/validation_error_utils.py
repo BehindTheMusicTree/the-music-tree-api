@@ -3,33 +3,61 @@ from typing import List, Dict, Any, Union
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
 
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+
 
 def raise_duplicate_fields_error(fields: List[str]) -> None:
-    """Raise a validation error for duplicate fields."""
-    raise ValidationError({
-        'duplicate_fields': {
-            'code': 'duplicate_fields',
-            'message': f'Duplicate fields found: {", ".join(fields)}',
-            'fields': fields
-        }
-    })
+    raise_validation_error(
+        message=f'Duplicate fields found: {", ".join(fields)}',
+        code=ValidationResponseCode.FIELD_NAME_DUPLICATE.value,
+        field='duplicate_fields'
+    )
 
 
-def raise_integrity_error(exc: IntegrityError, error_code: str) -> None:
-    """Raise a ValidationError from an IntegrityError."""
-    raise ValidationError({
-        'integrity_error': {
-            'message': str(exc),
-            'code': error_code.lower()
-        }
-    })
+def raise_integrity_error(exc: IntegrityError, error_code: Union[str, ValidationResponseCode, None] = None) -> None:
+    """
+    Raise a validation error for a database integrity error that is caused by user input.
+    Only use this for integrity errors that represent validation failures (like unique constraints
+    or non-empty checks). Other integrity errors should be allowed to propagate as system errors.
+
+    Example from Criteria model:
+        try:
+            model.save()
+        except IntegrityError as e:
+            if 'non_empty_name' in str(e):
+                raise_validation_error(
+                    message='Name cannot be empty',
+                    code=ValidationResponseCode.FIELD_NAME_EMPTY.value,
+                    field='name'
+                )
+            elif 'unique_name_per_user' in str(e):
+                raise_validation_error(
+                    message='A criteria with this name already exists',
+                    code=ValidationResponseCode.FIELD_NAME_DUPLICATE.value,
+                    field='name'
+                )
+            # Let other database integrity errors propagate to be handled as system errors
+            raise e
+
+    Args:
+        exc: The integrity error from the database
+        error_code: The specific validation code for known constraint violations.
+                   Use FIELD_NAME_DUPLICATE for unique constraints,
+                   FIELD_NAME_EMPTY for non-empty constraints, etc.
+                   Defaults to FIELD_DB_INTEGRITY_ERROR for general integrity errors.
+    """
+    raise_validation_error(
+        message=str(exc),
+        code=error_code if error_code is not None else ValidationResponseCode.FIELD_DB_INTEGRITY_ERROR.value,
+        field='integrity_error'
+    )
 
 
-def raise_validation_error(message: str, code: str, field: Union[str, None] = None) -> None:
-    """Raise a ValidationError with the given message and code."""
+def raise_validation_error(
+        message: str, code: Union[str, ValidationResponseCode], field: Union[str, None] = None) -> None:
     error_detail: Dict[str, Any] = {
         'message': message,
-        'code': code
+        'code': code.value if isinstance(code, ValidationResponseCode) else code
     }
 
     if field is not None:
@@ -39,14 +67,11 @@ def raise_validation_error(message: str, code: str, field: Union[str, None] = No
 
 
 def raise_unknown_fields_error(fields: List[str]) -> None:
-    """Raise a validation error for unknown fields."""
-    raise ValidationError({
-        'unknown_fields': {
-            'code': 'unknown_fields',
-            'message': f'Unknown fields found: {", ".join(fields)}',
-            'fields': fields
-        }
-    })
+    raise_validation_error(
+        message=f'Unknown fields found: {", ".join(fields)}',
+        code=ValidationResponseCode.FIELD_INVALID_CHOICE.value,
+        field='unknown_fields'
+    )
 
 
 def raise_multiple_validation_errors(errors: Dict[str, List[Dict[str, Any]]]) -> None:
@@ -105,7 +130,7 @@ def raise_multiple_validation_errors(errors: Dict[str, List[Dict[str, Any]]]) ->
         field: [
             {
                 'message': error.get('message', 'Validation error occurred'),
-                'code': error.get('code', 'invalid'),
+                'code': error.get('code', ValidationResponseCode.FIELD_INVALID_FORMAT.value),
                 **{k: v for k, v in error.items() if k not in ['message', 'code']}
             }
             for error in field_errors
@@ -116,7 +141,7 @@ def raise_multiple_validation_errors(errors: Dict[str, List[Dict[str, Any]]]) ->
     raise ValidationError({'errors': formatted_errors})
 
 
-def handle_drf_validation_error(exc: ValidationError, error_code: str) -> None:
+def handle_drf_validation_error(exc: ValidationError, error_code: Union[str, ValidationResponseCode]) -> None:
     """Handle a DRF ValidationError and re-raise it in our standard format."""
     if isinstance(exc.detail, dict):
         # Get the first error from the dictionary
@@ -126,11 +151,17 @@ def handle_drf_validation_error(exc: ValidationError, error_code: str) -> None:
             first_error = first_error[0]
         raise_validation_error(
             message=str(first_error),
-            code=error_code.lower(),
+            code=error_code.value if isinstance(error_code, ValidationResponseCode) else error_code.lower(),
             field=str(first_field)
         )
     elif isinstance(exc.detail, (list, tuple)):
         first_error = exc.detail[0]
-        raise_validation_error(message=str(first_error), code=error_code.lower())
+        raise_validation_error(
+            message=str(first_error),
+            code=error_code.value if isinstance(error_code, ValidationResponseCode) else error_code.lower()
+        )
     else:
-        raise_validation_error(message=str(exc.detail), code=error_code.lower())
+        raise_validation_error(
+            message=str(exc.detail),
+            code=error_code.value if isinstance(error_code, ValidationResponseCode) else error_code.lower()
+        )
