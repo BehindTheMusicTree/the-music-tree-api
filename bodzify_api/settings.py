@@ -364,6 +364,9 @@ def setup_app_constants():
     LIB_TRACK_FILE_SIZE_MIN_IN_MO = 0
     global LIB_TRACK_FILE_SIZE_MAX_IN_MO
     LIB_TRACK_FILE_SIZE_MAX_IN_MO = 300
+    # Set Django's upload size limit to match our max file size
+    global DATA_UPLOAD_MAX_MEMORY_SIZE
+    DATA_UPLOAD_MAX_MEMORY_SIZE = LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1024 * 1024  # Convert MB to bytes
     global LIB_TRACK_FILE_EXTENSIONS
     LIB_TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
     global LIB_TRACK_FILE_CONTENT_TYPES
