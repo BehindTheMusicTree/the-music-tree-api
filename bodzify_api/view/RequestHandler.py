@@ -23,5 +23,10 @@ class RequestHandler:
         try:
             self.validate_request_data(request_data, serializer_class, request)
             return operation()
-        except (IntegrityError, DrfValidationError) as exception:
+        except DrfValidationError as exception:
             return ErrorResponse.from_validation_error(exception)
+        except IntegrityError as exception:
+            # Let system-level integrity errors propagate
+            # Validation-related integrity errors should be caught and handled at the model level
+            # (see Criteria.save() for an example)
+            return ErrorResponse.from_unhandled_integrity_error(exception)

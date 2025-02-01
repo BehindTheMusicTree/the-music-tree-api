@@ -17,8 +17,19 @@ def raise_duplicate_fields_error(fields: List[str]) -> None:
 def raise_integrity_error(exc: IntegrityError, error_code: Union[str, ValidationResponseCode, None] = None) -> None:
     """
     Raise a validation error for a database integrity error that is caused by user input.
-    Only use this for integrity errors that represent validation failures (like unique constraints
-    or non-empty checks). Other integrity errors should be allowed to propagate as system errors.
+    This should ONLY be used at the model level for known constraint violations that represent
+    validation failures (like unique constraints or non-empty checks).
+
+    Error Handling Pattern:
+    1. Model Level (e.g., in model.save()):
+       - Catch specific integrity errors that represent validation failures
+       - Use raise_validation_error with specific codes (FIELD_NAME_DUPLICATE, FIELD_NAME_EMPTY)
+       - Let unknown integrity errors propagate up
+
+    2. View Level (RequestHandler, AppModelViewSet):
+       - Handle validation errors (DrfValidationError, DjangoValidationError)
+       - Treat unhandled integrity errors as system errors
+       - Use ErrorResponse.from_unhandled_integrity_error for system-level integrity errors
 
     Example from Criteria model:
         try:
