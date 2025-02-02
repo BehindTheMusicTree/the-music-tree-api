@@ -2,7 +2,8 @@ import json
 import re
 from typing import Dict, Any, List, Union, Mapping
 from rest_framework import serializers
-from bodzify_api.utils.validation_error_utils import raise_duplicate_fields_error, raise_unknown_fields_error
+from bodzify_api.utils.validation_error_utils \
+    import raise_duplicate_fields_error, raise_unknown_fields_error, raise_unknown_field_error
 
 
 class AppValidationSerializer(serializers.Serializer):
@@ -46,13 +47,14 @@ class AppValidationSerializer(serializers.Serializer):
             return duplicates
         except (UnicodeDecodeError, AttributeError, json.JSONDecodeError):
             return []
-    """Base serializer that provides field validation functionality."""
 
     def _validate_fields(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
         # Check for unknown fields
         if hasattr(self, 'initial_data') and hasattr(self, 'fields'):
             unknown_keys = self._check_unknown_fields(self.initial_data, self.fields)
-            if unknown_keys:
+            if len(unknown_keys) == 1:
+                raise_unknown_field_error(unknown_keys[0])
+            elif len(unknown_keys) > 1:
                 raise_unknown_fields_error(unknown_keys)
 
         # Check for duplicate fields

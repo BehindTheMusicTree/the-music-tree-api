@@ -14,8 +14,10 @@ class ValidationResponseCode(Enum):
     FIELD_REQUIRED = 2103
     FIELD_INVALID_FORMAT = 2104
     FIELD_INVALID_CHOICE = 2105
-    FIELD_SELF_REFERENCE = 2106
-    FIELD_ANCESTOR_REFERENCE = 2107
+    FIELD_UNKNOWN = 2106          # Single unknown field
+    FIELD_UNKNOWN_MULTIPLE = 2107  # Multiple unknown fields found
+    FIELD_SELF_REFERENCE = 2108
+    FIELD_ANCESTOR_REFERENCE = 2109
     FIELD_FILE_TOO_LARGE = 2108
     FIELD_FILE_TOO_SMALL = 2109
     FIELD_INVALID_FILE_TYPE = 2110
@@ -37,6 +39,8 @@ class ValidationResponseCode(Enum):
     FIELD_REQUIRED = 'required'
     FIELD_INVALID_FORMAT = 'invalid_format'
     FIELD_INVALID_CHOICE = 'invalid_choice'
+    FIELD_UNKNOWN = 'unknown_field'
+    FIELD_UNKNOWN_MULTIPLE = 'unknown_fields'
     FIELD_SELF_REFERENCE = 'self_reference'
     FIELD_ANCESTOR_REFERENCE = 'ancestor_reference'
     FIELD_FILE_TOO_LARGE = 'file_too_large'

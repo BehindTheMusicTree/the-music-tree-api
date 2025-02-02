@@ -102,12 +102,38 @@ def raise_integrity_error(exc: IntegrityError, error_code: Union[str, Validation
     )
 
 
-def raise_unknown_fields_error(fields: List[str]) -> None:
+def raise_unknown_field_error(field: str) -> None:
+    """
+    Raise a validation error for a single unknown field.
+
+    Args:
+        field: The name of the field that was not recognized in the request
+    """
     raise_validation_error(
-        message=f'Unknown fields found: {", ".join(fields)}',
-        code=ValidationResponseCode.FIELD_INVALID_CHOICE.value,
-        field='unknown_fields'
+        message='Unrecognized field',
+        code=ValidationResponseCode.FIELD_UNKNOWN.value,
+        field=field
     )
+
+
+def raise_unknown_fields_error(fields: List[str]) -> None:
+    """
+    Raise a validation error for multiple unknown fields.
+    The error includes both a descriptive message and the list of unknown fields.
+
+    Args:
+        fields: List of field names that were not recognized in the request
+    """
+    if len(fields) == 1:
+        raise_unknown_field_error(fields[0])
+        return
+
+    error_detail: Dict[str, Any] = {
+        'message': 'Request contains multiple unrecognized fields',
+        'code': ValidationResponseCode.FIELD_UNKNOWN_MULTIPLE.value,
+        'fields': fields
+    }
+    raise ValidationError({'unknown_fields': error_detail})
 
 
 def raise_multiple_validation_errors(errors: Dict[str, List[Dict[str, Any]]]) -> None:
