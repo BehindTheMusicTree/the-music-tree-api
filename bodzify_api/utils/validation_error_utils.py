@@ -6,6 +6,19 @@ from rest_framework.exceptions import ValidationError
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
+def raise_validation_error(
+        message: str, code: Union[str, ValidationResponseCode], field: Union[str, None] = None) -> None:
+    error_detail: Dict[str, Any] = {
+        'message': message,
+        'code': code.value if isinstance(code, ValidationResponseCode) else code
+    }
+
+    if field is not None:
+        raise ValidationError({field: error_detail})
+    else:
+        raise ValidationError(error_detail)
+
+
 def raise_duplicate_fields_error(fields: List[str]) -> None:
     raise_validation_error(
         message=f'Duplicate fields found: {", ".join(fields)}',
@@ -62,19 +75,6 @@ def raise_integrity_error(exc: IntegrityError, error_code: Union[str, Validation
         code=error_code if error_code is not None else ValidationResponseCode.FIELD_DB_INTEGRITY_ERROR.value,
         field='integrity_error'
     )
-
-
-def raise_validation_error(
-        message: str, code: Union[str, ValidationResponseCode], field: Union[str, None] = None) -> None:
-    error_detail: Dict[str, Any] = {
-        'message': message,
-        'code': code.value if isinstance(code, ValidationResponseCode) else code
-    }
-
-    if field is not None:
-        raise ValidationError({field: error_detail})
-    else:
-        raise ValidationError(error_detail)
 
 
 def raise_unknown_fields_error(fields: List[str]) -> None:
