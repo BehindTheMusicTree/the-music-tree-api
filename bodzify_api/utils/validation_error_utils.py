@@ -1,4 +1,5 @@
 
+import re
 from typing import List, Dict, Any, Union
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
@@ -6,25 +7,33 @@ from rest_framework.exceptions import ValidationError
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
-def raise_validation_error(
-        message: str, code: Union[str, ValidationResponseCode], field: Union[str, None] = None) -> None:
+# Regex pattern to extract field name from constraint names
+CONSTRAINT_FIELD_PATTERN = re.compile(r'(?:non_empty_|unique_)(\w+)(?:_per_user)?')
+
+
+def raise_validation_error(message: str, code: Union[str, ValidationResponseCode], field: str) -> None:
+    """
+    Raise a validation error with a specific field and error details.
+
+    Args:
+        message: Human-readable error message
+        code: Machine-readable error code
+        field: The field that caused the validation error
+    """
     error_detail: Dict[str, Any] = {
         'message': message,
         'code': code.value if isinstance(code, ValidationResponseCode) else code
     }
-
-    if field is not None:
-        raise ValidationError({field: error_detail})
-    else:
-        raise ValidationError(error_detail)
+    raise ValidationError({field: error_detail})
 
 
 def raise_duplicate_fields_error(fields: List[str]) -> None:
-    raise_validation_error(
-        message=f'Duplicate fields found: {", ".join(fields)}',
-        code=ValidationResponseCode.FIELD_NAME_DUPLICATE.value,
-        field='duplicate_fields'
-    )
+    error_detail: Dict[str, Any] = {
+        'message': f'Duplicate fields found: {", ".join(fields)}',
+        'code': ValidationResponseCode.FIELD_NAME_DUPLICATE.value,
+        'fields': fields
+    }
+    raise ValidationError({'duplicate_fields': error_detail})
 
 
 def raise_integrity_error(exc: IntegrityError, error_code: Union[str, ValidationResponseCode, None] = None) -> None:
@@ -70,10 +79,26 @@ def raise_integrity_error(exc: IntegrityError, error_code: Union[str, Validation
                    FIELD_NAME_EMPTY for non-empty constraints, etc.
                    Defaults to FIELD_DB_INTEGRITY_ERROR for general integrity errors.
     """
+    error_msg = str(exc)
+
+    # Try to extract field name from constraint name
+    match = CONSTRAINT_FIELD_PATTERN.search(error_msg)
+    if match:
+        field = match.group(1)
+    # Try to determine the type of constraint if field name couldn't be extracted
+    elif 'unique constraint' in error_msg.lower():
+        field = 'unknown_unique_field'
+    elif 'not null constraint' in error_msg.lower():
+        field = 'unknown_required_field'
+    elif 'foreign key constraint' in error_msg.lower():
+        field = 'unknown_reference_field'
+    else:
+        field = 'unknown_constraint_field'
+
     raise_validation_error(
-        message=str(exc),
+        message=error_msg,
         code=error_code if error_code is not None else ValidationResponseCode.FIELD_DB_INTEGRITY_ERROR.value,
-        field='integrity_error'
+        field=field
     )
 
 
@@ -169,10 +194,12 @@ def handle_drf_validation_error(exc: ValidationError, error_code: Union[str, Val
         first_error = exc.detail[0]
         raise_validation_error(
             message=str(first_error),
-            code=error_code.value if isinstance(error_code, ValidationResponseCode) else error_code.lower()
+            code=error_code.value if isinstance(error_code, ValidationResponseCode) else error_code.lower(),
+            field='validation_error'
         )
     else:
         raise_validation_error(
             message=str(exc.detail),
-            code=error_code.value if isinstance(error_code, ValidationResponseCode) else error_code.lower()
+            code=error_code.value if isinstance(error_code, ValidationResponseCode) else error_code.lower(),
+            field='validation_error'
         )
