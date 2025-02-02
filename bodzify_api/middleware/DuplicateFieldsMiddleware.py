@@ -1,8 +1,8 @@
 
 import json
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from rest_framework.exceptions import ValidationError
-from bodzify_api.view.error.ErrorResponse import ErrorResponse
+from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
 def find_duplicate_fields(json_str: str) -> list[str]:
@@ -40,30 +40,33 @@ def find_duplicate_fields(json_str: str) -> list[str]:
 
 
 class DuplicateFieldsMiddleware:
-    """Middleware to preserve raw request body for duplicate field detection."""
 
     def __init__(self, get_response):
         self.get_response = get_response
 
+    def _handle_duplicate_field_error_for_content_type_json(self, field_name: str) -> JsonResponse:
+        # raise_validation_error always raises an exception, so this will always go to the except block
+        raise_validation_error(
+            message='Duplicate field detected.',
+            code=ValidationResponseCode.FIELD_INVALID_FORMAT.value,
+            field=field_name
+        )
+        # This is unreachable but makes the type checker happy
+        raise RuntimeError('Unreachable - raise_validation_error always raises')
+
     def __call__(self, request: HttpRequest) -> HttpResponse:
-        if request.method in ['POST', 'PUT', 'PATCH'] and request.content_type == 'application/json':
-            try:
-                raw_body = request.body.decode('utf-8')
-                duplicate_fields = find_duplicate_fields(raw_body)
-                if duplicate_fields:
-                    validation_error = ValidationError({
-                        'duplicate_fields': {
-                            'code': 'duplicate_fields',
-                            'field': duplicate_fields[0]  # Show the field name that has duplicates
-                        }
-                    })
-                    error_response = ErrorResponse.from_validation_error(validation_error)
-                    return JsonResponse(
-                        error_response.data,
-                        status=error_response.status_code,
-                        content_type='application/json'
-                    )
-            except UnicodeDecodeError:
-                pass
+        if request.method in ['POST', 'PUT', 'PATCH']:
+            content_type = request.content_type or ''
+            # Only check for duplicates in JSON data
+            # Multipart/form-data allows multiple fields with the same name by design
+            if content_type == 'application/json':
+                try:
+                    raw_body = request.body.decode('utf-8')
+                    duplicate_fields = find_duplicate_fields(raw_body)
+                    if duplicate_fields:
+                        return self._handle_duplicate_field_error_for_content_type_json(duplicate_fields[0])
+                except UnicodeDecodeError:
+                    # Let system errors propagate up to be handled by global error handler
+                    raise
 
         return self.get_response(request)
