@@ -11,25 +11,6 @@ from bodzify_api.view.error.ErrorResponseDetail import ErrorResponseDetail
 from bodzify_api.view.error.ErrorHttpStatusCodeMap import ErrorHTTPStatusCodeMap
 
 
-def convert_error_detail_to_dict(obj: Any) -> Any:
-    if isinstance(obj, ErrorResponseDetail):
-        return obj.to_dict()
-    elif isinstance(obj, list):
-        return [convert_error_detail_to_dict(item) for item in obj]
-    elif isinstance(obj, dict):
-        if 'unknown_fields' in obj:
-            unknown_fields = obj['unknown_fields']
-            return {
-                'message': str(unknown_fields['message']),
-                'code': str(unknown_fields['code']),
-                'fields': [str(f) for f in unknown_fields['fields']]
-            }
-        return {key: convert_error_detail_to_dict(value) for key, value in obj.items()}
-    elif isinstance(obj, DRFErrorDetail):
-        return str(obj)
-    return obj
-
-
 class ErrorResponse:
 
     @staticmethod
@@ -93,12 +74,9 @@ class ErrorResponse:
     def from_validation_error(exception: Union[DrfValidationError, DjangoValidationError]) -> Response:
 
         if isinstance(exception, DrfValidationError):
-            error_detail = convert_error_detail_to_dict(exception.detail)
+            error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
             if isinstance(error_detail, dict) and 'message' in error_detail:
-                return ErrorResponse._create_error_response(
-                    error_detail,
-                    ErrorCode.VALIDATION_INVALID_INPUT
-                )
+                return ErrorResponse._create_error_response(error_detail, ErrorCode.VALIDATION_INVALID_INPUT)
             return ErrorResponse._create_error_response(
                 {'message': 'Validation error', 'errors': error_detail},
                 ErrorCode.VALIDATION_INVALID_INPUT

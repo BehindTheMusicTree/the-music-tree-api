@@ -158,6 +158,7 @@ Usage Examples:
 
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
+from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 
 
 @dataclass
@@ -261,3 +262,31 @@ class ErrorResponseDetail:
             else:
                 result['details'] = str(self.details)
         return result
+
+    @staticmethod
+    def convert_error_detail_to_dict(obj: Any) -> Any:
+        """
+        Convert various error detail types to dictionary format.
+
+        Args:
+            obj: The error detail object to convert
+
+        Returns:
+            The converted dictionary representation of the error detail
+        """
+        if isinstance(obj, ErrorResponseDetail):
+            return obj.to_dict()
+        elif isinstance(obj, list):
+            return [ErrorResponseDetail.convert_error_detail_to_dict(item) for item in obj]
+        elif isinstance(obj, dict):
+            if 'unknown_fields' in obj:
+                unknown_fields = obj['unknown_fields']
+                return {
+                    'message': str(unknown_fields['message']),
+                    'code': str(unknown_fields['code']),
+                    'fields': [str(f) for f in unknown_fields['fields']]
+                }
+            return {key: ErrorResponseDetail.convert_error_detail_to_dict(value) for key, value in obj.items()}
+        elif isinstance(obj, DRFErrorDetail):
+            return str(obj)
+        return obj
