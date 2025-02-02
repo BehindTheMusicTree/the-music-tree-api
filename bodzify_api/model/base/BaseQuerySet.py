@@ -38,8 +38,7 @@ def get_related_model(model: Type[models.Model], field_path: str) -> Type[models
 def uses_internal_name(model: Type[models.Model]) -> bool:
     try:
         field = model._meta.get_field(LibTrackMixinFields.NAME_INTERNAL)
-        return (isinstance(field, models.CharField) and
-                field.db_column == LibTrackMixinFields.NAME_PUBLIC)
+        return isinstance(field, models.CharField) and field.db_column == LibTrackMixinFields.NAME_PUBLIC
     except (models.FieldDoesNotExist, AttributeError):
         return False
 
@@ -47,7 +46,7 @@ def uses_internal_name(model: Type[models.Model]) -> bool:
 class BaseQuerySet(models.QuerySet):
     """QuerySet that handles name field transformations for both direct and related fields."""
 
-    def transform_related_fields(self, **kwargs: Any) -> Dict[str, Any]:
+    def transform_internal_fields(self, **kwargs: Any) -> Dict[str, Any]:
         """
         Transform name fields in related field queries.
 
@@ -64,26 +63,39 @@ class BaseQuerySet(models.QuerySet):
         transformed = {}
 
         for key, value in kwargs.items():
-            # Handle direct name field
-            if key == 'name':
-                if uses_internal_name(self.model):
-                    transformed['_name'] = value
-                else:
-                    transformed[key] = value
-            # Handle related name fields
-            elif '__name' in key:
-                # Split on __name to preserve any lookups that come after
-                parts = key.split('__name')
-                field_path = parts[0]  # The path to the related model
-                lookups = parts[1]     # Any trailing lookups (e.g., __icontains)
+            print(f"Processing key: {key}")
+            print(f"NAME_PUBLIC value: {LibTrackMixinFields.NAME_PUBLIC!r}")
+            print(f"Model: {self.model.__name__}")
 
+            # Split the key into parts
+            parts = key.split('__')
+            print(f"Split parts: {parts}")
+
+            # Find any part that starts with 'name'
+            name_part_index = -1
+            for i, part in enumerate(parts):
+                if part.startswith(LibTrackMixinFields.NAME_PUBLIC):
+                    name_part_index = i
+                    break
+
+            if name_part_index >= 0:
+                print(f"Found name at index: {name_part_index}")
                 # Get the model that owns the name field
-                related_model = get_related_model(self.model, field_path)
+                field_path = '__'.join(parts[:name_part_index]) if name_part_index > 0 else ''
+                current_model = get_related_model(self.model, field_path) if field_path else self.model
+                print(f"Current model: {current_model.__name__}")
 
                 # Check if this model uses internal name fields
-                if uses_internal_name(related_model):
-                    # Transform name to _name while preserving the path and lookups
-                    transformed_key = f"{field_path}__{'_name'}{lookups}"
+                uses_internal = uses_internal_name(current_model)
+                print(f"Uses internal name: {uses_internal}")
+
+                if uses_internal:
+                    # Transform name to _name while preserving any suffixes
+                    name_part = parts[name_part_index]
+                    suffix = name_part[len(LibTrackMixinFields.NAME_PUBLIC):]  # Get any suffix after 'name'
+                    parts[name_part_index] = LibTrackMixinFields.NAME_INTERNAL + suffix
+                    transformed_key = '__'.join(parts)
+                    print(f"Transformed to: {transformed_key}")
                     transformed[transformed_key] = value
                 else:
                     transformed[key] = value
@@ -93,21 +105,23 @@ class BaseQuerySet(models.QuerySet):
         return transformed
 
     def filter(self, *args: Any, **kwargs: Any) -> 'BaseQuerySet':
-        transformed_kwargs = self.transform_related_fields(**kwargs)
+        print('kwargs', kwargs)
+        transformed_kwargs = self.transform_internal_fields(**kwargs)
+        print('transformed_kwargs', transformed_kwargs)
         return super().filter(*args, **transformed_kwargs)
 
     def exclude(self, *args: Any, **kwargs: Any) -> 'BaseQuerySet':
-        transformed_kwargs = self.transform_related_fields(**kwargs)
+        transformed_kwargs = self.transform_internal_fields(**kwargs)
         return super().exclude(*args, **transformed_kwargs)
 
     def get(self, *args: Any, **kwargs: Any) -> Any:
-        transformed_kwargs = self.transform_related_fields(**kwargs)
+        transformed_kwargs = self.transform_internal_fields(**kwargs)
         return super().get(*args, **transformed_kwargs)
 
     def create(self, **kwargs: Any) -> Any:
-        transformed_kwargs = self.transform_related_fields(**kwargs)
+        transformed_kwargs = self.transform_internal_fields(**kwargs)
         return super().create(**transformed_kwargs)
 
     def get_or_create(self, **kwargs: Any) -> Any:
-        transformed_kwargs = self.transform_related_fields(**kwargs)
+        transformed_kwargs = self.transform_internal_fields(**kwargs)
         return super().get_or_create(**transformed_kwargs)
