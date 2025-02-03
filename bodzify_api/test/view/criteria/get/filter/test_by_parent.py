@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.test.field.filter.foreign_key.PrivateForeignKeyFilterTestCase import PrivateForeignKeyFilterTestCase
-from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
+from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterfFields
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
 

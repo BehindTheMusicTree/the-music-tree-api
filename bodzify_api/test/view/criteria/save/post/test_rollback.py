@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
-from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
+from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
 class TestCase(GenreTestCase):

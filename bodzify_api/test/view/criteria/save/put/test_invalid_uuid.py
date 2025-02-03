@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
+from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
 class TestCase(GenreTestCase):
