@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from bodzify_api import settings
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
