@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.utils import data_transformer
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album \
@@ -71,12 +72,15 @@ class TestCase(PlaylistTestCase):
         genre = self.model_fixture_factory.create_genre(name='rock')
         self.model_fixture_factory.create_lib_track_with_file(
             title="In Too Deep", genre=genre, use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Summer", genre=genre, archived=True, use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Summer2", genre=genre, archived=True, use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Summer3", genre=genre, archived=True, use_manager_for_genre_playlist_adding=True)
+        track_archived_1 = self.model_fixture_factory.create_lib_track_with_file(
+            title="Summer", genre=genre, use_manager_for_genre_playlist_adding=True)
+        track_archived_2 = self.model_fixture_factory.create_lib_track_with_file(
+            title="Summer2", genre=genre, use_manager_for_genre_playlist_adding=True)
+        track_archived_3 = self.model_fixture_factory.create_lib_track_with_file(
+            title="Summer3", genre=genre, use_manager_for_genre_playlist_adding=True)
+
+        for track in [track_archived_1, track_archived_2, track_archived_3]:
+            LibraryTrack.objects.update_instance(track, archived=True)
 
         response = self._retrieve_playlist(genre.criteria_playlist.uuid)
 
