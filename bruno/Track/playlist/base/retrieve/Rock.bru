@@ -1,0 +1,11 @@
+meta {
+  name: Rock
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}playlists/{{genreCountryPlaylistUuid}}/
+  body: json
+  auth: inherit
+}
