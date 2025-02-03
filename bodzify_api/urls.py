@@ -5,15 +5,16 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from . import settings
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.view.viewset.model.AllLibTracksMixinViewSet import AllLibTracksViewSet
-from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
 from .view.viewset.model.ArtistViewSet import ArtistViewSet
 from .view.viewset.model.criteria.children.GenreViewSet import GenreViewSet
 from .view.viewset.model.criteria.children.TagViewSet import TagViewSet
 from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from .view.viewset.model.playlist.children.criteria.GenrePlaylistViewSet import GenrePlaylistViewSet
+from .view.viewset.model.playlist.children.criteria.TagPlaylistViewSet import TagPlaylistViewSet
 from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPlaylistViewSet
 from .view.viewset.model.PlayViewSet import PlayViewSet
 from .view.viewset.model.lib_track.LibTrackViewSet import LibTrackViewSet
@@ -34,6 +35,7 @@ router.register(r'plays', PlayViewSet, basename='play')
 router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
+router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
 router.register(r'all-tracks', AllLibTracksViewSet, basename='all-library-tracks')
 router.register(r'search', SearchViewSet, basename='search')
 
