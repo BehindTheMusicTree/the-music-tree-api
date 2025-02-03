@@ -80,4 +80,4 @@ class TestCase(PlaylistTestCase):
         response = self._retrieve_playlist(genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACKS_ARCHIVED_COUNT)] == 3
+        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 3

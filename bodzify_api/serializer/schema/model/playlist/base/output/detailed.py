@@ -7,7 +7,9 @@ from .Fields import Fields
 
 
 class PlaylistDetailedSerializer(serializers.ModelSerializer):
-    lib_track_playlist_rels = LibTrackPlaylistRelWithoutPlaylist(many=True)
+    library_track_playlist_relations = LibTrackPlaylistRelWithoutPlaylist(
+        source=Fields.LIB_TRACK_PLAYLIST_RELS_INTERNAL, many=True)
+    library_tracks_archived_count = serializers.IntegerField(source=Fields.LIB_TRACKS_ARCHIVED_COUNT_INTERNAL)
     type = serializers.CharField(source=Fields.TYPE_LABEL_INTERNAL)
 
     class Meta:
@@ -15,9 +17,8 @@ class PlaylistDetailedSerializer(serializers.ModelSerializer):
         fields = [Fields.UUID,
                   Fields.NAME,
                   Fields.TYPE_LABEL_PUBLIC,
-                  Fields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC,
                   Fields.LIB_TRACK_PLAYLIST_RELS_PUBLIC,
-                  Fields.LIB_TRACKS_ARCHIVED_COUNT,
+                  Fields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.PLAY_COUNT,
