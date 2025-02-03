@@ -2,7 +2,7 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
-from bodzify_api.utils.validation_error_utils import raise_validation_error, raise_duplicate_fields_error
+from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 from .Fields import Fields
 

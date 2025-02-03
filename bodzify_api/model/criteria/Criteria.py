@@ -8,7 +8,6 @@ from django.utils.translation import gettext as _
 from bodzify_api import settings
 from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
-from bodzify_api.view.error.ErrorCode import ErrorCode
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.criteria.lineage_rel.Fields import Fields as CriteriaLineageRelFields
