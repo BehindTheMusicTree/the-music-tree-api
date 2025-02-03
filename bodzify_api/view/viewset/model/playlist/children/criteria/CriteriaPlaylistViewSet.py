@@ -9,7 +9,7 @@ from bodzify_api.serializer.schema.model.playlist.children.criteria.output.simpl
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
-class GenrePlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
+class CriteriaPlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
     def __init__(self, **kwargs):
         super().__init__(service=None,
                          model_class=CriteriaPlaylist,

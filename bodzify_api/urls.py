@@ -7,14 +7,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.view.viewset.model.AllLibTracksMixinViewSet import AllLibTracksViewSet
-
 from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
 from .view.viewset.model.ArtistViewSet import ArtistViewSet
 from .view.viewset.model.criteria.children.GenreViewSet import GenreViewSet
 from .view.viewset.model.criteria.children.TagViewSet import TagViewSet
 from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
-from .view.viewset.model.playlist.children.GenrePlaylistViewSet import GenrePlaylistViewSet
+from .view.viewset.model.playlist.children.criteria.GenrePlaylistViewSet import GenrePlaylistViewSet
 from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPlaylistViewSet
 from .view.viewset.model.PlayViewSet import PlayViewSet
 from .view.viewset.model.lib_track.LibTrackViewSet import LibTrackViewSet

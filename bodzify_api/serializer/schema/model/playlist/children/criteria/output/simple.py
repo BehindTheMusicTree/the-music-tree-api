@@ -26,7 +26,7 @@ class CriteriaPlaylistSimpleSerializer(serializers.ModelSerializer):
     criteria = CriteriaSimpleSerializer()
     parent = CriteriaPlaylistMinimumSerializer()
     root = CriteriaPlaylistMinimumSerializer()  # type: ignore
-    library_tracks_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)
+    library_tracks_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
 
     def to_representation(self, instance):
         if not isinstance(instance, CriteriaPlaylist):

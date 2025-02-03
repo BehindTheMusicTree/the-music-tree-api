@@ -9,7 +9,6 @@ from .Fields import Fields
 
 class CriteriaPlaylistFilterSet(AppFilterSet):
     name = filters.CharFilter(field_name=f'{ModelFields.CRITERIA}__{ModelFields.NAME}',
-                              field_name_user_friendly=Fields.NAME,
                               lookup_expr="icontains")
     parent = ForeignKeyFilter(field_name=f'{ModelFields.CRITERIA}__{ModelFields.PARENT}',
                               field_name_user_friendly=Fields.PARENT,)
