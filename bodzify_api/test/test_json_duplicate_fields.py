@@ -2,7 +2,7 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as CriteriaPostFields
-from bodzify_api.test.view.genre.GenreTestCase import GenreTestCase
+from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
 class TestCase(GenreTestCase):
