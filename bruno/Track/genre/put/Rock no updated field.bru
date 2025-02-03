@@ -1,15 +1,11 @@
 meta {
-  name: Rock
+  name: Rock no updated field
   type: http
-  seq: 5
+  seq: 11
 }
 
-get {
+put {
   url: {{BASE_URL}}genres/{{genreRockUuid}}/
   body: json
   auth: inherit
-}
-
-vars:post-response {
-  lol: res.body.uuid
 }
