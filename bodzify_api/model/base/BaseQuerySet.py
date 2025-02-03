@@ -63,13 +63,9 @@ class BaseQuerySet(models.QuerySet):
         transformed = {}
 
         for key, value in kwargs.items():
-            print(f"Processing key: {key}")
-            print(f"NAME_PUBLIC value: {LibTrackMixinFields.NAME_PUBLIC!r}")
-            print(f"Model: {self.model.__name__}")
 
             # Split the key into parts
             parts = key.split('__')
-            print(f"Split parts: {parts}")
 
             # Find any part that starts with 'name'
             name_part_index = -1
@@ -79,15 +75,12 @@ class BaseQuerySet(models.QuerySet):
                     break
 
             if name_part_index >= 0:
-                print(f"Found name at index: {name_part_index}")
                 # Get the model that owns the name field
                 field_path = '__'.join(parts[:name_part_index]) if name_part_index > 0 else ''
                 current_model = get_related_model(self.model, field_path) if field_path else self.model
-                print(f"Current model: {current_model.__name__}")
 
                 # Check if this model uses internal name fields
                 uses_internal = uses_internal_name(current_model)
-                print(f"Uses internal name: {uses_internal}")
 
                 if uses_internal:
                     # Transform name to _name while preserving any suffixes
@@ -95,7 +88,6 @@ class BaseQuerySet(models.QuerySet):
                     suffix = name_part[len(LibTrackMixinFields.NAME_PUBLIC):]  # Get any suffix after 'name'
                     parts[name_part_index] = LibTrackMixinFields.NAME_INTERNAL + suffix
                     transformed_key = '__'.join(parts)
-                    print(f"Transformed to: {transformed_key}")
                     transformed[transformed_key] = value
                 else:
                     transformed[key] = value
