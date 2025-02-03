@@ -1,0 +1,17 @@
+meta {
+  name: trackRock archived
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{BASE_URL}}tracks/{{trackJohnnyUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Noir cest noir"
+  }
+}

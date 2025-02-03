@@ -1,5 +1,5 @@
 meta {
-  name: to rock
+  name: trackRock to rock
   type: http
   seq: 18
 }
@@ -16,5 +16,9 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  genreName: 
+  genreName: Rock
+}
+
+vars:post-response {
+  trackRockUuid: res.body.uuid
 }
