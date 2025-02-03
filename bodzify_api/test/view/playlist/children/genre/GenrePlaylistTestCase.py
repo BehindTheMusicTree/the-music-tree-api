@@ -16,7 +16,10 @@ class GenrePlaylistTestCase(ApiTestCase):
         return response
 
     def _retrieve_genre_playlist(self, uuid):
-        return self.api_client.get(path=reverse('genre-playlist-detail', kwargs={'pk': uuid}))
+        response = self.api_client.get(path=reverse('genre-playlist-detail', kwargs={'pk': uuid}))
+        if response.status_code == status.HTTP_200_OK:
+            self._set_result(response)
+        return response
 
     def _get_genre_playlists(self, **kwargs):
         response = self.api_client.get(path=reverse('genre-playlist-list'), data=kwargs)
