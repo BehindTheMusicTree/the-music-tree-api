@@ -10,9 +10,9 @@ from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
 class CriteriaPlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
-    def __init__(self, **kwargs):
+    def __init__(self, model_class, **kwargs):
         super().__init__(service=None,
-                         model_class=CriteriaPlaylist,
+                         model_class=model_class if model_class else CriteriaPlaylist,
                          filterset_class=CriteriaPlaylistFilterSet,
                          simple_serializer_class=CriteriaPlaylistSimpleSerializer,
                          detailed_serializer_class=CriteriaPlaylistDetailedSerializer,
