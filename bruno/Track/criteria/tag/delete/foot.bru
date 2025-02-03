@@ -1,0 +1,17 @@
+meta {
+  name: foot
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{BASE_URL}}tags/{{tagFootUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "parent": "{{genreCowboyCountryUuid}}"
+  }
+}

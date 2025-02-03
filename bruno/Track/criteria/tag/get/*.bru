@@ -1,0 +1,16 @@
+meta {
+  name: *
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}genres/?parent
+  body: json
+  auth: inherit
+}
+
+params:query {
+  parent: 
+  ~name: 
+}

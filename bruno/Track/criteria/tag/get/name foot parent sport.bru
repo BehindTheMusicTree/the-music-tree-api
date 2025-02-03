@@ -1,0 +1,20 @@
+meta {
+  name: name foot parent sport
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}genres/?name=Rock&parent
+  body: json
+  auth: inherit
+}
+
+params:query {
+  name: Rock
+  parent: 
+}
+
+vars:post-response {
+  genreRockUuid: res.body.results[0].uuid
+}

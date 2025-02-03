@@ -1,0 +1,11 @@
+meta {
+  name: sport
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{BASE_URL}}tags/{{tagSportUuid}}/
+  body: json
+  auth: inherit
+}

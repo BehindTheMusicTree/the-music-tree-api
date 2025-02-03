@@ -1,0 +1,15 @@
+meta {
+  name: parent Country
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}genres/?parent={{genreCountryUuid}}
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  parent: {{genreCountryUuid}}
+}

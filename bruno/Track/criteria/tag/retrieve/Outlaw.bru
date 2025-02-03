@@ -1,0 +1,15 @@
+meta {
+  name: Outlaw
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{BASE_URL}}genres/{{genreOutlawUuid}}/
+  body: json
+  auth: inherit
+}
+
+vars:post-response {
+  lol: res.body.uuid
+}
