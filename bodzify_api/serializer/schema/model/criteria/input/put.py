@@ -1,12 +1,13 @@
 from rest_framework import serializers
+
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.field.DescendantAwareField import DescendantAwareField
-from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
+from bodzify_api.serializer.PutValidationSerializer import PutValidationSerializer
 from .Fields import Fields
 
 
-class CriteriaPutSerializer(AppValidationSerializer, serializers.ModelSerializer):
+class CriteriaPutSerializer(PutValidationSerializer, serializers.ModelSerializer):
     parent: DescendantAwareField = DescendantAwareField(queryset=Criteria.objects.all(),
                                                         required=False,
                                                         allow_null=True)

@@ -105,9 +105,7 @@ class BaseQuerySet(models.QuerySet):
         return transformed
 
     def filter(self, *args: Any, **kwargs: Any) -> 'BaseQuerySet':
-        print('kwargs', kwargs)
         transformed_kwargs = self.transform_internal_fields(**kwargs)
-        print('transformed_kwargs', transformed_kwargs)
         return super().filter(*args, **transformed_kwargs)
 
     def exclude(self, *args: Any, **kwargs: Any) -> 'BaseQuerySet':

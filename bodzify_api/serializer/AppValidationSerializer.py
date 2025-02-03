@@ -3,10 +3,12 @@ import re
 from typing import Dict, Any, List, Union, Mapping
 from rest_framework import serializers
 from bodzify_api.utils.validation_error_utils \
-    import raise_duplicate_fields_error, raise_unknown_fields_error, raise_unknown_field_error
+    import raise_duplicate_fields_error, raise_unknown_fields_error, raise_unknown_field_error, raise_validation_error
+from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
 
 
 class AppValidationSerializer(serializers.Serializer):
+    """Base serializer class that provides common validation functionality."""
 
     @staticmethod
     def _get_raw_field_names(raw_data: str) -> List[str]:

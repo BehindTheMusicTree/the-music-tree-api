@@ -61,3 +61,4 @@ class ValidationResponseCode(Enum):
     FIELD_MUTUALLY_EXCLUSIVE = 'mutually_exclusive'
     FIELD_DEPENDENCY_MISSING = 'dependency_missing'
     FIELD_RESOURCE_NOT_OWNED = 'resource_not_owned'
+    FIELD_NO_UPDATES = 'no_updates'  # Used when a PUT request contains no fields to update

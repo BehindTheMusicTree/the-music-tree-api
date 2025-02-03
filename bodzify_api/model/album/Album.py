@@ -41,13 +41,14 @@ class Album(LibTrackMixin):
         constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="album_non_empty_name")]
 
     def __str__(self) -> str:
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+        string = f"{self.uuid} | {self._name}"
 
-        string = f"{self.uuid} {self._name}"
-
-        artists = self.album_artists.all()
-        artist_names = " ".join(str(artist) for artist in artists) if artists else "[No Artist]"
-        string += f" by {artist_names}"
+        # Get artist names directly from the database to avoid recursion
+        artist_names = self.album_artists.values_list('_name', flat=True)
+        if artist_names:
+            string += f" by {', '.join(artist_names)}"
+        else:
+            string += " [No Artist]"
 
         tracks: list[LibraryTrack] = list(self.lib_tracks_not_archived.all())
         if tracks:
