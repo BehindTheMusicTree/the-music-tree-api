@@ -4,7 +4,7 @@ from bodzify_api import settings
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
 from bodzify_api.utils.validation_error_utils import raise_validation_error
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 from .Fields import Fields
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
@@ -47,7 +47,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
             if data[Fields.GENRE_UUID] not in ['', None] and data[Fields.GENRE_NAME] not in ['', None]:
                 raise_validation_error(
                     message='Genre name and genre uuid cannot be specified at the same time',
-                    code=ValidationResponseCode.FIELD_MUTUALLY_EXCLUSIVE.value,
+                    code=FieldValidationErrorCode.FIELD_MUTUALLY_EXCLUSIVE.value,
                     field=Fields.GENRE_NAME
                 )
 
@@ -61,7 +61,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
             if error_message:
                 raise_validation_error(
                     message=error_message,
-                    code=ValidationResponseCode.FIELD_DEPENDENCY_MISSING.value,
+                    code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING.value,
                     field=Fields.ALBUM_ARTISTS_NAMES
                 )
 
@@ -75,7 +75,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
             if error_message:
                 raise_validation_error(
                     message=error_message,
-                    code=ValidationResponseCode.FIELD_DEPENDENCY_MISSING.value,
+                    code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING.value,
                     field=Fields.ALBUM_NAME
                 )
 
@@ -87,7 +87,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                 except ValueError:
                     raise_validation_error(
                         message='Rating must be an integer',
-                        code=ValidationResponseCode.FIELD_INVALID_FORMAT.value,
+                        code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
                         field=Fields.RATING
                     )
 

@@ -9,7 +9,7 @@ from django_filters import CharFilter, FilterSet
 from bodzify_api.utils.validation_error_utils import raise_validation_error
 
 from bodzify_api.filtering.filter.AppFilter import AppFilter
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class ForeignKeyFilter(CharFilter, AppFilter):
@@ -32,7 +32,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
         if re.match(r'{{.*}}', str(value)):
             raise_validation_error(
                 message=_('%(value)s is not a valid UUID') % {'value': value},
-                code=ValidationResponseCode.FIELD_INVALID_FORMAT.value,
+                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
                 field=str(self.field_name)
             )
 
@@ -42,7 +42,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
         except (TypeError, ValueError):
             raise_validation_error(
                 message=_('%(value)s is not a valid UUID') % {'value': value},
-                code=ValidationResponseCode.FIELD_INVALID_FORMAT.value,
+                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
                 field=str(self.field_name)
             )
 

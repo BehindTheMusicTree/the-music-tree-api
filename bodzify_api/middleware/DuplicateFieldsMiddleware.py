@@ -2,7 +2,7 @@
 import json
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from bodzify_api.utils.validation_error_utils import raise_validation_error
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 def find_duplicate_fields(json_str: str) -> list[str]:
@@ -48,7 +48,7 @@ class DuplicateFieldsMiddleware:
         # raise_validation_error always raises an exception, so this will always go to the except block
         raise_validation_error(
             message='Duplicate field detected.',
-            code=ValidationResponseCode.FIELD_INVALID_FORMAT.value,
+            code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
             field=field_name
         )
         # This is unreachable but makes the type checker happy
