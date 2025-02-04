@@ -152,8 +152,9 @@ class ModelFixtureFactory:
 
         return lib_track
 
-    def create_play(self, content_object: TrackablePlayCount, **kwargs) -> Play:
-        model_fields = {PlayFields.CREATED_ON: timezone.make_aware(datetime.now()),
+    def create_play(self, content_object: TrackablePlayCount, user: Optional[User] = None, **kwargs) -> Play:
+        model_fields = {PlayFields.USER: user or self.default_test_user,
+                        PlayFields.CREATED_ON: timezone.make_aware(datetime.now()),
                         PlayFields.UPDATED_ON: timezone.make_aware(datetime.now()),
                         PlayFields.CONTENT_OBJECT: content_object}
         model_fields.update(kwargs)
