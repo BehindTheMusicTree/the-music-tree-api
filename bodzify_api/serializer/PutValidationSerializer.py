@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 
@@ -21,10 +21,11 @@ class PutValidationSerializer(AppValidationSerializer):
         # For PUT requests, ensure there's at least one field to update
         request = self.context.get('request')
         if request and request.method.upper() == 'PUT' and not attrs:
-            raise_validation_error(
+            # Since this is serializer validation, use from_serializer
+            raise AppValidationError.from_serializer(
+                field='request',
                 message='At least one field must be provided for update',
-                field_validation_error_code=FieldValidationErrorCode.FIELD_NO_UPDATES,
-                field='request'
+                code=FieldValidationErrorCode.FIELD_NO_UPDATES
             )
 
         return attrs

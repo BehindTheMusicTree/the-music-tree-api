@@ -12,7 +12,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api import settings
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
@@ -130,13 +130,13 @@ class TrackFile(PrivateStandardResource):
                         self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first()
                     )
                     if existing_track_file:
-                        raise_validation_error(
+                        raise AppValidationError.from_model(
+                            field='file',
                             message=_('The file "%(current)s" has the same fingerprint as the file "%(existing)s"') % {
                                 'current': self.filename,
                                 'existing': existing_track_file.filename
                             },
-                            field_validation_error_code=FieldValidationErrorCode.FIELD_DUPLICATE_FINGERPRINT,
-                            field='file'
+                            code=FieldValidationErrorCode.FIELD_DUPLICATE_FINGERPRINT
                         )
                 self.fingerprint_memory = fingerprint
             else:
@@ -206,10 +206,11 @@ class TrackFile(PrivateStandardResource):
                 audio_metadata.replace_flac_file_with_corrected_md5(self.file.path)
                 self.flac_md5_has_been_corrected = True
             except Exception:
-                raise_validation_error(
+                raise AppValidationError.from_model(
+                    field='file',
                     message=_(
                         'The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.'),
-                    field_validation_error_code=FieldValidationErrorCode.FIELD_FILE_CORRUPTED, field='file')
+                    code=FieldValidationErrorCode.FIELD_FILE_CORRUPTED)
         else:
             self.flac_md5_has_been_corrected = False
 

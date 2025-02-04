@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
@@ -33,8 +33,9 @@ class PrivateUuidField(serializers.UUIDField):
             return uuid_value
         except self.queryset.model.DoesNotExist:
             field_name = self.field_name if self.field_name is not None else 'uuid_field'
-            raise_validation_error(
+            # Since this is field validation (to_internal_value), use from_field
+            raise AppValidationError.from_field(
+                field=field_name,
                 message='Resource does not exist for this user',
-                field_validation_error_code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED,
-                field=field_name
+                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED
             )

@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from django_filters import FilterSet
 
 from bodzify_api.filtering.filter.foreign_key.NonSelfReferencingFilter import NonSelfReferencingFilter
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
@@ -33,10 +33,11 @@ class DescendantAwareFilter(NonSelfReferencingFilter):
             # Get the target object from the queryset's model
             target = queryset.model.objects.filter(pk=value).first()
             if target is not None and instance.is_descendant_of(target):
-                raise_validation_error(
+                # Since this is field validation (filter), use from_field
+                raise AppValidationError.from_field(
+                    field=str(self.field_name),
                     message=_('Cannot reference an ancestor'),
-                    field_validation_error_code=FieldValidationErrorCode.FIELD_ANCESTOR_REFERENCE,
-                    field=str(self.field_name)
+                    code=FieldValidationErrorCode.FIELD_ANCESTOR_REFERENCE
                 )
 
         return filtered_queryset

@@ -6,7 +6,7 @@ from django.db.models import QuerySet
 from django.utils.translation import gettext as _
 
 from bodzify_api import settings
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
@@ -105,16 +105,16 @@ class Criteria(LibTrackMixin):
         except IntegrityError as e:
             error_message = str(e)
             if 'non_empty_name' in error_message:
-                raise_validation_error(
+                raise AppValidationError.from_model(
+                    field=Fields.NAME_PUBLIC,
                     message=_('Name cannot be empty'),
-                    field_validation_error_code=FieldValidationErrorCode.FIELD_NAME_EMPTY,
-                    field='name'
+                    code=FieldValidationErrorCode.FIELD_NAME_EMPTY
                 )
             elif 'unique_name_per_user' in error_message:
-                raise_validation_error(
+                raise AppValidationError.from_model(
+                    field=Fields.NAME_PUBLIC,
                     message=_('A criteria with this name already exists for this user'),
-                    field_validation_error_code=FieldValidationErrorCode.FIELD_NAME_DUPLICATE,
-                    field='name'
+                    code=FieldValidationErrorCode.FIELD_NAME_DUPLICATE
                 )
             # Let other database integrity errors propagate to be handled as system errors
             raise e

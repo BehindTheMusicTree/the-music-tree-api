@@ -3,13 +3,12 @@ from uuid import UUID
 
 from django.contrib.auth.models import User, AnonymousUser
 from django.db.models import Model, QuerySet
-from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.field.PrivateUuidField import PrivateUuidField
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
@@ -53,8 +52,11 @@ class TrackablePlayCountUuidField(PrivateUuidField):
         )
 
         if not content_object:
-            raise_validation_error(message='Invalid content object UUID',
-                                   field=self.field_name or 'trackable_play_count_uuid',
-                                   field_validation_error_code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED)
+            # Since this is field validation (to_internal_value), use from_field
+            raise AppValidationError.from_field(
+                field=self.field_name or 'trackable_play_count_uuid',
+                message='Invalid content object UUID',
+                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED
+            )
 
         return uuid_value

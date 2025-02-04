@@ -1,3 +1,4 @@
+from bodzify_api.view.error.AppValidationError import AppValidationError
 import re
 import inspect
 from typing import List, Dict, Any, Optional
@@ -20,29 +21,16 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
         field: The field that caused the validation error
 
     Note:
-        In field validation context (run_validation method), DRF automatically wraps the error
-        with the field name, so we pass the error detail directly:
-            ValidationError({'message': '...', 'code': '...'})
-            -> DRF wraps it as: {'field_name': {'message': '...', 'code': '...'}}
-
-        In serializer context, we need to wrap the error with the field name ourselves:
-            ValidationError({'field_name': {'message': '...', 'code': '...'}})
-
-        This way we work with DRF's validation chain instead of against it, letting DRF
-        handle field wrapping in field validation context while we handle it in serializer context.
+        Uses AppValidationError to maintain consistent error structure:
+        - In field validation context (run_validation method): AppValidationError.from_field()
+        - In serializer context: AppValidationError.from_serializer()
     """
-    error_detail = {
-        'message': message,
-        'code': field_validation_error_code.value
-    }
-
-    # In field validation context (run_validation), let DRF handle field wrapping
+    # In field validation context (run_validation), use from_field
     if 'run_validation' in inspect.stack()[1].function:
-        # DRF will automatically wrap this with the field name
-        raise ValidationError(error_detail)
+        raise AppValidationError.from_field(field, message, field_validation_error_code)
     else:
-        # In serializer context, wrap with field name ourselves
-        raise ValidationError({field: error_detail})
+        # In serializer context, use from_serializer
+        raise AppValidationError.from_serializer(field, message, field_validation_error_code)
 
 
 def raise_duplicate_field_error(field: str) -> None:

@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 from bodzify_api import settings
@@ -30,10 +30,11 @@ class UserContentObjectUuidField(serializers.CharField):
         try:
             uuid_obj = UUID(data)
         except (ValueError, AttributeError):
-            raise_validation_error(
+            # Since this is field validation (to_internal_value), use from_field
+            raise AppValidationError.from_field(
+                field=self.field_name,
                 message='Invalid UUID format',
-                field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FORMAT,
-                field=self.field_name
+                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT
             )
 
         request = self.context['request']
@@ -43,10 +44,11 @@ class UserContentObjectUuidField(serializers.CharField):
 
         if not Playlist.objects.filter(user=user, uuid=uuid_obj).exists() \
                 and not LibraryTrack.objects.filter(user=user, uuid=uuid_obj).exists():
-            raise_validation_error(
+            # Since this is field validation (to_internal_value), use from_field
+            raise AppValidationError.from_field(
+                field=self.field_name,
                 message='Object with this ID does not exist or does not belong to the user',
-                field_validation_error_code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED,
-                field=self.field_name
+                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED
             )
 
         return str(uuid_obj)

@@ -6,7 +6,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext as _
 from django_filters import CharFilter, FilterSet
 
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 
 from bodzify_api.filtering.filter.AppFilter import AppFilter
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
@@ -30,20 +30,22 @@ class ForeignKeyFilter(CharFilter, AppFilter):
             return queryset.filter(**{f"{self.field_name}__isnull": True})
 
         if re.match(r'{{.*}}', str(value)):
-            raise_validation_error(
+            # Since this is field validation (filter), use from_field
+            raise AppValidationError.from_field(
+                field=str(self.field_name),
                 message=_('%(value)s is not a valid UUID') % {'value': value},
-                field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FORMAT,
-                field=str(self.field_name)
+                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT
             )
 
         try:
             if value and not isinstance(value, uuid.UUID):
                 uuid.UUID(str(value))
         except (TypeError, ValueError):
-            raise_validation_error(
+            # Since this is field validation (filter), use from_field
+            raise AppValidationError.from_field(
+                field=str(self.field_name),
                 message=_('%(value)s is not a valid UUID') % {'value': value},
-                field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FORMAT,
-                field=str(self.field_name)
+                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT
             )
 
         return super().filter(queryset, value)

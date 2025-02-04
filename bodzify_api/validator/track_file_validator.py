@@ -6,7 +6,7 @@ from mutagen import File  # type: ignore
 
 from bodzify_api import settings
 from bodzify_api.model.track.lib.Fields import Fields
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
@@ -16,18 +16,24 @@ def validate_size(file):
         message = _('File too large. Size should not exceed %(size).3f Mo.') % {
             'size': settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO
         }
-        raise_validation_error(
-            message=message, field_validation_error_code=FieldValidationErrorCode.FIELD_FILE_TOO_LARGE,
-            field=Fields.TRACK_FILE)
+        # Since this is field validation, use from_field
+        raise AppValidationError.from_field(
+            field=Fields.TRACK_FILE,
+            message=message,
+            code=FieldValidationErrorCode.FIELD_FILE_TOO_LARGE
+        )
 
     track_size_min = settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
     if file.size < track_size_min:
         message = _('File too small. Size should be at least %(size).3f Mo.') % {
             'size': settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO
         }
-        raise_validation_error(
-            message=message, field_validation_error_code=FieldValidationErrorCode.FIELD_FILE_TOO_SMALL,
-            field=Fields.TRACK_FILE)
+        # Since this is field validation, use from_field
+        raise AppValidationError.from_field(
+            field=Fields.TRACK_FILE,
+            message=message,
+            code=FieldValidationErrorCode.FIELD_FILE_TOO_SMALL
+        )
 
 
 def validate_content_type_is_audio(file):
@@ -51,9 +57,12 @@ def validate_content_type_is_audio(file):
     error = audio is None
     if error:
         message = 'Invalid file format. Only audio files are allowed.'
-        raise_validation_error(
-            message=message, field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FILE_TYPE,
-            field=Fields.TRACK_FILE_PUBLIC)
+        # Since this is field validation, use from_field
+        raise AppValidationError.from_field(
+            field=Fields.TRACK_FILE_PUBLIC,
+            message=message,
+            code=FieldValidationErrorCode.FIELD_INVALID_FILE_TYPE
+        )
 
 
 def validate_filename_length(value):
@@ -68,6 +77,9 @@ def validate_filename_length(value):
             'max_length': settings.LIB_TRACK_FILENAME_LEN_MAX,
             'current_length': len(filename)
         }
-        raise_validation_error(
-            message=message, field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FILENAME,
-            field=Fields.TRACK_FILE_PUBLIC)
+        # Since this is field validation, use from_field
+        raise AppValidationError.from_field(
+            field=Fields.TRACK_FILE_PUBLIC,
+            message=message,
+            code=FieldValidationErrorCode.FIELD_INVALID_FILENAME
+        )

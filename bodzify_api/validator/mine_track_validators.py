@@ -2,7 +2,7 @@
 import requests
 from django.utils.translation import gettext as _
 
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
@@ -18,31 +18,35 @@ def check_if_remote_file_exists_using_get_request_with_range_header(url):
         else:
             return False
     except Exception as e:
-        raise_validation_error(
+        # Since this is field validation, use from_field
+        raise AppValidationError.from_field(
+            field='url',
             message=_('There was an issue requesting the URL %(url)s') % {'url': url},
-            field_validation_error_code=FieldValidationErrorCode.FIELD_URL_REQUEST_FAILED,
-            field='url'
+            code=FieldValidationErrorCode.FIELD_URL_REQUEST_FAILED
         )
 
 
 def validate_url(value: str):
     if not value.startswith('http'):
-        raise_validation_error(
+        # Since this is field validation, use from_field
+        raise AppValidationError.from_field(
+            field='url',
             message=_('%(url)s is not a valid URL') % {'url': value},
-            field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_URL,
-            field='url'
+            code=FieldValidationErrorCode.FIELD_INVALID_URL
         )
     if (not value.lower().endswith('.mp3')
         and not value.lower().endswith('.wav')
             and not value.lower().endswith('.flac')):
-        raise_validation_error(
+        # Since this is field validation, use from_field
+        raise AppValidationError.from_field(
+            field='url',
             message=_('%(url)s is not a valid audio file') % {'url': value},
-            field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FILE_TYPE,
-            field='url'
+            code=FieldValidationErrorCode.FIELD_INVALID_FILE_TYPE
         )
     if not check_if_remote_file_exists_using_get_request_with_range_header(value):
-        raise_validation_error(
+        # Since this is field validation, use from_field
+        raise AppValidationError.from_field(
+            field='url',
             message=_('%(url)s does not exist') % {'url': value},
-            field_validation_error_code=FieldValidationErrorCode.FIELD_URL_NOT_FOUND,
-            field='url'
+            code=FieldValidationErrorCode.FIELD_URL_NOT_FOUND
         )

@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
-from bodzify_api.utils.validation_error_utils import raise_validation_error
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
@@ -20,22 +20,24 @@ class EnumCharFilter(EmptiableCharFilter):
 
     def filter(self, qs, value):
         if value == '':
-            raise_validation_error(
+            # Since this is field validation, use from_field
+            raise AppValidationError.from_field(
+                field=str(self.field_name),
                 message=_('This field may not be blank.'),
-                field_validation_error_code=FieldValidationErrorCode.FIELD_BLANK,
-                field=str(self.field_name)
+                code=FieldValidationErrorCode.FIELD_BLANK
             )
 
         if value is not None:
             normalized_value = str(value).lower()
             if normalized_value not in self.valid_values:
-                raise_validation_error(
+                # Since this is field validation, use from_field
+                raise AppValidationError.from_field(
+                    field=str(self.field_name),
                     message=_('%(value)s is not a valid value. Allowed values are: %(valid_values)s') % {
                         'value': value,
                         'valid_values': ', '.join(self.valid_values)
                     },
-                    field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_ENUM,
-                    field=str(self.field_name)
+                    code=FieldValidationErrorCode.FIELD_INVALID_ENUM
                 )
 
             # If we have a method defined, use it for filtering

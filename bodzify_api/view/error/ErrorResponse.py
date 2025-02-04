@@ -91,7 +91,21 @@ class ErrorResponse:
 
     @staticmethod
     def from_validation_error(exception: Union[DrfValidationError, DjangoValidationError]) -> Response:
-        if isinstance(exception, DrfValidationError):
+        from bodzify_api.view.error.AppValidationError import AppValidationError
+
+        if isinstance(exception, AppValidationError):
+            # Handle our structured validation error
+            formatted_error = {
+                'message': 'Validation failed',
+                'field_errors': {
+                    exception.field: exception.get_error_detail()
+                }
+            }
+            return ErrorResponse._create_error_response(
+                formatted_error,
+                ApiErrorCode.VALIDATION_INVALID_INPUT
+            )
+        elif isinstance(exception, DrfValidationError):
             error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
             if isinstance(error_detail, dict):
                 # Handle field validation errors (already properly structured by DRF)
