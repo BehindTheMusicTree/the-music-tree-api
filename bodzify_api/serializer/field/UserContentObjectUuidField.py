@@ -14,10 +14,17 @@ from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
 
 class UserContentObjectUuidField(serializers.CharField):
+    field_name: str
+
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = settings.UUID_LEN
         kwargs['required'] = True
         super().__init__(*args, **kwargs)
+
+    def bind(self, field_name, parent):
+        super().bind(field_name, parent)
+        if field_name is None:
+            raise ImproperlyConfigured("field_name cannot be None")
 
     def to_internal_value(self, data):
         try:
@@ -25,7 +32,8 @@ class UserContentObjectUuidField(serializers.CharField):
         except (ValueError, AttributeError):
             raise_validation_error(
                 message='Invalid UUID format',
-                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value
+                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
+                field=self.field_name
             )
 
         request = self.context['request']
@@ -37,7 +45,8 @@ class UserContentObjectUuidField(serializers.CharField):
                 and not LibraryTrack.objects.filter(user=user, uuid=uuid_obj).exists():
             raise_validation_error(
                 message='Object with this ID does not exist or does not belong to the user',
-                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED.value
+                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED.value,
+                field=self.field_name
             )
 
         return str(uuid_obj)
