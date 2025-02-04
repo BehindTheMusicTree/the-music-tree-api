@@ -14,7 +14,7 @@ from django.dispatch import receiver
 from bodzify_api import settings
 from bodzify_api.utils.validation_error_utils import raise_validation_error
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.validator.track_file_validator \
     import validate_content_type_is_audio, validate_filename_length, validate_size
@@ -135,7 +135,7 @@ class TrackFile(PrivateStandardResource):
                                 'current': self.filename,
                                 'existing': existing_track_file.filename
                             },
-                            code=ValidationResponseCode.FIELD_DUPLICATE_FINGERPRINT.value,
+                            code=FieldValidationErrorCode.FIELD_DUPLICATE_FINGERPRINT.value,
                             field='file'
                         )
                 self.fingerprint_memory = fingerprint
@@ -209,7 +209,7 @@ class TrackFile(PrivateStandardResource):
                 raise_validation_error(
                     message=_(
                         'The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.'),
-                    code=ValidationResponseCode.FIELD_FILE_CORRUPTED.value, field='file')
+                    code=FieldValidationErrorCode.FIELD_FILE_CORRUPTED.value, field='file')
         else:
             self.flac_md5_has_been_corrected = False
 

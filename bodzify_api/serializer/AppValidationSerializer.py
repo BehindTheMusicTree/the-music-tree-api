@@ -4,7 +4,7 @@ from typing import Dict, Any, List, Union, Mapping
 from rest_framework import serializers
 from bodzify_api.utils.validation_error_utils \
     import raise_duplicate_fields_error, raise_unknown_fields_error, raise_unknown_field_error, raise_validation_error
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class AppValidationSerializer(serializers.Serializer):

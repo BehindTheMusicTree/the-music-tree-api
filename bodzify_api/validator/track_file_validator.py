@@ -7,7 +7,7 @@ from mutagen import File  # type: ignore
 from bodzify_api import settings
 from bodzify_api.model.track.lib.Fields import Fields
 from bodzify_api.utils.validation_error_utils import raise_validation_error
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 def validate_size(file):
@@ -17,7 +17,7 @@ def validate_size(file):
             'size': settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO
         }
         raise_validation_error(
-            message=message, code=ValidationResponseCode.FIELD_FILE_TOO_LARGE.value, field=Fields.TRACK_FILE)
+            message=message, code=FieldValidationErrorCode.FIELD_FILE_TOO_LARGE.value, field=Fields.TRACK_FILE)
 
     track_size_min = settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
     if file.size < track_size_min:
@@ -25,7 +25,7 @@ def validate_size(file):
             'size': settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO
         }
         raise_validation_error(
-            message=message, code=ValidationResponseCode.FIELD_FILE_TOO_SMALL.value, field=Fields.TRACK_FILE)
+            message=message, code=FieldValidationErrorCode.FIELD_FILE_TOO_SMALL.value, field=Fields.TRACK_FILE)
 
 
 def validate_content_type_is_audio(file):
@@ -50,7 +50,8 @@ def validate_content_type_is_audio(file):
     if error:
         message = 'Invalid file format. Only audio files are allowed.'
         raise_validation_error(
-            message=message, code=ValidationResponseCode.FIELD_INVALID_FILE_TYPE.value, field=Fields.TRACK_FILE_PUBLIC)
+            message=message, code=FieldValidationErrorCode.FIELD_INVALID_FILE_TYPE.value,
+            field=Fields.TRACK_FILE_PUBLIC)
 
 
 def validate_filename_length(value):
@@ -66,4 +67,5 @@ def validate_filename_length(value):
             'current_length': len(filename)
         }
         raise_validation_error(
-            message=message, code=ValidationResponseCode.FIELD_INVALID_FILENAME.value, field=Fields.TRACK_FILE_PUBLIC)
+            message=message, code=FieldValidationErrorCode.FIELD_INVALID_FILENAME.value,
+            field=Fields.TRACK_FILE_PUBLIC)

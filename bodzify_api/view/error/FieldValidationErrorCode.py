@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ValidationResponseCode(Enum):
+class FieldValidationErrorCode(Enum):
     """
     Enumerated validation response codes for field validation errors.
     These codes are used specifically for field-level validation responses.

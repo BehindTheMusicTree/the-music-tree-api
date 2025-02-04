@@ -5,7 +5,7 @@ from django_filters import FilterSet
 
 from bodzify_api.filtering.filter.foreign_key.ForeignKeyFilter import ForeignKeyFilter
 from bodzify_api.utils.validation_error_utils import raise_validation_error
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class NonSelfReferencingFilter(ForeignKeyFilter):
@@ -25,7 +25,7 @@ class NonSelfReferencingFilter(ForeignKeyFilter):
             if instance and str(instance.pk) == str(value):
                 raise_validation_error(
                     message=_('Self-referencing is not allowed'),
-                    code=ValidationResponseCode.FIELD_SELF_REFERENCE.value,
+                    code=FieldValidationErrorCode.FIELD_SELF_REFERENCE.value,
                     field=str(self.field_name)
                 )
 

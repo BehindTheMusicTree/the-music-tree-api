@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 from bodzify_api.utils.validation_error_utils import raise_validation_error
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class PrivateUuidField(serializers.UUIDField):
@@ -35,6 +35,6 @@ class PrivateUuidField(serializers.UUIDField):
             field_name = self.field_name if self.field_name is not None else 'uuid_field'
             raise_validation_error(
                 message='Resource does not exist for this user',
-                code=ValidationResponseCode.FIELD_RESOURCE_NOT_OWNED.value,
+                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED.value,
                 field=field_name
             )

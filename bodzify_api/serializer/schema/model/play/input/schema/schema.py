@@ -4,7 +4,7 @@ from bodzify_api.model.play.Play import Play, Fields as ModelFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.utils.validation_error_utils import raise_validation_error
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class Fields:
@@ -24,7 +24,7 @@ class PlaySchemaSerializer(serializers.ModelSerializer):
                 and not LibraryTrack.objects.filter(user=user, uuid=object_pk).exists():
             raise_validation_error(
                 message='Object with this ID does not exist or does not belong to the user',
-                code=ValidationResponseCode.FIELD_RESOURCE_NOT_OWNED.value,
+                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED.value,
                 field=Fields.CONTENT_OBJECT_UUID
             )
         return object_pk
