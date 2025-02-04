@@ -71,12 +71,64 @@ class ErrorResponse:
         )
 
     @staticmethod
-    def from_validation_error(exception: Union[DrfValidationError, DjangoValidationError]) -> Response:
+    def _get_validation_context(error: Dict[str, Any]) -> str:
+        return error.get('_validation_context', 'serializer')
 
+    @staticmethod
+    def _format_validation_error(error_detail: Dict[str, Any], context: str) -> Dict[str, Any]:
+        formatted_errors = {}
+        for field, error in error_detail.items():
+            if not isinstance(error, dict):
+                formatted_errors[field] = error
+                continue
+
+            # Extract error details safely
+            message = error.get('message', 'Validation error occurred')
+            code = error.get('code', 'validation_error')
+
+            if context == 'field':
+                # For field-level validation, wrap in another layer
+                formatted_errors[field] = {field: {
+                    'message': message,
+                    'code': code
+                }}
+            else:
+                # For serializer-level validation, keep as is
+                formatted_errors[field] = {
+                    'message': message,
+                    'code': code
+                }
+
+        return {
+            'message': 'Validation failed',
+            'field_errors': formatted_errors
+        }
+
+    @staticmethod
+    def from_validation_error(exception: Union[DrfValidationError, DjangoValidationError]) -> Response:
         if isinstance(exception, DrfValidationError):
             error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
-            if isinstance(error_detail, dict) and 'message' in error_detail:
-                return ErrorResponse._create_error_response(error_detail, ApiErrorCode.VALIDATION_INVALID_INPUT)
+            if isinstance(error_detail, dict):
+                # Get validation context from first error (they should all be the same type)
+                first_error = next(iter(error_detail.values())) if error_detail else {}
+                context = ErrorResponse._get_validation_context(
+                    first_error) if isinstance(first_error, dict) else 'serializer'
+
+                # Format based on context
+                if any(isinstance(v, dict) for v in error_detail.values()):
+                    formatted_error = ErrorResponse._format_validation_error(error_detail, context)
+                    return ErrorResponse._create_error_response(
+                        formatted_error,
+                        ApiErrorCode.VALIDATION_INVALID_INPUT
+                    )
+                # For simple validation errors with message
+                if 'message' in error_detail:
+                    return ErrorResponse._create_error_response(
+                        error_detail,
+                        ApiErrorCode.VALIDATION_INVALID_INPUT
+                    )
+
+            # Fallback for any other validation error structure
             return ErrorResponse._create_error_response(
                 {'message': 'Validation error', 'errors': error_detail},
                 ApiErrorCode.VALIDATION_INVALID_INPUT

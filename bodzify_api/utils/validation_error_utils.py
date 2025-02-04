@@ -1,6 +1,7 @@
 
 import re
-from typing import List, Dict, Any
+import inspect
+from typing import List, Dict, Any, Optional
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
@@ -16,7 +17,7 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
 
     Args:
         message: Human-readable error message
-        code: Machine-readable error code
+        field_validation_error_code: Machine-readable error code
         field: The field that caused the validation error
 
     Note:
@@ -24,16 +25,16 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
         {
             'field_name': {
                 'message': 'Human readable message',
-                'code': 'machine_readable_code'
+                'code': 'machine_readable_code',
+                '_validation_context': 'field' | 'serializer'  # Internal context
             }
         }
-
-        When used in a serializer's validate method, this structure is preserved.
-        When used outside a serializer, we ensure it doesn't get double-nested.
     """
     error_detail = {
         'message': message,
-        'code': field_validation_error_code.value
+        'code': field_validation_error_code.value,
+        # Add validation context based on the call stack
+        '_validation_context': 'field' if 'run_validation' in inspect.stack()[1].function else 'serializer'
     }
 
     # Create the error with the field name as the key
