@@ -15,7 +15,7 @@ from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
-from bodzify_api.view.error.ApiErrorCode import ErrorCode
+from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 from bodzify_api.view.error.AppErrorMessages import AppErrorMessages
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
@@ -57,7 +57,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         if not serializer:
             raise DrfValidationError(
                 detail={
-                    'message': AppErrorMessages.MESSAGES[ErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED],
+                    'message': AppErrorMessages.MESSAGES[ApiErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED],
                     'code': 'serializer_not_defined'
                 }
             )
@@ -68,7 +68,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return self.create_serializer_class
         raise DrfValidationError(
             detail={
-                'message': AppErrorMessages.MESSAGES[ErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED],
+                'message': AppErrorMessages.MESSAGES[ApiErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED],
                 'code': 'serializer_not_defined'
             }
         )
