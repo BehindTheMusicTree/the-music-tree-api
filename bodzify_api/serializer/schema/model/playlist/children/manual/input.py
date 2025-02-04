@@ -22,7 +22,7 @@ class ManualPlaylistInputSerializer(AppValidationSerializer, serializers.ModelSe
         if ManualPlaylist.objects.filter(user=user, name=name).exists():
             raise_validation_error(
                 message=_('A playlist with this name already exists'),
-                code=FieldValidationErrorCode.FIELD_PLAYLIST_NAME_DUPLICATE.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_PLAYLIST_NAME_DUPLICATE,
                 field=ModelFields.NAME_PUBLIC
             )
         return super().validate(data)

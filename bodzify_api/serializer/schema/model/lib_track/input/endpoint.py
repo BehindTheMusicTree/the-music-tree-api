@@ -47,7 +47,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
             if data[Fields.GENRE_UUID] not in ['', None] and data[Fields.GENRE_NAME] not in ['', None]:
                 raise_validation_error(
                     message='Genre name and genre uuid cannot be specified at the same time',
-                    code=FieldValidationErrorCode.FIELD_MUTUALLY_EXCLUSIVE.value,
+                    field_validation_error_code=FieldValidationErrorCode.FIELD_MUTUALLY_EXCLUSIVE,
                     field=Fields.GENRE_NAME
                 )
 
@@ -61,7 +61,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
             if error_message:
                 raise_validation_error(
                     message=error_message,
-                    code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING.value,
+                    field_validation_error_code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING,
                     field=Fields.ALBUM_ARTISTS_NAMES
                 )
 
@@ -75,7 +75,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
             if error_message:
                 raise_validation_error(
                     message=error_message,
-                    code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING.value,
+                    field_validation_error_code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING,
                     field=Fields.ALBUM_NAME
                 )
 
@@ -87,7 +87,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                 except ValueError:
                     raise_validation_error(
                         message='Rating must be an integer',
-                        code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
+                        field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FORMAT,
                         field=Fields.RATING
                     )
 

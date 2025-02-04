@@ -24,7 +24,7 @@ class PlaySchemaSerializer(serializers.ModelSerializer):
                 and not LibraryTrack.objects.filter(user=user, uuid=object_pk).exists():
             raise_validation_error(
                 message='Object with this ID does not exist or does not belong to the user',
-                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED,
                 field=Fields.CONTENT_OBJECT_UUID
             )
         return object_pk

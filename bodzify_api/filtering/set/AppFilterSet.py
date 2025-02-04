@@ -19,7 +19,7 @@ class AppFilterSet(FilterSet):
         if invalid_filters:
             raise_validation_error(
                 message=f'Invalid filter(s) detected: {", ".join(sorted(invalid_filters))}',
-                code=FieldValidationErrorCode.FIELD_INVALID_FILTER.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FILTER,
                 field='filters'
             )
 

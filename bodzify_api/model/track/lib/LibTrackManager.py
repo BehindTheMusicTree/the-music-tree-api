@@ -123,7 +123,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         except Exception as error:
             raise_validation_error(
                 message=_('Error while extracting metadata from file: %(error)s') % {'error': str(error)},
-                code=FieldValidationErrorCode.FIELD_METADATA_EXTRACTION_FAILED.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_METADATA_EXTRACTION_FAILED,
                 field=Fields.TRACK_FILE_PUBLIC
             )
 

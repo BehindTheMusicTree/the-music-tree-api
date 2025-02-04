@@ -35,6 +35,6 @@ class PrivateUuidField(serializers.UUIDField):
             field_name = self.field_name if self.field_name is not None else 'uuid_field'
             raise_validation_error(
                 message='Resource does not exist for this user',
-                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED,
                 field=field_name
             )

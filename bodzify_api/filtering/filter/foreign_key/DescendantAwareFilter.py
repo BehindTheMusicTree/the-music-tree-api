@@ -35,7 +35,7 @@ class DescendantAwareFilter(NonSelfReferencingFilter):
             if target is not None and instance.is_descendant_of(target):
                 raise_validation_error(
                     message=_('Cannot reference an ancestor'),
-                    code=FieldValidationErrorCode.FIELD_ANCESTOR_REFERENCE.value,
+                    field_validation_error_code=FieldValidationErrorCode.FIELD_ANCESTOR_REFERENCE,
                     field=str(self.field_name)
                 )
 

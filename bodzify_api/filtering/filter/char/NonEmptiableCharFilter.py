@@ -18,7 +18,7 @@ class NonEmptiableCharFilter(EmptiableCharFilter):
             if value == '':
                 raise_validation_error(
                     message=_('This field may not be blank.'),
-                    code=FieldValidationErrorCode.FIELD_BLANK.value,
+                    field_validation_error_code=FieldValidationErrorCode.FIELD_BLANK,
                     field=str(self.field_name_user_friendly or self.field_name)
                 )
 

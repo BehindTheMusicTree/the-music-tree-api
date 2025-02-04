@@ -32,7 +32,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
         if re.match(r'{{.*}}', str(value)):
             raise_validation_error(
                 message=_('%(value)s is not a valid UUID') % {'value': value},
-                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FORMAT,
                 field=str(self.field_name)
             )
 
@@ -42,7 +42,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
         except (TypeError, ValueError):
             raise_validation_error(
                 message=_('%(value)s is not a valid UUID') % {'value': value},
-                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FORMAT,
                 field=str(self.field_name)
             )
 

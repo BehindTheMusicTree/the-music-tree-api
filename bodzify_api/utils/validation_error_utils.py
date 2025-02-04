@@ -11,7 +11,7 @@ from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationError
 CONSTRAINT_FIELD_PATTERN = re.compile(r'(?:non_empty_|unique_)(\w+)(?:_per_user)?')
 
 
-def raise_validation_error(message: str, code: Union[str, FieldValidationErrorCode], field: str) -> None:
+def raise_validation_error(message: str, field_validation_error_code: FieldValidationErrorCode, field: str) -> None:
     """
     Raise a validation error with a specific field and error details.
 
@@ -22,9 +22,12 @@ def raise_validation_error(message: str, code: Union[str, FieldValidationErrorCo
     """
     error_detail: Dict[str, Any] = {
         'message': message,
-        'code': code.value if isinstance(code, FieldValidationErrorCode) else code
+        'code': field_validation_error_code.value
     }
-    raise ValidationError({field: error_detail})
+    exc = ValidationError({field: error_detail})
+
+    print('validation_error_utils.py: raise_validation_error', exc)
+    raise exc
 
 
 def raise_duplicate_fields_error(fields: List[str]) -> None:
@@ -96,10 +99,8 @@ def raise_integrity_error(exc: IntegrityError, error_code: Union[str, FieldValid
         field = 'unknown_constraint_field'
 
     raise_validation_error(
-        message=error_msg,
-        code=error_code if error_code is not None else FieldValidationErrorCode.FIELD_DB_INTEGRITY_ERROR.value,
-        field=field
-    )
+        message=error_msg, field_validation_error_code=error_code
+        if error_code is not None else FieldValidationErrorCode.FIELD_DB_INTEGRITY_ERROR.value, field=field)
 
 
 def raise_unknown_field_error(field: str) -> None:
@@ -111,7 +112,7 @@ def raise_unknown_field_error(field: str) -> None:
     """
     raise_validation_error(
         message='Unrecognized field',
-        code=FieldValidationErrorCode.FIELD_UNKNOWN.value,
+        field_validation_error_code=FieldValidationErrorCode.FIELD_UNKNOWN.value,
         field=field
     )
 
@@ -211,21 +212,12 @@ def handle_drf_validation_error(exc: ValidationError, error_code: Union[str, Fie
         first_error = exc.detail[first_field]
         if isinstance(first_error, (list, tuple)):
             first_error = first_error[0]
-        raise_validation_error(
-            message=str(first_error),
-            code=error_code.value if isinstance(error_code, FieldValidationErrorCode) else error_code.lower(),
-            field=str(first_field)
-        )
+        raise_validation_error(message=str(first_error), field_validation_error_code=error_code.value if isinstance(
+            error_code, FieldValidationErrorCode) else error_code.lower(), field=str(first_field))
     elif isinstance(exc.detail, (list, tuple)):
         first_error = exc.detail[0]
-        raise_validation_error(
-            message=str(first_error),
-            code=error_code.value if isinstance(error_code, FieldValidationErrorCode) else error_code.lower(),
-            field='validation_error'
-        )
+        raise_validation_error(message=str(first_error), field_validation_error_code=error_code.value if isinstance(
+            error_code, FieldValidationErrorCode) else error_code.lower(), field='validation_error')
     else:
-        raise_validation_error(
-            message=str(exc.detail),
-            code=error_code.value if isinstance(error_code, FieldValidationErrorCode) else error_code.lower(),
-            field='validation_error'
-        )
+        raise_validation_error(message=str(exc.detail), field_validation_error_code=error_code.value if isinstance(
+            error_code, FieldValidationErrorCode) else error_code.lower(), field='validation_error')

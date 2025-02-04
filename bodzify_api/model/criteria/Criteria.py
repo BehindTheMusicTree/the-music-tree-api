@@ -107,13 +107,13 @@ class Criteria(LibTrackMixin):
             if 'non_empty_name' in error_message:
                 raise_validation_error(
                     message=_('Name cannot be empty'),
-                    code=FieldValidationErrorCode.FIELD_NAME_EMPTY.value,
+                    field_validation_error_code=FieldValidationErrorCode.FIELD_NAME_EMPTY,
                     field='name'
                 )
             elif 'unique_name_per_user' in error_message:
                 raise_validation_error(
                     message=_('A criteria with this name already exists for this user'),
-                    code=FieldValidationErrorCode.FIELD_NAME_DUPLICATE.value,
+                    field_validation_error_code=FieldValidationErrorCode.FIELD_NAME_DUPLICATE,
                     field='name'
                 )
             # Let other database integrity errors propagate to be handled as system errors

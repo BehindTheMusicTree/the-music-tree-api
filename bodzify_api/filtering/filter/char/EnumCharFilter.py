@@ -22,7 +22,7 @@ class EnumCharFilter(EmptiableCharFilter):
         if value == '':
             raise_validation_error(
                 message=_('This field may not be blank.'),
-                code=FieldValidationErrorCode.FIELD_BLANK.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_BLANK,
                 field=str(self.field_name)
             )
 
@@ -34,7 +34,7 @@ class EnumCharFilter(EmptiableCharFilter):
                         'value': value,
                         'valid_values': ', '.join(self.valid_values)
                     },
-                    code=FieldValidationErrorCode.FIELD_INVALID_ENUM.value,
+                    field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_ENUM,
                     field=str(self.field_name)
                 )
 

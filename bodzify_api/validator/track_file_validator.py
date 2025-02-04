@@ -17,7 +17,8 @@ def validate_size(file):
             'size': settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO
         }
         raise_validation_error(
-            message=message, code=FieldValidationErrorCode.FIELD_FILE_TOO_LARGE.value, field=Fields.TRACK_FILE)
+            message=message, field_validation_error_code=FieldValidationErrorCode.FIELD_FILE_TOO_LARGE,
+            field=Fields.TRACK_FILE)
 
     track_size_min = settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
     if file.size < track_size_min:
@@ -25,7 +26,8 @@ def validate_size(file):
             'size': settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO
         }
         raise_validation_error(
-            message=message, code=FieldValidationErrorCode.FIELD_FILE_TOO_SMALL.value, field=Fields.TRACK_FILE)
+            message=message, field_validation_error_code=FieldValidationErrorCode.FIELD_FILE_TOO_SMALL,
+            field=Fields.TRACK_FILE)
 
 
 def validate_content_type_is_audio(file):
@@ -50,7 +52,7 @@ def validate_content_type_is_audio(file):
     if error:
         message = 'Invalid file format. Only audio files are allowed.'
         raise_validation_error(
-            message=message, code=FieldValidationErrorCode.FIELD_INVALID_FILE_TYPE.value,
+            message=message, field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FILE_TYPE,
             field=Fields.TRACK_FILE_PUBLIC)
 
 
@@ -67,5 +69,5 @@ def validate_filename_length(value):
             'current_length': len(filename)
         }
         raise_validation_error(
-            message=message, code=FieldValidationErrorCode.FIELD_INVALID_FILENAME.value,
+            message=message, field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FILENAME,
             field=Fields.TRACK_FILE_PUBLIC)

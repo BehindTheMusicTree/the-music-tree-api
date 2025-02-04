@@ -23,7 +23,7 @@ class PutValidationSerializer(AppValidationSerializer):
         if request and request.method.upper() == 'PUT' and not attrs:
             raise_validation_error(
                 message='At least one field must be provided for update',
-                code=FieldValidationErrorCode.FIELD_NO_UPDATES,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_NO_UPDATES,
                 field='request'
             )
 

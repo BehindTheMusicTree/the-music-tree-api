@@ -32,7 +32,7 @@ class UserContentObjectUuidField(serializers.CharField):
         except (ValueError, AttributeError):
             raise_validation_error(
                 message='Invalid UUID format',
-                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FORMAT,
                 field=self.field_name
             )
 
@@ -45,7 +45,7 @@ class UserContentObjectUuidField(serializers.CharField):
                 and not LibraryTrack.objects.filter(user=user, uuid=uuid_obj).exists():
             raise_validation_error(
                 message='Object with this ID does not exist or does not belong to the user',
-                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED.value,
+                field_validation_error_code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED,
                 field=self.field_name
             )
 
