@@ -47,17 +47,14 @@ class TrackablePlayCountUuidField(PrivateUuidField):
 
         user = request.user
 
-        # Try to find the object in either Playlist or LibraryTrack
         content_object = (
             self._get_object_by_uuid(uuid_value, user, Playlist) or
             self._get_object_by_uuid(uuid_value, user, LibraryTrack)
         )
 
         if not content_object:
-            raise_validation_error(
-                message='Object with this ID does not exist or does not belong to the user',
-                field_validation_error_code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED,
-                field=self.field_name or 'content_object_uuid'
-            )
+            raise_validation_error(message='Invalid content object UUID',
+                                   field=self.field_name or 'trackable_play_count_uuid',
+                                   field_validation_error_code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED)
 
         return uuid_value

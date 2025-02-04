@@ -1,4 +1,3 @@
-
 import re
 import inspect
 from typing import List, Dict, Any, Optional
@@ -21,30 +20,29 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
         field: The field that caused the validation error
 
     Note:
-        Creates a ValidationError in DRF's expected format:
-        {
-            'field_name': {
-                'message': 'Human readable message',
-                'code': 'machine_readable_code',
-                '_validation_context': 'field' | 'serializer'  # Internal context
-            }
-        }
+        In field validation context (run_validation method), DRF automatically wraps the error
+        with the field name, so we pass the error detail directly:
+            ValidationError({'message': '...', 'code': '...'})
+            -> DRF wraps it as: {'field_name': {'message': '...', 'code': '...'}}
+
+        In serializer context, we need to wrap the error with the field name ourselves:
+            ValidationError({'field_name': {'message': '...', 'code': '...'}})
+
+        This way we work with DRF's validation chain instead of against it, letting DRF
+        handle field wrapping in field validation context while we handle it in serializer context.
     """
     error_detail = {
         'message': message,
-        'code': field_validation_error_code.value,
-        # Add validation context based on the call stack
-        '_validation_context': 'field' if 'run_validation' in inspect.stack()[1].function else 'serializer'
+        'code': field_validation_error_code.value
     }
 
-    # Create the error with the field name as the key
-    exc = ValidationError({field: error_detail})
-
-    # Print for debugging
-    print('validation_error_utils.py: raise_validation_error error_detail', error_detail)
-    print('validation_error_utils.py: raise_validation_error exc', exc)
-
-    raise exc
+    # In field validation context (run_validation), let DRF handle field wrapping
+    if 'run_validation' in inspect.stack()[1].function:
+        # DRF will automatically wrap this with the field name
+        raise ValidationError(error_detail)
+    else:
+        # In serializer context, wrap with field name ourselves
+        raise ValidationError({field: error_detail})
 
 
 def raise_duplicate_field_error(field: str) -> None:

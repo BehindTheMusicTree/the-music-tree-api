@@ -15,7 +15,6 @@ class ErrorResponse:
 
     @staticmethod
     def _get_error_code(error: Any, default_code: str = 'error') -> str:
-        """Get the error code from a DRF error detail."""
         if isinstance(error, dict) and 'unknown_fields' in error:
             return str(error['unknown_fields']['code'])
         if isinstance(error, DRFErrorDetail) and hasattr(error, 'code') and error.code:
@@ -24,7 +23,6 @@ class ErrorResponse:
 
     @staticmethod
     def _format_validation_message(message: str, field: str) -> str:
-        """Format validation message, handling JSON-like strings."""
         if message.startswith("{'message': '") and message.endswith("'}"):
             try:
                 import json
@@ -71,11 +69,7 @@ class ErrorResponse:
         )
 
     @staticmethod
-    def _get_validation_context(error: Dict[str, Any]) -> str:
-        return error.get('_validation_context', 'serializer')
-
-    @staticmethod
-    def _format_validation_error(error_detail: Dict[str, Any], context: str) -> Dict[str, Any]:
+    def _format_validation_error(error_detail: Dict[str, Any]) -> Dict[str, Any]:
         formatted_errors = {}
         for field, error in error_detail.items():
             if not isinstance(error, dict):
@@ -85,19 +79,10 @@ class ErrorResponse:
             # Extract error details safely
             message = error.get('message', 'Validation error occurred')
             code = error.get('code', 'validation_error')
-
-            if context == 'field':
-                # For field-level validation, wrap in another layer
-                formatted_errors[field] = {field: {
-                    'message': message,
-                    'code': code
-                }}
-            else:
-                # For serializer-level validation, keep as is
-                formatted_errors[field] = {
-                    'message': message,
-                    'code': code
-                }
+            formatted_errors[field] = {
+                'message': message,
+                'code': code
+            }
 
         return {
             'message': 'Validation failed',
@@ -109,14 +94,9 @@ class ErrorResponse:
         if isinstance(exception, DrfValidationError):
             error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
             if isinstance(error_detail, dict):
-                # Get validation context from first error (they should all be the same type)
-                first_error = next(iter(error_detail.values())) if error_detail else {}
-                context = ErrorResponse._get_validation_context(
-                    first_error) if isinstance(first_error, dict) else 'serializer'
-
-                # Format based on context
+                # Handle field validation errors (already properly structured by DRF)
                 if any(isinstance(v, dict) for v in error_detail.values()):
-                    formatted_error = ErrorResponse._format_validation_error(error_detail, context)
+                    formatted_error = ErrorResponse._format_validation_error(error_detail)
                     return ErrorResponse._create_error_response(
                         formatted_error,
                         ApiErrorCode.VALIDATION_INVALID_INPUT
@@ -136,25 +116,33 @@ class ErrorResponse:
 
         if isinstance(exception, DjangoValidationError):
             if hasattr(exception, 'message_dict'):
-                first_field = next(iter(exception.message_dict.keys()))
-                first_message = exception.message_dict[first_field][0]
+                # Multiple field errors
                 error_detail = {
-                    'message': str(first_message),
-                    'field': str(first_field),
-                    'code': ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
+                    field: {'message': msgs[0], 'code': 'validation_error'}
+                    for field, msgs in exception.message_dict.items()
                 }
+                formatted_error = ErrorResponse._format_validation_error(error_detail)
+                return ErrorResponse._create_error_response(
+                    formatted_error,
+                    ApiErrorCode.VALIDATION_INVALID_INPUT
+                )
             else:
+                # Single error message
                 error_detail = {
-                    'message': str(exception.messages[0]),
+                    'message': str(exception.messages[0] if exception.messages else exception),
                     'code': ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
                 }
-            return ErrorResponse._create_error_response(
-                error_detail,
-                ApiErrorCode.VALIDATION_INVALID_INPUT
-            )
+                return ErrorResponse._create_error_response(
+                    error_detail,
+                    ApiErrorCode.VALIDATION_INVALID_INPUT
+                )
 
+        # Generic validation error
         error_detail = {
             'message': str(exception),
             'code': ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
         }
-        return ErrorResponse._create_error_response(error_detail, ApiErrorCode.VALIDATION_INVALID_INPUT)
+        return ErrorResponse._create_error_response(
+            error_detail,
+            ApiErrorCode.VALIDATION_INVALID_INPUT
+        )
