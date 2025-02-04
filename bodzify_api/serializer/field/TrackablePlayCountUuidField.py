@@ -23,11 +23,13 @@ class TrackablePlayCountUuidField(PrivateUuidField):
         # Initialize with a dummy queryset, we'll handle the actual validation in to_internal_value
         super().__init__(queryset=Playlist.objects.none(), **kwargs)
 
-    def _get_object_by_uuid(self, uuid_value: UUID, user: Union[User, AnonymousUser], model_class: Type[Model]) -> Optional[Model]:
+    def _get_object_by_uuid(
+            self, uuid_value: UUID, user: Union[User, AnonymousUser],
+            model_class: Type[Model]) -> Optional[Model]:
         """Helper method to get an object by UUID and user."""
         if isinstance(user, AnonymousUser):
             return None
-            
+
         try:
             return model_class.objects.get(uuid=uuid_value, user=user)
         except model_class.DoesNotExist:
@@ -44,7 +46,7 @@ class TrackablePlayCountUuidField(PrivateUuidField):
             raise ValueError("TrackablePlayCountUuidField requires request in the context")
 
         user = request.user
-        
+
         # Try to find the object in either Playlist or LibraryTrack
         content_object = (
             self._get_object_by_uuid(uuid_value, user, Playlist) or
