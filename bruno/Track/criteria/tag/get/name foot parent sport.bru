@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}genres/?name=Rock&parent
+  url: {{BASE_URL}}tags/?name=foot&parent={{tagSportUuid}}
   body: json
   auth: inherit
 }
 
 params:query {
-  name: Rock
-  parent: 
+  name: foot
+  parent: {{tagSportUuid}}
 }
 
 vars:post-response {

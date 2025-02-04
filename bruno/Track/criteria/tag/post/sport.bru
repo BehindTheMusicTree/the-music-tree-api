@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}genres/
+  url: {{BASE_URL}}tags/
   body: json
   auth: inherit
 }
@@ -16,11 +16,10 @@ headers {
 
 body:json {
   {
-    "name": "Outlaw",
-    "parent": "{{genreCountryUuid}}"
+    "name": "Sport"
   }
 }
 
 vars:post-response {
-  genreOutlawUuid: res.body.uuid
+  tagSportUuid: res.body.uuid
 }

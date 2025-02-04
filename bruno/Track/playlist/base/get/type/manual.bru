@@ -5,11 +5,11 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}playlists?type=manual
+  url: {{BASE_URL}}playlists?type_label=manual
   body: json
   auth: inherit
 }
 
 params:query {
-  type: manual
+  type_label: manual
 }

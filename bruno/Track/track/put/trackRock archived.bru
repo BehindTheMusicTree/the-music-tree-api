@@ -5,13 +5,13 @@ meta {
 }
 
 put {
-  url: {{BASE_URL}}tracks/{{trackJohnnyUuid}}/
+  url: {{BASE_URL}}tracks/{{trackRockUuid}}/
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "title": "Noir cest noir"
+    "archived": "True"
   }
 }
