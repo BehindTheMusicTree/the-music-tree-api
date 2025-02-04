@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.utils.validation_error_utils import raise_validation_error
-from bodzify_api.view.error.FieldFieldValidationErrorCode import FieldFieldValidationErrorCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class EnumCharFilter(EmptiableCharFilter):
