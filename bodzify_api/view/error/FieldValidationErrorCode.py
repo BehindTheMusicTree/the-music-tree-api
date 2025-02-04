@@ -56,6 +56,7 @@ class FieldValidationErrorCode(Enum):
     FIELD_METADATA_EXTRACTION_FAILED = 'metadata_extraction_failed'
     FIELD_NAME_EMPTY = 'name_empty'
     FIELD_NAME_DUPLICATE = 'name_duplicate'
+    FIELD_NAMES_DUPLICATE = 'names_duplicate'
     FIELD_DB_INTEGRITY_ERROR = 'db_integrity_error'
     FIELD_PLAYLIST_NAME_DUPLICATE = 'playlist_name_duplicate'
     FIELD_MUTUALLY_EXCLUSIVE = 'mutually_exclusive'

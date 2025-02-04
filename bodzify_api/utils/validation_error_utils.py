@@ -1,7 +1,6 @@
 
 import re
-from typing import List, Dict, Any, Union
-from django.db import IntegrityError
+from typing import List, Dict, Any
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
@@ -24,17 +23,25 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
         'message': message,
         'code': field_validation_error_code.value
     }
+
+    # DRF ValidationError expects a dictionary with field names as keys
     exc = ValidationError({field: error_detail})
 
-    print('validation_error_utils.py: raise_validation_error', exc)
     raise exc
+
+
+def raise_duplicate_field_error(field: str) -> None:
+    error_detail: Dict[str, Any] = {
+        'message': f'Duplicate field found',
+        'code': FieldValidationErrorCode.FIELD_NAME_DUPLICATE.value,
+    }
+    raise ValidationError({field: error_detail})
 
 
 def raise_duplicate_fields_error(fields: List[str]) -> None:
     error_detail: Dict[str, Any] = {
         'message': f'Duplicate fields found: {", ".join(fields)}',
-        'code': FieldValidationErrorCode.FIELD_NAME_DUPLICATE.value,
-        'fields': fields
+        'code': FieldValidationErrorCode.FIELD_NAMES_DUPLICATE.value,
     }
     raise ValidationError({'duplicate_fields': error_detail})
 
