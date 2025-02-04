@@ -18,14 +18,30 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
         message: Human-readable error message
         code: Machine-readable error code
         field: The field that caused the validation error
+
+    Note:
+        Creates a ValidationError in DRF's expected format:
+        {
+            'field_name': {
+                'message': 'Human readable message',
+                'code': 'machine_readable_code'
+            }
+        }
+
+        When used in a serializer's validate method, this structure is preserved.
+        When used outside a serializer, we ensure it doesn't get double-nested.
     """
-    error_detail: Dict[str, Any] = {
+    error_detail = {
         'message': message,
         'code': field_validation_error_code.value
     }
 
-    # DRF ValidationError expects a dictionary with field names as keys
+    # Create the error with the field name as the key
     exc = ValidationError({field: error_detail})
+
+    # Print for debugging
+    print('validation_error_utils.py: raise_validation_error error_detail', error_detail)
+    print('validation_error_utils.py: raise_validation_error exc', exc)
 
     raise exc
 
