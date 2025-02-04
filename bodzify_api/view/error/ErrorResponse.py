@@ -59,17 +59,6 @@ class ErrorResponse:
         )
 
     @staticmethod
-    def from_unhandled_integrity_error(exception: IntegrityError) -> Response:
-        error_detail = {
-            'message': 'An internal error occurred',
-            'code': ApiErrorCode.SYSTEM_INTERNAL_ERROR.name.lower()
-        }
-        return ErrorResponse._create_error_response(
-            error_detail=error_detail,
-            error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR
-        )
-
-    @staticmethod
     def _format_validation_error(error_detail: Dict[str, Any]) -> Dict[str, Any]:
         formatted_errors = {}
         for field, error in error_detail.items():
@@ -89,6 +78,17 @@ class ErrorResponse:
             'message': 'Validation failed',
             'field_errors': formatted_errors
         }
+
+    @staticmethod
+    def from_unhandled_integrity_error(exception: IntegrityError) -> Response:
+        error_detail = {
+            'message': 'An internal error occurred',
+            'code': ApiErrorCode.SYSTEM_INTERNAL_ERROR.name.lower()
+        }
+        return ErrorResponse._create_error_response(
+            error_detail=error_detail,
+            error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR
+        )
 
     @staticmethod
     def from_app_validation_error(exception: AppValidationError) -> Response:
