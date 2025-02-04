@@ -17,6 +17,7 @@ from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 from bodzify_api.view.error.AppErrorMessages import AppErrorMessages
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
@@ -164,7 +165,9 @@ to modify in the request body.",
         return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def handle_exception(self, exc: Exception) -> Response:
-        if isinstance(exc, (DrfValidationError, DjangoValidationError)):
+        if isinstance(exc, (AppValidationError, DrfValidationError, DjangoValidationError)):
+            # Handle all validation errors through the same method
+            # AppValidationError is handled specifically inside from_validation_error
             return ErrorResponse.from_validation_error(exc)
         elif isinstance(exc, IntegrityError):
             return ErrorResponse.from_unhandled_integrity_error(exc)

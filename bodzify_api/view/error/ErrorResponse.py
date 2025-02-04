@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
+from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.ErrorResponseDetail import ErrorResponseDetail
 from bodzify_api.view.error.ErrorHttpStatusCodeMap import ErrorHTTPStatusCodeMap
 
@@ -90,21 +91,28 @@ class ErrorResponse:
         }
 
     @staticmethod
+    def from_app_validation_error(exception: AppValidationError) -> Response:
+        """
+        Handle our custom AppValidationError specifically.
+        We know its exact structure, so we can format it precisely.
+        """
+        formatted_error = {
+            'message': 'Validation failed',
+            'field_errors': {
+                exception.field: exception.get_error_detail()
+            }
+        }
+        return ErrorResponse._create_error_response(
+            formatted_error,
+            ApiErrorCode.VALIDATION_INVALID_INPUT
+        )
+
+    @staticmethod
     def from_validation_error(exception: Union[DrfValidationError, DjangoValidationError]) -> Response:
-        from bodzify_api.view.error.AppValidationError import AppValidationError
+        """Handle DRF and Django validation errors which may have varying structures."""
 
         if isinstance(exception, AppValidationError):
-            # Handle our structured validation error
-            formatted_error = {
-                'message': 'Validation failed',
-                'field_errors': {
-                    exception.field: exception.get_error_detail()
-                }
-            }
-            return ErrorResponse._create_error_response(
-                formatted_error,
-                ApiErrorCode.VALIDATION_INVALID_INPUT
-            )
+            return ErrorResponse.from_app_validation_error(exception)
         elif isinstance(exception, DrfValidationError):
             error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
             if isinstance(error_detail, dict):
