@@ -5,26 +5,25 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 import logging
 
 from bodzify_api import settings
-from bodzify_api.view.error.ErrorMessages import AppErrorMessages
-from bodzify_api.view.error.ErrorCode import ErrorCode
+from bodzify_api.view.error.AppErrorMessages import AppErrorMessages
+from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 
 
 class ErrorProcessor:
-    """Process and format validation errors from different sources."""
 
     @staticmethod
     def format_error_message(message: Union[str, DRFErrorDetail]) -> str:
         """Format error messages, handling special cases like UUID validation."""
         message_str = str(message)
-        return AppErrorMessages.MESSAGES[ErrorCode.VALIDATION_INVALID_UUID] if 'UUID' in message_str else message_str
+        return AppErrorMessages.MESSAGES[ApiErrorCode.VALIDATION_INVALID_UUID] if 'UUID' in message_str else message_str
 
     def process_validation_errors(self, exc: Union[DrfValidationError, DjangoValidationError]) -> Dict[str, Any]:
         """
         Process validation errors from DRF or Django into a consistent format.
-        
+
         Args:
             exc: The validation error to process.
-        
+
         Returns:
             A dictionary containing formatted error messages.
         """

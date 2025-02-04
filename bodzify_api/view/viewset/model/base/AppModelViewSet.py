@@ -15,8 +15,8 @@ from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
-from bodzify_api.view.error.ErrorCode import ErrorCode
-from bodzify_api.view.error.ErrorMessages import AppErrorMessages
+from bodzify_api.view.error.ApiErrorCode import ErrorCode
+from bodzify_api.view.error.AppErrorMessages import AppErrorMessages
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod

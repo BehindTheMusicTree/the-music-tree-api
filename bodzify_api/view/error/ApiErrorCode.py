@@ -1,9 +1,9 @@
 from enum import Enum
 
 
-class ErrorCode(Enum):
+class ApiErrorCode(Enum):
     """
-    Enumerated error codes organized by domain.
+    Enumerated error codes organized by domain for API responses.
     Format: CATEGORY_SPECIFIC_ERROR
     Ranges:
     1000-1999: Authentication/Authorization errors

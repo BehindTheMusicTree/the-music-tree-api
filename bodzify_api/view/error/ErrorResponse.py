@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError as DrfValidationError, Err
 from rest_framework.response import Response
 from rest_framework import status
 
-from bodzify_api.view.error.ErrorCode import ErrorCode
+from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 from bodzify_api.view.error.ErrorResponseDetail import ErrorResponseDetail
 from bodzify_api.view.error.ErrorHttpStatusCodeMap import ErrorHTTPStatusCodeMap
 
@@ -41,7 +41,7 @@ class ErrorResponse:
     @staticmethod
     def _create_error_response(
             error_detail: Dict[str, Any],
-            error_code: ErrorCode = ErrorCode.VALIDATION_INVALID_INPUT
+            error_code: ApiErrorCode = ApiErrorCode.VALIDATION_INVALID_INPUT
     ) -> Response:
         http_status = ErrorHTTPStatusCodeMap.ERROR_TO_HTTP_STATUS.get(error_code, status.HTTP_400_BAD_REQUEST)
         status_message = ErrorHTTPStatusCodeMap.STATUS_MESSAGES.get(http_status, "Bad Request")
@@ -63,11 +63,11 @@ class ErrorResponse:
     def from_unhandled_integrity_error(exception: IntegrityError) -> Response:
         error_detail = {
             'message': 'An internal error occurred',
-            'code': ErrorCode.SYSTEM_INTERNAL_ERROR.name.lower()
+            'code': ApiErrorCode.SYSTEM_INTERNAL_ERROR.name.lower()
         }
         return ErrorResponse._create_error_response(
             error_detail=error_detail,
-            error_code=ErrorCode.SYSTEM_INTERNAL_ERROR
+            error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR
         )
 
     @staticmethod
@@ -76,10 +76,10 @@ class ErrorResponse:
         if isinstance(exception, DrfValidationError):
             error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
             if isinstance(error_detail, dict) and 'message' in error_detail:
-                return ErrorResponse._create_error_response(error_detail, ErrorCode.VALIDATION_INVALID_INPUT)
+                return ErrorResponse._create_error_response(error_detail, ApiErrorCode.VALIDATION_INVALID_INPUT)
             return ErrorResponse._create_error_response(
                 {'message': 'Validation error', 'errors': error_detail},
-                ErrorCode.VALIDATION_INVALID_INPUT
+                ApiErrorCode.VALIDATION_INVALID_INPUT
             )
 
         if isinstance(exception, DjangoValidationError):
@@ -89,20 +89,20 @@ class ErrorResponse:
                 error_detail = {
                     'message': str(first_message),
                     'field': str(first_field),
-                    'code': ErrorCode.VALIDATION_INVALID_INPUT.name.lower()
+                    'code': ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
                 }
             else:
                 error_detail = {
                     'message': str(exception.messages[0]),
-                    'code': ErrorCode.VALIDATION_INVALID_INPUT.name.lower()
+                    'code': ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
                 }
             return ErrorResponse._create_error_response(
                 error_detail,
-                ErrorCode.VALIDATION_INVALID_INPUT
+                ApiErrorCode.VALIDATION_INVALID_INPUT
             )
 
         error_detail = {
             'message': str(exception),
-            'code': ErrorCode.VALIDATION_INVALID_INPUT.name.lower()
+            'code': ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
         }
-        return ErrorResponse._create_error_response(error_detail, ErrorCode.VALIDATION_INVALID_INPUT)
+        return ErrorResponse._create_error_response(error_detail, ApiErrorCode.VALIDATION_INVALID_INPUT)
