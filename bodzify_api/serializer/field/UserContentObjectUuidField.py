@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 from bodzify_api.utils.validation_error_utils import raise_validation_error
-from bodzify_api.view.error.ValidationResponseCode import ValidationResponseCode
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 from bodzify_api import settings
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -25,7 +25,7 @@ class UserContentObjectUuidField(serializers.CharField):
         except (ValueError, AttributeError):
             raise_validation_error(
                 message='Invalid UUID format',
-                code=ValidationResponseCode.FIELD_INVALID_FORMAT.value
+                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT.value
             )
 
         request = self.context['request']
@@ -37,7 +37,7 @@ class UserContentObjectUuidField(serializers.CharField):
                 and not LibraryTrack.objects.filter(user=user, uuid=uuid_obj).exists():
             raise_validation_error(
                 message='Object with this ID does not exist or does not belong to the user',
-                code=ValidationResponseCode.FIELD_RESOURCE_NOT_OWNED.value
+                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED.value
             )
 
         return str(uuid_obj)
