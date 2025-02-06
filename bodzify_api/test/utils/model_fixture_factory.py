@@ -153,10 +153,16 @@ class ModelFixtureFactory:
         return lib_track
 
     def create_play(self, content_object: TrackablePlayCount, user: Optional[User] = None, **kwargs) -> Play:
-        model_fields = {PlayFields.USER: user or self.default_test_user,
-                        PlayFields.CREATED_ON: timezone.make_aware(datetime.now()),
-                        PlayFields.UPDATED_ON: timezone.make_aware(datetime.now()),
-                        PlayFields.CONTENT_OBJECT: content_object}
+        from django.contrib.contenttypes.models import ContentType
+        content_type = ContentType.objects.get_for_model(content_object)
+
+        model_fields = {
+            PlayFields.USER: user or self.default_test_user,
+            PlayFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            PlayFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            PlayFields.CONTENT_TYPE: content_type,
+            PlayFields.OBJECT_PK: content_object.pk
+        }
         model_fields.update(kwargs)
         return G(Play, **model_fields)
 
