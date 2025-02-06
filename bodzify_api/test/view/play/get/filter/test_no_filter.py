@@ -8,10 +8,9 @@ class TestCase(PlayTestCase):
 
     def test_no_filter_then_ok(self):
         track = self.model_fixture_factory.create_lib_track_with_file(title='track')
+        play1 = self.model_fixture_factory.create_play(content_object=track)
+        print('play1', play1)
         self.model_fixture_factory.create_play(content_object=track)
-        self.model_fixture_factory.create_play(content_object=track)
-
-        saved_plays = list(Play.objects.all())
 
         response = self._get_plays()
 

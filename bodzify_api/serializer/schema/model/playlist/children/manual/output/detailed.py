@@ -8,7 +8,10 @@ from .Fields import Fields
 
 
 class ManualPlaylistDetailedSerializer(serializers.ModelSerializer):
-    library_tracks = LibTrackSimpleWithoutPlaylistAndAlbumSerializer(many=True)
+    library_tracks_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    library_tracks = LibTrackSimpleWithoutPlaylistAndAlbumSerializer(
+        source=Fields.LIB_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
+    library_tracks_archived_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     name = serializers.CharField()
 
     class Meta:
@@ -16,7 +19,7 @@ class ManualPlaylistDetailedSerializer(serializers.ModelSerializer):
         fields = [Fields.UUID,
                   Fields.NAME,
                   Fields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC,
-                  Fields.LIB_TRACKS_NOT_ARCHIVED_INTERNAL,
-                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON,]

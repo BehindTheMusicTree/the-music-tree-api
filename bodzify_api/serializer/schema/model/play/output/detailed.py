@@ -1,6 +1,6 @@
 from typing import Any
-from typing import Dict as ReturnDict
-from typing import List as ReturnList
+from typing import Dict
+from typing import List
 
 from rest_framework import serializers
 
@@ -23,7 +23,7 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
                   Fields.CONTENT_OBJECT,
                   Fields.CREATED_ON]
 
-    def get_content_object(self, obj: Play) -> ReturnList | Any | ReturnDict:
+    def get_content_object(self, obj: Play) -> List | Any | Dict:
         if isinstance(obj.content_object, Playlist):
             return PlaylistDetailedSerializer(obj.content_object).data
         else:
