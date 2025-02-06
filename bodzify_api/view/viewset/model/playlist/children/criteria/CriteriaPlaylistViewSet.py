@@ -19,7 +19,7 @@ class CriteriaPlaylistViewSet(AppModelViewSet[CriteriaPlaylist]):
                          **kwargs)
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=FilterFields.NAME,
+        OpenApiParameter(name=FilterFields.NAME_PUBLIC,
                          type=OpenApiTypes.STR,
                          location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.PARENT,
