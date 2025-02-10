@@ -17,7 +17,10 @@ class Fields:
     LIB_TRACKS_ARCHIVED_COUNT_PUBLIC = LibTrackMixinFields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC
     DURATION_IN_SEC = LibTrackMixinFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = LibTrackMixinFields.DURATION_STR_IN_HOUR_MIN_SEC
+    LAST_TRACK_LIST_UPDATE_DATE = LibTrackMixinFields.LAST_TRACK_LIST_UPDATE_DATE
+
     PLAY_COUNT = TrackablePlayCountFields.PLAY_COUNT
+
     LIB_TRACKS_RELATED_NAME = 'lib_tracks_of_playlist'
     LIB_TRACK_PLAYLIST_RELS_INTERNAL = 'lib_track_playlist_rels'
     LIB_TRACK_PLAYLIST_RELS_PUBLIC = 'library_track_playlist_relations'

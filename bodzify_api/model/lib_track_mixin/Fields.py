@@ -18,3 +18,4 @@ class Fields:
     LIB_TRACKS_ARCHIVED_COUNT_PUBLIC = LIB_TRACKS_NOT_ARCHIVED_PUBLIC + '_archived_count'
     DURATION_IN_SEC = 'duration_in_sec'
     DURATION_STR_IN_HOUR_MIN_SEC = 'duration_str_in_hour_min_sec'
+    LAST_TRACK_LIST_UPDATE_DATE = 'last_track_list_update_date'
