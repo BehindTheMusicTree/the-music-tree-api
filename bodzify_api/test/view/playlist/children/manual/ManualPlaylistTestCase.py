@@ -18,7 +18,7 @@ class ManualPlaylistTestCase(ApiTestCase):
     def _post_manual_playlist(self, **kwargs):
         response = self.api_client.post(path=reverse('manual-playlist-list'),
                                         data=kwargs,
-                                        content_type='application/x-www-form-urlencoded')
+                                        content_type='application/json')
         if response.status_code == status.HTTP_201_CREATED:
             self._set_saved_manual_playlist_attribute(response)
         return response
@@ -38,7 +38,7 @@ class ManualPlaylistTestCase(ApiTestCase):
     def _put_manual_playlist(self, uuid: UUID, **kwargs):
         response = self.api_client.put(path=reverse('manual-playlist-detail', kwargs={'pk': uuid}),
                                        data=kwargs,
-                                       content_type='application/x-www-form-urlencoded')
+                                       content_type='application/json')
         if response.status_code == status.HTTP_200_OK:
             self._set_saved_manual_playlist_attribute(response)
         return response
