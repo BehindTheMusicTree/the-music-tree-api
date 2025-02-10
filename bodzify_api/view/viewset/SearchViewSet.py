@@ -1,10 +1,8 @@
-from bodzify_api.filtering.set.search.model_filtersets import (
-    LibTrackSearchFilterSet,
-    ManualPlaylistSearchFilterSet,
-    CriteriaPlaylistSearchFilterSet,
-    AlbumSearchFilterSet,
-    ArtistSearchFilterSet
-)
+from bodzify_api.filtering.set.search.LibTrackSearchFilterSet import LibTrackSearchFilterSet
+from bodzify_api.filtering.set.search.ManualPlaylistSearchFilterSet import ManualPlaylistSearchFilterSet
+from bodzify_api.filtering.set.search.CriteriaPlaylistSearchFilterSet import CriteriaPlaylistSearchFilterSet
+from bodzify_api.filtering.set.search.AlbumSearchFilterSet import AlbumSearchFilterSet
+from bodzify_api.filtering.set.search.ArtistSearchFilterSet import ArtistSearchFilterSet
 from ..pagination.DefaultMultipleModelLimitOffsetPagination import DefaultMultipleModelLimitOffsetPagination
 from bodzify_api.serializer.schema.model.lib_track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.serializer.schema.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
