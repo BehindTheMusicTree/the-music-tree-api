@@ -2,4 +2,4 @@ from bodzify_api.model.playlist.children.manual.Fields import Fields as ModelFie
 
 
 class Fields:
-    NAME = ModelFields.NAME_PUBLIC
+    NAME_PUBLIC = ModelFields.NAME_PUBLIC

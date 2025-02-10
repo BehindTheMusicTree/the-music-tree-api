@@ -28,7 +28,7 @@ class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
         return self._handle_post(request)
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=Fields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=Fields.NAME_PUBLIC, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, *args, **kwargs):
         return self._handle_list()
