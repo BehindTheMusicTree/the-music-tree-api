@@ -7,12 +7,13 @@ from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase impor
 
 class TestCase(ManualPlaylistTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_return_all(self):
+    def test_empty_then_error(self):
         self.model_fixture_factory.create_manual_playlist(name="foot")
         self.model_fixture_factory.create_manual_playlist(name="cuisine")
+
         response = self._get_manual_playlists(name='')
-        assert response.status_code == status.HTTP_200_OK
-        assert self.results_overall_total == 2
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_contains_in_another_case_then_results(self):
         manual_playlist1 = self.model_fixture_factory.create_manual_playlist(name="foot")
@@ -26,3 +27,17 @@ class TestCase(ManualPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         result_names = [result[Fields.NAME] for result in self.results]
         assert manual_playlist1.name in result_names
         assert manual_playlist2.name in result_names
+
+    def test_not_provided_then_results(self):
+        manual_playlist1 = self.model_fixture_factory.create_manual_playlist(name="foot")
+        manual_playlist2 = self.model_fixture_factory.create_manual_playlist(name="football")
+        self.model_fixture_factory.create_manual_playlist(name="cuisine")
+
+        response = self._get_manual_playlists()
+
+        assert response.status_code == status.HTTP_200_OK
+        assert self.results_overall_total == 3
+        result_names = [result[Fields.NAME] for result in self.results]
+        assert manual_playlist1.name in result_names
+        assert manual_playlist2.name in result_names
+        assert "cuisine" in result_names
