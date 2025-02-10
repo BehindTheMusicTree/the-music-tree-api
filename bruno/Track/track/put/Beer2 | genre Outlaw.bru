@@ -1,0 +1,17 @@
+meta {
+  name: Beer2 | genre Outlaw
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{BASE_URL}}tracks/{{trackShowUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "genreName": "Stadium"
+  }
+}
