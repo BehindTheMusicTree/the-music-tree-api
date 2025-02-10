@@ -30,15 +30,16 @@ class TestCase(GenrePlaylistTestCase, PrivateForeignKeyFilterTestCase):
     def test_empty_then_results(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_rockabilly = self.model_fixture_factory.create_genre(name="Rockabilly")
-        self.model_fixture_factory.create_genre(name="Koko", parent=genre_rock.criteria_playlist)
+        genre_koko = self.model_fixture_factory.create_genre(name="Koko", parent=genre_rock)
 
         response = self._get_genre_playlists(**{GetResultFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.results_overall_total == 2
+        assert self.results_overall_total == 3
         result_names = [result[GetResultFields.NAME] for result in self.results]
         assert genre_rock.name in result_names
         assert genre_rockabilly.name in result_names
+        assert genre_koko.name not in result_names
 
     def test_genres_playlist_parent_corresponds_to_filter_then_return_instances(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
