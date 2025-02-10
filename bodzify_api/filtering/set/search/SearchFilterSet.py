@@ -6,10 +6,6 @@ from .Fields import Fields
 
 
 class SearchFilterSet(PrivateUniqueResourceFilterSet):
-    """
-    Base filterset for search functionality across different models.
-    Each model using this filterset should specify the search_fields in Meta class.
-    """
     query = filters.CharFilter(method='filter_query')
 
     def filter_query(self, queryset, name, value):
