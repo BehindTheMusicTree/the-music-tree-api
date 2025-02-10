@@ -1,0 +1,15 @@
+meta {
+  name: put
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{BASE_URL}}search/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  type: genre
+}
