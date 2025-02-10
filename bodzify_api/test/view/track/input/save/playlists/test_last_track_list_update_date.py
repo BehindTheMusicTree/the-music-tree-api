@@ -12,17 +12,18 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
     def test_track_newly_linked_to_genre_then_update_genre_playlist_last_track_list_update_date(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
-        criteria_playlist: CriteriaPlaylist = genre.criteria_playlist
-        genre_playlist_last_track_list_update_date_before_update = criteria_playlist.last_track_list_update_date
+        criteria_playlist_before_update: CriteriaPlaylist = genre.criteria_playlist
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
             title="Love", use_manager_for_genre_playlist_adding=True)
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre.name})
 
         assert response.status_code == status.HTTP_200_OK
-        genre.refresh_from_db()
-        criteria_playlist: CriteriaPlaylist = genre.criteria_playlist
-        assert criteria_playlist.last_track_list_update_date > genre_playlist_last_track_list_update_date_before_update
+        assert self.saved_lib_track.genre
+        criteria_playlist_after_update: CriteriaPlaylist = genre.criteria_playlist
+
+        assert criteria_playlist_after_update.last_track_list_update_date > \
+            criteria_playlist_before_update.last_track_list_update_date
 
     def test_track_newly_linked_to_genre_then_update_genre_parent_playlist_last_track_list_update_date(self):
         genre_parent = self.model_fixture_factory.create_genre(name='rock')
