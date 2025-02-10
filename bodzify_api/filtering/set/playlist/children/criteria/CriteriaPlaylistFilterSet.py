@@ -11,8 +11,7 @@ class CriteriaPlaylistFilterSet(AppFilterSet):
     name = NonEmptiableCharFilter(field_name=f'{ModelFields.CRITERIA}__{ModelFields.NAME}',
                                   field_name_user_friendly=Fields.NAME_PUBLIC,
                                   lookup_expr="icontains")
-    parent = ForeignKeyFilter(field_name=f'{ModelFields.CRITERIA}__{ModelFields.PARENT}',
-                              field_name_user_friendly=Fields.PARENT,)
+    parent = ForeignKeyFilter()
 
     class Meta:
         model = CriteriaPlaylist
