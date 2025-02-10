@@ -1,0 +1,11 @@
+meta {
+  name: Outlaw
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}genre-playlists/{{genreOutlayPlaylistUuid}}/
+  body: json
+  auth: inherit
+}

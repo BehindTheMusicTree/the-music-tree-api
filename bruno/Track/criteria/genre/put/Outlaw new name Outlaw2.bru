@@ -1,0 +1,18 @@
+meta {
+  name: Outlaw new name Outlaw2
+  type: http
+  seq: 13
+}
+
+put {
+  url: {{BASE_URL}}genres/{{genreOutlawUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    // "parent": ""
+    "parent": "{{genreCountryUuid}}"
+  }
+}
