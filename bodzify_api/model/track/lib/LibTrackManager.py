@@ -15,6 +15,7 @@ from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationError
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
+from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.user.User import User
 from bodzify_api.utils import audio_metadata, data_transformer, utils
@@ -46,14 +47,14 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 LibTrackPlaylistRel.objects.filter(playlist=old_genre_tree_item.criteria_playlist,
                                                    library_track=instance).delete()
                 old_genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
-                old_genre_tree_item.criteria_playlist.save()
+                old_genre_tree_item.criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
                 if old_genre_tree_item.parent:
                     old_genre_tree_item = old_genre_tree_item.parent
         else:
             genreless_criteria_playlist: CriteriaPlaylist = \
                 CriteriaPlaylist.objects.get(user=instance.user, type=CriteriaTypePks.GENRE, criteria=None)
             genreless_criteria_playlist.last_track_list_update_date = update_date
-            genreless_criteria_playlist.save()
+            genreless_criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
             LibTrackPlaylistRel.objects.filter(
                 playlist=genreless_criteria_playlist, lib_track=instance).delete()
 
@@ -69,6 +70,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                                                    playlist=genre_tree_item.criteria_playlist,
                                                    lib_track=instance)
                 genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
+                genre_tree_item.criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
 
                 # The loop will stop before genre_tree_item is None
                 genre_tree_item = genre_tree_item.parent  # type: ignore
@@ -80,6 +82,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                                                playlist=genreless_criteria_playlist,
                                                lib_track=instance)
             genreless_criteria_playlist.last_track_list_update_date = update_date
+            genreless_criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]

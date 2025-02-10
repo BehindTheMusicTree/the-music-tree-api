@@ -64,8 +64,3 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
             return self.criteria_playlist.name
         else:
             raise ValueError('Playlist has no name')
-
-    def update_last_track_list_update_date(self):
-        self.last_track_list_update_date = timezone.now()
-        self.save()
-        return self.last_track_list_update_date
