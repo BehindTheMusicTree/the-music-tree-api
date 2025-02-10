@@ -3,7 +3,7 @@ from bodzify_api.test.field.filter.foreign_key.ForeignKeyFilterTestCase import F
 
 class PrivateForeignKeyFilterTestCase(ForeignKeyFilterTestCase):
 
-    def setUp(self, allow_empty_value, methods_names_to_implement=None):
+    def setUp(self, allow_empty_value: bool, methods_names_to_implement=None):
         class_methods_to_implement = ['test_of_another_user_then_empty']
         if methods_names_to_implement:
             class_methods_to_implement += methods_names_to_implement

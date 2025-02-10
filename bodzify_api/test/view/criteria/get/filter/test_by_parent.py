@@ -11,6 +11,13 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
     def setUp(self):
         super().setUp(allow_empty_value=True)
 
+    def test_invalid_uuid_then_error(self):
+        self.model_fixture_factory.create_genre(name="Rock")
+
+        response = self._get_genres(**{FilterfFields.PARENT: 'invalid-uuid'})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
     def test_of_another_user_then_empty(self):
         test_user1_genre = self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop", parent=test_user1_genre)
