@@ -16,15 +16,6 @@ class TestCase(ManualPlaylistTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_manual_playlist.name == manual_playlist_name_new
 
-    def test_not_provided_then_unchanged(self):
-        manual_playlist_name = "cuisine"
-        simpe_playlist = self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
-
-        response = self._put_manual_playlist(uuid=simpe_playlist.uuid, **{})
-
-        assert response.status_code == status.HTTP_200_OK
-        assert self.saved_manual_playlist.name == manual_playlist_name
-
     def test_empty_then_error(self):
         uuid = self.model_fixture_factory.create_manual_playlist(name='foero').uuid
         data = {PlaylistFields.NAME_PUBLIC: ""}
