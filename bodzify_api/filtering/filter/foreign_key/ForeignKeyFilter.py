@@ -23,9 +23,6 @@ class ForeignKeyFilter(CharFilter, AppFilter):
         if not parent:
             raise ImproperlyConfigured('ForeignKeyFilter must be used within a FilterSet')
 
-        if self.field_name not in parent.data:
-            return queryset
-
         if value == '':  # Empty string explicitly provided
             return queryset.filter(**{f"{self.field_name}__isnull": True})
 
