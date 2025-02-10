@@ -1,0 +1,15 @@
+meta {
+  name: parent invalid
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}genre-playlists/?name
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  name: 
+}
