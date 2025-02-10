@@ -111,7 +111,7 @@ class LibTrackTestCase(ApiTestCase):
 
     def _put_lib_track(self, uuid, **kwargs):
         response = self.api_client.put(
-            path=reverse('library-track-detail', kwargs={'pk': uuid}), data=kwargs, format='json')
+            path=reverse('library-track-detail', kwargs={'pk': uuid}), data=kwargs)
         if response.status_code == status.HTTP_200_OK:
             self._set_saved_lib_track_attribute(response)
         return response
