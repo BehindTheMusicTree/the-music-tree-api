@@ -11,7 +11,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 @pytest.mark.django_db
 class TestCase(LibTrackTestCase):
 
-    def test_new_genre_then_in_new_genre_playlist(self):
+    def test_newly_created_genre_then_in_new_genre_playlist(self):
         genre_name = "Rock"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
@@ -26,17 +26,18 @@ class TestCase(LibTrackTestCase):
 
     def test_existing_genre_then_track_in_existing_playlist(self):
         genre_name = "Rock"
-        genre = self.model_fixture_factory.create_genre(name=genre_name)
+        self.model_fixture_factory.create_genre(name=genre_name)
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
         assert response.status_code == status.HTTP_200_OK
 
-        track_playlists = self.saved_lib_track.playlists.all()
-        assert len(track_playlists) == 2
+        track_playlists_uuids_list = [playlist.uuid for playlist in self.saved_lib_track.playlists.all()]
+        assert len(track_playlists_uuids_list) == 1
 
-        genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre)
-        assert lib_track in genre_playlist.lib_tracks.all()
+        rock_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria__name=genre_name)
+        assert rock_criteria_playlist.playlist.uuid in track_playlists_uuids_list
 
     def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
         genre_rock_name = "Rock"
