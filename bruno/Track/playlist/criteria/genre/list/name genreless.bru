@@ -1,0 +1,15 @@
+meta {
+  name: name genreless
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}genre-playlists/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  name: Bro-country
+}
