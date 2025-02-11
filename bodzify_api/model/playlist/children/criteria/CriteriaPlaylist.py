@@ -19,7 +19,6 @@ class CriteriaPlaylist(Playlist):
                                     on_delete=models.CASCADE,
                                     parent_link=True,
                                     related_name=PlaylistFields.CRITERIA_PLAYLIST)
-
     criteria = models.OneToOneField(Criteria,
                                     on_delete=models.CASCADE,
                                     blank=True,
