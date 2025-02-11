@@ -45,8 +45,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         if old_genre:
             old_genre_tree_item: Genre = old_genre
             while old_genre_tree_item != genre_limit:
-                LibTrackPlaylistRel.objects.filter(playlist=old_genre_tree_item.criteria_playlist,
-                                                   lib_track=instance).delete()
+                LibTrackPlaylistRel.objects.filter(
+                    playlist=old_genre_tree_item.criteria_playlist, lib_track=instance).delete()
                 old_genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
                 old_genre_tree_item.criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
 
