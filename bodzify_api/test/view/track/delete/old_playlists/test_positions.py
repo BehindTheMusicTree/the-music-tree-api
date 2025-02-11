@@ -11,12 +11,12 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_removal_then_next_tracks_in_playlist_decrease_position(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
-        track_old_position_3 = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame",
-                                                                                     genre=genre_rock)
-        track_old_position_2 = self.model_fixture_factory.create_lib_track_with_file(title="Still Waiting",
-                                                                                     genre=genre_rock)
-        track_old_position_1 = self.model_fixture_factory.create_lib_track_with_file(title="The Hell Song",
-                                                                                     genre=genre_rock)
+        track_old_position_3 = self.model_fixture_factory.create_lib_track_with_file(
+            title="We're All To Blame", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
+        track_old_position_2 = self.model_fixture_factory.create_lib_track_with_file(
+            title="Still Waiting", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
+        track_old_position_1 = self.model_fixture_factory.create_lib_track_with_file(
+            title="The Hell Song", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
 
         response = self._delete_lib_track(uuid=track_old_position_1.uuid)
 
