@@ -2,6 +2,7 @@ import pytest
 
 from rest_framework import status
 
+from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.schema.model.lib_track.input.put import Fields as PutFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
@@ -17,10 +18,11 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
-        track_playlists = self.saved_lib_track.playlists.all()
-        assert len(track_playlists) == 2
-        criteria_playlists = CriteriaPlaylist.objects.filter(user=self.test_user1, playlist__in=track_playlists)
-        assert criteria_playlists.filter(criteria__name=genre_name).exists()
+        track_playlists_uuids_list = [playlist.uuid for playlist in self.saved_lib_track.playlists.all()]
+        assert len(track_playlists_uuids_list) == 1
+        rock_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria__name=genre_name)
+        assert rock_criteria_playlist.playlist.uuid in track_playlists_uuids_list
 
     def test_existing_genre_then_track_in_existing_playlist(self):
         genre_name = "Rock"
