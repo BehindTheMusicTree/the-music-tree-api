@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: {{BASE_URL}}manual-playlists/
+  url: {{BASE_URL}}manual-playlists/{{manualPlaylistFootUuid}}/
   body: json
   auth: inherit
 }
@@ -16,6 +16,6 @@ headers {
 
 body:json {
   {
-    "content_object_uuid": "{{trackJohnnyUuid}}"
+    "name": "sport"
   }
 }

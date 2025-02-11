@@ -5,11 +5,19 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}manual-playlists/
+  url: {{BASE_URL}}manual-playlists/?name=foot
   body: none
   auth: inherit
 }
 
+params:query {
+  name: foot
+}
+
 headers {
   Authorization: Bearer {{tokenAccess}}
+}
+
+vars:post-response {
+  manualPlaylistFootUuid: res.body.results[0].uuid
 }

@@ -5,11 +5,15 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}search/
+  url: {{BASE_URL}}search/?query=feu
   body: multipartForm
   auth: inherit
 }
 
+params:query {
+  query: feu
+}
+
 body:multipart-form {
-  type: genre
+  : 
 }
