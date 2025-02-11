@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from bodzify_api import settings
+from bodzify_api.model.playlist import Playlist
 from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
@@ -42,14 +43,16 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         update_date = timezone.now()
         if old_genre:
-            old_genre_tree_item = old_genre
+            old_genre_tree_item: Genre = old_genre
             while old_genre_tree_item != genre_limit:
                 LibTrackPlaylistRel.objects.filter(playlist=old_genre_tree_item.criteria_playlist,
-                                                   library_track=instance).delete()
+                                                   lib_track=instance).delete()
                 old_genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
                 old_genre_tree_item.criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
-                if old_genre_tree_item.parent:
-                    old_genre_tree_item = old_genre_tree_item.parent
+
+                # The loop will stop before genre_tree_item is None
+                old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
+
         else:
             genreless_criteria_playlist: CriteriaPlaylist = \
                 CriteriaPlaylist.objects.get(user=instance.user, type=CriteriaTypePks.GENRE, criteria=None)
@@ -66,9 +69,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         if instance.genre:
             genre_tree_item: Genre = instance.genre
             while genre_tree_item != genre_limit:
-                LibTrackPlaylistRel.objects.create(user=instance.user,
-                                                   playlist=genre_tree_item.criteria_playlist,
-                                                   lib_track=instance)
+                LibTrackPlaylistRel.objects.create(
+                    user=instance.user, playlist=genre_tree_item.criteria_playlist, lib_track=instance)
                 genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
                 genre_tree_item.criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
 
@@ -78,11 +80,11 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=instance.user,
                                                                                          type=CriteriaTypePks.GENRE,
                                                                                          criteria=None)
-            LibTrackPlaylistRel.objects.create(user=instance.user,
-                                               playlist=genreless_criteria_playlist,
-                                               lib_track=instance)
+            LibTrackPlaylistRel.objects.create(
+                user=instance.user, playlist=genreless_criteria_playlist, lib_track=instance)
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
+        print('track playlists', instance.playlists_with_positions)
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
@@ -95,8 +97,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         if len(filename_without_expressions_to_exclude) > settings.LIB_TRACK_FILENAME_LEN_MAX or force_title_generation:
             title = settings.LIB_TRACK_GENERATED_TITLE_PREFIXE + \
-                utils.generate_short_uu(settings.LIB_TRACK_GENERATED_TITLE_LENGTH -
-                                        len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
+                utils.generate_short_uu(
+                    settings.LIB_TRACK_GENERATED_TITLE_LENGTH - len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
         else:
             title = filename_without_expressions_to_exclude
         return title
@@ -156,8 +158,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             if InputFields.ALBUM_ARTISTS_NAMES in schema_data:
                 album_artists_names_str = schema_data[InputFields.ALBUM_ARTISTS_NAMES]
                 if album_artists_names_str:
-                    album_artists_name_list = \
-                        Artist.objects.get_artists_names_list_from_str(names_str=album_artists_names_str)
+                    album_artists_name_list = Artist.objects.get_artists_names_list_from_str(
+                        names_str=album_artists_names_str)
                 else:
                     album_artists_name_list = []
             else:
@@ -276,8 +278,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_model_data_from_extract_data(self, **kwargs):
         mine_track_url = kwargs[ExtractFields.URL]
-        track_filename, is_filename_randomly_generated = \
-            self._get_track_filename_with_extension(mine_track_url=mine_track_url, data=kwargs)
+        track_filename, is_filename_randomly_generated = self._get_track_filename_with_extension(
+            mine_track_url=mine_track_url,
+            data=kwargs)
 
         # stream=True makes it more effective for large files.
         track_file_streamed = requests.get(mine_track_url, stream=True)
@@ -308,13 +311,14 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
         for playlist_uuid, old_position in playlists_with_old_position:
-            lib_track_playlist_rels_to_update = \
-                LibTrackPlaylistRel.objects.filter(user=user, playlist=playlist_uuid, position__gt=old_position)
+            lib_track_playlist_rels_to_update = LibTrackPlaylistRel.objects.filter(
+                user=user, playlist=playlist_uuid, position__gt=old_position)
             lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
     def update_genre_playlists(self, instance: 'LibraryTrack', old_genre: Optional['Genre']):
-        common_genre = \
-            Genre.objects.get_common_ascendant(instance.genre, old_genre) if old_genre and instance.genre else None
+        from bodzify_api.model.criteria.children.genre.Genre import Genre
+        common_genre = Genre.objects.get_common_ascendant(
+            instance.genre, old_genre) if old_genre and instance.genre else None
 
         self._add_to_genre_playlists(instance=instance, genre_limit=common_genre)
         self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
@@ -375,20 +379,23 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         else:
             old_album = None
 
+        old_genre = old_instance.genre
+        old_artists = old_instance.artists.all()
+
         model_data = self._get_model_data_from_update_data(update_data=kwargs)
         updated_instance: LibraryTrack = super().update_instance(old_instance, **model_data)
 
-        if old_instance.genre != updated_instance.genre:
-            self.update_genre_playlists(updated_instance, old_genre=old_instance.genre)
+        if old_genre != updated_instance.genre:
+            self.update_genre_playlists(updated_instance, old_genre=old_genre)
 
-        if old_instance.album and updated_instance.album and old_album != updated_instance.album:
-            Album.objects.delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(old_instance.album)
+        if old_album and updated_instance.album and old_album != updated_instance.album:
+            Album.objects.delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(old_album)
             for album_artist in old_album_artists:
                 Artist.objects.delete_instance_if_nothing_linked(album_artist)
 
-        if old_instance.artists.count() > 0:
+        if old_artists.count() > 0:
             current_track_artists_list = list(updated_instance.artists.all())
-            old_track_artists_list: list[Artist] = list(old_instance.artists.all())
+            old_track_artists_list: list[Artist] = list(old_artists)
             for old_track_artist in old_track_artists_list:
                 if old_track_artist not in current_track_artists_list:
                     Artist.objects.delete_instance_if_nothing_linked(old_track_artist)
