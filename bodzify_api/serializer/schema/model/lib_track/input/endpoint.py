@@ -66,19 +66,19 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                     code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING
                 )
 
-        if Fields.POSITION_IN_ALBUM in data:
-            error_message = None
-            if Fields.ALBUM_NAME not in data:
-                error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
-            elif data[Fields.ALBUM_NAME] in [None, ""]:
-                error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+        # if Fields.POSITION_IN_ALBUM in data:
+        #     error_message = None
+        #     if Fields.ALBUM_NAME not in data:
+        #         error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+        #     elif data[Fields.ALBUM_NAME] in [None, ""]:
+        #         error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
-            if error_message:
-                raise AppValidationError.from_serializer(
-                    field=Fields.ALBUM_NAME,
-                    message=error_message,
-                    code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING
-                )
+        #     if error_message:
+        #         raise AppValidationError.from_serializer(
+        #             field=Fields.ALBUM_NAME,
+        #             message=error_message,
+        #             code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING
+        #         )
 
         if Fields.RATING in data:
             value = data[Fields.RATING]
