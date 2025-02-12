@@ -1,6 +1,5 @@
 from rest_framework import status
 
-from bodzify_api.model.play.Play import Play
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 
 

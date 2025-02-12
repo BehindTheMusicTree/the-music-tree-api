@@ -10,7 +10,6 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from bodzify_api import settings
-from bodzify_api.model.playlist import Playlist
 from bodzify_api.view.error.AppValidationError import AppValidationError
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields

@@ -2,7 +2,6 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING, Optional
 
 from django.db import models
-from django.utils import timezone
 
 from bodzify_api.model.playlist.PlaylistManager import PlaylistManager
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount

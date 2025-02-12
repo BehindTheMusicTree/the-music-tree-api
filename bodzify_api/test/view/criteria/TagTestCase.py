@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from django.urls import reverse
@@ -6,9 +5,6 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.serializer.schema.model.criteria.output.Fields import Fields
-from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
-from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 

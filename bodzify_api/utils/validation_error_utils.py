@@ -1,7 +1,7 @@
 from bodzify_api.view.error.AppValidationError import AppValidationError
 import re
 import inspect
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode

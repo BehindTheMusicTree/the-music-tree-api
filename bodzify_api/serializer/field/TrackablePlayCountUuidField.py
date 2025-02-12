@@ -2,7 +2,7 @@ from typing import Union, Type, Optional
 from uuid import UUID
 
 from django.contrib.auth.models import User, AnonymousUser
-from django.db.models import Model, QuerySet
+from django.db.models import Model
 from rest_framework.request import Request
 
 from bodzify_api.model.playlist.Playlist import Playlist
