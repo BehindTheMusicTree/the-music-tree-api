@@ -3,10 +3,11 @@ from rest_framework import status
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.model.lib_track.input.put import Fields as PutFields
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
-from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
+from bodzify_api.test.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(NullableFieldTestCase):
+class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
 
     def test_not_provided_then_unchanged(self):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
@@ -43,8 +44,7 @@ class TestCase(NullableFieldTestCase):
 
     def test_not_none_then_update(self):
         genre_name = "rap"
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackFields.TITLE: 'lolo'})
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(title='lolo')
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
 
