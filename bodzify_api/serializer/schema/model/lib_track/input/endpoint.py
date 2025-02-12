@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from rest_framework import serializers
 
 from bodzify_api import settings
@@ -31,7 +32,21 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                                             required=False,
                                             allow_blank=True,
                                             allow_null=True)
-    position_in_album = serializers.IntegerField(required=False, allow_null=True)
+    position_in_album = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)
+        ]
+    )
+
+    def to_internal_value(self, data):
+        # Convert empty string to None for position_in_album
+        if 'position_in_album' in data and data['position_in_album'] == '':
+            data['position_in_album'] = None
+        return super().to_internal_value(data)
+
     genre_uuid = GenreField(required=False)
     genre_name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
                                        required=False,
@@ -66,19 +81,19 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                     code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING
                 )
 
-        # if Fields.POSITION_IN_ALBUM in data:
-        #     error_message = None
-        #     if Fields.ALBUM_NAME not in data:
-        #         error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
-        #     elif data[Fields.ALBUM_NAME] in [None, ""]:
-        #         error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+        if Fields.POSITION_IN_ALBUM in data:
+            error_message = None
+            if Fields.ALBUM_NAME not in data:
+                error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+            elif data[Fields.ALBUM_NAME] in [None, ""]:
+                error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
-        #     if error_message:
-        #         raise AppValidationError.from_serializer(
-        #             field=Fields.ALBUM_NAME,
-        #             message=error_message,
-        #             code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING
-        #         )
+            if error_message:
+                raise AppValidationError.from_serializer(
+                    field=Fields.ALBUM_NAME,
+                    message=error_message,
+                    code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING
+                )
 
         if Fields.RATING in data:
             value = data[Fields.RATING]
