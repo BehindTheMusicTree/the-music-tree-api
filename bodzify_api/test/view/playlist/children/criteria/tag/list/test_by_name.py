@@ -16,9 +16,9 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_tag_playlists_then_not_in_results(self):
+    def test_genre_playlists_then_not_in_results(self):
         tag = self.model_fixture_factory.create_tag(name="foot")
-        tag = self.model_fixture_factory.create_tag(name="foot fiesta")
+        gnere = self.model_fixture_factory.create_genre(name="footcode")
 
         response = self._get_tag_playlists(**{FilterFields.NAME: 'foot'})
 
@@ -26,7 +26,7 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         assert self.results_overall_total == 1
         result_names = [result[RietrieveFields.NAME] for result in self.results]
         assert tag.name in result_names
-        assert tag.name not in result_names
+        assert gnere.name not in result_names
 
     def test_contains_in_another_case_then_results(self):
         criteria1 = self.model_fixture_factory.create_tag(name="Fiesta")
