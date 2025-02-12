@@ -1,7 +1,7 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.model.playlist.children.criteria.output.detailed import Fields as GetResultFields
-from bodzify_api.test.view.playlist.children.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
+from bodzify_api.serializer.schema.model.playlist.children.criteria.output.detailed import Fields as RietrieveFields
+from bodzify_api.test.view.playlist.children.criteria.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 
 
 class TestCase(GenrePlaylistTestCase):
@@ -15,6 +15,6 @@ class TestCase(GenrePlaylistTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        result_names = [result[GetResultFields.NAME] for result in self.results]
+        result_names = [result[RietrieveFields.NAME] for result in self.results]
         assert genre_punk.name in result_names
         assert genre_punky.name in result_names

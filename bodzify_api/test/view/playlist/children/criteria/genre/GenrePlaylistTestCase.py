@@ -27,8 +27,8 @@ class GenrePlaylistTestCase(ApiTestCase):
             self._set_results_attributes(response)
         return response
 
-    def _put_genre_playlist(self, manual_playlist_uuid: UUID, **kwargs):
-        response = self.api_client.put(path=reverse('genre-playlist-detail', kwargs={'pk': manual_playlist_uuid}),
+    def _put_genre_playlist(self, uuid: UUID, **kwargs):
+        response = self.api_client.put(path=reverse('genre-playlist-detail', kwargs={'pk': uuid}),
                                        data=kwargs,
                                        content_type='application/x-www-form-urlencoded')
         return response
