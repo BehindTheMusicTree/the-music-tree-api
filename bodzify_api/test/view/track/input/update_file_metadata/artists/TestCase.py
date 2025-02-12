@@ -1,6 +1,6 @@
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
-from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields as InputFields
+from bodzify_api.serializer.schema.model.lib_track.input.Fields import InputFields as InputFields
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase \
     import UpdateFileMetadataStrTestCase
 
