@@ -20,7 +20,8 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_lib_track.genre
-        criteria_playlist_after_update: CriteriaPlaylist = genre.criteria_playlist
+        criteria_playlist_after_update: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, uuid=genre.criteria_playlist.uuid)
 
         assert criteria_playlist_after_update.last_track_list_update_date > \
             criteria_playlist_before_update.last_track_list_update_date
@@ -36,16 +37,48 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_200_OK
         genre_parent.refresh_from_db()
         parent_criteria_playlist: CriteriaPlaylist = genre_parent.criteria_playlist
-        assert genre.criteria_playlist.last_track_list_update_date < parent_criteria_playlist.last_track_list_update_date
+        assert \
+            genre.criteria_playlist.last_track_list_update_date < parent_criteria_playlist.last_track_list_update_date
 
-    def test_track_newly_linked_to_no_genre_then_update_genreless_playlist_last_track_list_update_date(self):
-        genreless_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
-            user=self.test_user1, type=CriteriaTypePks.GENRE, criteria=None)
-
+    def test_track_not_linked_to_genre_anymore_then_update_genre_playlist_last_track_list_update_date(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", genre=genre)
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+            title="Love", genre=genre, use_manager_for_genre_playlist_adding=True)
+        criteria_playlist_before_update: CriteriaPlaylist = genre.criteria_playlist
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: ''})
+
         assert response.status_code == status.HTTP_200_OK
-        genreless_playlist.refresh_from_db()
-        assert genreless_playlist.last_track_list_update_date > genreless_playlist.last_track_list_update_date
+        criteria_playlist_after_update: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, uuid=genre.criteria_playlist.uuid)
+        assert criteria_playlist_after_update.last_track_list_update_date > \
+            criteria_playlist_before_update.last_track_list_update_date
+
+    def test_track_not_linked_to_genre_anymore_then_update_genre_parents_playlist_last_track_list_update_date(self):
+        genre_parent = self.model_fixture_factory.create_genre(name='rock')
+        genre = self.model_fixture_factory.create_genre(name='rock hard', parent=genre_parent)
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+            title="Love", genre=genre, use_manager_for_genre_playlist_adding=True)
+        parent_criteria_playlist_before_update: CriteriaPlaylist = genre_parent.criteria_playlist
+
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: ''})
+
+        assert response.status_code == status.HTTP_200_OK
+        genre_parent.refresh_from_db()
+        parent_criteria_playlist_after_update: CriteriaPlaylist = genre_parent.criteria_playlist
+        assert parent_criteria_playlist_after_update.last_track_list_update_date > \
+            parent_criteria_playlist_before_update.last_track_list_update_date
+
+    def test_track_newly_linked_to_no_genre_then_update_genreless_playlist_last_track_list_update_date(self):
+        genre = self.model_fixture_factory.create_genre(name='rock')
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+            title="Love", genre=genre, use_manager_for_genre_playlist_adding=True)
+        genreless_playlist_before_update: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, type=CriteriaTypePks.GENRE, criteria=None)
+
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: ''})
+
+        assert response.status_code == status.HTTP_200_OK
+        genreless_playlist_after_update: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, type=CriteriaTypePks.GENRE, criteria=None)
+        assert genreless_playlist_after_update.last_track_list_update_date > genreless_playlist_before_update.last_track_list_update_date
