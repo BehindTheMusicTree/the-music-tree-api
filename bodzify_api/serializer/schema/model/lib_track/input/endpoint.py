@@ -1,7 +1,7 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
 from rest_framework import serializers
 
 from bodzify_api import settings
+from bodzify_api.serializer.field.PositionInAlbumField import PositionInAlbumField
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.field.ArtistsNamesField import ArtistsNamesField
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
@@ -32,20 +32,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                                             required=False,
                                             allow_blank=True,
                                             allow_null=True)
-    position_in_album = serializers.IntegerField(
-        required=False,
-        allow_null=True,
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)
-        ]
-    )
-
-    def to_internal_value(self, data):
-        # Convert empty string to None for position_in_album
-        if 'position_in_album' in data and data['position_in_album'] == '':
-            data['position_in_album'] = None
-        return super().to_internal_value(data)
+    position_in_album = PositionInAlbumField()
 
     genre_uuid = GenreField(required=False)
     genre_name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX,

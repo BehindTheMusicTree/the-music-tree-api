@@ -66,3 +66,5 @@ class FieldValidationErrorCode(Enum):
     # When an artist name is empty in a list of multiple artists
     FIELD_ARTIST_NAME_EMPTY_IN_LIST = 'artist_name_empty_in_list'
     FIELD_ARTIST_NAMES_DUPLICATE = 'artist_names_duplicate'  # When duplicate artist names are provided
+    FIELD_POSITION_IN_ALBUM_TOO_SMALL = 'position_in_album_too_small'  # When position is less than 1
+    FIELD_POSITION_IN_ALBUM_TOO_LARGE = 'position_in_album_too_large'  # When position exceeds max value
