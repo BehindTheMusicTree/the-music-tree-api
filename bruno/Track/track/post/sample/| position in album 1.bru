@@ -1,7 +1,7 @@
 meta {
-  name: artists mat muse
+  name: | position in album 1
   type: http
-  seq: 14
+  seq: 21
 }
 
 post {
@@ -16,10 +16,13 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  PositionInAlbum: 
-  ~ArtistsNames: mat, muse
+  title: Horses
+  genreName: Outlaw
 }
 
-vars:pre-request {
-  : 
+vars:post-response {
+  libTrackHorsesUuid: res.body.uuid
+  genreOutlawUuid: res.body.genre.uuid
+  genreOutlawPlaylistUuid: res.body.playlists[0].uuid
+  title: horses
 }
