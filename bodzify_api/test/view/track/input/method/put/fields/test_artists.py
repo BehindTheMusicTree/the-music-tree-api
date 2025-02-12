@@ -2,10 +2,11 @@ from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.schema.model.lib_track.input.put import Fields as PutFields
-from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
+from bodzify_api.test.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(NullableFieldTestCase):
+class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
 
     def test_not_provided_then_unchanged(self):
         artist = self.model_fixture_factory.create_artist(name="a-ha")
