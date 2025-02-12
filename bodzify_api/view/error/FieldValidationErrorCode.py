@@ -63,3 +63,6 @@ class FieldValidationErrorCode(Enum):
     FIELD_DEPENDENCY_MISSING = 'dependency_missing'
     FIELD_RESOURCE_NOT_OWNED = 'resource_not_owned'
     FIELD_NO_UPDATES = 'no_updates'  # Used when a PUT request contains no fields to update
+    # When an artist name is empty in a list of multiple artists
+    FIELD_ARTIST_NAME_EMPTY_IN_LIST = 'artist_name_empty_in_list'
+    FIELD_ARTIST_NAMES_DUPLICATE = 'artist_names_duplicate'  # When duplicate artist names are provided
