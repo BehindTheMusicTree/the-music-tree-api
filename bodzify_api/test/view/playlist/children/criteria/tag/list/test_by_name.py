@@ -33,7 +33,7 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         criteria2 = self.model_fixture_factory.create_tag(name="Fiestaabilly")
         self.model_fixture_factory.create_tag(name="Punk")
 
-        response = self._get_tag_playlists(**{FilterFields.NAME: 'RO'})
+        response = self._get_tag_playlists(**{FilterFields.NAME: 'Fi'})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
