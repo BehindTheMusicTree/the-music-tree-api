@@ -171,3 +171,54 @@ class BaseQuerySet(models.QuerySet):
     def get_or_create(self, **kwargs: Any) -> Any:
         transformed_kwargs = self.transform_keyword_internal_fields(**kwargs)
         return super().get_or_create(**transformed_kwargs)
+
+    def order_by(self, *field_names: Any) -> 'BaseQuerySet':
+        """
+        Transform field names in order_by clauses.
+
+        This method handles both direct field references and related field queries like:
+        - name
+        - -name
+        - manual_playlist__name
+
+        Args:
+            *field_names: The field names to order by
+
+        Returns:
+            QuerySet with transformed field names for ordering
+        """
+        transformed_field_names = []
+
+        for field_name in field_names:
+            # Handle descending prefix
+            descending = field_name.startswith('-')
+            clean_name = field_name[1:] if descending else field_name
+
+            # Split the field path
+            parts = clean_name.split('__')
+
+            # Find any part that starts with 'name'
+            name_part_index = -1
+            for i, part in enumerate(parts):
+                if part.startswith(LibTrackMixinFields.NAME_PUBLIC):
+                    name_part_index = i
+                    break
+
+            if name_part_index >= 0:
+                # Get the model that owns the name field
+                field_path = '__'.join(parts[:name_part_index]) if name_part_index > 0 else ''
+                current_model = get_related_model(self.model, field_path) if field_path else self.model
+
+                # Check if this model uses internal name fields
+                if uses_internal_name(current_model):
+                    # Transform name to _name
+                    parts[name_part_index] = LibTrackMixinFields.NAME_INTERNAL
+                    transformed_name = '__'.join(parts)
+                    # Restore descending prefix if needed
+                    transformed_field_names.append(f'-{transformed_name}' if descending else transformed_name)
+                    continue
+
+            # If no transformation needed, use original field name
+            transformed_field_names.append(field_name)
+
+        return super().order_by(*transformed_field_names)
