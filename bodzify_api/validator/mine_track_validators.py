@@ -22,7 +22,7 @@ def check_if_remote_file_exists_using_get_request_with_range_header(url):
         raise AppValidationError.from_field(
             field='url',
             message=_('There was an issue requesting the URL %(url)s') % {'url': url},
-            code=FieldValidationErrorCode.FIELD_URL_REQUEST_FAILED
+            code=FieldValidationErrorCode.URL_REQUEST_FAILED
         )
 
 
@@ -32,7 +32,7 @@ def validate_url(value: str):
         raise AppValidationError.from_field(
             field='url',
             message=_('%(url)s is not a valid URL') % {'url': value},
-            code=FieldValidationErrorCode.FIELD_INVALID_URL
+            code=FieldValidationErrorCode.INVALID_URL
         )
     if (not value.lower().endswith('.mp3')
         and not value.lower().endswith('.wav')
@@ -41,12 +41,12 @@ def validate_url(value: str):
         raise AppValidationError.from_field(
             field='url',
             message=_('%(url)s is not a valid audio file') % {'url': value},
-            code=FieldValidationErrorCode.FIELD_INVALID_FILE_TYPE
+            code=FieldValidationErrorCode.INVALID_FILE_TYPE
         )
     if not check_if_remote_file_exists_using_get_request_with_range_header(value):
         # Since this is field validation, use from_field
         raise AppValidationError.from_field(
             field='url',
             message=_('%(url)s does not exist') % {'url': value},
-            code=FieldValidationErrorCode.FIELD_URL_NOT_FOUND
+            code=FieldValidationErrorCode.URL_NOT_FOUND
         )

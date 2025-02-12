@@ -46,6 +46,36 @@ class ApiTestCase(AppTestCase):
     def _set_result(self, response):
         self.result = response.json()
 
+    def _set_bad_request_result(self, response):
+        """Store bad request result details with field-specific error information.
+
+        Handles responses with field errors in the format:
+        {
+            "code": 2001,
+            "message": "Bad Request",
+            "success": false,
+            "details": [{
+                "message": "Validation failed",
+                "fieldErrors": {
+                    "field1": {"message": "...", "code": "..."},
+                    "field2": {"message": "...", "code": "..."}
+                }
+            }]
+        }
+        """
+        self.bad_request_result = response.json()
+        bad_request_result_details = response.json()['details'][0]
+        self.bad_request_result_field_errors_json = bad_request_result_details['fieldErrors']
+
+        # Convert field errors to a list format for easier testing
+        self.bad_request_result_field_errors = []
+        for field_name, error_info in self.bad_request_result_field_errors_json.items():
+            self.bad_request_result_field_errors.append({
+                'field': field_name,
+                'message': error_info['message'],
+                'code': error_info['code']
+            })
+
     def _set_results_attributes(self, response):
         response_json = response.json()
         self.results = response_json[PaginatedResponseFields.RESULTS]
@@ -99,6 +129,8 @@ class ApiTestCase(AppTestCase):
             if response.status_code == status.HTTP_201_CREATED:
                 self._set_saved_lib_track_attribute(response)
                 self._set_result(response)
+            elif response.status_code == status.HTTP_400_BAD_REQUEST:
+                self._set_bad_request_result(response)
             return response
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:

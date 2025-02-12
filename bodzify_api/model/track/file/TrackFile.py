@@ -136,7 +136,7 @@ class TrackFile(PrivateStandardResource):
                                 'current': self.filename,
                                 'existing': existing_track_file.filename
                             },
-                            code=FieldValidationErrorCode.FIELD_DUPLICATE_FINGERPRINT
+                            code=FieldValidationErrorCode.DUPLICATE_FINGERPRINT
                         )
                 self.fingerprint_memory = fingerprint
             else:
@@ -210,7 +210,7 @@ class TrackFile(PrivateStandardResource):
                     field='file',
                     message=_(
                         'The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.'),
-                    code=FieldValidationErrorCode.FIELD_FILE_CORRUPTED)
+                    code=FieldValidationErrorCode.FILE_CORRUPTED)
         else:
             self.flac_md5_has_been_corrected = False
 

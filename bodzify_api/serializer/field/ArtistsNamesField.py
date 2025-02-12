@@ -19,7 +19,7 @@ class ArtistsNamesField(serializers.CharField):
             raise AppValidationError.from_field(
                 field=Fields.ARTISTS_NAMES,
                 message='Empty artist names are not allowed when specifying multiple artists',
-                code=FieldValidationErrorCode.FIELD_ARTIST_NAME_EMPTY_IN_LIST
+                code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
             )
 
         # Check for duplicates
@@ -28,7 +28,7 @@ class ArtistsNamesField(serializers.CharField):
             raise AppValidationError.from_field(
                 field=Fields.ARTISTS_NAMES,
                 message='Duplicate artist names are not allowed',
-                code=FieldValidationErrorCode.FIELD_ARTIST_NAMES_DUPLICATE
+                code=FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
             )
 
         # Sort artists for consistent ordering

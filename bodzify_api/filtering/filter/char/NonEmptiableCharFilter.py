@@ -20,7 +20,7 @@ class NonEmptiableCharFilter(EmptiableCharFilter):
                 raise AppValidationError.from_field(
                     field=str(self.field_name_user_friendly or self.field_name),
                     message=_('This field may not be blank.'),
-                    code=FieldValidationErrorCode.FIELD_BLANK
+                    code=FieldValidationErrorCode.BLANK
                 )
 
         result = super().filter(qs, value)

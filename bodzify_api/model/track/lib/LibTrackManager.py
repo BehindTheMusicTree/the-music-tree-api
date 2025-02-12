@@ -128,7 +128,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             raise AppValidationError.from_model(
                 field=Fields.TRACK_FILE_PUBLIC,
                 message=_('Error while extracting metadata from file: %(error)s') % {'error': str(error)},
-                code=FieldValidationErrorCode.FIELD_METADATA_EXTRACTION_FAILED
+                code=FieldValidationErrorCode.METADATA_EXTRACTION_FAILED
             )
 
         save_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(

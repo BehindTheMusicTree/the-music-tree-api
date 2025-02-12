@@ -108,13 +108,13 @@ class Criteria(LibTrackMixin):
                 raise AppValidationError.from_model(
                     field=Fields.NAME_PUBLIC,
                     message=_('Name cannot be empty'),
-                    code=FieldValidationErrorCode.FIELD_NAME_EMPTY
+                    code=FieldValidationErrorCode.NAME_EMPTY
                 )
             elif 'unique_name_per_user' in error_message:
                 raise AppValidationError.from_model(
                     field=Fields.NAME_PUBLIC,
                     message=_('A criteria with this name already exists for this user'),
-                    code=FieldValidationErrorCode.FIELD_NAME_DUPLICATE
+                    code=FieldValidationErrorCode.NAME_DUPLICATE
                 )
             # Let other database integrity errors propagate to be handled as system errors
             raise e

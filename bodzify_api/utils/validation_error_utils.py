@@ -36,7 +36,7 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
 def raise_duplicate_field_error(field: str) -> None:
     error_detail: Dict[str, Any] = {
         'message': f'Duplicate field found',
-        'code': FieldValidationErrorCode.FIELD_NAME_DUPLICATE.value,
+        'code': FieldValidationErrorCode.NAME_DUPLICATE.value,
     }
     raise ValidationError({field: error_detail})
 
@@ -44,7 +44,7 @@ def raise_duplicate_field_error(field: str) -> None:
 def raise_duplicate_fields_error(fields: List[str]) -> None:
     error_detail: Dict[str, Any] = {
         'message': f'Duplicate fields found: {", ".join(fields)}',
-        'code': FieldValidationErrorCode.FIELD_NAMES_DUPLICATE.value,
+        'code': FieldValidationErrorCode.NAMES_DUPLICATE.value,
     }
     raise ValidationError({'duplicate_fields': error_detail})
 
@@ -58,7 +58,7 @@ def raise_unknown_field_error(field: str) -> None:
     """
     raise_validation_error(
         message='Unrecognized field',
-        field_validation_error_code=FieldValidationErrorCode.FIELD_UNKNOWN,
+        field_validation_error_code=FieldValidationErrorCode.UNKNOWN,
         field=field
     )
 
@@ -77,7 +77,7 @@ def raise_unknown_fields_error(fields: List[str]) -> None:
 
     error_detail: Dict[str, Any] = {
         'message': 'Request contains multiple unrecognized fields',
-        'code': FieldValidationErrorCode.FIELD_UNKNOWN_MULTIPLE.value,
+        'code': FieldValidationErrorCode.UNKNOWN_MULTIPLE.value,
         'fields': fields
     }
     raise ValidationError({'unknown_fields': error_detail})
@@ -139,7 +139,7 @@ def raise_multiple_validation_errors(errors: Dict[str, List[Dict[str, Any]]]) ->
         field: [
             {
                 'message': error.get('message', 'Validation error occurred'),
-                'code': error.get('code', FieldValidationErrorCode.FIELD_INVALID_FORMAT.value),
+                'code': error.get('code', FieldValidationErrorCode.INVALID_FORMAT.value),
                 **{k: v for k, v in error.items() if k not in ['message', 'code']}
             }
             for error in field_errors

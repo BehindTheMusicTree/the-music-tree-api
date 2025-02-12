@@ -48,7 +48,7 @@ class DuplicateFieldsMiddleware:
         # raise_validation_error always raises an exception, so this will always go to the except block
         raise_validation_error(
             message='Duplicate field detected.',
-            field_validation_error_code=FieldValidationErrorCode.FIELD_INVALID_FORMAT,
+            field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT,
             field=field_name
         )
         # This is unreachable but makes the type checker happy

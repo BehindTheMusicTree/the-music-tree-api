@@ -37,7 +37,7 @@ class DescendantAwareFilter(NonSelfReferencingFilter):
                 raise AppValidationError.from_field(
                     field=str(self.field_name),
                     message=_('Cannot reference an ancestor'),
-                    code=FieldValidationErrorCode.FIELD_ANCESTOR_REFERENCE
+                    code=FieldValidationErrorCode.ANCESTOR_REFERENCE
                 )
 
         return filtered_queryset

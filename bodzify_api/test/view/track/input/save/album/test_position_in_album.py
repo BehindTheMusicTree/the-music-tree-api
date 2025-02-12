@@ -47,6 +47,11 @@ class TestCase(LibTrackTestCase):
             album_name='album', position_in_album=settings.LIB_TRACK_POSITION_IN_ALBUM_MAX + 1)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == 'positionInAlbum'
+        assert error['code'] == 'position_in_album_too_large'
+        assert error['message'] == 'Position in album must be less than or equal to 1000'
 
     def test_negative_one_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(album_name='album', position_in_album=-1)

@@ -34,7 +34,7 @@ class UserContentObjectUuidField(serializers.CharField):
             raise AppValidationError.from_field(
                 field=self.field_name,
                 message='Invalid UUID format',
-                code=FieldValidationErrorCode.FIELD_INVALID_FORMAT
+                code=FieldValidationErrorCode.INVALID_FORMAT
             )
 
         request = self.context['request']
@@ -48,7 +48,7 @@ class UserContentObjectUuidField(serializers.CharField):
             raise AppValidationError.from_field(
                 field=self.field_name,
                 message='Object with this ID does not exist or does not belong to the user',
-                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED
+                code=FieldValidationErrorCode.RESOURCE_NOT_OWNED
             )
 
         return str(uuid_obj)

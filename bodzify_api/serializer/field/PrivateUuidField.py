@@ -37,5 +37,5 @@ class PrivateUuidField(serializers.UUIDField):
             raise AppValidationError.from_field(
                 field=field_name,
                 message='Resource does not exist for this user',
-                code=FieldValidationErrorCode.FIELD_RESOURCE_NOT_OWNED
+                code=FieldValidationErrorCode.RESOURCE_NOT_OWNED
             )

@@ -20,7 +20,7 @@ class AppFilterSet(FilterSet):
             raise AppValidationError.from_filterset(
                 field=f'{", ".join(sorted(invalid_filters))}',
                 message=f'Invalid filter(s) detected: {", ".join(sorted(invalid_filters))}',
-                code=FieldValidationErrorCode.FIELD_INVALID_FILTER
+                code=FieldValidationErrorCode.INVALID_FILTER
             )
 
         return super(AppFilterSet, self).qs
