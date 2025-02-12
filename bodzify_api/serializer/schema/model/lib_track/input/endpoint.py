@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.serializer.field.PositionInAlbumField import PositionInAlbumField
+from bodzify_api.serializer.field.RatingField import RatingField
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.field.ArtistsNamesField import ArtistsNamesField
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
@@ -39,7 +40,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                                        required=False,
                                        allow_blank=True,
                                        allow_null=True)
-    rating = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    rating = RatingField()
     language = serializers.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX,
                                      required=False,
                                      allow_blank=True,
@@ -81,17 +82,5 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                     message=error_message,
                     code=FieldValidationErrorCode.FIELD_DEPENDENCY_MISSING
                 )
-
-        if Fields.RATING in data:
-            value = data[Fields.RATING]
-            if value and value != '':
-                try:
-                    value = int(value)
-                except ValueError:
-                    raise AppValidationError.from_serializer(
-                        field=Fields.RATING,
-                        message='Rating must be an integer',
-                        code=FieldValidationErrorCode.FIELD_INVALID_FORMAT
-                    )
 
         return super().validate(data)

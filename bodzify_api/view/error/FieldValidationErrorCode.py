@@ -68,3 +68,5 @@ class FieldValidationErrorCode(Enum):
     FIELD_ARTIST_NAMES_DUPLICATE = 'artist_names_duplicate'  # When duplicate artist names are provided
     FIELD_POSITION_IN_ALBUM_TOO_SMALL = 'position_in_album_too_small'  # When position is less than 1
     FIELD_POSITION_IN_ALBUM_TOO_LARGE = 'position_in_album_too_large'  # When position exceeds max value
+    FIELD_RATING_TOO_SMALL = 'rating_too_small'  # When rating is less than 0
+    FIELD_RATING_TOO_LARGE = 'rating_too_large'  # When rating exceeds max value
