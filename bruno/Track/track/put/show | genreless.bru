@@ -1,0 +1,17 @@
+meta {
+  name: show | genreless
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{BASE_URL}}tracks/{{trackShowUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "genreName": ""
+  }
+}
