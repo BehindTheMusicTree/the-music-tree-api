@@ -70,7 +70,7 @@ class BaseQuerySet(models.QuerySet):
             else:
                 # Transform (key, value) tuples
                 key, value = child
-                transformed_kwargs = self.transform_internal_fields(**{key: value})
+                transformed_kwargs = self.transform_keyword_internal_fields(**{key: value})
                 if transformed_kwargs:
                     # Get the first (and only) item from transformed_kwargs
                     transformed_key = next(iter(transformed_kwargs.keys()))
@@ -81,7 +81,7 @@ class BaseQuerySet(models.QuerySet):
 
         return new_q
 
-    def transform_args(self, *args: Any) -> tuple:
+    def transform_q_objects_internal_fields(self, *args: Any) -> tuple:
         """
         Transform Q objects in args.
 
@@ -99,7 +99,7 @@ class BaseQuerySet(models.QuerySet):
                 transformed_args.append(arg)
         return tuple(transformed_args)
 
-    def transform_internal_fields(self, **kwargs: Any) -> Dict[str, Any]:
+    def transform_keyword_internal_fields(self, **kwargs: Any) -> Dict[str, Any]:
         """
         Transform name fields in related field queries.
 
@@ -150,24 +150,24 @@ class BaseQuerySet(models.QuerySet):
         return transformed
 
     def filter(self, *args: Any, **kwargs: Any) -> 'BaseQuerySet':
-        transformed_args = self.transform_args(*args)
-        transformed_kwargs = self.transform_internal_fields(**kwargs)
+        transformed_args = self.transform_q_objects_internal_fields(*args)
+        transformed_kwargs = self.transform_keyword_internal_fields(**kwargs)
         return super().filter(*transformed_args, **transformed_kwargs)
 
     def exclude(self, *args: Any, **kwargs: Any) -> 'BaseQuerySet':
-        transformed_args = self.transform_args(*args)
-        transformed_kwargs = self.transform_internal_fields(**kwargs)
+        transformed_args = self.transform_q_objects_internal_fields(*args)
+        transformed_kwargs = self.transform_keyword_internal_fields(**kwargs)
         return super().exclude(*transformed_args, **transformed_kwargs)
 
     def get(self, *args: Any, **kwargs: Any) -> Any:
-        transformed_args = self.transform_args(*args)
-        transformed_kwargs = self.transform_internal_fields(**kwargs)
+        transformed_args = self.transform_q_objects_internal_fields(*args)
+        transformed_kwargs = self.transform_keyword_internal_fields(**kwargs)
         return super().get(*transformed_args, **transformed_kwargs)
 
     def create(self, **kwargs: Any) -> Any:
-        transformed_kwargs = self.transform_internal_fields(**kwargs)
+        transformed_kwargs = self.transform_keyword_internal_fields(**kwargs)
         return super().create(**transformed_kwargs)
 
     def get_or_create(self, **kwargs: Any) -> Any:
-        transformed_kwargs = self.transform_internal_fields(**kwargs)
+        transformed_kwargs = self.transform_keyword_internal_fields(**kwargs)
         return super().get_or_create(**transformed_kwargs)
