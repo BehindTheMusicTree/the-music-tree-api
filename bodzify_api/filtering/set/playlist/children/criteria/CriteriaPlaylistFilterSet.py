@@ -1,5 +1,5 @@
 
-from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
+from bodzify_api.filtering.filter.char.CriteriaNameFilter import CriteriaNameFilter
 from bodzify_api.filtering.filter.foreign_key.ForeignKeyFilter import ForeignKeyFilter
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
@@ -8,9 +8,9 @@ from .Fields import Fields
 
 
 class CriteriaPlaylistFilterSet(AppFilterSet):
-    name = NonEmptiableCharFilter(field_name=f'{ModelFields.CRITERIA}__{ModelFields.NAME}',
-                                  field_name_user_friendly=Fields.NAME_PUBLIC,
-                                  lookup_expr="icontains")
+    name = CriteriaNameFilter(field_name=f'{ModelFields.CRITERIA}__{ModelFields.NAME}',
+                              field_name_user_friendly=Fields.NAME_PUBLIC,
+                              lookup_expr="icontains")
     parent = ForeignKeyFilter()
 
     class Meta:

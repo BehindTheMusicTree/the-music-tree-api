@@ -1,6 +1,7 @@
 from typing import Any, Dict, Type
 
 from django.db import models
+from django.db.models import Q
 
 from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
 
@@ -44,7 +45,59 @@ def uses_internal_name(model: Type[models.Model]) -> bool:
 
 
 class BaseQuerySet(models.QuerySet):
-    """QuerySet that handles name field transformations for both direct and related fields."""
+    """QuerySet that handles name field transformations for both direct and related fields, including Q objects."""
+
+    def transform_q_object(self, q_object: Q) -> Q:
+        """
+        Transform field names in a Q object recursively.
+
+        Args:
+            q_object: The Q object to transform
+
+        Returns:
+            A new Q object with transformed field names
+        """
+        # New Q object to hold transformed conditions
+        new_q = Q()
+        new_q.connector = q_object.connector
+        new_q.negated = q_object.negated
+
+        # Transform each child
+        for child in q_object.children:
+            if isinstance(child, Q):
+                # Recursively transform nested Q objects
+                new_q.children.append(self.transform_q_object(child))
+            else:
+                # Transform (key, value) tuples
+                key, value = child
+                transformed_kwargs = self.transform_internal_fields(**{key: value})
+                if transformed_kwargs:
+                    # Get the first (and only) item from transformed_kwargs
+                    transformed_key = next(iter(transformed_kwargs.keys()))
+                    transformed_value = transformed_kwargs[transformed_key]
+                    new_q.children.append((transformed_key, transformed_value))
+                else:
+                    new_q.children.append(child)
+
+        return new_q
+
+    def transform_args(self, *args: Any) -> tuple:
+        """
+        Transform Q objects in args.
+
+        Args:
+            *args: Query arguments that may contain Q objects
+
+        Returns:
+            Tuple of transformed arguments
+        """
+        transformed_args = []
+        for arg in args:
+            if isinstance(arg, Q):
+                transformed_args.append(self.transform_q_object(arg))
+            else:
+                transformed_args.append(arg)
+        return tuple(transformed_args)
 
     def transform_internal_fields(self, **kwargs: Any) -> Dict[str, Any]:
         """
@@ -97,16 +150,19 @@ class BaseQuerySet(models.QuerySet):
         return transformed
 
     def filter(self, *args: Any, **kwargs: Any) -> 'BaseQuerySet':
+        transformed_args = self.transform_args(*args)
         transformed_kwargs = self.transform_internal_fields(**kwargs)
-        return super().filter(*args, **transformed_kwargs)
+        return super().filter(*transformed_args, **transformed_kwargs)
 
     def exclude(self, *args: Any, **kwargs: Any) -> 'BaseQuerySet':
+        transformed_args = self.transform_args(*args)
         transformed_kwargs = self.transform_internal_fields(**kwargs)
-        return super().exclude(*args, **transformed_kwargs)
+        return super().exclude(*transformed_args, **transformed_kwargs)
 
     def get(self, *args: Any, **kwargs: Any) -> Any:
+        transformed_args = self.transform_args(*args)
         transformed_kwargs = self.transform_internal_fields(**kwargs)
-        return super().get(*args, **transformed_kwargs)
+        return super().get(*transformed_args, **transformed_kwargs)
 
     def create(self, **kwargs: Any) -> Any:
         transformed_kwargs = self.transform_internal_fields(**kwargs)
