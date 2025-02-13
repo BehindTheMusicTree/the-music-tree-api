@@ -52,6 +52,7 @@ class FieldValidationErrorCode(Enum):
     REQUIRED = 'required'
     INVALID_FORMAT = 'invalid_format'
     INVALID_CHOICE = 'invalid_choice'
+    FIELD_DUPLICATE = 'field_duplicate'
 
     # Field existence validation
     UNKNOWN = 'unknown_field'
