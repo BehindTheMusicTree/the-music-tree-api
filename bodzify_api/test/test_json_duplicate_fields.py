@@ -11,7 +11,6 @@ from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationError
 class TestCase(GenreTestCase):
 
     def test_duplicate_fields_on_content_type_json_then_400(self):
-        from django.utils.encoding import force_bytes
         json_str = '{"name": "test", "name": "test2"}'
         response = self.client.post(
             reverse(self.list_endpoint),
@@ -24,4 +23,4 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == CriteriaPostFields.NAME_PUBLIC
-        assert error['code'] == FieldValidationErrorCode.FIELD_DUPLICATE
+        assert error['code'] == FieldValidationErrorCode.FIELD_DUPLICATE.value
