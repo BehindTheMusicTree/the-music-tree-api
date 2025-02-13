@@ -157,7 +157,7 @@ Usage Examples:
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 
 
@@ -174,56 +174,6 @@ class ErrorResponseDetail:
     message: str
     code: str = "error"
     details: Optional[Dict[str, Any]] = None
-
-    @classmethod
-    def invalid_uuid(cls, value: str) -> 'ErrorResponseDetail':
-        """Create an error detail for invalid UUID values."""
-        # Escape curly braces in template variables
-        escaped_value = value.replace("{{", "{ {").replace("}}", "} }")
-        # Create message without surrounding quotes
-        return cls(
-            message=f'{escaped_value} is not a valid UUID',
-            code="validation_invalid_uuid"
-        )
-
-    @classmethod
-    def unknown_fields(cls, fields: List[str], allowed_fields: Optional[List[str]] = None) -> 'ErrorResponseDetail':
-        """Create an error detail for unknown fields."""
-        details = {"fields": fields}
-        if allowed_fields is not None:
-            details["allowed_fields"] = allowed_fields
-
-        return cls(
-            message=f"Unknown field(s) detected: {', '.join(sorted(fields))}",
-            code="invalid_fields",
-            details=details
-        )
-
-    @classmethod
-    def duplicate_fields(cls, fields: List[str]) -> 'ErrorResponseDetail':
-        """Create an error detail for duplicate fields."""
-        return cls(
-            message=f"Duplicate fields found: {', '.join(sorted(fields))}",
-            code="duplicate_fields",
-            details={"fields": fields}
-        )
-
-    @classmethod
-    def integrity_error(cls, message: str, error_code: str) -> 'ErrorResponseDetail':
-        """Create an error detail for integrity errors."""
-        return cls(
-            message=message,
-            code=error_code.lower()
-        )
-
-    @classmethod
-    def multiple_errors(cls, errors: List[Dict[str, Any]]) -> 'ErrorResponseDetail':
-        """Create an error detail for multiple validation errors on a single field."""
-        return cls(
-            message="Multiple validation errors",
-            code="multiple_errors",
-            details={"errors": errors}
-        )
 
     def __str__(self) -> str:
         return self.message
