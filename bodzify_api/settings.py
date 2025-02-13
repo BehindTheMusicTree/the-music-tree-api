@@ -508,7 +508,7 @@ def setup_middlewares():
     """Setup Django middleware classes."""
     global MIDDLEWARE
     MIDDLEWARE = [
-        f'{APP_NAME}.middleware.DuplicateFieldsMiddleware.DuplicateFieldsMiddleware',
+        f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
         f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
         f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.security.SecurityMiddleware',
