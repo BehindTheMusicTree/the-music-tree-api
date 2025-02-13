@@ -7,6 +7,7 @@ from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.model.play.input.schema.endpoint.post import Fields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(PlayTestCase):
@@ -15,6 +16,10 @@ class TestCase(PlayTestCase):
         response = self._post_play(**{'nonExistingField': 'oifjqoif'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == 'nonExistingField'
+        assert error['code'] == FieldValidationErrorCode.UNKNOWN
 
     def test_multiple_values_for_content_object_uuid_then_error(self) -> None:
         playlist1_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
@@ -24,10 +29,18 @@ class TestCase(PlayTestCase):
         response = self._post_play(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == to_camel_case(Fields.CONTENT_OBJECT_UUID)
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_non_existant_content_object_uuid_then_error(self):
         response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): 'oifjqoif'})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == to_camel_case(Fields.CONTENT_OBJECT_UUID)
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_playlist_play(self) -> None:
         current_play_count = 42

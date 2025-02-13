@@ -52,59 +52,59 @@ class FieldValidationErrorCode(Enum):
     REQUIRED = 'required'
     INVALID_FORMAT = 'invalid_format'
     INVALID_CHOICE = 'invalid_choice'
-    
+
     # Field existence validation
     UNKNOWN = 'unknown_field'
     UNKNOWN_MULTIPLE = 'unknown_fields'
-    
+
     # Reference validation
     SELF_REFERENCE = 'self_reference'
     ANCESTOR_REFERENCE = 'ancestor_reference'
-    
+
     # File validation
     FILE_TOO_LARGE = 'file_too_large'
     FILE_TOO_SMALL = 'file_too_small'
     INVALID_FILE_TYPE = 'invalid_file_type'
     INVALID_FILENAME = 'invalid_filename'
-    
+
     # URL validation
     INVALID_URL = 'invalid_url'
     URL_NOT_FOUND = 'url_not_found'
     URL_REQUEST_FAILED = 'url_request_failed'
-    
+
     # Filter and fingerprint validation
     INVALID_FILTER = 'invalid_filter'
     DUPLICATE_FINGERPRINT = 'duplicate_fingerprint'
-    
+
     # File processing validation
     FILE_CORRUPTED = 'file_corrupted'
     METADATA_EXTRACTION_FAILED = 'metadata_extraction_failed'
-    
+
     # Name validation
     NAME_EMPTY = 'name_empty'
     NAME_DUPLICATE = 'name_duplicate'
     NAMES_DUPLICATE = 'names_duplicate'
-    
+
     # Database validation
     DB_INTEGRITY_ERROR = 'db_integrity_error'
-    
+
     # Playlist validation
     PLAYLIST_NAME_DUPLICATE = 'playlist_name_duplicate'
-    
+
     # Field relationship validation
     MUTUALLY_EXCLUSIVE = 'mutually_exclusive'
     DEPENDENCY_MISSING = 'dependency_missing'
     RESOURCE_NOT_OWNED = 'resource_not_owned'
     NO_UPDATES = 'no_updates'
-    
+
     # Artist validation
     ARTIST_NAME_EMPTY_IN_LIST = 'artist_name_empty_in_list'
     ARTIST_NAMES_DUPLICATE = 'artist_names_duplicate'
-    
+
     # Album position validation
     POSITION_IN_ALBUM_TOO_SMALL = 'position_in_album_too_small'
     POSITION_IN_ALBUM_TOO_LARGE = 'position_in_album_too_large'
-    
+
     # Rating validation
     RATING_TOO_SMALL = 'rating_too_small'
     RATING_TOO_LARGE = 'rating_too_large'

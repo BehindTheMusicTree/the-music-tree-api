@@ -7,6 +7,7 @@ from bodzify_api.test.field.body_data.type.not_nullable.PrimaryBodyDataTestCase 
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
@@ -34,6 +35,10 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: ""})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PutFields.NAME_PUBLIC
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_not_provided_then_unchanged(self):
         genre_name = "Rock"

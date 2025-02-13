@@ -5,6 +5,7 @@ from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.filtering.set.playlist.Fields import Fields as QueryParams
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
@@ -15,6 +16,10 @@ class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
     def test_empty_then_error(self) -> None:
         response = self._get_playlists(**{QueryParams.NAME: ''})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == QueryParams.NAME
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_not_provided_then_results(self) -> None:
         self.model_fixture_factory.create_genre(name="Rock")

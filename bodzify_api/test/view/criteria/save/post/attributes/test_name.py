@@ -2,6 +2,7 @@ from rest_framework import status
 
 from bodzify_api.serializer.schema.model.criteria.input.post import Fields as PostFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(GenreTestCase):
@@ -9,10 +10,18 @@ class TestCase(GenreTestCase):
     def test_not_provided_then_error(self):
         response = self._post_genre(**{})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.NAME_PUBLIC
+        assert error['code'] == FieldValidationErrorCode.REQUIRED
 
     def test_empty_then_error(self):
         response = self._post_genre(**{PostFields.PARENT: ""})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.PARENT
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_value_then_ok(self):
         name = "rock"

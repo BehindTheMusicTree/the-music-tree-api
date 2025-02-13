@@ -1,14 +1,20 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as Fields
+from bodzify_api.test.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
-class TestCase(GenreTestCase, NullableFieldTestCase):
+class TestCase(GenreTestCase, NullableBodyDataTestCase):
 
     def test_multiple_values_then_error(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: ["value", "value2"]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == Fields.PARENT
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_empty_then_none(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: ""})
@@ -25,3 +31,7 @@ class TestCase(GenreTestCase, NullableFieldTestCase):
         self.model_fixture_factory.create_genre(name="Rock")
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: "not existing"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == Fields.PARENT
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT

@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.filtering.set.playlist.Fields import Fields as FilterSetFields
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import VALUE as MANUAL_PLAYLIST_TYPE_LABEL
 from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistGetFields
@@ -35,13 +36,15 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
     def test_empty_then_error(self):
         response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: ''})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == FilterSetFields.TYPE_LABEL_INTERNAL
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"
         self.model_fixture_factory.create_genre(name=rock_criteria_name)
-
         response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: 'genre'})
-
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -72,3 +75,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
     def test_value_is_wrong_then_error(self):
         response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: 'wrong_value'})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == FilterSetFields.TYPE_LABEL_INTERNAL
+        assert error['code'] == FieldValidationErrorCode.INVALID_CHOICE

@@ -3,9 +3,10 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields
 from bodzify_api.test.field.body_data.method.SaveBodyDataTestCase import SaveBodyDataTestCase
-from bodzify_api.test.field.body_data.type.NotNullableBodyDataTestCase import NotNullableBodyDataTestCase
-from bodzify_api.test.field.body_data.type.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
+from bodzify_api.test.field.body_data.type.not_nullable.NotNullableBodyDataTestCase import NotNullableBodyDataTestCase
+from bodzify_api.test.field.body_data.type.not_nullable.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCase, SaveBodyDataTestCase):
@@ -19,17 +20,37 @@ class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCa
     def test_too_long_then_error(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == Fields.NAME_PUBLIC
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_multiple_values_then_error(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: ["value", "value2"]})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == Fields.NAME_PUBLIC
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_already_exists_then_error(self):
         genre_name = "Rock"
         self.model_fixture_factory.create_genre(name=genre_name)
+
         response = self._post_genre(**{Fields.NAME_PUBLIC: genre_name})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == Fields.NAME_PUBLIC
+        assert error['code'] == FieldValidationErrorCode.NAME_DUPLICATE
 
     def test_empty_then_error(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: ''})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == Fields.NAME_PUBLIC
+        assert error['code'] == FieldValidationErrorCode.BLANK
