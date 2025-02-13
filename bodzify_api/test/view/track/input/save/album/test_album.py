@@ -3,6 +3,7 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.extract import Fields as ExtractFields
 from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldModelStrTestCase
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(FieldModelStrTestCase):
@@ -19,6 +20,10 @@ class TestCase(FieldModelStrTestCase):
         album_name = "a" * (settings.ALBUM_NAME_LEN_MAX + 1)
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ALBUM_NAME: album_name})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == ExtractFields.ALBUM_NAME
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ALBUM_NAME: ''})

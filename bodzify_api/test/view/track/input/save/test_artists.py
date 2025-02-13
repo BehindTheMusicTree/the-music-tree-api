@@ -4,6 +4,7 @@ from bodzify_api import settings
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.schema.model.lib_track.input.extract import Fields as ExtractFields
 from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldModelStrTestCase
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(FieldModelStrTestCase):
@@ -24,6 +25,10 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == ExtractFields.ARTISTS_NAMES_STR
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ARTISTS_NAMES_STR: ''})
@@ -107,6 +112,10 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == ExtractFields.ARTISTS_NAMES_STR
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_multiple_artists_with_duplicates_then_error(self) -> None:
         artist_name = "DuplicateArtist"
@@ -114,6 +123,10 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == ExtractFields.ARTISTS_NAMES_STR
+        assert error['code'] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
 
     def test_multiple_artists_with_empty_names_then_error(self) -> None:
         valid_artist = "ValidArtist"
@@ -121,3 +134,7 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == ExtractFields.ARTISTS_NAMES_STR
+        assert error['code'] == FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST

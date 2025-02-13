@@ -4,6 +4,7 @@ from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as PostFields
 from bodzify_api.test.view import album
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(LibTrackTestCase):
@@ -24,6 +25,10 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.POSITION_IN_ALBUM: 0})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.POSITION_IN_ALBUM
+        assert error['code'] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
 
     def test_one_then_ok(self):
         position_in_album = 1
@@ -49,16 +54,23 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == 'positionInAlbum'
-        assert error['code'] == 'position_in_album_too_large'
-        assert error['message'] == 'Position in album must be less than or equal to 1000'
+        assert error['field'] == PostFields.POSITION_IN_ALBUM
+        assert error['code'] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE
 
     def test_negative_one_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(album_name='album', position_in_album=-1)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.POSITION_IN_ALBUM
+        assert error['code'] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
 
     def test_not_integer_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.POSITION_IN_ALBUM: 5.5})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.POSITION_IN_ALBUM
+        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
