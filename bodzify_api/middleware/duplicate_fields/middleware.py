@@ -1,5 +1,7 @@
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse
 from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.AppValidationError import AppValidationError
+from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from .utils import find_duplicate_fields
 
 
@@ -8,22 +10,13 @@ class DuplicateFieldsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def _handle_duplicate_field_error_for_content_type_json(self, field_name: str) -> JsonResponse:
-        error_data = {
-            'code': 2001,
-            'message': 'Bad Request',
-            'success': False,
-            'details': [{
-                'message': 'Validation failed',
-                'fieldErrors': {
-                    field_name: {
-                        'message': 'Duplicate field detected.',
-                        'code': FieldValidationErrorCode.FIELD_DUPLICATE.value
-                    }
-                }
-            }]
-        }
-        return JsonResponse(error_data, status=400)
+    def _handle_duplicate_field_error_for_content_type_json(self, field_name: str) -> HttpResponse:
+        validation_error = AppValidationError.from_middleware(
+            field=field_name,
+            message='Duplicate field detected.',
+            code=FieldValidationErrorCode.FIELD_DUPLICATE
+        )
+        return ErrorResponse.from_app_validation_error(validation_error)
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         if request.method in ['POST', 'PUT', 'PATCH']:

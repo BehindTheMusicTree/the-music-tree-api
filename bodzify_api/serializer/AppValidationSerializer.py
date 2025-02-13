@@ -5,7 +5,8 @@ from typing import Dict, Any, List, Union, Mapping
 from rest_framework import serializers
 
 from bodzify_api.utils.validation_error_utils \
-    import raise_duplicate_field_error, raise_unknown_fields_error, raise_unknown_field_error
+    import raise_duplicate_field_error, raise_duplicate_fields_error, \
+    raise_unknown_fields_error, raise_unknown_field_error
 
 
 class AppValidationSerializer(serializers.Serializer):
@@ -88,7 +89,7 @@ class AppValidationSerializer(serializers.Serializer):
                     duplicates = self._find_duplicate_fields(raw_data)
                     if duplicates:
                         if len(duplicates) == 1:
-                            raise_duplicate_field_error(duplicates)
+                            raise_duplicate_field_error(duplicates[0])
 
                         raise_duplicate_fields_error(duplicates)
                 except (UnicodeDecodeError, AttributeError):
