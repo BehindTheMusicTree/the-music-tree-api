@@ -91,28 +91,21 @@ class ErrorResponse:
         )
 
     @staticmethod
-    def from_app_validation_error(exception: AppValidationError) -> Response:
-        """
-        Handle our custom AppValidationError specifically.
-        We know its exact structure, so we can format it precisely.
-        """
-        formatted_error = {
-            'message': 'Validation failed',
-            'field_errors': {
-                exception.field: exception.get_error_detail()
-            }
-        }
-        return ErrorResponse._create_error_response(
-            formatted_error,
-            ApiErrorCode.VALIDATION_INVALID_INPUT
-        )
-
-    @staticmethod
-    def from_validation_error(exception: Union[DrfValidationError, DjangoValidationError]) -> Response:
-        """Handle DRF and Django validation errors which may have varying structures."""
+    def from_validation_error(
+            exception: Union[AppValidationError, DrfValidationError, DjangoValidationError]) -> Response:
+        """Handle various types of validation errors with appropriate formatting."""
 
         if isinstance(exception, AppValidationError):
-            return ErrorResponse.from_app_validation_error(exception)
+            formatted_error = {
+                'message': 'Validation failed',
+                'field_errors': {
+                    exception.field: exception.get_error_detail()
+                }
+            }
+            return ErrorResponse._create_error_response(
+                formatted_error,
+                ApiErrorCode.VALIDATION_INVALID_INPUT
+            )
         elif isinstance(exception, DrfValidationError):
             error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
             if isinstance(error_detail, dict):
