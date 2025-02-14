@@ -18,6 +18,7 @@ from bodzify_api.utils import data_transformer
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 from bodzify_api.view.error.AppErrorMessages import AppErrorMessages
 from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
@@ -166,9 +167,15 @@ to modify in the request body.",
 
     def handle_exception(self, exc: Exception) -> Response:
         print('handle_exception exc class', exc.__class__)
-        if isinstance(exc, (AppValidationError, DrfValidationError, DjangoValidationError)):
-            # Handle all validation errors through the same method
-            # AppValidationError is handled specifically inside from_validation_error
+        if isinstance(exc, (DrfValidationError, DjangoValidationError)):
+            # Check if this was originally an AppValidationError by looking at the error structure
+            if isinstance(exc, DrfValidationError) and hasattr(exc, 'detail'):
+                # Convert list to dict if necessary
+                detail = exc.detail
+                if isinstance(detail, list):
+                    detail = {'error': detail[0] if detail else 'Unknown error'}
+                # Reconstruct AppValidationError from DRF's ValidationError
+                exc = AppValidationError.from_drf_validation_error(detail)
             return ErrorResponse.from_validation_error(exc)
         elif isinstance(exc, IntegrityError):
             return ErrorResponse.from_unhandled_integrity_error(exc)

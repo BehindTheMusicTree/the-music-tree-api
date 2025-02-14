@@ -6,8 +6,17 @@ from .FieldValidationErrorCode import FieldValidationErrorCode
 
 class AppValidationError(ValidationError):
     """
+    Custom validation error that maintains its class through DRF middleware.
+    Instead of inheriting from ValidationError, we implement the DRF exception interface.
+    """
+    status_code = 400  # Same as ValidationError
+    """
     Custom validation error that maintains a consistent structure across different validation contexts.
-    Each factory method corresponds to a specific validation context and ensures proper error structure.
+    
+    Note on DRF Exception Handling:
+    When this exception is raised, DRF's middleware will convert it to a ValidationError instance
+    while preserving our error structure. This is expected behavior and our error handling in 
+    ErrorResponse.from_validation_error is designed to work with this conversion.
 
     Error Structure:
         Field-level validation (from_field, from_filter):
@@ -40,6 +49,8 @@ class AppValidationError(ValidationError):
 
         # Create the error structure based on context
         error_dict = self.error_detail if is_field_level_validation else {field: self.error_detail}
+        # Add a marker to identify this as AppValidationError even after DRF processing
+        self.is_app_validation_error = True
         super().__init__(error_dict)
 
     @classmethod
@@ -88,8 +99,43 @@ class AppValidationError(ValidationError):
         Create a filterset-level validation error (e.g., from filterset validation).
         Wraps the error with field name since filterset validation is similar to serializer validation.
         """
-        return cls(field, message, code, is_field_level_validation=True)
+        return cls(field, message, code, is_field_level_validation=False)
 
     def get_error_detail(self) -> Dict[str, Any]:
         """Get the error detail in a consistent format."""
         return self.error_detail
+
+    @classmethod
+    def from_drf_validation_error(cls, detail: Dict[str, Any]) -> 'AppValidationError':
+        """
+        Create an AppValidationError from a DRF ValidationError detail.
+        This is used to reconstruct our error format after DRF middleware processing.
+
+        Args:
+            detail: The detail dictionary from DRF ValidationError
+        """
+        if not isinstance(detail, dict):
+            return cls('', str(detail), FieldValidationErrorCode.VALIDATION_ERROR, True)
+
+        # Handle field-level validation error
+        if 'message' in detail and 'code' in detail:
+            field_name = next(iter(detail)) if len(detail) > 2 else ''
+            return cls(
+                field=field_name,
+                message=str(detail['message']),
+                code=FieldValidationErrorCode(str(detail['code'])),
+                is_field_level_validation=True
+            )
+
+        # Handle model/serializer-level validation error
+        for field, field_detail in detail.items():
+            if isinstance(field_detail, dict) and 'message' in field_detail and 'code' in field_detail:
+                return cls(
+                    field=str(field),
+                    message=str(field_detail['message']),
+                    code=FieldValidationErrorCode(str(field_detail['code'])),
+                    is_field_level_validation=False
+                )
+
+        # Fallback for unknown format
+        return cls('', str(detail), FieldValidationErrorCode.INVALID_FORMAT, True)

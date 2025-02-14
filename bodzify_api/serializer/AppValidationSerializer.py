@@ -36,7 +36,7 @@ class AppValidationSerializer(serializers.Serializer):
                     if isinstance(value, list) and not self._is_list_field(field):
                         raise AppValidationError.from_filterset(
                             field=field_name,
-                            message=f"Field '{field_name}' does not accept list values",
+                            message=f"The field does not accept list values",
                             code=FieldValidationErrorCode.UNEXPECTED_LIST_VALUE
                         )
 
