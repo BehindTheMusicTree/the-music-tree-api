@@ -19,14 +19,16 @@ class PlayTestCase(ApiTestCase):
             path=reverse('play-list'),
             data=kwargs,
             content_type='application/json',
-            on_success=self._set_saved_play_attribute
+            on_success=self._set_saved_play_attribute,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _get_plays(self, **kwargs):
         return self.api_client.get(
             path=reverse('play-list'),
             data=kwargs,
-            on_success=self._set_results_attributes
+            on_success=self._set_results_attributes,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _put_play(self, genre_uuid: UUID, **kwargs):
@@ -34,7 +36,8 @@ class PlayTestCase(ApiTestCase):
             path=reverse('play-detail', kwargs={'pk': genre_uuid}),
             data=kwargs,
             content_type='application/json',
-            on_success=self._set_result
+            on_success=self._set_result,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _delete_play(self, uuid: UUID):

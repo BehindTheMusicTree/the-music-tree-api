@@ -34,7 +34,8 @@ class LibTrackTestCase(ApiTestCase):
             path=reverse('library-track-extract'),
             data=kwargs,
             content_type='application/x-www-form-urlencoded',
-            on_success=self._set_saved_lib_track_attribute
+            on_success=self._set_saved_lib_track_attribute,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _extract_default_mine_track(self, extension=None, **kwargs):
@@ -56,7 +57,13 @@ class LibTrackTestCase(ApiTestCase):
         return response
 
     def _post_lib_track_without_file(self, **kwargs):
-        return self.api_client.post(path=reverse('library-track-list'), data=kwargs, format='json')
+        return self.api_client.post(
+            path=reverse('library-track-list'),
+            data=kwargs,
+            format='json',
+            on_success=self._set_saved_lib_track_attribute,
+            on_bad_request=self._set_bad_request_result
+        )
 
     def _post_lib_track_with_queenshowmustgoon(self, **kwargs):
         filename_with_extension = self.LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION
@@ -112,7 +119,8 @@ class LibTrackTestCase(ApiTestCase):
         return self.api_client.put(
             path=reverse('library-track-detail', kwargs={'pk': uuid}),
             data=kwargs,
-            on_success=self._set_saved_lib_track_attribute
+            on_success=self._set_saved_lib_track_attribute,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _download_lib_track(self, uuid):
@@ -124,12 +132,14 @@ class LibTrackTestCase(ApiTestCase):
     def _retrieve_lib_track(self, uuid: UUID):
         return self.api_client.get(
             path=reverse('library-track-detail', kwargs={'pk': uuid}),
-            on_success=self._set_result
+            on_success=self._set_result,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _get_lib_tracks(self, **kwargs):
         return self.api_client.get(
             path=reverse('library-track-list'),
             data=kwargs,
-            on_success=self._set_results_attributes
+            on_success=self._set_results_attributes,
+            on_bad_request=self._set_bad_request_result
         )

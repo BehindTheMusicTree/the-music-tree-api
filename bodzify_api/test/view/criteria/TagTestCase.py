@@ -21,14 +21,16 @@ class TagTestCase(ApiTestCase):
     def _retrieve_tag(self, uuid: UUID):
         return self.api_client.get(
             path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
-            on_success=self._set_result
+            on_success=self._set_result,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _get_tags(self, **kwargs):
         return self.api_client.get(
             path=reverse(self.list_endpoint),
             data=kwargs,
-            on_success=self._set_results_attributes
+            on_success=self._set_results_attributes,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _post_tag(self, **kwargs):
@@ -36,7 +38,8 @@ class TagTestCase(ApiTestCase):
             path=reverse(self.list_endpoint),
             data=kwargs,
             content_type='application/json',
-            on_success=self._set_saved_tag_attribute
+            on_success=self._set_saved_tag_attribute,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _put_tag(self, uuid: UUID, **kwargs):
@@ -44,7 +47,8 @@ class TagTestCase(ApiTestCase):
             path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
             data=kwargs,
             content_type='application/json',
-            on_success=self._set_saved_tag_attribute
+            on_success=self._set_saved_tag_attribute,
+            on_bad_request=self._set_bad_request_result
         )
 
     def _delete_tag(self, uuid: UUID):
