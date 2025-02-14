@@ -1,0 +1,25 @@
+meta {
+  name: name none | parent invalid
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{BASE_URL}}genres/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "", "parent":"ds"
+  }
+}
+
+vars:post-response {
+  genreAUuid: res.body.uuid
+}
