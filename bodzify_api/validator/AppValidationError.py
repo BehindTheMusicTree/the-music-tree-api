@@ -39,73 +39,21 @@ class AppValidationError(DrfValidationError):
         from_filterset: Filterset-level validation
     """
 
-    def __init__(self, field: str, message: str, code: FieldValidationErrorCode, is_field_level_validation: bool = False):
+    def __init__(self, field: str, message: str, code: FieldValidationErrorCode):
         self.field = field
         self.error_detail = {
             'message': message,
-            'code': code.value
+            'code': code.value,
+            'field': field,  # Always include field name in error detail
+            'error_type': 'app_validation_error'  # Add marker in the error detail
         }
         # Store original values for easy access in error handling
         self.original_message = message
         self.original_code = code
-        self.is_field_level_validation = is_field_level_validation
 
-        # Create the error structure based on context
-        self.error_detail['error_type'] = 'app_validation_error'  # Add marker in the error detail
-        error_dict = self.error_detail if is_field_level_validation else {field: self.error_detail}
+        # Always wrap error detail with field name
+        error_dict = {field: self.error_detail}
         super().__init__(error_dict)
-
-    @classmethod
-    def from_field(cls, field: str, message: str, code: FieldValidationErrorCode) -> 'AppValidationError':
-        """
-        Create a field-level validation error (e.g., from to_internal_value or validate_<field>).
-        DRF will handle the field wrapping automatically in field validation context.
-        """
-        return cls(field, message, code, is_field_level_validation=True)
-
-    @classmethod
-    def from_serializer(cls, field: str, message: str, code: FieldValidationErrorCode) -> 'AppValidationError':
-        """
-        Create a serializer-level validation error (e.g., from validate method).
-        Wraps the error with field name since we're outside field validation context.
-        """
-        return cls(field, message, code, is_field_level_validation=False)
-
-    @classmethod
-    def from_model(cls, field: str, message: str, code: FieldValidationErrorCode) -> 'AppValidationError':
-        """
-        Create a model-level validation error (e.g., from save method or integrity errors).
-        Wraps the error with field name since model validation is similar to serializer validation.
-        """
-        return cls(field, message, code, is_field_level_validation=False)
-
-    @classmethod
-    def from_filter(cls, field: str, message: str, code: FieldValidationErrorCode) -> 'AppValidationError':
-        """
-        Create a filter-level validation error (e.g., from filter method).
-        DRF will handle the field wrapping automatically in filter validation context.
-        """
-        return cls(field, message, code, is_field_level_validation=True)
-
-    @classmethod
-    def from_middleware(cls, field: str, message: str, code: FieldValidationErrorCode) -> 'AppValidationError':
-        """
-        Create a middleware-level validation error (e.g., from request processing).
-        Wraps the error with field name since middleware validation is outside DRF's field context.
-        """
-        return cls(field, message, code, is_field_level_validation=False)
-
-    @classmethod
-    def from_filterset(cls, field: str, message: str, code: FieldValidationErrorCode) -> 'AppValidationError':
-        """
-        Create a filterset-level validation error (e.g., from filterset validation).
-        Wraps the error with field name since filterset validation is similar to serializer validation.
-        """
-        return cls(field, message, code, is_field_level_validation=False)
-
-    def get_error_detail(self) -> Dict[str, Any]:
-        """Get the error detail in a consistent format."""
-        return self.error_detail
 
     @classmethod
     def detect_and_convert_from_drf_error(
@@ -122,6 +70,8 @@ class AppValidationError(DrfValidationError):
         if not isinstance(exc, DrfValidationError) or not hasattr(exc, 'detail'):
             return None
 
+        print('exception:', exc)
+
         detail = exc.detail
         # Convert list to dict if necessary
         if isinstance(detail, list):
@@ -133,12 +83,10 @@ class AppValidationError(DrfValidationError):
         # Check in field details first
         for field_detail in detail.values():
             if isinstance(field_detail, dict) and field_detail.get('error_type') == cls.error_type:
-                print('Found AppValidationError marker in field detail')
                 return cls.from_drf_validation_error(detail)
 
         # Then check in top-level detail
         if detail.get('error_type') == cls.error_type:
-            print('Found AppValidationError marker in top-level detail')
             return cls.from_drf_validation_error(detail)
 
         return None
@@ -157,23 +105,24 @@ class AppValidationError(DrfValidationError):
 
         # Handle field-level validation error
         if 'message' in detail and 'code' in detail:
-            field_name = next(iter(detail)) if len(detail) > 2 else ''
+            # Use preserved field name if available
+            field_name = detail.get('field', next(iter(detail)) if len(detail) > 2 else '')
             return cls(
                 field=field_name,
                 message=str(detail['message']),
-                code=FieldValidationErrorCode(str(detail['code'])),
-                is_field_level_validation=True
+                code=FieldValidationErrorCode(str(detail['code']))
             )
 
         # Handle model/serializer-level validation error
         for field, field_detail in detail.items():
             if isinstance(field_detail, dict) and 'message' in field_detail and 'code' in field_detail:
+                # Use preserved field name if available
+                field_name = field_detail.get('field', field)
                 return cls(
-                    field=str(field),
+                    field=str(field_name),
                     message=str(field_detail['message']),
-                    code=FieldValidationErrorCode(str(field_detail['code'])),
-                    is_field_level_validation=False
+                    code=FieldValidationErrorCode(str(field_detail['code']))
                 )
 
         # Fallback for unknown format
-        return cls('', str(detail), FieldValidationErrorCode.INVALID_FORMAT, True)
+        return cls('', str(detail), FieldValidationErrorCode.INVALID_FORMAT)

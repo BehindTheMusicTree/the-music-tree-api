@@ -21,7 +21,7 @@ class EnumCharFilter(EmptiableCharFilter):
     def filter(self, qs, value):
         if value == '':
             # Since this is field validation, use from_field
-            raise AppValidationError.from_field(
+            raise AppValidationError.from_filter(
                 field=str(self.field_name),
                 message=_('This field may not be blank.'),
                 code=FieldValidationErrorCode.BLANK
