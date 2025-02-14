@@ -15,7 +15,8 @@ class TestCase(GenreTestCase):
         response = self.client.post(
             reverse(self.list_endpoint),
             json_str.encode('utf-8'),
-            content_type='application/json'
+            content_type='application/json',
+            HTTP_ACCEPT='application/json'
         )
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
