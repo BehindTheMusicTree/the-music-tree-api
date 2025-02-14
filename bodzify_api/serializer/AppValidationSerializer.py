@@ -27,7 +27,7 @@ class AppValidationSerializer(serializers.Serializer):
                             raise AppValidationError.from_field(
                                 field=field_name,
                                 message="Expected a string but received a list",
-                                code=FieldValidationErrorCode.INVALID_FORMAT
+                                code=FieldValidationErrorCode.EXPECTED_STRING_GOT_LIST
                             )
             return super().run_validation(data)
         except AppValidationError as e:

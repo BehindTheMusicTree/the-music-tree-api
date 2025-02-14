@@ -45,6 +45,7 @@ class FieldValidationErrorCode(Enum):
         POSITION_IN_ALBUM_TOO_LARGE = 2133 # Album position exceeds maximum
         RATING_TOO_SMALL = 2134        # Rating below minimum
         RATING_TOO_LARGE = 2135        # Rating exceeds maximum
+        EXPECTED_STRING_GOT_LIST = 2136 # Expected string value but received a list
     """
     # Basic field validation
     BLANK = 'blank'
@@ -109,3 +110,4 @@ class FieldValidationErrorCode(Enum):
     # Rating validation
     RATING_TOO_SMALL = 'rating_too_small'
     RATING_TOO_LARGE = 'rating_too_large'
+    EXPECTED_STRING_GOT_LIST = 'expected_string_got_list'
