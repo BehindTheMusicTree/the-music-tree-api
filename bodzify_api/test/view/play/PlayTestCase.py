@@ -15,26 +15,27 @@ class PlayTestCase(ApiTestCase):
         self.saved_play: Play = Play.objects.get(uuid=uuid)
 
     def _post_play(self, **kwargs):
-        response = self.api_client.post(path=reverse('play-list'),
-                                        data=kwargs,
-                                        content_type='application/json')
-        if response.status_code == status.HTTP_201_CREATED:
-            self._set_saved_play_attribute(response)
-        return response
+        return self.api_client.post(
+            path=reverse('play-list'),
+            data=kwargs,
+            content_type='application/json',
+            on_success=self._set_saved_play_attribute
+        )
 
     def _get_plays(self, **kwargs):
-        response = self.api_client.get(path=reverse('play-list'), data=kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            self._set_results_attributes(response)
-        return response
+        return self.api_client.get(
+            path=reverse('play-list'),
+            data=kwargs,
+            on_success=self._set_results_attributes
+        )
 
     def _put_play(self, genre_uuid: UUID, **kwargs):
-        response = self.api_client.put(path=reverse('play-detail', kwargs={'pk': genre_uuid}),
-                                       data=kwargs,
-                                       content_type='application/json')
-        if response.status_code == status.HTTP_200_OK:
-            self._set_result(response)
-        return response
+        return self.api_client.put(
+            path=reverse('play-detail', kwargs={'pk': genre_uuid}),
+            data=kwargs,
+            content_type='application/json',
+            on_success=self._set_result
+        )
 
     def _delete_play(self, uuid: UUID):
         return self.api_client.delete(path=reverse('play-detail', kwargs={'pk': uuid}))

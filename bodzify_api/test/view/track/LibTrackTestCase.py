@@ -30,13 +30,12 @@ class LibTrackTestCase(ApiTestCase):
     SAMPLE_LIB_TRACK_FLAC_DURATION = 1
 
     def _extract(self, **kwargs):
-        response = self.api_client.post(path=reverse('library-track-extract'),
-                                        data=kwargs,
-                                        content_type='application/x-www-form-urlencoded')
-
-        if response.status_code == status.HTTP_201_CREATED:
-            self._set_saved_lib_track_attribute(response)
-        return response
+        return self.api_client.post(
+            path=reverse('library-track-extract'),
+            data=kwargs,
+            content_type='application/x-www-form-urlencoded',
+            on_success=self._set_saved_lib_track_attribute
+        )
 
     def _extract_default_mine_track(self, extension=None, **kwargs):
         if extension is None:
@@ -110,11 +109,11 @@ class LibTrackTestCase(ApiTestCase):
             **kwargs)
 
     def _put_lib_track(self, uuid, **kwargs):
-        response = self.api_client.put(
-            path=reverse('library-track-detail', kwargs={'pk': uuid}), data=kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            self._set_saved_lib_track_attribute(response)
-        return response
+        return self.api_client.put(
+            path=reverse('library-track-detail', kwargs={'pk': uuid}),
+            data=kwargs,
+            on_success=self._set_saved_lib_track_attribute
+        )
 
     def _download_lib_track(self, uuid):
         return self.api_client.get(path=reverse('library-track-download', kwargs={'pk': uuid}))
@@ -123,10 +122,14 @@ class LibTrackTestCase(ApiTestCase):
         return self.api_client.delete(path=reverse('library-track-detail', kwargs={'pk': uuid}))
 
     def _retrieve_lib_track(self, uuid: UUID):
-        return self.api_client.get(path=reverse('library-track-detail', kwargs={'pk': uuid}))
+        return self.api_client.get(
+            path=reverse('library-track-detail', kwargs={'pk': uuid}),
+            on_success=self._set_result
+        )
 
     def _get_lib_tracks(self, **kwargs):
-        response = self.api_client.get(path=reverse('library-track-list'), data=kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            self._set_results_attributes(response)
-        return response
+        return self.api_client.get(
+            path=reverse('library-track-list'),
+            data=kwargs,
+            on_success=self._set_results_attributes
+        )

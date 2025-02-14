@@ -19,32 +19,33 @@ class GenreTestCase(ApiTestCase):
         self.saved_genre = Genre.objects.get(user=self.test_user1, uuid=uuid)
 
     def _retrieve_genre(self, uuid: UUID):
-        response = self.api_client.get(path=reverse(self.detail_endpoint, kwargs={'pk': uuid}))
-        if response.status_code == status.HTTP_200_OK:
-            self._set_result(response=response)
-        return response
+        return self.api_client.get(
+            path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
+            on_success=self._set_result
+        )
 
     def _get_genres(self, **kwargs):
-        response = self.api_client.get(path=reverse(self.list_endpoint), data=kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            self._set_results_attributes(response)
-        return response
+        return self.api_client.get(
+            path=reverse(self.list_endpoint),
+            data=kwargs,
+            on_success=self._set_results_attributes
+        )
 
     def _post_genre(self, **kwargs):
-        response = self.api_client.post(path=reverse(self.list_endpoint),
-                                        data=kwargs,
-                                        content_type='application/json')
-        if response.status_code == status.HTTP_201_CREATED:
-            self._set_saved_genre_attribute(response)
-        return response
+        return self.api_client.post(
+            path=reverse(self.list_endpoint),
+            data=kwargs,
+            content_type='application/json',
+            on_success=self._set_saved_genre_attribute
+        )
 
     def _put_genre(self, uuid: UUID, **kwargs):
-        response = self.api_client.put(path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
-                                       data=kwargs,
-                                       content_type='application/json')
-        if response.status_code == status.HTTP_200_OK:
-            self._set_saved_genre_attribute(response)
-        return response
+        return self.api_client.put(
+            path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
+            data=kwargs,
+            content_type='application/json',
+            on_success=self._set_saved_genre_attribute
+        )
 
     def _delete_genre(self, uuid: UUID):
         return self.api_client.delete(path=reverse(self.detail_endpoint, kwargs={'pk': uuid}))
