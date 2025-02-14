@@ -17,7 +17,7 @@ class AppFilterSet(FilterSet):
                 invalid_filters.append(data_transformer.to_camel_case(param))
 
         if invalid_filters:
-            raise AppValidationError.from_filterset(
+            raise AppValidationError(
                 field=f'{", ".join(sorted(invalid_filters))}',
                 message=f'Invalid filter(s) detected: {", ".join(sorted(invalid_filters))}',
                 code=FieldValidationErrorCode.INVALID_FILTER
