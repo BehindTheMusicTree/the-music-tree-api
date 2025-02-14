@@ -238,5 +238,8 @@ class ErrorResponseDetail:
                 }
             return {key: ErrorResponseDetail.convert_error_detail_to_dict(value) for key, value in obj.items()}
         elif isinstance(obj, DRFErrorDetail):
-            return str(obj)
+            return {
+                'message': str(obj),
+                'code': obj.code if hasattr(obj, 'code') else 'validation_error'
+            }
         return obj

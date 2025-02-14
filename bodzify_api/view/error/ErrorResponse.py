@@ -111,24 +111,28 @@ class ErrorResponse:
             )
         elif isinstance(exception, DrfValidationError):
             error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
-            if isinstance(error_detail, dict):
-                # Handle field validation errors (already properly structured by DRF)
-                if any(isinstance(v, dict) for v in error_detail.values()):
-                    formatted_error = ErrorResponse._format_validation_error(error_detail)
-                    return ErrorResponse._create_error_response(
-                        formatted_error,
-                        ApiErrorCode.VALIDATION_INVALID_INPUT
-                    )
-                # For simple validation errors with message
-                if 'message' in error_detail:
-                    return ErrorResponse._create_error_response(
-                        error_detail,
-                        ApiErrorCode.VALIDATION_INVALID_INPUT
-                    )
 
-            # Fallback for any other validation error structure
+            # If it's already a dict with a message, use it directly
+            if isinstance(error_detail, dict) and 'message' in error_detail:
+                return ErrorResponse._create_error_response(
+                    error_detail,
+                    ApiErrorCode.VALIDATION_INVALID_INPUT
+                )
+
+            # If it's a dict with field errors
+            if isinstance(error_detail, dict):
+                formatted_error = ErrorResponse._format_validation_error(error_detail)
+                return ErrorResponse._create_error_response(
+                    formatted_error,
+                    ApiErrorCode.VALIDATION_INVALID_INPUT
+                )
+
+            # For any other case, wrap it in a standard format
             return ErrorResponse._create_error_response(
-                {'message': 'Validation error', 'errors': error_detail},
+                {
+                    'message': 'Validation failed',
+                    'field_errors': error_detail if isinstance(error_detail, dict) else {'detail': error_detail}
+                },
                 ApiErrorCode.VALIDATION_INVALID_INPUT
             )
 
