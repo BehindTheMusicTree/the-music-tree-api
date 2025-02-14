@@ -6,8 +6,8 @@ from mutagen import File  # type: ignore
 
 from bodzify_api import settings
 from bodzify_api.model.track.lib.Fields import Fields
-from bodzify_api.view.error.AppValidationError import AppValidationError
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from .AppValidationError import AppValidationError
+from .FieldValidationErrorCode import FieldValidationErrorCode
 
 
 def validate_size(file):

@@ -7,11 +7,11 @@ from django.http import JsonResponse
 from rest_framework import status
 
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
-from bodzify_api.view.error.AppValidationError import AppValidationError
+from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.view.error.ErrorResponseDetail import ErrorResponseDetail
 from bodzify_api.view.error.ErrorHttpStatusCodeMap import ErrorHTTPStatusCodeMap
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
-from bodzify_api.view.error.ValidationErrorFields import ValidationErrorFields
+from bodzify_api.validator.ValidationErrorFields import ValidationErrorFields
 from bodzify_api.view.error.ErrorMessages import ErrorMessages
 
 
