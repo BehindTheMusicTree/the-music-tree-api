@@ -59,24 +59,47 @@ class ErrorResponse:
         )
 
     @staticmethod
+    def _parse_error_message(error: Any) -> tuple[str, str]:
+        """Parse error message and code from various error formats."""
+        if isinstance(error, str):
+            # Try to parse if it looks like a serialized list/dict
+            if error.startswith('[') or error.startswith('{'):
+                try:
+                    import json
+                    parsed = json.loads(error.replace("'", '"'))
+                    if isinstance(parsed, list) and parsed and isinstance(parsed[0], dict):
+                        return parsed[0]['message'], parsed[0]['code']
+                    elif isinstance(parsed, dict):
+                        return parsed['message'], parsed['code']
+                except:
+                    pass
+            return error, 'blank' if 'may not be blank' in error else 'invalid'
+        if isinstance(error, dict):
+            if 'message' in error and 'code' in error:
+                return error['message'], error['code']
+            return str(error.get('message', error)), error.get('code', 'validation_error')
+        return str(error), 'validation_error'
+
+    @staticmethod
     def _format_validation_error(error_detail: Dict[str, Any]) -> Dict[str, Any]:
         formatted_errors = {}
-        for field, error in error_detail.items():
-            if not isinstance(error, dict):
-                formatted_errors[field] = error
-                continue
+        for field, errors in error_detail.items():
+            if not isinstance(errors, (list, tuple)):
+                errors = [errors]
 
-            # Extract error details safely
-            message = error.get('message', 'Validation error occurred')
-            code = error.get('code', 'validation_error')
-            formatted_errors[field] = {
-                'message': message,
-                'code': code
-            }
+            field_errors = []
+            for error in errors:
+                message, code = ErrorResponse._parse_error_message(error)
+                field_errors.append({
+                    'message': message,
+                    'code': code
+                })
+
+            formatted_errors[field] = field_errors
 
         return {
             'message': 'Validation failed',
-            'field_errors': formatted_errors
+            'fieldErrors': formatted_errors
         }
 
     @staticmethod
@@ -99,11 +122,12 @@ class ErrorResponse:
             error_detail = exception.get_error_detail()
             formatted_error = {
                 'message': 'Validation failed',
-                'field_errors': [{
-                    'field': exception.field,
-                    'message': error_detail['message'],
-                    'code': error_detail['code']
-                }]
+                'fieldErrors': {
+                    exception.field: [{
+                        'message': error_detail['message'],
+                        'code': error_detail['code']
+                    }]
+                }
             }
             return ErrorResponse._create_error_response(
                 formatted_error,
@@ -131,7 +155,7 @@ class ErrorResponse:
             return ErrorResponse._create_error_response(
                 {
                     'message': 'Validation failed',
-                    'field_errors': error_detail if isinstance(error_detail, dict) else {'detail': error_detail}
+                    'fieldErrors': error_detail if isinstance(error_detail, dict) else {'detail': error_detail}
                 },
                 ApiErrorCode.VALIDATION_INVALID_INPUT
             )
@@ -139,23 +163,32 @@ class ErrorResponse:
         if isinstance(exception, DjangoValidationError):
             if hasattr(exception, 'message_dict'):
                 # Multiple field errors
-                error_detail = {
-                    field: {'message': msgs[0], 'code': 'validation_error'}
-                    for field, msgs in exception.message_dict.items()
+                formatted_error = {
+                    'message': 'Validation failed',
+                    'fieldErrors': {
+                        field: [{
+                            'message': msgs[0],
+                            'code': 'validation_error'
+                        }] for field, msgs in exception.message_dict.items()
+                    }
                 }
-                formatted_error = ErrorResponse._format_validation_error(error_detail)
                 return ErrorResponse._create_error_response(
                     formatted_error,
                     ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
             else:
                 # Single error message
-                error_detail = {
-                    'message': str(exception.messages[0] if exception.messages else exception),
-                    'code': ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
+                formatted_error = {
+                    'message': 'Validation failed',
+                    'fieldErrors': {
+                        'detail': [{
+                            'message': str(exception.messages[0] if exception.messages else exception),
+                            'code': ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
+                        }]
+                    }
                 }
                 return ErrorResponse._create_error_response(
-                    error_detail,
+                    formatted_error,
                     ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
 
