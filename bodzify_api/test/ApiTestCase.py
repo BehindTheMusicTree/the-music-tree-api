@@ -1,4 +1,5 @@
 from typing import Optional, Union
+from uuid import UUID
 
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework import status
@@ -127,16 +128,29 @@ class ApiTestCase(AppTestCase):
             else:
                 kwargs = file_field_dict
 
-            response = self.api_client.post(path=reverse('library-track-list'), data=kwargs, format='multipart')
-            if response.status_code == status.HTTP_201_CREATED:
-                self._set_saved_lib_track_attribute(response)
-                self._set_result(response)
-            elif response.status_code == status.HTTP_400_BAD_REQUEST:
-                self._set_bad_request_result(response)
-            return response
+            # Extract any custom error handler from kwargs
+            on_bad_request = kwargs.pop('on_bad_request', None)
+
+            return self.api_client.post(
+                path=reverse('library-track-list'),
+                data=kwargs,
+                format='multipart',
+                on_success=self._set_saved_lib_track_attribute,
+                on_bad_request=on_bad_request
+            )
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
         super().setUp(methods_names_to_implement=methods_names_to_implement)
 
-        self.api_client = AppApiClient()
+        self.api_client = AppApiClient(test_case=self)
         self._login_as_test_user1()
+
+    def _post_album(self, **kwargs):
+        return self.api_client.post(path=reverse('album-list'),
+                                    data=kwargs,
+                                    content_type='application/x-www-form-urlencoded')
+
+    def _put_album(self, uuid: UUID, **kwargs):
+        return self.api_client.put(path=reverse('album-detail', kwargs={'pk': uuid}),
+                                   data=kwargs,
+                                   content_type='application/x-www-form-urlencoded')
