@@ -22,7 +22,7 @@ class ArtistTestCase(ApiTestCase[Artist]):
         return self.api_client.get(
             path=reverse('artist-list'),
             data=kwargs,
-            handle_response=self._set_results_attributes
+            handle_response=self._set_results
         )
 
     def _retrieve_artist(self, uuid: UUID):
