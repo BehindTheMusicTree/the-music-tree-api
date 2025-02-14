@@ -16,7 +16,7 @@ class DuplicateFieldsMiddleware:
             message='Duplicate field detected.',
             code=FieldValidationErrorCode.FIELD_DUPLICATE
         )
-        return ErrorResponse.from_app_validation_error(validation_error)
+        return ErrorResponse.from_validation_error(validation_error)
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         if request.method in ['POST', 'PUT', 'PATCH']:
