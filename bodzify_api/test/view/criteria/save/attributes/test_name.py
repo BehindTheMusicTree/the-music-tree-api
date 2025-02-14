@@ -15,7 +15,7 @@ class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCa
         genre_name = "a" * settings.CRITERIA_NAME_LEN_MAX
         response = self._post_genre(**{Fields.NAME_PUBLIC: genre_name})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.name == genre_name
+        assert self.saved_object.name == genre_name
 
     def test_too_long_then_error(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)})

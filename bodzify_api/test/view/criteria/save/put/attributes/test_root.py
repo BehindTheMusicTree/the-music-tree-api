@@ -14,7 +14,7 @@ class TestCase(GenreTestCase):
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_genre.root == genre_rock
+        assert self.saved_object.root == genre_rock
 
     def test_from_being_first_descendant_to_root(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
@@ -23,7 +23,7 @@ class TestCase(GenreTestCase):
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ""})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_genre.root == genre_punk
+        assert self.saved_object.root == genre_punk
 
     def test_new_root_then_update_root_of_descendants(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
@@ -33,7 +33,7 @@ class TestCase(GenreTestCase):
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_genre.root == genre_rock
+        assert self.saved_object.root == genre_rock
         updated_punkhardcore_genre = Criteria.objects.get(user=self.test_user1, uuid=punkhardcore_genre.uuid)
         assert updated_punkhardcore_genre.root == genre_rock
 
@@ -49,7 +49,7 @@ class TestCase(GenreTestCase):
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_genre.root == genre_rock
+        assert self.saved_object.root == genre_rock
         updated_punkhardcore_genre: Criteria = Criteria.objects.get(user=self.test_user1, uuid=punkhardcore_genre.uuid)
         assert updated_punkhardcore_genre.root == genre_rock
         updated_frenchpunkhardcore_genre: Criteria = \
@@ -67,6 +67,6 @@ class TestCase(GenreTestCase):
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ""})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_genre.root == genre_punk
+        assert self.saved_object.root == genre_punk
         updated_punkhardcore_genre: Criteria = Criteria.objects.get(user=self.test_user1, uuid=punkhardcore_genre.uuid)
         assert updated_punkhardcore_genre.root == genre_punk

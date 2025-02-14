@@ -13,4 +13,4 @@ class TestCase(GenreTestCase):
         response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_genre.name == genre_new_name
+        assert self.saved_object.name == genre_new_name

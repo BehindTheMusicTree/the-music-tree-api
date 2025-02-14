@@ -27,4 +27,4 @@ class TestCase(GenreTestCase):
         name = "rock"
         response = self._post_genre(**{PostFields.NAME_PUBLIC: name})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.name == name
+        assert self.saved_object.name == name

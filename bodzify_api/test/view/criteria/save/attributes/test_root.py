@@ -14,7 +14,7 @@ class TestCase(GenreTestCase, NotNullableFieldTestCase):
         response = self._put_genre(uuid=genre_punk.uuid, **{Fields.PARENT: None})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_genre.root == self.saved_genre
+        assert self.saved_object.root == self.saved_genre
 
     def test_one_acendant_then_root_is_parent(self):
         rock = self.model_fixture_factory.create_genre(name="Rock")
@@ -22,7 +22,7 @@ class TestCase(GenreTestCase, NotNullableFieldTestCase):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: rock.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.root == rock
+        assert self.saved_object.root == rock
 
     def test_two_acendant_then_root_is_parent_of_parent(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
@@ -31,7 +31,7 @@ class TestCase(GenreTestCase, NotNullableFieldTestCase):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk hardcore", Fields.PARENT: genre_punk.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.root == genre_rock
+        assert self.saved_object.root == genre_rock
 
     def test_three_acendants_then_root_is_parent_of_parent_of_parent(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
@@ -42,4 +42,4 @@ class TestCase(GenreTestCase, NotNullableFieldTestCase):
                                     Fields.PARENT: hardcoregenre_punk.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_genre.root == genre_rock
+        assert self.saved_object.root == genre_rock
