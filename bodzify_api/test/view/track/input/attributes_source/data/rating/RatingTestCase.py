@@ -1,4 +1,3 @@
-from jsonschema import ValidationError
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as PostFields

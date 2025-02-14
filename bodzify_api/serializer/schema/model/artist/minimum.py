@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.schema.model.album.Fields import Fields as AvailableFields
+from bodzify_api.serializer.schema.model.album.fields import Fields as AvailableFields
 
 
 class Fields:

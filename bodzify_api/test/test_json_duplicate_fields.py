@@ -1,7 +1,6 @@
 
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as CriteriaPostFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
