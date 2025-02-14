@@ -30,8 +30,7 @@ class UserContentObjectUuidField(serializers.CharField):
         try:
             uuid_obj = UUID(data)
         except (ValueError, AttributeError):
-            # Since this is field validation (to_internal_value), use from_field
-            raise AppValidationError.from_field(
+            raise AppValidationError(
                 field=self.field_name,
                 message='Invalid UUID format',
                 code=FieldValidationErrorCode.INVALID_FORMAT
@@ -44,8 +43,7 @@ class UserContentObjectUuidField(serializers.CharField):
 
         if not Playlist.objects.filter(user=user, uuid=uuid_obj).exists() \
                 and not LibraryTrack.objects.filter(user=user, uuid=uuid_obj).exists():
-            # Since this is field validation (to_internal_value), use from_field
-            raise AppValidationError.from_field(
+            raise AppValidationError(
                 field=self.field_name,
                 message='Object with this ID does not exist or does not belong to the user',
                 code=FieldValidationErrorCode.RESOURCE_NOT_OWNED

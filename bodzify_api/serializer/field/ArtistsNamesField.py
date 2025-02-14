@@ -16,7 +16,7 @@ class ArtistsNamesField(serializers.CharField):
 
         # Check for empty values between commas
         if '' in artists and len(artists) > 1:
-            raise AppValidationError.from_field(
+            raise AppValidationError(
                 field=Fields.ARTISTS_NAMES,
                 message='Empty artist names are not allowed when specifying multiple artists',
                 code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
@@ -25,7 +25,7 @@ class ArtistsNamesField(serializers.CharField):
         # Check for duplicates
         unique_artists = set(artists)
         if len(unique_artists) < len(artists):
-            raise AppValidationError.from_field(
+            raise AppValidationError(
                 field=Fields.ARTISTS_NAMES,
                 message='Duplicate artist names are not allowed',
                 code=FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE

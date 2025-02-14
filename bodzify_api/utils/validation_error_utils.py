@@ -25,12 +25,7 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
         - In field validation context (run_validation method): AppValidationError.from_field()
         - In serializer context: AppValidationError.from_serializer()
     """
-    # In field validation context (run_validation), use from_field
-    if 'run_validation' in inspect.stack()[1].function:
-        raise AppValidationError.from_field(field, message, field_validation_error_code)
-    else:
-        # In serializer context, use from_serializer
-        raise AppValidationError.from_serializer(field, message, field_validation_error_code)
+    raise AppValidationError(field=field, message=message, code=field_validation_error_code)
 
 
 def raise_duplicate_field_error(field: str) -> None:

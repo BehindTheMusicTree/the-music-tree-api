@@ -16,8 +16,7 @@ class UniquePerUserNameField(serializers.CharField):
         if request and value:
             user = request.user
             if self.model.objects.filter(user=user, name=value).exists():
-                # Since this is field validation (run_validation), use from_field
-                raise AppValidationError.from_field(
+                raise AppValidationError(
                     field=ModelFields.NAME_PUBLIC,
                     message=_('A playlist with this name already exists'),
                     code=FieldValidationErrorCode.PLAYLIST_NAME_DUPLICATE

@@ -34,7 +34,7 @@ class AppValidationSerializer(serializers.Serializer):
                 if field_name in data:
                     value = data[field_name]
                     if isinstance(value, list) and not self._is_list_field(field):
-                        raise AppValidationError.from_filterset(
+                        raise AppValidationError(
                             field=field_name,
                             message=f"The field does not accept list values",
                             code=FieldValidationErrorCode.UNEXPECTED_LIST_VALUE
@@ -48,7 +48,7 @@ class AppValidationSerializer(serializers.Serializer):
             if isinstance(e, AppValidationError):
                 raise
             # For DRF validation errors, wrap them in our format
-            raise AppValidationError.from_field(
+            raise AppValidationError(
                 field='non_field_errors',
                 message=str(e.detail if hasattr(e, 'detail') else e),
                 code=FieldValidationErrorCode.INVALID_FORMAT

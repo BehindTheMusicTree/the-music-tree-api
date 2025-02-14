@@ -130,7 +130,7 @@ class TrackFile(PrivateStandardResource):
                         self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first()
                     )
                     if existing_track_file:
-                        raise AppValidationError.from_model(
+                        raise AppValidationError(
                             field='file',
                             message=_('The file "%(current)s" has the same fingerprint as the file "%(existing)s"') % {
                                 'current': self.filename,
@@ -206,7 +206,7 @@ class TrackFile(PrivateStandardResource):
                 audio_metadata.replace_flac_file_with_corrected_md5(self.file.path)
                 self.flac_md5_has_been_corrected = True
             except Exception:
-                raise AppValidationError.from_model(
+                raise AppValidationError(
                     field='file',
                     message=_(
                         'The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.'),
