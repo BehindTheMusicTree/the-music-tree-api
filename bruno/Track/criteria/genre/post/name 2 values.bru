@@ -1,0 +1,25 @@
+meta {
+  name: name 2 values
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{BASE_URL}}genres/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "genre", "name":"sfds"
+  }
+}
+
+vars:post-response {
+  genreAUuid: res.body.uuid
+}
