@@ -3,7 +3,7 @@ from typing import Any, List, Union, Dict
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError as DrfValidationError, ErrorDetail as DRFErrorDetail
-from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework import status
 
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
@@ -41,7 +41,7 @@ class ErrorResponse:
     def _create_error_response(
             error_detail: Dict[str, Any],
             error_code: ApiErrorCode = ApiErrorCode.VALIDATION_INVALID_INPUT
-    ) -> Response:
+    ) -> JsonResponse:
         http_status = ErrorHTTPStatusCodeMap.ERROR_TO_HTTP_STATUS.get(error_code, status.HTTP_400_BAD_REQUEST)
         status_message = ErrorHTTPStatusCodeMap.STATUS_MESSAGES.get(http_status, "Bad Request")
 
@@ -52,10 +52,10 @@ class ErrorResponse:
             'details': [error_detail]
         }
 
-        return Response(
+        return JsonResponse(
             data=response_data,
             status=http_status,
-            content_type='application/json'
+            safe=False
         )
 
     @staticmethod
@@ -80,7 +80,7 @@ class ErrorResponse:
         }
 
     @staticmethod
-    def from_unhandled_integrity_error(exception: IntegrityError) -> Response:
+    def from_unhandled_integrity_error(exception: IntegrityError) -> JsonResponse:
         error_detail = {
             'message': 'An internal error occurred',
             'code': ApiErrorCode.SYSTEM_INTERNAL_ERROR.name.lower()
@@ -92,7 +92,7 @@ class ErrorResponse:
 
     @staticmethod
     def from_validation_error(
-            exception: Union[AppValidationError, DrfValidationError, DjangoValidationError]) -> Response:
+            exception: Union[AppValidationError, DrfValidationError, DjangoValidationError]) -> JsonResponse:
         """Handle various types of validation errors with appropriate formatting."""
 
         if isinstance(exception, AppValidationError):
