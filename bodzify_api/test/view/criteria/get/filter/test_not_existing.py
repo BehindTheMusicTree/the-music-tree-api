@@ -8,9 +8,11 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestCase(LibTrackTestCase):
 
     def test_filter_not_existing_then_error(self):
-        response = self._get_lib_tracks(sdkfhsdkjfhskjfh='')
+        invalid_filter_name = 'invalidFilter'
+        response = self._get_lib_tracks(**{invalid_filter_name: 'invalidFilter'})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == 'sdkfhsdkjfhskjfh'
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNKNOWN.value
+        assert error['field'] == invalid_filter_name
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FILTER.value
