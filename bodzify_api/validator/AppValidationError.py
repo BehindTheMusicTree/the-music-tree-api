@@ -1,4 +1,6 @@
 from typing import Dict, Any
+
+from django.core.exceptions import ImproperlyConfigured
 from rest_framework.exceptions import ValidationError
 
 from .FieldValidationErrorCode import FieldValidationErrorCode
@@ -10,6 +12,7 @@ class AppValidationError(ValidationError):
     Instead of inheriting from ValidationError, we implement the DRF exception interface.
     """
     status_code = 400  # Same as ValidationError
+    error_type = 'app_validation_error'  # Marker to identify our error type after DRF processing
     """
     Custom validation error that maintains a consistent structure across different validation contexts.
     
@@ -48,9 +51,8 @@ class AppValidationError(ValidationError):
         self.is_field_level_validation = is_field_level_validation
 
         # Create the error structure based on context
+        self.error_detail['error_type'] = 'app_validation_error'  # Add marker in the error detail
         error_dict = self.error_detail if is_field_level_validation else {field: self.error_detail}
-        # Add a marker to identify this as AppValidationError even after DRF processing
-        self.is_app_validation_error = True
         super().__init__(error_dict)
 
     @classmethod
@@ -115,7 +117,7 @@ class AppValidationError(ValidationError):
             detail: The detail dictionary from DRF ValidationError
         """
         if not isinstance(detail, dict):
-            return cls('', str(detail), FieldValidationErrorCode.VALIDATION_ERROR, True)
+            raise ImproperlyConfigured('Detail must be a dictionary')
 
         # Handle field-level validation error
         if 'message' in detail and 'code' in detail:
