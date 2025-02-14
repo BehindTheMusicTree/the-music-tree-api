@@ -5,6 +5,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterfFields
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
@@ -21,7 +22,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == FilterfFields.PARENT
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
 
     def test_of_another_user_then_empty(self):
         test_user1_genre = self.model_fixture_factory.create_genre(name="Rock")

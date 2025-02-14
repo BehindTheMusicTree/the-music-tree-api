@@ -1,6 +1,5 @@
 from uuid import UUID
 from django.urls import reverse
-from rest_framework import status
 
 from bodzify_api.test.ApiTestCase import ApiTestCase
 

@@ -1,22 +1,37 @@
-from typing import Optional, Union
+from typing import Union, Type, TypeVar, Generic, Optional
 from uuid import UUID
 
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework import status
+from django.db import models
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
+from rest_framework import status
+from rest_framework_simplejwt.tokens import AccessToken
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.test.AppApiClient import AppApiClient
-from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.model.user.User import User
-from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
 from bodzify_api.serializer.schema.model.lib_track.output.detailed import Fields as LibTrackGetFields
+from bodzify_api.test.AppApiClient import AppApiClient
+from bodzify_api.test.AppTestCase import AppTestCase
+from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
 
 
-class ApiTestCase(AppTestCase):
+T = TypeVar('T', bound=models.Model)
+
+
+class ApiTestCase(AppTestCase, Generic[T]):
+    """Base class for API test cases that handle model instances.
+
+    Child classes should:
+    1. Define model_class class variable pointing to their model
+    2. Override _set_saved_object if custom fetching logic is needed
+    3. Use handle_response=self._set_results in API calls
+    """
+
+    model_class: Type[T]
+    saved_object: T
+
     class LibTrackGenericSamplesFilenameWithoutExtension:
         BELOW_1_SEC = "below 1 sec"
         ONE_STAR = "1 star"
@@ -44,8 +59,34 @@ class ApiTestCase(AppTestCase):
     def _login_as_test_admin(self):
         self._login_as_user(self.test_admin_user)
 
-    def _set_result(self, response):
+    def _set_saved_object(self, response):
+        """Get model instance from response UUID.
+
+        Child classes must define model_class class attribute.
+        """
+        if not hasattr(self, 'model_class') or self.model_class is None:
+            raise NotImplementedError("Test case must define model_class")
+
+        uuid = response.json()['uuid']  # Assumes UUID field is named 'uuid'
+        # At this point model_class is guaranteed to be a Model class with objects manager
+        self.saved_object = self.model_class.objects.get(uuid=uuid)  # type: ignore
+
+    def _set_single_result(self, response):
+        """Handle single item response and get model instance if applicable."""
         self.result = response.json()
+        if hasattr(self, 'model_class'):
+            self._set_saved_object(response)
+
+    def _set_results(self, response):
+        """Unified response handler that routes to appropriate method based on status code."""
+        if response.status_code == status.HTTP_400_BAD_REQUEST:
+            self._set_bad_request_result(response)
+        elif response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
+            # List endpoints return paginated results
+            if isinstance(response.json(), dict) and PaginatedResponseFields.RESULTS in response.json():
+                self._set_results_attributes(response)
+            else:
+                self._set_single_result(response)
 
     def _set_bad_request_result(self, response):
         """Store bad request result details with field-specific error information.
@@ -128,15 +169,16 @@ class ApiTestCase(AppTestCase):
             else:
                 kwargs = file_field_dict
 
-            # Extract any custom error handler from kwargs
-            on_bad_request = kwargs.pop('on_bad_request', None)
+            # Extract any custom response handler from kwargs
+            handle_response = kwargs.pop('handle_response', None)
+            if handle_response is None:
+                handle_response = self._set_saved_lib_track_attribute
 
             return self.api_client.post(
                 path=reverse('library-track-list'),
                 data=kwargs,
                 format='multipart',
-                on_success=self._set_saved_lib_track_attribute,
-                on_bad_request=on_bad_request
+                handle_response=handle_response
             )
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
@@ -146,11 +188,17 @@ class ApiTestCase(AppTestCase):
         self._login_as_test_user1()
 
     def _post_album(self, **kwargs):
-        return self.api_client.post(path=reverse('album-list'),
-                                    data=kwargs,
-                                    content_type='application/x-www-form-urlencoded')
+        return self.api_client.post(
+            path=reverse('album-list'),
+            data=kwargs,
+            content_type='application/x-www-form-urlencoded',
+            handle_response=self._set_results
+        )
 
     def _put_album(self, uuid: UUID, **kwargs):
-        return self.api_client.put(path=reverse('album-detail', kwargs={'pk': uuid}),
-                                   data=kwargs,
-                                   content_type='application/x-www-form-urlencoded')
+        return self.api_client.put(
+            path=reverse('album-detail', kwargs={'pk': uuid}),
+            data=kwargs,
+            content_type='application/x-www-form-urlencoded',
+            handle_response=self._set_results
+        )

@@ -1,7 +1,6 @@
 from uuid import UUID
 
 from django.urls import reverse
-from rest_framework import status
 
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.serializer.schema.model.playlist.children.manual.output.detailed import Fields as ManualPlaylistGetFields

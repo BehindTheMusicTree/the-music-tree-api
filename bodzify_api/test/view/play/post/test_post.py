@@ -8,6 +8,7 @@ from bodzify_api.serializer.schema.model.play.input.schema.endpoint.post import 
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(PlayTestCase):
@@ -19,7 +20,7 @@ class TestCase(PlayTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == 'nonExistingField'
-        assert error['code'] == FieldValidationErrorCode.UNKNOWN
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNKNOWN.value
 
     def test_multiple_values_for_content_object_uuid_then_error(self) -> None:
         playlist1_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
@@ -32,7 +33,7 @@ class TestCase(PlayTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == to_camel_case(Fields.CONTENT_OBJECT_UUID)
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
 
     def test_non_existant_content_object_uuid_then_error(self):
         response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): 'oifjqoif'})
@@ -40,7 +41,7 @@ class TestCase(PlayTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == to_camel_case(Fields.CONTENT_OBJECT_UUID)
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
 
     def test_playlist_play(self) -> None:
         current_play_count = 42
@@ -50,7 +51,7 @@ class TestCase(PlayTestCase):
         response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): db_playlist.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        response_playlist: Playlist = self.saved_play.content_object  # type: ignore
+        response_playlist: Playlist = self.saved_object.content_object  # type: ignore
         assert response_playlist.uuid == db_playlist.uuid
         assert response_playlist.play_count == current_play_count + 1
 
@@ -63,7 +64,7 @@ class TestCase(PlayTestCase):
         response = self._post_play(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        playlist: Playlist = self.saved_play.content_object  # type: ignore
+        playlist: Playlist = self.saved_object.content_object  # type: ignore
         assert playlist.lib_tracks.count() == 1
         playlist_lib_track: Optional[LibraryTrack] = playlist.lib_tracks.first()
         assert playlist_lib_track
@@ -76,6 +77,6 @@ class TestCase(PlayTestCase):
         response = self._post_play(**{to_camel_case(Fields.CONTENT_OBJECT_UUID): lib_track.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        saved_lib_track: LibraryTrack = self.saved_play.content_object  # type: ignore
+        saved_lib_track: LibraryTrack = self.saved_object.content_object  # type: ignore
         assert saved_lib_track.uuid == lib_track.uuid  # Compare with original UUID
-        assert self.saved_play.content_object.play_count == current_play_count + 1
+        assert self.saved_object.content_object.play_count == current_play_count + 1

@@ -13,23 +13,15 @@ class AppApiClient(APIClient):
         super().__init__(*args, **kwargs)
         self.test_case = test_case
 
-    def _handle_response(self, response: HttpResponse, on_success=None, on_bad_request=None) -> HttpResponse:
-        """Handle API response by setting appropriate results based on status code.
+    def _handle_response(self, response: HttpResponse, handle_response=None) -> HttpResponse:
+        """Handle API response using a unified response handler.
 
         Args:
             response: The API response to handle
-            on_success: Optional callback to execute after setting result on successful response
-            on_bad_request: Optional callback to execute after setting result on bad request
+            handle_response: Optional callback to handle the response regardless of status code
         """
-        if hasattr(self.test_case, '_set_result') and hasattr(self.test_case, '_set_bad_request_result'):
-            if response.status_code in [200, 201]:
-                self.test_case._set_result(response)
-                if on_success:
-                    on_success(response)
-            elif response.status_code == 400:
-                self.test_case._set_bad_request_result(response)
-                if on_bad_request:
-                    on_bad_request(response)
+        if handle_response:
+            handle_response(response)
         return response
 
     def get(self, path, data: Optional[dict] = None, content_type=None, follow=False, **extra) -> HttpResponse:
@@ -43,7 +35,10 @@ class AppApiClient(APIClient):
         if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:
             extra['HTTP_ACCEPT'] = 'application/json'
 
-        return super().get(path, data_url_encoded, follow, **extra)
+        # Extract response handler from extra if present
+        handle_response = extra.pop('handle_response', None)
+        response = super().get(path, data_url_encoded, follow, **extra)
+        return self._handle_response(response, handle_response)
 
     def post(self, path, data: Optional[dict] = None, content_type=None, follow=False, format=None, **extra
              ) -> HttpResponse:
@@ -59,11 +54,10 @@ class AppApiClient(APIClient):
         if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:
             extra['HTTP_ACCEPT'] = 'application/json'
 
-        # Extract callbacks from extra if present
-        on_success = extra.pop('on_success', None)
-        on_bad_request = extra.pop('on_bad_request', None)
+        # Extract response handler from extra if present
+        handle_response = extra.pop('handle_response', None)
         response = super().post(path, data_url_encoded, content_type=content_type, follow=follow, format=format, **extra)
-        return self._handle_response(response, on_success, on_bad_request)
+        return self._handle_response(response, handle_response)
 
     def put(self, path, data: Optional[dict] = None, format=None, content_type=None, follow=False, **extra
             ) -> HttpResponse:
@@ -79,11 +73,10 @@ class AppApiClient(APIClient):
         if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:
             extra['HTTP_ACCEPT'] = 'application/json'
 
-        # Extract callbacks from extra if present
-        on_success = extra.pop('on_success', None)
-        on_bad_request = extra.pop('on_bad_request', None)
+        # Extract response handler from extra if present
+        handle_response = extra.pop('handle_response', None)
         response = super().put(path, data_url_encoded, format, content_type, follow, **extra)
-        return self._handle_response(response, on_success, on_bad_request)
+        return self._handle_response(response, handle_response)
 
     def delete(self, path, data: Optional[dict] = None, format=None, content_type=None, follow=False, **extra
                ) -> HttpResponse:
@@ -99,4 +92,7 @@ class AppApiClient(APIClient):
         if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:
             extra['HTTP_ACCEPT'] = 'application/json'
 
-        return super().delete(path, data_url_encoded, format, content_type, follow, **extra)
+        # Extract response handler from extra if present
+        handle_response = extra.pop('handle_response', None)
+        response = super().delete(path, data_url_encoded, format, content_type, follow, **extra)
+        return self._handle_response(response, handle_response)

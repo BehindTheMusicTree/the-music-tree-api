@@ -5,6 +5,7 @@ from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import
 from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
@@ -15,7 +16,7 @@ class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == ArtistFields.NAME
-        assert error['code'] == FieldValidationErrorCode.BLANK
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_contains_in_another_case_then_results(self):
         artist1 = self.model_fixture_factory.create_artist(name="Muse")

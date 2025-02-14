@@ -1,0 +1,15 @@
+meta {
+  name: invalid filter
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{BASE_URL}}albums/?name
+  body: json
+  auth: inherit
+}
+
+params:query {
+  name: 
+}

@@ -1,14 +1,14 @@
 from uuid import UUID
 
 from django.urls import reverse
-from rest_framework import status
 
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.schema.model.lib_track.input.extract import Fields as LibTrackExtractFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.utils import data_transformer
 
 
-class LibTrackTestCase(ApiTestCase):
+class LibTrackTestCase(ApiTestCase[LibraryTrack]):
 
     LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION = "queen_showmustgoon 177s.mp3"
     SKIPPING_TEST_DUE_TO_ACOUSTID_UNKNOWN_CONNECTION_ISSUE = "Skipping test due to Acoustid unknown connection issue."
@@ -34,8 +34,7 @@ class LibTrackTestCase(ApiTestCase):
             path=reverse('library-track-extract'),
             data=kwargs,
             content_type='application/x-www-form-urlencoded',
-            on_success=self._set_saved_lib_track_attribute,
-            on_bad_request=self._set_bad_request_result
+            handle_response=self._set_results
         )
 
     def _extract_default_mine_track(self, extension=None, **kwargs):
@@ -61,8 +60,7 @@ class LibTrackTestCase(ApiTestCase):
             path=reverse('library-track-list'),
             data=kwargs,
             format='json',
-            on_success=self._set_saved_lib_track_attribute,
-            on_bad_request=self._set_bad_request_result
+            handle_response=self._set_results
         )
 
     def _post_lib_track_with_queenshowmustgoon(self, **kwargs):
@@ -119,8 +117,7 @@ class LibTrackTestCase(ApiTestCase):
         return self.api_client.put(
             path=reverse('library-track-detail', kwargs={'pk': uuid}),
             data=kwargs,
-            on_success=self._set_saved_lib_track_attribute,
-            on_bad_request=self._set_bad_request_result
+            handle_response=self._set_results
         )
 
     def _download_lib_track(self, uuid):
@@ -132,14 +129,12 @@ class LibTrackTestCase(ApiTestCase):
     def _retrieve_lib_track(self, uuid: UUID):
         return self.api_client.get(
             path=reverse('library-track-detail', kwargs={'pk': uuid}),
-            on_success=self._set_result,
-            on_bad_request=self._set_bad_request_result
+            handle_response=self._set_results
         )
 
     def _get_lib_tracks(self, **kwargs):
         return self.api_client.get(
             path=reverse('library-track-list'),
             data=kwargs,
-            on_success=self._set_results_attributes,
-            on_bad_request=self._set_bad_request_result
+            handle_response=self._set_results
         )

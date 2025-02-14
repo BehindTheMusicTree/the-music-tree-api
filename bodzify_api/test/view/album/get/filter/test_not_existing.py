@@ -2,6 +2,7 @@ from rest_framework import status
 
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(AlbumTestCase):
@@ -13,4 +14,4 @@ class TestCase(AlbumTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == 'invalid_filter'
-        assert error['code'] == FieldValidationErrorCode.UNKNOWN
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNKNOWN.value
