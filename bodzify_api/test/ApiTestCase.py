@@ -69,14 +69,14 @@ class ApiTestCase(AppTestCase):
 
         # Convert field errors to a list format for easier testing
         self.bad_request_result_field_errors = []
-        print('bad_request_result_field_errors_json:', self.bad_request_result_field_errors_json)
-        print('items:', self.bad_request_result_field_errors_json.items())
-        for field_name, error_info in self.bad_request_result_field_errors_json.items():
-            self.bad_request_result_field_errors.append({
-                'field': field_name,
-                'message': error_info['message'],
-                'code': error_info['code']
-            })
+        for field_name, error_list in self.bad_request_result_field_errors_json.items():
+            # error_list is a list of error dictionaries
+            for error in error_list:
+                self.bad_request_result_field_errors.append({
+                    'field': field_name,
+                    'message': error['message'],
+                    'code': error['code']
+                })
 
     def _set_results_attributes(self, response):
         response_json = response.json()
