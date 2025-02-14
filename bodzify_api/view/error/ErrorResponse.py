@@ -123,7 +123,7 @@ class ErrorResponse:
         """Handle various types of validation errors with appropriate formatting."""
 
         if isinstance(exception, AppValidationError):
-            error_detail = exception.get_error_detail()
+            error_detail = exception.error_detail
             formatted_error = {
                 ErrorResponseFields.MESSAGE: ErrorMessages.VALIDATION_FAILED,
                 ValidationErrorFields.FIELD_ERRORS: {
