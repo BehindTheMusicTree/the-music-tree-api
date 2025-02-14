@@ -1,20 +1,9 @@
 class ErrorResponseFields:
-    """Constants for error response field names and messages."""
+    """Constants for API response field names."""
     
     # Response structure fields
-    MESSAGE = 'message'
-    FIELD_ERRORS = 'fieldErrors'
-    CODE = 'code'
-    SUCCESS = 'success'
-    DETAILS = 'details'
+    MESSAGE = 'message'  # Main message field used across all responses
+    CODE = 'code'  # Error code field used across all responses
+    SUCCESS = 'success'  # Indicates if the request was successful
+    DETAILS = 'details'  # List of detailed error information
     DETAIL = 'detail'  # Used for single error messages
-    
-    # Common error messages
-    VALIDATION_FAILED = 'Validation failed'
-    INTERNAL_ERROR = 'An internal error occurred'
-    BAD_REQUEST = 'Bad Request'
-
-    # Common error codes
-    VALIDATION_ERROR = 'validation_error'
-    BLANK_ERROR = 'blank'
-    INVALID_ERROR = 'invalid'
