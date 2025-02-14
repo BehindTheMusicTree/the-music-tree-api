@@ -88,7 +88,7 @@ class AppValidationError(ValidationError):
         Create a filterset-level validation error (e.g., from filterset validation).
         Wraps the error with field name since filterset validation is similar to serializer validation.
         """
-        return cls(field, message, code, is_field_level_validation=False)
+        return cls(field, message, code, is_field_level_validation=True)
 
     def get_error_detail(self) -> Dict[str, Any]:
         """Get the error detail in a consistent format."""

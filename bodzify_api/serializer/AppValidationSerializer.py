@@ -3,7 +3,9 @@ import re
 from typing import Dict, Any, List, Union, Mapping
 
 from rest_framework import serializers
-from rest_framework.fields import CharField
+from rest_framework.fields import CharField, ListField
+from rest_framework.relations import ManyRelatedField
+from rest_framework.exceptions import ValidationError
 
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
@@ -16,22 +18,41 @@ from bodzify_api.utils.validation_error_utils \
 class AppValidationSerializer(serializers.Serializer):
     """Base serializer class that provides common validation functionality."""
 
+    def _is_list_field(self, field):
+        """Check if a field is designed to accept list values."""
+        return (
+            isinstance(field, (ListField, ManyRelatedField)) or
+            getattr(field, 'many', False) or
+            getattr(field, 'child', None) is not None
+        )
+
     def run_validation(self, data):
         """Override run_validation to preserve AppValidationError through the validation chain."""
+        # First check for list values in non-list fields
+        if isinstance(data, dict):
+            for field_name, field in self.fields.items():
+                if field_name in data:
+                    value = data[field_name]
+                    if isinstance(value, list) and not self._is_list_field(field):
+                        raise AppValidationError.from_filterset(
+                            field=field_name,
+                            message=f"Field '{field_name}' does not accept list values",
+                            code=FieldValidationErrorCode.UNEXPECTED_LIST_VALUE
+                        )
+
+        # Run parent validation but preserve our exception
         try:
-            if isinstance(data, dict):
-                for field_name, field in self.fields.items():
-                    if isinstance(field, CharField) and field_name in data:
-                        value = data[field_name]
-                        if isinstance(value, list):
-                            raise AppValidationError.from_field(
-                                field=field_name,
-                                message="Expected a string but received a list",
-                                code=FieldValidationErrorCode.EXPECTED_STRING_GOT_LIST
-                            )
             return super().run_validation(data)
-        except AppValidationError as e:
-            raise e  # Re-raise AppValidationError directly to preserve it
+        except ValidationError as e:
+            # If it's already our custom error, re-raise it
+            if isinstance(e, AppValidationError):
+                raise
+            # For DRF validation errors, wrap them in our format
+            raise AppValidationError.from_field(
+                field='non_field_errors',
+                message=str(e.detail if hasattr(e, 'detail') else e),
+                code=FieldValidationErrorCode.INVALID_FORMAT
+            )
 
     @staticmethod
     def _get_raw_field_names(raw_data: str) -> List[str]:
