@@ -165,6 +165,7 @@ to modify in the request body.",
         return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def handle_exception(self, exc: Exception) -> Response:
+        print('handle_exception exc class', exc.__class__)
         if isinstance(exc, (AppValidationError, DrfValidationError, DjangoValidationError)):
             # Handle all validation errors through the same method
             # AppValidationError is handled specifically inside from_validation_error

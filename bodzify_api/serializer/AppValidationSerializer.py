@@ -16,19 +16,22 @@ from bodzify_api.utils.validation_error_utils \
 class AppValidationSerializer(serializers.Serializer):
     """Base serializer class that provides common validation functionality."""
 
-    def to_internal_value(self, data):
-        """Override to_internal_value to add type validation for CharField."""
-        if isinstance(data, dict):
-            for field_name, field in self.fields.items():
-                if isinstance(field, CharField) and field_name in data:
-                    value = data[field_name]
-                    if isinstance(value, list):
-                        raise AppValidationError.from_field(
-                            field=field_name,
-                            message="Expected a string but received a list",
-                            code=FieldValidationErrorCode.INVALID_FORMAT
-                        )
-        return super().to_internal_value(data)
+    def run_validation(self, data):
+        """Override run_validation to preserve AppValidationError through the validation chain."""
+        try:
+            if isinstance(data, dict):
+                for field_name, field in self.fields.items():
+                    if isinstance(field, CharField) and field_name in data:
+                        value = data[field_name]
+                        if isinstance(value, list):
+                            raise AppValidationError.from_field(
+                                field=field_name,
+                                message="Expected a string but received a list",
+                                code=FieldValidationErrorCode.INVALID_FORMAT
+                            )
+            return super().run_validation(data)
+        except AppValidationError as e:
+            raise e  # Re-raise AppValidationError directly to preserve it
 
     @staticmethod
     def _get_raw_field_names(raw_data: str) -> List[str]:
