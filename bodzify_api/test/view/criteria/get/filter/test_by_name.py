@@ -4,7 +4,7 @@ from bodzify_api.serializer.schema.model.criteria.output.Fields import Fields as
 from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(GenreTestCase, NotNullableFreeCharFilterTestCase):

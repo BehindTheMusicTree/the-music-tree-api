@@ -12,9 +12,9 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api import settings
-from bodzify_api.view.error.AppValidationError import AppValidationError
+from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.validator.track_file_validator \
     import validate_content_type_is_audio, validate_filename_length, validate_size

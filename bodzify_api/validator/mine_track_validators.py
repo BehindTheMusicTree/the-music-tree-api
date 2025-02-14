@@ -2,8 +2,8 @@
 import requests
 from django.utils.translation import gettext as _
 
-from bodzify_api.view.error.AppValidationError import AppValidationError
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from .AppValidationError import AppValidationError
+from .FieldValidationErrorCode import FieldValidationErrorCode
 
 
 def check_if_url_contains_two_strings(url, string1, string2):

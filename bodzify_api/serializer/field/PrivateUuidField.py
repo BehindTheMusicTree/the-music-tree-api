@@ -4,8 +4,8 @@ from django.db.models import QuerySet
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from bodzify_api.view.error.AppValidationError import AppValidationError
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class PrivateUuidField(serializers.UUIDField):

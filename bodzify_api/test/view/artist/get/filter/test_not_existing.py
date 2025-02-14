@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(ArtistTestCase):

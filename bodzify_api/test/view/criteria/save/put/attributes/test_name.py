@@ -7,7 +7,7 @@ from bodzify_api.test.field.body_data.type.not_nullable.PrimaryBodyDataTestCase 
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):

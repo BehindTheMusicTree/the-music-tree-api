@@ -6,7 +6,7 @@ from bodzify_api.test.field.body_data.method.SaveBodyDataTestCase import SaveBod
 from bodzify_api.test.field.body_data.type.not_nullable.NotNullableBodyDataTestCase import NotNullableBodyDataTestCase
 from bodzify_api.test.field.body_data.type.not_nullable.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCase, SaveBodyDataTestCase):

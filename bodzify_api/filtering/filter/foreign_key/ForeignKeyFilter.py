@@ -6,10 +6,10 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext as _
 from django_filters import CharFilter, FilterSet
 
-from bodzify_api.view.error.AppValidationError import AppValidationError
+from bodzify_api.validator.AppValidationError import AppValidationError
 
 from bodzify_api.filtering.filter.AppFilter import AppFilter
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class ForeignKeyFilter(CharFilter, AppFilter):

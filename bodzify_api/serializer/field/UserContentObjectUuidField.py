@@ -5,8 +5,8 @@ from django.core.exceptions import ImproperlyConfigured
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from bodzify_api.view.error.AppValidationError import AppValidationError
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 from bodzify_api import settings
 from bodzify_api.model.playlist.Playlist import Playlist

@@ -5,7 +5,7 @@ from rest_framework.test import APIClient
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as CriteriaPostFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(GenreTestCase):

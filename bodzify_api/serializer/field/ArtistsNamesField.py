@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from bodzify_api.view.error.AppValidationError import AppValidationError
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields
 
 

@@ -1,10 +1,10 @@
-from bodzify_api.view.error.AppValidationError import AppValidationError
+from bodzify_api.validator.AppValidationError import AppValidationError
 import re
 import inspect
 from typing import List, Dict, Any
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 # Regex pattern to extract field name from constraint names

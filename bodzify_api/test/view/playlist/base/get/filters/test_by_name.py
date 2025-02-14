@@ -5,7 +5,7 @@ from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.filtering.set.playlist.Fields import Fields as QueryParams
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
-from bodzify_api.view.error.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
