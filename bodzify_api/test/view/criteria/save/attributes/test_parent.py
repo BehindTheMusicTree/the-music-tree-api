@@ -15,7 +15,7 @@ class TestCase(GenreTestCase, NullableBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == Fields.PARENT
-        assert error['code'] == FieldValidationErrorCode.FIELD_DUPLICATE.value
+        assert error['code'] == FieldValidationErrorCode.EXPECTED_STRING_GOT_LIST.value
 
     def test_empty_then_none(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: ""})
