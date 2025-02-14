@@ -168,27 +168,10 @@ to modify in the request body.",
     def handle_exception(self, exc: Exception) -> Response:
         print('handle_exception exc class', exc.__class__)
         if isinstance(exc, (DrfValidationError, DjangoValidationError)):
-            if isinstance(exc, DrfValidationError) and hasattr(exc, 'detail'):
-                detail = exc.detail
-                print('handle_exception detail', detail)
-
-                # Convert list to dict if necessary
-                if isinstance(detail, list):
-                    detail = {'error': detail[0] if detail else 'Unknown error'}
-
-                # Check if this was originally an AppValidationError by looking for our marker
-                if isinstance(detail, dict):
-                    # Check in the field details first
-                    for field_detail in detail.values():
-                        if isinstance(
-                                field_detail, dict) and field_detail.get('error_type') == AppValidationError.error_type:
-                            print('Found AppValidationError marker in field detail')
-                            exc = AppValidationError.from_drf_validation_error(detail)
-                            break
-                    # Then check in top-level detail
-                    if detail.get('error_type') == AppValidationError.error_type:
-                        print('Found AppValidationError marker in top-level detail')
-                        exc = AppValidationError.from_drf_validation_error(detail)
+            # Try to detect and convert back to AppValidationError if it was originally ours
+            converted = AppValidationError.detect_and_convert_from_drf_error(exc)
+            if converted:
+                exc = converted
             return ErrorResponse.from_validation_error(exc)
         elif isinstance(exc, IntegrityError):
             return ErrorResponse.from_unhandled_integrity_error(exc)

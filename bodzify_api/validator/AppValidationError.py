@@ -1,12 +1,12 @@
-from typing import Dict, Any
+from typing import Dict, Any, Union, Optional
 
-from django.core.exceptions import ImproperlyConfigured
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured, ValidationError as DjangoValidationError
+from rest_framework.exceptions import ValidationError as DrfValidationError
 
 from .FieldValidationErrorCode import FieldValidationErrorCode
 
 
-class AppValidationError(ValidationError):
+class AppValidationError(DrfValidationError):
     """
     Custom validation error that maintains its class through DRF middleware.
     Instead of inheriting from ValidationError, we implement the DRF exception interface.
@@ -106,6 +106,42 @@ class AppValidationError(ValidationError):
     def get_error_detail(self) -> Dict[str, Any]:
         """Get the error detail in a consistent format."""
         return self.error_detail
+
+    @classmethod
+    def detect_and_convert_from_drf_error(
+            cls, exc: Union[DrfValidationError, DjangoValidationError]) -> Optional['AppValidationError']:
+        """
+        Detect if a DRF ValidationError was originally an AppValidationError and convert it back.
+
+        Args:
+            exc: The exception to check and potentially convert
+
+        Returns:
+            AppValidationError if the error was originally ours, None otherwise
+        """
+        if not isinstance(exc, DrfValidationError) or not hasattr(exc, 'detail'):
+            return None
+
+        detail = exc.detail
+        # Convert list to dict if necessary
+        if isinstance(detail, list):
+            detail = {'error': detail[0] if detail else 'Unknown error'}
+
+        if not isinstance(detail, dict):
+            return None
+
+        # Check in field details first
+        for field_detail in detail.values():
+            if isinstance(field_detail, dict) and field_detail.get('error_type') == cls.error_type:
+                print('Found AppValidationError marker in field detail')
+                return cls.from_drf_validation_error(detail)
+
+        # Then check in top-level detail
+        if detail.get('error_type') == cls.error_type:
+            print('Found AppValidationError marker in top-level detail')
+            return cls.from_drf_validation_error(detail)
+
+        return None
 
     @classmethod
     def from_drf_validation_error(cls, detail: Dict[str, Any]) -> 'AppValidationError':
