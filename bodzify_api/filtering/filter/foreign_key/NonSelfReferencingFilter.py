@@ -20,11 +20,9 @@ class NonSelfReferencingFilter(ForeignKeyFilter):
         filtered_queryset = super().filter(queryset, value)
 
         if value and parent and hasattr(parent, 'instance'):
-            # If we have an instance and a value, check for self-reference
             instance = getattr(parent, 'instance', None)
             if instance and str(instance.pk) == str(value):
-                # Since this is field validation (filter), use from_field
-                raise AppValidationError.from_field(
+                raise AppValidationError(
                     field=str(self.field_name),
                     message=_('Self-referencing is not allowed'),
                     code=FieldValidationErrorCode.SELF_REFERENCE

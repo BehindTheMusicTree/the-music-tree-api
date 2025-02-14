@@ -16,8 +16,7 @@ def validate_size(file):
         message = _('File too large. Size should not exceed %(size).3f Mo.') % {
             'size': settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO
         }
-        # Since this is field validation, use from_field
-        raise AppValidationError.from_field(
+        raise AppValidationError(
             field=Fields.TRACK_FILE,
             message=message,
             code=FieldValidationErrorCode.FILE_TOO_LARGE
@@ -28,8 +27,7 @@ def validate_size(file):
         message = _('File too small. Size should be at least %(size).3f Mo.') % {
             'size': settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO
         }
-        # Since this is field validation, use from_field
-        raise AppValidationError.from_field(
+        raise AppValidationError(
             field=Fields.TRACK_FILE,
             message=message,
             code=FieldValidationErrorCode.FILE_TOO_SMALL
@@ -57,8 +55,7 @@ def validate_content_type_is_audio(file):
     error = audio is None
     if error:
         message = 'Invalid file format. Only audio files are allowed.'
-        # Since this is field validation, use from_field
-        raise AppValidationError.from_field(
+        raise AppValidationError(
             field=Fields.TRACK_FILE_PUBLIC,
             message=message,
             code=FieldValidationErrorCode.INVALID_FILE_TYPE
@@ -77,8 +74,7 @@ def validate_filename_length(value):
             'max_length': settings.LIB_TRACK_FILENAME_LEN_MAX,
             'current_length': len(filename)
         }
-        # Since this is field validation, use from_field
-        raise AppValidationError.from_field(
+        raise AppValidationError(
             field=Fields.TRACK_FILE_PUBLIC,
             message=message,
             code=FieldValidationErrorCode.INVALID_FILENAME

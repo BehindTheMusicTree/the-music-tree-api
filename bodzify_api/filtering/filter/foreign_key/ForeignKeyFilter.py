@@ -27,8 +27,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
             return queryset.filter(**{f"{self.field_name}__isnull": True})
 
         if re.match(r'{{.*}}', str(value)):
-            # Since this is field validation (filter), use from_field
-            raise AppValidationError.from_field(
+            raise AppValidationError(
                 field=str(self.field_name),
                 message=_('%(value)s is not a valid UUID') % {'value': value},
                 code=FieldValidationErrorCode.INVALID_FORMAT
@@ -38,8 +37,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
             if value and not isinstance(value, uuid.UUID):
                 uuid.UUID(str(value))
         except (TypeError, ValueError):
-            # Since this is field validation (filter), use from_field
-            raise AppValidationError.from_field(
+            raise AppValidationError(
                 field=str(self.field_name),
                 message=_('%(value)s is not a valid UUID') % {'value': value},
                 code=FieldValidationErrorCode.INVALID_FORMAT

@@ -16,8 +16,7 @@ class NonEmptiableCharFilter(EmptiableCharFilter):
 
         if (self.field_name_user_friendly or self.field_name) in parent_data:
             if value == '':
-                # Since this is field validation, use from_field
-                raise AppValidationError.from_field(
+                raise AppValidationError(
                     field=str(self.field_name_user_friendly or self.field_name),
                     message=_('This field may not be blank.'),
                     code=FieldValidationErrorCode.BLANK

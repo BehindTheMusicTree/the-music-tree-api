@@ -19,11 +19,6 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
         message: Human-readable error message
         field_validation_error_code: Machine-readable error code
         field: The field that caused the validation error
-
-    Note:
-        Uses AppValidationError to maintain consistent error structure:
-        - In field validation context (run_validation method): AppValidationError.from_field()
-        - In serializer context: AppValidationError.from_serializer()
     """
     raise AppValidationError(field=field, message=message, code=field_validation_error_code)
 
