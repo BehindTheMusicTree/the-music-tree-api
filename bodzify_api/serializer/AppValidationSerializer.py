@@ -3,6 +3,10 @@ import re
 from typing import Dict, Any, List, Union, Mapping
 
 from rest_framework import serializers
+from rest_framework.fields import CharField
+
+from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 from bodzify_api.utils.validation_error_utils \
     import raise_duplicate_field_error, raise_duplicate_fields_error, \
@@ -11,6 +15,20 @@ from bodzify_api.utils.validation_error_utils \
 
 class AppValidationSerializer(serializers.Serializer):
     """Base serializer class that provides common validation functionality."""
+
+    def to_internal_value(self, data):
+        """Override to_internal_value to add type validation for CharField."""
+        if isinstance(data, dict):
+            for field_name, field in self.fields.items():
+                if isinstance(field, CharField) and field_name in data:
+                    value = data[field_name]
+                    if isinstance(value, list):
+                        raise AppValidationError.from_field(
+                            field=field_name,
+                            message="Expected a string but received a list",
+                            code=FieldValidationErrorCode.INVALID_FORMAT
+                        )
+        return super().to_internal_value(data)
 
     @staticmethod
     def _get_raw_field_names(raw_data: str) -> List[str]:
