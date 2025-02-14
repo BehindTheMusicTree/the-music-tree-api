@@ -8,36 +8,35 @@ from .FieldValidationErrorCode import FieldValidationErrorCode
 
 class AppValidationError(DrfValidationError):
     """
-    Custom validation error that maintains its class through DRF middleware.
-    Instead of inheriting from ValidationError, we implement the DRF exception interface.
-    """
-    status_code = 400  # Same as ValidationError
-    error_type = 'app_validation_error'  # Marker to identify our error type after DRF processing
-    """
-    Custom validation error that maintains a consistent structure across different validation contexts.
-    
+    Custom validation error that maintains a consistent structure through DRF's middleware.
+
+    This error always includes:
+    - Field name (both in error detail and as dict key)
+    - Error type marker (to identify our errors after DRF processing)
+    - Message and code
+
+    Error Structure:
+        {
+            field_name: {
+                'message': '...',
+                'code': '...',
+                'field': field_name,
+                'error_type': 'app_validation_error'
+            }
+        }
+
     Note on DRF Exception Handling:
     When this exception is raised, DRF's middleware will convert it to a ValidationError instance
     while preserving our error structure. This is expected behavior and our error handling in 
-    ErrorResponse.from_validation_error is designed to work with this conversion.
+    detect_and_convert_from_drf_error will convert it back to AppValidationError if necessary.
 
-    Error Structure:
-        Field-level validation (from_field, from_filter):
-            {'message': '...', 'code': '...'}  # DRF wraps with field name
-            Used in: to_internal_value, validate_<field>, filter methods
-
-        Other validation (from_serializer, from_model, from_middleware, from_filterset):
-            {'field_name': {'message': '...', 'code': '...'}}  # We wrap with field name
-            Used in: validate methods, model validation, middleware, filterset validation
-
-    Factory Methods:
-        from_field: Field-level validation (DRF handles field wrapping)
-        from_filter: Filter field validation (DRF handles field wrapping)
-        from_serializer: Serializer-level validation
-        from_model: Model-level validation (e.g., integrity errors)
-        from_middleware: Middleware-level validation
-        from_filterset: Filterset-level validation
+    The error structure is preserved through DRF's middleware by:
+    1. Including field name in both the error detail and as dict key
+    2. Adding an error_type marker to identify our errors
+    3. Using a consistent structure for all validation contexts
     """
+    status_code = 400  # Same as ValidationError
+    error_type = 'app_validation_error'  # Marker to identify our error type after DRF processing
 
     def __init__(self, field: str, message: str, code: FieldValidationErrorCode):
         self.field = field
@@ -69,8 +68,6 @@ class AppValidationError(DrfValidationError):
         """
         if not isinstance(exc, DrfValidationError) or not hasattr(exc, 'detail'):
             return None
-
-        print('exception:', exc)
 
         detail = exc.detail
         # Convert list to dict if necessary
