@@ -1,7 +1,9 @@
 import json
 import re
-from typing import Dict, Any, List, Union, Mapping
+from typing import Dict, Any, List, Union, Mapping, Optional
 
+from django.db import models
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 from rest_framework.fields import CharField, ListField
 from rest_framework.relations import ManyRelatedField
@@ -27,27 +29,62 @@ class AppValidationSerializer(serializers.Serializer):
         )
 
     def run_validation(self, data):
-        """Override run_validation to preserve AppValidationError through the validation chain."""
-        # First check for list values in non-list fields
+        """
+        Override run_validation to handle field validation and preserve AppValidationError.
+
+        Validation steps:
+        1. Field type validation (list values)
+        2. Unknown fields check
+        3. Duplicate fields check
+        4. Parent class validation
+        """
         if isinstance(data, dict):
+            # 1. Validate field types (list values)
             for field_name, field in self.fields.items():
                 if field_name in data:
                     value = data[field_name]
                     if isinstance(value, list) and not self._is_list_field(field):
                         raise AppValidationError(
                             field=field_name,
-                            message=f"The field does not accept list values",
+                            message=_("The field does not accept list values"),
                             code=FieldValidationErrorCode.UNEXPECTED_LIST_VALUE
                         )
 
-        # Run parent validation but preserve our exception
+            # 2. Check for unknown fields
+            unknown_keys = self._check_unknown_fields(data, self.fields)
+            if len(unknown_keys) == 1:
+                raise_unknown_field_error(unknown_keys[0])
+            elif len(unknown_keys) > 1:
+                raise_unknown_fields_error(unknown_keys)
+
+        # 3. Check for duplicate fields
+        request = self.context.get('request')
+        if request:
+            raw_body = getattr(request, '_raw_body', None)
+            if not raw_body and hasattr(request, '_request'):
+                try:
+                    raw_body = request._request.body
+                    setattr(request, '_raw_body', raw_body)
+                except Exception:
+                    pass
+
+            if raw_body:
+                try:
+                    raw_data = raw_body.decode('utf-8') if isinstance(raw_body, bytes) else str(raw_body)
+                    duplicates = self._find_duplicate_fields(raw_data)
+                    if duplicates:
+                        if len(duplicates) == 1:
+                            raise_duplicate_field_error(duplicates[0])
+                        raise_duplicate_fields_error(duplicates)
+                except (UnicodeDecodeError, AttributeError):
+                    pass
+
+        # 4. Run parent validation but preserve our exception
         try:
             return super().run_validation(data)
         except ValidationError as e:
-            # If it's already our custom error, re-raise it
             if isinstance(e, AppValidationError):
                 raise
-            # For DRF validation errors, wrap them in our format
             raise AppValidationError(
                 field='non_field_errors',
                 message=str(e.detail if hasattr(e, 'detail') else e),
@@ -93,53 +130,3 @@ class AppValidationSerializer(serializers.Serializer):
             return duplicates
         except (UnicodeDecodeError, AttributeError, json.JSONDecodeError):
             return []
-
-    def _validate_fields(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
-        # Check for unknown fields
-        if hasattr(self, 'initial_data') and hasattr(self, 'fields'):
-            unknown_keys = self._check_unknown_fields(self.initial_data, self.fields)
-            if len(unknown_keys) == 1:
-                raise_unknown_field_error(unknown_keys[0])
-            elif len(unknown_keys) > 1:
-                raise_unknown_fields_error(unknown_keys)
-
-        # Check for duplicate fields
-        request = self.context.get('request')
-        if request:
-            # Try to get raw body from different possible locations
-            raw_body = getattr(request, '_raw_body', None)
-
-            # If we don't have the raw body stored, try to get it from the request
-            # and store it before it's consumed
-            if not raw_body and hasattr(request, '_request'):
-                try:
-                    raw_body = request._request.body
-                    # Store the raw body for future access
-                    setattr(request, '_raw_body', raw_body)
-                except Exception:
-                    # If we can't access the body, it might have been consumed
-                    pass
-
-            if raw_body:
-                try:
-                    # Convert bytes to string if needed
-                    if isinstance(raw_body, bytes):
-                        raw_data = raw_body.decode('utf-8')
-                    else:
-                        raw_data = str(raw_body)
-
-                    duplicates = self._find_duplicate_fields(raw_data)
-                    if duplicates:
-                        if len(duplicates) == 1:
-                            raise_duplicate_field_error(duplicates[0])
-
-                        raise_duplicate_fields_error(duplicates)
-                except (UnicodeDecodeError, AttributeError):
-                    pass
-
-        return attrs
-
-    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate the input data."""
-        attrs = self._validate_fields(attrs)
-        return super().validate(attrs)

@@ -1,12 +1,11 @@
 from django.utils.translation import gettext_lazy as _
 
 from bodzify_api.serializer.field.PrivateUuidField import PrivateUuidField
+from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class NonSelfReferencingField(PrivateUuidField):
-    """
-    A custom field that prevents self-referential relationships in foreign keys.
-    """
     default_error_messages = {
         'self_reference': _('The object cannot reference itself.')
     }
@@ -16,7 +15,11 @@ class NonSelfReferencingField(PrivateUuidField):
         instance = self.parent.instance
 
         if instance and uuid and instance.uuid == uuid:
-            self.fail('self_reference')
+            raise AppValidationError(
+                field=str(self.field_name),
+                message=self.error_messages['self_reference'],
+                code=FieldValidationErrorCode.SELF_REFERENCE
+            )
 
         if uuid:
             return self.queryset.get(uuid=uuid)

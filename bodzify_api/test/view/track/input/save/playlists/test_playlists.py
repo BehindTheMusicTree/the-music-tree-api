@@ -23,7 +23,7 @@ class TestCase(LibTrackTestCase):
             user=self.test_user1, criteria__name=genre_name)
         assert rock_criteria_playlist.playlist.uuid in track_playlists_uuids
 
-    def test_existing_genre_then_track_in_existing_playlist(self):
+    def test_existing_then_ok_genre_then_track_in_existing_playlist(self):
         genre_name = "Rock"
         self.model_fixture_factory.create_genre(name=genre_name)
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
@@ -38,7 +38,7 @@ class TestCase(LibTrackTestCase):
             user=self.test_user1, criteria__name=genre_name)
         assert rock_criteria_playlist.playlist.uuid in track_playlists_uuids
 
-    def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
+    def test_existing_then_ok_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
         genre_rock_name = "Rock"
         genre_hard_rock_name = "Hard rock"
         genre_emo_name = "Emo"

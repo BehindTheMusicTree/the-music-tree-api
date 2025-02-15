@@ -32,9 +32,8 @@ class PrivateUuidField(serializers.UUIDField):
             self.queryset.get(uuid=uuid_value, user=user)
             return uuid_value
         except self.queryset.model.DoesNotExist:
-            field_name = self.field_name if self.field_name is not None else 'uuid_field'
             raise AppValidationError(
-                field=field_name,
+                field=str(self.field_name),
                 message='Resource does not exist for this user',
                 code=FieldValidationErrorCode.RESOURCE_NOT_OWNED
             )

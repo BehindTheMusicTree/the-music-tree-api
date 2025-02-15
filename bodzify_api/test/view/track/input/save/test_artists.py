@@ -36,7 +36,7 @@ class TestCase(FieldModelStrTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.artists.count() == 0
 
-    def test_existing(self) -> None:
+    def test_existing_then_ok(self) -> None:
         artist_name = "Kopoe"
         self.model_fixture_factory.create_artist(name=artist_name)
 

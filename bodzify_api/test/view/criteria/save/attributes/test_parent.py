@@ -23,7 +23,7 @@ class TestCase(GenreTestCase, NullableBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.parent == None
 
-    def test_existing(self):
+    def test_existing_then_ok(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: genre_rock.uuid})
@@ -31,13 +31,15 @@ class TestCase(GenreTestCase, NullableBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.parent == genre_rock
 
-    def test_error_when_not_existing(self):
+    def test_non_existing_then_error(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
-        response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: "not existing"})
+        response = self._post_genre(
+            **{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: "5d63bbee-32ca-47d9-89fe-fd82f18dd183"})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
+        print('error', error)
         assert error['field'] == Fields.PARENT
         assert error['code'] == FieldValidationErrorCode.RESOURCE_NOT_OWNED.value

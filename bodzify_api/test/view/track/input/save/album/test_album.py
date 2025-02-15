@@ -30,7 +30,7 @@ class TestCase(FieldModelStrTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_lib_track.album == None
 
-    def test_existing(self):
+    def test_existing_then_ok(self):
         album_name = "Kopoe"
         self.model_fixture_factory.create_album(name=album_name)
 
