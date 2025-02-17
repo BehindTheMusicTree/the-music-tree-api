@@ -1,16 +1,35 @@
+from typing import TypeVar, Any, Optional, Protocol, runtime_checkable, Generic
 from django.core.exceptions import ImproperlyConfigured
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+from rest_framework.relations import RelatedField
+from rest_framework.serializers import BaseSerializer
 
 from bodzify_api.serializer.field.foreign_key.NonSelfReferencingField import NonSelfReferencingField
+from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
-class DescendantAwareField(NonSelfReferencingField):
+@runtime_checkable
+class HasDescendantCheck(Protocol):
+    def is_descendant_of(self, other: Any) -> bool:
+        ...
+
+
+T = TypeVar('T', bound=models.Model)
+
+
+class DescendantAwareField(NonSelfReferencingField[T], Generic[T]):
+    """
+    A field that ensures the referenced object is not a descendant of the current object.
+    Extends NonSelfReferencingField to prevent self-referencing and adds descendant checking.
+    """
 
     default_error_messages = {
         'descendant_reference': _('Cannot reference a descendant of the object.')
     }
 
-    def to_internal_value(self, data):
+    def to_internal_value(self, data: Any) -> Optional[T]:
         value = super().to_internal_value(data)
         instance = self.parent.instance
 
@@ -18,7 +37,11 @@ class DescendantAwareField(NonSelfReferencingField):
             if not hasattr(instance, 'is_descendant_of'):
                 raise ImproperlyConfigured("Instance must have is_descendant_of method.")
 
-            if value and value.is_descendant_of(instance):
-                self.fail('descendant_reference')
+            if value and isinstance(value, HasDescendantCheck) and value.is_descendant_of(instance):
+                raise AppValidationError(
+                    field=str(self.field_name),
+                    message=self.error_messages['descendant_reference'],
+                    code=FieldValidationErrorCode.ANCESTOR_REFERENCE
+                )
 
         return value

@@ -1,13 +1,14 @@
 import json
 import re
-from typing import Dict, Any, List, Union, Mapping, Optional
+from typing import Dict, Any, List, Union, Mapping, Optional, TypeVar, Generic
 
 from django.db import models
 from django.utils.translation import gettext as _
 from rest_framework import serializers
-from rest_framework.fields import CharField, ListField
-from rest_framework.relations import ManyRelatedField
+from rest_framework.fields import CharField, ListField, Field
+from rest_framework.relations import ManyRelatedField, RelatedField
 from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import BaseSerializer
 
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
@@ -16,8 +17,10 @@ from bodzify_api.utils.validation_error_utils \
     import raise_duplicate_field_error, raise_duplicate_fields_error, \
     raise_unknown_fields_error, raise_unknown_field_error
 
+T = TypeVar('T')
 
-class AppValidationSerializer(serializers.Serializer):
+
+class AppValidationSerializer(serializers.Serializer, Generic[T]):
     """Base serializer class that provides common validation functionality."""
 
     def _is_list_field(self, field):
