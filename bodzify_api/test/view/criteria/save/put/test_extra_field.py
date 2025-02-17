@@ -17,4 +17,4 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == 'extra_field'
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNKNOWN.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_REFERENCE.value

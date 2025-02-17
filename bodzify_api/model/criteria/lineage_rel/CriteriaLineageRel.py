@@ -1,5 +1,6 @@
 from django.db import models
 
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from ..Fields import Fields as CriteriaFields
 from ..Criteria import Criteria
@@ -7,8 +8,8 @@ from .Fields import Fields
 
 
 class CriteriaLineageRel(PrivateStandardResource):
-    descendant = models.ForeignKey(Criteria, on_delete=models.CASCADE, related_name=CriteriaFields.ASCENDANTS_RELS)
-    ascendant = models.ForeignKey(Criteria, on_delete=models.CASCADE, related_name=CriteriaFields.DESCENDANTS_RELS)
+    descendant = PrivateForeignKey(Criteria, on_delete=models.CASCADE, related_name=CriteriaFields.ASCENDANTS_RELS)
+    ascendant = PrivateForeignKey(Criteria, on_delete=models.CASCADE, related_name=CriteriaFields.DESCENDANTS_RELS)
     degree = models.PositiveIntegerField()
 
     def __str__(self):

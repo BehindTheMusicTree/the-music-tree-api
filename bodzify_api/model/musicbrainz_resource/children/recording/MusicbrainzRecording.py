@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import F, Value
 
 from bodzify_api import settings
+from bodzify_api.model.field.foreign_key.AppManyToManyField import AppManyToManyField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 from ...MusicbrainzResource import MusicbrainzResource
 from ..artist.MusicbrainzArtist import MusicbrainzArtist
@@ -20,7 +21,7 @@ class MusicbrainzRecording(MusicbrainzResource):
     score = models.DecimalField(max_digits=9, decimal_places=8, editable=False)
     duration_in_sec = models.IntegerField(editable=False, null=True)
     release_date = models.DateField(null=True, blank=True, editable=False)
-    musicbrainz_artists = models.ManyToManyField(MusicbrainzArtist)
+    musicbrainz_artists = AppManyToManyField(MusicbrainzArtist)
 
     @property
     def duration_str_in_hour_min_sec(self) -> Optional[str]:

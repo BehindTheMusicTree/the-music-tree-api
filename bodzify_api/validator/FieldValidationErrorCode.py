@@ -47,6 +47,10 @@ class FieldValidationErrorCode(Enum):
         RATING_TOO_LARGE = 2135        # Rating exceeds maximum
         UNEXPECTED_LIST_VALUE = 2136    # Received a list for a field that doesn't accept lists
     """
+
+    # Database validation
+    DB_INTEGRITY_ERROR = 'db_integrity_error'
+
     # Basic field validation
     BLANK = 'blank'
     INVALID_ENUM = 'invalid_enum'
@@ -54,12 +58,17 @@ class FieldValidationErrorCode(Enum):
     INVALID_FORMAT = 'invalid_format'
     INVALID_CHOICE = 'invalid_choice'
     FIELD_DUPLICATE = 'field_duplicate'
+    UNEXPECTED_LIST_VALUE = 'unexpected_list_value'
+
+    # Filter
+    INVALID_FILTER = 'invalid_filter'
 
     # Field existence validation
     UNKNOWN = 'unknown_field'
     UNKNOWN_MULTIPLE = 'unknown_fields'
 
     # Reference validation
+    INVALID_REFERENCE = 'invalid_reference'
     SELF_REFERENCE = 'self_reference'
     ANCESTOR_REFERENCE = 'ancestor_reference'
 
@@ -68,15 +77,12 @@ class FieldValidationErrorCode(Enum):
     FILE_TOO_SMALL = 'file_too_small'
     INVALID_FILE_TYPE = 'invalid_file_type'
     INVALID_FILENAME = 'invalid_filename'
+    DUPLICATE_FINGERPRINT = 'duplicate_fingerprint'
 
     # URL validation
     INVALID_URL = 'invalid_url'
     URL_NOT_FOUND = 'url_not_found'
     URL_REQUEST_FAILED = 'url_request_failed'
-
-    # Filter and fingerprint validation
-    INVALID_FILTER = 'invalid_filter'
-    DUPLICATE_FINGERPRINT = 'duplicate_fingerprint'
 
     # File processing validation
     FILE_CORRUPTED = 'file_corrupted'
@@ -86,9 +92,6 @@ class FieldValidationErrorCode(Enum):
     NAME_EMPTY = 'name_empty'
     NAME_DUPLICATE = 'name_duplicate'
     NAMES_DUPLICATE = 'names_duplicate'
-
-    # Database validation
-    DB_INTEGRITY_ERROR = 'db_integrity_error'
 
     # Playlist validation
     PLAYLIST_NAME_DUPLICATE = 'playlist_name_duplicate'
@@ -110,4 +113,7 @@ class FieldValidationErrorCode(Enum):
     # Rating validation
     RATING_TOO_SMALL = 'rating_too_small'
     RATING_TOO_LARGE = 'rating_too_large'
-    UNEXPECTED_LIST_VALUE = 'unexpected_list_value'
+
+    # String validation
+    STRING_TOO_LONG = 'string_too_long'
+    STRING_TOO_SHORT = 'string_too_short'

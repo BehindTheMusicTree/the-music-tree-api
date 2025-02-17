@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
-from bodzify_api.serializer.field.PrivateUuidField import PrivateUuidField
+from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 

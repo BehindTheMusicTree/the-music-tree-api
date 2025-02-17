@@ -20,7 +20,7 @@ class TestCase(PlayTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == 'nonExistingField'
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNKNOWN.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_REFERENCE.value
 
     def test_multiple_values_for_content_object_uuid_then_error(self) -> None:
         playlist1_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid

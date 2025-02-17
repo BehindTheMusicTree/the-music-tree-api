@@ -1,0 +1,100 @@
+from typing import Any, Dict, Optional
+
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.relations import PrimaryKeyRelatedField
+
+from bodzify_api.serializer.field.AppField import AppField
+from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+
+
+class ForeignKeyField(AppField, PrimaryKeyRelatedField):
+    """
+    Custom ForeignKey serializer field that raises AppValidationError instead of DRF's ValidationError.
+    This ensures consistent error handling across the application.
+
+    Supports additional filters for validation:
+        track = ForeignKeyField(
+            queryset=LibraryTrack.objects.all(),
+            additional_filters={'user': request.user}
+        )
+    """
+
+    def __init__(self, **kwargs):
+        """Initialize with optional additional_filters for validation"""
+        self.additional_filters = kwargs.pop('additional_filters', {})
+        super().__init__(**kwargs)
+
+    def fail(self, key: str, **kwargs: Any) -> None:
+        """
+        Raise an AppValidationError with appropriate error code and message.
+
+        Args:
+            key: The error key that maps to an error message
+            **kwargs: Format parameters for the error message
+        """
+        try:
+            msg = self.error_messages[key]
+            if kwargs:
+                msg = msg.format(**kwargs)
+        except KeyError:
+            class_name = self.__class__.__name__
+            msg = f"Invalid input for {class_name}."
+
+        if key == 'required':
+            code = FieldValidationErrorCode.REQUIRED
+        elif key == 'does_not_exist':
+            code = FieldValidationErrorCode.UNKNOWN
+        elif key == 'incorrect_type':
+            code = FieldValidationErrorCode.INVALID_FORMAT
+        else:
+            code = FieldValidationErrorCode.INVALID_FORMAT
+
+        raise AppValidationError(
+            field=self.field_name or '',
+            message=msg,
+            code=code,
+            source_field=self
+        )
+
+    def get_queryset(self) -> Any:
+        """
+        Return the queryset filtered with additional_filters if any are specified.
+        """
+        queryset = super().get_queryset()
+        if self.additional_filters:
+            queryset = queryset.filter(**self.additional_filters)
+        return queryset
+
+    def to_internal_value(self, data: Any) -> Any:
+        """
+        Transform the *incoming* primitive data into a native value.
+        Applies additional filters during validation if specified.
+        Raises AppValidationError for any validation issues.
+        """
+        if data == '' or (self.allow_null and data is None):
+            if self.required:
+                raise AppValidationError(
+                    field=self.field_name or '',  # Fallback empty string if field_name not set
+                    message='This field is required.',
+                    code=FieldValidationErrorCode.REQUIRED,
+                    source_field=self
+                )
+            return None
+
+        try:
+            return super().to_internal_value(data)
+        except ObjectDoesNotExist:
+            raise AppValidationError(
+                field=self.field_name or '',
+                message='Object with this ID does not exist or does not belong to the user',
+                code=FieldValidationErrorCode.INVALID_REFERENCE,
+                source_field=self
+            )
+        except (TypeError, ValueError):
+            raise AppValidationError(
+                field=self.field_name or '',
+                message='Incorrect type. Expected UUID.',
+                code=FieldValidationErrorCode.INVALID_FORMAT,
+                source_field=self
+            )

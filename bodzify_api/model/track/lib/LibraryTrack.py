@@ -8,8 +8,11 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from bodzify_api import settings
+from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
+from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
@@ -27,10 +30,11 @@ from .LibTrackManager import LibTrackManager
 if TYPE_CHECKING:
     from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
+
 class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
-    title = models.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
+    title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
-    album = models.ForeignKey(Album,
+    album = PrivateForeignKey(Album,
                               on_delete=models.CASCADE,
                               null=True,
                               blank=True,
@@ -39,8 +43,8 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
         null=True,
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)])
-    artists = models.ManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_RELATED_NAME)
-    genre = models.ForeignKey(Genre,
+    artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_RELATED_NAME)
+    genre = PrivateForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
                               null=True,
                               blank=True,
@@ -49,12 +53,12 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
         null=True,
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
-    language = models.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
+    language = AppCharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
-    playlists = models.ManyToManyField(Playlist, 
-                                       through='LibTrackPlaylistRel', 
+    playlists = PrivateManyToManyField(Playlist,
+                                       through='LibTrackPlaylistRel',
                                        related_name=PlaylistFields.LIB_TRACKS_RELATED_NAME)
-    
+
     if TYPE_CHECKING:
         track_file: TrackFile
         lib_track_playlist_rels: models.QuerySet['LibTrackPlaylistRel']
@@ -71,13 +75,13 @@ class LibraryTrack(PrivateUniqueResource, TrackablePlayCount):
     @property
     def relative_url(self) -> str:
         return f"tracks/{self.uuid}/"
-        
 
     def __str__(self):
         position_str = f"#{self.position_in_album}" if self.position_in_album else "#--"
 
         artists: QuerySet[Artist] = self.artists.all()
-        artists_str = ", ".join(artist.name for artist in artists) if self.artists.exists() else f"[no {Fields.ARTISTS}]"
+        artists_str = ", ".join(
+            artist.name for artist in artists) if self.artists.exists() else f"[no {Fields.ARTISTS}]"
         album_str = str(self.album) if self.album else f"[no {Fields.ALBUM}]"
 
         genre_str = f"{Fields.GENRE}: {self.genre}" if self.genre else f"{Fields.GENRE}: --"

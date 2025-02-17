@@ -1,8 +1,9 @@
 from rest_framework.fields import IntegerField, CharField
+from rest_framework import serializers
 
-from bodzify_api.serializer.AppModelSerializer import AppModelSerializer
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
+from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.schema.model.criteria_lineage_rel.without_ascendant \
     import CriteriaLineageRelWithoutAscendantSerializer
 from bodzify_api.serializer.schema.model.criteria_lineage_rel.without_descendant \
@@ -15,7 +16,7 @@ from .Fields import Fields as Fields
 from .minimum import CriteriaMinimumSerializer
 
 
-class CriteriaDetailedSerializer(AppModelSerializer):
+class CriteriaDetailedSerializer(AppValidationSerializer, serializers.ModelSerializer):
     library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(
         source=Fields.LIB_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
     library_tracks_count = IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)

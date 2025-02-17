@@ -1,5 +1,8 @@
+
+from rest_framework import serializers
+
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.AppModelSerializer import AppModelSerializer
+from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.serializer.schema.model.artist.minimum import ArtistMinimumSerializer
 from bodzify_api.serializer.schema.model.lib_track.output.simple.Fields import Fields as SimpleFields
 
@@ -13,7 +16,7 @@ class Fields:
     PLAY_COUNT = SimpleFields.PLAY_COUNT
 
 
-class LibTrackWithoutAlbumPlaylistGenreSerializer(AppModelSerializer):
+class LibTrackWithoutAlbumPlaylistGenreSerializer(AppValidationSerializer, serializers.ModelSerializer):
     artists = ArtistMinimumSerializer(many=True)
 
     class Meta:

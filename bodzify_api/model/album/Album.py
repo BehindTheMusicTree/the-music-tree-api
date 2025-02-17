@@ -4,11 +4,13 @@ from django.db import models
 from django.db.models import Q
 
 from bodzify_api import settings
+from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from bodzify_api.model.album.AlbumManager import AlbumManager
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
+from bodzify_api.model.field.AppCharField import AppCharField
 from .Fields import Fields
 
 if TYPE_CHECKING:
@@ -16,10 +18,10 @@ if TYPE_CHECKING:
 
 
 class Album(LibTrackMixin):
-    _name = models.CharField(max_length=settings.ALBUM_NAME_LEN_MAX,
-                             default=None, db_column=Fields.NAME)  # type: ignore
-    year = models.CharField(max_length=4, default=None, null=True)
-    album_artists = models.ManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
+    _name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX,
+                         default=None, db_column=Fields.NAME)  # type: ignore
+    year = AppCharField(max_length=4, default=None, null=True)
+    album_artists = PrivateManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
 
     objects: AlbumManager = AlbumManager()
 

@@ -4,6 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
+from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.play.PlayManager import PlayManager
 from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -12,7 +13,7 @@ from .Fields import Fields
 
 
 class Play(PrivateUniqueResource):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = AppForeignKey(ContentType, on_delete=models.CASCADE)
     object_pk = models.UUIDField()
     content_object: Union[LibraryTrack, Playlist] = GenericForeignKey(
         Fields.CONTENT_TYPE, Fields.OBJECT_PK)  # type: ignore

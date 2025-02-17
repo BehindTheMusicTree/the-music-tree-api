@@ -12,6 +12,9 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api import settings
+from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
+from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
+from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
@@ -38,10 +41,8 @@ if TYPE_CHECKING:
 
 
 class TrackFile(PrivateStandardResource):
-    lib_track = models.OneToOneField('LibraryTrack',
-                                     on_delete=models.CASCADE,
-                                     related_name=LibraryTrackFields.TRACK_FILE,
-                                     unique=True)  # Makes the track file unique for a library track
+    lib_track = PrivateOneToOneField('LibraryTrack', on_delete=models.CASCADE,
+                                     related_name=LibraryTrackFields.TRACK_FILE)
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
@@ -52,10 +53,10 @@ class TrackFile(PrivateStandardResource):
                             max_length=settings.FILE_PATH_MAX_LENGTH)
     duration_in_sec = models.PositiveIntegerField()
     fingerprint_memory = models.BinaryField(null=True, blank=True, default=None, editable=True)
-    fingerprint_missing_cause = models.ForeignKey(FingerprintMissingCause,
-                                                  on_delete=models.DO_NOTHING,
-                                                  null=True,
-                                                  blank=True)
+    fingerprint_missing_cause = AppForeignKey(FingerprintMissingCause,
+                                              on_delete=models.DO_NOTHING,
+                                              null=True,
+                                              blank=True)
     flac_md5_has_been_corrected = models.BooleanField(null=True, default=None, blank=True)
     size_in_bytes = models.DecimalField(max_digits=11, decimal_places=2)
     size_in_ko = models.GeneratedField(expression=F(Fields.SIZE_IN_BYTES) / 1024,  # type: ignore
@@ -66,11 +67,11 @@ class TrackFile(PrivateStandardResource):
                                        db_persist=True)
     bitrate_in_kbps = models.IntegerField()
 
-    musicbrainz_recording = models.ForeignKey(MusicbrainzRecording,
-                                              on_delete=models.DO_NOTHING,
-                                              default=None,
-                                              null=True)
-    musicbrainz_recording_missing_cause = models.OneToOneField(
+    musicbrainz_recording = AppForeignKey(MusicbrainzRecording,
+                                          on_delete=models.DO_NOTHING,
+                                          default=None,
+                                          null=True)
+    musicbrainz_recording_missing_cause = AppOneToOneField(
         MusicbrainzRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:

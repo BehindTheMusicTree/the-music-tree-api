@@ -1,10 +1,12 @@
+from rest_framework import serializers
+
 from bodzify_api.model.play.Play import Play
-from bodzify_api.serializer.field.UserContentObjectUuidField import UserContentObjectUuidField
-from bodzify_api.serializer.AppModelSerializer import AppModelSerializer
+from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
+from bodzify_api.serializer.field.foreign_key.UserContentObjectUuidField import UserContentObjectUuidField
 from .Fields import Fields
 
 
-class PlayPostSerializer(AppModelSerializer):
+class PlayPostSerializer(AppValidationSerializer, serializers.ModelSerializer):
     content_object_uuid = UserContentObjectUuidField()
 
     class Meta:

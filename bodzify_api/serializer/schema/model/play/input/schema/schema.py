@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.play.Play import Play, Fields as ModelFields
-from bodzify_api.serializer.field.TrackablePlayCountUuidField import TrackablePlayCountUuidField
+from bodzify_api.serializer.field.foreign_key.TrackablePlayCountUuidField import TrackablePlayCountUuidField
 
 
 class Fields:

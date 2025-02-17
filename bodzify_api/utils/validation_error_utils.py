@@ -48,7 +48,7 @@ def raise_unknown_field_error(field: str) -> None:
     """
     raise_validation_error(
         message='Unrecognized field',
-        field_validation_error_code=FieldValidationErrorCode.UNKNOWN,
+        field_validation_error_code=FieldValidationErrorCode.INVALID_REFERENCE,
         field=field
     )
 

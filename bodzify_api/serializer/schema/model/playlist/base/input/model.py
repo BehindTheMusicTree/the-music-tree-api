@@ -1,13 +1,15 @@
+from rest_framework import serializers
+
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.serializer.AppModelSerializer import AppModelSerializer
+from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 
 
 class Fields:
     USER = PlaylistFields.USER
 
 
-class PlaylistModelSerializer(AppModelSerializer):
+class PlaylistModelSerializer(AppValidationSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = Playlist

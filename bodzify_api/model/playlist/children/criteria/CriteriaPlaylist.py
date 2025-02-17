@@ -6,6 +6,9 @@ from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
+from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.utils.model import SaveContext
@@ -15,20 +18,20 @@ from .Fields import Fields
 
 
 class CriteriaPlaylist(Playlist):
-    playlist = models.OneToOneField(Playlist,
+    playlist = PrivateOneToOneField(Playlist,
                                     on_delete=models.CASCADE,
                                     parent_link=True,
                                     related_name=PlaylistFields.CRITERIA_PLAYLIST)
-    criteria = models.OneToOneField(Criteria,
+    criteria = PrivateOneToOneField(Criteria,
                                     on_delete=models.CASCADE,
                                     blank=True,
                                     null=True,
                                     related_name=CriteriaFields.CRITERIA_PLAYLIST)
-    parent: Optional['CriteriaPlaylist'] = models.ForeignKey(
+    parent: Optional['CriteriaPlaylist'] = PrivateForeignKey(
         'self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)  # type: ignore
-    root: 'CriteriaPlaylist' = models.ForeignKey(
+    root: 'CriteriaPlaylist' = PrivateForeignKey(
         'self', on_delete=models.DO_NOTHING, related_name=Fields.ROOT_DESCENDANTS)  # type: ignore
-    type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
+    type = AppForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     if TYPE_CHECKING:
         children: models.QuerySet['CriteriaPlaylist']

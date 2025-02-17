@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 
-from bodzify_api.serializer.field.NonSelfReferencingField import NonSelfReferencingField
+from bodzify_api.serializer.field.foreign_key.NonSelfReferencingField import NonSelfReferencingField
 
 
 class DescendantAwareField(NonSelfReferencingField):

@@ -6,6 +6,10 @@ from django.db.models import QuerySet
 from django.utils.translation import gettext as _
 
 from bodzify_api import settings
+from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
+from bodzify_api.model.field.AppCharField import AppCharField
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
+from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
@@ -22,20 +26,20 @@ if TYPE_CHECKING:
 
 
 class Criteria(LibTrackMixin):
-    _name = models.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, db_column=Fields.NAME_PUBLIC)
-    ascendants: QuerySet['Criteria'] = models.ManyToManyField('self',
+    _name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX, db_column=Fields.NAME_PUBLIC)
+    ascendants: QuerySet['Criteria'] = PrivateManyToManyField('self',
                                                               through='CriteriaLineageRel',
                                                               through_fields=(CriteriaLineageRelFields.DESCENDANT,
                                                                               CriteriaLineageRelFields.ASCENDANT),
                                                               symmetrical=False,)  # type: ignore
-    parent: Optional['Criteria'] = models.ForeignKey('self',
+    parent: Optional['Criteria'] = PrivateForeignKey('self',
                                                      on_delete=models.SET_NULL,
                                                      null=True,
                                                      related_name=Fields.CHILDREN)  # type: ignore
-    root: 'Criteria' = models.ForeignKey('self',
+    root: 'Criteria' = PrivateForeignKey('self',
                                          on_delete=models.DO_NOTHING,
                                          related_name=Fields.DESCENDANTS)  # type: ignore
-    type = models.ForeignKey(CriteriaType, on_delete=models.CASCADE)
+    type = AppForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     if TYPE_CHECKING:
         ascendants_rels: QuerySet['CriteriaLineageRel']

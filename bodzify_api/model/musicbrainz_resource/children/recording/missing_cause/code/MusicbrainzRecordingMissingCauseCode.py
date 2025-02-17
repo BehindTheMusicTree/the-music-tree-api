@@ -2,6 +2,7 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.base.BaseModel import BaseModel
+from bodzify_api.model.field.AppCharField import AppCharField
 
 
 class MusicbrainzRecordingMissingCauseCode(BaseModel):
@@ -18,7 +19,7 @@ class MusicbrainzRecordingMissingCauseCode(BaseModel):
         LOOKUP_FAILED_FOR_UNKNOWN_REASON = 9
 
     code = models.PositiveIntegerField(primary_key=True, choices=Codes.choices, unique=True)
-    label = models.CharField(unique=True, max_length=settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX)
+    label = AppCharField(unique=True, max_length=settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX)
 
     class Meta:
         verbose_name = 'MusicBrainz Recording Missing Cause Code'

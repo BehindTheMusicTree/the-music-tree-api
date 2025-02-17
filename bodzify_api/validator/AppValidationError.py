@@ -38,8 +38,21 @@ class AppValidationError(DrfValidationError):
     status_code = 400  # Same as ValidationError
     error_type = 'app_validation_error'  # Marker to identify our error type after DRF processing
 
-    def __init__(self, field: str, message: str, code: FieldValidationErrorCode):
-        self.field = field
+    def __init__(self, field: str, message: str, code: FieldValidationErrorCode, source_field=None):
+        """
+        Initialize AppValidationError with field name and error details.
+
+        Args:
+            field: The field name for the error
+            message: The error message
+            code: The error code
+            source_field: Optional source field instance that raised the error.
+                         If provided and has get_error_field_name(), that will be used for field name.
+        """
+        # Use get_error_field_name if available from source field
+        self.field = (getattr(source_field, 'get_error_field_name')()
+                      if source_field and hasattr(source_field, 'get_error_field_name')
+                      else field)
         self.error_detail = {
             'message': message,
             'code': code.value,
