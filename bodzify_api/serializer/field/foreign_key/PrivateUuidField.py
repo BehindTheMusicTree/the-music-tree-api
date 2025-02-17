@@ -1,16 +1,11 @@
 from typing import Any, Optional, TypeVar, Generic
-from uuid import UUID
-import uuid
 
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from rest_framework.request import Request
-from rest_framework.relations import RelatedField
 
 from bodzify_api.serializer.field.AppUuidField import AppUuidField
 from bodzify_api.serializer.field.foreign_key.ForeignKeyField import ForeignKeyField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 T = TypeVar('T', bound=models.Model)
 
@@ -33,12 +28,6 @@ class PrivateUuidField(ForeignKeyField, AppUuidField, Generic[T]):
             track = PrivateUuidField(queryset=LibraryTrack.objects.all())
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.error_messages['does_not_exist'] = (
-            'Object with this ID does not exist or does not belong to the user'
-        )
-
     def get_request_user(self) -> Any:
         """Gets the user from request context with validation"""
         request = self.context.get('request')
@@ -55,29 +44,11 @@ class PrivateUuidField(ForeignKeyField, AppUuidField, Generic[T]):
         return super().get_queryset()
 
     def to_internal_value(self, data: Any) -> Optional[Any]:
-        """
-        Validates the input value:
-        1. Validates UUID format
-        2. Validates existence and user ownership
-        3. Returns the model instance from queryset
-        """
         if data in [None, ''] and self.allow_null:
             return None
 
-        # Validate UUID format
-        uuid_str = super(AppUuidField, self).to_internal_value(data)
+        uuid_str = AppUuidField.to_internal_value(self, data)
+        if uuid_str is None:
+            return None
 
-        # Get filtered queryset with user ownership check
-        queryset = self.get_queryset()
-        if queryset is None:
-            raise ImproperlyConfigured("Queryset must be set for this field")
-
-        try:
-            # Try to get the instance from the filtered queryset
-            return queryset.get(uuid=uuid_str)
-        except ObjectDoesNotExist:
-            raise AppValidationError(
-                field=self.get_error_field_name(),
-                message='Object with this ID does not exist or does not belong to the user',
-                code=FieldValidationErrorCode.RESOURCE_NOT_OWNED
-            )
+        return ForeignKeyField.to_internal_value(self, uuid_str)

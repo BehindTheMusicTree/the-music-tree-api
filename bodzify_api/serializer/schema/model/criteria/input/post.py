@@ -18,7 +18,7 @@ class CriteriaPostSerializer(ModelSerializer, AppValidationSerializer):
     Handles validation of name and parent fields.
     """
     name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX, allow_blank=False)
-    parent = DescendantAwareField(
+    parent = DescendantAwareField(  # type: ignore
         queryset=Criteria.objects.all(), required=False, allow_null=True
     )
 
