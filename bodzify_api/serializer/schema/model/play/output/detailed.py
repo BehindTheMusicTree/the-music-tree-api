@@ -23,7 +23,7 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
                   Fields.CONTENT,
                   Fields.CREATED_ON]
 
-    def get_content_object(self, obj: Play) -> List | Any | Dict:
+    def get_content(self, obj: Play) -> List | Any | Dict:
         if isinstance(obj.content, Playlist):
             return PlaylistDetailedSerializer(obj.content).data
         else:

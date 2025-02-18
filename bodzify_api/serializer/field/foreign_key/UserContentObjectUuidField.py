@@ -97,13 +97,3 @@ class PrivateContentUuidField(PrivateUuidField):
         self.fail('does_not_exist')
 
         return {}  # Never reached due to fail()
-
-    def verify_user_ownership(self, uuid_obj: UUID, user: Any) -> bool:
-        """
-        Custom ownership verification that checks both model types.
-        Overrides the default single-model verification to check both Playlists and LibraryTracks.
-        """
-        return (
-            Playlist.objects.filter(user=user, uuid=uuid_obj).exists() or
-            LibraryTrack.objects.filter(user=user, uuid=uuid_obj).exists()
-        )
