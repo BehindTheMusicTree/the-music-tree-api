@@ -1,11 +1,11 @@
-from rest_framework import serializers
 
+from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields
 
 
-class ArtistsNamesField(serializers.CharField):
+class ArtistsNamesField(AppCharField):
     def to_internal_value(self, data):
         value = super().to_internal_value(data)
         if not value:
