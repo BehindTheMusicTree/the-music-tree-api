@@ -83,7 +83,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 user=instance.user, playlist=genreless_criteria_playlist, lib_track=instance)
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
-        print('track playlists', instance.playlists_with_positions)
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
