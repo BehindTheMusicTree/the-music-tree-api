@@ -9,8 +9,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.user.User import User
+from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
 from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as LibTrackPostFields
-from bodzify_api.serializer.schema.model.lib_track.output.detailed import Fields as LibTrackGetFields
 from bodzify_api.test.AppApiClient import AppApiClient
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.utils import audio_metadata, data_transformer
@@ -68,12 +68,13 @@ class ApiTestCase(AppTestCase, Generic[T]):
         if not hasattr(self, 'model_class') or self.model_class is None:
             raise NotImplementedError("Test case must define model_class")
 
-        uuid = response.json()['uuid']  # Assumes UUID field is named 'uuid'
+        uuid = response.json()[UuidModelFields.UUID]
         # At this point model_class is guaranteed to be a Model class with objects manager
         self.saved_object = self.model_class.objects.get(uuid=uuid)  # type: ignore
+        if isinstance(self.saved_object, LibraryTrack):
+            self._set_saved_lib_track_metadata(response)
 
     def _set_single_result(self, response):
-        """Handle single item response and get model instance if applicable."""
         self.result = response.json()
         if hasattr(self, 'model_class'):
             self._set_saved_object(response)
@@ -81,7 +82,6 @@ class ApiTestCase(AppTestCase, Generic[T]):
             raise NotImplementedError("Test case must define model_class")
 
     def _set_results(self, response):
-        """Unified response handler that routes to appropriate method based on status code."""
         if response.status_code == status.HTTP_400_BAD_REQUEST:
             self._set_bad_request_result(response)
         elif response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
@@ -128,11 +128,10 @@ class ApiTestCase(AppTestCase, Generic[T]):
         self.results = response_json[PaginatedResponseFields.RESULTS]
         self.results_overall_total = response_json[PaginatedResponseFields.OVERALL_TOTAL]
 
-    def _set_saved_lib_track_attribute(self, response):
-        lib_track_uuid = response.json()[LibTrackGetFields.UUID]
-        self.saved_lib_track = LibraryTrack.objects.get(uuid=lib_track_uuid)
+    def _set_saved_lib_track_metadata(self, response):
+        saved_lib_track: LibraryTrack = self.saved_object  # type: ignore
         self.saved_lib_track_metadata = \
-            audio_metadata.get_normalized_metadata_from_file(file=self.saved_lib_track.track_file.file)
+            audio_metadata.get_normalized_metadata_from_file(file=saved_lib_track.track_file.file)
 
     def _post_lib_track_with_generic_sample(self,
                                             generic_sample_filename_without_extension,
@@ -172,16 +171,11 @@ class ApiTestCase(AppTestCase, Generic[T]):
             else:
                 kwargs = file_field_dict
 
-            # Extract any custom response handler from kwargs
-            handle_response = kwargs.pop('handle_response', None)
-            if handle_response is None:
-                handle_response = self._set_saved_lib_track_attribute
-
             return self.api_client.post(
                 path=reverse('library-track-list'),
                 data=kwargs,
                 format='multipart',
-                handle_response=handle_response
+                handle_response=self._set_results
             )
 
     def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:

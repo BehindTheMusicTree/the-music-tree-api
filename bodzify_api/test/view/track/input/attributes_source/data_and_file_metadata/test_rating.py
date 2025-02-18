@@ -11,4 +11,4 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_1_star(**{PostFields.RATING: data_rating})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == data_rating
+        assert self.saved_object.rating == data_rating

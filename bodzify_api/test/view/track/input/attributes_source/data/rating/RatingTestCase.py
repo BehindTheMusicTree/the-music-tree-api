@@ -3,6 +3,7 @@ from rest_framework import status
 from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as PostFields
 from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import FieldIntFromDataTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class RatingTestCase(FieldIntFromDataTestCase):
@@ -12,12 +13,12 @@ class RatingTestCase(FieldIntFromDataTestCase):
         value = 1
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: value})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == value
+        assert self.saved_object.rating == value
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_1_star(**{PostFields.RATING: ""})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == None
+        assert self.saved_object.rating == None
 
     def test_rating_too_large_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: 11})

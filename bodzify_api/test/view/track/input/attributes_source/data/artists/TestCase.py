@@ -13,11 +13,11 @@ class TestCase(NullableStrFieldFromDataTestCase):
         value = 'rovk'
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.ARTISTS_NAMES: value})
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
+        artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].name == value
 
     def test_empty_then_none(self) -> None:
         response = self._post_lib_track_with_generic_sample_1_star(**{PostFields.ARTISTS_NAMES: ""})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.artists.count() == 0
+        assert self.saved_object.artists.count() == 0

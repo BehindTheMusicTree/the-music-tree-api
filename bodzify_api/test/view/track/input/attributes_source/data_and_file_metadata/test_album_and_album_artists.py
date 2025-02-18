@@ -13,7 +13,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        album = self.saved_lib_track.album
+        album = self.saved_object.album
         assert album
         assert album.name == data_album_name
 
@@ -23,7 +23,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_tag_album_artists_koko_without_album(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        album = self.saved_lib_track.album
+        album = self.saved_object.album
         assert album
         assert album.name == data_album_name
         album_artist = album.album_artists.first()
@@ -36,7 +36,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        album = self.saved_lib_track.album
+        album = self.saved_object.album
         assert album
         assert album.name == data_album_name
         album_artist = album.album_artists.first()
@@ -53,7 +53,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        album = self.saved_lib_track.album
+        album = self.saved_object.album
         assert album
         assert album.name == data_album_name
         album_artist = album.album_artists.first()
@@ -67,7 +67,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        album = self.saved_lib_track.album
+        album = self.saved_object.album
         assert album
         assert album.name == data_album_name
         album_artist = album.album_artists.first()

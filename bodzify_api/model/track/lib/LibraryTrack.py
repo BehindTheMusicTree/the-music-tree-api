@@ -34,11 +34,11 @@ if TYPE_CHECKING:
 class LibraryTrack(TrackablePlayCount):
     title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
-    album = PrivateForeignKey(Album,
-                              on_delete=models.CASCADE,
-                              null=True,
-                              blank=True,
-                              related_name=AlbumFields.LIB_TRACKS_RELATED_NAME,)
+    album: Album = PrivateForeignKey(Album,  # type: ignore
+                                     on_delete=models.CASCADE,
+                                     null=True,
+                                     blank=True,
+                                     related_name=AlbumFields.LIB_TRACKS_RELATED_NAME,)
     position_in_album = models.PositiveIntegerField(
         null=True,
         blank=True,

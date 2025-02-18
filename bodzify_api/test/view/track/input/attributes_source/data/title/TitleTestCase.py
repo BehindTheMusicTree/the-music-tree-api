@@ -13,4 +13,4 @@ class TitleTestCase(NonNullableStrFieldFromDataTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.TITLE: value})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.title == value
+        assert self.saved_object.title == value

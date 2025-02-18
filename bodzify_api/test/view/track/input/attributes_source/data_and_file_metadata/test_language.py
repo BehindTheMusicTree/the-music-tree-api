@@ -12,4 +12,4 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.language == data_language
+        assert self.saved_object.language == data_language

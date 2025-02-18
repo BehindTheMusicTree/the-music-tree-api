@@ -21,10 +21,10 @@ class TestCase(NullableUuidFieldFromDataTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.GENRE_UUID: genre_uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre
-        assert self.saved_lib_track.genre.name == genre_name
+        assert self.saved_object.genre
+        assert self.saved_object.genre.name == genre_name
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.GENRE_UUID: ''})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre == None
+        assert self.saved_object.genre == None

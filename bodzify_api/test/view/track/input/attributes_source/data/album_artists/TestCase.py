@@ -18,8 +18,8 @@ class TestCase(NullableStrFieldFromDataTestCase):
         }
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album
-        artist: Optional[Artist] = self.saved_lib_track.album.album_artists.first()
+        assert self.saved_object.album
+        artist: Optional[Artist] = self.saved_object.album.album_artists.first()
         assert artist
         assert artist.name == value
 
@@ -30,5 +30,5 @@ class TestCase(NullableStrFieldFromDataTestCase):
         }
         response = self._post_lib_track_with_generic_sample_1_star(**data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album
-        assert self.saved_lib_track.album.album_artists.count() == 0
+        assert self.saved_object.album
+        assert self.saved_object.album.album_artists.count() == 0

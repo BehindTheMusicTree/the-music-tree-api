@@ -12,7 +12,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists = self.saved_lib_track.artists.all()
+        artists = self.saved_object.artists.all()
         artist = artists.first()
         assert artist
         assert artist.name == data_artist_name

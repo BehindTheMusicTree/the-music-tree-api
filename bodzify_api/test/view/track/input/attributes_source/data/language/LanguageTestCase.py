@@ -13,9 +13,9 @@ class LanguageTestCase(NullableStrFieldFromDataTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.LANGUAGE: value})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.language == value
+        assert self.saved_object.language == value
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_1_star(**{PostFields.LANGUAGE: ""})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.language == None
+        assert self.saved_object.language == None

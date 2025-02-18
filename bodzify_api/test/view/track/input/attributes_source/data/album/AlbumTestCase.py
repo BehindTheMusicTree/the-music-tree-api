@@ -12,10 +12,10 @@ class AlbumTestCase(NullableStrFieldFromDataTestCase):
         value = 'fofof'
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.ALBUM_NAME: value})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album
-        assert self.saved_lib_track.album.name == value
+        assert self.saved_object.album
+        assert self.saved_object.album.name == value
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_1_star(**{PostFields.ALBUM_NAME: ""})
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album == None
+        assert self.saved_object.album == None
