@@ -8,8 +8,8 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 class GenreTestCase(ApiTestCase[Genre]):
-    model_class = Genre
     saved_object: Genre
+    model_class = Genre
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

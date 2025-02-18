@@ -29,8 +29,8 @@ class ApiTestCase(AppTestCase, Generic[T]):
     3. Use handle_response=self._set_results in API calls
     """
 
-    model_class: Type[T]
-    saved_object: T
+    model_class: Type[T]  # Must be defined in child classes
+    saved_object: T  # Must be defined in child classes
 
     class LibTrackGenericSamplesFilenameWithoutExtension:
         BELOW_1_SEC = "below 1 sec"
@@ -76,6 +76,8 @@ class ApiTestCase(AppTestCase, Generic[T]):
         self.result = response.json()
         if hasattr(self, 'model_class'):
             self._set_saved_object(response)
+        else:
+            raise NotImplementedError("Test case must define model_class")
 
     def _set_results(self, response):
         """Unified response handler that routes to appropriate method based on status code."""

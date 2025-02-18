@@ -22,7 +22,7 @@ class TestCase(PlayTestCase):
         assert error[ErrorResponseFields.FIELD] == 'nonExistingField'
         assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNKNOWN_FIELD.value
 
-    def test_multiple_values_for_content_object_uuid_then_error(self) -> None:
+    def test_multiple_values_for_content_then_error(self) -> None:
         playlist1_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
         playlist2_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
 
@@ -35,7 +35,7 @@ class TestCase(PlayTestCase):
         assert error[ErrorResponseFields.FIELD] == to_camel_case(Fields.CONTENT)
         assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST_VALUE.value
 
-    def test_non_existant_content_object_uuid_then_error(self):
+    def test_non_existant_content_then_error(self):
         response = self._post_play(**{to_camel_case(Fields.CONTENT): '88978e5e-5238-442b-bd24-dbbde478e090'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -46,15 +46,14 @@ class TestCase(PlayTestCase):
 
     def test_playlist_play(self) -> None:
         current_play_count = 42
-        db_playlist: Playlist = self.model_fixture_factory.create_manual_playlist(name='test',
-                                                                                  play_count=current_play_count)
+        playlist_before_update: Playlist = self.model_fixture_factory.create_manual_playlist(
+            name='test', play_count=current_play_count)
 
-        response = self._post_play(**{to_camel_case(Fields.CONTENT): db_playlist.uuid})
+        response = self._post_play(**{to_camel_case(Fields.CONTENT): playlist_before_update.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        response_playlist: Playlist = self.saved_object.content  # type: ignore
-        assert response_playlist.uuid == db_playlist.uuid
-        assert response_playlist.play_count == current_play_count + 1
+        assert self.saved_object.content.uuid == playlist_before_update.uuid
+        assert self.saved_object.content.play_count == current_play_count + 1
 
     def test_playlist_play_then_returns_lib_tracks(self) -> None:
         criteria = self.model_fixture_factory.create_genre(name='criteria1')

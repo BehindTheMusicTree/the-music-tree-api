@@ -7,6 +7,9 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 class AlbumTestCase(ApiTestCase[Album]):
+    saved_object: Album
+    model_class = Album
+
     def _post_album(self, **kwargs):
         return self.api_client.post(
             path=reverse('album-list'),
