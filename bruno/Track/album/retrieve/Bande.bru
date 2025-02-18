@@ -1,0 +1,11 @@
+meta {
+  name: Bande
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}albums/{{albumBoUuid}}/
+  body: json
+  auth: inherit
+}
