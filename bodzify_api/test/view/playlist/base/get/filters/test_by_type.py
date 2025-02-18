@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.filtering.set.playlist.Fields import Fields as FilterSetFields
+from bodzify_api.utils.data_transformer import to_camel_case, to_snake_case
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import VALUE as MANUAL_PLAYLIST_TYPE_LABEL
@@ -35,12 +36,12 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert CriterialessPlaylistNames.TAG in names
 
     def test_empty_then_error(self):
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: ''})
+        response = self._get_playlists(**{to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC): ''})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == FilterSetFields.TYPE_LABEL_INTERNAL
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
+        assert to_snake_case(error[ErrorResponseFields.FIELD]) == FilterSetFields.TYPE_LABEL_PUBLIC
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FILTER.value
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"
@@ -79,4 +80,4 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == FilterSetFields.TYPE_LABEL_INTERNAL
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_CHOICE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_CHOICE.value
