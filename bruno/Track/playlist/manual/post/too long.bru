@@ -1,0 +1,25 @@
+meta {
+  name: too long
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}manual-playlists/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+}
+
+vars:post-response {
+  ManualPlaylistFootUuid: res.body.uuid
+}
