@@ -8,18 +8,17 @@ class TestCase(ManualPlaylistTestCase):
 
     def test_value_then_ok(self):
         simpe_playlist = self.model_fixture_factory.create_manual_playlist(name="teuf")
+
         manual_playlist_name_new = "teuf2"
         data = {PlaylistFields.NAME_PUBLIC: manual_playlist_name_new}
-
         response = self._put_manual_playlist(uuid=simpe_playlist.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_manual_playlist.name == manual_playlist_name_new
+        assert self.saved_object.name == manual_playlist_name_new
 
     def test_empty_then_error(self):
         uuid = self.model_fixture_factory.create_manual_playlist(name='foero').uuid
-        data = {PlaylistFields.NAME_PUBLIC: ""}
 
-        response = self._put_manual_playlist(uuid=uuid, **data)
+        response = self._put_manual_playlist(uuid=uuid, **{PlaylistFields.NAME_PUBLIC: ""})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
