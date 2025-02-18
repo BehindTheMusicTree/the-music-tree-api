@@ -78,7 +78,7 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
     def delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(self, instance: 'Album'):
         from bodzify_api.model.artist.Artist import Artist
         if instance.lib_tracks.count() == 0:
-            album_artists = instance.album_artists.all()
+            album_artists = list(instance.album_artists.all())  # Copy the list before the deletion
             instance.delete()
             for album_artist in album_artists:
                 Artist.objects.delete_instance_if_nothing_linked(album_artist)
