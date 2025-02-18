@@ -2,12 +2,13 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.extract import Fields as ExtractFields
-from bodzify_api.test.view.track.input.save.FieldModelStrTestCase import FieldModelStrTestCase
+from bodzify_api.test.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
-class TestCase(FieldModelStrTestCase):
+class TestCase(LibTrackTestCase, NullableBodyDataTestCase):
 
     def test_longest_then_ok(self):
         album_name = "a" * settings.ALBUM_NAME_LEN_MAX

@@ -58,7 +58,7 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
                             error = AppValidationError(
                                 field=field_name,
                                 message=_("The field does not accept list values"),
-                                code=FieldValidationErrorCode.INVALID_ENUM
+                                code=FieldValidationErrorCode.UNEXPECTED_LIST
                             )
                             self._errors = error.detail
                             raise error

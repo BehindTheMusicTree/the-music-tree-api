@@ -1,3 +1,4 @@
+from os import name
 from rest_framework import status
 
 from bodzify_api import settings
@@ -15,7 +16,7 @@ class TestCase(ManualPlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_ENUM.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST.value
 
     def test_longest_then_ok(self):
         response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: "a" * settings.MANUAL_PLAYLIST_NAME_LEN_MAX})
@@ -31,9 +32,11 @@ class TestCase(ManualPlaylistTestCase):
         assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_already_exists_then_error(self):
-        response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: "value"})
-        assert response.status_code == status.HTTP_201_CREATED
-        response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: "value"})
+        name = "value"
+        self.model_fixture_factory.create_manual_playlist(name=name)
+
+        response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: name})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
