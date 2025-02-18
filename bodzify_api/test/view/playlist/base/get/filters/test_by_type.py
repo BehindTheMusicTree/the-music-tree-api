@@ -41,12 +41,13 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert to_snake_case(error[ErrorResponseFields.FIELD]) == FilterSetFields.TYPE_LABEL_PUBLIC
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FILTER.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"
         self.model_fixture_factory.create_genre(name=rock_criteria_name)
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: 'genre'})
+
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_PUBLIC: 'genre'})
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -55,7 +56,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
 
     def test_value_is_tag_then_results(self):
         self.model_fixture_factory.create_tag(name='teuf')
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: 'tag'})
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_PUBLIC: 'tag'})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
@@ -67,7 +68,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
         self.model_fixture_factory.create_genre(name='rock')
 
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: MANUAL_PLAYLIST_TYPE_LABEL})
+        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_PUBLIC: MANUAL_PLAYLIST_TYPE_LABEL})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1

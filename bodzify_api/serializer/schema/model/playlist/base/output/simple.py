@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.schema.model.playlist.base.output.Fields import Fields as AvailableFields
 
 
@@ -16,7 +17,7 @@ class Fields:
 
 
 class PlaylistSimpleSerializer(serializers.ModelSerializer):
-    type = serializers.CharField(source=Fields.TYPE_LABEL_INTERNAL)
+    type = AppCharField(source=Fields.TYPE_LABEL_INTERNAL)
     library_tracks_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
 
     class Meta:

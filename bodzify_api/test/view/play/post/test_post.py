@@ -33,7 +33,7 @@ class TestCase(PlayTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == to_camel_case(Fields.CONTENT)
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_ENUM.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST.value
 
     def test_non_existant_content_then_error(self):
         response = self._post_play(**{to_camel_case(Fields.CONTENT): '88978e5e-5238-442b-bd24-dbbde478e090'})

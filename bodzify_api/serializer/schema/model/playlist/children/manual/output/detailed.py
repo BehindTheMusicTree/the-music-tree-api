@@ -2,6 +2,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
+from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album \
     import LibTrackSimpleWithoutPlaylistAndAlbumSerializer
 from .Fields import Fields
@@ -12,7 +13,7 @@ class ManualPlaylistDetailedSerializer(serializers.ModelSerializer):
     library_tracks = LibTrackSimpleWithoutPlaylistAndAlbumSerializer(
         source=Fields.LIB_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
     library_tracks_archived_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
-    name = serializers.CharField()
+    name = AppCharField()
 
     class Meta:
         model = ManualPlaylist

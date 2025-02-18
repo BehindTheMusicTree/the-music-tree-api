@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
+from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.PositionInAlbumField import PositionInAlbumField
 from bodzify_api.serializer.field.RatingField import RatingField
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
@@ -16,19 +17,19 @@ POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be s
 
 class LibTrackEndPointSerializer(AppValidationSerializer):
     track_file_fingerprint_must_be_unique = serializers.BooleanField(required=False)
-    title = serializers.CharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
-                                  required=False,
-                                  allow_blank=True,
-                                  allow_null=True)
+    title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
+                         required=False,
+                         allow_blank=True,
+                         allow_null=True)
     force_title_generation = serializers.BooleanField(required=False)
     artists_names = ArtistsNamesField(max_length=settings.ARTISTS_NAMES_LEN_MAX,
                                       required=False,
                                       allow_blank=True,
                                       allow_null=True)
-    album_name = serializers.CharField(max_length=settings.ALBUM_NAME_LEN_MAX,
-                                       required=False,
-                                       allow_blank=True,
-                                       allow_null=True)
+    album_name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX,
+                              required=False,
+                              allow_blank=True,
+                              allow_null=True)
     album_artists_names = ArtistsNamesField(max_length=settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,
                                             required=False,
                                             allow_blank=True,
@@ -36,15 +37,15 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
     position_in_album = PositionInAlbumField()
 
     genre_uuid = GenreField(required=False)
-    genre_name = serializers.CharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
-                                       required=False,
-                                       allow_blank=True,
-                                       allow_null=True)
+    genre_name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
+                              required=False,
+                              allow_blank=True,
+                              allow_null=True)
     rating = RatingField()
-    language = serializers.CharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX,
-                                     required=False,
-                                     allow_blank=True,
-                                     allow_null=True)
+    language = AppCharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX,
+                            required=False,
+                            allow_blank=True,
+                            allow_null=True)
 
     def validate(self, data):
         if Fields.GENRE_UUID in data and Fields.GENRE_NAME in data:
