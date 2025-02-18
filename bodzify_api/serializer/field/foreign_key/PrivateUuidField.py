@@ -4,6 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from rest_framework.request import Request
 
+from bodzify_api.model.uuid.UuidModel import UuidModel
 from bodzify_api.serializer.field.AppUuidField import AppUuidField
 from bodzify_api.serializer.field.foreign_key.ForeignKeyField import ForeignKeyField
 
@@ -43,12 +44,12 @@ class PrivateUuidField(ForeignKeyField, AppUuidField, Generic[T]):
         self.additional_filters = {'user': user}
         return super().get_queryset()
 
-    def to_internal_value(self, data: Any) -> Optional[Any]:
+    def to_internal_value(self, data: Any) -> Optional[UuidModel]:
         if data in [None, ''] and self.allow_null:
             return None
 
-        uuid_str = AppUuidField.to_internal_value(self, data)
-        if uuid_str is None:
+        uuid = AppUuidField.to_internal_value(self, data)
+        if uuid is None:
             return None
 
-        return ForeignKeyField.to_internal_value(self, uuid_str)
+        return ForeignKeyField.to_internal_value(self, uuid)

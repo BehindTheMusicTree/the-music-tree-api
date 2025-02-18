@@ -58,13 +58,4 @@ class ForeignKeyField(AppField, PrimaryKeyRelatedField):
         return queryset
 
     def to_internal_value(self, data: Any) -> Any:
-        if data == '' or (self.allow_null and data is None):
-            if self.required:
-                raise AppValidationError(
-                    field=self.get_error_field_name(),
-                    message='This field is required.',
-                    code=FieldValidationErrorCode.REQUIRED,
-                )
-            return None
-
-        return super().to_internal_value(data)
+        return PrimaryKeyRelatedField.to_internal_value(self, data)

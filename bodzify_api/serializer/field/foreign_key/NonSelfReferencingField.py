@@ -3,6 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from bodzify_api.model.uuid.UuidModel import UuidModel
 from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
@@ -16,19 +17,22 @@ class NonSelfReferencingField(PrivateUuidField[T], Generic[T]):
     }
 
     def to_internal_value(self, data: Any) -> Optional[T]:
-        uuid = super().to_internal_value(data)
+        object: Optional[UuidModel] = PrivateUuidField.to_internal_value(self, data)
+        if not object:
+            return None
+
         instance = self.parent.instance
 
-        if instance and uuid and instance.uuid == uuid:
+        if instance and object.uuid and instance.uuid == object.uuid:
             raise AppValidationError(
                 field=str(self.field_name),
                 message=self.error_messages['self_reference'],
                 code=FieldValidationErrorCode.SELF_REFERENCE
             )
 
-        if uuid:
+        if object.uuid:
             queryset = self.get_queryset()
             if queryset is None:
                 raise ImproperlyConfigured("Queryset must be set for this field")
-            return queryset.get(uuid=uuid)
+            return queryset.get(uuid=object.uuid)
         return None
