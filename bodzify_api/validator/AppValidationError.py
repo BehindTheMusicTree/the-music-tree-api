@@ -7,6 +7,8 @@ from .FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class AppValidationError(DrfValidationError):
+    DEFAULT_FIELD = 'unhandled'  # Default field value when none or empty string provided
+
     """
     Custom validation error that maintains a consistent structure through DRF's middleware.
 
@@ -38,15 +40,15 @@ class AppValidationError(DrfValidationError):
     status_code = 400
     error_type = 'app_validation_error'  # Marker to identify our error type after DRF processing
 
-    def __init__(self, message: str, code: FieldValidationErrorCode, field: str = 'unhandled_field'):
-        self.field = field
+    def __init__(self, message: str, code: FieldValidationErrorCode, field: Optional[str] = DEFAULT_FIELD):
+        self.field = field if field else self.DEFAULT_FIELD
         error_detail = {
             'message': message,
             'code': code.value,
-            'field': field,
+            'field': self.field,
             'error_type': 'app_validation_error'
         }
-        self.errors = {field: error_detail}
+        self.errors = {self.field: error_detail}
         super().__init__(self.errors)
 
     @classmethod
@@ -143,4 +145,4 @@ class AppValidationError(DrfValidationError):
             )
 
         # Fallback for unknown format
-        return cls(message=str(detail), code=FieldValidationErrorCode.INVALID_FORMAT, field='unhandled_field')
+        return cls(message=str(detail), code=FieldValidationErrorCode.INVALID_FORMAT, field=cls.DEFAULT_FIELD)

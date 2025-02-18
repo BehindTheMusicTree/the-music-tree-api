@@ -11,6 +11,7 @@ class AppCharField(serializers.CharField):
     Custom CharField that raises AppValidationError instead of DRF's ValidationError.
     This ensures consistent error handling across the application.
     """
+
     def run_validation(self, data: Any = serializers.empty) -> Any:
         if data == serializers.empty:
             if self.required:
@@ -29,18 +30,18 @@ class AppCharField(serializers.CharField):
     def fail(self, key: str, **kwargs: Any) -> None:
         """
         Raise an AppValidationError with appropriate error code and message.
-        
+
         Args:
             key: The error key that maps to an error message
             **kwargs: Format parameters for the error message
         """
         try:
-            msg = self.error_messages[key]
+            message = self.error_messages[key]
             if kwargs:
-                msg = msg.format(**kwargs)
+                message = message.format(**kwargs)
         except KeyError:
             class_name = self.__class__.__name__
-            msg = f"Invalid input for {class_name}."
+            message = f"Invalid input for {class_name}."
 
         if key == 'required':
             code = FieldValidationErrorCode.REQUIRED
@@ -56,10 +57,8 @@ class AppCharField(serializers.CharField):
             code = FieldValidationErrorCode.INVALID_FORMAT
 
         # Get field name, defaulting to empty string if not available
-        field_name: str = getattr(self, 'field_name', '') or ''
-        
-        raise AppValidationError(
-            field=field_name,
-            message=msg,
-            code=code
-        )
+        field_name: Optional[str] = getattr(self, 'field_name', '')
+        if field_name:
+            raise AppValidationError(field=field_name, message=message, code=code)
+        else:
+            raise AppValidationError(message=message, code=code)

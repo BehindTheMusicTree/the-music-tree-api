@@ -30,7 +30,6 @@ class DescendantAwareField(NonSelfReferencingField[T], Generic[T]):
     }
 
     def to_internal_value(self, data: Any) -> Optional[T]:
-        # First validate through the parent class chain
         value = NonSelfReferencingField.to_internal_value(self, data)
         if value is None:
             return None

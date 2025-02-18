@@ -1,7 +1,4 @@
-from typing import Dict, Any
 
-from rest_framework import serializers
-from rest_framework.fields import Field
 from rest_framework.serializers import ModelSerializer
 
 from bodzify_api import settings

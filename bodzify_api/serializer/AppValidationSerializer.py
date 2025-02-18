@@ -5,7 +5,7 @@ from typing import Dict, Any, List, Union, Mapping, Optional, TypeVar, Generic
 from django.db import models
 from django.utils.translation import gettext as _
 from rest_framework import serializers
-from rest_framework.fields import CharField, ListField, Field
+from rest_framework.fields import CharField, ListField, Field, SkipField
 from rest_framework.relations import ManyRelatedField, RelatedField
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import BaseSerializer
@@ -98,23 +98,21 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
             validated_data = {}
             for field in self._writable_fields:
                 try:
-                    validated_value = field.run_validation(field.get_value(data))
+                    value = field.get_value(data)
+                    validated_value = field.run_validation(value)
                     if validated_value is not None:
                         validated_data[field.source] = validated_value
                 except AppValidationError as exc:
-                    self._errors = exc.detail
-                    raise
+                    raise exc
                 except ValidationError as exc:
-                    # Ensure we have a valid field name
-                    kwargs = {
-                        'message': str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
-                        'code': FieldValidationErrorCode.DEFAULT
-                    }
-                    if field.field_name:
-                        kwargs['field'] = field.field_name
-                    error = AppValidationError(**kwargs)
+                    exc_first_detail = str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail)
+                    error = AppValidationError(field=field.field_name,
+                                               message=exc_first_detail or 'Invalid input for field.',
+                                               code=FieldValidationErrorCode.DEFAULT)
                     self._errors = error.detail
                     raise error
+                except SkipField:
+                    continue
 
             # 5. Run object-level validation
             try:
@@ -135,9 +133,9 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
             self._validated_data = validated_data
             return validated_data
 
-        except AppValidationError:
+        except AppValidationError as exc:
             self._validated_data = {}
-            raise
+            raise exc
 
     @staticmethod
     def _get_raw_field_names(raw_data: str) -> List[str]:
