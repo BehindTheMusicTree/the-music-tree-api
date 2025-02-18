@@ -2,7 +2,6 @@ from rest_framework import status
 
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
-from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 

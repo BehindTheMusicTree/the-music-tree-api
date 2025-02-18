@@ -22,7 +22,7 @@ class TestCase(FieldStrNullableTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == PutFields.LANGUAGE
+        assert error[ErrorResponseFields.FIELD] == PutFields.LANGUAGE
         assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_empty_then_none(self):

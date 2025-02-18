@@ -20,5 +20,5 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == PutFields.TITLE
+        assert error[ErrorResponseFields.FIELD] == PutFields.TITLE
         assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
