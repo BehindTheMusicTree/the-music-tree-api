@@ -44,18 +44,13 @@ class ForeignKeyField(AppField, PrimaryKeyRelatedField):
         if key == 'required':
             code = FieldValidationErrorCode.REQUIRED
         elif key == 'does_not_exist':
-            code = FieldValidationErrorCode.UNKNOWN
+            code = FieldValidationErrorCode.INVALID_REFERENCE
         elif key == 'incorrect_type':
             code = FieldValidationErrorCode.INVALID_FORMAT
         else:
-            code = FieldValidationErrorCode.INVALID_FORMAT
+            code = FieldValidationErrorCode.DEFAULT
 
-        raise AppValidationError(
-            field=self.field_name or '',
-            message=msg,
-            code=code,
-            source_field=self
-        )
+        raise AppValidationError(field=self.get_error_field_name(), message=msg, code=code)
 
     def get_queryset(self) -> Any:
         """
@@ -78,31 +73,7 @@ class ForeignKeyField(AppField, PrimaryKeyRelatedField):
                     field=self.get_error_field_name(),
                     message='This field is required.',
                     code=FieldValidationErrorCode.REQUIRED,
-                    source_field=self
                 )
             return None
 
-        try:
-            return super().to_internal_value(data)
-        except Exception as e:
-            print('error class:', e.__class__)
-            print('error message:', e)
-            raise AppValidationError(
-                field=self.get_error_field_name(),
-                message=str(e),
-                code=FieldValidationErrorCode.INVALID_FORMAT,
-                source_field=self)
-        except ObjectDoesNotExist:
-            raise AppValidationError(
-                field=self.get_error_field_name(),
-                message='Object with this ID does not exist or does not belong to the user',
-                code=FieldValidationErrorCode.INVALID_REFERENCE,
-                source_field=self
-            )
-        except (TypeError, ValueError):
-            raise AppValidationError(
-                field=self.get_error_field_name(),
-                message='Incorrect type. Expected UUID.',
-                code=FieldValidationErrorCode.INVALID_FORMAT,
-                source_field=self
-            )
+        return super().to_internal_value(data)

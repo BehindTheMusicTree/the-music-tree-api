@@ -34,68 +34,115 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
     def run_validation(self, data):
         """
         Override run_validation to handle field validation and preserve AppValidationError.
-
-        Validation steps:
-        1. Field type validation (list values)
-        2. Unknown fields check
-        3. Duplicate fields check
-        4. Parent class validation
+        This implementation prevents DRF from converting our custom validation errors.
         """
-        if isinstance(data, dict):
-            # 1. Validate field types (list values)
-            for field_name, field in self.fields.items():
-                if field_name in data:
-                    value = data[field_name]
-                    if isinstance(value, list) and not self._is_list_field(field):
-                        raise AppValidationError(
-                            field=field_name,
-                            message=_("The field does not accept list values"),
-                            code=FieldValidationErrorCode.UNEXPECTED_LIST_VALUE
-                        )
+        if not hasattr(self, '_validated_data'):
+            self._validated_data = {}
+        if not hasattr(self, '_errors'):
+            self._errors = {}
 
-            # 2. Check for unknown fields
-            unknown_keys = self._check_unknown_fields(data, self.fields)
-            if len(unknown_keys) == 1:
-                raise_unknown_field_error(unknown_keys[0])
-            elif len(unknown_keys) > 1:
-                raise_unknown_fields_error(unknown_keys)
-
-        # 3. Check for duplicate fields
-        request = self.context.get('request')
-        if request:
-            raw_body = getattr(request, '_raw_body', None)
-            if not raw_body and hasattr(request, '_request'):
-                try:
-                    raw_body = request._request.body
-                    setattr(request, '_raw_body', raw_body)
-                except Exception:
-                    pass
-
-            if raw_body:
-                try:
-                    raw_data = raw_body.decode('utf-8') if isinstance(raw_body, bytes) else str(raw_body)
-                    duplicates = self._find_duplicate_fields(raw_data)
-                    if duplicates:
-                        if len(duplicates) == 1:
-                            raise_duplicate_field_error(duplicates[0])
-                        raise_duplicate_fields_error(duplicates)
-                except (UnicodeDecodeError, AttributeError):
-                    pass
-
-        # 4. Run parent validation but preserve our exception
-        try:
-            return super().run_validation(data)
-        except ValidationError as e:
-            if isinstance(e, AppValidationError):
-                raise
-            raise AppValidationError(
-                field='non_field_errors',
-                message=str(e.detail if hasattr(e, 'detail') else e),
-                code=FieldValidationErrorCode.INVALID_FORMAT
+        if data is None:
+            error = AppValidationError(
+                message="This field is required.",
+                code=FieldValidationErrorCode.REQUIRED,
+                field=self.__class__.__name__.lower()
             )
+            self._errors = error.detail
+            raise error
+
+        try:
+            # Run field validations
+            if isinstance(data, dict):
+                # 1. Validate field types (list values)
+                for field_name, field in self.fields.items():
+                    if field_name in data:
+                        value = data[field_name]
+                        if isinstance(value, list) and not self._is_list_field(field):
+                            error = AppValidationError(
+                                field=field_name,
+                                message=_("The field does not accept list values"),
+                                code=FieldValidationErrorCode.UNEXPECTED_LIST_VALUE
+                            )
+                            self._errors = error.detail
+                            raise error
+
+                # 2. Check for unknown fields
+                unknown_keys = self._check_unknown_fields(data, self.fields)
+                if len(unknown_keys) == 1:
+                    raise_unknown_field_error(unknown_keys[0])
+                elif len(unknown_keys) > 1:
+                    raise_unknown_fields_error(unknown_keys)
+
+            # 3. Check for duplicate fields
+            request = self.context.get('request')
+            if request:
+                raw_body = getattr(request, '_raw_body', None)
+                if not raw_body and hasattr(request, '_request'):
+                    try:
+                        raw_body = request._request.body
+                        setattr(request, '_raw_body', raw_body)
+                    except Exception:
+                        pass
+
+                if raw_body:
+                    try:
+                        raw_data = raw_body.decode('utf-8') if isinstance(raw_body, bytes) else str(raw_body)
+                        duplicates = self._find_duplicate_fields(raw_data)
+                        if duplicates:
+                            if len(duplicates) == 1:
+                                raise_duplicate_field_error(duplicates[0])
+                            raise_duplicate_fields_error(duplicates)
+                    except (UnicodeDecodeError, AttributeError):
+                        pass
+
+            # 4. Run field-level validation
+            validated_data = {}
+            for field in self._writable_fields:
+                try:
+                    validated_value = field.run_validation(field.get_value(data))
+                    if validated_value is not None:
+                        validated_data[field.source] = validated_value
+                except AppValidationError as exc:
+                    self._errors = exc.detail
+                    raise
+                except ValidationError as exc:
+                    # Ensure we have a valid field name
+                    field_name = field.field_name if field.field_name else self.__class__.__name__.lower()
+                    error = AppValidationError(
+                        message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
+                        code=FieldValidationErrorCode.DEFAULT,
+                        field=field_name
+                    )
+                    self._errors = error.detail
+                    raise error
+
+            # 5. Run object-level validation
+            try:
+                validated_data = self.validate(validated_data)
+            except AppValidationError as exc:
+                self._errors = exc.detail
+                raise
+            except ValidationError as exc:
+                error = AppValidationError(
+                    message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
+                    code=FieldValidationErrorCode.DEFAULT,
+                    field=self.__class__.__name__.lower()
+                )
+                self._errors = error.detail
+                raise error
+
+            # Success path
+            self._errors = {}
+            self._validated_data = validated_data
+            return validated_data
+
+        except AppValidationError:
+            self._validated_data = {}
+            raise
 
     @staticmethod
     def _get_raw_field_names(raw_data: str) -> List[str]:
+        """Extract field names from raw JSON data."""
         # Remove whitespace and newlines between tokens to simplify parsing
         raw_data = re.sub(r'\s+', '', raw_data)
 
@@ -112,11 +159,12 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
             initial_data: Dict[str, Any],
             fields: Union[Dict[str, Any],
                           Mapping[str, Any]]) -> List[str]:
-
+        """Check for unknown fields in the input data."""
         return list(set(initial_data.keys()) - set(fields.keys()))
 
     @classmethod
     def _find_duplicate_fields(cls, raw_data: str) -> List[str]:
+        """Find duplicate field names in raw JSON data."""
         try:
             field_names = cls._get_raw_field_names(raw_data)
             field_counts = {}

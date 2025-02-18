@@ -123,14 +123,15 @@ class ErrorResponse:
         """Handle various types of validation errors with appropriate formatting."""
 
         if isinstance(exception, AppValidationError):
-            error_detail = exception.error_detail
+
             formatted_error = {
                 ErrorResponseFields.MESSAGE: ErrorMessages.VALIDATION_FAILED,
                 ValidationErrorFields.FIELD_ERRORS: {
-                    exception.field: [{
-                        ErrorResponseFields.MESSAGE: error_detail[ErrorResponseFields.MESSAGE],
-                        ErrorResponseFields.CODE: error_detail[ErrorResponseFields.CODE]
+                    field: [{
+                        ErrorResponseFields.MESSAGE: ErrorResponse._format_validation_message(error_detail['message'], field),
+                        ErrorResponseFields.CODE: error_detail['code']
                     }]
+                    for field, error_detail in exception.errors.items()
                 }
             }
             return ErrorResponse._create_error_response(

@@ -48,6 +48,8 @@ class FieldValidationErrorCode(Enum):
         UNEXPECTED_LIST_VALUE = 2136    # Received a list for a field that doesn't accept lists
     """
 
+    DEFAULT = '`validation_error'
+
     # Database validation
     DB_INTEGRITY_ERROR = 'db_integrity_error'
 
