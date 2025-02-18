@@ -160,8 +160,8 @@ class ModelFixtureFactory:
             PlayFields.USER: user or self.default_test_user,
             PlayFields.CREATED_ON: timezone.make_aware(datetime.now()),
             PlayFields.UPDATED_ON: timezone.make_aware(datetime.now()),
-            PlayFields.CONTENT_TYPE: content_type,
-            PlayFields.OBJECT_PK: content_object.pk
+            PlayFields.CONTENT_OBJECT_TYPE: content_type,
+            PlayFields.CONTENT_PK: content_object.pk
         }
         model_fields.update(kwargs)
         return G(Play, **model_fields)

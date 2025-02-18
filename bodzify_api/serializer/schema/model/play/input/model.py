@@ -8,4 +8,4 @@ class PlayModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Play
-        fields = [Fields.USER, Fields.CONTENT_TYPE, Fields.OBJECT_PK]
+        fields = [Fields.USER, Fields.CONTENT_OBJECT_TYPE, Fields.CONTENT_PK]

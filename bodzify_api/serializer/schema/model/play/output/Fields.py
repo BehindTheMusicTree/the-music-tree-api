@@ -5,4 +5,4 @@ class Fields:
     CREATED_ON = ModelFields.CREATED_ON
     UUID = ModelFields.UUID
     CONTENT_TYPE = ModelFields.CONTENT_TYPE
-    CONTENT_OBJECT = ModelFields.CONTENT_OBJECT
+    CONTENT = ModelFields.CONTENT

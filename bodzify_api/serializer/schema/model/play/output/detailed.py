@@ -13,18 +13,18 @@ from .Fields import Fields
 
 
 class PlayDetailedSerializer(serializers.ModelSerializer):
-    content_type = serializers.CharField(source='content_type.model')
-    content_object = serializers.SerializerMethodField()
+    content_type = serializers.CharField(source=f'{Fields.CONTENT_TYPE}.model')
+    content = serializers.SerializerMethodField()
 
     class Meta:
         model = Play
         fields = [Fields.UUID,
                   Fields.CONTENT_TYPE,
-                  Fields.CONTENT_OBJECT,
+                  Fields.CONTENT,
                   Fields.CREATED_ON]
 
     def get_content_object(self, obj: Play) -> List | Any | Dict:
-        if isinstance(obj.content_object, Playlist):
-            return PlaylistDetailedSerializer(obj.content_object).data
+        if isinstance(obj.content, Playlist):
+            return PlaylistDetailedSerializer(obj.content).data
         else:
-            return LibTrackWithoutAlbumPlaylistGenreSerializer(obj.content_object).data
+            return LibTrackWithoutAlbumPlaylistGenreSerializer(obj.content).data

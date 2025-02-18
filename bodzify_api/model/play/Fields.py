@@ -1,3 +1,4 @@
+from bodzify_api.model.ContentObjectFields import ContentObjectFields
 from bodzify_api.model.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 
 
@@ -6,6 +7,7 @@ class Fields:
     UPDATED_ON = PrivateUniqueResourceFields.UPDATED_ON
     USER = PrivateUniqueResourceFields.USER
     UUID = PrivateUniqueResourceFields.UUID
-    CONTENT_TYPE = 'content_type'
-    OBJECT_PK = 'object_pk'
-    CONTENT_OBJECT = 'content_object'
+
+    CONTENT = ContentObjectFields.CONTENT
+    CONTENT_TYPE = ContentObjectFields.CONTENT_TYPE
+    CONTENT_UUID = ContentObjectFields.CONTENT_UUID

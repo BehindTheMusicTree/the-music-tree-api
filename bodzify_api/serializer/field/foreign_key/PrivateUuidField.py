@@ -30,16 +30,12 @@ class PrivateUuidField(ForeignKeyField, AppUuidField, Generic[T]):
     """
 
     def get_request_user(self) -> Any:
-        """Gets the user from request context with validation"""
         request = self.context.get('request')
         if not isinstance(request, Request):
             raise ImproperlyConfigured("request must be a Request instance.")
         return request.user
 
     def get_queryset(self) -> Any:
-        """
-        Returns the queryset filtered by the current user.
-        """
         user = self.get_request_user()
         self.additional_filters = {'user': user}
         return super().get_queryset()

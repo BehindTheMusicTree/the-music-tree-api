@@ -9,8 +9,6 @@ class DynamicTableNameModelBase(DjangoModelBase):
     def __new__(cls, name, bases, attrs):
         dynamic_db_table_name = f"{settings.APP_NAME}_{to_snake_case(name)}"
 
-        # TODO: I couldn't test if meta is abstract (where db_table should not be set).
-        # if not hasattr(meta, 'db_table'):
         # TODO: Do not override if already set. Testing if set does not work as it is always set by the mother
         # abstract classes like BaseModel.
 
