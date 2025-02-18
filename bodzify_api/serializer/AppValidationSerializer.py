@@ -44,7 +44,7 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
         if data is None:
             error = AppValidationError(
                 message="This field is required.",
-                code=FieldValidationErrorCode.DEFAULT
+                code=FieldValidationErrorCode.REQUIRED
             )
             self._errors = error.detail
             raise error
@@ -105,9 +105,14 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
                     raise exc
                 except ValidationError as exc:
                     exc_first_detail = str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail)
+                    error_code = (
+                        FieldValidationErrorCode.REQUIRED
+                        if exc_first_detail == "This field is required."
+                        else FieldValidationErrorCode.DEFAULT
+                    )
                     error = AppValidationError(field=field.field_name,
                                                message=exc_first_detail or 'Invalid input.',
-                                               code=FieldValidationErrorCode.DEFAULT)
+                                               code=error_code)
                     self._errors = error.detail
                     raise error
                 except SkipField:
