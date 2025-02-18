@@ -31,9 +31,7 @@ class FieldValidationErrorCode(Enum):
         METADATA_EXTRACTION_FAILED = 2120 # Failed to extract metadata
         NAME_EMPTY = 2121              # Empty name field
         NAME_DUPLICATE = 2122          # Duplicate name
-        NAMES_DUPLICATE = 2123         # Multiple duplicate names
         DB_INTEGRITY_ERROR = 2124      # Database integrity violation
-        PLAYLIST_NAME_DUPLICATE = 2125  # Duplicate playlist name
         MUTUALLY_EXCLUSIVE = 2126      # Mutually exclusive fields
         DEPENDENCY_MISSING = 2127      # Required dependent field missing
         RESOURCE_NOT_OWNED = 2128      # Resource ownership validation failed
@@ -92,10 +90,6 @@ class FieldValidationErrorCode(Enum):
     # Name validation
     NAME_EMPTY = 'name_empty'
     NAME_DUPLICATE = 'name_duplicate'
-    NAMES_DUPLICATE = 'names_duplicate'
-
-    # Playlist validation
-    PLAYLIST_NAME_DUPLICATE = 'playlist_name_duplicate'
 
     # Field relationship validation
     MUTUALLY_EXCLUSIVE = 'mutually_exclusive'

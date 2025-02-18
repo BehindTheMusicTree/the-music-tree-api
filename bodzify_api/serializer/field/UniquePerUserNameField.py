@@ -19,6 +19,6 @@ class UniquePerUserNameField(serializers.CharField):
                 raise AppValidationError(
                     field=ModelFields.NAME_PUBLIC,
                     message=_('A playlist with this name already exists'),
-                    code=FieldValidationErrorCode.PLAYLIST_NAME_DUPLICATE
+                    code=FieldValidationErrorCode.NAME_DUPLICATE
                 )
         return value

@@ -15,8 +15,8 @@ class EnumCharFilter(EmptiableCharFilter):
 
     @property
     def valid_values(self) -> list[str]:
-        return [str(value).lower() for value in vars(self.enum_class).values()
-                if isinstance(value, str) and not value.startswith('_')]
+        return [str(value).lower() for name, value in vars(self.enum_class).items()
+                if not name.startswith('_') and isinstance(value, str)]
 
     def filter(self, qs, value):
         if value == '':
