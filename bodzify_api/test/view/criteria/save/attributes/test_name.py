@@ -23,7 +23,7 @@ class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCa
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_multiple_values_then_error(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: ["value", "value2"]})
@@ -32,7 +32,7 @@ class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCa
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_already_exists_then_error(self):
         genre_name = "Rock"
@@ -44,7 +44,7 @@ class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCa
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error['code'] == FieldValidationErrorCode.NAME_DUPLICATE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.NAME_DUPLICATE
 
     def test_empty_then_error(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: ''})
@@ -53,4 +53,4 @@ class TestCase(GenreTestCase, NotNullableBodyDataTestCase, PrimaryBodyDataTestCa
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error['code'] == FieldValidationErrorCode.BLANK
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK

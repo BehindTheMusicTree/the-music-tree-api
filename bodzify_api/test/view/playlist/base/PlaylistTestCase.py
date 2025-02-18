@@ -7,6 +7,9 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 
 
 class PlaylistTestCase(ApiTestCase[Playlist]):
+    model_class = Playlist
+    saved_object: Playlist
+
     def _post_playlist(self, **kwargs):
         return self.api_client.post(
             path=reverse('playlist-list'),

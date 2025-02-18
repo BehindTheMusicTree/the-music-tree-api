@@ -27,7 +27,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error['code'] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
 
     def test_one_then_ok(self):
         position_in_album = 1
@@ -54,7 +54,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error['code'] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE
 
     def test_negative_one_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(album_name='album', position_in_album=-1)
@@ -63,7 +63,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error['code'] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
 
     def test_not_integer_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.POSITION_IN_ALBUM: 5.5})
@@ -72,4 +72,4 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT

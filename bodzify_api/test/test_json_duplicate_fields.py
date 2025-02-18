@@ -23,4 +23,4 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == CriteriaPostFields.NAME_PUBLIC
-        assert error['code'] == FieldValidationErrorCode.FIELD_DUPLICATE.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE.value

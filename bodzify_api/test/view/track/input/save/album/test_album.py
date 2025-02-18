@@ -23,7 +23,7 @@ class TestCase(FieldModelStrTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == ExtractFields.ALBUM_NAME
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ALBUM_NAME: ''})

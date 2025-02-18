@@ -7,6 +7,7 @@ from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import V
 from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.field.filter.char.EnumCharFilterTestCase import EnumCharFilterTestCase
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
@@ -39,7 +40,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == FilterSetFields.TYPE_LABEL_INTERNAL
-        assert error['code'] == FieldValidationErrorCode.BLANK
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"
@@ -78,4 +79,4 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == FilterSetFields.TYPE_LABEL_INTERNAL
-        assert error['code'] == FieldValidationErrorCode.INVALID_CHOICE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_CHOICE

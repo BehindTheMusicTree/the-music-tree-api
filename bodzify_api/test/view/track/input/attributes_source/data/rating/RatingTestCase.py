@@ -26,7 +26,7 @@ class RatingTestCase(FieldIntFromDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error['code'] == FieldValidationErrorCode.RATING_TOO_LARGE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE
 
     def test_rating_negative_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: -1})
@@ -35,7 +35,7 @@ class RatingTestCase(FieldIntFromDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error['code'] == FieldValidationErrorCode.RATING_TOO_SMALL
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL
 
     def test_field_twice_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: [1, 2]})
@@ -44,4 +44,4 @@ class RatingTestCase(FieldIntFromDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT

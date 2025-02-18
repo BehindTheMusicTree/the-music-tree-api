@@ -19,7 +19,7 @@ class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == QueryParams.NAME
-        assert error['code'] == FieldValidationErrorCode.BLANK
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK
 
     def test_not_provided_then_results(self) -> None:
         self.model_fixture_factory.create_genre(name="Rock")

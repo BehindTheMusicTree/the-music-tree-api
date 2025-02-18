@@ -14,7 +14,7 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.NAME_PUBLIC
-        assert error['code'] == FieldValidationErrorCode.REQUIRED.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.REQUIRED.value
 
     def test_empty_then_error(self):
         response = self._post_genre(**{PostFields.NAME_PUBLIC: ""})
@@ -23,7 +23,7 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.NAME_PUBLIC
-        assert error['code'] == FieldValidationErrorCode.BLANK.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_value_then_ok(self):
         name = "rock"

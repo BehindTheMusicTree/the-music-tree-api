@@ -28,7 +28,7 @@ class TestCase(FieldModelStrTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_STR
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ARTISTS_NAMES_STR: ''})
@@ -115,7 +115,7 @@ class TestCase(FieldModelStrTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_STR
-        assert error['code'] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_multiple_artists_with_duplicates_then_error(self) -> None:
         artist_name = "DuplicateArtist"
@@ -126,7 +126,7 @@ class TestCase(FieldModelStrTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_STR
-        assert error['code'] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
 
     def test_multiple_artists_with_empty_names_then_error(self) -> None:
         valid_artist = "ValidArtist"
@@ -137,4 +137,4 @@ class TestCase(FieldModelStrTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_STR
-        assert error['code'] == FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST

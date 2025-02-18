@@ -13,4 +13,4 @@ class TestCase(ManualPlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == 'extra_field'
-        assert error['code'] == FieldValidationErrorCode.INVALID_REFERENCE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_REFERENCE
