@@ -1,4 +1,3 @@
-from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.public_standard_resource.PublicStandardResource import PublicStandardResource

@@ -1,6 +1,5 @@
 from typing import Any
 
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from bodzify_api.serializer.field.AppField import AppField

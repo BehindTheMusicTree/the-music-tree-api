@@ -1,14 +1,12 @@
 import json
 import re
-from typing import Dict, Any, List, Union, Mapping, Optional, TypeVar, Generic
+from typing import Dict, Any, List, Union, Mapping, TypeVar, Generic
 
-from django.db import models
 from django.utils.translation import gettext as _
 from rest_framework import serializers
-from rest_framework.fields import CharField, ListField, Field, SkipField
-from rest_framework.relations import ManyRelatedField, RelatedField
+from rest_framework.fields import ListField, SkipField
+from rest_framework.relations import ManyRelatedField
 from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import BaseSerializer
 
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
