@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from bodzify_api.serializer.PutValidationSerializer import PutValidationSerializer
+from bodzify_api.serializer.PutSerializer import PutSerializer
 from .endpoint import LibTrackEndPointSerializer, Fields as EndpointFields
 
 
@@ -19,6 +19,6 @@ class Fields:
     ARCHIVED = EndpointFields.ARCHIVED
 
 
-class LibTrackPutSerializer(PutValidationSerializer, LibTrackEndPointSerializer):
+class LibTrackPutSerializer(PutSerializer, LibTrackEndPointSerializer):
     file = serializers.FileField(required=False)
     archived = serializers.BooleanField(required=False)

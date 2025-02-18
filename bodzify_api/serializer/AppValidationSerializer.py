@@ -100,8 +100,7 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
                 try:
                     value = field.get_value(data)
                     validated_value = field.run_validation(value)
-                    if validated_value is not None:
-                        validated_data[field.source] = validated_value
+                    validated_data[field.source] = validated_value
                 except AppValidationError as exc:
                     raise exc
                 except ValidationError as exc:
@@ -128,7 +127,6 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
                 self._errors = error.detail
                 raise error
 
-            # Success path
             self._errors = {}
             self._validated_data = validated_data
             return validated_data

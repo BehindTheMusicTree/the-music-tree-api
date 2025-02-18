@@ -1,12 +1,11 @@
 from typing import Dict, Any
-from rest_framework import serializers
 
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
-class AppPutModelSerializer(AppValidationSerializer, serializers.ModelSerializer):
+class PutSerializer(AppValidationSerializer):
 
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
         attrs = super().validate(attrs)
@@ -20,4 +19,4 @@ class AppPutModelSerializer(AppValidationSerializer, serializers.ModelSerializer
                 code=FieldValidationErrorCode.NO_UPDATES
             )
 
-        return attrs
+        return super().validate(attrs)
