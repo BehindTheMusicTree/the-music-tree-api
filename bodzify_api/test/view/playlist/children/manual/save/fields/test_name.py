@@ -15,7 +15,7 @@ class TestCase(ManualPlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_ENUM.value
 
     def test_longest_then_ok(self):
         response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: "a" * settings.MANUAL_PLAYLIST_NAME_LEN_MAX})
@@ -28,7 +28,7 @@ class TestCase(ManualPlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_already_exists_then_error(self):
         response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: "value"})

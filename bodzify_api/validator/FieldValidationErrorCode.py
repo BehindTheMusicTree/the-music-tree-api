@@ -42,7 +42,6 @@ class FieldValidationErrorCode(Enum):
         POSITION_IN_ALBUM_TOO_LARGE = 2133 # Album position exceeds maximum
         RATING_TOO_SMALL = 2134        # Rating below minimum
         RATING_TOO_LARGE = 2135        # Rating exceeds maximum
-        UNEXPECTED_LIST_VALUE = 2136    # Received a list for a field that doesn't accept lists
     """
 
     DEFAULT = 'validation_error'
@@ -56,7 +55,6 @@ class FieldValidationErrorCode(Enum):
     REQUIRED = 'required'
     INVALID_FORMAT = 'invalid_format'
     FIELD_DUPLICATE = 'field_duplicate'
-    UNEXPECTED_LIST_VALUE = 'unexpected_list_value'
 
     # Filter
     INVALID_FILTER = 'invalid_filter'
