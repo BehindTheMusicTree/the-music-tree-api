@@ -7,15 +7,14 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestCase(GenreTestCase):
 
-    def test_renaming(self):
+    def test_name(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_new_name = "Punk"
 
         response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})
 
         assert response.status_code == status.HTTP_200_OK
-        playlist = self.saved_genre
-        assert playlist.name == genre_new_name
+        assert self.saved_object.name == genre_new_name
 
     def test_new_parent_then_update_playlist_parent(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
