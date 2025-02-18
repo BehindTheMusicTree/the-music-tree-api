@@ -75,9 +75,9 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert manual_playlist_name in names
 
     def test_value_is_wrong_then_error(self):
-        response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_INTERNAL: 'wrong_value'})
+        response = self._get_playlists(**{to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC): 'wrong_value'})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == FilterSetFields.TYPE_LABEL_INTERNAL
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_CHOICE.value
+        assert error[ErrorResponseFields.FIELD] == to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC)
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_ENUM.value
