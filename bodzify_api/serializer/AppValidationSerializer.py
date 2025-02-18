@@ -107,7 +107,7 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
                 except ValidationError as exc:
                     exc_first_detail = str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail)
                     error = AppValidationError(field=field.field_name,
-                                               message=exc_first_detail or 'Invalid input for field.',
+                                               message=exc_first_detail or 'Invalid input.',
                                                code=FieldValidationErrorCode.DEFAULT)
                     self._errors = error.detail
                     raise error

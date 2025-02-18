@@ -48,7 +48,7 @@ def raise_unknown_field_error(field: str) -> None:
     """
     raise_validation_error(
         message='Unrecognized field',
-        field_validation_error_code=FieldValidationErrorCode.INVALID_REFERENCE,
+        field_validation_error_code=FieldValidationErrorCode.UNKNOWN_FIELD,
         field=field
     )
 
@@ -67,7 +67,7 @@ def raise_unknown_fields_error(fields: List[str]) -> None:
 
     error_detail: Dict[str, Any] = {
         'message': 'Request contains multiple unrecognized fields',
-        'code': FieldValidationErrorCode.UNKNOWN_MULTIPLE.value,
+        'code': FieldValidationErrorCode.UNKNOWN_FIELDS.value,
         'fields': fields
     }
     raise ValidationError({'unknown_fields': error_detail})

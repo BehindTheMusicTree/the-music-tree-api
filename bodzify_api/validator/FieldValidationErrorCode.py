@@ -66,8 +66,8 @@ class FieldValidationErrorCode(Enum):
     INVALID_FILTER = 'invalid_filter'
 
     # Field existence validation
-    UNKNOWN = 'unknown_field'
-    UNKNOWN_MULTIPLE = 'unknown_fields'
+    UNKNOWN_FIELD = 'unknown_field'
+    UNKNOWN_FIELDS = 'unknown_fields'
 
     # Reference validation
     INVALID_REFERENCE = 'invalid_reference'
