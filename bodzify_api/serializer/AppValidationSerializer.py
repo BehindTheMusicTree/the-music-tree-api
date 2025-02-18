@@ -19,12 +19,10 @@ T = TypeVar('T')
 
 
 class AppValidationSerializer(serializers.Serializer, Generic[T]):
-    """Base serializer class that provides common validation functionality."""
 
     REQUEST_FIELD = 'request'
 
     def _is_list_field(self, field):
-        """Check if a field is designed to accept list values."""
         return (
             isinstance(field, (ListField, ManyRelatedField)) or
             getattr(field, 'many', False) or

@@ -2,9 +2,6 @@ from django.db import models
 
 
 class AppCharField(models.CharField):
-    """
-    Custom CharField model field that uses AppCharField serializer for serialization.
-    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
