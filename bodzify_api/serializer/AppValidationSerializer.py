@@ -23,6 +23,8 @@ T = TypeVar('T')
 class AppValidationSerializer(serializers.Serializer, Generic[T]):
     """Base serializer class that provides common validation functionality."""
 
+    REQUEST_FIELD = 'request'
+
     def _is_list_field(self, field):
         """Check if a field is designed to accept list values."""
         return (
@@ -73,7 +75,7 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
                     raise_unknown_fields_error(unknown_keys)
 
             # 3. Check for duplicate fields
-            request = self.context.get('request')
+            request = self.context.get(self.REQUEST_FIELD)
             if request:
                 raw_body = getattr(request, '_raw_body', None)
                 if not raw_body and hasattr(request, '_request'):
