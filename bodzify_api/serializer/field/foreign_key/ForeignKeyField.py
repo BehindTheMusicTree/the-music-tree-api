@@ -21,7 +21,6 @@ class ForeignKeyField(AppField, PrimaryKeyRelatedField):
     """
 
     def __init__(self, **kwargs):
-        """Initialize with optional additional_filters for validation"""
         self.additional_filters = kwargs.pop('additional_filters', {})
         super().__init__(**kwargs)
 
@@ -53,20 +52,12 @@ class ForeignKeyField(AppField, PrimaryKeyRelatedField):
         raise AppValidationError(field=self.get_error_field_name(), message=msg, code=code)
 
     def get_queryset(self) -> Any:
-        """
-        Return the queryset filtered with additional_filters if any are specified.
-        """
         queryset = super().get_queryset()
         if self.additional_filters:
             queryset = queryset.filter(**self.additional_filters)
         return queryset
 
     def to_internal_value(self, data: Any) -> Any:
-        """
-        Transform the *incoming* primitive data into a native value.
-        Applies additional filters during validation if specified.
-        Raises AppValidationError for any validation issues.
-        """
         if data == '' or (self.allow_null and data is None):
             if self.required:
                 raise AppValidationError(
