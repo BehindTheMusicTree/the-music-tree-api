@@ -40,7 +40,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == FilterSetFields.TYPE_LABEL_INTERNAL
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"

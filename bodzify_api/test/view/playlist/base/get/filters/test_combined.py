@@ -5,15 +5,15 @@ from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames \
     import CriterialessPlaylistNames
 from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
-from bodzify_api.filtering.set.playlist.Fields import Fields as QueryParams
+from bodzify_api.filtering.set.playlist.Fields import Fields as Filters
 
 
 class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {
-            QueryParams.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
-            QueryParams.NAME: CriterialessPlaylistNames.TAG
+            Filters.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
+            Filters.NAME: CriterialessPlaylistNames.TAG
         }
         response = self._get_playlists(**data_dict)
 
@@ -22,8 +22,8 @@ class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_genreless_then_one_result(self):
         data_dict = {
-            QueryParams.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
-            QueryParams.NAME: CriterialessPlaylistNames.GENRE
+            Filters.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
+            Filters.NAME: CriterialessPlaylistNames.GENRE
         }
         response = self._get_playlists(**data_dict)
 
@@ -38,8 +38,8 @@ class TestCase(PlaylistTestCase):
         self.model_fixture_factory.create_genre(name=genre2_name)
 
         data_dict = {
-            QueryParams.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
-            QueryParams.NAME: 'rock'
+            Filters.TYPE_LABEL_INTERNAL: PlaylistTypesLabel.GENRE,
+            Filters.NAME: 'rock'
         }
         response = self._get_playlists(**data_dict)
 

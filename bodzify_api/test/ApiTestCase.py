@@ -14,6 +14,7 @@ from bodzify_api.serializer.schema.model.lib_track.output.detailed import Fields
 from bodzify_api.test.AppApiClient import AppApiClient
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.utils import audio_metadata, data_transformer
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
 
 
@@ -118,7 +119,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
             for error in error_list:
                 self.bad_request_result_field_errors.append({
                     'field': field_name,
-                    'message': error['message'],
+                    'message': error[ErrorResponseFields.MESSAGE],
                     'code': error[ErrorResponseFields.CODE]
                 })
 

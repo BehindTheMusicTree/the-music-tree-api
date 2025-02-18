@@ -3,9 +3,10 @@ from rest_framework import status
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
-from bodzify_api.filtering.set.playlist.Fields import Fields as QueryParams
+from bodzify_api.filtering.set.playlist.Fields import Fields as Filters
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
@@ -14,12 +15,12 @@ class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
         super().setUp(methods_names_to_implement=None)
 
     def test_empty_then_error(self) -> None:
-        response = self._get_playlists(**{QueryParams.NAME: ''})
+        response = self._get_playlists(**{Filters.NAME: ''})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == QueryParams.NAME
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK
+        assert error[ErrorResponseFields.FIELD] == Filters.NAME
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_not_provided_then_results(self) -> None:
         self.model_fixture_factory.create_genre(name="Rock")
@@ -34,26 +35,26 @@ class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
         manual_playlist_name = "Teuf"
         self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
 
-        response = self._get_playlists(**{QueryParams.NAME: "tEU"})
+        response = self._get_playlists(**{Filters.NAME: "tEU"})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        names_lowered = [result[QueryParams.NAME].lower() for result in self.results]
+        names_lowered = [result[Filters.NAME].lower() for result in self.results]
         assert manual_playlist_name.lower() in names_lowered
 
     def test_genreless_special_name_then_results(self) -> None:
-        response = self._get_playlists(**{QueryParams.NAME: 'geNr'})
+        response = self._get_playlists(**{Filters.NAME: 'geNr'})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][QueryParams.NAME] == CriterialessPlaylistNames.GENRE
+        assert self.results[0][Filters.NAME] == CriterialessPlaylistNames.GENRE
 
     def test_tagless_special_name_then_results(self) -> None:
-        response = self._get_playlists(**{QueryParams.NAME: 'aGl'})
+        response = self._get_playlists(**{Filters.NAME: 'aGl'})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
-        assert self.results[0][QueryParams.NAME] == CriterialessPlaylistNames.TAG
+        assert self.results[0][Filters.NAME] == CriterialessPlaylistNames.TAG
 
     def test_value_in_simple_criteria_and_special_names_then_results(self) -> None:
         manual_playlist_name = "lEsson"
@@ -61,11 +62,11 @@ class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
         criteria_name = "leSsa"
         self.model_fixture_factory.create_genre(name=criteria_name)
 
-        response = self._get_playlists(**{QueryParams.NAME: 'Less'})
+        response = self._get_playlists(**{Filters.NAME: 'Less'})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 4
-        names_lowered = [result[QueryParams.NAME].lower() for result in self.results]
+        names_lowered = [result[Filters.NAME].lower() for result in self.results]
         assert manual_playlist_name.lower() in names_lowered
         assert criteria_name.lower() in names_lowered
         assert CriterialessPlaylistNames.GENRE.lower() in names_lowered
