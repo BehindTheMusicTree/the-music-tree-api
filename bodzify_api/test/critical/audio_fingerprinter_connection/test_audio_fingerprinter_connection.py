@@ -16,7 +16,7 @@ class TestCase(LibTrackTestCase):
         if not is_reponse_ok:
             print(response.data)  # type: ignore
         assert is_reponse_ok
-        track_file = self.saved_lib_track.track_file
+        track_file = self.saved_object.track_file
         assert track_file
         if track_file.fingerprint_missing_cause:
             print(track_file.fingerprint_missing_cause)

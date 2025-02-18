@@ -14,8 +14,8 @@ class TestCase(FieldModelStrTestCase):
         data = {PostFields.GENRE_NAME: genre_name}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre
-        assert self.saved_lib_track.genre.name == genre_name
+        assert self.saved_object.genre
+        assert self.saved_object.genre.name == genre_name
 
     def test_too_long_then_error(self):
         genre_name = "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)
@@ -26,14 +26,14 @@ class TestCase(FieldModelStrTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.GENRE_NAME
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_empty_then_none(self):
         data = {PostFields.GENRE_NAME: ''}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre == None
+        assert self.saved_object.genre == None
 
     def test_existing_then_ok(self):
         genre_name = "Kopoe"
@@ -43,8 +43,8 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre
-        assert self.saved_lib_track.genre.name == genre_name
+        assert self.saved_object.genre
+        assert self.saved_object.genre.name == genre_name
 
     def test_not_existing(self):
         genre_name = "hoho"
@@ -53,8 +53,8 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre
-        assert self.saved_lib_track.genre.name == genre_name
+        assert self.saved_object.genre
+        assert self.saved_object.genre.name == genre_name
 
     def test_new_so_parent_none(self):
         genre_name = "Rock"
@@ -63,5 +63,5 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre
-        assert self.saved_lib_track.genre.parent == None
+        assert self.saved_object.genre
+        assert self.saved_object.genre.parent == None

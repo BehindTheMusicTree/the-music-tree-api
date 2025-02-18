@@ -15,4 +15,4 @@ class TestCase(LibTrackTestCase):
         response = self._extract(**{ExtractFields.URL: track_url})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.title.startswith(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE)
+        assert self.saved_object.title.startswith(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE)

@@ -14,12 +14,13 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ALBUM_NAME: album_name})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album
-        assert self.saved_lib_track.album.name == album_name
+        assert self.saved_object.album
+        assert self.saved_object.album.name == album_name
 
     def test_too_long_then_error(self):
         album_name = "a" * (settings.ALBUM_NAME_LEN_MAX + 1)
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ALBUM_NAME: album_name})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
@@ -28,8 +29,9 @@ class TestCase(FieldModelStrTestCase):
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ALBUM_NAME: ''})
+
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album == None
+        assert self.saved_object.album == None
 
     def test_existing_then_ok(self):
         album_name = "Kopoe"

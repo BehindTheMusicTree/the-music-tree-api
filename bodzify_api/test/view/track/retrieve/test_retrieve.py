@@ -13,7 +13,7 @@ class TestCase(LibTrackTestCase):
         data = {PostFields.TITLE: title}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_201_CREATED
-        track_uuid = self.saved_lib_track.uuid
+        track_uuid = self.saved_object.uuid
 
         response = self._retrieve_lib_track(uuid=track_uuid)
         assert response.status_code == status.HTTP_200_OK
@@ -23,7 +23,7 @@ class TestCase(LibTrackTestCase):
         data = {PostFields.TITLE: title}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_201_CREATED
-        track_uuid = self.saved_lib_track.uuid
+        track_uuid = self.saved_object.uuid
 
         response = self._retrieve_lib_track(uuid=track_uuid)
         assert response.status_code == status.HTTP_200_OK

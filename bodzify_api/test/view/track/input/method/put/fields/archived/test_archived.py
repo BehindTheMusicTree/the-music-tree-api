@@ -12,7 +12,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.TITLE: "Love"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert not self.saved_lib_track.archived
+        assert not self.saved_object.archived
 
     def test_not_provided_then_unchanged_true(self):
         track = self.model_fixture_factory.create_lib_track_with_file(title="Love", archived=True)
@@ -20,7 +20,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.TITLE: "Love"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.archived
+        assert self.saved_object.archived
 
     def test_empty_then_error(self):
         track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
@@ -38,7 +38,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.archived
+        assert self.saved_object.archived
 
     def test_true_in_capital_letters_then_update(self):
         track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
@@ -46,7 +46,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: 'TRUE'})\
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.archived
+        assert self.saved_object.archived
 
     def test_false_then_update(self):
         track = self.model_fixture_factory.create_lib_track_with_file(title="Love", archived=True)
@@ -54,7 +54,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: "false"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert not self.saved_lib_track.archived
+        assert not self.saved_object.archived
 
     def test_false_in_capital_letters_then_update(self):
         track = self.model_fixture_factory.create_lib_track_with_file(title="Love", archived=True)
@@ -62,4 +62,4 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: 'FALSE'})
 
         assert response.status_code == status.HTTP_200_OK
-        assert not self.saved_lib_track.archived
+        assert not self.saved_object.archived

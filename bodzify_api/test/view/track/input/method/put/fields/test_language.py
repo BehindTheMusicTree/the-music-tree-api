@@ -13,7 +13,7 @@ class TestCase(NullableFieldTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: language})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.language == language
+        assert self.saved_object.language == language
 
     def test_not_provided_then_unchanged(self):
         language = "French"
@@ -22,7 +22,7 @@ class TestCase(NullableFieldTestCase):
         response = self._put_lib_track(lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.language == language
+        assert self.saved_object.language == language
 
     def test_empty_then_none(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language="French")
@@ -30,7 +30,7 @@ class TestCase(NullableFieldTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: ""})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.language == None
+        assert self.saved_object.language == None
 
     def test_not_none_then_update(self):
         language = "a"
@@ -39,4 +39,4 @@ class TestCase(NullableFieldTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: language})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.language == language
+        assert self.saved_object.language == language

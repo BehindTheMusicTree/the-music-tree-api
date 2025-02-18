@@ -17,7 +17,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
-        track_playlists_uuids = [playlist.uuid for playlist in self.saved_lib_track.playlists.all()]
+        track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]
         assert len(track_playlists_uuids) == 1
         rock_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
             user=self.test_user1, criteria__name=genre_name)
@@ -31,7 +31,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
         assert response.status_code == status.HTTP_200_OK
 
-        track_playlists_uuids = [playlist.uuid for playlist in self.saved_lib_track.playlists.all()]
+        track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]
         assert len(track_playlists_uuids) == 1
 
         rock_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
@@ -51,7 +51,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_emo_name})
 
         assert response.status_code == status.HTTP_200_OK
-        track_playlists_uuids = [playlist.uuid for playlist in self.saved_lib_track.playlists.all()]
+        track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]
         assert len(track_playlists_uuids) == 3
 
         criteria_rock_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(

@@ -30,7 +30,7 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.genre == rock_criteria
+        assert self.saved_object.genre == rock_criteria
 
     def test_empty_then_none(self):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
@@ -40,7 +40,7 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.GENRE_NAME: ''})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.genre == None
+        assert self.saved_object.genre == None
 
     def test_not_none_then_update(self):
         genre_name = "rap"
@@ -49,5 +49,5 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.genre
-        assert self.saved_lib_track.genre.name == genre_name
+        assert self.saved_object.genre
+        assert self.saved_object.genre.name == genre_name

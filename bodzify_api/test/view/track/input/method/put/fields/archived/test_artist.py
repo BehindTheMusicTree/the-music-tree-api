@@ -18,7 +18,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track_love.uuid, **{PutFields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
+        artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].lib_tracks_archived_count == 2
 
@@ -33,6 +33,6 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: "false"})
 
         assert response.status_code == status.HTTP_200_OK
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
+        artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].lib_tracks_archived_count == 1

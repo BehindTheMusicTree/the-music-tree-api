@@ -12,54 +12,54 @@ class TestCase(RatingNotNoneWithHalfValuesAndZeroTestCase):
     def test_0_then_0(self):
         response = self._post_lib_track_with_specific_sample("0 star.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 0
+        assert self.saved_object.rating == 0
 
     def test_0_and_half_then_1(self):
         response = self._post_lib_track_with_specific_sample("0 5 star.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 1
+        assert self.saved_object.rating == 1
 
     def test_1_then_2(self):
         response = self._post_lib_track_with_specific_sample("1 star.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 2
+        assert self.saved_object.rating == 2
 
     def test_1_and_half_then_3(self):
         response = self._post_lib_track_with_specific_sample("1 5 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 3
+        assert self.saved_object.rating == 3
 
     def test_2_then_4(self):
         response = self._post_lib_track_with_specific_sample("2 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 4
+        assert self.saved_object.rating == 4
 
     def test_2_and_half_then_5(self):
         response = self._post_lib_track_with_specific_sample("2 5 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 5
+        assert self.saved_object.rating == 5
 
     def test_3_then_6(self):
         response = self._post_lib_track_with_specific_sample("3 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 6
+        assert self.saved_object.rating == 6
 
     def test_3_and_half_then_7(self):
         response = self._post_lib_track_with_specific_sample("3 5 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 7
+        assert self.saved_object.rating == 7
 
     def test_4_then_8(self):
         response = self._post_lib_track_with_specific_sample("4 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 8
+        assert self.saved_object.rating == 8
 
     def test_4_and_half_then_9(self):
         response = self._post_lib_track_with_specific_sample("4 5 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 9
+        assert self.saved_object.rating == 9
 
     def test_5_then_10(self):
         response = self._post_lib_track_with_specific_sample("5 stars.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == 10
+        assert self.saved_object.rating == 10

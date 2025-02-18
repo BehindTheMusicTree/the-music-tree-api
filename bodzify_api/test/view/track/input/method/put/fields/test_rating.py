@@ -13,7 +13,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.rating == rating
+        assert self.saved_object.rating == rating
 
     def test_zero(self):
         rating = 0
@@ -22,4 +22,4 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.RATING: rating})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.rating == rating
+        assert self.saved_object.rating == rating

@@ -4,6 +4,7 @@ from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as PostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(LibTrackTestCase):
@@ -12,13 +13,13 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.POSITION_IN_ALBUM: None})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.position_in_album == None
+        assert self.saved_object.position_in_album == None
 
     def test_empty_string_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.POSITION_IN_ALBUM: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.position_in_album == None
+        assert self.saved_object.position_in_album == None
 
     def test_zero_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.POSITION_IN_ALBUM: 0})
@@ -27,7 +28,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL.value
 
     def test_one_then_ok(self):
         position_in_album = 1
@@ -36,7 +37,7 @@ class TestCase(LibTrackTestCase):
             albumName='hey', position_in_album=position_in_album)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.position_in_album == position_in_album
+        assert self.saved_object.position_in_album == position_in_album
 
     def test_max_then_ok(self):
         position_in_album = settings.LIB_TRACK_POSITION_IN_ALBUM_MAX
@@ -44,7 +45,7 @@ class TestCase(LibTrackTestCase):
             album_name='album', position_in_album=position_in_album)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.position_in_album == position_in_album
+        assert self.saved_object.position_in_album == position_in_album
 
     def test_max_plus_one_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(
@@ -54,7 +55,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE.value
 
     def test_negative_one_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(album_name='album', position_in_album=-1)
@@ -63,7 +64,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL.value
 
     def test_not_integer_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.POSITION_IN_ALBUM: 5.5})
@@ -72,4 +73,4 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value

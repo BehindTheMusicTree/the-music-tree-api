@@ -15,8 +15,8 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.artists.count() == 1
-        assert self.saved_lib_track.artists.first() == artist
+        assert self.saved_object.artists.count() == 1
+        assert self.saved_object.artists.first() == artist
 
     def test_empty_then_none(self):
         artist_old = self.model_fixture_factory.create_artist(name="a-ha")
@@ -25,7 +25,7 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.ARTISTS_NAMES: ''})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.artists.count() == 0
+        assert self.saved_object.artists.count() == 0
 
     def test_one_artist_then_update(self):
         artist_old = self.model_fixture_factory.create_artist(name="a-ha")
@@ -36,8 +36,8 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.artists.count() == 1
-        assert self.saved_lib_track.artists.first() == artist_new
+        assert self.saved_object.artists.count() == 1
+        assert self.saved_object.artists.first() == artist_new
 
     def test_two_artists_then_update(self):
         artist_old = self.model_fixture_factory.create_artist(name="a-ha")
@@ -49,10 +49,10 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.artists.count() == 2
-        assert self.saved_lib_track.artists.filter(name=artist_new_1.name).exists()
-        assert self.saved_lib_track.artists.filter(name=artist_new_2.name).exists()
-        assert not self.saved_lib_track.artists.filter(name=artist_old.name).exists()
+        assert self.saved_object.artists.count() == 2
+        assert self.saved_object.artists.filter(name=artist_new_1.name).exists()
+        assert self.saved_object.artists.filter(name=artist_new_2.name).exists()
+        assert not self.saved_object.artists.filter(name=artist_old.name).exists()
 
     def test_delete_old_one_because_nothing_linked_to_it(self):
         artist_name = "a-ha"

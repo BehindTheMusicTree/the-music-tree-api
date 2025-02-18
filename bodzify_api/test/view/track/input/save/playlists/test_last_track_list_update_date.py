@@ -19,7 +19,7 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre.name})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.genre
+        assert self.saved_object.genre
         criteria_playlist_after_update: CriteriaPlaylist = CriteriaPlaylist.objects.get(
             user=self.test_user1, uuid=genre.criteria_playlist.uuid)
 

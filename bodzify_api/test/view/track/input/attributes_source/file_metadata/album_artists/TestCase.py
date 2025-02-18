@@ -12,15 +12,15 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
         response = \
             self._post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.album
-        assert self.saved_lib_track.album.album_artists.count() == 0
+        assert self.saved_object.album
+        assert self.saved_object.album.album_artists.count() == 0
 
     def test_longest_then_ok(self):
         response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
 
         expected_name = 'a' * settings.ARTIST_NAME_LEN_MAX
-        album = self.saved_lib_track.album
+        album = self.saved_object.album
         assert album
         assert album.name == expected_name
 

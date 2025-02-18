@@ -14,7 +14,7 @@ class TestCase(NullableFieldTestCase):
         response = self._put_lib_track(lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album == album
+        assert self.saved_object.album == album
 
     def test_empty_then_none(self):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
@@ -23,7 +23,7 @@ class TestCase(NullableFieldTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.ALBUM_NAME: ''})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album == None
+        assert self.saved_object.album == None
 
     def test_not_none_then_update(self):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
@@ -33,7 +33,7 @@ class TestCase(NullableFieldTestCase):
         response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.ALBUM_NAME: album_new.name})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.album == album_new
+        assert self.saved_object.album == album_new
 
     def test_nothing_linked_to_old_album_anymore_then_delete(self):
         album_name = "Le Noir"

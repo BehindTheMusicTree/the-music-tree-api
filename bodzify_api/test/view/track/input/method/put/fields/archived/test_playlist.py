@@ -39,8 +39,8 @@ class TestCase(LibTrackTestCase):
         response = self._put_lib_track(uuid=track_love.uuid, **{PutFields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.genre
-        criteria_playlist_saved: CriteriaPlaylist = self.saved_lib_track.genre.criteria_playlist
+        assert self.saved_object.genre
+        criteria_playlist_saved: CriteriaPlaylist = self.saved_object.genre.criteria_playlist
         assert criteria_playlist_saved.lib_tracks_archived_count == 2
         assert criteria_playlist_saved.lib_tracks_not_archived_count == 0
 

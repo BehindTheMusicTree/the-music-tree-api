@@ -15,7 +15,7 @@ class FilenameTestCase(LibTrackTestCase):
         response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.track_file.filename == \
+        assert self.saved_object.track_file.filename == \
             f"Roméo - ImHere.{LibTrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_title_and_artist_with_spaces_then_filename_with_spaces(self):
@@ -28,7 +28,7 @@ class FilenameTestCase(LibTrackTestCase):
         response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.track_file.filename == \
+        assert self.saved_object.track_file.filename == \
             f"{artist_name} - {title}.{LibTrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_title_and_artist_with_special_characters_then_filename_with_them(self):
@@ -41,7 +41,7 @@ class FilenameTestCase(LibTrackTestCase):
         response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.track_file.filename == \
+        assert self.saved_object.track_file.filename == \
             f"{artist_name} - {title}.{LibTrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_only_title_in_data_then_filename_with_title(self):
@@ -50,7 +50,7 @@ class FilenameTestCase(LibTrackTestCase):
         response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.track_file.filename == \
+        assert self.saved_object.track_file.filename == \
             f"{title}.{LibTrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
     def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_filename(self):
@@ -61,5 +61,5 @@ class FilenameTestCase(LibTrackTestCase):
         data_dict = {ExtractFields.URL: track_url}
         response = self._extract(**data_dict)
         assert response.status_code == status.HTTP_201_CREATED
-        assert len(self.saved_lib_track.track_file.filename) == \
+        assert len(self.saved_object.track_file.filename) == \
             settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH

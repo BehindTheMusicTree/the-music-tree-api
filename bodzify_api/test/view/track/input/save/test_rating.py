@@ -12,28 +12,28 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: None})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == None
+        assert self.saved_object.rating == None
 
     def test_zero(self):
         rating = 0
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: rating})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        assert self.saved_object.rating == rating
 
     def test_four(self):
         rating = 4
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: rating})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        assert self.saved_object.rating == rating
 
     def test_ten(self):
         rating = 10
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: rating})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        assert self.saved_object.rating == rating
 
     def test_error_when_above_maximum(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: 11})
@@ -42,7 +42,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE.value
 
     def test_error_when_below_minimum(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: -1})
@@ -51,7 +51,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL.value
 
     def test_error_when_not_integer(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: 5.5})
@@ -60,4 +60,4 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value

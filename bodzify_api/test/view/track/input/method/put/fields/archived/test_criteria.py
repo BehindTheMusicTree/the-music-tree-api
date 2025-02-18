@@ -25,7 +25,7 @@ class TestCase(LibTrackTestCase):
         data = {PutFields.ARCHIVED: "true"}
         response = self._put_lib_track(uuid=track_love.uuid, **data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.genre and self.saved_lib_track.genre.lib_tracks_archived_count == 4
+        assert self.saved_object.genre and self.saved_object.genre.lib_tracks_archived_count == 4
 
     def test_unarchived_then_criteria_has_minus_1_archived_lib_tracks(self):
         criteria = self.model_fixture_factory.create_genre(name="Jojo")
@@ -44,4 +44,4 @@ class TestCase(LibTrackTestCase):
         data = {PutFields.ARCHIVED: "false"}
         response = self._put_lib_track(uuid=track.uuid, **data)
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.genre and self.saved_lib_track.genre.lib_tracks_archived_count == 2
+        assert self.saved_object.genre and self.saved_object.genre.lib_tracks_archived_count == 2

@@ -16,7 +16,7 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
+        artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
@@ -35,7 +35,7 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ARTISTS_NAMES_STR: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.artists.count() == 0
+        assert self.saved_object.artists.count() == 0
 
     def test_existing_then_ok(self) -> None:
         artist_name = "Kopoe"
@@ -45,7 +45,7 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
+        artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
@@ -55,7 +55,7 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all())
+        artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
@@ -69,7 +69,7 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all().order_by('name'))
+        artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
         assert len(artists_list) == 2
         assert artists_list[0].name == artist1_name
         assert artists_list[1].name == artist2_name
@@ -83,7 +83,7 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all().order_by('name'))
+        artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
         assert len(artists_list) == 3
         assert artists_list[0].name == artist1_name
         assert artists_list[1].name == artist2_name
@@ -99,7 +99,7 @@ class TestCase(FieldModelStrTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_lib_track.artists.all().order_by('name'))
+        artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
         assert len(artists_list) == 3
         assert artists_list[0].name == existing_artist
         assert artists_list[1].name == new_artist1

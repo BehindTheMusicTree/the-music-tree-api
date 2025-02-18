@@ -13,7 +13,7 @@ class TestCase(NotNullableFieldTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.TITLE: title_new})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.title == title_new
+        assert self.saved_object.title == title_new
 
     def test_not_provided_then_unchanged(self):
         old_title = "Love"
@@ -22,7 +22,7 @@ class TestCase(NotNullableFieldTestCase):
         response = self._put_lib_track(lib_track.uuid, **{})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.title == old_title
+        assert self.saved_object.title == old_title
 
     def test_empty_then_error(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
@@ -38,4 +38,4 @@ class TestCase(NotNullableFieldTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.TITLE: title})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_lib_track.title == title
+        assert self.saved_object.title == title
