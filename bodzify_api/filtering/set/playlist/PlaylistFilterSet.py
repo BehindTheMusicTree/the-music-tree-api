@@ -15,11 +15,11 @@ from .Fields import Fields
 
 class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
     name = NonEmptiableCharFilter(method='filter_by_name_and_type')
-    type_label = OptionalEnumCharFilter(enum_class=PlaylistTypesLabel)
+    type = OptionalEnumCharFilter(enum_class=PlaylistTypesLabel)
 
     class Meta:
         model = Playlist
-        fields = [Fields.NAME, Fields.TYPE_LABEL_INTERNAL]
+        fields = [Fields.NAME, Fields.TYPE_LABEL_PUBLIC]
 
     def filter_by_name_and_type(self, queryset: QuerySet, name, value):
         type_label: Optional[str] = self.data.get(Fields.TYPE_LABEL_INTERNAL)

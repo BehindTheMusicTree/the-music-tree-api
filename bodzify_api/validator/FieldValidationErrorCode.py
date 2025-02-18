@@ -14,7 +14,6 @@ class FieldValidationErrorCode(Enum):
         INVALID_ENUM = 2102             # Invalid enumeration value
         REQUIRED = 2103                 # Missing required field
         INVALID_FORMAT = 2104           # Field format validation failed
-        INVALID_CHOICE = 2105           # Invalid choice from available options
         UNKNOWN = 2106                  # Single unknown field
         UNKNOWN_MULTIPLE = 2107         # Multiple unknown fields found
         SELF_REFERENCE = 2108           # Field references itself
@@ -58,12 +57,12 @@ class FieldValidationErrorCode(Enum):
     INVALID_ENUM = 'invalid_enum'
     REQUIRED = 'required'
     INVALID_FORMAT = 'invalid_format'
-    INVALID_CHOICE = 'invalid_choice'
     FIELD_DUPLICATE = 'field_duplicate'
     UNEXPECTED_LIST_VALUE = 'unexpected_list_value'
 
     # Filter
     INVALID_FILTER = 'invalid_filter'
+    INVALID_FILTERS = 'invalid_filters'
 
     # Field existence validation
     UNKNOWN_FIELD = 'unknown_field'
