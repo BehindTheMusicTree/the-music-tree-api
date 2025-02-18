@@ -44,8 +44,7 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
         if data is None:
             error = AppValidationError(
                 message="This field is required.",
-                code=FieldValidationErrorCode.REQUIRED,
-                field=self.__class__.__name__.lower()
+                code=FieldValidationErrorCode.DEFAULT
             )
             self._errors = error.detail
             raise error
@@ -107,12 +106,13 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
                     raise
                 except ValidationError as exc:
                     # Ensure we have a valid field name
-                    field_name = field.field_name if field.field_name else self.__class__.__name__.lower()
-                    error = AppValidationError(
-                        message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
-                        code=FieldValidationErrorCode.DEFAULT,
-                        field=field_name
-                    )
+                    kwargs = {
+                        'message': str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
+                        'code': FieldValidationErrorCode.DEFAULT
+                    }
+                    if field.field_name:
+                        kwargs['field'] = field.field_name
+                    error = AppValidationError(**kwargs)
                     self._errors = error.detail
                     raise error
 
@@ -125,8 +125,7 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
             except ValidationError as exc:
                 error = AppValidationError(
                     message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
-                    code=FieldValidationErrorCode.DEFAULT,
-                    field=self.__class__.__name__.lower()
+                    code=FieldValidationErrorCode.DEFAULT
                 )
                 self._errors = error.detail
                 raise error
