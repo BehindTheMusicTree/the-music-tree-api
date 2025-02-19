@@ -13,7 +13,7 @@ class ArtistsNamesField(AppField, ListField):
         # Only accept array input
         if not isinstance(data, (list, tuple)):
             raise AppValidationError(
-                field=self.get_error_field_name(),
+                field_name=self.get_error_field_name(),
                 message='Multiple values must be sent using array notation (field[]=value)',
                 field_validation_error_code=FieldValidationErrorCode.LIST_EXPECTED
             )
@@ -23,7 +23,7 @@ class ArtistsNamesField(AppField, ListField):
             for artist_name in data:
                 if artist_name is None or artist_name == '':
                     raise AppValidationError(
-                        field=self.get_error_field_name(),
+                        field_name=self.get_error_field_name(),
                         message='Empty artist names are not allowed when specifying multiple artists',
                         field_validation_error_code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
                     )
@@ -32,7 +32,7 @@ class ArtistsNamesField(AppField, ListField):
         unique_artists = set(data)
         if len(unique_artists) < len(data):
             raise AppValidationError(
-                field=self.get_error_field_name(),
+                field_name=self.get_error_field_name(),
                 message='Duplicate artist names are not allowed',
                 field_validation_error_code=FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
             )

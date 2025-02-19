@@ -19,7 +19,7 @@ class UniquePerUserNameField(AppCharField):
             user = request.user
             if self.model.objects.filter(user=user, name=value).exists():
                 raise AppValidationError(
-                    field=ModelFields.NAME_PUBLIC,
+                    field_name=ModelFields.NAME_PUBLIC,
                     message=_('An object this name already exists'),
                     field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE
                 )

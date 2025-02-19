@@ -23,7 +23,7 @@ class NonSelfReferencingFilter(ForeignKeyFilter):
             instance = getattr(parent, 'instance', None)
             if instance and str(instance.pk) == str(value):
                 raise AppValidationError(
-                    field=str(self.field_name),
+                    field_name=str(self.field_name),
                     message=_('Self-referencing is not allowed'),
                     field_validation_error_code=FieldValidationErrorCode.SELF_REFERENCE
                 )

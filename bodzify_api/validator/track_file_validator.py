@@ -17,7 +17,7 @@ def validate_size(file):
             'size': settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO
         }
         raise AppValidationError(
-            field=Fields.TRACK_FILE,
+            field_name=Fields.TRACK_FILE,
             message=message,
             field_validation_error_code=FieldValidationErrorCode.FILE_TOO_LARGE
         )
@@ -28,7 +28,7 @@ def validate_size(file):
             'size': settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO
         }
         raise AppValidationError(
-            field=Fields.TRACK_FILE,
+            field_name=Fields.TRACK_FILE,
             message=message,
             field_validation_error_code=FieldValidationErrorCode.FILE_TOO_SMALL
         )
@@ -56,7 +56,7 @@ def validate_content_type_is_audio(file):
     if error:
         message = 'Invalid file format. Only audio files are allowed.'
         raise AppValidationError(
-            field=Fields.TRACK_FILE_PUBLIC,
+            field_name=Fields.TRACK_FILE_PUBLIC,
             message=message,
             field_validation_error_code=FieldValidationErrorCode.INVALID_FILE_TYPE
         )
@@ -75,7 +75,7 @@ def validate_filename_length(value):
             'current_length': len(filename)
         }
         raise AppValidationError(
-            field=Fields.TRACK_FILE_PUBLIC,
+            field_name=Fields.TRACK_FILE_PUBLIC,
             message=message,
             field_validation_error_code=FieldValidationErrorCode.INVALID_FILENAME
         )

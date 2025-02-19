@@ -125,7 +125,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except Exception as error:
             raise AppValidationError(
-                field=Fields.TRACK_FILE_PUBLIC,
+                field_name=Fields.TRACK_FILE_PUBLIC,
                 message=_('Error while extracting metadata from file: %(error)s') % {'error': str(error)},
                 field_validation_error_code=FieldValidationErrorCode.METADATA_EXTRACTION_FAILED
             )

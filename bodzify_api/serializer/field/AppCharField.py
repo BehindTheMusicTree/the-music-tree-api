@@ -50,7 +50,9 @@ class AppCharField(AppField, serializers.CharField):
         else:
             code = FieldValidationErrorCode.INVALID_FORMAT
 
-        raise AppValidationError(field=self.get_error_field_name(), message=message, field_validation_error_code=code)
+        raise AppValidationError(
+            field_name=self.get_error_field_name(),
+            message=message, field_validation_error_code=code)
 
     def to_internal_value(self, data: Any) -> Optional[str]:
         if data is None:

@@ -92,7 +92,7 @@ class PrivateContentUuidField(PrivateUuidField):
         else:
             code = FieldValidationErrorCode.DEFAULT
 
-        raise AppValidationError(field=self.get_error_field_name(), message=msg, field_validation_error_code=code)
+        raise AppValidationError(field_name=self.get_error_field_name(), message=msg, field_validation_error_code=code)
 
     def to_internal_value(self, data: Any) -> Dict[str, Any]:
         if data is None:

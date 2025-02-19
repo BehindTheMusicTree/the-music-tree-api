@@ -53,7 +53,7 @@ class TrackablePlayCountUuidField(PrivateUuidField):
 
         if not content_object:
             raise AppValidationError(
-                field=self.field_name or 'trackable_play_count_uuid',
+                field_name=self.field_name or 'trackable_play_count_uuid',
                 message='Invalid content object UUID',
                 field_validation_error_code=FieldValidationErrorCode.RESOURCE_NOT_OWNED
             )

@@ -42,8 +42,8 @@ class AppValidationError(DrfValidationError):
 
     def __init__(self, message: str,
                  field_validation_error_code: FieldValidationErrorCode,
-                 field: Optional[str] = DEFAULT_FIELD):
-        self.field = field if field else self.DEFAULT_FIELD
+                 field_name: Optional[str] = DEFAULT_FIELD):
+        self.field = field_name if field_name else self.DEFAULT_FIELD
         error_detail = {
             'message': message,
             'code': field_validation_error_code.value,
@@ -141,10 +141,12 @@ class AppValidationError(DrfValidationError):
         if error_details:
             field, message, code = error_details
             return cls(
-                field=field,
+                field_name=field,
                 message=message,
-                code=FieldValidationErrorCode(code)
+                field_validation_error_code=FieldValidationErrorCode(code)
             )
 
         # Fallback for unknown format
-        return cls(message=str(detail), code=FieldValidationErrorCode.INVALID_FORMAT, field=cls.DEFAULT_FIELD)
+        return cls(message=str(detail),
+                   field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT,
+                   field_name=cls.DEFAULT_FIELD)

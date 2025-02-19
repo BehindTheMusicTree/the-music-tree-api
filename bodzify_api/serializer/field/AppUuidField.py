@@ -48,7 +48,7 @@ class AppUuidField(AppField, serializers.UUIDField):
             code = FieldValidationErrorCode.DEFAULT
 
         raise AppValidationError(
-            field=self.get_error_field_name(),
+            field_name=self.get_error_field_name(),
             message=msg,
             field_validation_error_code=code
         )

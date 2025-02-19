@@ -19,12 +19,12 @@ class AppFilterSet(FilterSet):
         if invalid_filters:
             if len(invalid_filters) == 1:
                 raise AppValidationError(
-                    field=f'{invalid_filters[0]}',
+                    field_name=f'{invalid_filters[0]}',
                     message=f'Invalid filter detected',
                     field_validation_error_code=FieldValidationErrorCode.INVALID_FILTER
                 )
             raise AppValidationError(
-                field=f'{", ".join(sorted(invalid_filters))}',
+                field_name=f'{", ".join(sorted(invalid_filters))}',
                 message=f'Invalid filters detected',
                 field_validation_error_code=FieldValidationErrorCode.INVALID_FILTERS
             )

@@ -132,7 +132,7 @@ class TrackFile(PrivateStandardResource):
                     )
                     if existing_track_file:
                         raise AppValidationError(
-                            field='file',
+                            field_name='file',
                             message=_('The file "%(current)s" has the same fingerprint as the file "%(existing)s"') % {
                                 'current': self.filename,
                                 'existing': existing_track_file.filename
@@ -208,7 +208,7 @@ class TrackFile(PrivateStandardResource):
                 self.flac_md5_has_been_corrected = True
             except Exception:
                 raise AppValidationError(
-                    field='file',
+                    field_name='file',
                     message=_(
                         'The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.'),
                     field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)

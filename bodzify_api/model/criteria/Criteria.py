@@ -110,13 +110,13 @@ class Criteria(LibTrackMixin):
             error_message = str(e)
             if 'non_empty_name' in error_message:
                 raise AppValidationError(
-                    field=Fields.NAME_PUBLIC,
+                    field_name=Fields.NAME_PUBLIC,
                     message=_('Name cannot be empty'),
                     field_validation_error_code=FieldValidationErrorCode.NAME_EMPTY
                 )
             elif 'unique_name_per_user' in error_message:
                 raise AppValidationError(
-                    field=Fields.NAME_PUBLIC,
+                    field_name=Fields.NAME_PUBLIC,
                     message=_('A criteria with this name already exists for this user'),
                     field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE
                 )

@@ -34,7 +34,7 @@ class DescendantAwareFilter(NonSelfReferencingFilter):
             target = queryset.model.objects.filter(pk=value).first()
             if target is not None and instance.is_descendant_of(target):
                 raise AppValidationError(
-                    field=str(self.field_name),
+                    field_name=str(self.field_name),
                     message=_('Cannot reference an ancestor'),
                     field_validation_error_code=FieldValidationErrorCode.ANCESTOR_REFERENCE
                 )

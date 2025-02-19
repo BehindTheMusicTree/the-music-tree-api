@@ -19,7 +19,7 @@ def check_if_remote_file_exists_using_get_request_with_range_header(url):
             return False
     except Exception as e:
         raise AppValidationError(
-            field='url',
+            field_name='url',
             message=_('There was an issue requesting the URL %(url)s') % {'url': url},
             field_validation_error_code=FieldValidationErrorCode.URL_REQUEST_FAILED
         )
@@ -28,7 +28,7 @@ def check_if_remote_file_exists_using_get_request_with_range_header(url):
 def validate_url(value: str):
     if not value.startswith('http'):
         raise AppValidationError(
-            field='url',
+            field_name='url',
             message=_('%(url)s is not a valid URL') % {'url': value},
             field_validation_error_code=FieldValidationErrorCode.INVALID_URL
         )
@@ -36,13 +36,13 @@ def validate_url(value: str):
         and not value.lower().endswith('.wav')
             and not value.lower().endswith('.flac')):
         raise AppValidationError(
-            field='url',
+            field_name='url',
             message=_('%(url)s is not a valid audio file') % {'url': value},
             field_validation_error_code=FieldValidationErrorCode.INVALID_FILE_TYPE
         )
     if not check_if_remote_file_exists_using_get_request_with_range_header(value):
         raise AppValidationError(
-            field='url',
+            field_name='url',
             message=_('%(url)s does not exist') % {'url': value},
             field_validation_error_code=FieldValidationErrorCode.URL_NOT_FOUND
         )

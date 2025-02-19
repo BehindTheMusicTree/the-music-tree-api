@@ -41,7 +41,7 @@ class DescendantAwareField(NonSelfReferencingField[T], Generic[T]):
             model_instance = value
             if isinstance(model_instance, HasDescendantCheck) and model_instance.is_descendant_of(instance):
                 raise AppValidationError(
-                    field=str(self.field_name),
+                    field_name=str(self.field_name),
                     message=self.error_messages['descendant_reference'],
                     field_validation_error_code=FieldValidationErrorCode.ANCESTOR_REFERENCE
                 )

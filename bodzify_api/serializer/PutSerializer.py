@@ -14,7 +14,7 @@ class PutSerializer(AppSerializer):
         request = self.context.get(self.REQUEST_FIELD)
         if request and request.method.upper() == 'PUT' and not attrs:
             raise AppValidationError(
-                field=self.REQUEST_FIELD,
+                field_name=self.REQUEST_FIELD,
                 message='At least one field must be provided for update',
                 field_validation_error_code=FieldValidationErrorCode.NO_UPDATES
             )

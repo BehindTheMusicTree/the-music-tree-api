@@ -67,13 +67,13 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         if self._is_list_field(field):
             if field_name in data:
                 raise AppValidationError(
-                    field=field_name,
+                    field_name=field_name,
                     message=_(f"List field '{field_name}' must be specified as '{field_name}[]'"),
                     field_validation_error_code=FieldValidationErrorCode.MALFORMED_LIST
                 )
         elif field_name in data and isinstance(data[field_name], list):
             raise AppValidationError(
-                field=field_name,
+                field_name=field_name,
                 message=_("The field does not accept list values"),
                 field_validation_error_code=FieldValidationErrorCode.UNEXPECTED_LIST
             )
@@ -146,7 +146,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 else FieldValidationErrorCode.DEFAULT
             )
             error = AppValidationError(
-                field=field.field_name,
+                field_name=field.field_name,
                 message=exc_first_detail or 'Invalid input.',
                 field_validation_error_code=error_code
             )
