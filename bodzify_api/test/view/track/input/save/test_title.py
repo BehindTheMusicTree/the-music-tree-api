@@ -2,12 +2,13 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.put import Fields as PutFields
+from bodzify_api.test.field.body_data.type.not_nullable.NotNullableBodyDataTestCase import NotNullableBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(NotNullableBodyDataTestCase, LibTrackTestCase):
 
     def test_longest_then_ok(self):
         value = "a" * settings.LIB_TRACK_TITLE_LEN_MAX

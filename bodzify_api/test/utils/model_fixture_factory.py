@@ -12,7 +12,7 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.core.files import File
 
-from bodzify_api.serializer.schema.model.lib_track.input.post.post import Fields as LibTrackPostFields
+from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
