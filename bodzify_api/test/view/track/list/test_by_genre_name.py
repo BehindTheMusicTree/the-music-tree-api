@@ -10,13 +10,17 @@ class TestCase(LibTrackTestCase, NullableFreeCharFilterTestCase):
     def test_empty_then_return_all(self):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
+
         response = self._get_lib_tracks(genre_name='')
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
 
     def test_filter_not_empty_then_dont_return_track_with_no_genre(self):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
+
         response = self._get_lib_tracks(genre_name='jo')
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 0
 
@@ -30,6 +34,7 @@ class TestCase(LibTrackTestCase, NullableFreeCharFilterTestCase):
             title="Hey", genre=genre_punk)
 
         response = self._get_lib_tracks(genre_name='RoC')
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
         assert self.results[0][LibTrackFields.TITLE] == track_life.title

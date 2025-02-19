@@ -13,7 +13,9 @@ class TestCase(LibTrackTestCase):
             title="Life", language="en", genre=genre)
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", language="fr")
         self.model_fixture_factory.create_lib_track_with_file(title="Rockaille", language="en")
+
         response = self._get_lib_tracks(language='en', genre_name='Roc')
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
         assert self.results[0][data_transformer.to_camel_case(LibTrackFields.TITLE)] == track.title
