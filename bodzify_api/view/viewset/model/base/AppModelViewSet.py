@@ -1,14 +1,16 @@
 from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
-from django.db import IntegrityError
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.serializers import ModelSerializer, Serializer, BaseSerializer
 from rest_framework import viewsets, status
 from rest_framework.exceptions import ValidationError as DrfValidationError, MethodNotAllowed
+from django.db import IntegrityError
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import FileResponse
 from django.db.models import QuerySet
+from django.core.exceptions import ImproperlyConfigured
 
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
@@ -16,7 +18,6 @@ from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
-from bodzify_api.view.error.AppErrorMessages import AppErrorMessages
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
@@ -56,23 +57,13 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
         if not serializer:
-            raise DrfValidationError(
-                detail={
-                    'message': AppErrorMessages.MESSAGES[ApiErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED],
-                    'code': 'serializer_not_defined'
-                }
-            )
+            raise ImproperlyConfigured(f"Serializer {serializer_type.class_name} not defined in viewset")
         return serializer
 
     def _get_create_serializer_class(self) -> Type[Serializer]:
         if self.create_serializer_class:
             return self.create_serializer_class
-        raise DrfValidationError(
-            detail={
-                'message': AppErrorMessages.MESSAGES[ApiErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED],
-                'code': 'serializer_not_defined'
-            }
-        )
+        raise ImproperlyConfigured("Create serializer class not defined in viewset")
 
     def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
         serializer.is_valid(raise_exception=True)
@@ -104,14 +95,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._require_serializer(SerializerType.UPDATE)
         serializer = serializer_class(instance=instance, data=update_data, partial=True, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-        if not validated_data:
-            raise DrfValidationError(
-                detail={
-                    'message': "PUT request requires at least one field to update. Please specify the fields you want \
-to modify in the request body.",
-                    'code': "validation_error"
-                }
-            )
         return self.model_class.objects.update_instance(instance, **validated_data)
 
     def _handle_list(self) -> Response:
