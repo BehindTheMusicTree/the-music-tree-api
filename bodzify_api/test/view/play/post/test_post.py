@@ -14,12 +14,13 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestCase(PlayTestCase):
 
     def test_extra_field_then_error(self) -> None:
-        response = self._post_play(**{'nonExistingField': 'oifjqoif'})
+        extra_field = 'extraField'
+        response = self._post_play(**{extra_field: 'value'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == 'nonExistingField'
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == extra_field
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNKNOWN_FIELD.value
 
     def test_multiple_values_for_content_then_error(self) -> None:
