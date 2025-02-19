@@ -5,6 +5,8 @@ from bodzify_api.serializer.schema.model.playlist.children.criteria.output.detai
 from bodzify_api.filtering.set.playlist.Fields import Fields as FilterFields
 from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.playlist.children.criteria.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(GenrePlaylistTestCase, NotNullableFreeCharFilterTestCase):
@@ -15,6 +17,8 @@ class TestCase(GenrePlaylistTestCase, NotNullableFreeCharFilterTestCase):
         response = self._get_genre_playlists(**{FilterFields.NAME: ''})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FIELD] == FilterFields.NAME
+        assert self.bad_request_result_field_errors[0][ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_tag_playlists_then_not_in_results(self):
         tag = self.model_fixture_factory.create_tag(name="foot")

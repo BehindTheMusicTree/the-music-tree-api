@@ -2,14 +2,14 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as PostFields
-from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase \
-    import NullableUuidFieldFromDataTestCase
+from bodzify_api.test.field.body_data.type.ForeignKeyDataTestCase import ForeignKeyDataTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(NullableUuidFieldFromDataTestCase):
+class TestCase(LibTrackTestCase, ForeignKeyDataTestCase):
     post_field_key = PostFields.GENRE_NAME
 
-    def test_non_existing_uuid_then_error(self):
+    def test_non_existing_then_error(self):
         data = {PostFields.GENRE_UUID: 'a' * settings.UUID_LEN}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

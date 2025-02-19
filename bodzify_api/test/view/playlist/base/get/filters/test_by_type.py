@@ -37,6 +37,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
 
     def test_empty_then_error(self):
         response = self._get_playlists(**{to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC): ''})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]

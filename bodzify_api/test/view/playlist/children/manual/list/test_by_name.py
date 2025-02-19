@@ -3,6 +3,9 @@ from rest_framework import status
 from bodzify_api.serializer.schema.model.playlist.children.manual.output.Fields import Fields
 from bodzify_api.test.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
+from bodzify_api.filtering.set.playlist.Fields import Fields as FilterFields
 
 
 class TestCase(ManualPlaylistTestCase, NotNullableFreeCharFilterTestCase):
@@ -14,6 +17,8 @@ class TestCase(ManualPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         response = self._get_manual_playlists(name='')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FIELD] == FilterFields.NAME
+        assert self.bad_request_result_field_errors[0][ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_contains_in_another_case_then_results(self):
         manual_playlist1 = self.model_fixture_factory.create_manual_playlist(name="foot")
