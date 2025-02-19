@@ -11,6 +11,6 @@ class TestCase(ArtistTestCase):
         filter = 'invalidfilter'
         response = self._get_artists(**{filter: 'a'})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FIELD] == filter
+        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FieldErrors.FIELD] == filter
         assert self.bad_request_result_field_errors[0][
             ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FILTER.value

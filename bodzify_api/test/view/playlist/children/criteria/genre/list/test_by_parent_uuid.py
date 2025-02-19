@@ -28,7 +28,7 @@ class TestCase(GenrePlaylistTestCase, PrivateForeignKeyFilterTestCase):
         response = self._get_genre_playlists(**{RietrieveFields.PARENT: 'invalid-uuid'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FIELD] == RietrieveFields.PARENT
+        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FieldErrors.FIELD] == RietrieveFields.PARENT
         assert self.bad_request_result_field_errors[0][
             ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
 

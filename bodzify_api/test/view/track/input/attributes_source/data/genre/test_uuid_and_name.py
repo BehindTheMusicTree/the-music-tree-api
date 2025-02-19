@@ -24,7 +24,8 @@ class TestCase(LibTrackTestCase):
             PostFields.GENRE_UUID: 'k' * settings.UUID_LEN,
         }
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FIELD] == PostFields.GENRE_UUID
+        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE_UUID
         assert self.bad_request_result_field_errors[0][
             ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.MUTUALLY_EXCLUSIVE.value
