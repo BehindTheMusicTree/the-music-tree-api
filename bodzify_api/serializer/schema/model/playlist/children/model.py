@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
-from bodzify_api.serializer.AppValidationSerializer import AppSerializer
+from bodzify_api.serializer.AppSerializer import AppSerializer
 
 
 class ChildPlaylistModelSerializer(AppSerializer, serializers.ModelSerializer):
