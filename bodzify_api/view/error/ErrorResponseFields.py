@@ -1,5 +1,4 @@
 
-from locale import CODESET
 from rest_framework import status
 
 from bodzify_api.validator.AppValidationErrorFields import AppValidationErrorFields
@@ -13,7 +12,6 @@ class ErrorResponseFields:
     MESSAGE = 'message'  # Used for general error messages
     SUCCESS = 'success'  # Indicates if the operation was successful
     DETAILS = 'details'  # List of detailed error information
-    DETAIL = 'detail'  # Used for single error messages
     FIELD_ERRORS = 'field_errors'  # Used for field-specific error messages
 
     class FieldErrors:

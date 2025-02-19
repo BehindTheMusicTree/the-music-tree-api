@@ -109,7 +109,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
         }
         """
         self.bad_request_result = response.json()
-        bad_request_result_details = response.json()['details'][0]
+        bad_request_result_details = response.json()[ErrorResponseFields.DETAILS][0]
         self.bad_request_result_field_errors_json = bad_request_result_details['fieldErrors']
 
         # Convert field errors to a list format for easier testing

@@ -145,7 +145,7 @@ class ErrorResponse:
             return ErrorResponse._create_error_response(
                 {ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
                  ErrorResponseFields.FIELD_ERRORS: error_detail
-                 if isinstance(error_detail, dict) else {ErrorResponseFields.DETAIL: error_detail}},
+                 if isinstance(error_detail, dict) else {ErrorResponseFields.DETAILS: error_detail}},
                 ApiErrorCode.VALIDATION_INVALID_INPUT)
 
         if isinstance(exception, DjangoValidationError):
@@ -170,7 +170,7 @@ class ErrorResponse:
                 formatted_error = {
                     ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
                     ErrorResponseFields.FIELD_ERRORS: {
-                        ErrorResponseFields.DETAIL: [{
+                        ErrorResponseFields.DETAILS: [{
                             ErrorResponseFields.FieldErrors.MESSAGE:
                                 str(exception.messages[0] if exception.messages else exception),
                             ErrorResponseFields.FieldErrors.CODE:
