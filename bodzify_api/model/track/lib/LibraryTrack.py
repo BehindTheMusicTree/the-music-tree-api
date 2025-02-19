@@ -15,7 +15,6 @@ from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeign
 from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
-from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
