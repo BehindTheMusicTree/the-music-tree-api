@@ -9,6 +9,7 @@ from rest_framework.fields import ListField, SkipField
 from rest_framework.relations import ManyRelatedField
 from rest_framework.exceptions import ValidationError
 
+from bodzify_api.serializer.field.AppField import AppField
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
@@ -132,7 +133,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
 
         return value
 
-    def _validate_field(self, field, value) -> Any:
+    def _validate_field(self, field: AppField, value) -> Any:
         try:
             return field.run_validation(value)
         except ValidationError as exc:
