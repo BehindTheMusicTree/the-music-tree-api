@@ -29,8 +29,8 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD]rrors.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_malformed_array_field_name_then_error(self) -> None:
         malformed_field_name = "album_artists_names"
@@ -40,8 +40,8 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == malformed_field_name
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.MALFORMED_LIST.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == malformed_field_name
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.MALFORMED_LIST.value
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ARTISTS_NAMES_ARRAY: ''})
@@ -127,8 +127,8 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_multiple_artists_with_duplicates_then_error(self) -> None:
         artist_name = "DuplicateArtist"
@@ -138,8 +138,8 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE.value
 
     def test_multiple_artists_with_empty_names_then_error(self) -> None:
         valid_artist = "ValidArtist"
@@ -149,5 +149,5 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST.value

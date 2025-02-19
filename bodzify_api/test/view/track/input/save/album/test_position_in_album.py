@@ -27,8 +27,8 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.POSITION_IN_ALBUM
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL.value
 
     def test_one_then_ok(self):
         position_in_album = 1
@@ -54,8 +54,8 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.POSITION_IN_ALBUM
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE.value
 
     def test_negative_one_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(album_name='album', position_in_album=-1)
@@ -63,8 +63,8 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.POSITION_IN_ALBUM
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL.value
 
     def test_not_integer_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.POSITION_IN_ALBUM: 5.5})
@@ -72,5 +72,5 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == PostFields.POSITION_IN_ALBUM
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.POSITION_IN_ALBUM
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value

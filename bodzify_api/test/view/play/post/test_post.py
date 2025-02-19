@@ -19,8 +19,8 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == 'nonExistingField'
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNKNOWN_FIELD.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == 'nonExistingField'
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNKNOWN_FIELD.value
 
     def test_multiple_values_for_content_then_error(self) -> None:
         playlist1_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
@@ -32,8 +32,8 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == to_camel_case(Fields.CONTENT)
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(Fields.CONTENT)
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST.value
 
     def test_non_existant_content_then_error(self):
         response = self._post_play(**{to_camel_case(Fields.CONTENT): '88978e5e-5238-442b-bd24-dbbde478e090'})
@@ -41,8 +41,8 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == to_camel_case(Fields.CONTENT)
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_REFERENCE.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(Fields.CONTENT)
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_REFERENCE.value
 
     def test_playlist_play(self) -> None:
         current_play_count = 42

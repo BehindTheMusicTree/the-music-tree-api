@@ -26,8 +26,8 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == PostFields.GENRE_NAME
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE_NAME
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_empty_then_none(self):
         data = {PostFields.GENRE_NAME: ''}

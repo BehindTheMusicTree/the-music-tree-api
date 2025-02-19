@@ -41,8 +41,8 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE.value
 
     def test_error_when_below_minimum(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: -1})
@@ -50,8 +50,8 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL.value
 
     def test_error_when_not_integer(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: 5.5})
@@ -59,5 +59,5 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value

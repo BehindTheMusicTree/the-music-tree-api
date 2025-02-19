@@ -120,7 +120,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
                 self.bad_request_result_field_errors.append({
                     'field': field_name,
                     'message': error[ErrorResponseFields.MESSAGE],
-                    'code': error[ErrorResponseFields.CODE]
+                    'code': error[ErrorResponseFields.FieldErrors.CODE]
                 })
 
     def _set_results_attributes(self, response):

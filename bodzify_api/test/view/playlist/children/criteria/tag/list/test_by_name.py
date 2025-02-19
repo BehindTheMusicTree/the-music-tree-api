@@ -18,7 +18,8 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0][ErrorResponseFields.FIELD] == FilterFields.NAME
-        assert self.bad_request_result_field_errors[0][ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
+        assert self.bad_request_result_field_errors[0][
+            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_genre_playlists_then_not_in_results(self):
         tag = self.model_fixture_factory.create_tag(name="foot")

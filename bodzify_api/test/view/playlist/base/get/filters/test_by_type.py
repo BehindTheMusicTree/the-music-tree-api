@@ -41,8 +41,8 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert to_snake_case(error[ErrorResponseFields.FIELD]) == FilterSetFields.TYPE_LABEL_PUBLIC
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
+        assert to_snake_case(error[ErrorResponseFields.FieldErrors.FIELD]) == FilterSetFields.TYPE_LABEL_PUBLIC
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"
@@ -81,5 +81,5 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC)
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.INVALID_ENUM.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC)
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_ENUM.value

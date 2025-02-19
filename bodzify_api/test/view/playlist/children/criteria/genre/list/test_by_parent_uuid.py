@@ -29,7 +29,8 @@ class TestCase(GenrePlaylistTestCase, PrivateForeignKeyFilterTestCase):
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0][ErrorResponseFields.FIELD] == RietrieveFields.PARENT
-        assert self.bad_request_result_field_errors[0][ErrorResponseFields.CODE] == FieldValidationErrorCode.BLANK.value
+        assert self.bad_request_result_field_errors[0][
+            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_empty_then_results(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")

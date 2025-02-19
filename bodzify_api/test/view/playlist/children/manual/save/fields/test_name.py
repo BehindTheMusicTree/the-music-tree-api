@@ -15,8 +15,8 @@ class TestCase(ManualPlaylistTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.NAME_PUBLIC
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST.value
 
     def test_longest_then_ok(self):
         response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: "a" * settings.MANUAL_PLAYLIST_NAME_LEN_MAX})
@@ -31,8 +31,8 @@ class TestCase(ManualPlaylistTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.NAME_PUBLIC
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_already_exists_then_error(self):
         name = "value"
@@ -43,5 +43,5 @@ class TestCase(ManualPlaylistTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == Fields.NAME_PUBLIC
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.NAME_DUPLICATE.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.NAME_PUBLIC
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.NAME_DUPLICATE.value

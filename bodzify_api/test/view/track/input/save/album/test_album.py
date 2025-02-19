@@ -26,8 +26,8 @@ class TestCase(LibTrackTestCase, NullableBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == to_camel_case(ExtractFields.ALBUM_NAME)
-        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(ExtractFields.ALBUM_NAME)
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ALBUM_NAME: ''})

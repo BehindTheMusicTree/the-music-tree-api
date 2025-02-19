@@ -27,4 +27,4 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0][ErrorResponseFields.FIELD] == PostFields.GENRE_UUID
         assert self.bad_request_result_field_errors[0][
-            ErrorResponseFields.CODE] == FieldValidationErrorCode.MUTUALLY_EXCLUSIVE.value
+            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.MUTUALLY_EXCLUSIVE.value
