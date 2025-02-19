@@ -16,7 +16,7 @@ class PutSerializer(AppSerializer):
             raise AppValidationError(
                 field=self.REQUEST_FIELD,
                 message='At least one field must be provided for update',
-                code=FieldValidationErrorCode.NO_UPDATES
+                field_validation_error_code=FieldValidationErrorCode.NO_UPDATES
             )
 
         return super().validate(attrs)

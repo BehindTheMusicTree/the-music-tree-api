@@ -21,6 +21,6 @@ class UniquePerUserNameField(AppCharField):
                 raise AppValidationError(
                     field=ModelFields.NAME_PUBLIC,
                     message=_('An object this name already exists'),
-                    code=FieldValidationErrorCode.NAME_DUPLICATE
+                    field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE
                 )
         return value

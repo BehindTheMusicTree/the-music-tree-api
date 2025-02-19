@@ -15,7 +15,7 @@ class ArtistsNamesField(AppField, ListField):
             raise AppValidationError(
                 field=self.get_error_field_name(),
                 message='Multiple values must be sent using array notation (field[]=value)',
-                code=FieldValidationErrorCode.LIST_EXPECTED
+                field_validation_error_code=FieldValidationErrorCode.LIST_EXPECTED
             )
 
         # Check for empty values between commas
@@ -25,7 +25,7 @@ class ArtistsNamesField(AppField, ListField):
                     raise AppValidationError(
                         field=self.get_error_field_name(),
                         message='Empty artist names are not allowed when specifying multiple artists',
-                        code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
+                        field_validation_error_code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
                     )
 
         # Check for duplicates
@@ -34,7 +34,7 @@ class ArtistsNamesField(AppField, ListField):
             raise AppValidationError(
                 field=self.get_error_field_name(),
                 message='Duplicate artist names are not allowed',
-                code=FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
+                field_validation_error_code=FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
             )
 
         # Convert tuple to list if necessary to match ListField's expected type

@@ -21,7 +21,7 @@ class RatingField(serializers.IntegerField):
             raise AppValidationError(
                 field='rating',
                 message='Rating must be an integer',
-                code=FieldValidationErrorCode.INVALID_FORMAT
+                field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT
             )
 
         if value is not None:
@@ -29,13 +29,13 @@ class RatingField(serializers.IntegerField):
                 raise AppValidationError(
                     field='rating',
                     message='Rating must be greater than or equal to 0',
-                    code=FieldValidationErrorCode.RATING_TOO_SMALL
+                    field_validation_error_code=FieldValidationErrorCode.RATING_TOO_SMALL
                 )
             if value > settings.LIB_TRACK_RATING_VALUE_MAX:
                 raise AppValidationError(
                     field='rating',
                     message=f'Rating must be less than or equal to {settings.LIB_TRACK_RATING_VALUE_MAX}',
-                    code=FieldValidationErrorCode.RATING_TOO_LARGE
+                    field_validation_error_code=FieldValidationErrorCode.RATING_TOO_LARGE
                 )
 
         return value

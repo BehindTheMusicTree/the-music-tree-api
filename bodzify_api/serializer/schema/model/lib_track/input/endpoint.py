@@ -51,7 +51,7 @@ class LibTrackEndPointSerializer(AppSerializer):
                 raise AppValidationError(
                     field=Fields.GENRE_NAME,
                     message='Genre name and genre uuid cannot be specified at the same time',
-                    code=FieldValidationErrorCode.MUTUALLY_EXCLUSIVE
+                    field_validation_error_code=FieldValidationErrorCode.MUTUALLY_EXCLUSIVE
                 )
 
         if Fields.ALBUM_ARTISTS_NAMES_ARRAY in data:
@@ -65,7 +65,7 @@ class LibTrackEndPointSerializer(AppSerializer):
                 raise AppValidationError(
                     field=Fields.ALBUM_ARTISTS_NAMES_ARRAY,
                     message=error_message,
-                    code=FieldValidationErrorCode.DEPENDENCY_MISSING
+                    field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING
                 )
 
         if Fields.POSITION_IN_ALBUM in data:
@@ -79,7 +79,7 @@ class LibTrackEndPointSerializer(AppSerializer):
                 AppValidationError(
                     field=Fields.ALBUM_NAME,
                     message=error_message,
-                    code=FieldValidationErrorCode.DEPENDENCY_MISSING
+                    field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING
                 )
 
         return super().validate(data)

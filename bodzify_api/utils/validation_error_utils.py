@@ -19,7 +19,7 @@ def raise_validation_error(message: str, field_validation_error_code: FieldValid
         field_validation_error_code: Machine-readable error code
         field: The field that caused the validation error
     """
-    raise AppValidationError(field=field, message=message, code=field_validation_error_code)
+    raise AppValidationError(field=field, message=message, field_validation_error_code=field_validation_error_code)
 
 
 def raise_duplicate_field_error(field: str) -> None:

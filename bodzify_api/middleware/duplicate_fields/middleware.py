@@ -11,10 +11,10 @@ class DuplicateFieldsMiddleware:
         self.get_response = get_response
 
     def _handle_duplicate_field_error_for_content_type_json(self, field_name: str) -> HttpResponse:
-        validation_error = AppValidationError.from_middleware(
+        validation_error = AppValidationError(
             field=field_name,
             message='Duplicate field detected.',
-            code=FieldValidationErrorCode.FIELD_DUPLICATE
+            field_validation_error_code=FieldValidationErrorCode.FIELD_DUPLICATE
         )
         return ErrorResponse.from_validation_error(validation_error)
 

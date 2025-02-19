@@ -25,7 +25,7 @@ class NonSelfReferencingFilter(ForeignKeyFilter):
                 raise AppValidationError(
                     field=str(self.field_name),
                     message=_('Self-referencing is not allowed'),
-                    code=FieldValidationErrorCode.SELF_REFERENCE
+                    field_validation_error_code=FieldValidationErrorCode.SELF_REFERENCE
                 )
 
         return filtered_queryset

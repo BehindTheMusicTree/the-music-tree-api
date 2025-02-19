@@ -21,7 +21,7 @@ class PositionInAlbumField(serializers.IntegerField):
             raise AppValidationError(
                 field='positionInAlbum',
                 message='Position in album must be an integer',
-                code=FieldValidationErrorCode.INVALID_FORMAT
+                field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT
             )
 
         if value is not None:
@@ -29,13 +29,13 @@ class PositionInAlbumField(serializers.IntegerField):
                 raise AppValidationError(
                     field='positionInAlbum',
                     message='Position in album must be greater than or equal to 1',
-                    code=FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
+                    field_validation_error_code=FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_SMALL
                 )
             if value > settings.LIB_TRACK_POSITION_IN_ALBUM_MAX:
                 raise AppValidationError(
                     field='positionInAlbum',
                     message=f'Position in album must be less than or equal to {settings.LIB_TRACK_POSITION_IN_ALBUM_MAX}',
-                    code=FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE
+                    field_validation_error_code=FieldValidationErrorCode.POSITION_IN_ALBUM_TOO_LARGE
                 )
 
         return value

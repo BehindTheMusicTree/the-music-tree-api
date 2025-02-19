@@ -21,12 +21,12 @@ class AppFilterSet(FilterSet):
                 raise AppValidationError(
                     field=f'{invalid_filters[0]}',
                     message=f'Invalid filter detected',
-                    code=FieldValidationErrorCode.INVALID_FILTER
+                    field_validation_error_code=FieldValidationErrorCode.INVALID_FILTER
                 )
             raise AppValidationError(
                 field=f'{", ".join(sorted(invalid_filters))}',
                 message=f'Invalid filters detected',
-                code=FieldValidationErrorCode.INVALID_FILTERS
+                field_validation_error_code=FieldValidationErrorCode.INVALID_FILTERS
             )
 
         return super(AppFilterSet, self).qs

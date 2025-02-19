@@ -50,7 +50,7 @@ class AppUuidField(AppField, serializers.UUIDField):
         raise AppValidationError(
             field=self.get_error_field_name(),
             message=msg,
-            code=code
+            field_validation_error_code=code
         )
 
     def to_internal_value(self, data: Any) -> UUID:

@@ -27,7 +27,7 @@ class NonSelfReferencingField(PrivateUuidField[T], Generic[T]):
             raise AppValidationError(
                 field=str(self.field_name),
                 message=self.error_messages['self_reference'],
-                code=FieldValidationErrorCode.SELF_REFERENCE
+                field_validation_error_code=FieldValidationErrorCode.SELF_REFERENCE
             )
 
         if object.uuid:

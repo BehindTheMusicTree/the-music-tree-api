@@ -69,13 +69,13 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 raise AppValidationError(
                     field=field_name,
                     message=_(f"List field '{field_name}' must be specified as '{field_name}[]'"),
-                    code=FieldValidationErrorCode.MALFORMED_LIST
+                    field_validation_error_code=FieldValidationErrorCode.MALFORMED_LIST
                 )
         elif field_name in data and isinstance(data[field_name], list):
             raise AppValidationError(
                 field=field_name,
                 message=_("The field does not accept list values"),
-                code=FieldValidationErrorCode.UNEXPECTED_LIST
+                field_validation_error_code=FieldValidationErrorCode.UNEXPECTED_LIST
             )
 
     def _collect_known_fields(self, data: dict) -> tuple[set, list]:
@@ -148,7 +148,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             error = AppValidationError(
                 field=field.field_name,
                 message=exc_first_detail or 'Invalid input.',
-                code=error_code
+                field_validation_error_code=error_code
             )
             self._errors = error.detail
             raise error
@@ -162,7 +162,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         except ValidationError as exc:
             error = AppValidationError(
                 message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
-                code=FieldValidationErrorCode.DEFAULT
+                field_validation_error_code=FieldValidationErrorCode.DEFAULT
             )
             self._errors = error.detail
             raise error

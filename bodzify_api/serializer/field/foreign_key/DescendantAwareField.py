@@ -43,7 +43,7 @@ class DescendantAwareField(NonSelfReferencingField[T], Generic[T]):
                 raise AppValidationError(
                     field=str(self.field_name),
                     message=self.error_messages['descendant_reference'],
-                    code=FieldValidationErrorCode.ANCESTOR_REFERENCE
+                    field_validation_error_code=FieldValidationErrorCode.ANCESTOR_REFERENCE
                 )
 
         return value
