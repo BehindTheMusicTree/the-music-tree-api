@@ -1,3 +1,9 @@
+
+from dataclasses import dataclass
+from typing import Any, Dict, Optional
+
+from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
+
 """
 Error Response Detail Module
 
@@ -156,13 +162,9 @@ Usage Examples:
     )
 """
 
-from dataclasses import dataclass
-from typing import Any, Dict, Optional
-from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
-
 
 @dataclass
-class ErrorResponseDetail:
+class DrfValidationErrorResponseDetail:
     """
     A class to represent API error response details in a consistent format.
 
@@ -224,10 +226,10 @@ class ErrorResponseDetail:
         Returns:
             The converted dictionary representation of the error detail
         """
-        if isinstance(obj, ErrorResponseDetail):
+        if isinstance(obj, DrfValidationErrorResponseDetail):
             return obj.to_dict()
         elif isinstance(obj, list):
-            return [ErrorResponseDetail.convert_error_detail_to_dict(item) for item in obj]
+            return [DrfValidationErrorResponseDetail.convert_error_detail_to_dict(item) for item in obj]
         elif isinstance(obj, dict):
             if 'unknown_fields' in obj:
                 unknown_fields = obj['unknown_fields']
@@ -236,7 +238,7 @@ class ErrorResponseDetail:
                     'code': str(unknown_fields['code']),
                     'fields': [str(f) for f in unknown_fields['fields']]
                 }
-            return {key: ErrorResponseDetail.convert_error_detail_to_dict(value) for key, value in obj.items()}
+            return {key: DrfValidationErrorResponseDetail.convert_error_detail_to_dict(value) for key, value in obj.items()}
         elif isinstance(obj, DRFErrorDetail):
             return {
                 'message': str(obj),

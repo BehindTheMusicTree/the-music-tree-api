@@ -1,18 +1,16 @@
-from typing import Any, List, Union, Dict, Type
+from typing import Any, List, Union, Dict
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError as DrfValidationError, ErrorDetail as DRFErrorDetail
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.serializers import ModelSerializer, Serializer
 
-from bodzify_api.serializer.SerializerType import SerializerType
-
+from bodzify_api.validator.AppValidationErrorFields import AppValidationErrorFields
 from bodzify_api.validator.DrfValidationErrorFields import DrfValidationErrorFields
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.view.error.ErrorResponseDetail import ErrorResponseDetail
+from bodzify_api.view.error.DrfValidationErrorResponseDetail import DrfValidationErrorResponseDetail
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
@@ -129,8 +127,9 @@ class ErrorResponse:
                 ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
                 ErrorResponseFields.FIELD_ERRORS: {
                     field: [{
-                        ErrorResponseFields.FieldErrors.MESSAGE: ErrorResponse._format_validation_message(error_detail['message'], field),
-                        ErrorResponseFields.FieldErrors.CODE: error_detail['code']
+                        ErrorResponseFields.FieldErrors.MESSAGE:
+                            ErrorResponse._format_validation_message(error_detail[AppValidationErrorFields.CODE], field),
+                            ErrorResponseFields.FieldErrors.CODE: error_detail[AppValidationErrorFields.CODE]
                     }]
                     for field, error_detail in exception.errors.items()
                 }
@@ -140,7 +139,7 @@ class ErrorResponse:
                 ApiErrorCode.VALIDATION_INVALID_INPUT
             )
         elif isinstance(exception, DrfValidationError):
-            error_detail = ErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
+            error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
 
             # If it's already a dict with a message, use it directly
             if isinstance(error_detail, dict) and ErrorResponseFields.MESSAGE in error_detail:
