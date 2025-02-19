@@ -3,8 +3,9 @@ from typing import Any, List, Union, Dict
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError as DrfValidationError, ErrorDetail as DRFErrorDetail
-from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework import status
+from rest_framework.response import Response
 
 from bodzify_api.validator.AppValidationErrorFields import AppValidationErrorFields
 from bodzify_api.validator.DrfValidationErrorFields import DrfValidationErrorFields
@@ -32,9 +33,9 @@ class ErrorResponse:
     def _create_error_response(
             error_detail: Dict[str, Any],
             error_code: ApiErrorCode = ApiErrorCode.VALIDATION_INVALID_INPUT
-    ) -> Response:
+    ) -> JsonResponse:
         http_status = ErrorResponseFields.ERROR_TO_HTTP_STATUS.get(error_code, status.HTTP_400_BAD_REQUEST)
-        status_message = ErrorResponseFields.STATUS_MESSAGES.get(http_status, "Bad Request")
+        status_message = ErrorResponseFields.STATUS_MESSAGES.get(http_status, "An error occurred")
 
         response_data = {
             ErrorResponseFields.FieldErrors.CODE: error_code.value,
@@ -43,7 +44,11 @@ class ErrorResponse:
             ErrorResponseFields.DETAILS: [error_detail]
         }
 
-        return Response(data=response_data, status=http_status)
+        return JsonResponse(
+            data=response_data,
+            status=http_status,
+            safe=False
+        )
 
     @staticmethod
     def _parse_error_message(error: Any) -> tuple[str, str]:
@@ -92,7 +97,7 @@ class ErrorResponse:
         }
 
     @staticmethod
-    def from_unhandled_integrity_error(exception: IntegrityError) -> Response:
+    def from_unhandled_integrity_error(exception: IntegrityError) -> JsonResponse:
         error_detail = {
             ErrorResponseFields.FieldErrors.MESSAGE:
             ErrorResponseFields.DefaultFieldValidationValues.DbIntegrityError.MESSAGE,
@@ -105,7 +110,7 @@ class ErrorResponse:
 
     @staticmethod
     def from_validation_error(
-            exception: Union[AppValidationError, DrfValidationError, DjangoValidationError]) -> Response:
+            exception: Union[AppValidationError, DrfValidationError, DjangoValidationError]) -> JsonResponse:
 
         if isinstance(exception, AppValidationError):
 
@@ -120,8 +125,8 @@ class ErrorResponse:
                 }
             }
             return ErrorResponse._create_error_response(
-                formatted_error,
-                ApiErrorCode.VALIDATION_INVALID_INPUT
+                error_detail=formatted_error,
+                error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
             )
         elif isinstance(exception, DrfValidationError):
             error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_dict(exception.detail)

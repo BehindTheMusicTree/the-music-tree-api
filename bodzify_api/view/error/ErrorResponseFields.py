@@ -36,7 +36,7 @@ class ErrorResponseFields:
         ApiErrorCode.AUTH_INSUFFICIENT_PERMISSIONS: "Insufficient permissions for this operation",
 
         # Validation errors
-        ApiErrorCode.VALIDATION_INVALID_INPUT: "The provided data is invalid",
+        ApiErrorCode.VALIDATION_INVALID_INPUT: "One or more fields contain invalid data. Please check the error details for specific validation requirements",
 
         # Resource errors
         ApiErrorCode.RESOURCE_NOT_FOUND: "The requested resource could not be found",
