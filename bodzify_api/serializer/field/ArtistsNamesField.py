@@ -1,11 +1,11 @@
 
-from bodzify_api.serializer.field.AppCharField import AppCharField
+from rest_framework.fields import ListField
+from bodzify_api.serializer.field.AppField import AppField
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields
 
 
-class ArtistsNamesField(AppCharField):
+class ArtistsNamesField(AppField, ListField):
     def to_internal_value(self, data):
         if not data:
             return None
@@ -13,30 +13,30 @@ class ArtistsNamesField(AppCharField):
         # Only accept array input
         if not isinstance(data, (list, tuple)):
             raise AppValidationError(
-                field=Fields.ARTISTS_NAMES,
+                field=self.get_error_field_name(),
                 message='Multiple values must be sent using array notation (field[]=value)',
                 code=FieldValidationErrorCode.LIST_EXPECTED
             )
 
-        artists = [str(artist).strip() for artist in data]
-
         # Check for empty values between commas
-        if '' in artists and len(artists) > 1:
-            raise AppValidationError(
-                field=Fields.ARTISTS_NAMES,
-                message='Empty artist names are not allowed when specifying multiple artists',
-                code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
-            )
+        if len(data) > 1:
+            for artist_name in data:
+                if artist_name is None or artist_name == '':
+                    raise AppValidationError(
+                        field=self.get_error_field_name(),
+                        message='Empty artist names are not allowed when specifying multiple artists',
+                        code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
+                    )
 
         # Check for duplicates
-        unique_artists = set(artists)
-        if len(unique_artists) < len(artists):
+        unique_artists = set(data)
+        if len(unique_artists) < len(data):
             raise AppValidationError(
-                field=Fields.ARTISTS_NAMES,
+                field=self.get_error_field_name(),
                 message='Duplicate artist names are not allowed',
                 code=FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
             )
 
-        # Sort artists for consistent ordering
-        sorted_artists = sorted(artists)
-        return ', '.join(sorted_artists)
+        # Convert tuple to list if necessary to match ListField's expected type
+        list_data = list(data) if isinstance(data, tuple) else data
+        return ListField.to_internal_value(self, list_data)

@@ -1,8 +1,9 @@
 import json
 import re
-from typing import Dict, Any, List, Union, Mapping, TypeVar, Generic
+from typing import Any, List, TypeVar, Generic
 
 from django.utils.translation import gettext as _
+from django.core.exceptions import ImproperlyConfigured
 from rest_framework import serializers
 from rest_framework.fields import ListField, SkipField
 from rest_framework.relations import ManyRelatedField
@@ -42,39 +43,6 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
         # Return all field names found in the raw JSON
         return [match.group(1).replace('\\"', '"') for match in matches]
 
-    def _check_unknown_fields(
-            self,
-            initial_data: Dict[str, Any],
-            fields: Union[Dict[str, Any], Mapping[str, Any]]) -> List[str]:
-        """
-        Check for malformed list fields and unknown fields.
-        First checks if any list fields are missing the [] suffix,
-        then checks for unknown fields.
-        """
-        # First check for malformed list fields
-        for field_name, field in fields.items():
-            if self._is_list_field(field) and field_name in initial_data:
-                # If it's a list field but used without [] in request, raise error
-                error = AppValidationError(
-                    field=field_name,
-                    message=_(f"List field '{field_name}' must be specified as '{field_name}[]'"),
-                    code=FieldValidationErrorCode.MALFORMED_LIST
-                )
-                self._errors = error.detail
-                raise error
-
-        # Then check for unknown fields
-        input_fields = set(initial_data.keys())
-        known_fields = set()
-        for field_name, field in fields.items():
-            # Add array notation to list fields in known fields
-            if self._is_list_field(field):
-                known_fields.add(f"{field_name}[]")
-            else:
-                known_fields.add(field_name)
-
-        return list(input_fields - known_fields)
-
     @classmethod
     def _find_duplicate_fields(cls, raw_data: str) -> List[str]:
         try:
@@ -94,106 +62,159 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
         except (UnicodeDecodeError, AttributeError, json.JSONDecodeError):
             return []
 
-    def run_validation(self, data):
-        """
-        Override run_validation to handle field validation and preserve AppValidationError.
-        This implementation prevents DRF from converting our custom validation errors.
-        """
+    def _validate_field_format(self, field_name: str, field, data: dict) -> None:
+        if self._is_list_field(field):
+            if field_name in data:
+                raise AppValidationError(
+                    field=field_name,
+                    message=_(f"List field '{field_name}' must be specified as '{field_name}[]'"),
+                    code=FieldValidationErrorCode.MALFORMED_LIST
+                )
+        elif field_name in data and isinstance(data[field_name], list):
+            raise AppValidationError(
+                field=field_name,
+                message=_("The field does not accept list values"),
+                code=FieldValidationErrorCode.UNEXPECTED_LIST
+            )
+
+    def _collect_known_fields(self, data: dict) -> tuple[set, list]:
+        known_fields = set()
+        unknown_fields = []
+
+        for field_name, field in self.fields.items():
+            self._validate_field_format(field_name, field, data)
+            known_fields.add(f"{field_name}[]" if self._is_list_field(field) else field_name)
+
+        for field_name in data.keys():
+            if field_name not in known_fields:
+                unknown_fields.append(field_name)
+
+        return known_fields, unknown_fields
+
+    def _check_duplicate_fields(self, request) -> None:
+        if not request:
+            return
+
+        raw_body = getattr(request, '_raw_body', None)
+        if not raw_body and hasattr(request, '_request'):
+            try:
+                raw_body = request._request.body
+                setattr(request, '_raw_body', raw_body)
+            except Exception:
+                return
+
+        if raw_body:
+            try:
+                raw_data = raw_body.decode('utf-8') if isinstance(raw_body, bytes) else str(raw_body)
+                duplicates = self._find_duplicate_fields(raw_data)
+                if duplicates:
+                    if len(duplicates) == 1:
+                        raise_duplicate_field_error(duplicates[0])
+                    raise_duplicate_fields_error(duplicates)
+            except (UnicodeDecodeError, AttributeError):
+                pass
+
+    def _collect_list_field_values(self, field_name_with_suffix: str, data: dict):
+        if field_name_with_suffix not in data:
+            return None
+
+        value = data[field_name_with_suffix]
+        if not isinstance(value, list):
+            value = [value]
+
+        additional_values = [
+            v for k, v in data.items()
+            if k.startswith(field_name_with_suffix) and k != field_name_with_suffix
+        ]
+
+        if additional_values:
+            value.extend([v for v in additional_values if v is not None])
+
+        return value
+
+    def _validate_field(self, field, value) -> Any:
+        try:
+            return field.run_validation(value)
+        except ValidationError as exc:
+            exc_first_detail = str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail)
+            error_code = (
+                FieldValidationErrorCode.REQUIRED
+                if exc_first_detail == "This field is required."
+                else FieldValidationErrorCode.DEFAULT
+            )
+            error = AppValidationError(
+                field=field.field_name,
+                message=exc_first_detail or 'Invalid input.',
+                code=error_code
+            )
+            self._errors = error.detail
+            raise error
+
+    def _validate_object(self, validated_data: dict) -> dict:
+        try:
+            return self.validate(validated_data)
+        except AppValidationError as exc:
+            self._errors = exc.detail
+            raise
+        except ValidationError as exc:
+            error = AppValidationError(
+                message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
+                code=FieldValidationErrorCode.DEFAULT
+            )
+            self._errors = error.detail
+            raise error
+
+    def _initialize_validation_state(self):
         if not hasattr(self, '_validated_data'):
             self._validated_data = {}
         if not hasattr(self, '_errors'):
             self._errors = {}
 
+    def _validate_fields(self, data: dict) -> dict:
+        validated_data = {}
+        for field in self._writable_fields:
+            try:
+                if self._is_list_field(field):
+                    field_name_with_suffix = f"{field.field_name}[]"
+                    value = self._collect_list_field_values(field_name_with_suffix, data)
+                    if value is None:
+                        value = field.get_value(data)
+                else:
+                    value = field.get_value(data)
+
+                validated_value = self._validate_field(field, value)
+                validated_data[field.source] = validated_value
+            except AppValidationError:
+                raise
+            except SkipField:
+                continue
+        return validated_data
+
+    def run_validation(self, data):
+        """
+        Override run_validation to handle field validation and preserve AppValidationError.
+        This implementation prevents DRF from converting our custom validation errors.
+        """
+        self._initialize_validation_state()
+
         if data is None:
-            error = AppValidationError(
-                message="This field is required.",
-                code=FieldValidationErrorCode.REQUIRED
-            )
-            self._errors = error.detail
-            raise error
+            raise ImproperlyConfigured('Cannot validate null data')
 
         try:
-            # Run field validations
-            if isinstance(data, dict):
-                # 1. Validate field types (list values)
-                for field_name, field in self.fields.items():
-                    if field_name in data:
-                        value = data[field_name]
-                        if isinstance(value, list) and not self._is_list_field(field):
-                            error = AppValidationError(
-                                field=field_name,
-                                message=_("The field does not accept list values"),
-                                code=FieldValidationErrorCode.UNEXPECTED_LIST
-                            )
-                            self._errors = error.detail
-                            raise error
+            if not isinstance(data, dict):
+                raise ImproperlyConfigured('Data must be a dictionary')
 
-                # 2. Check for unknown fields
-                unknown_keys = self._check_unknown_fields(data, self.fields)
-                if len(unknown_keys) == 1:
-                    raise_unknown_field_error(unknown_keys[0])
-                elif len(unknown_keys) > 1:
-                    raise_unknown_fields_error(unknown_keys)
+            _, unknown_fields = self._collect_known_fields(data)
+            if len(unknown_fields) == 1:
+                raise_unknown_field_error(unknown_fields[0])
+            elif len(unknown_fields) > 1:
+                raise_unknown_fields_error(unknown_fields)
 
-            # 3. Check for duplicate fields
-            request = self.context.get(self.REQUEST_FIELD)
-            if request:
-                raw_body = getattr(request, '_raw_body', None)
-                if not raw_body and hasattr(request, '_request'):
-                    try:
-                        raw_body = request._request.body
-                        setattr(request, '_raw_body', raw_body)
-                    except Exception:
-                        pass
+            self._check_duplicate_fields(self.context.get(self.REQUEST_FIELD))
 
-                if raw_body:
-                    try:
-                        raw_data = raw_body.decode('utf-8') if isinstance(raw_body, bytes) else str(raw_body)
-                        duplicates = self._find_duplicate_fields(raw_data)
-                        if duplicates:
-                            if len(duplicates) == 1:
-                                raise_duplicate_field_error(duplicates[0])
-                            raise_duplicate_fields_error(duplicates)
-                    except (UnicodeDecodeError, AttributeError):
-                        pass
+            validated_data = self._validate_fields(data)
 
-            # 4. Run field-level validation
-            validated_data = {}
-            for field in self._writable_fields:
-                try:
-                    value = field.get_value(data)
-                    validated_value = field.run_validation(value)
-                    validated_data[field.source] = validated_value
-                except AppValidationError as exc:
-                    raise exc
-                except ValidationError as exc:
-                    exc_first_detail = str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail)
-                    error_code = (
-                        FieldValidationErrorCode.REQUIRED
-                        if exc_first_detail == "This field is required."
-                        else FieldValidationErrorCode.DEFAULT
-                    )
-                    error = AppValidationError(field=field.field_name,
-                                               message=exc_first_detail or 'Invalid input.',
-                                               code=error_code)
-                    self._errors = error.detail
-                    raise error
-                except SkipField:
-                    continue
-
-            # 5. Run object-level validation
-            try:
-                validated_data = self.validate(validated_data)
-            except AppValidationError as exc:
-                self._errors = exc.detail
-                raise
-            except ValidationError as exc:
-                error = AppValidationError(
-                    message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
-                    code=FieldValidationErrorCode.DEFAULT
-                )
-                self._errors = error.detail
-                raise error
+            validated_data = self._validate_object(validated_data)
 
             self._errors = {}
             self._validated_data = validated_data

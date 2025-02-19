@@ -24,9 +24,8 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
                 names.append(name)
         return names
 
-    def get_artists_list_from_names_str_after_eventual_creation(
-            self, user: 'User', artists_names_str: str) -> list['Artist']:
-        artists_names_list = self.get_artists_names_list_from_str(artists_names_str)
+    def get_artists_list_from_names_after_eventual_creation(
+            self, user: 'User', artists_names_list: str) -> list['Artist']:
         return [self.get_or_create(user=user, name=artist_name)[0] for artist_name in artists_names_list] \
             if len(artists_names_list) > 0 else []
 

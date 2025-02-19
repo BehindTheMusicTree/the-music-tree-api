@@ -22,7 +22,7 @@ from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
-from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields as InputFields
+from bodzify_api.serializer.schema.model.lib_track.input.schema.Fields import Fields as SchemaFields
 from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.schema.model.lib_track.input.extract.Fields import Fields as ExtractFields
 from .Fields import Fields
@@ -88,8 +88,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
         filename_without_expressions_to_exclude = data_transformer.remove_substrings_from_string(
             string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
-        if InputFields.FORCE_TITLE_GENERATION in data:
-            force_title_generation = data[InputFields.FORCE_TITLE_GENERATION]
+        if SchemaFields.FORCE_TITLE_GENERATION in data:
+            force_title_generation = data[SchemaFields.FORCE_TITLE_GENERATION]
         else:
             force_title_generation = False
 
@@ -104,11 +104,11 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     def _update_model_data_with_genre_if_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
 
-        if InputFields.GENRE_UUID in schema_data:
-            genre_uuid = schema_data[InputFields.GENRE_UUID]
+        if SchemaFields.GENRE_UUID in schema_data:
+            genre_uuid = schema_data[SchemaFields.GENRE_UUID]
             genre = None if not genre_uuid else Genre.objects.get(user=schema_data[Fields.USER], uuid=genre_uuid)
-        elif InputFields.GENRE_NAME in schema_data:
-            genre_name = schema_data[InputFields.GENRE_NAME]
+        elif SchemaFields.GENRE_NAME in schema_data:
+            genre_name = schema_data[SchemaFields.GENRE_NAME]
             genre = None if not genre_name else Genre.objects.get_or_create(
                 name=genre_name,
                 user=schema_data[Fields.USER]
@@ -137,49 +137,43 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                   NormalizedMetadataKeys.GENRE_NAME,
                   NormalizedMetadataKeys.RATING,
                   NormalizedMetadataKeys.LANGUAGE])
-        save_data_with_potential_none[InputFields.ARTISTS_NAMES_ARRAY] = \
+        save_data_with_potential_none[SchemaFields.ARTISTS_NAMES] = \
             normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES]
-        save_data_with_potential_none[InputFields.ALBUM_ARTISTS_NAMES_ARRAY] = \
+        save_data_with_potential_none[SchemaFields.ALBUM_ARTISTS_NAMES] = \
             normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES]
 
         schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(save_data_with_potential_none)
-        schema_data_clean[InputFields.TRACK_FILE_PUBLIC] = file
+        schema_data_clean[SchemaFields.TRACK_FILE_PUBLIC] = file
 
         return schema_data_clean
 
     def _update_model_data_with_album_if_name_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.album.Album import Album
-        if InputFields.ALBUM_NAME in schema_data:
-            album_name = schema_data[InputFields.ALBUM_NAME]
+        if SchemaFields.ALBUM_NAME in schema_data:
+            album_name = schema_data[SchemaFields.ALBUM_NAME]
 
             if not album_name:
                 return None
 
-            if InputFields.ALBUM_ARTISTS_NAMES in schema_data:
-                album_artists_names_str = schema_data[InputFields.ALBUM_ARTISTS_NAMES]
-                if album_artists_names_str:
-                    album_artists_name_list = Artist.objects.get_artists_names_list_from_str(
-                        names_str=album_artists_names_str)
-                else:
-                    album_artists_name_list = []
-            else:
-                album_artists_name_list = []
+            album_artists_names_list = []
+            if SchemaFields.ALBUM_ARTISTS_NAMES in schema_data:
+                album_artists_names_list = schema_data[SchemaFields.ALBUM_ARTISTS_NAMES]
 
             album = Album.objects.get_album_from_name_and_album_artists_names_list_after_eventual_creations(
                 user=schema_data[Fields.USER],
                 name=album_name,
-                album_artists_names_list=album_artists_name_list)
+                album_artists_names_list=album_artists_names_list)
 
             model_data[Fields.ALBUM] = album
 
-    def _update_model_data_with_artists_if_names_str_in_schema_data_or_empty_list(
+    def _update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
             self, model_data: dict, schema_data: dict) -> None:
-        if InputFields.ARTISTS_NAMES in schema_data:
-            artists_names_str = schema_data[InputFields.ARTISTS_NAMES]
-            if artists_names_str:
-                artists = Artist.objects.get_artists_list_from_names_str_after_eventual_creation(
+        if SchemaFields.ARTISTS_NAMES in schema_data:
+            artists_names_list = schema_data[SchemaFields.ARTISTS_NAMES]
+            if artists_names_list:
+                artists = Artist.objects.get_artists_list_from_names_after_eventual_creation(
                     user=schema_data[Fields.USER],
-                    artists_names_str=artists_names_str)
+                    artists_names_list=artists_names_list)
             else:
                 artists = []
         else:
@@ -191,8 +185,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         is_filename_randomly_generated = False
         if Fields.TITLE in data:
             title = data[Fields.TITLE]
-            if InputFields.ARTISTS_NAMES_ARRAY in data:
-                artists_names_list = data[InputFields.ARTISTS_NAMES_ARRAY]
+            if SchemaFields.ARTISTS_NAMES in data:
+                artists_names_list = data[SchemaFields.ARTISTS_NAMES]
                 artists_names = ", ".join(artists_names_list)
                 if artists_names is None or artists_names == "":
                     filename_without_extension = title
@@ -223,7 +217,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                     Fields.POSITION_IN_ALBUM]:
             data_transformer.update_data1_with_key_if_set_in_data2(key=key, data1=model_data, data2=schema_data)
 
-        self._update_model_data_with_artists_if_names_str_in_schema_data_or_empty_list(
+        self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
             model_data=model_data, schema_data=schema_data)
         self._update_model_data_with_album_if_name_in_schema_data(model_data=model_data,
                                                                   schema_data=schema_data)
@@ -243,25 +237,25 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         schema_data = schema_data_from_file.copy()
         keys = [Fields.USER,
-                InputFields.TRACK_FILE_PUBLIC,
-                InputFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
-                InputFields.TITLE,
-                InputFields.ARTISTS_NAMES_ARRAY,
-                InputFields.ALBUM_NAME,
-                InputFields.ALBUM_ARTISTS_NAMES_ARRAY,
-                InputFields.POSITION_IN_ALBUM,
-                InputFields.GENRE_UUID,
-                InputFields.RATING,
-                InputFields.LANGUAGE]
+                SchemaFields.TRACK_FILE_PUBLIC,
+                SchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
+                SchemaFields.TITLE,
+                SchemaFields.ARTISTS_NAMES,
+                SchemaFields.ALBUM_NAME,
+                SchemaFields.ALBUM_ARTISTS_NAMES,
+                SchemaFields.POSITION_IN_ALBUM,
+                SchemaFields.GENRE_UUID,
+                SchemaFields.RATING,
+                SchemaFields.LANGUAGE]
         data_transformer.override_data1_with_data2_values_for_each_key_in_data2(
             data1=schema_data, data2=post_data, keys=keys)
 
-        if InputFields.TITLE not in schema_data:
+        if SchemaFields.TITLE not in schema_data:
             schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
-        if InputFields.GENRE_UUID not in post_data:
+        if SchemaFields.GENRE_UUID not in post_data:
             data_transformer.override_data1_with_data2_values_for_each_key_in_data2(data1=schema_data,
                                                                                     data2=post_data,
-                                                                                    keys=[InputFields.GENRE_NAME])
+                                                                                    keys=[SchemaFields.GENRE_NAME])
 
         data_transformer.update_data1_converting_str_to_int_value_if_set(key=Fields.RATING, data1=schema_data)
         return schema_data
@@ -269,7 +263,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         schema_data = self._get_schema_data_from_post_data(post_data)
         model_data = self._get_model_data_from_post_and_extract_common_schema_data(schema_data)
-        model_data[Fields.TRACK_FILE] = schema_data[InputFields.TRACK_FILE_PUBLIC]
+        model_data[Fields.TRACK_FILE] = schema_data[SchemaFields.TRACK_FILE_PUBLIC]
         return model_data
 
     def _get_post_data_from_extract_data(self, **kwargs):

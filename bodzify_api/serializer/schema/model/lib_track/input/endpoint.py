@@ -24,7 +24,6 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
     force_title_generation = serializers.BooleanField(required=False)
     artists_names = ArtistsNamesField(max_length=settings.ARTISTS_NAMES_LEN_MAX,
                                       required=False,
-                                      allow_blank=True,
                                       allow_null=True)
     album_name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX,
                               required=False,
@@ -32,7 +31,6 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                               allow_null=True)
     album_artists_names = ArtistsNamesField(max_length=settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,
                                             required=False,
-                                            allow_blank=True,
                                             allow_null=True)
     position_in_album = PositionInAlbumField()
 
@@ -56,7 +54,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                     code=FieldValidationErrorCode.MUTUALLY_EXCLUSIVE
                 )
 
-        if Fields.ALBUM_ARTISTS_NAMES in data:
+        if Fields.ALBUM_ARTISTS_NAMES_ARRAY in data:
             error_message = None
             if Fields.ALBUM_NAME not in data:
                 error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
@@ -65,7 +63,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
 
             if error_message:
                 raise AppValidationError(
-                    field=Fields.ALBUM_ARTISTS_NAMES,
+                    field=Fields.ALBUM_ARTISTS_NAMES_ARRAY,
                     message=error_message,
                     code=FieldValidationErrorCode.DEPENDENCY_MISSING
                 )

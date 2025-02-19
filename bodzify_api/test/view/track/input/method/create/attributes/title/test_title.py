@@ -1,6 +1,5 @@
 from rest_framework import status
 
-from bodzify_api.test.field.body_data.type.not_nullable.NotNullableBodyDataTestCase import NotNullableBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

@@ -9,9 +9,11 @@ class Fields:
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = ModelFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = ModelFields.TITLE
     FORCE_TITLE_GENERATION = 'force_title_generation'
-    ARTISTS_NAMES_ARRAY = f'{ModelFields.ARTISTS}_{ArtistFields.NAME}s[]'
+    ARTISTS_NAMES = f'{ModelFields.ARTISTS}_{ArtistFields.NAME}s'
+    ARTISTS_NAMES_ARRAY = f'{ARTISTS_NAMES}[]'
     ALBUM_NAME = f'{ModelFields.ALBUM}_{AlbumFields.NAME}'
-    ALBUM_ARTISTS_NAMES_ARRAY = f'{AlbumFields.ALBUM_ARTISTS}_{ArtistFields.NAME}s[]'
+    ALBUM_ARTISTS_NAMES = f'{AlbumFields.ALBUM_ARTISTS}_{ArtistFields.NAME}s'
+    ALBUM_ARTISTS_NAMES_ARRAY = f'{ALBUM_ARTISTS_NAMES}[]'
     POSITION_IN_ALBUM = ModelFields.POSITION_IN_ALBUM
     GENRE_UUID = f'{ModelFields.GENRE}_{CriteriaFields.UUID}'
     GENRE_NAME = f'{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}'
