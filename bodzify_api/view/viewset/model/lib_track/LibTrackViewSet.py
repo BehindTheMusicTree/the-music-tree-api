@@ -5,8 +5,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes 
 from rest_framework.decorators import action
 from rest_framework.serializers import Serializer
 
-from bodzify_api.serializer.schema.model.lib_track.input.extract import LibTrackExtractSerializer
-from bodzify_api.serializer.schema.model.lib_track.input.post import LibTrackPostSerializer
+from bodzify_api.serializer.schema.model.lib_track.input.extract.extract import LibTrackExtractSerializer
+from bodzify_api.serializer.schema.model.lib_track.input.post.post import LibTrackPostSerializer
 from bodzify_api.serializer.schema.model.lib_track.input.put import LibTrackPutSerializer
 from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album_and_genre \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
