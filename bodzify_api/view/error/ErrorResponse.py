@@ -25,17 +25,6 @@ class ErrorResponse:
         return default_code
 
     @staticmethod
-    def _format_validation_message(message: str, field: str) -> str:
-        if message.startswith("{'message': '") and message.endswith("'}"):
-            try:
-                import json
-                parsed = json.loads(message.replace("'", '"'))
-                message = parsed.get('message', message)
-            except:
-                pass
-        return message
-
-    @staticmethod
     def _convert_fields_to_list(fields: List[Any]) -> List[str]:
         return [str(field) for field in fields]
 
@@ -127,9 +116,8 @@ class ErrorResponse:
                 ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
                 ErrorResponseFields.FIELD_ERRORS: {
                     field: [{
-                        ErrorResponseFields.FieldErrors.MESSAGE:
-                            ErrorResponse._format_validation_message(error_detail[AppValidationErrorFields.CODE], field),
-                            ErrorResponseFields.FieldErrors.CODE: error_detail[AppValidationErrorFields.CODE]
+                        ErrorResponseFields.FieldErrors.MESSAGE: error_detail[AppValidationErrorFields.MESSAGE],
+                        ErrorResponseFields.FieldErrors.CODE: error_detail[AppValidationErrorFields.CODE]
                     }]
                     for field, error_detail in exception.errors.items()
                 }
