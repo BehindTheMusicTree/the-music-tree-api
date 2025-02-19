@@ -1,4 +1,3 @@
-from os import name
 from rest_framework import status
 
 from bodzify_api import settings

@@ -3,7 +3,6 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.schema.model.lib_track.input.extract.Fields import Fields as ExtractFields
-from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields as InputFields
 from bodzify_api.test.field.body_data.type.NullableListDataTestCase import NullableListDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
@@ -14,7 +13,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
 
     def test_longest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
-        data = {ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -24,17 +23,17 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
 
     def test_too_long_then_error(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
-        data = {f"{InputFields.ARTISTS_NAMES_ARRAY}[]": [artist_name]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == InputFields.ALBUM_ARTISTS_NAMES_ARRAY
+        assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
         assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_empty_then_none(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ARTISTS_NAMES_ARRAY: []})
+        response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ARTISTS_NAMES_ARRAY: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
@@ -43,7 +42,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         artist_name = "Kopoe"
         self.model_fixture_factory.create_artist(name=artist_name)
 
-        data = {InputFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -53,7 +52,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
 
     def test_not_existing(self) -> None:
         artist_name = "hoho"
-        data = {InputFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -67,7 +66,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         self.model_fixture_factory.create_artist(name=artist1_name)
         self.model_fixture_factory.create_artist(name=artist2_name)
 
-        data = {InputFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: f"{artist1_name}, {artist2_name}"}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -81,7 +80,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         artist2_name = "NewArtist2"
         artist3_name = "NewArtist3"
 
-        data = {InputFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name, artist3_name]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: f"{artist1_name}, {artist2_name}, {artist3_name}"}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -97,7 +96,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         new_artist1 = "NewArtist1"
         new_artist2 = "NewArtist2"
 
-        data = {InputFields.ALBUM_ARTISTS_NAMES_ARRAY: [existing_artist, new_artist1, new_artist2]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: f"{existing_artist}, {new_artist1}, {new_artist2}"}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -111,18 +110,18 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         valid_artist = "ValidArtist"
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
-        data = {InputFields.ALBUM_ARTISTS_NAMES_ARRAY: [valid_artist, too_long_artist]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: f"{valid_artist}, {too_long_artist}"}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FIELD] == InputFields.ALBUM_ARTISTS_NAMES_ARRAY
+        assert error[ErrorResponseFields.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
         assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_multiple_artists_with_duplicates_then_error(self) -> None:
-        artist_name = "Duplicate Artist"
-        data = {ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name, artist_name, artist_name]}
+        artist_name = "DuplicateArtist"
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: f"{artist_name}, {artist_name}, {artist_name}"}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -133,7 +132,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
 
     def test_multiple_artists_with_empty_names_then_error(self) -> None:
         valid_artist = "ValidArtist"
-        data = {ExtractFields.ARTISTS_NAMES_ARRAY: [valid_artist, "", "", valid_artist]}
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: f"{valid_artist}, , , {valid_artist}"}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

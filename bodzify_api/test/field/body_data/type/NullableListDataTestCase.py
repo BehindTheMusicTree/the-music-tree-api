@@ -45,6 +45,8 @@ from bodzify_api.test.ApiTestCase import ApiTestCase
 class NullableListDataTestCase(ApiTestCase):
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
         list_methods_to_implement = [
+            'test_too_long_then_error',
+            'test_longest_then_ok',
             'test_array_notation_then_ok',
             'test_empty_array_then_none',
             'test_values_with_one_empty_then_error',

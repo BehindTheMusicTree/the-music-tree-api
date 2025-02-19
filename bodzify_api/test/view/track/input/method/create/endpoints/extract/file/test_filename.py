@@ -1,29 +1,45 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.schema.model.lib_track.input.extract import Fields as ExtractFields
+from bodzify_api.serializer.schema.model.lib_track.input.extract.Fields import Fields as ExtractFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class FilenameTestCase(LibTrackTestCase):
 
-    def test_title_and_artist_name_in_data_then_filename_with_artist_and_title(self):
+    def test_title_and_one_artist_name_in_data_then_filename_with_artist_and_title(self):
+        title = "ImHere"
+        artist_name = "Roméo"
         data_dict = {
-            ExtractFields.TITLE: "ImHere",
-            ExtractFields.ARTISTS_NAMES_STR: "Roméo",
+            ExtractFields.TITLE: title,
+            ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name],
         }
         response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.filename == \
-            f"Roméo - ImHere.{LibTrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
+            f"{artist_name} - {title}.{LibTrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
 
-    def test_title_and_artist_with_spaces_then_filename_with_spaces(self):
-        title = "Im Here"
-        artist_name = "Rom éo"
+    def test_title_and_multiple_artists_name_in_data_then_filename_with_artist_and_title(self):
+        title = "ImHere"
+        artist_name1 = "Roméo"
+        artist_name2 = "Juliet"
         data_dict = {
             ExtractFields.TITLE: title,
-            ExtractFields.ARTISTS_NAMES_STR: artist_name,
+            ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name1, artist_name2],
+        }
+        response = self._extract_default_mine_track(**data_dict)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.track_file.filename == \
+            f"{artist_name1}, {artist_name2} - {title}.{LibTrackTestCase.SAMPLE_MINE_TRACK_DEFAULT_EXTENSION}"
+
+    def test_title_and_artist_with_spaces_then_filename_with_spaces(self):
+        title = " Im Here "
+        artist_name = " Rom éo "
+        data_dict = {
+            ExtractFields.TITLE: title,
+            ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name],
         }
         response = self._extract_default_mine_track(**data_dict)
 
@@ -36,7 +52,7 @@ class FilenameTestCase(LibTrackTestCase):
         artist_name = "Rom#éo"
         data_dict = {
             ExtractFields.TITLE: title,
-            ExtractFields.ARTISTS_NAMES_STR: artist_name,
+            ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name],
         }
         response = self._extract_default_mine_track(**data_dict)
 

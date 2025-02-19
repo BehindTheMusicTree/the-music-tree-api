@@ -1,12 +1,12 @@
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
-from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as PostFields
+from bodzify_api.serializer.schema.model.lib_track.input.post.post import Fields as PostFields
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase \
     import UpdateFileMetadataStrTestCase
 
 
 class TestCase(UpdateFileMetadataStrTestCase):
-    save_field = PostFields.ALBUM_ARTISTS_NAMES
+    save_field = PostFields.ALBUM_ARTISTS_NAMES_ARRAY
     lib_track_normalized_metadata_key = NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES
     length_max = settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX
     album_data_dict = {PostFields.ALBUM_NAME: "The Great Twenty-Eight"}
