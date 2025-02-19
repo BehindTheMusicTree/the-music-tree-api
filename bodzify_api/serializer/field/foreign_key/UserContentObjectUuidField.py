@@ -5,6 +5,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework.request import Request
 
+from bodzify_api.validator.AppValidationError import AppValidationError
+from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+
 from bodzify_api.model.ContentObjectFields import ContentObjectFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -65,6 +68,31 @@ class PrivateContentUuidField(PrivateUuidField):
 
     def to_representation(self, obj: Any) -> str:
         return str(obj.uuid) if obj else ''
+
+    def fail(self, key: str, **kwargs: Any) -> None:
+        """
+        Raise an AppValidationError with appropriate error code and message.
+
+        Args:
+            key: The error key that maps to an error message
+            **kwargs: Format parameters for the error message
+        """
+        try:
+            msg = self.error_messages[key]
+            if kwargs:
+                msg = msg.format(**kwargs)
+        except KeyError:
+            class_name = self.__class__.__name__
+            msg = f"Invalid input for {class_name}."
+
+        if key == 'invalid':
+            code = FieldValidationErrorCode.INVALID_FORMAT
+        elif key == 'does_not_exist':
+            code = FieldValidationErrorCode.INVALID_REFERENCE
+        else:
+            code = FieldValidationErrorCode.DEFAULT
+
+        raise AppValidationError(field=self.get_error_field_name(), message=msg, code=code)
 
     def to_internal_value(self, data: Any) -> Dict[str, Any]:
         if data is None:

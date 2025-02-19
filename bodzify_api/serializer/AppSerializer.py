@@ -136,6 +136,8 @@ class AppSerializer(serializers.Serializer, Generic[T]):
     def _validate_field(self, field: AppField, value) -> Any:
         try:
             return field.run_validation(value)
+        except AppValidationError as exc:
+            raise exc
         except ValidationError as exc:
             exc_first_detail = str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail)
             error_code = (
