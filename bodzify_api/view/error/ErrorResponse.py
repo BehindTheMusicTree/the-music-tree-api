@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 
+from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.validator.AppValidationErrorFields import AppValidationErrorFields
 from bodzify_api.validator.DrfValidationErrorFields import DrfValidationErrorFields
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
@@ -81,6 +82,7 @@ class ErrorResponse:
             if not isinstance(errors, (list, tuple)):
                 errors = [errors]
 
+            camel_case_field = to_camel_case(field)
             field_errors = []
             for error in errors:
                 message, code = ErrorResponse._parse_error_message(error)
@@ -89,7 +91,7 @@ class ErrorResponse:
                     ErrorResponseFields.CODE: code
                 })
 
-            formatted_errors[field] = field_errors
+            formatted_errors[camel_case_field] = field_errors
 
         return {
             ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
@@ -117,7 +119,7 @@ class ErrorResponse:
             formatted_error = {
                 ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
                 ErrorResponseFields.FIELD_ERRORS: {
-                    field: [{
+                    to_camel_case(field): [{
                         ErrorResponseFields.FieldErrors.MESSAGE: error_detail[AppValidationErrorFields.MESSAGE],
                         ErrorResponseFields.FieldErrors.CODE: error_detail[AppValidationErrorFields.CODE]
                     }]
@@ -159,7 +161,7 @@ class ErrorResponse:
                 formatted_error = {
                     ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
                     ErrorResponseFields.FIELD_ERRORS: {
-                        field: [{
+                        to_camel_case(field): [{
                             ErrorResponseFields.FieldErrors.MESSAGE: msgs[0],
                             ErrorResponseFields.FieldErrors.CODE:
                                 ErrorResponseFields.DefaultFieldValidationValues.NonDbIntegrityError.CODE
@@ -184,8 +186,8 @@ class ErrorResponse:
                     }
                 }
                 return ErrorResponse._create_error_response(
-                    formatted_error,
-                    ApiErrorCode.VALIDATION_INVALID_INPUT
+                    error_detail=formatted_error,
+                    error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
 
         # Generic validation error
@@ -194,6 +196,6 @@ class ErrorResponse:
             ErrorResponseFields.CODE: ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
         }
         return ErrorResponse._create_error_response(
-            error_detail,
-            ApiErrorCode.VALIDATION_INVALID_INPUT
+            error_detail=error_detail,
+            error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
         )

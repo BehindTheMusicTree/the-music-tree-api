@@ -5,17 +5,13 @@ from typing import Any, List, TypeVar, Generic
 from django.utils.translation import gettext as _
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import serializers
-from rest_framework.fields import ListField, SkipField
+from rest_framework.fields import Field, ListField, SkipField
 from rest_framework.relations import ManyRelatedField
 from rest_framework.exceptions import ValidationError
 
 from bodzify_api.serializer.field.AppField import AppField
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
-
-from bodzify_api.utils.validation_error_utils \
-    import raise_duplicate_field_error, raise_duplicate_fields_error, \
-    raise_unknown_fields_error, raise_unknown_field_error
 
 T = TypeVar('T')
 
@@ -110,8 +106,15 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 duplicates = self._find_duplicate_fields(raw_data)
                 if duplicates:
                     if len(duplicates) == 1:
-                        raise_duplicate_field_error(duplicates[0])
-                    raise_duplicate_fields_error(duplicates)
+                        raise AppValidationError(
+                            field_name=duplicates[0],
+                            message=_("Duplicate field"),
+                            field_validation_error_code=FieldValidationErrorCode.FIELD_DUPLICATE
+                        )
+                    raise AppValidationError(
+                        field_name=f", ".join(duplicates),
+                        message=_("Multiple duplicate fields"),
+                        field_validation_error_code=FieldValidationErrorCode.FIELD_DUPLICATE)
             except (UnicodeDecodeError, AttributeError):
                 pass
 
@@ -133,7 +136,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
 
         return value
 
-    def _validate_field(self, field: AppField, value) -> Any:
+    def _validate_field(self, field: Field, value) -> Any:
         try:
             return field.run_validation(value)
         except AppValidationError as exc:
@@ -209,9 +212,17 @@ class AppSerializer(serializers.Serializer, Generic[T]):
 
             _, unknown_fields = self._collect_known_fields(data)
             if len(unknown_fields) == 1:
-                raise_unknown_field_error(unknown_fields[0])
+                raise AppValidationError(
+                    field_name=unknown_fields[0],
+                    message="Unknown field",
+                    field_validation_error_code=FieldValidationErrorCode.UNKNOWN_FIELD
+                )
             elif len(unknown_fields) > 1:
-                raise_unknown_fields_error(unknown_fields)
+                raise AppValidationError(
+                    field_name=", ".join(unknown_fields),
+                    message="Multiple unknown fields",
+                    field_validation_error_code=FieldValidationErrorCode.UNKNOWN_FIELD
+                )
 
             self._check_duplicate_fields(self.context.get(self.REQUEST_FIELD))
 
