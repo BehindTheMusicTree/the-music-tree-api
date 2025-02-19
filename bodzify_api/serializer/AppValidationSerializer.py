@@ -29,6 +29,71 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
             getattr(field, 'child', None) is not None
         )
 
+    @staticmethod
+    def _get_raw_field_names(raw_data: str) -> List[str]:
+        # Remove whitespace and newlines between tokens to simplify parsing
+        raw_data = re.sub(r'\s+', '', raw_data)
+
+        # Find all field names using regex
+        # This pattern matches field names in JSON, handling escaped quotes
+        pattern = r'"((?:[^"\\]|\\.)*)":'
+        matches = re.finditer(pattern, raw_data)
+
+        # Return all field names found in the raw JSON
+        return [match.group(1).replace('\\"', '"') for match in matches]
+
+    def _check_unknown_fields(
+            self,
+            initial_data: Dict[str, Any],
+            fields: Union[Dict[str, Any], Mapping[str, Any]]) -> List[str]:
+        """
+        Check for malformed list fields and unknown fields.
+        First checks if any list fields are missing the [] suffix,
+        then checks for unknown fields.
+        """
+        # First check for malformed list fields
+        for field_name, field in fields.items():
+            if self._is_list_field(field) and field_name in initial_data:
+                # If it's a list field but used without [] in request, raise error
+                error = AppValidationError(
+                    field=field_name,
+                    message=_(f"List field '{field_name}' must be specified as '{field_name}[]'"),
+                    code=FieldValidationErrorCode.MALFORMED_LIST
+                )
+                self._errors = error.detail
+                raise error
+
+        # Then check for unknown fields
+        input_fields = set(initial_data.keys())
+        known_fields = set()
+        for field_name, field in fields.items():
+            # Add array notation to list fields in known fields
+            if self._is_list_field(field):
+                known_fields.add(f"{field_name}[]")
+            else:
+                known_fields.add(field_name)
+
+        return list(input_fields - known_fields)
+
+    @classmethod
+    def _find_duplicate_fields(cls, raw_data: str) -> List[str]:
+        try:
+            field_names = cls._get_raw_field_names(raw_data)
+            field_counts = {}
+            duplicates = []
+
+            for field in field_names:
+                if field in field_counts:
+                    if field_counts[field] == 1:  # Only add to duplicates once
+                        duplicates.append(field)
+                    field_counts[field] += 1
+                else:
+                    field_counts[field] = 1
+
+            return duplicates
+        except (UnicodeDecodeError, AttributeError, json.JSONDecodeError):
+            return []
+
     def run_validation(self, data):
         """
         Override run_validation to handle field validation and preserve AppValidationError.
@@ -137,51 +202,3 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
         except AppValidationError as exc:
             self._validated_data = {}
             raise exc
-
-    @staticmethod
-    def _get_raw_field_names(raw_data: str) -> List[str]:
-        """Extract field names from raw JSON data."""
-        # Remove whitespace and newlines between tokens to simplify parsing
-        raw_data = re.sub(r'\s+', '', raw_data)
-
-        # Find all field names using regex
-        # This pattern matches field names in JSON, handling escaped quotes
-        pattern = r'"((?:[^"\\]|\\.)*)":'
-        matches = re.finditer(pattern, raw_data)
-
-        # Return all field names found in the raw JSON
-        return [match.group(1).replace('\\"', '"') for match in matches]
-
-    @staticmethod
-    def _check_unknown_fields(
-            initial_data: Dict[str, Any],
-            fields: Union[Dict[str, Any],
-                          Mapping[str, Any]]) -> List[str]:
-        """
-        Handles array notation by stripping '[]' suffix before comparing field names.
-        For example, 'field[]' is treated the same as 'field' when checking against known fields.
-        """
-        # Strip array notation from input field names
-        input_fields = {k[:-2] if k.endswith('[]') else k for k in initial_data.keys()}
-        known_fields = set(fields.keys())
-        return list(input_fields - known_fields)
-
-    @classmethod
-    def _find_duplicate_fields(cls, raw_data: str) -> List[str]:
-        """Find duplicate field names in raw JSON data."""
-        try:
-            field_names = cls._get_raw_field_names(raw_data)
-            field_counts = {}
-            duplicates = []
-
-            for field in field_names:
-                if field in field_counts:
-                    if field_counts[field] == 1:  # Only add to duplicates once
-                        duplicates.append(field)
-                    field_counts[field] += 1
-                else:
-                    field_counts[field] = 1
-
-            return duplicates
-        except (UnicodeDecodeError, AttributeError, json.JSONDecodeError):
-            return []
