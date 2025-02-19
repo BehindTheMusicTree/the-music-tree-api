@@ -4,7 +4,6 @@ from rest_framework.serializers import ModelSerializer
 from bodzify_api import settings
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
-from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.UniquePerUserNameField import UniquePerUserNameField
 from bodzify_api.serializer.field.foreign_key.DescendantAwareField import DescendantAwareField
 from .Fields import Fields

@@ -56,6 +56,7 @@ class FieldValidationErrorCode(Enum):
     INVALID_FORMAT = 'invalid_format'
     FIELD_DUPLICATE = 'field_duplicate'
     UNEXPECTED_LIST = 'unexpected_list'
+    LIST_EXPECTED = 'list_expected'
 
     # Filter
     INVALID_FILTER = 'invalid_filter'

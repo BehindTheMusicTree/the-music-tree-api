@@ -7,12 +7,18 @@ from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields
 
 class ArtistsNamesField(AppCharField):
     def to_internal_value(self, data):
-        value = super().to_internal_value(data)
-        if not value:
-            return value
+        if not data:
+            return None
 
-        # Split by comma and strip whitespace
-        artists = [artist.strip() for artist in value.split(',')]
+        # Only accept array input
+        if not isinstance(data, (list, tuple)):
+            raise AppValidationError(
+                field=Fields.ARTISTS_NAMES,
+                message='Multiple values must be sent using array notation (field[]=value)',
+                code=FieldValidationErrorCode.LIST_EXPECTED
+            )
+
+        artists = [str(artist).strip() for artist in data]
 
         # Check for empty values between commas
         if '' in artists and len(artists) > 1:

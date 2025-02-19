@@ -23,8 +23,8 @@ from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields as InputFields
-from bodzify_api.serializer.schema.model.lib_track.input.post import Fields as PostFields
-from bodzify_api.serializer.schema.model.lib_track.input.extract import Fields as ExtractFields
+from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.serializer.schema.model.lib_track.input.extract.Fields import Fields as ExtractFields
 from .Fields import Fields
 
 
@@ -133,12 +133,14 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         save_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
             dict=normalized_metadata,
             keys=[NormalizedMetadataKeys.TITLE,
-                  NormalizedMetadataKeys.ARTISTS_NAMES,
                   NormalizedMetadataKeys.ALBUM_NAME,
-                  NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES,
                   NormalizedMetadataKeys.GENRE_NAME,
                   NormalizedMetadataKeys.RATING,
                   NormalizedMetadataKeys.LANGUAGE])
+        save_data_with_potential_none[InputFields.ARTISTS_NAMES_ARRAY] = \
+            normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES]
+        save_data_with_potential_none[InputFields.ALBUM_ARTISTS_NAMES_ARRAY] = \
+            normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES]
 
         schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(save_data_with_potential_none)
         schema_data_clean[InputFields.TRACK_FILE_PUBLIC] = file
@@ -189,12 +191,13 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         is_filename_randomly_generated = False
         if Fields.TITLE in data:
             title = data[Fields.TITLE]
-            if InputFields.ARTISTS_NAMES in data:
-                artist_name = data[InputFields.ARTISTS_NAMES]
-                if artist_name is None or artist_name == "":
+            if InputFields.ARTISTS_NAMES_ARRAY in data:
+                artists_names_list = data[InputFields.ARTISTS_NAMES_ARRAY]
+                artists_names = ", ".join(artists_names_list)
+                if artists_names is None or artists_names == "":
                     filename_without_extension = title
                 else:
-                    filename_without_extension = artist_name + " - " + title
+                    filename_without_extension = artists_names + " - " + title
             else:
                 filename_without_extension = title
             filename_with_extension = filename_without_extension + "." + file_extension
@@ -207,7 +210,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 is_filename_randomly_generated = True
         return filename_with_extension, is_filename_randomly_generated
 
-    def _get_model_data_from_common_schema_data(self, schema_data: dict[str, str]) -> dict:
+    def _get_model_data_from_post_and_extract_common_schema_data(self, schema_data: dict[str, str]) -> dict:
         model_data = dict()
 
         for key in [Fields.USER,
@@ -243,9 +246,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 InputFields.TRACK_FILE_PUBLIC,
                 InputFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 InputFields.TITLE,
-                InputFields.ARTISTS_NAMES,
+                InputFields.ARTISTS_NAMES_ARRAY,
                 InputFields.ALBUM_NAME,
-                InputFields.ALBUM_ARTISTS_NAMES,
+                InputFields.ALBUM_ARTISTS_NAMES_ARRAY,
                 InputFields.POSITION_IN_ALBUM,
                 InputFields.GENRE_UUID,
                 InputFields.RATING,
@@ -265,7 +268,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         schema_data = self._get_schema_data_from_post_data(post_data)
-        model_data = self._get_model_data_from_common_schema_data(schema_data)
+        model_data = self._get_model_data_from_post_and_extract_common_schema_data(schema_data)
         model_data[Fields.TRACK_FILE] = schema_data[InputFields.TRACK_FILE_PUBLIC]
         return model_data
 
@@ -303,7 +306,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
-        return self._get_model_data_from_common_schema_data(schema_data=schema_data)
+        return self._get_model_data_from_post_and_extract_common_schema_data(schema_data=schema_data)
 
     def decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel

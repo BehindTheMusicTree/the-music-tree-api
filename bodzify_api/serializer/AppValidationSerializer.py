@@ -157,8 +157,14 @@ class AppValidationSerializer(serializers.Serializer, Generic[T]):
             initial_data: Dict[str, Any],
             fields: Union[Dict[str, Any],
                           Mapping[str, Any]]) -> List[str]:
-        """Check for unknown fields in the input data."""
-        return list(set(initial_data.keys()) - set(fields.keys()))
+        """
+        Handles array notation by stripping '[]' suffix before comparing field names.
+        For example, 'field[]' is treated the same as 'field' when checking against known fields.
+        """
+        # Strip array notation from input field names
+        input_fields = {k[:-2] if k.endswith('[]') else k for k in initial_data.keys()}
+        known_fields = set(fields.keys())
+        return list(input_fields - known_fields)
 
     @classmethod
     def _find_duplicate_fields(cls, raw_data: str) -> List[str]:
