@@ -53,6 +53,7 @@ class NullableListDataTestCase(ApiTestCase):
             'test_non_array_then_error',
             'test_comma_separated_then_only_one_value',
             'test_duplicate_values_then_error',
+            'test_malformed_array_field_name_then_error'
         ]
         if methods_names_to_implement:
             list_methods_to_implement += methods_names_to_implement

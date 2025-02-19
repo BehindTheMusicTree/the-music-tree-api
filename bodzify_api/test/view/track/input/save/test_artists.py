@@ -33,6 +33,17 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FIELD] == InputFields.ALBUM_ARTISTS_NAMES_ARRAY
         assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
+    def test_malformed_array_field_name_then_error(self) -> None:
+        malformed_field_name = "artists_names"
+        data = {malformed_field_name: ['muse']}
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error[ErrorResponseFields.FIELD] == malformed_field_name
+        assert error[ErrorResponseFields.CODE] == FieldValidationErrorCode.MALFORMED_LIST.value
+
     def test_empty_then_none(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ARTISTS_NAMES_ARRAY: []})
 
