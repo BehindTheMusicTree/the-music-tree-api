@@ -50,7 +50,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
     def validate(self, data):
         if Fields.GENRE_UUID in data and Fields.GENRE_NAME in data:
             if data[Fields.GENRE_UUID] not in ['', None] and data[Fields.GENRE_NAME] not in ['', None]:
-                raise AppValidationError.from_serializer(
+                raise AppValidationError(
                     field=Fields.GENRE_NAME,
                     message='Genre name and genre uuid cannot be specified at the same time',
                     code=FieldValidationErrorCode.MUTUALLY_EXCLUSIVE
@@ -64,7 +64,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                 error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
-                raise AppValidationError.from_serializer(
+                raise AppValidationError(
                     field=Fields.ALBUM_ARTISTS_NAMES,
                     message=error_message,
                     code=FieldValidationErrorCode.DEPENDENCY_MISSING
@@ -78,7 +78,7 @@ class LibTrackEndPointSerializer(AppValidationSerializer):
                 error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
-                raise AppValidationError.from_serializer(
+                AppValidationError(
                     field=Fields.ALBUM_NAME,
                     message=error_message,
                     code=FieldValidationErrorCode.DEPENDENCY_MISSING
