@@ -19,7 +19,7 @@ from bodzify_api.utils.validation_error_utils \
 T = TypeVar('T')
 
 
-class AppValidationSerializer(serializers.Serializer, Generic[T]):
+class AppSerializer(serializers.Serializer, Generic[T]):
 
     REQUEST_FIELD = 'request'
 

@@ -4,7 +4,7 @@ from bodzify_api import settings
 from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.PositionInAlbumField import PositionInAlbumField
 from bodzify_api.serializer.field.RatingField import RatingField
-from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
+from bodzify_api.serializer.AppSerializer import AppSerializer
 from bodzify_api.serializer.field.ArtistsNamesField import ArtistsNamesField
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
 from bodzify_api.validator.AppValidationError import AppValidationError
@@ -15,7 +15,7 @@ ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be 
 POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album position is."""
 
 
-class LibTrackEndPointSerializer(AppValidationSerializer):
+class LibTrackEndPointSerializer(AppSerializer):
     track_file_fingerprint_must_be_unique = serializers.BooleanField(required=False)
     title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                          required=False,

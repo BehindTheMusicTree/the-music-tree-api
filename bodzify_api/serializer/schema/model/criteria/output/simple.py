@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
+from bodzify_api.serializer.AppSerializer import AppSerializer
 from bodzify_api.serializer.schema.model.criteria.output.minimum import CriteriaMinimumSerializer
 from .Fields import Fields as AvailableFields
 
@@ -13,7 +13,7 @@ class Fields:
     CREATED_ON = AvailableFields.CREATED_ON
 
 
-class CriteriaSimpleSerializer(AppValidationSerializer, serializers.ModelSerializer):
+class CriteriaSimpleSerializer(AppSerializer, serializers.ModelSerializer):
     parent = CriteriaMinimumSerializer()
 
     class Meta:

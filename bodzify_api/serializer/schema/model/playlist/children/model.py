@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
-from bodzify_api.serializer.AppValidationSerializer import AppValidationSerializer
+from bodzify_api.serializer.AppValidationSerializer import AppSerializer
 
 
-class ChildPlaylistModelSerializer(AppValidationSerializer, serializers.ModelSerializer):
+class ChildPlaylistModelSerializer(AppSerializer, serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
