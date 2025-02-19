@@ -37,16 +37,13 @@ class ErrorResponse:
         status_message = ErrorResponseFields.STATUS_MESSAGES.get(http_status, "Bad Request")
 
         response_data = {
-            ErrorResponseFields.CODE: error_code.value,
+            ErrorResponseFields.FieldErrors.CODE: error_code.value,
             ErrorResponseFields.MESSAGE: status_message,
             ErrorResponseFields.SUCCESS: False,
             ErrorResponseFields.DETAILS: [error_detail]
         }
 
-        return Response(
-            data=response_data,
-            status=http_status
-        )
+        return Response(data=response_data, status=http_status)
 
     @staticmethod
     def _parse_error_message(error: Any) -> tuple[str, str]:
