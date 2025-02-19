@@ -77,7 +77,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
         serializer.is_valid(raise_exception=True)
         validated_data_dict = getattr(serializer, 'validated_data', {})
-        validated_data_dict = {str(k): v for k, v in validated_data_dict.items()}
         if PrivateFields.USER not in validated_data_dict:
             validated_data_dict[PrivateFields.USER] = self.request.user
         return validated_data_dict
@@ -130,7 +129,7 @@ to modify in the request body.",
         return self.get_paginated_response(data)
 
     def _handle_post(self, request: Request, creation_type: Optional[str] = None) -> Response:
-        create_data_in_snake_case = data_transformer.dict_to_snake_case(request.data)
+        create_data_in_snake_case = data_transformer.form_data_to_snake_case(request.data)
         instance = self._create_instance(request=request,
                                          create_data=create_data_in_snake_case,
                                          creation_type=creation_type)
@@ -145,7 +144,7 @@ to modify in the request body.",
 
     def _handle_update(self, request: Request) -> Response:
         instance = self.get_object()
-        update_data_in_snake_case = data_transformer.dict_to_snake_case(request.data)
+        update_data_in_snake_case = data_transformer.form_data_to_snake_case(request.data)
         updated_instance = self._update_instance(request=request,
                                                  instance=instance,
                                                  update_data=update_data_in_snake_case)
