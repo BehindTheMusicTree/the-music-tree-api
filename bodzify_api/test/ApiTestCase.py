@@ -100,7 +100,8 @@ class ApiTestCase(AppTestCase, Generic[T]):
             "message": "Bad Request",
             "success": false,
             "details": [{
-                "message": "Validation failed",
+                "message": "One or more fields contain invalid data. Please check the error details for specific 
+                    validation requirements",
                 "fieldErrors": {
                     "field1": {"message": "...", "code": "..."},
                     "field2": {"message": "...", "code": "..."}
@@ -109,8 +110,8 @@ class ApiTestCase(AppTestCase, Generic[T]):
         }
         """
         self.bad_request_result = response.json()
-        bad_request_result_details = response.json()[ErrorResponseFields.DETAILS][0]
-        self.bad_request_result_field_errors_json = bad_request_result_details['fieldErrors']
+        bad_request_result_details = self.bad_request_result[ErrorResponseFields.DETAILS][0]
+        self.bad_request_result_field_errors_json = bad_request_result_details[ErrorResponseFields.FIELD_ERRORS]
 
         # Convert field errors to a list format for easier testing
         self.bad_request_result_field_errors = []
@@ -118,9 +119,9 @@ class ApiTestCase(AppTestCase, Generic[T]):
             # error_list is a list of error dictionaries
             for error in error_list:
                 self.bad_request_result_field_errors.append({
-                    'field': field_name,
-                    'message': error[ErrorResponseFields.MESSAGE],
-                    'code': error[ErrorResponseFields.FieldErrors.CODE]
+                    ErrorResponseFields.FieldErrors.FIELD: field_name,
+                    ErrorResponseFields.FieldErrors.MESSAGE: error[ErrorResponseFields.MESSAGE],
+                    ErrorResponseFields.FieldErrors.CODE: error[ErrorResponseFields.FieldErrors.CODE]
                 })
 
     def _set_results_attributes(self, response):
