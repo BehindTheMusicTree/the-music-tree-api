@@ -31,7 +31,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_one_is_max_length_and_another_one_is_one_char_then_ok(self) -> None:
