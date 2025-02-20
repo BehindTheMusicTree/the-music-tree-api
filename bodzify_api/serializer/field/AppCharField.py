@@ -21,39 +21,6 @@ class AppCharField(AppField, serializers.CharField):
     called automatically for validation errors.
     """
 
-    def fail(self, key: str, **kwargs: Any) -> None:
-        """
-        Raise an AppValidationError with appropriate error code and message.
-
-        Args:
-            key: The error key that maps to an error message
-            **kwargs: Format parameters for the error message
-        """
-        try:
-            message = self.error_messages[key]
-            if kwargs:
-                message = message.format(**kwargs)
-        except KeyError:
-            class_name = self.__class__.__name__
-            message = f"Invalid input for {class_name}."
-
-        if key == 'required':
-            code = FieldValidationErrorCode.REQUIRED
-        elif key == 'blank':
-            code = FieldValidationErrorCode.BLANK
-        elif key == 'max_length':
-            code = FieldValidationErrorCode.STRING_TOO_LONG
-        elif key == 'min_length':
-            code = FieldValidationErrorCode.STRING_TOO_SHORT
-        elif key == 'invalid':
-            code = FieldValidationErrorCode.INVALID_FORMAT
-        else:
-            code = FieldValidationErrorCode.INVALID_FORMAT
-
-        raise AppValidationError(
-            field_name=self.get_error_field_name(),
-            message=message, field_validation_error_code=code)
-
     def to_internal_value(self, data: Any) -> Optional[str]:
         if data is None:
             if not self.allow_null:

@@ -23,33 +23,6 @@ class ForeignKeyField(AppField, PrimaryKeyRelatedField):
         self.additional_filters = kwargs.pop('additional_filters', {})
         super().__init__(**kwargs)
 
-    def fail(self, key: str, **kwargs: Any) -> None:
-        """
-        Raise an AppValidationError with appropriate error code and message.
-
-        Args:
-            key: The error key that maps to an error message
-            **kwargs: Format parameters for the error message
-        """
-        try:
-            msg = self.error_messages[key]
-            if kwargs:
-                msg = msg.format(**kwargs)
-        except KeyError:
-            class_name = self.__class__.__name__
-            msg = f"Invalid input for {class_name}."
-
-        if key == 'required':
-            code = FieldValidationErrorCode.REQUIRED
-        elif key == 'does_not_exist':
-            code = FieldValidationErrorCode.INVALID_REFERENCE
-        elif key == 'incorrect_type':
-            code = FieldValidationErrorCode.INVALID_FORMAT
-        else:
-            code = FieldValidationErrorCode.DEFAULT
-
-        raise AppValidationError(field_name=self.get_error_field_name(), message=msg, field_validation_error_code=code)
-
     def get_queryset(self) -> Any:
         queryset = super().get_queryset()
         if self.additional_filters:

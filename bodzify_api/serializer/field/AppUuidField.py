@@ -24,39 +24,26 @@ class AppUuidField(AppField, serializers.UUIDField):
         self.error_messages = {**self.default_error_messages}
         super().__init__(**kwargs)
 
-    def fail(self, key: str, **kwargs: Any) -> NoReturn:
+    def to_internal_value(self, data: Any) -> Optional[UUID]:
         """
-        Raise an AppValidationError with appropriate error code and message.
+        Validate that the input is a valid UUID.
+        Unlike UUIDField which directly raises ValidationError, we use fail()
+        to ensure consistent error handling across the application.
+        """
+        if data is None:
+            if not self.allow_null:
+                self.fail('null')
+            return None
 
-        Args:
-            key: The error key that maps to an error message
-            **kwargs: Format parameters for the error message
-        """
+        if not isinstance(data, (str, UUID)):
+            self.fail('incorrect_type')
+
         try:
-            msg = self.error_messages[key]
-            if kwargs:
-                msg = msg.format(**kwargs)
-        except KeyError:
-            class_name = self.__class__.__name__
-            msg = f"Invalid input for {class_name}."
-
-        if key == 'required':
-            code = FieldValidationErrorCode.REQUIRED
-        elif key == 'incorrect_type':
-            code = FieldValidationErrorCode.INVALID_FORMAT
-        else:
-            code = FieldValidationErrorCode.DEFAULT
-
-        raise AppValidationError(
-            field_name=self.get_error_field_name(),
-            message=msg,
-            field_validation_error_code=code
-        )
-
-    def to_internal_value(self, data: Any) -> UUID:
-        return serializers.UUIDField.to_internal_value(self, data)
+            if isinstance(data, str):
+                return UUID(data)
+            return data
+        except (ValueError, AttributeError):
+            self.fail('invalid')
 
     def to_representation(self, value: Any) -> Optional[str]:
-        if value is None:
-            return None
-        return str(value)
+        return serializers.UUIDField.to_representation(self, value)

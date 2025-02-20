@@ -60,40 +60,6 @@ class PrivateContentUuidField(PrivateUuidField):
             LibraryTrack.objects.filter(user=user)
         )
 
-    def get_request_user(self) -> Any:
-        request = self.context.get('request')
-        if not isinstance(request, Request):
-            raise ImproperlyConfigured("request must be a Request instance.")
-        return request.user
-
-    def to_representation(self, obj: Any) -> str:
-        return str(obj.uuid) if obj else ''
-
-    def fail(self, key: str, **kwargs: Any) -> None:
-        """
-        Raise an AppValidationError with appropriate error code and message.
-
-        Args:
-            key: The error key that maps to an error message
-            **kwargs: Format parameters for the error message
-        """
-        try:
-            msg = self.error_messages[key]
-            if kwargs:
-                msg = msg.format(**kwargs)
-        except KeyError:
-            class_name = self.__class__.__name__
-            msg = f"Invalid input for {class_name}."
-
-        if key == 'invalid':
-            code = FieldValidationErrorCode.INVALID_FORMAT
-        elif key == 'does_not_exist':
-            code = FieldValidationErrorCode.INVALID_REFERENCE
-        else:
-            code = FieldValidationErrorCode.DEFAULT
-
-        raise AppValidationError(field_name=self.get_error_field_name(), message=msg, field_validation_error_code=code)
-
     def to_internal_value(self, data: Any) -> Dict[str, Any]:
         if data is None:
             return {ContentObjectFields.CONTENT_TYPE: None, ContentObjectFields.CONTENT: None}
