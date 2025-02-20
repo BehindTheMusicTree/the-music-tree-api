@@ -47,8 +47,7 @@ class NullableListDataTestCase(ApiTestCase):
         list_methods_to_implement = [
             'test_too_long_then_error',
             'test_longest_then_ok',
-            'test_array_notation_then_ok',
-            'test_empty_array_then_none',
+            'test_empty_then_none',
             'test_values_with_one_empty_then_error',
             'test_non_array_then_error',
             'test_comma_separated_then_only_one_value',

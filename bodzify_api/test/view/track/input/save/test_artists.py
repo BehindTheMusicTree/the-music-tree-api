@@ -50,7 +50,18 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
 
-    def test_existing_then_ok(self) -> None:
+    def test_values_with_one_empty_then_error(self) -> None:
+        artist_name = "Muse"
+        data = {ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name, ""]}
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST.value
+
+    def test_one_existing_then_create_it(self) -> None:
         artist_name = "Kopoe"
         self.model_fixture_factory.create_artist(name=artist_name)
 
@@ -62,7 +73,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
-    def test_not_existing(self) -> None:
+    def test_one_not_existing_then_ok(self) -> None:
         artist_name = "hoho"
         data = {InputFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
