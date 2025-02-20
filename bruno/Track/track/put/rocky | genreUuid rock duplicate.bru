@@ -1,0 +1,17 @@
+meta {
+  name: rocky | genreUuid rock duplicate
+  type: http
+  seq: 10
+}
+
+put {
+  url: {{BASE_URL}}tracks/{{trackRockyUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "genreUuid": 
+  }
+}
