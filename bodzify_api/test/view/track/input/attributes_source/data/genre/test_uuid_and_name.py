@@ -15,6 +15,7 @@ class TestCase(LibTrackTestCase):
             PostFields.GENRE_UUID: None,
         }
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre == None
 

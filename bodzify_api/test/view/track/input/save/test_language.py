@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.schema.model.lib_track.input.put import Fields as PutFields
+from bodzify_api.serializer.schema.model.lib_track.input.put.put import Fields as PutFields
 from bodzify_api.test.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
