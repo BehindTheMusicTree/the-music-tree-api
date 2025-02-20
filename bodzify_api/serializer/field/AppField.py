@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from rest_framework.fields import Field
+from rest_framework.fields import Field, ListField
 
 
 class AppField(Field):
@@ -10,7 +10,10 @@ class AppField(Field):
 
     def get_error_field_name(self) -> Optional[str]:
         if hasattr(self, 'field_name') and self.field_name:
-            return self.field_name
+            field_name = self.field_name
+            if getattr(self, 'many', False) or isinstance(self, ListField):
+                field_name += '[]'
+            return field_name
         return None
 
     def to_internal_value(self, data: Any) -> Any:
