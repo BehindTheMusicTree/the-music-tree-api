@@ -3,6 +3,7 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -27,6 +28,8 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE_UUID
+        assert self.bad_request_result_field_errors[0][
+            ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(
+            PostFields.GENRE_UUID)
         assert self.bad_request_result_field_errors[0][
             ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.MUTUALLY_EXCLUSIVE.value
