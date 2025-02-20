@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+from django.core.exceptions import ImproperlyConfigured
+
 from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from bodzify_api.utils.audio_metadata.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
@@ -15,7 +17,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
     def get_default_ordering(self) -> list[str]:
         return [LibTrackMixinFields.NAME_INTERNAL]
 
-    def get_artists_names_list_from_str(self, names_str: str) -> list:
+    def get_artists_names_list_from_metadata_str(self, names_str: str) -> list:
         names_with_eventual_spaces_around_and_duplicates = names_str.split(METADATA_ARTISTS_SEPARATION_CHAR)
         names = []
         for name_with_eventual_spaces_around in names_with_eventual_spaces_around_and_duplicates:
@@ -28,6 +30,17 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
             self, user: 'User', artists_names_list: str) -> list['Artist']:
         return [self.get_or_create(user=user, name=artist_name)[0] for artist_name in artists_names_list] \
             if len(artists_names_list) > 0 else []
+
+    def get_artists_list_from_metadata_str_after_eventual_creation(
+            self, user: 'User', artists_names_str: str) -> list['Artist']:
+        if not user:
+            raise ImproperlyConfigured("User must be provided")
+
+        names_list = self.get_artists_names_list_from_metadata_str(artists_names_str)
+        artists = []
+        for name in names_list:
+            artists.append(self.get_or_create(user=user, name=name)[0])
+        return artists
 
     def delete_instance(self, instance: 'Artist'):
         self.delete_instance_with_albums_and_tracks(instance)

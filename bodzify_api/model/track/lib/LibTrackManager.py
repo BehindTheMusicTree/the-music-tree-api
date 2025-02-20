@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from bodzify_api import settings
+from bodzify_api.model.artist.ArtistManager import ArtistManager
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
@@ -22,9 +23,9 @@ from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
-from bodzify_api.serializer.schema.model.lib_track.input.schema.Fields import Fields as SchemaFields
-from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.serializer.schema.model.lib_track.input.extract.Fields import Fields as ExtractFields
+from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as ExtractFields
 from .Fields import Fields
 
 
@@ -237,15 +238,20 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 SchemaFields.TRACK_FILE_PUBLIC,
                 SchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 SchemaFields.TITLE,
-                SchemaFields.ARTISTS_NAMES,
                 SchemaFields.ALBUM_NAME,
-                SchemaFields.ALBUM_ARTISTS_NAMES,
                 SchemaFields.POSITION_IN_ALBUM,
                 SchemaFields.GENRE_UUID,
                 SchemaFields.RATING,
                 SchemaFields.LANGUAGE]
         data_transformer.override_data1_with_data2_values_for_each_key_in_data2(
             data1=schema_data, data2=post_data, keys=keys)
+
+        for key in [SchemaFields.ARTISTS_NAMES, SchemaFields.ALBUM_ARTISTS_NAMES]:
+            if key in schema_data_from_file:
+                artists_names_comma_separated_str = schema_data_from_file[key]
+                artists = Artist.objects.get_artists_names_list_from_metadata_str(
+                    names_str=artists_names_comma_separated_str)
+                schema_data[key] = artists
 
         if SchemaFields.TITLE not in schema_data:
             schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
