@@ -23,16 +23,28 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
-    def test_too_long_then_error(self):
+    def test_one_too_long_then_error(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
-        data = {f"{PostFields.ARTISTS_NAMES_ARRAY}[]": [artist_name]}
+        data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name]}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.ALBUM_ARTISTS_NAMES_ARRAY
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
+
+    def test_one_is_max_length_and_another_one_is_one_char_then_ok(self) -> None:
+        artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
+        artist_name2 = "b"
+        data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name, artist_name2]}
+        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        artists_list: list[Artist] = list(self.saved_object.artists.all())
+        assert len(artists_list) == 2
+        assert artists_list[0].name == artist_name
+        assert artists_list[1].name == artist_name2
 
     def test_malformed_array_then_error(self) -> None:
         malformed_field_name = "artists_names"
