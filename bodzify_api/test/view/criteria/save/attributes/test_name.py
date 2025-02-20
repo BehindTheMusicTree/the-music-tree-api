@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields
+from bodzify_api.serializer.model.criteria.input.Fields import Fields
 from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode

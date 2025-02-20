@@ -4,10 +4,10 @@ from rest_framework.response import Response  # type: ignore
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterFields
-from bodzify_api.serializer.schema.model.criteria.input.post import CriteriaPostSerializer
-from bodzify_api.serializer.schema.model.criteria.input.put import CriteriaPutSerializer
-from bodzify_api.serializer.schema.model.criteria.output.detailed import CriteriaDetailedSerializer
-from bodzify_api.serializer.schema.model.criteria.output.simple import CriteriaSimpleSerializer
+from bodzify_api.serializer.model.criteria.input.post import CriteriaPostSerializer
+from bodzify_api.serializer.model.criteria.input.put import CriteriaPutSerializer
+from bodzify_api.serializer.model.criteria.output.detailed import CriteriaDetailedSerializer
+from bodzify_api.serializer.model.criteria.output.simple import CriteriaSimpleSerializer
 from ..base.AppModelViewSet import AppModelViewSet
 
 
@@ -42,9 +42,9 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
     def retrieve(self, *args, **kwargs) -> Response:
         return self._handle_retrieve()
 
-    @ transaction.atomic
-    @ extend_schema(request=CriteriaPutSerializer,
-                    responses=CriteriaDetailedSerializer,
-                    description="""Updates a criteria""")
+    @transaction.atomic
+    @extend_schema(request=CriteriaPutSerializer,
+                   responses=CriteriaDetailedSerializer,
+                   description="""Updates a criteria""")
     def update(self, request, *args, **kwargs):
         return self._handle_update(request)

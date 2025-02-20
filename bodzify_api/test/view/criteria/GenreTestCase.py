@@ -3,7 +3,7 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
-from bodzify_api.serializer.schema.model.criteria.output.Fields import Fields
+from bodzify_api.serializer.model.criteria.output.Fields import Fields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 

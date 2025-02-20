@@ -3,7 +3,7 @@ from typing import Optional
 from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields

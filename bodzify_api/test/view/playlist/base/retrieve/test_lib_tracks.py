@@ -4,10 +4,10 @@ from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import Criter
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.utils import data_transformer
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
-from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album \
+from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album \
     import Fields as LibTrackOutputFields
 from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
-from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistOutputFields
+from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as PlaylistOutputFields
 
 
 class TestCase(PlaylistTestCase):

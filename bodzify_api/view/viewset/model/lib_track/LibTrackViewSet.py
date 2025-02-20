@@ -5,13 +5,13 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes 
 from rest_framework.decorators import action
 from rest_framework.serializers import Serializer
 
-from bodzify_api.serializer.schema.model.lib_track.input.extract.extract import LibTrackExtractSerializer
-from bodzify_api.serializer.schema.model.lib_track.input.post.post import LibTrackPostSerializer
-from bodzify_api.serializer.schema.model.lib_track.input.put.put import LibTrackPutSerializer
-from bodzify_api.serializer.schema.model.lib_track.output.simple.simple_without_album_and_genre \
+from bodzify_api.serializer.model.lib_track.input.extract.extract import LibTrackExtractSerializer
+from bodzify_api.serializer.model.lib_track.input.post.post import LibTrackPostSerializer
+from bodzify_api.serializer.model.lib_track.input.put.put import LibTrackPutSerializer
+from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album_and_genre \
     import LibTrackWithoutAlbumPlaylistGenreSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
-from bodzify_api.serializer.schema.model.lib_track.output.detailed import LibTrackDetailedSerializer
+from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.filtering.set.lib_track.Fields import Fields as FilterFields
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType

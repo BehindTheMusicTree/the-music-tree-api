@@ -3,7 +3,7 @@ from rest_framework import status
 
 from ..AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
 
-from bodzify_api.serializer.schema.model.lib_track.output.Fields import Fields as LibTrackOutputFields
+from bodzify_api.serializer.model.lib_track.output.Fields import Fields as LibTrackOutputFields
 
 
 class TestCase(AllLibTracksMixinTestCase):

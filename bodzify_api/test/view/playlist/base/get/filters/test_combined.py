@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
-from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistGetFields
+from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.filtering.set.playlist.Fields import Fields as Filters
 

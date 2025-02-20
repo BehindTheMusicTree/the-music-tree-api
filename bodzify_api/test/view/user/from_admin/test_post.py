@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.model.user.input.Fields import Fields
+from bodzify_api.serializer.model.user.input.Fields import Fields
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
 

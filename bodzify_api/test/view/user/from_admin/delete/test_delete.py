@@ -11,7 +11,7 @@ from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as TrackPostFields
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as TrackPostFields
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
 

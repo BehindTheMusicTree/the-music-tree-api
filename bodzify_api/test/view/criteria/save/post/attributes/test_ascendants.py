@@ -3,7 +3,7 @@ from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 from bodzify_api.model.criteria.lineage_rel.Fields import Fields
-from bodzify_api.serializer.schema.model.criteria.input.post import Fields as PostFields
+from bodzify_api.serializer.model.criteria.input.post import Fields as PostFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 

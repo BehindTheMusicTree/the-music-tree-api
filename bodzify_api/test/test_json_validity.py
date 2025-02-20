@@ -4,7 +4,7 @@ from django.test import TestCase, RequestFactory
 from django.http import HttpResponse
 
 from bodzify_api.middleware.duplicate_fields.middleware import DuplicateFieldsMiddleware
-from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as CriteriaFields
+from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaFields
 
 
 class DuplicateFieldsMiddlewareTest(TestCase):

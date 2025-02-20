@@ -4,11 +4,11 @@ from bodzify_api.filtering.set.search.CriteriaPlaylistSearchFilterSet import Cri
 from bodzify_api.filtering.set.search.AlbumSearchFilterSet import AlbumSearchFilterSet
 from bodzify_api.filtering.set.search.ArtistSearchFilterSet import ArtistSearchFilterSet
 from ..pagination.DefaultMultipleModelLimitOffsetPagination import DefaultMultipleModelLimitOffsetPagination
-from bodzify_api.serializer.schema.model.lib_track.output.detailed import LibTrackDetailedSerializer
-from bodzify_api.serializer.schema.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
-from bodzify_api.serializer.schema.model.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
-from bodzify_api.serializer.schema.model.artist.simple import ArtistSimpleSerializer
-from bodzify_api.serializer.schema.model.album.minimum import AlbumMinimumSerializer
+from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
+from bodzify_api.serializer.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
+from bodzify_api.serializer.model.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
+from bodzify_api.serializer.model.artist.simple import ArtistSimpleSerializer
+from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames

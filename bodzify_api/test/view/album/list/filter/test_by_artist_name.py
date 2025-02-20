@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.test.utils.field.filter.char.NullableFreeCharFilterTestCase import NullableFreeCharFilterTestCase
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
-from bodzify_api.serializer.schema.model.album.Fields import Fields as AlbumFields
+from bodzify_api.serializer.model.album.Fields import Fields as AlbumFields
 
 
 class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):

@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.model.artist.detailed import Fields as ArtistFields
+from bodzify_api.serializer.model.artist.detailed import Fields as ArtistFields
 from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
 from bodzify_api.utils import data_transformer
 

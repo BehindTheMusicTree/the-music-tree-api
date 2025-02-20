@@ -3,13 +3,13 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from bodzify_api.filtering.set.playlist.children.manual.ManualPlaylistFilterSet import Fields, ManualPlaylistFilterSet
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.serializer.schema.model.playlist.children.manual.input.input \
+from bodzify_api.serializer.model.playlist.children.manual.input.input \
     import ManualPlaylistInputSerializer
-from bodzify_api.serializer.schema.model.playlist.children.manual.input.post import ManualPlaylistPostSerializer
-from bodzify_api.serializer.schema.model.playlist.children.manual.input.put import ManualPlaylistPutSerializer
-from bodzify_api.serializer.schema.model.playlist.children.manual.output.detailed \
+from bodzify_api.serializer.model.playlist.children.manual.input.post import ManualPlaylistPostSerializer
+from bodzify_api.serializer.model.playlist.children.manual.input.put import ManualPlaylistPutSerializer
+from bodzify_api.serializer.model.playlist.children.manual.output.detailed \
     import ManualPlaylistDetailedSerializer
-from bodzify_api.serializer.schema.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
+from bodzify_api.serializer.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 

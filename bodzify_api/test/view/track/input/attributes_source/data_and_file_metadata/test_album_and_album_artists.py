@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -18,7 +18,7 @@ class TestCase(LibTrackTestCase):
         assert album.name == data_album_name
 
     def test_only_album_in_data_and_only_album_artists_in_metadata_then_take_both(self):
-        data_album_name = "oiuhgoi"
+        data_album_name = "Best of"
         data_dict = {PostFields.ALBUM_NAME: data_album_name}
         response = self._post_lib_track_with_generic_sample_tag_album_artists_koko_without_album(**data_dict)
 

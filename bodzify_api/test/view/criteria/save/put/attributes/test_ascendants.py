@@ -4,7 +4,7 @@ from rest_framework import status
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 from bodzify_api.model.criteria.lineage_rel.Fields import Fields
-from bodzify_api.serializer.schema.model.criteria.input.put import Fields as PutFields
+from bodzify_api.serializer.model.criteria.input.put import Fields as PutFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 

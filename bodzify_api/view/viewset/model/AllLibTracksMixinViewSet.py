@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.SerializerType import SerializerType
-from bodzify_api.serializer.schema.model.lib_track.output.minimum import LibTrackMinimumSerializer
+from bodzify_api.serializer.model.lib_track.output.minimum import LibTrackMinimumSerializer
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 

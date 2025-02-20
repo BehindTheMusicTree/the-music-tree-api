@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.schema.model.playlist.children.manual.input.Fields import Fields
+from bodzify_api.serializer.model.playlist.children.manual.input.Fields import Fields
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
