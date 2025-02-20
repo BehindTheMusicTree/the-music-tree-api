@@ -12,7 +12,7 @@ class ErrorResponseFields:
     MESSAGE = 'message'  # Used for general error messages
     SUCCESS = 'success'  # Indicates if the operation was successful
     DETAILS = 'details'  # List of detailed error information
-    FIELD_ERRORS = 'field_errors'  # Used for field-specific error messages
+    FIELD_ERRORS = 'fieldErrors'  # Used for field-specific error messages
 
     class FieldErrors:
         FIELD = AppValidationErrorFields.FIELD
