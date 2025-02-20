@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.field.body_data.type.ForeignKeyDataTestCase import ForeignKeyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.ForeignKeyDataTestCase import ForeignKeyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

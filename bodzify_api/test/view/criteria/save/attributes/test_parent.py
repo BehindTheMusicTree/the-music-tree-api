@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as Fields
-from bodzify_api.test.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields

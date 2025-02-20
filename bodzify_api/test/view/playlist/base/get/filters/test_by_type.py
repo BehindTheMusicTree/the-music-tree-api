@@ -6,7 +6,7 @@ from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorC
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import VALUE as MANUAL_PLAYLIST_TYPE_LABEL
 from bodzify_api.serializer.schema.model.playlist.base.output.detailed import Fields as PlaylistGetFields
-from bodzify_api.test.field.filter.char.EnumCharFilterTestCase import EnumCharFilterTestCase
+from bodzify_api.test.utils.field.filter.char.EnumCharFilterTestCase import EnumCharFilterTestCase
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
