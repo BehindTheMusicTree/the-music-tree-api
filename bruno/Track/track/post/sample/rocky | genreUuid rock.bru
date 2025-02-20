@@ -1,7 +1,7 @@
 meta {
-  name: title Beer to Bro-country
+  name: rocky | genreUuid rock
   type: http
-  seq: 16
+  seq: 21
 }
 
 post {
@@ -16,6 +16,10 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  title: Beer
-  genreName: Bro-country
+  genreUuid: b7579b59-6fda-4981-86e0-b124859057a9
+  ~title: rock
+}
+
+vars:post-response {
+  trackRockUuid: res.body.uuid
 }
