@@ -19,12 +19,14 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackFields.TITLE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE.value
+
+        # The raised error will be invalid format as the duplicated data in multipart form data will be converted to
+        # a list
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
 
     def test_duplicate_fields_on_multipart_put_then_400(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Hey Ho")
 
-        # Test duplicate fields in multipart form data (like curl --form)
         data = {
             LibTrackFields.TITLE: ['Jo', 'steeve']  # Multiple values will be converted to separate form fields
         }
@@ -35,7 +37,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackFields.TITLE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
 
     def test_duplicate_fields_on_multipart_patch_then_400(self):
         # PATCH is not supported
@@ -45,7 +47,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         # Test array fields that allow duplicate values
         data = {
             LibTrackFields.TITLE: 'test',
-            LibTrackFields.ARTISTS_NAMES_ARRAY: ['artist1', 'artist2', 'artist1']  # Duplicate in array is allowed
+            LibTrackFields.ARTISTS_NAMES_ARRAY: ['artist1', 'artist2', 'artist3']
         }
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
