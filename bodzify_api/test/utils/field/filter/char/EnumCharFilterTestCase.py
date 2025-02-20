@@ -1,4 +1,5 @@
-from bodzify_api.test.field.filter.FilterTestCase import FilterTestCase
+
+from bodzify_api.test.utils.field.filter.FilterTestCase import FilterTestCase
 
 
 class EnumCharFilterTestCase(FilterTestCase):
