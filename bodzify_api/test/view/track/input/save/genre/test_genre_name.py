@@ -4,6 +4,7 @@ from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -26,7 +27,7 @@ class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE_NAME
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.GENRE_NAME)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
 
     def test_empty_then_none(self):
