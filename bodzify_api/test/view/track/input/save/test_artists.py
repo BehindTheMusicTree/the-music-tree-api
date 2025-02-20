@@ -97,7 +97,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         artist_name = "Kopoe"
         self.model_fixture_factory.create_artist(name=artist_name)
 
-        data = {PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
+        data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name]}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -107,7 +107,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
 
     def test_one_not_existing_then_ok(self) -> None:
         artist_name = "hoho"
-        data = {PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
+        data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name]}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -121,7 +121,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         self.model_fixture_factory.create_artist(name=artist1_name)
         self.model_fixture_factory.create_artist(name=artist2_name)
 
-        data = {PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name]}
+        data = {PostFields.ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name]}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -136,7 +136,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         artist2_name = "NewArtist2"
         artist3_name = "NewArtist3"
 
-        data = {PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name, artist3_name]}
+        data = {PostFields.ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name, artist3_name]}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -152,7 +152,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         new_artist1 = "NewArtist1"
         new_artist2 = "NewArtist2"
 
-        data = {PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [existing_artist, new_artist1, new_artist2]}
+        data = {PostFields.ARTISTS_NAMES_ARRAY: [existing_artist, new_artist1, new_artist2]}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -166,7 +166,7 @@ class TestCase(NullableListDataTestCase, LibTrackTestCase):
         valid_artist = "ValidArtist"
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
-        data = {PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [valid_artist, too_long_artist]}
+        data = {PostFields.ARTISTS_NAMES_ARRAY: [valid_artist, too_long_artist]}
         response = self._post_lib_track_with_generic_sample_no_tags(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
