@@ -1,8 +1,8 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.schema.model.lib_track.input.put.put import Fields as PutFields
-from bodzify_api.test.field.body_data.type.not_nullable.NotNullableBodyDataTestCase import NotNullableBodyDataTestCase
+from bodzify_api.serializer.schema.model.lib_track.input.put.Fields import Fields as PutFields
+from bodzify_api.test.utils.field.body_data.type.not_nullable.NotNullableBodyDataTestCase import NotNullableBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -15,7 +15,7 @@ class TestCase(NotNullableBodyDataTestCase, LibTrackTestCase):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PutFields.TITLE: value})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.title == value
+        assert self.saved_object.title == value
 
     def test_too_long_then_error(self):
         value = "a" * (settings.LIB_TRACK_TITLE_LEN_MAX + 1)

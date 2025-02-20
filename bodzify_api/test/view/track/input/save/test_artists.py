@@ -4,7 +4,7 @@ from bodzify_api import settings
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.schema.model.lib_track.input.extract.Fields import Fields as ExtractFields
 from bodzify_api.serializer.schema.model.lib_track.input.Fields import Fields as InputFields
-from bodzify_api.test.field.body_data.type.NullableListDataTestCase import NullableListDataTestCase
+from bodzify_api.test.utils.field.body_data.type.NullableListDataTestCase import NullableListDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
