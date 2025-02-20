@@ -1,4 +1,5 @@
-
+from typing import Any, Optional, Union
+from rest_framework import serializers
 from rest_framework.fields import ListField
 from bodzify_api.serializer.field.AppField import AppField
 from bodzify_api.validator.AppValidationError import AppValidationError
@@ -6,7 +7,15 @@ from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorC
 
 
 class ArtistsNamesField(AppField, ListField):
-    def to_internal_value(self, data):
+    max_length: int  # Declare max_length as a class variable with type annotation
+
+    def __init__(self, max_length: int, **kwargs):
+        # Initialize both parent classes properly
+        AppField.__init__(self, **kwargs)
+        ListField.__init__(self, child=serializers.CharField(max_length=max_length), **kwargs)
+        self.max_length = max_length  # Keep this for our own validation
+
+    def to_internal_value(self, data: Any) -> Optional[list[str]]:
         if not data:
             return None
 
@@ -14,11 +23,15 @@ class ArtistsNamesField(AppField, ListField):
             if '' in data or None in data:
                 raise AppValidationError(
                     field_name=self.get_error_field_name(),
-                    message='Empty artist names are not allowed',
+                    message='Empty artist names are not allowed when another value is specified',
                     field_validation_error_code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
                 )
         else:
             data = [data]
+
+        for artist_name in data:
+            if len(artist_name) > self.max_length:
+                self.fail('max_length', max_length=self.max_length)
 
         unique_artists = set(data)
         if len(unique_artists) < len(data):
@@ -30,4 +43,5 @@ class ArtistsNamesField(AppField, ListField):
 
         # Convert tuple to list if necessary to match ListField's expected type
         list_data = list(data) if isinstance(data, tuple) else data
-        return ListField.to_internal_value(self, list_data)
+        internal_value = ListField.to_internal_value(self, list_data)
+        return internal_value
