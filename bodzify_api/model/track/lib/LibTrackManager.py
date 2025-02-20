@@ -105,8 +105,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
 
         if SchemaFields.GENRE_UUID in schema_data:
-            genre_uuid = schema_data[SchemaFields.GENRE_UUID]
-            genre = None if not genre_uuid else Genre.objects.get(user=schema_data[Fields.USER], uuid=genre_uuid)
+            genre = schema_data[SchemaFields.GENRE_UUID]
         elif SchemaFields.GENRE_NAME in schema_data:
             genre_name = schema_data[SchemaFields.GENRE_NAME]
             genre = None if not genre_name else Genre.objects.get_or_create(
