@@ -15,7 +15,7 @@ ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be 
 POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album position is."""
 
 
-class LibTrackEndPointSerializer(AppSerializer):
+class LibTrackInputSerializer(AppSerializer):
     track_file_fingerprint_must_be_unique = serializers.BooleanField(required=False)
     title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
                          required=False,
@@ -34,7 +34,7 @@ class LibTrackEndPointSerializer(AppSerializer):
                                             allow_null=True)
     position_in_album = PositionInAlbumField()
 
-    genre_uuid = GenreField(required=False)
+    genre_uuid = GenreField(required=False, allow_null=True)
     genre_name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
                               required=False,
                               allow_blank=True,

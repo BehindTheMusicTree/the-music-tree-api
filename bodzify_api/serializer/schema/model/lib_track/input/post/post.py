@@ -1,8 +1,8 @@
 
 from rest_framework import serializers
 
-from bodzify_api.serializer.schema.model.lib_track.input.endpoint import LibTrackEndPointSerializer
+from bodzify_api.serializer.schema.model.lib_track.input.input import LibTrackInputSerializer
 
 
-class LibTrackPostSerializer(LibTrackEndPointSerializer):
+class LibTrackPostSerializer(LibTrackInputSerializer):
     file = serializers.FileField(required=True)
