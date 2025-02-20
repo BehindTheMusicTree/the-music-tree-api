@@ -1,10 +1,11 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.lib_track.input.put.Fields import Fields as PutFields
+from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(LibTrackTestCase, PutBodyDataTestCase):
 
     def test_not_provided_then_unchanged(self):
         rating = 5

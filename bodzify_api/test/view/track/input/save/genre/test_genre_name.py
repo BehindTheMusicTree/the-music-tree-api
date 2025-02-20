@@ -2,14 +2,15 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.utils.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.to_extend_from.NullableCharBodyDataTestCase \
+    import NullableCharBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
-class TestCase(NullableBodyDataTestCase, LibTrackTestCase):
+class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
 
     def test_longest_then_ok(self):
         genre_name = "a" * settings.CRITERIA_NAME_LEN_MAX

@@ -1,10 +1,11 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.lib_track.input.put.Fields import Fields as PutFields
-from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
+from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(NullableFieldTestCase):
+class TestCase(LibTrackTestCase, PutBodyDataTestCase):
 
     def test_not_empty_then_ok(self):
         language = "a"
@@ -32,7 +33,7 @@ class TestCase(NullableFieldTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.language == None
 
-    def test_not_none_then_update(self):
+    def test_provided_then_update(self):
         language = "a"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language="French")
 

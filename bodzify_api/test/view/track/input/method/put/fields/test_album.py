@@ -2,10 +2,11 @@ from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.schema.model.lib_track.input.put.Fields import Fields as PutFields
-from bodzify_api.test.view.track.input.method.put.fields.NullableFieldTestCase import NullableFieldTestCase
+from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(NullableFieldTestCase):
+class TestCase(LibTrackTestCase, PutBodyDataTestCase):
 
     def test_not_provided_then_unchanged(self):
         album = self.model_fixture_factory.create_album(name="Jojo")
@@ -25,7 +26,7 @@ class TestCase(NullableFieldTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.album == None
 
-    def test_not_none_then_update(self):
+    def test_provided_then_update(self):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", album=album_old)
         album_new = self.model_fixture_factory.create_album(name="koko")

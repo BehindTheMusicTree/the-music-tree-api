@@ -1,13 +1,14 @@
 from rest_framework import status
 
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields as Fields
-from bodzify_api.test.utils.field.body_data.type.NullableBodyDataTestCase import NullableBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
+from bodzify_api.test.utils.field.body_data.type.to_extend_from.ForeignKeyBodyDataTestCase \
+    import ForeignKeyBodyDataTestCase
 
 
-class TestCase(GenreTestCase, NullableBodyDataTestCase):
+class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
 
     def test_multiple_values_then_error(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: ["value", "value2"]})

@@ -2,14 +2,13 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.schema.model.criteria.input.Fields import Fields
-from bodzify_api.test.utils.field.body_data.method.SaveBodyDataTestCase import SaveBodyDataTestCase
-from bodzify_api.test.utils.field.body_data.type.not_nullable.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
-class TestCase(GenreTestCase, PrimaryBodyDataTestCase, SaveBodyDataTestCase):
+class TestCase(GenreTestCase, PrimaryBodyDataTestCase):
 
     def test_longest_then_ok(self):
         genre_name = "a" * settings.CRITERIA_NAME_LEN_MAX

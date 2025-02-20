@@ -18,7 +18,7 @@ class TestCase(LibTrackTestCase):
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria__name=genre_name)
         assert genre_playlist.lib_track_playlist_rels.get(lib_track=self.saved_object).position == 1
 
-    def test_existing_then_ok_genre_then_first_position_and_other_tracks_after(self):
+    def test_existing_then_first_position_and_other_tracks_after(self):
         genre_name = "Rock"
         genre = self.model_fixture_factory.create_genre(name=genre_name)
         lib_track1 = self.model_fixture_factory.create_lib_track_with_file(
