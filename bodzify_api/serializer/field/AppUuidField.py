@@ -57,9 +57,6 @@ class AppUuidField(AppField, serializers.UUIDField):
         return serializers.UUIDField.to_internal_value(self, data)
 
     def to_representation(self, value: Any) -> Optional[str]:
-        """
-        Returns the string representation of the UUID.
-        """
         if value is None:
             return None
         return str(value)
