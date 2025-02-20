@@ -74,19 +74,56 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 field_validation_error_code=FieldValidationErrorCode.UNEXPECTED_LIST
             )
 
-    def _collect_known_fields(self, data: dict) -> tuple[set, list]:
+    def _collect_known_fields_and_malformed_array_fields_names(self, data: dict) -> tuple[set, list]:
         known_fields = set()
         unknown_fields = []
+        updated_data = data.copy()
 
+        # First pass: check for malformed arrays and build known fields
         for field_name, field in self.fields.items():
-            self._validate_field_format(field_name, field, data)
-            known_fields.add(f"{field_name}[]" if self._is_list_field(field) else field_name)
+            is_list_field = self._is_list_field(field)
+            array_field_name = f"{field_name}[]"
 
+            # Check if field exists in data but missing [] suffix
+            if field_name in data and is_list_field:
+                raise AppValidationError(
+                    field_name=field_name,
+                    message=_(f"List field '{field_name}' must be specified as '{array_field_name}'"),
+                    field_validation_error_code=FieldValidationErrorCode.MALFORMED_LIST
+                )
+
+            # Add to known fields without [] suffix
+            known_fields.add(field_name)
+
+            # If it's a list field and has [] suffix in data, update the data to remove []
+            if is_list_field and array_field_name in data:
+                updated_data[field_name] = data[array_field_name]
+                del updated_data[array_field_name]
+
+        # Second pass: collect unknown fields from updated data
         for field_name in data.keys():
-            if field_name not in known_fields:
+            base_field_name = field_name[:-2] if field_name.endswith('[]') else field_name
+            if base_field_name not in known_fields:
                 unknown_fields.append(field_name)
 
         return known_fields, unknown_fields
+
+    def _collect_list_field_values(self, field_name: str | None, data: dict) -> Any:
+        """
+        Collects values for list fields, handling both array notation and direct values.
+        Args:
+            field_name: The name of the field without [] suffix
+            data: The data dictionary containing the field values
+        Returns:
+            The field value or None if not found
+        """
+        if field_name is None:
+            return None
+
+        array_field_name = f"{field_name}[]"
+        if array_field_name in data:
+            return data[array_field_name]
+        return data.get(field_name)
 
     def _check_duplicate_fields(self, request) -> None:
         if not request:
@@ -117,24 +154,6 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                         field_validation_error_code=FieldValidationErrorCode.FIELD_DUPLICATE)
             except (UnicodeDecodeError, AttributeError):
                 pass
-
-    def _collect_list_field_values(self, field_name_with_suffix: str, data: dict):
-        if field_name_with_suffix not in data:
-            return None
-
-        value = data[field_name_with_suffix]
-        if not isinstance(value, list):
-            value = [value]
-
-        additional_values = [
-            v for k, v in data.items()
-            if k.startswith(field_name_with_suffix) and k != field_name_with_suffix
-        ]
-
-        if additional_values:
-            value.extend([v for v in additional_values if v is not None])
-
-        return value
 
     def _validate_field(self, field: Field, value) -> Any:
         try:
@@ -180,14 +199,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         validated_data = {}
         for field in self._writable_fields:
             try:
-                if self._is_list_field(field):
-                    field_name_with_suffix = f"{field.field_name}[]"
-                    value = self._collect_list_field_values(field_name_with_suffix, data)
-                    if value is None:
-                        value = field.get_value(data)
-                else:
-                    value = field.get_value(data)
-
+                value = field.get_value(data)
                 validated_value = self._validate_field(field, value)
                 validated_data[field.source] = validated_value
             except AppValidationError:
@@ -210,7 +222,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             if not isinstance(data, dict):
                 raise ImproperlyConfigured('Data must be a dictionary')
 
-            _, unknown_fields = self._collect_known_fields(data)
+            _, unknown_fields = self._collect_known_fields_and_malformed_array_fields_names(data)
             if len(unknown_fields) == 1:
                 raise AppValidationError(
                     field_name=unknown_fields[0],
@@ -226,7 +238,8 @@ class AppSerializer(serializers.Serializer, Generic[T]):
 
             self._check_duplicate_fields(self.context.get(self.REQUEST_FIELD))
 
-            validated_data = self._validate_fields(data)
+            data_without_array_suffixe = {key[:-2] if key.endswith('[]') else key: value for key, value in data.items()}
+            validated_data = self._validate_fields(data_without_array_suffixe)
 
             validated_data = self._validate_object(validated_data)
 

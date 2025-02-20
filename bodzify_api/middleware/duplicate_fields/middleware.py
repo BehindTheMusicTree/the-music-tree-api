@@ -60,7 +60,8 @@ class DuplicateFieldsMiddleware:
                 for field_name in data.keys():
                     # Skip list fields (fields that appear multiple times)
                     if hasattr(data, 'getlist'):  # Handle QueryDict
-                        has_multiple_values = len(data.getlist(field_name)) > 1
+                        values = data.getlist(field_name)
+                        has_multiple_values = len(values) > 1
                     else:  # Handle regular dict
                         value = data.get(field_name)
                         has_multiple_values = isinstance(value, (list, tuple))

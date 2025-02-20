@@ -49,10 +49,9 @@ class NullableListDataTestCase(ApiTestCase):
             'test_longest_then_ok',
             'test_empty_then_none',
             'test_values_with_one_empty_then_error',
-            'test_non_array_then_error',
+            'test_malformed_array_then_error',
             'test_comma_separated_then_only_one_value',
             'test_duplicate_values_then_error',
-            'test_malformed_array_field_name_then_error'
         ]
         if methods_names_to_implement:
             list_methods_to_implement += methods_names_to_implement

@@ -10,25 +10,16 @@ class ArtistsNamesField(AppField, ListField):
         if not data:
             return None
 
-        # Only accept array input
-        if not isinstance(data, (list, tuple)):
-            raise AppValidationError(
-                field_name=self.get_error_field_name(),
-                message='Multiple values must be sent using array notation (field[]=value)',
-                field_validation_error_code=FieldValidationErrorCode.LIST_EXPECTED
-            )
+        if isinstance(data, (list, tuple)):
+            if '' in data or None in data:
+                raise AppValidationError(
+                    field_name=self.get_error_field_name(),
+                    message='Empty artist names are not allowed',
+                    field_validation_error_code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
+                )
+        else:
+            data = [data]
 
-        # Check for empty values between commas
-        if len(data) > 1:
-            for artist_name in data:
-                if artist_name is None or artist_name == '':
-                    raise AppValidationError(
-                        field_name=self.get_error_field_name(),
-                        message='Empty artist names are not allowed when specifying multiple artists',
-                        field_validation_error_code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
-                    )
-
-        # Check for duplicates
         unique_artists = set(data)
         if len(unique_artists) < len(data):
             raise AppValidationError(

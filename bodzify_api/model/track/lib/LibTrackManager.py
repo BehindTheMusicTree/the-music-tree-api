@@ -218,10 +218,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
             model_data=model_data, schema_data=schema_data)
-        self._update_model_data_with_album_if_name_in_schema_data(model_data=model_data,
-                                                                  schema_data=schema_data)
-        self._update_model_data_with_genre_if_in_schema_data(model_data=model_data,
-                                                             schema_data=schema_data)
+        self._update_model_data_with_album_if_name_in_schema_data(model_data=model_data, schema_data=schema_data)
+        self._update_model_data_with_genre_if_in_schema_data(model_data=model_data, schema_data=schema_data)
 
         return model_data
 
