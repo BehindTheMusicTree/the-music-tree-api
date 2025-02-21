@@ -92,17 +92,15 @@ def get_musicbrainz_recording_lookup_result(user: User,
         except musicbrainz_exception.MusicbrainzRecordingLookupException as e:
             exception_mapping: dict[type, MusicbrainzRecordingMissingCauseCode.Codes] = {
                 musicbrainz_exception.InvalidFingerprintMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INVALID_FINGERPRINT_RESPONSE_ERROR_CODE,
+                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DUE_TO_INVALID_FINGERPRINT,
                 musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INTERNAL_ERROR_RESPONSE_ERROR_CODE,
-                musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException:
+                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INTERNAL_ERROR,
+                musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_ERROR_CODE,
                 musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_RESPONSE_UNKNOWN_STATUS_CODE,
+                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_STATUS_CODE,
                 musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DNS_RESOLUTION_ERROR,
-                musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_FOR_UNKNOWN_REASON}
+                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DNS_RESOLUTION_ERROR}
             musicbrainz_recording_missing_cause_code = exception_mapping[type(e)]
             error_message = str(e)
             if len(error_message) > settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX:

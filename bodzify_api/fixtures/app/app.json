@@ -192,14 +192,5 @@
             "code": 9,
             "label": "The MusicBrainz lookup failed resolving MusicBrainz DNS."
         }
-    },
-    
-    {
-        "model": "bodzify_api.musicbrainzrecordingmissingcausecode",
-        "pk": 10,
-        "fields": {
-            "code": 10,
-            "label": "The MusicBrainz lookup failed for an unknown reason."
-        }
     }
 ]
