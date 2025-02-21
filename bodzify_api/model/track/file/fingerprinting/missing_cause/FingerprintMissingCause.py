@@ -10,7 +10,8 @@ from .FingerprintMissingCauseManager import FingerprintMissingCauseManager
 
 class FingerprintMissingCause(PrivateUniqueResource):
 
-    code = AppForeignKey(FingerprintMissingCauseCode, on_delete=models.DO_NOTHING)
+    code: FingerprintMissingCauseCode = AppForeignKey(  # type: ignore
+        FingerprintMissingCauseCode, on_delete=models.DO_NOTHING)
     message = AppCharField(max_length=settings.FINGERPRINTING_ERROR_MESSAGE_LEN_MAX, null=True)
 
     objects = FingerprintMissingCauseManager()
