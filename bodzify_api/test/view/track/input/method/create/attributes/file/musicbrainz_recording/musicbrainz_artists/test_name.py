@@ -1,3 +1,4 @@
+import pytest
 from rest_framework import status
 from django.db.models import QuerySet
 
@@ -5,6 +6,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
+@pytest.mark.usefixtures("enable_audio_metadata_analysis")
 class TestCase(LibTrackTestCase):
 
     def test_one_then_ok(self):
