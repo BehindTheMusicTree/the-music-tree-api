@@ -17,6 +17,7 @@ class TestCase(LibTrackTestCase):
 
     def test_ok_then_no_missing_cause(self):
         response = self._post_lib_track_with_queenshowmustgoon()
+
         assert response.status_code == status.HTTP_201_CREATED
         assert not self.saved_object.track_file.musicbrainz_recording_missing_cause
 
@@ -29,6 +30,7 @@ class TestCase(LibTrackTestCase):
 
     def test_duration_below_one_then_corresponding_missing_cause(self):
         response = self._post_lib_track_with_generic_sample_below_1_sec()
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
@@ -36,6 +38,7 @@ class TestCase(LibTrackTestCase):
 
     def test_invalid_fingerprint_then_corresponding_missing_cause(self):
         response = self._post_lib_track_with_generic_sample_no_tags()
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
@@ -48,6 +51,7 @@ class TestCase(LibTrackTestCase):
                 musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(exception_message)
 
             response = self._post_lib_track_with_queenshowmustgoon()
+
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.message == \
@@ -60,6 +64,7 @@ class TestCase(LibTrackTestCase):
                 musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException(error_message)
 
             response = self._post_lib_track_with_queenshowmustgoon()
+
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
@@ -74,6 +79,7 @@ class TestCase(LibTrackTestCase):
                 musicbrainz_exception.InternalErrorStatusErrorMusicbrainzRecordingLookupException(error_message)
 
             response = self._post_lib_track_with_queenshowmustgoon()
+
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
@@ -87,6 +93,7 @@ class TestCase(LibTrackTestCase):
                 musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(error_message)
 
             response = self._post_lib_track_with_queenshowmustgoon()
+
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
@@ -99,6 +106,7 @@ class TestCase(LibTrackTestCase):
                 musicbrainz_exception.UnknownStatusCodeMusicbrainzRecordingLookupException("unknown_status")
 
             response = self._post_lib_track_with_queenshowmustgoon()
+
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
@@ -110,6 +118,7 @@ class TestCase(LibTrackTestCase):
             mock_get_fingerprint.side_effect = Exception("Unknown error occurred")
 
             response = self._post_lib_track_with_queenshowmustgoon()
+
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
@@ -119,6 +128,7 @@ class TestCase(LibTrackTestCase):
     @pytest.mark.usefixtures("disable_audio_metadata_analysis")
     def test_audio_meta_analysis_disabled_then_corresponding_missing_cause(self):
         response = self._post_lib_track_with_queenshowmustgoon()
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
@@ -136,6 +146,7 @@ class TestCase(LibTrackTestCase):
                 error=missing_cause
             )
             response = self._post_lib_track_with_queenshowmustgoon()
+
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
