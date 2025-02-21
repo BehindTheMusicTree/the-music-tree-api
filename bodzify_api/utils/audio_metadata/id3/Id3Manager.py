@@ -72,13 +72,13 @@ class Id3Manager(MetadataManager):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             id3_key = self.Id3TextFrames.TITLE
             text_frame_class = TIT2
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES:
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES_STR:
             id3_key = self.Id3TextFrames.ARTIST_NAME
             text_frame_class = TPE1
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
             id3_key = self.Id3TextFrames.ALBUM_NAME
             text_frame_class = TALB
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
             id3_key = self.Id3TextFrames.ALBUM_ARTISTS_NAMES
             text_frame_class = TPE2
         elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:

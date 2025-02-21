@@ -1,17 +1,17 @@
 
-from ..Fields import Fields as EndpointFields
+from ..Fields import Fields as InoutFields
 
 
 class Fields:
-    TRACK_FILE = EndpointFields.TRACK_FILE_PUBLIC
-    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = EndpointFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
-    TITLE = EndpointFields.TITLE
-    ARTISTS_NAMES_ = EndpointFields.ALBUM_ARTISTS_NAMES_ARRAY
-    ALBUM_NAME = EndpointFields.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES_ARRAY = EndpointFields.ALBUM_ARTISTS_NAMES_ARRAY
-    POSITION_IN_ALBUM = EndpointFields.POSITION_IN_ALBUM
-    GENRE_UUID = EndpointFields.GENRE_UUID
-    GENRE_NAME = EndpointFields.GENRE_NAME
-    RATING = EndpointFields.RATING
-    LANGUAGE = EndpointFields.LANGUAGE
-    ARCHIVED = EndpointFields.ARCHIVED
+    TRACK_FILE = InoutFields.TRACK_FILE_PUBLIC
+    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = InoutFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
+    TITLE = InoutFields.TITLE
+    ARTISTS_NAMES_ = InoutFields.ALBUM_ARTISTS_NAMES_ARRAY
+    ALBUM_NAME = InoutFields.ALBUM_NAME
+    ALBUM_ARTISTS_NAMES_ARRAY = InoutFields.ALBUM_ARTISTS_NAMES_ARRAY
+    POSITION_IN_ALBUM = InoutFields.POSITION_IN_ALBUM
+    GENRE_UUID = InoutFields.GENRE_UUID
+    GENRE_NAME = InoutFields.GENRE_NAME
+    RATING = InoutFields.RATING
+    LANGUAGE = InoutFields.LANGUAGE
+    ARCHIVED = InoutFields.ARCHIVED

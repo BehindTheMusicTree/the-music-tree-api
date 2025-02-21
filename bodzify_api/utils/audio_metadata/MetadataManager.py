@@ -201,9 +201,9 @@ class MetadataManager:
     def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> dict:
         normalized_metadata = dict()
         normalized_metadata[NormalizedMetadataKeys.TITLE] = self.get_title()
-        normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES] = self.get_artists_names()
+        normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES_STR] = self.get_artists_names()
         normalized_metadata[NormalizedMetadataKeys.ALBUM_NAME] = self.get_album_name()
-        normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES] = self.get_album_artists_name_str()
+        normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR] = self.get_album_artists_name_str()
         normalized_metadata[NormalizedMetadataKeys.GENRE_NAME] = self.get_genre_name()
         normalized_metadata[NormalizedMetadataKeys.DURATION_IN_SEC] = self.get_duration_in_sec()
         normalized_metadata[NormalizedMetadataKeys.RATING] = self.get_eventually_normalized_rating_value(
@@ -215,11 +215,11 @@ class MetadataManager:
                                    normalized_rating_max_value: Optional[int] = None):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             return self.get_title()
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES:
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES_STR:
             return self.get_artists_names()
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
             return self.get_album_name()
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
             return self.get_album_artists_name_str()
         elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
             return self.get_genre_name()

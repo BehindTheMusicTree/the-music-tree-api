@@ -1,15 +1,15 @@
-from bodzify_api.serializer.model.lib_track.input.Fields import Fields as EndpointFields
+from bodzify_api.serializer.model.lib_track.input.Fields import Fields as InoutFields
 
 
 class Fields:
     URL = "url"
-    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = EndpointFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
-    TITLE = EndpointFields.TITLE
-    ARTISTS_NAMES_ARRAY = EndpointFields.ARTISTS_NAMES_ARRAY
-    ALBUM_NAME = EndpointFields.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES_ARRAY = EndpointFields.ALBUM_ARTISTS_NAMES_ARRAY
-    POSITION_IN_ALBUM = EndpointFields.POSITION_IN_ALBUM
-    GENRE_UUID = EndpointFields.GENRE_UUID
-    GENRE_NAME = EndpointFields.GENRE_NAME
-    RATING = EndpointFields.RATING
-    LANGUAGE = EndpointFields.LANGUAGE
+    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = InoutFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
+    TITLE = InoutFields.TITLE
+    ARTISTS_NAMES_ARRAY = InoutFields.ARTISTS_NAMES_ARRAY
+    ALBUM_NAME = InoutFields.ALBUM_NAME
+    ALBUM_ARTISTS_NAMES_ARRAY = InoutFields.ALBUM_ARTISTS_NAMES_ARRAY
+    POSITION_IN_ALBUM = InoutFields.POSITION_IN_ALBUM
+    GENRE_UUID = InoutFields.GENRE_UUID
+    GENRE_NAME = InoutFields.GENRE_NAME
+    RATING = InoutFields.RATING
+    LANGUAGE = InoutFields.LANGUAGE

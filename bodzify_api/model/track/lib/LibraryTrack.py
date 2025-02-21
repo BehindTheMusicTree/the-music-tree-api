@@ -105,7 +105,7 @@ class LibraryTrack(TrackablePlayCount):
                 artists_names_tag = artists_names_tag + artist.name
         else:
             artists_names_tag = ""
-        normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES] = artists_names_tag
+        normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES_STR] = artists_names_tag
 
         album_artists_tag = ""
         if self.album:
@@ -121,7 +121,7 @@ class LibraryTrack(TrackablePlayCount):
             album_name_tag = ""
 
         normalized_metadata[NormalizedMetadataKeys.ALBUM_NAME] = album_name_tag
-        normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES] = album_artists_tag
+        normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR] = album_artists_tag
         normalized_metadata[NormalizedMetadataKeys.GENRE_NAME] = self.genre.name if self.genre else ""
         normalized_metadata[NormalizedMetadataKeys.RATING] = self.rating
         normalized_metadata[NormalizedMetadataKeys.LANGUAGE] = self.language if self.language else ""

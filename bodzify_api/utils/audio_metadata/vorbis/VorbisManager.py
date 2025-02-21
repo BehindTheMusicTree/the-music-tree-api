@@ -94,11 +94,11 @@ class VorbisManager(MetadataManager):
             normalized_rating_max_value: Optional[int] = None):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
             vorbis_tag_key = self.VorbisTagKeys.TITLE
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES:
+        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES_STR:
             vorbis_tag_key = self.VorbisTagKeys.ARTIST_NAME
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
             vorbis_tag_key = self.VorbisTagKeys.ALBUM_NAME
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES:
+        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
             vorbis_tag_key = self.VorbisTagKeys.ALBUM_ARTISTS_NAMES
         elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
             vorbis_tag_key = self.VorbisTagKeys.GENRE_NAME

@@ -1,0 +1,25 @@
+meta {
+  name: | artist mat
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags album artists koko without album.mp3)
+  albumName: Best of
+}
+
+vars:post-response {
+  trackAllumerUuid: res.body.uuid
+  albumStadeUuid: res.body.album.uuid
+}
