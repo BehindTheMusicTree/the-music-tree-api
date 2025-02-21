@@ -1,5 +1,6 @@
 import logging
 
+import pytest
 from rest_framework import status
 
 from bodzify_api.logging.LoggersName import LoggersName
@@ -8,6 +9,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 logger = logging.getLogger(LoggersName.INFO)
 
 
+@pytest.mark.usefixtures("enable_audio_metadata_analysis")
 class TestCase(LibTrackTestCase):
 
     def test_not_found_then_none(self):

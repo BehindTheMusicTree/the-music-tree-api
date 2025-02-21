@@ -1,8 +1,10 @@
+import pytest
 from rest_framework import status
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
+@pytest.mark.usefixtures("enable_audio_metadata_analysis")
 class TestCase(LibTrackTestCase):
 
     def test_drown_7m21_mp3_then_ok(self):
