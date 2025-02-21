@@ -16,7 +16,8 @@ class MusicbrainzRecordingMissingCauseCode(BaseModel):
         LOOKUP_FAILED_WITH_INTERNAL_ERROR_RESPONSE_ERROR_CODE = 6
         LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_ERROR_CODE = 7
         LOOKUP_FAILED_WITH_RESPONSE_UNKNOWN_STATUS_CODE = 8
-        LOOKUP_FAILED_FOR_UNKNOWN_REASON = 9
+        LOOKUP_FAILED_DNS_RESOLUTION_ERROR = 9
+        LOOKUP_FAILED_FOR_UNKNOWN_REASON = 10
 
     code = models.PositiveIntegerField(primary_key=True, choices=Codes.choices, unique=True)
     label = AppCharField(unique=True, max_length=settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX)

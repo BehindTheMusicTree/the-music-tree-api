@@ -1,5 +1,6 @@
 from typing import Optional
 import acoustid
+from acoustid import WebServiceError
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -56,6 +57,8 @@ def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerpri
     except Exception as exception:
         if isinstance(exception, musicbrainz_exception.MusicbrainzRecordingLookupException):
             raise exception
+        if isinstance(exception, WebServiceError):
+            raise musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException(str(exception))
         raise musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(str(exception))
 
 
@@ -96,6 +99,8 @@ def get_musicbrainz_recording_lookup_result(user: User,
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_ERROR_CODE,
                 musicbrainz_exception.UnknownStatusCodeMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_RESPONSE_UNKNOWN_STATUS_CODE,
+                musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException:
+                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DNS_RESOLUTION_ERROR,
                 musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_FOR_UNKNOWN_REASON}
             musicbrainz_recording_missing_cause_code = exception_mapping[type(e)]
