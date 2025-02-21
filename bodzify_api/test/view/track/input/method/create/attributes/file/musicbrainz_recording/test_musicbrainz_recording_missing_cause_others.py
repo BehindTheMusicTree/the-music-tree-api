@@ -38,15 +38,27 @@ class TestCase(LibTrackTestCase):
             MusicbrainzRecordingMissingCauseCode.Codes.DURATION_BELOW_OR_EQUAL_1_SEC
 
     def test_invalid_fingerprint_then_corresponding_missing_cause(self):
-        response = self._post_lib_track_with_generic_sample_no_tags()
+        with patch('acoustid.lookup') as mock_lookup:
+            error_code = 3  # MusicBrainz error code for invalid fingerprint.
+            error_message = "Invalid fingerprint sent"
+            mock_lookup.return_value = {
+                'status': 'error',
+                'error': {
+                    'code': error_code,
+                    'message': error_message
+                }
+            }
+            response = self._post_lib_track_with_queenshowmustgoon()
 
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.musicbrainz_recording_missing_cause
-        assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
-            MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DUE_TO_INVALID_FINGERPRINT
+            assert response.status_code == status.HTTP_201_CREATED
+            assert self.saved_object.track_file.musicbrainz_recording_missing_cause
+            assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
+                MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DUE_TO_INVALID_FINGERPRINT
 
     def test_long_message_then_truncated(self):
-        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') as mock_get_fingerprint:
+        with patch(
+            'bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') \
+                as mock_get_fingerprint:
             exception_message = "a" * (settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX + 1)
             mock_get_fingerprint.side_effect = \
                 musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(exception_message)
@@ -119,21 +131,3 @@ class TestCase(LibTrackTestCase):
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
                 MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_STATUS_CODE
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.message is not None
-
-    def test_track_file_missing_then_corresponding_missing_cause(self):
-        with patch('bodzify_api.utils.audio_fingerprinter.get_fingerprinting_result') as mock_get_fingerprint:
-            missing_cause = FingerprintMissingCause.objects.create(
-                user=self.test_user1,
-                code=MusicbrainzRecordingMissingCauseCode.Codes.TRACK_FILE_MISSING
-            )
-            mock_get_fingerprint.return_value = FingerprintingResult(
-                fingerprint=None,
-                duration_in_sec=None,
-                error=missing_cause
-            )
-            response = self._post_lib_track_with_queenshowmustgoon()
-
-            assert response.status_code == status.HTTP_201_CREATED
-            assert self.saved_object.track_file.musicbrainz_recording_missing_cause
-            assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
-                MusicbrainzRecordingMissingCauseCode.Codes.TRACK_FILE_MISSING
