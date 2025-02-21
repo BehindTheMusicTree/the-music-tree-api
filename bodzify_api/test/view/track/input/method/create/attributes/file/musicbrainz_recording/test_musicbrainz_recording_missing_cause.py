@@ -5,6 +5,8 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.exception import musicbrainz as musicbrainz_exception
+from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import FingerprintingResult
+from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
     import MusicbrainzRecordingMissingCauseCode
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
@@ -124,12 +126,14 @@ class TestCase(LibTrackTestCase):
 
     def test_track_file_missing_then_corresponding_missing_cause(self):
         with patch('bodzify_api.utils.audio_fingerprinter.get_fingerprinting_result') as mock_get_fingerprint:
+            missing_cause = FingerprintMissingCause.objects.create(
+                user=self.test_user1,
+                code=MusicbrainzRecordingMissingCauseCode.Codes.TRACK_FILE_MISSING
+            )
             mock_get_fingerprint.return_value = FingerprintingResult(
-                is_success=False,
-                missing_cause=FingerprintMissingCause.objects.create(
-                    user=self.user,
-                    code=MusicbrainzRecordingMissingCauseCode.Codes.TRACK_FILE_MISSING
-                )
+                fingerprint=None,
+                duration_in_sec=None,
+                error=missing_cause
             )
             response = self._post_lib_track_with_queenshowmustgoon()
             assert response.status_code == status.HTTP_201_CREATED
