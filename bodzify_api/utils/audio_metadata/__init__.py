@@ -57,11 +57,23 @@ def is_flac_file_md5_valid(file_obj):
     else:
         raise ImproperlyConfigured("Expected string path or InMemoryUploadedFile")
 
-    return 'ok' in result.stderr.decode()
+    output = result.stderr.decode()
+    if 'ok' in output:
+        return True
+    if 'MD5 signature mismatch' in output:
+        return False
+    else:
+        raise Exception("The Flac file md5 check failed")
 
 
-def replace_flac_file_with_corrected_md5(file_path):
-    result = subprocess.run(['flac', '-f', '--best', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def replace_flac_file_with_corrected_md5(file_obj):
+    if isinstance(file_obj, str):
+        result = subprocess.run(['flac', '-f', '--best', file_obj], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    elif isinstance(file_obj, InMemoryUploadedFile):
+        file_obj.seek(0)  # Ensure we're at the start of the file
+        result = subprocess.run(
+            ['flac', '-f', '--best', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=file_obj.read())
+
     stderr = result.stderr.decode()
     if 'wrote' not in stderr:
         raise Exception("The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")

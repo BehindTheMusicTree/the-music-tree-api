@@ -204,7 +204,7 @@ class TrackFile(PrivateStandardResource):
 
         if not audio_metadata.is_flac_file_md5_valid(self.file_path_temp_or_not):
             try:
-                audio_metadata.replace_flac_file_with_corrected_md5(self.file.path)
+                audio_metadata.replace_flac_file_with_corrected_md5(self.file_path_temp_or_not)
                 self.flac_md5_has_been_corrected = True
             except Exception:
                 raise AppValidationError(
