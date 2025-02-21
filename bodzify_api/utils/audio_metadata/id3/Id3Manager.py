@@ -53,6 +53,7 @@ class Id3Manager(MetadataManager):
                 file_rating_tag = self.file_metadata[key]
                 file_rating_email = file_rating_tag.email
                 file_rating_value = file_rating_tag.rating
+                break
         if file_rating_value is None:
             return None
         else:

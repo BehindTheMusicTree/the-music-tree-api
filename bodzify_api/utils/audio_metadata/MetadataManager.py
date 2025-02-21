@@ -4,12 +4,12 @@ import tempfile
 from abc import abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
 from typing import Optional
-
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
-from django.db.models.fields.files import FieldFile
 from mutagen._file import FileType as MutagenFileMetadata
 from pydub.utils import mediainfo
 from tinytag import TinyTag, TinyTagException
+
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from django.db.models.fields.files import FieldFile
 
 from .NormalizedMetadataKeys import NormalizedMetadataKeys
 
@@ -100,7 +100,7 @@ class MetadataManager:
                                                            file_rating: int,
                                                            normalized_rating_max_value: Optional[int] = None,
                                                            is_rating_from_traktor: bool = False):
-        if file_rating:
+        if file_rating is not None:
             if normalized_rating_max_value:
                 if file_rating == 0 and is_rating_from_traktor:
                     return None

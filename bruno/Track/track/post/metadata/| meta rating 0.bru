@@ -1,0 +1,25 @@
+meta {
+  name: | meta rating 0
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags max length with letter a.mp3)
+  artistsNames[]: mat
+}
+
+vars:post-response {
+  trackAllumerUuid: res.body.uuid
+  albumStadeUuid: res.body.album.uuid
+}
