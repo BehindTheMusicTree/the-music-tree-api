@@ -1,6 +1,7 @@
-from unittest.mock import patch
 
+from unittest.mock import patch
 import pytest
+
 from rest_framework import status
 
 from bodzify_api import settings
@@ -86,12 +87,17 @@ class TestCase(LibTrackTestCase):
                 MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INTERNAL_ERROR_RESPONSE_ERROR_CODE
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.message is not None
 
-    def test_unknown_response_error_then_corresponding_missing_cause(self):
-        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') \
-                as mock_get_fingerprint:
-            error_message = "Unknown response error"
-            mock_get_fingerprint.side_effect = \
-                musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(error_message)
+    def test_unknown_error_code_then_corresponding_missing_cause(self):
+        with patch('acoustid.lookup') as mock_lookup:
+            error_code = 7  # Using error code 7 (not 3 or 5)
+            error_message = "Some other error"
+            mock_lookup.return_value = {
+                'status': 'error',
+                'error': {
+                    'code': error_code,
+                    'message': error_message
+                }
+            }
 
             response = self._post_lib_track_with_queenshowmustgoon()
 

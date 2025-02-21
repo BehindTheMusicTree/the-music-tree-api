@@ -76,27 +76,12 @@ def enable_audio_metadata_analysis(request):
     Yields:
         None: The fixture handles environment setup/teardown
     """
-    print("=== FIXTURE START: enable_audio_metadata_analysis ===")
-    print(f"Request param: {getattr(request, 'param', None)}")
-    print(f"Current env var AUDIO_META_ANALYSIS_ENABLED: {os.environ.get('AUDIO_META_ANALYSIS_ENABLED', 'not set')}")
-    print(
-        f"Current env var AUDIO_META_ANALYSIS_ENABLED_OVERRIDE: {os.environ.get('AUDIO_META_ANALYSIS_ENABLED_OVERRIDE', 'not set')}")
 
     # Get the enable value from parametrize or default to True
     enable = getattr(request, 'param', True)
-    os.environ['AUDIO_META_ANALYSIS_ENABLED'] = str(enable).lower()
     os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = str(enable).lower()
-
-    print(f"Set AUDIO_META_ANALYSIS_ENABLED to: {os.environ['AUDIO_META_ANALYSIS_ENABLED']}")
-    print(f"Set AUDIO_META_ANALYSIS_ENABLED_OVERRIDE to: {os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE']}")
-    print("=== FIXTURE SETUP COMPLETE ===")
-
     yield
-
-    print("=== FIXTURE CLEANUP START ===")
-    os.environ['AUDIO_META_ANALYSIS_ENABLED'] = 'false'
     os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = 'false'
-    print("=== FIXTURE CLEANUP COMPLETE ===")
 
 
 def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
