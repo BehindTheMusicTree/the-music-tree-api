@@ -144,7 +144,6 @@ class ApiTestCase(AppTestCase, Generic[T]):
 
     def _post_lib_track_with_generic_sample_no_tags(self,
                                                     extension: str = 'mp3',
-                                                    /,
                                                     **kwargs) -> Union[JsonResponse, HttpResponse]:
         filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_NONE
         response = self._post_lib_track_with_generic_sample(
