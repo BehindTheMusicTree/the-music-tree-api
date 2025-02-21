@@ -1,7 +1,7 @@
 meta {
-  name: | position in album 1
+  name: | rating 0
   type: http
-  seq: 25
+  seq: 29
 }
 
 post {
@@ -16,7 +16,7 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  positionInAlbum: 1
+  rating: 0
 }
 
 vars:post-response {
