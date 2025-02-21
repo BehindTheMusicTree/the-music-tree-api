@@ -8,7 +8,8 @@ from .code.MusicbrainzRecordingMissingCauseCode import MusicbrainzRecordingMissi
 
 
 class MusicbrainzRecordingMissingCause(PrivateStandardResource):
-    code = AppForeignKey(MusicbrainzRecordingMissingCauseCode, on_delete=models.DO_NOTHING)
+    code: MusicbrainzRecordingMissingCauseCode = AppForeignKey(  # type: ignore
+        MusicbrainzRecordingMissingCauseCode, on_delete=models.DO_NOTHING)
     message = models.CharField(max_length=settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX, null=True)
 
     objects: MusicbrainzRecordingMissingCauseManager = MusicbrainzRecordingMissingCauseManager()
