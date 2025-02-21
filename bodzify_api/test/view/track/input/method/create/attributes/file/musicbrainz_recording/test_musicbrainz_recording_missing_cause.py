@@ -48,7 +48,7 @@ class TestCase(LibTrackTestCase):
         with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') as mock_get_fingerprint:
             exception_message = "a" * (settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX + 1)
             mock_get_fingerprint.side_effect = \
-                musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(exception_message)
+                musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(exception_message)
 
             response = self._post_lib_track_with_queenshowmustgoon()
 
@@ -76,7 +76,7 @@ class TestCase(LibTrackTestCase):
         with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') as mock_get_fingerprint:
             error_message = "Internal server error occurred"
             mock_get_fingerprint.side_effect = \
-                musicbrainz_exception.InternalErrorStatusErrorMusicbrainzRecordingLookupException(error_message)
+                musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException(error_message)
 
             response = self._post_lib_track_with_queenshowmustgoon()
 
@@ -87,10 +87,11 @@ class TestCase(LibTrackTestCase):
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.message is not None
 
     def test_unknown_response_error_then_corresponding_missing_cause(self):
-        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') as mock_get_fingerprint:
+        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') \
+                as mock_get_fingerprint:
             error_message = "Unknown response error"
             mock_get_fingerprint.side_effect = \
-                musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(error_message)
+                musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(error_message)
 
             response = self._post_lib_track_with_queenshowmustgoon()
 
@@ -103,7 +104,7 @@ class TestCase(LibTrackTestCase):
     def test_unknown_status_code_then_corresponding_missing_cause(self):
         with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') as mock_get_fingerprint:
             mock_get_fingerprint.side_effect = \
-                musicbrainz_exception.UnknownStatusCodeMusicbrainzRecordingLookupException("unknown_status")
+                musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException("unknown_status")
 
             response = self._post_lib_track_with_queenshowmustgoon()
 

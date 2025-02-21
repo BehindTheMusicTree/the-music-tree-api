@@ -18,7 +18,7 @@ class DNSResolutionErrorMusicbrainzRecordingLookupException(MusicbrainzRecording
         super().__init__(f"DNS resolution error: {exception_message}")
 
 
-class UnknownStatusCodeMusicbrainzRecordingLookupException(MusicbrainzRecordingLookupException):
+class UnknownStatusMusicbrainzRecordingLookupException(MusicbrainzRecordingLookupException):
     def __init__(self, status_code: str):
         super().__init__(f"Unknown lookup status code: {status_code}")
 
@@ -28,17 +28,17 @@ class ErrorStatusMusicbrainzRecordingLookupException(MusicbrainzRecordingLookupE
         super().__init__(exception_message)
 
 
-class InvalidFingerprintErrorStatusErrorMusicbrainzRecordingLookupException(
+class InvalidFingerprintMusicbrainzRecordingLookupException(
         ErrorStatusMusicbrainzRecordingLookupException):
     def __init__(self, exception_message: str):
         super().__init__(exception_message)
 
 
-class InternalErrorStatusErrorMusicbrainzRecordingLookupException(ErrorStatusMusicbrainzRecordingLookupException):
+class InternalErrorMusicbrainzRecordingLookupException(ErrorStatusMusicbrainzRecordingLookupException):
     def __init__(self, exception_message: str):
         super().__init__(exception_message)
 
 
-class UnknownErrorStatusMusicbrainzRecordingLookupException(ErrorStatusMusicbrainzRecordingLookupException):
+class UnknownErrorCodeMusicbrainzRecordingLookupException(ErrorStatusMusicbrainzRecordingLookupException):
     def __init__(self, exception_message: str):
         super().__init__(exception_message)

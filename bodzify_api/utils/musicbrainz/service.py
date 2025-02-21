@@ -44,22 +44,22 @@ def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerpri
             error_code = error_dict[ApiFields.Names.CODE]
             error_message = error_dict[ApiFields.Names.MESSAGE]
             if error_code == 3:
-                raise musicbrainz_exception.InvalidFingerprintErrorStatusErrorMusicbrainzRecordingLookupException(
+                raise musicbrainz_exception.InvalidFingerprintMusicbrainzRecordingLookupException(
                     f"Musicbrainz original lookup error message: \"{error_message}\"")
             elif error_code == 5:
-                raise musicbrainz_exception.InternalErrorStatusErrorMusicbrainzRecordingLookupException(
+                raise musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException(
                     f"Musicbrainz original lookup error message: \"{error_message}\"")
             else:
                 exception_message = f"Error while getting MusicBrainz recording ID: {error_code} - {error_message}"
-                raise musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(exception_message)
+                raise musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(exception_message)
         else:
-            raise musicbrainz_exception.UnknownStatusCodeMusicbrainzRecordingLookupException(lookup_status)
+            raise musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException(lookup_status)
     except Exception as exception:
         if isinstance(exception, musicbrainz_exception.MusicbrainzRecordingLookupException):
             raise exception
         if isinstance(exception, WebServiceError):
             raise musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException(str(exception))
-        raise musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException(str(exception))
+        raise musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(str(exception))
 
 
 def get_musicbrainz_recording_lookup_result(user: User,
@@ -91,17 +91,17 @@ def get_musicbrainz_recording_lookup_result(user: User,
 
         except musicbrainz_exception.MusicbrainzRecordingLookupException as e:
             exception_mapping: dict[type, MusicbrainzRecordingMissingCauseCode.Codes] = {
-                musicbrainz_exception.InvalidFingerprintErrorStatusErrorMusicbrainzRecordingLookupException:
+                musicbrainz_exception.InvalidFingerprintMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INVALID_FINGERPRINT_RESPONSE_ERROR_CODE,
-                musicbrainz_exception.InternalErrorStatusErrorMusicbrainzRecordingLookupException:
+                musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INTERNAL_ERROR_RESPONSE_ERROR_CODE,
-                musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException:
+                musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_ERROR_CODE,
-                musicbrainz_exception.UnknownStatusCodeMusicbrainzRecordingLookupException:
+                musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_RESPONSE_UNKNOWN_STATUS_CODE,
                 musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DNS_RESOLUTION_ERROR,
-                musicbrainz_exception.UnknownErrorStatusMusicbrainzRecordingLookupException:
+                musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_FOR_UNKNOWN_REASON}
             musicbrainz_recording_missing_cause_code = exception_mapping[type(e)]
             error_message = str(e)
