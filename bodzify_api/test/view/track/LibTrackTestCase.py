@@ -108,7 +108,7 @@ class LibTrackTestCase(ApiTestCase[LibraryTrack]):
             generic_sample_file_extension=extension,
             **kwargs)
 
-    def _post_lib_track_with_generic_sample_below_1_sec(self, **kwargs):
+    def _post_lib_track_with_generic_sample_1_sec(self, **kwargs):
         filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.BELOW_1_SEC
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,

@@ -136,7 +136,7 @@
         "pk": 3,
         "fields": {
             "code": 3,
-            "label": "The track's duration is below 1 so MusicBrainz won't lookup."
+            "label": "The track's duration is below or quals 1 second. MusicBrainz won't lookup."
         }
     },
     

@@ -69,8 +69,8 @@ def get_musicbrainz_recording_lookup_result(user: User,
     musicbrainz_recording_missing_cause = None
     musicbrainz_recording_missing_cause_code = None
 
-    if duration_in_sec < 1:
-        musicbrainz_recording_missing_cause_code = MusicbrainzRecordingMissingCauseCode.Codes.DURATION_BELOW_1_SEC
+    if duration_in_sec <= 1:
+        musicbrainz_recording_missing_cause_code = MusicbrainzRecordingMissingCauseCode.Codes.DURATION_BELOW_OR_EQUAL_1_SEC
         musicbrainz_recording_missing_cause_message = None
     else:
         try:
