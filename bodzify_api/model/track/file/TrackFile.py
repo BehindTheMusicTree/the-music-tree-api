@@ -153,7 +153,7 @@ class TrackFile(PrivateStandardResource):
         musicbrainz_recording_lookup_result = None
 
         if self.fingerprint_missing_cause:
-            if self.fingerprint_missing_cause.code == \
+            if self.fingerprint_missing_cause.code.code == \
                     MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED:
                 self.musicbrainz_recording_missing_cause = MusicbrainzRecordingMissingCause.objects.create(
                     user=self.user,

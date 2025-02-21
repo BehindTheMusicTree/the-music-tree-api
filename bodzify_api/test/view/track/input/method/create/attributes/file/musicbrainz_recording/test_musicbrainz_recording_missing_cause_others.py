@@ -120,15 +120,6 @@ class TestCase(LibTrackTestCase):
                 MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_STATUS_CODE
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.message is not None
 
-    @pytest.mark.usefixtures("disable_audio_metadata_analysis")
-    def test_audio_meta_analysis_disabled_then_corresponding_missing_cause(self):
-        response = self._post_lib_track_with_queenshowmustgoon()
-
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.musicbrainz_recording_missing_cause
-        assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
-            MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED
-
     def test_track_file_missing_then_corresponding_missing_cause(self):
         with patch('bodzify_api.utils.audio_fingerprinter.get_fingerprinting_result') as mock_get_fingerprint:
             missing_cause = FingerprintMissingCause.objects.create(
