@@ -54,12 +54,49 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture()
-def enable_audio_metadata_analysis():
-    """Fixture to control metadata analysis during tests."""
-    print("Setting up metadata analysis")
-    os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = 'true'
+def enable_audio_metadata_analysis(request):
+    """Control audio metadata analysis state in tests.
+
+    This fixture allows tests to control whether audio metadata analysis is enabled or disabled.
+    It can be used in two ways:
+
+    1. As a simple fixture:
+       @pytest.fixture(enable_audio_metadata_analysis)
+       def test_something():
+           # Audio metadata analysis will be enabled
+
+    2. With parametrize to control the state:
+       @pytest.mark.parametrize('enable_audio_metadata_analysis', [True, False], indirect=True)
+       def test_something():
+           # Will run twice - once with analysis enabled, once disabled
+
+    Args:
+        request: The pytest request object containing the parametrized value if used with parametrize
+
+    Yields:
+        None: The fixture handles environment setup/teardown
+    """
+    print("=== FIXTURE START: enable_audio_metadata_analysis ===")
+    print(f"Request param: {getattr(request, 'param', None)}")
+    print(f"Current env var AUDIO_META_ANALYSIS_ENABLED: {os.environ.get('AUDIO_META_ANALYSIS_ENABLED', 'not set')}")
+    print(
+        f"Current env var AUDIO_META_ANALYSIS_ENABLED_OVERRIDE: {os.environ.get('AUDIO_META_ANALYSIS_ENABLED_OVERRIDE', 'not set')}")
+
+    # Get the enable value from parametrize or default to True
+    enable = getattr(request, 'param', True)
+    os.environ['AUDIO_META_ANALYSIS_ENABLED'] = str(enable).lower()
+    os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = str(enable).lower()
+
+    print(f"Set AUDIO_META_ANALYSIS_ENABLED to: {os.environ['AUDIO_META_ANALYSIS_ENABLED']}")
+    print(f"Set AUDIO_META_ANALYSIS_ENABLED_OVERRIDE to: {os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE']}")
+    print("=== FIXTURE SETUP COMPLETE ===")
+
     yield
+
+    print("=== FIXTURE CLEANUP START ===")
+    os.environ['AUDIO_META_ANALYSIS_ENABLED'] = 'false'
     os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = 'false'
+    print("=== FIXTURE CLEANUP COMPLETE ===")
 
 
 def pytest_sessionfinish(session: Session, exitstatus: int) -> None:

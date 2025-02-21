@@ -42,7 +42,7 @@ def restart_docker_container(container_id_or_name):
         logging.error(f"Error restarting container {container_id_or_name}: {e}")
 
 
-@pytest.mark.parametrize('enable_metadata_analysis', [True], indirect=True)
+@pytest.mark.usefixtures("enable_audio_metadata_analysis")
 class TestCase(LibTrackTestCase):
 
     def test_audio_meta_analysis_not_enabled_then_corresponding_missing_cause(self):
