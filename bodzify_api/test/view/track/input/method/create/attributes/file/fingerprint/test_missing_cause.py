@@ -47,6 +47,7 @@ class TestCase(LibTrackTestCase):
 
     def test_audio_meta_analysis_not_enabled_then_corresponding_missing_cause(self):
         response = self._post_lib_track_with_queenshowmustgoon()
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file and self.saved_object.track_file.fingerprint_missing_cause
         assert self.saved_object.track_file.fingerprint_missing_cause.code.code == \
@@ -59,6 +60,7 @@ class TestCase(LibTrackTestCase):
         stop_docker_container(settings.AFP_CONTAINER_NAME)
         response = self._post_lib_track_with_queenshowmustgoon()
         restart_docker_container(settings.AFP_CONTAINER_NAME)
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file and self.saved_object.track_file.fingerprint_missing_cause
         assert self.saved_object.track_file.fingerprint_missing_cause.code.code in [
@@ -68,5 +70,6 @@ class TestCase(LibTrackTestCase):
 
     def test_audio_fingerprinter_service_ok_then_no_missing_cause(self):
         response = self._post_lib_track_with_queenshowmustgoon()
+
         assert response.status_code == status.HTTP_201_CREATED
         assert not self.saved_object.track_file.fingerprint_missing_cause
