@@ -137,13 +137,17 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                   NormalizedMetadataKeys.RATING,
                   NormalizedMetadataKeys.LANGUAGE])
 
-        artists_names_list = Artist.objects.get_artists_names_list_from_metadata_str(
-            names_str=normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES_STR])
-        schema_data_with_potential_none[SchemaFields.ARTISTS_NAMES] = artists_names_list
-
-        album_artists_names_list = Artist.objects.get_artists_names_list_from_metadata_str(
-            names_str=normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR])
-        schema_data_with_potential_none[SchemaFields.ALBUM_ARTISTS_NAMES] = album_artists_names_list
+        for artists_names_keys in [
+            [NormalizedMetadataKeys.ARTISTS_NAMES_STR, SchemaFields.ARTISTS_NAMES],
+            [NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR, SchemaFields.ALBUM_ARTISTS_NAMES]
+        ]:
+            normalized_metadata_key, schema_key = artists_names_keys
+            if normalized_metadata_key in normalized_metadata:
+                artists_names_str = normalized_metadata[normalized_metadata_key]
+                if artists_names_str is not None and artists_names_str != "":
+                    artists_names_list = \
+                        Artist.objects.get_artists_names_list_from_metadata_str(names_str=artists_names_str)
+                    schema_data_with_potential_none[schema_key] = artists_names_list
 
         schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(schema_data_with_potential_none)
         schema_data_clean[SchemaFields.TRACK_FILE_PUBLIC] = file
