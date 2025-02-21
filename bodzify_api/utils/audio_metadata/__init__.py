@@ -4,10 +4,9 @@ import subprocess
 from typing import Optional
 
 from django.core.exceptions import ImproperlyConfigured
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 
 from bodzify_api.utils.audio_metadata.exceptions import FlacFileProbablyCorruptedError
-from bodzify_api.validator.AppValidationError import AppValidationError
 
 from .id3.Mp3MetadataManager import Mp3MetadataManager
 from .id3.WavMetadataManager import WavMetadataManager
@@ -57,6 +56,9 @@ def is_flac_file_md5_valid(file_obj):
         file_obj.seek(0)  # Ensure we're at the start of the file
         result = subprocess.run(
             ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=file_obj.read())
+    elif isinstance(file_obj, TemporaryUploadedFile):
+        result = subprocess.run(['flac', '-t', file_obj.temporary_file_path()],
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         raise ImproperlyConfigured("Expected string path or InMemoryUploadedFile")
 

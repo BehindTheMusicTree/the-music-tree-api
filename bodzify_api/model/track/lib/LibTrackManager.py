@@ -233,7 +233,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_schema_data_from_update_data(self, update_data: dict) -> dict:
         schema_data = update_data.copy()
-        data_transformer.update_data1_converting_str_to_int_value_if_set(key=Fields.RATING, data1=schema_data)
+        data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
     def _get_schema_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
@@ -266,7 +266,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                                                                                     data2=post_data,
                                                                                     keys=[SchemaFields.GENRE_NAME])
 
-        data_transformer.update_data1_converting_str_to_int_value_if_set(key=Fields.RATING, data1=schema_data)
+        data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
     def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:

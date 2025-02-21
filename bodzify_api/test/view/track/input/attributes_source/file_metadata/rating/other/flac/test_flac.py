@@ -11,16 +11,19 @@ class TestCase(RatingNotNoneWithHalfValuesAndZeroTestCase):
 
     def test_0_then_0(self):
         response = self._post_lib_track_with_specific_sample("0 star.flac")
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == 0
 
     def test_0_and_half_then_1(self):
         response = self._post_lib_track_with_specific_sample("0 5 star.flac")
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == 1
 
     def test_1_then_2(self):
         response = self._post_lib_track_with_specific_sample("1 star.flac")
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == 2
 
