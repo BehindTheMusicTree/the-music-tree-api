@@ -94,7 +94,7 @@ class LibTrackTestCase(ApiTestCase[LibraryTrack]):
             generic_sample_file_extension='mp3',
             **kwargs)
 
-    def _post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', /, **kwargs):
+    def _post_lib_track_with_generic_sample_tags_max_length_of_a(self, extension='mp3', **kwargs):
         filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_MAX_LEN_WITH_LETTER_A
         return self._post_lib_track_with_generic_sample(
             generic_sample_filename_without_extension=filename_without_extension,
