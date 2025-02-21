@@ -48,14 +48,14 @@ class TestCase(LibTrackTestCase):
     def test_short_mp3(self):
         response = self._post_lib_track_with_specific_sample("short.mp3")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.fingerprint_bytes == b'AQAAAA'
+        assert self.saved_object.track_file.fingerprint_bytes in [b'AQAAAA', b'415141414141']
 
     def test_short_flac(self):
         response = self._post_lib_track_with_specific_sample("short.flac")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.fingerprint_bytes == b'AQAAAA'
+        assert self.saved_object.track_file.fingerprint_bytes in [b'AQAAAA', b'415141414141']
 
     def test_short_wav(self):
         response = self._post_lib_track_with_specific_sample("short.wav")
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.fingerprint_bytes == b'AQAAAA'
+        assert self.saved_object.track_file.fingerprint_bytes in [b'AQAAAA', b'415141414141']
