@@ -3,6 +3,9 @@ import os
 import subprocess
 from typing import Optional
 
+from django.core.exceptions import ImproperlyConfigured
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
 from .id3.Mp3MetadataManager import Mp3MetadataManager
 from .id3.WavMetadataManager import WavMetadataManager
 from .MetadataManager import MetadataManager
@@ -36,7 +39,7 @@ def _get_metadata_manager(file) -> MetadataManager:
     elif file_extension_lowered == ".flac":
         return VorbisManager(file)
     else:
-        raise ValueError(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+        raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
 
 def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
@@ -44,8 +47,16 @@ def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_
                                                      normalized_rating_max_value=normalized_rating_max_value)
 
 
-def is_flac_file_md5_valid(file_path):
-    result = subprocess.run(['flac', '-t', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def is_flac_file_md5_valid(file_obj):
+    if isinstance(file_obj, str):
+        result = subprocess.run(['flac', '-t', file_obj], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    elif isinstance(file_obj, InMemoryUploadedFile):
+        file_obj.seek(0)  # Ensure we're at the start of the file
+        result = subprocess.run(
+            ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=file_obj.read())
+    else:
+        raise ImproperlyConfigured("Expected string path or InMemoryUploadedFile")
+
     return 'ok' in result.stderr.decode()
 
 
