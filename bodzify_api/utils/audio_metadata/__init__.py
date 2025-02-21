@@ -6,6 +6,9 @@ from typing import Optional
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
+from bodzify_api.utils.audio_metadata.exceptions import FlacFileProbablyCorruptedError
+from bodzify_api.validator.AppValidationError import AppValidationError
+
 from .id3.Mp3MetadataManager import Mp3MetadataManager
 from .id3.WavMetadataManager import WavMetadataManager
 from .MetadataManager import MetadataManager
@@ -76,4 +79,5 @@ def replace_flac_file_with_corrected_md5(file_obj):
 
     stderr = result.stderr.decode()
     if 'wrote' not in stderr:
-        raise Exception("The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")
+        raise FlacFileProbablyCorruptedError(
+            "The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")

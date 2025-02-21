@@ -1,0 +1,3 @@
+
+class FlacFileProbablyCorruptedError (Exception):
+    pass
