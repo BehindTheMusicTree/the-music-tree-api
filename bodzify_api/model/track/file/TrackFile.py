@@ -3,7 +3,6 @@ import binascii
 import datetime
 import os
 
-from django.core.files.base import File as DjangoFile
 from django.db import models
 from django.utils.translation import gettext as _
 from django.db.models import F

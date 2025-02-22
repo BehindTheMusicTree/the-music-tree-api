@@ -17,30 +17,6 @@ from .vorbis.VorbisManager import VorbisManager
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
-def has_id3v2_tags(file):
-    return _get_metadata_manager(file).has_id3v2_tags()
-
-
-def get_bitrate_from_file(file):
-    return _get_metadata_manager(file).get_bitrate()
-
-
-def get_specific_metadata_from_file(file, normalized_metadata_key: str):
-    return _get_metadata_manager(file).get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
-
-
-def get_normalized_metadata_from_file(file, normalized_rating_max_value: Optional[int] = None) -> dict:
-    try:
-        return _get_metadata_manager(file).get_normalized_metadata(normalized_rating_max_value)
-    except Exception as error:
-        error_str = str(error)
-        if "file said" in error_str and "bytes, read" in error_str:
-            raise FileByteMismatchError(error_str.capitalize())
-        elif "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
-            raise InvalidChunkDecodeError(error_str)
-        raise
-
-
 def _get_metadata_manager(file) -> MetadataManager:
     if hasattr(file, 'name'):
         _, file_extension = os.path.splitext(file.name)
@@ -55,6 +31,30 @@ def _get_metadata_manager(file) -> MetadataManager:
         return VorbisManager(file)
     else:
         raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+
+
+def get_bitrate_from_file(file):
+    return _get_metadata_manager(file).get_bitrate()
+
+
+def get_specific_metadata_from_file(file, normalized_metadata_key: str):
+    return _get_metadata_manager(file).get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
+
+
+def get_raw_metadata_from_file(file):
+    return _get_metadata_manager(file).get_raw_metadata()
+
+
+def get_normalized_metadata_from_file(file, normalized_rating_max_value: Optional[int] = None) -> dict:
+    try:
+        return _get_metadata_manager(file).get_normalized_metadata(normalized_rating_max_value)
+    except Exception as error:
+        error_str = str(error)
+        if "file said" in error_str and "bytes, read" in error_str:
+            raise FileByteMismatchError(error_str.capitalize())
+        elif "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
+            raise InvalidChunkDecodeError(error_str)
+        raise
 
 
 def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):

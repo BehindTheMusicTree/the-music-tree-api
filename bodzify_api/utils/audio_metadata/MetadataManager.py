@@ -2,12 +2,10 @@
 import hashlib
 from io import BufferedReader
 import os
-import subprocess
 import tempfile
 from abc import abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
 from typing import Optional, Union
-from mutagen._file import FileType as MutagenFileMetadata
 from pydub.utils import mediainfo
 from tinytag import TinyTag, TinyTagException
 
@@ -35,15 +33,15 @@ class MetadataManager:
         BASE_100 = '100'
 
     file: object
-    file_metadata: MutagenFileMetadata
+    file_metadata: dict
 
     def __init__(self, file):
         self.file = file
-        self.file_metadata = self._get_file_metadata()
+        self.file_metadata = self.get_raw_metadata()
 
     @abstractmethod
-    def _get_file_metadata(self) -> MutagenFileMetadata:
-        raise NotImplementedError(f"{self._get_file_metadata.__name__} method must be implemented.")
+    def get_raw_metadata(self, force_from_id3v2: bool = False) -> dict:
+        raise NotImplementedError(f"{self.get_raw_metadata.__name__} method must be implemented.")
 
     def _compute_md5_from_buffer(self, buffer: Union[BufferedReader, InMemoryUploadedFile]):
         hash_md5 = hashlib.md5()
@@ -51,46 +49,9 @@ class MetadataManager:
             hash_md5.update(chunk)
         return hash_md5.hexdigest()
 
-    def compute_md5(self):
-        if isinstance(self.file, TemporaryUploadedFile):
-            with open(self.file.temporary_file_path(), 'rb') as f:
-                return self._compute_md5_from_buffer(f)
-        elif isinstance(self.file, FieldFile):
-            with open(self.file.path, 'rb') as f:
-                return self._compute_md5_from_buffer(f)
-        elif isinstance(self.file, InMemoryUploadedFile):
-            file: InMemoryUploadedFile = self.file
-            file.seek(0)
-            return self._compute_md5_from_buffer(file)
-        else:
-            raise ImproperlyConfigured("File type not handled.")
-
-    def _compute_and_chec
-
-    def is_md5_valid(self):
-        hash_md5 = hashlib.md5()
-        md5 = self.compute_md5()
-        if isinstance(self.file, TemporaryUploadedFile):
-            with open(self.file.temporary_file_path(), 'rb') as f:
-                md5 = self.compute_md5(file_obj)
-
-                hash_md5 = hashlib.md5()
-                with open(file_obj, "rb") as f:
-                    for chunk in iter(lambda: f.read(4096), b""):
-                        hash_md5.update(chunk)
-                return hash_md5.hexdigest() == md5
-        elif isinstance(self.file, FieldFile):
-            with open(self.file.path, 'rb') as f:
-                return FLAC(fileobj=f)
-        elif isinstance(self.file, InMemoryUploadedFile):
-            self.file.seek(0)
-            return FLAC(io.BytesIO(self.file.read()))
-        with open(self.file, 'rb') as f:  # type: ignore
-            return FLAC(fileobj=f)
-
     @abstractmethod
-    def has_id3v2_tags(self) -> bool:
-        raise NotImplementedError(f"{self.has_id3v2_tags.__name__} method must be implemented.")
+    def is_md5_valid(self):
+        raise NotImplementedError(f"{self.is_md5_valid.__name__} method must be implemented.")
 
     @abstractmethod
     def get_title(self) -> Optional[str]:

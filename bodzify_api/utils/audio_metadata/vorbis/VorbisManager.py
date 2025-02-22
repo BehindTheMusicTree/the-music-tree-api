@@ -10,6 +10,7 @@ from mutagen.flac import FLAC
 
 from bodzify_api.utils.audio_metadata.MetadataManager import (
     MetadataManager, NormalizedMetadataKeys)
+from bodzify_api.utils.audio_metadata.exceptions import FileTypeNotSupportedError
 
 
 # Flac files
@@ -28,7 +29,7 @@ class VorbisManager(MetadataManager):
     def __init__(self, file):
         super().__init__(file)
 
-    def _get_file_metadata(self) -> MutagenFileMetadata:
+    def _get_raw_metadata_from_id3v2(self) -> dict:
         if isinstance(self.file, TemporaryUploadedFile):
             with open(self.file.temporary_file_path(), 'rb') as f:
                 return FLAC(fileobj=io.BytesIO(f.read()))
@@ -41,7 +42,20 @@ class VorbisManager(MetadataManager):
         with open(self.file, 'rb') as f:  # type: ignore
             return FLAC(fileobj=f)
 
-    def has_id3v2_tags(self) -> bool:
+    def get_raw_metadata(self, force_from_id3v2: bool = False) -> dict:
+        if force_from_id3v2:
+            return self._get_raw_metadata_from_id3v2()
+        if isinstance(self.file, TemporaryUploadedFile):
+            with open(self.file.temporary_file_path(), 'rb') as f:
+                return FLAC(fileobj=io.BytesIO(f.read()))
+        elif isinstance(self.file, FieldFile):
+            with open(self.file.path, 'rb') as f:
+                return FLAC(fileobj=f)
+        elif isinstance(self.file, InMemoryUploadedFile):
+            self.file.seek(0)
+            return FLAC(io.BytesIO(self.file.read()))
+        with open(self.file, 'rb') as f:  # type: ignore
+            return FLAC(fileobj=f)
 
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:

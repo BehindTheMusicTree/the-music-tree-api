@@ -12,3 +12,7 @@ class FileByteMismatchError(FileCorruptedError):
 
 class InvalidChunkDecodeError(FileCorruptedError):
     pass
+
+
+class FileTypeNotSupportedError(Exception):
+    pass

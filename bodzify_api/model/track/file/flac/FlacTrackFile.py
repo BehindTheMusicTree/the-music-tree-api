@@ -16,9 +16,9 @@ class FlacTrackFile(TrackFile):
     id3v2_tags_found_and_converted = models.BooleanField(default=False)
     md5_has_been_corrected = models.BooleanField(default=False)
 
-    def detect_id3v2_tags(self) -> bool:
-        try:
-            if isinstance(self.file, TemporaryUploadedFile):
+    def _prepare_save(self, ctx) -> dict:
+        id3v2_tags = audio_metadata.get_normalized_metadata_from_file
+        return super()._prepare_save(ctx)
 
     def handle_flac_md5(self) -> bool:
         id3v2_tags_present = self.detect_id3v2_tags()

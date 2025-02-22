@@ -16,7 +16,7 @@ class WavMetadataManager(Id3Manager):
     def __init__(self, file):
         super().__init__(file)
 
-    def _get_file_metadata(self) -> MutagenFileMetadata:
+    def get_raw_metadata(self) -> MutagenFileMetadata:
         file_metadata = MutagenFile(self.file)
         if file_metadata.tags is None:  # type: ignore
             file_metadata.add_tags()  # type: ignore
