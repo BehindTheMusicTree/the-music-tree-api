@@ -82,9 +82,11 @@ class TrackFile(PrivateStandardResource):
         return os.path.splitext(self.filename)[1]
 
     @property
-    def file_path_temp_or_not(self) -> DjangoFile:
-        path = self.file.file or self.file.path
-        return path  # type: ignore
+    def file_path_temp_or_not(self) -> str:
+        if self.file.file:
+            return self.file.file.name
+        else:
+            return str(self.file.path)
 
     @property
     def duration_str_in_hour_min_sec(self) -> Optional[str]:
@@ -114,7 +116,7 @@ class TrackFile(PrivateStandardResource):
         if is_audio_meta_analysis_enabled_override == 'true' or settings.AUDIO_META_ANALYSIS_ENABLED:
             lib_track: LibraryTrack = self.lib_track
             fingerprinting_result = audio_fingerprinter.get_fingerprinting_result(
-                user=self.user, track_file=self.file_path_temp_or_not, title=lib_track.title)
+                user=self.user, track_file=self.file, title=lib_track.title)
 
             if fingerprinting_result.is_success:
                 fingerprint = binascii.hexlify(fingerprinting_result.fingerprint)

@@ -14,7 +14,6 @@ class Fields:
     DURATION_IN_SEC = ModelFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = ModelFields.DURATION_STR_IN_HOUR_MIN_SEC
     FINGERPRINT_MISSING_CAUSE = ModelFields.FINGERPRINT_MISSING_CAUSE
-    FLAC_MD5_HAS_BEEN_CORRECTED = ModelFields.FLAC_MD5_HAS_BEEN_CORRECTED
     SIZE_IN_BYTES = ModelFields.SIZE_IN_BYTES
     SIZE_IN_KO = ModelFields.SIZE_IN_KO
     SIZE_IN_MO = ModelFields.SIZE_IN_MO
@@ -35,7 +34,6 @@ class FileDetailedSerializer(serializers.ModelSerializer):
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.FINGERPRINT_MISSING_CAUSE,
-                  Fields.FLAC_MD5_HAS_BEEN_CORRECTED,
                   Fields.SIZE_IN_BYTES,
                   Fields.SIZE_IN_KO,
                   Fields.SIZE_IN_MO,
