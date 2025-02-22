@@ -116,6 +116,7 @@ class FieldValidationErrorCode(Enum):
     FILE_TOO_SMALL = 'file_too_small'
     INVALID_FILE_TYPE = 'invalid_file_type'
     INVALID_FILENAME = 'invalid_filename'
+    INVALID_EXTENSION = 'invalid_extension'
     FILE_CORRUPTED = 'file_corrupted'
     DUPLICATE_FINGERPRINT = 'duplicate_fingerprint'
     METADATA_EXTRACTION_FAILED = 'metadata_extraction_failed'
