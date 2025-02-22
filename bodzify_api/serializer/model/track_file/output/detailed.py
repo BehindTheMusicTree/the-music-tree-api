@@ -1,25 +1,12 @@
 from rest_framework import serializers
 
-from bodzify_api.model.track.file.TrackFile import TrackFile, Fields as ModelFields
+from bodzify_api.model.track.file.TrackFile import TrackFile
+from bodzify_api.model.track.file.flac.FlacTrackFile import FlacTrackFile
 from bodzify_api.serializer.model.fingerprint_missing_cause.detailed \
     import FingerprintMissingCauseDetailedSerializer
 from bodzify_api.serializer.model.musicbrainz.recording.detailed import MusicbrainzRecordingDetailedSerializer
-
-
-class Fields:
-    CREATED_ON = ModelFields.CREATED_ON
-    UPDATED_ON = ModelFields.UPDATED_ON
-    FILENAME = ModelFields.FILENAME
-    EXTENSION = ModelFields.EXTENSION
-    DURATION_IN_SEC = ModelFields.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = ModelFields.DURATION_STR_IN_HOUR_MIN_SEC
-    FINGERPRINT_MISSING_CAUSE = ModelFields.FINGERPRINT_MISSING_CAUSE
-    SIZE_IN_BYTES = ModelFields.SIZE_IN_BYTES
-    SIZE_IN_KO = ModelFields.SIZE_IN_KO
-    SIZE_IN_MO = ModelFields.SIZE_IN_MO
-    BITRATE_IN_KBPS = ModelFields.BITRATE_IN_KBPS
-    MUSICBRAINZ_RECORDING = ModelFields.MUSICBRAINZ_RECORDING
-    MUSICBRAINZ_RECORDING_MISSING_CAUSE = ModelFields.MUSICBRAINZ_RECORDING_MISSING_CAUSE
+from .Fields import Fields
+from .FlacSpecificFields import FlacSpecificFields
 
 
 class FileDetailedSerializer(serializers.ModelSerializer):
@@ -42,6 +29,13 @@ class FileDetailedSerializer(serializers.ModelSerializer):
                   Fields.MUSICBRAINZ_RECORDING_MISSING_CAUSE,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if isinstance(instance, FlacTrackFile):
+            data[FlacSpecificFields.ID3v2_TAGS_FOUND_AND_CONVERTED] = instance.id3v2_tags_found_and_converted
+            data[FlacSpecificFields.MD5_HAS_BEEN_CORRECTED] = instance.md5_has_been_corrected
+        return data
 
     def get_fingerprint_missing_cause(self, obj: TrackFile):
         if obj.fingerprint_memory is None:

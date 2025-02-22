@@ -354,7 +354,13 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         track_file_model_data[TrackFileFields.USER] = instance.user
         track_file_model_data[TrackFileFields.LIB_TRACK] = instance
-        TrackFile.objects.create(**track_file_model_data)
+
+        file_extension = track_file_model_data[TrackFileFields.FILE].name.split('.')[-1].lower()
+        if file_extension == 'flac':
+            from ..file.flac.FlacTrackFile import FlacTrackFile
+            FlacTrackFile.objects.create(**track_file_model_data)
+        else:
+            TrackFile.objects.create(**track_file_model_data)
 
         self._add_to_genre_playlists(instance)
         instance.update_file_tags_from_lib_track_instance_values()
