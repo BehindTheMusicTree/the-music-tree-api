@@ -33,6 +33,10 @@ def _get_metadata_manager(file, force_from_id3v2: bool = False) -> MetadataManag
         raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
 
+def is_md5_valid(file):
+    return _get_metadata_manager(file).is_md5_valid()
+
+
 def get_bitrate_from_file(file):
     return _get_metadata_manager(file).get_bitrate()
 

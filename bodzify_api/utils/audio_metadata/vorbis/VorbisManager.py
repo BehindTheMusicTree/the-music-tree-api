@@ -1,11 +1,10 @@
 
 import io
+import subprocess
 from typing import Optional
 
-from django.core.files.uploadedfile import (InMemoryUploadedFile,
-                                            TemporaryUploadedFile)
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
-from mutagen._file import FileType as MutagenFileMetadata
 from mutagen.flac import FLAC
 
 from bodzify_api.utils.audio_metadata.MetadataManager import (
@@ -31,17 +30,18 @@ class VorbisManager(MetadataManager):
 
     def _get_raw_metadata_from_id3v2(self) -> dict:
         flac_file: FLAC
+
         if isinstance(self.file, TemporaryUploadedFile):
             with open(self.file.temporary_file_path(), 'rb') as f:
                 flac_file = FLAC(fileobj=io.BytesIO(f.read()))
         elif isinstance(self.file, FieldFile):
-            with open(self.file.path, 'rb') as f:
+            with open(self.file.file.file.name, 'rb') as f:
                 flac_file = FLAC(fileobj=f)
         elif isinstance(self.file, InMemoryUploadedFile):
             self.file.seek(0)
             flac_file = FLAC(io.BytesIO(self.file.read()))
-        with open(self.file, 'rb') as f:  # type: ignore
-            flac_file = FLAC(fileobj=f)
+        else:
+            raise FileTypeNotSupportedError()
 
         if not flac_file or not flac_file.tags:
             return {}
@@ -49,8 +49,30 @@ class VorbisManager(MetadataManager):
         id3v2_tags = {tag: flac_file.tags[tag] for tag in flac_file.tags.keys() if tag.startswith('ID3')}
         return id3v2_tags
 
+    def is_md5_valid(self) -> bool:
+        if isinstance(self.file, FieldFile):
+            result = subprocess.run(
+                ['flac', '-t', self.file.file.file.name],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        elif isinstance(self.file, InMemoryUploadedFile):
+            self.file.seek(0)  # Ensure we're at the start of the file
+            result = subprocess.run(
+                ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=self.file.read())
+        elif isinstance(self.file, TemporaryUploadedFile):
+            result = subprocess.run(['flac', '-t', self.file.temporary_file_path()],
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        else:
+            raise FileTypeNotSupportedError()
+
+        output = result.stderr.decode()
+        if 'ok' in output:
+            return True
+        if 'MD5 signature mismatch' in output:
+            return False
+        else:
+            raise Exception("The Flac file md5 check failed")
+
     def get_raw_metadata(self, force_from_id3v2: bool = False) -> dict:
-        print('file class is:', self.file.__class__)
         if force_from_id3v2:
             return self._get_raw_metadata_from_id3v2()
 
@@ -58,13 +80,13 @@ class VorbisManager(MetadataManager):
             with open(self.file.temporary_file_path(), 'rb') as f:
                 return FLAC(fileobj=io.BytesIO(f.read()))
         elif isinstance(self.file, FieldFile):
-            with open(self.file.path, 'rb') as f:
+            with open(self.file.file.file.name, 'rb') as f:
                 return FLAC(fileobj=f)
         elif isinstance(self.file, InMemoryUploadedFile):
             self.file.seek(0)
             return FLAC(io.BytesIO(self.file.read()))
-        with open(self.file, 'rb') as f:  # type: ignore
-            return FLAC(fileobj=f)
+        else:
+            raise FileTypeNotSupportedError()
 
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:

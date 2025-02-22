@@ -17,14 +17,14 @@ class FlacTrackFile(TrackFile):
     md5_has_been_corrected = models.BooleanField(default=False)
 
     def _prepare_save(self, ctx) -> dict:
-        id3v2_tags = audio_metadata.get_raw_metadata_from_file(file=self.file_path_temp_or_not, force_from_id3v2=True)
+        id3v2_tags = audio_metadata.get_raw_metadata_from_file(file=self.file, force_from_id3v2=True)
         if id3v2_tags:
             raise AppValidationError(
                 field_name=Fields.FILE,
                 message='The FLAC file contains ID3v2 tags, which are not supported.',
                 field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT)
 
-        if not audio_metadata.is_md5_valid(self.file_path_temp_or_not):
+        if not audio_metadata.is_md5_valid(self.file):
             try:
                 audio_metadata.replace_flac_file_with_corrected_md5(self.file_path_temp_or_not)
                 self.md5_has_been_corrected = True

@@ -8,6 +8,7 @@ from django.db.models.fields.files import FieldFile
 from mutagen._file import File as MutagenFile
 from mutagen._file import FileType as MutagenFileMetadata
 
+from bodzify_api.utils.audio_metadata.exceptions import FileTypeNotSupportedError
 from bodzify_api.utils.audio_metadata.id3.Id3Manager import Id3Manager
 
 
@@ -36,11 +37,7 @@ class WavMetadataManager(Id3Manager):
                 tmp.close()
                 file_path = tmp.name
         else:
-            # Try to get the name for other file types
-            if self.file.file:  # type: ignore
-                file_path = self.file.file.name  # type: ignore
-            else:
-                file_path = self.file.name  # type: ignore
+            raise FileTypeNotSupportedError()
 
         # Open and process the WAV file
         wave_file = wave.open(file_path, 'rb')

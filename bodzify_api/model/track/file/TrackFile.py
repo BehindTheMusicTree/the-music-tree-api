@@ -83,8 +83,6 @@ class TrackFile(PrivateStandardResource):
     @property
     def file_path_temp_or_not(self) -> str:
         if self.file.file:
-            if self.file.file.file:
-                return self.file.file.file.name
             return self.file.file.name
         else:
             return str(self.file.path)
