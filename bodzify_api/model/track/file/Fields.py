@@ -14,7 +14,6 @@ class Fields:
     FINGERPRINT_MEMORY = 'fingerprint_memory'
     FINGERPRINT_BYTES = 'fingerprint_bytes'
     FINGERPRINT_MISSING_CAUSE = 'fingerprint_missing_cause'
-    FLAC_MD5_HAS_BEEN_CORRECTED = 'flac_md5_has_been_corrected'
     SIZE_IN_BYTES = 'size_in_bytes'
     SIZE_IN_KO = 'size_in_ko'
     SIZE_IN_MO = 'size_in_mo'

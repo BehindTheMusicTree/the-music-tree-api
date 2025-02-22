@@ -53,7 +53,6 @@ class TrackFile(PrivateStandardResource):
                                               on_delete=models.DO_NOTHING,
                                               null=True,
                                               blank=True)
-    flac_md5_has_been_corrected = models.BooleanField(null=True, default=None, blank=True)
     size_in_bytes = models.DecimalField(max_digits=11, decimal_places=2)
     size_in_ko = models.GeneratedField(expression=F(Fields.SIZE_IN_BYTES) / 1024,  # type: ignore
                                        output_field=models.DecimalField(max_digits=8, decimal_places=2),
@@ -194,28 +193,7 @@ class TrackFile(PrivateStandardResource):
                                             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:
-        if not self.file or self.extension != '.flac':
-            return False
-
-        if not audio_metadata.is_flac_file_md5_valid(self.file_path_temp_or_not):
-            try:
-                audio_metadata.replace_flac_file_with_corrected_md5(self.file_path_temp_or_not)
-                self.flac_md5_has_been_corrected = True
-            except FlacMd5CheckFailedError:
-                raise AppValidationError(
-                    field_name='file',
-                    message=_(
-                        'The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.'),
-                    field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
-        else:
-            self.flac_md5_has_been_corrected = False
-
-        return True
-
-    def delete_file(self):
-        if self.file:
-            if os.path.isfile(self.file.path):
-                os.remove(self.file.path)
+        return False
 
 
 @receiver(pre_delete, sender=TrackFile)
