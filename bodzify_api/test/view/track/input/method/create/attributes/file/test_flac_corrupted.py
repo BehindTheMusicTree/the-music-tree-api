@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from rest_framework import status
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
@@ -11,11 +12,10 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestCase(LibTrackTestCase):
 
     def test_flac_file_corrupted_then_400(self):
-        with patch('bodzify_api.model.track.file.TrackFile.TrackFile.replace_flac_file_with_corrected_md5') \
-                as mock_delete:
+        with patch('bodzify_api.utils.audio_metadata.replace_flac_file_with_corrected_md5') as mock_replace_flac_file_with_corrected_md5:
             exception_message = \
                 "The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted."
-            mock_delete.side_effect = FlacFileProbablyCorruptedError(exception_message)
+            mock_replace_flac_file_with_corrected_md5.side_effect = FlacFileProbablyCorruptedError(exception_message)
 
             response = self._post_lib_track_with_generic_sample_no_tags(extension='flac')
 
