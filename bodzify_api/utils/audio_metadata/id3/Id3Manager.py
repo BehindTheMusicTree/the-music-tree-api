@@ -20,9 +20,6 @@ class Id3Manager(MetadataManager):
         RATING = 'POPM'
         LANGUAGE = 'TLAN'
 
-    def __init__(self, file):
-        super().__init__(file)
-
     def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
 
