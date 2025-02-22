@@ -11,7 +11,9 @@ from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, F
 from .id3.Mp3MetadataManager import Mp3MetadataManager
 from .id3.WavMetadataManager import WavMetadataManager
 from .MetadataManager import MetadataManager
+from mutagen._file import File as MutagenFile
 from .vorbis.VorbisManager import VorbisManager
+from .flac_id3v2.FlacID3v2Manager import FlacID3v2Manager
 
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
@@ -28,7 +30,11 @@ def _get_metadata_manager(file, force_from_id3v2: bool = False) -> MetadataManag
     elif file_extension_lowered == ".wav":
         return WavMetadataManager(file)
     elif file_extension_lowered == ".flac":
-        return VorbisManager(file=file, force_from_id3v2=force_from_id3v2)
+        mutagen_file = MutagenFile(file, easy=True)
+        if mutagen_file is not None and mutagen_file.tags is not None:
+            return FlacID3v2Manager(file=file, file_path=file.name)
+        else:
+            return VorbisManager(file=file)
     else:
         raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 

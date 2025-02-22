@@ -10,6 +10,9 @@ ID3_RATING_APP_EMAIL = 'bodzify'
 
 
 class Id3Manager(MetadataManager):
+    def __init__(self, file, file_path):
+        super().__init__(file)
+        self.file_path = file_path
 
     class Id3TextFrames:  # MP3 and Wave (.wav) files use ID3 tags
         TITLE = 'TIT2'
@@ -42,7 +45,7 @@ class Id3Manager(MetadataManager):
         else:
             return ""
 
-    def get_eventually_normalized_rating_value(self, normalized_rating_max_value: Optional[int] = None):
+    def get_eventually_normalized_rating_value(self, normalized_rating_max_value: int = 255):
         file_rating_value = None
         file_rating_email = None
         for key in self.file_metadata:
@@ -86,6 +89,8 @@ class Id3Manager(MetadataManager):
             normalized_rating = normalized_metadata_value
             self.file_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
             if normalized_rating:
+                if normalized_rating_max_value is None:
+                    normalized_rating_max_value = 255
                 id3_rating = self._get_file_rating_from_normalized_rating(
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
@@ -100,3 +105,32 @@ class Id3Manager(MetadataManager):
 
         self.file_metadata.delall(id3_key)  # type: ignore
         self.file_metadata.add(text_frame_class(encoding=3, text=normalized_metadata_value))  # type: ignore
+
+    def _calculate_md5(self, audio_data):
+        import hashlib
+        md5_hash = hashlib.md5()
+        md5_hash.update(audio_data)
+        return md5_hash.hexdigest()
+
+    def _get_stored_md5(self):
+        if 'TXXX:MD5' in self.file_metadata:
+            return self.file_metadata['TXXX:MD5'].text[0]
+        else:
+            return None
+
+    def is_md5_valid(self):
+        try:
+            # Open the file and read the audio data
+            with open(self.file_path, 'rb') as file:
+                audio_data = file.read()
+
+            # Calculate the MD5 checksum of the audio data
+            calculated_md5 = self._calculate_md5(audio_data)
+
+            # Retrieve the stored MD5 checksum from the ID3 metadata
+            stored_md5 = self._get_stored_md5()
+
+            # Compare the calculated and stored MD5 checksums
+            return calculated_md5 == stored_md5
+        except Exception:
+            return False
