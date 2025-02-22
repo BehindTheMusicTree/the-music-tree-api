@@ -2,11 +2,6 @@ from uuid import UUID
 from typing import Any, Dict
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
-from rest_framework.request import Request
-
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 from bodzify_api.model.ContentObjectFields import ContentObjectFields
 from bodzify_api.model.playlist.Playlist import Playlist

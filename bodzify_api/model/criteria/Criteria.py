@@ -6,12 +6,12 @@ from django.db.models import QuerySet
 from django.utils.translation import gettext as _
 
 from bodzify_api import settings
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
 from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.criteria.lineage_rel.Fields import Fields as CriteriaLineageRelFields

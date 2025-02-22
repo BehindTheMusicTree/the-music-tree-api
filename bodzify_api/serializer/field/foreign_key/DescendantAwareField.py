@@ -1,11 +1,13 @@
+
 from typing import TypeVar, Any, Optional, Protocol, runtime_checkable, Generic
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.serializer.field.foreign_key.NonSelfReferencingField import NonSelfReferencingField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 @runtime_checkable

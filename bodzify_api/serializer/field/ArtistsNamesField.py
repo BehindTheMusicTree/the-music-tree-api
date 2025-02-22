@@ -1,9 +1,11 @@
-from typing import Any, Optional, Union
+from typing import Any, Optional
+
 from rest_framework import serializers
 from rest_framework.fields import ListField
+
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.serializer.field.AppField import AppField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class ArtistsNamesField(AppField, ListField):

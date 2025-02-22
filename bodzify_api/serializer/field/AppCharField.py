@@ -2,8 +2,6 @@ from typing import Any, Optional
 
 from rest_framework import serializers
 
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from .AppField import AppField
 
 

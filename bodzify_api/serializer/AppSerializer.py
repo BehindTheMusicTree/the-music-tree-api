@@ -9,9 +9,8 @@ from rest_framework.fields import Field, ListField, SkipField
 from rest_framework.relations import ManyRelatedField
 from rest_framework.exceptions import ValidationError
 
-from bodzify_api.serializer.field.AppField import AppField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 
 T = TypeVar('T')
 

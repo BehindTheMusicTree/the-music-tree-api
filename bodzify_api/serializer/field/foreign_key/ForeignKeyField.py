@@ -3,8 +3,6 @@ from typing import Any
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from bodzify_api.serializer.field.AppField import AppField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class ForeignKeyField(AppField, PrimaryKeyRelatedField):

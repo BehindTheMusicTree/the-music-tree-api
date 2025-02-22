@@ -1,8 +1,8 @@
 from typing import Dict, Any
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.serializer.AppSerializer import AppSerializer
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class PutSerializer(AppSerializer):

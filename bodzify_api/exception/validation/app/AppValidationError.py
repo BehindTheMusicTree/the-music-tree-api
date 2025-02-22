@@ -1,9 +1,9 @@
-from typing import Dict, Any, Union, Optional
+from typing import Dict, Any, Optional
 
 from django.core.exceptions import ImproperlyConfigured, ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DrfValidationError
 
-from .FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class AppValidationError(DrfValidationError):

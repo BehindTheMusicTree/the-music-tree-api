@@ -12,13 +12,12 @@ from django.http import FileResponse
 from django.db.models import QuerySet
 from django.core.exceptions import ImproperlyConfigured
 
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
-from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
-from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod

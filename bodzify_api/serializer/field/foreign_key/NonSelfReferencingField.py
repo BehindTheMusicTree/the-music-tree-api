@@ -3,10 +3,10 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.model.uuid.UuidModel import UuidModel
 from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 T = TypeVar('T', bound=models.Model)
 

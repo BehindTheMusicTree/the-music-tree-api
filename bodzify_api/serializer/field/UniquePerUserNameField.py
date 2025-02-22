@@ -1,9 +1,9 @@
 
 from django.utils.translation import gettext as _
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.serializer.field.AppCharField import AppCharField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.playlist.children.manual.Fields import Fields as ModelFields
 
 

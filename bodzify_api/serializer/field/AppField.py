@@ -1,8 +1,8 @@
 from typing import Any, Dict, Optional
 from rest_framework.fields import Field, ListField
 
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 
 
 class AppField(Field):
