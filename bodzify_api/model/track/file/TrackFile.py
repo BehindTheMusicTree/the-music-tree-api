@@ -20,7 +20,7 @@ from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
-from bodzify_api.validator.track_file_validator \
+from bodzify_api.validator.TrackFileValidator \
     import validate_content_type_is_audio, validate_filename_length, FileSizeValidator
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
