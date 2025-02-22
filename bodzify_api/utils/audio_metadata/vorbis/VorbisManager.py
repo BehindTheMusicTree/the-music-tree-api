@@ -41,6 +41,8 @@ class VorbisManager(MetadataManager):
         with open(self.file, 'rb') as f:  # type: ignore
             return FLAC(fileobj=f)
 
+    def has_id3v2_tags(self) -> bool:
+
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
         file_rating = self._get_first_value_int_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.RATING)

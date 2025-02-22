@@ -17,6 +17,10 @@ from .vorbis.VorbisManager import VorbisManager
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
+def has_id3v2_tags(file):
+    return _get_metadata_manager(file).has_id3v2_tags()
+
+
 def get_bitrate_from_file(file):
     return _get_metadata_manager(file).get_bitrate()
 
@@ -56,28 +60,6 @@ def _get_metadata_manager(file) -> MetadataManager:
 def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
     _get_metadata_manager(file).update_file_metadata(normalized_metadata=normalized_metadata,
                                                      normalized_rating_max_value=normalized_rating_max_value)
-
-
-def is_flac_file_md5_valid(file_obj):
-    if isinstance(file_obj, str):
-        result = subprocess.run(['flac', '-t', file_obj], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    elif isinstance(file_obj, InMemoryUploadedFile):
-        file_obj.seek(0)  # Ensure we're at the start of the file
-        result = subprocess.run(
-            ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=file_obj.read())
-    elif isinstance(file_obj, TemporaryUploadedFile):
-        result = subprocess.run(['flac', '-t', file_obj.temporary_file_path()],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    else:
-        raise ImproperlyConfigured("Expected string path or InMemoryUploadedFile")
-
-    output = result.stderr.decode()
-    if 'ok' in output:
-        return True
-    if 'MD5 signature mismatch' in output:
-        return False
-    else:
-        raise Exception("The Flac file md5 check failed")
 
 
 def replace_flac_file_with_corrected_md5(file_obj):

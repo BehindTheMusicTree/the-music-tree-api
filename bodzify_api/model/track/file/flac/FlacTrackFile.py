@@ -1,6 +1,8 @@
 
 import os
+
 from django.db import models
+from django.core.files.uploadedfile import TemporaryUploadedFile
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
@@ -16,24 +18,12 @@ class FlacTrackFile(TrackFile):
 
     def detect_id3v2_tags(self) -> bool:
         try:
-            with open(self.file_path_temp_or_not, 'rb') as file:
-                header = file.read(10)
-                if header.startswith(b'ID3'):
-                    self.id3v2_tags_found_and_converted = True
-                else:
-                    self.id3v2_tags_found_and_converted = False
-        except IOError:
-            raise AppValidationError(
-                field_name=Fields.FILE,
-                message='Failed to open or read the FLAC file for ID3v2 tag detection.',
-                field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
-
-        return self.id3v2_tags_found_and_converted
+            if isinstance(self.file, TemporaryUploadedFile):
 
     def handle_flac_md5(self) -> bool:
         id3v2_tags_present = self.detect_id3v2_tags()
 
-        if not audio_metadata.is_flac_file_md5_valid(self.file_path_temp_or_not):
+        if not audio_metadata.is_md5_valid(self.file_path_temp_or_not):
             try:
                 audio_metadata.replace_flac_file_with_corrected_md5(self.file_path_temp_or_not)
                 self.md5_has_been_corrected = True
