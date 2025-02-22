@@ -15,7 +15,7 @@ from bodzify_api import settings
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
-from bodzify_api.utils.audio_metadata.exceptions import FlacFileProbablyCorruptedError
+from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
@@ -179,12 +179,13 @@ class TrackFile(PrivateStandardResource):
 
     def _prepare_save(self, ctx) -> dict:
         temp_file_path = self.file.file
+
+        self.handle_flac_md5()
         duration_in_sec: int = audio_metadata.get_specific_metadata_from_file(
             file=temp_file_path,
             normalized_metadata_key=NormalizedMetadataKeys.DURATION_IN_SEC)  # type: ignore
         self.duration_in_sec = int(duration_in_sec)
         self.bitrate_in_kbps = self._get_bitrate()
-        self.handle_flac_md5()
         self.size_in_bytes = self.file.size
         return ctx.kwargs
 
@@ -205,7 +206,7 @@ class TrackFile(PrivateStandardResource):
             try:
                 audio_metadata.replace_flac_file_with_corrected_md5(self.file_path_temp_or_not)
                 self.flac_md5_has_been_corrected = True
-            except FlacFileProbablyCorruptedError:
+            except FlacMd5CheckFailedError:
                 raise AppValidationError(
                     field_name='file',
                     message=_(

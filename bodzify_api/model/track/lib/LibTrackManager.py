@@ -1,3 +1,4 @@
+from math import e
 import os
 import tempfile
 from typing import Any, List, TYPE_CHECKING, Optional
@@ -11,6 +12,7 @@ from django.utils.translation import gettext as _
 
 from bodzify_api import settings
 from bodzify_api.model.user.User import User
+from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.validator.AppValidationError import AppValidationError
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
@@ -19,6 +21,7 @@ from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.utils import audio_metadata, data_transformer, utils
+from bodzify_api.utils.audio_metadata import FileByteMismatchError, InvalidChunkDecodeError
 from bodzify_api.utils.app_django_file import AppDjangoFile
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
@@ -122,6 +125,11 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             normalized_metadata = audio_metadata.get_normalized_metadata_from_file(
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
+        except FileCorruptedError as exc:
+            raise AppValidationError(
+                field_name=Fields.TRACK_FILE_PUBLIC,
+                message=str(exc),
+                field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
         except Exception as error:
             raise AppValidationError(
                 field_name=Fields.TRACK_FILE_PUBLIC,
