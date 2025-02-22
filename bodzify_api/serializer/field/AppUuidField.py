@@ -9,10 +9,6 @@ from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorC
 
 
 class AppUuidField(AppField, serializers.UUIDField):
-    """
-    Base field for UUID validation.
-    Ensures that the input value is a valid UUID format.
-    """
 
     default_error_messages = {
         'required': 'This field is required.',
