@@ -15,7 +15,7 @@ class Mp3MetadataManager(Id3Manager):
     def __init__(self, file):
         super().__init__(file)
 
-    def _get_file_metadata(self) -> MutagenFileMetadata:
+    def get_raw_metadata(self) -> MutagenFileMetadata:
         if isinstance(self.file, FieldFile):
             tags = MP3(self.file).tags
         else:

@@ -17,8 +17,20 @@ from .vorbis.VorbisManager import VorbisManager
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
-def has_id3v2_tags(file):
-    return _get_metadata_manager(file).has_id3v2_tags()
+def _get_metadata_manager(file, force_from_id3v2: bool = False) -> MetadataManager:
+    if hasattr(file, 'name'):
+        _, file_extension = os.path.splitext(file.name)
+    else:
+        _, file_extension = os.path.splitext(file)
+    file_extension_lowered = file_extension.lower()
+    if file_extension_lowered == ".mp3":
+        return Mp3MetadataManager(file)
+    elif file_extension_lowered == ".wav":
+        return WavMetadataManager(file)
+    elif file_extension_lowered == ".flac":
+        return VorbisManager(file=file, force_from_id3v2=force_from_id3v2)
+    else:
+        raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
 
 def get_bitrate_from_file(file):
@@ -27,6 +39,10 @@ def get_bitrate_from_file(file):
 
 def get_specific_metadata_from_file(file, normalized_metadata_key: str):
     return _get_metadata_manager(file).get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
+
+
+def get_raw_metadata_from_file(file, force_from_id3v2: bool = False) -> dict:
+    return _get_metadata_manager(file=file, force_from_id3v2=force_from_id3v2).file_metadata
 
 
 def get_normalized_metadata_from_file(file, normalized_rating_max_value: Optional[int] = None) -> dict:
@@ -39,22 +55,6 @@ def get_normalized_metadata_from_file(file, normalized_rating_max_value: Optiona
         elif "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
             raise InvalidChunkDecodeError(error_str)
         raise
-
-
-def _get_metadata_manager(file) -> MetadataManager:
-    if hasattr(file, 'name'):
-        _, file_extension = os.path.splitext(file.name)
-    else:
-        _, file_extension = os.path.splitext(file)
-    file_extension_lowered = file_extension.lower()
-    if file_extension_lowered == ".mp3":
-        return Mp3MetadataManager(file)
-    elif file_extension_lowered == ".wav":
-        return WavMetadataManager(file)
-    elif file_extension_lowered == ".flac":
-        return VorbisManager(file)
-    else:
-        raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
 
 def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):

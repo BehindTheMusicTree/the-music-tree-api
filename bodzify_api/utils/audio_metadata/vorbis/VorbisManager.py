@@ -10,6 +10,7 @@ from mutagen.flac import FLAC
 
 from bodzify_api.utils.audio_metadata.MetadataManager import (
     MetadataManager, NormalizedMetadataKeys)
+from bodzify_api.utils.audio_metadata.exceptions import FileTypeNotSupportedError
 
 
 # Flac files
@@ -25,10 +26,34 @@ class VorbisManager(MetadataManager):
         RATING_TRAKTOR = 'rating wmp'
         LANGUAGE = 'language'
 
-    def __init__(self, file):
-        super().__init__(file)
+    def __init__(self, file, force_from_id3v2: bool = False):
+        super().__init__(file=file, force_from_id3v2=force_from_id3v2)
 
-    def _get_file_metadata(self) -> MutagenFileMetadata:
+    def _get_raw_metadata_from_id3v2(self) -> dict:
+        flac_file: FLAC
+        if isinstance(self.file, TemporaryUploadedFile):
+            with open(self.file.temporary_file_path(), 'rb') as f:
+                flac_file = FLAC(fileobj=io.BytesIO(f.read()))
+        elif isinstance(self.file, FieldFile):
+            with open(self.file.path, 'rb') as f:
+                flac_file = FLAC(fileobj=f)
+        elif isinstance(self.file, InMemoryUploadedFile):
+            self.file.seek(0)
+            flac_file = FLAC(io.BytesIO(self.file.read()))
+        with open(self.file, 'rb') as f:  # type: ignore
+            flac_file = FLAC(fileobj=f)
+
+        if not flac_file or not flac_file.tags:
+            return {}
+
+        id3v2_tags = {tag: flac_file.tags[tag] for tag in flac_file.tags.keys() if tag.startswith('ID3')}
+        return id3v2_tags
+
+    def get_raw_metadata(self, force_from_id3v2: bool = False) -> dict:
+        print('file class is:', self.file.__class__)
+        if force_from_id3v2:
+            return self._get_raw_metadata_from_id3v2()
+
         if isinstance(self.file, TemporaryUploadedFile):
             with open(self.file.temporary_file_path(), 'rb') as f:
                 return FLAC(fileobj=io.BytesIO(f.read()))
@@ -40,8 +65,6 @@ class VorbisManager(MetadataManager):
             return FLAC(io.BytesIO(self.file.read()))
         with open(self.file, 'rb') as f:  # type: ignore
             return FLAC(fileobj=f)
-
-    def has_id3v2_tags(self) -> bool:
 
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:

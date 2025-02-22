@@ -3,7 +3,6 @@ import binascii
 import datetime
 import os
 
-from django.core.files.base import File as DjangoFile
 from django.db import models
 from django.utils.translation import gettext as _
 from django.db.models import F
@@ -84,6 +83,8 @@ class TrackFile(PrivateStandardResource):
     @property
     def file_path_temp_or_not(self) -> str:
         if self.file.file:
+            if self.file.file.file:
+                return self.file.file.file.name
             return self.file.file.name
         else:
             return str(self.file.path)
