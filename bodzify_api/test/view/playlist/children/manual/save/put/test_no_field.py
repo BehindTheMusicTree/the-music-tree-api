@@ -4,7 +4,6 @@ from bodzify_api.serializer.AppSerializer import AppSerializer
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
-from bodzify_api.serializer.model.playlist.children.manual.input.Fields import Fields as PlaylistFields
 
 
 class TestCase(ManualPlaylistTestCase):

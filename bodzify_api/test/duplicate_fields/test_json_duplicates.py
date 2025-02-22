@@ -1,4 +1,3 @@
-from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaPostFields

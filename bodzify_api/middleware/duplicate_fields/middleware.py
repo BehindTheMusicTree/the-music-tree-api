@@ -1,5 +1,5 @@
 import json
-from typing import Any, Union
+from typing import Union
 
 from django.http import HttpRequest, HttpResponse
 from rest_framework.request import Request
