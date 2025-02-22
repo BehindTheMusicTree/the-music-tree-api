@@ -2,7 +2,6 @@
 import os
 
 from django.db import models
-from django.core.files.uploadedfile import TemporaryUploadedFile
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
