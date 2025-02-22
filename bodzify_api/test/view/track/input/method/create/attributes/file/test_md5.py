@@ -25,7 +25,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackPostFields.TRACK_FILE_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FILE_CORRUPTED
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FILE_CORRUPTED.value
 
     def test_flac_md5_is_valid(self):
         response = self._post_lib_track_with_specific_sample("md5_valid.flac")
