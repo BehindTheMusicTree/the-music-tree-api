@@ -11,6 +11,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api import settings
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField

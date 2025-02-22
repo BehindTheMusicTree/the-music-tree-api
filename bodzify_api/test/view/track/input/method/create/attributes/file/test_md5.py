@@ -28,7 +28,7 @@ class TestCase(LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FILE_CORRUPTED.value
 
     def test_flac_md5_is_valid(self):
-        response = self._post_lib_track_with_specific_sample("md5_valid.flac")
+        response = self._post_lib_track_with_californiagurls_flac()
 
         assert response.status_code == status.HTTP_201_CREATED
         track_file = self.saved_object.track_file
