@@ -5,8 +5,7 @@ from mutagen import File  # type: ignore
 from django.utils.deconstruct import deconstructible
 
 from bodzify_api import settings
-from .AppValidationError import AppValidationError
-from .FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields
 
 
@@ -49,7 +48,7 @@ class TrackFileValidator:
         """
         allowed_extensions = [ext.lower() for ext in settings.LIB_TRACK_FILE_EXTENSIONS]
         extension = Path(value.name).suffix[1:].lower()
-        
+
         if extension not in allowed_extensions:
             message = _(
                 "File extension '%(extension)s' is not allowed. "
@@ -58,10 +57,11 @@ class TrackFileValidator:
                 'extension': extension,
                 'allowed_extensions': ', '.join(allowed_extensions),
             }
-            
+
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.INVALID_EXTENSION, message)
             else:
+                from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                 raise AppValidationError(
                     message=message,
                     field_validation_error_code=FieldValidationErrorCode.INVALID_EXTENSION,
@@ -80,6 +80,7 @@ class TrackFileValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.FILE_TOO_LARGE, message)
             else:
+                from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                 raise AppValidationError(
                     field_name=self.field_name,
                     message=message,
@@ -94,6 +95,7 @@ class TrackFileValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.FILE_TOO_SMALL, message)
             else:
+                from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                 raise AppValidationError(
                     field_name=Fields.TRACK_FILE_PUBLIC,
                     message=message,
@@ -122,6 +124,7 @@ class TrackFileValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.INVALID_FILE_TYPE, message)
             else:
+                from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                 raise AppValidationError(
                     field_name=self.field_name,
                     message=message,
@@ -145,6 +148,7 @@ class TrackFileValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.INVALID_FILENAME, message)
             else:
+                from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                 raise AppValidationError(
                     field_name=self.field_name,
                     message=message,

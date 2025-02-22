@@ -2,8 +2,7 @@ import requests
 from django.utils.translation import gettext as _
 from django.utils.deconstruct import deconstructible
 
-from .AppValidationError import AppValidationError
-from .FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 @deconstructible
@@ -23,10 +22,10 @@ class TrackUrlValidator:
     def __call__(self, value: str, field=None):
         # Validate URL format
         self._validate_url_format(value, field)
-        
+
         # Validate audio file extension
         self._validate_audio_extension(value, field)
-        
+
         # Validate file existence
         self._validate_remote_file_exists(value, field)
 
@@ -36,6 +35,7 @@ class TrackUrlValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.INVALID_URL, message)
             else:
+                from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                 raise AppValidationError(
                     field_name=self.field_name,
                     message=message,
@@ -48,6 +48,7 @@ class TrackUrlValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.INVALID_FILE_TYPE, message)
             else:
+                from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                 raise AppValidationError(
                     field_name=self.field_name,
                     message=message,
@@ -62,6 +63,7 @@ class TrackUrlValidator:
                 if field and hasattr(field, 'fail'):
                     field.fail(FieldValidationErrorCode.URL_NOT_FOUND, message)
                 else:
+                    from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                     raise AppValidationError(
                         field_name=self.field_name,
                         message=message,
@@ -72,6 +74,7 @@ class TrackUrlValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.URL_REQUEST_FAILED, message)
             else:
+                from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
                 raise AppValidationError(
                     field_name=self.field_name,
                     message=message,

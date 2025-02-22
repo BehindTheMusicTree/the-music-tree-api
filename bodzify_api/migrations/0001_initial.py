@@ -11,7 +11,7 @@ import bodzify_api.model.utils.ConcatOp
 import bodzify_api.model.utils.ConditionalExpression
 import bodzify_api.model.utils.PreserveSpacesStorage
 import bodzify_api.model.utils.utils
-import bodzify_api.validator.track_file_validator
+import bodzify_api.validator.TrackFileValidator
 import django.contrib.auth.validators
 import django.core.validators
 import django.db.models.deletion
@@ -200,7 +200,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
                 ('updated_on', models.DateTimeField(null=True)),
-                ('file', models.FileField(help_text='Only audio formats accepted.', max_length=255, storage=bodzify_api.model.utils.PreserveSpacesStorage.PreserveSpacesStorage(), upload_to=bodzify_api.model.utils.utils.get_user_lib_path, validators=[django.core.validators.FileExtensionValidator(['mp3', 'flac', 'wav']), bodzify_api.validator.track_file_validator.validate_filename_length, bodzify_api.validator.track_file_validator.validate_size, bodzify_api.validator.track_file_validator.validate_content_type_is_audio])),
+                ('file', models.FileField(help_text='Only audio formats accepted.', max_length=255, storage=bodzify_api.model.utils.PreserveSpacesStorage.PreserveSpacesStorage(), upload_to=bodzify_api.model.utils.utils.get_user_lib_path, validators=[django.core.validators.FileExtensionValidator(['mp3', 'flac', 'wav']), bodzify_api.validator.TrackFileValidator.validate_filename_length, bodzify_api.validator.TrackFileValidator.validate_size, bodzify_api.validator.TrackFileValidator.validate_content_type_is_audio])),
                 ('duration_in_sec', models.PositiveIntegerField()),
                 ('fingerprint_memory', models.BinaryField(blank=True, default=None, editable=True, null=True)),
                 ('flac_md5_has_been_corrected', models.BooleanField(blank=True, default=None, null=True)),
