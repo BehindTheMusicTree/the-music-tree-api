@@ -19,7 +19,7 @@ from .flac_id3v2.FlacID3v2Manager import FlacID3v2Manager
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
-def _get_metadata_manager(file, force_from_id3v2: bool = False) -> MetadataManager:
+def _get_metadata_manager(file, use_id3v2: bool = False) -> MetadataManager:
     if hasattr(file, 'name'):
         _, file_extension = os.path.splitext(file.name)
     else:
@@ -30,8 +30,7 @@ def _get_metadata_manager(file, force_from_id3v2: bool = False) -> MetadataManag
     elif file_extension_lowered == ".wav":
         return WavMetadataManager(file)
     elif file_extension_lowered == ".flac":
-        mutagen_file = MutagenFile(file, easy=True)
-        if mutagen_file is not None and mutagen_file.tags is not None:
+        if use_id3v2:
             return FlacID3v2Manager(file=file, file_path=file.name)
         else:
             return VorbisManager(file=file)
@@ -39,25 +38,28 @@ def _get_metadata_manager(file, force_from_id3v2: bool = False) -> MetadataManag
         raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
 
-def is_md5_valid(file):
-    return _get_metadata_manager(file).is_md5_valid()
+def is_md5_valid(file, use_id3v2: bool = False):
+    return _get_metadata_manager(file, use_id3v2=use_id3v2).is_md5_valid()
 
 
 def get_bitrate_from_file(file):
     return _get_metadata_manager(file).get_bitrate()
 
 
-def get_specific_metadata_from_file(file, normalized_metadata_key: str):
-    return _get_metadata_manager(file).get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
+def get_specific_metadata_from_file(file, normalized_metadata_key: str, use_id3v2: bool = False):
+    return _get_metadata_manager(
+        file, use_id3v2=use_id3v2).get_specific_file_metadata(
+        normalized_metadata_key=normalized_metadata_key)
 
 
-def get_raw_metadata_from_file(file, force_from_id3v2: bool = False) -> dict:
-    return _get_metadata_manager(file=file, force_from_id3v2=force_from_id3v2).file_metadata
+def get_raw_metadata_from_file(file, use_id3v2: bool = False) -> dict:
+    return _get_metadata_manager(file=file, use_id3v2=use_id3v2).file_metadata
 
 
-def get_normalized_metadata_from_file(file, normalized_rating_max_value: Optional[int] = None) -> dict:
+def get_normalized_metadata_from_file(
+        file, normalized_rating_max_value: Optional[int] = None, use_id3v2: bool = False) -> dict:
     try:
-        return _get_metadata_manager(file).get_normalized_metadata(normalized_rating_max_value)
+        return _get_metadata_manager(file, use_id3v2=use_id3v2).get_normalized_metadata(normalized_rating_max_value)
     except Exception as error:
         error_str = str(error)
         if "file said" in error_str and "bytes, read" in error_str:

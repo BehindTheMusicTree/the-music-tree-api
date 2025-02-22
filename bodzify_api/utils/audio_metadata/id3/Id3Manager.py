@@ -118,19 +118,16 @@ class Id3Manager(MetadataManager):
         else:
             return None
 
-    def is_md5_valid(self):
-        try:
-            # Open the file and read the audio data
+    def is_md5_valid(self, audio_data=None):
+        if audio_data is None:
             with open(self.file_path, 'rb') as file:
                 audio_data = file.read()
 
-            # Calculate the MD5 checksum of the audio data
-            calculated_md5 = self._calculate_md5(audio_data)
+        # Calculate the MD5 checksum of the audio data
+        calculated_md5 = self._calculate_md5(audio_data)
 
-            # Retrieve the stored MD5 checksum from the ID3 metadata
-            stored_md5 = self._get_stored_md5()
+        # Retrieve the stored MD5 checksum from the ID3 metadata
+        stored_md5 = self._get_stored_md5()
 
-            # Compare the calculated and stored MD5 checksums
-            return calculated_md5 == stored_md5
-        except Exception:
-            return False
+        # Compare the calculated and stored MD5 checksums
+        return calculated_md5 == stored_md5

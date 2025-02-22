@@ -9,7 +9,6 @@ class FlacID3v2Manager(Id3Manager):
     def __init__(self, file, file_path):
         super().__init__(file, file_path)
         self.id3v2_metadata = self._extract_id3v2_metadata()
-        self.flac_metadata = self._extract_flac_metadata()
 
     def _extract_id3v2_metadata(self):
         try:
@@ -18,27 +17,16 @@ class FlacID3v2Manager(Id3Manager):
         except Exception:
             return None
 
-    def _extract_flac_metadata(self):
-        try:
-            flac = FLAC(self.file)
-            return flac
-        except Exception:
-            return None
-
     @property
     def file_metadata(self):
-        if self.id3v2_metadata:
-            return self.id3v2_metadata
-        else:
-            return self.flac_metadata
+        return self.id3v2_metadata
 
     def is_md5_valid(self):
         if self.id3v2_metadata:
-            if self.flac_metadata:
-                # Strip ID3v2 tag before calculating MD5 checksum
-                self.flac_metadata.delete()
-                return super().is_md5_valid()
-            else:
-                return False
+            # Strip ID3v2 tag before calculating MD5 checksum
+            with open(self.file_path, 'rb') as file:
+                audio_data = file.read()
+            self.id3v2_metadata.delete(self.file_path)
+            return super().is_md5_valid(audio_data)
         else:
-            return super().is_md5_valid()
+            return False
