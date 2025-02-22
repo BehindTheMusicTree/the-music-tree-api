@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.filtering.set.playlist.Fields import Fields as FilterSetFields
 from bodzify_api.utils.data_transformer import to_camel_case, to_snake_case
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import VALUE as MANUAL_PLAYLIST_TYPE_LABEL
 from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as PlaylistGetFields

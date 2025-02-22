@@ -5,7 +5,7 @@ from rest_framework import status
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
 from bodzify_api.serializer.model.lib_track.input.Fields import Fields as LibTrackInputFields
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

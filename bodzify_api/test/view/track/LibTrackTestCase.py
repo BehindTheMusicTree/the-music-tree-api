@@ -13,6 +13,7 @@ class LibTrackTestCase(ApiTestCase[LibraryTrack]):
     saved_object: LibraryTrack
 
     LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION = "queen_showmustgoon 177s.mp3"
+    LIB_TRACK_CALIFORNIAGURLS_FLAC_FILENAME_WITH_EXTENSION = "01. Katy Perry feat. Snoop Dogg - California Gurls.flac"
     SKIPPING_TEST_DUE_TO_ACOUSTID_UNKNOWN_CONNECTION_ISSUE = "Skipping test due to Acoustid unknown connection issue."
 
     class LibTrackGenericSamplesTagsNoneSizeInMo:
@@ -67,6 +68,11 @@ class LibTrackTestCase(ApiTestCase[LibraryTrack]):
 
     def _post_lib_track_with_queenshowmustgoon(self, **kwargs):
         filename_with_extension = self.LIB_TRACK_QUEENSHOWMUSTGOON_FILENAME_WITH_EXTENSION
+        generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
+        return self._post_lib_track(file_abs_path=generic_sample_abs_path, **kwargs)
+
+    def _post_lib_track_with_californiagurls_flac(self, **kwargs):
+        filename_with_extension = self.LIB_TRACK_CALIFORNIAGURLS_FLAC_FILENAME_WITH_EXTENSION
         generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
         return self._post_lib_track(file_abs_path=generic_sample_abs_path, **kwargs)
 

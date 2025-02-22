@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api.serializer.model.playlist.children.manual.output.Fields import Fields
 from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 from bodzify_api.filtering.set.playlist.Fields import Fields as FilterFields
 
