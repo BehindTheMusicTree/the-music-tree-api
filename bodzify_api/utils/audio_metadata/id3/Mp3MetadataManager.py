@@ -1,5 +1,4 @@
 
-from bodzify_api.utils.audio_metadata.audio_file import AudioFile
 from mutagen._file import File as MutagenFile
 from mutagen._file import FileType as MutagenFileMetadata
 from mutagen.id3 import ID3
@@ -8,6 +7,7 @@ from mutagen.mp3 import MP3
 from mutagen.mp4 import MP4StreamInfoError
 
 from bodzify_api.utils.audio_metadata.id3.Id3Manager import Id3Manager
+from bodzify_api.utils.audio_metadata.audio_file import AudioFile
 
 
 class Mp3MetadataManager(Id3Manager):
