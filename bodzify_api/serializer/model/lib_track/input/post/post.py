@@ -1,3 +1,4 @@
+from bodzify_api import settings
 from bodzify_api.serializer.model.lib_track.input.input import LibTrackInputSerializer
 from bodzify_api.validator.track_file_validator import FileExtensionValidator
 from bodzify_api.serializer.field.AppFileField import AppFileField
@@ -9,4 +10,4 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
         required=True,
         field_name=Fields.TRACK_FILE_PUBLIC,
         validators=[
-            FileExtensionValidator(allowed_extensions=['wav', 'mp3', 'flac'])])
+            FileExtensionValidator(allowed_extensions=settings.LIB_TRACK_FILE_EXTENSIONS)])

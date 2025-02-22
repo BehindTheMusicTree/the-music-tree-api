@@ -48,14 +48,13 @@ class AppValidationError(DrfValidationError):
             'message': message,
             'code': field_validation_error_code.value,
             'field': self.field,
-            'error_type': 'app_validation_error'
+            'error_type': self.error_type
         }
         self.errors = {self.field: error_detail}
         super().__init__(self.errors)
 
     @classmethod
-    def detect_and_convert_from_drf_error(
-            cls, exc: Union[DrfValidationError, DjangoValidationError]) -> Optional['AppValidationError']:
+    def detect_and_convert_from_drf_error(cls, exc: DrfValidationError) -> Optional['AppValidationError']:
         """
         Detect if a DRF ValidationError was originally an AppValidationError and convert it back.
 

@@ -4,7 +4,6 @@ import datetime
 import os
 
 from django.core.files.base import File as DjangoFile
-from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils.translation import gettext as _
 from django.db.models import F
@@ -12,6 +11,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from bodzify_api import settings
+from bodzify_api.validator.file_extension_validator import FileExtensionValidator
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
@@ -21,7 +21,7 @@ from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from bodzify_api.validator.track_file_validator \
-    import validate_content_type_is_audio, validate_filename_length, validate_size
+    import validate_content_type_is_audio, validate_filename_length, FileSizeValidator
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
     import MusicbrainzRecordingLookupResult
@@ -47,10 +47,14 @@ class TrackFile(PrivateStandardResource):
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
-                            validators=[FileExtensionValidator(settings.LIB_TRACK_FILE_EXTENSIONS),
-                                        validate_filename_length,
-                                        validate_size,
-                                        validate_content_type_is_audio],
+                            validators=[
+                                FileExtensionValidator(
+                                    allowed_extensions=settings.LIB_TRACK_FILE_EXTENSIONS,
+                                ),
+                                validate_filename_length,
+                                FileSizeValidator(field_name='file'),
+                                validate_content_type_is_audio
+                            ],
                             max_length=settings.FILE_PATH_MAX_LENGTH)
     duration_in_sec = models.PositiveIntegerField()
     fingerprint_memory = models.BinaryField(null=True, blank=True, default=None, editable=True)

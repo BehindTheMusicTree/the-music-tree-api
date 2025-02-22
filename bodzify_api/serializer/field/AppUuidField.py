@@ -1,11 +1,9 @@
-from typing import Any, Optional, NoReturn
+from typing import Any, Optional
 from uuid import UUID
 
 from rest_framework import serializers
 
 from bodzify_api.serializer.field.AppField import AppField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class AppUuidField(AppField, serializers.UUIDField):
