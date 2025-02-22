@@ -5,11 +5,11 @@ from django.contrib.auth.models import User, AnonymousUser
 from django.db.models import Model
 from rest_framework.request import Request
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
-from bodzify_api.validator.AppValidationError import AppValidationError
-from bodzify_api.validator.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class TrackablePlayCountUuidField(PrivateUuidField):
