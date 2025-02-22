@@ -25,17 +25,12 @@ FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the se
 
 def _get_metadata_manager(file, use_id3v2: bool = False) -> MetadataManager:
     audio_file = AudioFile(file)
-    file_extension = os.path.splitext(
-        audio_file.file.name if isinstance(audio_file.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile))
-        else audio_file.file if isinstance(audio_file.file, str)
-        else str(audio_file.file)
-    )[1].lower()
 
-    if file_extension == ".mp3":
+    if audio_file.file_extension == ".mp3":
         return Mp3MetadataManager(audio_file)
-    elif file_extension == ".wav":
+    elif audio_file.file_extension == ".wav":
         return WavMetadataManager(audio_file)
-    elif file_extension == ".flac":
+    elif audio_file.file_extension == ".flac":
         if use_id3v2:
             return FlacID3v2Manager(audio_file)
         else:

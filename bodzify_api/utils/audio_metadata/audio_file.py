@@ -1,4 +1,5 @@
 
+import os
 from typing import Union
 
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
@@ -8,6 +9,12 @@ from django.db.models.fields.files import FieldFile
 class AudioFile:
     def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, str]):
         self.file = file
+        file_extension = os.path.splitext(
+            self.file.name if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile))
+            else self.file if isinstance(self.file, str)
+            else str(self.file)
+        )[1].lower()
+        self.file_extension = file_extension
 
     def read(self, size: int = -1) -> bytes:
         if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):
