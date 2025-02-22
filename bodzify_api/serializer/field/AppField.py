@@ -24,6 +24,8 @@ class AppField(Field):
         'min_length': FieldValidationErrorCode.STRING_TOO_SHORT,
         'max_value': FieldValidationErrorCode.RATING_TOO_LARGE,
         'min_value': FieldValidationErrorCode.RATING_TOO_SMALL,
+        'max_size': FieldValidationErrorCode.FILE_TOO_LARGE,
+        'min_size': FieldValidationErrorCode.FILE_TOO_SMALL,
     }
 
     def fail(self, key: str, **kwargs: Any) -> None:
