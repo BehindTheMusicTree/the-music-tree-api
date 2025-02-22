@@ -3,13 +3,10 @@ import io
 import subprocess
 from typing import Optional
 
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
-from django.db.models.fields.files import FieldFile
 from mutagen.flac import FLAC
 
-from bodzify_api.utils.audio_metadata.MetadataManager import (
-    MetadataManager, NormalizedMetadataKeys)
-from bodzify_api.utils.audio_metadata.exceptions import FileTypeNotSupportedError
+from bodzify_api.utils.audio_metadata.audio_file import AudioFile
+from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
 
 # Flac files
@@ -25,44 +22,14 @@ class VorbisManager(MetadataManager):
         RATING_TRAKTOR = 'rating wmp'
         LANGUAGE = 'language'
 
-    def __init__(self, file, force_from_id3v2: bool = False):
-        super().__init__(file=file, force_from_id3v2=force_from_id3v2)
-
-    def _get_raw_metadata_from_id3v2(self) -> dict:
-        flac_file: FLAC
-
-        if isinstance(self.file, TemporaryUploadedFile):
-            with open(self.file.temporary_file_path(), 'rb') as f:
-                flac_file = FLAC(fileobj=io.BytesIO(f.read()))
-        elif isinstance(self.file, FieldFile):
-            with open(self.file.file.file.name, 'rb') as f:
-                flac_file = FLAC(fileobj=f)
-        elif isinstance(self.file, InMemoryUploadedFile):
-            self.file.seek(0)
-            flac_file = FLAC(io.BytesIO(self.file.read()))
-        else:
-            raise FileTypeNotSupportedError()
-
-        if not flac_file or not flac_file.tags:
-            return {}
-
-        id3v2_tags = {tag: flac_file.tags[tag] for tag in flac_file.tags.keys() if tag.startswith('ID3')}
-        return id3v2_tags
+    def __init__(self, audio_file: AudioFile):
+        super().__init__(audio_file.file)
+        self.audio_file = audio_file
 
     def is_md5_valid(self) -> bool:
-        if isinstance(self.file, FieldFile):
-            result = subprocess.run(
-                ['flac', '-t', self.file.file.file.name],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        elif isinstance(self.file, InMemoryUploadedFile):
-            self.file.seek(0)  # Ensure we're at the start of the file
-            result = subprocess.run(
-                ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=self.file.read())
-        elif isinstance(self.file, TemporaryUploadedFile):
-            result = subprocess.run(['flac', '-t', self.file.temporary_file_path()],
-                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        else:
-            raise FileTypeNotSupportedError()
+        self.audio_file.seek(0)
+        result = subprocess.run(
+            ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=self.audio_file.read())
 
         output = result.stderr.decode()
         if 'ok' in output:
@@ -72,21 +39,16 @@ class VorbisManager(MetadataManager):
         else:
             raise Exception("The Flac file md5 check failed")
 
-    def get_raw_metadata(self, force_from_id3v2: bool = False) -> dict:
-        if force_from_id3v2:
-            return self._get_raw_metadata_from_id3v2()
-
-        if isinstance(self.file, TemporaryUploadedFile):
-            with open(self.file.temporary_file_path(), 'rb') as f:
-                return FLAC(fileobj=io.BytesIO(f.read()))
-        elif isinstance(self.file, FieldFile):
-            with open(self.file.file.file.name, 'rb') as f:
-                return FLAC(fileobj=f)
-        elif isinstance(self.file, InMemoryUploadedFile):
-            self.file.seek(0)
-            return FLAC(io.BytesIO(self.file.read()))
-        else:
-            raise FileTypeNotSupportedError()
+    def get_raw_metadata(self) -> dict:
+        self.audio_file.seek(0)
+        flac_file = FLAC(io.BytesIO(self.audio_file.read()))
+        return {
+            'info': flac_file.info.__dict__,
+            'tags': flac_file.tags,
+            'pictures': [picture.__dict__ for picture in flac_file.pictures],
+            'cuesheet': flac_file.cuesheet.__dict__ if flac_file.cuesheet else None,
+            'seektable': flac_file.seektable.__dict__ if flac_file.seektable else None,
+        }
 
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:

@@ -4,15 +4,20 @@ from typing import Optional
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
 
 from ..NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.audio_file import AudioFile
+from typing import IO, Union
+from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
+from django.db.models.fields.files import FieldFile
 from ..MetadataManager import MetadataManager
 
 ID3_RATING_APP_EMAIL = 'bodzify'
 
 
 class Id3Manager(MetadataManager):
-    def __init__(self, file, file_path):
-        super().__init__(file)
-        self.file_path = file_path
+    def __init__(self, audio_file: AudioFile):
+        super().__init__(audio_file.file)
+        self.file_path = audio_file.file
+        self.audio_file = audio_file
 
     class Id3TextFrames:  # MP3 and Wave (.wav) files use ID3 tags
         TITLE = 'TIT2'
@@ -120,8 +125,8 @@ class Id3Manager(MetadataManager):
 
     def is_md5_valid(self, audio_data=None):
         if audio_data is None:
-            with open(self.file_path, 'rb') as file:
-                audio_data = file.read()
+            self.audio_file.seek(0)
+            audio_data = self.audio_file.read()
 
         # Calculate the MD5 checksum of the audio data
         calculated_md5 = self._calculate_md5(audio_data)

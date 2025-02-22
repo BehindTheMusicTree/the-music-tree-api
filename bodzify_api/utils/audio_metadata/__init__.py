@@ -1,10 +1,14 @@
 
+from .audio_file import AudioFile
+import shutil
+import tempfile
 import os
 import subprocess
 from typing import Optional
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from django.db.models.fields.files import FieldFile
 
 from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
 
@@ -19,21 +23,23 @@ from .flac_id3v2.FlacID3v2Manager import FlacID3v2Manager
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
+def create_temporary_copy(file) -> AudioFile:
+    return AudioFile(file)
+
+
 def _get_metadata_manager(file, use_id3v2: bool = False) -> MetadataManager:
-    if hasattr(file, 'name'):
-        _, file_extension = os.path.splitext(file.name)
-    else:
-        _, file_extension = os.path.splitext(file)
-    file_extension_lowered = file_extension.lower()
-    if file_extension_lowered == ".mp3":
-        return Mp3MetadataManager(file)
-    elif file_extension_lowered == ".wav":
-        return WavMetadataManager(file)
-    elif file_extension_lowered == ".flac":
+    temp_file = create_temporary_copy(file)
+    file_extension = os.path.splitext(file.name)[1].lower()
+
+    if file_extension == ".mp3":
+        return Mp3MetadataManager(temp_file)
+    elif file_extension == ".wav":
+        return WavMetadataManager(temp_file)
+    elif file_extension == ".flac":
         if use_id3v2:
-            return FlacID3v2Manager(file=file, file_path=file.name)
+            return FlacID3v2Manager(temp_file)
         else:
-            return VorbisManager(file=file)
+            return VorbisManager(temp_file)
     else:
         raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
