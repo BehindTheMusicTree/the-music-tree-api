@@ -1,15 +1,16 @@
 
 from typing import Optional
-
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
+
+from bodzify_api import settings
 
 from ..NormalizedMetadataKeys import NormalizedMetadataKeys
 from ..MetadataManager import MetadataManager
 
-ID3_RATING_APP_EMAIL = 'bodzify'
-
 
 class Id3Manager(MetadataManager):
+
+    ID3_RATING_APP_EMAIL = settings.APP_NAME
 
     class Id3TextFrames:  # MP3 and Wave (.wav) files use ID3 tags
         TITLE = 'TIT2'
@@ -92,7 +93,7 @@ class Id3Manager(MetadataManager):
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
                     rating_file_profile=self.RatingFileProfile.BASE_255)
-                self.file_raw_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
+                self.file_raw_metadata.add(POPM(email=self.ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
             return
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             id3_key = self.Id3TextFrames.LANGUAGE
