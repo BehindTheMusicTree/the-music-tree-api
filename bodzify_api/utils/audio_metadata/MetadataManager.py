@@ -2,16 +2,13 @@
 import hashlib
 from io import BufferedReader
 import os
-import tempfile
 from abc import abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
 from typing import Optional, Union
 from pydub.utils import mediainfo
 from tinytag import TinyTag, TinyTagException
 
-from django.core.exceptions import ImproperlyConfigured
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
-from django.db.models.fields.files import FieldFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from bodzify_api.utils.audio_metadata.audio_file import AudioFile
 

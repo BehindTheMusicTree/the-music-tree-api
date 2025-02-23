@@ -4,7 +4,7 @@ import struct
 from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
 
-from ..constants import ID3V2_AND_RIFF_GENRE_MAP
+from ..constants import ID3V1_AND_RIFF_GENRE_MAP
 
 
 class Id3v1Manager(MetadataManager):
@@ -17,12 +17,15 @@ class Id3v1Manager(MetadataManager):
     - Bytes 3-32: Title (30 chars)
     - Bytes 33-62: Artist (30 chars)
     - Bytes 63-92: Album (30 chars)
-    - Bytes 93-96: Year (4 chars)
-    - Bytes 97-126: Comment (28 or 30 chars)
+    - Bytes 93-96: Release year (4 chars)
+    - Bytes 97-126: Comment (28 chars in ID3v1.1, 30 chars in ID3v1)
+    - Byte 125: Always 0 in ID3v1.1 to indicate track number presence
+    - Byte 126: Track number in ID3v1.1 (1-255, 0 = not set)
     - Byte 127: Genre code (0-255)
 
-    Note: If byte 125 is null and byte 126 is non-null in the comment field,
-    then byte 126 is the track number (ID3v1.1 extension).
+    Note: ID3v1.1 extends ID3v1 by using the last two bytes of the comment
+    field to store the track number. If byte 125 is 0 and byte 126 is not 0,
+    then byte 126 contains the track number (1-255).
     """
 
     def get_raw_metadata(self) -> dict:
@@ -42,7 +45,7 @@ class Id3v1Manager(MetadataManager):
 
         # Check for ID3v1.1 track number
         if comment[28] == 0 and comment[29] != 0:
-            track = comment[29]
+            track = str(comment[29])  # Convert track number byte to string
             comment = comment[:28]
         else:
             track = None
@@ -50,27 +53,35 @@ class Id3v1Manager(MetadataManager):
 
         comment = comment.decode('latin1', 'replace')
 
-        return {
-            'title': [title] if title else [],
-            'artist': [artist] if artist else [],
-            'album': [album] if album else [],
-            'year': [year] if year else [],
-            'comment': [comment] if comment else [],
-            'genre': [genre] if genre < len(ID3V2_AND_RIFF_GENRE_MAP) else [],
-            'track': [track] if track is not None else []
-        }
+        metadata = {}
+
+        if title:
+            metadata[NormalizedMetadataKeys.TITLE] = [title]
+        if artist:
+            metadata[NormalizedMetadataKeys.ARTISTS_NAMES_STR] = [artist]
+        if album:
+            metadata[NormalizedMetadataKeys.ALBUM_NAME] = [album]
+        if year:
+            metadata[NormalizedMetadataKeys.RELEASE_DATE] = [year]
+        # Comments are not part of normalized metadata
+        if genre < len(ID3V1_AND_RIFF_GENRE_MAP):
+            metadata[NormalizedMetadataKeys.GENRE_NAME] = [genre]
+        if track and track != '0':
+            metadata[NormalizedMetadataKeys.POSITION_IN_ALBUM] = [track]
+
+        return metadata
 
     def get_title(self) -> Optional[str]:
         """Get title from ID3v1 tag."""
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none('title')
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.TITLE)
 
     def get_artists_names(self) -> Optional[str]:
         """Get artist from ID3v1 tag."""
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none('artist')
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.ARTISTS_NAMES_STR)
 
     def get_album_name(self) -> Optional[str]:
         """Get album name from ID3v1 tag."""
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none('album')
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.ALBUM_NAME)
 
     def get_album_artists_name_str(self) -> Optional[str]:
         """ID3v1 doesn't support album artist."""
@@ -78,10 +89,10 @@ class Id3v1Manager(MetadataManager):
 
     def get_genre_name(self) -> Optional[str]:
         """Get genre name from ID3v1 genre code."""
-        if 'genre' in self.file_raw_metadata:
+        if NormalizedMetadataKeys.GENRE_NAME in self.file_raw_metadata:
             try:
-                genre_code = self.file_raw_metadata['genre'][0]
-                return ID3V2_AND_RIFF_GENRE_MAP.get(genre_code, "Other")
+                genre_code = self.file_raw_metadata[NormalizedMetadataKeys.GENRE_NAME][0]
+                return ID3V1_AND_RIFF_GENRE_MAP.get(genre_code, "Other")
             except (IndexError, KeyError):
                 return None
         return None
@@ -92,13 +103,13 @@ class Id3v1Manager(MetadataManager):
 
     def get_release_date(self) -> Optional[str]:
         """Get release year from ID3v1 tag."""
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none('year')
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.RELEASE_DATE)
 
     def get_position_in_album(self) -> Optional[int]:
         """Get track number from ID3v1.1 tag."""
-        if 'track' in self.file_raw_metadata:
+        if NormalizedMetadataKeys.POSITION_IN_ALBUM in self.file_raw_metadata:
             try:
-                return int(self.file_raw_metadata['track'][0])
+                return int(self.file_raw_metadata[NormalizedMetadataKeys.POSITION_IN_ALBUM][0])
             except (ValueError, IndexError):
                 return None
         return None

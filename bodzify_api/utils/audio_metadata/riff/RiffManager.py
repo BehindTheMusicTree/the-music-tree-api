@@ -6,7 +6,7 @@ from mutagen.wave import WAVE
 from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
 
-from ..constants import ID3V2_AND_RIFF_GENRE_MAP
+from ..constants import ID3V1_AND_RIFF_GENRE_MAP
 
 
 class RiffManager(MetadataManager):
@@ -87,7 +87,7 @@ class RiffManager(MetadataManager):
             try:
                 # Try to get genre code and convert to name
                 genre_code = int(self.file_raw_metadata[self.RiffTagKeys.GENRE_NAME][0])
-                return ID3V2_AND_RIFF_GENRE_MAP.get(genre_code, "Other")
+                return ID3V1_AND_RIFF_GENRE_MAP.get(genre_code, "Other")
             except (ValueError, TypeError):
                 # If the tag contains a string instead of a code, use it directly
                 return self.file_raw_metadata[self.RiffTagKeys.GENRE_NAME][0]
