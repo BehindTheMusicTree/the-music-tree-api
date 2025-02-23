@@ -17,9 +17,18 @@ from .MetadataManager import MetadataManager
 from mutagen._file import File as MutagenFile
 from .vorbis.VorbisManager import VorbisManager
 from .flac_id3v2.FlacID3v2Manager import FlacID3v2Manager
+from .NormalizedMetadataKeys import NormalizedMetadataKeys
 
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
+
+# Define tag type priorities for different file formats
+# First tag type in each list has highest priority
+TAG_TYPE_PRIORITIES = {
+    '.flac': ['vorbis', 'id3v2'],  # Prefer Vorbis comments over ID3v2 tags for FLAC
+    '.mp3': ['id3v2'],             # MP3 files only use ID3v2 tags
+    '.wav': ['riff']               # WAV files only use RIFF metadata
+}
 
 
 def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[str, MetadataManager]:
@@ -147,9 +156,12 @@ def get_normalized_metadata_from_file(
 def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[str, dict]:
     """Merge metadata from different tag types with priority ordering.
 
-    For FLAC files: Vorbis > ID3v2
-    For MP3 files: ID3v2 only
-    For WAV files: RIFF only
+    The priority order is defined in TAG_TYPE_PRIORITIES. For each metadata field,
+    the function tries tag types in priority order and uses the first valid value found.
+
+    Example for FLAC files:
+    If both Vorbis and ID3v2 tags contain a title, the Vorbis title is used.
+    If Vorbis tags don't have a title but ID3v2 does, the ID3v2 title is used.
 
     Args:
         metadata: Dictionary of metadata by tag type
@@ -158,14 +170,7 @@ def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[
     Returns:
         Dictionary with merged metadata under 'merged' key, plus original tag data
     """
-    # Define priority orders for different file types
-    priority_orders = {
-        '.flac': ['vorbis', 'id3v2'],
-        '.mp3': ['id3v2'],
-        '.wav': ['riff']
-    }
-
-    priorities = priority_orders.get(file_extension.lower(), [])
+    priorities = TAG_TYPE_PRIORITIES.get(file_extension.lower(), [])
     if not priorities:
         raise ImproperlyConfigured(f"No priority order defined for {file_extension}")
 
@@ -173,7 +178,6 @@ def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[
     merged = {}
 
     # For each field that could exist in metadata
-    from .NormalizedMetadataKeys import NormalizedMetadataKeys
     for field in vars(NormalizedMetadataKeys).values():
         if not isinstance(field, str) or field.startswith('_'):
             continue
@@ -211,11 +215,7 @@ def get_prioritized_metadata_from_file(
     audio_file = AudioFile(file)
 
     # Determine which tag types to check based on file extension
-    tag_types = {
-        '.flac': ['vorbis', 'id3v2'],
-        '.mp3': ['id3v2'],
-        '.wav': ['riff']
-    }.get(audio_file.file_extension.lower())
+    tag_types = TAG_TYPE_PRIORITIES.get(audio_file.file_extension.lower())
 
     if not tag_types:
         raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
@@ -236,6 +236,51 @@ def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_
     manager = next(iter(_get_metadata_manager(file).values()))
     manager.update_file_metadata(normalized_metadata=normalized_metadata,
                                  normalized_rating_max_value=normalized_rating_max_value)
+
+
+def clear_metadata(file, tag_types: Optional[list[str]] = None) -> dict[str, bool]:
+    """Clear metadata from specified tag types.
+
+    Args:
+        file: The audio file to clear metadata from
+        tag_types: List of tag types to clear. Supported: ['id3v2', 'vorbis', 'riff']
+                  If None, clears all supported tag types for the file format.
+
+    Returns:
+        Dictionary mapping tag type to success status
+        Example: {'vorbis': True, 'id3v2': False} where True means successfully cleared
+    """
+    audio_file = AudioFile(file)
+
+    # If no specific tag types requested, use all supported types for the file format
+    if tag_types is None:
+        tag_types = TAG_TYPE_PRIORITIES.get(audio_file.file_extension.lower(), [])
+        if not tag_types:
+            raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
+
+    # Get managers for requested tag types
+    managers = _get_metadata_manager(file, tag_types=tag_types)
+    results = {}
+
+    # Try to clear each tag type
+    for tag_type, manager in managers.items():
+        try:
+            # Create empty metadata dict
+            empty_metadata = {}
+            for field in vars(NormalizedMetadataKeys).values():
+                if isinstance(field, str) and not field.startswith('_'):
+                    empty_metadata[field] = None
+
+            # Update with empty metadata
+            manager.update_file_metadata(
+                normalized_metadata=empty_metadata,
+                normalized_rating_max_value=100  # Default value since we're clearing
+            )
+            results[tag_type] = True
+        except Exception as e:
+            results[tag_type] = False
+
+    return results
 
 
 def replace_flac_file_with_corrected_md5(file):
