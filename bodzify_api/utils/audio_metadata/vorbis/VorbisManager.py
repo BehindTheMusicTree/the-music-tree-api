@@ -158,9 +158,6 @@ class VorbisManager(MetadataManager):
                 return None
         return None
 
-    def get_bitrate(self):
-        return self.file_raw_metadata.info.bitrate / 1000  # type: ignore
-
     def update_specific_file_metadata_without_saving(
             self,
             normalized_metadata_value,

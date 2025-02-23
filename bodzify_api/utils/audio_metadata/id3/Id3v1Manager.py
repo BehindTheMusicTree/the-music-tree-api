@@ -109,10 +109,6 @@ class Id3v1Manager(MetadataManager):
                 return None
         return None
 
-    def get_bitrate(self) -> int:
-        """ID3v1 doesn't store bitrate information."""
-        return 0
-
     def get_bpm(self) -> Optional[float]:
         """Get BPM (Beats Per Minute).
 

@@ -125,10 +125,6 @@ class RiffManager(MetadataManager):
         """
         return None
 
-    def get_bitrate(self) -> int:
-        """Get bitrate from WAV info."""
-        return self.file_raw_metadata['info']['bitrate'] // 1000
-
     def update_specific_file_metadata_without_saving(
             self,
             normalized_metadata_value,
