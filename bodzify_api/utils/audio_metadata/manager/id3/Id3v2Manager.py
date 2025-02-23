@@ -7,7 +7,7 @@ from mutagen.id3._frames import (
 from bodzify_api import settings
 
 from ..NormalizedMetadataKeys import NormalizedMetadataKeys
-from ..MetadataManager import MetadataManager
+from ..manager.MetadataManager import MetadataManager
 from .id3v2_versions import Id3v2Versions as _Id3v2Versions
 from .id3v2_frames import Id3v2TextFrames as _Id3v2TextFrames
 

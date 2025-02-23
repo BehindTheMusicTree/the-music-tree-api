@@ -1,7 +1,7 @@
 from typing import Optional
 import struct
 
-from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
 
 from ..constants import ID3V1_AND_RIFF_GENRE_MAP

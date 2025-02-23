@@ -4,7 +4,7 @@ from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, 
 from bodzify_api import settings
 
 from ..NormalizedMetadataKeys import NormalizedMetadataKeys
-from ..MetadataManager import MetadataManager
+from ..manager.MetadataManager import MetadataManager
 
 
 class Id3v2Manager(MetadataManager):

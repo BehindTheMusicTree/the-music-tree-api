@@ -11,13 +11,12 @@ from django.db.models.fields.files import FieldFile
 
 from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
 
-from .id3.Id3v2Manager import Id3v2Manager
-from .id3.Id3v1Manager import Id3v1Manager
-from .riff.RiffManager import RiffManager
-from .MetadataManager import MetadataManager
+from .manager.id3.Id3v2Manager import Id3v2Manager
+from .manager.id3.Id3v1Manager import Id3v1Manager
+from .manager.riff.RiffManager import RiffManager
+from .manager.MetadataManager import MetadataManager
 from mutagen._file import File as MutagenFile
 from .vorbis.VorbisManager import VorbisManager
-from .flac_id3v2.FlacID3v2Manager import FlacID3v2Manager
 from .NormalizedMetadataKeys import NormalizedMetadataKeys
 
 
@@ -60,10 +59,8 @@ def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[s
 
     # Multiple tag types requested
     for tag_type in tag_types:
-        if tag_type == 'id3v2':
-            if audio_file.file_extension in [".mp3", ".flac"]:
-                managers['id3v2'] = Id3v2Manager(
-                    audio_file) if audio_file.file_extension == ".mp3" else FlacID3v2Manager(audio_file)
+        if tag_type == 'id3v2' and audio_file.file_extension in [".mp3", ".flac"]:
+            managers['id3v2'] = Id3v2Manager(audio_file)
         elif tag_type == 'vorbis' and audio_file.file_extension == ".flac":
             managers['vorbis'] = VorbisManager(audio_file)
         elif tag_type == 'riff' and audio_file.file_extension == ".wav":
@@ -83,7 +80,7 @@ def is_md5_valid(file, check_id3v2: bool = False):
 
     if audio_file.file_extension == ".flac":
         if check_id3v2:
-            id3v2_tags = FlacID3v2Manager(audio_file).file_raw_metadata
+            id3v2_tags = Id3v2Manager(audio_file).file_raw_metadata
             if id3v2_tags:
                 return False
         return audio_file.is_flac_file_md5_valid()

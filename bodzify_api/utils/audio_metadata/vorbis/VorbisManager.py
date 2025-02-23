@@ -4,7 +4,7 @@ from typing import Optional
 
 from mutagen.flac import FLAC
 
-from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
 
 class VorbisManager(MetadataManager):
