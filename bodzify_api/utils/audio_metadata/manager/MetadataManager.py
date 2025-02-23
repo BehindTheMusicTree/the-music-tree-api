@@ -83,21 +83,12 @@ class MetadataManager:
         raise NotImplementedError(f"{self.get_release_date.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_position_in_album(self) -> Optional[int]:
-        """Get track number/position in album.
+    def get_track_number(self) -> Optional[int]:
 
-        Returns:
-            Optional[int]: Track number if available, None otherwise
-        """
-        raise NotImplementedError(f"{self.get_position_in_album.__name__} method must be implemented.")
+        raise NotImplementedError(f"{self.get_track_number.__name__} method must be implemented.")
 
     @abstractmethod
     def get_bpm(self) -> Optional[float]:
-        """Get BPM (Beats Per Minute) value.
-
-        Returns:
-            Optional[float]: BPM value if available, None otherwise
-        """
         raise NotImplementedError(f"{self.get_bpm.__name__} method must be implemented.")
 
     @abstractmethod
@@ -202,7 +193,7 @@ class MetadataManager:
             normalized_rating_max_value=normalized_rating_max_value)
         normalized_metadata[AppMetadataKeys.LANGUAGE] = self.get_language()
         normalized_metadata[AppMetadataKeys.RELEASE_DATE] = self.get_release_date()
-        normalized_metadata[AppMetadataKeys.POSITION_IN_ALBUM] = self.get_position_in_album()
+        normalized_metadata[AppMetadataKeys.TRACK_NUMBER] = self.get_track_number()
         normalized_metadata[AppMetadataKeys.BPM] = self.get_bpm()
         return normalized_metadata
 
@@ -226,8 +217,8 @@ class MetadataManager:
             return self.get_language()
         elif normalized_metadata_key == AppMetadataKeys.RELEASE_DATE:
             return self.get_release_date()
-        elif normalized_metadata_key == AppMetadataKeys.POSITION_IN_ALBUM:
-            return self.get_position_in_album()
+        elif normalized_metadata_key == AppMetadataKeys.TRACK_NUMBER:
+            return self.get_track_number()
         elif normalized_metadata_key == AppMetadataKeys.BPM:
             return self.get_bpm()
 

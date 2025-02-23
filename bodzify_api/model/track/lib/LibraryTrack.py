@@ -38,10 +38,10 @@ class LibraryTrack(TrackablePlayCount):
                                      null=True,
                                      blank=True,
                                      related_name=AlbumFields.LIB_TRACKS_RELATED_NAME,)
-    position_in_album = models.PositiveIntegerField(
+    track_number = models.PositiveIntegerField(
         null=True,
         blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_POSITION_IN_ALBUM_MAX)])
+        validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_TRACK_NUMBER_MAX)])
     artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_RELATED_NAME)
     genre = PrivateForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
@@ -76,7 +76,7 @@ class LibraryTrack(TrackablePlayCount):
         return f"tracks/{self.uuid}/"
 
     def __str__(self):
-        position_str = f"#{self.position_in_album}" if self.position_in_album else "#--"
+        position_str = f"#{self.track_number}" if self.track_number else "#--"
 
         artists: QuerySet[Artist] = self.artists.all()
         artists_str = ", ".join(

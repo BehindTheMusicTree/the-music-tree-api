@@ -14,7 +14,7 @@ class Fields:
     ALBUM_NAME = f'{ModelFields.ALBUM}_{AlbumFields.NAME}'
     ALBUM_ARTISTS_NAMES = f'{AlbumFields.ALBUM_ARTISTS}_{ArtistFields.NAME}s'
     ALBUM_ARTISTS_NAMES_ARRAY = f'{ALBUM_ARTISTS_NAMES}[]'
-    POSITION_IN_ALBUM = ModelFields.POSITION_IN_ALBUM
+    TRACK_NUMBER = ModelFields.TRACK_NUMBER
     GENRE_UUID = f'{ModelFields.GENRE}_{CriteriaFields.UUID}'
     GENRE_NAME = f'{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}'
     RATING = ModelFields.RATING

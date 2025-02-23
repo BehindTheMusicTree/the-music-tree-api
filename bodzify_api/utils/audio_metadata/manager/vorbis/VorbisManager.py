@@ -139,7 +139,7 @@ class VorbisManager(MetadataManager):
         """Get release date from DATE tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.DATE)
 
-    def get_position_in_album(self) -> Optional[int]:
+    def get_track_number(self) -> Optional[int]:
         """Get track number from TRACKNUMBER tag.
 
         Returns:
@@ -195,7 +195,7 @@ class VorbisManager(MetadataManager):
             vorbis_tag_key = self.VorbisTagKeys.LANGUAGE
         elif normalized_metadata_key == AppMetadataKeys.RELEASE_DATE:
             vorbis_tag_key = self.VorbisTagKeys.DATE
-        elif normalized_metadata_key == AppMetadataKeys.POSITION_IN_ALBUM:
+        elif normalized_metadata_key == AppMetadataKeys.TRACK_NUMBER:
             vorbis_tag_key = self.VorbisTagKeys.TRACK_NUMBER
         elif normalized_metadata_key == AppMetadataKeys.BPM:
             vorbis_tag_key = self.VorbisTagKeys.BPM

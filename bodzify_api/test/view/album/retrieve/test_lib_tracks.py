@@ -11,11 +11,11 @@ class TestCase(AlbumTestCase):
     def test_all_lib_tracks_with_positions_then_order_by_position_asc(self):
         album = self.model_fixture_factory.create_album(name="Chuck")
         lib_track_12th_position = self.model_fixture_factory.create_lib_track_with_file(
-            title="Love", album=album, position_in_album=12)
+            title="Love", album=album, track_number=12)
         lib_track_45th_position = self.model_fixture_factory.create_lib_track_with_file(
-            title="Loves", album=album, position_in_album=45)
+            title="Loves", album=album, track_number=45)
         lib_track_1st_position = self.model_fixture_factory.create_lib_track_with_file(
-            title="Lovdddde", album=album, position_in_album=1)
+            title="Lovdddde", album=album, track_number=1)
 
         response = self._retrieve_album(uuid=album.uuid)
 
@@ -29,9 +29,9 @@ class TestCase(AlbumTestCase):
     def test_some_lib_tracks_with_positions_then_order_by_position_asc_then_those_with_no_position_by_title_asc(self):
         album = self.model_fixture_factory.create_album(name="Chuck")
         lib_track_112th_position = self.model_fixture_factory.create_lib_track_with_file(
-            title="Love", album=album, position_in_album=112)
+            title="Love", album=album, track_number=112)
         lib_track_4th_position = self.model_fixture_factory.create_lib_track_with_file(
-            title="Loves", album=album, position_in_album=2)
+            title="Loves", album=album, track_number=2)
         lib_track_no_position_3 = self.model_fixture_factory.create_lib_track_with_file(title="Lovdddde", album=album)
         lib_track_no_position_4 = self.model_fixture_factory.create_lib_track_with_file(title="Movee", album=album)
         lib_track_no_position_2 = self.model_fixture_factory.create_lib_track_with_file(title="Jooove", album=album)

@@ -24,7 +24,7 @@ class LibTrackDetailedSerializer(serializers.ModelSerializer):
                   Fields.FILE,
                   Fields.ARTISTS,
                   Fields.ALBUM,
-                  Fields.POSITION_IN_ALBUM,
+                  Fields.TRACK_NUMBER,
                   Fields.GENRE,
                   Fields.RATING,
                   Fields.LANGUAGE,

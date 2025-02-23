@@ -11,7 +11,7 @@ class Fields:
     UUID = SimpleFields.UUID
     TITLE = SimpleFields.TITLE
     ARTISTS = SimpleFields.ARTISTS
-    POSITION_IN_ALBUM = SimpleFields.POSITION_IN_ALBUM
+    TRACK_NUMBER = SimpleFields.TRACK_NUMBER
     GENRE = SimpleFields.GENRE
     RATING = SimpleFields.RATING
     LANGUAGE = SimpleFields.LANGUAGE
@@ -24,7 +24,7 @@ class LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(serializers.ModelS
 
     class Meta:
         model = LibraryTrack
-        fields = [Fields.POSITION_IN_ALBUM,
+        fields = [Fields.TRACK_NUMBER,
                   Fields.UUID,
                   Fields.TITLE,
                   Fields.ARTISTS,

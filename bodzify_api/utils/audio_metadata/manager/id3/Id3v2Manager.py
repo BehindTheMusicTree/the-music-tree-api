@@ -110,7 +110,7 @@ class Id3v2Manager(Id3Manager):
         LANGUAGE = 'TLAN'
         RECORDING_TIME = 'TDRC'  # ID3v2.4 recording time
         YEAR = 'TYER'  # ID3v2.3 year
-        POSITION_IN_ALBUM = 'TRCK'
+        TRACK_NUMBER = 'TRCK'
         BPM = 'TBPM'
 
     def __init__(self, audio_file: AudioFile):
@@ -186,13 +186,13 @@ class Id3v2Manager(Id3Manager):
         # Fall back to ID3v2.3 TYER frame
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.YEAR)
 
-    def get_position_in_album(self) -> Optional[int]:
+    def get_track_number(self) -> Optional[int]:
         """Get track number from TRCK frame.
 
         The TRCK frame can contain either just a track number or 'track/total'
         format. This method extracts just the track number.
         """
-        track = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.POSITION_IN_ALBUM)
+        track = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.TRACK_NUMBER)
         if track:
             # Handle 'track/total' format by taking just the track number
             track = track.split('/')[0]
@@ -254,8 +254,8 @@ class Id3v2Manager(Id3Manager):
         elif normalized_metadata_key == AppMetadataKeys.RELEASE_DATE:
             id3_key = self.Id3TextFrames.RECORDING_TIME
             text_frame_class = TDRC
-        elif normalized_metadata_key == AppMetadataKeys.POSITION_IN_ALBUM:
-            id3_key = self.Id3TextFrames.POSITION_IN_ALBUM
+        elif normalized_metadata_key == AppMetadataKeys.TRACK_NUMBER:
+            id3_key = self.Id3TextFrames.TRACK_NUMBER
             text_frame_class = TRCK
         elif normalized_metadata_key == AppMetadataKeys.BPM:
             id3_key = self.Id3TextFrames.BPM

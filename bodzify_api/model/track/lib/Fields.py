@@ -16,7 +16,7 @@ class Fields:
     TITLE = "title"
     ARTISTS = "artists"
     ALBUM = "album"
-    POSITION_IN_ALBUM = "position_in_album"
+    TRACK_NUMBER = "track_number"
     GENRE = "genre"
     RATING = "rating"
     PLAYLISTS = "playlists"

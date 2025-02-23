@@ -228,7 +228,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                     Fields.RATING,
                     Fields.LANGUAGE,
                     Fields.ARCHIVED,
-                    Fields.POSITION_IN_ALBUM]:
+                    Fields.TRACK_NUMBER]:
             data_transformer.update_data1_with_key_if_set_in_data2(key=key, data1=model_data, data2=schema_data)
 
         self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
@@ -253,7 +253,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 SchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 SchemaFields.TITLE,
                 SchemaFields.ALBUM_NAME,
-                SchemaFields.POSITION_IN_ALBUM,
+                SchemaFields.TRACK_NUMBER,
                 SchemaFields.GENRE_UUID,
                 SchemaFields.RATING,
                 SchemaFields.LANGUAGE]

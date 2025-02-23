@@ -107,35 +107,18 @@ class RiffManager(MetadataManager):
         return ""
 
     def get_language(self) -> Optional[str]:
-        """Get language from ILNG tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.LANGUAGE)
 
     def get_release_date(self) -> Optional[str]:
-        """Get release date from ICRD tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.RELEASE_DATE)
 
-    def get_position_in_album(self) -> Optional[int]:
-        """Get track number from IPRT (Part) tag.
-
-        Returns:
-            Optional[int]: Track number if available, None otherwise
-        """
+    def get_track_number(self) -> Optional[int]:
         part = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.PART)
         if part:
             try:
                 return int(part)
             except ValueError:
                 return None
-        return None
-
-    def get_bpm(self) -> Optional[float]:
-        """Get BPM (Beats Per Minute).
-
-        RIFF INFO chunks do not have a standard field for BPM metadata.
-
-        Returns:
-            None: RIFF format does not support BPM
-        """
         return None
 
     def update_specific_file_metadata_without_saving(
@@ -162,7 +145,7 @@ class RiffManager(MetadataManager):
             riff_tag_key = self.RiffTagKeys.LANGUAGE
         elif normalized_metadata_key == AppMetadataKeys.RELEASE_DATE:
             riff_tag_key = self.RiffTagKeys.RELEASE_DATE
-        elif normalized_metadata_key == AppMetadataKeys.POSITION_IN_ALBUM:
+        elif normalized_metadata_key == AppMetadataKeys.TRACK_NUMBER:
             riff_tag_key = self.RiffTagKeys.PART
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)

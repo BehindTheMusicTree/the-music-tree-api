@@ -114,7 +114,7 @@ class Migration(migrations.Migration):
                 ('play_count', models.PositiveIntegerField(default=0)),
                 ('title', bodzify_api.model.field.AppCharField(max_length=200)),
                 ('track_file_fingerprint_must_be_unique', models.BooleanField(default=False)),
-                ('position_in_album', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(1000)])),
+                ('track_number', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(1000)])),
                 ('rating', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
                 ('language', bodzify_api.model.field.AppCharField(blank=True, default=None, max_length=200, null=True)),
                 ('archived', models.BooleanField(default=False)),

@@ -67,8 +67,8 @@ class FieldValidationErrorCode(Enum):
         DEPENDENCY_MISSING = 2173      # Required dependent field missing
 
     Numeric Range Validation:
-        POSITION_IN_ALBUM_TOO_SMALL = 2180 # Album position below minimum
-        POSITION_IN_ALBUM_TOO_LARGE = 2181 # Album position exceeds maximum
+        TRACK_NUMBER_TOO_SMALL = 2180 # Album position below minimum
+        TRACK_NUMBER_TOO_LARGE = 2181 # Album position exceeds maximum
         RATING_TOO_SMALL = 2182        # Rating below minimum
         RATING_TOO_LARGE = 2183        # Rating exceeds maximum
 
@@ -139,8 +139,8 @@ class FieldValidationErrorCode(Enum):
     DEPENDENCY_MISSING = 'dependency_missing'
 
     # Numeric Range Validation
-    POSITION_IN_ALBUM_TOO_SMALL = 'position_in_album_too_small'
-    POSITION_IN_ALBUM_TOO_LARGE = 'position_in_album_too_large'
+    TRACK_NUMBER_TOO_SMALL = 'track_number_too_small'
+    TRACK_NUMBER_TOO_LARGE = 'track_number_too_large'
     RATING_TOO_SMALL = 'rating_too_small'
     RATING_TOO_LARGE = 'rating_too_large'
 

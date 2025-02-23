@@ -9,5 +9,5 @@ class AppMetadataKeys:
     RATING = 'rating'
     LANGUAGE = 'language'
     RELEASE_DATE = 'release_date'
-    POSITION_IN_ALBUM = 'position_in_album'
+    TRACK_NUMBER = 'track_number'
     BPM = 'bpm'

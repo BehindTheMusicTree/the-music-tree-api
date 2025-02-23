@@ -36,8 +36,8 @@ class Album(LibTrackMixin):
     @property
     def lib_tracks_not_archived_sorted(self) -> models.QuerySet['LibraryTrack']:
         return self.lib_tracks_not_archived.annotate(
-            null_position=Q(position_in_album__isnull=True)).order_by(
-            'null_position', LibraryTrackFields.POSITION_IN_ALBUM, LibraryTrackFields.TITLE)
+            null_position=Q(track_number__isnull=True)).order_by(
+            'null_position', LibraryTrackFields.TRACK_NUMBER, LibraryTrackFields.TITLE)
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="album_non_empty_name")]
@@ -56,7 +56,7 @@ class Album(LibTrackMixin):
         if tracks:
             track_details = []
             for track in tracks:
-                track_position = f"{track.position_in_album}." if track.position_in_album else "--."
+                track_position = f"{track.track_number}." if track.track_number else "--."
                 track_artists = ", ".join(str(artist) for artist in track.artists.all())
                 track_artists = f"{track_artists} | " if track_artists else "[No Artist] | "
                 track_details.append(f"{track_position}{track_artists}{track.title}")

@@ -11,7 +11,7 @@ class Fields:
     TITLE = ModelFields.TITLE
     ARTISTS = ModelFields.ARTISTS
     ALBUM = ModelFields.ALBUM
-    POSITION_IN_ALBUM = ModelFields.POSITION_IN_ALBUM
+    TRACK_NUMBER = ModelFields.TRACK_NUMBER
     GENRE = ModelFields.GENRE
     RATING = ModelFields.RATING
     LANGUAGE = ModelFields.LANGUAGE

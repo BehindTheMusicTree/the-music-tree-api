@@ -12,7 +12,7 @@ from bodzify_api.serializer.field.criteria.GenreField import GenreField
 from .Fields import Fields
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
-POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album position is."""
+TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album position is."""
 
 
 class LibTrackInputSerializer(AppSerializer):
@@ -32,7 +32,7 @@ class LibTrackInputSerializer(AppSerializer):
     album_artists_names = ArtistsNamesField(max_length=settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,
                                             required=False,
                                             allow_null=True)
-    position_in_album = PositionInAlbumField()
+    track_number = PositionInAlbumField()
 
     genre_uuid = GenreField(required=False, allow_null=True)
     genre_name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
@@ -68,12 +68,12 @@ class LibTrackInputSerializer(AppSerializer):
                     field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING
                 )
 
-        if Fields.POSITION_IN_ALBUM in data:
+        if Fields.TRACK_NUMBER in data:
             error_message = None
             if Fields.ALBUM_NAME not in data:
-                error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+                error_message = TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
             elif data[Fields.ALBUM_NAME] in [None, ""]:
-                error_message = POSITION_IN_ALBUM_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+                error_message = TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
                 AppValidationError(

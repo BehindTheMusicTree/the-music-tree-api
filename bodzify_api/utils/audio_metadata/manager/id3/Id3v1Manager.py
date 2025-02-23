@@ -80,7 +80,7 @@ class Id3v1Manager(Id3Manager):
         if genre < len(ID3V1_AND_RIFF_GENRE_MAP):
             metadata[AppMetadataKeys.GENRE_NAME] = [genre]
         if track and track != '0':
-            metadata[AppMetadataKeys.POSITION_IN_ALBUM] = [track]
+            metadata[AppMetadataKeys.TRACK_NUMBER] = [track]
 
         return metadata
 
@@ -122,10 +122,10 @@ class Id3v1Manager(Id3Manager):
     def get_release_date(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKeys.RELEASE_DATE)
 
-    def get_position_in_album(self) -> Optional[int]:
-        if AppMetadataKeys.POSITION_IN_ALBUM in self.file_raw_metadata:
+    def get_track_number(self) -> Optional[int]:
+        if AppMetadataKeys.TRACK_NUMBER in self.file_raw_metadata:
             try:
-                return int(self.file_raw_metadata[AppMetadataKeys.POSITION_IN_ALBUM][0])
+                return int(self.file_raw_metadata[AppMetadataKeys.TRACK_NUMBER][0])
             except (ValueError, IndexError):
                 return None
         return None

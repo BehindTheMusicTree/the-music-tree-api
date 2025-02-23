@@ -6,7 +6,7 @@ class Fields:
     TITLE = AvailableFields.TITLE
     ARTISTS = AvailableFields.ARTISTS
     ALBUM = AvailableFields.ALBUM
-    POSITION_IN_ALBUM = AvailableFields.POSITION_IN_ALBUM
+    TRACK_NUMBER = AvailableFields.TRACK_NUMBER
     GENRE = AvailableFields.GENRE
     RATING = AvailableFields.RATING
     LANGUAGE = AvailableFields.LANGUAGE
