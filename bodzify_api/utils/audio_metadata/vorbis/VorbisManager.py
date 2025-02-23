@@ -4,7 +4,6 @@ from typing import Optional
 
 from mutagen.flac import FLAC
 
-from bodzify_api.utils.audio_metadata.audio_file import AudioFile
 from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
 
