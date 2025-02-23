@@ -3,8 +3,8 @@ from typing import Optional
 
 from mutagen.wave import WAVE
 
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, NormalizedMetadataKeys
-from bodzify_api.utils.audio_metadata.constants import ID3V1_AND_RIFF_GENRE_MAP
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, AppMetadataKeys
+from bodzify_api.utils.audio_metadata.manager.constants import ID3V1_AND_RIFF_GENRE_MAP
 from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
 
 
@@ -152,25 +152,25 @@ class RiffManager(MetadataManager):
             normalized_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
         """Update specific metadata field in WAV file."""
-        if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
+        if normalized_metadata_key == AppMetadataKeys.TITLE:
             riff_tag_key = self.RiffTagKeys.TITLE
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES_STR:
+        elif normalized_metadata_key == AppMetadataKeys.ARTISTS_NAMES_STR:
             riff_tag_key = self.RiffTagKeys.ARTIST_NAME
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
+        elif normalized_metadata_key == AppMetadataKeys.ALBUM_NAME:
             riff_tag_key = self.RiffTagKeys.ALBUM_NAME
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
+        elif normalized_metadata_key == AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
             riff_tag_key = self.RiffTagKeys.ALBUM_ARTISTS_NAMES
-        elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
+        elif normalized_metadata_key == AppMetadataKeys.GENRE_NAME:
             riff_tag_key = self.RiffTagKeys.GENRE_NAME
-        elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
+        elif normalized_metadata_key == AppMetadataKeys.RATING:
             raise UnsupportedMetadataError("RIFF format does not support ratings")
-        elif normalized_metadata_key == NormalizedMetadataKeys.BPM:
+        elif normalized_metadata_key == AppMetadataKeys.BPM:
             raise UnsupportedMetadataError("RIFF format does not support BPM metadata")
-        elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
+        elif normalized_metadata_key == AppMetadataKeys.LANGUAGE:
             riff_tag_key = self.RiffTagKeys.LANGUAGE
-        elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
+        elif normalized_metadata_key == AppMetadataKeys.RELEASE_DATE:
             riff_tag_key = self.RiffTagKeys.RELEASE_DATE
-        elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
+        elif normalized_metadata_key == AppMetadataKeys.POSITION_IN_ALBUM:
             riff_tag_key = self.RiffTagKeys.PART
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)

@@ -21,7 +21,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.app_metadata_keys import AppMetadataKeys
 from ..file.TrackFile import TrackFile
 from .Fields import Fields
 from .LibTrackManager import LibTrackManager
@@ -94,7 +94,7 @@ class LibraryTrack(TrackablePlayCount):
 
     def update_file_tags_from_lib_track_instance_values(self):
         normalized_metadata = dict()
-        normalized_metadata[NormalizedMetadataKeys.TITLE] = self.title
+        normalized_metadata[AppMetadataKeys.TITLE] = self.title
 
         if self.artists.count() > 0:
             artists_names_tag = ""
@@ -105,7 +105,7 @@ class LibraryTrack(TrackablePlayCount):
                 artists_names_tag = artists_names_tag + artist.name
         else:
             artists_names_tag = ""
-        normalized_metadata[NormalizedMetadataKeys.ARTISTS_NAMES_STR] = artists_names_tag
+        normalized_metadata[AppMetadataKeys.ARTISTS_NAMES_STR] = artists_names_tag
 
         album_artists_tag = ""
         if self.album:
@@ -120,11 +120,11 @@ class LibraryTrack(TrackablePlayCount):
         else:
             album_name_tag = ""
 
-        normalized_metadata[NormalizedMetadataKeys.ALBUM_NAME] = album_name_tag
-        normalized_metadata[NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR] = album_artists_tag
-        normalized_metadata[NormalizedMetadataKeys.GENRE_NAME] = self.genre.name if self.genre else ""
-        normalized_metadata[NormalizedMetadataKeys.RATING] = self.rating
-        normalized_metadata[NormalizedMetadataKeys.LANGUAGE] = self.language if self.language else ""
+        normalized_metadata[AppMetadataKeys.ALBUM_NAME] = album_name_tag
+        normalized_metadata[AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR] = album_artists_tag
+        normalized_metadata[AppMetadataKeys.GENRE_NAME] = self.genre.name if self.genre else ""
+        normalized_metadata[AppMetadataKeys.RATING] = self.rating
+        normalized_metadata[AppMetadataKeys.LANGUAGE] = self.language if self.language else ""
 
         self.track_file.update_file_tags(normalized_metadata=normalized_metadata)
 

@@ -152,7 +152,7 @@ from .manager.riff.RiffManager import RiffManager
 from .manager.MetadataManager import MetadataManager
 from mutagen._file import File as MutagenFile
 from .vorbis.VorbisManager import VorbisManager
-from .NormalizedMetadataKeys import NormalizedMetadataKeys
+from .app_metadata_keys import AppMetadataKeys
 
 
 from .tag_types import TagTypes
@@ -314,7 +314,7 @@ def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[
     merged = {}
 
     # For each field that could exist in metadata
-    for field in vars(NormalizedMetadataKeys).values():
+    for field in vars(app_metadata_keys).values():
         if not isinstance(field, str) or field.startswith('_'):
             continue
 
@@ -431,7 +431,7 @@ def clear_metadata(file, tag_types: Optional[list[str]] = None) -> dict[str, boo
         try:
             # Create empty metadata dict
             empty_metadata = {}
-            for field in vars(NormalizedMetadataKeys).values():
+            for field in vars(app_metadata_keys).values():
                 if isinstance(field, str) and not field.startswith('_'):
                     empty_metadata[field] = None
 

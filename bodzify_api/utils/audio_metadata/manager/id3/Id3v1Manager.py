@@ -1,9 +1,9 @@
 from typing import Optional
 import struct
 
-from bodzify_api.utils.audio_metadata.constants import ID3V1_AND_RIFF_GENRE_MAP
+from bodzify_api.utils.audio_metadata.manager.constants import ID3V1_AND_RIFF_GENRE_MAP
 from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.app_metadata_keys import AppMetadataKeys
 from .Id3Manager import Id3Manager
 
 
@@ -69,29 +69,29 @@ class Id3v1Manager(Id3Manager):
         metadata = {}
 
         if title:
-            metadata[NormalizedMetadataKeys.TITLE] = [title]
+            metadata[AppMetadataKeys.TITLE] = [title]
         if artist:
-            metadata[NormalizedMetadataKeys.ARTISTS_NAMES_STR] = [artist]
+            metadata[AppMetadataKeys.ARTISTS_NAMES_STR] = [artist]
         if album:
-            metadata[NormalizedMetadataKeys.ALBUM_NAME] = [album]
+            metadata[AppMetadataKeys.ALBUM_NAME] = [album]
         if year:
-            metadata[NormalizedMetadataKeys.RELEASE_DATE] = [year]
+            metadata[AppMetadataKeys.RELEASE_DATE] = [year]
         # Comments are not part of normalized metadata
         if genre < len(ID3V1_AND_RIFF_GENRE_MAP):
-            metadata[NormalizedMetadataKeys.GENRE_NAME] = [genre]
+            metadata[AppMetadataKeys.GENRE_NAME] = [genre]
         if track and track != '0':
-            metadata[NormalizedMetadataKeys.POSITION_IN_ALBUM] = [track]
+            metadata[AppMetadataKeys.POSITION_IN_ALBUM] = [track]
 
         return metadata
 
     def get_title(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.TITLE)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKeys.TITLE)
 
     def get_artists_names(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.ARTISTS_NAMES_STR)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKeys.ARTISTS_NAMES_STR)
 
     def get_album_name(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.ALBUM_NAME)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKeys.ALBUM_NAME)
 
     def get_album_artists_name_str(self) -> Optional[str]:
         """Get album artist.
@@ -103,9 +103,9 @@ class Id3v1Manager(Id3Manager):
 
     def get_genre_name(self) -> Optional[str]:
         """Get genre name from ID3v1 genre code."""
-        if NormalizedMetadataKeys.GENRE_NAME in self.file_raw_metadata:
+        if AppMetadataKeys.GENRE_NAME in self.file_raw_metadata:
             try:
-                genre_code = self.file_raw_metadata[NormalizedMetadataKeys.GENRE_NAME][0]
+                genre_code = self.file_raw_metadata[AppMetadataKeys.GENRE_NAME][0]
                 return ID3V1_AND_RIFF_GENRE_MAP.get(genre_code, "Other")
             except (IndexError, KeyError):
                 return None
@@ -120,12 +120,12 @@ class Id3v1Manager(Id3Manager):
         raise UnsupportedMetadataError("ID3v1 format does not support language tags")
 
     def get_release_date(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.RELEASE_DATE)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKeys.RELEASE_DATE)
 
     def get_position_in_album(self) -> Optional[int]:
-        if NormalizedMetadataKeys.POSITION_IN_ALBUM in self.file_raw_metadata:
+        if AppMetadataKeys.POSITION_IN_ALBUM in self.file_raw_metadata:
             try:
-                return int(self.file_raw_metadata[NormalizedMetadataKeys.POSITION_IN_ALBUM][0])
+                return int(self.file_raw_metadata[AppMetadataKeys.POSITION_IN_ALBUM][0])
             except (ValueError, IndexError):
                 return None
         return None

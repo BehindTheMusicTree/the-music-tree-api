@@ -22,7 +22,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.app_metadata_keys import AppMetadataKeys
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as ExtractFields
@@ -138,15 +138,15 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         schema_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
             dict=normalized_metadata,
-            keys=[NormalizedMetadataKeys.TITLE,
-                  NormalizedMetadataKeys.ALBUM_NAME,
-                  NormalizedMetadataKeys.GENRE_NAME,
-                  NormalizedMetadataKeys.RATING,
-                  NormalizedMetadataKeys.LANGUAGE])
+            keys=[AppMetadataKeys.TITLE,
+                  AppMetadataKeys.ALBUM_NAME,
+                  AppMetadataKeys.GENRE_NAME,
+                  AppMetadataKeys.RATING,
+                  AppMetadataKeys.LANGUAGE])
 
         for artists_names_keys in [
-            [NormalizedMetadataKeys.ARTISTS_NAMES_STR, SchemaFields.ARTISTS_NAMES],
-            [NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR, SchemaFields.ALBUM_ARTISTS_NAMES]
+            [AppMetadataKeys.ARTISTS_NAMES_STR, SchemaFields.ARTISTS_NAMES],
+            [AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR, SchemaFields.ALBUM_ARTISTS_NAMES]
         ]:
             normalized_metadata_key, schema_key = artists_names_keys
             if normalized_metadata_key in normalized_metadata:

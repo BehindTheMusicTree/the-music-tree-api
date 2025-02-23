@@ -1,5 +1,5 @@
 
-class NormalizedMetadataKeys:
+class AppMetadataKeys:
     TITLE = 'title'
     ARTISTS_NAMES_STR = 'artists_names_str'
     ALBUM_NAME = 'album_name'
@@ -10,4 +10,4 @@ class NormalizedMetadataKeys:
     LANGUAGE = 'language'
     RELEASE_DATE = 'release_date'
     POSITION_IN_ALBUM = 'position_in_album'
-    BPM = 'bpm'  # Beats Per Minute
+    BPM = 'bpm'

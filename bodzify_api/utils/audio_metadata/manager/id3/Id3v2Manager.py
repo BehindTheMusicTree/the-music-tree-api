@@ -2,7 +2,7 @@ from typing import Optional
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM
 
 from bodzify_api import settings
-from ....audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from ...app_metadata_keys import AppMetadataKeys
 from .Id3Manager import Id3Manager
 
 
@@ -24,8 +24,17 @@ class Id3v2Manager(Id3Manager):
         BPM = 'TBPM'
 
     def get_raw_metadata(self) -> dict:
-        from mutagen.id3 import ID3
-        return ID3(self.file_path)  # type: ignore
+        from mutagen.id3 import ID3, ID3NoHeaderError
+        try:
+            tags = ID3(self.audio_file.file_path)
+            # Force v2.3 update to ensure compatibility
+            tags.update_to_v23()
+            return tags  # type: ignore
+        except ID3NoHeaderError:
+            # Create new ID3 tag if none exists
+            tags = ID3()
+            tags.save(self.audio_file.file_path)
+            return tags  # type: ignore
 
     def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
@@ -117,22 +126,22 @@ class Id3v2Manager(Id3Manager):
             normalized_metadata_value,
             normalized_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
-        if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
+        if normalized_metadata_key == AppMetadataKeys.TITLE:
             id3_key = self.Id3TextFrames.TITLE
             text_frame_class = TIT2
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES_STR:
+        elif normalized_metadata_key == AppMetadataKeys.ARTISTS_NAMES_STR:
             id3_key = self.Id3TextFrames.ARTIST_NAME
             text_frame_class = TPE1
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
+        elif normalized_metadata_key == AppMetadataKeys.ALBUM_NAME:
             id3_key = self.Id3TextFrames.ALBUM_NAME
             text_frame_class = TALB
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
+        elif normalized_metadata_key == AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
             id3_key = self.Id3TextFrames.ALBUM_ARTISTS_NAMES
             text_frame_class = TPE2
-        elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
+        elif normalized_metadata_key == AppMetadataKeys.GENRE_NAME:
             id3_key = self.Id3TextFrames.GENRE_NAME
             text_frame_class = TCON
-        elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
+        elif normalized_metadata_key == AppMetadataKeys.RATING:
             normalized_rating = normalized_metadata_value
             self.file_raw_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
             if normalized_rating:
@@ -144,16 +153,16 @@ class Id3v2Manager(Id3Manager):
                     rating_file_profile=self.RatingFileProfile.BASE_255)
                 self.file_raw_metadata.add(POPM(email=self.ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
             return
-        elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
+        elif normalized_metadata_key == AppMetadataKeys.LANGUAGE:
             id3_key = self.Id3TextFrames.LANGUAGE
             text_frame_class = TLAN
-        elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
+        elif normalized_metadata_key == AppMetadataKeys.RELEASE_DATE:
             id3_key = self.Id3TextFrames.RECORDING_TIME
             text_frame_class = TDRC
-        elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
+        elif normalized_metadata_key == AppMetadataKeys.POSITION_IN_ALBUM:
             id3_key = self.Id3TextFrames.POSITION_IN_ALBUM
             text_frame_class = TRCK
-        elif normalized_metadata_key == NormalizedMetadataKeys.BPM:
+        elif normalized_metadata_key == AppMetadataKeys.BPM:
             id3_key = self.Id3TextFrames.BPM
             text_frame_class = TBPM
         else:

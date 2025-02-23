@@ -17,7 +17,7 @@ from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneT
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
 from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.app_metadata_keys import AppMetadataKeys
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
     import MusicbrainzRecordingLookupResult
@@ -178,7 +178,7 @@ class TrackFile(PrivateStandardResource):
         self.handle_flac_md5()
         duration_in_sec: int = audio_metadata.get_specific_metadata_from_file(
             file=temp_file_path,
-            normalized_metadata_key=NormalizedMetadataKeys.DURATION_IN_SEC)  # type: ignore
+            normalized_metadata_key=AppMetadataKeys.DURATION_IN_SEC)  # type: ignore
         self.duration_in_sec = int(duration_in_sec)
         self.bitrate_in_kbps = self._get_bitrate()
         self.size_in_bytes = self.file.size

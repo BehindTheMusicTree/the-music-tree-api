@@ -4,7 +4,7 @@ from typing import Optional
 
 from mutagen.flac import FLAC
 
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, AppMetadataKeys
 
 
 class VorbisManager(MetadataManager):
@@ -171,17 +171,17 @@ class VorbisManager(MetadataManager):
             normalized_metadata_value,
             normalized_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
-        if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
+        if normalized_metadata_key == AppMetadataKeys.TITLE:
             vorbis_tag_key = self.VorbisTagKeys.TITLE
-        elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES_STR:
+        elif normalized_metadata_key == AppMetadataKeys.ARTISTS_NAMES_STR:
             vorbis_tag_key = self.VorbisTagKeys.ARTIST_NAME
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
+        elif normalized_metadata_key == AppMetadataKeys.ALBUM_NAME:
             vorbis_tag_key = self.VorbisTagKeys.ALBUM_NAME
-        elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
+        elif normalized_metadata_key == AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
             vorbis_tag_key = self.VorbisTagKeys.ALBUM_ARTISTS_NAMES
-        elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
+        elif normalized_metadata_key == AppMetadataKeys.GENRE_NAME:
             vorbis_tag_key = self.VorbisTagKeys.GENRE_NAME
-        elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
+        elif normalized_metadata_key == AppMetadataKeys.RATING:
             app_rating = normalized_metadata_value
             vorbis_tag_key = self.VorbisTagKeys.RATING
             if app_rating:
@@ -190,13 +190,13 @@ class VorbisManager(MetadataManager):
                     normalized_rating_max_value=normalized_rating_max_value,  # type: ignore
                     rating_file_profile=self.RatingFileProfile.BASE_100)
                 normalized_metadata_value = str(vorbis_rating)
-        elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
+        elif normalized_metadata_key == AppMetadataKeys.LANGUAGE:
             vorbis_tag_key = self.VorbisTagKeys.LANGUAGE
-        elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
+        elif normalized_metadata_key == AppMetadataKeys.RELEASE_DATE:
             vorbis_tag_key = self.VorbisTagKeys.DATE
-        elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
+        elif normalized_metadata_key == AppMetadataKeys.POSITION_IN_ALBUM:
             vorbis_tag_key = self.VorbisTagKeys.TRACK_NUMBER
-        elif normalized_metadata_key == NormalizedMetadataKeys.BPM:
+        elif normalized_metadata_key == AppMetadataKeys.BPM:
             vorbis_tag_key = self.VorbisTagKeys.BPM
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)

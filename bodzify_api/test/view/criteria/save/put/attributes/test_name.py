@@ -6,7 +6,7 @@ from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import Pu
 from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.app_metadata_keys import AppMetadataKeys
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -69,5 +69,5 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
         for possible_tags in possible_tags_list:
             metadata = audio_metadata.get_normalized_metadata_from_file(
                 file=updated_track.track_file.file, possible_tags=possible_tags)
-            assert NormalizedMetadataKeys.GENRE_NAME in metadata
-            assert metadata[NormalizedMetadataKeys.GENRE_NAME] == genre_new_name
+            assert AppMetadataKeys.GENRE_NAME in metadata
+            assert metadata[AppMetadataKeys.GENRE_NAME] == genre_new_name
