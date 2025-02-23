@@ -6,6 +6,9 @@ Metadata Support by Format:
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
 | Text Encoding   |    ASCII     | UTF-8/16/ISO |    UTF-8     | ASCII/UTF-8 |        -        |
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
+| Operations      |      R       |      R/W     |     R/W      |    R/W      |        ✓        |
+| supported       |(W using v2.4)|(W using v2.4)|              |             |                 |
++-----------------+--------------+--------------+--------------+-------------+-----------------+
 | Technical Info  |              |              |              |             |                 |
 | - Duration      |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - Bitrate       |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
@@ -15,13 +18,13 @@ Metadata Support by Format:
 | - Format Info   |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - MD5 Checksum  |              |              |      ✓       |             |    ✓ (Vorbis)   |
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
-| Title           |  ✓ (30, R)   |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| Artist          |  ✓ (30, R)   |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| Album           |  ✓ (30, R)   |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| Title           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| Artist          |    ✓ (30)    |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| Album           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
 | Album Artist    |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|
-| Genre           |  ✓ (1, R)*   |      ✓       |      ✓       |     ✓*      |    ✓ (all)      |
-| Release Date    |  ✓ (4, R)    |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| Track Number    |  ✓ (1, R)    |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| Genre           |    ✓ (1)*    |      ✓       |      ✓       |     ✓*      |    ✓ (all)      |
+| Release Date    |    ✓ (4)     |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| Track Number    |    ✓ (1)     |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
 | Disc Number     |              |      ✓       |      ✓       |             |                 |
 | Rating          |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|
 | BPM             |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|
@@ -30,7 +33,7 @@ Metadata Support by Format:
 | Publisher       |              |      ✓       |      ✓       |             |                 |
 | Copyright       |              |      ✓       |      ✓       |      ✓      |                 |
 | Lyrics          |              |      ✓       |      ✓       |             |                 |
-| Comment         |  ✓ (28, R)   |      ✓       |      ✓       |      ✓      |                 |
+| Comment         |    ✓ (28)    |      ✓       |      ✓       |      ✓      |                 |
 | Encoder         |              |      ✓       |      ✓       |      ✓      |                 |
 | URL             |              |      ✓       |      ✓       |             |                 |
 | ISRC            |              |      ✓       |      ✓       |             |                 |
@@ -63,7 +66,7 @@ Metadata Support by Format:
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
 Legend:
 - ✓: Supported
-- (30, R): Fixed 30-byte field, Read-only
+- (30): Fixed 30-byte field
 - *: Uses standard genre codes (0-147)
 - Empty space: Not supported
 
