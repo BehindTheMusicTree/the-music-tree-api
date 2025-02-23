@@ -1,13 +1,21 @@
 from typing import Optional
-from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM
+from mutagen.id3._frames import (
+    POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM,
+    TYER  # ID3v2.3 year frame
+)
 
 from bodzify_api import settings
 
 from ..NormalizedMetadataKeys import NormalizedMetadataKeys
 from ..MetadataManager import MetadataManager
+from .id3v2_versions import Id3v2Versions as _Id3v2Versions
+from .id3v2_frames import Id3v2TextFrames as _Id3v2TextFrames
 
 
 class Id3v2Manager(MetadataManager):
+    # Make version and frame classes available as class attributes
+    Id3v2Versions = _Id3v2Versions
+    Id3v2TextFrames = _Id3v2TextFrames
     """
     Manages ID3v2 metadata for audio files.
 
@@ -42,19 +50,6 @@ class Id3v2Manager(MetadataManager):
     """
 
     ID3V2_RATING_APP_EMAIL = settings.APP_NAME
-
-    class Id3v2TextFrames:
-        TITLE = 'TIT2'
-        ARTIST_NAME = 'TPE1'
-        ALBUM_NAME = 'TALB'
-        ALBUM_ARTISTS_NAMES = 'TPE2'
-        GENRE_NAME = 'TCON'
-        RATING = 'POPM'
-        LANGUAGE = 'TLAN'
-        RECORDING_TIME = 'TDRC'  # ID3v2.4 recording time
-        YEAR = 'TYER'  # ID3v2.3 year
-        TRACK_NUMBER = 'TRCK'  # Track number/Position in set
-        BPM = 'TBPM'  # Beats Per Minute
 
     def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3v2TextFrames.TITLE)
@@ -98,18 +93,50 @@ class Id3v2Manager(MetadataManager):
     def get_language(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3v2TextFrames.LANGUAGE)
 
-    def get_release_date(self) -> Optional[str]:
-        """Get release date from ID3 tags.
+    def get_id3v2_version(self) -> str:
+        """Get ID3v2 version of the file.
 
-        Tries TDRC (ID3v2.4) first, then falls back to TYER (ID3v2.3) if needed.
+        Returns:
+            str: ID3v2 version (e.g., "2.3", "2.4")
         """
-        # Try ID3v2.4 TDRC frame first
-        date = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3v2TextFrames.RECORDING_TIME)
-        if date:
-            return date
+        if hasattr(self.file_raw_metadata, 'version'):
+            version = self.file_raw_metadata.version  # type: ignore
+            if isinstance(version, tuple) and len(version) >= 2:
+                return f"{version[0]}.{version[1]}"
+        return self.Id3v2Versions.V24  # Default to latest version
 
-        # Fall back to ID3v2.3 TYER frame
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3v2TextFrames.YEAR)
+    def get_release_date(self) -> Optional[str]:
+        """Get release date from ID3v2 tags.
+
+        The date format and frames depend on the ID3v2 version:
+        - ID3v2.4: Uses TDRC frame with ISO 8601 format
+        - ID3v2.3: Uses TYER (year), TDAT (date), TIME (time)
+
+        Returns:
+            Optional[str]: Release date if available
+        """
+        version = self.get_id3v2_version()
+
+        if version == self.Id3v2Versions.V24:
+            # ID3v2.4 uses TDRC with ISO 8601 format
+            return self._get_first_value_str_if_exists_in_file_metadata_or_none(
+                key=self.Id3v2TextFrames.DateFrames.V24_RECORDING_TIME)
+        else:
+            # ID3v2.3 uses separate frames
+            year = self._get_first_value_str_if_exists_in_file_metadata_or_none(
+                key=self.Id3v2TextFrames.DateFrames.V23_YEAR)
+            if not year:
+                return None
+
+            # Try to get day/month if available
+            date = self._get_first_value_str_if_exists_in_file_metadata_or_none(
+                key=self.Id3v2TextFrames.DateFrames.V23_DATE)
+            if date and len(date) == 4:
+                # DDMM format
+                month, day = date[2:], date[:2]
+                year = f"{year}-{month}-{day}"
+
+            return year
 
     def get_position_in_album(self) -> Optional[int]:
         """Get track number from TRCK frame.
@@ -177,8 +204,17 @@ class Id3v2Manager(MetadataManager):
             id3_key = self.Id3v2TextFrames.LANGUAGE
             text_frame_class = TLAN
         elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
-            id3_key = self.Id3v2TextFrames.RECORDING_TIME
-            text_frame_class = TDRC
+            version = self.get_id3v2_version()
+            if version == self.Id3v2Versions.V24:
+                id3_key = self.Id3v2TextFrames.DateFrames.V24_RECORDING_TIME
+                text_frame_class = TDRC
+            else:
+                # ID3v2.3: Store only year if full date not provided
+                id3_key = self.Id3v2TextFrames.DateFrames.V23_YEAR
+                text_frame_class = TYER
+                if normalized_metadata_value and '-' in normalized_metadata_value:
+                    # Extract just the year from ISO date
+                    normalized_metadata_value = normalized_metadata_value.split('-')[0]
         elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
             id3_key = self.Id3v2TextFrames.TRACK_NUMBER
             text_frame_class = TRCK
