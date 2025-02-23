@@ -126,7 +126,6 @@ class RiffManager(MetadataManager):
             normalized_metadata_value,
             normalized_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
-        """Update specific metadata field in WAV file."""
         if normalized_metadata_key == AppMetadataKeys.TITLE:
             riff_tag_key = self.RiffTagKeys.TITLE
         elif normalized_metadata_key == AppMetadataKeys.ARTISTS_NAMES_STR:

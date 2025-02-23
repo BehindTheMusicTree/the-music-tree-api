@@ -11,7 +11,7 @@ from tinytag import TinyTag, TinyTagException
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from bodzify_api.utils.audio_metadata.audio_file import AudioFile
-
+from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
 from ..app_metadata_keys import AppMetadataKeys
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
@@ -48,48 +48,36 @@ class MetadataManager:
             hash_md5.update(chunk)
         return hash_md5.hexdigest()
 
-    @abstractmethod
     def get_title(self) -> Optional[str]:
-        raise NotImplementedError(f"{self.get_title.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("Title metadata not supported by this format")
 
-    @abstractmethod
     def get_artists_names(self) -> Optional[str]:
-        raise NotImplementedError(f"{self.get_artists_names.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("Artist metadata not supported by this format")
 
-    @abstractmethod
     def get_album_name(self) -> Optional[str]:
-        raise NotImplementedError(f"{self.get_album_name.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("Album metadata not supported by this format")
 
-    @abstractmethod
     def get_album_artists_name_str(self) -> Optional[str]:
-        raise NotImplementedError(f"{self.get_album_artists_name_str.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("Album artist metadata not supported by this format")
 
-    @abstractmethod
     def get_genre_name(self) -> Optional[str]:
-        raise NotImplementedError(f"{self.get_genre_name.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("Genre metadata not supported by this format")
 
-    @abstractmethod
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
-        raise NotImplementedError(
-            f"{self.get_eventually_normalized_rating_value.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("Rating metadata not supported by this format")
 
-    @abstractmethod
     def get_language(self) -> Optional[str]:
-        raise NotImplementedError(f"{self.get_language.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("Language metadata not supported by this format")
 
-    @abstractmethod
     def get_release_date(self) -> Optional[str]:
-        raise NotImplementedError(f"{self.get_release_date.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("Release date metadata not supported by this format")
 
-    @abstractmethod
     def get_track_number(self) -> Optional[int]:
+        raise UnsupportedMetadataError("Track number metadata not supported by this format")
 
-        raise NotImplementedError(f"{self.get_track_number.__name__} method must be implemented.")
-
-    @abstractmethod
     def get_bpm(self) -> Optional[float]:
-        raise NotImplementedError(f"{self.get_bpm.__name__} method must be implemented.")
+        raise UnsupportedMetadataError("BPM metadata not supported by this format")
 
     @abstractmethod
     def update_specific_file_metadata_without_saving(self,
