@@ -68,35 +68,10 @@ Legend:
 - ✓: Supported
 - (30): Fixed 30-byte field
 - *: Uses standard genre codes (0-147)
-- Empty space: Not supported
 
 Format Details:
 
-Version Support:
-  * v2.4:
-    - TDRC frame for full timestamps (YYYY-MM-DD)
-    - UTF-8 text encoding
-    - Extended header features
-    - Unsynchronization per frame
-    - All metadata fields supported
-    - Preferred version for new tags
-
-  * v2.3:
-    - TYER+TDAT frames for date (year and date separately)
-    - UTF-16/UTF-16BE text encoding
-    - Basic unsynchronization
-    - All metadata fields supported
-    - Most widely used version
-
-  * v2.2:
-    - Three-character frame IDs (TT2, TP1, etc.)
-    - ISO-8859-1 or UCS-2 text encoding
-    - All standard fields supported
-    - Simpler header structure than v2.3/v2.4
-    - Full read/write support
-    - Less common but equally functional
-
-  Writing Policy:
+- ID3 Writing Policy:
   * The app always writes ID3v2 tags in v2.4 format
   * When updating an existing file:
     - v2.4 tags are updated in place
@@ -105,7 +80,8 @@ Version Support:
     - All text is encoded in UTF-8
   * Reading supports all versions (v2.2, v2.3, v2.4)
   * Only one ID3v2 version can exist in a file at a time
-
+  * Native format for MP3 files
+  
 - ID3v1:
   * Fixed 128-byte format at end of file
   * ASCII only, no Unicode
@@ -113,6 +89,29 @@ Version Support:
   * Single byte for track number (v1.1 only)
   * Genre limited to predefined codes (0-147)
   * Legacy format, read-only support
+  
+- ID3v2:
+  * v2.2:
+    - Three-character frame IDs (TT2, TP1, etc.)
+    - ISO-8859-1 or UCS-2 text encoding
+    - All standard fields supported
+    - Simpler header structure than v2.3/v2.4
+    - Less common but equally functional
+
+  * v2.3:
+    - TYER+TDAT frames for date (year and date separately)
+    - UTF-16/UTF-16BE text encoding
+    - Basic unsynchronization
+    - All metadata fields supported
+    - Most widely used version
+    
+  * v2.4:
+    - TDRC frame for full timestamps (YYYY-MM-DD)
+    - UTF-8 text encoding
+    - Extended header features
+    - Unsynchronization per frame
+    - All metadata fields supported
+    - Preferred version for new tags
 
 - Vorbis:
   * Free-form text fields with no length limits
