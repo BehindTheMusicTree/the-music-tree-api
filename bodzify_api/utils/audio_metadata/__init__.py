@@ -6,57 +6,57 @@ Tag Support by Format:
 +-----------------+--------------+--------------+--------------+--------------+------------------+
 | Text Encoding   | ASCII        | UTF-8/16/ISO | UTF-8        | ASCII/UTF-8  | -                |
 +-----------------+--------------+--------------+--------------+--------------+------------------+
-| Title           | Yes (30, R)  | Yes          | Yes          | Yes          | Yes (all)        |
-| Artist          | Yes (30, R)  | Yes          | Yes          | Yes          | Yes (all)        |
-| Album           | Yes (30, R)  | Yes          | Yes          | Yes          | Yes (all)        |
-| Album Artist    | No           | Yes          | Yes          | No           | Yes (ID3v2/Vorbis)|
-| Genre           | Yes (1, R)*  | Yes          | Yes          | Yes*         | Yes (all)        |
-| Release Date    | Yes (4, R)   | Yes          | Yes          | Yes          | Yes (all)        |
-| Track Number    | Yes (1, R)   | Yes          | Yes          | Yes          | Yes (all)        |
-| Disc Number     | No           | Yes          | Yes          | No           | No               |
-| Rating          | No           | Yes          | Yes          | No           | Yes (ID3v2/Vorbis)|
-| BPM             | No           | Yes          | Yes          | No           | Yes (ID3v2/Vorbis)|
-| Language        | No           | Yes          | Yes          | No           | Yes (ID3v2/Vorbis)|
-| Composer        | No           | Yes          | Yes          | Yes          | No               |
-| Publisher       | No           | Yes          | Yes          | No           | No               |
-| Copyright       | No           | Yes          | Yes          | Yes          | No               |
-| Lyrics          | No           | Yes          | Yes          | No           | No               |
-| Comment         | Yes (28, R)  | Yes          | Yes          | Yes          | No               |
-| Encoder         | No           | Yes          | Yes          | Yes          | No               |
-| URL             | No           | Yes          | Yes          | No           | No               |
-| ISRC            | No           | Yes          | Yes          | No           | No               |
-| Mood            | No           | Yes          | Yes          | No           | No               |
-| Key             | No           | Yes          | Yes          | No           | No               |
-| Original Date   | No           | Yes          | Yes          | No           | No               |
-| Remixer         | No           | Yes          | Yes          | No           | No               |
-| Conductor       | No           | Yes          | Yes          | Yes          | No               |
-| Cover Art       | No           | Yes          | Yes          | No           | No               |
-| Compilation     | No           | Yes          | Yes          | No           | No               |
-| Media Type      | No           | Yes          | Yes          | Yes          | No               |
-| File Owner      | No           | Yes          | Yes          | No           | No               |
-| Recording Date  | No           | Yes          | Yes          | No           | No               |
-| File Size       | No           | Yes          | No           | No           | No               |
-| Encoder Settings| No           | Yes          | Yes          | No           | No               |
-| ReplayGain      | No           | Yes          | Yes          | No           | No               |
-| MusicBrainz ID  | No           | Yes          | Yes          | No           | No               |
-| Arranger        | No           | Yes          | Yes          | No           | No               |
-| Version         | No           | Yes          | Yes          | No           | No               |
-| Performance     | No           | Yes          | Yes          | No           | No               |
-| Archival Location| No          | No           | No           | Yes          | No               |
-| Keywords        | No           | No           | No           | Yes          | No               |
-| Subject         | No           | No           | No           | Yes          | No               |
-| Original Artist | No           | Yes          | Yes          | No           | No               |
-| Set Subtitle    | No           | Yes          | Yes          | No           | No               |
-| Initial Key     | No           | Yes          | Yes          | No           | No               |
-| Involved People | No           | Yes          | Yes          | No           | No               |
-| Musicians       | No           | Yes          | Yes          | No           | No               |
-| Part of Set     | No           | Yes          | Yes          | No           | No               |
+| Title           | ✓ (30, R)    | ✓            | ✓            | ✓            | ✓ (all)          |
+| Artist          | ✓ (30, R)    | ✓            | ✓            | ✓            | ✓ (all)          |
+| Album           | ✓ (30, R)    | ✓            | ✓            | ✓            | ✓ (all)          |
+| Album Artist    |              | ✓            | ✓            |              | ✓ (ID3v2/Vorbis) |
+| Genre           | ✓ (1, R)*    | ✓            | ✓            | ✓*           | ✓ (all)          |
+| Release Date    | ✓ (4, R)     | ✓            | ✓            | ✓            | ✓ (all)          |
+| Track Number    | ✓ (1, R)     | ✓            | ✓            | ✓            | ✓ (all)          |
+| Disc Number     |              | ✓            | ✓            |              |                  |
+| Rating          |              | ✓            | ✓            |              | ✓ (ID3v2/Vorbis) |
+| BPM             |              | ✓            | ✓            |              | ✓ (ID3v2/Vorbis) |
+| Language        |              | ✓            | ✓            |              | ✓ (ID3v2/Vorbis) |
+| Composer        |              | ✓            | ✓            | ✓            |                  |
+| Publisher       |              | ✓            | ✓            |              |                  |
+| Copyright       |              | ✓            | ✓            | ✓            |                  |
+| Lyrics          |              | ✓            | ✓            |              |                  |
+| Comment         | ✓ (28, R)    | ✓            | ✓            | ✓            |                  |
+| Encoder         |              | ✓            | ✓            | ✓            |                  |
+| URL             |              | ✓            | ✓            |              |                  |
+| ISRC            |              | ✓            | ✓            |              |                  |
+| Mood            |              | ✓            | ✓            |              |                  |
+| Key             |              | ✓            | ✓            |              |                  |
+| Original Date   |              | ✓            | ✓            |              |                  |
+| Remixer         |              | ✓            | ✓            |              |                  |
+| Conductor       |              | ✓            | ✓            | ✓            |                  |
+| Cover Art       |              | ✓            | ✓            |              |                  |
+| Compilation     |              | ✓            | ✓            |              |                  |
+| Media Type      |              | ✓            | ✓            | ✓            |                  |
+| File Owner      |              | ✓            | ✓            |              |                  |
+| Recording Date  |              | ✓            | ✓            |              |                  |
+| File Size       |              | ✓            |              |              |                  |
+| Encoder Settings|              | ✓            | ✓            |              |                  |
+| ReplayGain      |              | ✓            | ✓            |              |                  |
+| MusicBrainz ID  |              | ✓            | ✓            |              |                  |
+| Arranger        |              | ✓            | ✓            |              |                  |
+| Version         |              | ✓            | ✓            |              |                  |
+| Performance     |              | ✓            | ✓            |              |                  |
+| Archival Location|             |              |              | ✓            |                  |
+| Keywords        |              |              |              | ✓            |                  |
+| Subject         |              |              |              | ✓            |                  |
+| Original Artist |              | ✓            | ✓            |              |                  |
+| Set Subtitle    |              | ✓            | ✓            |              |                  |
+| Initial Key     |              | ✓            | ✓            |              |                  |
+| Involved People |              | ✓            | ✓            |              |                  |
+| Musicians       |              | ✓            | ✓            |              |                  |
+| Part of Set     |              | ✓            | ✓            |              |                  |
 +-----------------+--------------+--------------+--------------+--------------+------------------+
 Legend:
+- ✓: Supported
 - (30, R): Fixed 30-byte field, Read-only
 - *: Uses standard genre codes (0-147)
-- No: Not supported
-- Yes: Supported with read/write capability
+- Empty space: Not supported
 
 Format Details:
 
