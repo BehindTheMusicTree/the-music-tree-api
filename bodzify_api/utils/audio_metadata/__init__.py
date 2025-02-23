@@ -239,10 +239,38 @@ def get_prioritized_metadata_from_file(
 
 
 def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
-    # Use default manager for updates
-    manager = next(iter(_get_metadata_manager(file).values()))
-    manager.update_file_metadata(normalized_metadata=normalized_metadata,
-                                 normalized_rating_max_value=normalized_rating_max_value)
+    """Update metadata using the highest priority manager for the file type.
+
+    For FLAC files: Uses Vorbis comments (preferred over ID3v2)
+    For MP3 files: Uses ID3v2 tags (preferred over ID3v1)
+    For WAV files: Uses RIFF metadata
+
+    Args:
+        file: The audio file to update
+        normalized_metadata: Dictionary of normalized metadata to write
+        normalized_rating_max_value: Max value for normalizing ratings
+
+    Raises:
+        ImproperlyConfigured: If the file type is not supported
+    """
+    audio_file = AudioFile(file)
+    priorities = TAG_TYPE_PRIORITIES.get(audio_file.file_extension.lower())
+    if not priorities:
+        raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
+
+    # Get the highest priority tag type for this format
+    primary_tag_type = priorities[0]
+
+    # Get the manager for just this tag type
+    managers = _get_metadata_manager(file, tag_types=[primary_tag_type])
+    if not managers or primary_tag_type not in managers:
+        raise ImproperlyConfigured(
+            f"Could not get {primary_tag_type} manager for {audio_file.file_extension}")
+
+    # Use the primary manager for updates
+    managers[primary_tag_type].update_file_metadata(
+        normalized_metadata=normalized_metadata,
+        normalized_rating_max_value=normalized_rating_max_value)
 
 
 def clear_metadata(file, tag_types: Optional[list[str]] = None) -> dict[str, bool]:
