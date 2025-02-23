@@ -1,20 +1,20 @@
 """Audio metadata handling module.
 
 Tag Support by Format:
-+----------------+-------------------+------------------+------------------+------------------+
-| Field         | ID3v2            | ID3v1           | Vorbis          | RIFF            |
-+----------------+-------------------+------------------+------------------+------------------+
-| Title         | TIT2 (R/W)       | title (30, R)   | TITLE (R/W)     | INAM (R/W)      |
-| Artist        | TPE1 (R/W)       | artist (30, R)  | ARTIST (R/W)    | IART (R/W)      |
-| Album         | TALB (R/W)       | album (30, R)   | ALBUM (R/W)     | IPRD (R/W)      |
-| Album Artist  | TPE2 (R/W)       | -               | ALBUMARTIST (R/W)| -               |
-| Genre         | TCON (R/W, free) | genre (1, R)    | GENRE (R/W)     | IGNR (R/W, code)|
-| Release Date  | TDRC/TYER (R/W)  | year (4, R)     | DATE (R/W)      | ICRD (R/W)      |
-| Track Number  | TRCK (R/W)       | track (1, R)    | TRACKNUMBER (R/W)| IPRT (R/W)      |
-| Rating        | POPM (R/W)       | -               | RATING (R/W)     | -               |
-| BPM           | TBPM (R/W)       | -               | BPM (R/W)       | -               |
-| Language      | TLAN (R/W)       | -               | LANGUAGE (R/W)   | -               |
-+----------------+-------------------+------------------+------------------+------------------+
++----------------+-------------------+------------------+------------------+------------------+------------------+
+| Field         | ID3v2            | ID3v1           | Vorbis          | RIFF            | App Support      |
++----------------+-------------------+------------------+------------------+------------------+------------------+
+| Title         | TIT2 (R/W)       | title (30, R)   | TITLE (R/W)     | INAM (R/W)      | Yes (all)        |
+| Artist        | TPE1 (R/W)       | artist (30, R)  | ARTIST (R/W)    | IART (R/W)      | Yes (all)        |
+| Album         | TALB (R/W)       | album (30, R)   | ALBUM (R/W)     | IPRD (R/W)      | Yes (all)        |
+| Album Artist  | TPE2 (R/W)       | -               | ALBUMARTIST (R/W)| -               | Yes (ID3v2/Vorbis)|
+| Genre         | TCON (R/W, free) | genre (1, R)    | GENRE (R/W)     | IGNR (R/W, code)| Yes (all)        |
+| Release Date  | TDRC/TYER (R/W)  | year (4, R)     | DATE (R/W)      | ICRD (R/W)      | Yes (all)        |
+| Track Number  | TRCK (R/W)       | track (1, R)    | TRACKNUMBER (R/W)| IPRT (R/W)      | Yes (all)        |
+| Rating        | POPM (R/W)       | -               | RATING (R/W)     | -               | Yes (ID3v2/Vorbis)|
+| BPM           | TBPM (R/W)       | -               | BPM (R/W)       | -               | Yes (ID3v2/Vorbis)|
+| Language      | TLAN (R/W)       | -               | LANGUAGE (R/W)   | -               | Yes (ID3v2/Vorbis)|
++----------------+-------------------+------------------+------------------+------------------+------------------+
 Legend:
 - (30, R): Fixed 30-byte field, Read-only
 - (R/W): Read and Write support
@@ -23,13 +23,31 @@ Legend:
 - (code): Uses standard genre codes (0-147)
 
 Format Details:
-- ID3v2:
-  * v2.4: Uses TDRC for full timestamps (YYYY-MM-DD)
-  * v2.3: Uses TYER+TDAT for date (separate year and date frames)
-  * Unicode support in all text frames
-  * Free-form genre text or numeric references
-  * Full featured, supports all metadata fields
-  * Preferred format for MP3 files
+- ID3v2 Version Support:
+  * v2.4 (Full Support):
+    - TDRC frame for full timestamps (YYYY-MM-DD)
+    - UTF-8 text encoding
+    - Extended header features
+    - Unsynchronization per frame
+    - All metadata fields supported
+    - Preferred version for new tags
+
+  * v2.3 (Full Support):
+    - TYER+TDAT frames for date (year and date separately)
+    - UTF-16/UTF-16BE text encoding
+    - Basic unsynchronization
+    - All metadata fields supported
+    - Most widely used version
+
+  * v2.2 (Limited Support):
+    - Three-character frame IDs (TT2, TP1, etc.)
+    - ISO-8859-1 or UCS-2 text encoding
+    - Basic fields supported
+    - Legacy version, less common but fully functional
+    - Writing supported but v2.4 recommended for new tags
+
+  Note: A file can only have one ID3v2 version at a time.
+        The app prefers v2.4 for writing, but can read all versions.
 
 - ID3v1:
   * Fixed 128-byte format at end of file
