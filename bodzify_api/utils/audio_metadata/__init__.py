@@ -13,6 +13,7 @@ from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, F
 
 from .id3.Mp3MetadataManager import Mp3MetadataManager
 from .id3.WavMetadataManager import WavMetadataManager
+from .id3.Id3v1Manager import Id3v1Manager
 from .MetadataManager import MetadataManager
 from mutagen._file import File as MutagenFile
 from .vorbis.VorbisManager import VorbisManager
@@ -25,9 +26,9 @@ FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the se
 # Define tag type priorities for different file formats
 # First tag type in each list has highest priority
 TAG_TYPE_PRIORITIES = {
-    '.flac': ['vorbis', 'id3v2'],  # Prefer Vorbis comments over ID3v2 tags for FLAC
-    '.mp3': ['id3v2'],             # MP3 files only use ID3v2 tags
-    '.wav': ['riff']               # WAV files only use RIFF metadata
+    '.flac': ['vorbis', 'id3v2'],           # Prefer Vorbis comments over ID3v2 tags for FLAC
+    '.mp3': ['id3v2', 'id3v1'],             # Prefer ID3v2 over ID3v1 for MP3
+    '.wav': ['riff']                        # WAV files only use RIFF metadata
 }
 
 
@@ -67,6 +68,8 @@ def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[s
             managers['vorbis'] = VorbisManager(audio_file)
         elif tag_type == 'riff' and audio_file.file_extension == ".wav":
             managers['riff'] = WavMetadataManager(audio_file)
+        elif tag_type == 'id3v1' and audio_file.file_extension == ".mp3":
+            managers['id3v1'] = Id3v1Manager(audio_file)
 
     if not managers:
         raise ImproperlyConfigured(
