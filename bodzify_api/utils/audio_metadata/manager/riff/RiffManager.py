@@ -28,40 +28,32 @@ class RiffManager(MetadataManager):
        - May not work with all software
        - Use genre codes for better compatibility
 
-    Standard INFO chunk fields:
-    - INAM: Title
-    - IART: Artist
-    - IPRD: Album
-    - IGNR: Genre (numeric code or string)
-    - ICRD: Creation/Release date
-    - IPRT: Part/Track number
-    - IAAR: Album Artist (non-standard but common)
-    - ILNG: Language (non-standard but common)
-
-    Additional INFO fields (less commonly used):
-    - ICMT: Comments
-    - IENG: Engineer
-    - ISFT: Software
-    - ICOP: Copyright
-    - ITCH: Technician
-
     Note: This manager is the preferred way to handle WAV metadata, as it uses
     the format's native metadata system rather than non-standard alternatives
     like ID3v2 tags.
     """
 
     class RiffTagKeys:
+        # Standard
         TITLE = 'INAM'
         ARTIST_NAME = 'IART'
         ALBUM_NAME = 'IPRD'
         ALBUM_ARTISTS_NAMES = 'IAAR'  # Non-standard but commonly used
-        GENRE_NAME = 'IGNR'
-        LANGUAGE = 'ILNG'  # Non-standard but commonly used
+        GENRE_NAME = 'IGNR'  # Numeric code or string
         RELEASE_DATE = 'ICRD'  # Creation/Release date
         PART = 'IPRT'  # Part number (track number)
 
+        # Non-standard but commonly used
+        LANGUAGE = 'ILNG'
+
+        # Less common
+        COMMENTS = 'ICMT'  # Comments field
+        ENGINEER = 'IENG'  # Engineer who worked on the track
+        SOFTWARE = 'ISFT'  # Software used to create the file
+        COPYRIGHT = 'ICOP'  # Copyright information
+        TECHNICIAN = 'ITCH'  # Technician who worked on the track
+
     def get_raw_metadata(self) -> dict:
-        """Get raw metadata from WAV file."""
         self.audio_file.seek(0)
         wave_file = WAVE(io.BytesIO(self.audio_file.read()))
         return {
