@@ -92,25 +92,31 @@ Format Details:
   
 - ID3v2:
   * v2.2:
+    - Introduced in 1998
     - Three-character frame IDs (TT2, TP1, etc.)
     - ISO-8859-1 or UCS-2 text encoding
     - All standard fields supported
     - Simpler header structure than v2.3/v2.4
+    - Basic support for embedded images
     - Less common but equally functional
 
   * v2.3:
+    - Introduced in 1999
     - TYER+TDAT frames for date (year and date separately)
     - UTF-16/UTF-16BE text encoding
     - Basic unsynchronization
     - All metadata fields supported
+    - Better support for embedded images and other binary data
     - Most widely used version
     
   * v2.4:
+    - Introduced in 2000
     - TDRC frame for full timestamps (YYYY-MM-DD)
     - UTF-8 text encoding
     - Extended header features
     - Unsynchronization per frame
     - All metadata fields supported
+    - New frames for more detailed metadata (e.g., TDRC for recording time, TDRL for release time)
     - Preferred version for new tags
 
 - Vorbis:
