@@ -4,10 +4,6 @@ from typing import Optional
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
 
 from ..NormalizedMetadataKeys import NormalizedMetadataKeys
-from bodzify_api.utils.audio_metadata.audio_file import AudioFile
-from typing import IO, Union
-from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
-from django.db.models.fields.files import FieldFile
 from ..MetadataManager import MetadataManager
 
 ID3_RATING_APP_EMAIL = 'bodzify'

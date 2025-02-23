@@ -1,6 +1,5 @@
 
 from .audio_file import AudioFile
-import shutil
 import tempfile
 import os
 import subprocess

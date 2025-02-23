@@ -12,12 +12,11 @@ from django.core.exceptions import ImproperlyConfigured
 
 class AudioFile:
     def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, str]):
-        self.file = file
-        print('file', file)
-        print('file class', file.__class__)
 
         if isinstance(file, FieldFile):
             file = file.file
+
+        self.file = file
 
         if isinstance(file, TemporaryUploadedFile):
             self.file_path = file.file.name
