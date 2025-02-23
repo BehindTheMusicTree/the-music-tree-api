@@ -11,9 +11,9 @@ from django.db.models.fields.files import FieldFile
 
 from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
 
-from .id3.Mp3MetadataManager import Mp3MetadataManager
-from .id3.WavMetadataManager import WavMetadataManager
+from .id3.Id3v2Manager import Id3v2Manager
 from .id3.Id3v1Manager import Id3v1Manager
+from .riff.RiffManager import RiffManager
 from .MetadataManager import MetadataManager
 from mutagen._file import File as MutagenFile
 from .vorbis.VorbisManager import VorbisManager
@@ -49,9 +49,9 @@ def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[s
     if tag_types is None:
         # Default behavior - single manager
         if audio_file.file_extension == ".mp3":
-            managers['id3v2'] = Mp3MetadataManager(audio_file)
+            managers['id3v2'] = Id3v2Manager(audio_file)
         elif audio_file.file_extension == ".wav":
-            managers['riff'] = WavMetadataManager(audio_file)
+            managers['riff'] = RiffManager(audio_file)
         elif audio_file.file_extension == ".flac":
             managers['vorbis'] = VorbisManager(audio_file)
         else:
@@ -62,12 +62,12 @@ def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[s
     for tag_type in tag_types:
         if tag_type == 'id3v2':
             if audio_file.file_extension in [".mp3", ".flac"]:
-                managers['id3v2'] = Mp3MetadataManager(
+                managers['id3v2'] = Id3v2Manager(
                     audio_file) if audio_file.file_extension == ".mp3" else FlacID3v2Manager(audio_file)
         elif tag_type == 'vorbis' and audio_file.file_extension == ".flac":
             managers['vorbis'] = VorbisManager(audio_file)
         elif tag_type == 'riff' and audio_file.file_extension == ".wav":
-            managers['riff'] = WavMetadataManager(audio_file)
+            managers['riff'] = RiffManager(audio_file)
         elif tag_type == 'id3v1' and audio_file.file_extension == ".mp3":
             managers['id3v1'] = Id3v1Manager(audio_file)
 
