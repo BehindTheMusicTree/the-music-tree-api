@@ -2,17 +2,29 @@ from typing import Optional
 import struct
 
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, NormalizedMetadataKeys
-
-
-from ..constants import ID3V1_AND_RIFF_GENRE_MAP
+from bodzify_api.utils.audio_metadata.constants import ID3V1_AND_RIFF_GENRE_MAP
+from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
 
 
 class Id3v1Manager(MetadataManager):
     """
     Manages ID3v1 metadata for audio files.
 
-    ID3v1 is a simple metadata format that stores information in a 128-byte block
-    at the end of the file. The format is:
+    ID3v1 is a simple, legacy metadata format with significant limitations:
+    - Fixed 128-byte block at end of file
+    - No Unicode support (Latin-1 only)
+    - Limited field lengths (30 chars)
+    - No support for:
+        - Album artist
+        - BPM
+        - Ratings
+        - Language
+        - Custom genres
+        - Multiple genres
+        - Multiple artists
+    - Read-only (modification not safe)
+
+    Format Structure:
     - Bytes 0-2: "TAG" identifier
     - Bytes 3-32: Title (30 chars)
     - Bytes 33-62: Artist (30 chars)
@@ -81,8 +93,12 @@ class Id3v1Manager(MetadataManager):
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.ALBUM_NAME)
 
     def get_album_artists_name_str(self) -> Optional[str]:
-        """ID3v1 doesn't support album artist."""
-        return None
+        """Get album artist.
+
+        Raises:
+            UnsupportedMetadataError: ID3v1 does not support album artist
+        """
+        raise UnsupportedMetadataError("ID3v1 format does not support album artist")
 
     def get_genre_name(self) -> Optional[str]:
         """Get genre name from ID3v1 genre code."""
@@ -95,8 +111,12 @@ class Id3v1Manager(MetadataManager):
         return None
 
     def get_language(self) -> Optional[str]:
-        """ID3v1 doesn't support language tags."""
-        return None
+        """Get language.
+
+        Raises:
+            UnsupportedMetadataError: ID3v1 does not support language tags
+        """
+        raise UnsupportedMetadataError("ID3v1 format does not support language tags")
 
     def get_release_date(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.RELEASE_DATE)
@@ -112,17 +132,19 @@ class Id3v1Manager(MetadataManager):
     def get_bpm(self) -> Optional[float]:
         """Get BPM (Beats Per Minute).
 
-        ID3v1 format does not support BPM metadata.
-
-        Returns:
-            None: ID3v1 does not support BPM
+        Raises:
+            UnsupportedMetadataError: ID3v1 does not support BPM metadata
         """
-        return None
+        raise UnsupportedMetadataError("ID3v1 format does not support BPM metadata")
 
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
-        """ID3v1 doesn't support ratings."""
-        return None
+        """Get rating.
+
+        Raises:
+            UnsupportedMetadataError: ID3v1 does not support ratings
+        """
+        raise UnsupportedMetadataError("ID3v1 format does not support ratings")
 
     def update_specific_file_metadata_without_saving(
             self,
@@ -131,7 +153,8 @@ class Id3v1Manager(MetadataManager):
             normalized_rating_max_value: Optional[int] = None):
         """Update ID3v1 tag field.
 
-        Note: This implementation is read-only as modifying ID3v1 tags
-        requires careful handling of the fixed-length fields and file seeking.
+        Raises:
+            UnsupportedMetadataError: ID3v1 is read-only due to fixed-length fields
         """
-        raise NotImplementedError("ID3v1 tag modification is not supported")
+        raise UnsupportedMetadataError(
+            "ID3v1 tag modification is not supported (fixed-length format)")

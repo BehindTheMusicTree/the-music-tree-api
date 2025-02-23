@@ -5,6 +5,7 @@ from mutagen.wave import WAVE
 
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, NormalizedMetadataKeys
 from bodzify_api.utils.audio_metadata.constants import ID3V1_AND_RIFF_GENRE_MAP
+from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
 
 
 class RiffManager(MetadataManager):
@@ -162,8 +163,9 @@ class RiffManager(MetadataManager):
         elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
             riff_tag_key = self.RiffTagKeys.GENRE_NAME
         elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
-            # WAV files don't support ratings
-            return
+            raise UnsupportedMetadataError("RIFF format does not support ratings")
+        elif normalized_metadata_key == NormalizedMetadataKeys.BPM:
+            raise UnsupportedMetadataError("RIFF format does not support BPM metadata")
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             riff_tag_key = self.RiffTagKeys.LANGUAGE
         elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
