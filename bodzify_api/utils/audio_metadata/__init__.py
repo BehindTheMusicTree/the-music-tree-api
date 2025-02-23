@@ -11,20 +11,20 @@ Metadata Support by Format:
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
 | Technical Info  |              |              |              |             |                 |
 | - Duration      |      ✓       |      ✓       |      ✓       |      ✓      |                 |
-| - Bitrate       |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| - Bitrate       |      ✓       |      ✓       |      ✓       |      ✓      |        ✓        |
 | - Sample Rate   |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - Channels      |      ✓       |      ✓       |      ✓       |      ✓      |                 |
-| - File Size     |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| - File Size     |      ✓       |      ✓       |      ✓       |      ✓      |        ✓ (all)  |
 | - Format Info   |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - MD5 Checksum  |              |              |      ✓       |             |    ✓ (Vorbis)   |
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
-| Title           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| Artist          |    ✓ (30)    |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| Album           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| Title           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |       ✓ (all)   |
+| Artist          |    ✓ (30)    |      ✓       |      ✓       |      ✓      |        ✓ (all)  |
+| Album           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |       ✓ (all)   |
 | Album Artist    |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|
-| Genre           |    ✓ (1)*    |      ✓       |      ✓       |     ✓*      |    ✓ (all)      |
-| Release Date    |    ✓ (4)     |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| Track Number    |    ✓ (1)     |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| Genre           |    ✓ (1)*    |      ✓       |      ✓       |     ✓*      |        ✓ (all)  |
+| Release Date    |    ✓ (4)     |      ✓       |      ✓       |      ✓      |        ✓ (all)  |
+| Track Number    |    ✓ (1)     |      ✓       |      ✓       |      ✓      |        ✓ (all)  |
 | Disc Number     |              |      ✓       |      ✓       |             |                 |
 | Rating          |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|
 | BPM             |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|

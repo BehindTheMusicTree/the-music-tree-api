@@ -63,23 +63,18 @@ class RiffManager(MetadataManager):
 
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
-        """WAV files don't typically support ratings, return None."""
-        return None
+        raise UnsupportedMetadataError("RIFF format does not support ratings")
 
     def get_title(self) -> Optional[str]:
-        """Get title from INAM tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.TITLE)
 
     def get_artists_names(self) -> Optional[str]:
-        """Get artist from IART tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.ARTIST_NAME)
 
     def get_album_name(self) -> Optional[str]:
-        """Get album name from IPRD tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.ALBUM_NAME)
 
     def get_album_artists_name_str(self) -> Optional[str]:
-        """Get album artist from IAAR tag."""
         album_artists_name_str_raw = self._get_first_value_str_if_exists_in_file_metadata_or_none(
             key=self.RiffTagKeys.ALBUM_ARTISTS_NAMES)
         if album_artists_name_str_raw:
@@ -147,7 +142,7 @@ class RiffManager(MetadataManager):
         elif normalized_metadata_key == AppMetadataKeys.TRACK_NUMBER:
             riff_tag_key = self.RiffTagKeys.PART
         else:
-            raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
+            raise UnsupportedMetadataError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
         if normalized_metadata_value:
             if riff_tag_key not in self.file_raw_metadata:
