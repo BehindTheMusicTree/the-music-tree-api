@@ -2,39 +2,15 @@ from typing import Optional
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM
 
 from bodzify_api import settings
-
+from ....audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 from .Id3Manager import Id3Manager
-from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
 
 
 class Id3v2Manager(Id3Manager):
-    """
-    Manages ID3v2 metadata for audio files.
-
-    ID3v2 is a metadata format introduced in 1998, located at the beginning of audio files.
-    It offers extensive metadata support with variable-size tags and Unicode encoding.
-    See Id3Manager module docstring for comprehensive ID3 format support documentation.
-
-    Key Features:
-    - Variable size tags at file start
-    - Unicode text support
-    - Extensive metadata fields via frames:
-        - Title (TIT2)
-        - Artist (TPE1)
-        - Album (TALB)
-        - Year (TDRC/TYER)
-        - Genre (TCON)
-        - Track number (TRCK)
-        - Album artist (TPE2)
-        - Language (TLAN)
-        - BPM (TBPM)
-        - Rating (POPM)
-        - And many more...
-    """
 
     ID3_RATING_APP_EMAIL = settings.APP_NAME
 
-    class Id3TextFrames:  # MP3 and Wave (.wav) files use ID3 tags
+    class Id3TextFrames:
         TITLE = 'TIT2'
         ARTIST_NAME = 'TPE1'
         ALBUM_NAME = 'TALB'
@@ -44,8 +20,12 @@ class Id3v2Manager(Id3Manager):
         LANGUAGE = 'TLAN'
         RECORDING_TIME = 'TDRC'  # ID3v2.4 recording time
         YEAR = 'TYER'  # ID3v2.3 year
-        TRACK_NUMBER = 'TRCK'  # Track number/Position in set
-        BPM = 'TBPM'  # Beats Per Minute
+        POSITION_IN_ALBUM = 'TRCK'
+        BPM = 'TBPM'
+
+    def get_raw_metadata(self) -> dict:
+        from mutagen.id3 import ID3
+        return ID3(self.file_path)  # type: ignore
 
     def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
@@ -108,7 +88,7 @@ class Id3v2Manager(Id3Manager):
         The TRCK frame can contain either just a track number or 'track/total'
         format. This method extracts just the track number.
         """
-        track = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.TRACK_NUMBER)
+        track = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.POSITION_IN_ALBUM)
         if track:
             # Handle 'track/total' format by taking just the track number
             track = track.split('/')[0]
@@ -171,7 +151,7 @@ class Id3v2Manager(Id3Manager):
             id3_key = self.Id3TextFrames.RECORDING_TIME
             text_frame_class = TDRC
         elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
-            id3_key = self.Id3TextFrames.TRACK_NUMBER
+            id3_key = self.Id3TextFrames.POSITION_IN_ALBUM
             text_frame_class = TRCK
         elif normalized_metadata_key == NormalizedMetadataKeys.BPM:
             id3_key = self.Id3TextFrames.BPM
