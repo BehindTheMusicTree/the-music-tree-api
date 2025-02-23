@@ -47,8 +47,15 @@ Format Details:
     - Full read/write support
     - Less common but equally functional
 
-  Note: A file can only have one ID3v2 version at a time.
-        The app prefers v2.4 for writing, but can read all versions.
+  Writing Policy:
+  * The app always writes ID3v2 tags in v2.4 format
+  * When updating an existing file:
+    - v2.4 tags are updated in place
+    - v2.3 or v2.2 tags are upgraded to v2.4
+    - Frame IDs are automatically converted
+    - All text is encoded in UTF-8
+  * Reading supports all versions (v2.2, v2.3, v2.4)
+  * Only one ID3v2 version can exist in a file at a time
 
 - ID3v1:
   * Fixed 128-byte format at end of file

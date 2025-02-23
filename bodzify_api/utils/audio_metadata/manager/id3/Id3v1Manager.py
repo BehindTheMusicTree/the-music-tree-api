@@ -1,12 +1,13 @@
 from typing import Optional
 import struct
 
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, NormalizedMetadataKeys
 from bodzify_api.utils.audio_metadata.constants import ID3V1_AND_RIFF_GENRE_MAP
 from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
+from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from .Id3Manager import Id3Manager
 
 
-class Id3v1Manager(MetadataManager):
+class Id3v1Manager(Id3Manager):
     """
     Manages ID3v1 metadata for audio files.
 
