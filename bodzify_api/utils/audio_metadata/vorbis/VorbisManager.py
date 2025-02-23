@@ -63,9 +63,10 @@ class VorbisManager(MetadataManager):
         RATING = 'rating'
         RATING_TRAKTOR = 'rating wmp'
         LANGUAGE = 'language'
-        DATE = 'date'  # Standard Vorbis comment field for dates
-        TRACK_NUMBER = 'tracknumber'  # Standard Vorbis comment field for track number
-        BPM = 'bpm'  # Standard Vorbis comment field for tempo
+
+        DATE = 'date'
+        TRACK_NUMBER = 'tracknumber'
+        BPM = 'bpm'
 
     def is_md5_valid(self) -> bool:
         self.audio_file.seek(0)

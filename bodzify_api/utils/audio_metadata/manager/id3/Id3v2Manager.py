@@ -2,6 +2,7 @@ from typing import Optional
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM
 
 from bodzify_api import settings
+from bodzify_api.utils.audio_metadata.audio_file import AudioFile
 from ...app_metadata_keys import AppMetadataKeys
 from .Id3Manager import Id3Manager
 
@@ -43,6 +44,58 @@ class Id3v2Manager(Id3Manager):
     - ID3v2.4 introduced UTF-8 encoding and unsync changes
     - Older players may have issues with ID3v2.4's changes
     - For maximum compatibility, ID3v2.3 is recommended
+
+    - ID3:
+        - Writing Policy:
+            * The app always writes ID3v2 tags in v2.4 format
+            * When updating an existing file:
+                - v2.4 tags are updated in place
+                - v2.3 or v2.2 tags are upgraded to v2.4
+                - Frame IDs are automatically converted
+                - All text is encoded in UTF-8
+            * Reading supports all versions (v2.2, v2.3, v2.4)
+            * Only one ID3v2 version can exist in a file at a time
+            * Native format for MP3 files
+
+        - ID3v1:
+            * Fixed 128-byte format at end of file
+            * ASCII only, no Unicode
+            * Limited to 30 chars for text fields
+            * Single byte for track number (v1.1 only)
+            * Genre limited to predefined codes (0-147)
+            * Legacy format, read-only support
+
+        - ID3v2:
+            * v2.2:
+                - Introduced in 1998
+                - Three-character frame IDs (TT2, TP1, etc.)
+                - ISO-8859-1 or UCS-2 text encoding
+                - All standard fields supported
+                - Simpler header structure than v2.3/v2.4
+                - Basic support for embedded images
+                - Less common but equally functional
+
+            * v2.3:
+                - Introduced in 1999
+                - TYER+TDAT frames for date (year and date separately)
+                - UTF-16/UTF-16BE text encoding
+                - Basic unsynchronization
+                - All metadata fields supported
+                - Better support for embedded images and other binary data
+                - Most widely used version
+
+            * v2.4:
+                - Introduced in 2000
+                - TDRC frame for full timestamps (YYYY-MM-DD)
+                - UTF-8 text encoding
+                - Extended header features
+                - Unsynchronization per frame
+                - All metadata fields supported
+                - New frames for more detailed metadata (e.g., TDRC for recording time, TDRL for release time)
+                - Preferred version for new tags
+
+    For the most compatibility, ID3v2.3 will be used as the version for writing metadata. 
+    Thus when reading/updating an existing file, the ID3 tags will be updated to v2.3 format.
     """
 
     ID3_RATING_APP_EMAIL = settings.APP_NAME
@@ -59,6 +112,10 @@ class Id3v2Manager(Id3Manager):
         YEAR = 'TYER'  # ID3v2.3 year
         POSITION_IN_ALBUM = 'TRCK'
         BPM = 'TBPM'
+
+    def __init__(self, audio_file: AudioFile):
+
+        super().__init__(audio_file)
 
     def get_raw_metadata(self) -> dict:
         from mutagen.id3 import ID3
