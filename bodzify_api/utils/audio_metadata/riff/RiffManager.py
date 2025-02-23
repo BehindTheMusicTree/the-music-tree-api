@@ -13,20 +13,30 @@ class RiffManager(MetadataManager):
     """
     Manages RIFF metadata for WAV audio files.
 
-    RIFF (Resource Interchange File Format) is used to store metadata in WAV files.
-    WAV files use the INFO chunk for storing metadata, with standardized four-character codes (FourCC).
-    Common INFO chunk fields include:
+    RIFF (Resource Interchange File Format) is the standard metadata format for WAV files.
+    While WAV files can technically contain ID3v2 tags, this is non-standard and less reliable.
+    This manager uses the standard RIFF INFO chunk with standardized four-character codes (FourCC).
+
+    Standard INFO chunk fields:
     - INAM: Title
     - IART: Artist
     - IPRD: Album
-    - IGNR: Genre
+    - IGNR: Genre (can be numeric code or string)
+    - ICRD: Creation/Release date
+    - IPRT: Part/Track number
+    - IAAR: Album Artist (non-standard but common)
+    - ILNG: Language (non-standard but common)
+
+    Additional INFO fields (less commonly used):
     - ICMT: Comments
-    - ICRD: Creation date
     - IENG: Engineer
     - ISFT: Software
     - ICOP: Copyright
     - ITCH: Technician
-    - IPRT: Part number (track number)
+
+    Note: This manager is the preferred way to handle WAV metadata, as it uses
+    the format's native metadata system rather than non-standard alternatives
+    like ID3v2 tags.
     """
 
     class RiffTagKeys:

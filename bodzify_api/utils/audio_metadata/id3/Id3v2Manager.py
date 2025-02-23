@@ -37,9 +37,8 @@ class Id3v2Manager(MetadataManager):
 
     Compatible Formats:
     - MP3: Primary format, full support
-    - WAV: Supported but less common
     - FLAC: Can contain ID3v2 but Vorbis comments preferred
-    - FLAC: Can have ID3 tags, but it's not standard. FLAC typically uses Vorbis comments for metadata.
+    - WAV: Not recommended (use RiffManager instead)
     """
 
     ID3_RATING_APP_EMAIL = settings.APP_NAME

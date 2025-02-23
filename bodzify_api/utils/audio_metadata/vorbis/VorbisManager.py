@@ -20,7 +20,7 @@ class VorbisManager(MetadataManager):
     - ARTIST: The artist or performer.
     - ALBUM: The name of the album.
     - TRACKNUMBER: The track number on the album.
-    - GENRE: The genre of the track.
+    - GENRE: The genre name of the track.
     - DATE: The date of the recording.
     - COMMENT: Any additional comments.
     - ALBUMARTIST: The album artist.
