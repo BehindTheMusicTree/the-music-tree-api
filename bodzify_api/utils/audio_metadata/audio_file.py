@@ -14,7 +14,7 @@ class AudioFile:
         print('file class', file.__class__)
 
         if isinstance(file, TemporaryUploadedFile):
-            self.file_path = file.name
+            self.file_path = file.file.name
         elif isinstance(file, FieldFile):
             self.file_path = file.path
         elif isinstance(file, InMemoryUploadedFile):
@@ -69,3 +69,15 @@ class AudioFile:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+    def get_file_path_or_object(self):
+        if isinstance(self.file, (TemporaryUploadedFile, FieldFile)):
+            return self.file_path
+        elif isinstance(self.file, InMemoryUploadedFile):
+            temp_file = tempfile.NamedTemporaryFile(delete=False)
+            for chunk in self.file.chunks():
+                temp_file.write(chunk)
+            temp_file.close()
+            return temp_file.name
+        else:
+            return self.file_path

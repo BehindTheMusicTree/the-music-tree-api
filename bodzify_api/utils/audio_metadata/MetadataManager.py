@@ -146,20 +146,9 @@ class MetadataManager:
 
     def _get_duration_using_tinytag(self) -> Optional[int]:
         try:
-            if isinstance(self.audio_file, TemporaryUploadedFile):
-                with open(self.audio_file.temporary_file_path(), 'rb') as f:
-                    return TinyTag.get(f.name).duration
-            elif isinstance(self.audio_file, FieldFile):
-                with open(self.audio_file.path, 'rb') as f:
-                    with open(os.devnull, 'w') as devnull, redirect_stdout(devnull), redirect_stderr(devnull):
-                        return TinyTag.get(f.name).duration
-            elif isinstance(self.audio_file, InMemoryUploadedFile):
-                with tempfile.NamedTemporaryFile(delete=False) as tmp:
-                    for chunk in self.audio_file.chunks():
-                        tmp.write(chunk)
-                    tmp.close()
-                    tinytag = TinyTag.get(tmp.name)
-                    return tinytag.duration
+            file_path_or_object = self.audio_file.get_file_path_or_object()
+            with open(os.devnull, 'w') as devnull, redirect_stdout(devnull), redirect_stderr(devnull):
+                return TinyTag.get(file_path_or_object).duration
         except TinyTagException as exception:
             if exception.args[0] == 'No tag reader found to support filetype! ':
                 return None
