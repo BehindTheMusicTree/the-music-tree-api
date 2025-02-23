@@ -162,26 +162,8 @@ class MetadataManager:
         return TinyTag.get(filename).duration
 
     def _get_duration_using_pydub(self) -> str:
-        if isinstance(self.audio_file, TemporaryUploadedFile):
-            with open(self.audio_file.temporary_file_path(), 'rb') as f:
-                audio_info = mediainfo(f.name)
-                return audio_info['duration']
-        elif isinstance(self.audio_file, FieldFile):
-            with open(self.audio_file.path, 'rb') as f:
-                audio_info = mediainfo(f.name)
-                return audio_info['duration']
-        elif isinstance(self.audio_file, InMemoryUploadedFile):
-            with tempfile.NamedTemporaryFile(delete=False) as tmp:
-                for chunk in self.audio_file.chunks():
-                    tmp.write(chunk)
-                tmp.close()
-                audio_info = mediainfo(tmp.name)
-                return audio_info['duration']
-        if self.audio_file.file:  # type: ignore
-            filename = self.audio_file.file.name  # type: ignore
-        else:
-            filename = self.audio_file.name  # type: ignore
-        audio_info = mediainfo(filename)
+        file_path_or_object = self.audio_file.get_file_path_or_object()
+        audio_info = mediainfo(file_path_or_object)
         return audio_info['duration']
 
     def get_duration_in_sec(self) -> int:
