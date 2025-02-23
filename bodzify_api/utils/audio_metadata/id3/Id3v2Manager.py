@@ -41,9 +41,9 @@ class Id3v2Manager(MetadataManager):
     - WAV: Not recommended (use RiffManager instead)
     """
 
-    ID3_RATING_APP_EMAIL = settings.APP_NAME
+    ID3V2_RATING_APP_EMAIL = settings.APP_NAME
 
-    class Id3TextFrames:  # MP3 and Wave (.wav) files use ID3 tags
+    class Id3v2TextFrames:
         TITLE = 'TIT2'
         ARTIST_NAME = 'TPE1'
         ALBUM_NAME = 'TALB'
@@ -57,24 +57,24 @@ class Id3v2Manager(MetadataManager):
         BPM = 'TBPM'  # Beats Per Minute
 
     def get_title(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3v2TextFrames.TITLE)
 
     def get_artists_names(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.ARTIST_NAME)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3v2TextFrames.ARTIST_NAME)
 
     def get_album_name(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.ALBUM_NAME)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3v2TextFrames.ALBUM_NAME)
 
     def get_album_artists_name_str(self) -> Optional[str]:
         album_artists_name_str_raw = (self._get_first_value_str_if_exists_in_file_metadata_or_none(
-            self.Id3TextFrames.ALBUM_ARTISTS_NAMES))
+            self.Id3v2TextFrames.ALBUM_ARTISTS_NAMES))
         if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
         return None
 
     def get_genre_name(self) -> Optional[str]:
-        if self.Id3TextFrames.GENRE_NAME in self.file_raw_metadata:
-            return self.file_raw_metadata[self.Id3TextFrames.GENRE_NAME][0]
+        if self.Id3v2TextFrames.GENRE_NAME in self.file_raw_metadata:
+            return self.file_raw_metadata[self.Id3v2TextFrames.GENRE_NAME][0]
         else:
             return ""
 
@@ -82,7 +82,7 @@ class Id3v2Manager(MetadataManager):
         file_rating_value = None
         file_rating_email = None
         for key in self.file_raw_metadata:
-            if self.Id3TextFrames.RATING in key:
+            if self.Id3v2TextFrames.RATING in key:
                 file_rating_tag = self.file_raw_metadata[key]
                 file_rating_email = file_rating_tag.email
                 file_rating_value = file_rating_tag.rating
@@ -96,7 +96,7 @@ class Id3v2Manager(MetadataManager):
                 normalized_rating_max_value=normalized_rating_max_value)
 
     def get_language(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.LANGUAGE)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3v2TextFrames.LANGUAGE)
 
     def get_release_date(self) -> Optional[str]:
         """Get release date from ID3 tags.
@@ -104,12 +104,12 @@ class Id3v2Manager(MetadataManager):
         Tries TDRC (ID3v2.4) first, then falls back to TYER (ID3v2.3) if needed.
         """
         # Try ID3v2.4 TDRC frame first
-        date = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.RECORDING_TIME)
+        date = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3v2TextFrames.RECORDING_TIME)
         if date:
             return date
 
         # Fall back to ID3v2.3 TYER frame
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.YEAR)
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3v2TextFrames.YEAR)
 
     def get_position_in_album(self) -> Optional[int]:
         """Get track number from TRCK frame.
@@ -117,7 +117,7 @@ class Id3v2Manager(MetadataManager):
         The TRCK frame can contain either just a track number or 'track/total'
         format. This method extracts just the track number.
         """
-        track = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.TRACK_NUMBER)
+        track = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3v2TextFrames.TRACK_NUMBER)
         if track:
             # Handle 'track/total' format by taking just the track number
             track = track.split('/')[0]
@@ -133,7 +133,7 @@ class Id3v2Manager(MetadataManager):
         Returns:
             Optional[float]: BPM value if available, None otherwise
         """
-        bpm = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.BPM)
+        bpm = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3v2TextFrames.BPM)
         if bpm:
             try:
                 return float(bpm)
@@ -147,23 +147,23 @@ class Id3v2Manager(MetadataManager):
             normalized_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
         if normalized_metadata_key == NormalizedMetadataKeys.TITLE:
-            id3_key = self.Id3TextFrames.TITLE
+            id3_key = self.Id3v2TextFrames.TITLE
             text_frame_class = TIT2
         elif normalized_metadata_key == NormalizedMetadataKeys.ARTISTS_NAMES_STR:
-            id3_key = self.Id3TextFrames.ARTIST_NAME
+            id3_key = self.Id3v2TextFrames.ARTIST_NAME
             text_frame_class = TPE1
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_NAME:
-            id3_key = self.Id3TextFrames.ALBUM_NAME
+            id3_key = self.Id3v2TextFrames.ALBUM_NAME
             text_frame_class = TALB
         elif normalized_metadata_key == NormalizedMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
-            id3_key = self.Id3TextFrames.ALBUM_ARTISTS_NAMES
+            id3_key = self.Id3v2TextFrames.ALBUM_ARTISTS_NAMES
             text_frame_class = TPE2
         elif normalized_metadata_key == NormalizedMetadataKeys.GENRE_NAME:
-            id3_key = self.Id3TextFrames.GENRE_NAME
+            id3_key = self.Id3v2TextFrames.GENRE_NAME
             text_frame_class = TCON
         elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
             normalized_rating = normalized_metadata_value
-            self.file_raw_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
+            self.file_raw_metadata.delall(self.Id3v2TextFrames.RATING)  # type: ignore
             if normalized_rating:
                 if normalized_rating_max_value is None:
                     normalized_rating_max_value = 255
@@ -171,19 +171,19 @@ class Id3v2Manager(MetadataManager):
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
                     rating_file_profile=self.RatingFileProfile.BASE_255)
-                self.file_raw_metadata.add(POPM(email=self.ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
+                self.file_raw_metadata.add(POPM(email=self.ID3V2_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
             return
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
-            id3_key = self.Id3TextFrames.LANGUAGE
+            id3_key = self.Id3v2TextFrames.LANGUAGE
             text_frame_class = TLAN
         elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
-            id3_key = self.Id3TextFrames.RECORDING_TIME
+            id3_key = self.Id3v2TextFrames.RECORDING_TIME
             text_frame_class = TDRC
         elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
-            id3_key = self.Id3TextFrames.TRACK_NUMBER
+            id3_key = self.Id3v2TextFrames.TRACK_NUMBER
             text_frame_class = TRCK
         elif normalized_metadata_key == NormalizedMetadataKeys.BPM:
-            id3_key = self.Id3TextFrames.BPM
+            id3_key = self.Id3v2TextFrames.BPM
             text_frame_class = TBPM
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
