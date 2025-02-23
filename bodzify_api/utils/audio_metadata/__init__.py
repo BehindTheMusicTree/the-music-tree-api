@@ -106,7 +106,8 @@ def get_raw_metadata_from_file(file, tag_types: Optional[list[str]] = None) -> d
 
 
 def get_normalized_metadata_from_file(
-        file, normalized_rating_max_value: Optional[int] = None, tag_types: Optional[list[str]] = None) -> dict[str, dict]:
+        file, normalized_rating_max_value: Optional[int] = None, tag_types: Optional[list[str]] = None,
+        merge_tags: bool = False) -> dict[str, dict]:
     """Get normalized metadata from specified tag types.
 
     Args:
@@ -114,17 +115,24 @@ def get_normalized_metadata_from_file(
         normalized_rating_max_value: Optional max value for normalizing ratings
         tag_types: List of tag types to extract. Supported: ['id3v2', 'vorbis', 'riff']
                   If None, returns metadata from default tag type for the file.
+        merge_tags: If True, includes a 'merged' key with metadata merged according to tag priorities
 
     Returns:
-        Dict mapping tag type to normalized metadata dict for that format
+        Dict mapping tag type to normalized metadata dict for that format.
+        If merge_tags is True, includes a 'merged' key with prioritized metadata.
     """
     try:
         managers = _get_metadata_manager(file, tag_types=tag_types)
         metadata = {}
 
         for tag_type, manager in managers.items():
-            metadata[tag_type] = manager.get_normalized_metadata(normalized_rating_max_value)
+            try:
+                metadata[tag_type] = manager.get_normalized_metadata(normalized_rating_max_value)
+            except Exception as e:
+                metadata[tag_type] = {"error": str(e)}
 
+        if merge_tags:
+            return get_merged_metadata(metadata, AudioFile(file).file_extension)
         return metadata
 
     except Exception as error:
@@ -134,6 +142,93 @@ def get_normalized_metadata_from_file(
         elif "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
             raise InvalidChunkDecodeError(error_str)
         raise
+
+
+def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[str, dict]:
+    """Merge metadata from different tag types with priority ordering.
+
+    For FLAC files: Vorbis > ID3v2
+    For MP3 files: ID3v2 only
+    For WAV files: RIFF only
+
+    Args:
+        metadata: Dictionary of metadata by tag type
+        file_extension: File extension to determine priority order
+
+    Returns:
+        Dictionary with merged metadata under 'merged' key, plus original tag data
+    """
+    # Define priority orders for different file types
+    priority_orders = {
+        '.flac': ['vorbis', 'id3v2'],
+        '.mp3': ['id3v2'],
+        '.wav': ['riff']
+    }
+
+    priorities = priority_orders.get(file_extension.lower(), [])
+    if not priorities:
+        raise ImproperlyConfigured(f"No priority order defined for {file_extension}")
+
+    # Start with empty merged metadata
+    merged = {}
+
+    # For each field that could exist in metadata
+    from .NormalizedMetadataKeys import NormalizedMetadataKeys
+    for field in vars(NormalizedMetadataKeys).values():
+        if not isinstance(field, str) or field.startswith('_'):
+            continue
+
+        # Try each tag type in priority order
+        for tag_type in priorities:
+            if (tag_type in metadata and
+                isinstance(metadata[tag_type], dict) and
+                "error" not in metadata[tag_type] and
+                field in metadata[tag_type] and
+                    metadata[tag_type][field] is not None):
+                merged[field] = metadata[tag_type][field]
+                break
+
+    # Add merged result while preserving original tag data
+    metadata['merged'] = merged
+    return metadata
+
+
+def get_prioritized_metadata_from_file(
+        file, normalized_rating_max_value: Optional[int] = None) -> dict:
+    """Get merged metadata prioritizing certain tag types based on file format.
+
+    For FLAC files: Prioritizes Vorbis comments over ID3v2 tags
+    For MP3 files: Uses ID3v2 tags
+    For WAV files: Uses RIFF metadata
+
+    Args:
+        file: The audio file to analyze
+        normalized_rating_max_value: Optional max value for normalizing ratings
+
+    Returns:
+        Dictionary with merged metadata using tag type priorities
+    """
+    audio_file = AudioFile(file)
+
+    # Determine which tag types to check based on file extension
+    tag_types = {
+        '.flac': ['vorbis', 'id3v2'],
+        '.mp3': ['id3v2'],
+        '.wav': ['riff']
+    }.get(audio_file.file_extension.lower())
+
+    if not tag_types:
+        raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
+
+    # Get metadata from all relevant tag types and merge with priority
+    metadata = get_normalized_metadata_from_file(
+        file,
+        normalized_rating_max_value=normalized_rating_max_value,
+        tag_types=tag_types,
+        merge_tags=True
+    )
+
+    return metadata['merged']
 
 
 def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
