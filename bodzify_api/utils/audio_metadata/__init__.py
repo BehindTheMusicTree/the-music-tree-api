@@ -1,19 +1,54 @@
 """Audio metadata handling module.
 
 Tag Support by Format:
-+----------------+-------------------+------------------+------------------+------------------+------------------+
-| Field         | ID3v2            | ID3v1           | Vorbis          | RIFF            | App Support      |
-+----------------+-------------------+------------------+------------------+------------------+------------------+
-| Title         | TIT2 (R/W)       | title (30, R)   | TITLE (R/W)     | INAM (R/W)      | Yes (all)        |
-| Artist        | TPE1 (R/W)       | artist (30, R)  | ARTIST (R/W)    | IART (R/W)      | Yes (all)        |
-| Album         | TALB (R/W)       | album (30, R)   | ALBUM (R/W)     | IPRD (R/W)      | Yes (all)        |
-| Album Artist  | TPE2 (R/W)       | -               | ALBUMARTIST (R/W)| -               | Yes (ID3v2/Vorbis)|
-| Genre         | TCON (R/W, free) | genre (1, R)    | GENRE (R/W)     | IGNR (R/W, code)| Yes (all)        |
-| Release Date  | TDRC/TYER (R/W)  | year (4, R)     | DATE (R/W)      | ICRD (R/W)      | Yes (all)        |
-| Track Number  | TRCK (R/W)       | track (1, R)    | TRACKNUMBER (R/W)| IPRT (R/W)      | Yes (all)        |
-| Rating        | POPM (R/W)       | -               | RATING (R/W)     | -               | Yes (ID3v2/Vorbis)|
-| BPM           | TBPM (R/W)       | -               | BPM (R/W)       | -               | Yes (ID3v2/Vorbis)|
-| Language      | TLAN (R/W)       | -               | LANGUAGE (R/W)   | -               | Yes (ID3v2/Vorbis)|
++------------------+-------------------+------------------+------------------+------------------+------------------+
+| Field           | ID3v2            | ID3v1           | Vorbis          | RIFF            | App Support      |
++------------------+-------------------+------------------+------------------+------------------+------------------+
+| Title           | TIT2 (R/W)       | title (30, R)   | TITLE (R/W)     | INAM (R/W)      | Yes (all)        |
+| Artist          | TPE1 (R/W)       | artist (30, R)  | ARTIST (R/W)    | IART (R/W)      | Yes (all)        |
+| Album           | TALB (R/W)       | album (30, R)   | ALBUM (R/W)     | IPRD (R/W)      | Yes (all)        |
+| Album Artist    | TPE2 (R/W)       | -               | ALBUMARTIST (R/W)| -               | Yes (ID3v2/Vorbis)|
+| Genre           | TCON (R/W, free) | genre (1, R)    | GENRE (R/W)     | IGNR (R/W, code)| Yes (all)        |
+| Release Date    | TDRC/TYER (R/W)  | year (4, R)     | DATE (R/W)      | ICRD (R/W)      | Yes (all)        |
+| Track Number    | TRCK (R/W)       | track (1, R)    | TRACKNUMBER (R/W)| IPRT (R/W)      | Yes (all)        |
+| Disc Number     | TPOS (R/W)       | -               | DISCNUMBER (R/W) | -               | No               |
+| Rating          | POPM (R/W)       | -               | RATING (R/W)     | -               | Yes (ID3v2/Vorbis)|
+| BPM             | TBPM (R/W)       | -               | BPM (R/W)       | -               | Yes (ID3v2/Vorbis)|
+| Language        | TLAN (R/W)       | -               | LANGUAGE (R/W)   | -               | Yes (ID3v2/Vorbis)|
+| Composer        | TCOM (R/W)       | -               | COMPOSER (R/W)   | IMUS (R/W)      | No               |
+| Publisher       | TPUB (R/W)       | -               | PUBLISHER (R/W)  | -               | No               |
+| Copyright       | TCOP (R/W)       | -               | COPYRIGHT (R/W)  | ICOP (R/W)      | No               |
+| Lyrics         | USLT (R/W)       | -               | LYRICS (R/W)     | -               | No               |
+| Comment         | COMM (R/W)       | comment (28, R) | COMMENT (R/W)    | ICMT (R/W)      | No               |
+| Encoder         | TENC (R/W)       | -               | ENCODER (R/W)    | ISFT (R/W)      | No               |
+| URL             | WXXX (R/W)       | -               | URL (R/W)        | -               | No               |
+| ISRC            | TSRC (R/W)       | -               | ISRC (R/W)       | -               | No               |
+| Mood            | TMOO (R/W)       | -               | MOOD (R/W)       | -               | No               |
+| Key             | TKEY (R/W)       | -               | KEY (R/W)        | -               | No               |
+| Original Date   | TDOR (R/W)       | -               | ORIGINALDATE (R/W)| -               | No               |
+| Remixer         | TPE4 (R/W)       | -               | REMIXER (R/W)    | -               | No               |
+| Conductor       | TPE3 (R/W)       | -               | CONDUCTOR (R/W)  | ICND (R/W)      | No               |
+| Cover Art       | APIC (R/W)       | -               | METADATA_BLOCK_PICTURE (R/W) | -   | No               |
+| Compilation     | TCMP (R/W)       | -               | COMPILATION (R/W) | -               | No               |
+| Media Type      | TMED (R/W)       | -               | MEDIA (R/W)      | IMED (R/W)      | No               |
+| File Owner      | TOWN (R/W)       | -               | OWNER (R/W)      | -               | No               |
+| Recording Date  | TRDA (R/W)       | -               | RECORDINGDATE (R/W)| -              | No               |
+| File Size       | TSIZ (R/W)       | -               | -                | -               | No               |
+| Encoder Settings| TSSE (R/W)       | -               | ENCODERSETTINGS (R/W)| -            | No               |
+| ReplayGain      | RGAD (R/W)       | -               | REPLAYGAIN_* (R/W)| -              | No               |
+| MusicBrainz ID  | UFID (R/W)       | -               | MUSICBRAINZ_* (R/W)| -             | No               |
+| Arranger        | TIPL (R/W)       | -               | ARRANGER (R/W)   | -               | No               |
+| Version         | TIT3 (R/W)       | -               | VERSION (R/W)    | -               | No               |
+| Performance     | PRIV (R/W)       | -               | PERFORMANCE_* (R/W)| -              | No               |
+| Archival Location| -               | -               | -                | IARL (R/W)      | No               |
+| Keywords        | -                | -               | -                | IKEY (R/W)      | No               |
+| Subject         | -                | -               | -                | ISBJ (R/W)      | No               |
+| Original Artist | TOPE (R/W)       | -               | ORIGINALARTIST (R/W)| -             | No               |
+| Set Subtitle    | TSST (R/W)       | -               | SUBTITLE (R/W)   | -               | No               |
+| Initial Key     | TKEY (R/W)       | -               | INITIALKEY (R/W) | -               | No               |
+| Involved People | TIPL (R/W)       | -               | INVOLVEDPEOPLE (R/W)| -             | No               |
+| Musicians       | TMCL (R/W)       | -               | PERFORMER (R/W)  | -               | No               |
+| Part of Set     | TPOS (R/W)       | -               | DISCSUBTITLE (R/W)| -              | No               |
 +----------------+-------------------+------------------+------------------+------------------+------------------+
 Legend:
 - (30, R): Fixed 30-byte field, Read-only
