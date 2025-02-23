@@ -1,5 +1,5 @@
 from typing import Optional
-from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
+from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC
 
 from bodzify_api import settings
 
@@ -67,6 +67,8 @@ class Id3Manager(MetadataManager):
         GENRE_NAME = 'TCON'
         RATING = 'POPM'
         LANGUAGE = 'TLAN'
+        RECORDING_TIME = 'TDRC'  # ID3v2.4 recording time
+        YEAR = 'TYER'  # ID3v2.3 year
 
     def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(self.Id3TextFrames.TITLE)
@@ -110,6 +112,19 @@ class Id3Manager(MetadataManager):
     def get_language(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.LANGUAGE)
 
+    def get_release_date(self) -> Optional[str]:
+        """Get release date from ID3 tags.
+
+        Tries TDRC (ID3v2.4) first, then falls back to TYER (ID3v2.3) if needed.
+        """
+        # Try ID3v2.4 TDRC frame first
+        date = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.RECORDING_TIME)
+        if date:
+            return date
+
+        # Fall back to ID3v2.3 TYER frame
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.Id3TextFrames.YEAR)
+
     def update_specific_file_metadata_without_saving(
             self,
             normalized_metadata_value,
@@ -145,6 +160,9 @@ class Id3Manager(MetadataManager):
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             id3_key = self.Id3TextFrames.LANGUAGE
             text_frame_class = TLAN
+        elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
+            id3_key = self.Id3TextFrames.RECORDING_TIME
+            text_frame_class = TDRC
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 

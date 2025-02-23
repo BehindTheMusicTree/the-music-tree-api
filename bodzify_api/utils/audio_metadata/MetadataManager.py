@@ -82,6 +82,10 @@ class MetadataManager:
         raise NotImplementedError(f"{self.get_language.__name__} method must be implemented.")
 
     @abstractmethod
+    def get_release_date(self) -> Optional[str]:
+        raise NotImplementedError(f"{self.get_release_date.__name__} method must be implemented.")
+
+    @abstractmethod
     def get_bitrate(self) -> int:
         raise NotImplementedError(f"{self.get_bitrate.__name__} method must be implemented.")
 
@@ -186,6 +190,7 @@ class MetadataManager:
         normalized_metadata[NormalizedMetadataKeys.RATING] = self.get_eventually_normalized_rating_value(
             normalized_rating_max_value=normalized_rating_max_value)
         normalized_metadata[NormalizedMetadataKeys.LANGUAGE] = self.get_language()
+        normalized_metadata[NormalizedMetadataKeys.RELEASE_DATE] = self.get_release_date()
         return normalized_metadata
 
     def get_specific_file_metadata(self, normalized_metadata_key: str,
@@ -206,6 +211,8 @@ class MetadataManager:
             return self.get_eventually_normalized_rating_value(normalized_rating_max_value)
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             return self.get_language()
+        elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
+            return self.get_release_date()
 
     def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: Optional[int]):
         for key in list(normalized_metadata.keys()):

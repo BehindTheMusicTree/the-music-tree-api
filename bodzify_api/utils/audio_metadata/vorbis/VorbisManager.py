@@ -55,6 +55,7 @@ class VorbisManager(MetadataManager):
         RATING = 'rating'
         RATING_TRAKTOR = 'rating wmp'
         LANGUAGE = 'language'
+        DATE = 'date'  # Standard Vorbis comment field for dates
 
     def is_md5_valid(self) -> bool:
         self.audio_file.seek(0)
@@ -123,6 +124,10 @@ class VorbisManager(MetadataManager):
     def get_language(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.LANGUAGE)
 
+    def get_release_date(self) -> Optional[str]:
+        """Get release date from DATE tag."""
+        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.DATE)
+
     def get_bitrate(self):
         return self.file_raw_metadata.info.bitrate / 1000  # type: ignore
 
@@ -152,6 +157,8 @@ class VorbisManager(MetadataManager):
                 normalized_metadata_value = str(vorbis_rating)
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             vorbis_tag_key = self.VorbisTagKeys.LANGUAGE
+        elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
+            vorbis_tag_key = self.VorbisTagKeys.DATE
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 

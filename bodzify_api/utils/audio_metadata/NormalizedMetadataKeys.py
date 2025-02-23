@@ -8,3 +8,4 @@ class NormalizedMetadataKeys:
     DURATION_IN_SEC = 'duration_in_sec'
     RATING = 'rating'
     LANGUAGE = 'language'
+    RELEASE_DATE = 'release_date'
