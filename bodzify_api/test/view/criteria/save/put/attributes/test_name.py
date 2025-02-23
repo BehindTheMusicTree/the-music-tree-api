@@ -60,5 +60,14 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         updated_track: LibraryTrack = LibraryTrack.objects.get(uuid=track.uuid)
-        metadata = audio_metadata.get_normalized_metadata_from_file(file=updated_track.track_file.file)
-        assert metadata[NormalizedMetadataKeys.GENRE_NAME] == genre_new_name
+        # Test with different possible tags
+        possible_tags_list = [
+            ['id3v2'],
+            ['vorbis'],
+            ['id3v2', 'vorbis'],
+        ]
+        for possible_tags in possible_tags_list:
+            metadata = audio_metadata.get_normalized_metadata_from_file(
+                file=updated_track.track_file.file, possible_tags=possible_tags)
+            assert NormalizedMetadataKeys.GENRE_NAME in metadata
+            assert metadata[NormalizedMetadataKeys.GENRE_NAME] == genre_new_name

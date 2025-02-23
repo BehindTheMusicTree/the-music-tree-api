@@ -22,53 +22,111 @@ from .flac_id3v2.FlacID3v2Manager import FlacID3v2Manager
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
-def _get_metadata_manager(file, use_id3v2: bool = False) -> MetadataManager:
+def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[str, MetadataManager]:
+    """Get metadata managers for specified tag types.
+
+    Args:
+        file: The audio file to analyze
+        tag_types: List of tag types to extract. Supported values: ['id3v2', 'vorbis', 'riff']
+                  If None, returns default manager for the file type.
+
+    Returns:
+        Dict mapping tag type to corresponding MetadataManager instance
+    """
     audio_file = AudioFile(file)
+    managers = {}
 
-    if audio_file.file_extension == ".mp3":
-        return Mp3MetadataManager(audio_file)
-    elif audio_file.file_extension == ".wav":
-        return WavMetadataManager(audio_file)
-    elif audio_file.file_extension == ".flac":
-        if use_id3v2:
-            return FlacID3v2Manager(audio_file)
+    if tag_types is None:
+        # Default behavior - single manager
+        if audio_file.file_extension == ".mp3":
+            managers['id3v2'] = Mp3MetadataManager(audio_file)
+        elif audio_file.file_extension == ".wav":
+            managers['riff'] = WavMetadataManager(audio_file)
+        elif audio_file.file_extension == ".flac":
+            managers['vorbis'] = VorbisManager(audio_file)
         else:
-            return VorbisManager(audio_file)
-    else:
-        raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+            raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+        return managers
+
+    # Multiple tag types requested
+    for tag_type in tag_types:
+        if tag_type == 'id3v2':
+            if audio_file.file_extension in [".mp3", ".flac"]:
+                managers['id3v2'] = Mp3MetadataManager(
+                    audio_file) if audio_file.file_extension == ".mp3" else FlacID3v2Manager(audio_file)
+        elif tag_type == 'vorbis' and audio_file.file_extension == ".flac":
+            managers['vorbis'] = VorbisManager(audio_file)
+        elif tag_type == 'riff' and audio_file.file_extension == ".wav":
+            managers['riff'] = WavMetadataManager(audio_file)
+
+    if not managers:
+        raise ImproperlyConfigured(
+            f"No supported tag types ({', '.join(tag_types)}) for file extension {audio_file.file_extension}")
+
+    return managers
 
 
-def is_md5_valid(file):
+def is_md5_valid(file, check_id3v2: bool = False):
     audio_file = AudioFile(file)
 
     if audio_file.file_extension == ".flac":
-        id3v2_tags = FlacID3v2Manager(audio_file).file_raw_metadata
-        if id3v2_tags:
-            return False
-        else:
-            return audio_file.is_flac_file_md5_valid()
+        if check_id3v2:
+            id3v2_tags = FlacID3v2Manager(audio_file).file_raw_metadata
+            if id3v2_tags:
+                return False
+        return audio_file.is_flac_file_md5_valid()
     else:
         raise ImproperlyConfigured('The file must be a FLAC file to check the MD5.')
 
 
 def get_bitrate_from_file(file):
-    return _get_metadata_manager(AudioFile(file)).get_bitrate()
+    # Use default manager for bitrate
+    manager = next(iter(_get_metadata_manager(AudioFile(file)).values()))
+    return manager.get_bitrate()
 
 
-def get_specific_metadata_from_file(file, normalized_metadata_key: str, use_id3v2: bool = False):
-    return _get_metadata_manager(
-        file, use_id3v2=use_id3v2).get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
+def get_specific_metadata_from_file(file, normalized_metadata_key: str, tag_types: Optional[list[str]] = None):
+    """Get specific metadata from file using specified tag types.
+    If tag_types is None, uses default manager for the file type."""
+    managers = _get_metadata_manager(file, tag_types=tag_types)
+    results = {}
+    for tag_type, manager in managers.items():
+        results[tag_type] = manager.get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
+    return results
 
 
-def get_raw_metadata_from_file(file, use_id3v2: bool = False) -> dict:
-    return _get_metadata_manager(file, use_id3v2=use_id3v2).file_raw_metadata
+def get_raw_metadata_from_file(file, tag_types: Optional[list[str]] = None) -> dict:
+    """Get raw metadata from file using specified tag types.
+    If tag_types is None, uses default manager for the file type."""
+    managers = _get_metadata_manager(file, tag_types=tag_types)
+    results = {}
+    for tag_type, manager in managers.items():
+        results[tag_type] = manager.file_raw_metadata
+    return results
 
 
 def get_normalized_metadata_from_file(
-        file, normalized_rating_max_value: Optional[int] = None, use_id3v2: bool = False) -> dict:
+        file, normalized_rating_max_value: Optional[int] = None, tag_types: Optional[list[str]] = None) -> dict[str, dict]:
+    """Get normalized metadata from specified tag types.
+
+    Args:
+        file: The audio file to analyze
+        normalized_rating_max_value: Optional max value for normalizing ratings
+        tag_types: List of tag types to extract. Supported: ['id3v2', 'vorbis', 'riff']
+                  If None, returns metadata from default tag type for the file.
+
+    Returns:
+        Dict mapping tag type to normalized metadata dict for that format
+    """
     try:
-        return _get_metadata_manager(file, use_id3v2=use_id3v2).get_normalized_metadata(
-            normalized_rating_max_value)
+        managers = _get_metadata_manager(file, tag_types=tag_types)
+        metadata = {}
+
+        for tag_type, manager in managers.items():
+            metadata[tag_type] = manager.get_normalized_metadata(normalized_rating_max_value)
+
+        return metadata
+
     except Exception as error:
         error_str = str(error)
         if "file said" in error_str and "bytes, read" in error_str:
@@ -79,8 +137,10 @@ def get_normalized_metadata_from_file(
 
 
 def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
-    _get_metadata_manager(file).update_file_metadata(normalized_metadata=normalized_metadata,
-                                                     normalized_rating_max_value=normalized_rating_max_value)
+    # Use default manager for updates
+    manager = next(iter(_get_metadata_manager(file).values()))
+    manager.update_file_metadata(normalized_metadata=normalized_metadata,
+                                 normalized_rating_max_value=normalized_rating_max_value)
 
 
 def replace_flac_file_with_corrected_md5(file):
