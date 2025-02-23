@@ -72,15 +72,12 @@ class Id3v1Manager(MetadataManager):
         return metadata
 
     def get_title(self) -> Optional[str]:
-        """Get title from ID3v1 tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.TITLE)
 
     def get_artists_names(self) -> Optional[str]:
-        """Get artist from ID3v1 tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.ARTISTS_NAMES_STR)
 
     def get_album_name(self) -> Optional[str]:
-        """Get album name from ID3v1 tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.ALBUM_NAME)
 
     def get_album_artists_name_str(self) -> Optional[str]:
@@ -102,11 +99,9 @@ class Id3v1Manager(MetadataManager):
         return None
 
     def get_release_date(self) -> Optional[str]:
-        """Get release year from ID3v1 tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(NormalizedMetadataKeys.RELEASE_DATE)
 
     def get_position_in_album(self) -> Optional[int]:
-        """Get track number from ID3v1.1 tag."""
         if NormalizedMetadataKeys.POSITION_IN_ALBUM in self.file_raw_metadata:
             try:
                 return int(self.file_raw_metadata[NormalizedMetadataKeys.POSITION_IN_ALBUM][0])
