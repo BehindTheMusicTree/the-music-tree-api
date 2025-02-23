@@ -1,4 +1,3 @@
-
 import io
 import subprocess
 from typing import Optional
@@ -9,8 +8,44 @@ from bodzify_api.utils.audio_metadata.audio_file import AudioFile
 from bodzify_api.utils.audio_metadata.MetadataManager import MetadataManager, NormalizedMetadataKeys
 
 
-# Flac files
 class VorbisManager(MetadataManager):
+    """
+    Manages Vorbis comments for audio files.
+
+    Vorbis comments are used to store metadata in audio files, primarily in formats like Ogg Vorbis and FLAC.
+    They are more flexible and extensible compared to ID3 tags, allowing for a wide range of metadata fields.
+
+    Vorbis comments are key-value pairs, where the key is a field name and the value is the corresponding metadata.
+    Common fields include:
+    - TITLE: The title of the track.
+    - ARTIST: The artist or performer.
+    - ALBUM: The name of the album.
+    - TRACKNUMBER: The track number on the album.
+    - GENRE: The genre of the track.
+    - DATE: The date of the recording.
+    - COMMENT: Any additional comments.
+    - ALBUMARTIST: The album artist.
+    - COMPOSER: The composer of the track.
+    - PERFORMER: The performer of the track.
+    - COPYRIGHT: Copyright information.
+    - LICENSE: Licensing information.
+    - ORGANIZATION: The organization or label.
+    - DESCRIPTION: A description of the track.
+    - LOCATION: The location where the track was recorded.
+    - CONTACT: Contact information.
+    - ISRC: International Standard Recording Code.
+    - ENCODEDBY: The person or software that encoded the track.
+    - BPM: Beats per minute.
+    - LANGUAGE: The language of the track.
+    - RATING: The rating of the track.
+
+    Compatible Extensions:
+    - Ogg Vorbis: Fully supports Vorbis comments.
+    - FLAC: Fully supports Vorbis comments.
+    - Opus: Fully supports Vorbis comments.
+
+    Note: This class assumes that the audio files being managed are primarily in formats that support Vorbis comments.
+    """
 
     class VorbisTagKeys:
         TITLE = 'title'
