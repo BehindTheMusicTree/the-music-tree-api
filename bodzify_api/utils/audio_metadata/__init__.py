@@ -4,6 +4,8 @@ Tag Support by Format:
 +-----------------+--------------+--------------+--------------+--------------+------------------+
 | Field           | ID3v1        | ID3v2        | Vorbis       | RIFF         | App Support      |
 +-----------------+--------------+--------------+--------------+--------------+------------------+
+| Text Encoding   | ASCII        | UTF-8/16/ISO | UTF-8        | ASCII/UTF-8  | -                |
++-----------------+--------------+--------------+--------------+--------------+------------------+
 | Title           | Yes (30, R)  | Yes          | Yes          | Yes          | Yes (all)        |
 | Artist          | Yes (30, R)  | Yes          | Yes          | Yes          | Yes (all)        |
 | Album           | Yes (30, R)  | Yes          | Yes          | Yes          | Yes (all)        |
@@ -57,7 +59,8 @@ Legend:
 - Yes: Supported with read/write capability
 
 Format Details:
-- ID3v2 Version Support:
+
+Version Support:
   * v2.4:
     - TDRC frame for full timestamps (YYYY-MM-DD)
     - UTF-8 text encoding
