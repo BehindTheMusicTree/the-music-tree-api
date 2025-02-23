@@ -8,6 +8,9 @@ from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUpload
 from django.db.models.fields.files import FieldFile
 from django.core.files import File as DjangoFile
 from django.core.exceptions import ImproperlyConfigured
+from mutagen.mp3 import MP3
+from mutagen.wave import WAVE
+from mutagen.flac import FLAC
 
 
 class AudioFile:
@@ -38,8 +41,37 @@ class AudioFile:
             else str(self.file)
         )[1].lower()
         self.file_extension = file_extension
-        print(file_extension)
         return
+
+    def get_bitrate(self) -> int:
+        """Get bitrate in kbps based on file extension.
+
+        Returns:
+            int: Bitrate in kbps, or 0 if bitrate cannot be determined
+        """
+        try:
+            path = self.get_file_path_or_object()
+            if self.file_extension == '.mp3':
+                audio = MP3(path)
+                # Calculate MP3 bitrate from file size and duration
+                if audio.info.length > 0 and isinstance(path, str) and os.path.exists(path):
+                    file_size = os.path.getsize(path)
+                    return int((file_size * 8) / audio.info.length / 1000)
+                return 0
+            elif self.file_extension == '.wav':
+                audio = WAVE(path)
+                # WAV bitrate = sample_rate * channels * bits_per_sample
+                return (audio.info.sample_rate * audio.info.channels *
+                        audio.info.bits_per_sample) // 1000
+            elif self.file_extension == '.flac':
+                audio = FLAC(path)
+                # FLAC bitrate = sample_rate * channels * bits_per_sample
+                return (audio.info.sample_rate * audio.info.channels *
+                        audio.info.bits_per_sample) // 1000
+            else:
+                return 0
+        except Exception:
+            return 0
 
     def read(self, size: int = -1) -> bytes:
         if isinstance(self.file, InMemoryUploadedFile):

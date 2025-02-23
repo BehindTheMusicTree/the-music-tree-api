@@ -92,10 +92,6 @@ class MetadataManager:
         raise NotImplementedError(f"{self.get_position_in_album.__name__} method must be implemented.")
 
     @abstractmethod
-    def get_bitrate(self) -> int:
-        raise NotImplementedError(f"{self.get_bitrate.__name__} method must be implemented.")
-
-    @abstractmethod
     def update_specific_file_metadata_without_saving(self,
                                                      normalized_metadata_value,
                                                      normalized_metadata_key: str,

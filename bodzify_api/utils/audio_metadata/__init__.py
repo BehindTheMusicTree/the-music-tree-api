@@ -92,9 +92,16 @@ def is_md5_valid(file, check_id3v2: bool = False):
 
 
 def get_bitrate_from_file(file):
-    # Use default manager for bitrate
-    manager = next(iter(_get_metadata_manager(AudioFile(file)).values()))
-    return manager.get_bitrate()
+    """Get bitrate in kbps from audio file.
+
+    Args:
+        file: Audio file to get bitrate from
+
+    Returns:
+        int: Bitrate in kbps, or 0 if bitrate cannot be determined
+    """
+    audio_file = AudioFile(file)
+    return audio_file.get_bitrate()
 
 
 def get_specific_metadata_from_file(file, normalized_metadata_key: str, tag_types: Optional[list[str]] = None):
