@@ -7,6 +7,43 @@ from .Id3Manager import Id3Manager
 
 
 class Id3v2Manager(Id3Manager):
+    """ID3v2 metadata manager for audio files.
+
+    ID3v2 Version Compatibility Table:
+    +---------------+----------+----------+----------+
+    | Player/Device | ID3v2.2  | ID3v2.3  | ID3v2.4  |
+    +---------------+----------+----------+----------+
+    | Windows Media Player                           |
+    |  - WMP 7-8    |    ✓     |    ✓     |          |
+    |  - WMP 9-12   |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
+    | iTunes                                         |
+    |  - 12.x+      |    ✓     |    ✓     |    ✓     |
+    |  - 7.x-11.x   |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
+    | Winamp                                         |
+    |  - 5.x+       |    ✓     |    ✓     |    ✓     |
+    |  - 2.x-4.x    |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
+    | Smartphones                                    |
+    |  - iOS 7+     |    ✓     |    ✓     |    ✓     |
+    |  - Android 4+ |    ✓     |    ✓     |    ✓     |
+    +---------------+----------+----------+----------+
+    | Car Systems                                    |
+    |  - Pre-2010   |    ✓     |    ~     |          |
+    |  - Post-2010  |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
+
+    Legend:
+    ✓ = Full support
+    ~ = Partial support/May have issues
+      = No support
+
+    Notes:
+    - ID3v2.4 introduced UTF-8 encoding and unsync changes
+    - Older players may have issues with ID3v2.4's changes
+    - For maximum compatibility, ID3v2.3 is recommended
+    """
 
     ID3_RATING_APP_EMAIL = settings.APP_NAME
 
@@ -24,7 +61,8 @@ class Id3v2Manager(Id3Manager):
         BPM = 'TBPM'
 
     def get_raw_metadata(self) -> dict:
-        from mutagen.id3 import ID3, ID3NoHeaderError
+        from mutagen.id3 import ID3
+        from mutagen.id3._util import ID3NoHeaderError
         try:
             tags = ID3(self.audio_file.file_path)
             # Force v2.3 update to ensure compatibility
