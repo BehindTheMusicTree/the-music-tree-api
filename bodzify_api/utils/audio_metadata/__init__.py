@@ -1,3 +1,58 @@
+"""Audio metadata handling module.
+
+Tag Support by Format:
++----------------+-------------------+------------------+------------------+------------------+
+| Field         | ID3v2            | ID3v1           | Vorbis          | RIFF            |
++----------------+-------------------+------------------+------------------+------------------+
+| Title         | TIT2 (R/W)       | title (30, R)   | TITLE (R/W)     | INAM (R/W)      |
+| Artist        | TPE1 (R/W)       | artist (30, R)  | ARTIST (R/W)    | IART (R/W)      |
+| Album         | TALB (R/W)       | album (30, R)   | ALBUM (R/W)     | IPRD (R/W)      |
+| Album Artist  | TPE2 (R/W)       | -               | ALBUMARTIST (R/W)| -               |
+| Genre         | TCON (R/W, free) | genre (1, R)    | GENRE (R/W)     | IGNR (R/W, code)|
+| Release Date  | TDRC/TYER (R/W)  | year (4, R)     | DATE (R/W)      | ICRD (R/W)      |
+| Track Number  | TRCK (R/W)       | track (1, R)    | TRACKNUMBER (R/W)| IPRT (R/W)      |
+| Rating        | POPM (R/W)       | -               | RATING (R/W)     | -               |
+| BPM           | TBPM (R/W)       | -               | BPM (R/W)       | -               |
+| Language      | TLAN (R/W)       | -               | LANGUAGE (R/W)   | -               |
++----------------+-------------------+------------------+------------------+------------------+
+Legend:
+- (30, R): Fixed 30-byte field, Read-only
+- (R/W): Read and Write support
+- (-): Not supported
+- (free): Free text input supported
+- (code): Uses standard genre codes (0-147)
+
+Format Details:
+- ID3v2:
+  * v2.4: Uses TDRC for full timestamps (YYYY-MM-DD)
+  * v2.3: Uses TYER+TDAT for date (separate year and date frames)
+  * Unicode support in all text frames
+  * Free-form genre text or numeric references
+  * Full featured, supports all metadata fields
+  * Preferred format for MP3 files
+
+- ID3v1:
+  * Fixed 128-byte format at end of file
+  * ASCII only, no Unicode
+  * Limited to 30 chars for text fields
+  * Single byte for track number (v1.1 only)
+  * Genre limited to predefined codes (0-147)
+  * Legacy format, read-only support
+
+- Vorbis:
+  * Free-form text fields with no length limits
+  * Full Unicode support
+  * Multiple values allowed per field
+  * No predefined format restrictions
+  * Preferred format for FLAC files
+
+- RIFF:
+  * INFO chunk with predefined chunk IDs
+  * Genre codes same as ID3v1 (0-147)
+  * Basic text fields only
+  * No rating or BPM support
+  * Native format for WAV files
+"""
 
 from .audio_file import AudioFile
 import tempfile
