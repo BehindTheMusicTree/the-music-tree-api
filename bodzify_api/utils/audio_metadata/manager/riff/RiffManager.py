@@ -4,9 +4,7 @@ from typing import Optional
 from mutagen.wave import WAVE
 
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, NormalizedMetadataKeys
-
-
-from ..constants import ID3V1_AND_RIFF_GENRE_MAP
+from bodzify_api.utils.audio_metadata.constants import ID3V1_AND_RIFF_GENRE_MAP
 
 
 class RiffManager(MetadataManager):
@@ -17,11 +15,23 @@ class RiffManager(MetadataManager):
     While WAV files can technically contain ID3v2 tags, this is non-standard and less reliable.
     This manager uses the standard RIFF INFO chunk with standardized four-character codes (FourCC).
 
+    Genre Support:
+    The IGNR tag in RIFF files has two modes:
+    1. Genre Code (Preferred): Uses the standard ID3v1/RIFF genre list (0-147)
+       - Limited to predefined genres
+       - Compatible with older software
+       - No custom genres
+       - No multiple genres
+    2. Text Mode (Less Common): Direct genre name as text
+       - Less widely supported
+       - May not work with all software
+       - Use genre codes for better compatibility
+
     Standard INFO chunk fields:
     - INAM: Title
     - IART: Artist
     - IPRD: Album
-    - IGNR: Genre (can be numeric code or string)
+    - IGNR: Genre (numeric code or string)
     - ICRD: Creation/Release date
     - IPRT: Part/Track number
     - IAAR: Album Artist (non-standard but common)

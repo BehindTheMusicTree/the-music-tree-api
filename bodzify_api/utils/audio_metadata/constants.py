@@ -1,6 +1,18 @@
-"""Common constants for audio metadata handling."""
+"""Common constants for audio metadata handling.
 
-# Standard ID3v1/WAV genre codes mapping
+Genre Handling:
+- ID3v1 and RIFF: Limited to standard genres listed below (0-147)
+- ID3v2: Supports custom genres as free text
+- Vorbis: Supports custom genres as free text
+
+For modern formats (ID3v2, Vorbis), it's recommended to use descriptive genre names
+rather than being limited to this standard list. The genre map below is maintained
+for backward compatibility with ID3v1 and RIFF formats only.
+"""
+
+# Standard ID3v1/RIFF genre codes mapping
+# This is a fixed list for backward compatibility
+# For modern formats (ID3v2, Vorbis), use descriptive genre names instead
 # This mapping is used by both ID3v1 tags and RIFF INFO chunks
 """Standard ID3v1/RIFF genre codes mapping.
 

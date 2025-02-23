@@ -6,8 +6,8 @@ from mutagen.id3._frames import (
 
 from bodzify_api import settings
 
-from ..NormalizedMetadataKeys import NormalizedMetadataKeys
-from ..manager.MetadataManager import MetadataManager
+from bodzify_api.utils.audio_metadata.NormalizedMetadataKeys import NormalizedMetadataKeys
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager
 from .id3v2_versions import Id3v2Versions as _Id3v2Versions
 from .id3v2_frames import Id3v2TextFrames as _Id3v2TextFrames
 
@@ -37,6 +37,15 @@ class Id3v2Manager(MetadataManager):
         - BPM (TBPM)
         - Rating (POPM)
         - And many more...
+
+    Genre Support:
+    Unlike ID3v1 and RIFF which are limited to a fixed list of genres,
+    ID3v2's TCON frame supports:
+    - Custom genre names as free text
+    - Multiple genres (separated by semicolons)
+    - More accurate genre classification
+    - No length limitations
+    - Unicode support for international genres
 
     Versions:
     - ID3v2.2: Original version (obsolete)

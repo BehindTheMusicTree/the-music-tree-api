@@ -14,6 +14,14 @@ class VorbisManager(MetadataManager):
     Vorbis comments are used to store metadata in audio files, primarily in formats like Ogg Vorbis and FLAC.
     They are more flexible and extensible compared to ID3 tags, allowing for a wide range of metadata fields.
 
+    Genre Support:
+    Like ID3v2 but unlike ID3v1 and RIFF, Vorbis comments support:
+    - Custom genre names as free text
+    - Multiple genres (comma-separated)
+    - No length limitations
+    - Unicode support for international genres
+    - No predefined genre list restrictions
+
     Vorbis comments are key-value pairs, where the key is a field name and the value is the corresponding metadata.
     Common fields include:
     - TITLE: The title of the track.
