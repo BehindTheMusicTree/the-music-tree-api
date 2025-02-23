@@ -1,4 +1,3 @@
-
 from typing import Optional
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2
 
@@ -9,6 +8,54 @@ from ..MetadataManager import MetadataManager
 
 
 class Id3Manager(MetadataManager):
+    """
+    Manages ID3 metadata for audio files.
+
+    ID3 tags are used to store metadata in audio files, primarily MP3 and WAV files.
+    There are different versions of ID3 tags, with ID3v1 and ID3v2 being the most common.
+
+    - ID3v1:
+        - Introduced in 1996.
+        - Fixed size of 128 bytes, located at the end of the file.
+        - Stores basic information such as:
+            - Title (30 characters)
+            - Artist (30 characters)
+            - Album (30 characters)
+            - Year (4 characters)
+            - Comment (28 characters + 2-byte track number)
+            - Genre (1 byte)
+        - Does not support Unicode, only ASCII characters.
+
+    - ID3v2:
+        - Introduced in 1998.
+        - Variable size, located at the beginning of the file.
+        - Supports a wide range of metadata fields, including:
+            - Title (TIT2)
+            - Artist (TPE1)
+            - Album (TALB)
+            - Year (TYER)
+            - Comment (COMM)
+            - Genre (TCON)
+            - Track number (TRCK)
+            - Album artist (TPE2)
+            - Composer (TCOM)
+            - Original artist (TOPE)
+            - Copyright (TCOP)
+            - URL (WXXX)
+            - Encoder settings (TSSE)
+            - Cover art (APIC)
+            - Lyrics (USLT)
+            - Custom frames (TXXX)
+        - Allows for Unicode characters, supporting multiple languages.
+        - More flexible and extensible, with different versions (ID3v2.2, ID3v2.3, ID3v2.4) adding more features and 
+        improvements.
+        - Can store multiple values for certain fields, such as multiple artists.
+
+    Compatible Extensions:
+    - MP3: Fully supports ID3 tags.
+    - WAV: Can use ID3 tags, but it's less common.
+    - FLAC: Can have ID3 tags, but it's not standard. FLAC typically uses Vorbis comments for metadata.
+    """
 
     ID3_RATING_APP_EMAIL = settings.APP_NAME
 
