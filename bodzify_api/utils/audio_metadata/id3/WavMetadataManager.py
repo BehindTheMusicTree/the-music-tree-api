@@ -1,25 +1,16 @@
 
-from bodzify_api.utils.audio_metadata.audio_file import AudioFile
 import os
 import wave
 import tempfile
 
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
-from django.db.models.fields.files import FieldFile
 from mutagen._file import File as MutagenFile
-from mutagen._file import FileType as MutagenFileMetadata
 
-from bodzify_api.utils.audio_metadata.exceptions import FileTypeNotSupportedError
 from bodzify_api.utils.audio_metadata.id3.Id3Manager import Id3Manager
 
 
 class WavMetadataManager(Id3Manager):
 
-    def __init__(self, audio_file: AudioFile):
-        super().__init__(audio_file)
-        self.audio_file = audio_file
-
-    def get_raw_metadata(self) -> MutagenFileMetadata:
+    def get_raw_metadata(self) -> dict:
         self.audio_file.seek(0)
         file_metadata = MutagenFile(self.audio_file)
         if file_metadata.tags is None:  # type: ignore

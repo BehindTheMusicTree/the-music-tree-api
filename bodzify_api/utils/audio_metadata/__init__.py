@@ -39,8 +39,25 @@ def _get_metadata_manager(file, use_id3v2: bool = False) -> MetadataManager:
         raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
 
-def is_md5_valid(file, use_id3v2: bool = False):
-    return _get_metadata_manager(AudioFile(file), use_id3v2=use_id3v2).is_md5_valid()
+def is_md5_valid(file):
+    audio_file = AudioFile(file)
+
+    if audio_file.file_extension == ".flac":
+        id3v2_tags = FlacID3v2Manager(audio_file).file_raw_metadata
+        if id3v2_tags:
+            return False
+        else:
+            result = subprocess.run(
+                ['flac', '-t', audio_file.file_path],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            output = result.stderr.decode()
+            if 'ok' in output:
+                return True
+            if 'MD5 signature mismatch' in output:
+                return False
+            else:
+                raise Exception("The Flac file md5 check failed")
 
 
 def get_bitrate_from_file(file):

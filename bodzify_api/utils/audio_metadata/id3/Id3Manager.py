@@ -14,10 +14,6 @@ ID3_RATING_APP_EMAIL = 'bodzify'
 
 
 class Id3Manager(MetadataManager):
-    def __init__(self, audio_file: AudioFile):
-        super().__init__(audio_file.file)
-        self.file_path = audio_file.file
-        self.audio_file = audio_file
 
     class Id3TextFrames:  # MP3 and Wave (.wav) files use ID3 tags
         TITLE = 'TIT2'

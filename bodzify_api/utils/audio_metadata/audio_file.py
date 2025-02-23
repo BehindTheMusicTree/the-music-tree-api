@@ -5,6 +5,7 @@ from typing import Union
 
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.db.models.fields.files import FieldFile
+from django.core.files import File as DjangoFile
 
 
 class AudioFile:
@@ -13,17 +14,21 @@ class AudioFile:
         print('file', file)
         print('file class', file.__class__)
 
+        if isinstance(file, FieldFile):
+            file = file.file
+
         if isinstance(file, TemporaryUploadedFile):
             self.file_path = file.file.name
-        elif isinstance(file, FieldFile):
-            self.file_path = file.path
+        elif isinstance(file, TemporaryUploadedFile):
+            self.file_path = file.temporary_file_path()
+        elif isinstance(file, DjangoFile):
+            self.file_path = file.name
         elif isinstance(file, InMemoryUploadedFile):
             self.file_path = None
         else:
             self.file_path = file
 
         if self.file_path is not None and not os.path.exists(self.file_path):
-            print('file does not exist')
             raise FileNotFoundError(f"File {self.file_path} does not exist")
 
         file_extension = os.path.splitext(
@@ -81,3 +86,9 @@ class AudioFile:
             return temp_file.name
         else:
             return self.file_path
+
+    def get_file_name(self):
+        if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):
+            return self.file.name
+        else:
+            return self.file

@@ -52,10 +52,6 @@ class MetadataManager:
         return hash_md5.hexdigest()
 
     @abstractmethod
-    def is_md5_valid(self):
-        raise NotImplementedError(f"{self.is_md5_valid.__name__} method must be implemented.")
-
-    @abstractmethod
     def get_title(self) -> Optional[str]:
         raise NotImplementedError(f"{self.get_title.__name__} method must be implemented.")
 
@@ -155,11 +151,7 @@ class MetadataManager:
             else:
                 raise exception
 
-        if self.audio_file.file:  # type: ignore
-            filename = self.audio_file.file.name  # type: ignore
-        else:
-            filename = self.audio_file.name  # type: ignore
-        return TinyTag.get(filename).duration
+        return TinyTag.get(self.audio_file.get_file_name()).duration
 
     def _get_duration_using_pydub(self) -> str:
         file_path_or_object = self.audio_file.get_file_path_or_object()
