@@ -7,6 +7,7 @@ from typing import Union
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.db.models.fields.files import FieldFile
 from django.core.files import File as DjangoFile
+from django.core.exceptions import ImproperlyConfigured
 
 
 class AudioFile:
@@ -95,6 +96,9 @@ class AudioFile:
             return self.file
 
     def is_flac_file_md5_valid(self) -> bool:
+        if not self.file_extension == '.flac':
+            raise ImproperlyConfigured("The file is not a FLAC file")
+
         if isinstance(self.file_path, str):
             result = subprocess.run(['flac', '-t', self.file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         elif not self.file_path:

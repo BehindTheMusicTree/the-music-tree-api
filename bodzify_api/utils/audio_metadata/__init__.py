@@ -47,17 +47,9 @@ def is_md5_valid(file):
         if id3v2_tags:
             return False
         else:
-            result = subprocess.run(
-                ['flac', '-t', audio_file.file_path],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-            output = result.stderr.decode()
-            if 'ok' in output:
-                return True
-            if 'MD5 signature mismatch' in output:
-                return False
-            else:
-                raise Exception("The Flac file md5 check failed")
+            return audio_file.is_flac_file_md5_valid()
+    else:
+        raise ImproperlyConfigured('The file must be a FLAC file to check the MD5.')
 
 
 def get_bitrate_from_file(file):

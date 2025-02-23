@@ -16,12 +16,11 @@ class FlacTrackFile(TrackFile):
     md5_has_been_corrected = models.BooleanField(default=False)
 
     def _prepare_save(self, ctx) -> dict:
-        id3v2_tags = audio_metadata.get_raw_metadata_from_file(file=self.file, use_id3v2=True)
-        if id3v2_tags:
+        if not audio_metadata.is_md5_valid(self.file):
             raise AppValidationError(
                 field_name=Fields.FILE,
-                message='The FLAC file contains ID3v2 tags, which are not supported.',
-                field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT)
+                message='The FLAC file MD5 check failed. The file is probably corrupted.',
+                field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
 
         if not audio_metadata.is_md5_valid(self.file):
             try:
