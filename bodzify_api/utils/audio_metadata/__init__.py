@@ -70,6 +70,7 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
+from bodzify_api.utils.audio_metadata.manager.vorbis.VorbisManager import VorbisManager
 from .audio_file import AudioFile
 import tempfile
 import os
@@ -86,9 +87,6 @@ from .manager.id3.Id3v2Manager import Id3v2Manager
 from .manager.id3.Id3v1Manager import Id3v1Manager
 from .manager.riff.RiffManager import RiffManager
 from .manager.MetadataManager import MetadataManager
-from mutagen._file import File as MutagenFile
-from .vorbis.VorbisManager import VorbisManager
-from .app_metadata_keys import AppMetadataKeys
 
 
 from .tag_types import TagTypes

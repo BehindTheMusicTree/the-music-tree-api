@@ -3,7 +3,7 @@ from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, 
 
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.audio_file import AudioFile
-from ...app_metadata_keys import AppMetadataKeys
+from ...AppMetadataKeys import AppMetadataKeys
 from .Id3Manager import Id3Manager
 
 

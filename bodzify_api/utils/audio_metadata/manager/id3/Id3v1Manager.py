@@ -1,9 +1,9 @@
 from typing import Optional
 import struct
 
-from bodzify_api.utils.audio_metadata.manager.constants import ID3V1_AND_RIFF_GENRE_MAP
-from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
-from bodzify_api.utils.audio_metadata.app_metadata_keys import AppMetadataKeys
+from ...exceptions import UnsupportedMetadataError
+from ...AppMetadataKeys import AppMetadataKeys
+from ..constants import ID3V1_AND_RIFF_GENRE_MAP
 from .Id3Manager import Id3Manager
 
 
@@ -23,7 +23,9 @@ class Id3v1Manager(Id3Manager):
         - Custom genres
         - Multiple genres
         - Multiple artists
-    - Read-only (modification not safe)
+    - Read-only (modification not safe). ID3v1 tags have a fixed size of 128 bytes. Each field within the tag has a 
+    specific length (e.g., 30 bytes for title, artist, and album). This fixed size can make it challenging to modify the 
+    tags without potentially corrupting the file or losing data.
 
     Format Structure:
     - Bytes 0-2: "TAG" identifier

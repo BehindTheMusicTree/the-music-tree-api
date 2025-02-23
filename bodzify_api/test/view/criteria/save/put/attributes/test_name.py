@@ -6,7 +6,7 @@ from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import Pu
 from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
-from bodzify_api.utils.audio_metadata.app_metadata_keys import AppMetadataKeys
+from bodzify_api.utils.audio_metadata.AppMetadataKeys import AppMetadataKeys
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 

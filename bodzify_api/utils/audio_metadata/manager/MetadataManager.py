@@ -12,7 +12,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from bodzify_api.utils.audio_metadata.audio_file import AudioFile
 from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
-from ..app_metadata_keys import AppMetadataKeys
+from ..AppMetadataKeys import AppMetadataKeys
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
 
