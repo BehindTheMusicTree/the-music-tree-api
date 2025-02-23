@@ -24,7 +24,7 @@ Legend:
 
 Format Details:
 - ID3v2 Version Support:
-  * v2.4 (Full Support):
+  * v2.4:
     - TDRC frame for full timestamps (YYYY-MM-DD)
     - UTF-8 text encoding
     - Extended header features
@@ -32,19 +32,20 @@ Format Details:
     - All metadata fields supported
     - Preferred version for new tags
 
-  * v2.3 (Full Support):
+  * v2.3:
     - TYER+TDAT frames for date (year and date separately)
     - UTF-16/UTF-16BE text encoding
     - Basic unsynchronization
     - All metadata fields supported
     - Most widely used version
 
-  * v2.2 (Limited Support):
+  * v2.2:
     - Three-character frame IDs (TT2, TP1, etc.)
     - ISO-8859-1 or UCS-2 text encoding
-    - Basic fields supported
-    - Legacy version, less common but fully functional
-    - Writing supported but v2.4 recommended for new tags
+    - All standard fields supported
+    - Simpler header structure than v2.3/v2.4
+    - Full read/write support
+    - Less common but equally functional
 
   Note: A file can only have one ID3v2 version at a time.
         The app prefers v2.4 for writing, but can read all versions.
