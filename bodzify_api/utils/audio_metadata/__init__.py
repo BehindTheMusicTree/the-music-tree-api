@@ -7,12 +7,12 @@ Metadata Support by Format:
 | Text Encoding   |    ASCII     | UTF-8/16/ISO |    UTF-8     | ASCII/UTF-8 |        -        |
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
 | Technical Info  |              |              |              |             |                 |
-| - Duration      |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| - Duration      |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - Bitrate       |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| - Sample Rate   |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| - Channels      |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| - Sample Rate   |      ✓       |      ✓       |      ✓       |      ✓      |                 |
+| - Channels      |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - File Size     |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
-| - Format Info   |      ✓       |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
+| - Format Info   |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - MD5 Checksum  |              |              |      ✓       |             |    ✓ (Vorbis)   |
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
 | Title           |  ✓ (30, R)   |      ✓       |      ✓       |      ✓      |    ✓ (all)      |
@@ -60,7 +60,7 @@ Metadata Support by Format:
 | Involved People |              |      ✓       |      ✓       |             |                 |
 | Musicians       |              |      ✓       |      ✓       |             |                 |
 | Part of Set     |              |      ✓       |      ✓       |             |                 |
-+-----------------+--------------+--------------+--------------+-------------+----------=------+
++-----------------+--------------+--------------+--------------+--------------+------------------+
 Legend:
 - ✓: Supported
 - (30, R): Fixed 30-byte field, Read-only
