@@ -9,3 +9,4 @@ class NormalizedMetadataKeys:
     RATING = 'rating'
     LANGUAGE = 'language'
     RELEASE_DATE = 'release_date'
+    POSITION_IN_ALBUM = 'position_in_album'

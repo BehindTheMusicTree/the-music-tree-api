@@ -86,6 +86,15 @@ class MetadataManager:
         raise NotImplementedError(f"{self.get_release_date.__name__} method must be implemented.")
 
     @abstractmethod
+    def get_position_in_album(self) -> Optional[int]:
+        """Get track number/position in album.
+
+        Returns:
+            Optional[int]: Track number if available, None otherwise
+        """
+        raise NotImplementedError(f"{self.get_position_in_album.__name__} method must be implemented.")
+
+    @abstractmethod
     def get_bitrate(self) -> int:
         raise NotImplementedError(f"{self.get_bitrate.__name__} method must be implemented.")
 
@@ -191,6 +200,7 @@ class MetadataManager:
             normalized_rating_max_value=normalized_rating_max_value)
         normalized_metadata[NormalizedMetadataKeys.LANGUAGE] = self.get_language()
         normalized_metadata[NormalizedMetadataKeys.RELEASE_DATE] = self.get_release_date()
+        normalized_metadata[NormalizedMetadataKeys.POSITION_IN_ALBUM] = self.get_position_in_album()
         return normalized_metadata
 
     def get_specific_file_metadata(self, normalized_metadata_key: str,
@@ -213,6 +223,8 @@ class MetadataManager:
             return self.get_language()
         elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
             return self.get_release_date()
+        elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
+            return self.get_position_in_album()
 
     def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: Optional[int]):
         for key in list(normalized_metadata.keys()):

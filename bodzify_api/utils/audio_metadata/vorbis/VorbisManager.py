@@ -56,6 +56,7 @@ class VorbisManager(MetadataManager):
         RATING_TRAKTOR = 'rating wmp'
         LANGUAGE = 'language'
         DATE = 'date'  # Standard Vorbis comment field for dates
+        TRACK_NUMBER = 'tracknumber'  # Standard Vorbis comment field for track number
 
     def is_md5_valid(self) -> bool:
         self.audio_file.seek(0)
@@ -128,6 +129,20 @@ class VorbisManager(MetadataManager):
         """Get release date from DATE tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.DATE)
 
+    def get_position_in_album(self) -> Optional[int]:
+        """Get track number from TRACKNUMBER tag.
+
+        Returns:
+            Optional[int]: Track number if available, None otherwise
+        """
+        track = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.TRACK_NUMBER)
+        if track:
+            try:
+                return int(track)
+            except ValueError:
+                return None
+        return None
+
     def get_bitrate(self):
         return self.file_raw_metadata.info.bitrate / 1000  # type: ignore
 
@@ -159,6 +174,8 @@ class VorbisManager(MetadataManager):
             vorbis_tag_key = self.VorbisTagKeys.LANGUAGE
         elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
             vorbis_tag_key = self.VorbisTagKeys.DATE
+        elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
+            vorbis_tag_key = self.VorbisTagKeys.TRACK_NUMBER
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 

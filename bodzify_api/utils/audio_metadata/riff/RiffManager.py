@@ -23,6 +23,7 @@ class RiffManager(MetadataManager):
     - ISFT: Software
     - ICOP: Copyright
     - ITCH: Technician
+    - IPRT: Part number (track number)
     """
 
     class RiffTagKeys:
@@ -33,6 +34,7 @@ class RiffManager(MetadataManager):
         GENRE_NAME = 'IGNR'
         LANGUAGE = 'ILNG'  # Non-standard but commonly used
         RELEASE_DATE = 'ICRD'  # Creation/Release date
+        PART = 'IPRT'  # Part number (track number)
 
     def get_raw_metadata(self) -> dict:
         """Get raw metadata from WAV file."""
@@ -83,6 +85,20 @@ class RiffManager(MetadataManager):
         """Get release date from ICRD tag."""
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.RELEASE_DATE)
 
+    def get_position_in_album(self) -> Optional[int]:
+        """Get track number from IPRT (Part) tag.
+        
+        Returns:
+            Optional[int]: Track number if available, None otherwise
+        """
+        part = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.PART)
+        if part:
+            try:
+                return int(part)
+            except ValueError:
+                return None
+        return None
+
     def get_bitrate(self) -> int:
         """Get bitrate from WAV info."""
         return self.file_raw_metadata['info']['bitrate'] // 1000
@@ -110,6 +126,8 @@ class RiffManager(MetadataManager):
             riff_tag_key = self.RiffTagKeys.LANGUAGE
         elif normalized_metadata_key == NormalizedMetadataKeys.RELEASE_DATE:
             riff_tag_key = self.RiffTagKeys.RELEASE_DATE
+        elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
+            riff_tag_key = self.RiffTagKeys.PART
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
