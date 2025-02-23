@@ -1,5 +1,6 @@
 
 import os
+import subprocess
 import tempfile
 from typing import Union
 
@@ -92,3 +93,21 @@ class AudioFile:
             return self.file.name
         else:
             return self.file
+
+    def is_flac_file_md5_valid(self) -> bool:
+        if isinstance(self.file_path, str):
+            result = subprocess.run(['flac', '-t', self.file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        elif not self.file_path:
+            self.file.seek(0)  # type: ignore
+            result = subprocess.run(
+                ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=self.read())
+        else:
+            result = subprocess.run(['flac', '-t', self.file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        output = result.stderr.decode()
+        if 'ok' in output:
+            return True
+        if 'MD5 signature mismatch' in output:
+            return False
+        else:
+            raise Exception("The Flac file md5 check failed")
