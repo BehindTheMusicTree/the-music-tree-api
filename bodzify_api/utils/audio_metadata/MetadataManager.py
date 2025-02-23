@@ -13,6 +13,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 
+from bodzify_api.utils.audio_metadata.audio_file import AudioFile
+
 from .NormalizedMetadataKeys import NormalizedMetadataKeys
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
@@ -32,15 +34,15 @@ class MetadataManager:
         BASE_255 = '255'
         BASE_100 = '100'
 
-    file: object
-    file_metadata: dict
+    audio_file: AudioFile
+    file_raw_metadata: dict
 
-    def __init__(self, file, force_from_id3v2: bool = False):
-        self.file = file
-        self.file_metadata = self.get_raw_metadata(force_from_id3v2=force_from_id3v2)
+    def __init__(self, audio_file: AudioFile):
+        self.audio_file = audio_file
+        self.file_raw_metadata = self.get_raw_metadata()
 
     @abstractmethod
-    def get_raw_metadata(self, force_from_id3v2: bool = False) -> dict:
+    def get_raw_metadata(self) -> dict:
         raise NotImplementedError(f"{self.get_raw_metadata.__name__} method must be implemented.")
 
     def _compute_md5_from_buffer(self, buffer: Union[BufferedReader, InMemoryUploadedFile]):
@@ -96,14 +98,14 @@ class MetadataManager:
             f"{self.update_specific_file_metadata_without_saving.__name__} method must be implemented.")
 
     def _get_first_value_str_if_exists_in_file_metadata_or_none(self, key: str):
-        if key in self.file_metadata:
-            return self.file_metadata[key][0]
+        if key in self.file_raw_metadata:
+            return self.file_raw_metadata[key][0]
         else:
             return None
 
     def _get_first_value_int_if_exists_in_file_metadata_or_none(self, key: str):
-        if key in self.file_metadata:
-            value_str = self.file_metadata[key][0]
+        if key in self.file_raw_metadata:
+            value_str = self.file_raw_metadata[key][0]
             if value_str != "":
                 return int(value_str)
         return None
@@ -138,22 +140,22 @@ class MetadataManager:
             return self.BASE_100_RATING_STAR_VALUES[star_rating_base_10]
 
     def _get_duration_from_file_matadata_using_mutagen(self) -> Optional[float]:
-        if hasattr(self.file_metadata, 'info'):
-            return self.file_metadata.info.length  # type: ignore
+        if hasattr(self.file_raw_metadata, 'info'):
+            return self.file_raw_metadata.info.length  # type: ignore
         return None
 
     def _get_duration_using_tinytag(self) -> Optional[int]:
         try:
-            if isinstance(self.file, TemporaryUploadedFile):
-                with open(self.file.temporary_file_path(), 'rb') as f:
+            if isinstance(self.audio_file, TemporaryUploadedFile):
+                with open(self.audio_file.temporary_file_path(), 'rb') as f:
                     return TinyTag.get(f.name).duration
-            elif isinstance(self.file, FieldFile):
-                with open(self.file.path, 'rb') as f:
+            elif isinstance(self.audio_file, FieldFile):
+                with open(self.audio_file.path, 'rb') as f:
                     with open(os.devnull, 'w') as devnull, redirect_stdout(devnull), redirect_stderr(devnull):
                         return TinyTag.get(f.name).duration
-            elif isinstance(self.file, InMemoryUploadedFile):
+            elif isinstance(self.audio_file, InMemoryUploadedFile):
                 with tempfile.NamedTemporaryFile(delete=False) as tmp:
-                    for chunk in self.file.chunks():
+                    for chunk in self.audio_file.chunks():
                         tmp.write(chunk)
                     tmp.close()
                     tinytag = TinyTag.get(tmp.name)
@@ -164,32 +166,32 @@ class MetadataManager:
             else:
                 raise exception
 
-        if self.file.file:  # type: ignore
-            filename = self.file.file.name  # type: ignore
+        if self.audio_file.file:  # type: ignore
+            filename = self.audio_file.file.name  # type: ignore
         else:
-            filename = self.file.name  # type: ignore
+            filename = self.audio_file.name  # type: ignore
         return TinyTag.get(filename).duration
 
     def _get_duration_using_pydub(self) -> str:
-        if isinstance(self.file, TemporaryUploadedFile):
-            with open(self.file.temporary_file_path(), 'rb') as f:
+        if isinstance(self.audio_file, TemporaryUploadedFile):
+            with open(self.audio_file.temporary_file_path(), 'rb') as f:
                 audio_info = mediainfo(f.name)
                 return audio_info['duration']
-        elif isinstance(self.file, FieldFile):
-            with open(self.file.path, 'rb') as f:
+        elif isinstance(self.audio_file, FieldFile):
+            with open(self.audio_file.path, 'rb') as f:
                 audio_info = mediainfo(f.name)
                 return audio_info['duration']
-        elif isinstance(self.file, InMemoryUploadedFile):
+        elif isinstance(self.audio_file, InMemoryUploadedFile):
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
-                for chunk in self.file.chunks():
+                for chunk in self.audio_file.chunks():
                     tmp.write(chunk)
                 tmp.close()
                 audio_info = mediainfo(tmp.name)
                 return audio_info['duration']
-        if self.file.file:  # type: ignore
-            filename = self.file.file.name  # type: ignore
+        if self.audio_file.file:  # type: ignore
+            filename = self.audio_file.file.name  # type: ignore
         else:
-            filename = self.file.name  # type: ignore
+            filename = self.audio_file.name  # type: ignore
         audio_info = mediainfo(filename)
         return audio_info['duration']
 
@@ -259,4 +261,4 @@ class MetadataManager:
                     self.update_specific_file_metadata_without_saving(normalized_metadata_value=value,
                                                                       normalized_metadata_key=key)
 
-        self.file_metadata.save(self.file.path)  # type: ignore
+        self.file_raw_metadata.save(self.audio_file.path)  # type: ignore

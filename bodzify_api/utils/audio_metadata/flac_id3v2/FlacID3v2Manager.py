@@ -24,7 +24,7 @@ class FlacID3v2Manager(Id3Manager):
 
     def _extract_id3v2_metadata(self):
         try:
-            id3 = ID3(self.file)
+            id3 = ID3(self.audio_file)
             return id3
         except Exception as e:
             self.logger.error(f"Failed to extract ID3v2 metadata: {str(e)}")
@@ -37,9 +37,9 @@ class FlacID3v2Manager(Id3Manager):
     def is_md5_valid(self):
         if self.id3v2_metadata:
             # Strip ID3v2 tag before calculating MD5 checksum
-            self.file.seek(0)  # type: ignore
-            audio_data = self.file.read()  # type: ignore
-            self.id3v2_metadata.delete(self.file)
+            self.audio_file.seek(0)  # type: ignore
+            audio_data = self.audio_file.read()  # type: ignore
+            self.id3v2_metadata.delete(self.audio_file)
             return super(FlacID3v2Manager, self).is_md5_valid(audio_data)
         else:
             return False

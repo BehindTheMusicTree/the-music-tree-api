@@ -45,17 +45,17 @@ class Id3Manager(MetadataManager):
         return None
 
     def get_genre_name(self) -> Optional[str]:
-        if self.Id3TextFrames.GENRE_NAME in self.file_metadata:
-            return self.file_metadata[self.Id3TextFrames.GENRE_NAME][0]
+        if self.Id3TextFrames.GENRE_NAME in self.file_raw_metadata:
+            return self.file_raw_metadata[self.Id3TextFrames.GENRE_NAME][0]
         else:
             return ""
 
     def get_eventually_normalized_rating_value(self, normalized_rating_max_value: int = 255):
         file_rating_value = None
         file_rating_email = None
-        for key in self.file_metadata:
+        for key in self.file_raw_metadata:
             if self.Id3TextFrames.RATING in key:
-                file_rating_tag = self.file_metadata[key]
+                file_rating_tag = self.file_raw_metadata[key]
                 file_rating_email = file_rating_tag.email
                 file_rating_value = file_rating_tag.rating
                 break
@@ -92,7 +92,7 @@ class Id3Manager(MetadataManager):
             text_frame_class = TCON
         elif normalized_metadata_key == NormalizedMetadataKeys.RATING:
             normalized_rating = normalized_metadata_value
-            self.file_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
+            self.file_raw_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
             if normalized_rating:
                 if normalized_rating_max_value is None:
                     normalized_rating_max_value = 255
@@ -100,7 +100,7 @@ class Id3Manager(MetadataManager):
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
                     rating_file_profile=self.RatingFileProfile.BASE_255)
-                self.file_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
+                self.file_raw_metadata.add(POPM(email=ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
             return
         elif normalized_metadata_key == NormalizedMetadataKeys.LANGUAGE:
             id3_key = self.Id3TextFrames.LANGUAGE
@@ -108,8 +108,8 @@ class Id3Manager(MetadataManager):
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
-        self.file_metadata.delall(id3_key)  # type: ignore
-        self.file_metadata.add(text_frame_class(encoding=3, text=normalized_metadata_value))  # type: ignore
+        self.file_raw_metadata.delall(id3_key)  # type: ignore
+        self.file_raw_metadata.add(text_frame_class(encoding=3, text=normalized_metadata_value))  # type: ignore
 
     def _calculate_md5(self, audio_data):
         import hashlib
@@ -118,8 +118,8 @@ class Id3Manager(MetadataManager):
         return md5_hash.hexdigest()
 
     def _get_stored_md5(self):
-        if 'TXXX:MD5' in self.file_metadata:
-            return self.file_metadata['TXXX:MD5'].text[0]
+        if 'TXXX:MD5' in self.file_raw_metadata:
+            return self.file_raw_metadata['TXXX:MD5'].text[0]
         else:
             return None
 

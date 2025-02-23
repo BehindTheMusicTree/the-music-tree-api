@@ -9,7 +9,13 @@ from django.db.models.fields.files import FieldFile
 class AudioFile:
     def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, str]):
         self.file = file
-        print(file)
+        print('file', file)
+        print('file class', file.__class__)
+
+        if not self._check_file_exists():
+            print('file does not exist')
+            raise FileNotFoundError(f"File {self.file} does not exist")
+
         file_extension = os.path.splitext(
             self.file.name if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile))
             else self.file if isinstance(self.file, str)
@@ -18,6 +24,12 @@ class AudioFile:
         self.file_extension = file_extension
         print(file_extension)
         return
+
+    def _check_file_exists(self) -> bool:
+        if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):
+            return self.file.closed
+        else:
+            return not os.path.exists(self.file)
 
     def read(self, size: int = -1) -> bytes:
         if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):

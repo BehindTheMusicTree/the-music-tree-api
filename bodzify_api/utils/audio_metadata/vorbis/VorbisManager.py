@@ -22,10 +22,6 @@ class VorbisManager(MetadataManager):
         RATING_TRAKTOR = 'rating wmp'
         LANGUAGE = 'language'
 
-    def __init__(self, audio_file: AudioFile):
-        super().__init__(audio_file.file)
-        self.audio_file = audio_file
-
     def is_md5_valid(self) -> bool:
         self.audio_file.seek(0)
         result = subprocess.run(
@@ -85,8 +81,8 @@ class VorbisManager(MetadataManager):
         return None
 
     def get_genre_name(self) -> Optional[str]:
-        if self.VorbisTagKeys.GENRE_NAME in self.file_metadata:
-            return self.file_metadata[self.VorbisTagKeys.GENRE_NAME][0]
+        if self.VorbisTagKeys.GENRE_NAME in self.file_raw_metadata:
+            return self.file_raw_metadata[self.VorbisTagKeys.GENRE_NAME][0]
         else:
             return ""
 
@@ -94,7 +90,7 @@ class VorbisManager(MetadataManager):
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.LANGUAGE)
 
     def get_bitrate(self):
-        return self.file_metadata.info.bitrate / 1000  # type: ignore
+        return self.file_raw_metadata.info.bitrate / 1000  # type: ignore
 
     def update_specific_file_metadata_without_saving(
             self,
@@ -126,8 +122,8 @@ class VorbisManager(MetadataManager):
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
         if normalized_metadata_value:
-            if vorbis_tag_key not in self.file_metadata:
-                self.file_metadata[vorbis_tag_key] = [1]
-            self.file_metadata[vorbis_tag_key] = normalized_metadata_value
-        elif vorbis_tag_key in self.file_metadata:
-            del self.file_metadata[vorbis_tag_key]
+            if vorbis_tag_key not in self.file_raw_metadata:
+                self.file_raw_metadata[vorbis_tag_key] = [1]
+            self.file_raw_metadata[vorbis_tag_key] = normalized_metadata_value
+        elif vorbis_tag_key in self.file_raw_metadata:
+            del self.file_raw_metadata[vorbis_tag_key]

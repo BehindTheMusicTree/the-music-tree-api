@@ -53,7 +53,7 @@ def get_specific_metadata_from_file(file, normalized_metadata_key: str, use_id3v
 
 
 def get_raw_metadata_from_file(file, use_id3v2: bool = False) -> dict:
-    return _get_metadata_manager(file, use_id3v2=use_id3v2).file_metadata
+    return _get_metadata_manager(file, use_id3v2=use_id3v2).file_raw_metadata
 
 
 def get_normalized_metadata_from_file(
