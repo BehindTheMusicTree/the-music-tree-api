@@ -9,12 +9,15 @@ from django.db.models.fields.files import FieldFile
 class AudioFile:
     def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, str]):
         self.file = file
+        print(file)
         file_extension = os.path.splitext(
             self.file.name if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile))
             else self.file if isinstance(self.file, str)
             else str(self.file)
         )[1].lower()
         self.file_extension = file_extension
+        print(file_extension)
+        return
 
     def read(self, size: int = -1) -> bytes:
         if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):

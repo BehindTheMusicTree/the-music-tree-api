@@ -49,18 +49,17 @@ def get_bitrate_from_file(file):
 
 def get_specific_metadata_from_file(file, normalized_metadata_key: str, use_id3v2: bool = False):
     return _get_metadata_manager(
-        AudioFile(file), use_id3v2=use_id3v2).get_specific_file_metadata(
-        normalized_metadata_key=normalized_metadata_key)
+        file, use_id3v2=use_id3v2).get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
 
 
 def get_raw_metadata_from_file(file, use_id3v2: bool = False) -> dict:
-    return _get_metadata_manager(AudioFile(file), use_id3v2=use_id3v2).file_metadata
+    return _get_metadata_manager(file, use_id3v2=use_id3v2).file_metadata
 
 
 def get_normalized_metadata_from_file(
         file, normalized_rating_max_value: Optional[int] = None, use_id3v2: bool = False) -> dict:
     try:
-        return _get_metadata_manager(AudioFile(file), use_id3v2=use_id3v2).get_normalized_metadata(
+        return _get_metadata_manager(file, use_id3v2=use_id3v2).get_normalized_metadata(
             normalized_rating_max_value)
     except Exception as error:
         error_str = str(error)
@@ -72,8 +71,8 @@ def get_normalized_metadata_from_file(
 
 
 def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
-    _get_metadata_manager(AudioFile(file)).update_file_metadata(normalized_metadata=normalized_metadata,
-                                                                normalized_rating_max_value=normalized_rating_max_value)
+    _get_metadata_manager(file).update_file_metadata(normalized_metadata=normalized_metadata,
+                                                     normalized_rating_max_value=normalized_rating_max_value)
 
 
 def replace_flac_file_with_corrected_md5(file):
