@@ -113,6 +113,16 @@ class Id3v1Manager(MetadataManager):
         """ID3v1 doesn't store bitrate information."""
         return 0
 
+    def get_bpm(self) -> Optional[float]:
+        """Get BPM (Beats Per Minute).
+
+        ID3v1 format does not support BPM metadata.
+
+        Returns:
+            None: ID3v1 does not support BPM
+        """
+        return None
+
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
         """ID3v1 doesn't support ratings."""

@@ -115,6 +115,16 @@ class RiffManager(MetadataManager):
                 return None
         return None
 
+    def get_bpm(self) -> Optional[float]:
+        """Get BPM (Beats Per Minute).
+
+        RIFF INFO chunks do not have a standard field for BPM metadata.
+
+        Returns:
+            None: RIFF format does not support BPM
+        """
+        return None
+
     def get_bitrate(self) -> int:
         """Get bitrate from WAV info."""
         return self.file_raw_metadata['info']['bitrate'] // 1000

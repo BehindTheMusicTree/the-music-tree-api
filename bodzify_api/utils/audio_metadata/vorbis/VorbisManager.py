@@ -57,6 +57,7 @@ class VorbisManager(MetadataManager):
         LANGUAGE = 'language'
         DATE = 'date'  # Standard Vorbis comment field for dates
         TRACK_NUMBER = 'tracknumber'  # Standard Vorbis comment field for track number
+        BPM = 'bpm'  # Standard Vorbis comment field for tempo
 
     def is_md5_valid(self) -> bool:
         self.audio_file.seek(0)
@@ -143,6 +144,20 @@ class VorbisManager(MetadataManager):
                 return None
         return None
 
+    def get_bpm(self) -> Optional[float]:
+        """Get BPM (Beats Per Minute) from BPM tag.
+
+        Returns:
+            Optional[float]: BPM value if available, None otherwise
+        """
+        bpm = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.VorbisTagKeys.BPM)
+        if bpm:
+            try:
+                return float(bpm)
+            except ValueError:
+                return None
+        return None
+
     def get_bitrate(self):
         return self.file_raw_metadata.info.bitrate / 1000  # type: ignore
 
@@ -176,6 +191,8 @@ class VorbisManager(MetadataManager):
             vorbis_tag_key = self.VorbisTagKeys.DATE
         elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
             vorbis_tag_key = self.VorbisTagKeys.TRACK_NUMBER
+        elif normalized_metadata_key == NormalizedMetadataKeys.BPM:
+            vorbis_tag_key = self.VorbisTagKeys.BPM
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 

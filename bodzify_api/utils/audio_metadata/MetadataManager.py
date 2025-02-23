@@ -92,6 +92,15 @@ class MetadataManager:
         raise NotImplementedError(f"{self.get_position_in_album.__name__} method must be implemented.")
 
     @abstractmethod
+    def get_bpm(self) -> Optional[float]:
+        """Get BPM (Beats Per Minute) value.
+
+        Returns:
+            Optional[float]: BPM value if available, None otherwise
+        """
+        raise NotImplementedError(f"{self.get_bpm.__name__} method must be implemented.")
+
+    @abstractmethod
     def update_specific_file_metadata_without_saving(self,
                                                      normalized_metadata_value,
                                                      normalized_metadata_key: str,
@@ -194,6 +203,7 @@ class MetadataManager:
         normalized_metadata[NormalizedMetadataKeys.LANGUAGE] = self.get_language()
         normalized_metadata[NormalizedMetadataKeys.RELEASE_DATE] = self.get_release_date()
         normalized_metadata[NormalizedMetadataKeys.POSITION_IN_ALBUM] = self.get_position_in_album()
+        normalized_metadata[NormalizedMetadataKeys.BPM] = self.get_bpm()
         return normalized_metadata
 
     def get_specific_file_metadata(self, normalized_metadata_key: str,
@@ -218,6 +228,8 @@ class MetadataManager:
             return self.get_release_date()
         elif normalized_metadata_key == NormalizedMetadataKeys.POSITION_IN_ALBUM:
             return self.get_position_in_album()
+        elif normalized_metadata_key == NormalizedMetadataKeys.BPM:
+            return self.get_bpm()
 
     def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: Optional[int]):
         for key in list(normalized_metadata.keys()):

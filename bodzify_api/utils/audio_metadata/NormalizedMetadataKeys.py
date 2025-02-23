@@ -10,3 +10,4 @@ class NormalizedMetadataKeys:
     LANGUAGE = 'language'
     RELEASE_DATE = 'release_date'
     POSITION_IN_ALBUM = 'position_in_album'
+    BPM = 'bpm'  # Beats Per Minute
