@@ -8,6 +8,7 @@ from bodzify_api.exception.validation.app.AppValidationError import AppValidatio
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
+from bodzify_api.utils.audio_metadata.tag_types import TagTypes
 from .Fields import Fields
 
 
@@ -16,7 +17,7 @@ class FlacTrackFile(TrackFile):
     md5_has_been_corrected = models.BooleanField(default=False)
 
     def _prepare_save(self, ctx) -> dict:
-        id3v2_tags = audio_metadata.get_raw_metadata_from_file(self.file, use_id3v2=True)
+        id3v2_tags = audio_metadata.get_raw_metadata_from_file(self.file, tag_types=[TagTypes.ID3V2])
         if id3v2_tags:
             self.id3v2_tags_found_and_converted = True
 

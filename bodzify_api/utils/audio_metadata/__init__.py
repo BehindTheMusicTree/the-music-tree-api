@@ -155,15 +155,9 @@ from .vorbis.VorbisManager import VorbisManager
 from .NormalizedMetadataKeys import NormalizedMetadataKeys
 
 
-FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
+from .tag_types import TagTypes
 
-# Define tag type priorities for different file formats
-# First tag type in each list has highest priority
-TAG_TYPE_PRIORITIES = {
-    '.flac': ['vorbis', 'id3v2'],           # Prefer Vorbis comments over ID3v2 tags for FLAC
-    '.mp3': ['id3v2', 'id3v1'],             # Prefer ID3v2 over ID3v1 for MP3
-    '.wav': ['riff']                        # WAV files only use RIFF metadata
-}
+FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
 def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[str, MetadataManager]:
@@ -183,25 +177,25 @@ def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[s
     if tag_types is None:
         # Default behavior - single manager
         if audio_file.file_extension == ".mp3":
-            managers['id3v2'] = Id3v2Manager(audio_file)
+            managers[TagTypes.ID3V2] = Id3v2Manager(audio_file)
         elif audio_file.file_extension == ".wav":
-            managers['riff'] = RiffManager(audio_file)
+            managers[TagTypes.RIFF] = RiffManager(audio_file)
         elif audio_file.file_extension == ".flac":
-            managers['vorbis'] = VorbisManager(audio_file)
+            managers[TagTypes.VORBIS] = VorbisManager(audio_file)
         else:
             raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
         return managers
 
     # Multiple tag types requested
     for tag_type in tag_types:
-        if tag_type == 'id3v2' and audio_file.file_extension in [".mp3", ".flac"]:
-            managers['id3v2'] = Id3v2Manager(audio_file)
-        elif tag_type == 'vorbis' and audio_file.file_extension == ".flac":
-            managers['vorbis'] = VorbisManager(audio_file)
-        elif tag_type == 'riff' and audio_file.file_extension == ".wav":
-            managers['riff'] = RiffManager(audio_file)
-        elif tag_type == 'id3v1' and audio_file.file_extension == ".mp3":
-            managers['id3v1'] = Id3v1Manager(audio_file)
+        if tag_type == TagTypes.ID3V2 and audio_file.file_extension in [".mp3", ".flac"]:
+            managers[TagTypes.ID3V2] = Id3v2Manager(audio_file)
+        elif tag_type == TagTypes.VORBIS and audio_file.file_extension == ".flac":
+            managers[TagTypes.VORBIS] = VorbisManager(audio_file)
+        elif tag_type == TagTypes.RIFF and audio_file.file_extension == ".wav":
+            managers[TagTypes.RIFF] = RiffManager(audio_file)
+        elif tag_type == TagTypes.ID3V1 and audio_file.file_extension == ".mp3":
+            managers[TagTypes.ID3V1] = Id3v1Manager(audio_file)
 
     if not managers:
         raise ImproperlyConfigured(
@@ -312,7 +306,7 @@ def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[
     Returns:
         Dictionary with merged metadata under 'merged' key, plus original tag data
     """
-    priorities = TAG_TYPE_PRIORITIES.get(file_extension.lower(), [])
+    priorities = TagTypes.PRIORITIES.get(file_extension.lower(), [])
     if not priorities:
         raise ImproperlyConfigured(f"No priority order defined for {file_extension}")
 
@@ -357,7 +351,7 @@ def get_prioritized_metadata_from_file(
     audio_file = AudioFile(file)
 
     # Determine which tag types to check based on file extension
-    tag_types = TAG_TYPE_PRIORITIES.get(audio_file.file_extension.lower())
+    tag_types = TagTypes.PRIORITIES.get(audio_file.file_extension.lower())
 
     if not tag_types:
         raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
@@ -389,7 +383,7 @@ def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_
         ImproperlyConfigured: If the file type is not supported
     """
     audio_file = AudioFile(file)
-    priorities = TAG_TYPE_PRIORITIES.get(audio_file.file_extension.lower())
+    priorities = TagTypes.PRIORITIES.get(audio_file.file_extension.lower())
     if not priorities:
         raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
 
@@ -424,7 +418,7 @@ def clear_metadata(file, tag_types: Optional[list[str]] = None) -> dict[str, boo
 
     # If no specific tag types requested, use all supported types for the file format
     if tag_types is None:
-        tag_types = TAG_TYPE_PRIORITIES.get(audio_file.file_extension.lower(), [])
+        tag_types = TagTypes.PRIORITIES.get(audio_file.file_extension.lower(), [])
         if not tag_types:
             raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
 
