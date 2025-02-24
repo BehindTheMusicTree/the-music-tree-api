@@ -342,48 +342,11 @@ def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_
         normalized_rating_max_value=normalized_rating_max_value)
 
 
-def clear_metadata(file, tag_types: Optional[list[TagTypes]] = None) -> dict[str, bool]:
-    """Clear metadata from specified tag types.
-
-    Args:
-        file: The audio file to clear metadata from
-        tag_types: List of TagTypes enum values to clear.
-                  If None, clears all supported tag types for the file format.
-
-    Returns:
-        Dictionary mapping tag type to success status
-        Example: {'vorbis': True, 'id3v2': False} where True means successfully cleared
-    """
-    audio_file = AudioFile(file)
-
-    # If no specific tag types requested, use all supported types for the file format
-    if tag_types is None:
-        tag_types = TagTypes.get_priorities().get(audio_file.file_extension.lower(), [])
-        if not tag_types:
-            raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
-
-    # Get managers for requested tag types
+def delete_metadata(file, tag_types: Optional[list[TagTypes]] = None) -> dict[TagTypes, bool]:
     managers = _get_metadata_manager(file, tag_types=tag_types)
     results = {}
-
-    # Try to clear each tag type
     for tag_type, manager in managers.items():
-        try:
-            # Create empty metadata dict
-            empty_metadata = {}
-            for field in vars(AppMetadataKeys).values():
-                if isinstance(field, str) and not field.startswith('_'):
-                    empty_metadata[field] = None
-
-            # Update with empty metadata
-            manager.update_file_metadata(
-                normalized_metadata=empty_metadata,
-                normalized_rating_max_value=100  # Default value since we're clearing
-            )
-            results[tag_type] = True
-        except Exception as e:
-            results[tag_type] = False
-
+        results[tag_type] = manager.delete_metadata()
     return results
 
 

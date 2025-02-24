@@ -42,6 +42,14 @@ class MetadataManager:
     def get_raw_metadata(self) -> dict:
         raise NotImplementedError(f"{self.get_raw_metadata.__name__} method must be implemented.")
 
+    @abstractmethod
+    def delete_metadata(self) -> bool:
+        """
+        Returns:
+            bool: True if metadata was successfully deleted, False otherwise
+        """
+        raise NotImplementedError(f"{self.delete_metadata.__name__} method must be implemented.")
+
     def _compute_md5_from_buffer(self, buffer: Union[BufferedReader, InMemoryUploadedFile]):
         hash_md5 = hashlib.md5()
         for chunk in iter(lambda: buffer.read(4096), b""):

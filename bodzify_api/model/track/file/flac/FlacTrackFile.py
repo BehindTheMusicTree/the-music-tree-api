@@ -19,16 +19,19 @@ class FlacTrackFile(TrackFile):
     def _prepare_save(self, ctx) -> dict:
         id3v2_tags = audio_metadata.get_raw_metadata_from_file(self.file, tag_types=[TagTypes.ID3V2])
         if id3v2_tags:
-            self.id3v2_tags_found_and_converted = True
+            delete_result = audio_metadata.delete_metadata(self.file, [TagTypes.ID3V2])
+            id3v2_tags = audio_metadata.get_raw_metadata_from_file(self.file, tag_types=[TagTypes.ID3V2])
+            if not delete_result.get(TagTypes.ID3V2, False):
+                raise AppValidationError(
+                    field_name=Fields.FILE,
+                    message='Failed to clear ID3v2 tags from FLAC file.',
+                    field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
 
-            raise AppValidationError(
-                field_name=Fields.FILE,
-                message='The FLAC file MD5 check failed. The file is probably corrupted.',
-                field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
+            self.id3v2_tags_found_and_converted = True
 
         if not audio_metadata.is_md5_valid(self.file):
             try:
-                audio_metadata.replace_flac_file_with_corrected_md5(self.file_path_temp_or_not)
+                audio_metadata.replace_flac_file_with_corrected_md5(self.file)
                 self.md5_has_been_corrected = True
             except FlacMd5CheckFailedError:
                 raise AppValidationError(

@@ -208,3 +208,48 @@ class VorbisManager(MetadataManager):
             self.file_raw_metadata[vorbis_tag_key] = normalized_metadata_value
         elif vorbis_tag_key in self.file_raw_metadata:
             del self.file_raw_metadata[vorbis_tag_key]
+
+    def delete_metadata(self) -> bool:
+        """Delete all metadata from the FLAC/Vorbis file.
+
+        This removes:
+        - All Vorbis comment tags
+        - All pictures/album art
+        - Cuesheet if present
+        - Any ID3 tags that might be present
+
+        Returns:
+            bool: True if metadata was successfully deleted, False otherwise
+        """
+        try:
+            # Read the file into memory
+            self.audio_file.seek(0)
+            flac_file = FLAC(io.BytesIO(self.audio_file.read()))
+
+            # Clear all Vorbis comments
+            if flac_file.tags:
+                flac_file.tags.clear()
+
+            # Clear all pictures
+            flac_file.clear_pictures()
+
+            # Clear cuesheet
+            flac_file.cuesheet = None
+
+            # Save changes back to the file
+            flac_file.save(self.audio_file.file_path)
+
+            # Also remove any ID3 tags that might be present
+            try:
+                from mutagen.id3 import ID3, ID3NoHeaderError
+                try:
+                    id3 = ID3(self.audio_file.file_path)
+                    id3.delete()
+                except ID3NoHeaderError:
+                    pass
+            except ImportError:
+                pass  # ID3 support not available
+
+            return True
+        except Exception:
+            return False

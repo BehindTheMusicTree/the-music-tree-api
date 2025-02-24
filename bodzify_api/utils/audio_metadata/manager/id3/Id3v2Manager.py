@@ -357,3 +357,24 @@ class Id3v2Manager(Id3Manager):
 
         # Compare the calculated and stored MD5 checksums
         return calculated_md5 == stored_md5
+
+    def delete_metadata(self) -> bool:
+        """Delete all ID3v2 metadata from the audio file.
+
+        This removes all ID3v2 frames from the file while preserving the audio data.
+        Uses ID3.delete() which is more reliable than deleting individual frames,
+        especially for non-MP3 files like FLAC that might have ID3v2 tags.
+
+        Returns:
+            bool: True if metadata was successfully deleted, False otherwise
+        """
+        try:
+            # Create a new ID3 instance and use delete() to remove all ID3v2 tags
+            id3 = ID3(self.audio_file.file_path)
+            id3.delete()
+            return True
+        except ID3NoHeaderError:
+            # No ID3 tags present, consider this a success
+            return True
+        except Exception:
+            return False

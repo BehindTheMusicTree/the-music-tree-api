@@ -81,13 +81,6 @@ class TrackFile(PrivateStandardResource):
         return os.path.splitext(self.filename)[1]
 
     @property
-    def file_path_temp_or_not(self) -> str:
-        if self.file.file:
-            return self.file.file.name
-        else:
-            return str(self.file.path)
-
-    @property
     def duration_str_in_hour_min_sec(self) -> Optional[str]:
         return str(datetime.timedelta(seconds=self.duration_in_sec)) if self.duration_in_sec else None
 
@@ -101,7 +94,7 @@ class TrackFile(PrivateStandardResource):
         return ""
 
     def _get_bitrate(self) -> Optional[int]:
-        return audio_metadata.get_bitrate_from_file(self.file_path_temp_or_not)
+        return audio_metadata.get_bitrate_from_file(self.file)
 
     def _manage_fingerprint(self) -> Optional[FingerprintingResult]:
         audio_meta_analysis_enabled_override_env_var = os.environ.get('AUDIO_META_ANALYSIS_ENABLED_OVERRIDE', None)
