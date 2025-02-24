@@ -79,7 +79,7 @@ from django.db.models.fields.files import FieldFile
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.utils.audio_metadata.types import AppMetadataDict, RawMetadataDict, TagValue
+from bodzify_api.utils.audio_metadata.types import AppMetadataDict, RawMetadataDict, MetadataValue
 
 
 from .exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
@@ -139,116 +139,48 @@ def get_raw_metadata(file, tag_format: Optional[TagFormat] = None) -> RawMetadat
 
 
 def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[int] = None) -> AppMetadataDict:
-    audio_file = AudioFile(file)
     try:
-        managers = _get_metadata_managers(file)
-        metadata = {}
-
-        for tag_format, manager in managers.items():
-            metadata[tag_format] = manager.get_normalized_metadata(normalized_rating_max_value)
-
-        priorities = TagFormat.get_priorities().get(audio_file.file_extension, [])
-        if not priorities:
-            # Never reached because already checked in _get_metadata_managers
-            raise ImproperlyConfigured(f"No priority order defined for {audio_file.file_extension}")
-
-        merged_metadata: AppMetadataDict = {}
-        for field in AppMetadataKey:
-            for tag_format in priorities:
-                value = metadata[tag_format].get(field)
-                if value is not None:
-                    merged_metadata[field] = value
-                    break
-        return merged_metadata
-
+        audio_file = AudioFile(file)
     except Exception as error:
         error_str = str(error)
         if "file said" in error_str and "bytes, read" in error_str:
             raise FileByteMismatchError(error_str.capitalize())
-        elif "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
-            raise InvalidChunkDecodeError(error_str)
         raise
 
+    managers = _get_metadata_managers(file)
+    metadata = {}
 
-def get_prioritized_specific_metadata(
-        file, app_metadata_key: str, tag_format: Optional[TagFormat] = None) -> TagValue:
-    manager = _get_metadata_manager(file, tag_format=tag_format)
+    # Get normalized metadata from each manager
+    for tag_format, manager in managers.items():
+        metadata[tag_format] = manager.get_normalized_metadata(normalized_rating_max_value)
+
+    priorities = TagFormat.get_priorities().get(audio_file.file_extension, [])
+    if not priorities:
+        # Never reached because already checked in _get_metadata_managers
+        raise ImproperlyConfigured(f"No priority order defined for {audio_file.file_extension}")
+
+    result: AppMetadataDict = {}
+    for field in AppMetadataKey:
+        for tag_format in priorities:
+            value = metadata[tag_format].get(field)
+            if value is not None:
+                result[field] = value
+                break
+
+    return result
+
+
+def get_prioritized_specific_metadata(file, app_metadata_key: AppMetadataKey) -> MetadataValue:
+    manager = _get_metadata_manager(file)
     value = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
-    if value is not None and isinstance(value, (str, int)):
+    if value is not None and isinstance(value, MetadataValue):
         return value
     return ""  # Return empty string as fallback
 
 
-def get_bitrate(file) -> int:
-    return AudioFile(file).get_bitrate()
-
-
-def get_prioritized_metadata(
-        file, normalized_rating_max_value: Optional[int] = None) -> Dict[str, TagValue]:
-    """Get merged metadata prioritizing certain tag types based on file format.
-
-    For FLAC files: Prioritizes Vorbis comments over ID3v2 tags
-    For MP3 files: Uses ID3v2 tags
-    For WAV files: Uses RIFF metadata
-
-    Args:
-        file: The audio file to analyze
-        normalized_rating_max_value: Optional max value for normalizing ratings
-
-    Returns:
-        Dictionary with merged metadata using tag type priorities
-    """
-    audio_file = AudioFile(file)
-
-    # Determine which tag types to check based on file extension
-    tag_formats = TagFormat.get_priorities().get(audio_file.file_extension.lower())
-
-    if not tag_formats:
-        raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
-
-    # Get metadata from all relevant tag types and merge with priority
-    metadata = get_merged_normalized_metadata(
-        file,
-        normalized_rating_max_value=normalized_rating_max_value
-    )
-
-    # Convert AppMetadataKey to str in the return value
-    merged_data = metadata['merged']
-    return {str(key): value for key, value in merged_data.items()}
-
-
-def update_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
-    """Update metadata using the highest priority manager for the file type.
-
-    For FLAC files: Uses Vorbis comments (preferred over ID3v2)
-    For MP3 files: Uses ID3v2 tags (preferred over ID3v1)
-    For WAV files: Uses RIFF metadata
-
-    Args:
-        file: The audio file to update
-        normalized_metadata: Dictionary of normalized metadata to write
-        normalized_rating_max_value: Max value for normalizing ratings
-
-    Raises:
-        ImproperlyConfigured: If the file type is not supported
-    """
-    audio_file = AudioFile(file)
-    priorities = TagFormat.get_priorities().get(audio_file.file_extension.lower())
-    if not priorities:
-        raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
-
-    primary_tag_format = priorities[0]
-
-    # Get the manager for just this tag type
-    manager = _get_metadata_manager(file, tag_format=primary_tag_format)
-    if not manager:
-        raise ImproperlyConfigured(
-            f"Could not get {primary_tag_format} manager for {audio_file.file_extension}")
-
-    # Use the primary manager for updates
-    manager.update_file_metadata(
-        normalized_metadata=normalized_metadata,
-        normalized_rating_max_value=normalized_rating_max_value)
+def update_metadata(file, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: int):
+    _get_metadata_manager(file).update_bulk(
+        app_metadata_dict=app_metadata_dict, normalized_rating_max_value=normalized_rating_max_value)
 
 
 def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> dict[TagFormat, bool]:
@@ -258,6 +190,10 @@ def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> dict[TagFor
         results[tag_format if tag_format else TagFormat.ID3V2] = manager.delete_metadata()
         results[tag_format] = manager.delete_metadata()
     return results
+
+
+def get_bitrate(file) -> int:
+    return AudioFile(file).get_bitrate()
 
 
 def is_flac_md5_valid(file, check_id3v2: bool = False):

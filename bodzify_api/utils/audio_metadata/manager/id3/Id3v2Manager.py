@@ -282,7 +282,7 @@ class Id3v2Manager(Id3Manager):
                 return None
         return None
 
-    def update_specific_file_metadata_without_saving(
+    def update_specific_without_saving(
             self,
             normalized_metadata_value,
             app_metadata_key: str,

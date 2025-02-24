@@ -149,7 +149,7 @@ class Id3v1Manager(Id3Manager):
         """
         raise UnsupportedMetadataError("ID3v1 format does not support ratings")
 
-    def update_specific_file_metadata_without_saving(
+    def update_specific_without_saving(
             self,
             normalized_metadata_value,
             app_metadata_key: str,

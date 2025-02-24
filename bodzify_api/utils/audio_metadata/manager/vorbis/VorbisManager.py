@@ -3,8 +3,11 @@ import subprocess
 from typing import Optional
 
 from mutagen.flac import FLAC
+from mutagen.id3._util import ID3NoHeaderError
+from mutagen.id3 import ID3
 
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, AppMetadataKey
+from bodzify_api.utils.audio_metadata.exceptions import InvalidChunkDecodeError
 
 
 class VorbisManager(MetadataManager):
@@ -83,14 +86,20 @@ class VorbisManager(MetadataManager):
 
     def get_raw_metadata(self) -> dict:
         self.audio_file.seek(0)
-        flac_file = FLAC(io.BytesIO(self.audio_file.read()))
-        return {
-            'info': flac_file.info.__dict__,
-            'tags': flac_file.tags,
-            'pictures': [picture.__dict__ for picture in flac_file.pictures],
-            'cuesheet': flac_file.cuesheet.__dict__ if flac_file.cuesheet else None,
-            'seektable': flac_file.seektable.__dict__ if flac_file.seektable else None,
-        }
+        try:
+            flac_file = FLAC(io.BytesIO(self.audio_file.read()))
+            return {
+                'info': flac_file.info.__dict__,
+                'tags': flac_file.tags,
+                'pictures': [picture.__dict__ for picture in flac_file.pictures],
+                'cuesheet': flac_file.cuesheet.__dict__ if flac_file.cuesheet else None,
+                'seektable': flac_file.seektable.__dict__ if flac_file.seektable else None,
+            }
+        except Exception as error:
+            error_str = str(error)
+            if "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
+                raise InvalidChunkDecodeError(error_str)
+            raise
 
     def get_eventually_normalized_rating_value(self,
                                                normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
@@ -167,7 +176,7 @@ class VorbisManager(MetadataManager):
                 return None
         return None
 
-    def update_specific_file_metadata_without_saving(
+    def update_specific_without_saving(
             self,
             normalized_metadata_value,
             app_metadata_key: str,
@@ -227,8 +236,7 @@ class VorbisManager(MetadataManager):
             flac_file = FLAC(io.BytesIO(self.audio_file.read()))
 
             # Clear all Vorbis comments
-            if flac_file.tags:
-                flac_file.tags.clear()
+            flac_file.tags = None
 
             # Clear all pictures
             flac_file.clear_pictures()
@@ -241,14 +249,10 @@ class VorbisManager(MetadataManager):
 
             # Also remove any ID3 tags that might be present
             try:
-                from mutagen.id3 import ID3, ID3NoHeaderError
-                try:
-                    id3 = ID3(self.audio_file.file_path)
-                    id3.delete()
-                except ID3NoHeaderError:
-                    pass
-            except ImportError:
-                pass  # ID3 support not available
+                id3 = ID3(self.audio_file.file_path)
+                id3.delete()
+            except (ID3NoHeaderError, ImportError):
+                pass  # No ID3 tags present or ID3 support not available
 
             return True
         except Exception:

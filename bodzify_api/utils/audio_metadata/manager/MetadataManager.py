@@ -10,7 +10,8 @@ from tinytag import TinyTag, TinyTagException
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from ...audio_metadata import MetadataDict
+from bodzify_api.utils.audio_metadata.types import AppMetadataDict, MetadataValue, RawMetadataDict
+
 from ..AudioFile import AudioFile
 from ..exceptions import UnsupportedMetadataError
 from ..AppMetadataKey import AppMetadataKey
@@ -33,14 +34,14 @@ class MetadataManager:
         BASE_100 = '100'
 
     audio_file: AudioFile
-    file_raw_metadata: MetadataDict
+    file_raw_metadata: RawMetadataDict
 
     def __init__(self, audio_file: AudioFile):
         self.audio_file = audio_file
         self.file_raw_metadata = self.get_raw_metadata()
 
     @abstractmethod
-    def get_raw_metadata(self) -> MetadataDict:
+    def get_raw_metadata(self) -> RawMetadataDict:
         raise NotImplementedError(f"{self.get_raw_metadata.__name__} method must be implemented.")
 
     @abstractmethod
@@ -89,24 +90,32 @@ class MetadataManager:
         raise UnsupportedMetadataError("BPM metadata not supported by this format")
 
     @abstractmethod
-    def update_specific_file_metadata_without_saving(self,
-                                                     normalized_metadata_value,
-                                                     app_metadata_key: str,
-                                                     normalized_rating_max_value: Optional[int] = None):
+    def update_specific_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey,
+                                       normalized_rating_max_value: Optional[int] = None):
         raise NotImplementedError(
-            f"{self.update_specific_file_metadata_without_saving.__name__} method must be implemented.")
+            f"{self.update_specific_without_saving.__name__} method must be implemented.")
 
-    def _get_first_value_str_if_exists_in_file_metadata_or_none(self, key: str):
+    def _get_first_value_str_if_exists_in_file_metadata_or_none(self, key: str) -> Optional[MetadataValue]:
         if key in self.file_raw_metadata:
-            return self.file_raw_metadata[key][0]
+            value = self.file_raw_metadata[key]
+            if isinstance(value, list):
+                return value[0] if value else None
         else:
             return None
 
     def _get_first_value_int_if_exists_in_file_metadata_or_none(self, key: str):
         if key in self.file_raw_metadata:
-            value_str = self.file_raw_metadata[key][0]
-            if value_str != "":
-                return int(value_str)
+            value = self.file_raw_metadata[key]
+            if isinstance(value, list):
+                value_str = value[0] if value else ""
+            else:
+                value_str = str(value)
+
+            if value_str and value_str.strip():
+                try:
+                    return int(value_str)
+                except ValueError:
+                    return None
         return None
 
     def _get_eventually_normalized_rating_from_file_rating(self,
@@ -138,7 +147,7 @@ class MetadataManager:
         else:
             return self.BASE_100_RATING_STAR_VALUES[star_rating_base_10]
 
-    def _get_duration_from_file_matadata_using_mutagen(self) -> Optional[float]:
+    def _get_duration_using_mutagen(self) -> Optional[float]:
         if hasattr(self.file_raw_metadata, 'info'):
             return self.file_raw_metadata.info.length  # type: ignore
         return None
@@ -162,7 +171,7 @@ class MetadataManager:
         return audio_info['duration']
 
     def get_duration_in_sec(self) -> int:
-        duration_in_sec_float = self._get_duration_from_file_matadata_using_mutagen()
+        duration_in_sec_float = self._get_duration_using_mutagen()
         duration_in_sec = int(duration_in_sec_float) if duration_in_sec_float else None
         if duration_in_sec is None:
             duration_in_sec_float = self._get_duration_using_tinytag()
@@ -194,7 +203,7 @@ class MetadataManager:
         normalized_metadata[AppMetadataKey.BPM] = self.get_bpm()
         return normalized_metadata
 
-    def get_specific_file_metadata(self, app_metadata_key: str,
+    def get_specific_file_metadata(self, app_metadata_key: AppMetadataKey,
                                    normalized_rating_max_value: Optional[int] = None):
         if app_metadata_key == AppMetadataKey.TITLE:
             return self.get_title()
@@ -219,21 +228,21 @@ class MetadataManager:
         elif app_metadata_key == AppMetadataKey.BPM:
             return self.get_bpm()
 
-    def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: Optional[int]):
-        for key in list(normalized_metadata.keys()):
+    def update_bulk(self, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: Optional[int]):
+        for key in list(app_metadata_dict.keys()):
             if key == AppMetadataKey.DURATION_IN_SEC:
                 raise ValueError(self.METADATA_CANT_BE_UPDATED_MESSAGE)
             else:
-                value = normalized_metadata[key]
+                value = app_metadata_dict[key]
                 if key == AppMetadataKey.RATING:
                     if normalized_rating_max_value is None:
                         raise Exception("If updating the rating, the max value of the normalized rating must be set.")
-                    self.update_specific_file_metadata_without_saving(
-                        normalized_metadata_value=value,
+                    self.update_specific_without_saving(
+                        app_metadata_value=value,
                         app_metadata_key=key,
                         normalized_rating_max_value=normalized_rating_max_value)
                 else:
-                    self.update_specific_file_metadata_without_saving(normalized_metadata_value=value,
-                                                                      app_metadata_key=key)
+                    self.update_specific_without_saving(app_metadata_value=value,
+                                                        app_metadata_key=key)
 
         self.file_raw_metadata.save(self.audio_file.path)  # type: ignore

@@ -179,7 +179,7 @@ class TrackFile(PrivateStandardResource):
 
     def update_file_tags(self, normalized_metadata: dict):
         audio_metadata.update_metadata(file=self.file,
-                                       normalized_metadata=normalized_metadata,
+                                       app_metadata_dict=normalized_metadata,
                                        normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:
