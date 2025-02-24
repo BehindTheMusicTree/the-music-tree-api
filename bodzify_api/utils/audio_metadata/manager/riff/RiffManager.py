@@ -104,7 +104,7 @@ class RiffManager(MetadataManager):
     def get_language(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.LANGUAGE)
 
-    def get_release_date(self) -> Optional[str]:
+    def get_release_date_str(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.RELEASE_DATE)
 
     def get_track_number(self) -> Optional[int]:

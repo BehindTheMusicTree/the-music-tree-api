@@ -1,5 +1,7 @@
-from typing import Optional
+from typing import Optional, cast
 import struct
+
+from bodzify_api.utils.audio_metadata.types import MetadataValue
 
 from ...exceptions import UnsupportedMetadataError
 from ...AppMetadataKey import AppMetadataKey
@@ -23,6 +25,7 @@ class Id3v1Manager(Id3Manager):
         - Custom genres
         - Multiple genres
         - Multiple artists
+        ...
     - Read-only (modification not safe). ID3v1 tags have a fixed size of 128 bytes. Each field within the tag has a 
     specific length (e.g., 30 bytes for title, artist, and album). This fixed size can make it challenging to modify the 
     tags without potentially corrupting the file or losing data.
@@ -41,6 +44,8 @@ class Id3v1Manager(Id3Manager):
     Note: ID3v1.1 extends ID3v1 by using the last two bytes of the comment
     field to store the track number. If byte 125 is 0 and byte 126 is not 0,
     then byte 126 contains the track number (1-255).
+
+    Note 2: The genre code is an index into a predefined list of genres. 
     """
 
     def get_raw_metadata(self) -> dict:
@@ -86,78 +91,41 @@ class Id3v1Manager(Id3Manager):
 
         return metadata
 
+    def _get_str_metadata_value(self, key: AppMetadataKey) -> Optional[str]:
+        if key in self.file_raw_metadata:
+            return cast(str, self.file_raw_metadata[key.value])
+        return None
+
+    def _get_int_metadata_value(self, key: AppMetadataKey) -> Optional[int]:
+        if key in self.file_raw_metadata:
+            return cast(int, self.file_raw_metadata[key.value])
+        return None
+
     def get_title(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKey.TITLE)
+        return self._get_str_metadata_value(AppMetadataKey.TITLE)
 
     def get_artists_names(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKey.ARTISTS_NAMES_STR)
+        return self._get_str_metadata_value(AppMetadataKey.ARTISTS_NAMES_STR)
 
     def get_album_name(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKey.ALBUM_NAME)
-
-    def get_album_artists_name_str(self) -> Optional[str]:
-        """Get album artist.
-
-        Raises:
-            UnsupportedMetadataError: ID3v1 does not support album artist
-        """
-        raise UnsupportedMetadataError("ID3v1 format does not support album artist")
+        return self._get_str_metadata_value(AppMetadataKey.ALBUM_NAME)
 
     def get_genre_name(self) -> Optional[str]:
-        """Get genre name from ID3v1 genre code."""
-        if AppMetadataKey.GENRE_NAME in self.file_raw_metadata:
-            try:
-                genre_code = self.file_raw_metadata[AppMetadataKey.GENRE_NAME][0]
-                return ID3V1_AND_RIFF_GENRE_MAP.get(genre_code, "Other")
-            except (IndexError, KeyError):
-                return None
-        return None
+        genre_code = self._get_int_metadata_value(AppMetadataKey.GENRE_NAME)
+        if not genre_code:
+            return None
+        if not 0 <= genre_code < len(ID3V1_AND_RIFF_GENRE_MAP):
+            return None
+        return ID3V1_AND_RIFF_GENRE_MAP[genre_code]
 
-    def get_language(self) -> Optional[str]:
-        """Get language.
-
-        Raises:
-            UnsupportedMetadataError: ID3v1 does not support language tags
-        """
-        raise UnsupportedMetadataError("ID3v1 format does not support language tags")
-
-    def get_release_date(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(AppMetadataKey.RELEASE_DATE)
+    def get_release_date_str(self) -> Optional[str]:
+        return self._get_str_metadata_value(AppMetadataKey.RELEASE_DATE)
 
     def get_track_number(self) -> Optional[int]:
-        if AppMetadataKey.TRACK_NUMBER in self.file_raw_metadata:
-            try:
-                return int(self.file_raw_metadata[AppMetadataKey.TRACK_NUMBER][0])
-            except (ValueError, IndexError):
-                return None
-        return None
-
-    def get_bpm(self) -> Optional[float]:
-        """Get BPM (Beats Per Minute).
-
-        Raises:
-            UnsupportedMetadataError: ID3v1 does not support BPM metadata
-        """
-        raise UnsupportedMetadataError("ID3v1 format does not support BPM metadata")
-
-    def get_eventually_normalized_rating_value(self,
-                                               normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
-        """Get rating.
-
-        Raises:
-            UnsupportedMetadataError: ID3v1 does not support ratings
-        """
-        raise UnsupportedMetadataError("ID3v1 format does not support ratings")
+        return self._get_int_metadata_value(AppMetadataKey.TRACK_NUMBER)
 
     def update_specific_without_saving(
-            self,
-            normalized_metadata_value,
-            app_metadata_key: str,
+            self, app_metadata_value: MetadataValue, app_metadata_key: AppMetadataKey,
             normalized_rating_max_value: Optional[int] = None):
-        """Update ID3v1 tag field.
-
-        Raises:
-            UnsupportedMetadataError: ID3v1 is read-only due to fixed-length fields
-        """
         raise UnsupportedMetadataError(
             "ID3v1 tag modification is not supported (fixed-length format)")

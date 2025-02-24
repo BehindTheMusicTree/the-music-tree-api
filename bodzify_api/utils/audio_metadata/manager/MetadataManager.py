@@ -80,7 +80,7 @@ class MetadataManager:
     def get_language(self) -> Optional[str]:
         raise UnsupportedMetadataError("Language metadata not supported by this format")
 
-    def get_release_date(self) -> Optional[str]:
+    def get_release_date_str(self) -> Optional[str]:
         raise UnsupportedMetadataError("Release date metadata not supported by this format")
 
     def get_track_number(self) -> Optional[int]:
@@ -90,14 +90,14 @@ class MetadataManager:
         raise UnsupportedMetadataError("BPM metadata not supported by this format")
 
     @abstractmethod
-    def update_specific_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey,
+    def update_specific_without_saving(self, app_metadata_value: MetadataValue, app_metadata_key: AppMetadataKey,
                                        normalized_rating_max_value: Optional[int] = None):
         raise NotImplementedError(
             f"{self.update_specific_without_saving.__name__} method must be implemented.")
 
-    def _get_first_value_str_if_exists_in_file_metadata_or_none(self, key: str) -> Optional[MetadataValue]:
+    def _get_first_value_str_if_exists_in_file_metadata_or_none(self, key: AppMetadataKey) -> Optional[MetadataValue]:
         if key in self.file_raw_metadata:
-            value = self.file_raw_metadata[key]
+            value = self.file_raw_metadata[key.value]
             if isinstance(value, list):
                 return value[0] if value else None
         else:
@@ -198,7 +198,7 @@ class MetadataManager:
         normalized_metadata[AppMetadataKey.RATING] = self.get_eventually_normalized_rating_value(
             normalized_rating_max_value=normalized_rating_max_value)
         normalized_metadata[AppMetadataKey.LANGUAGE] = self.get_language()
-        normalized_metadata[AppMetadataKey.RELEASE_DATE] = self.get_release_date()
+        normalized_metadata[AppMetadataKey.RELEASE_DATE] = self.get_release_date_str()
         normalized_metadata[AppMetadataKey.TRACK_NUMBER] = self.get_track_number()
         normalized_metadata[AppMetadataKey.BPM] = self.get_bpm()
         return normalized_metadata
@@ -222,7 +222,7 @@ class MetadataManager:
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
             return self.get_language()
         elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
-            return self.get_release_date()
+            return self.get_release_date_str()
         elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
             return self.get_track_number()
         elif app_metadata_key == AppMetadataKey.BPM:
