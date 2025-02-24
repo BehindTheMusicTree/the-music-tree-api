@@ -1,9 +1,9 @@
 
-from typing import Dict, Union
+from typing import Dict
 
 from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 
 
-MetadataValue = Union[str, int]
+MetadataValue = str | int | float
 RawMetadataDict = Dict[str, MetadataValue]
 AppMetadataDict = Dict[AppMetadataKey, MetadataValue]
