@@ -2,7 +2,7 @@ from typing import Optional
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM
 
 from bodzify_api import settings
-from bodzify_api.utils.audio_metadata.audio_file import AudioFile
+from ...audio_file import AudioFile
 from ...AppMetadataKeys import AppMetadataKeys
 from .Id3Manager import Id3Manager
 
@@ -15,8 +15,8 @@ class Id3v2Manager(Id3Manager):
     | Player/Device | ID3v2.2  | ID3v2.3  | ID3v2.4  |
     +---------------+----------+----------+----------+
     | Windows Media Player                           |
-    |  - WMP 7-8    |    ✓     |    ✓     |          |
     |  - WMP 9-12   |    ✓     |    ✓     |    ~     |
+    |  - WMP 7-8    |    ✓     |    ✓     |          |
     +---------------+----------+----------+----------+
     | iTunes                                         |
     |  - 12.x+      |    ✓     |    ✓     |    ✓     |
@@ -26,13 +26,66 @@ class Id3v2Manager(Id3Manager):
     |  - 5.x+       |    ✓     |    ✓     |    ✓     |
     |  - 2.x-4.x    |    ✓     |    ✓     |    ~     |
     +---------------+----------+----------+----------+
+    | MusicBee                                       |
+    |  - 3.x+       |    ✓     |    ✓     |    ✓     |
+    |  - 2.x        |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
+    | VLC                                            |
+    |  - 2.x+       |    ✓     |    ✓     |    ✓     |
+    |  - 1.x        |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
     | Smartphones                                    |
     |  - iOS 7+     |    ✓     |    ✓     |    ✓     |
     |  - Android 4+ |    ✓     |    ✓     |    ✓     |
+    |  - Windows    |    ✓     |    ✓     |    ✓     |
+    |  - Blackberry |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
+    | Network Players                                |
+    |  - Sonos      |    ✓     |    ✓     |    ✓     |
+    |  - Roku       |    ✓     |    ✓     |    ~     |
+    |  - Chromecast |    ✓     |    ✓     |    ✓     |
+    |  - Apple TV   |    ✓     |    ✓     |    ✓     |
+    +---------------+----------+----------+----------+
+    |iPods/MP3 Players                               |
+    |  - iPod 5G+   |    ✓     |    ✓     |    ✓     |
+    |  - iPod 1-4G  |    ✓     |    ✓     |    ~     |
+    |  - Zune       |    ✓     |    ✓     |    ~     |
+    |  - Sony       |    ✓     |    ✓     |    ~     |
     +---------------+----------+----------+----------+
     | Car Systems                                    |
-    |  - Pre-2010   |    ✓     |    ~     |          |
     |  - Post-2010  |    ✓     |    ✓     |    ~     |
+    |  - Pre-2010   |    ✓     |    ~     |          |
+    +---------------+----------+----------+----------+
+    | Home Audio Systems                             |
+    |  - Post-2000  |    ✓     |    ✓     |    ~     |
+    |  - Pre-2000   |    ✓     |    ~     |          |
+    +---------------+----------+----------+----------+
+    | DJ Software                                    |
+    |  - Traktor    |    ✓     |    ✓     |    ✓     |
+    |  - Serato     |    ✓     |    ✓     |    ~     |
+    |  - VirtualDJ  |    ✓     |    ✓     |    ~     |
+    |  - Rekordbox  |    ✓     |    ✓     |    ~     |
+    |  - Mixxx      |    ✓     |    ✓     |    ~     |
+    |  - Cross DJ   |    ✓     |    ✓     |    ~     |
+    |  - djay Pro   |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
+    | Web Browsers                                   |
+    |  - Chrome     |    ✓     |    ✓     |    ✓     |
+    |  - Firefox    |    ✓     |    ✓     |    ✓     |
+    |  - Safari     |    ✓     |    ✓     |    ✓     |
+    |  - Edge       |    ✓     |    ✓     |    ✓     |
+    +---------------+----------+----------+----------+
+    | Gaming Consoles                                |
+    |  - PS4/PS5    |    ✓     |    ✓     |    ✓     |
+    |  - Xbox Series|    ✓     |    ✓     |    ✓     |
+    |  - PS3        |    ✓     |    ✓     |    ~     |
+    |  - Xbox 360   |    ✓     |    ✓     |    ~     |
+    +---------------+----------+----------+----------+
+    | Smart TVs                                      |
+    |  - Samsung    |    ✓     |    ✓     |    ~     |
+    |  - LG         |    ✓     |    ✓     |    ~     |
+    |  - Sony       |    ✓     |    ✓     |    ~     |
+    |  - Android TV |    ✓     |    ✓     |    ✓     |
     +---------------+----------+----------+----------+
 
     Legend:
@@ -114,8 +167,24 @@ class Id3v2Manager(Id3Manager):
         BPM = 'TBPM'
 
     def __init__(self, audio_file: AudioFile):
+        """Initialize ID3v2 manager and convert existing tags to v2.3 format.
 
+        Args:
+            audio_file: The audio file to manage metadata for
+        """
         super().__init__(audio_file)
+
+        # Convert any existing tags to ID3v2.3 format during initialization
+        from mutagen.id3 import ID3
+        from mutagen.id3._util import ID3NoHeaderError
+
+        try:
+            tags = ID3(self.audio_file.file_path)
+            tags.update_to_v23()  # Convert to ID3v2.3
+            tags.save()  # Save the converted tags
+        except ID3NoHeaderError:
+            # No existing tags, nothing to convert
+            pass
 
     def get_raw_metadata(self) -> dict:
         from mutagen.id3 import ID3
