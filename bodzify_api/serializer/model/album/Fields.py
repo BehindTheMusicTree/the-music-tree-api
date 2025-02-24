@@ -6,7 +6,7 @@ class Fields:
     CREATED_ON = ModelFields.CREATED_ON
     UPDATED_ON = ModelFields.UPDATED_ON
     UUID = ModelFields.UUID
-    NAME = ModelFields.NAME
+    NAME_PUBLIC = ModelFields.NAME_PUBLIC
     YEAR = ModelFields.YEAR
     ALBUM_ARTISTS = ModelFields.ALBUM_ARTISTS
     LIB_TRACKS_NOT_ARCHIVED_SORTED_INTERNAL = ModelFields.LIB_TRACKS_NOT_ARCHIVED_SORTED_INTERNAL

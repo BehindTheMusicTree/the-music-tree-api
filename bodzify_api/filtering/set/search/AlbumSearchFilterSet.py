@@ -6,4 +6,4 @@ from .SearchFilterSet import SearchFilterSet
 class AlbumSearchFilterSet(SearchFilterSet):
     class Meta(SearchFilterSet.Meta):
         model = Album
-        search_fields = [AlbumFields.NAME]
+        search_fields = [AlbumFields.NAME_PUBLIC]

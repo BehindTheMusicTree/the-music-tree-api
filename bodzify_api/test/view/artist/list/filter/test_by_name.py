@@ -11,12 +11,12 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
 
     def test_empty_then_error(self):
-        response = self._get_artists(**{ArtistFields.NAME: ''})
+        response = self._get_artists(**{ArtistFields.NAME_PUBLIC: ''})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == ArtistFields.NAME
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == ArtistFields.NAME_PUBLIC
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
 
     def test_contains_in_another_case_then_results(self):
@@ -24,11 +24,11 @@ class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
         artist2 = self.model_fixture_factory.create_artist(name="Museum")
         self.model_fixture_factory.create_artist(name="Jon")
 
-        response = self._get_artists(**{ArtistFields.NAME: 'MuS'})
+        response = self._get_artists(**{ArtistFields.NAME_PUBLIC: 'MuS'})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        result_names = [result[to_camel_case(ArtistFields.NAME)] for result in self.results]
+        result_names = [result[to_camel_case(ArtistFields.NAME_PUBLIC)] for result in self.results]
         assert artist1.name in result_names
         assert artist2.name in result_names
 
@@ -40,6 +40,6 @@ class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        result_names = [result[to_camel_case(ArtistFields.NAME)] for result in self.results]
+        result_names = [result[to_camel_case(ArtistFields.NAME_PUBLIC)] for result in self.results]
         assert artist1.name in result_names
         assert artist2.name in result_names

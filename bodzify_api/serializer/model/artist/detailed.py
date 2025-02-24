@@ -17,7 +17,7 @@ class ArtistDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
         fields = [Fields.UUID,
-                  Fields.NAME,
+                  Fields.NAME_PUBLIC,
                   Fields.ALBUMS,
                   Fields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC,
                   Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,

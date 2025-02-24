@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class Artist(LibTrackMixin):
-    _name = AppCharField(max_length=settings.ARTIST_NAME_LEN_MAX, default=None, db_column=Fields.NAME)
+    _name = AppCharField(max_length=settings.ARTIST_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
 
     @property
     def name(self) -> str:

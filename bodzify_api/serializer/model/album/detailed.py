@@ -17,7 +17,7 @@ class AlbumDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = [Fields.UUID,
-                  Fields.NAME,
+                  Fields.NAME_PUBLIC,
                   Fields.YEAR,
                   Fields.ALBUM_ARTISTS,
                   Fields.LIB_TRACKS_NOT_ARCHIVED_SORTED_PUBLIC,

@@ -10,7 +10,7 @@ from .Fields import Fields
 
 class AlbumFilterSet(PrivateUniqueResourceFilterSet):
     name = NonEmptiableCharFilter(field_name=ModelFields.NAME_INTERNAL,
-                                  field_name_user_friendly=ModelFields.NAME,
+                                  field_name_user_friendly=ModelFields.NAME_PUBLIC,
                                   lookup_expr='icontains')
     album_artist_name = PrimaryFieldCharFilter(
         primary_field=ArtistModelFields.NAME_INTERNAL,
@@ -21,4 +21,4 @@ class AlbumFilterSet(PrivateUniqueResourceFilterSet):
 
     class Meta:
         model = Album
-        fields = [Fields.NAME, Fields.ALBUM_ARTIST_NAME]
+        fields = [Fields.NAME_PUBLIC, Fields.ALBUM_ARTIST_NAME]

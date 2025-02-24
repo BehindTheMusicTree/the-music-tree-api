@@ -8,7 +8,7 @@ from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
 
 class Fields:
     UUID = AvailableFields.UUID
-    NAME = AvailableFields.NAME
+    NAME = AvailableFields.NAME_PUBLIC
     ALBUMS = AvailableFields.ALBUMS
     LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
     LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC

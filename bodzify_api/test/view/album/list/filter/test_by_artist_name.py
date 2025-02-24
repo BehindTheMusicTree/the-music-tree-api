@@ -17,7 +17,7 @@ class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        names = [result[AlbumFields.NAME] for result in self.results]
+        names = [result[AlbumFields.NAME_PUBLIC] for result in self.results]
         assert album1.name in names
         assert album2.name in names
 
@@ -30,7 +30,7 @@ class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
-        assert self.results[0][AlbumFields.NAME] == album.name
+        assert self.results[0][AlbumFields.NAME_PUBLIC] == album.name
 
     def test_not_provided_then_results(self):
         album1 = self.model_fixture_factory.create_album(name="Dark")
@@ -40,6 +40,6 @@ class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
-        names = [result[AlbumFields.NAME] for result in self.results]
+        names = [result[AlbumFields.NAME_PUBLIC] for result in self.results]
         assert album1.name in names
         assert album2.name in names

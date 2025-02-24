@@ -7,7 +7,7 @@ from bodzify_api.serializer.model.album.Fields import Fields as AvailableFields
 
 class Fields:
     UUID = AvailableFields.UUID
-    NAME = AvailableFields.NAME
+    NAME = AvailableFields.NAME_PUBLIC
 
 
 class ArtistMinimumSerializer(AppSerializer, serializers.ModelSerializer):

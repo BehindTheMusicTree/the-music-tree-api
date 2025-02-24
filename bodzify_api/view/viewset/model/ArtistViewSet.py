@@ -16,7 +16,7 @@ class ArtistViewSet(AppModelViewSet[Artist]):
                          **kwargs)
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.NAME_PUBLIC, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
     ])
     def list(self, *args, **kwargs):
         return self._handle_list()
