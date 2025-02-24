@@ -1,5 +1,8 @@
 
-class AppMetadataKeys:
+from enum import Enum
+
+
+class AppMetadataKey(Enum):
     TITLE = 'title'
     ARTISTS_NAMES_STR = 'artists_names_str'
     ALBUM_NAME = 'album_name'

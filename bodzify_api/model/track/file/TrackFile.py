@@ -17,7 +17,7 @@ from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneT
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
 from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.utils.audio_metadata.AppMetadataKeys import AppMetadataKeys
+from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
     import MusicbrainzRecordingLookupResult
@@ -167,7 +167,7 @@ class TrackFile(PrivateStandardResource):
 
     def _prepare_save(self, ctx) -> dict:
         duration_in_sec: str = audio_metadata.get_specific_metadata(
-            file=self.file, app_metadata_key=AppMetadataKeys.DURATION_IN_SEC)
+            file=self.file, app_metadata_key=AppMetadataKey.DURATION_IN_SEC)
         self.duration_in_sec = int(duration_in_sec)
         self.bitrate_in_kbps = self._get_bitrate()
         self.size_in_bytes = self.file.size

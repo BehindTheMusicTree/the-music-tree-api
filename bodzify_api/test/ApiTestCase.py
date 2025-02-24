@@ -132,7 +132,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
     def _set_saved_lib_track_metadata(self, response):
         saved_lib_track: LibraryTrack = self.saved_object  # type: ignore
         self.saved_lib_track_metadata = \
-            audio_metadata.get_normalized_metadata_from_file(file=saved_lib_track.track_file.file)
+            audio_metadata.get_merged_normalized_metadata(file=saved_lib_track.track_file.file)
 
     def _post_lib_track_with_generic_sample(self,
                                             generic_sample_filename_without_extension,

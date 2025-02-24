@@ -1,4 +1,4 @@
-from bodzify_api.utils.audio_metadata.AppMetadataKeys import AppMetadataKeys
+from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 from bodzify_api.serializer.model.lib_track.input.Fields import Fields as InoutFields
 from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIntTestCase import \
     UpdateFileMetadataIntTestCase
@@ -6,7 +6,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIn
 
 class UpdateFileMetadataRatingTestCase(UpdateFileMetadataIntTestCase):
     save_field = InoutFields.RATING
-    lib_track_app_metadata_key = AppMetadataKeys.RATING
+    lib_track_app_metadata_key = AppMetadataKey.RATING
     value_min = 0
     value_max = 10
     value_min_expected_in_metadata = 0

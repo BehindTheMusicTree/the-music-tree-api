@@ -3,7 +3,7 @@ from typing import Optional
 
 from mutagen.wave import WAVE
 
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, AppMetadataKeys
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, AppMetadataKey
 from bodzify_api.utils.audio_metadata.manager.constants import ID3V1_AND_RIFF_GENRE_MAP
 from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
 
@@ -121,25 +121,25 @@ class RiffManager(MetadataManager):
             normalized_metadata_value,
             app_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
-        if app_metadata_key == AppMetadataKeys.TITLE:
+        if app_metadata_key == AppMetadataKey.TITLE:
             riff_tag_key = self.RiffTagKeys.TITLE
-        elif app_metadata_key == AppMetadataKeys.ARTISTS_NAMES_STR:
+        elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:
             riff_tag_key = self.RiffTagKeys.ARTIST_NAME
-        elif app_metadata_key == AppMetadataKeys.ALBUM_NAME:
+        elif app_metadata_key == AppMetadataKey.ALBUM_NAME:
             riff_tag_key = self.RiffTagKeys.ALBUM_NAME
-        elif app_metadata_key == AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
+        elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
             riff_tag_key = self.RiffTagKeys.ALBUM_ARTISTS_NAMES
-        elif app_metadata_key == AppMetadataKeys.GENRE_NAME:
+        elif app_metadata_key == AppMetadataKey.GENRE_NAME:
             riff_tag_key = self.RiffTagKeys.GENRE_NAME
-        elif app_metadata_key == AppMetadataKeys.RATING:
+        elif app_metadata_key == AppMetadataKey.RATING:
             raise UnsupportedMetadataError("RIFF format does not support ratings")
-        elif app_metadata_key == AppMetadataKeys.BPM:
+        elif app_metadata_key == AppMetadataKey.BPM:
             raise UnsupportedMetadataError("RIFF format does not support BPM metadata")
-        elif app_metadata_key == AppMetadataKeys.LANGUAGE:
+        elif app_metadata_key == AppMetadataKey.LANGUAGE:
             riff_tag_key = self.RiffTagKeys.LANGUAGE
-        elif app_metadata_key == AppMetadataKeys.RELEASE_DATE:
+        elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
             riff_tag_key = self.RiffTagKeys.RELEASE_DATE
-        elif app_metadata_key == AppMetadataKeys.TRACK_NUMBER:
+        elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
             riff_tag_key = self.RiffTagKeys.PART
         else:
             raise UnsupportedMetadataError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)

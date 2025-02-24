@@ -18,7 +18,7 @@ class TagFormat(str, Enum):
             Dictionary mapping file extensions to ordered list of tag types
         """
         return {
-            '.flac': [cls.VORBIS, cls.ID3V2],  # Prefer Vorbis comments over ID3v2 tags for FLAC
-            '.mp3': [cls.ID3V2, cls.ID3V1],    # Prefer ID3v2 over ID3v1 for MP3
-            '.wav': [cls.RIFF]                  # WAV files only use RIFF metadata
+            '.flac': [cls.VORBIS, cls.ID3V2],
+            '.mp3': [cls.ID3V2, cls.ID3V1],
+            '.wav': [cls.RIFF, cls.ID3V2],
         }

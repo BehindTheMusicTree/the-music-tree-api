@@ -5,7 +5,7 @@ from mutagen.id3._util import ID3NoHeaderError
 
 from bodzify_api import settings
 from ...audio_file import AudioFile
-from ...AppMetadataKeys import AppMetadataKeys
+from ...AppMetadataKey import AppMetadataKey
 from .Id3Manager import Id3Manager
 
 
@@ -287,22 +287,22 @@ class Id3v2Manager(Id3Manager):
             normalized_metadata_value,
             app_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
-        if app_metadata_key == AppMetadataKeys.TITLE:
+        if app_metadata_key == AppMetadataKey.TITLE:
             id3_key = self.Id3TextFrames.TITLE
             text_frame_class = TIT2
-        elif app_metadata_key == AppMetadataKeys.ARTISTS_NAMES_STR:
+        elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:
             id3_key = self.Id3TextFrames.ARTIST_NAME
             text_frame_class = TPE1
-        elif app_metadata_key == AppMetadataKeys.ALBUM_NAME:
+        elif app_metadata_key == AppMetadataKey.ALBUM_NAME:
             id3_key = self.Id3TextFrames.ALBUM_NAME
             text_frame_class = TALB
-        elif app_metadata_key == AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
+        elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
             id3_key = self.Id3TextFrames.ALBUM_ARTISTS_NAMES
             text_frame_class = TPE2
-        elif app_metadata_key == AppMetadataKeys.GENRE_NAME:
+        elif app_metadata_key == AppMetadataKey.GENRE_NAME:
             id3_key = self.Id3TextFrames.GENRE_NAME
             text_frame_class = TCON
-        elif app_metadata_key == AppMetadataKeys.RATING:
+        elif app_metadata_key == AppMetadataKey.RATING:
             normalized_rating = normalized_metadata_value
             self.file_raw_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
             if normalized_rating:
@@ -314,16 +314,16 @@ class Id3v2Manager(Id3Manager):
                     rating_file_profile=self.RatingFileProfile.BASE_255)
                 self.file_raw_metadata.add(POPM(email=self.ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
             return
-        elif app_metadata_key == AppMetadataKeys.LANGUAGE:
+        elif app_metadata_key == AppMetadataKey.LANGUAGE:
             id3_key = self.Id3TextFrames.LANGUAGE
             text_frame_class = TLAN
-        elif app_metadata_key == AppMetadataKeys.RELEASE_DATE:
+        elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
             id3_key = self.Id3TextFrames.RECORDING_TIME
             text_frame_class = TDRC
-        elif app_metadata_key == AppMetadataKeys.TRACK_NUMBER:
+        elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
             id3_key = self.Id3TextFrames.TRACK_NUMBER
             text_frame_class = TRCK
-        elif app_metadata_key == AppMetadataKeys.BPM:
+        elif app_metadata_key == AppMetadataKey.BPM:
             id3_key = self.Id3TextFrames.BPM
             text_frame_class = TBPM
         else:
