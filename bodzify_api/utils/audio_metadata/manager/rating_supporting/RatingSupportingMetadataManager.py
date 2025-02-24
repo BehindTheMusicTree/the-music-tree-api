@@ -10,30 +10,29 @@ Rating Compatibility Table Across Different Audio Players
 The following table shows how different audio players handle ratings across various audio formats.
 Values represent the actual numbers written to files for each star rating (0-5 stars).
 
-+-------+----------------------+----------------------+---------------------+----------------------+----------------------+-------------+
-| Stars | kid3/Lollypop        | Windows Media Player |      MusicBee       | Winamp               |       Traktor        | iTunes      |
-|       | mp3    wav    flac   | mp3    wav    flac   | mp3    wav    flac  | mp3    wav    flac   | mp3    wav    flac   | Don't write |
-|       | id3v2  riff  vorbis  | id3v2  riff  vorbis  | id3v2  riff  vorbis | id3v2  riff  vorbis  | id3v2  riff  vorbis  | rating tags |
-|       | OK     OK     OK     | OK     ✗      OK     | OK     OK     OK    | OK     ✗      OK     | OK     ✗      OK     |      ✗      |
-+-------+----------------------+----------------------+---------------------+----------------------+----------------------+-------------+
-| None  | ✗      ✗      ✗      | ✗             ✗      | ✗      ✗      ✗     | ✗             ✗      | 0             0      |             |
-| 0     |                      |                      | 0      0      0     |                      |                      |             |
-| 0.5   |                      |                      | 13     10     10    |                      |                      |             |
-| 1     | 1      1      20     | 1             20     | 1      20     20    | 1             20     | 51            51     |             |
-| 1.5   |                      |                      | 54     30     30    |                      |                      |             |
-| 2     | 64     64     40     | 64            40     | 64     40     40    | 64            40     | 102           102    |             |
-| 2.5   |                      |                      | 118    50     50    |                      |                      |             |
-| 3     | 128    128    60     | 128           60     | 128    60     60    | 128           60     | 153           153    |             |
-| 3.5   |                      |                      | 186    70     70    |                      |                      |             |
-| 4     | 196    196    80     | 196           80     | 196    80     80    | 196           80     | 204           204    |             |
-| 4.5   |                      |                      | 242    90     90    |                      |                      |             |
-| 5     | 255    255    100    | 255           100    | 255    100    100   | 255           100    | 255           255    |             |
-+-------+----------------------+----------------------+---------------------+----------------------+----------------------+-------------+
++-------+----------------+---------------+-----------------+---------------+--------------+-----------+
+| Stars |  kid3/Lollypop |      WMP      |     MusicBee    |     Winamp    |    Traktor   |   iTunes  |
+|       | mp3  wav  flac | mp3  wav flac | mp3  wav  flac  | mp3  wav flac | mp3 wav flac |Don't write|
+|       |id3v2 riff vorb.|id3v2  ✗  vorb.|id3v2 id3v2 vorb.|id3v2  ✗  vorb.|id3v2 ✗  vorb.|rating tags|
++-------+----------------+---------------+-----------------+---------------+--------------+-----------+
+| None  |  ✗    ✗    ✗   |  ✗         ✗  |  ✗    ✗    ✗    |  ✗        ✗   |  0        0  |           |
+|  0    |                |               |  0    0    0    |               |              |           |
+| 0.5   |                |               | 13   10   10    |               |              |           |
+|  1    |  1    1    20  |  1         20 |  1   20   20    |  1        20  | 51        51 |           |
+| 1.5   |                |               | 54   30   30    |               |              |           |
+|  2    | 64    64   40  | 64         40 | 64   40   40    | 64        40  |102       102 |           |
+| 2.5   |                |               |118   50   50    |               |              |           |
+|  3    | 128   128  60  | 128        60 |128   60   60    | 128       60  |153       153 |           |
+| 3.5   |                |               |186   70   70    |               |              |           |
+|  4    | 196   196  80  | 196        80 |196   80   80    | 196       80  |204       204 |           |
+| 4.5   |                |               |242   90   90    |               |              |           |
+|  5    | 255   255  100 | 255       100 |255  100  100    | 255       100 |255       255 |           |
++-------+----------------+---------------+-----------------+---------------+--------------+-----------+
 
 Legend:
 ✗ = No tag written
   = Rating value not supported
-OK = Can write ratings
+✓ = Can write ratings
 
 Rating scale type:
 - 255 star: Values 0-255 representing star ratings
