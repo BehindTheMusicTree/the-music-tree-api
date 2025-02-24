@@ -13,8 +13,8 @@ from .Fields import Fields
 
 class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
     title = CharFilter(field_name=ModelFields.TITLE, lookup_expr='icontains')
-    artists_name = CharFilter(method=f'filter_{ModelFields.ARTISTS}_{ArtistFields.NAME}')
-    album_name = CharFilter(method=f'filter_{ModelFields.ALBUM}_{AlbumFields.NAME}')
+    artists_name = CharFilter(method=f'filter_{ModelFields.ARTISTS}_{ArtistFields.NAME_PUBLIC}')
+    album_name = CharFilter(method=f'filter_{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}')
     genre_name = CharFilter(method=f'filter_{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}')
     language = CharFilter(field_name=ModelFields.LANGUAGE, lookup_expr='icontains')
 
