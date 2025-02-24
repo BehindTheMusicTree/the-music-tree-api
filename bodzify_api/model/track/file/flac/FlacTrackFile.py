@@ -17,11 +17,9 @@ class FlacTrackFile(TrackFile):
     md5_has_been_corrected = models.BooleanField(default=False)
 
     def _prepare_save(self, ctx) -> dict:
-        id3v2_tags = audio_metadata.get_raw_metadata(self.file, tag_formats=[TagFormat.ID3V2])
+        id3v2_tags = audio_metadata.get_raw_metadata(self.file, tag_format=TagFormat.ID3V2)
         if id3v2_tags:
-            delete_result = audio_metadata.delete_metadata(self.file, [TagFormat.ID3V2])
-            id3v2_tags = audio_metadata.get_raw_metadata(self.file, tag_formats=[TagFormat.ID3V2])
-            if not delete_result.get(TagFormat.ID3V2, False):
+            if not audio_metadata.delete_metadata(self.file, TagFormat.ID3V2):
                 raise AppValidationError(
                     field_name=Fields.FILE,
                     message='Failed to clear ID3v2 tags from FLAC file.',

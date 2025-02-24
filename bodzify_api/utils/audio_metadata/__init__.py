@@ -170,9 +170,8 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[i
     return result
 
 
-def get_prioritized_specific_metadata(file, app_metadata_key: AppMetadataKey) -> MetadataValue:
-    manager = _get_metadata_manager(file)
-    value = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
+def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> MetadataValue:
+    value = _get_metadata_manager(file).get_specific_file_metadata(app_metadata_key=app_metadata_key)
     if value is not None and isinstance(value, MetadataValue):
         return value
     return ""  # Return empty string as fallback
@@ -183,13 +182,8 @@ def update_metadata(file, app_metadata_dict: AppMetadataDict, normalized_rating_
         app_metadata_dict=app_metadata_dict, normalized_rating_max_value=normalized_rating_max_value)
 
 
-def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> dict[TagFormat, bool]:
-    manager = _get_metadata_manager(file, tag_format=tag_format)
-    results = {}
-    if manager:
-        results[tag_format if tag_format else TagFormat.ID3V2] = manager.delete_metadata()
-        results[tag_format] = manager.delete_metadata()
-    return results
+def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> bool:
+    return _get_metadata_manager(file, tag_format=tag_format).delete_metadata()
 
 
 def get_bitrate(file) -> int:

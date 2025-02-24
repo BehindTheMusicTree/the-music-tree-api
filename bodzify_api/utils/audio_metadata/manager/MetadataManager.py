@@ -242,7 +242,6 @@ class MetadataManager:
                         app_metadata_key=key,
                         normalized_rating_max_value=normalized_rating_max_value)
                 else:
-                    self.update_specific_without_saving(app_metadata_value=value,
-                                                        app_metadata_key=key)
+                    self.update_specific_without_saving(app_metadata_value=value, app_metadata_key=key)
 
         self.file_raw_metadata.save(self.audio_file.path)  # type: ignore

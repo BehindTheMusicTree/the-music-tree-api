@@ -93,9 +93,6 @@ class TrackFile(PrivateStandardResource):
             return self.file.name + " (" + str(self.size_in_bytes) + " bytes)"
         return ""
 
-    def _get_bitrate(self) -> Optional[int]:
-        return audio_metadata.get_bitrate(self.file)
-
     def _manage_fingerprint(self) -> Optional[FingerprintingResult]:
         audio_meta_analysis_enabled_override_env_var = os.environ.get('AUDIO_META_ANALYSIS_ENABLED_OVERRIDE', None)
         if audio_meta_analysis_enabled_override_env_var:
@@ -166,10 +163,9 @@ class TrackFile(PrivateStandardResource):
         return musicbrainz_recording_lookup_result
 
     def _prepare_save(self, ctx) -> dict:
-        duration_in_sec: str = audio_metadata.get_specific_metadata(
-            file=self.file, app_metadata_key=AppMetadataKey.DURATION_IN_SEC)
-        self.duration_in_sec = int(duration_in_sec)
-        self.bitrate_in_kbps = self._get_bitrate()
+        self.duration_in_sec = cast(int, audio_metadata.get_specific_metadata(
+            file=self.file, app_metadata_key=AppMetadataKey.DURATION_IN_SEC))
+        self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
         self.size_in_bytes = self.file.size
         return ctx.kwargs
 
