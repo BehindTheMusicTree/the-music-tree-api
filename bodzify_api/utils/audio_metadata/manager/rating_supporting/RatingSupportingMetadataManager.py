@@ -37,7 +37,7 @@ Legend:
   = Rating value not supported
 ✓ = Can write ratings
 
-Rating scale type:
+Rating Profiles:
 A. 255 star: Values 0-255 representing star ratings
 B. 100 prop: Values 0-100 representing proportional ratings
 C. 255 prop: Values 0-255 representing proportional ratings
