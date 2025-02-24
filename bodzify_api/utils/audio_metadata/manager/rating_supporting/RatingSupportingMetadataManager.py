@@ -10,22 +10,23 @@ Rating Compatibility Table Across Different Audio Players
 The following table shows how different audio players handle ratings across various audio formats.
 Values represent the actual numbers written to files for each star rating (0-5 stars).
 
-kid3/Lollypop      wmp                 musicbee            winamp              traktor     
-    mp3 wav flac   mp3 wav flac        mp3 wav flac       mp3 wav flac        mp3 wav flac
-    OK  OK  OK     OK  X   OK          OK  OK  OK         OK  X   OK          OK  X   OK    (X = doesn't write ratings)
++-----+--------------+-------------+-------------+------------+--------------+
+        kid3/Lollypop      wmp         musicbee       winamp      traktor     
+        mp3 wav flac   mp3 wav flac  mp3 wav flac  mp3 wav flac  mp3 wav flac
+        OK  OK  OK     OK  X   OK    OK  OK  OK    OK  X   OK    OK  X   OK    (X = doesn't write ratings) 
 
-None No  No  No    No  -   No          No  No  No         No  -   No          0   -   0     (No = No tag, - = unsupported)
-0    -   -   -     -   -   -          0   0   0          -   -   -           -   -   -
-0.5  -   -   -     -   -   -          13  10  10         -   -   -           -   -   -
-1    1   1   20    1   -   20         1   20  20         1   -   20          51  -   51
-1.5  -   -   -     -   -   -          54  30  30         -   -   -           -   -   -
-2    64  64  40    64  -   40         64  40  40         64  -   40          102 -   102
-2.5  -   -   -     -   -   -          118 50  50         -   -   -           -   -   -
-3    128 128 60    128 -   60         128 60  60         128 -   60          153 -   153
-3.5  -   -   -     -   -   -          186 70  70         -   -   -           -   -   -
-4    196 196 80    196 -   80         196 80  80         196 -   80          204 -   204
-4.5  -   -   -     -   -   -          242 90  90         -   -   -           -   -   -
-5    255 255 100   255 -   100        255 100 100        255 -   100         255 -   255
+  None  No  No  No    No  -   No    No  No  No    No  -   No    0   -   0     (No = No tag, - = unsupported)
+   0    -   -   -     -   -   -     0   0   0     -   -   -     -   -   -
+   0.5  -   -   -     -   -   -     13  10  10    -   -   -     -   -   -
+   1    1   1   20    1   -   20    1   20  20    1   -   20    51  -   51
+   1.5  -   -   -     -   -   -     54  30  30    -   -   -     -   -   -
+   2    64  64  40    64  -   40    64  40  40    64  -   40    102 -   102
+   2.5  -   -   -     -   -   -     118 50  50    -   -   -     -   -   -
+   3    128 128 60    128 -   60    128 60  60    128 -   60    153 -   153
+   3.5  -   -   -     -   -   -     186 70  70    -   -   -     -   -   -
+   4    196 196 80    196 -   80    196 80  80    196 -   80    204 -   204
+   4.5  -   -   -     -   -   -     242 90  90    -   -   -     -   -   -
+   5    255 255 100   255 -   100   255 100 100   255 -   100   255 -   255
 
 Rating scale type:
 - 255 star: Values 0-255 representing star ratings
