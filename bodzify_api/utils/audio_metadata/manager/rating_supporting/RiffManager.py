@@ -53,7 +53,7 @@ class RiffManager(MetadataManager):
         COPYRIGHT = 'ICOP'
         TECHNICIAN = 'ITCH'
 
-    def extract_raw_metadata(self) -> Dict:
+    def extract_raw_metadata_dict(self) -> Dict:
         self.audio_file.seek(0)
         wave_file = WAVE(io.BytesIO(self.audio_file.read()))
         return {

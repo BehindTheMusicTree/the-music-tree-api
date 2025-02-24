@@ -190,7 +190,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             tags = ID3()
             tags.save(self.audio_file.file_path, v2_version=3)  # Explicitly save as ID3v2.3
 
-    def extract_raw_metadata(self) -> Dict:
+    def extract_raw_metadata_dict(self) -> Dict:
         try:
             tags = ID3(self.audio_file.file_path)
             # Force v2.3 update to ensure compatibility

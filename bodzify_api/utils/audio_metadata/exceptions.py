@@ -14,11 +14,11 @@ class InvalidChunkDecodeError(FileCorruptedError):
     pass
 
 
-class FileTypeNotSupportedError(Exception):
+class DurationNotFoundError(FileCorruptedError):
     pass
 
 
-class DurationNotFoundError(Exception):
+class FileTypeNotSupportedError(Exception):
     pass
 
 

@@ -134,7 +134,7 @@ def _get_metadata_managers(file, tag_formats: Optional[list[TagFormat]] = None) 
     return managers
 
 
-def get_raw_metadata(file, tag_format: Optional[TagFormat] = None) -> RawMetadataDict:
+def extract_raw_metadata_dict(file, tag_format: Optional[TagFormat] = None) -> RawMetadataDict:
     return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
 
 

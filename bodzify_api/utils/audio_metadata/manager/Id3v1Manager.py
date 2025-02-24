@@ -64,7 +64,7 @@ class Id3v1Manager(MetadataManager):
         }
         super().__init__(audio_file=audio_file, metadata_keys_direct_map=metadata_keys_diract_map)
 
-    def extract_raw_metadata(self) -> Dict:
+    def extract_raw_metadata_dict(self) -> Dict:
         """Read ID3v1 tag from the end of the file."""
         self.audio_file.seek(-128, 2)  # Seek from end
         data = self.audio_file.read(128)

@@ -13,7 +13,7 @@ from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingProfile im
 
 from ...AudioFile import AudioFile
 from ...exceptions import InvalidChunkDecodeError
-from ...types import MetadataValue, RawMetadataKey
+from ...types import MetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -93,7 +93,7 @@ class VorbisManager(RatingSupportingMetadataManager):
                          metadata_keys_direct_map=metadata_keys_direct_map,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def get_raw_metadata(self) -> Dict:
+    def extract_raw_metadata_dict(self) -> RawMetadataDict:
         self.audio_file.seek(0)
         try:
             return FLAC(io.BytesIO(self.audio_file.read())).tags

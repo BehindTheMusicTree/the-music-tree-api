@@ -129,12 +129,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 field_name=Fields.TRACK_FILE_PUBLIC,
                 message=str(exc),
                 field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
-        except Exception as error:
-            raise AppValidationError(
-                field_name=Fields.TRACK_FILE_PUBLIC,
-                message=_('Error while extracting metadata from file: %(error)s') % {'error': str(error)},
-                field_validation_error_code=FieldValidationErrorCode.METADATA_EXTRACTION_FAILED
-            )
 
         schema_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
             Dict=normalized_metadata,

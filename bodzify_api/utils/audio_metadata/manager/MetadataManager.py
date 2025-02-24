@@ -27,15 +27,15 @@ class MetadataManager:
     def __init__(self, audio_file: AudioFile, metadata_keys_direct_map: Dict[AppMetadataKey, Optional[RawMetadataKey]]):
         self.audio_file = audio_file
         self.metadata_keys_direct_map = metadata_keys_direct_map
-        self.file_raw_metadata = self.extract_raw_metadata()
+        self.file_raw_metadata = self.extract_raw_metadata_dict()
 
     @abstractmethod
     def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> Optional[str]:
         raise NotImplementedError()
 
     @abstractmethod
-    def extract_raw_metadata(self) -> RawMetadataDict:
-        raise NotImplementedError(f"{self.extract_raw_metadata.__name__} method must be implemented.")
+    def extract_raw_metadata_dict(self) -> RawMetadataDict:
+        raise NotImplementedError(f"{self.extract_raw_metadata_dict.__name__} method must be implemented.")
 
     @abstractmethod
     def delete_metadata(self) -> bool:
