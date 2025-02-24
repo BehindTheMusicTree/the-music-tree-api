@@ -3,7 +3,7 @@ from typing import Dict, Optional, cast
 import struct
 
 from ..AudioFile import AudioFile
-from ..types import MetadataValue, RawMetadataKey
+from ..types import AppMetadataValue, RawMetadataKey
 from ..exceptions import UnsupportedMetadataError
 from ..AppMetadataKey import AppMetadataKey
 from .id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
@@ -141,7 +141,7 @@ class Id3v1Manager(MetadataManager):
         return self._get_int_metadata_value(AppMetadataKey.TRACK_NUMBER)
 
     def update_specific_without_saving(
-            self, app_metadata_value: MetadataValue, app_metadata_key: AppMetadataKey,
+            self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
             normalized_rating_max_value: Optional[int] = None):
         raise UnsupportedMetadataError(
             "ID3v1 tag modification is not supported (fixed-length format)")

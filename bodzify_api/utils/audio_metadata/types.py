@@ -9,6 +9,11 @@ class RawMetadataKey(Enum):
     pass
 
 
-MetadataValue = str | int | float
-RawMetadataDict = Dict[RawMetadataKey, MetadataValue]
-AppMetadataDict = Dict[AppMetadataKey, MetadataValue]
+AppMetadataValue = str | int | float
+
+"""
+Raw metadata value can be string (title), integer (rating), float(BPM) or lists (Vorbis).
+"""
+RawMetadataValue = str | int | float | list
+RawMetadataDict = Dict[RawMetadataKey, RawMetadataValue]
+AppMetadataDict = Dict[AppMetadataKey, AppMetadataValue]

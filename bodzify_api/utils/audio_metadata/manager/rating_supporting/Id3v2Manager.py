@@ -169,7 +169,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         TRACK_NUMBER = 'TRCK'
         BPM = 'TBPM'
 
-    def __init__(self, audio_file: AudioFile):
+    def __init__(self, audio_file: AudioFile, normalized_rating_max_value: Optional[int] = None):
         metadata_keys_direct_mapping = {
             AppMetadataKey.TITLE: self.Id3TextFrames.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: self.Id3TextFrames.ARTIST_NAME,
@@ -179,7 +179,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.Id3TextFrames.LANGUAGE,
         }
-        super().__init__(audio_file, metadata_keys_direct_mapping)
+        super().__init__(audio_file, metadata_keys_direct_mapping, normalized_rating_max_value)
 
         try:
             tags = ID3(self.audio_file.file_path)
@@ -192,7 +192,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
 
     def extract_raw_metadata_dict(self) -> Dict:
         try:
-            tags = ID3(self.audio_file.file_path)
+            tags = ID3(self.audio_file.get_file_path_or_object())
             # Force v2.3 update to ensure compatibility
             tags.update_to_v23()
             return tags  # type: ignore

@@ -8,7 +8,7 @@ from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 from bodzify_api.utils.audio_metadata.AudioFile import AudioFile
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager
 from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingProfile import RatingProfile
-from bodzify_api.utils.audio_metadata.types import MetadataValue, RawMetadataKey
+from bodzify_api.utils.audio_metadata.types import AppMetadataValue, RawMetadataKey
 
 
 class RatingSupportingMetadataManager(MetadataManager):
@@ -37,10 +37,11 @@ class RatingSupportingMetadataManager(MetadataManager):
         raise NotImplementedError()
 
     @abstractmethod
-    def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> Optional[MetadataValue]:
+    def _get_undirectly_mapped_metadata_value_other_than_rating(
+            self, key: AppMetadataKey) -> Optional[AppMetadataValue]:
         raise NotImplementedError()
 
-    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> Optional[MetadataValue]:
+    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> Optional[AppMetadataValue]:
         if app_metadata_key == AppMetadataKey.RATING:
             return self._get_eventually_normalized_rating_from_file()
         else:

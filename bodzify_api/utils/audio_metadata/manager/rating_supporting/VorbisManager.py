@@ -13,7 +13,7 @@ from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingProfile im
 
 from ...AudioFile import AudioFile
 from ...exceptions import InvalidChunkDecodeError
-from ...types import MetadataValue, RawMetadataDict, RawMetadataKey
+from ...types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -94,9 +94,8 @@ class VorbisManager(RatingSupportingMetadataManager):
                          normalized_rating_max_value=normalized_rating_max_value)
 
     def extract_raw_metadata_dict(self) -> RawMetadataDict:
-        self.audio_file.seek(0)
         try:
-            return FLAC(io.BytesIO(self.audio_file.read())).tags
+            return FLAC(self.audio_file.get_file_path_or_object()).tags
         except Exception as error:
             error_str = str(error)
             if "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
@@ -110,7 +109,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         return self._get_first_value_int_if_exists_in_raw_metadata_or_none(key=self.VorbisKey.RATING_TRAKTOR)
 
     def _get_undirectly_mapped_metadata_value_other_than_rating(
-            self, app_metadata_key: AppMetadataKey) -> Optional[MetadataValue]:
+            self, app_metadata_key: AppMetadataKey) -> Optional[AppMetadataValue]:
         if app_metadata_key == AppMetadataKey.GENRE_NAME:
             return self._get_genre_name()
         elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
@@ -137,40 +136,41 @@ class VorbisManager(RatingSupportingMetadataManager):
         return None
 
     def update_specific_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey):
+        vorbis_key: RawMetadataKey
         if app_metadata_key == AppMetadataKey.TITLE:
-            vorbis_tag_key = self.VorbisKey.TITLE
+            vorbis_key = self.VorbisKey.TITLE
         elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:
-            vorbis_tag_key = self.VorbisKey.ARTIST_NAME
+            vorbis_key = self.VorbisKey.ARTIST_NAME
         elif app_metadata_key == AppMetadataKey.ALBUM_NAME:
-            vorbis_tag_key = self.VorbisKey.ALBUM_NAME
+            vorbis_key = self.VorbisKey.ALBUM_NAME
         elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
-            vorbis_tag_key = self.VorbisKey.ALBUM_ARTISTS_NAMES
+            vorbis_key = self.VorbisKey.ALBUM_ARTISTS_NAMES
         elif app_metadata_key == AppMetadataKey.GENRE_NAME:
-            vorbis_tag_key = self.VorbisKey.GENRE_NAME
+            vorbis_key = self.VorbisKey.GENRE_NAME
         elif app_metadata_key == AppMetadataKey.RATING:
             app_rating = app_metadata_value
-            vorbis_tag_key = self.VorbisKey.RATING
+            vorbis_key = self.VorbisKey.RATING
             if app_rating:
                 vorbis_rating = self._convert_normalized_rating_to_file_rating(
                     normalized_rating=app_rating, rating_profile=RatingProfile.BASE_100)
                 app_metadata_value = str(vorbis_rating)
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
-            vorbis_tag_key = self.VorbisKey.LANGUAGE
+            vorbis_key = self.VorbisKey.LANGUAGE
         elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
-            vorbis_tag_key = self.VorbisKey.DATE
+            vorbis_key = self.VorbisKey.DATE
         elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
-            vorbis_tag_key = self.VorbisKey.TRACK_NUMBER
+            vorbis_key = self.VorbisKey.TRACK_NUMBER
         elif app_metadata_key == AppMetadataKey.BPM:
-            vorbis_tag_key = self.VorbisKey.BPM
+            vorbis_key = self.VorbisKey.BPM
         else:
             raise ImproperlyConfigured('Metadata key not handled')
 
         if app_metadata_value:
-            if vorbis_tag_key not in self.file_raw_metadata:
-                self.file_raw_metadata[vorbis_tag_key] = [1]
-            self.file_raw_metadata[vorbis_tag_key] = app_metadata_value
-        elif vorbis_tag_key in self.file_raw_metadata:
-            del self.file_raw_metadata[vorbis_tag_key]
+            if vorbis_key not in self.file_raw_metadata:
+                self.file_raw_metadata[vorbis_key] = [1]
+            self.file_raw_metadata[vorbis_key] = app_metadata_value
+        elif vorbis_key in self.file_raw_metadata:
+            del self.file_raw_metadata[vorbis_key]
 
     def delete_metadata(self) -> bool:
         """Delete all metadata from the FLAC/Vorbis file.

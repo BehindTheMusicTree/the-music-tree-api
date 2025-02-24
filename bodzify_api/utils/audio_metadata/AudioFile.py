@@ -117,20 +117,14 @@ class AudioFile:
         self.close()
 
     def get_file_path_or_object(self):
-        if isinstance(self.file, (TemporaryUploadedFile, FieldFile)):
-            return self.file_path
-        elif isinstance(self.file, InMemoryUploadedFile):
+        if isinstance(self.file, (InMemoryUploadedFile)):
             temp_file = tempfile.NamedTemporaryFile(delete=False)
             for chunk in self.file.chunks():
                 temp_file.write(chunk)
             temp_file.close()
             return temp_file.name
-        elif isinstance(self.file, DjangoFile):
-            return self.file.name
-        elif isinstance(self.file, str):
-            return self.file
         else:
-            raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
+            return self.file_path
 
     def get_file_name(self):
         if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, DjangoFile)):

@@ -79,7 +79,7 @@ from django.db.models.fields.files import FieldFile
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.utils.audio_metadata.types import AppMetadataDict, RawMetadataDict, MetadataValue
+from bodzify_api.utils.audio_metadata.types import AppMetadataDict, RawMetadataDict, AppMetadataValue
 
 
 from .exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
@@ -170,9 +170,9 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[i
     return result
 
 
-def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> MetadataValue:
+def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
     value = _get_metadata_manager(file).get_specific_metadata(app_metadata_key=app_metadata_key)
-    if value is not None and isinstance(value, MetadataValue):
+    if value is not None and isinstance(value, AppMetadataValue):
         return value
     return ""  # Return empty string as fallback
 

@@ -11,7 +11,7 @@ from tinytag import TinyTag, TinyTagException
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from ..types import AppMetadataDict, MetadataValue, RawMetadataDict, RawMetadataKey
+from ..types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..AudioFile import AudioFile
 from ..exceptions import DurationNotFoundError, UnsupportedMetadataError
 from ..AppMetadataKey import AppMetadataKey
@@ -46,7 +46,7 @@ class MetadataManager:
         raise NotImplementedError(f"{self.delete_metadata.__name__} method must be implemented.")
 
     @abstractmethod
-    def update_specific_without_saving(self, app_metadata_value: MetadataValue, app_metadata_key: AppMetadataKey,
+    def update_specific_without_saving(self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
                                        normalized_rating_max_value: Optional[int] = None):
         raise NotImplementedError(
             f"{self.update_specific_without_saving.__name__} method must be implemented.")
