@@ -87,10 +87,10 @@ from .AppMetadataKey import AppMetadataKey
 from .AudioFile import AudioFile
 from .TagFormat import TagFormat
 from .manager.MetadataManager import MetadataManager
-from .manager.riff.RiffManager import RiffManager
-from .manager.id3.Id3v1Manager import Id3v1Manager
-from .manager.id3.Id3v2Manager import Id3v2Manager
-from .manager.vorbis.VorbisManager import VorbisManager
+from .manager.rating_supporting.RiffManager import RiffManager
+from .manager.Id3v1Manager import Id3v1Manager
+from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
+from .manager.rating_supporting.VorbisManager import VorbisManager
 
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
@@ -152,7 +152,7 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[i
 
     # Get normalized metadata from each manager
     for tag_format, manager in managers.items():
-        metadata[tag_format] = manager.get_normalized_metadata(normalized_rating_max_value)
+        metadata[tag_format] = manager.get_app_metadata_dict(normalized_rating_max_value)
 
     priorities = TagFormat.get_priorities().get(audio_file.file_extension, [])
     if not priorities:
@@ -171,7 +171,7 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[i
 
 
 def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> MetadataValue:
-    value = _get_metadata_manager(file).get_specific_file_metadata(app_metadata_key=app_metadata_key)
+    value = _get_metadata_manager(file).get_specific_metadata(app_metadata_key=app_metadata_key)
     if value is not None and isinstance(value, MetadataValue):
         return value
     return ""  # Return empty string as fallback
@@ -188,6 +188,10 @@ def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> bool:
 
 def get_bitrate(file) -> int:
     return AudioFile(file).get_bitrate()
+
+
+def get_duration_in_sec(file) -> float:
+    return AudioFile(file).get_duration()
 
 
 def is_flac_md5_valid(file, check_id3v2: bool = False):

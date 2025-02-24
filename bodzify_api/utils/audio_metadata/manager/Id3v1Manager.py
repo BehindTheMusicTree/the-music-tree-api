@@ -1,15 +1,16 @@
+
 from typing import Dict, Optional, cast
 import struct
 
-from bodzify_api.utils.audio_metadata.types import MetadataValue
+from ..AudioFile import AudioFile
+from ..types import MetadataValue, RawMetadataKey
+from ..exceptions import UnsupportedMetadataError
+from ..AppMetadataKey import AppMetadataKey
+from .id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
+from .MetadataManager import MetadataManager
 
-from ...exceptions import UnsupportedMetadataError
-from ...AppMetadataKey import AppMetadataKey
-from ..constants import ID3V1_AND_RIFF_GENRE_MAP
-from .Id3Manager import Id3Manager
 
-
-class Id3v1Manager(Id3Manager):
+class Id3v1Manager(MetadataManager):
     """
     Manages ID3v1 metadata for audio files.
 
@@ -48,7 +49,22 @@ class Id3v1Manager(Id3Manager):
     Note 2: The genre code is an index into a predefined list of genres. 
     """
 
-    def get_raw_metadata(self) -> Dict:
+    class Id3v1RawMetadataKey(RawMetadataKey):
+        TITLE = AppMetadataKey.TITLE.value
+        ARTISTS_NAMES_STR = AppMetadataKey.ARTISTS_NAMES_STR.value
+        ALBUM_NAME = AppMetadataKey.ALBUM_NAME.value
+        GENRE_NAME = AppMetadataKey.GENRE_NAME.value
+
+    def __init__(self, audio_file: AudioFile):
+        metadata_keys_diract_map: Dict = {
+            AppMetadataKey.TITLE: self.Id3v1RawMetadataKey.TITLE,
+            AppMetadataKey.ARTISTS_NAMES_STR: self.Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
+            AppMetadataKey.ALBUM_NAME: self.Id3v1RawMetadataKey.ALBUM_NAME,
+            AppMetadataKey.GENRE_NAME: self.Id3v1RawMetadataKey.GENRE_NAME,
+        }
+        super().__init__(audio_file=audio_file, metadata_keys_direct_map=metadata_keys_diract_map)
+
+    def extract_raw_metadata(self) -> Dict:
         """Read ID3v1 tag from the end of the file."""
         self.audio_file.seek(-128, 2)  # Seek from end
         data = self.audio_file.read(128)
@@ -76,18 +92,18 @@ class Id3v1Manager(Id3Manager):
         metadata = {}
 
         if title:
-            metadata[AppMetadataKey.TITLE] = [title]
+            metadata[AppMetadataKey.TITLE.value] = [title]
         if artist:
-            metadata[AppMetadataKey.ARTISTS_NAMES_STR] = [artist]
+            metadata[AppMetadataKey.ARTISTS_NAMES_STR.value] = [artist]
         if album:
-            metadata[AppMetadataKey.ALBUM_NAME] = [album]
+            metadata[AppMetadataKey.ALBUM_NAME.value] = [album]
         if year:
-            metadata[AppMetadataKey.RELEASE_DATE] = [year]
+            metadata[AppMetadataKey.RELEASE_DATE.value] = [year]
         # Comments are not part of normalized metadata
-        if genre < len(ID3V1_AND_RIFF_GENRE_MAP):
-            metadata[AppMetadataKey.GENRE_NAME] = [genre]
+        if genre < len(ID3V1_AND_RIFF_GENRE_CODE_MAP):
+            metadata[AppMetadataKey.GENRE_NAME.value] = [genre]
         if track and track != '0':
-            metadata[AppMetadataKey.TRACK_NUMBER] = [track]
+            metadata[AppMetadataKey.TRACK_NUMBER.value] = [track]
 
         return metadata
 
@@ -114,9 +130,9 @@ class Id3v1Manager(Id3Manager):
         genre_code = self._get_int_metadata_value(AppMetadataKey.GENRE_NAME)
         if not genre_code:
             return None
-        if not 0 <= genre_code < len(ID3V1_AND_RIFF_GENRE_MAP):
+        if not 0 <= genre_code < len(ID3V1_AND_RIFF_GENRE_CODE_MAP):
             return None
-        return ID3V1_AND_RIFF_GENRE_MAP[genre_code]
+        return ID3V1_AND_RIFF_GENRE_CODE_MAP[genre_code]
 
     def get_release_date_str(self) -> Optional[str]:
         return self._get_str_metadata_value(AppMetadataKey.RELEASE_DATE)

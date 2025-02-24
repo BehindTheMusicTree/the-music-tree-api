@@ -18,6 +18,10 @@ class FileTypeNotSupportedError(Exception):
     pass
 
 
+class DurationNotFoundError(Exception):
+    pass
+
+
 class UnsupportedMetadataError(Exception):
     """Raised when attempting to read or write metadata not supported by the format.
 

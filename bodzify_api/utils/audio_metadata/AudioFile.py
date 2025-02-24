@@ -43,6 +43,20 @@ class AudioFile:
         self.file_extension = file_extension
         return
 
+    def get_duration(self) -> float:
+        path = self.get_file_path_or_object()
+        if self.file_extension == '.mp3':
+            audio = MP3(path)
+            return audio.info.length
+        elif self.file_extension == '.wav':
+            audio = WAVE(path)
+            return audio.info.length
+        elif self.file_extension == '.flac':
+            audio = FLAC(path)
+            return audio.info.length
+        else:
+            raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
+
     def get_bitrate(self) -> int:
         path = self.get_file_path_or_object()
         if self.file_extension == '.mp3':
@@ -50,7 +64,7 @@ class AudioFile:
             # Calculate MP3 bitrate from file size and duration
             if audio.info.length > 0 and isinstance(path, str) and os.path.exists(path):
                 file_size = os.path.getsize(path)
-                return int((file_size * 8) / audio.info.length / 1000)
+                return int((file_size * 8) / self.get_duration() / 1000)
             return 0
         elif self.file_extension == '.wav':
             audio = WAVE(path)

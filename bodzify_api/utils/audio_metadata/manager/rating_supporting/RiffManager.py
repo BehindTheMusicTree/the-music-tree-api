@@ -4,7 +4,7 @@ from typing import Dict, Optional
 from mutagen.wave import WAVE
 
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, AppMetadataKey
-from bodzify_api.utils.audio_metadata.manager.constants import ID3V1_AND_RIFF_GENRE_MAP
+from bodzify_api.utils.audio_metadata.manager.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
 
 
@@ -38,12 +38,12 @@ class RiffManager(MetadataManager):
         TITLE = 'INAM'
         ARTIST_NAME = 'IART'
         ALBUM_NAME = 'IPRD'
-        ALBUM_ARTISTS_NAMES = 'IAAR'  # Non-standard but commonly used
         GENRE_NAME = 'IGNR'  # Numeric code or string
-        RELEASE_DATE = 'ICRD'  # Creation/Release date
-        PART = 'IPRT'  # Part number (track number)
+        DATE = 'ICRD'  # Creation/Release date
+        TRACK_NUMBER = 'IPRT'  # Part number (track number)
 
         # Non-standard but commonly used
+        ALBUM_ARTISTS_NAMES = 'IAAR'
         LANGUAGE = 'ILNG'
 
         # Less common
@@ -53,7 +53,7 @@ class RiffManager(MetadataManager):
         COPYRIGHT = 'ICOP'
         TECHNICIAN = 'ITCH'
 
-    def get_raw_metadata(self) -> Dict:
+    def extract_raw_metadata(self) -> Dict:
         self.audio_file.seek(0)
         wave_file = WAVE(io.BytesIO(self.audio_file.read()))
         return {
@@ -61,21 +61,21 @@ class RiffManager(MetadataManager):
             'tags': wave_file.tags if wave_file.tags else {},
         }
 
-    def get_eventually_normalized_rating_value(self,
-                                               normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
+    def get_eventually_normalized_rating_from_file(
+            self, normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
         raise UnsupportedMetadataError("RIFF format does not support ratings")
 
     def get_title(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.TITLE)
+        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.TITLE)
 
     def get_artists_names(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.ARTIST_NAME)
+        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.ARTIST_NAME)
 
     def get_album_name(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.ALBUM_NAME)
+        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.ALBUM_NAME)
 
     def get_album_artists_name_str(self) -> Optional[str]:
-        album_artists_name_str_raw = self._get_first_value_str_if_exists_in_file_metadata_or_none(
+        album_artists_name_str_raw = self._get_first_value_str_if_exists_in_raw_metadata_or_none(
             key=self.RiffTagKeys.ALBUM_ARTISTS_NAMES)
         if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
@@ -95,20 +95,20 @@ class RiffManager(MetadataManager):
             try:
                 # Try to get genre code and convert to name
                 genre_code = int(self.file_raw_metadata[self.RiffTagKeys.GENRE_NAME][0])
-                return ID3V1_AND_RIFF_GENRE_MAP.get(genre_code, "Other")
+                return ID3V1_AND_RIFF_GENRE_CODE_MAP.get(genre_code, "Other")
             except (ValueError, TypeError):
                 # If the tag contains a string instead of a code, use it directly
                 return self.file_raw_metadata[self.RiffTagKeys.GENRE_NAME][0]
         return ""
 
     def get_language(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.LANGUAGE)
+        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.LANGUAGE)
 
     def get_release_date_str(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.RELEASE_DATE)
+        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.DATE)
 
     def get_track_number(self) -> Optional[int]:
-        part = self._get_first_value_str_if_exists_in_file_metadata_or_none(key=self.RiffTagKeys.PART)
+        part = self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.TRACK_NUMBER)
         if part:
             try:
                 return int(part)
@@ -138,9 +138,9 @@ class RiffManager(MetadataManager):
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
             riff_tag_key = self.RiffTagKeys.LANGUAGE
         elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
-            riff_tag_key = self.RiffTagKeys.RELEASE_DATE
+            riff_tag_key = self.RiffTagKeys.DATE
         elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
-            riff_tag_key = self.RiffTagKeys.PART
+            riff_tag_key = self.RiffTagKeys.TRACK_NUMBER
         else:
             raise UnsupportedMetadataError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
