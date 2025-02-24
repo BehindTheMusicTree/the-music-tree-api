@@ -6,6 +6,7 @@ from mutagen.id3._util import ID3NoHeaderError
 
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
+from bodzify_api.utils.audio_metadata.types import RawMetadataDict
 from ...AudioFile import AudioFile
 from ...AppMetadataKey import AppMetadataKey
 
@@ -181,26 +182,16 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         }
         super().__init__(audio_file, metadata_keys_direct_mapping, normalized_rating_max_value)
 
-        try:
-            tags = ID3(self.audio_file.file_path)
-            tags.update_to_v23()  # Convert to ID3v2.3
-            tags.save()  # Save the converted tags
-        except ID3NoHeaderError:
-            # Create new ID3v2.3 tag if none exists
-            tags = ID3()
-            tags.save(self.audio_file.file_path, v2_version=3)  # Explicitly save as ID3v2.3
-
-    def extract_raw_metadata_dict(self) -> Dict:
+    def extract_raw_metadata_dict(self) -> RawMetadataDict:
         try:
             tags = ID3(self.audio_file.get_file_path_or_object())
             # Force v2.3 update to ensure compatibility
             tags.update_to_v23()
-            return tags  # type: ignore
+            return tags
         except ID3NoHeaderError:
-            # Create new ID3 tag if none exists
             tags = ID3()
-            tags.save(self.audio_file.file_path)
-            return tags  # type: ignore
+            tags.save(self.audio_file.file_path, v2_version=3)
+            return {}
 
     def get_title(self) -> Optional[str]:
         return self._get_first_value_str_if_exists_in_raw_metadata_or_none(self.Id3TextFrames.TITLE)
