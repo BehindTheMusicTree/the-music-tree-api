@@ -3,18 +3,17 @@ from enum import Enum
 from typing import Dict, List
 
 
-class TagTypes(str, Enum):
-    """Constants for audio metadata tag types."""
+class TagFormat(str, Enum):
     ID3V2 = 'id3v2'
     ID3V1 = 'id3v1'
     VORBIS = 'vorbis'
     RIFF = 'riff'
 
     @classmethod
-    def get_priorities(cls) -> Dict[str, List['TagTypes']]:
-        """Get tag type priorities for different file formats.
-        First tag type in each list has highest priority.
-        
+    def get_priorities(cls) -> Dict[str, List['TagFormat']]:
+        """Get tag format priorities for different file formats.
+        First tag format in each list has highest priority.
+
         Returns:
             Dictionary mapping file extensions to ordered list of tag types
         """

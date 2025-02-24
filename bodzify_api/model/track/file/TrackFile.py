@@ -166,12 +166,8 @@ class TrackFile(PrivateStandardResource):
         return musicbrainz_recording_lookup_result
 
     def _prepare_save(self, ctx) -> dict:
-        temp_file_path = self.file.file
-
-        self.handle_flac_md5()
-        duration_in_sec: int = audio_metadata.get_specific_metadata_from_file(
-            file=temp_file_path,
-            app_metadata_key=AppMetadataKeys.DURATION_IN_SEC)  # type: ignore
+        duration_in_sec: str = audio_metadata.get_specific_metadata_from_file(
+            file=self.file, app_metadata_key=AppMetadataKeys.DURATION_IN_SEC)
         self.duration_in_sec = int(duration_in_sec)
         self.bitrate_in_kbps = self._get_bitrate()
         self.size_in_bytes = self.file.size

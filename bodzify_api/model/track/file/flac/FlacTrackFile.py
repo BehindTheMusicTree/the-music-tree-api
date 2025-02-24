@@ -8,7 +8,7 @@ from bodzify_api.exception.validation.app.AppValidationError import AppValidatio
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
-from bodzify_api.utils.audio_metadata.tag_types import TagTypes
+from bodzify_api.utils.audio_metadata.TagFormat import TagFormat
 from .Fields import Fields
 
 
@@ -17,11 +17,11 @@ class FlacTrackFile(TrackFile):
     md5_has_been_corrected = models.BooleanField(default=False)
 
     def _prepare_save(self, ctx) -> dict:
-        id3v2_tags = audio_metadata.get_raw_metadata_from_file(self.file, tag_types=[TagTypes.ID3V2])
+        id3v2_tags = audio_metadata.get_raw_metadata_from_file(self.file, tag_formats=[TagFormat.ID3V2])
         if id3v2_tags:
-            delete_result = audio_metadata.delete_metadata(self.file, [TagTypes.ID3V2])
-            id3v2_tags = audio_metadata.get_raw_metadata_from_file(self.file, tag_types=[TagTypes.ID3V2])
-            if not delete_result.get(TagTypes.ID3V2, False):
+            delete_result = audio_metadata.delete_metadata(self.file, [TagFormat.ID3V2])
+            id3v2_tags = audio_metadata.get_raw_metadata_from_file(self.file, tag_formats=[TagFormat.ID3V2])
+            if not delete_result.get(TagFormat.ID3V2, False):
                 raise AppValidationError(
                     field_name=Fields.FILE,
                     message='Failed to clear ID3v2 tags from FLAC file.',
