@@ -116,7 +116,7 @@ class RiffManager(MetadataManager):
                 return None
         return None
 
-    def update_specific_without_saving(
+    def update_specific_metadata_without_saving(
             self,
             normalized_metadata_value,
             app_metadata_key: str,

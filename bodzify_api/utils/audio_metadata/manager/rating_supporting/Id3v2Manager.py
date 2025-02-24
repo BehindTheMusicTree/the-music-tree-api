@@ -5,6 +5,7 @@ from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, 
 from mutagen.id3._util import ID3NoHeaderError
 
 from bodzify_api import settings
+from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingProfile import RatingProfile
 from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 from bodzify_api.utils.audio_metadata.types import RawMetadataDict
 from ...AudioFile import AudioFile
@@ -190,7 +191,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             return tags
         except ID3NoHeaderError:
             tags = ID3()
-            tags.save(self.audio_file.file_path, v2_version=3)
+            tags.save(self.audio_file.get_file_path_or_object(), v2_version=3)
             return {}
 
     def get_title(self) -> Optional[str]:
@@ -232,22 +233,6 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                 is_rating_from_traktor=(file_rating_email == self.TRAKTOR_RATING_TAG_MAIL),
                 normalized_rating_max_value=normalized_rating_max_value)
 
-    def get_language(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.Id3TextFrames.LANGUAGE)
-
-    def get_release_date_str(self) -> Optional[str]:
-        """Get release date from ID3 tags.
-
-        Tries TDRC (ID3v2.4) first, then falls back to TYER (ID3v2.3) if needed.
-        """
-        # Try ID3v2.4 TDRC frame first
-        date = self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.Id3TextFrames.RECORDING_TIME)
-        if date:
-            return date
-
-        # Fall back to ID3v2.3 TYER frame
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.Id3TextFrames.YEAR)
-
     def get_track_number(self) -> Optional[int]:
         """Get track number from TRCK frame.
 
@@ -264,16 +249,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def get_bpm(self) -> Optional[float]:
-        bpm = self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.Id3TextFrames.BPM)
-        if bpm:
-            try:
-                return float(bpm)
-            except ValueError:
-                return None
-        return None
-
-    def update_specific_without_saving(
+    def update_specific_metadata_without_saving(
             self,
             normalized_metadata_value,
             app_metadata_key: str,
@@ -302,7 +278,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                 id3_rating = self._convert_normalized_rating_to_file_rating(
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
-                    rating_profile=self.RatingProfile.BASE_255)
+                    rating_profile=RatingProfile.BASE_255)
                 self.file_raw_metadata.add(POPM(email=self.ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
             return
         elif app_metadata_key == AppMetadataKey.LANGUAGE:

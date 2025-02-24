@@ -2,7 +2,7 @@ from enum import Enum
 import io
 from typing import Dict, Optional
 
-from mutagen.flac import FLAC
+from mutagen.flac import FLAC, VCFLACDict
 from mutagen.id3._util import ID3NoHeaderError
 from mutagen.id3 import ID3
 
@@ -12,7 +12,7 @@ from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingProfile im
 
 
 from ...AudioFile import AudioFile
-from ...exceptions import InvalidChunkDecodeError
+from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
 from ...types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
@@ -95,7 +95,17 @@ class VorbisManager(RatingSupportingMetadataManager):
 
     def extract_raw_metadata_dict(self) -> RawMetadataDict:
         try:
-            return FLAC(self.audio_file.get_file_path_or_object()).tags
+            raw_metadata = FLAC(self.audio_file.get_file_path_or_object()).tags
+            print('raw_metadata:', raw_metadata)
+            print('class raw_metadata:', raw_metadata.__class__)
+            if isinstance(raw_metadata, dict):
+                return raw_metadata
+            elif isinstance(raw_metadata, VCFLACDict):
+                return dict(raw_metadata)
+            elif not raw_metadata:
+                return {}
+            else:
+                raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(raw_metadata)}")
         except Exception as error:
             error_str = str(error)
             if "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
@@ -119,7 +129,7 @@ class VorbisManager(RatingSupportingMetadataManager):
 
     def _get_genre_name(self) -> Optional[str]:
         if self.VorbisKey.GENRE_NAME.value in self.file_raw_metadata:
-            genres_names = self.file_raw_metadata[self.VorbisKey.GENRE_NAME]
+            genres_names = self.file_raw_metadata.get(self.VorbisKey.GENRE_NAME)
             if isinstance(genres_names, list):
                 return genres_names[0]
             elif isinstance(genres_names, str):
@@ -129,13 +139,14 @@ class VorbisManager(RatingSupportingMetadataManager):
             return ""
 
     def get_album_artists_name_str(self) -> Optional[str]:
-        album_artists_name_str_raw = self._get_first_value_str_if_exists_in_raw_metadata_or_none(
-            key=self.VorbisKey.ALBUM_ARTISTS_NAMES)
+        album_artists_name_str_raw = \
+            self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.VorbisKey.ALBUM_ARTISTS_NAMES)
+
         if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
         return None
 
-    def update_specific_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey):
+    def update_specific_metadata_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey):
         vorbis_key: RawMetadataKey
         if app_metadata_key == AppMetadataKey.TITLE:
             vorbis_key = self.VorbisKey.TITLE

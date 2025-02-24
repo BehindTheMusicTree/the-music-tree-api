@@ -4,11 +4,11 @@ from typing import Dict, Optional
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
-from bodzify_api.utils.audio_metadata.AudioFile import AudioFile
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager
-from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingProfile import RatingProfile
-from bodzify_api.utils.audio_metadata.types import AppMetadataValue, RawMetadataKey
+from ...AppMetadataKey import AppMetadataKey
+from ...AudioFile import AudioFile
+from ...types import AppMetadataDict, AppMetadataValue, RawMetadataKey
+from ..MetadataManager import MetadataManager
+from .RatingProfile import RatingProfile
 
 
 class RatingSupportingMetadataManager(MetadataManager):
@@ -20,10 +20,12 @@ class RatingSupportingMetadataManager(MetadataManager):
     TRAKTOR_RATING_TAG_MAIL = 'traktor@native-instruments.de'
 
     normalized_rating_max_value: Optional[int]
+    rating_profile: RatingProfile
 
     def __init__(self,
                  audio_file: AudioFile,
                  metadata_keys_direct_map: Dict[AppMetadataKey, Optional[RawMetadataKey]],
+                 rating_profile: RatingProfile,
                  normalized_rating_max_value: Optional[int]):
         self.normalized_rating_max_value = normalized_rating_max_value
         super().__init__(audio_file, metadata_keys_direct_map)
@@ -86,3 +88,15 @@ class RatingSupportingMetadataManager(MetadataManager):
             raise ValueError("Rating value not handled: " + str(file_rating))
         else:
             return file_rating
+
+    def update_bulk(self, app_metadata_dict: AppMetadataDict):
+        if AppMetadataKey.RATING in list(app_metadata_dict.keys()):
+            value = app_metadata_dict[AppMetadataKey.RATING]
+            if self.normalized_rating_max_value is None:
+                raise ImproperlyConfigured(
+                    "If updating the rating, the max value of the normalized rating must be set.")
+
+            file_rating = self._convert_normalized_rating_to_file_rating(
+                normalized_rating=app_rating, rating_profile=RatingProfile.BASE_100)
+
+        self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())

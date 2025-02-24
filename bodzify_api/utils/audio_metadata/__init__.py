@@ -208,37 +208,4 @@ def is_flac_md5_valid(file, check_id3v2: bool = False):
 
 
 def replace_flac_with_corrected_md5(file):
-    audio_file = AudioFile(file)
-
-    # Create temporary file
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        temp_path = temp_file.name
-
-    # Run FLAC and save to temporary file
-    result = subprocess.run(
-        ['flac', '-f', '--best', '-o', temp_path, '-'],
-        input=audio_file.read(),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-
-    stderr = result.stderr.decode()
-    if 'wrote' not in stderr:
-        raise FlacMd5CheckFailedError(
-            "The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")
-
-    # Replace original file content with corrected content
-    if isinstance(audio_file.file, (TemporaryUploadedFile, InMemoryUploadedFile)):
-        audio_file.seek(0)
-        with open(temp_path, 'rb') as f:
-            audio_file.write(f.read())
-    elif isinstance(audio_file.file, FieldFile):
-        with audio_file.file.open('wb') as f, open(temp_path, 'rb') as temp_f:
-            f.write(temp_f.read())
-    else:
-        # Assume audio_file.file is a path
-        with open(audio_file.file, 'wb') as f, open(temp_path, 'rb') as temp_f:
-            f.write(temp_f.read())
-
-    # Clean up temporary file
-    os.unlink(temp_path)
+    return AudioFile(file).replace_flac_with_corrected_md5()
