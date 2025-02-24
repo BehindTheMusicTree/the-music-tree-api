@@ -16,7 +16,7 @@ class TestCase(LibTrackTestCase):
         track_file = self.saved_object.track_file
         assert track_file
         assert track_file.flac_md5_has_been_corrected
-        assert audio_metadata.is_md5_valid(track_file.file.path)
+        assert audio_metadata.is_flac_md5_valid(track_file.file.path)
 
     def test_flac_md5_not_valid_and_corrupted_then_error(self):
         response = self._post_lib_track_with_specific_sample("md5_not_valid_and_corrupted.flac")

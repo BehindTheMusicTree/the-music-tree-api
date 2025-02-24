@@ -148,25 +148,11 @@ def _get_metadata_manager(file, tag_formats: Optional[list[TagFormat]] = None) -
     return managers
 
 
-def is_md5_valid(file, check_id3v2: bool = False):
-    audio_file = AudioFile(file)
-
-    if audio_file.file_extension == ".flac":
-        if check_id3v2:
-            id3v2_tags = Id3v2Manager(audio_file).file_raw_metadata
-            if id3v2_tags:
-                return False
-        return audio_file.is_flac_file_md5_valid()
-    else:
-        raise ImproperlyConfigured('The file must be a FLAC file to check the MD5.')
+def get_bitrate(file):
+    return AudioFile(file).get_bitrate()
 
 
-def get_bitrate_from_file(file):
-    audio_file = AudioFile(file)
-    return audio_file.get_bitrate()
-
-
-def get_specific_metadata_from_file(
+def get_specific_metadata(
         file, app_metadata_key: str, tag_formats: Optional[list[TagFormat]] = None) -> TagValue:
     managers = _get_metadata_manager(file, tag_formats=tag_formats)
     # Return the first valid value found
@@ -177,7 +163,7 @@ def get_specific_metadata_from_file(
     return ""  # Return empty string as fallback
 
 
-def get_raw_metadata_from_file(file, tag_formats: Optional[list[TagFormat]] = None) -> dict:
+def get_raw_metadata(file, tag_formats: Optional[list[TagFormat]] = None) -> dict:
     managers = _get_metadata_manager(file, tag_formats=tag_formats)
     results = {}
     for tag_type, manager in managers.items():
@@ -271,7 +257,7 @@ def get_merged_metadata(metadata: Dict[TagFormat, Dict[str, TagValue]], file_ext
     return result
 
 
-def get_prioritized_metadata_from_file(
+def get_prioritized_metadata(
         file, normalized_rating_max_value: Optional[int] = None) -> Dict[str, TagValue]:
     """Get merged metadata prioritizing certain tag types based on file format.
 
@@ -305,7 +291,7 @@ def get_prioritized_metadata_from_file(
     return metadata['merged']
 
 
-def update_file_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
+def update_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
     """Update metadata using the highest priority manager for the file type.
 
     For FLAC files: Uses Vorbis comments (preferred over ID3v2)
@@ -348,7 +334,20 @@ def delete_metadata(file, tag_formats: Optional[list[TagFormat]] = None) -> dict
     return results
 
 
-def replace_flac_file_with_corrected_md5(file):
+def is_flac_md5_valid(file, check_id3v2: bool = False):
+    audio_file = AudioFile(file)
+
+    if audio_file.file_extension == ".flac":
+        if check_id3v2:
+            id3v2_tags = Id3v2Manager(audio_file).file_raw_metadata
+            if id3v2_tags:
+                return False
+        return audio_file.is_flac_file_md5_valid()
+    else:
+        raise ImproperlyConfigured('The file must be a FLAC file to check the MD5.')
+
+
+def replace_flac_with_corrected_md5(file):
     audio_file = AudioFile(file)
 
     # Create temporary file
