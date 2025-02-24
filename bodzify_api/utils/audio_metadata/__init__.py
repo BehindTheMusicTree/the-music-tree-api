@@ -152,17 +152,14 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[i
             # Never reached because already checked in _get_metadata_managers
             raise ImproperlyConfigured(f"No priority order defined for {audio_file.file_extension}")
 
-        merged_data: Dict[AppMetadataKey, TagValue] = {}
+        merged_metadata: AppMetadataDict = {}
         for field in AppMetadataKey:
             for tag_format in priorities:
                 value = metadata[tag_format].get(field)
                 if value is not None:
-                    merged_data[field] = value
+                    merged_metadata[field] = value
                     break
-
-        merged: AppMetadataDict = {"merged": merged_data}
-
-        return merged
+        return merged_metadata
 
     except Exception as error:
         error_str = str(error)
@@ -176,11 +173,9 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[i
 def get_specific_metadata(
         file, app_metadata_key: str, tag_format: Optional[TagFormat] = None) -> TagValue:
     manager = _get_metadata_manager(file, tag_format=tag_format)
-    # Return the first valid value found
-    for manager in managers.values():
-        value = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
-        if value is not None and isinstance(value, (str, int)):
-            return value
+    value = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
+    if value is not None and isinstance(value, (str, int)):
+        return value
     return ""  # Return empty string as fallback
 
 
@@ -217,7 +212,9 @@ def get_prioritized_metadata(
         normalized_rating_max_value=normalized_rating_max_value
     )
 
-    return metadata['merged']
+    # Convert AppMetadataKey to str in the return value
+    merged_data = metadata['merged']
+    return {str(key): value for key, value in merged_data.items()}
 
 
 def update_metadata(file, normalized_metadata: dict, normalized_rating_max_value: int):
