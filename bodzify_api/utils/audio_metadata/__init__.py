@@ -73,25 +73,25 @@ Legend:
 import tempfile
 import os
 import subprocess
-from typing import Optional, Union, Dict, Literal, TypedDict, cast, Any
+from typing import Optional, Union, Dict, Literal, TypedDict, cast
 
+from django.db.models.fields.files import FieldFile
+from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
+from django.core.exceptions import ImproperlyConfigured
+
+
+from .exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
+from .AppMetadataKeys import AppMetadataKeys
+from .audio_file import AudioFile
 from .TagFormat import TagFormat
 from .manager.MetadataManager import MetadataManager
 from .manager.riff.RiffManager import RiffManager
 from .manager.id3.Id3v1Manager import Id3v1Manager
 from .manager.id3.Id3v2Manager import Id3v2Manager
-from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
-from django.db.models.fields.files import FieldFile
-from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
-from django.core.exceptions import ImproperlyConfigured
-from bodzify_api.utils.audio_metadata.AppMetadataKeys import AppMetadataKeys
-from bodzify_api.utils.audio_metadata.manager.vorbis.VorbisManager import VorbisManager
-from .audio_file import AudioFile
+from .manager.vorbis.VorbisManager import VorbisManager
 
-# Type alias for tag values that can be strings or integers
+
 TagValue = Union[str, int]
-
-# Type definitions for metadata structures
 
 
 class MetadataDict(TypedDict):
