@@ -148,9 +148,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             [AppMetadataKeys.ARTISTS_NAMES_STR, SchemaFields.ARTISTS_NAMES],
             [AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR, SchemaFields.ALBUM_ARTISTS_NAMES]
         ]:
-            normalized_metadata_key, schema_key = artists_names_keys
-            if normalized_metadata_key in normalized_metadata:
-                artists_names_str = normalized_metadata[normalized_metadata_key]
+            app_metadata_key, schema_key = artists_names_keys
+            if app_metadata_key in normalized_metadata:
+                artists_names_str = normalized_metadata[app_metadata_key]
                 if artists_names_str is not None and artists_names_str != "":
                     artists_names_list = \
                         Artist.objects.get_artists_names_list_from_metadata_str(names_str=artists_names_str)

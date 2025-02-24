@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class UpdateFileMetadataIntTestCase(LibTrackTestCase):
     save_field: Optional[str] = None
-    lib_track_normalized_metadata_key: Optional[str] = None
+    lib_track_app_metadata_key: Optional[str] = None
     file_extension: str
     value_min: Optional[int] = None
     value_max: Optional[int] = None
@@ -35,10 +35,10 @@ class UpdateFileMetadataIntTestCase(LibTrackTestCase):
         value_expected_in_metadata = value_expected_in_metadata if value_expected_in_metadata else value
 
         if value_expected_in_metadata is None:
-            if self.lib_track_normalized_metadata_key in self.saved_lib_track_metadata:
-                assert not self.saved_lib_track_metadata[self.lib_track_normalized_metadata_key]
+            if self.lib_track_app_metadata_key in self.saved_lib_track_metadata:
+                assert not self.saved_lib_track_metadata[self.lib_track_app_metadata_key]
             else:
                 assert True
         else:
-            assert self.lib_track_normalized_metadata_key in self.saved_lib_track_metadata
-            assert self.saved_lib_track_metadata[self.lib_track_normalized_metadata_key] == value_expected_in_metadata
+            assert self.lib_track_app_metadata_key in self.saved_lib_track_metadata
+            assert self.saved_lib_track_metadata[self.lib_track_app_metadata_key] == value_expected_in_metadata

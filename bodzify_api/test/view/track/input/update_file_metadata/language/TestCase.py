@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataSt
 
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = InoutFields.LANGUAGE
-    lib_track_normalized_metadata_key = AppMetadataKeys.LANGUAGE
+    lib_track_app_metadata_key = AppMetadataKeys.LANGUAGE
     length_max = settings.LIB_TRACK_LANGUAGE_LEN_MAX
 
 

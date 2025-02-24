@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataSt
 
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = InoutFields.ARTISTS_NAMES
-    lib_track_normalized_metadata_key = AppMetadataKeys.ARTISTS_NAMES_STR
+    lib_track_app_metadata_key = AppMetadataKeys.ARTISTS_NAMES_STR
     length_max = settings.ARTIST_NAME_LEN_MAX
 
 

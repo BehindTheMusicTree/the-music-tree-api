@@ -152,7 +152,7 @@ class Id3v1Manager(Id3Manager):
     def update_specific_file_metadata_without_saving(
             self,
             normalized_metadata_value,
-            normalized_metadata_key: str,
+            app_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
         """Update ID3v1 tag field.
 

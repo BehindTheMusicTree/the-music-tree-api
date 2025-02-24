@@ -90,7 +90,7 @@ class MetadataManager:
     @abstractmethod
     def update_specific_file_metadata_without_saving(self,
                                                      normalized_metadata_value,
-                                                     normalized_metadata_key: str,
+                                                     app_metadata_key: str,
                                                      normalized_rating_max_value: Optional[int] = None):
         raise NotImplementedError(
             f"{self.update_specific_file_metadata_without_saving.__name__} method must be implemented.")
@@ -193,29 +193,29 @@ class MetadataManager:
         normalized_metadata[AppMetadataKeys.BPM] = self.get_bpm()
         return normalized_metadata
 
-    def get_specific_file_metadata(self, normalized_metadata_key: str,
+    def get_specific_file_metadata(self, app_metadata_key: str,
                                    normalized_rating_max_value: Optional[int] = None):
-        if normalized_metadata_key == AppMetadataKeys.TITLE:
+        if app_metadata_key == AppMetadataKeys.TITLE:
             return self.get_title()
-        elif normalized_metadata_key == AppMetadataKeys.ARTISTS_NAMES_STR:
+        elif app_metadata_key == AppMetadataKeys.ARTISTS_NAMES_STR:
             return self.get_artists_names()
-        elif normalized_metadata_key == AppMetadataKeys.ALBUM_NAME:
+        elif app_metadata_key == AppMetadataKeys.ALBUM_NAME:
             return self.get_album_name()
-        elif normalized_metadata_key == AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
+        elif app_metadata_key == AppMetadataKeys.ALBUM_ARTISTS_NAMES_STR:
             return self.get_album_artists_name_str()
-        elif normalized_metadata_key == AppMetadataKeys.GENRE_NAME:
+        elif app_metadata_key == AppMetadataKeys.GENRE_NAME:
             return self.get_genre_name()
-        elif normalized_metadata_key == AppMetadataKeys.DURATION_IN_SEC:
+        elif app_metadata_key == AppMetadataKeys.DURATION_IN_SEC:
             return self.get_duration_in_sec()
-        elif normalized_metadata_key == AppMetadataKeys.RATING:
+        elif app_metadata_key == AppMetadataKeys.RATING:
             return self.get_eventually_normalized_rating_value(normalized_rating_max_value)
-        elif normalized_metadata_key == AppMetadataKeys.LANGUAGE:
+        elif app_metadata_key == AppMetadataKeys.LANGUAGE:
             return self.get_language()
-        elif normalized_metadata_key == AppMetadataKeys.RELEASE_DATE:
+        elif app_metadata_key == AppMetadataKeys.RELEASE_DATE:
             return self.get_release_date()
-        elif normalized_metadata_key == AppMetadataKeys.TRACK_NUMBER:
+        elif app_metadata_key == AppMetadataKeys.TRACK_NUMBER:
             return self.get_track_number()
-        elif normalized_metadata_key == AppMetadataKeys.BPM:
+        elif app_metadata_key == AppMetadataKeys.BPM:
             return self.get_bpm()
 
     def update_file_metadata(self, normalized_metadata: dict, normalized_rating_max_value: Optional[int]):
@@ -229,10 +229,10 @@ class MetadataManager:
                         raise Exception("If updating the rating, the max value of the normalized rating must be set.")
                     self.update_specific_file_metadata_without_saving(
                         normalized_metadata_value=value,
-                        normalized_metadata_key=key,
+                        app_metadata_key=key,
                         normalized_rating_max_value=normalized_rating_max_value)
                 else:
                     self.update_specific_file_metadata_without_saving(normalized_metadata_value=value,
-                                                                      normalized_metadata_key=key)
+                                                                      app_metadata_key=key)
 
         self.file_raw_metadata.save(self.audio_file.path)  # type: ignore

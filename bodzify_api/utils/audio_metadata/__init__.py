@@ -164,19 +164,19 @@ def get_bitrate_from_file(file):
     return audio_file.get_bitrate()
 
 
-def get_specific_metadata_from_file(file, normalized_metadata_key: str, tag_types: Optional[list[TagTypes]] = None):
+def get_specific_metadata_from_file(file, app_metadata_key: str, tag_types: Optional[list[TagTypes]] = None):
     """Get specific metadata from file using specified tag types.
     If tag_types is None, uses default manager for the file type.
 
     Args:
         file: The audio file to analyze
-        normalized_metadata_key: The metadata key to extract
+        app_metadata_key: The metadata key to extract
         tag_types: List of TagTypes enum values to extract from
     """
     managers = _get_metadata_manager(file, tag_types=tag_types)
     results = {}
     for tag_type, manager in managers.items():
-        results[tag_type] = manager.get_specific_file_metadata(normalized_metadata_key=normalized_metadata_key)
+        results[tag_type] = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
     return results
 
 

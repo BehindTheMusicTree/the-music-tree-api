@@ -171,7 +171,7 @@ class TrackFile(PrivateStandardResource):
         self.handle_flac_md5()
         duration_in_sec: int = audio_metadata.get_specific_metadata_from_file(
             file=temp_file_path,
-            normalized_metadata_key=AppMetadataKeys.DURATION_IN_SEC)  # type: ignore
+            app_metadata_key=AppMetadataKeys.DURATION_IN_SEC)  # type: ignore
         self.duration_in_sec = int(duration_in_sec)
         self.bitrate_in_kbps = self._get_bitrate()
         self.size_in_bytes = self.file.size

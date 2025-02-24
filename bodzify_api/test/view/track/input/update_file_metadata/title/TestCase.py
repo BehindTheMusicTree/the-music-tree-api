@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataSt
 
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = InoutFields.TITLE
-    lib_track_normalized_metadata_key = AppMetadataKeys.TITLE
+    lib_track_app_metadata_key = AppMetadataKeys.TITLE
     length_max = settings.LIB_TRACK_TITLE_LEN_MAX
 
 

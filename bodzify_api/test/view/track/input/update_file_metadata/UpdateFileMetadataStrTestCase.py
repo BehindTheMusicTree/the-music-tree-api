@@ -10,7 +10,7 @@ class UpdateFileMetadataStrTestCase(LibTrackTestCase):
     VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
 
     save_field: Optional[str] = None
-    lib_track_normalized_metadata_key: Optional[str] = None
+    lib_track_app_metadata_key: Optional[str] = None
     file_extension: str
     length_max: int
 
@@ -35,13 +35,13 @@ class UpdateFileMetadataStrTestCase(LibTrackTestCase):
             value_expected_in_metadata = value
 
         if value_expected_in_metadata is None:
-            if self.lib_track_normalized_metadata_key in self.saved_lib_track_metadata:
-                assert not self.saved_lib_track_metadata[self.lib_track_normalized_metadata_key]
+            if self.lib_track_app_metadata_key in self.saved_lib_track_metadata:
+                assert not self.saved_lib_track_metadata[self.lib_track_app_metadata_key]
             else:
                 assert True
         else:
-            assert self.lib_track_normalized_metadata_key in self.saved_lib_track_metadata
-            assert self.saved_lib_track_metadata[self.lib_track_normalized_metadata_key] == value_expected_in_metadata
+            assert self.lib_track_app_metadata_key in self.saved_lib_track_metadata
+            assert self.saved_lib_track_metadata[self.lib_track_app_metadata_key] == value_expected_in_metadata
 
     def test_on_missing_tag_then_ok(self, additional_data_dict=None):
         self._test_value("a", additional_data_dict=additional_data_dict, file_has_tags=False)

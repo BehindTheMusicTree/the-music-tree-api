@@ -6,7 +6,7 @@ from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIn
 
 class UpdateFileMetadataRatingTestCase(UpdateFileMetadataIntTestCase):
     save_field = InoutFields.RATING
-    lib_track_normalized_metadata_key = AppMetadataKeys.RATING
+    lib_track_app_metadata_key = AppMetadataKeys.RATING
     value_min = 0
     value_max = 10
     value_min_expected_in_metadata = 0
