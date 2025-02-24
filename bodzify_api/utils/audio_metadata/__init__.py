@@ -96,8 +96,7 @@ FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the se
 
 
 def _get_metadata_manager(file, tag_types: Optional[list[str]] = None) -> dict[str, MetadataManager]:
-    """Get metadata managers for specified tag types.
-
+    """
     Args:
         file: The audio file to analyze
         tag_types: List of tag types to extract. Supported values: ['id3v2', 'vorbis', 'riff']
