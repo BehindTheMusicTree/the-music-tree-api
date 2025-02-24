@@ -4,11 +4,11 @@ from typing import Dict, Optional
 
 from django.core.exceptions import ImproperlyConfigured
 
-from ...AppMetadataKey import AppMetadataKey
-from ...AudioFile import AudioFile
-from ...types import AppMetadataDict, AppMetadataValue, RawMetadataKey
+from ...utils.AppMetadataKey import AppMetadataKey
+from ...utils.AudioFile import AudioFile
+from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
 from ..MetadataManager import MetadataManager
-from .RatingProfile import RatingProfile
+from ...utils.RatingProfile import RatingProfile
 
 
 class RatingSupportingMetadataManager(MetadataManager):
@@ -27,6 +27,7 @@ class RatingSupportingMetadataManager(MetadataManager):
                  metadata_keys_direct_map: Dict[AppMetadataKey, Optional[RawMetadataKey]],
                  rating_profile: RatingProfile,
                  normalized_rating_max_value: Optional[int]):
+        self.rating_profile = rating_profile
         self.normalized_rating_max_value = normalized_rating_max_value
         super().__init__(audio_file, metadata_keys_direct_map)
 

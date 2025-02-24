@@ -17,7 +17,7 @@ from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneT
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
 from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
     import MusicbrainzRecordingLookupResult

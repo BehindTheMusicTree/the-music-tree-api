@@ -2,11 +2,11 @@
 from typing import Dict, Optional, cast
 import struct
 
-from ..AudioFile import AudioFile
-from ..types import AppMetadataValue, RawMetadataKey
+from ..utils.AudioFile import AudioFile
+from ..utils.types import AppMetadataValue, RawMetadataKey
 from ..exceptions import UnsupportedMetadataError
-from ..AppMetadataKey import AppMetadataKey
-from .id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
+from ..utils.AppMetadataKey import AppMetadataKey
+from ..utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from .MetadataManager import MetadataManager
 
 

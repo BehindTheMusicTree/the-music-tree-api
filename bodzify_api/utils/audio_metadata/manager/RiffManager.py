@@ -4,7 +4,7 @@ from typing import Dict, Optional
 from mutagen.wave import WAVE
 
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import MetadataManager, AppMetadataKey
-from bodzify_api.utils.audio_metadata.manager.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
+from bodzify_api.utils.audio_metadata.utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
 
 

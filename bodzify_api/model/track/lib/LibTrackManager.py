@@ -22,7 +22,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.app_django_file import AppDjangoFile
-from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as ExtractFields

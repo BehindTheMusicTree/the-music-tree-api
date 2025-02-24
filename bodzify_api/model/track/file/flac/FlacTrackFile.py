@@ -9,7 +9,7 @@ from bodzify_api.exception.validation.app.AppValidationError import AppValidatio
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
-from bodzify_api.utils.audio_metadata.TagFormat import TagFormat
+from bodzify_api.utils.audio_metadata.utils.TagFormat import TagFormat
 from .Fields import Fields
 
 

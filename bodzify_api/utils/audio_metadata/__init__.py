@@ -70,24 +70,19 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
-import tempfile
-import os
-import subprocess
-from typing import Optional, Dict, cast, Union
+from typing import Optional, Dict
 
-from django.db.models.fields.files import FieldFile
-from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.utils.audio_metadata.types import AppMetadataDict, RawMetadataDict, AppMetadataValue
+from bodzify_api.utils.audio_metadata.utils.types import AppMetadataDict, RawMetadataDict, AppMetadataValue
 
 
-from .exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
-from .AppMetadataKey import AppMetadataKey
-from .AudioFile import AudioFile
-from .TagFormat import TagFormat
+from .exceptions import FileByteMismatchError
+from .utils.AppMetadataKey import AppMetadataKey
+from .utils.AudioFile import AudioFile
+from .utils.TagFormat import TagFormat
 from .manager.MetadataManager import MetadataManager
-from .manager.rating_supporting.RiffManager import RiffManager
+from .manager.RiffManager import RiffManager
 from .manager.Id3v1Manager import Id3v1Manager
 from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
 from .manager.rating_supporting.VorbisManager import VorbisManager
@@ -95,7 +90,7 @@ from .manager.rating_supporting.VorbisManager import VorbisManager
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
-TAG_FORMAT_MANAGER_MAP = {
+TAG_FORMAT_MANAGER_CLASS_MAP = {
     TagFormat.ID3V1: Id3v1Manager,
     TagFormat.ID3V2: Id3v2Manager,
     TagFormat.VORBIS: VorbisManager,
@@ -103,7 +98,9 @@ TAG_FORMAT_MANAGER_MAP = {
 }
 
 
-def _get_metadata_manager(file, tag_format: Optional[TagFormat] = None) -> MetadataManager:
+def _get_metadata_manager(
+        file, tag_format: Optional[TagFormat] = None, normalized_rating_max_value: Optional[int] = None
+) -> MetadataManager:
     audio_file = AudioFile(file)
 
     audio_file_prioritized_tag_formats = TagFormat.get_priorities().get(audio_file.file_extension)
@@ -117,7 +114,8 @@ def _get_metadata_manager(file, tag_format: Optional[TagFormat] = None) -> Metad
             raise ImproperlyConfigured(
                 f"Tag format {tag_format} not supported for file extension {audio_file.file_extension}")
 
-    return TAG_FORMAT_MANAGER_MAP[tag_format](audio_file)
+    manager_class = TAG_FORMAT_MANAGER_CLASS_MAP[tag_format]
+    return manager_class(audio_file=audio_file, normalized_rating_max_value=normalized_rating_max_value)
 
 
 def _get_metadata_managers(file, tag_formats: Optional[list[TagFormat]] = None) -> Dict[TagFormat, MetadataManager]:
@@ -177,9 +175,8 @@ def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> AppMetadata
     return ""  # Return empty string as fallback
 
 
-def update_metadata(file, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: int):
-    _get_metadata_manager(file).update_bulk(
-        app_metadata_dict=app_metadata_dict, normalized_rating_max_value=normalized_rating_max_value)
+def update_metadata(file, app_metadata_dict: AppMetadataDict):
+    _get_metadata_manager(file,).update_bulk(app_metadata_dict=app_metadata_dict)
 
 
 def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> bool:

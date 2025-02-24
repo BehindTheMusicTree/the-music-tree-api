@@ -8,12 +8,12 @@ from mutagen.id3 import ID3
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingProfile import RatingProfile
+from bodzify_api.utils.audio_metadata.utils.RatingProfile import RatingProfile
 
 
-from ...AudioFile import AudioFile
+from ...utils.AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
-from ...types import AppMetadataValue, RawMetadataDict, RawMetadataKey
+from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -91,6 +91,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         }
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map=metadata_keys_direct_map,
+                         rating_profile=RatingProfile.BASE_100,
                          normalized_rating_max_value=normalized_rating_max_value)
 
     def extract_raw_metadata_dict(self) -> RawMetadataDict:

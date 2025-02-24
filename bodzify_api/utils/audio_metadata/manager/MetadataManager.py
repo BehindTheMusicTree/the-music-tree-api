@@ -11,10 +11,10 @@ from tinytag import TinyTag, TinyTagException
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from ..types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey
-from ..AudioFile import AudioFile
+from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey
+from ..utils.AudioFile import AudioFile
 from ..exceptions import DurationNotFoundError, UnsupportedMetadataError
-from ..AppMetadataKey import AppMetadataKey
+from ..utils.AppMetadataKey import AppMetadataKey
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
 

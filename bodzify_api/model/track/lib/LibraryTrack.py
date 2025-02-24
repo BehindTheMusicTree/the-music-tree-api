@@ -21,7 +21,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
-from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from ..file.TrackFile import TrackFile
 from .Fields import Fields
 from .LibTrackManager import LibTrackManager

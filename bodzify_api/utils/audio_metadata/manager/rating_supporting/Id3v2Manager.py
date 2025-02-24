@@ -5,11 +5,11 @@ from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, 
 from mutagen.id3._util import ID3NoHeaderError
 
 from bodzify_api import settings
-from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingProfile import RatingProfile
+from bodzify_api.utils.audio_metadata.utils.RatingProfile import RatingProfile
 from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
-from bodzify_api.utils.audio_metadata.types import RawMetadataDict
-from ...AudioFile import AudioFile
-from ...AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.utils.types import RawMetadataDict
+from ...utils.AudioFile import AudioFile
+from ...utils.AppMetadataKey import AppMetadataKey
 
 
 class Id3v2Manager(RatingSupportingMetadataManager):
@@ -172,7 +172,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         BPM = 'TBPM'
 
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: Optional[int] = None):
-        metadata_keys_direct_mapping = {
+        metadata_keys_direct_map = {
             AppMetadataKey.TITLE: self.Id3TextFrames.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: self.Id3TextFrames.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.Id3TextFrames.ALBUM_NAME,
@@ -181,7 +181,10 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.Id3TextFrames.LANGUAGE,
         }
-        super().__init__(audio_file, metadata_keys_direct_mapping, normalized_rating_max_value)
+        super().__init__(audio_file=audio_file,
+                         metadata_keys_direct_map=metadata_keys_direct_map,
+                         rating_profile=RatingProfile.BASE_255,
+                         normalized_rating_max_value=normalized_rating_max_value)
 
     def extract_raw_metadata_dict(self) -> RawMetadataDict:
         try:
