@@ -4,6 +4,35 @@ from typing import Dict, Optional
 
 from django.core.exceptions import ImproperlyConfigured
 
+"""
+Rating Compatibility Table Across Different Audio Players
+
+The following table shows how different audio players handle ratings across various audio formats.
+Values represent the actual numbers written to files for each star rating (0-5 stars).
+
+kid3/Lollypop      wmp                 musicbee            winamp              traktor     
+    mp3 wav flac   mp3 wav flac        mp3 wav flac       mp3 wav flac        mp3 wav flac
+    OK  OK  OK     OK  X   OK          OK  OK  OK         OK  X   OK          OK  X   OK    (X = doesn't write ratings)
+
+None No  No  No    No  -   No          No  No  No         No  -   No          0   -   0     (No = No tag, - = unsupported)
+0    -   -   -     -   -   -          0   0   0          -   -   -           -   -   -
+0.5  -   -   -     -   -   -          13  10  10         -   -   -           -   -   -
+1    1   1   20    1   -   20         1   20  20         1   -   20          51  -   51
+1.5  -   -   -     -   -   -          54  30  30         -   -   -           -   -   -
+2    64  64  40    64  -   40         64  40  40         64  -   40          102 -   102
+2.5  -   -   -     -   -   -          118 50  50         -   -   -           -   -   -
+3    128 128 60    128 -   60         128 60  60         128 -   60          153 -   153
+3.5  -   -   -     -   -   -          186 70  70         -   -   -           -   -   -
+4    196 196 80    196 -   80         196 80  80         196 -   80          204 -   204
+4.5  -   -   -     -   -   -          242 90  90         -   -   -           -   -   -
+5    255 255 100   255 -   100        255 100 100        255 -   100         255 -   255
+
+Rating scale type:
+- 255 star: Values 0-255 representing star ratings
+- 100 prop: Values 0-100 representing proportional ratings
+- 255 prop: Values 0-255 representing proportional ratings
+"""
+
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.AudioFile import AudioFile
 from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
@@ -93,11 +122,19 @@ class RatingSupportingMetadataManager(MetadataManager):
     def update_bulk(self, app_metadata_dict: AppMetadataDict):
         if AppMetadataKey.RATING in list(app_metadata_dict.keys()):
             value = app_metadata_dict[AppMetadataKey.RATING]
-            if self.normalized_rating_max_value is None:
-                raise ImproperlyConfigured(
-                    "If updating the rating, the max value of the normalized rating must be set.")
+            if value is None:
+                del app_metadata_dict[AppMetadataKey.RATING]
+            else:
+                if self.normalized_rating_max_value is None:
+                    raise ImproperlyConfigured(
+                        "If updating the rating, the max value of the normalized rating must be set.")
 
-            file_rating = self._convert_normalized_rating_to_file_rating(
-                normalized_rating=app_rating, rating_profile=RatingProfile.BASE_100)
+                try:
+                    normalized_rating = int(float(value))
+                    file_rating = self._convert_normalized_rating_to_file_rating(
+                        normalized_rating=normalized_rating, rating_profile=RatingProfile.BASE_100)
+                    app_metadata_dict[AppMetadataKey.RATING] = file_rating
+                except (TypeError, ValueError):
+                    raise ValueError(f"Invalid rating value: {value}. Expected a numeric value.")
 
-        self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())
+        super().update_bulk(app_metadata_dict)
