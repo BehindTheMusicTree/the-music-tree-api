@@ -46,8 +46,8 @@ Rating Profiles:
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.AudioFile import AudioFile
 from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
-from ..MetadataManager import MetadataManager
 from ...utils.RatingProfile import RatingProfile
+from ..MetadataManager import MetadataManager
 
 
 class RatingSupportingMetadataManager(MetadataManager):
