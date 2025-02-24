@@ -3,14 +3,14 @@ import os
 import subprocess
 import tempfile
 from typing import Union
+from mutagen.mp3 import MP3
+from mutagen.wave import WAVE
+from mutagen.flac import FLAC
 
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.db.models.fields.files import FieldFile
 from django.core.files import File as DjangoFile
 from django.core.exceptions import ImproperlyConfigured
-from mutagen.mp3 import MP3
-from mutagen.wave import WAVE
-from mutagen.flac import FLAC
 
 
 class AudioFile:
@@ -25,10 +25,10 @@ class AudioFile:
             self.file_path = file.file.name
         elif isinstance(file, TemporaryUploadedFile):
             self.file_path = file.temporary_file_path()
-        elif isinstance(file, DjangoFile):
-            self.file_path = file.name
         elif isinstance(file, InMemoryUploadedFile):
             self.file_path = None
+        elif isinstance(file, DjangoFile):
+            self.file_path = file.name
         else:
             self.file_path = file
 
@@ -125,8 +125,10 @@ class AudioFile:
                 temp_file.write(chunk)
             temp_file.close()
             return temp_file.name
-        elif isinstance(self.file, (str, DjangoFile)):
+        elif isinstance(self.file, DjangoFile):
             return self.file.name
+        elif isinstance(self.file, str):
+            return self.file
         else:
             raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 
