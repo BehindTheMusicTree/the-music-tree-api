@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Any, List, TypeVar, Generic
+from typing import Any, Dict, List, TypeVar, Generic
 
 from django.utils.translation import gettext as _
 from django.core.exceptions import ImproperlyConfigured
@@ -58,7 +58,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         except (UnicodeDecodeError, AttributeError, json.JSONDecodeError):
             return []
 
-    def _validate_field_format(self, field_name: str, field, data: dict) -> None:
+    def _validate_field_format(self, field_name: str, field, data: Dict) -> None:
         if self._is_list_field(field):
             if field_name in data:
                 raise AppValidationError(
@@ -73,7 +73,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 field_validation_error_code=FieldValidationErrorCode.UNEXPECTED_LIST
             )
 
-    def _collect_known_fields_and_malformed_array_fields_names(self, data: dict) -> tuple[set, list]:
+    def _collect_known_fields_and_malformed_array_fields_names(self, data: Dict) -> tuple[set, list]:
         known_fields = set()
         unknown_fields = []
         updated_data = data.copy()
@@ -107,7 +107,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
 
         return known_fields, unknown_fields
 
-    def _collect_list_field_values(self, field_name: str | None, data: dict) -> Any:
+    def _collect_list_field_values(self, field_name: str | None, data: Dict) -> Any:
         """
         Collects values for list fields, handling both array notation and direct values.
         Args:
@@ -174,7 +174,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             self._errors = error.detail
             raise error
 
-    def _validate_object(self, validated_data: dict) -> dict:
+    def _validate_object(self, validated_data: Dict) -> Dict:
         try:
             return self.validate(validated_data)
         except AppValidationError as exc:
@@ -194,7 +194,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         if not hasattr(self, '_errors'):
             self._errors = {}
 
-    def _validate_fields(self, data: dict) -> dict:
+    def _validate_fields(self, data: Dict) -> Dict:
         validated_data = {}
         for field in self._writable_fields:
             try:
@@ -218,7 +218,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             raise ImproperlyConfigured('Cannot validate null data')
 
         try:
-            if not isinstance(data, dict):
+            if not isinstance(data, Dict):
                 raise ImproperlyConfigured('Data must be a dictionary')
 
             _, unknown_fields = self._collect_known_fields_and_malformed_array_fields_names(data)

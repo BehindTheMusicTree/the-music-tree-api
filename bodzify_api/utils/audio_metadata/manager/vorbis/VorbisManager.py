@@ -1,6 +1,6 @@
 import io
 import subprocess
-from typing import Optional
+from typing import Dict, Optional
 
 from mutagen.flac import FLAC
 from mutagen.id3._util import ID3NoHeaderError
@@ -84,7 +84,7 @@ class VorbisManager(MetadataManager):
         else:
             raise Exception("The Flac file md5 check failed")
 
-    def get_raw_metadata(self) -> dict:
+    def get_raw_metadata(self) -> Dict:
         self.audio_file.seek(0)
         try:
             flac_file = FLAC(io.BytesIO(self.audio_file.read()))

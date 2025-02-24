@@ -203,7 +203,7 @@ class DrfValidationErrorResponseDetail:
             'code': self.code
         }
         if self.details is not None:
-            if isinstance(self.details, dict):
+            if isinstance(self.details, Dict):
                 processed_details = {}
                 for k, v in self.details.items():
                     if isinstance(v, (str, int, float, bool)):
@@ -230,7 +230,7 @@ class DrfValidationErrorResponseDetail:
             return obj.to_dict()
         elif isinstance(obj, list):
             return [DrfValidationErrorResponseDetail.convert_error_detail_to_dict(item) for item in obj]
-        elif isinstance(obj, dict):
+        elif isinstance(obj, Dict):
             if 'unknown_fields' in obj:
                 unknown_fields = obj['unknown_fields']
                 return {

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, Optional
 from mutagen.id3 import ID3
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM
 from mutagen.id3._util import ID3NoHeaderError
@@ -185,7 +185,7 @@ class Id3v2Manager(Id3Manager):
             tags = ID3()
             tags.save(self.audio_file.file_path, v2_version=3)  # Explicitly save as ID3v2.3
 
-    def get_raw_metadata(self) -> dict:
+    def get_raw_metadata(self) -> Dict:
         try:
             tags = ID3(self.audio_file.file_path)
             # Force v2.3 update to ensure compatibility

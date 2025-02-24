@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, Optional
 import acoustid
 from acoustid import WebServiceError
 
@@ -20,7 +20,7 @@ from . import utils
 
 
 def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: bytes,
-                                                                       duration_in_sec: float) -> Optional[dict]:
+                                                                       duration_in_sec: float) -> Optional[Dict]:
     try:
         lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
                                  fingerprint=fingerprint,
@@ -90,7 +90,7 @@ def get_musicbrainz_recording_lookup_result(user: User,
                         musicbrainz_recording_dict=musicbrainz_recording_dict)
 
         except musicbrainz_exception.MusicbrainzRecordingLookupException as e:
-            exception_mapping: dict[type, MusicbrainzRecordingMissingCauseCode.Codes] = {
+            exception_mapping: Dict[type, MusicbrainzRecordingMissingCauseCode.Codes] = {
                 musicbrainz_exception.InvalidFingerprintMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DUE_TO_INVALID_FINGERPRINT,
                 musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException:

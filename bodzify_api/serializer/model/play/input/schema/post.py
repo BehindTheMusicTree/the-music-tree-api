@@ -1,3 +1,5 @@
+from typing import Dict
+
 from rest_framework import serializers
 
 from bodzify_api.model.play.Play import Play
@@ -14,7 +16,7 @@ class PlayPostSerializer(AppSerializer, serializers.ModelSerializer):
         model = Play
         fields = [PostFields.CONTENT]
 
-    def validate(self, attrs: dict) -> dict:
+    def validate(self, attrs: Dict) -> Dict:
         content_data = attrs.pop(PostFields.CONTENT)
         attrs[SchemaFields.CONTENT_TYPE] = content_data[SchemaFields.CONTENT_TYPE]
         attrs[SchemaFields.CONTENT] = content_data[SchemaFields.CONTENT]

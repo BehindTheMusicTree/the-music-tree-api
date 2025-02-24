@@ -1,4 +1,4 @@
-from typing import Self, TypeVar
+from typing import Dict, Self, TypeVar
 
 from django.db import models
 
@@ -17,7 +17,7 @@ class BaseModel(models.Model, metaclass=DynamicTableNameModelBase):
         abstract = True
 
     @staticmethod
-    def ensure_update_field(kwargs: dict, field_name: str) -> dict:
+    def ensure_update_field(kwargs: Dict, field_name: str) -> Dict:
         if 'update_fields' not in kwargs:
             kwargs['update_fields'] = [field_name]
         elif kwargs['update_fields'] is not None:
@@ -26,7 +26,7 @@ class BaseModel(models.Model, metaclass=DynamicTableNameModelBase):
         return kwargs
 
     @staticmethod
-    def ensure_update_fields(kwargs: dict, field_names: list[str]) -> dict:
+    def ensure_update_fields(kwargs: Dict, field_names: list[str]) -> Dict:
         if 'update_fields' not in kwargs:
             kwargs['update_fields'] = field_names
         elif kwargs['update_fields'] is not None:
@@ -59,7 +59,7 @@ class BaseModel(models.Model, metaclass=DynamicTableNameModelBase):
         super().save(*args, **kwargs)
         self._post_save(adding=adding)
 
-    def _prepare_save(self, ctx: SaveContext) -> dict:
+    def _prepare_save(self, ctx: SaveContext) -> Dict:
         # Transform name fields if needed
         transformed_kwargs = transform_name_fields(self.__class__, **ctx.kwargs)
         ctx.kwargs = transformed_kwargs

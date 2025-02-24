@@ -13,7 +13,7 @@ class AppValidationError(DrfValidationError):
     Custom validation error that maintains a consistent structure through DRF's middleware.
 
     This error always includes:
-    - Field name (both in error detail and as dict key)
+    - Field name (both in error detail and as Dict key)
     - Error type marker (to identify our errors after DRF processing)
     - Message and code
 
@@ -33,7 +33,7 @@ class AppValidationError(DrfValidationError):
     detect_and_convert_from_drf_error will convert it back to AppValidationError if necessary.
 
     The error structure is preserved through DRF's middleware by:
-    1. Including field name in both the error detail and as dict key
+    1. Including field name in both the error detail and as Dict key
     2. Adding an error_type marker to identify our errors
     3. Using a consistent structure for all validation contexts
     """
@@ -68,18 +68,18 @@ class AppValidationError(DrfValidationError):
             return None
 
         detail = exc.detail
-        # Convert list to dict if necessary
+        # Convert list to Dict if necessary
         if isinstance(detail, list):
             detail = {'error': detail[0] if detail else 'Unknown error'}
 
-        if not isinstance(detail, dict):
+        if not isinstance(detail, Dict):
             return None
 
         def has_error_type(error_dict: Dict[str, Any]) -> bool:
             """
             Recursively check if the error_type marker exists in the dictionary or its nested values.
             """
-            if not isinstance(error_dict, dict):
+            if not isinstance(error_dict, Dict):
                 return False
 
             # Check current level
@@ -89,7 +89,7 @@ class AppValidationError(DrfValidationError):
             # Check nested dictionaries
             return any(
                 has_error_type(value) for value in error_dict.values()
-                if isinstance(value, dict)
+                if isinstance(value, Dict)
             )
 
         # Check if our error_type exists anywhere in the error structure
@@ -112,7 +112,7 @@ class AppValidationError(DrfValidationError):
         2. Model/serializer-level validation error with nested field details
         3. Deeply nested validation errors (e.g., {'parent': {'parent': {...}}})
         """
-        if not isinstance(detail, dict):
+        if not isinstance(detail, Dict):
             raise ImproperlyConfigured('Detail must be a dictionary')
 
         def extract_error_details(error_dict: Dict[str, Any], parent_field: str = '') -> Optional[tuple]:
@@ -127,7 +127,7 @@ class AppValidationError(DrfValidationError):
 
             # Case 2 & 3: Nested error details
             for field, field_detail in error_dict.items():
-                if isinstance(field_detail, dict):
+                if isinstance(field_detail, Dict):
                     # Recursively check nested dictionary
                     result = extract_error_details(field_detail, field)
                     if result:

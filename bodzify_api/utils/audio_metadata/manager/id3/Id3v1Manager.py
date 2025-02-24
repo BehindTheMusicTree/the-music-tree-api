@@ -1,4 +1,4 @@
-from typing import Optional, cast
+from typing import Dict, Optional, cast
 import struct
 
 from bodzify_api.utils.audio_metadata.types import MetadataValue
@@ -48,7 +48,7 @@ class Id3v1Manager(Id3Manager):
     Note 2: The genre code is an index into a predefined list of genres. 
     """
 
-    def get_raw_metadata(self) -> dict:
+    def get_raw_metadata(self) -> Dict:
         """Read ID3v1 tag from the end of the file."""
         self.audio_file.seek(-128, 2)  # Seek from end
         data = self.audio_file.read(128)

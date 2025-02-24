@@ -1,5 +1,5 @@
 import io
-from typing import Optional
+from typing import Dict, Optional
 
 from mutagen.wave import WAVE
 
@@ -47,13 +47,13 @@ class RiffManager(MetadataManager):
         LANGUAGE = 'ILNG'
 
         # Less common
-        COMMENTS = 'ICMT'  # Comments field
+        COMMENTS = 'ICMT'
         ENGINEER = 'IENG'  # Engineer who worked on the track
         SOFTWARE = 'ISFT'  # Software used to create the file
-        COPYRIGHT = 'ICOP'  # Copyright information
-        TECHNICIAN = 'ITCH'  # Technician who worked on the track
+        COPYRIGHT = 'ICOP'
+        TECHNICIAN = 'ITCH'
 
-    def get_raw_metadata(self) -> dict:
+    def get_raw_metadata(self) -> Dict:
         self.audio_file.seek(0)
         wave_file = WAVE(io.BytesIO(self.audio_file.read()))
         return {

@@ -120,7 +120,7 @@ def _get_metadata_manager(file, tag_format: Optional[TagFormat] = None) -> Metad
     return TAG_FORMAT_MANAGER_MAP[tag_format](audio_file)
 
 
-def _get_metadata_managers(file, tag_formats: Optional[list[TagFormat]] = None) -> dict[TagFormat, MetadataManager]:
+def _get_metadata_managers(file, tag_formats: Optional[list[TagFormat]] = None) -> Dict[TagFormat, MetadataManager]:
     audio_file = AudioFile(file)
     managers = {}
 

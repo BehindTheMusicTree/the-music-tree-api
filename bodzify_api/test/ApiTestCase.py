@@ -44,7 +44,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
 
     api_client: AppApiClient
     saved_lib_track: LibraryTrack
-    saved_lib_track_metadata: dict
+    saved_lib_track_metadata: Dict
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
@@ -86,7 +86,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
             self._set_bad_request_result(response)
         elif response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
             # List endpoints return paginated results
-            if isinstance(response.json(), dict) and PaginatedResponseFields.RESULTS in response.json():
+            if isinstance(response.json(), Dict) and PaginatedResponseFields.RESULTS in response.json():
                 self._set_results_attributes(response)
             else:
                 self._set_single_result(response)

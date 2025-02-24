@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
 from django.db import models
 
@@ -92,7 +92,7 @@ class CriteriaPlaylist(Playlist):
         else:
             return False
 
-    def _prepare_save(self, ctx: SaveContext) -> dict:
+    def _prepare_save(self, ctx: SaveContext) -> Dict:
         self._set_uuid_if_necessary()
         return ctx.kwargs
 

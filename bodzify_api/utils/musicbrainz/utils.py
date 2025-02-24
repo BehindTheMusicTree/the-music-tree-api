@@ -1,5 +1,6 @@
 import datetime
 from calendar import monthrange
+from typing import Dict
 
 from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
@@ -12,7 +13,7 @@ def get_best_recording_dict_with_score(recordings_grouped_by_score, duration_in_
     def rate_groupe_of_recordings_by_score(group_of_recordings):
         return group_of_recordings[ApiFields.Names.SCORE]
 
-    def rate_recording_by_similar_duration_and_by_number_of_fields(recording: dict):
+    def rate_recording_by_similar_duration_and_by_number_of_fields(recording: Dict):
         DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST = 1000000000
         duration_difference = abs(recording.get(ApiFields.Names.DURATION_IN_SEC,
                                                 DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST) - duration_in_sec)
@@ -51,7 +52,7 @@ def get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_record
 
 
 def create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_id: str,
-                                                    musicbrainz_recording_dict: dict) -> MusicbrainzRecording:
+                                                    musicbrainz_recording_dict: Dict) -> MusicbrainzRecording:
     musicbrainz_artists_dict = musicbrainz_recording_dict[ApiFields.Names.ARTISTS]
     musicbrainz_artists = []
     for artist_dict in musicbrainz_artists_dict:

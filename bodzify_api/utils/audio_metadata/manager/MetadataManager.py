@@ -4,7 +4,7 @@ from io import BufferedReader
 import os
 from abc import abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 from pydub.utils import mediainfo
 from tinytag import TinyTag, TinyTagException
 
@@ -187,7 +187,7 @@ class MetadataManager:
             raise Exception("Duration not found in metadata.")
         return duration_in_sec
 
-    def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> dict:
+    def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> Dict:
         normalized_metadata = dict()
         normalized_metadata[AppMetadataKey.TITLE] = self.get_title()
         normalized_metadata[AppMetadataKey.ARTISTS_NAMES_STR] = self.get_artists_names()
