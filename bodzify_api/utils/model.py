@@ -29,16 +29,16 @@ class SaveContext:
             self.update_fields.append(field)
 
 
-def ensure_update_field(kwargs: dict, field_name: str) -> dict:
+def ensure_update_field(kwargs: , field_name: str) -> :
     """
     Ensures a field is included in update_fields if update_fields is being used.
 
     Args:
-        kwargs: The kwargs dict passed to save()
+        kwargs: The kwargs  passed to save()
         field_name: The field name to ensure is included
 
     Returns:
-        Modified kwargs dict with field_name added to update_fields if needed
+        Modified kwargs  with field_name added to update_fields if needed
     """
     if 'update_fields' not in kwargs:
         kwargs['update_fields'] = [field_name]
@@ -48,16 +48,16 @@ def ensure_update_field(kwargs: dict, field_name: str) -> dict:
     return kwargs
 
 
-def ensure_update_fields(kwargs: dict, field_names: list[str]) -> dict:
+def ensure_update_fields(kwargs: , field_names: list[str]) -> :
     """
     Ensures multiple fields are included in update_fields if update_fields is being used.
 
     Args:
-        kwargs: The kwargs dict passed to save()
+        kwargs: The kwargs  passed to save()
         field_names: List of field names to ensure are included
 
     Returns:
-        Modified kwargs dict with field_names added to update_fields if needed
+        Modified kwargs  with field_names added to update_fields if needed
     """
     if 'update_fields' not in kwargs:
         kwargs['update_fields'] = field_names

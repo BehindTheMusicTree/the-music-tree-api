@@ -53,11 +53,11 @@ class RiffManager(MetadataManager):
         COPYRIGHT = 'ICOP'  # Copyright information
         TECHNICIAN = 'ITCH'  # Technician who worked on the track
 
-    def get_raw_metadata(self) -> dict:
+    def get_raw_metadata(self) -> :
         self.audio_file.seek(0)
         wave_file = WAVE(io.BytesIO(self.audio_file.read()))
         return {
-            'info': wave_file.info.__dict__,
+            'info': wave_file.info.____,
             'tags': wave_file.tags if wave_file.tags else {},
         }
 
@@ -118,7 +118,7 @@ class RiffManager(MetadataManager):
 
     def update_specific_without_saving(
             self,
-            normalized_metadata_value,
+            app_metadata_value,
             app_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
         if app_metadata_key == AppMetadataKey.TITLE:
@@ -144,9 +144,9 @@ class RiffManager(MetadataManager):
         else:
             raise UnsupportedMetadataError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
-        if normalized_metadata_value:
+        if app_metadata_value:
             if riff_tag_key not in self.file_raw_metadata:
                 self.file_raw_metadata[riff_tag_key] = [1]
-            self.file_raw_metadata[riff_tag_key] = normalized_metadata_value
+            self.file_raw_metadata[riff_tag_key] = app_metadata_value
         elif riff_tag_key in self.file_raw_metadata:
             del self.file_raw_metadata[riff_tag_key]

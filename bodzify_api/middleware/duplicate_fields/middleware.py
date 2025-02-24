@@ -62,7 +62,7 @@ class DuplicateFieldsMiddleware:
                     if hasattr(data, 'getlist'):  # Handle QueryDict
                         values = data.getlist(field_name)
                         has_multiple_values = len(values) > 1
-                    else:  # Handle regular dict
+                    else:  # Handle regular
                         value = data.get(field_name)
                         has_multiple_values = isinstance(value, (list, tuple))
 

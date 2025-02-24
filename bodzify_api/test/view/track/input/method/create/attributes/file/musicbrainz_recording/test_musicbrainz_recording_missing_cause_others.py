@@ -57,7 +57,7 @@ class TestCase(LibTrackTestCase):
 
     def test_long_message_then_truncated(self):
         with patch(
-            'bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') \
+            'bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording__from_fingerprint_and_duration') \
                 as mock_get_fingerprint:
             exception_message = "a" * (settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX + 1)
             mock_get_fingerprint.side_effect = \
@@ -71,7 +71,7 @@ class TestCase(LibTrackTestCase):
                 "a" * (settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX - 3) + '...'
 
     def test_dns_resolution_error_then_corresponding_missing_cause(self):
-        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') as mock_get_fingerprint:
+        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording__from_fingerprint_and_duration') as mock_get_fingerprint:
             error_message = "Failed to resolve 'api.acoustid.org' ([Errno 8] nodename nor servname provided, or not known)"
             mock_get_fingerprint.side_effect = \
                 musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException(error_message)
@@ -86,7 +86,7 @@ class TestCase(LibTrackTestCase):
             assert "Failed to resolve 'api.acoustid.org'" in self.saved_object.track_file.musicbrainz_recording_missing_cause.message
 
     def test_internal_error_then_corresponding_missing_cause(self):
-        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') as mock_get_fingerprint:
+        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording__from_fingerprint_and_duration') as mock_get_fingerprint:
             error_message = "Internal server error occurred"
             mock_get_fingerprint.side_effect = \
                 musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException(error_message)
@@ -120,7 +120,7 @@ class TestCase(LibTrackTestCase):
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.message is not None
 
     def test_unknown_status_code_then_corresponding_missing_cause(self):
-        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration') as mock_get_fingerprint:
+        with patch('bodzify_api.utils.musicbrainz.service._get_musicbrainz_best_recording__from_fingerprint_and_duration') as mock_get_fingerprint:
             mock_get_fingerprint.side_effect = \
                 musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException("unknown_status")
 

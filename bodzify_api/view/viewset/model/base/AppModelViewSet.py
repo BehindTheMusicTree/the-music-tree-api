@@ -66,10 +66,10 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
         serializer.is_valid(raise_exception=True)
-        validated_data_dict = getattr(serializer, 'validated_data', {})
-        if PrivateFields.USER not in validated_data_dict:
-            validated_data_dict[PrivateFields.USER] = self.request.user
-        return validated_data_dict
+        validated_data_ = getattr(serializer, 'validated_data', {})
+        if PrivateFields.USER not in validated_data_:
+            validated_data_[PrivateFields.USER] = self.request.user
+        return validated_data_
 
     def _inject_user(self, data: Dict[str, Any], request: Request) -> Dict[str, Any]:
         if PrivateFields.USER not in data:
@@ -172,7 +172,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         queryset = self.model_class.objects.filter(user=request.user)
 
         if request.method == HttpMethod.GET and request.query_params:
-            query_params_snake_case = data_transformer.dict_to_snake_case(request.query_params)
+            query_params_snake_case = data_transformer._to_snake_case(request.query_params)
             queryset = self.filterset_class(query_params_snake_case, queryset=queryset).qs
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()

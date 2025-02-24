@@ -44,7 +44,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
 
     api_client: AppApiClient
     saved_lib_track: LibraryTrack
-    saved_lib_track_metadata: dict
+    saved_lib_track_metadata:
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
@@ -86,7 +86,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
             self._set_bad_request_result(response)
         elif response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
             # List endpoints return paginated results
-            if isinstance(response.json(), dict) and PaginatedResponseFields.RESULTS in response.json():
+            if isinstance(response.json(), ) and PaginatedResponseFields.RESULTS in response.json():
                 self._set_results_attributes(response)
             else:
                 self._set_single_result(response)
@@ -116,7 +116,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
         # Convert field errors to a list format for easier testing
         self.bad_request_result_field_errors = []
         for field_name, error_list in self.bad_request_result_field_errors_json.items():
-            # error_list is a list of error dictionaries
+            # error_list is a list of error ionaries
             for error in error_list:
                 self.bad_request_result_field_errors.append({
                     ErrorResponseFields.FieldErrors.FIELD: field_name,
@@ -132,7 +132,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
     def _set_saved_lib_track_metadata(self, response):
         saved_lib_track: LibraryTrack = self.saved_object  # type: ignore
         self.saved_lib_track_metadata = \
-            audio_metadata.get_merged_normalized_metadata(file=saved_lib_track.track_file.file)
+            audio_metadata.get_merged_app_metadata(file=saved_lib_track.track_file.file)
 
     def _post_lib_track_with_generic_sample(self,
                                             generic_sample_filename_without_extension,
@@ -165,11 +165,11 @@ class ApiTestCase(AppTestCase, Generic[T]):
     # (testing metadata updates for example)
     def _post_lib_track(self, file_abs_path, **kwargs) -> Union[JsonResponse, HttpResponse]:
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LibTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
+            file_field_ = {LibTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
             if kwargs:
-                kwargs = data_transformer.merge_two_dicts(file_field_dict, kwargs)
+                kwargs = data_transformer.merge_two_s(file_field_, kwargs)
             else:
-                kwargs = file_field_dict
+                kwargs = file_field_
 
             return self.api_client.post(
                 path=reverse('library-track-list'),

@@ -13,7 +13,7 @@ class AppValidationError(DrfValidationError):
     Custom validation error that maintains a consistent structure through DRF's middleware.
 
     This error always includes:
-    - Field name (both in error detail and as dict key)
+    - Field name (both in error detail and as  key)
     - Error type marker (to identify our errors after DRF processing)
     - Message and code
 
@@ -33,7 +33,7 @@ class AppValidationError(DrfValidationError):
     detect_and_convert_from_drf_error will convert it back to AppValidationError if necessary.
 
     The error structure is preserved through DRF's middleware by:
-    1. Including field name in both the error detail and as dict key
+    1. Including field name in both the error detail and as  key
     2. Adding an error_type marker to identify our errors
     3. Using a consistent structure for all validation contexts
     """
@@ -68,28 +68,28 @@ class AppValidationError(DrfValidationError):
             return None
 
         detail = exc.detail
-        # Convert list to dict if necessary
+        # Convert list to  if necessary
         if isinstance(detail, list):
             detail = {'error': detail[0] if detail else 'Unknown error'}
 
-        if not isinstance(detail, dict):
+        if not isinstance(detail, ):
             return None
 
-        def has_error_type(error_dict: Dict[str, Any]) -> bool:
+        def has_error_type(error_: Dict[str, Any]) -> bool:
             """
-            Recursively check if the error_type marker exists in the dictionary or its nested values.
+            Recursively check if the error_type marker exists in the ionary or its nested values.
             """
-            if not isinstance(error_dict, dict):
+            if not isinstance(error_, ):
                 return False
 
             # Check current level
-            if error_dict.get('error_type') == cls.error_type:
+            if error_.get('error_type') == cls.error_type:
                 return True
 
-            # Check nested dictionaries
+            # Check nested ionaries
             return any(
-                has_error_type(value) for value in error_dict.values()
-                if isinstance(value, dict)
+                has_error_type(value) for value in error_.values()
+                if isinstance(value, )
             )
 
         # Check if our error_type exists anywhere in the error structure
@@ -105,37 +105,37 @@ class AppValidationError(DrfValidationError):
         This is used to reconstruct our error format after DRF middleware processing.
 
         Args:
-            detail: The detail dictionary from DRF ValidationError
+            detail: The detail ionary from DRF ValidationError
 
         The method handles three types of validation error structures:
         1. Direct field-level validation error with message and code
         2. Model/serializer-level validation error with nested field details
         3. Deeply nested validation errors (e.g., {'parent': {'parent': {...}}})
         """
-        if not isinstance(detail, dict):
-            raise ImproperlyConfigured('Detail must be a dictionary')
+        if not isinstance(detail, ):
+            raise ImproperlyConfigured('Detail must be a ionary')
 
-        def extract_error_details(error_dict: Dict[str, Any], parent_field: str = '') -> Optional[tuple]:
+        def extract_error_details(error_: Dict[str, Any], parent_field: str = '') -> Optional[tuple]:
             """
-            Recursively extract error details from nested dictionaries.
+            Recursively extract error details from nested ionaries.
             Returns (field, message, code) tuple if found, None otherwise.
             """
             # Case 1: Direct error details
-            if all(key in error_dict for key in ('message', 'code')):
-                field = error_dict.get('field', parent_field)
-                return (field, str(error_dict['message']), str(error_dict['code']))
+            if all(key in error_ for key in ('message', 'code')):
+                field = error_.get('field', parent_field)
+                return (field, str(error_['message']), str(error_['code']))
 
             # Case 2 & 3: Nested error details
-            for field, field_detail in error_dict.items():
-                if isinstance(field_detail, dict):
-                    # Recursively check nested dictionary
+            for field, field_detail in error_.items():
+                if isinstance(field_detail, ):
+                    # Recursively check nested ionary
                     result = extract_error_details(field_detail, field)
                     if result:
                         return result
 
             return None
 
-        # Try to extract error details from the dictionary
+        # Try to extract error details from the ionary
         error_details = extract_error_details(detail)
         if error_details:
             field, message, code = error_details
