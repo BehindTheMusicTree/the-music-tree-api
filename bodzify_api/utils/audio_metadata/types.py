@@ -1,8 +1,8 @@
 
 from enum import Enum
-from typing import Dict,
+from typing import Dict
 
-from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
+from .AppMetadataKey import AppMetadataKey
 
 
 class RawMetadataKey(Enum):
