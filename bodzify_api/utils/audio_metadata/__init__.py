@@ -170,7 +170,7 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[i
         raise
 
 
-def get_specific_metadata(
+def get_prioritized_specific_metadata(
         file, app_metadata_key: str, tag_format: Optional[TagFormat] = None) -> TagValue:
     manager = _get_metadata_manager(file, tag_format=tag_format)
     value = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
