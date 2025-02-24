@@ -14,17 +14,17 @@ Metadata Support by Format:
 | - Bitrate       |      ✓       |      ✓       |      ✓       |      ✓      |        ✓        |
 | - Sample Rate   |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - Channels      |      ✓       |      ✓       |      ✓       |      ✓      |                 |
-| - File Size     |      ✓       |      ✓       |      ✓       |      ✓      |        ✓ (all)  |
+| - File Size     |      ✓       |      ✓       |      ✓       |      ✓      |        ✓        |
 | - Format Info   |      ✓       |      ✓       |      ✓       |      ✓      |                 |
 | - MD5 Checksum  |              |              |      ✓       |             |    ✓ (Vorbis)   |
 +-----------------+--------------+--------------+--------------+-------------+-----------------+
-| Title           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |       ✓ (all)   |
-| Artist          |    ✓ (30)    |      ✓       |      ✓       |      ✓      |        ✓ (all)  |
-| Album           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |       ✓ (all)   |
+| Title           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |        ✓        |
+| Artist          |    ✓ (30)    |      ✓       |      ✓       |      ✓      |        ✓        |
+| Album           |    ✓ (30)    |      ✓       |      ✓       |      ✓      |        ✓        |
 | Album Artist    |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|
-| Genre           |    ✓ (1)*    |      ✓       |      ✓       |     ✓*      |        ✓ (all)  |
-| Release Date    |    ✓ (4)     |      ✓       |      ✓       |      ✓      |        ✓ (all)  |
-| Track Number    |    ✓ (1)     |      ✓       |      ✓       |      ✓      |        ✓ (all)  |
+| Genre           |    ✓ (1)*    |      ✓       |      ✓       |     ✓*      |        ✓        |
+| Release Date    |    ✓ (4)     |      ✓       |      ✓       |      ✓      |        ✓        |
+| Track Number    |    ✓ (1)     |      ✓       |      ✓       |      ✓      |        ✓        |
 | Disc Number     |              |      ✓       |      ✓       |             |                 |
 | Rating          |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|
 | BPM             |              |      ✓       |      ✓       |             | ✓ (ID3v2/Vorbis)|
@@ -70,6 +70,7 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
+from bodzify_api.utils.audio_metadata.AppMetadataKeys import AppMetadataKeys
 from bodzify_api.utils.audio_metadata.manager.vorbis.VorbisManager import VorbisManager
 from .audio_file import AudioFile
 import tempfile
@@ -175,8 +176,6 @@ def get_specific_metadata_from_file(file, normalized_metadata_key: str, tag_type
 
 
 def get_raw_metadata_from_file(file, tag_types: Optional[list[str]] = None) -> dict:
-    """Get raw metadata from file using specified tag types.
-    If tag_types is None, uses default manager for the file type."""
     managers = _get_metadata_manager(file, tag_types=tag_types)
     results = {}
     for tag_type, manager in managers.items():
@@ -185,7 +184,9 @@ def get_raw_metadata_from_file(file, tag_types: Optional[list[str]] = None) -> d
 
 
 def get_normalized_metadata_from_file(
-        file, normalized_rating_max_value: Optional[int] = None, tag_types: Optional[list[str]] = None,
+        file,
+        normalized_rating_max_value: Optional[int] = None,
+        tag_types: Optional[list[str]] = None,
         merge_tags: bool = False) -> dict[str, dict]:
     """Get normalized metadata from specified tag types.
 
@@ -248,7 +249,7 @@ def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[
     merged = {}
 
     # For each field that could exist in metadata
-    for field in vars(app_metadata_keys).values():
+    for field in vars(AppMetadataKeys).values():
         if not isinstance(field, str) or field.startswith('_'):
             continue
 
