@@ -1,7 +1,7 @@
 
 import os
 import tempfile
-from typing import Any, Dict, List, TYPE_CHECKING, Optional, cast
+from typing import Any, List, TYPE_CHECKING, Optional
 import requests
 
 from django.db import transaction
@@ -26,7 +26,6 @@ from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as ExtractFields
-from bodzify_api.utils.audio_metadata.types import AppMetadataDict
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 from .Fields import Fields
 
@@ -87,7 +86,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
 
-    def _get_generated_title_from_data(self, file: DjangoFile, data:):
+    def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
         filename_without_expressions_to_exclude = data_transformer.remove_substrings_from_string(
             string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
@@ -104,7 +103,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             title = filename_without_expressions_to_exclude
         return title
 
-    def _update_model_data_with_genre_if_in_schema_data(self, model_data:, schema_data: ):
+    def _update_model_data_with_genre_if_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
 
         if SchemaFields.GENRE_UUID in schema_data:
@@ -122,8 +121,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_schema_data_from_file(self, file):
         try:
-            app_metadata: AppMetadataDict = audio_metadata.get_merged_app_metadata(
-                file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
+            normalized_metadata = audio_metadata.get_merged_normalized_metadata(
+                file=file,
+                normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except FileCorruptedError as exc:
             raise AppValidationError(
                 field_name=Fields.TRACK_FILE_PUBLIC,
@@ -136,32 +136,32 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 field_validation_error_code=FieldValidationErrorCode.METADATA_EXTRACTION_FAILED
             )
 
-        schema_data_with_potential_none: = data_transformer.get_copy_of__including_only_specified_keys(=app_metadata,
-                                                                                                       keys=[AppMetadataKey.TITLE,
-                                                                                                             AppMetadataKey.ALBUM_NAME,
-                                                                                                             AppMetadataKey.GENRE_NAME,
-                                                                                                             AppMetadataKey.RATING,
-                                                                                                             AppMetadataKey.LANGUAGE])
+        schema_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
+            dict=normalized_metadata,
+            keys=[AppMetadataKey.TITLE,
+                  AppMetadataKey.ALBUM_NAME,
+                  AppMetadataKey.GENRE_NAME,
+                  AppMetadataKey.RATING,
+                  AppMetadataKey.LANGUAGE])
 
-        keys: Dict[AppMetadataKey, str] = {
-            AppMetadataKey.TITLE: SchemaFields.TITLE,
-            AppMetadataKey.ALBUM_NAME: SchemaFields.ALBUM_NAME,
-        }
-
-        for app_metadata_key, schema_key in keys.items():
-            if app_metadata_key in app_metadata:
-                artists_names_str = cast(str, app_metadata[app_metadata_key])
+        for artists_names_keys in [
+            [AppMetadataKey.ARTISTS_NAMES_STR, SchemaFields.ARTISTS_NAMES],
+            [AppMetadataKey.ALBUM_ARTISTS_NAMES_STR, SchemaFields.ALBUM_ARTISTS_NAMES]
+        ]:
+            app_metadata_key, schema_key = artists_names_keys
+            if app_metadata_key in normalized_metadata:
+                artists_names_str = normalized_metadata[app_metadata_key]
                 if artists_names_str is not None and artists_names_str != "":
                     artists_names_list = \
                         Artist.objects.get_artists_names_list_from_metadata_str(names_str=artists_names_str)
                     schema_data_with_potential_none[schema_key] = artists_names_list
 
-        schema_data_clean = data_transformer.remove_none_or_empty_key_from_(schema_data_with_potential_none)
+        schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(schema_data_with_potential_none)
         schema_data_clean[SchemaFields.TRACK_FILE_PUBLIC] = file
 
         return schema_data_clean
 
-    def _update_model_data_with_album_if_name_in_schema_data(self, model_data:, schema_data: ):
+    def _update_model_data_with_album_if_name_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.album.Album import Album
         if SchemaFields.ALBUM_NAME in schema_data:
             album_name = schema_data[SchemaFields.ALBUM_NAME]
@@ -181,7 +181,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             model_data[Fields.ALBUM] = album
 
     def _update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
-            self, model_data:, schema_data: ) -> None:
+            self, model_data: dict, schema_data: dict) -> None:
         if SchemaFields.ARTISTS_NAMES in schema_data:
             artists_names_list = schema_data[SchemaFields.ARTISTS_NAMES]
             if artists_names_list:
@@ -194,7 +194,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             artists = []
         model_data[Fields.ARTISTS] = artists
 
-    def _get_track_filename_with_extension(self, mine_track_url: str, data:):
+    def _get_track_filename_with_extension(self, mine_track_url: str, data: dict):
         file_extension = utils.get_file_extension_from_url(mine_track_url)
         is_filename_randomly_generated = False
         if Fields.TITLE in data:
@@ -218,8 +218,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 is_filename_randomly_generated = True
         return filename_with_extension, is_filename_randomly_generated
 
-    def _get_model_data_from_post_and_extract_common_schema_data(self, schema_data: [str, str]) ->:
-        model_data = ()
+    def _get_model_data_from_post_and_extract_common_schema_data(self, schema_data: dict[str, str]) -> dict:
+        model_data = dict()
 
         for key in [Fields.USER,
                     Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
@@ -238,12 +238,12 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         return model_data
 
-    def _get_schema_data_from_update_data(self, update_data:) -> :
+    def _get_schema_data_from_update_data(self, update_data: dict) -> dict:
         schema_data = update_data.copy()
-        data_transformer.update__converting_str_to_int_value_if_set(key=Fields.RATING, data_=schema_data)
+        data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
-    def _get_schema_data_from_post_data(self, post_data: [str, Any]) -> [str, Any]:
+    def _get_schema_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         file = post_data[PostFields.TRACK_FILE_PUBLIC]
         schema_data_from_file = self._get_schema_data_from_file(file=file)
 
@@ -273,10 +273,10 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                                                                                     data2=post_data,
                                                                                     keys=[SchemaFields.GENRE_NAME])
 
-        data_transformer.update__converting_str_to_int_value_if_set(key=Fields.RATING, data_=schema_data)
+        data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
-    def _get_model_data_from_post_data(self, post_data: [str, Any]) -> [str, Any]:
+    def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         schema_data = self._get_schema_data_from_post_data(post_data)
         model_data = self._get_model_data_from_post_and_extract_common_schema_data(schema_data)
         model_data[Fields.TRACK_FILE] = schema_data[SchemaFields.TRACK_FILE_PUBLIC]
@@ -313,7 +313,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
             return self._get_model_data_from_post_data(post_data=post_data)
 
-    def _get_model_data_from_update_data(self, update_data: [str, str]):
+    def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
         return self._get_model_data_from_post_and_extract_common_schema_data(schema_data=schema_data)
 
@@ -336,7 +336,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     def create(self, creation_type: str, **kwargs) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
-        model_data:
+        model_data: dict
         if creation_type == LibTrackCreationType.POST:
             model_data = self._get_model_data_from_post_data(post_data=kwargs)
         elif creation_type == LibTrackCreationType.EXTRACT:
@@ -345,7 +345,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             raise NotImplementedError(f"Creation type {creation_type} is not implemented")
 
         artists = model_data.pop(Fields.ARTISTS, None)
-        track_file_model_data = ()
+        track_file_model_data = dict()
         track_file_model_data[TrackFileFields.FILE] = model_data.pop(Fields.TRACK_FILE)
 
         instance: LibraryTrack = super().create(**model_data)
@@ -367,7 +367,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         return instance
 
     def create_instance_with_track_file(
-            self, track_file_data: [str, Any], library_track_data: [str, Any]) -> 'LibraryTrack':
+            self, track_file_data: dict[str, Any], library_track_data: dict[str, Any]) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
         with transaction.atomic():

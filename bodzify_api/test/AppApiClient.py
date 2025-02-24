@@ -24,7 +24,7 @@ class AppApiClient(APIClient):
             handle_response(response)
         return response
 
-    def get(self, path, data: Optional[] = None, content_type=None, follow=False, **extra) -> HttpResponse:
+    def get(self, path, data: Optional[dict] = None, content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = None
         if data:
             data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
@@ -40,7 +40,7 @@ class AppApiClient(APIClient):
         response = super().get(path, data_url_encoded, follow, **extra)
         return self._handle_response(response, handle_response)
 
-    def post(self, path, data: Optional[] = None, content_type=None, follow=False, format=None, **extra
+    def post(self, path, data: Optional[dict] = None, content_type=None, follow=False, format=None, **extra
              ) -> HttpResponse:
         data_url_encoded = None
         if data:
@@ -59,7 +59,7 @@ class AppApiClient(APIClient):
         response = super().post(path, data_url_encoded, content_type=content_type, follow=follow, format=format, **extra)
         return self._handle_response(response, handle_response)
 
-    def put(self, path, data: Optional[] = None, format=None, content_type=None, follow=False, **extra
+    def put(self, path, data: Optional[dict] = None, format=None, content_type=None, follow=False, **extra
             ) -> HttpResponse:
         data_url_encoded = None
         if data:
@@ -78,7 +78,7 @@ class AppApiClient(APIClient):
         response = super().put(path, data_url_encoded, format, content_type, follow, **extra)
         return self._handle_response(response, handle_response)
 
-    def delete(self, path, data: Optional[] = None, format=None, content_type=None, follow=False, **extra
+    def delete(self, path, data: Optional[dict] = None, format=None, content_type=None, follow=False, **extra
                ) -> HttpResponse:
         data_url_encoded = None
         if data:

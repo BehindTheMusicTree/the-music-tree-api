@@ -34,7 +34,7 @@ class BaseManager(models.Manager, Generic[T]):
         return BaseQuerySet(self.model, using=self._db)
 
     def update_instance(self, instance: T, **kwargs) -> T:
-        # Initialize ionaries for different types of updates
+        # Initialize dictionaries for different types of updates
         save_kwargs = {}
         many_to_many_updates = {}
         regular_updates = {}

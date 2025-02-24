@@ -187,21 +187,21 @@ class MetadataManager:
             raise Exception("Duration not found in metadata.")
         return duration_in_sec
 
-    def get_app_metadata(self, normalized_rating_max_value: Optional[int] = None) -> :
-        app_metadata = ()
-        app_metadata[AppMetadataKey.TITLE] = self.get_title()
-        app_metadata[AppMetadataKey.ARTISTS_NAMES_STR] = self.get_artists_names()
-        app_metadata[AppMetadataKey.ALBUM_NAME] = self.get_album_name()
-        app_metadata[AppMetadataKey.ALBUM_ARTISTS_NAMES_STR] = self.get_album_artists_name_str()
-        app_metadata[AppMetadataKey.GENRE_NAME] = self.get_genre_name()
-        app_metadata[AppMetadataKey.DURATION_IN_SEC] = self.get_duration_in_sec()
-        app_metadata[AppMetadataKey.RATING] = self.get_eventually_normalized_rating_value(
+    def get_normalized_metadata(self, normalized_rating_max_value: Optional[int] = None) -> dict:
+        normalized_metadata = dict()
+        normalized_metadata[AppMetadataKey.TITLE] = self.get_title()
+        normalized_metadata[AppMetadataKey.ARTISTS_NAMES_STR] = self.get_artists_names()
+        normalized_metadata[AppMetadataKey.ALBUM_NAME] = self.get_album_name()
+        normalized_metadata[AppMetadataKey.ALBUM_ARTISTS_NAMES_STR] = self.get_album_artists_name_str()
+        normalized_metadata[AppMetadataKey.GENRE_NAME] = self.get_genre_name()
+        normalized_metadata[AppMetadataKey.DURATION_IN_SEC] = self.get_duration_in_sec()
+        normalized_metadata[AppMetadataKey.RATING] = self.get_eventually_normalized_rating_value(
             normalized_rating_max_value=normalized_rating_max_value)
-        app_metadata[AppMetadataKey.LANGUAGE] = self.get_language()
-        app_metadata[AppMetadataKey.RELEASE_DATE] = self.get_release_date_str()
-        app_metadata[AppMetadataKey.TRACK_NUMBER] = self.get_track_number()
-        app_metadata[AppMetadataKey.BPM] = self.get_bpm()
-        return app_metadata
+        normalized_metadata[AppMetadataKey.LANGUAGE] = self.get_language()
+        normalized_metadata[AppMetadataKey.RELEASE_DATE] = self.get_release_date_str()
+        normalized_metadata[AppMetadataKey.TRACK_NUMBER] = self.get_track_number()
+        normalized_metadata[AppMetadataKey.BPM] = self.get_bpm()
+        return normalized_metadata
 
     def get_specific_file_metadata(self, app_metadata_key: AppMetadataKey,
                                    normalized_rating_max_value: Optional[int] = None):
@@ -228,12 +228,12 @@ class MetadataManager:
         elif app_metadata_key == AppMetadataKey.BPM:
             return self.get_bpm()
 
-    def update_bulk(self, app_metadata_: AppMetadataDict, normalized_rating_max_value: Optional[int]):
-        for key in list(app_metadata_.keys()):
+    def update_bulk(self, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: Optional[int]):
+        for key in list(app_metadata_dict.keys()):
             if key == AppMetadataKey.DURATION_IN_SEC:
                 raise ValueError(self.METADATA_CANT_BE_UPDATED_MESSAGE)
             else:
-                value = app_metadata_[key]
+                value = app_metadata_dict[key]
                 if key == AppMetadataKey.RATING:
                     if normalized_rating_max_value is None:
                         raise Exception("If updating the rating, the max value of the normalized rating must be set.")

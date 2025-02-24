@@ -15,4 +15,4 @@ class JsonDuplicateDetectingDecoder(json.JSONDecoder):
         """Process key-value pairs during JSON parsing."""
         for key, _ in pairs:
             self.tracker.check_key(key)
-        return (pairs)
+        return dict(pairs)

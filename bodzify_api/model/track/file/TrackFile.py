@@ -162,7 +162,7 @@ class TrackFile(PrivateStandardResource):
 
         return musicbrainz_recording_lookup_result
 
-    def _prepare_save(self, ctx) -> :
+    def _prepare_save(self, ctx) -> dict:
         self.duration_in_sec = cast(int, audio_metadata.get_specific_metadata(
             file=self.file, app_metadata_key=AppMetadataKey.DURATION_IN_SEC))
         self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
@@ -173,9 +173,9 @@ class TrackFile(PrivateStandardResource):
         fingerprinting_result = self._manage_fingerprint()
         self._manage_musicbrainz_recording(fingerprinting_result)
 
-    def update_file_tags(self, app_metadata: ):
+    def update_file_tags(self, normalized_metadata: dict):
         audio_metadata.update_metadata(file=self.file,
-                                       app_metadata_=app_metadata,
+                                       app_metadata_dict=normalized_metadata,
                                        normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:

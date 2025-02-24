@@ -92,7 +92,7 @@ class CriteriaPlaylist(Playlist):
         else:
             return False
 
-    def _prepare_save(self, ctx: SaveContext) -> :
+    def _prepare_save(self, ctx: SaveContext) -> dict:
         self._set_uuid_if_necessary()
         return ctx.kwargs
 

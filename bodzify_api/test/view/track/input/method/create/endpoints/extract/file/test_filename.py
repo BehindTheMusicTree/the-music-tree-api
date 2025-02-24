@@ -10,11 +10,11 @@ class FilenameTestCase(LibTrackTestCase):
     def test_title_and_one_artist_name_in_data_then_filename_with_artist_and_title(self):
         title = "ImHere"
         artist_name = "Roméo"
-        data_ = {
+        data_dict = {
             ExtractFields.TITLE: title,
             ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name],
         }
-        response = self._extract_default_mine_track(**data_)
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.filename == \
@@ -24,11 +24,11 @@ class FilenameTestCase(LibTrackTestCase):
         title = "ImHere"
         artist_name1 = "Roméo"
         artist_name2 = "Juliet"
-        data_ = {
+        data_dict = {
             ExtractFields.TITLE: title,
             ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name1, artist_name2],
         }
-        response = self._extract_default_mine_track(**data_)
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.filename == \
@@ -37,11 +37,11 @@ class FilenameTestCase(LibTrackTestCase):
     def test_title_and_artist_with_spaces_then_filename_with_spaces(self):
         title = " Im Here "
         artist_name = " Rom éo "
-        data_ = {
+        data_dict = {
             ExtractFields.TITLE: title,
             ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name],
         }
-        response = self._extract_default_mine_track(**data_)
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.filename == \
@@ -50,11 +50,11 @@ class FilenameTestCase(LibTrackTestCase):
     def test_title_and_artist_with_special_characters_then_filename_with_them(self):
         title = "I'm Here"
         artist_name = "Rom#éo"
-        data_ = {
+        data_dict = {
             ExtractFields.TITLE: title,
             ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name],
         }
-        response = self._extract_default_mine_track(**data_)
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.filename == \
@@ -62,8 +62,8 @@ class FilenameTestCase(LibTrackTestCase):
 
     def test_only_title_in_data_then_filename_with_title(self):
         title = "Hellö"
-        data_ = {ExtractFields.TITLE: title}
-        response = self._extract_default_mine_track(**data_)
+        data_dict = {ExtractFields.TITLE: title}
+        response = self._extract_default_mine_track(**data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.filename == \
@@ -74,8 +74,8 @@ class FilenameTestCase(LibTrackTestCase):
             "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"
             + "oSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE"
             + "_KN414JidBikY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3")
-        data_ = {ExtractFields.URL: track_url}
-        response = self._extract(**data_)
+        data_dict = {ExtractFields.URL: track_url}
+        response = self._extract(**data_dict)
         assert response.status_code == status.HTTP_201_CREATED
         assert len(self.saved_object.track_file.filename) == \
             settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH

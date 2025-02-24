@@ -120,7 +120,7 @@ def _get_metadata_manager(file, tag_format: Optional[TagFormat] = None) -> Metad
     return TAG_FORMAT_MANAGER_MAP[tag_format](audio_file)
 
 
-def _get_metadata_managers(file, tag_formats: Optional[list[TagFormat]] = None) -> [TagFormat, MetadataManager]:
+def _get_metadata_managers(file, tag_formats: Optional[list[TagFormat]] = None) -> dict[TagFormat, MetadataManager]:
     audio_file = AudioFile(file)
     managers = {}
 
@@ -138,7 +138,7 @@ def get_raw_metadata(file, tag_format: Optional[TagFormat] = None) -> RawMetadat
     return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
 
 
-def get_merged_app_metadata(file, normalized_rating_max_value: Optional[int] = None) -> AppMetadataDict:
+def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[int] = None) -> AppMetadataDict:
     try:
         audio_file = AudioFile(file)
     except Exception as error:
@@ -152,7 +152,7 @@ def get_merged_app_metadata(file, normalized_rating_max_value: Optional[int] = N
 
     # Get normalized metadata from each manager
     for tag_format, manager in managers.items():
-        metadata[tag_format] = manager.get_app_metadata(normalized_rating_max_value)
+        metadata[tag_format] = manager.get_normalized_metadata(normalized_rating_max_value)
 
     priorities = TagFormat.get_priorities().get(audio_file.file_extension, [])
     if not priorities:
@@ -177,9 +177,9 @@ def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> MetadataVal
     return ""  # Return empty string as fallback
 
 
-def update_metadata(file, app_metadata_: AppMetadataDict, normalized_rating_max_value: int):
+def update_metadata(file, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: int):
     _get_metadata_manager(file).update_bulk(
-        app_metadata_=app_metadata_, normalized_rating_max_value=normalized_rating_max_value)
+        app_metadata_dict=app_metadata_dict, normalized_rating_max_value=normalized_rating_max_value)
 
 
 def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> bool:

@@ -183,12 +183,12 @@ class DrfValidationErrorResponseDetail:
     def __repr__(self) -> str:
         return f"ErrorResponseDetail(message='{self.message}', code='{self.code}', details={self.details})"
 
-    def to_(self) -> Dict[str, Any]:
+    def to_dict(self) -> Dict[str, Any]:
         """
-        Convert the error response detail to a ionary format.
+        Convert the error response detail to a dictionary format.
 
         Returns:
-            Dict[str, Any]: A ionary containing the error details with the following structure:
+            Dict[str, Any]: A dictionary containing the error details with the following structure:
             {
                 "message": "Human readable message",
                 "code": "machine_readable_code",
@@ -203,7 +203,7 @@ class DrfValidationErrorResponseDetail:
             'code': self.code
         }
         if self.details is not None:
-            if isinstance(self.details, ):
+            if isinstance(self.details, dict):
                 processed_details = {}
                 for k, v in self.details.items():
                     if isinstance(v, (str, int, float, bool)):
@@ -216,21 +216,21 @@ class DrfValidationErrorResponseDetail:
         return result
 
     @staticmethod
-    def convert_error_detail_to_(obj: Any) -> Any:
+    def convert_error_detail_to_dict(obj: Any) -> Any:
         """
-        Convert various error detail types to ionary format.
+        Convert various error detail types to dictionary format.
 
         Args:
             obj: The error detail object to convert
 
         Returns:
-            The converted ionary representation of the error detail
+            The converted dictionary representation of the error detail
         """
         if isinstance(obj, DrfValidationErrorResponseDetail):
-            return obj.to_()
+            return obj.to_dict()
         elif isinstance(obj, list):
-            return [DrfValidationErrorResponseDetail.convert_error_detail_to_(item) for item in obj]
-        elif isinstance(obj, ):
+            return [DrfValidationErrorResponseDetail.convert_error_detail_to_dict(item) for item in obj]
+        elif isinstance(obj, dict):
             if 'unknown_fields' in obj:
                 unknown_fields = obj['unknown_fields']
                 return {
@@ -238,7 +238,7 @@ class DrfValidationErrorResponseDetail:
                     'code': str(unknown_fields['code']),
                     'fields': [str(f) for f in unknown_fields['fields']]
                 }
-            return {key: DrfValidationErrorResponseDetail.convert_error_detail_to_(value) for key, value in obj.items()}
+            return {key: DrfValidationErrorResponseDetail.convert_error_detail_to_dict(value) for key, value in obj.items()}
         elif isinstance(obj, DRFErrorDetail):
             return {
                 'message': str(obj),

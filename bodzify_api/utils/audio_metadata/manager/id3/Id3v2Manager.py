@@ -185,7 +185,7 @@ class Id3v2Manager(Id3Manager):
             tags = ID3()
             tags.save(self.audio_file.file_path, v2_version=3)  # Explicitly save as ID3v2.3
 
-    def get_raw_metadata(self) -> :
+    def get_raw_metadata(self) -> dict:
         try:
             tags = ID3(self.audio_file.file_path)
             # Force v2.3 update to ensure compatibility
@@ -284,7 +284,7 @@ class Id3v2Manager(Id3Manager):
 
     def update_specific_without_saving(
             self,
-            app_metadata_value,
+            normalized_metadata_value,
             app_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
         if app_metadata_key == AppMetadataKey.TITLE:
@@ -303,7 +303,7 @@ class Id3v2Manager(Id3Manager):
             id3_key = self.Id3TextFrames.GENRE_NAME
             text_frame_class = TCON
         elif app_metadata_key == AppMetadataKey.RATING:
-            normalized_rating = app_metadata_value
+            normalized_rating = normalized_metadata_value
             self.file_raw_metadata.delall(self.Id3TextFrames.RATING)  # type: ignore
             if normalized_rating:
                 if normalized_rating_max_value is None:
@@ -330,7 +330,7 @@ class Id3v2Manager(Id3Manager):
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
         self.file_raw_metadata.delall(id3_key)  # type: ignore
-        self.file_raw_metadata.add(text_frame_class(encoding=3, text=app_metadata_value))  # type: ignore
+        self.file_raw_metadata.add(text_frame_class(encoding=3, text=normalized_metadata_value))  # type: ignore
 
     def _calculate_md5(self, audio_data):
         import hashlib

@@ -45,7 +45,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
     def delete_instance(self, instance: 'Artist'):
         self.delete_instance_with_albums_and_tracks(instance)
 
-    def delete_instance_with_albums_and_tracks(self, instance: 'Artist') -> tuple[int, [str, int]]:
+    def delete_instance_with_albums_and_tracks(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
         from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
         from bodzify_api.model.album.Album import Album
 
@@ -59,7 +59,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
 
         return instance.delete()
 
-    def delete_instance_if_nothing_linked(self, instance: 'Artist') -> tuple[int, [str, int]]:
+    def delete_instance_if_nothing_linked(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
         if instance.albums.count() == 0:
             if instance.lib_tracks.count() == 0:
                 return instance.delete()

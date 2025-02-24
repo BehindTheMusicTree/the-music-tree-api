@@ -1,12 +1,12 @@
 
 class FilterValidator:
     @staticmethod
-    def validate_filters(params: , filter_class) -> tuple[bool, list[str]]:
+    def validate_filters(params: dict, filter_class) -> tuple[bool, list[str]]:
         """
         Validates that all query parameters are valid filter fields for the given filter class.
 
         Args:
-            params (): Dictionary of query parameters to validate
+            params (dict): Dictionary of query parameters to validate
             filter_class: Class containing valid filter fields (should have fields as class attributes)
 
         Returns:

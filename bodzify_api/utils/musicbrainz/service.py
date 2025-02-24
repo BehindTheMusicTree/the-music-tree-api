@@ -19,8 +19,8 @@ from .LookupMetaFields import LookupMetaFields
 from . import utils
 
 
-def _get_musicbrainz_best_recording__from_fingerprint_and_duration(fingerprint: bytes,
-                                                                   duration_in_sec: float) -> Optional[]:
+def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: bytes,
+                                                                       duration_in_sec: float) -> Optional[dict]:
     try:
         lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
                                  fingerprint=fingerprint,
@@ -35,14 +35,14 @@ def _get_musicbrainz_best_recording__from_fingerprint_and_duration(fingerprint: 
         if lookup_status == ApiFields.Values.Status.OK:
             recordings_grouped_by_score = lookup[ApiFields.Names.RESULTS]
             if len(recordings_grouped_by_score) > 0:
-                return utils.get_best_recording__with_score(recordings_grouped_by_score=recordings_grouped_by_score,
-                                                            duration_in_sec=duration_in_sec)
+                return utils.get_best_recording_dict_with_score(recordings_grouped_by_score=recordings_grouped_by_score,
+                                                                duration_in_sec=duration_in_sec)
             else:
                 return None
         elif lookup_status == ApiFields.Values.Status.ERROR:
-            error_ = lookup[ApiFields.Names.ERROR]
-            error_code = error_[ApiFields.Names.CODE]
-            error_message = error_[ApiFields.Names.MESSAGE]
+            error_dict = lookup[ApiFields.Names.ERROR]
+            error_code = error_dict[ApiFields.Names.CODE]
+            error_message = error_dict[ApiFields.Names.MESSAGE]
             if error_code == 3:
                 raise musicbrainz_exception.InvalidFingerprintMusicbrainzRecordingLookupException(
                     f"Musicbrainz original lookup error message: \"{error_message}\"")
@@ -74,23 +74,23 @@ def get_musicbrainz_recording_lookup_result(user: User,
         musicbrainz_recording_missing_cause_message = None
     else:
         try:
-            musicbrainz_recording_ = _get_musicbrainz_best_recording__from_fingerprint_and_duration(
+            musicbrainz_recording_dict = _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(
                 fingerprint=fingerprint, duration_in_sec=duration_in_sec)
-            if not musicbrainz_recording_:
+            if not musicbrainz_recording_dict:
                 musicbrainz_recording_missing_cause_code = \
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FOUND_NO_MATCHING_RECORDING
                 musicbrainz_recording_missing_cause_message = None
             else:
-                musicbrainz_recording_id = musicbrainz_recording_[ApiFields.Names.ID]
+                musicbrainz_recording_id = musicbrainz_recording_dict[ApiFields.Names.ID]
                 try:
                     musicbrainz_recording = MusicbrainzRecording.objects.get(musicbrainz_id=musicbrainz_recording_id)
                 except ObjectDoesNotExist:
-                    musicbrainz_recording = utils.create_musicbrainz_recording_instance_from_(
+                    musicbrainz_recording = utils.create_musicbrainz_recording_instance_from_dict(
                         musicbrainz_recording_id=musicbrainz_recording_id,
-                        musicbrainz_recording_=musicbrainz_recording_)
+                        musicbrainz_recording_dict=musicbrainz_recording_dict)
 
         except musicbrainz_exception.MusicbrainzRecordingLookupException as e:
-            exception_mapping: [type, MusicbrainzRecordingMissingCauseCode.Codes] = {
+            exception_mapping: dict[type, MusicbrainzRecordingMissingCauseCode.Codes] = {
                 musicbrainz_exception.InvalidFingerprintMusicbrainzRecordingLookupException:
                     MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DUE_TO_INVALID_FINGERPRINT,
                 musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException:

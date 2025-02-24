@@ -9,16 +9,16 @@ class TestCase(UpdateFileMetadataStrTestCase):
     save_field = PostFields.ALBUM_ARTISTS_NAMES_ARRAY
     lib_track_app_metadata_key = AppMetadataKey.ALBUM_ARTISTS_NAMES_STR
     length_max = settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX
-    album_data_ = {PostFields.ALBUM_NAME: "The Great Twenty-Eight"}
+    album_data_dict = {PostFields.ALBUM_NAME: "The Great Twenty-Eight"}
 
     def test_on_missing_tag_then_ok(self):
-        self._test_value("a", additional_data_=self.album_data_, file_has_tags=False)
+        self._test_value("a", additional_data_dict=self.album_data_dict, file_has_tags=False)
 
     def test_on_present_tag_then_ok(self):
-        self._test_value("a", additional_data_=self.album_data_, file_has_tags=True)
+        self._test_value("a", additional_data_dict=self.album_data_dict, file_has_tags=True)
 
     def test_longest_then_ok(self):
-        self._test_value("a" * self.length_max, additional_data_=self.album_data_, file_has_tags=False)
+        self._test_value("a" * self.length_max, additional_data_dict=self.album_data_dict, file_has_tags=False)
 
 
 class Mp3TestCase(TestCase):

@@ -8,11 +8,11 @@ from bodzify_api.model.musicbrainz_resource.children.recording.Fields import Fie
 from .ApiFields import ApiFields
 
 
-def get_best_recording__with_score(recordings_grouped_by_score, duration_in_sec):
+def get_best_recording_dict_with_score(recordings_grouped_by_score, duration_in_sec):
     def rate_groupe_of_recordings_by_score(group_of_recordings):
         return group_of_recordings[ApiFields.Names.SCORE]
 
-    def rate_recording_by_similar_duration_and_by_number_of_fields(recording:):
+    def rate_recording_by_similar_duration_and_by_number_of_fields(recording: dict):
         DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST = 1000000000
         duration_difference = abs(recording.get(ApiFields.Names.DURATION_IN_SEC,
                                                 DURATION_FAKE_VALUE_IF_NOT_SET_IN_ORDER_TO_RANK_LAST) - duration_in_sec)
@@ -28,10 +28,10 @@ def get_best_recording__with_score(recordings_grouped_by_score, duration_in_sec)
     return best_recording
 
 
-def get_earliest_release_date_from_musicbrainz_recording_(musicbrainz_recording_):
+def get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict):
     earliest_comparison_date = None
     earliest_release_date = None
-    for releasegroup in musicbrainz_recording_.get(ApiFields.Names.RELEASEGROUPS, []):
+    for releasegroup in musicbrainz_recording_dict.get(ApiFields.Names.RELEASEGROUPS, []):
         for release in releasegroup.get(ApiFields.Names.RELEASES, []):
             current_release_date = release.get(ApiFields.Names.DATE, None)
             if current_release_date:
@@ -50,21 +50,21 @@ def get_earliest_release_date_from_musicbrainz_recording_(musicbrainz_recording_
     return earliest_release_date
 
 
-def create_musicbrainz_recording_instance_from_(musicbrainz_recording_id: str,
-                                                musicbrainz_recording_: ) -> MusicbrainzRecording:
-    musicbrainz_artists_ = musicbrainz_recording_[ApiFields.Names.ARTISTS]
+def create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_id: str,
+                                                    musicbrainz_recording_dict: dict) -> MusicbrainzRecording:
+    musicbrainz_artists_dict = musicbrainz_recording_dict[ApiFields.Names.ARTISTS]
     musicbrainz_artists = []
-    for artist_ in musicbrainz_artists_:
-        artist, _ = MusicbrainzArtist.objects.get_or_create(musicbrainz_id=artist_[ApiFields.Names.ID],
+    for artist_dict in musicbrainz_artists_dict:
+        artist, _ = MusicbrainzArtist.objects.get_or_create(musicbrainz_id=artist_dict[ApiFields.Names.ID],
                                                             defaults={MusicbrainzArtistFields.NAME:
-                                                                      artist_[ApiFields.Names.NAME]})
+                                                                      artist_dict[ApiFields.Names.NAME]})
         musicbrainz_artists.append(artist)
 
-    earliest_release_date = get_earliest_release_date_from_musicbrainz_recording_(musicbrainz_recording_)
+    earliest_release_date = get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict)
 
-    defaults = {MusicbrainzRecordingFields.SCORE: musicbrainz_recording_[ApiFields.Names.SCORE],
-                MusicbrainzRecordingFields.TITLE: musicbrainz_recording_[ApiFields.Names.TITLE],
-                MusicbrainzRecordingFields.DURATION_IN_SEC: musicbrainz_recording_.get(
+    defaults = {MusicbrainzRecordingFields.SCORE: musicbrainz_recording_dict[ApiFields.Names.SCORE],
+                MusicbrainzRecordingFields.TITLE: musicbrainz_recording_dict[ApiFields.Names.TITLE],
+                MusicbrainzRecordingFields.DURATION_IN_SEC: musicbrainz_recording_dict.get(
                     ApiFields.Names.DURATION_IN_SEC, None),
                 MusicbrainzRecordingFields.RELEASE_DATE: earliest_release_date, }
     musicbrainz_recording: MusicbrainzRecording

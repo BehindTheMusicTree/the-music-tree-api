@@ -50,12 +50,12 @@ class LibTrackTestCase(ApiTestCase[LibraryTrack]):
         else:
             raise ValueError(f"Unknown extension: {extension}")
 
-        extract_data_ = {LibTrackExtractFields.URL: url}
+        extract_data_dict = {LibTrackExtractFields.URL: url}
 
         if kwargs:
-            extract_data_ = data_transformer.merge_two_s(extract_data_, kwargs)
+            extract_data_dict = data_transformer.merge_two_dicts(extract_data_dict, kwargs)
 
-        response = self._extract(**extract_data_)
+        response = self._extract(**extract_data_dict)
         return response
 
     def _post_lib_track_without_file(self, **kwargs):

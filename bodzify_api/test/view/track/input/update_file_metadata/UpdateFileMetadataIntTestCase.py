@@ -16,12 +16,12 @@ class UpdateFileMetadataIntTestCase(LibTrackTestCase):
 
     def _test_value(self, value: Optional[int],
                     value_expected_in_metadata: Optional[int] = None,
-                    additional_data_=None,
+                    additional_data_dict=None,
                     file_has_tags=False):
         value_str = str(value) if value else ''
         data = {self.save_field: value_str}
-        if additional_data_:
-            data.update(additional_data_)
+        if additional_data_dict:
+            data.update(additional_data_dict)
 
         if file_has_tags:
             response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(

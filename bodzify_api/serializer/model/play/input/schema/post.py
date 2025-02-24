@@ -14,7 +14,7 @@ class PlayPostSerializer(AppSerializer, serializers.ModelSerializer):
         model = Play
         fields = [PostFields.CONTENT]
 
-    def validate(self, attrs: ) -> :
+    def validate(self, attrs: dict) -> dict:
         content_data = attrs.pop(PostFields.CONTENT)
         attrs[SchemaFields.CONTENT_TYPE] = content_data[SchemaFields.CONTENT_TYPE]
         attrs[SchemaFields.CONTENT] = content_data[SchemaFields.CONTENT]

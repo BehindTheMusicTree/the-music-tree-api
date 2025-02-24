@@ -93,8 +93,8 @@ class LibraryTrack(TrackablePlayCount):
                 + f"{Fields.CREATED_ON}: {self.created_on} | {file_str}")
 
     def update_file_tags_from_lib_track_instance_values(self):
-        app_metadata = ()
-        app_metadata[AppMetadataKey.TITLE] = self.title
+        normalized_metadata = dict()
+        normalized_metadata[AppMetadataKey.TITLE] = self.title
 
         if self.artists.count() > 0:
             artists_names_tag = ""
@@ -105,7 +105,7 @@ class LibraryTrack(TrackablePlayCount):
                 artists_names_tag = artists_names_tag + artist.name
         else:
             artists_names_tag = ""
-        app_metadata[AppMetadataKey.ARTISTS_NAMES_STR] = artists_names_tag
+        normalized_metadata[AppMetadataKey.ARTISTS_NAMES_STR] = artists_names_tag
 
         album_artists_tag = ""
         if self.album:
@@ -120,13 +120,13 @@ class LibraryTrack(TrackablePlayCount):
         else:
             album_name_tag = ""
 
-        app_metadata[AppMetadataKey.ALBUM_NAME] = album_name_tag
-        app_metadata[AppMetadataKey.ALBUM_ARTISTS_NAMES_STR] = album_artists_tag
-        app_metadata[AppMetadataKey.GENRE_NAME] = self.genre.name if self.genre else ""
-        app_metadata[AppMetadataKey.RATING] = self.rating
-        app_metadata[AppMetadataKey.LANGUAGE] = self.language if self.language else ""
+        normalized_metadata[AppMetadataKey.ALBUM_NAME] = album_name_tag
+        normalized_metadata[AppMetadataKey.ALBUM_ARTISTS_NAMES_STR] = album_artists_tag
+        normalized_metadata[AppMetadataKey.GENRE_NAME] = self.genre.name if self.genre else ""
+        normalized_metadata[AppMetadataKey.RATING] = self.rating
+        normalized_metadata[AppMetadataKey.LANGUAGE] = self.language if self.language else ""
 
-        self.track_file.update_file_tags(app_metadata=app_metadata)
+        self.track_file.update_file_tags(normalized_metadata=normalized_metadata)
 
     @property
     def playlists_with_positions(self) -> List[Tuple[str, int]]:

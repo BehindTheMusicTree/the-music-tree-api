@@ -10,21 +10,21 @@ from bodzify_api.filtering.set.playlist.Fields import Fields as Filters
 class TestCase(PlaylistTestCase):
 
     def test_type_genre_and_name_tagless_then_no_result(self):
-        data_ = {
+        data_dict = {
             Filters.TYPE_LABEL_PUBLIC: PlaylistTypesLabel.GENRE,
             Filters.NAME: CriterialessPlaylistNames.TAG
         }
-        response = self._get_playlists(**data_)
+        response = self._get_playlists(**data_dict)
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 0
 
     def test_type_genre_and_name_genreless_then_one_result(self):
-        data_ = {
+        data_dict = {
             Filters.TYPE_LABEL_PUBLIC: PlaylistTypesLabel.GENRE,
             Filters.NAME: CriterialessPlaylistNames.GENRE
         }
-        response = self._get_playlists(**data_)
+        response = self._get_playlists(**data_dict)
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 1
@@ -36,11 +36,11 @@ class TestCase(PlaylistTestCase):
         genre2_name = "Punk rock"
         self.model_fixture_factory.create_genre(name=genre2_name)
 
-        data_ = {
+        data_dict = {
             Filters.TYPE_LABEL_PUBLIC: PlaylistTypesLabel.GENRE,
             Filters.NAME: 'rock'
         }
-        response = self._get_playlists(**data_)
+        response = self._get_playlists(**data_dict)
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2

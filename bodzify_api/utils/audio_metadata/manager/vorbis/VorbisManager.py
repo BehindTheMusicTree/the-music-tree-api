@@ -84,16 +84,16 @@ class VorbisManager(MetadataManager):
         else:
             raise Exception("The Flac file md5 check failed")
 
-    def get_raw_metadata(self) -> :
+    def get_raw_metadata(self) -> dict:
         self.audio_file.seek(0)
         try:
             flac_file = FLAC(io.BytesIO(self.audio_file.read()))
             return {
-                'info': flac_file.info.____,
+                'info': flac_file.info.__dict__,
                 'tags': flac_file.tags,
-                'pictures': [picture.____ for picture in flac_file.pictures],
-                'cuesheet': flac_file.cuesheet.____ if flac_file.cuesheet else None,
-                'seektable': flac_file.seektable.____ if flac_file.seektable else None,
+                'pictures': [picture.__dict__ for picture in flac_file.pictures],
+                'cuesheet': flac_file.cuesheet.__dict__ if flac_file.cuesheet else None,
+                'seektable': flac_file.seektable.__dict__ if flac_file.seektable else None,
             }
         except Exception as error:
             error_str = str(error)
@@ -178,7 +178,7 @@ class VorbisManager(MetadataManager):
 
     def update_specific_without_saving(
             self,
-            app_metadata_value,
+            normalized_metadata_value,
             app_metadata_key: str,
             normalized_rating_max_value: Optional[int] = None):
         if app_metadata_key == AppMetadataKey.TITLE:
@@ -192,14 +192,14 @@ class VorbisManager(MetadataManager):
         elif app_metadata_key == AppMetadataKey.GENRE_NAME:
             vorbis_tag_key = self.VorbisTagKeys.GENRE_NAME
         elif app_metadata_key == AppMetadataKey.RATING:
-            app_rating = app_metadata_value
+            app_rating = normalized_metadata_value
             vorbis_tag_key = self.VorbisTagKeys.RATING
             if app_rating:
                 vorbis_rating = self._get_file_rating_from_normalized_rating(
                     normalized_rating=app_rating,
                     normalized_rating_max_value=normalized_rating_max_value,  # type: ignore
                     rating_file_profile=self.RatingFileProfile.BASE_100)
-                app_metadata_value = str(vorbis_rating)
+                normalized_metadata_value = str(vorbis_rating)
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
             vorbis_tag_key = self.VorbisTagKeys.LANGUAGE
         elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
@@ -211,10 +211,10 @@ class VorbisManager(MetadataManager):
         else:
             raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
-        if app_metadata_value:
+        if normalized_metadata_value:
             if vorbis_tag_key not in self.file_raw_metadata:
                 self.file_raw_metadata[vorbis_tag_key] = [1]
-            self.file_raw_metadata[vorbis_tag_key] = app_metadata_value
+            self.file_raw_metadata[vorbis_tag_key] = normalized_metadata_value
         elif vorbis_tag_key in self.file_raw_metadata:
             del self.file_raw_metadata[vorbis_tag_key]
 

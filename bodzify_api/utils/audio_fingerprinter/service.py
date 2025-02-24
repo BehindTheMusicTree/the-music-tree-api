@@ -62,7 +62,7 @@ def get_fingerprinting_result(user: User, track_file: DjangoFile, title: str) ->
 
     except audio_fingerprinter_error.AudioFingerprinterError as e:
         fingerprint = None
-        error_mapping: [type, FingerprintMissingCauseCode.Codes] = {
+        error_mapping: dict[type, FingerprintMissingCauseCode.Codes] = {
             audio_fingerprinter_error.WrongFileExtension: FingerprintMissingCauseCode.Codes.WRONG_FILE_EXTENSION,
             audio_fingerprinter_error.WrongFileType: FingerprintMissingCauseCode.Codes.WRONG_FILE_TYPE,
             audio_fingerprinter_error.FileNotInPool: FingerprintMissingCauseCode.Codes.FILE_NOT_FOUND_IN_POOL,

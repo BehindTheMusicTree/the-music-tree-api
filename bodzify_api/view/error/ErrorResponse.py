@@ -19,7 +19,7 @@ class ErrorResponse:
 
     @staticmethod
     def _get_error_code(error: Any, default_code: str = 'error') -> str:
-        if isinstance(error, ) and 'unknown_fields' in error:
+        if isinstance(error, dict) and 'unknown_fields' in error:
             return str(error['unknown_fields'][DrfValidationErrorFields.CODE])
         if isinstance(error, DRFErrorDetail) and hasattr(error, 'code') and error.code:
             return str(error.code)
@@ -54,19 +54,19 @@ class ErrorResponse:
     def _parse_error_message(error: Any) -> tuple[str, str]:
         """Parse error message and code from various error formats."""
         if isinstance(error, str):
-            # Try to parse if it looks like a serialized list/
+            # Try to parse if it looks like a serialized list/dict
             if error.startswith('[') or error.startswith('{'):
                 try:
                     import json
                     parsed = json.loads(error.replace("'", '"'))
-                    if isinstance(parsed, list) and parsed and isinstance(parsed[0], ):
+                    if isinstance(parsed, list) and parsed and isinstance(parsed[0], dict):
                         return parsed[0]['message'], parsed[0]['code']
-                    elif isinstance(parsed, ):
+                    elif isinstance(parsed, dict):
                         return parsed['message'], parsed['code']
                 except:
                     pass
             return error, 'blank' if 'may not be blank' in error else 'invalid'
-        if isinstance(error, ):
+        if isinstance(error, dict):
             if DrfValidationErrorFields.MESSAGE in error and DrfValidationErrorFields.CODE in error:
                 return error[ErrorResponseFields.MESSAGE], error[ErrorResponseFields.CODE]
             return str(error.get(DrfValidationErrorFields.MESSAGE, error)), \
@@ -130,17 +130,17 @@ class ErrorResponse:
                 error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
             )
         elif isinstance(exception, DrfValidationError):
-            error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_(exception.detail)
+            error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
 
-            # If it's already a  with a message, use it directly
-            if isinstance(error_detail, ) and ErrorResponseFields.MESSAGE in error_detail:
+            # If it's already a dict with a message, use it directly
+            if isinstance(error_detail, dict) and ErrorResponseFields.MESSAGE in error_detail:
                 return ErrorResponse._create_error_response(
                     error_detail=error_detail,
                     error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
 
-            # If it's a  with field errors
-            if isinstance(error_detail, ):
+            # If it's a dict with field errors
+            if isinstance(error_detail, dict):
                 formatted_error = ErrorResponse._format_from_drf_validation_error_detail(error_detail)
                 return ErrorResponse._create_error_response(
                     error_detail=formatted_error,
@@ -151,11 +151,11 @@ class ErrorResponse:
             return ErrorResponse._create_error_response(
                 {ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
                  ErrorResponseFields.FIELD_ERRORS: error_detail
-                 if isinstance(error_detail, ) else {ErrorResponseFields.DETAILS: error_detail}},
+                 if isinstance(error_detail, dict) else {ErrorResponseFields.DETAILS: error_detail}},
                 ApiErrorCode.VALIDATION_INVALID_INPUT)
 
         if isinstance(exception, DjangoValidationError):
-            if hasattr(exception, 'message_'):
+            if hasattr(exception, 'message_dict'):
                 # Multiple field errors
                 formatted_error = {
                     ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
@@ -164,7 +164,7 @@ class ErrorResponse:
                             ErrorResponseFields.FieldErrors.MESSAGE: msgs[0],
                             ErrorResponseFields.FieldErrors.CODE:
                                 ErrorResponseFields.DefaultFieldValidationValues.NonDbIntegrityError.CODE
-                        }] for field, msgs in exception.message_.items()
+                        }] for field, msgs in exception.message_dict.items()
                     }
                 }
                 return ErrorResponse._create_error_response(

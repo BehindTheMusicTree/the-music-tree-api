@@ -67,7 +67,7 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
             ['id3v2', 'vorbis'],
         ]
         for possible_tags in possible_tags_list:
-            metadata = audio_metadata.get_merged_app_metadata(
+            metadata = audio_metadata.get_merged_normalized_metadata(
                 file=updated_track.track_file.file, possible_tags=possible_tags)
             assert AppMetadataKey.GENRE_NAME in metadata
             assert metadata[AppMetadataKey.GENRE_NAME] == genre_new_name
