@@ -73,16 +73,18 @@ Legend:
 import tempfile
 import os
 import subprocess
-from typing import Optional, Union, Dict, Literal, TypedDict, cast
+from typing import Optional, Dict, cast, Union
 
 from django.db.models.fields.files import FieldFile
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.core.exceptions import ImproperlyConfigured
 
+from bodzify_api.utils.audio_metadata.types import AppMetadataDict, RawMetadataDict, TagValue
+
 
 from .exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
-from .AppMetadataKeys import AppMetadataKeys
-from .audio_file import AudioFile
+from .AppMetadataKey import AppMetadataKey
+from .AudioFile import AudioFile
 from .TagFormat import TagFormat
 from .manager.MetadataManager import MetadataManager
 from .manager.riff.RiffManager import RiffManager
@@ -91,117 +93,76 @@ from .manager.id3.Id3v2Manager import Id3v2Manager
 from .manager.vorbis.VorbisManager import VorbisManager
 
 
-TagValue = Union[str, int]
-
-
-class MetadataDict(TypedDict):
-    merged: Dict[str, TagValue]
-
-
-# Type alias for metadata operations
-MetadataType = Dict[Union[TagFormat, Literal['merged']], Dict[str, TagValue]]
-
-
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
+TAG_FORMAT_MANAGER_MAP = {
+    TagFormat.ID3V1: Id3v1Manager,
+    TagFormat.ID3V2: Id3v2Manager,
+    TagFormat.VORBIS: VorbisManager,
+    TagFormat.RIFF: RiffManager
+}
 
-def _get_metadata_manager(file, tag_formats: Optional[list[TagFormat]] = None) -> dict[TagFormat, MetadataManager]:
-    """
-    Args:
-        file: The audio file to analyze
-        tag_formats: List of tag types to extract. Use TagTypes enum values.
-                  If None, returns default manager for the file type.
 
-    Returns:
-        Dict mapping tag type to corresponding MetadataManager instance
-    """
+def _get_metadata_manager(file, tag_format: Optional[TagFormat] = None) -> MetadataManager:
+    audio_file = AudioFile(file)
+
+    audio_file_prioritized_tag_formats = TagFormat.get_priorities().get(audio_file.file_extension)
+    if not audio_file_prioritized_tag_formats:
+        raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
+
+    if not tag_format:
+        tag_format = audio_file_prioritized_tag_formats[0]
+    else:
+        if tag_format not in audio_file_prioritized_tag_formats:
+            raise ImproperlyConfigured(
+                f"Tag format {tag_format} not supported for file extension {audio_file.file_extension}")
+
+    return TAG_FORMAT_MANAGER_MAP[tag_format](audio_file)
+
+
+def _get_metadata_managers(file, tag_formats: Optional[list[TagFormat]] = None) -> dict[TagFormat, MetadataManager]:
     audio_file = AudioFile(file)
     managers = {}
 
-    if tag_formats is None:
-        # Default behavior - single manager
-        if audio_file.file_extension == ".mp3":
-            managers[TagFormat.ID3V2] = Id3v2Manager(audio_file)
-        elif audio_file.file_extension == ".wav":
-            managers[TagFormat.RIFF] = RiffManager(audio_file)
-        elif audio_file.file_extension == ".flac":
-            managers[TagFormat.VORBIS] = VorbisManager(audio_file)
-        else:
+    if not tag_formats:
+        tag_formats = TagFormat.get_priorities().get(audio_file.file_extension)
+        if not tag_formats:
             raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
-        return managers
 
-    # Multiple tag types requested
-    for tag_type in tag_formats:
-        if tag_type == TagFormat.ID3V2 and audio_file.file_extension in [".mp3", ".flac"]:
-            managers[TagFormat.ID3V2] = Id3v2Manager(audio_file)
-        elif tag_type == TagFormat.VORBIS and audio_file.file_extension == ".flac":
-            managers[TagFormat.VORBIS] = VorbisManager(audio_file)
-        elif tag_type == TagFormat.RIFF and audio_file.file_extension == ".wav":
-            managers[TagFormat.RIFF] = RiffManager(audio_file)
-        elif tag_type == TagFormat.ID3V1 and audio_file.file_extension == ".mp3":
-            managers[TagFormat.ID3V1] = Id3v1Manager(audio_file)
-
-    if not managers:
-        raise ImproperlyConfigured(
-            f"No supported tag types ({', '.join(tag_formats)}) for file extension {audio_file.file_extension}")
-
+    for tag_format in tag_formats:
+        managers[tag_format] = _get_metadata_manager(file, tag_format)
     return managers
 
 
-def get_bitrate(file):
-    return AudioFile(file).get_bitrate()
+def get_raw_metadata(file, tag_format: Optional[TagFormat] = None) -> RawMetadataDict:
+    return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
 
 
-def get_specific_metadata(
-        file, app_metadata_key: str, tag_formats: Optional[list[TagFormat]] = None) -> TagValue:
-    managers = _get_metadata_manager(file, tag_formats=tag_formats)
-    # Return the first valid value found
-    for manager in managers.values():
-        value = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
-        if value is not None and isinstance(value, (str, int)):
-            return value
-    return ""  # Return empty string as fallback
-
-
-def get_raw_metadata(file, tag_formats: Optional[list[TagFormat]] = None) -> dict:
-    managers = _get_metadata_manager(file, tag_formats=tag_formats)
-    results = {}
-    for tag_type, manager in managers.items():
-        results[tag_type] = manager.file_raw_metadata
-    return results
-
-
-def get_normalized_metadata_from_file(
-        file,
-        normalized_rating_max_value: Optional[int] = None,
-        tag_formats: Optional[list[TagFormat]] = None,
-        merge_tags: bool = True) -> MetadataType:
-    """Get normalized metadata from specified tag types.
-
-    Args:
-        file: The audio file to analyze
-        normalized_rating_max_value: Optional max value for normalizing ratings
-        tag_formats: List of TagTypes enum values to extract from.
-                  If None, returns metadata from default tag type for the file.
-        merge_tags: If True, includes a 'merged' key with metadata merged according to tag priorities
-
-    Returns:
-        Dict mapping tag type to normalized metadata dict for that format.
-        If merge_tags is True, includes a 'merged' key with prioritized metadata.
-    """
+def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[int] = None) -> AppMetadataDict:
+    audio_file = AudioFile(file)
     try:
-        managers = _get_metadata_manager(file, tag_formats=tag_formats)
+        managers = _get_metadata_managers(file)
         metadata = {}
 
-        for tag_type, manager in managers.items():
-            try:
-                metadata[tag_type] = manager.get_normalized_metadata(normalized_rating_max_value)
-            except Exception as e:
-                metadata[tag_type] = {"error": str(e)}
+        for tag_format, manager in managers.items():
+            metadata[tag_format] = manager.get_normalized_metadata(normalized_rating_max_value)
 
-        if merge_tags:
-            return get_merged_metadata(metadata, AudioFile(file).file_extension)
-        return metadata
+        priorities = TagFormat.get_priorities().get(audio_file.file_extension, [])
+        if not priorities:
+            # Never reached because already checked in _get_metadata_managers
+            raise ImproperlyConfigured(f"No priority order defined for {audio_file.file_extension}")
+
+        merged_data: Dict[AppMetadataKey, TagValue] = {}
+        for field in AppMetadataKey:
+            for tag_format in priorities:
+                value = metadata[tag_format].get(field)
+                if value is not None:
+                    merged_data[field] = value
+                    break
+
+        merged: AppMetadataDict = {"merged": merged_data}
+
+        return merged
 
     except Exception as error:
         error_str = str(error)
@@ -212,49 +173,19 @@ def get_normalized_metadata_from_file(
         raise
 
 
-def get_merged_metadata(metadata: Dict[TagFormat, Dict[str, TagValue]], file_extension: str) -> MetadataType:
-    """Merge metadata from different tag types with priority ordering.
+def get_specific_metadata(
+        file, app_metadata_key: str, tag_format: Optional[TagFormat] = None) -> TagValue:
+    manager = _get_metadata_manager(file, tag_format=tag_format)
+    # Return the first valid value found
+    for manager in managers.values():
+        value = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
+        if value is not None and isinstance(value, (str, int)):
+            return value
+    return ""  # Return empty string as fallback
 
-    The priority order is defined in TAG_TYPE_PRIORITIES. For each metadata field,
-    the function tries tag types in priority order and uses the first valid value found.
 
-    Example for FLAC files:
-    If both Vorbis and ID3v2 tags contain a title, the Vorbis title is used.
-    If Vorbis tags don't have a title but ID3v2 does, the ID3v2 title is used.
-
-    Args:
-        metadata: Dictionary of metadata by tag type
-        file_extension: File extension to determine priority order
-
-    Returns:
-        Dictionary with merged metadata under 'merged' key, plus original tag data
-    """
-    priorities = TagFormat.get_priorities().get(file_extension.lower(), [])
-    if not priorities:
-        raise ImproperlyConfigured(f"No priority order defined for {file_extension}")
-
-    # Start with empty merged metadata
-    merged = {}
-
-    # For each field that could exist in metadata
-    for field in vars(AppMetadataKeys).values():
-        if not isinstance(field, str) or field.startswith('_'):
-            continue
-
-        # Try each tag type in priority order
-        for tag_type in priorities:
-            if (tag_type in metadata and
-                isinstance(metadata[tag_type], dict) and
-                "error" not in metadata[tag_type] and
-                field in metadata[tag_type] and
-                    metadata[tag_type][field] is not None):
-                merged[field] = metadata[tag_type][field]
-                break
-
-    # Add merged result while preserving original tag data
-    result = cast(MetadataType, metadata)
-    result['merged'] = merged
-    return result
+def get_bitrate(file) -> int:
+    return AudioFile(file).get_bitrate()
 
 
 def get_prioritized_metadata(
@@ -281,11 +212,9 @@ def get_prioritized_metadata(
         raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
 
     # Get metadata from all relevant tag types and merge with priority
-    metadata = get_normalized_metadata_from_file(
+    metadata = get_merged_normalized_metadata(
         file,
-        normalized_rating_max_value=normalized_rating_max_value,
-        tag_formats=tag_formats,
-        merge_tags=True
+        normalized_rating_max_value=normalized_rating_max_value
     )
 
     return metadata['merged']
@@ -311,26 +240,26 @@ def update_metadata(file, normalized_metadata: dict, normalized_rating_max_value
     if not priorities:
         raise ImproperlyConfigured(f"File type {audio_file.file_extension} not supported")
 
-    # Get the highest priority tag type for this format
-    primary_tag_type = priorities[0]
+    primary_tag_format = priorities[0]
 
     # Get the manager for just this tag type
-    managers = _get_metadata_manager(file, tag_formats=[primary_tag_type])
-    if not managers or primary_tag_type not in managers:
+    manager = _get_metadata_manager(file, tag_format=primary_tag_format)
+    if not manager:
         raise ImproperlyConfigured(
-            f"Could not get {primary_tag_type} manager for {audio_file.file_extension}")
+            f"Could not get {primary_tag_format} manager for {audio_file.file_extension}")
 
     # Use the primary manager for updates
-    managers[primary_tag_type].update_file_metadata(
+    manager.update_file_metadata(
         normalized_metadata=normalized_metadata,
         normalized_rating_max_value=normalized_rating_max_value)
 
 
-def delete_metadata(file, tag_formats: Optional[list[TagFormat]] = None) -> dict[TagFormat, bool]:
-    managers = _get_metadata_manager(file, tag_formats=tag_formats)
+def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> dict[TagFormat, bool]:
+    manager = _get_metadata_manager(file, tag_format=tag_format)
     results = {}
-    for tag_type, manager in managers.items():
-        results[tag_type] = manager.delete_metadata()
+    if manager:
+        results[tag_format if tag_format else TagFormat.ID3V2] = manager.delete_metadata()
+        results[tag_format] = manager.delete_metadata()
     return results
 
 
