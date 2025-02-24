@@ -6,8 +6,9 @@ from rest_framework.request import Request
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
-from bodzify_api.middleware.duplicate_fields.JsonDuplicateDetectingDecoder import JsonDuplicateDetectingDecoder
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
+
+from .JsonDuplicateKeyDetectingDecoder import JsonDuplicateKeyDetectingDecoder
 
 
 class DuplicateFieldsMiddleware:
@@ -17,7 +18,7 @@ class DuplicateFieldsMiddleware:
 
     def find_duplicate_fields_in_json(self, json_str: str) -> list[str]:
         try:
-            decoder = JsonDuplicateDetectingDecoder()
+            decoder = JsonDuplicateKeyDetectingDecoder()
             decoder.decode(json_str)
             return decoder.tracker.duplicates
         except json.JSONDecodeError:

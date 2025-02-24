@@ -32,7 +32,7 @@ def to_snake_case(name: str) -> str:
 def to_dict(data: Any) -> Union[QueryDict, Dict[str, Any], Mapping[str, Any]]:
     if isinstance(data, (QueryDict, Dict, Mapping)):
         return cast(Union[QueryDict, Dict[str, Any], Mapping[str, Any]], data)
-    return Dict(data)
+    return dict(data)
 
 
 def dict_to_snake_case(data: Any) -> Dict[str, Any]:

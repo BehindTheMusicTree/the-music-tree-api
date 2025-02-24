@@ -1,7 +1,5 @@
 
-
 class JsonDuplicateKeyTracker:
-    """Track duplicate keys during JSON parsing."""
 
     def __init__(self):
         self.seen_keys = {}
