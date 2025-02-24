@@ -70,32 +70,42 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
-from bodzify_api.utils.audio_metadata.AppMetadataKeys import AppMetadataKeys
-from bodzify_api.utils.audio_metadata.manager.vorbis.VorbisManager import VorbisManager
-from .audio_file import AudioFile
 import tempfile
 import os
 import subprocess
-from typing import Optional, Union
-
-from django.core.exceptions import ImproperlyConfigured
-from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
-from django.db.models.fields.files import FieldFile
-
-from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
-
-from .manager.id3.Id3v2Manager import Id3v2Manager
-from .manager.id3.Id3v1Manager import Id3v1Manager
-from .manager.riff.RiffManager import RiffManager
-from .manager.MetadataManager import MetadataManager
-
+from typing import Optional, Union, Dict, Literal, TypedDict, cast, Any
 
 from .TagFormat import TagFormat
+from .manager.MetadataManager import MetadataManager
+from .manager.riff.RiffManager import RiffManager
+from .manager.id3.Id3v1Manager import Id3v1Manager
+from .manager.id3.Id3v2Manager import Id3v2Manager
+from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FlacMd5CheckFailedError, InvalidChunkDecodeError
+from django.db.models.fields.files import FieldFile
+from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
+from django.core.exceptions import ImproperlyConfigured
+from bodzify_api.utils.audio_metadata.AppMetadataKeys import AppMetadataKeys
+from bodzify_api.utils.audio_metadata.manager.vorbis.VorbisManager import VorbisManager
+from .audio_file import AudioFile
+
+# Type alias for tag values that can be strings or integers
+TagValue = Union[str, int]
+
+# Type definitions for metadata structures
+
+
+class MetadataDict(TypedDict):
+    merged: Dict[str, TagValue]
+
+
+# Type alias for metadata operations
+MetadataType = Dict[Union[TagFormat, Literal['merged']], Dict[str, TagValue]]
+
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 
-def _get_metadata_manager(file, tag_formats: Optional[list[TagFormat]] = None) -> dict[str, MetadataManager]:
+def _get_metadata_manager(file, tag_formats: Optional[list[TagFormat]] = None) -> dict[TagFormat, MetadataManager]:
     """
     Args:
         file: The audio file to analyze
@@ -152,25 +162,19 @@ def is_md5_valid(file, check_id3v2: bool = False):
 
 
 def get_bitrate_from_file(file):
-    """Get bitrate in kbps from audio file.
-
-    Args:
-        file: Audio file to get bitrate from
-
-    Returns:
-        int: Bitrate in kbps, or 0 if bitrate cannot be determined
-    """
     audio_file = AudioFile(file)
     return audio_file.get_bitrate()
 
 
 def get_specific_metadata_from_file(
-        file, app_metadata_key: str, tag_formats: Optional[list[TagFormat]] = None) -> Union[str, int]:
+        file, app_metadata_key: str, tag_formats: Optional[list[TagFormat]] = None) -> TagValue:
     managers = _get_metadata_manager(file, tag_formats=tag_formats)
-    results = {}
-    for tag_type, manager in managers.items():
-        results[tag_type] = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
-    return results
+    # Return the first valid value found
+    for manager in managers.values():
+        value = manager.get_specific_file_metadata(app_metadata_key=app_metadata_key)
+        if value is not None and isinstance(value, (str, int)):
+            return value
+    return ""  # Return empty string as fallback
 
 
 def get_raw_metadata_from_file(file, tag_formats: Optional[list[TagFormat]] = None) -> dict:
@@ -185,7 +189,7 @@ def get_normalized_metadata_from_file(
         file,
         normalized_rating_max_value: Optional[int] = None,
         tag_formats: Optional[list[TagFormat]] = None,
-        merge_tags: bool = True) -> Union[dict[TagFormat, [Union[str, int]], [str, int]]]:
+        merge_tags: bool = True) -> MetadataType:
     """Get normalized metadata from specified tag types.
 
     Args:
@@ -222,7 +226,7 @@ def get_normalized_metadata_from_file(
         raise
 
 
-def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[str, dict]:
+def get_merged_metadata(metadata: Dict[TagFormat, Dict[str, TagValue]], file_extension: str) -> MetadataType:
     """Merge metadata from different tag types with priority ordering.
 
     The priority order is defined in TAG_TYPE_PRIORITIES. For each metadata field,
@@ -262,12 +266,13 @@ def get_merged_metadata(metadata: dict[str, dict], file_extension: str) -> dict[
                 break
 
     # Add merged result while preserving original tag data
-    metadata['merged'] = merged
-    return metadata
+    result = cast(MetadataType, metadata)
+    result['merged'] = merged
+    return result
 
 
 def get_prioritized_metadata_from_file(
-        file, normalized_rating_max_value: Optional[int] = None) -> dict:
+        file, normalized_rating_max_value: Optional[int] = None) -> Dict[str, TagValue]:
     """Get merged metadata prioritizing certain tag types based on file format.
 
     For FLAC files: Prioritizes Vorbis comments over ID3v2 tags

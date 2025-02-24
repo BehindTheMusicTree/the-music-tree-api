@@ -44,34 +44,26 @@ class AudioFile:
         return
 
     def get_bitrate(self) -> int:
-        """Get bitrate in kbps based on file extension.
-
-        Returns:
-            int: Bitrate in kbps, or 0 if bitrate cannot be determined
-        """
-        try:
-            path = self.get_file_path_or_object()
-            if self.file_extension == '.mp3':
-                audio = MP3(path)
-                # Calculate MP3 bitrate from file size and duration
-                if audio.info.length > 0 and isinstance(path, str) and os.path.exists(path):
-                    file_size = os.path.getsize(path)
-                    return int((file_size * 8) / audio.info.length / 1000)
-                return 0
-            elif self.file_extension == '.wav':
-                audio = WAVE(path)
-                # WAV bitrate = sample_rate * channels * bits_per_sample
-                return (audio.info.sample_rate * audio.info.channels *
-                        audio.info.bits_per_sample) // 1000
-            elif self.file_extension == '.flac':
-                audio = FLAC(path)
-                # FLAC bitrate = sample_rate * channels * bits_per_sample
-                return (audio.info.sample_rate * audio.info.channels *
-                        audio.info.bits_per_sample) // 1000
-            else:
-                return 0
-        except Exception:
+        path = self.get_file_path_or_object()
+        if self.file_extension == '.mp3':
+            audio = MP3(path)
+            # Calculate MP3 bitrate from file size and duration
+            if audio.info.length > 0 and isinstance(path, str) and os.path.exists(path):
+                file_size = os.path.getsize(path)
+                return int((file_size * 8) / audio.info.length / 1000)
             return 0
+        elif self.file_extension == '.wav':
+            audio = WAVE(path)
+            # WAV bitrate = sample_rate * channels * bits_per_sample
+            return (audio.info.sample_rate * audio.info.channels *
+                    audio.info.bits_per_sample) // 1000
+        elif self.file_extension == '.flac':
+            audio = FLAC(path)
+            # FLAC bitrate = sample_rate * channels * bits_per_sample
+            return (audio.info.sample_rate * audio.info.channels *
+                    audio.info.bits_per_sample) // 1000
+        else:
+            raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 
     def read(self, size: int = -1) -> bytes:
         if isinstance(self.file, InMemoryUploadedFile):
@@ -101,6 +93,8 @@ class AudioFile:
     def close(self) -> None:
         if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):
             self.file.close()
+        else:
+            raise NotImplementedError(f"Closing is not supported for file type: {type(self.file)}")
 
     def __enter__(self):
         return self
@@ -117,14 +111,18 @@ class AudioFile:
                 temp_file.write(chunk)
             temp_file.close()
             return temp_file.name
-        else:
-            return self.file_path
-
-    def get_file_name(self):
-        if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):
+        elif isinstance(self.file, (str, DjangoFile)):
             return self.file.name
         else:
+            raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
+
+    def get_file_name(self):
+        if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, DjangoFile)):
+            return self.file.name
+        elif isinstance(self.file, str):
             return self.file
+        else:
+            raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 
     def is_flac_file_md5_valid(self) -> bool:
         if not self.file_extension == '.flac':
