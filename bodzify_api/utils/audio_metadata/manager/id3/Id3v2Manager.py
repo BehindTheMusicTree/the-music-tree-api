@@ -4,7 +4,7 @@ from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, 
 from mutagen.id3._util import ID3NoHeaderError
 
 from bodzify_api import settings
-from ...audio_file import AudioFile
+from ...AudioFile import AudioFile
 from ...AppMetadataKey import AppMetadataKey
 from .Id3Manager import Id3Manager
 

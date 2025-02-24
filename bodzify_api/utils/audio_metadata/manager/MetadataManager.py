@@ -11,7 +11,7 @@ from tinytag import TinyTag, TinyTagException
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from ...audio_metadata import MetadataDict
-from ..audio_file import AudioFile
+from ..AudioFile import AudioFile
 from ..exceptions import UnsupportedMetadataError
 from ..AppMetadataKey import AppMetadataKey
 
