@@ -78,7 +78,29 @@ class Id3v1Manager(MetadataManager):
 
     def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
         raw_metadata_id3v1: Id3v1RawMetadata = self.file_raw_metadata  # type: ignore
-        return raw_metadata_id3v1.tags if raw_metadata_id3v1.tags else {}
+        if not raw_metadata_id3v1.tags:
+            return {}
+
+        # Create a mapping of string values to enum members with proper value types
+        result: RawMetadataDict = {}
+        for key, value in raw_metadata_id3v1.tags.items():
+            # Skip empty values
+            if not value:
+                continue
+
+            # Find the matching enum member by its value
+            for enum_member in Id3v1RawMetadataKey:
+                if enum_member.value == key:
+                    # Convert numeric values to integers
+                    if enum_member in (Id3v1RawMetadataKey.GENRE_CODE, Id3v1RawMetadataKey.TRACK_NUMBER):
+                        try:
+                            result[enum_member] = int(value[0])
+                        except (ValueError, IndexError):
+                            continue
+                    else:
+                        result[enum_member] = value
+                    break
+        return result
 
     def _get_str_metadata_value(self, app_metadata_key: AppMetadataKey) -> str | None:
         """Helper method to get string metadata values."""
