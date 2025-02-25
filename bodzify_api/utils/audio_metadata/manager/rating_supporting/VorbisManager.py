@@ -1,9 +1,10 @@
 import io
 from typing import Optional
 
+from mutagen._file import FileType
 from mutagen.flac import FLAC, VCFLACDict
-from mutagen.id3._util import ID3NoHeaderError
 from mutagen.id3 import ID3
+from mutagen.id3._util import ID3NoHeaderError
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -92,22 +93,26 @@ class VorbisManager(RatingSupportingMetadataManager):
                          rating_profile=RatingWritingProfile.BASE_100,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def extract_raw_metadata_dict(self) -> RawMetadataDict:
+    def _extract_raw_metadata(self) -> FileType:
         try:
-            raw_metadata = FLAC(self.audio_file.get_file_path_or_object()).tags
-            if isinstance(raw_metadata, dict):
-                return raw_metadata
-            elif isinstance(raw_metadata, VCFLACDict):
-                return dict(raw_metadata)
-            elif not raw_metadata:
-                return {}
-            else:
-                raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(raw_metadata)}")
+            return FLAC(self.audio_file.get_file_path_or_object())
         except Exception as error:
             error_str = str(error)
             if "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
                 raise InvalidChunkDecodeError(error_str)
             raise
+
+    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
+        file_raw_metadata_flac: FLAC = self.file_raw_metadata  # type: ignore
+        metadata = file_raw_metadata_flac.tags
+        if isinstance(metadata, dict):
+            return metadata
+        elif isinstance(metadata, VCFLACDict):
+            return dict(metadata)
+        elif not metadata:
+            return {}
+        else:
+            raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
 
     def _extract_file_rating(self) -> Optional[int]:
         return self._get_first_value_int_if_exists_in_raw_metadata_or_none(key=self.VorbisKey.RATING)
@@ -143,7 +148,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             return album_artists_name_str_raw.strip()
         return None
 
-    def update_specific_metadata_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey):
+    def _update_specific_metadata_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey):
         vorbis_key: RawMetadataKey
         if app_metadata_key == AppMetadataKey.TITLE:
             vorbis_key = self.VorbisKey.TITLE

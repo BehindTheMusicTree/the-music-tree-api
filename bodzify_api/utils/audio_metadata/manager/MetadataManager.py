@@ -5,14 +5,13 @@ import os
 from abc import abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
 from typing import Dict, Optional, Union
-import mutagen
 from mutagen._file import FileType
 from pydub.utils import mediainfo
 from tinytag import TinyTag, TinyTagException
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey
+from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey, RawMetadataValue
 from ..utils.AudioFile import AudioFile
 from ..exceptions import DurationNotFoundError, UnsupportedMetadataError
 from ..utils.AppMetadataKey import AppMetadataKey
@@ -24,18 +23,24 @@ class MetadataManager:
 
     audio_file: AudioFile
     file_raw_metadata: FileType
+    raw_metadata_dict: Dict[RawMetadataKey, RawMetadataValue]
 
     def __init__(self, audio_file: AudioFile, metadata_keys_direct_map: Dict[AppMetadataKey, Optional[RawMetadataKey]]):
         self.audio_file = audio_file
         self.metadata_keys_direct_map = metadata_keys_direct_map
-        self.file_raw_metadata = self.extract_raw_metadata_dict()
+        self.file_raw_metadata = self._extract_raw_metadata()
+        self.raw_metadata_dict = self._convert_raw_metadata_to_dict()
 
     @abstractmethod
     def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> Optional[str]:
         raise NotImplementedError()
 
     @abstractmethod
-    def extract_raw_metadata_dict(self) -> FileType:
+    def _extract_raw_metadata(self) -> FileType:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
         raise NotImplementedError()
 
     @abstractmethod
@@ -47,9 +52,8 @@ class MetadataManager:
         raise NotImplementedError()
 
     @abstractmethod
-    def update_specific_metadata_without_saving(
-            self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
-            normalized_rating_max_value: Optional[int] = None):
+    def _update_specific_metadata_without_saving(
+            self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
         raise NotImplementedError()
 
     def _compute_md5_from_buffer(self, buffer: Union[BufferedReader, InMemoryUploadedFile]):
@@ -140,5 +144,5 @@ class MetadataManager:
     def update_bulk(self, app_metadata_dict: AppMetadataDict):
         for key in list(app_metadata_dict.keys()):
             value = app_metadata_dict[key]
-            self.update_specific_metadata_without_saving(app_metadata_value=value, app_metadata_key=key)
+            self._update_specific_metadata_without_saving(app_metadata_value=value, app_metadata_key=key)
         self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())

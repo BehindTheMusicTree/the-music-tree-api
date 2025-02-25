@@ -1,14 +1,14 @@
 import io
-from typing import Dict, Optional
+from typing import Optional
 
+from mutagen._file import FileType
 from mutagen.wave import WAVE
 
-from bodzify_api.utils.audio_metadata.utils.AudioFile import AudioFile
-from bodzify_api.utils.audio_metadata.utils.rating_profiles import RatingWritingProfile
-from bodzify_api.utils.audio_metadata.utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
-
+from ...utils.AudioFile import AudioFile
+from ...utils.rating_profiles import RatingWritingProfile
+from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
-from ...exceptions import UnsupportedMetadataError
+from ...exceptions import FileCorruptedError, UnsupportedMetadataError
 from ..MetadataManager import AppMetadataKey
 from ..rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -73,10 +73,18 @@ class RiffManager(RatingSupportingMetadataManager):
                          rating_profile=RatingWritingProfile.BASE_255,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def extract_raw_metadata_dict(self) -> RawMetadataDict:
+    def _extract_raw_metadata(self) -> FileType:
         self.audio_file.seek(0)
-        wave_file = WAVE(io.BytesIO(self.audio_file.read()))
-        return wave_file.tags if wave_file.tags else {}
+        return WAVE(io.BytesIO(self.audio_file.read()))
+
+    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
+        file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
+        metadata = file_raw_metadata_wav.tags
+        if metadata:
+            return metadata
+        else:
+            return {}
+            raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
 
     def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> None | AppMetadataValue:
         if key == AppMetadataKey.GENRE_NAME:
@@ -113,7 +121,7 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def update_specific_metadata_without_saving(self, normalized_metadata_value, app_metadata_key: str,):
+    def _update_specific_metadata_without_saving(self, normalized_metadata_value, app_metadata_key: str,):
         if app_metadata_key == AppMetadataKey.TITLE:
             riff_tag_key = self.RiffTagKey.TITLE
         elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:

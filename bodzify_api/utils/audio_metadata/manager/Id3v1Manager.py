@@ -64,7 +64,7 @@ class Id3v1Manager(MetadataManager):
         }
         super().__init__(audio_file=audio_file, metadata_keys_direct_map=metadata_keys_diract_map)
 
-    def extract_raw_metadata_dict(self) -> Dict:
+    def _extract_raw_metadata(self) -> Dict:
         """Read ID3v1 tag from the end of the file."""
         self.audio_file.seek(-128, 2)  # Seek from end
         data = self.audio_file.read(128)
@@ -140,7 +140,7 @@ class Id3v1Manager(MetadataManager):
     def get_track_number(self) -> Optional[int]:
         return self._get_int_metadata_value(AppMetadataKey.TRACK_NUMBER)
 
-    def update_specific_metadata_without_saving(
+    def _update_specific_metadata_without_saving(
             self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
             normalized_rating_max_value: Optional[int] = None):
         raise UnsupportedMetadataError(

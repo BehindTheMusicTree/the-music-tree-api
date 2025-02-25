@@ -186,7 +186,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                          rating_profile=RatingWritingProfile.BASE_255,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def extract_raw_metadata_dict(self) -> RawMetadataDict:
+    def _extract_raw_metadata(self) -> RawMetadataDict:
         try:
             tags = ID3(self.audio_file.get_file_path_or_object())
             # Force v2.3 update to ensure compatibility
@@ -252,7 +252,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def update_specific_metadata_without_saving(
+    def _update_specific_metadata_without_saving(
             self,
             normalized_metadata_value,
             app_metadata_key: str,
