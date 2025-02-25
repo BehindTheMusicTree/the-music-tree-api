@@ -33,14 +33,14 @@ class MetadataManager:
 
     audio_file: AudioFile
     metadata_keys_direct_map_read: Dict[AppMetadataKey, RawMetadataKey | None]
-    metadata_keys_direct_map_write: Dict[AppMetadataKey, RawMetadataKey | None]
+    metadata_keys_direct_map_write: Dict[AppMetadataKey, RawMetadataKey | None] | None
     file_raw_metadata: FileType
     raw_metadata_dict: Dict[RawMetadataKey, RawMetadataValue]
 
     def __init__(
             self, audio_file: AudioFile,
             metadata_keys_direct_map_read: Dict[AppMetadataKey, RawMetadataKey | None],
-            metadata_keys_direct_map_write: Dict[AppMetadataKey, RawMetadataKey | None]):
+            metadata_keys_direct_map_write: Dict[AppMetadataKey, RawMetadataKey | None] | None):
         self.audio_file = audio_file
         self.metadata_keys_direct_map_read = metadata_keys_direct_map_read
         self.metadata_keys_direct_map_write = metadata_keys_direct_map_write
@@ -103,6 +103,9 @@ class MetadataManager:
             return self._get_value_from_raw_metadata_dict(raw_metadata_key=raw_metadata_key, value_type=value_type)
 
     def update_bulk(self, app_metadata_dict: AppMetadataDict):
+        if not self.metadata_keys_direct_map_write:
+            raise UnsupportedMetadataError('This format does not support metadata writing')
+
         for app_metadata_key in list(app_metadata_dict.keys()):
             value = app_metadata_dict[app_metadata_key]
             if app_metadata_key not in self.metadata_keys_direct_map_write:
@@ -118,6 +121,8 @@ class MetadataManager:
         self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())
 
     def delete_metadata(self) -> bool:
+        if not self.metadata_keys_direct_map_write:
+            raise UnsupportedMetadataError('This format does not support metadata deletion')
         try:
             self.file_raw_metadata.delete()
             return True
