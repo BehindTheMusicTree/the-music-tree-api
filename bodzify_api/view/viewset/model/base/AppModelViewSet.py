@@ -146,8 +146,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def handle_exception(self, exc: Exception) -> Response:
-        if isinstance(exc, (DrfValidationError, DjangoValidationError)):
-            converted = AppValidationException.detect_and_convert_from_drf_error(exc)
+        if isinstance(exc, DrfValidationError):
+            converted = AppValidationException.detect_and_convert_from_drf_exception(exc)
             if converted:
                 exc = converted
             return ErrorResponse.from_validation_error(exc)
