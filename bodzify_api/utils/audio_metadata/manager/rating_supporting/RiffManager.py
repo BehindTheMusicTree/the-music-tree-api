@@ -91,7 +91,7 @@ class RiffManager(RatingSupportingMetadataManager):
         else:
             raise UnsupportedMetadataError(f'Metadata key not handled: {key}')
 
-    def get_genre_name(self) -> Optional[str]:
+    def get_genre_name(self) -> str | None:
         """
         The IGNR tag in RIFF files typically contains a genre code
         that corresponds to the ID3v1 genre list. This method converts
@@ -118,7 +118,7 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _update_specific_metadata_without_saving(
+    def _update_undirectly_mapped_metadata_without_saving(
             self, normalized_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
         if app_metadata_key == AppMetadataKey.TITLE:
             riff_tag_key = self.RiffTagKey.TITLE

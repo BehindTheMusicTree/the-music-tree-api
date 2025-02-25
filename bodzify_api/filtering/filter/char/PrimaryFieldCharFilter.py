@@ -24,7 +24,7 @@ class PrimaryFieldCharFilter(EmptiableCharFilter):
         kwargs['lookup_expr'] = lookup_expr
         super().__init__(*args, **kwargs)
 
-    def filter(self, qs: QuerySet, value: Optional[str]) -> QuerySet:
+    def filter(self, qs: QuerySet, value: str | None) -> QuerySet:
         if not self.field_name:
             raise ImproperlyConfigured(
                 f'{self.__class__.__name__} requires a field_name to be set.'

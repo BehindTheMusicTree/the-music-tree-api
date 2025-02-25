@@ -77,7 +77,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return data
 
     def _create_instance(
-            self, request: Request, create_data: Dict[str, Any], creation_type: Optional[str]) -> T:
+            self, request: Request, create_data: Dict[str, Any], creation_type: str | None) -> T:
         if self.action != 'create':
             raise NotImplementedError(f"No action defined for action {self.action}")
 
@@ -110,7 +110,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
         return self.get_paginated_response(data)
 
-    def _handle_post(self, request: Request, creation_type: Optional[str] = None) -> Response:
+    def _handle_post(self, request: Request, creation_type: str | None = None) -> Response:
         create_data_in_snake_case = data_transformer.form_data_to_snake_case(request.data)
         instance = self._create_instance(request=request,
                                          create_data=create_data_in_snake_case,

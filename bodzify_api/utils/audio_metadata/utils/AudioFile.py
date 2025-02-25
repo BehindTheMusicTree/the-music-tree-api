@@ -18,7 +18,7 @@ from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 class AudioFile:
 
     file: TemporaryUploadedFile | FieldFile | InMemoryUploadedFile | str
-    file_path: Optional[str]
+    file_path: str | None
 
     def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, str]):
 

@@ -6,8 +6,8 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class UpdateFileMetadataIntTestCase(LibTrackTestCase):
-    save_field: Optional[str] = None
-    lib_track_app_metadata_key: Optional[str] = None
+    save_field: str | None = None
+    lib_track_app_metadata_key: str | None = None
     file_extension: str
     value_min: Optional[int] = None
     value_max: Optional[int] = None

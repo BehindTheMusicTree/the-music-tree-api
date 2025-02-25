@@ -9,13 +9,13 @@ class UpdateFileMetadataStrTestCase(LibTrackTestCase):
 
     VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
 
-    save_field: Optional[str] = None
-    lib_track_app_metadata_key: Optional[str] = None
+    save_field: str | None = None
+    lib_track_app_metadata_key: str | None = None
     file_extension: str
     length_max: int
 
     def _test_value(self,
-                    value: Optional[str],
+                    value: str | None,
                     additional_data_dict,
                     value_expected_in_metadata=VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED,
                     file_has_tags=False):

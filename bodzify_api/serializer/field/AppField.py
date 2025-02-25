@@ -56,7 +56,7 @@ class AppField(Field):
             field_validation_error_code=code
         )
 
-    def get_error_field_name(self) -> Optional[str]:
+    def get_error_field_name(self) -> str | None:
         if hasattr(self, 'field_name') and self.field_name:
             field_name = self.field_name
             if getattr(self, 'many', False) or isinstance(self, ListField):

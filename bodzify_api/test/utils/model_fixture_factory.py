@@ -114,7 +114,7 @@ class ModelFixtureFactory:
     def create_lib_track_with_file(
         self,
         title: str,
-        filename: Optional[str] = None,
+        filename: str | None = None,
         user: Optional[User] = None,
         use_manager_for_genre_playlist_adding: bool = False,
         **kwargs

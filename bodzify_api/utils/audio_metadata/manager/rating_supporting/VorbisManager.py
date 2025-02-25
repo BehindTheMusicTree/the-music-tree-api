@@ -1,4 +1,4 @@
-import io
+
 from typing import Optional, Tuple, Type, TypeVar
 
 from mutagen._file import FileType
@@ -80,7 +80,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         BPM = 'bpm'
 
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: Optional[int] = None):
-        metadata_keys_direct_map = {
+        metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.VorbisKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: self.VorbisKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.VorbisKey.ALBUM_NAME,
@@ -89,8 +89,18 @@ class VorbisManager(RatingSupportingMetadataManager):
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.VorbisKey.LANGUAGE,
         }
+        metadata_keys_direct_map_write = {
+            AppMetadataKey.TITLE: self.VorbisKey.TITLE,
+            AppMetadataKey.ARTISTS_NAMES_STR: self.VorbisKey.ARTIST_NAME,
+            AppMetadataKey.ALBUM_NAME: self.VorbisKey.ALBUM_NAME,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: self.VorbisKey.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.GENRE_NAME: self.VorbisKey.GENRE_NAME,
+            AppMetadataKey.RATING: None,
+            AppMetadataKey.LANGUAGE: self.VorbisKey.LANGUAGE,
+        }
         super().__init__(audio_file=audio_file,
-                         metadata_keys_direct_map=metadata_keys_direct_map,
+                         metadata_keys_direct_map_read=metadata_keys_direct_map_read,
+                         metadata_keys_direct_map_write=metadata_keys_direct_map_write,
                          rating_write_profile=RatingWriteProfile.BASE_100_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
@@ -145,11 +155,11 @@ class VorbisManager(RatingSupportingMetadataManager):
         if app_metadata_key == AppMetadataKey.GENRE_NAME:
             return self._get_genre_name()
         elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
-            return self.get_album_artists_name_str()
+            return self._get_album_artists_name_str()
         else:
             raise ImproperlyConfigured('Metadata key not handled')
 
-    def _get_genre_name(self) -> Optional[str]:
+    def _get_genre_name(self) -> str | None:
         if self.VorbisKey.GENRE_NAME.value in self.file_raw_metadata:
             genres_names = self.file_raw_metadata.get(self.VorbisKey.GENRE_NAME)
             if isinstance(genres_names, list):
@@ -160,42 +170,25 @@ class VorbisManager(RatingSupportingMetadataManager):
         else:
             return ""
 
-    def get_album_artists_name_str(self) -> Optional[str]:
+    def _get_album_artists_name_str(self) -> str | None:
         album_artists_name_str_raw = self.file_raw_metadata.get(self.VorbisKey.ALBUM_ARTISTS_NAMES)
 
         if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
         return None
 
-    def _update_specific_metadata_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey):
-        vorbis_key: RawMetadataKey
-        if app_metadata_key == AppMetadataKey.TITLE:
-            vorbis_key = self.VorbisKey.TITLE
-        elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:
-            vorbis_key = self.VorbisKey.ARTIST_NAME
-        elif app_metadata_key == AppMetadataKey.ALBUM_NAME:
-            vorbis_key = self.VorbisKey.ALBUM_NAME
-        elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
-            vorbis_key = self.VorbisKey.ALBUM_ARTISTS_NAMES
-        elif app_metadata_key == AppMetadataKey.GENRE_NAME:
-            vorbis_key = self.VorbisKey.GENRE_NAME
-        elif app_metadata_key == AppMetadataKey.RATING:
+    def _set_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
+        if value:
+            if raw_metadata_key not in self.file_raw_metadata:
+                self.file_raw_metadata[raw_metadata_key] = [1]
+            self.file_raw_metadata[raw_metadata_key] = raw_metadata_key
+        elif raw_metadata_key in self.file_raw_metadata:
+            del self.file_raw_metadata[raw_metadata_key]
+
+    def _update_undirectly_mapped_metadata_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey):
+        if app_metadata_key == AppMetadataKey.RATING:
             if app_metadata_value:
                 app_metadata_value = str(app_metadata_value)
-        elif app_metadata_key == AppMetadataKey.LANGUAGE:
-            vorbis_key = self.VorbisKey.LANGUAGE
-        # elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
-        #     vorbis_key = self.VorbisKey.DATE
-        # elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
-        #     vorbis_key = self.VorbisKey.TRACK_NUMBER
-        # elif app_metadata_key == AppMetadataKey.BPM:
-        #     vorbis_key = self.VorbisKey.BPM
+            self._set_value_in_raw_metadata(raw_metadata_key=self.VorbisKey.RATING, value=app_metadata_value)
         else:
             raise ImproperlyConfigured('Metadata key not handled')
-
-        if app_metadata_value:
-            if vorbis_key not in self.file_raw_metadata:
-                self.file_raw_metadata[vorbis_key] = [1]
-            self.file_raw_metadata[vorbis_key] = app_metadata_value
-        elif vorbis_key in self.file_raw_metadata:
-            del self.file_raw_metadata[vorbis_key]

@@ -22,7 +22,7 @@ class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
         fields = [Fields.NAME, Fields.TYPE_LABEL_PUBLIC]
 
     def filter_by_name_and_type(self, queryset: QuerySet, name, value):
-        type_label: Optional[str] = self.data.get(Fields.TYPE_LABEL_INTERNAL)
+        type_label: str | None = self.data.get(Fields.TYPE_LABEL_INTERNAL)
 
         manual_playlist_queryset = Playlist.objects.none()
         if type_label is None or type_label.lower() == PlaylistTypesLabel.MANUAL.lower():

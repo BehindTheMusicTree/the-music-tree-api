@@ -24,7 +24,7 @@ class MusicbrainzRecording(MusicbrainzResource):
     musicbrainz_artists = AppManyToManyField(MusicbrainzArtist)
 
     @property
-    def duration_str_in_hour_min_sec(self) -> Optional[str]:
+    def duration_str_in_hour_min_sec(self) -> str | None:
         return str(datetime.timedelta(seconds=self.duration_in_sec)) if self.duration_in_sec else None
 
     def __str__(self):

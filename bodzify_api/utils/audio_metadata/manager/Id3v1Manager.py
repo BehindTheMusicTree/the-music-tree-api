@@ -62,7 +62,7 @@ class Id3v1Manager(MetadataManager):
             AppMetadataKey.ALBUM_NAME: self.Id3v1RawMetadataKey.ALBUM_NAME,
             AppMetadataKey.GENRE_NAME: self.Id3v1RawMetadataKey.GENRE_NAME,
         }
-        super().__init__(audio_file=audio_file, metadata_keys_direct_map=metadata_keys_diract_map)
+        super().__init__(audio_file=audio_file, metadata_keys_direct_map_read=metadata_keys_diract_map)
 
     def _extract_raw_metadata(self) -> Dict:
         """Read ID3v1 tag from the end of the file."""
@@ -107,7 +107,7 @@ class Id3v1Manager(MetadataManager):
 
         return metadata
 
-    def _get_str_metadata_value(self, key: AppMetadataKey) -> Optional[str]:
+    def _get_str_metadata_value(self, key: AppMetadataKey) -> str | None:
         if key in self.file_raw_metadata:
             return cast(str, self.file_raw_metadata[key.value])
         return None
@@ -117,16 +117,16 @@ class Id3v1Manager(MetadataManager):
             return cast(int, self.file_raw_metadata[key.value])
         return None
 
-    def get_title(self) -> Optional[str]:
+    def get_title(self) -> str | None:
         return self._get_str_metadata_value(AppMetadataKey.TITLE)
 
-    def get_artists_names(self) -> Optional[str]:
+    def get_artists_names(self) -> str | None:
         return self._get_str_metadata_value(AppMetadataKey.ARTISTS_NAMES_STR)
 
-    def get_album_name(self) -> Optional[str]:
+    def get_album_name(self) -> str | None:
         return self._get_str_metadata_value(AppMetadataKey.ALBUM_NAME)
 
-    def get_genre_name(self) -> Optional[str]:
+    def get_genre_name(self) -> str | None:
         genre_code = self._get_int_metadata_value(AppMetadataKey.GENRE_NAME)
         if not genre_code:
             return None
@@ -134,13 +134,13 @@ class Id3v1Manager(MetadataManager):
             return None
         return ID3V1_AND_RIFF_GENRE_CODE_MAP[genre_code]
 
-    def get_release_date_str(self) -> Optional[str]:
+    def get_release_date_str(self) -> str | None:
         return self._get_str_metadata_value(AppMetadataKey.RELEASE_DATE)
 
     def get_track_number(self) -> Optional[int]:
         return self._get_int_metadata_value(AppMetadataKey.TRACK_NUMBER)
 
-    def _update_specific_metadata_without_saving(
+    def _update_undirectly_mapped_metadata_without_saving(
             self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
             normalized_rating_max_value: Optional[int] = None):
         raise UnsupportedMetadataError(

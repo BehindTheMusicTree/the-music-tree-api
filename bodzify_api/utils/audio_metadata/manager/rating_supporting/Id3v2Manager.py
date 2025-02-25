@@ -182,7 +182,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             AppMetadataKey.LANGUAGE: self.Id3TextFrames.LANGUAGE,
         }
         super().__init__(audio_file=audio_file,
-                         metadata_keys_direct_map=metadata_keys_direct_map,
+                         metadata_keys_direct_map_read=metadata_keys_direct_map,
                          rating_write_profile=RatingWriteProfile.BASE_255_NON_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
@@ -197,23 +197,23 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             tags.save(self.audio_file.get_file_path_or_object(), v2_version=3)
             return {}
 
-    def get_title(self) -> Optional[str]:
+    def get_title(self) -> str | None:
         return self._get_first_value_str_if_exists_in_str_dict_or_none(self.Id3TextFrames.TITLE)
 
-    def get_artists_names(self) -> Optional[str]:
+    def get_artists_names(self) -> str | None:
         return self._get_first_value_str_if_exists_in_str_dict_or_none(self.Id3TextFrames.ARTIST_NAME)
 
-    def get_album_name(self) -> Optional[str]:
+    def get_album_name(self) -> str | None:
         return self._get_first_value_str_if_exists_in_str_dict_or_none(self.Id3TextFrames.ALBUM_NAME)
 
-    def get_album_artists_name_str(self) -> Optional[str]:
+    def get_album_artists_name_str(self) -> str | None:
         album_artists_name_str_raw = (self._get_first_value_str_if_exists_in_str_dict_or_none(
             self.Id3TextFrames.ALBUM_ARTISTS_NAMES))
         if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
         return None
 
-    def get_genre_name(self) -> Optional[str]:
+    def get_genre_name(self) -> str | None:
         if self.Id3TextFrames.GENRE_NAME in self.file_raw_metadata:
             return self.file_raw_metadata[self.Id3TextFrames.GENRE_NAME][0]
         else:
@@ -252,7 +252,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _update_specific_metadata_without_saving(
+    def _update_undirectly_mapped_metadata_without_saving(
             self,
             normalized_metadata_value,
             app_metadata_key: str,

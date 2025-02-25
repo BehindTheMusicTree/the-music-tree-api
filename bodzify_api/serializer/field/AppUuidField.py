@@ -39,5 +39,5 @@ class AppUuidField(AppField, serializers.UUIDField):
         except (ValueError, AttributeError):
             self.fail('invalid')
 
-    def to_representation(self, value: Any) -> Optional[str]:
+    def to_representation(self, value: Any) -> str | None:
         return serializers.UUIDField.to_representation(self, value)

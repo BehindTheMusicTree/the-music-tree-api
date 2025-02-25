@@ -81,7 +81,7 @@ class TrackFile(PrivateStandardResource):
         return os.path.splitext(self.filename)[1]
 
     @property
-    def duration_str_in_hour_min_sec(self) -> Optional[str]:
+    def duration_str_in_hour_min_sec(self) -> str | None:
         return str(datetime.timedelta(seconds=self.duration_in_sec)) if self.duration_in_sec else None
 
     @property

@@ -95,7 +95,7 @@ LIBRARIES_DIR: Path
 SECRET_KEY: str
 
 # File Upload
-FILE_UPLOAD_TEMP_DIR: Optional[str]
+FILE_UPLOAD_TEMP_DIR: str | None
 FILE_UPLOAD_ENABLED: bool
 
 

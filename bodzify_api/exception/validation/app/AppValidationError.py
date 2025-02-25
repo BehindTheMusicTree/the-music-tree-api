@@ -42,7 +42,7 @@ class AppValidationError(DrfValidationError):
 
     def __init__(self, message: str,
                  field_validation_error_code: FieldValidationErrorCode,
-                 field_name: Optional[str] = DEFAULT_FIELD):
+                 field_name: str | None = DEFAULT_FIELD):
         self.field = field_name if field_name else self.DEFAULT_FIELD
         error_detail = {
             'message': message,

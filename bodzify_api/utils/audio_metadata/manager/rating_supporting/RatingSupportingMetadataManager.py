@@ -19,12 +19,15 @@ class RatingSupportingMetadataManager(MetadataManager):
 
     def __init__(self,
                  audio_file: AudioFile,
-                 metadata_keys_direct_map: Dict[AppMetadataKey, Optional[RawMetadataKey]],
+                 metadata_keys_direct_map_read: Dict[AppMetadataKey, Optional[RawMetadataKey]],
+                 metadata_keys_direct_map_write: Dict[AppMetadataKey, Optional[RawMetadataKey]],
                  rating_write_profile: RatingWriteProfile,
                  normalized_rating_max_value: Optional[int]):
         self.rating_write_profile = rating_write_profile
         self.normalized_rating_max_value = normalized_rating_max_value
-        super().__init__(audio_file, metadata_keys_direct_map)
+        super().__init__(audio_file=audio_file,
+                         metadata_keys_direct_map_read=metadata_keys_direct_map_read,
+                         metadata_keys_direct_map_write=metadata_keys_direct_map_write)
 
     @abstractmethod
     def _extract_file_rating_by_traktor_or_not(self) -> Tuple[int | None, bool]:
