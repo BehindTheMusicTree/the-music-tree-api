@@ -1,5 +1,4 @@
-from bodzify_api.serializer.model.playlist.children.detailed import \
-    Fields as ChildPlaylistFields
+from bodzify_api.serializer.model.playlist.children.detailed import     Fields as ChildPlaylistFields
 
 
 class Fields:

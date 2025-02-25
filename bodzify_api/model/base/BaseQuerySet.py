@@ -3,8 +3,7 @@ from typing import Any, Dict, Type
 from django.db import models
 from django.db.models import Q
 
-from bodzify_api.model.lib_track_mixin.Fields import \
-    Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.Fields import     Fields as LibTrackMixinFields
 
 
 def get_related_model(model: Type[models.Model], field_path: str) -> Type[models.Model]:

@@ -1,8 +1,7 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
-    CriteriaPlaylist
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

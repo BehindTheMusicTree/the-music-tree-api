@@ -1,7 +1,5 @@
-from bodzify_api.model.lib_track_mixin.Fields import \
-    Fields as LibTrackMixinFields
-from bodzify_api.model.trackable_play_count.Fields import \
-    Fields as TrackablePlayCountFields
+from bodzify_api.model.lib_track_mixin.Fields import     Fields as LibTrackMixinFields
+from bodzify_api.model.trackable_play_count.Fields import     Fields as TrackablePlayCountFields
 
 
 class Fields(LibTrackMixinFields, TrackablePlayCountFields):

@@ -1,9 +1,7 @@
 from rest_framework import status
 
-from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import \
-    LibTrackPlaylistRel
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
-    CriteriaPlaylist
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import     LibTrackPlaylistRel
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
 from bodzify_api.serializer.model.criteria.input.put import Fields as PutFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 

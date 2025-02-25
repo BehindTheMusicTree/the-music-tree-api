@@ -2,8 +2,7 @@ from uuid import UUID
 
 from django.urls import reverse
 
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import \
-    ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 

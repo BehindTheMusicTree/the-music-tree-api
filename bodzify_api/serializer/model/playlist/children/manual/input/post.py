@@ -1,11 +1,8 @@
 
 from bodzify_api import settings
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import \
-    ManualPlaylist
-from bodzify_api.serializer.field.UniquePerUserNameField import \
-    UniquePerUserNameField
-from bodzify_api.serializer.model.playlist.children.manual.input.input import \
-    ManualPlaylistInputSerializer
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
+from bodzify_api.serializer.field.UniquePerUserNameField import     UniquePerUserNameField
+from bodzify_api.serializer.model.playlist.children.manual.input.input import     ManualPlaylistInputSerializer
 
 from .Fields import Fields
 

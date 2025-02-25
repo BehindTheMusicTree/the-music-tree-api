@@ -3,8 +3,7 @@ from typing import TYPE_CHECKING
 from django.db import models
 from django.db.models import QuerySet
 
-from bodzify_api.model.public_standard_resource.StandardResourceManager import \
-    StandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import     StandardResourceManager
 
 from .Fields import Fields
 
@@ -63,8 +62,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
                                                                        lib_tracks: QuerySet['LibraryTrack'],
                                                                        criteria_limit: 'Criteria | None' = None):
         if instance.criteria != criteria_limit:
-            from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import \
-                LibTrackPlaylistRel
+            from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import                 LibTrackPlaylistRel
             for lib_track in lib_tracks:
                 LibTrackPlaylistRel(user=instance.user, playlist=instance, lib_track=lib_track).save()
 
@@ -77,8 +75,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
             self, instance: 'CriteriaPlaylist',
             lib_tracks: QuerySet['LibraryTrack'],
             criteria_limit: 'Criteria | None' = None):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import \
-            LibTrackPlaylistRel
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import             LibTrackPlaylistRel
 
         if instance.criteria != criteria_limit:
             instance.lib_track_playlist_rels.filter(lib_track__in=lib_tracks).delete()

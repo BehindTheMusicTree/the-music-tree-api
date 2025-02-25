@@ -2,8 +2,7 @@
 
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.play.input.schema.PostFields import Fields

@@ -3,10 +3,8 @@ from datetime import timedelta
 
 from django.utils import timezone
 
-from bodzify_api.filtering.set.private_unique_resource.Fields import \
-    Fields as PrivateUniqueResourceFields
-from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import \
-    PrivateUniqueResourceFilterSet
+from bodzify_api.filtering.set.private_unique_resource.Fields import     Fields as PrivateUniqueResourceFields
+from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import     PrivateUniqueResourceFilterSet
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.test.ApiTestCase import ApiTestCase
 

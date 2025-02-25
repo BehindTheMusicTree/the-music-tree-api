@@ -1,11 +1,9 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import \
-    ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
 from bodzify_api.serializer.field.AppCharField import AppCharField
-from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album import \
-    LibTrackSimpleWithoutPlaylistAndAlbumSerializer
+from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album import     LibTrackSimpleWithoutPlaylistAndAlbumSerializer
 
 from .Fields import Fields
 

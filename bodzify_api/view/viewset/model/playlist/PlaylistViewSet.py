@@ -1,15 +1,11 @@
 from drf_spectacular.utils import (OpenApiParameter,  # type: ignore
                                    OpenApiTypes, extend_schema)
 
-from bodzify_api.filtering.set.playlist.Fields import \
-    Fields as QueryParamsFields
-from bodzify_api.filtering.set.playlist.PlaylistFilterSet import \
-    PlaylistFilterSet
+from bodzify_api.filtering.set.playlist.Fields import     Fields as QueryParamsFields
+from bodzify_api.filtering.set.playlist.PlaylistFilterSet import     PlaylistFilterSet
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.serializer.model.playlist.base.output.detailed import \
-    PlaylistDetailedSerializer
-from bodzify_api.serializer.model.playlist.base.output.simple import \
-    PlaylistSimpleSerializer
+from bodzify_api.serializer.model.playlist.base.output.detailed import     PlaylistDetailedSerializer
+from bodzify_api.serializer.model.playlist.base.output.simple import     PlaylistSimpleSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 

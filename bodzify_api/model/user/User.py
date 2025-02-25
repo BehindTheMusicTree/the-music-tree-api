@@ -17,8 +17,7 @@ from .Fields import Fields
 from .UserManager import UserManager
 
 if TYPE_CHECKING:
-    from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import \
-        AllLibTracksMixin
+    from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import         AllLibTracksMixin
 
 
 class User(AbstractUser, BaseModel):
@@ -48,8 +47,7 @@ class User(AbstractUser, BaseModel):
 
     @cached_property
     def all_lib_tracks_mixin(self) -> 'AllLibTracksMixin':
-        from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import \
-            AllLibTracksMixin
+        from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import             AllLibTracksMixin
         all_lib_tracks_mixin, _ = AllLibTracksMixin.objects.get_or_create(user=self)
         return all_lib_tracks_mixin
 

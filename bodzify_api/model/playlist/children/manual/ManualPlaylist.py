@@ -2,10 +2,8 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.field.AppCharField import AppCharField
-from bodzify_api.model.field.foreign_key.PrivateOneToOneField import \
-    PrivateOneToOneField
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import \
-    LibTrackMixinWithInternalNameManager
+from bodzify_api.model.field.foreign_key.PrivateOneToOneField import     PrivateOneToOneField
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import     LibTrackMixinWithInternalNameManager
 from bodzify_api.model.playlist.children.manual import ManualPlaylistTypeLabel
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.Playlist import Playlist

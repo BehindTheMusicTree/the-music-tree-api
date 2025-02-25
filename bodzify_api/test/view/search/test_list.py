@@ -3,17 +3,13 @@ from rest_framework import status
 from bodzify_api.filtering.set.search.Fields import Fields as SearchFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
-    CriteriaPlaylist
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import \
-    ManualPlaylist
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.album.minimum import Fields as AlbumFields
 from bodzify_api.serializer.model.artist.minimum import Fields as ArtistFields
-from bodzify_api.serializer.model.lib_track.output.detailed import \
-    Fields as LibTrackGetFields
-from bodzify_api.serializer.model.playlist.children.criteria.output.simple import \
-    Fields as CriteriaPlaylistFields
+from bodzify_api.serializer.model.lib_track.output.detailed import     Fields as LibTrackGetFields
+from bodzify_api.serializer.model.playlist.children.criteria.output.simple import     Fields as CriteriaPlaylistFields
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
 

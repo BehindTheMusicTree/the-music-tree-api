@@ -1,5 +1,4 @@
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import \
-    ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 
 from .SearchFilterSet import SearchFilterSet

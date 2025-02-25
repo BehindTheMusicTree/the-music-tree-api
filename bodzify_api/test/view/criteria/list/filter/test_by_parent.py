@@ -1,11 +1,9 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterfFields
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
-from bodzify_api.test.utils.field.filter.foreign_key.PrivateForeignKeyFilterTestCase import \
-    PrivateForeignKeyFilterTestCase
+from bodzify_api.test.utils.field.filter.foreign_key.PrivateForeignKeyFilterTestCase import     PrivateForeignKeyFilterTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 

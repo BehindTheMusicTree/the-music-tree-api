@@ -1,10 +1,8 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.serializer.model.lib_track.input.post.Fields import \
-    Fields as PostFields
-from bodzify_api.test.utils.field.body_data.type.to_extend_from.ForeignKeyBodyDataTestCase import \
-    ForeignKeyBodyDataTestCaseForeignKeyDataTestCase
+from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as PostFields
+from bodzify_api.test.utils.field.body_data.type.to_extend_from.ForeignKeyBodyDataTestCase import     ForeignKeyBodyDataTestCaseForeignKeyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

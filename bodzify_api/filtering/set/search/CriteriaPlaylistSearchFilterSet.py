@@ -1,5 +1,4 @@
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
-    CriteriaPlaylist
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
 
 from .SearchFilterSet import SearchFilterSet
 

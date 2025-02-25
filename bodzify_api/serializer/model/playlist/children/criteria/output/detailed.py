@@ -1,13 +1,9 @@
 from rest_framework import serializers
 
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
-    CriteriaPlaylist
-from bodzify_api.serializer.model.criteria.output.minimum import \
-    CriteriaMinimumSerializer
-from bodzify_api.serializer.model.lib_track_playlist_rel.output.without_playlist import \
-    LibTrackPlaylistRelWithoutPlaylist
-from bodzify_api.serializer.model.playlist.children.criteria.output.minumum import \
-    CriteriaPlaylistMinimumSerializer
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
+from bodzify_api.serializer.model.criteria.output.minimum import     CriteriaMinimumSerializer
+from bodzify_api.serializer.model.lib_track_playlist_rel.output.without_playlist import     LibTrackPlaylistRelWithoutPlaylist
+from bodzify_api.serializer.model.playlist.children.criteria.output.minumum import     CriteriaPlaylistMinimumSerializer
 
 from .Fields import Fields
 

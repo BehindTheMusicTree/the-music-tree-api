@@ -1,5 +1,4 @@
-from bodzify_api.model.criteria.type.CriteriaTypesLabel import \
-    CriteriaTypesLabel
+from bodzify_api.model.criteria.type.CriteriaTypesLabel import     CriteriaTypesLabel
 from bodzify_api.model.playlist.children.manual import ManualPlaylistTypeLabel
 
 

@@ -3,8 +3,7 @@ from typing import Any, Dict, Type
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
-from bodzify_api.model.lib_track_mixin.Fields import \
-    Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.Fields import     Fields as LibTrackMixinFields
 
 
 def uses_internal_name(model: Type[models.Model]) -> bool:

@@ -1,7 +1,6 @@
 
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.serializer.field.foreign_key.PrivateUuidField import \
-    PrivateUuidField
+from bodzify_api.serializer.field.foreign_key.PrivateUuidField import     PrivateUuidField
 
 
 class CriteriaField(PrivateUuidField):

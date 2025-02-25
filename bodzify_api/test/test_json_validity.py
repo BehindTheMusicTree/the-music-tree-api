@@ -3,10 +3,8 @@
 from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
 
-from bodzify_api.middleware.duplicate_fields.middleware import \
-    DuplicateFieldsMiddleware
-from bodzify_api.serializer.model.criteria.input.Fields import \
-    Fields as CriteriaFields
+from bodzify_api.middleware.duplicate_fields.middleware import     DuplicateFieldsMiddleware
+from bodzify_api.serializer.model.criteria.input.Fields import     Fields as CriteriaFields
 
 
 class DuplicateFieldsMiddlewareTest(TestCase):

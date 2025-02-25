@@ -10,14 +10,12 @@ from rest_framework_simplejwt.tokens import AccessToken
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.user.User import User
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
-from bodzify_api.serializer.model.lib_track.input.post.Fields import \
-    Fields as LibTrackPostFields
+from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as LibTrackPostFields
 from bodzify_api.test.AppApiClient import AppApiClient
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
-from bodzify_api.view.pagination.PaginatedResponseFields import \
-    PaginatedResponseFields
+from bodzify_api.view.pagination.PaginatedResponseFields import     PaginatedResponseFields
 
 T = TypeVar('T', bound=models.Model)
 

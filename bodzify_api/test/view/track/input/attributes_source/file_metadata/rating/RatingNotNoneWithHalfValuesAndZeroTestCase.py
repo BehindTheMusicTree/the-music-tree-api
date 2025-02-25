@@ -1,7 +1,6 @@
 import pytest
 
-from bodzify_api.test.view.track.input.attributes_source.file_metadata.rating.RatingNotNoneTestCase import \
-    RatingNotNoneTestCase
+from bodzify_api.test.view.track.input.attributes_source.file_metadata.rating.RatingNotNoneTestCase import     RatingNotNoneTestCase
 
 
 @pytest.mark.django_db

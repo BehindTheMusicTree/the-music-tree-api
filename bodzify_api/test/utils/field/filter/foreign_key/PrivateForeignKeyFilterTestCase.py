@@ -1,7 +1,6 @@
 
 
-from bodzify_api.test.utils.field.filter.foreign_key.ForeignKeyFilterTestCase import \
-    ForeignKeyFilterTestCase
+from bodzify_api.test.utils.field.filter.foreign_key.ForeignKeyFilterTestCase import     ForeignKeyFilterTestCase
 
 
 class PrivateForeignKeyFilterTestCase(ForeignKeyFilterTestCase):

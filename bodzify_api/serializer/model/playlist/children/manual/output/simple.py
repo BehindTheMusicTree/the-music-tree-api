@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import \
-    ManualPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
 from bodzify_api.serializer.field.AppCharField import AppCharField
 
 from .Fields import Fields as AvailableFields

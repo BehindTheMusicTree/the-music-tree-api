@@ -12,7 +12,8 @@ from bodzify_api.serializer.model.lib_track.input.extract.extract import LibTrac
 from bodzify_api.serializer.model.lib_track.input.post.post import LibTrackPostSerializer
 from bodzify_api.serializer.model.lib_track.input.put.put import LibTrackPutSerializer
 from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
-from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album_and_genre import LibTrackWithoutAlbumPlaylistGenreSerializer
+from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album_and_genre import (
+    LibTrackWithoutAlbumPlaylistGenreSerializer)
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 

@@ -6,8 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from bodzify_api.model.ContentObjectFields import ContentObjectFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.field.foreign_key.PrivateUuidField import \
-    PrivateUuidField
+from bodzify_api.serializer.field.foreign_key.PrivateUuidField import     PrivateUuidField
 
 
 class PrivateContentUuidField(PrivateUuidField):

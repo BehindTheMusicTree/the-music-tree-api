@@ -6,14 +6,10 @@ from django_filters import FilterSet
 
 from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet
 from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet
-from bodzify_api.filtering.set.criteria.CriteriaFilterSet import \
-    CriteriaFilterSet
-from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import \
-    LibTrackFilterSet
-from bodzify_api.filtering.set.playlist.PlaylistFilterSet import \
-    PlaylistFilterSet
-from bodzify_api.filtering.set.private_unique_resource.Fields import \
-    Fields as PrivateUniqueResourceFields
+from bodzify_api.filtering.set.criteria.CriteriaFilterSet import     CriteriaFilterSet
+from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import     LibTrackFilterSet
+from bodzify_api.filtering.set.playlist.PlaylistFilterSet import     PlaylistFilterSet
+from bodzify_api.filtering.set.private_unique_resource.Fields import     Fields as PrivateUniqueResourceFields
 from bodzify_api.filtering.set.search.SearchFilterSet import SearchFilterSet
 from bodzify_api.test.ApiTestCase import ApiTestCase
 

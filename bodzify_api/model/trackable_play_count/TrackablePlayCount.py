@@ -1,7 +1,6 @@
 from django.db import models
 
-from bodzify_api.model.private_unique_resource.PrivateUniqueResource import \
-    PrivateUniqueResource
+from bodzify_api.model.private_unique_resource.PrivateUniqueResource import     PrivateUniqueResource
 
 
 class TrackablePlayCount(PrivateUniqueResource):
