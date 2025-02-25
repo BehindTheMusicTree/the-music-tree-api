@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING, List
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -130,7 +130,7 @@ class LibraryTrack(TrackablePlayCount):
         self.track_file.update_file_tags(normalized_metadata=normalized_metadata)
 
     @property
-    def playlists_with_positions(self) -> List[Tuple[str, int]]:
+    def playlists_with_positions(self) -> List[tuple[str, int]]:
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, lib_track=self)

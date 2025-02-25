@@ -1,9 +1,7 @@
 from abc import abstractmethod
-from typing import Dict, Tuple, Type, TypeVar
+from typing import Dict
 
 from django.core.exceptions import ImproperlyConfigured
-
-from bodzify_api.utils import data_transformer
 
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
@@ -32,7 +30,7 @@ class RatingSupportingMetadataManager(MetadataManager):
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write)
 
     @abstractmethod
-    def _extract_file_rating_by_traktor_or_not(self) -> Tuple[int | None, bool]:
+    def _extract_file_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
         """
         Returns True if the rating is from Traktor, False otherwise.
         """
