@@ -34,28 +34,8 @@ class VorbisManager(RatingSupportingMetadataManager):
     - No predefined genre list restrictions
 
     Vorbis comments are key-value pairs, where the key is a field name and the value is the corresponding metadata.
-    Common fields include:
-    - TITLE: The title of the track.
-    - ARTIST: The artist or performer.
-    - ALBUM: The name of the album.
-    - TRACKNUMBER: The track number on the album.
-    - GENRE: The genre name of the track.
-    - DATE: The date of the recording.
-    - COMMENT: Any additional comments.
-    - ALBUMARTIST: The album artist.
-    - COMPOSER: The composer of the track.
-    - PERFORMER: The performer of the track.
-    - COPYRIGHT: Copyright information.
-    - LICENSE: Licensing information.
-    - ORGANIZATION: The organization or label.
-    - DESCRIPTION: A description of the track.
-    - LOCATION: The location where the track was recorded.
-    - CONTACT: Contact information.
-    - ISRC: International Standard Recording Code.
-    - ENCODEDBY: The person or software that encoded the track.
-    - BPM: Beats per minute.
-    - LANGUAGE: The language of the track.
-    - RATING: The rating of the track.
+    Common fields are defined in the VorbisKey enum class, which includes standardized keys for metadata like
+    title, artist, album, genre, rating, and more.
 
     Compatible Extensions:
     - Ogg Vorbis: Fully supports Vorbis comments.
@@ -72,12 +52,22 @@ class VorbisManager(RatingSupportingMetadataManager):
         ALBUM_ARTISTS_NAMES = 'albumartist'
         GENRE_NAME = 'genre'
         RATING = 'rating'
-        RATING_TRAKTOR = 'rating wmp'
+        RATING_TRAKTOR = 'rating wmp'  # Traktor rating
         LANGUAGE = 'language'
-
-        DATE = 'date'
+        DATE = 'date'  # Creation/Release date
         TRACK_NUMBER = 'tracknumber'
         BPM = 'bpm'
+        COMMENT = 'comment'
+        COMPOSER = 'composer'
+        PERFORMER = 'performer'
+        COPYRIGHT = 'copyright'
+        LICENSE = 'license'
+        ORGANIZATION = 'organization'  # Label or organization
+        DESCRIPTION = 'description'
+        LOCATION = 'location'  # Recording location
+        CONTACT = 'contact'  # Contact information
+        ISRC = 'isrc'  # International Standard Recording Code
+        ENCODED_BY = 'encodedby'  # Encoder software
 
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: Optional[int] = None):
         metadata_keys_direct_map_read = {
