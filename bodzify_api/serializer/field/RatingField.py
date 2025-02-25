@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 
 
 class RatingField(serializers.IntegerField):
@@ -18,7 +18,7 @@ class RatingField(serializers.IntegerField):
         try:
             value = int(data)
         except (TypeError, ValueError):
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name='rating',
                 message='Rating must be an integer',
                 field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT
@@ -26,13 +26,13 @@ class RatingField(serializers.IntegerField):
 
         if value is not None:
             if value < 0:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name='rating',
                     message='Rating must be greater than or equal to 0',
                     field_validation_error_code=FieldValidationErrorCode.RATING_TOO_SMALL
                 )
             if value > settings.LIB_TRACK_RATING_VALUE_MAX:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name='rating',
                     message=f'Rating must be less than or equal to {settings.LIB_TRACK_RATING_VALUE_MAX}',
                     field_validation_error_code=FieldValidationErrorCode.RATING_TOO_LARGE

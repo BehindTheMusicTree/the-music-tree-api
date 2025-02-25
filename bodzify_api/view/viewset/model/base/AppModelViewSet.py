@@ -12,7 +12,7 @@ from django.http import FileResponse
 from django.db.models import QuerySet
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
@@ -32,18 +32,18 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     permission_classes = [IsAuthenticated]
     model_class: Type[T]
     filterset_class: Type[AppFilterSet] = AppFilterSet
-    simple_serializer_class: AppMetadataValue | NoneType[ModelSerializer]] = None
-    detailed_serializer_class: AppMetadataValue | NoneType[ModelSerializer]] = None
-    create_serializer_class: AppMetadataValue | NoneType[Serializer]] = None
-    update_serializer_class: AppMetadataValue | NoneType[Serializer]] = None
+    simple_serializer_class: Type[ModelSerializer] | None = None
+    detailed_serializer_class: Type[ModelSerializer] | None = None
+    create_serializer_class: Type[Serializer] | None = None
+    update_serializer_class: Type[Serializer] | None = None
 
     def __init__(self,
                  model_class: Type[T],
-                 filterset_class: Type[AppFilterSet]=AppFilterSet,
-                 simple_serializer_class: AppMetadataValue | NoneType[ModelSerializer]] = None,
-                 detailed_serializer_class: AppMetadataValue | NoneType[ModelSerializer]] = None,
-                 update_serializer_class: AppMetadataValue | NoneType[Serializer]] = None,
-                 create_serializer_class: AppMetadataValue | NoneType[Serializer]] = None,
+                 filterset_class: Type[AppFilterSet] = AppFilterSet,
+                 simple_serializer_class: Type[ModelSerializer] | None = None,
+                 detailed_serializer_class: Type[ModelSerializer] | None = None,
+                 update_serializer_class: Type[Serializer] | None = None,
+                 create_serializer_class: Type[Serializer] | None = None,
                  **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
@@ -138,16 +138,16 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         self.model_class.objects.delete_instance(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def paginate_queryset(self, queryset) -> AppMetadataValue | NoneUnion[List[T], QuerySet[T]]]:
+    def paginate_queryset(self, queryset) -> Union[List[T], QuerySet[T]] | None:
         if self.paginator is None:
             return None
         if isinstance(queryset, Sequence) and not isinstance(queryset, QuerySet):
             queryset = self.model_class.objects.filter(id__in=[obj.id for obj in queryset])
-        return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
+            return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def handle_exception(self, exc: Exception) -> Response:
         if isinstance(exc, (DrfValidationError, DjangoValidationError)):
-            converted = AppValidationError.detect_and_convert_from_drf_error(exc)
+            converted = AppValidationException.detect_and_convert_from_drf_error(exc)
             if converted:
                 exc = converted
             return ErrorResponse.from_validation_error(exc)

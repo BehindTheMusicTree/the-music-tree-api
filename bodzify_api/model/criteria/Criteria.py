@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
@@ -109,13 +109,13 @@ class Criteria(LibTrackMixin):
         except IntegrityError as e:
             error_message = str(e)
             if 'non_empty_name' in error_message:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=Fields.NAME_PUBLIC,
                     message=_('Name cannot be empty'),
                     field_validation_error_code=FieldValidationErrorCode.NAME_EMPTY
                 )
             elif 'unique_name_per_user' in error_message:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=Fields.NAME_PUBLIC,
                     message=_('A criteria with this name already exists for this user'),
                     field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE

@@ -2,7 +2,7 @@
 from django.utils.translation import gettext as _
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.model.playlist.children.manual.Fields import Fields as ModelFields
 
@@ -18,7 +18,7 @@ class UniquePerUserNameField(AppCharField):
         if request and value:
             user = request.user
             if self.model.objects.filter(user=user, name=value).exists():
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=ModelFields.NAME_PUBLIC,
                     message=_('An object this name already exists'),
                     field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE

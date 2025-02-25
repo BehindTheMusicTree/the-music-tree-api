@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.model.uuid.UuidModel import UuidModel
 from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
@@ -24,7 +24,7 @@ class NonSelfReferencingField(PrivateUuidField[T], Generic[T]):
         instance = self.parent.instance
 
         if instance and object.uuid and instance.uuid == object.uuid:
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name=str(self.field_name),
                 message=self.error_messages['self_reference'],
                 field_validation_error_code=FieldValidationErrorCode.SELF_REFERENCE

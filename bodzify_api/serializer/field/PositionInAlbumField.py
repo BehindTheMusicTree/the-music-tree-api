@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 
 
 class PositionInAlbumField(serializers.IntegerField):
@@ -18,7 +18,7 @@ class PositionInAlbumField(serializers.IntegerField):
         try:
             value = int(data)
         except (TypeError, ValueError):
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name='positionInAlbum',
                 message='Position in album must be an integer',
                 field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT
@@ -26,13 +26,13 @@ class PositionInAlbumField(serializers.IntegerField):
 
         if value is not None:
             if value < 1:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name='positionInAlbum',
                     message='Position in album must be greater than or equal to 1',
                     field_validation_error_code=FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
                 )
             if value > settings.LIB_TRACK_TRACK_NUMBER_MAX:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name='positionInAlbum',
                     message=f'Position in album must be less than or equal to {settings.LIB_TRACK_TRACK_NUMBER_MAX}',
                     field_validation_error_code=FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE

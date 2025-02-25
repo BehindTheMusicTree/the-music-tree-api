@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from rest_framework.request import Request
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 from .JsonDuplicateKeyDetectingDecoder import JsonDuplicateKeyDetectingDecoder
@@ -25,7 +25,7 @@ class DuplicateFieldsMiddleware:
             return []
 
     def _handle_duplicate_field_error_for_content_type_json(self, field_name: str) -> HttpResponse:
-        validation_error = AppValidationError(
+        validation_error = AppValidationException(
             field_name=field_name,
             message='Duplicate field detected.',
             field_validation_error_code=FieldValidationErrorCode.FIELD_DUPLICATE

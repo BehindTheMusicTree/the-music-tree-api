@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from rest_framework import status
 
 from bodzify_api.exception.validation.DrfValidationErrorFields import DrfValidationErrorFields
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.exception.validation.app.AppValidationErrorFields import AppValidationErrorFields
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
@@ -111,9 +111,9 @@ class ErrorResponse:
 
     @staticmethod
     def from_validation_error(
-            exception: Union[AppValidationError, DrfValidationError, DjangoValidationError]) -> JsonResponse:
+            exception: Union[AppValidationException, DrfValidationError, DjangoValidationError]) -> JsonResponse:
 
-        if isinstance(exception, AppValidationError):
+        if isinstance(exception, AppValidationException):
 
             formatted_error = {
                 ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],

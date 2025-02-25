@@ -12,7 +12,7 @@ from django.utils.translation import gettext as _
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.model.user.User import User
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
@@ -125,7 +125,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 file=file,
                 normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except FileCorruptedError as exc:
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name=Fields.TRACK_FILE_PUBLIC,
                 message=str(exc),
                 field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)

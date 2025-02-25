@@ -5,7 +5,7 @@ from typing import Dict
 from django.db import models
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
@@ -21,7 +21,7 @@ class FlacTrackFile(TrackFile):
         id3v2_tags = audio_metadata.extract_raw_metadata_dict(self.file, tag_format=MetadataFormat.ID3V2)
         if id3v2_tags:
             if not audio_metadata.delete_metadata(self.file, MetadataFormat.ID3V2):
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=Fields.FILE,
                     message='Failed to clear ID3v2 tags from FLAC file.',
                     field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
@@ -33,7 +33,7 @@ class FlacTrackFile(TrackFile):
                 audio_metadata.replace_flac_with_corrected_md5(self.file)
                 self.md5_has_been_corrected = True
             except FlacMd5CheckFailedError:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=Fields.FILE,
                     message='The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.',
                     field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)

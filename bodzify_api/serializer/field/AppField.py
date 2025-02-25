@@ -2,7 +2,7 @@ from typing import Any, Dict
 from rest_framework.fields import Field, ListField
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 
 
 class AppField(Field):
@@ -50,7 +50,7 @@ class AppField(Field):
         # Get the error code from the mapping, defaulting to DEFAULT if not found
         code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)
 
-        raise AppValidationError(
+        raise AppValidationException(
             field_name=self.get_error_field_name(),
             message=msg,
             field_validation_error_code=code

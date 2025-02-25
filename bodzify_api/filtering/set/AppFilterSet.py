@@ -1,6 +1,6 @@
 from django_filters import FilterSet
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.utils import data_transformer
 
 
@@ -18,12 +18,12 @@ class AppFilterSet(FilterSet):
 
         if invalid_filters:
             if len(invalid_filters) == 1:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=f'{invalid_filters[0]}',
                     message=f'Invalid filter detected',
                     field_validation_error_code=FieldValidationErrorCode.INVALID_FILTER
                 )
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name=f'{", ".join(sorted(invalid_filters))}',
                 message=f'Invalid filters detected',
                 field_validation_error_code=FieldValidationErrorCode.INVALID_FILTERS

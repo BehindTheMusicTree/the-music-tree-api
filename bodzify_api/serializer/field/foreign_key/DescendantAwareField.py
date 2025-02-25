@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.serializer.field.foreign_key.NonSelfReferencingField import NonSelfReferencingField
 
 
@@ -42,7 +42,7 @@ class DescendantAwareField(NonSelfReferencingField[T], Generic[T]):
             # We know value is of type T since it came from NonSelfReferencingField[T]
             model_instance = value
             if isinstance(model_instance, HasDescendantCheck) and model_instance.is_descendant_of(instance):
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=str(self.field_name),
                     message=self.error_messages['descendant_reference'],
                     field_validation_error_code=FieldValidationErrorCode.ANCESTOR_REFERENCE

@@ -3,7 +3,7 @@ from typing import Type
 from django.utils.translation import gettext_lazy as _
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 
@@ -20,7 +20,7 @@ class EnumCharFilter(EmptiableCharFilter):
 
     def filter(self, qs, value):
         if value == '':
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name=str(self.field_name),
                 message=_('This field may not be blank.'),
                 field_validation_error_code=FieldValidationErrorCode.BLANK
@@ -29,7 +29,7 @@ class EnumCharFilter(EmptiableCharFilter):
         if value is not None:
             normalized_value = str(value).lower()
             if normalized_value not in self.valid_values:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=str(self.field_name),
                     message=_('%(value)s is not a valid value. Allowed values are: %(valid_values)s') % {
                         'value': value,

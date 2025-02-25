@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from django_filters import CharFilter, FilterSet
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.filtering.filter.AppFilter import AppFilter
 
 
@@ -26,7 +26,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
             return queryset.filter(**{f"{self.field_name}__isnull": True})
 
         if re.match(r'{{.*}}', str(value)):
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name=str(self.field_name),
                 message=_('%(value)s is not a valid UUID') % {'value': value},
                 field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT
@@ -36,7 +36,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
             if value and not isinstance(value, uuid.UUID):
                 uuid.UUID(str(value))
         except (TypeError, ValueError):
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name=str(self.field_name),
                 message=_('%(value)s is not a valid UUID') % {'value': value},
                 field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT

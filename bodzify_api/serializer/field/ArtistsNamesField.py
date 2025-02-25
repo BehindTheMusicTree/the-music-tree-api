@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.fields import ListField
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.serializer.field.AppField import AppField
 
 
@@ -23,7 +23,7 @@ class ArtistsNamesField(AppField, ListField):
 
         if isinstance(data, (list, tuple)):
             if '' in data or None in data:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=self.get_error_field_name(),
                     message='Empty artist names are not allowed when another value is specified',
                     field_validation_error_code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
@@ -37,7 +37,7 @@ class ArtistsNamesField(AppField, ListField):
 
         unique_artists = set(data)
         if len(unique_artists) < len(data):
-            raise AppValidationError(
+            raise AppValidationException(
                 field_name=self.get_error_field_name(),
                 message='Duplicate artist names are not allowed',
                 field_validation_error_code=FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE

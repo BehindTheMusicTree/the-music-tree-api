@@ -14,7 +14,7 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
@@ -114,7 +114,7 @@ class TrackFile(PrivateStandardResource):
                         self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first()
                     )
                     if existing_track_file:
-                        raise AppValidationError(
+                        raise AppValidationException(
                             field_name='file',
                             message=_('The file "%(current)s" has the same fingerprint as the file "%(existing)s"') % {
                                 'current': self.filename,

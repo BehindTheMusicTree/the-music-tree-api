@@ -1,4 +1,5 @@
 
+from typing import Tuple
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 from ..MetadataManager import AppMetadataKey
 from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
@@ -9,7 +10,6 @@ from bodzify_api.utils import data_transformer
 from django.core.exceptions import ImproperlyConfigured
 from mutagen.flac import FLAC, VCFLACDict
 from mutagen._file import FileType
-, Tuple
 
 
 class VorbisManager(RatingSupportingMetadataManager):

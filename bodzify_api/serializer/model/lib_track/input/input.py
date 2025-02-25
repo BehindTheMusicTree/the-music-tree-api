@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationError
+from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
 from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.PositionInAlbumField import PositionInAlbumField
 from bodzify_api.serializer.field.RatingField import RatingField
@@ -48,7 +48,7 @@ class LibTrackInputSerializer(AppSerializer):
     def validate(self, data):
         if Fields.GENRE_UUID in data and Fields.GENRE_NAME in data:
             if data[Fields.GENRE_UUID] not in ['', None] and data[Fields.GENRE_NAME] not in ['', None]:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=Fields.GENRE_NAME,
                     message='Genre name and genre uuid cannot be specified at the same time',
                     field_validation_error_code=FieldValidationErrorCode.MUTUALLY_EXCLUSIVE
@@ -62,7 +62,7 @@ class LibTrackInputSerializer(AppSerializer):
                 error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
-                raise AppValidationError(
+                raise AppValidationException(
                     field_name=Fields.ALBUM_ARTISTS_NAMES_ARRAY,
                     message=error_message,
                     field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING
@@ -76,7 +76,7 @@ class LibTrackInputSerializer(AppSerializer):
                 error_message = TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
-                AppValidationError(
+                AppValidationException(
                     field_name=Fields.ALBUM_NAME,
                     message=error_message,
                     field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING

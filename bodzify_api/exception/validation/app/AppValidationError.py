@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError as DrfValidationError
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
 
-class AppValidationError(DrfValidationError):
+class AppValidationException(DrfValidationError):
     DEFAULT_FIELD = 'unhandled'  # Default field value when none or empty string provided
 
     """
@@ -54,7 +54,7 @@ class AppValidationError(DrfValidationError):
         super().__init__(self.errors)
 
     @classmethod
-    def detect_and_convert_from_drf_error(cls, exc: DrfValidationError) -> 'AppValidationError | None':
+    def detect_and_convert_from_drf_error(cls, exc: DrfValidationError) -> 'AppValidationException | None':
         """
         Detect if a DRF ValidationError was originally an AppValidationError and convert it back.
 
@@ -99,7 +99,7 @@ class AppValidationError(DrfValidationError):
         return None
 
     @classmethod
-    def from_drf_validation_error(cls, detail: Dict[str, Any]) -> 'AppValidationError':
+    def from_drf_validation_error(cls, detail: Dict[str, Any]) -> 'AppValidationException':
         """
         Create an AppValidationError from a DRF ValidationError detail.
         This is used to reconstruct our error format after DRF middleware processing.
