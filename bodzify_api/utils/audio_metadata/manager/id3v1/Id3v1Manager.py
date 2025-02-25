@@ -6,7 +6,7 @@ from mutagen._file import FileType
 from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadata import Id3v1RawMetadata
 
 from ...utils.AudioFile import AudioFile
-from ...utils.types import AppMetadataValue
+from ...utils.types import AppMetadataValue, RawMetadataDict
 from ...exceptions import FileCorruptedError, UnsupportedMetadataError
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
@@ -70,14 +70,15 @@ class Id3v1Manager(MetadataManager):
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write)
 
-    def _extract_raw_metadata(self) -> FileType:
+    def _extract_raw_metadata(self) -> Id3v1RawMetadata:
         try:
             return Id3v1RawMetadata(fileobj=self.audio_file.get_file_path_or_object())
         except Exception as exc:
             raise FileCorruptedError(f"Failed to extract ID3v1 metadata: {exc}")
 
-    def _convert_raw_metadata_to_dict(self) -> Dict:
-        return self.file_raw_metadata  # type: ignore
+    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
+        raw_metadata_id3v1: Id3v1RawMetadata = self.file_raw_metadata  # type: ignore
+        return raw_metadata_id3v1.tags if raw_metadata_id3v1.tags else {}
 
     def _get_str_metadata_value(self, app_metadata_key: AppMetadataKey) -> str | None:
         """Helper method to get string metadata values."""

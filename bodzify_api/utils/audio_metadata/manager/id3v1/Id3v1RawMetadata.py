@@ -4,11 +4,13 @@ from dataclasses import dataclass
 import struct
 from typing import Any, Dict
 
+from mutagen._file import FileType
+
 from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
 from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadataKey import Id3v1RawMetadataKey
 
 
-class Id3v1RawMetadata:
+class Id3v1RawMetadata(FileType):
     """
     A custom file-like object for ID3v1 tags, providing a consistent interface similar to mutagen.
 
@@ -56,7 +58,7 @@ class Id3v1RawMetadata:
         else:
             tag.comment = comment[:30].decode('latin1', 'replace')
 
-        # Convert to dictionary format similar to other metadata managers
+        # Convert to dictionary format similar to other metadata formats
         self.tags = {}
         if tag.title:
             self.tags[Id3v1RawMetadataKey.TITLE.value] = [tag.title]
@@ -76,3 +78,21 @@ class Id3v1RawMetadata:
     def save(self) -> None:
         """Placeholder for save operation - ID3v1 is read-only."""
         raise UnsupportedMetadataError()
+
+    @property
+    def mime(self) -> list[str]:
+        """Return a list of MIME types this file type could be."""
+        return ["audio/mpeg"]  # ID3v1 is typically used with MP3 files
+
+    def add_tags(self) -> None:
+        """Add a new ID3v1 tag to the file."""
+        raise UnsupportedMetadataError("ID3v1 tags cannot be added (read-only format)")
+
+    def delete(self, filename: str) -> None:
+        """Remove tags from a file."""
+        raise UnsupportedMetadataError("ID3v1 tags cannot be deleted (read-only format)")
+
+    @staticmethod
+    def score(filename: str, fileobj: Any, header: Any) -> float:
+        """Return a score indicating how likely this class can handle the file."""
+        return 0.0  # We don't want this to be auto-detected by mutagen
