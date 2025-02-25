@@ -140,7 +140,7 @@ class Id3v1Manager(MetadataManager):
     def get_track_number(self) -> Optional[int]:
         return self._get_int_metadata_value(AppMetadataKey.TRACK_NUMBER)
 
-    def _update_undirectly_mapped_metadata_without_saving(
+    def _update_undirectly_mapped_metadata(
             self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
             normalized_rating_max_value: Optional[int] = None):
         raise UnsupportedMetadataError(

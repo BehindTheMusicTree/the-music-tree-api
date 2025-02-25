@@ -167,7 +167,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             return album_artists_name_str_raw.strip()
         return None
 
-    def _set_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
+    def _set_value_in_raw_metadata_without_saving(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
         if value:
             if raw_metadata_key not in self.file_raw_metadata:
                 self.file_raw_metadata[raw_metadata_key] = [1]
@@ -175,10 +175,11 @@ class VorbisManager(RatingSupportingMetadataManager):
         elif raw_metadata_key in self.file_raw_metadata:
             del self.file_raw_metadata[raw_metadata_key]
 
-    def _update_undirectly_mapped_metadata_without_saving(self, app_metadata_value, app_metadata_key: AppMetadataKey):
+    def _update_undirectly_mapped_metadata(self, app_metadata_value, app_metadata_key: AppMetadataKey):
         if app_metadata_key == AppMetadataKey.RATING:
             if app_metadata_value:
                 app_metadata_value = str(app_metadata_value)
-            self._set_value_in_raw_metadata(raw_metadata_key=self.VorbisKey.RATING, value=app_metadata_value)
+            self._set_value_in_raw_metadata_without_saving(
+                raw_metadata_key=self.VorbisKey.RATING, value=app_metadata_value)
         else:
             raise ImproperlyConfigured('Metadata key not handled')

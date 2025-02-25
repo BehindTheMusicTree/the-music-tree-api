@@ -51,7 +51,7 @@ class MetadataManager:
         raise NotImplementedError()
 
     @abstractmethod
-    def _update_undirectly_mapped_metadata_without_saving(
+    def _update_undirectly_mapped_metadata(
             self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
         raise NotImplementedError()
 
@@ -61,7 +61,7 @@ class MetadataManager:
             hash_md5.update(chunk)
         return hash_md5.hexdigest()
 
-    def _set_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
+    def _set_value_in_raw_metadata_without_saving(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
         self.file_raw_metadata[raw_metadata_key] = value
 
     def _get_duration_using_mutagen(self) -> Optional[float]:
@@ -128,9 +128,9 @@ class MetadataManager:
             else:
                 raw_metadata_key = self.metadata_keys_direct_map_write[app_metadata_key]
                 if raw_metadata_key:
-                    self._set_value_in_raw_metadata(raw_metadata_key=raw_metadata_key, value=value)
+                    self._set_value_in_raw_metadata_without_saving(raw_metadata_key=raw_metadata_key, value=value)
                 else:
-                    self._update_undirectly_mapped_metadata_without_saving(
+                    self._update_undirectly_mapped_metadata(
                         app_metadata_value=value, app_metadata_key=app_metadata_key)
 
         self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())

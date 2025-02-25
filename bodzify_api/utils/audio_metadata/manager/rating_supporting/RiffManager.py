@@ -8,7 +8,7 @@ from ...utils.AudioFile import AudioFile
 from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
-from ...exceptions import FileCorruptedError, UnsupportedMetadataError
+from ...exceptions import UnsupportedMetadataError
 from ..MetadataManager import AppMetadataKey
 from ..rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -18,8 +18,12 @@ class RiffManager(RatingSupportingMetadataManager):
     Manages RIFF metadata for WAV audio files.
 
     RIFF (Resource Interchange File Format) is the standard metadata format for WAV files.
-    While WAV files can technically contain ID3v2 tags, this is non-standard and less reliable.
-    This manager uses the standard RIFF INFO chunk with standardized four-character codes (FourCC).
+
+    The INFO chunk in RIFF/WAV files uses standardized 4-character codes (FourCC) like INAM(Title), IART(Artist) or 
+    ICMT(Comments).
+
+    These codes are defined in RiffTagKey and are part of the standard RIFF specification. Each tag in the INFO chunk 
+    follows the format: FourCC (4 chars) + data length (4 bytes) + data (UTF-8 text)
 
     Genre Support:
     The IGNR tag in RIFF files has two modes:
@@ -33,9 +37,8 @@ class RiffManager(RatingSupportingMetadataManager):
        - May not work with all software
        - Use genre codes for better compatibility
 
-    Note: This manager is the preferred way to handle WAV metadata, as it uses
-    the format's native metadata system rather than non-standard alternatives
-    like ID3v2 tags.
+    Note: This manager is the preferred way to handle WAV metadata, as it uses the format's native metadata system 
+    rather than non-standard alternatives like ID3v2 tags.
     """
 
     class RiffTagKey(RawMetadataKey):
@@ -56,7 +59,7 @@ class RiffManager(RatingSupportingMetadataManager):
         ENGINEER = 'IENG'  # Engineer who worked on the track
         SOFTWARE = 'ISFT'  # Software used to create the file
         COPYRIGHT = 'ICOP'
-        TECHNICIAN = 'ITCH'
+        TECHNICIAN = 'ITCH'  # Technician who worked on the track
 
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: None | int = None):
         metadata_keys_direct_map_read = {
@@ -90,12 +93,21 @@ class RiffManager(RatingSupportingMetadataManager):
         return WAVE(io.BytesIO(self.audio_file.read()))
 
     def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
+        """
+        Convert RIFF INFO chunk metadata to dictionary.
+        Only extracts tags from the INFO chunk.
+        """
         file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
-        metadata = file_raw_metadata_wav.tags
-        if metadata:
-            # Convert WAVE tags to RawMetadataDict using RiffTagKey enum values
-            return {self.RiffTagKey(key): value for key, value in metadata.items()}
-        return {}
+        if not file_raw_metadata_wav.tags:
+            return {}
+
+        # Extract only INFO chunk tags
+        info_chunk = file_raw_metadata_wav.tags.get('INFO')
+        if not info_chunk:
+            return {}
+
+        # Convert INFO chunk tags to RawMetadataDict
+        return {self.RiffTagKey(key): value for key, value in info_chunk.items()}
 
     def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> None | AppMetadataValue:
         if key == AppMetadataKey.GENRE_NAME:
@@ -130,28 +142,23 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _update_undirectly_mapped_metadata_without_saving(
-            self, normalized_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
-        if app_metadata_key == AppMetadataKey.TITLE:
-            riff_tag_key = self.RiffTagKey.TITLE
-        elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:
-            riff_tag_key = self.RiffTagKey.ARTIST_NAME
-        elif app_metadata_key == AppMetadataKey.ALBUM_NAME:
-            riff_tag_key = self.RiffTagKey.ALBUM_NAME
-        elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
-            riff_tag_key = self.RiffTagKey.ALBUM_ARTISTS_NAMES
-        elif app_metadata_key == AppMetadataKey.GENRE_NAME:
-            riff_tag_key = self.RiffTagKey.GENRE_NAME
-        elif app_metadata_key == AppMetadataKey.RATING:
+    def _set_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
+        file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
 
-        elif app_metadata_key == AppMetadataKey.LANGUAGE:
-            riff_tag_key = self.RiffTagKey.LANGUAGE
-        else:
-            raise UnsupportedMetadataError(f'Metadata key not handled: {app_metadata_key}')
+        # Ensure we have tags
+        if not file_raw_metadata_wav.tags:
+            file_raw_metadata_wav.add_tags()
 
-        if normalized_metadata_value:
-            if riff_tag_key not in self.file_raw_metadata:
-                self.file_raw_metadata[riff_tag_key] = [1]
-            self.file_raw_metadata[riff_tag_key] = normalized_metadata_value
-        elif riff_tag_key in self.file_raw_metadata:
-            del self.file_raw_metadata[riff_tag_key]
+        if file_raw_metadata_wav.tags is None:
+            return
+
+        # Ensure we have an INFO chunk
+        if 'INFO' not in file_raw_metadata_wav.tags:
+            file_raw_metadata_wav.tags['INFO'] = {}
+
+        # Handle the value using FourCC code
+        fourcc = raw_metadata_key.value  # Get the 4-character code
+        if value is None and fourcc in file_raw_metadata_wav.tags['INFO']:
+            del file_raw_metadata_wav.tags['INFO'][fourcc]
+        elif value is not None:
+            file_raw_metadata_wav.tags['INFO'][fourcc] = str(value)

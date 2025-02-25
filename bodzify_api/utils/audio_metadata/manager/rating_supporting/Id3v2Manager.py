@@ -252,7 +252,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _update_undirectly_mapped_metadata_without_saving(
+    def _update_undirectly_mapped_metadata(
             self,
             normalized_metadata_value,
             app_metadata_key: str,
