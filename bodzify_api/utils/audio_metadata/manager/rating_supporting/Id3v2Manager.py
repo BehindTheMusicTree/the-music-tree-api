@@ -9,7 +9,7 @@ from mutagen._file import FileType
 from bodzify_api import settings
 
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import AppMetadataValue, RawMetadataKey
+from ...utils.types import AppMetadataValue, RawMetadataKey, RawMetadataValue
 from ...utils.AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
@@ -224,6 +224,32 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             id3 = ID3()
             id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
             return id3  # type: ignore[return-value]
+
+    def _convert_raw_metadata_to_dict(self) -> Dict[RawMetadataKey, RawMetadataValue]:
+        raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
+        result: Dict[RawMetadataKey, RawMetadataValue] = {}
+
+        # Iterate through all defined ID3 text frames
+        for frame_key in self.Id3TextFrame:
+            # Skip class attributes that aren't frame keys
+            if not isinstance(frame_key, str) or frame_key.startswith('_'):
+                continue
+
+            frame_value = frame_key in raw_metadata_id3 and raw_metadata_id3[frame_key]
+            if not frame_value:
+                continue
+
+            # Handle POPM (rating) frame differently as it has a different structure
+            if frame_key == self.Id3TextFrame.RATING:
+                result[frame_key] = frame_value.rating
+            else:
+                # For text frames, get the text value
+                # ID3 text frames store values in a text list, typically with one item
+                text_value = frame_value.text[0] if frame_value.text else None
+                if text_value is not None:
+                    result[frame_key] = text_value
+
+        return result
 
     def _update_prepared_value_in_raw_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
