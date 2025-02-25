@@ -15,8 +15,6 @@ from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
-T = TypeVar('T', str, int)
-
 
 class VorbisManager(RatingSupportingMetadataManager):
     """
@@ -69,7 +67,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         ISRC = 'isrc'  # International Standard Recording Code
         ENCODED_BY = 'encodedby'  # Encoder software
 
-    def __init__(self, audio_file: AudioFile, normalized_rating_max_value: Optional[int] = None):
+    def __init__(self, audio_file: AudioFile, normalized_rating_max_value: int | None = None):
         metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.VorbisKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: self.VorbisKey.ARTIST_NAME,
@@ -115,17 +113,6 @@ class VorbisManager(RatingSupportingMetadataManager):
         else:
             raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
 
-    def _get_first_value_in_raw_metadata_dict_or_none(
-            self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> str | int | None:
-        if value_type == str:
-            return data_transformer.get_first_value_str_if_exists_in_str_dict_or_none(
-                str_dict=self.raw_metadata_dict, key=raw_metadata_key.value)
-        elif value_type == int:
-            return data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
-                str_dict=self.raw_metadata_dict, key=raw_metadata_key.value)
-        else:
-            raise ImproperlyConfigured('Value type not handled')
-
     def _extract_file_rating_by_traktor_or_not(self) -> Tuple[int | None, bool]:
         rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
             str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING.value)
@@ -167,7 +154,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             return album_artists_name_str_raw.strip()
         return None
 
-    def _set_value_in_raw_metadata_without_saving(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
+    def _update_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
         if value:
             if raw_metadata_key not in self.file_raw_metadata:
                 self.file_raw_metadata[raw_metadata_key] = [1]
@@ -179,7 +166,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         if app_metadata_key == AppMetadataKey.RATING:
             if app_metadata_value:
                 app_metadata_value = str(app_metadata_value)
-            self._set_value_in_raw_metadata_without_saving(
+            self._update_value_in_raw_metadata(
                 raw_metadata_key=self.VorbisKey.RATING, value=app_metadata_value)
         else:
             raise ImproperlyConfigured('Metadata key not handled')

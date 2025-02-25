@@ -9,13 +9,13 @@ class UpdateFileMetadataIntTestCase(LibTrackTestCase):
     save_field: str | None = None
     lib_track_app_metadata_key: str | None = None
     file_extension: str
-    value_min: Optional[int] = None
-    value_max: Optional[int] = None
-    value_min_expected_in_metadata: Optional[int] = None
-    value_max_expected_in_metadata: Optional[int] = None
+    value_min: int | None = None
+    value_max: int | None = None
+    value_min_expected_in_metadata: int | None = None
+    value_max_expected_in_metadata: int | None = None
 
-    def _test_value(self, value: Optional[int],
-                    value_expected_in_metadata: Optional[int] = None,
+    def _test_value(self, value: int | None,
+                    value_expected_in_metadata: int | None = None,
                     additional_data_dict=None,
                     file_has_tags=False):
         value_str = str(value) if value else ''

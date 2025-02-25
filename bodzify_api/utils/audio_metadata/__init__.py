@@ -99,7 +99,7 @@ TAG_FORMAT_MANAGER_CLASS_MAP = {
 
 
 def _get_metadata_manager(
-        file, tag_format: Optional[TagFormat] = None, normalized_rating_max_value: Optional[int] = None
+        file, tag_format: Optional[TagFormat] = None, normalized_rating_max_value: int | None = None
 ) -> MetadataManager:
     audio_file = AudioFile(file)
 
@@ -136,7 +136,7 @@ def extract_raw_metadata_dict(file, tag_format: Optional[TagFormat] = None) -> R
     return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
 
 
-def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[int] = None) -> AppMetadataDict:
+def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None = None) -> AppMetadataDict:
     try:
         audio_file = AudioFile(file)
     except Exception as error:
@@ -169,7 +169,7 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: Optional[i
 
 
 def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
-    value = _get_metadata_manager(file).get_specific_metadata(app_metadata_key=app_metadata_key)
+    value = _get_metadata_manager(file).get_app_specific_metadata(app_metadata_key=app_metadata_key)
     if value is not None and isinstance(value, AppMetadataValue):
         return value
     return ""  # Return empty string as fallback

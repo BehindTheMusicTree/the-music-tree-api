@@ -1,7 +1,9 @@
 from abc import abstractmethod
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Type, TypeVar
 
 from django.core.exceptions import ImproperlyConfigured
+
+from bodzify_api.utils import data_transformer
 
 from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
 from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
@@ -14,15 +16,15 @@ class RatingSupportingMetadataManager(MetadataManager):
 
     TRAKTOR_RATING_TAG_MAIL = 'traktor@native-instruments.de'
 
-    normalized_rating_max_value: Optional[int]
+    normalized_rating_max_value: int | None
     rating_write_profile: RatingWriteProfile
 
     def __init__(self,
                  audio_file: AudioFile,
-                 metadata_keys_direct_map_read: Dict[AppMetadataKey, Optional[RawMetadataKey]],
-                 metadata_keys_direct_map_write: Dict[AppMetadataKey, Optional[RawMetadataKey]],
+                 metadata_keys_direct_map_read: Dict[AppMetadataKey, RawMetadataKey | None],
+                 metadata_keys_direct_map_write: Dict[AppMetadataKey, RawMetadataKey | None],
                  rating_write_profile: RatingWriteProfile,
-                 normalized_rating_max_value: Optional[int]):
+                 normalized_rating_max_value: int | None):
         self.rating_write_profile = rating_write_profile
         self.normalized_rating_max_value = normalized_rating_max_value
         super().__init__(audio_file=audio_file,
@@ -38,7 +40,7 @@ class RatingSupportingMetadataManager(MetadataManager):
 
     @abstractmethod
     def _get_undirectly_mapped_metadata_value_other_than_rating(
-            self, key: AppMetadataKey) -> Optional[AppMetadataValue]:
+            self, key: AppMetadataKey) -> AppMetadataValue:
         raise NotImplementedError()
 
     def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue | None:
@@ -47,8 +49,7 @@ class RatingSupportingMetadataManager(MetadataManager):
         else:
             return self._get_undirectly_mapped_metadata_value_other_than_rating(app_metadata_key)
 
-    def _convert_normalized_rating_to_file_rating(
-            self, normalized_rating: int, rating_writing_profile: RatingWriteProfile) -> int | None:
+    def _convert_normalized_rating_to_file_rating(self, normalized_rating: int) -> int | None:
         if not self.normalized_rating_max_value:
             raise ImproperlyConfigured(
                 "normalized_rating_max_value must be set to convert normalized rating to file rating.")
@@ -56,14 +57,8 @@ class RatingSupportingMetadataManager(MetadataManager):
         star_rating_base_10 = (int)((normalized_rating * 10)/self.normalized_rating_max_value)
         self.rating_write_profile.value[star_rating_base_10]
 
-    def _get_eventually_normalized_rating_from_file(self) -> Optional[int]:
-        file_rating = self._extract_file_rating_by_traktor_or_not(search_traktor_rating=False)
-        is_rating_from_traktor = False
-        if file_rating is None:
-            file_rating = self._extract_file_rating_by_traktor_or_not(search_traktor_rating=True)
-            if file_rating:
-                is_rating_from_traktor = True
-
+    def _get_eventually_normalized_rating_from_file(self) -> int | None:
+        file_rating, is_rating_from_traktor = self._extract_file_rating_by_traktor_or_not()
         if file_rating is None or file_rating == "":
             return None
         else:
@@ -97,9 +92,7 @@ class RatingSupportingMetadataManager(MetadataManager):
 
                 try:
                     normalized_rating = int(float(value))
-                    file_rating = self._convert_normalized_rating_to_file_rating(
-                        normalized_rating=normalized_rating,
-                        rating_writing_profile=RatingWriteProfile.BASE_100_PROPORTIONAL)
+                    file_rating = self._convert_normalized_rating_to_file_rating(normalized_rating=normalized_rating)
                     app_metadata_dict[AppMetadataKey.RATING] = file_rating
                 except (TypeError, ValueError):
                     raise ValueError(f"Invalid rating value: {value}. Expected a numeric value.")

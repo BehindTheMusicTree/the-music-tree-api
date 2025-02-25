@@ -133,7 +133,7 @@ class RiffManager(RatingSupportingMetadataManager):
                     return None
         return None
 
-    def get_track_number(self) -> Optional[int]:
+    def get_track_number(self) -> int | None:
         part = self.file_raw_metadata.get(self.RiffTagKey.TRACK_NUMBER, None)
         if part:
             try:
@@ -142,7 +142,7 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _set_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
+    def _update_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
         file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
 
         # Ensure we have tags

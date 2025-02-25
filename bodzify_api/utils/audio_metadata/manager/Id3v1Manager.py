@@ -112,7 +112,7 @@ class Id3v1Manager(MetadataManager):
             return cast(str, self.file_raw_metadata[key.value])
         return None
 
-    def _get_int_metadata_value(self, key: AppMetadataKey) -> Optional[int]:
+    def _get_int_metadata_value(self, key: AppMetadataKey) -> int | None:
         if key in self.file_raw_metadata:
             return cast(int, self.file_raw_metadata[key.value])
         return None
@@ -137,11 +137,11 @@ class Id3v1Manager(MetadataManager):
     def get_release_date_str(self) -> str | None:
         return self._get_str_metadata_value(AppMetadataKey.RELEASE_DATE)
 
-    def get_track_number(self) -> Optional[int]:
+    def get_track_number(self) -> int | None:
         return self._get_int_metadata_value(AppMetadataKey.TRACK_NUMBER)
 
     def _update_undirectly_mapped_metadata(
             self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
-            normalized_rating_max_value: Optional[int] = None):
+            normalized_rating_max_value: int | None = None):
         raise UnsupportedMetadataError(
             "ID3v1 tag modification is not supported (fixed-length format)")

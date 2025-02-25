@@ -8,11 +8,11 @@ from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissin
 @dataclass
 class FingerprintingResult:
     _fingerprint: Optional[bytes] = None
-    _duration_in_sec: Optional[int] = None
+    _duration_in_sec: int | None = None
     _error: Optional[FingerprintMissingCause] = None
 
     def __init__(self, fingerprint: Optional[bytes],
-                 duration_in_sec: Optional[int],
+                 duration_in_sec: int | None,
                  error: Optional[FingerprintMissingCause]):
         self._fingerprint = fingerprint
         self._duration_in_sec = duration_in_sec
