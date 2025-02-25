@@ -1,7 +1,7 @@
 import os
 import shutil
 from pathlib import Path
-from typing import List
+
 
 import pytest
 from _pytest.main import Session
@@ -103,8 +103,8 @@ def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
     print("Executing post-test cleanup operations...")
 
     libraries_path = Path(settings.LIBRARIES_DIR)
-    removed_dirs: List[str] = []
-    failed_dirs: List[str] = []
+    removed_dirs: list[str] = []
+    failed_dirs: list[str] = []
 
     try:
         # Ensure the libraries directory exists

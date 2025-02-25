@@ -1,7 +1,7 @@
 import binascii
 import datetime
 import os
-from typing import TYPE_CHECKING, Dict, cast
+from typing import TYPE_CHECKING, cast
 
 from django.db import models
 from django.db.models import F
@@ -161,7 +161,7 @@ class TrackFile(PrivateStandardResource):
 
         return musicbrainz_recording_lookup_result
 
-    def _prepare_save(self, ctx) -> Dict:
+    def _prepare_save(self, ctx) -> dict:
         self.duration_in_sec = audio_metadata.get_duration_in_sec(self.file)
         self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
         self.size_in_bytes = self.file.size
@@ -171,7 +171,7 @@ class TrackFile(PrivateStandardResource):
         fingerprinting_result = self._manage_fingerprint()
         self._manage_musicbrainz_recording(fingerprinting_result)
 
-    def update_file_tags(self, normalized_metadata: Dict):
+    def update_file_tags(self, normalized_metadata: dict):
         audio_metadata.update_metadata(file=self.file,
                                        app_metadata_dict=normalized_metadata,
                                        normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)

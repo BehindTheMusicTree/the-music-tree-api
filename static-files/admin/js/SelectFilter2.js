@@ -17,10 +17,10 @@ Requires core.js and SelectBox.js.
             from_box.className = 'filtered';
 
             for (const p of from_box.parentNode.getElementsByTagName('p')) {
-                if (p.classList.contains("info")) {
+                if (p.classlist.contains("info")) {
                     // Remove <p class="info">, because it just gets in the way.
                     from_box.parentNode.removeChild(p);
-                } else if (p.classList.contains("help")) {
+                } else if (p.classlist.contains("help")) {
                     // Move help text up to the top so it isn't below the select
                     // boxes or wrapped off on the side to the right of the add
                     // button:
@@ -127,7 +127,7 @@ Requires core.js and SelectBox.js.
 
             // Set up the JavaScript event handlers for the select box filter interface
             const move_selection = function(e, elem, move_func, from, to) {
-                if (elem.classList.contains('active')) {
+                if (elem.classlist.contains('active')) {
                     move_func(from, to);
                     SelectFilter.refresh_icons(field_id);
                     SelectFilter.refresh_filtered_selects(field_id);
@@ -135,48 +135,48 @@ Requires core.js and SelectBox.js.
                 }
                 e.preventDefault();
             };
-            choose_all.addEventListener('click', function(e) {
+            choose_all.addEventlistener('click', function(e) {
                 move_selection(e, this, SelectBox.move_all, field_id + '_from', field_id + '_to');
             });
-            add_link.addEventListener('click', function(e) {
+            add_link.addEventlistener('click', function(e) {
                 move_selection(e, this, SelectBox.move, field_id + '_from', field_id + '_to');
             });
-            remove_link.addEventListener('click', function(e) {
+            remove_link.addEventlistener('click', function(e) {
                 move_selection(e, this, SelectBox.move, field_id + '_to', field_id + '_from');
             });
-            clear_all.addEventListener('click', function(e) {
+            clear_all.addEventlistener('click', function(e) {
                 move_selection(e, this, SelectBox.move_all, field_id + '_to', field_id + '_from');
             });
-            warning_footer.addEventListener('click', function(e) {
+            warning_footer.addEventlistener('click', function(e) {
                 filter_selected_input.value = '';
                 SelectBox.filter(field_id + '_to', '');
                 SelectFilter.refresh_filtered_warning(field_id);
                 SelectFilter.refresh_icons(field_id);
             });
-            filter_input.addEventListener('keypress', function(e) {
+            filter_input.addEventlistener('keypress', function(e) {
                 SelectFilter.filter_key_press(e, field_id, '_from', '_to');
             });
-            filter_input.addEventListener('keyup', function(e) {
+            filter_input.addEventlistener('keyup', function(e) {
                 SelectFilter.filter_key_up(e, field_id, '_from');
             });
-            filter_input.addEventListener('keydown', function(e) {
+            filter_input.addEventlistener('keydown', function(e) {
                 SelectFilter.filter_key_down(e, field_id, '_from', '_to');
             });
-            filter_selected_input.addEventListener('keypress', function(e) {
+            filter_selected_input.addEventlistener('keypress', function(e) {
                 SelectFilter.filter_key_press(e, field_id, '_to', '_from');
             });
-            filter_selected_input.addEventListener('keyup', function(e) {
+            filter_selected_input.addEventlistener('keyup', function(e) {
                 SelectFilter.filter_key_up(e, field_id, '_to', '_selected_input');
             });
-            filter_selected_input.addEventListener('keydown', function(e) {
+            filter_selected_input.addEventlistener('keydown', function(e) {
                 SelectFilter.filter_key_down(e, field_id, '_to', '_from');
             });
-            selector_div.addEventListener('change', function(e) {
+            selector_div.addEventlistener('change', function(e) {
                 if (e.target.tagName === 'SELECT') {
                     SelectFilter.refresh_icons(field_id);
                 }
             });
-            selector_div.addEventListener('dblclick', function(e) {
+            selector_div.addEventlistener('dblclick', function(e) {
                 if (e.target.tagName === 'OPTION') {
                     if (e.target.closest('select').id === field_id + '_to') {
                         SelectBox.move(field_id + '_to', field_id + '_from');
@@ -186,7 +186,7 @@ Requires core.js and SelectBox.js.
                     SelectFilter.refresh_icons(field_id);
                 }
             });
-            from_box.closest('form').addEventListener('submit', function() {
+            from_box.closest('form').addEventlistener('submit', function() {
                 SelectBox.filter(field_id + '_to', '');
                 SelectBox.select_all(field_id + '_to');
             });
@@ -227,11 +227,11 @@ Requires core.js and SelectBox.js.
             const from = document.getElementById(field_id + '_from');
             const to = document.getElementById(field_id + '_to');
             // Active if at least one item is selected
-            document.getElementById(field_id + '_add_link').classList.toggle('active', SelectFilter.any_selected(from));
-            document.getElementById(field_id + '_remove_link').classList.toggle('active', SelectFilter.any_selected(to));
+            document.getElementById(field_id + '_add_link').classlist.toggle('active', SelectFilter.any_selected(from));
+            document.getElementById(field_id + '_remove_link').classlist.toggle('active', SelectFilter.any_selected(to));
             // Active if the corresponding box isn't empty
-            document.getElementById(field_id + '_add_all_link').classList.toggle('active', from.querySelector('option'));
-            document.getElementById(field_id + '_remove_all_link').classList.toggle('active', to.querySelector('option'));
+            document.getElementById(field_id + '_add_all_link').classlist.toggle('active', from.querySelector('option'));
+            document.getElementById(field_id + '_remove_all_link').classlist.toggle('active', to.querySelector('option'));
             SelectFilter.refresh_filtered_warning(field_id);
         },
         filter_key_press: function(event, field_id, source, target) {
@@ -277,7 +277,7 @@ Requires core.js and SelectBox.js.
         }
     };
 
-    window.addEventListener('load', function(e) {
+    window.addEventlistener('load', function(e) {
         document.querySelectorAll('select.selectfilter, select.selectfilterstacked').forEach(function(el) {
             const data = el.dataset;
             SelectFilter.init(el.id, data.fieldName, parseInt(data.isStacked, 10));

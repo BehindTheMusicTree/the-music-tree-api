@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 from django.db import models
 
@@ -7,9 +7,9 @@ from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
-from bodzify_api.model.field.foreign_key.PrivateForeignKey import     PrivateForeignKey
-from bodzify_api.model.field.foreign_key.PrivateOneToOneField import     PrivateOneToOneField
-from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
+from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
+from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.utils.model import SaveContext
 
@@ -22,7 +22,7 @@ class CriteriaPlaylist(Playlist):
     playlist = PrivateOneToOneField(Playlist,
                                     on_delete=models.CASCADE,
                                     parent_link=True,
-                                    related_name=PlaylistFields.CRITERIA_PLAYLIST)
+                                    related_name=PlayListFields.CRITERIA_PLAYLIST)
     criteria = PrivateOneToOneField(Criteria,
                                     on_delete=models.CASCADE,
                                     blank=True,
@@ -93,7 +93,7 @@ class CriteriaPlaylist(Playlist):
         else:
             return False
 
-    def _prepare_save(self, ctx: SaveContext) -> Dict:
+    def _prepare_save(self, ctx: SaveContext) -> dict:
         self._set_uuid_if_necessary()
         return ctx.kwargs
 

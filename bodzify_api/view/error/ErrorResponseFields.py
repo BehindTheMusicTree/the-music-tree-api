@@ -11,7 +11,7 @@ class ErrorResponseFields:
     CODE = 'code'  # Global error code
     MESSAGE = 'message'  # Used for general error messages
     SUCCESS = 'success'  # Indicates if the operation was successful
-    DETAILS = 'details'  # List of detailed error information
+    DETAILS = 'details'  # list of detailed error information
     FIELD_ERRORS = 'fieldErrors'  # Used for field-specific error messages
 
     class FieldErrors:

@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
@@ -7,7 +7,7 @@ from bodzify_api.serializer.AppSerializer import AppSerializer
 
 class PutSerializer(AppSerializer):
 
-    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         attrs = super().validate(attrs)
 
         # Ensure there's at least one field to update

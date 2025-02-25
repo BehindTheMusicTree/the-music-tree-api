@@ -3442,37 +3442,37 @@ module.exports = function (it) {
 // iterable DOM collections
 // flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
 module.exports = {
-  CSSRuleList: 0,
+  CSSRulelist: 0,
   CSSStyleDeclaration: 0,
-  CSSValueList: 0,
-  ClientRectList: 0,
-  DOMRectList: 0,
-  DOMStringList: 0,
-  DOMTokenList: 1,
-  DataTransferItemList: 0,
-  FileList: 0,
+  CSSValuelist: 0,
+  ClientRectlist: 0,
+  DOMRectlist: 0,
+  DOMStringlist: 0,
+  DOMTokenlist: 1,
+  DataTransferItemlist: 0,
+  Filelist: 0,
   HTMLAllCollection: 0,
   HTMLCollection: 0,
   HTMLFormElement: 0,
   HTMLSelectElement: 0,
-  MediaList: 0,
+  Medialist: 0,
   MimeTypeArray: 0,
   NamedNodeMap: 0,
-  NodeList: 1,
-  PaintRequestList: 0,
+  Nodelist: 1,
+  PaintRequestlist: 0,
   Plugin: 0,
   PluginArray: 0,
-  SVGLengthList: 0,
-  SVGNumberList: 0,
-  SVGPathSegList: 0,
-  SVGPointList: 0,
-  SVGStringList: 0,
-  SVGTransformList: 0,
-  SourceBufferList: 0,
-  StyleSheetList: 0,
-  TextTrackCueList: 0,
-  TextTrackList: 0,
-  TouchList: 0
+  SVGLengthlist: 0,
+  SVGNumberlist: 0,
+  SVGPathSeglist: 0,
+  SVGPointlist: 0,
+  SVGStringlist: 0,
+  SVGTransformlist: 0,
+  SourceBufferlist: 0,
+  StyleSheetlist: 0,
+  TextTrackCuelist: 0,
+  TextTracklist: 0,
+  Touchlist: 0
 };
 
 },{}],86:[function(require,module,exports){
@@ -5073,7 +5073,7 @@ module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
   return { value: [index, target[index]], done: false };
 }, 'values');
 
-// argumentsList[@@iterator] is %ArrayProto_values%
+// argumentslist[@@iterator] is %ArrayProto_values%
 // https://tc39.es/ecma262/#sec-createunmappedargumentsobject
 // https://tc39.es/ecma262/#sec-createmappedargumentsobject
 var values = Iterators.Arguments = Iterators.Array;
@@ -5856,8 +5856,8 @@ var method = require('../array/virtual/for-each');
 var ArrayPrototype = Array.prototype;
 
 var DOMIterables = {
-  DOMTokenList: true,
-  NodeList: true
+  DOMTokenlist: true,
+  Nodelist: true
 };
 
 module.exports = function (it) {

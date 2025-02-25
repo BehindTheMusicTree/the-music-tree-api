@@ -4,7 +4,7 @@ from django.db.models import F
 
 from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRelManager import LibTrackPlaylistRelManager
-from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
@@ -18,7 +18,7 @@ User = get_user_model()
 class LibTrackPlaylistRel(PrivateStandardResource):
     playlist = PrivateForeignKey(Playlist,
                                  on_delete=models.CASCADE,
-                                 related_name=PlaylistFields.LIB_TRACK_PLAYLIST_RELS_INTERNAL)
+                                 related_name=PlayListFields.LIB_TRACK_PLAYLIST_RELS_INTERNAL)
     lib_track = PrivateForeignKey(LibraryTrack,
                                   on_delete=models.CASCADE,
                                   related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)

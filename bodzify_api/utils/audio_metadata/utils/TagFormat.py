@@ -1,6 +1,5 @@
 """Tag type constants for audio metadata handling."""
 from enum import Enum
-from typing import Dict, List
 
 
 class MetadataFormat(str, Enum):
@@ -10,12 +9,12 @@ class MetadataFormat(str, Enum):
     RIFF = 'riff'
 
     @classmethod
-    def get_priorities(cls) -> Dict[str, List['MetadataFormat']]:
+    def get_priorities(cls) -> dict[str, list['MetadataFormat']]:
         """Get tag format priorities for different file formats.
         First tag format in each list has highest priority.
 
         Returns:
-            Dictionary mapping file extensions to ordered list of tag types
+            dictionary mapping file extensions to ordered list of tag types
         """
         return {
             '.flac': [cls.VORBIS, cls.ID3V2],

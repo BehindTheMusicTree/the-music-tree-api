@@ -1,6 +1,6 @@
 
 from abc import abstractmethod
-from typing import Dict, Type, TypeVar
+from typing import Type, TypeVar
 
 from django.core.exceptions import ImproperlyConfigured
 from mutagen._file import FileType
@@ -31,15 +31,15 @@ class MetadataManager:
     }
 
     audio_file: AudioFile
-    metadata_keys_direct_map_read: Dict[AppMetadataKey, RawMetadataKey | None]
-    metadata_keys_direct_map_write: Dict[AppMetadataKey, RawMetadataKey | None]
+    metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None]
+    metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None]
     file_raw_metadata: FileType
-    raw_metadata_dict: Dict[RawMetadataKey, RawMetadataValue]
+    raw_metadata_dict: dict[RawMetadataKey, RawMetadataValue]
 
     def __init__(
             self, audio_file: AudioFile,
-            metadata_keys_direct_map_read: Dict[AppMetadataKey, RawMetadataKey | None],
-            metadata_keys_direct_map_write: Dict[AppMetadataKey, RawMetadataKey | None]):
+            metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
+            metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None]):
         self.audio_file = audio_file
         self.metadata_keys_direct_map_read = metadata_keys_direct_map_read
         self.metadata_keys_direct_map_write = metadata_keys_direct_map_write

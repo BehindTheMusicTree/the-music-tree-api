@@ -37,7 +37,7 @@ ID3V1_AND_RIFF_GENRE_CODE_MAP = {
     89: "Bluegrass", 90: "Avantgarde", 91: "Gothic Rock",
     92: "Progressive Rock", 93: "Psychedelic Rock", 94: "Symphonic Rock",
     95: "Slow Rock", 96: "Big Band", 97: "Chorus",
-    98: "Easy Listening", 99: "Acoustic", 100: "Humour",
+    98: "Easy listening", 99: "Acoustic", 100: "Humour",
     101: "Speech", 102: "Chanson", 103: "Opera",
     104: "Chamber Music", 105: "Sonata", 106: "Symphony",
     107: "Booty Bass", 108: "Primus", 109: "Porn Groove",

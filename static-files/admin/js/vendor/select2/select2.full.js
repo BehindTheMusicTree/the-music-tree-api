@@ -4793,7 +4793,7 @@ S2.define('select2/defaults',[
   './i18n/en'
 ], function ($, require,
 
-             ResultsList,
+             Resultslist,
 
              SingleSelection, MultipleSelection, Placeholder, AllowClear,
              SelectionSearch, EventRelay,
@@ -4875,7 +4875,7 @@ S2.define('select2/defaults',[
     }
 
     if (options.resultsAdapter == null) {
-      options.resultsAdapter = ResultsList;
+      options.resultsAdapter = Resultslist;
 
       if (options.ajax != null) {
         options.resultsAdapter = Utils.Decorate(
@@ -5571,21 +5571,21 @@ S2.define('select2/core',[
       });
       this._observer.observe(this.$element[0], {
         attributes: true,
-        childList: true,
+        childlist: true,
         subtree: false
       });
-    } else if (this.$element[0].addEventListener) {
-      this.$element[0].addEventListener(
+    } else if (this.$element[0].addEventlistener) {
+      this.$element[0].addEventlistener(
         'DOMAttrModified',
         self._syncA,
         false
       );
-      this.$element[0].addEventListener(
+      this.$element[0].addEventlistener(
         'DOMNodeInserted',
         self._syncS,
         false
       );
-      this.$element[0].addEventListener(
+      this.$element[0].addEventlistener(
         'DOMNodeRemoved',
         self._syncS,
         false
@@ -5967,13 +5967,13 @@ S2.define('select2/core',[
     if (this._observer != null) {
       this._observer.disconnect();
       this._observer = null;
-    } else if (this.$element[0].removeEventListener) {
+    } else if (this.$element[0].removeEventlistener) {
       this.$element[0]
-        .removeEventListener('DOMAttrModified', this._syncA, false);
+        .removeEventlistener('DOMAttrModified', this._syncA, false);
       this.$element[0]
-        .removeEventListener('DOMNodeInserted', this._syncS, false);
+        .removeEventlistener('DOMNodeInserted', this._syncS, false);
       this.$element[0]
-        .removeEventListener('DOMNodeRemoved', this._syncS, false);
+        .removeEventlistener('DOMNodeRemoved', this._syncS, false);
     }
 
     this._syncA = null;
@@ -6555,9 +6555,9 @@ S2.define('select2/selection/stopPropagation',[
         version: '3.1.12',
 
         setup: function() {
-            if ( this.addEventListener ) {
+            if ( this.addEventlistener ) {
                 for ( var i = toBind.length; i; ) {
-                    this.addEventListener( toBind[--i], handler, false );
+                    this.addEventlistener( toBind[--i], handler, false );
                 }
             } else {
                 this.onmousewheel = handler;
@@ -6568,9 +6568,9 @@ S2.define('select2/selection/stopPropagation',[
         },
 
         teardown: function() {
-            if ( this.removeEventListener ) {
+            if ( this.removeEventlistener ) {
                 for ( var i = toBind.length; i; ) {
-                    this.removeEventListener( toBind[--i], handler, false );
+                    this.removeEventlistener( toBind[--i], handler, false );
                 }
             } else {
                 this.onmousewheel = null;

@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, Mapping, Union, cast
+from typing import Any, Mapping, Union, cast
 
 from django.http import QueryDict
 
@@ -10,10 +10,10 @@ def remove_substrings_from_string(string_a: str, substrings: list) -> str:
     return string_a
 
 
-def convert_data_to_dict(data: Union[QueryDict, Dict[str, Any], Any]) -> Dict[str, Any]:
+def convert_data_to_dict(data: Union[QueryDict, dict[str, Any], Any]) -> dict[str, Any]:
     if isinstance(data, QueryDict):
         return data.dict()
-    elif isinstance(data, Dict):
+    elif isinstance(data, dict):
         return data
     else:
         return {k: v for k, v in data.items()}
@@ -29,26 +29,26 @@ def to_snake_case(name: str) -> str:
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
 
 
-def to_dict(data: Any) -> Union[QueryDict, Dict[str, Any], Mapping[str, Any]]:
-    if isinstance(data, (QueryDict, Dict, Mapping)):
-        return cast(Union[QueryDict, Dict[str, Any], Mapping[str, Any]], data)
+def to_dict(data: Any) -> Union[QueryDict, dict[str, Any], Mapping[str, Any]]:
+    if isinstance(data, (QueryDict, dict, Mapping)):
+        return cast(Union[QueryDict, dict[str, Any], Mapping[str, Any]], data)
     return dict(data)
 
 
-def dict_to_snake_case(data: Any) -> Dict[str, Any]:
+def dict_to_snake_case(data: Any) -> dict[str, Any]:
     data_dict = to_dict(data)
     return {to_snake_case(key): value for key, value in data_dict.items()}
 
 
-def form_data_to_snake_case(form_data: Any) -> Dict[str, Any]:
+def form_data_to_snake_case(form_data: Any) -> dict[str, Any]:
     data = to_dict(form_data)
-    snake_case_dict: Dict[str, Any] = {}
+    snake_case_dict: dict[str, Any] = {}
 
     if isinstance(data, QueryDict):
         for key, values in data.lists():
             snake_case_key = to_snake_case(key)
             snake_case_dict[snake_case_key] = values[0] if len(values) == 1 else values
-    elif isinstance(data, (Dict, Mapping)):
+    elif isinstance(data, (dict, Mapping)):
         for key, value in data.items():
             snake_case_key = to_snake_case(key)
             snake_case_dict[snake_case_key] = value
@@ -56,7 +56,7 @@ def form_data_to_snake_case(form_data: Any) -> Dict[str, Any]:
     return snake_case_dict
 
 
-def get_copy_of_dict_including_only_specified_keys(data_dict: Dict, keys):
+def get_copy_of_dict_including_only_specified_keys(data_dict: dict, keys):
     dict2 = data_dict.copy()
     for key in list(dict2.keys()):
         if key not in keys:
@@ -64,14 +64,14 @@ def get_copy_of_dict_including_only_specified_keys(data_dict: Dict, keys):
     return dict2
 
 
-def remove_none_or_empty_key_from_dict(data_dict: Dict):
+def remove_none_or_empty_key_from_dict(data_dict: dict):
     for key in list(data_dict.keys()):
         if data_dict[key] is None or data_dict[key] == "":
             del data_dict[key]
     return data_dict
 
 
-def update_dict_converting_str_to_int_value_if_set(key: str, data_dict: Dict):
+def update_dict_converting_str_to_int_value_if_set(key: str, data_dict: dict):
     if key in data_dict:
         if data_dict[key] is not None and data_dict[key] != '':
             rating = int(data_dict[key])
@@ -80,7 +80,7 @@ def update_dict_converting_str_to_int_value_if_set(key: str, data_dict: Dict):
         data_dict[key] = rating
 
 
-def update_dict1_with_key_if_set_in_dict2(key: str, dict1: Dict, dict: Dict):
+def update_dict1_with_key_if_set_in_dict2(key: str, dict1: dict, dict: dict):
     if key in dict:
         value = dict[key]
         if value == "":
@@ -88,7 +88,7 @@ def update_dict1_with_key_if_set_in_dict2(key: str, dict1: Dict, dict: Dict):
         dict1[key] = value
 
 
-def override_dict1_with_dict2_values_for_each_key_in_dict2(dict1: Dict, dict2: Dict, keys: list[str]):
+def override_dict1_with_dict2_values_for_each_key_in_dict2(dict1: dict, dict2: dict, keys: list[str]):
     for key in keys:
         update_dict1_with_key_if_set_in_dict2(key=key, dict1=dict1, dict=dict2)
 
@@ -104,7 +104,7 @@ def replace_none_with_empty_string(**kwargs):
     return {k: ('' if v is None else v) for k, v in kwargs.items()}
 
 
-def get_first_value_str_if_exists_in_str_dict_or_none(str_dict: Dict, key: str) -> str | None:
+def get_first_value_str_if_exists_in_str_dict_or_none(str_dict: dict, key: str) -> str | None:
     if key in str_dict:
         value = str_dict[key]
         if isinstance(value, list):
@@ -113,7 +113,7 @@ def get_first_value_str_if_exists_in_str_dict_or_none(str_dict: Dict, key: str) 
         return None
 
 
-def get_first_value_int_if_exists_in_str_dict_or_none(str_dict: Dict, key: str) -> int | None:
+def get_first_value_int_if_exists_in_str_dict_or_none(str_dict: dict, key: str) -> int | None:
     if key in str_dict:
         value = str_dict[key]
         if isinstance(value, list):

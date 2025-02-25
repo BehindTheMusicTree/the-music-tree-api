@@ -780,7 +780,7 @@ function safeActiveElement() {
 	} catch ( err ) { }
 }
 
-// Optimize for push.apply( _, NodeList )
+// Optimize for push.apply( _, Nodelist )
 try {
 	push.apply(
 		( arr = slice.call( preferredDoc.childNodes ) ),
@@ -1145,7 +1145,7 @@ function setDocument( node ) {
 		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
 
 		// Support: IE 9 - 11+, Edge 12 - 18+
-		subWindow.addEventListener( "unload", unloadHandler );
+		subWindow.addEventlistener( "unload", unloadHandler );
 	}
 
 	// Support: IE <10
@@ -2468,7 +2468,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 
 			// Add elements passing elementMatchers directly to results
 			// Support: iOS <=7 - 9 only
-			// Tolerate NodeList properties (IE: "length"; Safari: <number>) matching
+			// Tolerate Nodelist properties (IE: "length"; Safari: <number>) matching
 			// elements by id. (see trac-14142)
 			for ( ; i !== len && ( elem = elems[ i ] ) != null; i++ ) {
 				if ( byElement && elem ) {
@@ -3798,11 +3798,11 @@ jQuery.readyException = function( error ) {
 
 
 // The deferred used on DOM ready
-var readyList = jQuery.Deferred();
+var readylist = jQuery.Deferred();
 
 jQuery.fn.ready = function( fn ) {
 
-	readyList
+	readylist
 		.then( fn )
 
 		// Wrap jQuery.readyException in a function so that the lookup
@@ -3841,16 +3841,16 @@ jQuery.extend( {
 		}
 
 		// If there are functions bound, to execute
-		readyList.resolveWith( document, [ jQuery ] );
+		readylist.resolveWith( document, [ jQuery ] );
 	}
 } );
 
-jQuery.ready.then = readyList.then;
+jQuery.ready.then = readylist.then;
 
 // The ready event handler and self cleanup method
 function completed() {
-	document.removeEventListener( "DOMContentLoaded", completed );
-	window.removeEventListener( "load", completed );
+	document.removeEventlistener( "DOMContentLoaded", completed );
+	window.removeEventlistener( "load", completed );
 	jQuery.ready();
 }
 
@@ -3867,10 +3867,10 @@ if ( document.readyState === "complete" ||
 } else {
 
 	// Use the handy event callback
-	document.addEventListener( "DOMContentLoaded", completed );
+	document.addEventlistener( "DOMContentLoaded", completed );
 
 	// A fallback to window.onload, that will always work
-	window.addEventListener( "load", completed );
+	window.addEventlistener( "load", completed );
 }
 
 
@@ -4989,12 +4989,12 @@ jQuery.event = {
 				handlers = events[ type ] = [];
 				handlers.delegateCount = 0;
 
-				// Only use addEventListener if the special events handler returns false
+				// Only use addEventlistener if the special events handler returns false
 				if ( !special.setup ||
 					special.setup.call( elem, data, namespaces, eventHandle ) === false ) {
 
-					if ( elem.addEventListener ) {
-						elem.addEventListener( type, eventHandle );
+					if ( elem.addEventlistener ) {
+						elem.addEventlistener( type, eventHandle );
 					}
 				}
 			}
@@ -5407,8 +5407,8 @@ function leverageNative( el, type, isSetup ) {
 jQuery.removeEvent = function( elem, type, handle ) {
 
 	// This "if" is needed for plain objects
-	if ( elem.removeEventListener ) {
-		elem.removeEventListener( type, handle );
+	if ( elem.removeEventlistener ) {
+		elem.removeEventlistener( type, handle );
 	}
 };
 
@@ -5596,7 +5596,7 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 				// Use `delegateType` as the key as `type` is already used by `leverageNative`.
 				attaches = dataPriv.get( this, delegateType );
 				if ( !attaches ) {
-					this.addEventListener( delegateType, focusMappedHandler );
+					this.addEventlistener( delegateType, focusMappedHandler );
 				}
 				dataPriv.set( this, delegateType, ( attaches || 0 ) + 1 );
 			} else {
@@ -5620,7 +5620,7 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 			if ( document.documentMode ) {
 				attaches = dataPriv.get( this, delegateType ) - 1;
 				if ( !attaches ) {
-					this.removeEventListener( delegateType, focusMappedHandler );
+					this.removeEventlistener( delegateType, focusMappedHandler );
 					dataPriv.remove( this, delegateType );
 				} else {
 					dataPriv.set( this, delegateType, attaches );
@@ -5668,9 +5668,9 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 			// Use `delegateType` as the key as `type` is already used by `leverageNative`.
 			if ( !attaches ) {
 				if ( document.documentMode ) {
-					this.addEventListener( delegateType, focusMappedHandler );
+					this.addEventlistener( delegateType, focusMappedHandler );
 				} else {
-					doc.addEventListener( type, focusMappedHandler, true );
+					doc.addEventlistener( type, focusMappedHandler, true );
 				}
 			}
 			dataPriv.set( dataHolder, delegateType, ( attaches || 0 ) + 1 );
@@ -5682,9 +5682,9 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 
 			if ( !attaches ) {
 				if ( document.documentMode ) {
-					this.removeEventListener( delegateType, focusMappedHandler );
+					this.removeEventlistener( delegateType, focusMappedHandler );
 				} else {
-					doc.removeEventListener( type, focusMappedHandler, true );
+					doc.removeEventlistener( type, focusMappedHandler, true );
 				}
 				dataPriv.remove( dataHolder, delegateType );
 			} else {
@@ -8662,13 +8662,13 @@ jQuery.extend( jQuery.event, {
 					jQuery.event.triggered = type;
 
 					if ( event.isPropagationStopped() ) {
-						lastElement.addEventListener( type, stopPropagationCallback );
+						lastElement.addEventlistener( type, stopPropagationCallback );
 					}
 
 					elem[ type ]();
 
 					if ( event.isPropagationStopped() ) {
-						lastElement.removeEventListener( type, stopPropagationCallback );
+						lastElement.removeEventlistener( type, stopPropagationCallback );
 					}
 
 					jQuery.event.triggered = undefined;
@@ -9903,7 +9903,7 @@ jQuery.ajaxTransport( function( options ) {
 					};
 				};
 
-				// Listen to events
+				// listen to events
 				xhr.onload = callback();
 				errorCallback = xhr.onerror = xhr.ontimeout = callback( "error" );
 

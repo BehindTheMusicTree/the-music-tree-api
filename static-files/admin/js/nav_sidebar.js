@@ -8,17 +8,17 @@
         if (navSidebarIsOpen === null) {
             navSidebarIsOpen = 'true';
         }
-        main.classList.toggle('shifted', navSidebarIsOpen === 'true');
+        main.classlist.toggle('shifted', navSidebarIsOpen === 'true');
         navSidebar.setAttribute('aria-expanded', navSidebarIsOpen);
 
-        toggleNavSidebar.addEventListener('click', function() {
+        toggleNavSidebar.addEventlistener('click', function() {
             if (navSidebarIsOpen === 'true') {
                 navSidebarIsOpen = 'false';
             } else {
                 navSidebarIsOpen = 'true';
             }
             localStorage.setItem('django.admin.navSidebarIsOpen', navSidebarIsOpen);
-            main.classList.toggle('shifted');
+            main.classlist.toggle('shifted');
             navSidebar.setAttribute('aria-expanded', navSidebarIsOpen);
         });
     }
@@ -56,17 +56,17 @@
                 o.node.parentNode.parentNode.style.display = displayValue;
             }
             if (!filterValue || matches) {
-                event.target.classList.remove('no-results');
+                event.target.classlist.remove('no-results');
             } else {
-                event.target.classList.add('no-results');
+                event.target.classlist.add('no-results');
             }
             sessionStorage.setItem('django.admin.navSidebarFilterValue', filterValue);
         }
 
         const nav = document.getElementById('nav-filter');
-        nav.addEventListener('change', checkValue, false);
-        nav.addEventListener('input', checkValue, false);
-        nav.addEventListener('keyup', checkValue, false);
+        nav.addEventlistener('change', checkValue, false);
+        nav.addEventlistener('input', checkValue, false);
+        nav.addEventlistener('keyup', checkValue, false);
 
         const storedValue = sessionStorage.getItem('django.admin.navSidebarFilterValue');
         if (storedValue) {

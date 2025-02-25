@@ -25,14 +25,14 @@ class FieldValidationErrorCode(Enum):
         UNKNOWN_FIELD = 2110            # Single unknown field
         UNKNOWN_FIELDS = 2111           # Multiple unknown fields
 
-    List Validation:
-        UNEXPECTED_LIST = 2120          # List provided when single value expected
+    list Validation:
+        UNEXPECTED_LIST = 2120          # list provided when single value expected
         LIST_EXPECTED = 2121            # Single value when list expected
         MALFORMED_LIST = 2122           # Malformed list structure (e.g., missing [] suffix)
-        LIST_EMPTY = 2123               # List is empty when values required
-        LIST_TOO_LONG = 2124            # List exceeds maximum length
-        LIST_TOO_SHORT = 2125           # List below minimum length
-        LIST_DUPLICATE_ITEMS = 2126     # List contains duplicate items
+        LIST_EMPTY = 2123               # list is empty when values required
+        LIST_TOO_LONG = 2124            # list exceeds maximum length
+        LIST_TOO_SHORT = 2125           # list below minimum length
+        LIST_DUPLICATE_ITEMS = 2126     # list contains duplicate items
         LIST_ITEM_INVALID = 2127        # Individual list item is invalid
 
     Reference Validation:
@@ -96,7 +96,7 @@ class FieldValidationErrorCode(Enum):
     UNKNOWN_FIELD = 'unknown_field'
     UNKNOWN_FIELDS = 'unknown_fields'
 
-    # List Validation
+    # list Validation
     UNEXPECTED_LIST = 'unexpected_list'
     LIST_EXPECTED = 'list_expected'
     MALFORMED_LIST = 'malformed_list'

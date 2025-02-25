@@ -35,11 +35,11 @@
             }
 
             for (const inp of document.getElementsByTagName('input')) {
-                if (inp.type === 'text' && inp.classList.contains('vTimeField')) {
+                if (inp.type === 'text' && inp.classlist.contains('vTimeField')) {
                     DateTimeShortcuts.addClock(inp);
                     DateTimeShortcuts.addTimezoneWarning(inp);
                 }
-                else if (inp.type === 'text' && inp.classList.contains('vDateField')) {
+                else if (inp.type === 'text' && inp.classlist.contains('vDateField')) {
                     DateTimeShortcuts.addCalendar(inp);
                     DateTimeShortcuts.addTimezoneWarning(inp);
                 }
@@ -91,7 +91,7 @@
             message = interpolate(message, [timezoneOffset]);
 
             const warning = document.createElement('div');
-            warning.classList.add('help', warningClass);
+            warning.classlist.add('help', warningClass);
             warning.textContent = message;
             inp.parentNode.appendChild(warning);
         },
@@ -108,14 +108,14 @@
             const now_link = document.createElement('a');
             now_link.href = "#";
             now_link.textContent = gettext('Now');
-            now_link.addEventListener('click', function(e) {
+            now_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.handleClockQuicklink(num, -1);
             });
             const clock_link = document.createElement('a');
             clock_link.href = '#';
             clock_link.id = DateTimeShortcuts.clockLinkName + num;
-            clock_link.addEventListener('click', function(e) {
+            clock_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 // avoid triggering the document click handler to dismiss the clock
                 e.stopPropagation();
@@ -153,7 +153,7 @@
             clock_box.className = 'clockbox module';
             clock_box.id = DateTimeShortcuts.clockDivName + num;
             document.body.appendChild(clock_box);
-            clock_box.addEventListener('click', function(e) { e.stopPropagation(); });
+            clock_box.addEventlistener('click', function(e) { e.stopPropagation(); });
 
             quickElement('h2', clock_box, gettext('Choose a time'));
             const time_list = quickElement('ul', clock_box);
@@ -164,7 +164,7 @@
             const name = typeof DateTimeShortcuts.clockHours[inp.name] === 'undefined' ? 'default_' : inp.name;
             DateTimeShortcuts.clockHours[name].forEach(function(element) {
                 const time_link = quickElement('a', quickElement('li', time_list), gettext(element[0]), 'href', '#');
-                time_link.addEventListener('click', function(e) {
+                time_link.addEventlistener('click', function(e) {
                     e.preventDefault();
                     DateTimeShortcuts.handleClockQuicklink(num, element[1]);
                 });
@@ -173,12 +173,12 @@
             const cancel_p = quickElement('p', clock_box);
             cancel_p.className = 'calendar-cancel';
             const cancel_link = quickElement('a', cancel_p, gettext('Cancel'), 'href', '#');
-            cancel_link.addEventListener('click', function(e) {
+            cancel_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.dismissClock(num);
             });
 
-            document.addEventListener('keyup', function(event) {
+            document.addEventlistener('keyup', function(event) {
                 if (event.which === 27) {
                     // ESC key closes popup
                     DateTimeShortcuts.dismissClock(num);
@@ -204,11 +204,11 @@
 
             // Show the clock box
             clock_box.style.display = 'block';
-            document.addEventListener('click', DateTimeShortcuts.dismissClockFunc[num]);
+            document.addEventlistener('click', DateTimeShortcuts.dismissClockFunc[num]);
         },
         dismissClock: function(num) {
             document.getElementById(DateTimeShortcuts.clockDivName + num).style.display = 'none';
-            document.removeEventListener('click', DateTimeShortcuts.dismissClockFunc[num]);
+            document.removeEventlistener('click', DateTimeShortcuts.dismissClockFunc[num]);
         },
         handleClockQuicklink: function(num, val) {
             let d;
@@ -236,14 +236,14 @@
             const today_link = document.createElement('a');
             today_link.href = '#';
             today_link.appendChild(document.createTextNode(gettext('Today')));
-            today_link.addEventListener('click', function(e) {
+            today_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.handleCalendarQuickLink(num, 0);
             });
             const cal_link = document.createElement('a');
             cal_link.href = '#';
             cal_link.id = DateTimeShortcuts.calendarLinkName + num;
-            cal_link.addEventListener('click', function(e) {
+            cal_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 // avoid triggering the document click handler to dismiss the calendar
                 e.stopPropagation();
@@ -282,20 +282,20 @@
             cal_box.className = 'calendarbox module';
             cal_box.id = DateTimeShortcuts.calendarDivName1 + num;
             document.body.appendChild(cal_box);
-            cal_box.addEventListener('click', function(e) { e.stopPropagation(); });
+            cal_box.addEventlistener('click', function(e) { e.stopPropagation(); });
 
             // next-prev links
             const cal_nav = quickElement('div', cal_box);
             const cal_nav_prev = quickElement('a', cal_nav, '<', 'href', '#');
             cal_nav_prev.className = 'calendarnav-previous';
-            cal_nav_prev.addEventListener('click', function(e) {
+            cal_nav_prev.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.drawPrev(num);
             });
 
             const cal_nav_next = quickElement('a', cal_nav, '>', 'href', '#');
             cal_nav_next.className = 'calendarnav-next';
-            cal_nav_next.addEventListener('click', function(e) {
+            cal_nav_next.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.drawNext(num);
             });
@@ -310,19 +310,19 @@
             const shortcuts = quickElement('div', cal_box);
             shortcuts.className = 'calendar-shortcuts';
             let day_link = quickElement('a', shortcuts, gettext('Yesterday'), 'href', '#');
-            day_link.addEventListener('click', function(e) {
+            day_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.handleCalendarQuickLink(num, -1);
             });
             shortcuts.appendChild(document.createTextNode('\u00A0|\u00A0'));
             day_link = quickElement('a', shortcuts, gettext('Today'), 'href', '#');
-            day_link.addEventListener('click', function(e) {
+            day_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.handleCalendarQuickLink(num, 0);
             });
             shortcuts.appendChild(document.createTextNode('\u00A0|\u00A0'));
             day_link = quickElement('a', shortcuts, gettext('Tomorrow'), 'href', '#');
-            day_link.addEventListener('click', function(e) {
+            day_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.handleCalendarQuickLink(num, +1);
             });
@@ -331,11 +331,11 @@
             const cancel_p = quickElement('p', cal_box);
             cancel_p.className = 'calendar-cancel';
             const cancel_link = quickElement('a', cancel_p, gettext('Cancel'), 'href', '#');
-            cancel_link.addEventListener('click', function(e) {
+            cancel_link.addEventlistener('click', function(e) {
                 e.preventDefault();
                 DateTimeShortcuts.dismissCalendar(num);
             });
-            document.addEventListener('keyup', function(event) {
+            document.addEventlistener('keyup', function(event) {
                 if (event.which === 27) {
                     // ESC key closes popup
                     DateTimeShortcuts.dismissCalendar(num);
@@ -374,11 +374,11 @@
             cal_box.style.top = Math.max(0, findPosY(cal_link) - 75) + 'px';
 
             cal_box.style.display = 'block';
-            document.addEventListener('click', DateTimeShortcuts.dismissCalendarFunc[num]);
+            document.addEventlistener('click', DateTimeShortcuts.dismissCalendarFunc[num]);
         },
         dismissCalendar: function(num) {
             document.getElementById(DateTimeShortcuts.calendarDivName1 + num).style.display = 'none';
-            document.removeEventListener('click', DateTimeShortcuts.dismissCalendarFunc[num]);
+            document.removeEventlistener('click', DateTimeShortcuts.dismissCalendarFunc[num]);
         },
         drawPrev: function(num) {
             DateTimeShortcuts.calendars[num].drawPreviousMonth();
@@ -403,6 +403,6 @@
         }
     };
 
-    window.addEventListener('load', DateTimeShortcuts.init);
+    window.addEventlistener('load', DateTimeShortcuts.init);
     window.DateTimeShortcuts = DateTimeShortcuts;
 }

@@ -2,10 +2,10 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.field.AppCharField import AppCharField
-from bodzify_api.model.field.foreign_key.PrivateOneToOneField import     PrivateOneToOneField
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import     LibTrackMixinWithInternalNameManager
+from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from bodzify_api.model.playlist.children.manual import ManualPlaylistTypeLabel
-from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 
 from .Fields import Fields
@@ -15,7 +15,7 @@ class ManualPlaylist(Playlist):
     playlist = PrivateOneToOneField(Playlist,
                                     on_delete=models.CASCADE,
                                     parent_link=True,
-                                    related_name=PlaylistFields.MANUAL_PLAYLIST)
+                                    related_name=PlayListFields.MANUAL_PLAYLIST)
 
     _name = AppCharField(max_length=settings.MANUAL_PLAYLIST_NAME_LEN_MAX,
                          blank=False,

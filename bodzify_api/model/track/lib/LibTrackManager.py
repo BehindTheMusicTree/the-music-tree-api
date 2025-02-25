@@ -1,21 +1,20 @@
 
 import os
 import tempfile
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any
 
 import requests
 from django.core.files.base import File as DjangoFile
 from django.db import transaction
 from django.db.models import F, QuerySet
 from django.utils import timezone
-from django.utils.translation import gettext as _
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
@@ -50,7 +49,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 LibTrackPlaylistRel.objects.filter(
                     playlist=old_genre_tree_item.criteria_playlist, lib_track=instance).delete()
                 old_genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
-                old_genre_tree_item.criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
+                old_genre_tree_item.criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
                 # The loop will stop before genre_tree_item is None
                 old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
@@ -59,7 +58,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist: CriteriaPlaylist = \
                 CriteriaPlaylist.objects.get(user=instance.user, type=CriteriaTypePks.GENRE, criteria=None)
             genreless_criteria_playlist.last_track_list_update_date = update_date
-            genreless_criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
+            genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
             LibTrackPlaylistRel.objects.filter(
                 playlist=genreless_criteria_playlist, lib_track=instance).delete()
 
@@ -78,7 +77,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 LibTrackPlaylistRel.objects.create(
                     user=instance.user, playlist=genre_tree_item.criteria_playlist, lib_track=instance)
                 genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
-                genre_tree_item.criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
+                genre_tree_item.criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
                 # The loop will stop before genre_tree_item is None
                 genre_tree_item = genre_tree_item.parent  # type: ignore
@@ -89,9 +88,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             LibTrackPlaylistRel.objects.create(
                 user=instance.user, playlist=genreless_criteria_playlist, lib_track=instance)
             genreless_criteria_playlist.last_track_list_update_date = update_date
-            genreless_criteria_playlist.save(update_fields=[PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE])
+            genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
-    def _get_generated_title_from_data(self, file: DjangoFile, data: Dict):
+    def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
         filename_without_expressions_to_exclude = data_transformer.remove_substrings_from_string(
             string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
@@ -108,7 +107,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             title = filename_without_expressions_to_exclude
         return title
 
-    def _update_model_data_with_genre_if_in_schema_data(self, model_data: Dict, schema_data: Dict):
+    def _update_model_data_with_genre_if_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
 
         if SchemaFields.GENRE_UUID in schema_data:
@@ -160,7 +159,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         return schema_data_clean
 
-    def _update_model_data_with_album_if_name_in_schema_data(self, model_data: Dict, schema_data: Dict):
+    def _update_model_data_with_album_if_name_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.album.Album import Album
         if SchemaFields.ALBUM_NAME in schema_data:
             album_name = schema_data[SchemaFields.ALBUM_NAME]
@@ -180,7 +179,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             model_data[Fields.ALBUM] = album
 
     def _update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
-            self, model_data: Dict, schema_data: Dict) -> None:
+            self, model_data: dict, schema_data: dict) -> None:
         if SchemaFields.ARTISTS_NAMES in schema_data:
             artists_names_list = schema_data[SchemaFields.ARTISTS_NAMES]
             if artists_names_list:
@@ -193,7 +192,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             artists = []
         model_data[Fields.ARTISTS] = artists
 
-    def _get_track_filename_with_extension(self, mine_track_url: str, data: Dict):
+    def _get_track_filename_with_extension(self, mine_track_url: str, data: dict):
         file_extension = utils.get_file_extension_from_url(mine_track_url)
         is_filename_randomly_generated = False
         if Fields.TITLE in data:
@@ -217,7 +216,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 is_filename_randomly_generated = True
         return filename_with_extension, is_filename_randomly_generated
 
-    def _get_model_data_from_post_and_extract_common_schema_data(self, schema_data: Dict[str, str]) -> Dict:
+    def _get_model_data_from_post_and_extract_common_schema_data(self, schema_data: dict[str, str]) -> dict:
         model_data = dict()
 
         for key in [Fields.USER,
@@ -237,12 +236,12 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         return model_data
 
-    def _get_schema_data_from_update_data(self, update_data: Dict) -> Dict:
+    def _get_schema_data_from_update_data(self, update_data: dict) -> dict:
         schema_data = update_data.copy()
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
-    def _get_schema_data_from_post_data(self, post_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _get_schema_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         file = post_data[PostFields.TRACK_FILE_PUBLIC]
         schema_data_from_file = self._get_schema_data_from_file(file=file)
 
@@ -275,7 +274,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
-    def _get_model_data_from_post_data(self, post_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         schema_data = self._get_schema_data_from_post_data(post_data)
         model_data = self._get_model_data_from_post_and_extract_common_schema_data(schema_data)
         model_data[Fields.TRACK_FILE] = schema_data[SchemaFields.TRACK_FILE_PUBLIC]
@@ -312,7 +311,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
             return self._get_model_data_from_post_data(post_data=post_data)
 
-    def _get_model_data_from_update_data(self, update_data: Dict[str, str]):
+    def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
         return self._get_model_data_from_post_and_extract_common_schema_data(schema_data=schema_data)
 
@@ -339,7 +338,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     def create(self, creation_type: str, **kwargs) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
-        model_data: Dict
+        model_data: dict
         if creation_type == LibTrackCreationType.POST:
             model_data = self._get_model_data_from_post_data(post_data=kwargs)
         elif creation_type == LibTrackCreationType.EXTRACT:
@@ -370,7 +369,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         return instance
 
     def create_instance_with_track_file(
-            self, track_file_data: Dict[str, Any], library_track_data: Dict[str, Any]) -> 'LibraryTrack':
+            self, track_file_data: dict[str, Any], library_track_data: dict[str, Any]) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
         with transaction.atomic():
@@ -431,7 +430,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     def delete_instance_with_checking_album_and_artists_potential_deletion(self, instance: 'LibraryTrack'):
         from bodzify_api.model.album.Album import Album
         from bodzify_api.model.artist.Artist import Artist
-        artists: List[Artist] = list(instance.artists.all())  # list() makes a copy of the QuerySet before the deletion
+        artists: list[Artist] = list(instance.artists.all())  # list() makes a copy of the QuerySet before the deletion
         album = instance.album
 
         # The order of the deletions is important for deletion rollback testing. Be carefull before changing it.

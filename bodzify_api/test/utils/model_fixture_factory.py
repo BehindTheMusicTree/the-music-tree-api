@@ -27,9 +27,9 @@ from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecord
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.play.Fields import Fields as PlayFields
 from bodzify_api.model.play.Play import Play
-from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlaylistFields
+from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlayListFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
@@ -199,13 +199,13 @@ class ModelFixtureFactory:
         now = timezone.make_aware(datetime.now())
         model_fields = {
             # Base Playlist fields
-            PlaylistFields.CREATED_ON: kwargs.get(PlaylistFields.CREATED_ON, now),
-            PlaylistFields.UPDATED_ON: kwargs.get(PlaylistFields.UPDATED_ON, now),
-            PlaylistFields.USER: user or self.default_test_user,
-            PlaylistFields.PLAY_COUNT: kwargs.get(PlaylistFields.PLAY_COUNT, 0),
-            PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE: kwargs.get(PlaylistFields.LAST_TRACK_LIST_UPDATE_DATE, now),
+            PlayListFields.CREATED_ON: kwargs.get(PlayListFields.CREATED_ON, now),
+            PlayListFields.UPDATED_ON: kwargs.get(PlayListFields.UPDATED_ON, now),
+            PlayListFields.USER: user or self.default_test_user,
+            PlayListFields.PLAY_COUNT: kwargs.get(PlayListFields.PLAY_COUNT, 0),
+            PlayListFields.LAST_TRACK_LIST_UPDATE_DATE: kwargs.get(PlayListFields.LAST_TRACK_LIST_UPDATE_DATE, now),
             # ManualPlaylist specific field
-            ManualPlaylistFields.NAME_PUBLIC: name,  # Maps to _name in the model
+            ManualPlayListFields.NAME_PUBLIC: name,  # Maps to _name in the model
         }
 
         with transaction.atomic():

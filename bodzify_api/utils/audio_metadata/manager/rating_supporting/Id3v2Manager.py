@@ -1,5 +1,5 @@
 
-from typing import Dict, Type
+from typing import Type
 
 from mutagen._file import FileType
 from mutagen.id3 import ID3
@@ -175,7 +175,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         TRACK_NUMBER = 'TRCK'
         BPM = 'TBPM'
 
-    ID3_TEXT_FRAME_CLASS_MAP: Dict[RawMetadataKey, Type] = {
+    ID3_TEXT_FRAME_CLASS_MAP: dict[RawMetadataKey, Type] = {
         Id3TextFrame.TITLE: TIT2,
         Id3TextFrame.ARTIST_NAME: TPE1,
         Id3TextFrame.ALBUM_NAME: TALB,
@@ -199,7 +199,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.Id3TextFrame.LANGUAGE,
         }
-        metadata_keys_direct_map_write: Dict = {
+        metadata_keys_direct_map_write: dict = {
             AppMetadataKey.TITLE: self.Id3TextFrame.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: self.Id3TextFrame.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.Id3TextFrame.ALBUM_NAME,
@@ -226,9 +226,9 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
             return id3  # type: ignore[return-value]
 
-    def _convert_raw_metadata_to_dict(self) -> Dict[RawMetadataKey, RawMetadataValue]:
+    def _convert_raw_metadata_to_dict(self) -> dict[RawMetadataKey, RawMetadataValue]:
         raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
-        result: Dict[RawMetadataKey, RawMetadataValue] = {}
+        result: dict[RawMetadataKey, RawMetadataValue] = {}
 
         # Iterate through all defined ID3 text frames
         for frame_key in self.Id3TextFrame:

@@ -3,13 +3,13 @@
 {
     function show(selector) {
         document.querySelectorAll(selector).forEach(function(el) {
-            el.classList.remove('hidden');
+            el.classlist.remove('hidden');
         });
     }
 
     function hide(selector) {
         document.querySelectorAll(selector).forEach(function(el) {
-            el.classList.add('hidden');
+            el.classlist.add('hidden');
         });
     }
 
@@ -22,7 +22,7 @@
     function showClear(options) {
         show(options.acrossClears);
         hide(options.acrossQuestions);
-        document.querySelector(options.actionContainer).classList.remove(options.selectedClass);
+        document.querySelector(options.actionContainer).classlist.remove(options.selectedClass);
         show(options.allContainer);
         hide(options.counterContainer);
     }
@@ -40,7 +40,7 @@
         acrossInputs.forEach(function(acrossInput) {
             acrossInput.value = 0;
         });
-        document.querySelector(options.actionContainer).classList.remove(options.selectedClass);
+        document.querySelector(options.actionContainer).classlist.remove(options.selectedClass);
     }
 
     function checker(actionCheckboxes, options, checked) {
@@ -51,7 +51,7 @@
         }
         actionCheckboxes.forEach(function(el) {
             el.checked = checked;
-            el.closest('tr').classList.toggle(options.selectedClass, checked);
+            el.closest('tr').classlist.toggle(options.selectedClass, checked);
         });
     }
 
@@ -94,21 +94,21 @@
         let lastChecked = null;
         let shiftPressed = false;
 
-        document.addEventListener('keydown', (event) => {
+        document.addEventlistener('keydown', (event) => {
             shiftPressed = event.shiftKey;
         });
 
-        document.addEventListener('keyup', (event) => {
+        document.addEventlistener('keyup', (event) => {
             shiftPressed = event.shiftKey;
         });
 
-        document.getElementById(options.allToggleId).addEventListener('click', function(event) {
+        document.getElementById(options.allToggleId).addEventlistener('click', function(event) {
             checker(actionCheckboxes, options, this.checked);
             updateCounter(actionCheckboxes, options);
         });
 
         document.querySelectorAll(options.acrossQuestions + " a").forEach(function(el) {
-            el.addEventListener('click', function(event) {
+            el.addEventlistener('click', function(event) {
                 event.preventDefault();
                 const acrossInputs = document.querySelectorAll(options.acrossInput);
                 acrossInputs.forEach(function(acrossInput) {
@@ -119,7 +119,7 @@
         });
 
         document.querySelectorAll(options.acrossClears + " a").forEach(function(el) {
-            el.addEventListener('click', function(event) {
+            el.addEventlistener('click', function(event) {
                 event.preventDefault();
                 document.getElementById(options.allToggleId).checked = false;
                 clearAcross(options);
@@ -143,9 +143,9 @@
         };
 
         Array.from(document.getElementById('result_list').tBodies).forEach(function(el) {
-            el.addEventListener('change', function(event) {
+            el.addEventlistener('change', function(event) {
                 const target = event.target;
-                if (target.classList.contains('action-select')) {
+                if (target.classlist.contains('action-select')) {
                     const checkboxes = affectedCheckboxes(target, shiftPressed);
                     checker(checkboxes, options, target.checked);
                     updateCounter(actionCheckboxes, options);
@@ -156,7 +156,7 @@
             });
         });
 
-        document.querySelector('#changelist-form button[name=index]').addEventListener('click', function(event) {
+        document.querySelector('#changelist-form button[name=index]').addEventlistener('click', function(event) {
             if (list_editable_changed) {
                 const confirmed = confirm(gettext("You have unsaved changes on individual editable fields. If you run an action, your unsaved changes will be lost."));
                 if (!confirmed) {
@@ -168,7 +168,7 @@
         const el = document.querySelector('#changelist-form input[name=_save]');
         // The button does not exist if no fields are editable.
         if (el) {
-            el.addEventListener('click', function(event) {
+            el.addEventlistener('click', function(event) {
                 if (document.querySelector('[name=action]').value) {
                     const text = list_editable_changed
                         ? gettext("You have selected an action, but you haven’t saved your changes to individual fields yet. Please click OK to save. You’ll need to re-run the action.")
@@ -181,7 +181,7 @@
         }
         // Sync counter when navigating to the page, such as through the back
         // button.
-        window.addEventListener('pageshow', (event) => updateCounter(actionCheckboxes, options));
+        window.addEventlistener('pageshow', (event) => updateCounter(actionCheckboxes, options));
     };
 
     // Call function fn when the DOM is loaded and ready. If it is already
@@ -191,7 +191,7 @@
         if (document.readyState !== 'loading') {
             fn();
         } else {
-            document.addEventListener('DOMContentLoaded', fn);
+            document.addEventlistener('DOMContentLoaded', fn);
         }
     }
 

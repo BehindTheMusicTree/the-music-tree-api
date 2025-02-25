@@ -3,13 +3,13 @@ from rest_framework import status
 from bodzify_api.filtering.set.search.Fields import Fields as SearchFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.album.minimum import Fields as AlbumFields
 from bodzify_api.serializer.model.artist.minimum import Fields as ArtistFields
-from bodzify_api.serializer.model.lib_track.output.detailed import     Fields as LibTrackGetFields
-from bodzify_api.serializer.model.playlist.children.criteria.output.simple import     Fields as CriteriaPlaylistFields
+from bodzify_api.serializer.model.lib_track.output.detailed import Fields as LibTrackGetFields
+from bodzify_api.serializer.model.playlist.children.criteria.output.simple import Fields as CriteriaPlayListFields
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
 
@@ -37,8 +37,8 @@ class TestCase(SearchTestCase):
         response = self._search(**{SearchFields.QUERY: "rap"})
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlaylistFields.NAME] == rap_criteria_name
-        assert self.results[CriteriaPlaylist.__name__][1][CriteriaPlaylistFields.NAME] == us_rap_criteria_name
+        assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlayListFields.NAME] == rap_criteria_name
+        assert self.results[CriteriaPlaylist.__name__][1][CriteriaPlayListFields.NAME] == us_rap_criteria_name
 
     def test_manual_playlist_then_results(self):
         manual_playlist_foot = self.model_fixture_factory.create_manual_playlist(name='foot')
@@ -46,7 +46,7 @@ class TestCase(SearchTestCase):
         response = self._search(**{SearchFields.QUERY: "Foo"})
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
-        assert self.results[ManualPlaylist.__name__][0][CriteriaPlaylistFields.NAME] == manual_playlist_foot.name
+        assert self.results[ManualPlaylist.__name__][0][CriteriaPlayListFields.NAME] == manual_playlist_foot.name
 
     def test_criteria_playlist_then_results(self):
         criteria_playlist_rock = self.model_fixture_factory.create_genre(name='rock')
@@ -54,7 +54,7 @@ class TestCase(SearchTestCase):
         response = self._search(**{SearchFields.QUERY: "roC"})
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
-        assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlaylistFields.NAME] == criteria_playlist_rock.name
+        assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlayListFields.NAME] == criteria_playlist_rock.name
 
     def test_album_then_results(self):
         album = self.model_fixture_factory.create_album(name='album')

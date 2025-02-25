@@ -1,6 +1,5 @@
 
 import os
-from typing import Dict
 
 from django.db import models
 
@@ -18,7 +17,7 @@ class FlacTrackFile(TrackFile):
     id3v2_tags_found_and_converted = models.BooleanField(default=False)
     md5_has_been_corrected = models.BooleanField(default=False)
 
-    def _prepare_save(self, ctx) -> Dict:
+    def _prepare_save(self, ctx) -> dict:
         id3v2_tags = audio_metadata.extract_raw_metadata_dict(self.file, tag_format=MetadataFormat.ID3V2)
         if id3v2_tags:
             if not audio_metadata.delete_metadata(self.file, MetadataFormat.ID3V2):

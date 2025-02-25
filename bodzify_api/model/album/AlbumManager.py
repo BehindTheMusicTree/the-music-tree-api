@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from django.db.models import QuerySet
 
@@ -60,7 +60,7 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
 
         # Keep this deletion order for rollback tests: first delete tracks, then delete album, then delete artists
 
-        artists_linked_to_album_and_track: List[Artist] = []
+        artists_linked_to_album_and_track: list[Artist] = []
         lib_tracks: QuerySet[LibraryTrack] = instance.lib_tracks.all()
         for track in lib_tracks:
             if track.artists.exists():

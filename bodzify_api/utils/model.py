@@ -1,13 +1,13 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any
 
 
 @dataclass
 class SaveContext:
     """Context for save operations"""
-    kwargs: Dict[str, Any]
-    modified_fields: List[str]
-    update_fields: List[str] | None
+    kwargs: dict[str, Any]
+    modified_fields: list[str]
+    update_fields: list[str] | None
 
     @staticmethod
     def create(**kwargs) -> 'SaveContext':
@@ -29,16 +29,16 @@ class SaveContext:
             self.update_fields.append(field)
 
 
-def ensure_update_field(kwargs: Dict, field_name: str) -> Dict:
+def ensure_update_field(kwargs: dict, field_name: str) -> dict:
     """
     Ensures a field is included in update_fields if update_fields is being used.
 
     Args:
-        kwargs: The kwargs Dict passed to save()
+        kwargs: The kwargs dict passed to save()
         field_name: The field name to ensure is included
 
     Returns:
-        Modified kwargs Dict with field_name added to update_fields if needed
+        Modified kwargs dict with field_name added to update_fields if needed
     """
     if 'update_fields' not in kwargs:
         kwargs['update_fields'] = [field_name]
@@ -48,16 +48,16 @@ def ensure_update_field(kwargs: Dict, field_name: str) -> Dict:
     return kwargs
 
 
-def ensure_update_fields(kwargs: Dict, field_names: list[str]) -> Dict:
+def ensure_update_fields(kwargs: dict, field_names: list[str]) -> dict:
     """
     Ensures multiple fields are included in update_fields if update_fields is being used.
 
     Args:
-        kwargs: The kwargs Dict passed to save()
-        field_names: List of field names to ensure are included
+        kwargs: The kwargs dict passed to save()
+        field_names: list of field names to ensure are included
 
     Returns:
-        Modified kwargs Dict with field_names added to update_fields if needed
+        Modified kwargs dict with field_names added to update_fields if needed
     """
     if 'update_fields' not in kwargs:
         kwargs['update_fields'] = field_names

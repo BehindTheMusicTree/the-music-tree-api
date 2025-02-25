@@ -52,7 +52,7 @@
     function dismissRelatedLookupPopup(win, chosenId) {
         const name = removePopupIndex(win.name);
         const elem = document.getElementById(name);
-        if (elem.classList.contains('vManyToManyRawIdAdminField') && elem.value) {
+        if (elem.classlist.contains('vManyToManyRawIdAdminField') && elem.value) {
             elem.value += ',' + chosenId;
         } else {
             document.getElementById(name).value = chosenId;
@@ -126,7 +126,7 @@
                 elem.options[elem.options.length] = new Option(newRepr, newId, true, true);
                 updateRelatedSelectsOptions(elem, win, null, newRepr, newId);
             } else if (elemName === 'INPUT') {
-                if (elem.classList.contains('vManyToManyRawIdAdminField') && elem.value) {
+                if (elem.classlist.contains('vManyToManyRawIdAdminField') && elem.value) {
                     elem.value += ',' + newId;
                 } else {
                     elem.value = newId;
@@ -200,7 +200,7 @@
     window.showAddAnotherPopup = showRelatedObjectPopup;
     window.dismissAddAnotherPopup = dismissAddRelatedObjectPopup;
 
-    window.addEventListener('unload', function(evt) {
+    window.addEventlistener('unload', function(evt) {
         window.dismissChildPopups();
     });
 

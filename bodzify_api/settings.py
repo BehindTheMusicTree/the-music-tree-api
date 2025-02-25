@@ -3,7 +3,7 @@ import datetime
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.utils.env_var_loader import (
@@ -18,13 +18,13 @@ UUID_LEN: int
 FILE_PATH_MAX_LENGTH: int
 LIB_TRACK_FILE_SIZE_MIN_IN_MO: int
 LIB_TRACK_FILE_SIZE_MAX_IN_MO: int
-LIB_TRACK_FILE_EXTENSIONS: List[str] = []
-LIB_TRACK_FILE_CONTENT_TYPES: List[str] = []
+LIB_TRACK_FILE_EXTENSIONS: list[str] = []
+LIB_TRACK_FILE_CONTENT_TYPES: list[str] = []
 LIB_TRACK_FILENAME_LEN_MAX: int
 LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH: int
 LIB_TRACK_TITLE_LEN_MAX: int
 LIB_TRACK_TRACK_NUMBER_MAX: int
-LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE: List[str] = []
+LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE: list[str] = []
 LIB_TRACK_GENERATED_TITLE_LENGTH: int
 LIB_TRACK_GENERATED_TITLE_PREFIXE: str
 LIB_TRACK_RATING_VALUE_MAX: int
@@ -59,27 +59,27 @@ STATIC_ROOT: Path
 STATIC_URL: str
 
 # Installed Apps and Caches
-INSTALLED_APPS: List[str] = []
-CACHES: Dict[str, Any] = {}
+INSTALLED_APPS: list[str] = []
+CACHES: dict[str, Any] = {}
 
 # Middleware
-MIDDLEWARE: List[str] = []
+MIDDLEWARE: list[str] = []
 
 # Templates
-TEMPLATES: List[Dict[str, Any]] = []
+TEMPLATES: list[dict[str, Any]] = []
 
 # Django Constants
 WSGI_APPLICATION: str
 AUTH_USER_MODEL: str
-AUTH_PASSWORD_VALIDATORS: List[Dict[str, Any]] = []
+AUTH_PASSWORD_VALIDATORS: list[dict[str, Any]] = []
 LANGUAGE_CODE: str
 TIME_ZONE: str
 USE_I18N: bool
 USE_TZ: bool
 DEFAULT_AUTO_FIELD: str
-REST_FRAMEWORK: Dict[str, Any] = {}
-SPECTACULAR_SETTINGS: Dict[str, Any] = {}
-SIMPLE_JWT: Dict[str, Any] = {}
+REST_FRAMEWORK: dict[str, Any] = {}
+SPECTACULAR_SETTINGS: dict[str, Any] = {}
+SIMPLE_JWT: dict[str, Any] = {}
 
 # Media
 ACOUSTID_API_KEY: str

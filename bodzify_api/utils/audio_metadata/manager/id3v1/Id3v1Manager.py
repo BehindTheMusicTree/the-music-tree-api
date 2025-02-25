@@ -1,5 +1,5 @@
 
-from typing import Dict, cast
+from typing import cast
 
 from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadata import Id3v1RawMetadata
 
@@ -52,13 +52,13 @@ class Id3v1Manager(MetadataManager):
     """
 
     def __init__(self, audio_file: AudioFile):
-        metadata_keys_direct_map_read: Dict = {
+        metadata_keys_direct_map_read: dict = {
             AppMetadataKey.TITLE: Id3v1RawMetadataKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
             AppMetadataKey.ALBUM_NAME: Id3v1RawMetadataKey.ALBUM_NAME,
             AppMetadataKey.GENRE_NAME: Id3v1RawMetadataKey.GENRE_CODE,
         }
-        metadata_keys_direct_map_write: Dict = {
+        metadata_keys_direct_map_write: dict = {
             AppMetadataKey.TITLE: Id3v1RawMetadataKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
             AppMetadataKey.ALBUM_NAME: Id3v1RawMetadataKey.ALBUM_NAME,

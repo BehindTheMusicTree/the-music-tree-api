@@ -1,6 +1,6 @@
 
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any
 
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 
@@ -171,11 +171,11 @@ class DrfValidationErrorResponseDetail:
     Attributes:
         message (str): Human-readable error message
         code (str): Machine-readable error code
-        details (Dict[str, Any] | None): Additional error context
+        details (dict[str, Any] | None): Additional error context
     """
     message: str
     code: str = "error"
-    details: Dict[str, Any] | None = None
+    details: dict[str, Any] | None = None
 
     def __str__(self) -> str:
         return self.message
@@ -183,12 +183,12 @@ class DrfValidationErrorResponseDetail:
     def __repr__(self) -> str:
         return f"ErrorResponseDetail(message='{self.message}', code='{self.code}', details={self.details})"
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Convert the error response detail to a dictionary format.
 
         Returns:
-            Dict[str, Any]: A dictionary containing the error details with the following structure:
+            dict[str, Any]: A dictionary containing the error details with the following structure:
             {
                 "message": "Human readable message",
                 "code": "machine_readable_code",
@@ -198,12 +198,12 @@ class DrfValidationErrorResponseDetail:
                 }
             }
         """
-        result: Dict[str, Any] = {
+        result: dict[str, Any] = {
             'message': self.message,
             'code': self.code
         }
         if self.details is not None:
-            if isinstance(self.details, Dict):
+            if isinstance(self.details, dict):
                 processed_details = {}
                 for k, v in self.details.items():
                     if isinstance(v, (str, int, float, bool)):
@@ -230,7 +230,7 @@ class DrfValidationErrorResponseDetail:
             return obj.to_dict()
         elif isinstance(obj, list):
             return [DrfValidationErrorResponseDetail.convert_error_detail_to_dict(item) for item in obj]
-        elif isinstance(obj, Dict):
+        elif isinstance(obj, dict):
             if 'unknown_fields' in obj:
                 unknown_fields = obj['unknown_fields']
                 return {

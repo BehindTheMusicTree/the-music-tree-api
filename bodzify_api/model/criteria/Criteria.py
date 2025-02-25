@@ -1,5 +1,5 @@
 
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any
 
 from django.db import IntegrityError, models
 from django.db.models import QuerySet
@@ -100,7 +100,7 @@ class Criteria(LibTrackMixin):
             return True
         return False
 
-    def _prepare_save(self, ctx: SaveContext) -> Dict:
+    def _prepare_save(self, ctx: SaveContext) -> dict:
         self._set_uuid_if_necessary()
         root_has_changed = self._set_root()
         if not self._state.adding and root_has_changed:

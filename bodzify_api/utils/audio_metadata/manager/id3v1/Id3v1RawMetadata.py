@@ -2,7 +2,7 @@
 
 import struct
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any
 
 from mutagen._file import FileType
 
@@ -34,7 +34,7 @@ class Id3v1RawMetadata(FileType):
 
     def __init__(self, fileobj: Any):
         self.fileobj = fileobj
-        self.tags: Dict[str, list[str]] | None = None
+        self.tags: dict[str, list[str]] | None = None
         self._load_tags()
 
     def _load_tags(self) -> None:

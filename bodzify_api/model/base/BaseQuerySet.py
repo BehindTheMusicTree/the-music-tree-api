@@ -1,9 +1,9 @@
-from typing import Any, Dict, Type
+from typing import Any, Type
 
 from django.db import models
 from django.db.models import Q
 
-from bodzify_api.model.lib_track_mixin.Fields import     Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
 
 
 def get_related_model(model: Type[models.Model], field_path: str) -> Type[models.Model]:
@@ -99,7 +99,7 @@ class BaseQuerySet(models.QuerySet):
                 transformed_args.append(arg)
         return tuple(transformed_args)
 
-    def transform_keyword_internal_fields(self, **kwargs: Any) -> Dict[str, Any]:
+    def transform_keyword_internal_fields(self, **kwargs: Any) -> dict[str, Any]:
         """
         Transform name fields in related field queries.
 
@@ -111,7 +111,7 @@ class BaseQuerySet(models.QuerySet):
             **kwargs: The query parameters
 
         Returns:
-            Dict with transformed field names
+            dict with transformed field names
         """
         transformed = {}
 

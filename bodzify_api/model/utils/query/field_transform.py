@@ -1,9 +1,9 @@
-from typing import Any, Dict, Type
+from typing import Any, Type
 
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
-from bodzify_api.model.lib_track_mixin.Fields import     Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
 
 
 def uses_internal_name(model: Type[models.Model]) -> bool:
@@ -18,7 +18,7 @@ def uses_internal_name(model: Type[models.Model]) -> bool:
         return False
 
 
-def transform_name_fields(model: Type[models.Model], **kwargs: Any) -> Dict[str, Any]:
+def transform_name_fields(model: Type[models.Model], **kwargs: Any) -> dict[str, Any]:
     """
     Transform name fields to internal name fields in all cases:
     - Direct field references (name → _name)

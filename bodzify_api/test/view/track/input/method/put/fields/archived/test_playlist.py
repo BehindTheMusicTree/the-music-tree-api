@@ -1,12 +1,12 @@
-from typing import List
+
 
 from rest_framework import status
 
-from bodzify_api.model.lib_track_playlist_rel.Fields import     Fields as LibTrackPlaylistRelFields
-from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import     LibTrackPlaylistRel
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
-from bodzify_api.serializer.model.lib_track.input.put.Fields import     Fields as PutFields
+from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
+from bodzify_api.serializer.model.lib_track.input.put.Fields import Fields as PutFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -65,7 +65,7 @@ class TestCase(LibTrackTestCase):
         assert manual_playlist_saved.lib_tracks_archived_count == 1
         assert manual_playlist_saved.lib_tracks_not_archived_count == 3
 
-        lib_track_playlist_rels: List[LibTrackPlaylistRel] = list(LibTrackPlaylistRel.objects.filter(
+        lib_track_playlist_rels: list[LibTrackPlaylistRel] = list(LibTrackPlaylistRel.objects.filter(
             playlist=manual_playlist_saved).order_by(LibTrackPlaylistRelFields.POSITION))
         assert lib_track_playlist_rels[0] == track4
         assert lib_track_playlist_rels[1] == track3
@@ -92,7 +92,7 @@ class TestCase(LibTrackTestCase):
             ManualPlaylist.objects.get(user=self.test_user1, name=manual_playlist_name)
         assert manual_playlist_saved.lib_tracks_archived_count == 0
         assert manual_playlist_saved.lib_tracks_not_archived_count == 4
-        lib_track_playlist_rels: List[LibTrackPlaylistRel] = list(LibTrackPlaylistRel.objects.filter(
+        lib_track_playlist_rels: list[LibTrackPlaylistRel] = list(LibTrackPlaylistRel.objects.filter(
             playlist=manual_playlist_saved).order_by(LibTrackPlaylistRelFields.POSITION))
         assert lib_track_playlist_rels[0] == track2
         assert lib_track_playlist_rels[1] == track4

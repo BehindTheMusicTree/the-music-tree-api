@@ -1,4 +1,4 @@
-from typing import (Any, Dict, Generic, List, Sequence, Type, TypeVar, Union, cast)
+from typing import (Any, Generic, Sequence, Type, TypeVar, Union, cast)
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import IntegrityError
@@ -64,20 +64,20 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return self.create_serializer_class
         raise ImproperlyConfigured("Create serializer class not defined in viewset")
 
-    def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> Dict[str, Any]:
+    def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> dict[str, Any]:
         serializer.is_valid(raise_exception=True)
         validated_data_dict = getattr(serializer, 'validated_data', {})
         if PrivateFields.USER not in validated_data_dict:
             validated_data_dict[PrivateFields.USER] = self.request.user
         return validated_data_dict
 
-    def _inject_user(self, data: Dict[str, Any], request: Request) -> Dict[str, Any]:
+    def _inject_user(self, data: dict[str, Any], request: Request) -> dict[str, Any]:
         if PrivateFields.USER not in data:
             data[PrivateFields.USER] = request.user
         return data
 
     def _create_instance(
-            self, request: Request, create_data: Dict[str, Any], creation_type: str | None) -> T:
+            self, request: Request, create_data: dict[str, Any], creation_type: str | None) -> T:
         if self.action != 'create':
             raise NotImplementedError(f"No action defined for action {self.action}")
 
@@ -90,7 +90,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         else:
             return self.model_class.objects.create(**validated_data)
 
-    def _update_instance(self, request: Request, instance: T, update_data: Dict[str, Any]) -> T:
+    def _update_instance(self, request: Request, instance: T, update_data: dict[str, Any]) -> T:
         serializer_class = self._require_serializer(SerializerType.UPDATE)
         serializer = serializer_class(instance=instance, data=update_data, partial=True, context={'request': request})
         validated_data = self._get_validated_data(serializer)
@@ -138,7 +138,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         self.model_class.objects.delete_instance(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def paginate_queryset(self, queryset) -> Union[List[T], QuerySet[T]] | None:
+    def paginate_queryset(self, queryset) -> Union[list[T], QuerySet[T]] | None:
         if self.paginator is None:
             return None
         if isinstance(queryset, Sequence) and not isinstance(queryset, QuerySet):
@@ -188,7 +188,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         raise MethodNotAllowed('POST', detail='Create operation not allowed for this resource')
 
     def list(self, *args: Any, **kwargs: Any) -> Response:
-        raise MethodNotAllowed('GET', detail='List operation not allowed for this resource')
+        raise MethodNotAllowed('GET', detail='list operation not allowed for this resource')
 
     def update(self, *args: Any, **kwargs: Any) -> Response:
         raise MethodNotAllowed('PUT', detail='Update operation not allowed for this resource')

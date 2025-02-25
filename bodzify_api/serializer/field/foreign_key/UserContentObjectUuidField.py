@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 from uuid import UUID
 
 from django.contrib.contenttypes.models import ContentType
@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from bodzify_api.model.ContentObjectFields import ContentObjectFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.field.foreign_key.PrivateUuidField import     PrivateUuidField
+from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
 
 class PrivateContentUuidField(PrivateUuidField):
@@ -55,7 +55,7 @@ class PrivateContentUuidField(PrivateUuidField):
             LibraryTrack.objects.filter(user=user)
         )
 
-    def to_internal_value(self, data: Any) -> Dict[str, Any]:
+    def to_internal_value(self, data: Any) -> dict[str, Any]:
         if data is None:
             return {ContentObjectFields.CONTENT_TYPE: None, ContentObjectFields.CONTENT: None}
 

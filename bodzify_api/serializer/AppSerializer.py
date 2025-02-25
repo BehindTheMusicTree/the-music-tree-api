@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Any, Dict, Generic, List, TypeVar
+from typing import Any, Generic, TypeVar
 
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext as _
@@ -27,7 +27,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         )
 
     @staticmethod
-    def _get_raw_field_names(raw_data: str) -> List[str]:
+    def _get_raw_field_names(raw_data: str) -> list[str]:
         # Remove whitespace and newlines between tokens to simplify parsing
         raw_data = re.sub(r'\s+', '', raw_data)
 
@@ -40,7 +40,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         return [match.group(1).replace('\\"', '"') for match in matches]
 
     @classmethod
-    def _find_duplicate_fields(cls, raw_data: str) -> List[str]:
+    def _find_duplicate_fields(cls, raw_data: str) -> list[str]:
         try:
             field_names = cls._get_raw_field_names(raw_data)
             field_counts = {}
@@ -58,12 +58,12 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         except (UnicodeDecodeError, AttributeError, json.JSONDecodeError):
             return []
 
-    def _validate_field_format(self, field_name: str, field, data: Dict) -> None:
+    def _validate_field_format(self, field_name: str, field, data: dict) -> None:
         if self._is_list_field(field):
             if field_name in data:
                 raise AppValidationException(
                     field_name=field_name,
-                    message=_(f"List field '{field_name}' must be specified as '{field_name}[]'"),
+                    message=_(f"list field '{field_name}' must be specified as '{field_name}[]'"),
                     field_validation_error_code=FieldValidationErrorCode.MALFORMED_LIST
                 )
         elif field_name in data and isinstance(data[field_name], list):
@@ -73,7 +73,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 field_validation_error_code=FieldValidationErrorCode.UNEXPECTED_LIST
             )
 
-    def _collect_known_fields_and_malformed_array_fields_names(self, data: Dict) -> tuple[set, list]:
+    def _collect_known_fields_and_malformed_array_fields_names(self, data: dict) -> tuple[set, list]:
         known_fields = set()
         unknown_fields = []
         updated_data = data.copy()
@@ -87,7 +87,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             if field_name in data and is_list_field:
                 raise AppValidationException(
                     field_name=field_name,
-                    message=_(f"List field '{field_name}' must be specified as '{array_field_name}'"),
+                    message=_(f"list field '{field_name}' must be specified as '{array_field_name}'"),
                     field_validation_error_code=FieldValidationErrorCode.MALFORMED_LIST
                 )
 
@@ -107,7 +107,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
 
         return known_fields, unknown_fields
 
-    def _collect_list_field_values(self, field_name: str | None, data: Dict) -> Any:
+    def _collect_list_field_values(self, field_name: str | None, data: dict) -> Any:
         """
         Collects values for list fields, handling both array notation and direct values.
         Args:
@@ -174,7 +174,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             self._errors = error.detail
             raise error
 
-    def _validate_object(self, validated_data: Dict) -> Dict:
+    def _validate_object(self, validated_data: dict) -> dict:
         try:
             return self.validate(validated_data)
         except AppValidationException as exc:
@@ -194,7 +194,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         if not hasattr(self, '_errors'):
             self._errors = {}
 
-    def _validate_fields(self, data: Dict) -> Dict:
+    def _validate_fields(self, data: dict) -> dict:
         validated_data = {}
         for field in self._writable_fields:
             try:
@@ -218,7 +218,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             raise ImproperlyConfigured('Cannot validate null data')
 
         try:
-            if not isinstance(data, Dict):
+            if not isinstance(data, dict):
                 raise ImproperlyConfigured('Data must be a dictionary')
 
             _, unknown_fields = self._collect_known_fields_and_malformed_array_fields_names(data)

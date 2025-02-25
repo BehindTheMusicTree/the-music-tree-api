@@ -70,8 +70,6 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
-from typing import Dict
-
 from django.core.exceptions import ImproperlyConfigured
 from mutagen._file import FileType
 
@@ -122,7 +120,7 @@ def _get_metadata_manager(
 
 def _get_metadata_managers(
     file, tag_formats: list[MetadataFormat] | None = None, normalized_rating_max_value: int | None = None
-) -> Dict[MetadataFormat, MetadataManager]:
+) -> dict[MetadataFormat, MetadataManager]:
     audio_file = AudioFile(file)
     managers = {}
 

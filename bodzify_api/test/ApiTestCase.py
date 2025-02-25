@@ -10,12 +10,12 @@ from rest_framework_simplejwt.tokens import AccessToken
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.user.User import User
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
-from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as LibTrackPostFields
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
 from bodzify_api.test.AppApiClient import AppApiClient
 from bodzify_api.test.AppTestCase import AppTestCase
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
-from bodzify_api.view.pagination.PaginatedResponseFields import     PaginatedResponseFields
+from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
 
 T = TypeVar('T', bound=models.Model)
 
@@ -43,7 +43,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
 
     api_client: AppApiClient
     saved_lib_track: LibraryTrack
-    saved_lib_track_metadata: Dict
+    saved_lib_track_metadata: dict
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
@@ -84,8 +84,8 @@ class ApiTestCase(AppTestCase, Generic[T]):
         if response.status_code == status.HTTP_400_BAD_REQUEST:
             self._set_bad_request_result(response)
         elif response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
-            # List endpoints return paginated results
-            if isinstance(response.json(), Dict) and PaginatedResponseFields.RESULTS in response.json():
+            # list endpoints return paginated results
+            if isinstance(response.json(), dict) and PaginatedResponseFields.RESULTS in response.json():
                 self._set_results_attributes(response)
             else:
                 self._set_single_result(response)

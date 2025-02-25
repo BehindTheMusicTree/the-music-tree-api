@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from rest_framework.fields import Field, ListField
 
@@ -13,7 +13,7 @@ class AppField(Field):
     """
 
     # Default mapping of DRF validation keys to our custom error codes
-    validation_error_code_mapping: Dict[str, FieldValidationErrorCode] = {
+    validation_error_code_mapping: dict[str, FieldValidationErrorCode] = {
         'required': FieldValidationErrorCode.REQUIRED,
         'null': FieldValidationErrorCode.REQUIRED,
         'blank': FieldValidationErrorCode.BLANK,

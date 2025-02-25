@@ -136,7 +136,7 @@
     /**
      * Build an url
      * @param {string} url Base url
-     * @param {object} [params] Dictionary of parameters
+     * @param {object} [params] dictionary of parameters
      */
     var makeUrl = function(url, params) {
         var urlAppend = [];

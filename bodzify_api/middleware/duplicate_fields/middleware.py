@@ -60,10 +60,10 @@ class DuplicateFieldsMiddleware:
                 # Check for duplicates while allowing list fields
                 for field_name in data.keys():
                     # Skip list fields (fields that appear multiple times)
-                    if hasattr(data, 'getlist'):  # Handle QueryDict
-                        values = data.getlist(field_name)
+                    if hasattr(data, 'getList'):  # Handle QueryDict
+                        values = data.getList(field_name)
                         has_multiple_values = len(values) > 1
-                    else:  # Handle regular Dict
+                    else:  # Handle regular dict
                         value = data.get(field_name)
                         has_multiple_values = isinstance(value, (list, tuple))
 

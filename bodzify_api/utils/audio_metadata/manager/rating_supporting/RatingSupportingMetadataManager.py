@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict
+
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -19,8 +19,8 @@ class RatingSupportingMetadataManager(MetadataManager):
 
     def __init__(self,
                  audio_file: AudioFile,
-                 metadata_keys_direct_map_read: Dict[AppMetadataKey, RawMetadataKey | None],
-                 metadata_keys_direct_map_write: Dict[AppMetadataKey, RawMetadataKey | None],
+                 metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
+                 metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None],
                  rating_write_profile: RatingWriteProfile,
                  normalized_rating_max_value: int | None):
         self.rating_write_profile = rating_write_profile

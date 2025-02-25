@@ -33,4 +33,3 @@ class UnsupportedMetadataError(Exception):
         - Trying to write BPM to ID3v1 tags
         - Trying to write album artist to ID3v1 tags
     """
-    pass
