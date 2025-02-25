@@ -76,6 +76,7 @@ from mutagen._file import FileType
 
 from django.core.exceptions import ImproperlyConfigured
 
+from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 from bodzify_api.utils.audio_metadata.utils.types import AppMetadataDict, RawMetadataDict, AppMetadataValue
 
 
@@ -116,7 +117,10 @@ def _get_metadata_manager(
                 f"Tag format {tag_format} not supported for file extension {audio_file.file_extension}")
 
     manager_class = TAG_FORMAT_MANAGER_CLASS_MAP[tag_format]
-    return manager_class(audio_file=audio_file, normalized_rating_max_value=normalized_rating_max_value)
+    if issubclass(manager_class, RatingSupportingMetadataManager):
+        return manager_class(
+            audio_file=audio_file, normalized_rating_max_value=normalized_rating_max_value)  # type: ignore
+    return manager_class(audio_file=audio_file)
 
 
 def _get_metadata_managers(
