@@ -70,20 +70,23 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
+from typing import Dict
+
+from mutagen._file import FileType
+
+from django.core.exceptions import ImproperlyConfigured
+
+from ..AudioFile import AudioFile
 from .manager.rating_supporting.VorbisManager import VorbisManager
 from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
 from .manager.id3v1.Id3v1Manager import Id3v1Manager
 from .manager.rating_supporting.RiffManager import RiffManager
+from .manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 from .manager.MetadataManager import MetadataManager
 from .utils.TagFormat import MetadataFormat
-from ..AudioFile import AudioFile
+from .utils.types import AppMetadataDict, AppMetadataValue
 from .utils.AppMetadataKey import AppMetadataKey
 from .exceptions import FileByteMismatchError
-from bodzify_api.utils.audio_metadata.utils.types import AppMetadataDict, RawMetadataDict, AppMetadataValue
-from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
-from django.core.exceptions import ImproperlyConfigured
-from mutagen._file import FileType
-, Dict
 
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
@@ -97,7 +100,8 @@ TAG_FORMAT_MANAGER_CLASS_MAP = {
 
 
 def _get_metadata_manager(
-        file, tag_format: MetadataFormat | None = None, normalized_rating_max_value: int | None = None) -> MetadataManager:
+        file, tag_format: MetadataFormat | None = None, normalized_rating_max_value: int | None = None
+) -> MetadataManager:
     audio_file = AudioFile(file)
 
     audio_file_prioritized_tag_formats = MetadataFormat.get_priorities().get(audio_file.file_extension)
