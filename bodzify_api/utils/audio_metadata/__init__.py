@@ -99,8 +99,7 @@ TAG_FORMAT_MANAGER_CLASS_MAP = {
 
 
 def _get_metadata_manager(
-        file, tag_format: Optional[TagFormat] = None, normalized_rating_max_value: int | None = None
-) -> MetadataManager:
+        file, tag_format: Optional[TagFormat] = None, normalized_rating_max_value: int | None = None) -> MetadataManager:
     audio_file = AudioFile(file)
 
     audio_file_prioritized_tag_formats = TagFormat.get_priorities().get(audio_file.file_extension)
