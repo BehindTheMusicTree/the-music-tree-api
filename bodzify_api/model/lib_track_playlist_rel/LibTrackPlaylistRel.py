@@ -1,14 +1,18 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import F
-from django.contrib.auth import get_user_model
 
-from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
-from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
-from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRelManager import LibTrackPlaylistRelManager
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import \
+    PrivateForeignKey
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRelManager import \
+    LibTrackPlaylistRelManager
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.private_standard_resource.PrivateStandardResource import \
+    PrivateStandardResource
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+
 from .Fields import Fields
 
 User = get_user_model()

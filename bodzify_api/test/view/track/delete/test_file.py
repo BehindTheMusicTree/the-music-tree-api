@@ -1,5 +1,4 @@
 import pytest
-
 from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack

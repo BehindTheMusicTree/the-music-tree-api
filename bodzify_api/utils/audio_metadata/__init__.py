@@ -72,22 +72,21 @@ Legend:
 
 from typing import Dict
 
+from django.core.exceptions import ImproperlyConfigured
 from mutagen._file import FileType
 
-from django.core.exceptions import ImproperlyConfigured
-
 from ..AudioFile import AudioFile
-from .manager.rating_supporting.VorbisManager import VorbisManager
-from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
+from .exceptions import FileByteMismatchError
 from .manager.id3v1.Id3v1Manager import Id3v1Manager
-from .manager.rating_supporting.RiffManager import RiffManager
-from .manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 from .manager.MetadataManager import MetadataManager
+from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
+from .manager.rating_supporting.RatingSupportingMetadataManager import \
+    RatingSupportingMetadataManager
+from .manager.rating_supporting.RiffManager import RiffManager
+from .manager.rating_supporting.VorbisManager import VorbisManager
+from .utils.AppMetadataKey import AppMetadataKey
 from .utils.TagFormat import MetadataFormat
 from .utils.types import AppMetadataDict, AppMetadataValue
-from .utils.AppMetadataKey import AppMetadataKey
-from .exceptions import FileByteMismatchError
-
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 

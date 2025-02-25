@@ -5,10 +5,10 @@ from django.core.exceptions import ImproperlyConfigured
 
 from bodzify_api.utils import data_transformer
 
-from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
-from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
+from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
+from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
 from ..MetadataManager import MetadataManager
 
 

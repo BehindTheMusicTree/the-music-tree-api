@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 

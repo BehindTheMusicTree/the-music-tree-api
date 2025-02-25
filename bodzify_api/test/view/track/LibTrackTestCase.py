@@ -3,7 +3,8 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as LibTrackExtractFields
+from bodzify_api.serializer.model.lib_track.input.extract.Fields import \
+    Fields as LibTrackExtractFields
 from bodzify_api.test.ApiTestCase import ApiTestCase
 from bodzify_api.utils import data_transformer
 

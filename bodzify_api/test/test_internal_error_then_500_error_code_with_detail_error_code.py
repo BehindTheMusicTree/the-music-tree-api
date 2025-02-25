@@ -1,8 +1,8 @@
 
 from unittest.mock import patch
 
-from rest_framework import status
 from django.db import IntegrityError
+from rest_framework import status
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode

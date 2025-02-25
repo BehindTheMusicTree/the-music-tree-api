@@ -1,7 +1,8 @@
 import pytest
 
 from bodzify_api.test import conftest
-from bodzify_api.test.view.track.input.attributes_source.data.genre.uuid.TestCase import TestCase
+from bodzify_api.test.view.track.input.attributes_source.data.genre.uuid.TestCase import \
+    TestCase
 
 
 @pytest.fixture(params=[TestCase])

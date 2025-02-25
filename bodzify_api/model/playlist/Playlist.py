@@ -3,16 +3,20 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 
-from bodzify_api.model.playlist.PlaylistManager import PlaylistManager
-from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.playlist.PlaylistManager import PlaylistManager
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import \
+    TrackablePlayCount
+
 from .Fields import Fields
 
 if TYPE_CHECKING:
+    from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import \
+        LibTrackPlaylistRel
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-    from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-    from .children.manual.ManualPlaylist import ManualPlaylist
+
     from .children.criteria.CriteriaPlaylist import CriteriaPlaylist
+    from .children.manual.ManualPlaylist import ManualPlaylist
 
 
 class Playlist(LibTrackMixin, TrackablePlayCount):

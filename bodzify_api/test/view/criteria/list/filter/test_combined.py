@@ -1,8 +1,9 @@
 from rest_framework import status
 
+from bodzify_api.serializer.model.criteria.output.Fields import \
+    Fields as GenreFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
-from bodzify_api.serializer.model.criteria.output.Fields import Fields as GenreFields
 
 
 class TestCase(GenreTestCase):

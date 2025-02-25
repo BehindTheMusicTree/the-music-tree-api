@@ -1,6 +1,7 @@
 from rest_framework import status
 
-from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
+from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import \
+    ManualPlaylistTestCase
 
 
 class TestCase(ManualPlaylistTestCase):

@@ -1,22 +1,24 @@
 from typing import Dict
+
 import acoustid
 from acoustid import WebServiceError
-
 from django.core.exceptions import ObjectDoesNotExist
 
 from bodzify_api import settings
 from bodzify_api.exception import musicbrainz as musicbrainz_exception
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
-    import MusicbrainzRecordingLookupResult
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause \
-    import MusicbrainzRecordingMissingCause
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
-    import MusicbrainzRecordingMissingCauseCode
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import \
+    MusicbrainzRecordingMissingCauseCode
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import \
+    MusicbrainzRecordingMissingCause
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
+    MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult import \
+    MusicbrainzRecordingLookupResult
 from bodzify_api.model.user.User import User
+
+from . import utils
 from .ApiFields import ApiFields
 from .LookupMetaFields import LookupMetaFields
-from . import utils
 
 
 def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: bytes,

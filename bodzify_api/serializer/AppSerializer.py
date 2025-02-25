@@ -1,16 +1,18 @@
 import json
 import re
-from typing import Any, Dict, List, TypeVar, Generic
+from typing import Any, Dict, Generic, List, TypeVar
 
-from django.utils.translation import gettext as _
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.translation import gettext as _
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import Field, ListField, SkipField
 from rest_framework.relations import ManyRelatedField
-from rest_framework.exceptions import ValidationError
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
+from bodzify_api.exception.validation.app.AppValidationError import \
+    AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 
 T = TypeVar('T')
 

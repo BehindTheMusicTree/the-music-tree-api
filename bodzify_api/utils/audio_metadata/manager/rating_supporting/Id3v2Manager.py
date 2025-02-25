@@ -1,17 +1,18 @@
 
 from typing import Dict, Type
 
-from mutagen.id3 import ID3
-from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM, TYER
-from mutagen.id3._util import ID3NoHeaderError
 from mutagen._file import FileType
+from mutagen.id3 import ID3
+from mutagen.id3._frames import (POPM, TALB, TBPM, TCON, TDRC, TIT2, TLAN,
+                                 TPE1, TPE2, TRCK, TYER)
+from mutagen.id3._util import ID3NoHeaderError
 
 from bodzify_api import settings
 
-from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import AppMetadataValue, RawMetadataKey, RawMetadataValue
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
+from ...utils.rating_profiles import RatingWriteProfile
+from ...utils.types import AppMetadataValue, RawMetadataKey, RawMetadataValue
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
 

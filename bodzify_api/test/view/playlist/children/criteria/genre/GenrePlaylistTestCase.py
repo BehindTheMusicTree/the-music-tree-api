@@ -1,7 +1,9 @@
 from uuid import UUID
+
 from django.urls import reverse
 
-from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
+from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import \
+    GenrePlaylist
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 

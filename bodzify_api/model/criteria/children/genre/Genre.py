@@ -1,4 +1,5 @@
 from bodzify_api.model.criteria.Criteria import Criteria
+
 from .GenreManager import GenreManager
 
 

@@ -1,4 +1,5 @@
-from bodzify_api.serializer.model.lib_track.input.Fields import Fields as InoutFields
+from bodzify_api.serializer.model.lib_track.input.Fields import \
+    Fields as InoutFields
 
 
 class Fields:

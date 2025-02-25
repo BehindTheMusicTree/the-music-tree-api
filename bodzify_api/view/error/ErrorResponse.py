@@ -1,17 +1,22 @@
-from typing import Any, List, Union, Dict
+from typing import Any, Dict, List, Union
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
-from rest_framework.exceptions import ValidationError as DrfValidationError, ErrorDetail as DRFErrorDetail
 from django.http import JsonResponse
 from rest_framework import status
+from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
+from rest_framework.exceptions import ValidationError as DrfValidationError
 
-from bodzify_api.exception.validation.DrfValidationErrorFields import DrfValidationErrorFields
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
-from bodzify_api.exception.validation.app.AppValidationErrorFields import AppValidationErrorFields
+from bodzify_api.exception.validation.app.AppValidationError import \
+    AppValidationException
+from bodzify_api.exception.validation.app.AppValidationErrorFields import \
+    AppValidationErrorFields
+from bodzify_api.exception.validation.DrfValidationErrorFields import \
+    DrfValidationErrorFields
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
-from bodzify_api.view.error.DrfValidationErrorResponseDetail import DrfValidationErrorResponseDetail
+from bodzify_api.view.error.DrfValidationErrorResponseDetail import \
+    DrfValidationErrorResponseDetail
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

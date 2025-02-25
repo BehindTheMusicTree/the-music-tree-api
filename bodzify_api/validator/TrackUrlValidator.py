@@ -1,11 +1,11 @@
 import requests
-
-from django.utils.translation import gettext as _
-from django.utils.deconstruct import deconstructible
-from django.core.validators import BaseValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import BaseValidator
+from django.utils.deconstruct import deconstructible
+from django.utils.translation import gettext as _
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 
 
 @deconstructible

@@ -1,15 +1,18 @@
 
 from typing import Tuple
-from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
-from ..MetadataManager import AppMetadataKey
-from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
-from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
-from ...utils.rating_profiles import RatingWriteProfile
-from ....AudioFile import AudioFile
-from bodzify_api.utils import data_transformer
+
 from django.core.exceptions import ImproperlyConfigured
-from mutagen.flac import FLAC, VCFLACDict
 from mutagen._file import FileType
+from mutagen.flac import FLAC, VCFLACDict
+
+from bodzify_api.utils import data_transformer
+
+from ....AudioFile import AudioFile
+from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
+from ...utils.rating_profiles import RatingWriteProfile
+from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
+from ..MetadataManager import AppMetadataKey
+from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
 
 class VorbisManager(RatingSupportingMetadataManager):

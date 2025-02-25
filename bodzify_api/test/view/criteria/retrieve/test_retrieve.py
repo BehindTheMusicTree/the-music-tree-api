@@ -1,7 +1,9 @@
 from uuid import UUID
+
 from rest_framework import status
 
-from bodzify_api.serializer.model.criteria.output.Fields import Fields as RetrieveFields
+from bodzify_api.serializer.model.criteria.output.Fields import \
+    Fields as RetrieveFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 

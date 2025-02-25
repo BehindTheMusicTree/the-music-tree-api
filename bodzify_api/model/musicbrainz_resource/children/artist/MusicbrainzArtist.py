@@ -3,6 +3,7 @@ from django.db.models import F, Value
 
 from bodzify_api import settings
 from bodzify_api.model.utils.ConcatOp import ConcatOp
+
 from ...MusicbrainzResource import MusicbrainzResource
 from .Fields import Fields
 

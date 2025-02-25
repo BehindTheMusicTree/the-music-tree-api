@@ -1,36 +1,44 @@
-from typing import Dict, TYPE_CHECKING, cast
 import binascii
 import datetime
 import os
+from typing import TYPE_CHECKING, Dict, cast
 
 from django.db import models
-from django.utils.translation import gettext as _
 from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils.translation import gettext as _
 
 from bodzify_api import settings
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationError import \
+    AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
-from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
-from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
-from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult \
-    import MusicbrainzRecordingLookupResult
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause \
-    import MusicbrainzRecordingMissingCause
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
-    import MusicbrainzRecordingMissingCauseCode
+from bodzify_api.model.field.foreign_key.AppOneToOneField import \
+    AppOneToOneField
+from bodzify_api.model.field.foreign_key.PrivateOneToOneField import \
+    PrivateOneToOneField
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import \
+    MusicbrainzRecordingMissingCauseCode
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import \
+    MusicbrainzRecordingMissingCause
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
+    MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult import \
+    MusicbrainzRecordingLookupResult
+from bodzify_api.model.private_standard_resource.PrivateStandardResource import \
+    PrivateStandardResource
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
-from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.model.utils import utils as model_utils
+from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
+from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
-from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
-from .fingerprinting.FingerprintingResult import FingerprintingResult
+
 from .Fields import Fields
+from .fingerprinting.FingerprintingResult import FingerprintingResult
+from .fingerprinting.missing_cause.FingerprintMissingCause import \
+    FingerprintMissingCause
 
 if TYPE_CHECKING:
     from ..lib.LibraryTrack import LibraryTrack

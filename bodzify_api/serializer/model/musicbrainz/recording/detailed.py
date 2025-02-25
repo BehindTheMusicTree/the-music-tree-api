@@ -1,8 +1,11 @@
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording \
-    import MusicbrainzRecording, Fields as ModelFields
-from bodzify_api.serializer.model.musicbrainz.artist.detailed import MusicbrainzArtistDetailedSerializer
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
+    Fields as ModelFields
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
+    MusicbrainzRecording
+from bodzify_api.serializer.model.musicbrainz.artist.detailed import \
+    MusicbrainzArtistDetailedSerializer
 
 
 class Fields:
@@ -21,11 +24,13 @@ class MusicbrainzRecordingDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MusicbrainzRecording
-        fields = [Fields.MUSICBRAINZ_ID,
-                  Fields.TITLE,
-                  Fields.SCORE,
-                  Fields.MUSICBRAINZ_ARTISTS,
-                  Fields.MUSICBRAINZ_LINK,
-                  Fields.DURATION_IN_SEC,
-                  Fields.DURATION_STR_IN_HOUR_MIN_SEC,
-                  Fields.RELEASE_DATE,]
+        fields = [
+            Fields.MUSICBRAINZ_ID,
+            Fields.TITLE,
+            Fields.SCORE,
+            Fields.MUSICBRAINZ_ARTISTS,
+            Fields.MUSICBRAINZ_LINK,
+            Fields.DURATION_IN_SEC,
+            Fields.DURATION_STR_IN_HOUR_MIN_SEC,
+            Fields.RELEASE_DATE
+        ]

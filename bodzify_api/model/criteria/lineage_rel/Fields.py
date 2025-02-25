@@ -1,4 +1,5 @@
-from bodzify_api.model.private_standard_resource.Fields import Fields as PrivateRelationFields
+from bodzify_api.model.private_standard_resource.Fields import \
+    Fields as PrivateRelationFields
 
 
 class Fields:

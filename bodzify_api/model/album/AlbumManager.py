@@ -3,11 +3,13 @@ from typing import TYPE_CHECKING, List
 from django.db.models import QuerySet
 
 from bodzify_api.model.lib_track_mixin.Fields import Fields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import \
+    LibTrackMixinWithInternalNameManager
 
 if TYPE_CHECKING:
-    from bodzify_api.model.user.User import User
     from bodzify_api.model.artist.Artist import Artist
+    from bodzify_api.model.user.User import User
+
     from .Album import Album
 
 
@@ -54,8 +56,8 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
         self.delete_instance_with_tracks_and_eventually_artists(instance)
 
     def delete_instance_with_tracks_and_eventually_artists(self, instance: 'Album'):
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
         from bodzify_api.model.artist.Artist import Artist
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
         # Keep this deletion order for rollback tests: first delete tracks, then delete album, then delete artists
 

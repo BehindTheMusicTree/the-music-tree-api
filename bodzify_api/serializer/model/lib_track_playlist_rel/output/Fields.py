@@ -1,4 +1,5 @@
-from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as ModelFields
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import \
+    Fields as ModelFields
 
 
 class Fields:

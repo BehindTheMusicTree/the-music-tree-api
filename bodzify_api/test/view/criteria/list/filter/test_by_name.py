@@ -1,10 +1,13 @@
 from rest_framework import status
 
-from bodzify_api.serializer.model.criteria.output.Fields import Fields as ModelFields
-from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
+from bodzify_api.serializer.model.criteria.output.Fields import \
+    Fields as ModelFields
+from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import \
+    NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

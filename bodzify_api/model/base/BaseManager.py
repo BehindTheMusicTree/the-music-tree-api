@@ -1,10 +1,9 @@
 
-from typing import Any, MutableMapping, TypeVar, Generic, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Generic, MutableMapping, TypeVar
 
 from django.db import models
 
 from .BaseQuerySet import BaseQuerySet
-
 
 if TYPE_CHECKING:
     from .BaseModel import BaseModel

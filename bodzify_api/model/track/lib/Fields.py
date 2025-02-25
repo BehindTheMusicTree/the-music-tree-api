@@ -1,5 +1,7 @@
-from bodzify_api.model.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
-from bodzify_api.model.trackable_play_count.Fields import Fields as TrackablePlayCountFields
+from bodzify_api.model.private_unique_resource.Fields import \
+    Fields as PrivateUniqueResourceFields
+from bodzify_api.model.trackable_play_count.Fields import \
+    Fields as TrackablePlayCountFields
 
 
 class Fields(PrivateUniqueResourceFields, TrackablePlayCountFields):

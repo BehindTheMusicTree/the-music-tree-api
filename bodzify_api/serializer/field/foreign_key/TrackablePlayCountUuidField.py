@@ -1,15 +1,18 @@
-from typing import Union, Type
+from typing import Type, Union
 from uuid import UUID
 
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 from django.db.models import Model
 from rest_framework.request import Request
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
+from bodzify_api.exception.validation.app.AppValidationError import \
+    AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
+from bodzify_api.serializer.field.foreign_key.PrivateUuidField import \
+    PrivateUuidField
 
 
 class TrackablePlayCountUuidField(PrivateUuidField):

@@ -1,9 +1,11 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
-from django.core.exceptions import ImproperlyConfigured, ValidationError as DjangoValidationError
+from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DrfValidationError
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 
 
 class AppValidationException(DrfValidationError):

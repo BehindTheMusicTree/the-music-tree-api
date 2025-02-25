@@ -1,16 +1,19 @@
 
-from typing import Union
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
-from django.core.exceptions import ImproperlyConfigured
-from django.core.files import File as DjangoFile
-from django.db.models.fields.files import FieldFile
-from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
-from mutagen.flac import FLAC
-from mutagen.wave import WAVE
-from mutagen.mp3 import MP3
 import os
 import subprocess
 import tempfile
+from typing import Union
+
+from django.core.exceptions import ImproperlyConfigured
+from django.core.files import File as DjangoFile
+from django.core.files.uploadedfile import (InMemoryUploadedFile,
+                                            TemporaryUploadedFile)
+from django.db.models.fields.files import FieldFile
+from mutagen.flac import FLAC
+from mutagen.mp3 import MP3
+from mutagen.wave import WAVE
+
+from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 
 
 class AudioFile:

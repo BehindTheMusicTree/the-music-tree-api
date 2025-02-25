@@ -1,5 +1,6 @@
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.album.Fields import Fields as AlbumFields
+
 from .SearchFilterSet import SearchFilterSet
 
 

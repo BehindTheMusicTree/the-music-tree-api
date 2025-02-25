@@ -6,6 +6,7 @@ import re
 import requests
 
 from bodzify_api import settings
+
 from . import exception
 
 

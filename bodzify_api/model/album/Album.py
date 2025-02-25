@@ -1,16 +1,19 @@
 
 from typing import TYPE_CHECKING
+
 from django.db import models
 from django.db.models import Q
 
 from bodzify_api import settings
-from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from bodzify_api.model.album.AlbumManager import AlbumManager
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
+from bodzify_api.model.field.AppCharField import AppCharField
+from bodzify_api.model.field.foreign_key.PrivateManyToManyField import \
+    PrivateManyToManyField
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
-from bodzify_api.model.field.AppCharField import AppCharField
+
 from .Fields import Fields
 
 if TYPE_CHECKING:

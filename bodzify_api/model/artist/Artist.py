@@ -3,10 +3,11 @@ from typing import TYPE_CHECKING
 from django.db import models
 
 from bodzify_api import settings
-from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.field.AppCharField import AppCharField
-from .Fields import Fields
+from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+
 from .ArtistManager import ArtistManager
+from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.album.Album import Album

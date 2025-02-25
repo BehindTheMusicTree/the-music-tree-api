@@ -2,12 +2,13 @@
 
 from rest_framework import status
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.play.input.schema.PostFields import Fields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

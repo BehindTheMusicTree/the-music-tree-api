@@ -1,4 +1,5 @@
-from bodzify_api.model.public_standard_resource.Fields import Fields as PublicStandardResourceFields
+from bodzify_api.model.public_standard_resource.Fields import \
+    Fields as PublicStandardResourceFields
 
 
 class Fields:

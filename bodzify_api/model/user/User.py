@@ -1,22 +1,24 @@
 import os
-from pathlib import Path
 import shutil
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from django.contrib.auth.models import AbstractUser
-from django.utils.functional import cached_property
 from django.db import models
 from django.db.models import F, Value
+from django.utils.functional import cached_property
 
 from bodzify_api import settings
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.utils.ConditionalExpression import ConditionalExpression
-from .UserManager import UserManager
+
 from .Fields import Fields
+from .UserManager import UserManager
 
 if TYPE_CHECKING:
-    from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+    from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import \
+        AllLibTracksMixin
 
 
 class User(AbstractUser, BaseModel):
@@ -46,7 +48,8 @@ class User(AbstractUser, BaseModel):
 
     @cached_property
     def all_lib_tracks_mixin(self) -> 'AllLibTracksMixin':
-        from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+        from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import \
+            AllLibTracksMixin
         all_lib_tracks_mixin, _ = AllLibTracksMixin.objects.get_or_create(user=self)
         return all_lib_tracks_mixin
 

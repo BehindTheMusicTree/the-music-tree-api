@@ -2,9 +2,12 @@ from typing import Type
 
 from django.utils.translation import gettext_lazy as _
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
-from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
+from bodzify_api.exception.validation.app.AppValidationError import \
+    AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
+from bodzify_api.filtering.filter.char.EmptiableCharFilter import \
+    EmptiableCharFilter
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 
 

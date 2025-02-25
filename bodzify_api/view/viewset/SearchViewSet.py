@@ -1,25 +1,39 @@
-from bodzify_api.filtering.set.search.LibTrackSearchFilterSet import LibTrackSearchFilterSet
-from bodzify_api.filtering.set.search.ManualPlaylistSearchFilterSet import ManualPlaylistSearchFilterSet
-from bodzify_api.filtering.set.search.CriteriaPlaylistSearchFilterSet import CriteriaPlaylistSearchFilterSet
-from bodzify_api.filtering.set.search.AlbumSearchFilterSet import AlbumSearchFilterSet
-from bodzify_api.filtering.set.search.ArtistSearchFilterSet import ArtistSearchFilterSet
-from ..pagination.DefaultMultipleModelLimitOffsetPagination import DefaultMultipleModelLimitOffsetPagination
-from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
-from bodzify_api.serializer.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
-from bodzify_api.serializer.model.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
-from bodzify_api.serializer.model.artist.simple import ArtistSimpleSerializer
-from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.album.Album import Album
 from drf_multiple_model.viewsets import ObjectMultipleModelAPIViewSet
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.permissions import IsAuthenticated
+
+from bodzify_api.filtering.set.search.AlbumSearchFilterSet import \
+    AlbumSearchFilterSet
+from bodzify_api.filtering.set.search.ArtistSearchFilterSet import \
+    ArtistSearchFilterSet
+from bodzify_api.filtering.set.search.CriteriaPlaylistSearchFilterSet import \
+    CriteriaPlaylistSearchFilterSet
+from bodzify_api.filtering.set.search.LibTrackSearchFilterSet import \
+    LibTrackSearchFilterSet
+from bodzify_api.filtering.set.search.ManualPlaylistSearchFilterSet import \
+    ManualPlaylistSearchFilterSet
+from bodzify_api.model.album.Album import Album
+from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
+from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import \
+    CriterialessPlaylistNames
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
+    CriteriaPlaylist
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import \
+    ManualPlaylist
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
+from bodzify_api.serializer.model.artist.simple import ArtistSimpleSerializer
+from bodzify_api.serializer.model.lib_track.output.detailed import \
+    LibTrackDetailedSerializer
+from bodzify_api.serializer.model.playlist.children.criteria.output.simple import \
+    CriteriaSimpleSerializer
+from bodzify_api.serializer.model.playlist.children.manual.output.simple import \
+    ManualPlaylistSimpleSerializer
+
+from ..pagination.DefaultMultipleModelLimitOffsetPagination import \
+    DefaultMultipleModelLimitOffsetPagination
 
 
 def is_string1_part_of_string2_regardless_of_case(string1: str, string2: str) -> bool:

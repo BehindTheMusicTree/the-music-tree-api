@@ -3,7 +3,8 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, QuerySet
 
-from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
+from bodzify_api.filtering.filter.char.EmptiableCharFilter import \
+    EmptiableCharFilter
 
 
 class PrimaryFieldCharFilter(EmptiableCharFilter):

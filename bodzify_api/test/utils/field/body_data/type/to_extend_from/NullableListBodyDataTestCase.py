@@ -39,7 +39,8 @@ Advantages of array notation:
 Other methods like repeated fields or comma-separated values are not supported and will result in validation errors.
 """
 
-from bodzify_api.test.utils.field.body_data.type.base.NullableBodyDataTestCase import NullableBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.base.NullableBodyDataTestCase import \
+    NullableBodyDataTestCase
 
 
 class NullableListBodyDataTestCase(NullableBodyDataTestCase):

@@ -1,14 +1,18 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
-from bodzify_api.serializer.field.AppCharField import AppCharField
-from bodzify_api.serializer.field.PositionInAlbumField import PositionInAlbumField
-from bodzify_api.serializer.field.RatingField import RatingField
+from bodzify_api.exception.validation.app.AppValidationError import \
+    AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.ArtistsNamesField import ArtistsNamesField
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
+from bodzify_api.serializer.field.PositionInAlbumField import \
+    PositionInAlbumField
+from bodzify_api.serializer.field.RatingField import RatingField
+
 from .Fields import Fields
 
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""

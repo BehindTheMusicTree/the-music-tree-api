@@ -1,11 +1,14 @@
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.exception.validation.app.AppValidationError import AppValidationException
-from bodzify_api.model.base.BaseQuerySet import BaseQuerySet
 from django.utils.translation import gettext as _
 from django_filters.filterset import FilterSet
 
-from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
+from bodzify_api.exception.validation.app.AppValidationError import \
+    AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
+from bodzify_api.filtering.filter.char.EmptiableCharFilter import \
+    EmptiableCharFilter
+from bodzify_api.model.base.BaseQuerySet import BaseQuerySet
 
 
 class NonEmptiableCharFilter(EmptiableCharFilter):

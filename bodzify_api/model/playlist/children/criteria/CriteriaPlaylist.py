@@ -2,16 +2,19 @@ from typing import TYPE_CHECKING, Dict
 
 from django.db import models
 
-from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
-from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
+from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
-from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
-from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
-from bodzify_api.model.playlist.Playlist import Playlist
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import \
+    PrivateForeignKey
+from bodzify_api.model.field.foreign_key.PrivateOneToOneField import \
+    PrivateOneToOneField
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.utils.model import SaveContext
+
 from .CriterialessPlaylistNames import CriterialessPlaylistNames
 from .CriteriaPlaylistManager import CriteriaPlaylistManager
 from .Fields import Fields

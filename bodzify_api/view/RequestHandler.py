@@ -1,10 +1,10 @@
-from typing import Dict, Any, Callable
+from typing import Any, Callable, Dict
 
 from django.db import IntegrityError
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.serializers import Serializer
 from rest_framework.exceptions import ValidationError as DrfValidationError
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 

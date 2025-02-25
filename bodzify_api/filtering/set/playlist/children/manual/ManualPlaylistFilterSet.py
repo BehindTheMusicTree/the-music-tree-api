@@ -1,6 +1,8 @@
 
-from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
+from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import \
+    NonEmptiableCharFilter
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
+
 from .Fields import Fields
 
 

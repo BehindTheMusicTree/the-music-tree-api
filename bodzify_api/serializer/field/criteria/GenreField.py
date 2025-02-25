@@ -1,4 +1,5 @@
 from bodzify_api.model.criteria.children.genre.Genre import Genre
+
 from .CriteriaField import CriteriaField
 
 

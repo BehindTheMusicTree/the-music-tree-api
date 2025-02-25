@@ -1,7 +1,8 @@
 
 from rest_framework import status
 
-from bodzify_api.test.view.playlist.children.criteria.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
+from bodzify_api.test.view.playlist.children.criteria.genre.GenrePlaylistTestCase import \
+    GenrePlaylistTestCase
 
 
 class TestCase(GenrePlaylistTestCase):

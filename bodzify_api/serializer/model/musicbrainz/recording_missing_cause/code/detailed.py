@@ -1,8 +1,10 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode \
-    import MusicbrainzRecordingMissingCauseCode, Fields as ModelFields
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import \
+    Fields as ModelFields
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import \
+    MusicbrainzRecordingMissingCauseCode
 
 
 class Fields:

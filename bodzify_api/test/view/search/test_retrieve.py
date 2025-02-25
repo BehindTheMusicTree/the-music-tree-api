@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from django.urls import reverse, NoReverseMatch
 import pytest
+from django.urls import NoReverseMatch, reverse
 
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 

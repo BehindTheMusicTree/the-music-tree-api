@@ -1,5 +1,7 @@
-from bodzify_api.model.playlist.children.criteria.tag.TagPlaylist import TagPlaylist
-from bodzify_api.view.viewset.model.playlist.children.criteria.CriteriaPlaylistViewSet import CriteriaPlaylistViewSet
+from bodzify_api.model.playlist.children.criteria.tag.TagPlaylist import \
+    TagPlaylist
+from bodzify_api.view.viewset.model.playlist.children.criteria.CriteriaPlaylistViewSet import \
+    CriteriaPlaylistViewSet
 
 
 class TagPlaylistViewSet(CriteriaPlaylistViewSet):

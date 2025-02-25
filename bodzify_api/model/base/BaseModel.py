@@ -3,7 +3,8 @@ from typing import Dict, Self, TypeVar
 from django.db import models
 
 from bodzify_api.model.base.BaseManager import BaseManager
-from bodzify_api.model.base.DynamicTableNameModelBase import DynamicTableNameModelBase
+from bodzify_api.model.base.DynamicTableNameModelBase import \
+    DynamicTableNameModelBase
 from bodzify_api.model.lib_track_mixin.query_utils import transform_name_fields
 from bodzify_api.utils.model import SaveContext
 

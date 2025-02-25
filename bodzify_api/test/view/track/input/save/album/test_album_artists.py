@@ -1,12 +1,14 @@
 from rest_framework import status
 
 from bodzify_api import settings
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as ExtractFields
-from bodzify_api.test.utils.field.body_data.type.to_extend_from.NullableListBodyDataTestCase \
-    import NullableListBodyDataTestCase
+from bodzify_api.serializer.model.lib_track.input.extract.Fields import \
+    Fields as ExtractFields
+from bodzify_api.test.utils.field.body_data.type.to_extend_from.NullableListBodyDataTestCase import \
+    NullableListBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

@@ -3,13 +3,15 @@ from typing import Dict, cast
 
 from mutagen._file import FileType
 
-from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadata import Id3v1RawMetadata
+from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadata import \
+    Id3v1RawMetadata
 
 from ....AudioFile import AudioFile
-from ...utils.types import AppMetadataValue, RawMetadataDict
 from ...exceptions import FileCorruptedError, UnsupportedMetadataError
 from ...utils.AppMetadataKey import AppMetadataKey
-from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
+from ...utils.id3v1_and_riff_genre_code_map import \
+    ID3V1_AND_RIFF_GENRE_CODE_MAP
+from ...utils.types import AppMetadataValue, RawMetadataDict
 from ..MetadataManager import MetadataManager
 from .Id3v1RawMetadataKey import Id3v1RawMetadataKey
 

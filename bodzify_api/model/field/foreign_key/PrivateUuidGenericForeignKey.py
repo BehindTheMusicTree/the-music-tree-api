@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 
-from bodzify_api.serializer.field.foreign_key.UserContentObjectUuidField import PrivateContentUuidField
+from bodzify_api.serializer.field.foreign_key.UserContentObjectUuidField import \
+    PrivateContentUuidField
 
 
 class PrivateUuidGenericForeignKey(GenericForeignKey):

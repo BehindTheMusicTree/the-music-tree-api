@@ -2,6 +2,7 @@ from django_filters import DateTimeFilter
 
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.criteria.Criteria import Criteria
+
 from .Fields import Fields
 
 

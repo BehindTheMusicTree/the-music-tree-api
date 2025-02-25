@@ -1,5 +1,6 @@
 
-from bodzify_api.test.utils.field.body_data.type.base.NullableBodyDataTestCase import NullableBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.base.NullableBodyDataTestCase import \
+    NullableBodyDataTestCase
 
 
 class NullableCharBodyDataTestCase(NullableBodyDataTestCase):

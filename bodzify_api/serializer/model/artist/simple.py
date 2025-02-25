@@ -2,8 +2,9 @@
 from rest_framework import serializers
 
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.model.artist.Fields import Fields as AvailableFields
 from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
+from bodzify_api.serializer.model.artist.Fields import \
+    Fields as AvailableFields
 
 
 class Fields:

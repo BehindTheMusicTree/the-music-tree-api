@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 

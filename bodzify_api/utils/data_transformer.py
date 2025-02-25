@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any, Union, cast, Mapping
+from typing import Any, Dict, Mapping, Union, cast
 
 from django.http import QueryDict
 

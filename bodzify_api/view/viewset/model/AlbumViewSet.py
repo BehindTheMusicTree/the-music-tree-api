@@ -1,12 +1,13 @@
 from django.db import transaction
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes  # type: ignore
+from drf_spectacular.utils import (OpenApiParameter,  # type: ignore
+                                   OpenApiTypes, extend_schema)
 
-from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet
 from bodzify_api.filtering.set.album.Fields import Fields as FilterFields
 from bodzify_api.model.album.Album import Album
-from bodzify_api.serializer.model.album.simple import AlbumSimpleSerializer
 from bodzify_api.serializer.model.album.detailed import AlbumDetailedSerializer
+from bodzify_api.serializer.model.album.simple import AlbumSimpleSerializer
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
 class AlbumViewSet(AppModelViewSet[Album]):

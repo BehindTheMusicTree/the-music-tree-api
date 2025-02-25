@@ -1,9 +1,11 @@
 from rest_framework import status
 
-from bodzify_api.utils.data_transformer import to_camel_case
+from bodzify_api.serializer.model.album.detailed import \
+    Fields as RetrieveFields
+from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album import \
+    Fields as LibTrackOutputFields
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
-from bodzify_api.serializer.model.album.detailed import Fields as RetrieveFields
-from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album import Fields as LibTrackOutputFields
+from bodzify_api.utils.data_transformer import to_camel_case
 
 
 class TestCase(AlbumTestCase):

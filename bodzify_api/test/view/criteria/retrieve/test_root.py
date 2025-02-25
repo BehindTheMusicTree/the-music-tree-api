@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from rest_framework import status
 
 from bodzify_api.model.criteria.Criteria import Fields

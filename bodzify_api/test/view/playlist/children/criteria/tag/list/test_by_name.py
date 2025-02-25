@@ -1,11 +1,16 @@
 from rest_framework import status
 
-from bodzify_api.model.playlist.children.criteria.tag.TagPlaylist import TagPlaylist
-from bodzify_api.serializer.model.playlist.children.criteria.output.detailed import Fields as RietrieveFields
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 from bodzify_api.filtering.set.playlist.Fields import Fields as FilterFields
-from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
-from bodzify_api.test.view.playlist.children.criteria.tag.TagPlaylistTestCase import TagPlaylistTestCase
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.model.playlist.children.criteria.tag.TagPlaylist import \
+    TagPlaylist
+from bodzify_api.serializer.model.playlist.children.criteria.output.detailed import \
+    Fields as RietrieveFields
+from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import \
+    NotNullableFreeCharFilterTestCase
+from bodzify_api.test.view.playlist.children.criteria.tag.TagPlaylistTestCase import \
+    TagPlaylistTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

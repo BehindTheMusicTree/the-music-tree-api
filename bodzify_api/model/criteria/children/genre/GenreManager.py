@@ -1,8 +1,9 @@
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
+
 from ...CriteriaManager import CriteriaManager
 
 if TYPE_CHECKING:

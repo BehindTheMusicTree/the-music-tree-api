@@ -2,12 +2,16 @@ from typing import TYPE_CHECKING, Dict
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
+from bodzify_api.model.lib_track_mixin.Fields import \
+    Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import \
+    LibTrackMixinWithInternalNameManager
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import \
+    METADATA_ARTISTS_SEPARATION_CHAR
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
+
     from .Artist import Artist
 
 
@@ -46,8 +50,8 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
         self.delete_instance_with_albums_and_tracks(instance)
 
     def delete_instance_with_albums_and_tracks(self, instance: 'Artist') -> tuple[int, Dict[str, int]]:
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
         from bodzify_api.model.album.Album import Album
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
         # Keep deletion order for rollback tests
 

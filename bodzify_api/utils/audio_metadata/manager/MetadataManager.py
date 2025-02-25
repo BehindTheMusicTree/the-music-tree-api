@@ -2,16 +2,16 @@
 from abc import abstractmethod
 from typing import Dict, Type, TypeVar
 
-from mutagen._file import FileType
-
 from django.core.exceptions import ImproperlyConfigured
+from mutagen._file import FileType
 
 from bodzify_api.utils import data_transformer
 from bodzify_api.utils.AudioFile import AudioFile
 
-from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey, RawMetadataValue
-from ..utils.AppMetadataKey import AppMetadataKey
 from ..exceptions import UnsupportedMetadataError
+from ..utils.AppMetadataKey import AppMetadataKey
+from ..utils.types import (AppMetadataDict, AppMetadataValue, RawMetadataDict,
+                           RawMetadataKey, RawMetadataValue)
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
 

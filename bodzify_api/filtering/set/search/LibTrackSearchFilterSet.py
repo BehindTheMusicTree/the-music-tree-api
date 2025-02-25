@@ -1,5 +1,6 @@
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+
 from .SearchFilterSet import SearchFilterSet
 
 

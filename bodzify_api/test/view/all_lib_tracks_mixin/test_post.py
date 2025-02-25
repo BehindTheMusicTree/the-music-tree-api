@@ -1,6 +1,7 @@
 from rest_framework import status
 
-from bodzify_api.test.view.all_lib_tracks_mixin.AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
+from bodzify_api.test.view.all_lib_tracks_mixin.AllLibTracksMixinTestCase import \
+    AllLibTracksMixinTestCase
 
 
 class TestCase(AllLibTracksMixinTestCase):

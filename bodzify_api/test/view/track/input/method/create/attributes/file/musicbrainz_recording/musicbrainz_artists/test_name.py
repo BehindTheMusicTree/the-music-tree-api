@@ -1,6 +1,6 @@
 import pytest
-from rest_framework import status
 from django.db.models import QuerySet
+from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase

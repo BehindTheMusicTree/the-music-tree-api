@@ -1,7 +1,7 @@
-from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
+from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 
 
 class Fields:

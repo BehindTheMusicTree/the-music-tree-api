@@ -1,9 +1,11 @@
 from rest_framework import status
 
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
+from bodzify_api.serializer.model.lib_track.input.post.Fields import \
+    Fields as LibTrackPostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils import audio_metadata
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

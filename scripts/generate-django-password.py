@@ -1,8 +1,9 @@
+import argparse
+import secrets
+
 import django
 from django.conf import settings
 from django.contrib.auth.hashers import PBKDF2PasswordHasher
-import secrets
-import argparse
 
 settings.configure(
     PASSWORD_HASHERS=[

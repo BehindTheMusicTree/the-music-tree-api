@@ -1,10 +1,14 @@
 from django.db import models
 
 from bodzify_api import settings
-from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
-from .MusicbrainzRecordingMissingCauseManager import MusicbrainzRecordingMissingCauseManager
-from .code.MusicbrainzRecordingMissingCauseCode import MusicbrainzRecordingMissingCauseCode
+from bodzify_api.model.private_standard_resource.PrivateStandardResource import \
+    PrivateStandardResource
+
+from .code.MusicbrainzRecordingMissingCauseCode import \
+    MusicbrainzRecordingMissingCauseCode
+from .MusicbrainzRecordingMissingCauseManager import \
+    MusicbrainzRecordingMissingCauseManager
 
 
 class MusicbrainzRecordingMissingCause(PrivateStandardResource):

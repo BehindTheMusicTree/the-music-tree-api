@@ -1,8 +1,10 @@
 from rest_framework import status
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import \
+    FieldValidationErrorCode
 from bodzify_api.model.playlist.Playlist import Fields as PlaylistFields
-from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import \
+    ManualPlaylistTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

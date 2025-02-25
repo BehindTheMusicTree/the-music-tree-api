@@ -7,8 +7,8 @@ import pytest
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode \
-    import FingerprintMissingCauseCode
+from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import \
+    FingerprintMissingCauseCode
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s    %(name)s:%(filename)s:%(lineno)d %(message)s')

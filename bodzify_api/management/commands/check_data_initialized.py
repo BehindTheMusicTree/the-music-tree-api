@@ -1,7 +1,8 @@
 import sys
 
-from bodzify_api.model.user.User import User
 from django.core.management.base import BaseCommand
+
+from bodzify_api.model.user.User import User
 
 
 class Command(BaseCommand):

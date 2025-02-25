@@ -2,14 +2,17 @@ from typing import TYPE_CHECKING, TypeVar
 
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
-from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
-from .type.CriteriaType import CriteriaType
-from .Fields import Fields
+from bodzify_api.model.lib_track_mixin.Fields import \
+    Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import \
+    LibTrackMixinWithInternalNameManager
 
+from .Fields import Fields
+from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
+
     from .Criteria import Criteria
 
 T = TypeVar('T', bound='Criteria')
@@ -22,7 +25,8 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         return [LibTrackMixinFields.NAME_INTERNAL]
 
     def create(self, type_id: int, **kwargs) -> T:
-        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
+            CriteriaPlaylist
         type = CriteriaType.objects.get(pk=type_id)
         instance: T = super().create(type=type, **kwargs)
         CriteriaPlaylist.objects.create(user=instance.user, criteria=instance, type=type)
@@ -30,7 +34,8 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         return instance
 
     def update_instance(self, instance: T, **kwargs) -> T:
-        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
+            CriteriaPlaylist
         old_root = instance.root
         old_parent = instance.parent
         old_name = instance.name
