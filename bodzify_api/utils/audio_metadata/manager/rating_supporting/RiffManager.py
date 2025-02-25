@@ -59,7 +59,7 @@ class RiffManager(RatingSupportingMetadataManager):
         TECHNICIAN = 'ITCH'
 
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: None | int = None):
-        metadata_keys_direct_map = {
+        metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: self.RiffTagKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.RiffTagKey.ALBUM_NAME,
@@ -69,7 +69,19 @@ class RiffManager(RatingSupportingMetadataManager):
             AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,
             # AppMetadataKey.TRACK_NUMBER: None,
         }
-        super().__init__(audio_file, metadata_keys_direct_map,
+        metadata_keys_direct_map_write = {
+            AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
+            AppMetadataKey.ARTISTS_NAMES_STR: self.RiffTagKey.ARTIST_NAME,
+            AppMetadataKey.ALBUM_NAME: self.RiffTagKey.ALBUM_NAME,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: self.RiffTagKey.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.GENRE_NAME: self.RiffTagKey.GENRE_NAME,
+            AppMetadataKey.RATING: None,
+            AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,
+            # AppMetadataKey.TRACK_NUMBER: self.RiffTagKey.TRACK_NUMBER,
+        }
+        super().__init__(audio_file=audio_file,
+                         metadata_keys_direct_map_read=metadata_keys_direct_map_read,
+                         metadata_keys_direct_map_write=metadata_keys_direct_map_write,
                          rating_write_profile=RatingWriteProfile.BASE_255_NON_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
