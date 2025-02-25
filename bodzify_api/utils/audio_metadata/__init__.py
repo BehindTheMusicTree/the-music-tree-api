@@ -82,7 +82,7 @@ from .utils.AppMetadataKey import AppMetadataKey
 from .utils.AudioFile import AudioFile
 from .utils.TagFormat import TagFormat
 from .manager.MetadataManager import MetadataManager
-from .manager.RiffManager import RiffManager
+from .manager.rating_supporting.RiffManager import RiffManager
 from .manager.Id3v1Manager import Id3v1Manager
 from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
 from .manager.rating_supporting.VorbisManager import VorbisManager
