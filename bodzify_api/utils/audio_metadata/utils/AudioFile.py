@@ -18,7 +18,7 @@ from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 class AudioFile:
 
     file: TemporaryUploadedFile | FieldFile | InMemoryUploadedFile | str
-    file_path: str
+    file_path: str | None
 
     def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, str]):
 
@@ -30,17 +30,13 @@ class AudioFile:
         if isinstance(file, TemporaryUploadedFile):
             self.file_path = file.temporary_file_path()
         elif isinstance(file, InMemoryUploadedFile):
-            temp_file = tempfile.NamedTemporaryFile(delete=False)
-            for chunk in file.chunks():
-                temp_file.write(chunk)
-            temp_file.close()
-            self.file_path = temp_file.name
+            self.file_path = None
         elif isinstance(file, DjangoFile):
             self.file_path = file.name
         else:
             self.file_path = file
 
-        if not os.path.exists(self.file_path):
+        if self.file_path is not None and not os.path.exists(self.file_path):
             raise FileNotFoundError(f"File {self.file_path} does not exist")
 
         file_extension = os.path.splitext(
@@ -90,23 +86,30 @@ class AudioFile:
     def read(self, size: int = -1) -> bytes:
         if isinstance(self.file, InMemoryUploadedFile):
             return self.file.read(size)
-        else:
+        elif self.file_path is not None:
             with open(self.file_path, 'rb') as f:
                 return f.read(size)
+        else:
+            raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 
     def write(self, data: bytes) -> int:
         if isinstance(self.file, InMemoryUploadedFile):
-            raise NotImplementedError("Writing to InMemoryUploadedFile is not supported in audio_metadata module")
-        with open(self.file_path, 'wb') as f:
-            return f.write(data)
+            return self.file.write(data)
+        elif self.file_path is not None:
+            with open(self.file_path, 'wb') as f:
+                return f.write(data)
+        else:
+            raise NotImplementedError(f"Writing is not supported for file type: {type(self.file)}")
 
     def seek(self, offset: int, whence: int = 0) -> int:
         if isinstance(self.file, InMemoryUploadedFile):
             # For InMemoryUploadedFile, we can directly use the file object
             return self.file.seek(offset, whence)
-        else:
+        elif self.file_path is not None:
             with open(self.file_path, 'rb') as f:
                 return f.seek(offset, whence)
+        else:
+            raise NotImplementedError(f"Seeking is not supported for file type: {type(self.file)}")
 
     def close(self) -> None:
         if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):
@@ -120,8 +123,15 @@ class AudioFile:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
-    def get_file_path_or_object(self) -> str:
-        return self.file_path
+    def get_file_path_or_object(self):
+        if isinstance(self.file, (InMemoryUploadedFile)):
+            temp_file = tempfile.NamedTemporaryFile(delete=False)
+            for chunk in self.file.chunks():
+                temp_file.write(chunk)
+            temp_file.close()
+            return temp_file.name
+        else:
+            return self.file_path
 
     def get_file_name(self):
         if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, DjangoFile)):
@@ -140,7 +150,9 @@ class AudioFile:
             result = subprocess.run(
                 ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=self.read())
         else:
-            result = subprocess.run(['flac', '-t', self.file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # Then the file path is not None
+            file_path: str = self.file_path  # type: ignore
+            result = subprocess.run(['flac', '-t', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         output = result.stderr.decode()
         if 'ok' in output:
@@ -151,18 +163,25 @@ class AudioFile:
             raise Exception("The Flac file md5 check failed")
 
     def replace_flac_with_corrected_md5(self):
-        if isinstance(self.file, InMemoryUploadedFile):
-            raise NotImplementedError("Modifying InMemoryUploadedFile is not supported in audio_metadata module")
-
         # Create a temporary file to store the corrected FLAC content
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             temp_path = temp_file.name
 
-        result = subprocess.run(
-            ['flac', '-f', '--best', '-o', temp_path, '-'],
-            input=self.file_path,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+        if isinstance(self.file, InMemoryUploadedFile):
+            self.file.seek(0)
+            result = subprocess.run(
+                ['flac', '-f', '--best', '-o', temp_path, '-'],
+                input=self.read(),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+        else:
+            # The file path is not None
+            file_path: str = self.file_path  # type: ignore
+            result = subprocess.run(
+                ['flac', '-f', '--best', '-o', temp_path, '-'],
+                input=file_path,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
 
         stderr = result.stderr.decode()
         if 'wrote' not in stderr:
@@ -170,8 +189,15 @@ class AudioFile:
                 "The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")
 
         # Replace original file content with corrected content
-        with open(self.file_path, 'wb') as f, open(temp_path, 'rb') as temp_f:
-            f.write(temp_f.read())
+        if isinstance(self.file, InMemoryUploadedFile):
+            self.seek(0)
+            with open(temp_path, 'rb') as f:
+                self.write(f.read())
+        else:
+            # Path is not None
+            file_path: str = self.file_path  # type: ignore
+            with open(file_path, 'wb') as f, open(temp_path, 'rb') as temp_f:
+                f.write(temp_f.read())
 
         # Clean up temporary file
         os.unlink(temp_path)
