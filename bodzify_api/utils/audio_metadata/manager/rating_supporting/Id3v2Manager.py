@@ -9,7 +9,7 @@ from mutagen._file import FileType
 from bodzify_api import settings
 
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import RawMetadataKey
+from ...utils.types import AppMetadataValue, RawMetadataKey
 from ...utils.AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
@@ -185,6 +185,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         Id3TextFrame.YEAR: TYER,
         Id3TextFrame.TRACK_NUMBER: TRCK,
         Id3TextFrame.BPM: TBPM,
+        Id3TextFrame.RATING: POPM,
     }
 
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: int | None = None):
@@ -217,24 +218,28 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             id3 = ID3(self.audio_file.get_file_path_or_object())
             # Force v2.3 update to ensure compatibility
             id3.update_to_v23()
-            return id3
+            return id3  # type: ignore[return-value]
         except ID3NoHeaderError:
+            # Create new ID3 instance for files without existing tags
             id3 = ID3()
             id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
-            return {}
+            return id3  # type: ignore[return-value]
 
-    def _update_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: str | int | float | None):
+    def _update_prepared_value_in_raw_metadata(
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         file_raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
         file_raw_metadata_id3.delall(raw_metadata_key.value)
         text_frame_class = self.ID3_TEXT_FRAME_CLASS_MAP[raw_metadata_key]
-        file_raw_metadata_id3.add(text_frame_class(encoding=3, text=app_metadata_value))
-        return super()._update_value_in_raw_metadata(raw_metadata_key, app_metadata_value)
+
+        if raw_metadata_key == self.Id3TextFrame.RATING:
+            file_raw_metadata_id3.add(text_frame_class(email=self.ID3_RATING_APP_EMAIL, rating=app_metadata_value))
+        else:
+            file_raw_metadata_id3.add(text_frame_class(encoding=3, text=app_metadata_value))
 
     def _get_eventually_normalized_rating_from_file(self) -> int | None:
-     file_rating_value = None
-      file_rating_email = None
-       for key in self.file_raw_metadata:
+        file_rating_value = None
+        file_rating_email = None
+        for key in self.file_raw_metadata:
             if self.Id3TextFrame.RATING in key:
                 file_rating_tag = self.file_raw_metadata[key]
                 file_rating_email = file_rating_tag.email
@@ -246,53 +251,6 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             return self._convert_file_rating_to_eventually_normalized_rating(
                 file_rating=file_rating_value,
                 is_rating_from_traktor=(file_rating_email == self.TRAKTOR_RATING_TAG_MAIL))
-
-    def _update_undirectly_mapped_metadata(
-            self, app_metadata_value, app_metadata_key: str, normalized_rating_max_value: int | None = None):
-        if app_metadata_key == AppMetadataKey.TITLE:
-            id3_key = self.Id3TextFrame.TITLE
-            text_frame_class = TIT2
-        elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:
-            id3_key = self.Id3TextFrame.ARTIST_NAME
-            text_frame_class = TPE1
-        elif app_metadata_key == AppMetadataKey.ALBUM_NAME:
-            id3_key = self.Id3TextFrame.ALBUM_NAME
-            text_frame_class = TALB
-        elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
-            id3_key = self.Id3TextFrame.ALBUM_ARTISTS_NAMES
-            text_frame_class = TPE2
-        elif app_metadata_key == AppMetadataKey.GENRE_NAME:
-            id3_key = self.Id3TextFrame.GENRE_NAME
-            text_frame_class = TCON
-        elif app_metadata_key == AppMetadataKey.RATING:
-            normalized_rating = app_metadata_value
-            self.file_raw_metadata.delall(self.Id3TextFrame.RATING)  # type: ignore
-            if normalized_rating:
-                if normalized_rating_max_value is None:
-                    normalized_rating_max_value = 255
-                id3_rating = self._convert_normalized_rating_to_file_rating(
-                    normalized_rating=normalized_rating,
-                    normalized_rating_max_value=normalized_rating_max_value,
-                    rating_writing_profile=RatingWriteProfile.BASE_255_PROPORTIONAL)
-                self.file_raw_metadata.add(POPM(email=self.ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
-            return
-        elif app_metadata_key == AppMetadataKey.LANGUAGE:
-            id3_key = self.Id3TextFrame.LANGUAGE
-            text_frame_class = TLAN
-        elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
-            id3_key = self.Id3TextFrame.RECORDING_TIME
-            text_frame_class = TDRC
-        elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
-            id3_key = self.Id3TextFrame.TRACK_NUMBER
-            text_frame_class = TRCK
-        elif app_metadata_key == AppMetadataKey.BPM:
-            id3_key = self.Id3TextFrame.BPM
-            text_frame_class = TBPM
-        else:
-            raise KeyError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
-
-        self.file_raw_metadata.delall(id3_key)  # type: ignore
-        self.file_raw_metadata.add(text_frame_class(encoding=3, text=app_metadata_value))  # type: ignore
 
     def delete_metadata(self) -> bool:
         """Delete all ID3v2 metadata from the audio file.
