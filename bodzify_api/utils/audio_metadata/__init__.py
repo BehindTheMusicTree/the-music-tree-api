@@ -139,7 +139,7 @@ def extract_raw_metadata_dict(file, tag_format: MetadataFormat | None = None) ->
     return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
 
 
-def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None = None) -> AppMetadataDict:
+def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None = None) -> dict[str, AppMetadataValue]:
     try:
         audio_file = AudioFile(file)
     except Exception as error:
@@ -160,12 +160,12 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None
         # Never reached because already checked in _get_metadata_managers
         raise ImproperlyConfigured(f"No priority order defined for {audio_file.file_extension}")
 
-    result: AppMetadataDict = {}
-    for field in AppMetadataKey:
+    result = {}
+    for app_metadata_key in AppMetadataKey:
         for tag_format in priorities:
-            value = metadata[tag_format].get(field)
+            value = metadata[tag_format].get(app_metadata_key)
             if value is not None:
-                result[field] = value
+                result[app_metadata_key.value] = value
                 break
 
     return result

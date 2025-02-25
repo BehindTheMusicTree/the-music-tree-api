@@ -1,16 +1,16 @@
-from bodzify_api.serializer.model.lib_track.input.Fields import     Fields as InoutFields
+from bodzify_api.serializer.model.lib_track.input.Fields import Fields as InputFields
 
 
 class Fields:
-    TRACK_FILE_PUBLIC = InoutFields.TRACK_FILE_PUBLIC
-    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = InoutFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
-    TITLE = InoutFields.TITLE
-    FORCE_TITLE_GENERATION = InoutFields.FORCE_TITLE_GENERATION
-    ARTISTS_NAMES = InoutFields.ARTISTS_NAMES
-    ALBUM_NAME = InoutFields.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES = InoutFields.ALBUM_ARTISTS_NAMES
-    TRACK_NUMBER = InoutFields.TRACK_NUMBER
-    GENRE_UUID = InoutFields.GENRE_UUID
-    GENRE_NAME = InoutFields.GENRE_NAME
-    RATING = InoutFields.RATING
-    LANGUAGE = InoutFields.LANGUAGE
+    TRACK_FILE_PUBLIC = InputFields.TRACK_FILE_PUBLIC
+    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = InputFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
+    TITLE = InputFields.TITLE
+    FORCE_TITLE_GENERATION = InputFields.FORCE_TITLE_GENERATION
+    ARTISTS_NAMES = InputFields.ARTISTS_NAMES
+    ALBUM_NAME = InputFields.ALBUM_NAME
+    ALBUM_ARTISTS_NAMES = InputFields.ALBUM_ARTISTS_NAMES
+    TRACK_NUMBER = InputFields.TRACK_NUMBER
+    GENRE_UUID = InputFields.GENRE_UUID
+    GENRE_NAME = InputFields.GENRE_NAME
+    RATING = InputFields.RATING
+    LANGUAGE = InputFields.LANGUAGE
