@@ -1209,7 +1209,7 @@ function setDocument( node ) {
 			return function( elem ) {
 				var node = typeof elem.getAttributeNode !== "undefined" &&
 					elem.getAttributeNode( "id" );
-				return node && node.value === attrId;
+				return node && node === attrId;
 			};
 		};
 
@@ -1224,7 +1224,7 @@ function setDocument( node ) {
 
 					// Verify the id attribute
 					node = elem.getAttributeNode( "id" );
-					if ( node && node.value === id ) {
+					if ( node && node === id ) {
 						return [ elem ];
 					}
 
@@ -1233,7 +1233,7 @@ function setDocument( node ) {
 					i = 0;
 					while ( ( elem = elems[ i++ ] ) ) {
 						node = elem.getAttributeNode( "id" );
-						if ( node && node.value === id ) {
+						if ( node && node === id ) {
 							return [ elem ];
 						}
 					}
@@ -2161,7 +2161,7 @@ function toSelector( tokens ) {
 		len = tokens.length,
 		selector = "";
 	for ( ; i < len; i++ ) {
-		selector += tokens[ i ].value;
+		selector += tokens[ i ];
 	}
 	return selector;
 }
@@ -2634,7 +2634,7 @@ function select( selector, context, results, seed ) {
 				context = context.parentNode;
 			}
 
-			selector = selector.slice( tokens.shift().value.length );
+			selector = selector.slice( tokens.shift().length );
 		}
 
 		// Fetch a seed set for right-to-left matching
@@ -7849,7 +7849,7 @@ jQuery.fn.delay = function( time, type ) {
 
 	// Support: Android <=4.3 only
 	// Default value for a checkbox should be "on"
-	support.checkOn = input.value !== "";
+	support.checkOn = input !== "";
 
 	// Support: IE <=11 only
 	// Must access selectedIndex to make default options select
@@ -7858,9 +7858,9 @@ jQuery.fn.delay = function( time, type ) {
 	// Support: IE <=11 only
 	// An input loses its value after becoming a radio
 	input = document.createElement( "input" );
-	input.value = "t";
+	input = "t";
 	input.type = "radio";
-	support.radioValue = input.value === "t";
+	support.radioValue = input === "t";
 } )();
 
 
@@ -7931,10 +7931,10 @@ jQuery.extend( {
 			set: function( elem, value ) {
 				if ( !support.radioValue && value === "radio" &&
 					nodeName( elem, "input" ) ) {
-					var val = elem.value;
+					var val = elem;
 					elem.setAttribute( "type", value );
 					if ( val ) {
-						elem.value = val;
+						elem = val;
 					}
 					return value;
 				}
@@ -8333,7 +8333,7 @@ jQuery.fn.extend( {
 					return ret;
 				}
 
-				ret = elem.value;
+				ret = elem;
 
 				// Handle most common string cases
 				if ( typeof ret === "string" ) {
@@ -8379,7 +8379,7 @@ jQuery.fn.extend( {
 
 			// If set returns undefined, fall back to normal setting
 			if ( !hooks || !( "set" in hooks ) || hooks.set( this, val, "value" ) === undefined ) {
-				this.value = val;
+				this = val;
 			}
 		} );
 	}
@@ -8487,7 +8487,7 @@ jQuery.each( [ "radio", "checkbox" ], function() {
 	};
 	if ( !support.checkOn ) {
 		jQuery.valHooks[ this ].get = function( elem ) {
-			return elem.getAttribute( "value" ) === null ? "on" : elem.value;
+			return elem.getAttribute( "value" ) === null ? "on" : elem;
 		};
 	}
 } );
@@ -8785,7 +8785,7 @@ jQuery.param = function( a, traditional ) {
 
 		// Serialize the form elements
 		jQuery.each( a, function() {
-			add( this.name, this.value );
+			add( this.name, this );
 		} );
 
 	} else {

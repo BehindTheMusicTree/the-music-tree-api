@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -16,4 +16,4 @@ class TestCase(ArtistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == invalid_filter_name
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FILTER.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FILTER

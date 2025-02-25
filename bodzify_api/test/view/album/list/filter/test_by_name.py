@@ -1,8 +1,8 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.album.Fields import Fields as AlbumFields
-from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import     NotNullableFreeCharFilterTestCase
+from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -16,7 +16,7 @@ class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == AlbumFields.NAME_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
 
     def test_contains_in_another_case_then_results(self):
         album = self.model_fixture_factory.create_album(name="Muse")

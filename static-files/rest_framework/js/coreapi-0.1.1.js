@@ -153,7 +153,7 @@ function lookupLink(node, keys) {
 
   try {
     for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var key = _step.value;
+      var key = _step;
 
       if (node instanceof document.Document) {
         node = node.content[key];
@@ -786,7 +786,7 @@ var determineTransport = function determineTransport(transports, url) {
 
   try {
     for (var _iterator = transports[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var transport = _step.value;
+      var transport = _step;
 
       if (transport.schemes.includes(scheme)) {
         return transport;
@@ -826,7 +826,7 @@ var negotiateDecoder = function negotiateDecoder(decoders, contentType) {
 
   try {
     for (var _iterator2 = decoders[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var decoder = _step2.value;
+      var decoder = _step2;
 
       if (acceptableTypes.includes(decoder.mediaType)) {
         return decoder;

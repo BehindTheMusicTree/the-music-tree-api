@@ -53,7 +53,7 @@ class RatingSupportingMetadataManager(MetadataManager):
                 "normalized_rating_max_value must be set to convert normalized rating to file rating.")
 
         star_rating_base_10 = (int)((normalized_rating * 10)/self.normalized_rating_max_value)
-        self.rating_write_profile.value[star_rating_base_10]
+        self.rating_write_profile[star_rating_base_10]
 
     def _get_eventually_normalized_rating_from_file(self) -> int | None:
         file_rating, is_rating_from_traktor = self._extract_file_rating_by_traktor_or_not()
@@ -70,9 +70,9 @@ class RatingSupportingMetadataManager(MetadataManager):
             if file_rating == 0 and is_rating_from_traktor:
                 return None
             for star_rating_base_10 in range(11):
-                if file_rating in [RatingReadProfile.BASE_255_PROPORTIONAL.value[star_rating_base_10],
-                                   RatingReadProfile.BASE_255_NON_PROPORTIONAL.value[star_rating_base_10],
-                                   RatingReadProfile.BASE_100_PROPORTIONAL.value[star_rating_base_10]]:
+                if file_rating in [RatingReadProfile.BASE_255_PROPORTIONAL[star_rating_base_10],
+                                   RatingReadProfile.BASE_255_NON_PROPORTIONAL[star_rating_base_10],
+                                   RatingReadProfile.BASE_100_PROPORTIONAL[star_rating_base_10]]:
                     return int(star_rating_base_10 * self.normalized_rating_max_value / 10)
             return None
         else:

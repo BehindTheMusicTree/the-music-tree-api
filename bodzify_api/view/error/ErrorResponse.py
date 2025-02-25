@@ -39,7 +39,7 @@ class ErrorResponse:
         status_message = ErrorResponseFields.STATUS_MESSAGES.get(http_status, "An error occurred")
 
         response_data = {
-            ErrorResponseFields.FieldErrors.CODE: error_code.value,
+            ErrorResponseFields.FieldErrors.CODE: error_code,
             ErrorResponseFields.MESSAGE: status_message,
             ErrorResponseFields.SUCCESS: False,
             ErrorResponseFields.DETAILS: [error_detail]
@@ -103,7 +103,7 @@ class ErrorResponse:
         error_detail = {
             ErrorResponseFields.FieldErrors.MESSAGE:
             ErrorResponseFields.DefaultFieldValidationValues.DbIntegrityError.MESSAGE,
-            ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR.value
+            ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
         }
         return ErrorResponse._create_error_response(
             error_detail=error_detail,

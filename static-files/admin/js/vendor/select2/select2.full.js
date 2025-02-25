@@ -3357,7 +3357,7 @@ S2.define('select2/data/select',[
     }
 
     if (data.id !== undefined) {
-      option.value = data.id;
+      option = data.id;
     }
 
     if (data.disabled) {
@@ -3491,7 +3491,7 @@ S2.define('select2/data/array',[
 
   ArrayAdapter.prototype.select = function (data) {
     var $option = this.$element.find('option').filter(function (i, elm) {
-      return elm.value == data.id.toString();
+      return elm == data.id.toString();
     });
 
     if ($option.length === 0) {

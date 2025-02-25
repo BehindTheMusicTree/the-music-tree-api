@@ -97,7 +97,7 @@
             value = result[0];
             data = result.slice(1);
         } else if (type === 'object') {
-            value = result.value;
+            value = result;
             data = result.data;
         }
         value = String(value);
@@ -158,8 +158,8 @@
      * @returns {number}
      */
     var sortValueAlpha = function(a, b, matchCase) {
-        a = String(a.value);
-        b = String(b.value);
+        a = String(a);
+        b = String(b);
         if (!matchCase) {
             a = a.toLowerCase();
             b = b.toLowerCase();
@@ -692,12 +692,12 @@
      * @private
      */
     $.Autocompleter.prototype.defaultFilter = function(result, filter) {
-        if (!result.value) {
+        if (!result) {
             return false;
         }
         if (this.options.filterResults) {
             var pattern = this.matchStringConverter(filter);
-            var testValue = this.matchStringConverter(result.value);
+            var testValue = this.matchStringConverter(result);
             if (!this.options.matchCase) {
                 pattern = pattern.toLowerCase();
                 testValue = testValue.toLowerCase();
@@ -823,8 +823,8 @@
     $.Autocompleter.prototype.createItemFromResult = function(result) {
         var self = this;
         var $li = $('<li/>');
-        $li.html(this.showResult(result.value, result.data));
-        $li.data({value: result.value, data: result.data})
+        $li.html(this.showResult(result, result.data));
+        $li.data({value: result, data: result.data})
             .click(function() {
                 self.selectItem($li);
             })
@@ -859,7 +859,7 @@
                 $li = this.createItemFromResult(result);
                 $ul.append($li);
                 if (first === false) {
-                    first = String(result.value);
+                    first = String(result);
                     $first = $li;
                     $li.addClass(this.options.firstItemClass);
                 }

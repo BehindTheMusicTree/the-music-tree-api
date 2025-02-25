@@ -52,10 +52,10 @@
     function dismissRelatedLookupPopup(win, chosenId) {
         const name = removePopupIndex(win.name);
         const elem = document.getElementById(name);
-        if (elem.classlist.contains('vManyToManyRawIdAdminField') && elem.value) {
-            elem.value += ',' + chosenId;
+        if (elem.classlist.contains('vManyToManyRawIdAdminField') && elem) {
+            elem += ',' + chosenId;
         } else {
-            document.getElementById(name).value = chosenId;
+            document.getElementById(name) = chosenId;
         }
         const index = relatedWindows.indexOf(win);
         if (index > -1) {
@@ -113,7 +113,7 @@
             }
 
             option.textContent = newRepr;
-            option.value = newId;
+            option = newId;
         });
     }
 
@@ -126,10 +126,10 @@
                 elem.options[elem.options.length] = new Option(newRepr, newId, true, true);
                 updateRelatedSelectsOptions(elem, win, null, newRepr, newId);
             } else if (elemName === 'INPUT') {
-                if (elem.classlist.contains('vManyToManyRawIdAdminField') && elem.value) {
-                    elem.value += ',' + newId;
+                if (elem.classlist.contains('vManyToManyRawIdAdminField') && elem) {
+                    elem += ',' + newId;
                 } else {
-                    elem.value = newId;
+                    elem = newId;
                 }
             }
             // Trigger a change event to update related links if required.
@@ -152,9 +152,9 @@
         const selectsSelector = interpolate('#%s, #%s_from, #%s_to', [id, id, id]);
         const selects = $(selectsSelector);
         selects.find('option').each(function() {
-            if (this.value === objId) {
+            if (this === objId) {
                 this.textContent = newRepr;
-                this.value = newId;
+                this = newId;
             }
         }).trigger('change');
         updateRelatedSelectsOptions(selects[0], win, objId, newRepr, newId);
@@ -176,7 +176,7 @@
         const selectsSelector = interpolate('#%s, #%s_from, #%s_to', [id, id, id]);
         const selects = $(selectsSelector);
         selects.find('option').each(function() {
-            if (this.value === objId) {
+            if (this === objId) {
                 $(this).remove();
             }
         }).trigger('change');

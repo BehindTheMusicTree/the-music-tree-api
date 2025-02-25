@@ -1,9 +1,9 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
-from bodzify_api.serializer.model.playlist.children.criteria.output.detailed import     Fields as RietrieveFields
-from bodzify_api.test.utils.field.filter.foreign_key.PrivateForeignKeyFilterTestCase import     PrivateForeignKeyFilterTestCase
-from bodzify_api.test.view.playlist.children.criteria.tag.TagPlaylistTestCase import     TagPlaylistTestCase
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.playlist.children.criteria.output.detailed import Fields as RietrieveFields
+from bodzify_api.test.utils.field.filter.foreign_key.PrivateForeignKeyFilterTestCase import PrivateForeignKeyFilterTestCase
+from bodzify_api.test.view.playlist.children.criteria.tag.TagPlaylistTestCase import TagPlaylistTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
@@ -30,7 +30,7 @@ class TestCase(TagPlaylistTestCase, PrivateForeignKeyFilterTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0][ErrorResponseFields.FieldErrors.FIELD] == RietrieveFields.PARENT
         assert self.bad_request_result_field_errors[0][
-            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
+            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
 
     def test_empty_then_results(self):
         tag_fiesta = self.model_fixture_factory.create_tag(name="Fiesta")

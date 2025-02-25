@@ -1,13 +1,13 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.criteria.input.put import Fields as PutFields
-from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import     PutBodyDataTestCase
-from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryBodyDataTestCase import     PrimaryBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import     AppMetadataKey
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
@@ -40,7 +40,7 @@ class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.NAME_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
 
     def test_not_provided_then_unchanged(self):
         genre_name = "Rock"

@@ -1,10 +1,10 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.filtering.set.playlist.Fields import Fields as FilterFields
-from bodzify_api.serializer.model.playlist.children.manual.output.Fields import     Fields
-from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import     NotNullableFreeCharFilterTestCase
-from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import     ManualPlaylistTestCase
+from bodzify_api.serializer.model.playlist.children.manual.output.Fields import Fields
+from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
+from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
@@ -19,7 +19,7 @@ class TestCase(ManualPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0][ErrorResponseFields.FieldErrors.FIELD] == FilterFields.NAME
         assert self.bad_request_result_field_errors[0][
-            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
+            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
 
     def test_contains_in_another_case_then_results(self):
         manual_playlist1 = self.model_fixture_factory.create_manual_playlist(name="foot")

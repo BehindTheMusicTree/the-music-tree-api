@@ -1,7 +1,7 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
-from bodzify_api.serializer.model.criteria.input.Fields import     Fields as CriteriaPostFields
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaPostFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -18,7 +18,7 @@ class TestJsonDuplicateFields(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaPostFields.NAME_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE
 
     def test_duplicate_fields_on_json_put_then_400(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
@@ -34,7 +34,7 @@ class TestJsonDuplicateFields(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaPostFields.NAME_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE
 
     def test_duplicate_fields_on_json_patch_then_400(self):
         # PATCH is not supported

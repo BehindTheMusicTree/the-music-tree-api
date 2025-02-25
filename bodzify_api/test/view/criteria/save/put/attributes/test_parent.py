@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.criteria.input.put import Fields as PutFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -28,7 +28,7 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.PARENT
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ANCESTOR_REFERENCE.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ANCESTOR_REFERENCE
 
     def test_error_when_parent_is_itself(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
@@ -39,4 +39,4 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.PARENT
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.SELF_REFERENCE.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.SELF_REFERENCE

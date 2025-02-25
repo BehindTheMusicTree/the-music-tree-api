@@ -1,9 +1,9 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
-from bodzify_api.serializer.model.lib_track.input.put.Fields import     Fields as PutFields
-from bodzify_api.test.utils.field.body_data.type.to_extend_from.NotNullableCharBodyDataTestCase import     NotNullableCharBodyDataTestCase
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.lib_track.input.put.Fields import Fields as PutFields
+from bodzify_api.test.utils.field.body_data.type.to_extend_from.NotNullableCharBodyDataTestCase import NotNullableCharBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -25,4 +25,4 @@ class TestCase(NotNullableCharBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.TITLE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG

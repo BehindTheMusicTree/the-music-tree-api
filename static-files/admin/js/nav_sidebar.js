@@ -34,13 +34,13 @@
         });
 
         function checkValue(event) {
-            let filterValue = event.target.value;
+            let filterValue = event.target;
             if (filterValue) {
                 filterValue = filterValue.toLowerCase();
             }
             if (event.key === 'Escape') {
                 filterValue = '';
-                event.target.value = ''; // clear input
+                event.target = ''; // clear input
             }
             let matches = false;
             for (const o of options) {
@@ -70,7 +70,7 @@
 
         const storedValue = sessionStorage.getItem('django.admin.navSidebarFilterValue');
         if (storedValue) {
-            nav.value = storedValue;
+            nav = storedValue;
             checkValue({target: nav, key: ''});
         }
     }

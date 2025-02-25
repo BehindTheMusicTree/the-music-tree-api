@@ -1,8 +1,8 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
-from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as PostFields
-from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import     FieldIntFromDataTestCase
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import FieldIntFromDataTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
@@ -27,7 +27,7 @@ class RatingTestCase(FieldIntFromDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE
 
     def test_rating_negative_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: -1})
@@ -36,7 +36,7 @@ class RatingTestCase(FieldIntFromDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL
 
     def test_field_twice_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.RATING: [1, 2]})
@@ -45,4 +45,4 @@ class RatingTestCase(FieldIntFromDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE

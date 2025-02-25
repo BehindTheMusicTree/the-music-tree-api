@@ -67,11 +67,11 @@ class MetadataManager:
             self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> str | int | None:
         if value_type == str:
             value = data_transformer.get_first_value_str_if_exists_in_str_dict_or_none(
-                str_dict=self.raw_metadata_dict, key=raw_metadata_key.value)
+                str_dict=self.raw_metadata_dict, key=raw_metadata_key)
             return value.strip() if value else None
         elif value_type == int:
             return data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
-                str_dict=self.raw_metadata_dict, key=raw_metadata_key.value)
+                str_dict=self.raw_metadata_dict, key=raw_metadata_key)
         else:
             raise ImproperlyConfigured('Value type not handled')
 
@@ -93,7 +93,7 @@ class MetadataManager:
 
     def get_app_specific_metadata(self, app_metadata_key: AppMetadataKey):
         if app_metadata_key not in self.metadata_keys_direct_map_read:
-            raise UnsupportedMetadataError(f'{app_metadata_key.value} metadata not supported by this format')
+            raise UnsupportedMetadataError(f'{app_metadata_key} metadata not supported by this format')
 
         raw_metadata_key = self.metadata_keys_direct_map_read[app_metadata_key]
         if not raw_metadata_key:
@@ -106,7 +106,7 @@ class MetadataManager:
         for app_metadata_key in list(app_metadata_dict.keys()):
             value = app_metadata_dict[app_metadata_key]
             if app_metadata_key not in self.metadata_keys_direct_map_write:
-                raise UnsupportedMetadataError(f'{app_metadata_key.value} metadata not supported by this format')
+                raise UnsupportedMetadataError(f'{app_metadata_key} metadata not supported by this format')
             else:
                 raw_metadata_key = self.metadata_keys_direct_map_write[app_metadata_key]
                 if raw_metadata_key:

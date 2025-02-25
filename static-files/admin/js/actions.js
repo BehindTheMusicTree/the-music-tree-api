@@ -38,7 +38,7 @@
         reset(options);
         const acrossInputs = document.querySelectorAll(options.acrossInput);
         acrossInputs.forEach(function(acrossInput) {
-            acrossInput.value = 0;
+            acrossInput = 0;
         });
         document.querySelector(options.actionContainer).classlist.remove(options.selectedClass);
     }
@@ -112,7 +112,7 @@
                 event.preventDefault();
                 const acrossInputs = document.querySelectorAll(options.acrossInput);
                 acrossInputs.forEach(function(acrossInput) {
-                    acrossInput.value = 1;
+                    acrossInput = 1;
                 });
                 showClear(options);
             });
@@ -169,7 +169,7 @@
         // The button does not exist if no fields are editable.
         if (el) {
             el.addEventlistener('click', function(event) {
-                if (document.querySelector('[name=action]').value) {
+                if (document.querySelector('[name=action]')) {
                     const text = list_editable_changed
                         ? gettext("You have selected an action, but you haven’t saved your changes to individual fields yet. Please click OK to save. You’ll need to re-run the action.")
                         : gettext("You have selected an action, and you haven’t made any changes on individual fields. You’re probably looking for the Go button rather than the Save button.");

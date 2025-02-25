@@ -1,9 +1,9 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterfFields
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
-from bodzify_api.test.utils.field.filter.foreign_key.PrivateForeignKeyFilterTestCase import     PrivateForeignKeyFilterTestCase
+from bodzify_api.test.utils.field.filter.foreign_key.PrivateForeignKeyFilterTestCase import PrivateForeignKeyFilterTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -22,7 +22,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == FilterfFields.PARENT
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_of_another_user_then_empty(self):
         test_user1_genre = self.model_fixture_factory.create_genre(name="Rock")

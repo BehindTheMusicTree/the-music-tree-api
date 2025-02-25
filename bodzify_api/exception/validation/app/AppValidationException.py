@@ -46,7 +46,7 @@ class AppValidationException(DrfValidationError):
         self.field = field_name if field_name else self.DEFAULT_FIELD
         error_detail = {
             'message': message,
-            'code': field_validation_error_code.value,
+            'code': field_validation_error_code,
             'field': self.field,
             'error_type': self.error_type
         }

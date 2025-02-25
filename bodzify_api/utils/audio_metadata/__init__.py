@@ -165,7 +165,7 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None
         for tag_format in priorities:
             value = metadata[tag_format].get(app_metadata_key)
             if value is not None:
-                result[app_metadata_key.value] = value
+                result[app_metadata_key] = value
                 break
 
     return result

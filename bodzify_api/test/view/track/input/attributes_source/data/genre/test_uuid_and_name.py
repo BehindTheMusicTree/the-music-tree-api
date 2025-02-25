@@ -1,8 +1,8 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
-from bodzify_api.serializer.model.criteria.input.Fields import     Fields as CriteriaFields
-from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as PostFields
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaFields
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -33,4 +33,4 @@ class TestCase(LibTrackTestCase):
             ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(
             PostFields.GENRE_NAME)
         assert self.bad_request_result_field_errors[0][
-            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.MUTUALLY_EXCLUSIVE.value
+            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.MUTUALLY_EXCLUSIVE

@@ -266,7 +266,7 @@ var _default = function _default(XRegExp) {
 
     try {
       for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var item = _step.value;
+        var item = _step;
 
         if (!item.name) {
           throw new Error(ERR_NO_NAME);
@@ -860,7 +860,7 @@ function prepareFlags(pattern, flags) {
 
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var flag = _step.value;
+      var flag = _step;
 
       if (!registeredFlags[flag]) {
         throw new SyntaxError("Unknown regex flag ".concat(flag));
@@ -1196,7 +1196,7 @@ XRegExp.addToken = function (regex, handler, options) {
 
     try {
       for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var flag = _step2.value;
+        var flag = _step2;
         registerFlag(flag);
       }
     } catch (err) {
@@ -1609,7 +1609,7 @@ XRegExp.matchChain = function (str, chain) {
 
     try {
       for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var value = _step3.value;
+        var value = _step3;
         (0, _forEach["default"])(XRegExp).call(XRegExp, value, item.regex, addMatch);
       }
     } catch (err) {
@@ -1735,7 +1735,7 @@ XRegExp.replaceEach = function (str, replacements) {
 
   try {
     for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-      var r = _step4.value;
+      var r = _step4;
       str = XRegExp.replace(str, r[0], r[1], r[2]);
     }
   } catch (err) {
@@ -1899,7 +1899,7 @@ XRegExp.union = function (patterns, flags, options) {
 
   try {
     for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-      var pattern = _step5.value;
+      var pattern = _step5;
 
       if (XRegExp.isRegExp(pattern)) {
         numPriorCaptures = numCaptures;
@@ -2513,7 +2513,7 @@ function _iterableToArrayLimit(arr, i) {
 
   try {
     for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
+      _arr.push(_s);
 
       if (i && _arr.length === i) break;
     }
@@ -2885,7 +2885,7 @@ module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undef
     next = iterator.next;
     result = IS_CONSTRUCTOR ? new this() : [];
     for (;!(step = call(next, iterator)).done; index++) {
-      value = mapping ? callWithSafeIterationClosing(iterator, mapfn, [step.value, index], true) : step.value;
+      value = mapping ? callWithSafeIterationClosing(iterator, mapfn, [step, index], true) : step;
       createProperty(result, index, value);
     }
   } else {
@@ -3612,7 +3612,7 @@ module.exports = function (options, source) {
 
     if (USE_NATIVE) if (options.noTargetGet) {
       descriptor = getOwnPropertyDescriptor(nativeSource, key);
-      nativeProperty = descriptor && descriptor.value;
+      nativeProperty = descriptor && descriptor;
     } else nativeProperty = nativeSource[key];
 
     // export native or implementation
@@ -4328,7 +4328,7 @@ exports.f = DESCRIPTORS ? $defineProperty : function defineProperty(O, P, Attrib
     return $defineProperty(O, P, Attributes);
   } catch (error) { /* empty */ }
   if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
-  if ('value' in Attributes) O[P] = Attributes.value;
+  if ('value' in Attributes) O[P] = Attributes;
   return O;
 };
 

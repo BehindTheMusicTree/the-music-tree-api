@@ -88,7 +88,7 @@ class Id3v1Manager(MetadataManager):
 
             # Find the matching enum member by its value
             for enum_member in Id3v1RawMetadataKey:
-                if enum_member.value == key:
+                if enum_member == key:
                     # Convert numeric values to integers
                     if enum_member in (Id3v1RawMetadataKey.GENRE_CODE, Id3v1RawMetadataKey.TRACK_NUMBER):
                         try:

@@ -23,6 +23,7 @@ from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as P
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
 from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.AppDjangoFIle import AppDjangoFile
+from bodzify_api.utils.AudioFile import AudioFile
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
@@ -356,7 +357,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         track_file_model_data[TrackFileFields.USER] = instance.user
         track_file_model_data[TrackFileFields.LIB_TRACK] = instance
 
-        file_extension = track_file_model_data[TrackFileFields.FILE].name.split('.')[-1].lower()
+        file_extension = AudioFile(track_file_model_data[TrackFileFields.FILE]).file_extension
         if file_extension == 'flac':
             from ..file.flac.FlacTrackFile import FlacTrackFile
             FlacTrackFile.objects.create(**track_file_model_data)

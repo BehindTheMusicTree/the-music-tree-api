@@ -255,7 +255,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
     def _update_prepared_value_in_raw_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         file_raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
-        file_raw_metadata_id3.delall(raw_metadata_key.value)
+        file_raw_metadata_id3.delall(raw_metadata_key)
         text_frame_class = self.ID3_TEXT_FRAME_CLASS_MAP[raw_metadata_key]
 
         if raw_metadata_key == self.Id3TextFrame.RATING:
@@ -267,7 +267,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         file_rating_value = None
         file_rating_email = None
         for key in self.file_raw_metadata:
-            if self.Id3TextFrame.RATING.value in key:
+            if self.Id3TextFrame.RATING in key:
                 file_rating_tag = self.file_raw_metadata[key]
                 file_rating_email = file_rating_tag.email
                 file_rating_value = file_rating_tag.rating

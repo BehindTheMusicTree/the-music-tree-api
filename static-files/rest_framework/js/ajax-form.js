@@ -55,7 +55,7 @@ function doAjaxSubmit(e) {
       if (boundary !== null) {
         contentType += '; boundary="' + boundary[1] + '"';
       }
-      // Fix textarea.value EOL normalisation (multipart/form-data should use CR+NL, not NL)
+      // Fix textarea EOL normalisation (multipart/form-data should use CR+NL, not NL)
       data = data.replace(/\n/g, '\r\n');
     }
   } else {

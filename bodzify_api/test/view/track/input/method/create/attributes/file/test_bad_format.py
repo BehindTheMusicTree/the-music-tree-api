@@ -1,8 +1,8 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
-from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as LibTrackPostFields
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -17,4 +17,4 @@ class TextCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackPostFields.TRACK_FILE_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.METADATA_EXTRACTION_FAILED.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.METADATA_EXTRACTION_FAILED

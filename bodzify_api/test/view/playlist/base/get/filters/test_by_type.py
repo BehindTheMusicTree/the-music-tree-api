@@ -1,12 +1,12 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.filtering.set.playlist.Fields import Fields as FilterSetFields
-from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import     CriterialessPlaylistNames
-from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import     VALUE as MANUAL_PLAYLIST_TYPE_LABEL
-from bodzify_api.serializer.model.playlist.base.output.detailed import     Fields as PlaylistGetFields
-from bodzify_api.test.utils.field.filter.char.EnumCharFilterTestCase import     EnumCharFilterTestCase
-from bodzify_api.test.view.playlist.base.PlaylistTestCase import     PlaylistTestCase
+from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
+from bodzify_api.model.playlist.children.manual.ManualPlaylistTypeLabel import VALUE as MANUAL_PLAYLIST_TYPE_LABEL
+from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as PlaylistGetFields
+from bodzify_api.test.utils.field.filter.char.EnumCharFilterTestCase import EnumCharFilterTestCase
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.utils.data_transformer import to_camel_case, to_snake_case
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -42,7 +42,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert to_snake_case(error[ErrorResponseFields.FieldErrors.FIELD]) == FilterSetFields.TYPE_LABEL_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"
@@ -82,4 +82,4 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_ENUM.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_ENUM

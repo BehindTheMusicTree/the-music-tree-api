@@ -5,7 +5,7 @@ from enum import Enum
 from .AppMetadataKey import AppMetadataKey
 
 
-class RawMetadataKey(Enum):
+class RawMetadataKey(str, Enum):
     pass
 
 

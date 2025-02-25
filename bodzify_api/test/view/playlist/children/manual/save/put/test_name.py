@@ -25,6 +25,6 @@ class TestCase(ManualPlaylistTestCase):
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0][
-            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK.value
+            ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
         assert self.bad_request_result_field_errors[0][
             ErrorResponseFields.FieldErrors.FIELD] == PlayListFields.NAME_PUBLIC

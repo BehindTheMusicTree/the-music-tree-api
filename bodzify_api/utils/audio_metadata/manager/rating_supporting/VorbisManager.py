@@ -112,13 +112,13 @@ class VorbisManager(RatingSupportingMetadataManager):
 
     def _extract_file_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
         rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
-            str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING.value)
+            str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING)
 
         if rating:
             return rating, False
 
         rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
-            str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING_TRAKTOR.value)
+            str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING_TRAKTOR)
         if rating:
             return rating, True
 
@@ -134,7 +134,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             raise ImproperlyConfigured('Metadata key not handled')
 
     def _get_genre_name(self) -> str | None:
-        if self.VorbisKey.GENRE_NAME.value in self.file_raw_metadata:
+        if self.VorbisKey.GENRE_NAME in self.file_raw_metadata:
             genres_names = self.file_raw_metadata.get(self.VorbisKey.GENRE_NAME)
             if isinstance(genres_names, list):
                 return genres_names[0]

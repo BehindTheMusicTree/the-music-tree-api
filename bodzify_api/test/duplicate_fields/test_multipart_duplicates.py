@@ -1,8 +1,8 @@
 
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
-from bodzify_api.serializer.model.lib_track.input.extract.Fields import     Fields as LibTrackFields
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as LibTrackFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
@@ -22,7 +22,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
 
         # The raised error will be invalid format as the duplicated data in multipart form data will be converted to
         # a list
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_duplicate_fields_on_multipart_put_then_400(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Hey Ho")
@@ -37,7 +37,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackFields.TITLE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_duplicate_fields_on_multipart_patch_then_400(self):
         # PATCH is not supported

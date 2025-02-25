@@ -1,8 +1,8 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.exception.validation.FieldValidationErrorCode import     FieldValidationErrorCode
-from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as PostFields
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -29,7 +29,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
 
     def test_one_then_ok(self):
         track_number = 1
@@ -56,7 +56,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE
 
     def test_negative_one_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(album_name='album', track_number=-1)
@@ -65,7 +65,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
 
     def test_not_integer_then_error(self):
         response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.TRACK_NUMBER: 5.5})
@@ -74,4 +74,4 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT.value
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT

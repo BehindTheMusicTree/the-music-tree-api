@@ -22,11 +22,11 @@ class ErrorResponseFields:
     class DefaultFieldValidationValues:
         class DbIntegrityError:
             MESSAGE = 'Field validation error due to database integrity'
-            CODE = FieldValidationErrorCode.DB_INTEGRITY_ERROR.value
+            CODE = FieldValidationErrorCode.DB_INTEGRITY_ERROR
 
         class NonDbIntegrityError:
             MESSAGE = 'Field validation error'
-            CODE = FieldValidationErrorCode.DEFAULT.value
+            CODE = FieldValidationErrorCode.DEFAULT
 
     MESSAGES = {
         # Authentication errors

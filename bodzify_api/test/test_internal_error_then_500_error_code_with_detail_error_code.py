@@ -18,4 +18,4 @@ class TestCase(LibTrackTestCase):
             results = self._post_lib_track_with_generic_sample_no_tags(title='test')
             assert results.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
             json = results.json()
-            assert json['code'] == ApiErrorCode.SYSTEM_INTERNAL_ERROR.value
+            assert json['code'] == ApiErrorCode.SYSTEM_INTERNAL_ERROR

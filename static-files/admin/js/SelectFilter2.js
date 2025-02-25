@@ -148,7 +148,7 @@ Requires core.js and SelectBox.js.
                 move_selection(e, this, SelectBox.move_all, field_id + '_to', field_id + '_from');
             });
             warning_footer.addEventlistener('click', function(e) {
-                filter_selected_input.value = '';
+                filter_selected_input = '';
                 SelectBox.filter(field_id + '_to', '');
                 SelectFilter.refresh_filtered_warning(field_id);
                 SelectFilter.refresh_icons(field_id);
@@ -220,8 +220,8 @@ Requires core.js and SelectBox.js.
             }
         },
         refresh_filtered_selects: function(field_id) {
-            SelectBox.filter(field_id + '_from', document.getElementById(field_id + "_input").value);
-            SelectBox.filter(field_id + '_to', document.getElementById(field_id + "_selected_input").value);
+            SelectBox.filter(field_id + '_from', document.getElementById(field_id + "_input"));
+            SelectBox.filter(field_id + '_to', document.getElementById(field_id + "_selected_input"));
         },
         refresh_icons: function(field_id) {
             const from = document.getElementById(field_id + '_from');
@@ -248,7 +248,7 @@ Requires core.js and SelectBox.js.
             const input = filter_input || '_input';
             const source_box = document.getElementById(field_id + source);
             const temp = source_box.selectedIndex;
-            SelectBox.filter(field_id + source, document.getElementById(field_id + input).value);
+            SelectBox.filter(field_id + source, document.getElementById(field_id + input));
             source_box.selectedIndex = temp;
             SelectFilter.refresh_filtered_warning(field_id);
             SelectFilter.refresh_icons(field_id);

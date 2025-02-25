@@ -218,7 +218,7 @@
             else {
                 d = new Date(1970, 1, 1, val, 0, 0, 0);
             }
-            DateTimeShortcuts.clockInputs[num].value = d.strftime(get_format('TIME_INPUT_FORMATS')[0]);
+            DateTimeShortcuts.clockInputs[num] = d.strftime(get_format('TIME_INPUT_FORMATS')[0]);
             DateTimeShortcuts.clockInputs[num].focus();
             DateTimeShortcuts.dismissClock(num);
         },
@@ -350,9 +350,9 @@
 
             // Determine if the current value in the input has a valid date.
             // If so, draw the calendar with that date's year and month.
-            if (inp.value) {
+            if (inp) {
                 const format = get_format('DATE_INPUT_FORMATS')[0];
-                const selected = inp.value.strptime(format);
+                const selected = inp.strptime(format);
                 const year = selected.getUTCFullYear();
                 const month = selected.getUTCMonth() + 1;
                 const re = /\d{4}/;
@@ -389,7 +389,7 @@
         handleCalendarCallback: function(num) {
             const format = get_format('DATE_INPUT_FORMATS')[0];
             return function(y, m, d) {
-                DateTimeShortcuts.calendarInputs[num].value = new Date(y, m - 1, d).strftime(format);
+                DateTimeShortcuts.calendarInputs[num] = new Date(y, m - 1, d).strftime(format);
                 DateTimeShortcuts.calendarInputs[num].focus();
                 document.getElementById(DateTimeShortcuts.calendarDivName1 + num).style.display = 'none';
             };
@@ -397,7 +397,7 @@
         handleCalendarQuickLink: function(num, offset) {
             const d = DateTimeShortcuts.now();
             d.setDate(d.getDate() + offset);
-            DateTimeShortcuts.calendarInputs[num].value = d.strftime(get_format('DATE_INPUT_FORMATS')[0]);
+            DateTimeShortcuts.calendarInputs[num] = d.strftime(get_format('DATE_INPUT_FORMATS')[0]);
             DateTimeShortcuts.calendarInputs[num].focus();
             DateTimeShortcuts.dismissCalendar(num);
         }

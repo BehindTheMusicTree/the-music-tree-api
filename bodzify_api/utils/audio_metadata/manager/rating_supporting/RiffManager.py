@@ -156,7 +156,7 @@ class RiffManager(RatingSupportingMetadataManager):
             file_raw_metadata_wav.tags['INFO'] = {}
 
         # Handle the value using FourCC code
-        fourcc = raw_metadata_key.value  # Get the 4-character code
+        fourcc = raw_metadata_key  # Get the 4-character code
         if value is None and fourcc in file_raw_metadata_wav.tags['INFO']:
             del file_raw_metadata_wav.tags['INFO'][fourcc]
         elif value is not None:

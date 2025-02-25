@@ -65,19 +65,19 @@ class Id3v1RawMetadata(FileType):
         # Convert to dictionary format similar to other metadata formats
         self.tags = {}
         if tag.title:
-            self.tags[Id3v1RawMetadataKey.TITLE.value] = [tag.title]
+            self.tags[Id3v1RawMetadataKey.TITLE] = [tag.title]
         if tag.artists_names_str:
-            self.tags[Id3v1RawMetadataKey.ARTISTS_NAMES_STR.value] = [tag.artists_names_str]
+            self.tags[Id3v1RawMetadataKey.ARTISTS_NAMES_STR] = [tag.artists_names_str]
         if tag.album_name:
-            self.tags[Id3v1RawMetadataKey.ALBUM_NAME.value] = [tag.album_name]
+            self.tags[Id3v1RawMetadataKey.ALBUM_NAME] = [tag.album_name]
         if tag.year:
-            self.tags[Id3v1RawMetadataKey.YEAR.value] = [tag.year]
+            self.tags[Id3v1RawMetadataKey.YEAR] = [tag.year]
         if tag.genre_code:
-            self.tags[Id3v1RawMetadataKey.GENRE_CODE.value] = [str(tag.genre_code)]
+            self.tags[Id3v1RawMetadataKey.GENRE_CODE] = [str(tag.genre_code)]
         if tag.track_number and tag.track_number != 0:
-            self.tags[Id3v1RawMetadataKey.TRACK_NUMBER.value] = [str(tag.track_number)]
+            self.tags[Id3v1RawMetadataKey.TRACK_NUMBER] = [str(tag.track_number)]
         if tag.comment:
-            self.tags[Id3v1RawMetadataKey.COMMENT.value] = [tag.comment]
+            self.tags[Id3v1RawMetadataKey.COMMENT] = [tag.comment]
 
     def save(self) -> None:
         """Placeholder for save operation - ID3v1 is read-only."""
