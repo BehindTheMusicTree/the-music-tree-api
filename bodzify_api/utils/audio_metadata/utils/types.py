@@ -9,7 +9,7 @@ class RawMetadataKey(Enum):
     pass
 
 
-AppMetadataValue = str | int | float
+AppMetadataValue = str | int | float | None
 AppMetadataDict = Dict[AppMetadataKey, AppMetadataValue]
 
 """

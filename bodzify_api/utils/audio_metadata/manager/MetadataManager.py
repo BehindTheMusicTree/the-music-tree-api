@@ -5,6 +5,7 @@ import os
 from abc import abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
 from typing import Dict, Optional, Union
+
 from mutagen._file import FileType
 from pydub.utils import mediainfo
 from tinytag import TinyTag, TinyTagException
@@ -13,8 +14,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey, RawMetadataValue
 from ..utils.AudioFile import AudioFile
-from ..exceptions import DurationNotFoundError, UnsupportedMetadataError
 from ..utils.AppMetadataKey import AppMetadataKey
+from ..exceptions import DurationNotFoundError, UnsupportedMetadataError
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
 

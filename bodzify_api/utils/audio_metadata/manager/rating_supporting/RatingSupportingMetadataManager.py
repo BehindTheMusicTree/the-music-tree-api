@@ -1,11 +1,13 @@
 from abc import abstractmethod
-from ..MetadataManager import MetadataManager
+from typing import Dict, Optional
+
+from django.core.exceptions import ImproperlyConfigured
+
 from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
 from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
 from ...utils.AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
-from django.core.exceptions import ImproperlyConfigured
-from typing import Dict, Optional
+from ..MetadataManager import MetadataManager
 
 
 class RatingSupportingMetadataManager(MetadataManager):
