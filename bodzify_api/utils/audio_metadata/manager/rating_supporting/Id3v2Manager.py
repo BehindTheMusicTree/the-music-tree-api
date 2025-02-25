@@ -5,7 +5,7 @@ from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, 
 from mutagen.id3._util import ID3NoHeaderError
 
 from bodzify_api import settings
-from bodzify_api.utils.audio_metadata.utils.RatingProfile import RatingProfile
+from bodzify_api.utils.audio_metadata.utils.rating_profiles import RatingWritingProfile
 from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 from bodzify_api.utils.audio_metadata.utils.types import RawMetadataDict
 from ...utils.AudioFile import AudioFile
@@ -183,7 +183,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         }
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map=metadata_keys_direct_map,
-                         rating_profile=RatingProfile.BASE_255,
+                         rating_profile=RatingWritingProfile.BASE_255,
                          normalized_rating_max_value=normalized_rating_max_value)
 
     def extract_raw_metadata_dict(self) -> RawMetadataDict:
@@ -281,7 +281,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                 id3_rating = self._convert_normalized_rating_to_file_rating(
                     normalized_rating=normalized_rating,
                     normalized_rating_max_value=normalized_rating_max_value,
-                    rating_profile=RatingProfile.BASE_255)
+                    rating_writing_profile=RatingWritingProfile.BASE_255)
                 self.file_raw_metadata.add(POPM(email=self.ID3_RATING_APP_EMAIL, rating=id3_rating))  # type: ignore
             return
         elif app_metadata_key == AppMetadataKey.LANGUAGE:

@@ -8,7 +8,7 @@ from mutagen.id3 import ID3
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.utils.audio_metadata.utils.RatingProfile import RatingProfile
+from bodzify_api.utils.audio_metadata.utils.rating_profiles import RatingWritingProfile
 
 
 from ...utils.AudioFile import AudioFile
@@ -91,7 +91,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         }
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map=metadata_keys_direct_map,
-                         rating_profile=RatingProfile.BASE_100,
+                         rating_profile=RatingWritingProfile.BASE_100,
                          normalized_rating_max_value=normalized_rating_max_value)
 
     def extract_raw_metadata_dict(self) -> RawMetadataDict:
@@ -164,7 +164,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             vorbis_key = self.VorbisKey.RATING
             if app_rating:
                 vorbis_rating = self._convert_normalized_rating_to_file_rating(
-                    normalized_rating=app_rating, rating_profile=RatingProfile.BASE_100)
+                    normalized_rating=app_rating, rating_writing_profile=RatingWritingProfile.BASE_100)
                 app_metadata_value = str(vorbis_rating)
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
             vorbis_key = self.VorbisKey.LANGUAGE

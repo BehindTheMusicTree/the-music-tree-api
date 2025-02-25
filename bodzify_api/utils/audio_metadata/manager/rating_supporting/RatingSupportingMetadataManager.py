@@ -1,73 +1,24 @@
+from abc import abstractmethod
 from ..MetadataManager import MetadataManager
-from ...utils.RatingProfile import RatingProfile
+from ...utils.rating_profiles import RatingWritingProfile
 from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
 from ...utils.AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from django.core.exceptions import ImproperlyConfigured
 from typing import Dict, Optional
-om abc import abstractmethod
-
-
-"""
-Rating Compatibility Table Across Different Audio Players
-
-The following table shows how different audio players handle ratings across various audio formats.
-Values represent the actual numbers written to files for each star rating (0-5 stars).
-
-+----+------------+------------+------------+------------+------------+-----------+
-| ⭐ |     kid3   |   Windows  |  MusicBee  |   Winamp   |   Traktor  |   iTunes  |
-|    |  /Lollypop |Media Player|            |            |            |   iTunes  |
-+----+------------+------------+------------+------------+------------+-----------+
-|ext.|mp3 wav flac|mp3 wav flac|mp3 wav flac|mp3 wav flac|mp3 wav flac| W ops not |
-+----+------------+------------+------------+------------+------------+           +
-|tags|id3 rif vorb|id3  ✗  vorb|id3 id3 vorb|id3  ✗  vorb|id3  ✗  vorb| supported |
-+----+------------+------------+------------+------------+------------+-----------+
-|None| ✗    ✗   ✗ | ✗       ✗  | ✗   ✗   ✗  |  ✗      ✗  |  0       0 |           |
-| 0  |            |            | 0   0   0  |            |            |           |
-|0.5 |            |            |13   10  10 |            |            |           |
-| 1  | 1    1  20 | 1       20 | 1   20  20 |  1      20 | 51      51 |           |
-|1.5 |            |            |54   30  30 |            |            |           |
-| 2  |64   64  40 |64       40 |64   40  40 | 64      40 |102     102 |           |
-|2.5 |            |            |118  50  50 |            |            |           |
-| 3  |128 128  60 |128      60 |128  60  60 | 128     60 |153     153 |           |
-|3.5 |            |            |186  70  70 |            |            |           |
-| 4  |196 196  80 |196      80 |196  80  80 | 196     80 |204     204 |           |
-|4.5 |            |            |242  90  90 |            |            |           |
-| 5  |255 255 100 |255     100 |255 100 100 | 255    100 |255     255 |           |
-+----+------------+------------+------------+------------+------------+-----------+
-|Prof| A   A   B  | A   ✗   B  | A   B   B  |  A   ✗  B  | C   ✗   C  |     ✗     |
-+----+------------+------------+------------+------------+------------+-----------+
-
-Legend:
-    id3 = id3v2
-    rif = RIFF
-    vorb = Vorbis
-    ✗ = No tag written
-    empty = Rating value not supported
-    ✓ = Can write ratings
-
-Rating Profiles:
-    A. 255 star: .mp3 id3v2 not Traktor, RIFF
-    B. 100 prop: Vorbis not Traktor, .wav id3v2
-    C. 255 prop: Traktor id3v2/Vorbis
-"""
 
 
 class RatingSupportingMetadataManager(MetadataManager):
 
-    BASE_255_RATING_STAR_VALUES = [0, 13, 1, 54, 64, 118, 128, 186, 196, 242, 255]
-    BASE_255_PROPORTIONAL_RATING_STAR_VALUES = [None, None, 51, None, 102, None, 153, None, 204, None, 255]
-    BASE_100_RATING_STAR_VALUES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-
     TRAKTOR_RATING_TAG_MAIL = 'traktor@native-instruments.de'
 
     normalized_rating_max_value: Optional[int]
-    rating_profile: RatingProfile
+    rating_profile: RatingWritingProfile
 
     def __init__(self,
                  audio_file: AudioFile,
                  metadata_keys_direct_map: Dict[AppMetadataKey, Optional[RawMetadataKey]],
-                 rating_profile: RatingProfile,
+                 rating_profile: RatingWritingProfile,
                  normalized_rating_max_value: Optional[int]):
         self.rating_profile = rating_profile
         self.normalized_rating_max_value = normalized_rating_max_value
@@ -92,13 +43,14 @@ class RatingSupportingMetadataManager(MetadataManager):
         else:
             return self._get_undirectly_mapped_metadata_value_other_than_rating(app_metadata_key)
 
-    def _convert_normalized_rating_to_file_rating(self, normalized_rating: int, rating_profile: RatingProfile) -> int:
+    def _convert_normalized_rating_to_file_rating(
+            self, normalized_rating: int, rating_writing_profile: RatingWritingProfile) -> int:
         if not self.normalized_rating_max_value:
             raise ImproperlyConfigured(
                 "normalized_rating_max_value must be set to convert normalized rating to file rating.")
 
         star_rating_base_10 = (int)((normalized_rating * 10)/self.normalized_rating_max_value)
-        if rating_profile == RatingProfile.BASE_255:
+        if rating_writing_profile == RatingWritingProfile.BASE_255:
             return self.BASE_255_RATING_STAR_VALUES[star_rating_base_10]
         else:
             return self.BASE_100_RATING_STAR_VALUES[star_rating_base_10]
@@ -145,7 +97,7 @@ class RatingSupportingMetadataManager(MetadataManager):
                 try:
                     normalized_rating = int(float(value))
                     file_rating = self._convert_normalized_rating_to_file_rating(
-                        normalized_rating=normalized_rating, rating_profile=RatingProfile.BASE_100)
+                        normalized_rating=normalized_rating, rating_writing_profile=RatingWritingProfile.BASE_100)
                     app_metadata_dict[AppMetadataKey.RATING] = file_rating
                 except (TypeError, ValueError):
                     raise ValueError(f"Invalid rating value: {value}. Expected a numeric value.")
