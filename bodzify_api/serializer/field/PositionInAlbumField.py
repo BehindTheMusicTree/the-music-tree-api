@@ -1,10 +1,8 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
 
 class PositionInAlbumField(serializers.IntegerField):

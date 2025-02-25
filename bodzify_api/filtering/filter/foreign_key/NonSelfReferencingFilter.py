@@ -3,12 +3,9 @@
 from django.utils.translation import gettext as _
 from django_filters import FilterSet
 
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
-from bodzify_api.filtering.filter.foreign_key.ForeignKeyFilter import \
-    ForeignKeyFilter
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.filtering.filter.foreign_key.ForeignKeyFilter import ForeignKeyFilter
 
 
 class NonSelfReferencingFilter(ForeignKeyFilter):

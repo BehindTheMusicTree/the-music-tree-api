@@ -7,16 +7,12 @@ from rest_framework import status
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
 
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.app.AppValidationErrorFields import \
-    AppValidationErrorFields
-from bodzify_api.exception.validation.DrfValidationErrorFields import \
-    DrfValidationErrorFields
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.app.AppValidationExceptionFields import AppValidationErrorFields
+from bodzify_api.exception.validation.DrfValidationErrorFields import DrfValidationErrorFields
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
-from bodzify_api.view.error.DrfValidationErrorResponseDetail import \
-    DrfValidationErrorResponseDetail
+from bodzify_api.view.error.DrfValidationErrorResponseDetail import DrfValidationErrorResponseDetail
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 

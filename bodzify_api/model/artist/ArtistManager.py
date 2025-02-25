@@ -2,12 +2,9 @@ from typing import TYPE_CHECKING, Dict
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.model.lib_track_mixin.Fields import \
-    Fields as LibTrackMixinFields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import \
-    LibTrackMixinWithInternalNameManager
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import \
-    METADATA_ARTISTS_SEPARATION_CHAR
+from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User

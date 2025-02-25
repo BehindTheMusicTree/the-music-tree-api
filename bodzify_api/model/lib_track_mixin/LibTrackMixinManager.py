@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, TypeVar
 
-from bodzify_api.model.public_standard_resource.StandardResourceManager import \
-    StandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 
 from .Fields import Fields
 

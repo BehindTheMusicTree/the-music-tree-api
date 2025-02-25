@@ -3,8 +3,7 @@ from django.db import models
 from bodzify_api import settings
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
-from bodzify_api.model.private_unique_resource.PrivateUniqueResource import \
-    PrivateUniqueResource
+from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 
 from .code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
 from .FingerprintMissingCauseManager import FingerprintMissingCauseManager

@@ -1,8 +1,7 @@
 from typing import TYPE_CHECKING, TypeVar
 
 from bodzify_api.model.lib_track_mixin.Fields import Fields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import \
-    LibTrackMixinManager
+from bodzify_api.model.lib_track_mixin.LibTrackMixinManager import LibTrackMixinManager
 from bodzify_api.model.utils.query.field_transform import update_name_field
 
 if TYPE_CHECKING:

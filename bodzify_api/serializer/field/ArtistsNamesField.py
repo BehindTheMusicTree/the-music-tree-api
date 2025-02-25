@@ -3,10 +3,8 @@ from typing import Any
 from rest_framework import serializers
 from rest_framework.fields import ListField
 
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.field.AppField import AppField
 
 

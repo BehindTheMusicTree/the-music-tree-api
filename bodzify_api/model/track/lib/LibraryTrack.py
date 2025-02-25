@@ -15,26 +15,20 @@ from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 from bodzify_api.model.field.AppCharField import AppCharField
-from bodzify_api.model.field.foreign_key.PrivateForeignKey import \
-    PrivateForeignKey
-from bodzify_api.model.field.foreign_key.PrivateManyToManyField import \
-    PrivateManyToManyField
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
+from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.trackable_play_count.TrackablePlayCount import \
-    TrackablePlayCount
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import \
-    METADATA_ARTISTS_SEPARATION_CHAR
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import \
-    AppMetadataKey
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 from ..file.TrackFile import TrackFile
 from .Fields import Fields
 from .LibTrackManager import LibTrackManager
 
 if TYPE_CHECKING:
-    from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import \
-        LibTrackPlaylistRel
+    from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
 
 class LibraryTrack(TrackablePlayCount):
@@ -137,10 +131,8 @@ class LibraryTrack(TrackablePlayCount):
 
     @property
     def playlists_with_positions(self) -> List[Tuple[str, int]]:
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import \
-            Fields as LibTrackPlaylistRelFields
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import \
-            LibTrackPlaylistRel
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, lib_track=self)
         return list(lib_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
                                                         LibTrackPlaylistRelFields.POSITION))

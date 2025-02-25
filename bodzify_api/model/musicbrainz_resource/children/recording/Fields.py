@@ -1,5 +1,4 @@
-from bodzify_api.model.musicbrainz_resource.Fields import \
-    Fields as MusicbrainzResourceFields
+from bodzify_api.model.musicbrainz_resource.Fields import Fields as MusicbrainzResourceFields
 
 
 class Fields:

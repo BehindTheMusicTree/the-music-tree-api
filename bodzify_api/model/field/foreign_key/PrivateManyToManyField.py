@@ -1,7 +1,5 @@
-from bodzify_api.model.field.foreign_key.AppManyToManyField import \
-    AppManyToManyField
-from bodzify_api.serializer.field.foreign_key.PrivateUuidField import \
-    PrivateUuidField
+from bodzify_api.model.field.foreign_key.AppManyToManyField import AppManyToManyField
+from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
 
 class PrivateManyToManyField(AppManyToManyField):

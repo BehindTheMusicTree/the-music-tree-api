@@ -4,10 +4,8 @@ from typing import Union
 from django.http import HttpRequest, HttpResponse
 from rest_framework.request import Request
 
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 from .JsonDuplicateKeyDetectingDecoder import JsonDuplicateKeyDetectingDecoder

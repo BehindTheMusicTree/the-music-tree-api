@@ -10,8 +10,7 @@ from bodzify_api.utils.AudioFile import AudioFile
 
 from ..exceptions import UnsupportedMetadataError
 from ..utils.AppMetadataKey import AppMetadataKey
-from ..utils.types import (AppMetadataDict, AppMetadataValue, RawMetadataDict,
-                           RawMetadataKey, RawMetadataValue)
+from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey, RawMetadataValue
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
 

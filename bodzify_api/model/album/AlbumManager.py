@@ -3,8 +3,7 @@ from typing import TYPE_CHECKING, List
 from django.db.models import QuerySet
 
 from bodzify_api.model.lib_track_mixin.Fields import Fields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import \
-    LibTrackMixinWithInternalNameManager
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 
 if TYPE_CHECKING:
     from bodzify_api.model.artist.Artist import Artist
@@ -25,10 +24,10 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
         else:
             album_queryset = album_queryset.filter(album_artists=None)
 
-        return self.create_instance_with_album_artists_list(user=user,
-                                                            name=name,
-                                                            album_artists_list=album_artists) \
-            if album_queryset.count() == 0 else album_queryset.first()
+        return (self.create_instance_with_album_artists_list(user=user,
+                                                             name=name,
+                                                             album_artists_list=album_artists)
+                if album_queryset.count() == 0 else album_queryset.first())
 
     def get_default_ordering(self) -> list[str]:
         return [Fields.NAME_INTERNAL]

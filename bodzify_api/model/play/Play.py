@@ -2,13 +2,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
-from bodzify_api.model.field.foreign_key.PrivateUuidGenericForeignKey import \
-    PrivateUuidGenericForeignKey
+from bodzify_api.model.field.foreign_key.PrivateUuidGenericForeignKey import PrivateUuidGenericForeignKey
 from bodzify_api.model.play.PlayManager import PlayManager
-from bodzify_api.model.private_unique_resource.PrivateUniqueResource import \
-    PrivateUniqueResource
-from bodzify_api.model.trackable_play_count.TrackablePlayCount import \
-    TrackablePlayCount
+from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 
 from .Fields import Fields
 
@@ -27,12 +24,7 @@ class Play(PrivateUniqueResource):
     objects: PlayManager = PlayManager()
 
     def __str__(self) -> str:
-        return f"{
-            self.uuid}  | {
-            self.content_type}  | {
-            self.content_uuid}  | {
-            self.content}  | {
-            self.created_on} "
+        return f"{self.uuid} | {self.content_type} | {self.content_uuid} | {self.content} | {self.created_on}"
 
     class Meta:
         verbose_name = 'Play'

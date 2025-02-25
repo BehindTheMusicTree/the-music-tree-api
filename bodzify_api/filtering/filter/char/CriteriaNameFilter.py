@@ -1,13 +1,11 @@
 
 from django.db.models import Case, CharField, Q, Value, When
 
-from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import \
-    NonEmptiableCharFilter
+from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
 from bodzify_api.model.base.BaseQuerySet import BaseQuerySet
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import \
-    CriterialessPlaylistNames
+from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 
 
 class CriteriaNameFilter(NonEmptiableCharFilter):

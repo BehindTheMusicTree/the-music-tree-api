@@ -1,10 +1,8 @@
 
 from rest_framework import status
 
-from bodzify_api.exception.validation.app.AppValidationErrorFields import \
-    AppValidationErrorFields
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationExceptionFields import AppValidationErrorFields
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 
 

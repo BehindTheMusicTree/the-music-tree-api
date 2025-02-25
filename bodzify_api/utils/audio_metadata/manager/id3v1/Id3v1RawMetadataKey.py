@@ -1,6 +1,5 @@
 
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import \
-    AppMetadataKey
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.utils.audio_metadata.utils.types import RawMetadataKey
 
 

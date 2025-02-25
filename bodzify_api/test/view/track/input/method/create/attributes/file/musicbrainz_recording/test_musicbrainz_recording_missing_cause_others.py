@@ -6,12 +6,8 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.exception import musicbrainz as musicbrainz_exception
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import \
-    MusicbrainzRecordingMissingCauseCode
-from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import \
-    FingerprintingResult
-from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import \
-    FingerprintMissingCause
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import (
+    MusicbrainzRecordingMissingCauseCode)
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

@@ -4,10 +4,8 @@ from typing import Dict
 
 from django.db import models
 
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError

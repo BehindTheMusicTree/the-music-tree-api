@@ -1,12 +1,9 @@
 
 from django.utils.translation import gettext as _
 
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
-from bodzify_api.model.playlist.children.manual.Fields import \
-    Fields as ModelFields
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.model.playlist.children.manual.Fields import Fields as ModelFields
 from bodzify_api.serializer.field.AppCharField import AppCharField
 
 

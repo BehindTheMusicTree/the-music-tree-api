@@ -1,9 +1,7 @@
 from django.db import models
 
-from bodzify_api.model.field.foreign_key.PrivateForeignKey import \
-    PrivateForeignKey
-from bodzify_api.model.private_standard_resource.PrivateStandardResource import \
-    PrivateStandardResource
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
+from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 
 from ..Criteria import Criteria
 from ..Fields import Fields as CriteriaFields

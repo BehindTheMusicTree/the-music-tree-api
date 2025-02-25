@@ -5,13 +5,11 @@ from mutagen.wave import WAVE
 
 from ....AudioFile import AudioFile
 from ...exceptions import UnsupportedMetadataError
-from ...utils.id3v1_and_riff_genre_code_map import \
-    ID3V1_AND_RIFF_GENRE_CODE_MAP
+from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
-from ..rating_supporting.RatingSupportingMetadataManager import \
-    RatingSupportingMetadataManager
+from ..rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
 
 class RiffManager(RatingSupportingMetadataManager):

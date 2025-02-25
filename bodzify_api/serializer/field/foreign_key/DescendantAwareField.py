@@ -5,12 +5,9 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
-from bodzify_api.serializer.field.foreign_key.NonSelfReferencingField import \
-    NonSelfReferencingField
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.field.foreign_key.NonSelfReferencingField import NonSelfReferencingField
 
 
 @runtime_checkable

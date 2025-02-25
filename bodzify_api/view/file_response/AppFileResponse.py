@@ -4,8 +4,7 @@ from django.http import FileResponse
 
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
-from bodzify_api.view.file_response.FileResponseHeaders import \
-    FileResponseHeaders
+from bodzify_api.view.file_response.FileResponseHeaders import FileResponseHeaders
 
 
 class AppFileResponse:

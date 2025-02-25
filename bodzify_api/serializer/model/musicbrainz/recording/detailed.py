@@ -1,11 +1,8 @@
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
-    Fields as ModelFields
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
-    MusicbrainzRecording
-from bodzify_api.serializer.model.musicbrainz.artist.detailed import \
-    MusicbrainzArtistDetailedSerializer
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import Fields as ModelFields
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.serializer.model.musicbrainz.artist.detailed import MusicbrainzArtistDetailedSerializer
 
 
 class Fields:

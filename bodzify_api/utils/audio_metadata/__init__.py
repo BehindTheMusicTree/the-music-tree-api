@@ -80,8 +80,7 @@ from .exceptions import FileByteMismatchError
 from .manager.id3v1.Id3v1Manager import Id3v1Manager
 from .manager.MetadataManager import MetadataManager
 from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
-from .manager.rating_supporting.RatingSupportingMetadataManager import \
-    RatingSupportingMetadataManager
+from .manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 from .manager.rating_supporting.RiffManager import RiffManager
 from .manager.rating_supporting.VorbisManager import VorbisManager
 from .utils.AppMetadataKey import AppMetadataKey

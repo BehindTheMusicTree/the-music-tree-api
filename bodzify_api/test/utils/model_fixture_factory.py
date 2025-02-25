@@ -3,6 +3,7 @@ import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
+from typing import TypeVar, cast
 
 from ddf import G, N
 from django.contrib.auth import get_user_model
@@ -19,34 +20,24 @@ from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
-from bodzify_api.model.musicbrainz_resource.children.artist.Fields import \
-    Fields as MusicbrainzArtistFields
-from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import \
-    MusicbrainzArtist
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
-    Fields as MusicbrainzRecordingFields
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import \
-    MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
+from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import (
+    Fields as MusicbrainzRecordingFields)
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.play.Fields import Fields as PlayFields
 from bodzify_api.model.play.Play import Play
-from bodzify_api.model.playlist.children.manual.Fields import \
-    Fields as ManualPlaylistFields
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import \
-    ManualPlaylist
+from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlaylistFields
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.model.trackable_play_count.TrackablePlayCount import \
-    TrackablePlayCount
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.input.post.Fields import \
-    Fields as LibTrackPostFields
-from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import \
-    LibTrackCreationType
-
-, TypeVar, cast
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
+from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore

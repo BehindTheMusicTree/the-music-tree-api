@@ -1,8 +1,6 @@
-from typing import (Any, Dict, Generic, List, Sequence, Type, TypeVar, Union,
-                    cast)
+from typing import (Any, Dict, Generic, List, Sequence, Type, TypeVar, Union, cast)
 
 from django.core.exceptions import ImproperlyConfigured
-from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from django.db.models import QuerySet
 from django.http import FileResponse
@@ -12,11 +10,9 @@ from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.serializers import (BaseSerializer, ModelSerializer,
-                                        Serializer)
+from rest_framework.serializers import (BaseSerializer, ModelSerializer, Serializer)
 
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields

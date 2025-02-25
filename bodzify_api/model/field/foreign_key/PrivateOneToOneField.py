@@ -1,7 +1,5 @@
-from bodzify_api.model.field.foreign_key.AppOneToOneField import \
-    AppOneToOneField
-from bodzify_api.serializer.field.foreign_key.PrivateUuidField import \
-    PrivateUuidField
+from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
+from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
 
 class PrivateOneToOneField(AppOneToOneField):

@@ -6,19 +6,16 @@ from django.db.models import QuerySet
 from django.utils.translation import gettext as _
 
 from bodzify_api import settings
-from bodzify_api.exception.validation.app.AppValidationError import \
-    AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import \
-    FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.criteria.CriteriaManager import CriteriaManager
-from bodzify_api.model.criteria.lineage_rel.Fields import \
-    Fields as CriteriaLineageRelFields
+from bodzify_api.model.criteria.lineage_rel.Fields import Fields as CriteriaLineageRelFields
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
-from bodzify_api.model.field.foreign_key.PrivateForeignKey import \
+from bodzify_api.model.field.foreign_key.PrivateForeignKey import (
     PrivateForeignKey
-from bodzify_api.model.field.foreign_key.PrivateManyToManyField import \
-    PrivateManyToManyField
+)
+from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.utils.model import SaveContext
 
@@ -26,8 +23,7 @@ from .Fields import Fields
 from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
-    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import \
-        CriteriaPlaylist
+    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
     from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
