@@ -82,7 +82,7 @@ from bodzify_api.utils.audio_metadata.utils.types import AppMetadataDict, RawMet
 
 from .exceptions import FileByteMismatchError
 from .utils.AppMetadataKey import AppMetadataKey
-from .utils.AudioFile import AudioFile
+from ..AudioFile import AudioFile
 from .utils.TagFormat import TagFormat
 from .manager.MetadataManager import MetadataManager
 from .manager.rating_supporting.RiffManager import RiffManager

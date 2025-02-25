@@ -5,7 +5,7 @@ from mutagen._file import FileType
 
 from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadata import Id3v1RawMetadata
 
-from ...utils.AudioFile import AudioFile
+from ....AudioFile import AudioFile
 from ...utils.types import AppMetadataValue, RawMetadataDict
 from ...exceptions import FileCorruptedError, UnsupportedMetadataError
 from ...utils.AppMetadataKey import AppMetadataKey

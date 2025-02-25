@@ -4,7 +4,7 @@ from typing import Optional
 from mutagen._file import FileType
 from mutagen.wave import WAVE
 
-from ...utils.AudioFile import AudioFile
+from ....AudioFile import AudioFile
 from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP

@@ -10,7 +10,7 @@ from bodzify_api import settings
 
 from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataKey, RawMetadataValue
-from ...utils.AudioFile import AudioFile
+from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 

@@ -9,7 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from bodzify_api.utils import data_transformer
 
 from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey, RawMetadataValue
-from ..utils.AudioFile import AudioFile
+from ...AudioFile import AudioFile
 from ..utils.AppMetadataKey import AppMetadataKey
 from ..exceptions import UnsupportedMetadataError
 

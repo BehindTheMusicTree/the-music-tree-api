@@ -7,7 +7,7 @@ from bodzify_api.utils import data_transformer
 
 from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
 from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
-from ...utils.AudioFile import AudioFile
+from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from ..MetadataManager import MetadataManager
 

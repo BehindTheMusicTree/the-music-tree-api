@@ -2,11 +2,6 @@
 from django.core.files import File
 
 
-def print_django(message: str) -> None:
-    """Print a message with [Django] prefix."""
-    print(f"[Django] {message}")
-
-
 class AppDjangoFile(File):
     """Custom Django File class with additional functionality."""
 

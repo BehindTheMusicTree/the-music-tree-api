@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from rest_framework.fields import Field, ListField
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode

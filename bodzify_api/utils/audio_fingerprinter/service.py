@@ -6,13 +6,12 @@ from django.db.models.fields.files import FieldFile
 from django.core.files.base import File as DjangoFile
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 
-from bodzify_api.model.user.User import User
-
 from bodzify_api import settings
+from bodzify_api.model.user.User import User
 from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
 from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import FingerprintingResult
-from bodzify_api.utils.app_django_file import AppDjangoFile
+from bodzify_api.utils.AppDjangoFIle import AppDjangoFile
 from .utils import exception as audio_fingerprinter_exception
 from . import utils
 

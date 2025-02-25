@@ -3,7 +3,7 @@ import os
 import sys
 import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 from bodzify_api.utils.env_var_loader import (
     load_required_str_env_var,
     load_required_bool_env_var,
@@ -12,7 +12,7 @@ from bodzify_api.utils.env_var_loader import (
     load_env_vars_from_file_if_exists,
     load_calculated_env_paths,
 )
-from bodzify_api.utils.app_django_file import print_django
+from bodzify_api.utils.utils import print_django
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 
 TEST_USER_LIBRARIES_DIR_NAME_PREFIXE: str

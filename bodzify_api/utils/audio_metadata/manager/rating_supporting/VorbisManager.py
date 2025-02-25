@@ -8,7 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from bodzify_api.utils import data_transformer
 
-from ...utils.AudioFile import AudioFile
+from ....AudioFile import AudioFile
 from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
