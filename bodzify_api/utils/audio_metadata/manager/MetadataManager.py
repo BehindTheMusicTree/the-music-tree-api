@@ -67,21 +67,22 @@ class MetadataManager:
     def _get_first_value_in_raw_metadata_dict_or_none(
             self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> str | int | None:
         if value_type == str:
-            return data_transformer.get_first_value_str_if_exists_in_str_dict_or_none(
+            value = data_transformer.get_first_value_str_if_exists_in_str_dict_or_none(
                 str_dict=self.raw_metadata_dict, key=raw_metadata_key.value)
+            return value.strip() if value else None
         elif value_type == int:
             return data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
                 str_dict=self.raw_metadata_dict, key=raw_metadata_key.value)
         else:
             raise ImproperlyConfigured('Value type not handled')
 
-    def _update_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
-        self.file_raw_metadata[raw_metadata_key] = value
-
-    def _get_value_str_from_raw_metadata_dict(
+    def _get_value_from_raw_metadata_dict(
             self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> str | int | None:
         return self._get_first_value_in_raw_metadata_dict_or_none(
             raw_metadata_key=raw_metadata_key, value_type=value_type)
+
+    def _update_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
+        self.file_raw_metadata[raw_metadata_key] = value
 
     def get_app_metadata_dict(self) -> AppMetadataDict:
         app_metadata_dict = {}
@@ -99,7 +100,7 @@ class MetadataManager:
             return self._get_undirectly_mapped_metadata_value(app_metadata_key)
         else:
             value_type = self.APP_METADATA_KEY_TYPE_MAP[app_metadata_key]
-            return self._get_value_str_from_raw_metadata_dict(raw_metadata_key=raw_metadata_key, value_type=value_type)
+            return self._get_value_from_raw_metadata_dict(raw_metadata_key=raw_metadata_key, value_type=value_type)
 
     def update_bulk(self, app_metadata_dict: AppMetadataDict):
         for app_metadata_key in list(app_metadata_dict.keys()):

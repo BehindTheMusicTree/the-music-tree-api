@@ -1,13 +1,15 @@
 
 from typing import Dict, Type
+
 from mutagen.id3 import ID3
 from mutagen.id3._frames import POPM, TALB, TCON, TIT2, TLAN, TPE1, TPE2, TDRC, TRCK, TBPM, TYER
 from mutagen.id3._util import ID3NoHeaderError
+from mutagen._file import FileType
 
 from bodzify_api import settings
 
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import RawMetadataDict, RawMetadataKey
+from ...utils.types import RawMetadataKey
 from ...utils.AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
@@ -172,7 +174,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         TRACK_NUMBER = 'TRCK'
         BPM = 'TBPM'
 
-    ID3_TEXT_FRAME_CLASS_MAP = {
+    ID3_TEXT_FRAME_CLASS_MAP: Dict[RawMetadataKey, Type] = {
         Id3TextFrame.TITLE: TIT2,
         Id3TextFrame.ARTIST_NAME: TPE1,
         Id3TextFrame.ALBUM_NAME: TALB,
@@ -210,45 +212,24 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                          rating_write_profile=RatingWriteProfile.BASE_255_NON_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def _extract_raw_metadata(self) -> RawMetadataDict:
+    def _extract_raw_metadata(self) -> FileType:
         try:
-            tags = ID3(self.audio_file.get_file_path_or_object())
+            id3 = ID3(self.audio_file.get_file_path_or_object())
             # Force v2.3 update to ensure compatibility
-            tags.update_to_v23()
-            return tags
+            id3.update_to_v23()
+            return id3
         except ID3NoHeaderError:
-            tags = ID3()
-            tags.save(self.audio_file.get_file_path_or_object(), v2_version=3)
+            id3 = ID3()
+            id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
             return {}
 
-    def _update_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: str | int | float | None):
-        id3_key: Type[self.Id3TextFrame] = raw_metadata_key
-        self.file_raw_metadata.delall(id3_key)  # type: ignore
+    def _update_value_in_raw_metadata(
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: str | int | float | None):
+        file_raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
+        file_raw_metadata_id3.delall(raw_metadata_key.value)
         text_frame_class = self.ID3_TEXT_FRAME_CLASS_MAP[raw_metadata_key]
-        self.file_raw_metadata.add(text_frame_class(encoding=3, text=app_metadata_value))  # type: ignore
-        return super()._update_value_in_raw_metadata(raw_metadata_key, value)
-
-    def get_title(self) -> str | None:
-        return self._get_first_value_in_raw_metadata_dict_or_none(self.Id3TextFrame.TITLE, str)
-
-    def get_artists_names(self) -> str | None:
-        return self._get_first_value_str_if_exists_in_str_dict_or_none(self.Id3TextFrame.ARTIST_NAME)
-
-    def get_album_name(self) -> str | None:
-        return self._get_first_value_str_if_exists_in_str_dict_or_none(self.Id3TextFrame.ALBUM_NAME)
-
-    def get_album_artists_name_str(self) -> str | None:
-        album_artists_name_str_raw = (self._get_first_value_str_if_exists_in_str_dict_or_none(
-            self.Id3TextFrame.ALBUM_ARTISTS_NAMES))
-        if album_artists_name_str_raw:
-            return album_artists_name_str_raw.strip()
-        return None
-
-    def get_genre_name(self) -> str | None:
-        if self.Id3TextFrame.GENRE_NAME in self.file_raw_metadata:
-            return self.file_raw_metadata[self.Id3TextFrame.GENRE_NAME][0]
-        else:
-            return ""
+        file_raw_metadata_id3.add(text_frame_class(encoding=3, text=app_metadata_value))
+        return super()._update_value_in_raw_metadata(raw_metadata_key, app_metadata_value)
 
     def _get_eventually_normalized_rating_from_file(self) -> int | None:
      file_rating_value = None
@@ -265,22 +246,6 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             return self._convert_file_rating_to_eventually_normalized_rating(
                 file_rating=file_rating_value,
                 is_rating_from_traktor=(file_rating_email == self.TRAKTOR_RATING_TAG_MAIL))
-
-    def get_track_number(self) -> int | None:
-        """Get track number from TRCK frame.
-
-        The TRCK frame can contain either just a track number or 'track/total'
-        format. This method extracts just the track number.
-        """
-        track = self._get_first_value_str_if_exists_in_str_dict_or_none(key=self.Id3TextFrame.TRACK_NUMBER)
-        if track:
-            # Handle 'track/total' format by taking just the track number
-            track = track.split('/')[0]
-            try:
-                return int(track)
-            except ValueError:
-                return None
-        return None
 
     def _update_undirectly_mapped_metadata(
             self, app_metadata_value, app_metadata_key: str, normalized_rating_max_value: int | None = None):
