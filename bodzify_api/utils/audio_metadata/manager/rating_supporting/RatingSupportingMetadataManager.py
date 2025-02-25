@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -27,11 +27,10 @@ class RatingSupportingMetadataManager(MetadataManager):
         super().__init__(audio_file, metadata_keys_direct_map)
 
     @abstractmethod
-    def _extract_file_rating(self) -> Optional[int]:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def _extract_file_traktor_rating(self) -> Optional[int]:
+    def _extract_file_rating_by_traktor_or_not(self) -> Tuple[int | None, bool]:
+        """
+        Returns True if the rating is from Traktor, False otherwise.
+        """
         raise NotImplementedError()
 
     @abstractmethod
@@ -55,10 +54,10 @@ class RatingSupportingMetadataManager(MetadataManager):
         self.rating_write_profile.value[star_rating_base_10]
 
     def _get_eventually_normalized_rating_from_file(self) -> Optional[int]:
-        file_rating = self._extract_file_rating()
+        file_rating = self._extract_file_rating_by_traktor_or_not(search_traktor_rating=False)
         is_rating_from_traktor = False
         if file_rating is None:
-            file_rating = self._extract_file_traktor_rating()
+            file_rating = self._extract_file_rating_by_traktor_or_not(search_traktor_rating=True)
             if file_rating:
                 is_rating_from_traktor = True
 

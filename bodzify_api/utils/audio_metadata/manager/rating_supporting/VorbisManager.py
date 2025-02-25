@@ -1,13 +1,12 @@
 import io
-from typing import Optional
+from typing import Optional, Tuple, Type, TypeVar
 
 from mutagen._file import FileType
 from mutagen.flac import FLAC, VCFLACDict
-from mutagen.id3 import ID3
-from mutagen.id3._util import ID3NoHeaderError
 
 from django.core.exceptions import ImproperlyConfigured
 
+from bodzify_api.utils import data_transformer
 
 from ...utils.AudioFile import AudioFile
 from ...utils.rating_profiles import RatingWriteProfile
@@ -15,6 +14,8 @@ from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
+
+T = TypeVar('T', str, int)
 
 
 class VorbisManager(RatingSupportingMetadataManager):
@@ -114,11 +115,30 @@ class VorbisManager(RatingSupportingMetadataManager):
         else:
             raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
 
-    def _extract_file_rating(self) -> Optional[int]:
-        return self._get_first_value_int_if_exists_in_raw_metadata_or_none(key=self.VorbisKey.RATING)
+    def _get_first_value_in_raw_metadata_dict_or_none(
+            self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> str | int | None:
+        if value_type == str:
+            return data_transformer.get_first_value_str_if_exists_in_str_dict_or_none(
+                str_dict=self.raw_metadata_dict, key=raw_metadata_key.value)
+        elif value_type == int:
+            return data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
+                str_dict=self.raw_metadata_dict, key=raw_metadata_key.value)
+        else:
+            raise ImproperlyConfigured('Value type not handled')
 
-    def _extract_file_traktor_rating(self) -> Optional[int]:
-        return self._get_first_value_int_if_exists_in_raw_metadata_or_none(key=self.VorbisKey.RATING_TRAKTOR)
+    def _extract_file_rating_by_traktor_or_not(self) -> Tuple[int | None, bool]:
+        rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
+            str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING.value)
+
+        if rating:
+            return rating, False
+
+        rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
+            str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING_TRAKTOR.value)
+        if rating:
+            return rating, True
+
+        return None, False
 
     def _get_undirectly_mapped_metadata_value_other_than_rating(
             self, app_metadata_key: AppMetadataKey) -> Optional[AppMetadataValue]:
@@ -141,8 +161,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             return ""
 
     def get_album_artists_name_str(self) -> Optional[str]:
-        album_artists_name_str_raw = \
-            self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.VorbisKey.ALBUM_ARTISTS_NAMES)
+        album_artists_name_str_raw = self.file_raw_metadata.get(self.VorbisKey.ALBUM_ARTISTS_NAMES)
 
         if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
@@ -161,20 +180,16 @@ class VorbisManager(RatingSupportingMetadataManager):
         elif app_metadata_key == AppMetadataKey.GENRE_NAME:
             vorbis_key = self.VorbisKey.GENRE_NAME
         elif app_metadata_key == AppMetadataKey.RATING:
-            app_rating = app_metadata_value
-            vorbis_key = self.VorbisKey.RATING
-            if app_rating:
-                vorbis_rating = self._convert_normalized_rating_to_file_rating(
-                    normalized_rating=app_rating, rating_writing_profile=RatingWriteProfile.BASE_100_PROPORTIONAL)
-                app_metadata_value = str(vorbis_rating)
+            if app_metadata_value:
+                app_metadata_value = str(app_metadata_value)
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
             vorbis_key = self.VorbisKey.LANGUAGE
-        elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
-            vorbis_key = self.VorbisKey.DATE
-        elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
-            vorbis_key = self.VorbisKey.TRACK_NUMBER
-        elif app_metadata_key == AppMetadataKey.BPM:
-            vorbis_key = self.VorbisKey.BPM
+        # elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
+        #     vorbis_key = self.VorbisKey.DATE
+        # elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
+        #     vorbis_key = self.VorbisKey.TRACK_NUMBER
+        # elif app_metadata_key == AppMetadataKey.BPM:
+        #     vorbis_key = self.VorbisKey.BPM
         else:
             raise ImproperlyConfigured('Metadata key not handled')
 
@@ -184,43 +199,3 @@ class VorbisManager(RatingSupportingMetadataManager):
             self.file_raw_metadata[vorbis_key] = app_metadata_value
         elif vorbis_key in self.file_raw_metadata:
             del self.file_raw_metadata[vorbis_key]
-
-    def delete_metadata(self) -> bool:
-        """Delete all metadata from the FLAC/Vorbis file.
-
-        This removes:
-        - All Vorbis comment tags
-        - All pictures/album art
-        - Cuesheet if present
-        - Any ID3 tags that might be present
-
-        Returns:
-            bool: True if metadata was successfully deleted, False otherwise
-        """
-        try:
-            # Read the file into memory
-            self.audio_file.seek(0)
-            flac_file = FLAC(io.BytesIO(self.audio_file.read()))
-
-            # Clear all Vorbis comments
-            flac_file.tags = None
-
-            # Clear all pictures
-            flac_file.clear_pictures()
-
-            # Clear cuesheet
-            flac_file.cuesheet = None
-
-            # Save changes back to the file
-            flac_file.save(self.audio_file.file_path)
-
-            # Also remove any ID3 tags that might be present
-            try:
-                id3 = ID3(self.audio_file.file_path)
-                id3.delete()
-            except (ID3NoHeaderError, ImportError):
-                pass  # No ID3 tags present or ID3 support not available
-
-            return True
-        except Exception:
-            return False

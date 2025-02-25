@@ -198,16 +198,16 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             return {}
 
     def get_title(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(self.Id3TextFrames.TITLE)
+        return self._get_first_value_str_if_exists_in_str_dict_or_none(self.Id3TextFrames.TITLE)
 
     def get_artists_names(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(self.Id3TextFrames.ARTIST_NAME)
+        return self._get_first_value_str_if_exists_in_str_dict_or_none(self.Id3TextFrames.ARTIST_NAME)
 
     def get_album_name(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(self.Id3TextFrames.ALBUM_NAME)
+        return self._get_first_value_str_if_exists_in_str_dict_or_none(self.Id3TextFrames.ALBUM_NAME)
 
     def get_album_artists_name_str(self) -> Optional[str]:
-        album_artists_name_str_raw = (self._get_first_value_str_if_exists_in_raw_metadata_or_none(
+        album_artists_name_str_raw = (self._get_first_value_str_if_exists_in_str_dict_or_none(
             self.Id3TextFrames.ALBUM_ARTISTS_NAMES))
         if album_artists_name_str_raw:
             return album_artists_name_str_raw.strip()
@@ -242,7 +242,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         The TRCK frame can contain either just a track number or 'track/total'
         format. This method extracts just the track number.
         """
-        track = self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.Id3TextFrames.TRACK_NUMBER)
+        track = self._get_first_value_str_if_exists_in_str_dict_or_none(key=self.Id3TextFrames.TRACK_NUMBER)
         if track:
             # Handle 'track/total' format by taking just the track number
             track = track.split('/')[0]

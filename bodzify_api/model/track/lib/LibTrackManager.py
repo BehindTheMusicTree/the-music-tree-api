@@ -131,7 +131,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
 
         schema_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
-            Dict=normalized_metadata,
+            data_dict=normalized_metadata,
             keys=[AppMetadataKey.TITLE,
                   AppMetadataKey.ALBUM_NAME,
                   AppMetadataKey.GENRE_NAME,
@@ -223,7 +223,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                     Fields.LANGUAGE,
                     Fields.ARCHIVED,
                     Fields.TRACK_NUMBER]:
-            data_transformer.update_data1_with_key_if_set_in_data2(key=key, data1=model_data, data2=schema_data)
+            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict=schema_data)
 
         self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
             model_data=model_data, schema_data=schema_data)
@@ -251,8 +251,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 SchemaFields.GENRE_UUID,
                 SchemaFields.RATING,
                 SchemaFields.LANGUAGE]
-        data_transformer.override_data1_with_data2_values_for_each_key_in_data2(
-            data1=schema_data, data2=post_data, keys=keys)
+        data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(
+            dict1=schema_data, dict2=post_data, keys=keys)
 
         for key in [SchemaFields.ARTISTS_NAMES, SchemaFields.ALBUM_ARTISTS_NAMES]:
             if key in post_data:
@@ -263,8 +263,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         if SchemaFields.TITLE not in schema_data:
             schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
         if SchemaFields.GENRE_UUID not in post_data:
-            data_transformer.override_data1_with_data2_values_for_each_key_in_data2(data1=schema_data,
-                                                                                    data2=post_data,
+            data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(dict1=schema_data,
+                                                                                    dict2=post_data,
                                                                                     keys=[SchemaFields.GENRE_NAME])
 
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)

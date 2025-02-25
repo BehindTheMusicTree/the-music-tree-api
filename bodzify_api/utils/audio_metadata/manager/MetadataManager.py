@@ -45,14 +45,6 @@ class MetadataManager:
         raise NotImplementedError()
 
     @abstractmethod
-    def delete_metadata(self) -> bool:
-        """
-        Returns:
-            bool: True if metadata was successfully deleted, False otherwise
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
     def _update_specific_metadata_without_saving(
             self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
         raise NotImplementedError()
@@ -62,29 +54,6 @@ class MetadataManager:
         for chunk in iter(lambda: buffer.read(4096), b""):
             hash_md5.update(chunk)
         return hash_md5.hexdigest()
-
-    def _get_first_value_str_if_exists_in_raw_metadata_or_none(self, key: RawMetadataKey) -> Optional[str]:
-        if key in self.file_raw_metadata.items():
-            value = self.file_raw_metadata[key.value]
-            if isinstance(value, list):
-                return value[0] if value else None
-        else:
-            return None
-
-    def _get_first_value_int_if_exists_in_raw_metadata_or_none(self, key: RawMetadataKey) -> Optional[int]:
-        if key in self.file_raw_metadata.items():
-            value = self.file_raw_metadata[key]
-            if isinstance(value, list):
-                value_str = value[0] if value else ""
-            else:
-                value_str = str(value)
-
-            if value_str and value_str.strip():
-                try:
-                    return int(value_str)
-                except ValueError:
-                    return None
-        return None
 
     def _get_duration_using_mutagen(self) -> Optional[float]:
         if hasattr(self.file_raw_metadata, 'info'):
@@ -147,3 +116,10 @@ class MetadataManager:
             value = app_metadata_dict[key]
             self._update_specific_metadata_without_saving(app_metadata_value=value, app_metadata_key=key)
         self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())
+
+    def delete_metadata(self) -> bool:
+        try:
+            self.file_raw_metadata.delete()
+            return True
+        except Exception:
+            return False

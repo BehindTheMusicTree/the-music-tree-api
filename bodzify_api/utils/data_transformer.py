@@ -56,19 +56,19 @@ def form_data_to_snake_case(form_data: Any) -> Dict[str, Any]:
     return snake_case_dict
 
 
-def get_copy_of_dict_including_only_specified_keys(Dict: Dict, keys):
-    dict2 = Dict.copy()
+def get_copy_of_dict_including_only_specified_keys(data_dict: Dict, keys):
+    dict2 = data_dict.copy()
     for key in list(dict2.keys()):
         if key not in keys:
             del dict2[key]
     return dict2
 
 
-def remove_none_or_empty_key_from_dict(Dict: Dict):
-    for key in list(Dict.keys()):
-        if Dict[key] is None or Dict[key] == "":
-            del Dict[key]
-    return Dict
+def remove_none_or_empty_key_from_dict(data_dict: Dict):
+    for key in list(data_dict.keys()):
+        if data_dict[key] is None or data_dict[key] == "":
+            del data_dict[key]
+    return data_dict
 
 
 def update_dict_converting_str_to_int_value_if_set(key: str, data_dict: Dict):
@@ -80,17 +80,17 @@ def update_dict_converting_str_to_int_value_if_set(key: str, data_dict: Dict):
         data_dict[key] = rating
 
 
-def update_data1_with_key_if_set_in_data2(key: str, data1: Dict, data2: Dict):
-    if key in data2:
-        value = data2[key]
+def update_dict1_with_key_if_set_in_dict2(key: str, dict1: Dict, dict: Dict):
+    if key in dict:
+        value = dict[key]
         if value == "":
             value = None
-        data1[key] = value
+        dict1[key] = value
 
 
-def override_data1_with_data2_values_for_each_key_in_data2(data1: Dict, data2: Dict, keys: list[str]):
+def override_dict1_with_dict2_values_for_each_key_in_dict2(dict1: Dict, dict2: Dict, keys: list[str]):
     for key in keys:
-        update_data1_with_key_if_set_in_data2(key=key, data1=data1, data2=data2)
+        update_dict1_with_key_if_set_in_dict2(key=key, dict1=dict1, dict=dict2)
 
 
 def merge_two_dicts(dict1, dict2):
@@ -102,3 +102,28 @@ def replace_none_with_empty_string(**kwargs):
     if kwargs is None:
         return {}
     return {k: ('' if v is None else v) for k, v in kwargs.items()}
+
+
+def get_first_value_str_if_exists_in_str_dict_or_none(str_dict: Dict, key: str) -> str | None:
+    if key in str_dict:
+        value = str_dict[key]
+        if isinstance(value, list):
+            return value[0] if value else None
+    else:
+        return None
+
+
+def get_first_value_int_if_exists_in_str_dict_or_none(str_dict: Dict, key: str) -> int | None:
+    if key in str_dict:
+        value = str_dict[key]
+        if isinstance(value, list):
+            value_str = value[0] if value else ""
+        else:
+            value_str = str(value)
+
+        if value_str and value_str.strip():
+            try:
+                return int(value_str)
+            except ValueError:
+                return None
+    return None
