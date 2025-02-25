@@ -7,9 +7,9 @@ from mutagen._file import FileType
 from django.core.exceptions import ImproperlyConfigured
 
 from bodzify_api.utils import data_transformer
+from bodzify_api.utils.AudioFile import AudioFile
 
 from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey, RawMetadataValue
-from ...AudioFile import AudioFile
 from ..utils.AppMetadataKey import AppMetadataKey
 from ..exceptions import UnsupportedMetadataError
 

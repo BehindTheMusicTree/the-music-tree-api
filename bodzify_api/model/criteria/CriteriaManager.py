@@ -1,9 +1,11 @@
-from .Fields import Fields
-from .type.CriteriaType import CriteriaType
+from typing import TYPE_CHECKING, TypeVar
+
+from django.db.models import QuerySet
+
 from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
-from django.db.models import QuerySet
-, TYPE_CHECKING, TypeVar
+from .type.CriteriaType import CriteriaType
+from .Fields import Fields
 
 
 if TYPE_CHECKING:
