@@ -6,8 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.user.output.detailed import \
-    UserDetailedSerializer
+from bodzify_api.serializer.model.user.output.detailed import UserDetailedSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 

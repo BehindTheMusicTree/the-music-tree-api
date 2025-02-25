@@ -6,8 +6,7 @@ from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
 from bodzify_api.serializer.model.criteria.output.minimum import \
     CriteriaMinimumSerializer
-from bodzify_api.serializer.model.lib_track.output.simple.Fields import \
-    Fields as SimpleFields
+from bodzify_api.serializer.model.lib_track.output.simple.Fields import Fields as SimpleFields
 
 
 class Fields:
