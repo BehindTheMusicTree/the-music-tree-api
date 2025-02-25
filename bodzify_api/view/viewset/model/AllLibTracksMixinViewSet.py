@@ -1,4 +1,4 @@
-from typing import Optional
+
 from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import ValidationError as DrfValidationError, APIException
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -25,17 +25,17 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
     @extend_schema(responses=LibTrackMinimumSerializer(many=True))
     def list(self, args, **kwargs):
         try:
-            allLibTracksMixin: Optional[AllLibTracksMixin] = self.get_queryset().first()
-            if not allLibTracksMixin:
+            allLibTracksMixin: AppMetadataValue | NoneAllLibTracksMixin] = self.get_queryset().first()
+                if not allLibTracksMixin:
                 raise APIException('System initialization error: User data is corrupted')
-            page = self.paginate_queryset(allLibTracksMixin.lib_tracks_not_archived_sorted)
+                page= self.paginate_queryset(allLibTracksMixin.lib_tracks_not_archived_sorted)
 
-            if page is not None:
+                if page is not None:
                 serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)
                 data = list(serializer.data)
-            else:
+                else:
                 data = []
 
-            return self.get_paginated_response(data)
-        except (DrfValidationError, DjangoValidationError) as e:
-            return ErrorResponse.from_validation_error(e)
+                return self.get_paginated_response(data)
+                except (DrfValidationError, DjangoValidationError) as e:
+                return ErrorResponse.from_validation_error(e)

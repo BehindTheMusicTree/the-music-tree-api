@@ -1,4 +1,4 @@
-from typing import Optional
+
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, QuerySet

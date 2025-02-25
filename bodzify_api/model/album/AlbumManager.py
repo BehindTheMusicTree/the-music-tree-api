@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List
 
 from django.db.models import QuerySet
 
@@ -15,7 +15,7 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
     model: type['Album']
 
     def _get_instance_from_name_and_artists_list_after_having_eventually_created_instance(
-            self, user: 'User', name: str, album_artists: list) -> Optional['Album']:
+            self, user: 'User', name: str, album_artists: list) -> 'Album | None':
         album_queryset = self.filter(user=user, name=name)
         if len(album_artists) > 0:
             for album_artist in album_artists:
@@ -39,7 +39,7 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
         return album
 
     def get_album_from_name_and_album_artists_names_list_after_eventual_creations(
-            self, user: 'User', name: str, album_artists_names_list: list) -> Optional['Album']:
+            self, user: 'User', name: str, album_artists_names_list: list) -> 'Album | None':
         from bodzify_api.model.artist.Artist import Artist
         if album_artists_names_list and len(album_artists_names_list):
             album_artists = [Artist.objects.get_or_create(user=user, name=artist_name)[0]

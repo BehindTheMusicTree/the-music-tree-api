@@ -1,4 +1,3 @@
-from typing import Optional
 
 from django.core.exceptions import ImproperlyConfigured
 from django_filters import Filter
@@ -12,6 +11,4 @@ class AppFilter(Filter):
         self.field_name_user_friendly = field_name_user_friendly
 
         if self.field_name and not self.field_name_user_friendly:
-            raise ImproperlyConfigured(
-                'field_name_user_friendly must be provided when field_name is set'
-            )
+            raise ImproperlyConfigured('field_name_user_friendly must be provided when field_name is set')

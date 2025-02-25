@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, Any, Optional
+from typing import TypeVar, Generic, Any
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -16,8 +16,8 @@ class NonSelfReferencingField(PrivateUuidField[T], Generic[T]):
         'self_reference': _('The object cannot reference itself.')
     }
 
-    def to_internal_value(self, data: Any) -> Optional[T]:
-        object: Optional[UuidModel] = PrivateUuidField.to_internal_value(self, data)
+    def to_internal_value(self, data: Any) -> T | None:
+        object: UuidModel | None = PrivateUuidField.to_internal_value(self, data)
         if not object:
             return None
 

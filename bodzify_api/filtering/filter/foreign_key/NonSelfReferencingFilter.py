@@ -1,4 +1,4 @@
-from typing import Optional
+
 
 from django.utils.translation import gettext as _
 from django_filters import FilterSet
@@ -14,7 +14,7 @@ class NonSelfReferencingFilter(ForeignKeyFilter):
         super().__init__(**kwargs)
 
     def filter(self, queryset, value):
-        parent: Optional[FilterSet] = getattr(self, 'parent', None)
+        parent: FilterSet | None = getattr(self, 'parent', None)
 
         # First perform all standard ForeignKeyFilter validations
         filtered_queryset = super().filter(queryset, value)

@@ -1,43 +1,42 @@
+from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
+from bodzify_api.model.user.User import User
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
+from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
+from bodzify_api.model.track.file.TrackFile import TrackFile
+from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlaylistFields
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
+from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
+from bodzify_api.model.play.Fields import Fields as PlayFields
+from bodzify_api.model.play.Play import Play
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording \
+    import Fields as MusicbrainzRecordingFields
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
+from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
+from bodzify_api.model.criteria.children.tag.Tag import Tag
+from bodzify_api.model.criteria.children.genre.Genre import Genre
+from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.artist.Fields import Fields as ArtistFields
+from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.model.album.Fields import Fields as AlbumFields
+from bodzify_api.model.album.Album import Album
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
+from django.core.files import File
+from django.contrib.auth import get_user_model
+from django.db import transaction
+from django.utils import timezone
+from django_dynamic_fixture import global_settings
+from ddf import G, N
 import os
 import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, TypeVar, cast
+, TypeVar, cast
 
-from ddf import G, N
-from django_dynamic_fixture import global_settings
-from django.utils import timezone
-from django.db import transaction
-from django.contrib.auth import get_user_model
-from django.core.files import File
-
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
-from bodzify_api.model.album.Album import Album
-from bodzify_api.model.album.Fields import Fields as AlbumFields
-from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.artist.Fields import Fields as ArtistFields
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
-from bodzify_api.model.criteria.children.genre.Genre import Genre
-from bodzify_api.model.criteria.children.tag.Tag import Tag
-from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
-from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording \
-    import Fields as MusicbrainzRecordingFields
-from bodzify_api.model.play.Play import Play
-from bodzify_api.model.play.Fields import Fields as PlayFields
-from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlaylistFields
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
-from bodzify_api.model.track.file.TrackFile import TrackFile
-from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
-from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
-from bodzify_api.model.user.User import User
-from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
 
@@ -70,7 +69,7 @@ class ModelFixtureFactory:
     def __create_criteria(self,
                           name: str,
                           model_class: type[T],
-                          user: Optional[User] = None, **kwargs) -> T:
+                          user: User | None = None, **kwargs) -> T:
         now = timezone.make_aware(datetime.now())
         model_fields = {
             CriteriaFields.CREATED_ON: kwargs.get(CriteriaFields.CREATED_ON, now),
@@ -83,7 +82,7 @@ class ModelFixtureFactory:
         return model_class.objects.create(**model_fields)
 
     def _create_file(
-            self, user: User, lib_track: LibraryTrack, track_file_path_in_lib: Optional[Path],
+            self, user: User, lib_track: LibraryTrack, track_file_path_in_lib: Path | None,
             **kwargs) -> TrackFile:
         model_fields = {
             TrackFileFields.CREATED_ON: timezone.make_aware(datetime.now()),
@@ -115,7 +114,7 @@ class ModelFixtureFactory:
         self,
         title: str,
         filename: str | None = None,
-        user: Optional[User] = None,
+        user: User | None = None,
         use_manager_for_genre_playlist_adding: bool = False,
         **kwargs
     ) -> LibraryTrack:
@@ -152,7 +151,7 @@ class ModelFixtureFactory:
 
         return lib_track
 
-    def create_play(self, content: TrackablePlayCount, user: Optional[User] = None, **kwargs) -> Play:
+    def create_play(self, content: TrackablePlayCount, user: User | None = None, **kwargs) -> Play:
         from django.contrib.contenttypes.models import ContentType
         content_type = ContentType.objects.get_for_model(content)
 
@@ -166,7 +165,7 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return G(Play, **model_fields)
 
-    def create_artist(self, name: str, user: Optional[User] = None, **kwargs) -> Artist:
+    def create_artist(self, name: str, user: User | None = None, **kwargs) -> Artist:
         model_fields = {
             ArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
             ArtistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -176,7 +175,7 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return G(Artist, **model_fields)
 
-    def create_album(self, name: str, user: Optional[User] = None, **kwargs) -> Album:
+    def create_album(self, name: str, user: User | None = None, **kwargs) -> Album:
         model_fields = {
             AlbumFields.CREATED_ON: timezone.make_aware(datetime.now()),
             AlbumFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -194,7 +193,7 @@ class ModelFixtureFactory:
     def create_tag(self, name: str, **kwargs) -> Tag:
         return self.__create_criteria(name=name, model_class=Tag, **kwargs)
 
-    def create_manual_playlist(self, name: str, user: Optional[User] = None, **kwargs) -> ManualPlaylist:
+    def create_manual_playlist(self, name: str, user: User | None = None, **kwargs) -> ManualPlaylist:
         now = timezone.make_aware(datetime.now())
         model_fields = {
             # Base Playlist fields

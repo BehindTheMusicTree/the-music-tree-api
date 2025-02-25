@@ -1,4 +1,4 @@
-from typing import Any, Optional, TypeVar, Generic
+from typing import Any, TypeVar, Generic
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -40,7 +40,7 @@ class PrivateUuidField(ForeignKeyField, AppUuidField, Generic[T]):
         self.additional_filters = {'user': user}
         return super().get_queryset()
 
-    def to_internal_value(self, data: Any) -> Optional[UuidModel]:
+    def to_internal_value(self, data: Any) -> UuidModel | None:
         if data in [None, ''] and self.allow_null:
             return None
 

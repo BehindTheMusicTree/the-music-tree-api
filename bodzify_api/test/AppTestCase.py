@@ -1,7 +1,7 @@
 import inspect
 import os
 from pathlib import Path
-from typing import Optional
+
 
 from django.core.management import call_command
 from django.test import TestCase
@@ -25,7 +25,7 @@ class AppTestCase(TestCase):
         self.generic_sample_dir_abs_path = Path(os.path.dirname(os.path.abspath(__file__))) \
             / self.GENERIC_FILE_SAMPLE_PATH_RELATIVE_TO_TEST_DIR
 
-    def setUp(self, methods_names_to_implement: Optional[list[str]] = None):
+    def setUp(self, methods_names_to_implement: list[str] | None = None):
         call_command('loaddata', 'app')
         self.test_admin_user = User.objects.create_superuser(username='test_admin',
                                                              password='test_admin',

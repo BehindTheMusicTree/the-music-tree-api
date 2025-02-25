@@ -1,4 +1,4 @@
-from typing import Dict, Optional, TYPE_CHECKING, cast
+from typing import Dict, TYPE_CHECKING, cast
 import binascii
 import datetime
 import os
@@ -79,7 +79,7 @@ class TrackFile(PrivateStandardResource):
         return os.path.splitext(self.filename)[1]
 
     @property
-    def duration_str_in_hour_min_sec(self) -> Optional[str]:
+    def duration_str_in_hour_min_sec(self) -> str | None:
         return str(datetime.timedelta(seconds=self.duration_in_sec)) if self.duration_in_sec else None
 
     @property
@@ -91,14 +91,14 @@ class TrackFile(PrivateStandardResource):
             return self.file.name + " (" + str(self.size_in_bytes) + " bytes)"
         return ""
 
-    def _manage_fingerprint(self) -> Optional[FingerprintingResult]:
+    def _manage_fingerprint(self) -> FingerprintingResult | None:
         audio_meta_analysis_enabled_override_env_var = os.environ.get('AUDIO_META_ANALYSIS_ENABLED_OVERRIDE', None)
         if audio_meta_analysis_enabled_override_env_var:
             is_audio_meta_analysis_enabled_override = audio_meta_analysis_enabled_override_env_var.lower()
         else:
             is_audio_meta_analysis_enabled_override = 'false'
 
-        fingerprinting_result: Optional[FingerprintingResult] = None
+        fingerprinting_result: FingerprintingResult | None = None
 
         if is_audio_meta_analysis_enabled_override == 'true' or settings.AUDIO_META_ANALYSIS_ENABLED:
             lib_track: LibraryTrack = self.lib_track
@@ -110,7 +110,7 @@ class TrackFile(PrivateStandardResource):
 
                 if lib_track.track_file_fingerprint_must_be_unique:
                     existing_track_file = cast(
-                        'Optional[TrackFile]',
+                        'TrackFile | None',
                         self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first()
                     )
                     if existing_track_file:
@@ -131,8 +131,8 @@ class TrackFile(PrivateStandardResource):
 
         return fingerprinting_result
 
-    def _manage_musicbrainz_recording(self, fingerprinting_result_nullable: Optional[FingerprintingResult]
-                                      ) -> Optional[MusicbrainzRecordingLookupResult]:
+    def _manage_musicbrainz_recording(self, fingerprinting_result_nullable: FingerprintingResult | None
+                                      ) -> MusicbrainzRecordingLookupResult | None:
         musicbrainz_recording_lookup_result = None
 
         if self.fingerprint_missing_cause:

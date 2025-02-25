@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict
 
 from django.db import models
 
@@ -27,7 +27,7 @@ class CriteriaPlaylist(Playlist):
                                     blank=True,
                                     null=True,
                                     related_name=CriteriaFields.CRITERIA_PLAYLIST)
-    parent: Optional['CriteriaPlaylist'] = PrivateForeignKey(
+    parent: 'CriteriaPlaylist | None' = PrivateForeignKey(
         'self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)  # type: ignore
     root: 'CriteriaPlaylist' = PrivateForeignKey(
         'self', on_delete=models.DO_NOTHING, related_name=Fields.ROOT_DESCENDANTS)  # type: ignore

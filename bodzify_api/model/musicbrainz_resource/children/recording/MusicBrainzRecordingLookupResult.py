@@ -1,6 +1,6 @@
 
 from dataclasses import dataclass
-from typing import Optional
+
 
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause \
@@ -9,15 +9,15 @@ from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.Mus
 
 @dataclass
 class MusicbrainzRecordingLookupResult:
-    _recording: Optional[MusicbrainzRecording] = None
-    _missing_cause: Optional[MusicbrainzRecordingMissingCause] = None
+    _recording: MusicbrainzRecording | None = None
+    _missing_cause: MusicbrainzRecordingMissingCause | None = None
 
     class Meta:
         verbose_name = 'MusicBrainz Recording Lookup Result'
         verbose_name_plural = 'MusicBrainz Recording Lookup Results'
 
-    def __init__(self, recording: Optional[MusicbrainzRecording],
-                 missing_cause: Optional[MusicbrainzRecordingMissingCause]):
+    def __init__(self, recording: MusicbrainzRecording | None,
+                 missing_cause: MusicbrainzRecordingMissingCause | None):
         self._recording = recording
         self._missing_cause = missing_cause
 

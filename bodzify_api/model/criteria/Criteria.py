@@ -1,5 +1,5 @@
 
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict
 
 from django.db import models, IntegrityError
 from django.db.models import QuerySet
@@ -32,10 +32,10 @@ class Criteria(LibTrackMixin):
                                                               through_fields=(CriteriaLineageRelFields.DESCENDANT,
                                                                               CriteriaLineageRelFields.ASCENDANT),
                                                               symmetrical=False,)  # type: ignore
-    parent: Optional['Criteria'] = PrivateForeignKey('self',
-                                                     on_delete=models.SET_NULL,
-                                                     null=True,
-                                                     related_name=Fields.CHILDREN)  # type: ignore
+    parent: 'Criteria | None' = PrivateForeignKey('self',
+                                                  on_delete=models.SET_NULL,
+                                                  null=True,
+                                                  related_name=Fields.CHILDREN)  # type: ignore
     root: 'Criteria' = PrivateForeignKey('self',
                                          on_delete=models.DO_NOTHING,
                                          related_name=Fields.DESCENDANTS)  # type: ignore

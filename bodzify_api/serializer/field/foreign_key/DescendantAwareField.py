@@ -1,5 +1,5 @@
 
-from typing import TypeVar, Any, Optional, Protocol, runtime_checkable, Generic
+from typing import TypeVar, Any, Protocol, runtime_checkable, Generic
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -29,7 +29,7 @@ class DescendantAwareField(NonSelfReferencingField[T], Generic[T]):
         'descendant_reference': _('Cannot reference a descendant of the object.')
     }
 
-    def to_internal_value(self, data: Any) -> Optional[T]:
+    def to_internal_value(self, data: Any) -> T | None:
         value = NonSelfReferencingField.to_internal_value(self, data)
         if value is None:
             return None

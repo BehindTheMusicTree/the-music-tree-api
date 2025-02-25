@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from django.db import models
 from django.db.models import QuerySet
-from typing import Optional
+
 
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from .Fields import Fields
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class CriteriaPlaylistManager(StandardResourceManager):
 
-    def get_by_name(self, user, name: str) -> Optional['CriteriaPlaylist']:
+    def get_by_name(self, user, name: str) -> 'CriteriaPlaylist | None':
         return self.filter(user=user).filter(
             models.Q(criteria__name=name) |
             models.Q(criteria__isnull=True,
@@ -41,8 +41,8 @@ class CriteriaPlaylistManager(StandardResourceManager):
 
     def update_ascendants_lib_tracks(self,
                                      instance: 'CriteriaPlaylist',
-                                     old_parent: Optional['Criteria'],
-                                     common_criteria: Optional['Criteria']):
+                                     old_parent: 'Criteria | None',
+                                     common_criteria: 'Criteria | None'):
         if instance.parent:
             self.add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(
                 instance=instance.parent,
@@ -58,7 +58,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
     def add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(self,
                                                                        instance: 'CriteriaPlaylist',
                                                                        lib_tracks: QuerySet['LibraryTrack'],
-                                                                       criteria_limit: Optional['Criteria'] = None):
+                                                                       criteria_limit: 'Criteria | None' = None):
         if instance.criteria != criteria_limit:
             from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
             for lib_track in lib_tracks:
@@ -72,7 +72,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
     def remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
             self, instance: 'CriteriaPlaylist',
             lib_tracks: QuerySet['LibraryTrack'],
-            criteria_limit: Optional['Criteria'] = None):
+            criteria_limit: 'Criteria | None' = None):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
         if instance.criteria != criteria_limit:

@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict
 import acoustid
 from acoustid import WebServiceError
 
@@ -20,7 +20,7 @@ from . import utils
 
 
 def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerprint: bytes,
-                                                                       duration_in_sec: float) -> Optional[Dict]:
+                                                                       duration_in_sec: float) -> Dict | None:
     try:
         lookup = acoustid.lookup(apikey=settings.ACOUSTID_API_KEY,
                                  fingerprint=fingerprint,

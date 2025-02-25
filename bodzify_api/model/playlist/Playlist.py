@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from django.db import models
 
@@ -22,8 +22,8 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
 
     if TYPE_CHECKING:
         lib_track_playlist_rels: models.QuerySet['LibTrackPlaylistRel']
-        manual_playlist: Optional['ManualPlaylist']
-        criteria_playlist: Optional['CriteriaPlaylist']
+        manual_playlist: 'ManualPlaylist | None'
+        criteria_playlist: 'CriteriaPlaylist | None'
 
     class Meta:
         verbose_name = 'Playlist'

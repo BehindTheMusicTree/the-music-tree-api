@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Optional, Tuple, Type, TypeVar
+from typing import Dict, Tuple, Type, TypeVar
 
 from django.core.exceptions import ImproperlyConfigured
 

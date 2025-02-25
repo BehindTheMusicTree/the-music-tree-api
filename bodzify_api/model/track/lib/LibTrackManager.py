@@ -1,7 +1,7 @@
 
 import os
 import tempfile
-from typing import Any, Dict, List, TYPE_CHECKING, Optional
+from typing import Any, Dict, List, TYPE_CHECKING
 import requests
 
 from django.db import transaction
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 class LibTrackManager(StandardResourceManager['LibraryTrack']):
     model: type['LibraryTrack']
 
-    def _remove_from_genre_playlists(self, instance: 'LibraryTrack', old_genre: Optional['Genre'], genre_limit=None):
+    def _remove_from_genre_playlists(self, instance: 'LibraryTrack', old_genre: 'Genre | None', genre_limit=None):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
@@ -319,7 +319,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 user=user, playlist=playlist_uuid, position__gt=old_position)
             lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
-    def update_genre_playlists(self, instance: 'LibraryTrack', old_genre: Optional['Genre']):
+    def update_genre_playlists(self, instance: 'LibraryTrack', old_genre: 'Genre | None'):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
         common_genre = Genre.objects.get_common_ascendant(
             instance.genre, old_genre) if old_genre and instance.genre else None

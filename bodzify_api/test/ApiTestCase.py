@@ -1,4 +1,4 @@
-from typing import Union, Type, TypeVar, Generic, Optional
+from typing import Union, Type, TypeVar, Generic
 from uuid import UUID
 
 from django.db import models
@@ -178,7 +178,7 @@ class ApiTestCase(AppTestCase, Generic[T]):
                 handle_response=self._set_results
             )
 
-    def setUp(self, methods_names_to_implement: Optional[list[str]] = None) -> None:
+    def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
         super().setUp(methods_names_to_implement=methods_names_to_implement)
 
         self.api_client = AppApiClient(test_case=self)

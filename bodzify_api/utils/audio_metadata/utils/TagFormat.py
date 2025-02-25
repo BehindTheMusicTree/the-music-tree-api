@@ -3,14 +3,14 @@ from enum import Enum
 from typing import Dict, List
 
 
-class TagFormat(str, Enum):
+class MetadataFormat(str, Enum):
     ID3V2 = 'id3v2'
     ID3V1 = 'id3v1'
     VORBIS = 'vorbis'
     RIFF = 'riff'
 
     @classmethod
-    def get_priorities(cls) -> Dict[str, List['TagFormat']]:
+    def get_priorities(cls) -> Dict[str, List['MetadataFormat']]:
         """Get tag format priorities for different file formats.
         First tag format in each list has highest priority.
 

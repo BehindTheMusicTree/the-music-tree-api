@@ -1,4 +1,4 @@
-from typing import Optional
+
 import uuid
 import re
 
@@ -18,7 +18,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
         super().__init__(**kwargs)
 
     def filter(self, queryset, value):
-        parent: Optional[FilterSet] = getattr(self, 'parent', None)
+        parent: FilterSet | None = getattr(self, 'parent', None)
         if not parent:
             raise ImproperlyConfigured('ForeignKeyFilter must be used within a FilterSet')
 

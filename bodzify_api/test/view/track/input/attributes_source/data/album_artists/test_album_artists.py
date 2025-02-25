@@ -1,4 +1,4 @@
-from typing import Optional
+
 
 from rest_framework import status
 
@@ -21,7 +21,7 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
-        artist: Optional[Artist] = self.saved_object.album.album_artists.first()
+        artist: Artist | None = self.saved_object.album.album_artists.first()
         assert artist
         assert artist.name == value
 

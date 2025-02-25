@@ -1,6 +1,6 @@
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 
@@ -175,7 +175,7 @@ class DrfValidationErrorResponseDetail:
     """
     message: str
     code: str = "error"
-    details: Optional[Dict[str, Any]] = None
+    details: Dict[str, Any] | None = None
 
     def __str__(self) -> str:
         return self.message

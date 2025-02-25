@@ -1,5 +1,5 @@
 import io
-from typing import Optional
+
 
 from mutagen._file import FileType
 from mutagen.wave import WAVE

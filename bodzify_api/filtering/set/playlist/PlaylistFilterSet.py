@@ -1,6 +1,6 @@
 from django.db.models.query import QuerySet
 
-from typing import Optional
+
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
 from bodzify_api.filtering.filter.char.OptionalEnumCharFilter import OptionalEnumCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet \

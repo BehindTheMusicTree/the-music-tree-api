@@ -1,19 +1,15 @@
 
-from typing import Optional, Tuple
-
-from mutagen._file import FileType
-from mutagen.flac import FLAC, VCFLACDict
-
-from django.core.exceptions import ImproperlyConfigured
-
-from bodzify_api.utils import data_transformer
-
-from ....AudioFile import AudioFile
-from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
-from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
-from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
+from ..MetadataManager import AppMetadataKey
+from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
+from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
+from ...utils.rating_profiles import RatingWriteProfile
+from ....AudioFile import AudioFile
+from bodzify_api.utils import data_transformer
+from django.core.exceptions import ImproperlyConfigured
+from mutagen.flac import FLAC, VCFLACDict
+from mutagen._file import FileType
+, Tuple
 
 
 class VorbisManager(RatingSupportingMetadataManager):
@@ -128,7 +124,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         return None, False
 
     def _get_undirectly_mapped_metadata_value_other_than_rating(
-            self, app_metadata_key: AppMetadataKey) -> Optional[AppMetadataValue]:
+            self, app_metadata_key: AppMetadataKey) -> AppMetadataValue | None:
         if app_metadata_key == AppMetadataKey.GENRE_NAME:
             return self._get_genre_name()
         elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:

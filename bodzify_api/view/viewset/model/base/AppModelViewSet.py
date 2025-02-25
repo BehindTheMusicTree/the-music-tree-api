@@ -1,4 +1,4 @@
-from typing import Dict, Generic, Sequence, Type, Optional, TypeVar, Any, List, Union, cast
+from typing import Dict, Generic, Sequence, Type, TypeVar, Any, List, Union, cast
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -32,18 +32,18 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     permission_classes = [IsAuthenticated]
     model_class: Type[T]
     filterset_class: Type[AppFilterSet] = AppFilterSet
-    simple_serializer_class: Optional[Type[ModelSerializer]] = None
-    detailed_serializer_class: Optional[Type[ModelSerializer]] = None
-    create_serializer_class: Optional[Type[Serializer]] = None
-    update_serializer_class: Optional[Type[Serializer]] = None
+    simple_serializer_class: AppMetadataValue | NoneType[ModelSerializer]] = None
+    detailed_serializer_class: AppMetadataValue | NoneType[ModelSerializer]] = None
+    create_serializer_class: AppMetadataValue | NoneType[Serializer]] = None
+    update_serializer_class: AppMetadataValue | NoneType[Serializer]] = None
 
     def __init__(self,
                  model_class: Type[T],
-                 filterset_class: Type[AppFilterSet] = AppFilterSet,
-                 simple_serializer_class: Optional[Type[ModelSerializer]] = None,
-                 detailed_serializer_class: Optional[Type[ModelSerializer]] = None,
-                 update_serializer_class: Optional[Type[Serializer]] = None,
-                 create_serializer_class: Optional[Type[Serializer]] = None,
+                 filterset_class: Type[AppFilterSet]=AppFilterSet,
+                 simple_serializer_class: AppMetadataValue | NoneType[ModelSerializer]] = None,
+                 detailed_serializer_class: AppMetadataValue | NoneType[ModelSerializer]] = None,
+                 update_serializer_class: AppMetadataValue | NoneType[Serializer]] = None,
+                 create_serializer_class: AppMetadataValue | NoneType[Serializer]] = None,
                  **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
@@ -138,7 +138,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         self.model_class.objects.delete_instance(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def paginate_queryset(self, queryset) -> Optional[Union[List[T], QuerySet[T]]]:
+    def paginate_queryset(self, queryset) -> AppMetadataValue | NoneUnion[List[T], QuerySet[T]]]:
         if self.paginator is None:
             return None
         if isinstance(queryset, Sequence) and not isinstance(queryset, QuerySet):

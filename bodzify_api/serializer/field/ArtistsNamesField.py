@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from rest_framework import serializers
 from rest_framework.fields import ListField
@@ -17,7 +17,7 @@ class ArtistsNamesField(AppField, ListField):
         ListField.__init__(self, child=serializers.CharField(max_length=max_length), **kwargs)
         self.max_length = max_length  # Keep this for our own validation
 
-    def to_internal_value(self, data: Any) -> Optional[list[str]]:
+    def to_internal_value(self, data: Any) -> list[str] | None:
         if not data:
             return None
 

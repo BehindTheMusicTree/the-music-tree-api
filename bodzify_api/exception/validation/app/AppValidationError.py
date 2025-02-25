@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 from django.core.exceptions import ImproperlyConfigured, ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DrfValidationError
@@ -54,7 +54,7 @@ class AppValidationError(DrfValidationError):
         super().__init__(self.errors)
 
     @classmethod
-    def detect_and_convert_from_drf_error(cls, exc: DrfValidationError) -> Optional['AppValidationError']:
+    def detect_and_convert_from_drf_error(cls, exc: DrfValidationError) -> 'AppValidationError | None':
         """
         Detect if a DRF ValidationError was originally an AppValidationError and convert it back.
 
@@ -115,7 +115,7 @@ class AppValidationError(DrfValidationError):
         if not isinstance(detail, Dict):
             raise ImproperlyConfigured('Detail must be a dictionary')
 
-        def extract_error_details(error_dict: Dict[str, Any], parent_field: str = '') -> Optional[tuple]:
+        def extract_error_details(error_dict: Dict[str, Any], parent_field: str = '') -> tuple | None:
             """
             Recursively extract error details from nested dictionaries.
             Returns (field, message, code) tuple if found, None otherwise.

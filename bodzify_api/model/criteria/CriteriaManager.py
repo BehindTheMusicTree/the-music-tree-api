@@ -1,11 +1,10 @@
-from typing import Optional, TYPE_CHECKING, TypeVar
-
-from django.db.models import QuerySet
-
-from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
-from .type.CriteriaType import CriteriaType
 from .Fields import Fields
+from .type.CriteriaType import CriteriaType
+from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
+from django.db.models import QuerySet
+, TYPE_CHECKING, TypeVar
+
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
@@ -60,7 +59,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         return updated_instance
 
     def get_common_ascendant(
-            self, criteria_a: Optional['Criteria'], criteria_b: Optional['Criteria']) -> Optional['Criteria']:
+            self, criteria_a: 'Criteria | None', criteria_b: 'Criteria | None') -> 'Criteria | None':
         if not criteria_a or not criteria_b:
             return None
 

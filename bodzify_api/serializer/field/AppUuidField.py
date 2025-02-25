@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from rest_framework import serializers
@@ -18,7 +18,7 @@ class AppUuidField(AppField, serializers.UUIDField):
         self.error_messages = {**self.default_error_messages}
         super().__init__(**kwargs)
 
-    def to_internal_value(self, data: Any) -> Optional[UUID]:
+    def to_internal_value(self, data: Any) -> UUID | None:
         """
         Validate that the input is a valid UUID.
         Unlike UUIDField which directly raises ValidationError, we use fail()

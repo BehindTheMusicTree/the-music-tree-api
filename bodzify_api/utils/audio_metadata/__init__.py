@@ -70,42 +70,37 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
-from typing import Optional, Dict
-
-from mutagen._file import FileType
-
-from django.core.exceptions import ImproperlyConfigured
-
-from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
-from bodzify_api.utils.audio_metadata.utils.types import AppMetadataDict, RawMetadataDict, AppMetadataValue
-
-
-from .exceptions import FileByteMismatchError
-from .utils.AppMetadataKey import AppMetadataKey
-from ..AudioFile import AudioFile
-from .utils.TagFormat import TagFormat
-from .manager.MetadataManager import MetadataManager
-from .manager.rating_supporting.RiffManager import RiffManager
-from .manager.id3v1.Id3v1Manager import Id3v1Manager
-from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
 from .manager.rating_supporting.VorbisManager import VorbisManager
+from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
+from .manager.id3v1.Id3v1Manager import Id3v1Manager
+from .manager.rating_supporting.RiffManager import RiffManager
+from .manager.MetadataManager import MetadataManager
+from .utils.TagFormat import MetadataFormat
+from ..AudioFile import AudioFile
+from .utils.AppMetadataKey import AppMetadataKey
+from .exceptions import FileByteMismatchError
+from bodzify_api.utils.audio_metadata.utils.types import AppMetadataDict, RawMetadataDict, AppMetadataValue
+from bodzify_api.utils.audio_metadata.manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
+from django.core.exceptions import ImproperlyConfigured
+from mutagen._file import FileType
+, Dict
 
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 TAG_FORMAT_MANAGER_CLASS_MAP = {
-    TagFormat.ID3V1: Id3v1Manager,
-    TagFormat.ID3V2: Id3v2Manager,
-    TagFormat.VORBIS: VorbisManager,
-    TagFormat.RIFF: RiffManager
+    MetadataFormat.ID3V1: Id3v1Manager,
+    MetadataFormat.ID3V2: Id3v2Manager,
+    MetadataFormat.VORBIS: VorbisManager,
+    MetadataFormat.RIFF: RiffManager
 }
 
 
 def _get_metadata_manager(
-        file, tag_format: Optional[TagFormat] = None, normalized_rating_max_value: int | None = None) -> MetadataManager:
+        file, tag_format: MetadataFormat | None = None, normalized_rating_max_value: int | None = None) -> MetadataManager:
     audio_file = AudioFile(file)
 
-    audio_file_prioritized_tag_formats = TagFormat.get_priorities().get(audio_file.file_extension)
+    audio_file_prioritized_tag_formats = MetadataFormat.get_priorities().get(audio_file.file_extension)
     if not audio_file_prioritized_tag_formats:
         raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
@@ -124,13 +119,13 @@ def _get_metadata_manager(
 
 
 def _get_metadata_managers(
-    file, tag_formats: Optional[list[TagFormat]] = None, normalized_rating_max_value: int | None = None
-) -> Dict[TagFormat, MetadataManager]:
+    file, tag_formats: list[MetadataFormat] | None = None, normalized_rating_max_value: int | None = None
+) -> Dict[MetadataFormat, MetadataManager]:
     audio_file = AudioFile(file)
     managers = {}
 
     if not tag_formats:
-        tag_formats = TagFormat.get_priorities().get(audio_file.file_extension)
+        tag_formats = MetadataFormat.get_priorities().get(audio_file.file_extension)
         if not tag_formats:
             raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
@@ -140,7 +135,7 @@ def _get_metadata_managers(
     return managers
 
 
-def extract_raw_metadata_dict(file, tag_format: Optional[TagFormat] = None) -> FileType:
+def extract_raw_metadata_dict(file, tag_format: MetadataFormat | None = None) -> FileType:
     return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
 
 
@@ -160,7 +155,7 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None
     for tag_format, manager in managers.items():
         metadata[tag_format] = manager.get_app_metadata_dict()
 
-    priorities = TagFormat.get_priorities().get(audio_file.file_extension, [])
+    priorities = MetadataFormat.get_priorities().get(audio_file.file_extension, [])
     if not priorities:
         # Never reached because already checked in _get_metadata_managers
         raise ImproperlyConfigured(f"No priority order defined for {audio_file.file_extension}")
@@ -188,7 +183,7 @@ def update_metadata(file, app_metadata_dict: AppMetadataDict, normalized_rating_
     metadata_manager.update_bulk(app_metadata_dict=app_metadata_dict)
 
 
-def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> bool:
+def delete_metadata(file, tag_format: MetadataFormat | None = None) -> bool:
     return _get_metadata_manager(file, tag_format=tag_format).delete_metadata()
 
 

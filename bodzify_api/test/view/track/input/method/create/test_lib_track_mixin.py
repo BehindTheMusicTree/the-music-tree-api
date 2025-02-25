@@ -1,10 +1,8 @@
-from typing import Optional, cast
-
-from rest_framework import status
-
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from rest_framework import status
+, cast
 
 
 class TestCase(LibTrackTestCase):
@@ -15,6 +13,6 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.test_user1.all_lib_tracks_mixin.lib_tracks.count() == 1
-        lib_track = cast(Optional[LibraryTrack], self.test_user1.all_lib_tracks_mixin.lib_tracks_not_archived.first())
+        lib_track = cast(LibraryTrack | None, self.test_user1.all_lib_tracks_mixin.lib_tracks_not_archived.first())
         assert lib_track
         assert lib_track.title == title

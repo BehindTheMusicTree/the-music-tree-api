@@ -1,4 +1,4 @@
-from typing import Union, Type, Optional
+from typing import Union, Type
 from uuid import UUID
 
 from django.contrib.auth.models import User, AnonymousUser
@@ -24,7 +24,7 @@ class TrackablePlayCountUuidField(PrivateUuidField):
 
     def _get_object_by_uuid(
             self, uuid_value: UUID, user: Union[User, AnonymousUser],
-            model_class: Type[Model]) -> Optional[Model]:
+            model_class: Type[Model]) -> Model | None:
         """Helper method to get an object by UUID and user."""
         if isinstance(user, AnonymousUser):
             return None

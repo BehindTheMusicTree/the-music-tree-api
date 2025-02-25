@@ -1,19 +1,19 @@
 
 from dataclasses import dataclass
-from typing import Optional
+
 
 from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 
 
 @dataclass
 class FingerprintingResult:
-    _fingerprint: Optional[bytes] = None
+    _fingerprint: bytes | None = None
     _duration_in_sec: int | None = None
-    _error: Optional[FingerprintMissingCause] = None
+    _error: FingerprintMissingCause | None = None
 
-    def __init__(self, fingerprint: Optional[bytes],
+    def __init__(self, fingerprint: bytes | None,
                  duration_in_sec: int | None,
-                 error: Optional[FingerprintMissingCause]):
+                 error: FingerprintMissingCause | None):
         self._fingerprint = fingerprint
         self._duration_in_sec = duration_in_sec
         self._error = error

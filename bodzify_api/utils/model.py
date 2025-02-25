@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any
+, List, Dict, Any
 
 
 @dataclass
@@ -7,7 +7,7 @@ class SaveContext:
     """Context for save operations"""
     kwargs: Dict[str, Any]
     modified_fields: List[str]
-    update_fields: Optional[List[str]]
+    update_fields: List[str] | None
 
     @staticmethod
     def create(**kwargs) -> 'SaveContext':
