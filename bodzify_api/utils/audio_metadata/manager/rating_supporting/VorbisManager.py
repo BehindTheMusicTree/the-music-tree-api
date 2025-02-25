@@ -1,5 +1,5 @@
 
-from typing import Optional, Tuple, Type, TypeVar
+from typing import Optional, Tuple
 
 from mutagen._file import FileType
 from mutagen.flac import FLAC, VCFLACDict
