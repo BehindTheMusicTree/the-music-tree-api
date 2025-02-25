@@ -183,8 +183,9 @@ def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> AppMetadata
     return ""  # Return empty string as fallback
 
 
-def update_metadata(file, app_metadata_dict: AppMetadataDict):
-    _get_metadata_manager(file,).update_bulk(app_metadata_dict=app_metadata_dict)
+def update_metadata(file, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: int | None = None) -> None:
+    metadata_manager = _get_metadata_manager(file=file, normalized_rating_max_value=normalized_rating_max_value)
+    metadata_manager.update_bulk(app_metadata_dict=app_metadata_dict)
 
 
 def delete_metadata(file, tag_format: Optional[TagFormat] = None) -> bool:

@@ -1,6 +1,6 @@
 
 
-class AudioFingerprinterError(Exception):
+class AudioFingerprinterException(Exception):
     def __init__(self, message=""):
         super().__init__(message)
         self.message = message
@@ -9,58 +9,58 @@ class AudioFingerprinterError(Exception):
         return self.message
 
 
-class BadRequestError(AudioFingerprinterError):
+class BadRequestException(AudioFingerprinterException):
     def __init__(self, message=""):
         super().__init__(message)
 
 
-class WrongFileExtension(BadRequestError):
+class WrongFileExtension(BadRequestException):
     def __init__(self, message=""):
         super().__init__(message)
 
 
-class WrongFileType(BadRequestError):
+class WrongFileType(BadRequestException):
     def __init__(self, message=""):
         super().__init__(message)
 
 
-class FileNotInPool(BadRequestError):
+class FileNotInPool(BadRequestException):
     def __init__(self, message=""):
         super().__init__(message)
 
 
-class UnknownBadRequestError(BadRequestError):
+class UnknownBadRequestException(BadRequestException):
     def __init__(self, message=""):
         super().__init__("Unprocessable bad request error: " + message)
 
 
-class InternalServerError(AudioFingerprinterError):
+class InternalServerException(AudioFingerprinterException):
     def __init__(self, message=""):
         super().__init__(message)
 
 
-class TimeoutError(AudioFingerprinterError):
+class TimeoutException(AudioFingerprinterException):
     pass
 
 
-class UnprocessableEntityError(AudioFingerprinterError):
+class UnprocessableEntityException(AudioFingerprinterException):
     def __init__(self, message=""):
         super().__init__(message)
 
 
-class FpcalcStatusError(UnprocessableEntityError):
+class FpcalcStatusException(UnprocessableEntityException):
     def __init__(self, message=""):
         super().__init__(message)
 
 
-class UnknownUnprocessableEntityError(AudioFingerprinterError):
+class UnknownUnprocessableEntityException(AudioFingerprinterException):
     def __init__(self, message=""):
         super().__init__("Unknown unprocessable entity error: " + message)
 
 
-class ServiceNotFoundError(AudioFingerprinterError):
+class ServiceNotFoundException(AudioFingerprinterException):
     pass
 
 
-class ConnectionError(AudioFingerprinterError):
+class ConnectionException(AudioFingerprinterException):
     pass

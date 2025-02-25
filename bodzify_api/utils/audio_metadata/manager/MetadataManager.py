@@ -81,8 +81,9 @@ class MetadataManager:
         return self._get_first_value_in_raw_metadata_dict_or_none(
             raw_metadata_key=raw_metadata_key, value_type=value_type)
 
-    def _update_prepared_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
-        self.file_raw_metadata[raw_metadata_key] = value
+    def _update_prepared_value_in_raw_metadata(
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+        self.file_raw_metadata[raw_metadata_key] = app_metadata_value
 
     def get_app_metadata_dict(self) -> AppMetadataDict:
         app_metadata_dict = {}
@@ -110,7 +111,8 @@ class MetadataManager:
             else:
                 raw_metadata_key = self.metadata_keys_direct_map_write[app_metadata_key]
                 if raw_metadata_key:
-                    self._update_prepared_value_in_raw_metadata(raw_metadata_key=raw_metadata_key, value=value)
+                    self._update_prepared_value_in_raw_metadata(
+                        raw_metadata_key=raw_metadata_key, app_metadata_value=value)
                 else:
                     self._update_undirectly_mapped_metadata(
                         app_metadata_value=value, app_metadata_key=app_metadata_key)

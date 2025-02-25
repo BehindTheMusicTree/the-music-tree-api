@@ -6,7 +6,7 @@ import re
 import requests
 
 from bodzify_api import settings
-from . import error
+from . import exception
 
 
 class PostFields:
@@ -59,31 +59,31 @@ def post_fingerprint_audio(filename: str, title: str, user_id: str) -> tuple[byt
             error_code = _get_service_error_code_from_message(
                 response_json[ResponseFields.Error.MESSAGE])
             if error_code == 2:
-                raise error.WrongFileExtension(
+                raise exception.WrongFileExtension(
                     response_json[ResponseFields.Error.MESSAGE])
             elif error_code == 3:
-                raise error.WrongFileType(response_json[ResponseFields.Error.MESSAGE])
+                raise exception.WrongFileType(response_json[ResponseFields.Error.MESSAGE])
             elif error_code == 4:
-                raise error.FileNotInPool(response_json[ResponseFields.Error.MESSAGE])
+                raise exception.FileNotInPool(response_json[ResponseFields.Error.MESSAGE])
             else:
-                raise error.BadRequestError(response_json)
+                raise exception.BadRequestException(response_json)
         elif response.status_code == 500:
-            raise error.InternalServerError(response_json)
-        elif response.status_code == 504:
-            raise TimeoutError()
-        elif response.status_code == 422:
-            error_code = _get_service_error_code_from_message(
-                response_json[ResponseFields.Error.MESSAGE])
-            if error_code == 1:
-                raise error.FpcalcStatusError(response_json)
-            else:
-                raise error.UnprocessableEntityError(response_json)
-        elif response.status_code == 404:
-            raise error.ServiceNotFoundError()
-        else:
-            raise error.AudioFingerprinterError(response_json)
-    except requests.exceptions.ConnectionError as e:
-        if str(e).find('Errno 61') != -1:
-            raise error.ServiceNotFoundError()
-        else:
-            raise ConnectionError(str(e))
+            raise exception.InternalServerException](response_json)
+                elif response.status_code == 504:
+                raise TimeoutError()
+                elif response.status_code == 422:
+                error_code = _get_service_error_code_from_message(
+             response_json[ResponseFields.Error.MESSAGE])
+              if error_code == 1:
+              raise exception.FpcalcStatusException(response_json)
+              else:
+              raise exception.UnprocessableEntityException(response_json)
+              elif response.status_code == 404:
+              raise exception.ServiceNotFoundException()
+              else:
+              raise exception.AudioFingerprinterException(response_json)
+              except requests.exceptions.ConnectionError as e:
+              if str(e).find('Errno 61') != -1:
+              raise exception.ServiceNotFoundException()
+              else:
+              raise ConnectionError(str(e))

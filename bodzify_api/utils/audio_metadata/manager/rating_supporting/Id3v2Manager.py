@@ -266,7 +266,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         file_rating_value = None
         file_rating_email = None
         for key in self.file_raw_metadata:
-            if self.Id3TextFrame.RATING in key:
+            if self.Id3TextFrame.RATING.value in key:
                 file_rating_tag = self.file_raw_metadata[key]
                 file_rating_email = file_rating_tag.email
                 file_rating_value = file_rating_tag.rating
