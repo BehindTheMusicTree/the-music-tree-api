@@ -1,6 +1,5 @@
-from enum import Enum
 import io
-from typing import Dict, Optional
+from typing import Optional
 
 from mutagen.flac import FLAC, VCFLACDict
 from mutagen.id3._util import ID3NoHeaderError
@@ -8,12 +7,11 @@ from mutagen.id3 import ID3
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.utils.audio_metadata.utils.rating_profiles import RatingWritingProfile
-
 
 from ...utils.AudioFile import AudioFile
-from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
+from ...utils.rating_profiles import RatingWritingProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
+from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -97,8 +95,6 @@ class VorbisManager(RatingSupportingMetadataManager):
     def extract_raw_metadata_dict(self) -> RawMetadataDict:
         try:
             raw_metadata = FLAC(self.audio_file.get_file_path_or_object()).tags
-            print('raw_metadata:', raw_metadata)
-            print('class raw_metadata:', raw_metadata.__class__)
             if isinstance(raw_metadata, dict):
                 return raw_metadata
             elif isinstance(raw_metadata, VCFLACDict):

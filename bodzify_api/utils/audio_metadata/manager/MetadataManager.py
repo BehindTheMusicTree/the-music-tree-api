@@ -5,10 +5,11 @@ import os
 from abc import abstractmethod
 from contextlib import redirect_stderr, redirect_stdout
 from typing import Dict, Optional, Union
+import mutagen
+from mutagen._file import FileType
 from pydub.utils import mediainfo
 from tinytag import TinyTag, TinyTagException
 
-from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey
@@ -22,7 +23,7 @@ METADATA_ARTISTS_SEPARATION_CHAR = ","
 class MetadataManager:
 
     audio_file: AudioFile
-    file_raw_metadata: RawMetadataDict
+    file_raw_metadata: FileType
 
     def __init__(self, audio_file: AudioFile, metadata_keys_direct_map: Dict[AppMetadataKey, Optional[RawMetadataKey]]):
         self.audio_file = audio_file
@@ -34,7 +35,7 @@ class MetadataManager:
         raise NotImplementedError()
 
     @abstractmethod
-    def extract_raw_metadata_dict(self) -> RawMetadataDict:
+    def extract_raw_metadata_dict(self) -> FileType:
         raise NotImplementedError()
 
     @abstractmethod

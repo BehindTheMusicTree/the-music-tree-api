@@ -37,7 +37,7 @@ class RatingSupportingMetadataManager(MetadataManager):
             self, key: AppMetadataKey) -> Optional[AppMetadataValue]:
         raise NotImplementedError()
 
-    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> Optional[AppMetadataValue]:
+    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> None | AppMetadataValue:
         if app_metadata_key == AppMetadataKey.RATING:
             return self._get_eventually_normalized_rating_from_file()
         else:

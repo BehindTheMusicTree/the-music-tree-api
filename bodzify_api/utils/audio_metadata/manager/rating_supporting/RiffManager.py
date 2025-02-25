@@ -3,6 +3,10 @@ from typing import Dict, Optional
 
 from mutagen.wave import WAVE
 
+from bodzify_api.utils.audio_metadata.utils.AudioFile import AudioFile
+from bodzify_api.utils.audio_metadata.utils.rating_profiles import RatingWritingProfile
+from bodzify_api.utils.audio_metadata.utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
+
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from ...exceptions import UnsupportedMetadataError
 from ..MetadataManager import AppMetadataKey
@@ -34,7 +38,7 @@ class RiffManager(RatingSupportingMetadataManager):
     like ID3v2 tags.
     """
 
-    class RiffTagKeys:
+    class RiffTagKey(RawMetadataKey):
         # Standard
         TITLE = 'INAM'
         ARTIST_NAME = 'IART'
@@ -54,62 +58,54 @@ class RiffManager(RatingSupportingMetadataManager):
         COPYRIGHT = 'ICOP'
         TECHNICIAN = 'ITCH'
 
-    def extract_raw_metadata_dict(self) -> Dict:
+    def __init__(self, audio_file: AudioFile, normalized_rating_max_value: None | int = None):
+        metadata_keys_direct_map = {
+            AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
+            AppMetadataKey.ARTISTS_NAMES_STR: self.RiffTagKey.ARTIST_NAME,
+            AppMetadataKey.ALBUM_NAME: self.RiffTagKey.ALBUM_NAME,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: self.RiffTagKey.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.GENRE_NAME: None,
+            AppMetadataKey.RATING: None,
+            AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,
+            # AppMetadataKey.TRACK_NUMBER: None,
+        }
+        super().__init__(audio_file, metadata_keys_direct_map,
+                         rating_profile=RatingWritingProfile.BASE_255,
+                         normalized_rating_max_value=normalized_rating_max_value)
+
+    def extract_raw_metadata_dict(self) -> RawMetadataDict:
         self.audio_file.seek(0)
         wave_file = WAVE(io.BytesIO(self.audio_file.read()))
-        return {
-            'info': wave_file.info.__dict__,
-            'tags': wave_file.tags if wave_file.tags else {},
-        }
+        return wave_file.tags if wave_file.tags else {}
 
-    def get_eventually_normalized_rating_from_file(
-            self, normalized_rating_max_value: Optional[int] = None) -> Optional[int]:
-        raise UnsupportedMetadataError("RIFF format does not support ratings")
-
-    def get_title(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.TITLE)
-
-    def get_artists_names(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.ARTIST_NAME)
-
-    def get_album_name(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.ALBUM_NAME)
-
-    def get_album_artists_name_str(self) -> Optional[str]:
-        album_artists_name_str_raw = self._get_first_value_str_if_exists_in_raw_metadata_or_none(
-            key=self.RiffTagKeys.ALBUM_ARTISTS_NAMES)
-        if album_artists_name_str_raw:
-            return album_artists_name_str_raw.strip()
-        return None
+    def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> None | AppMetadataValue:
+        if key == AppMetadataKey.GENRE_NAME:
+            return self.get_genre_name()
+        elif key == AppMetadataKey.TRACK_NUMBER:
+            return self.get_track_number()
+        else:
+            raise UnsupportedMetadataError(f'Metadata key not handled: {key}')
 
     def get_genre_name(self) -> Optional[str]:
-        """Get genre name from IGNR tag.
-
+        """
         The IGNR tag in RIFF files typically contains a genre code
         that corresponds to the ID3v1 genre list. This method converts
         the code to a human-readable genre name.
-
-        Returns:
-            str: Genre name if available, empty string if not found
         """
-        if self.RiffTagKeys.GENRE_NAME in self.file_raw_metadata:
-            try:
-                # Try to get genre code and convert to name
-                genre_code = int(self.file_raw_metadata[self.RiffTagKeys.GENRE_NAME][0])
-                return ID3V1_AND_RIFF_GENRE_CODE_MAP.get(genre_code, "Other")
-            except (ValueError, TypeError):
-                # If the tag contains a string instead of a code, use it directly
-                return self.file_raw_metadata[self.RiffTagKeys.GENRE_NAME][0]
-        return ""
-
-    def get_language(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.LANGUAGE)
-
-    def get_release_date_str(self) -> Optional[str]:
-        return self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.DATE)
+        if self.RiffTagKey.GENRE_NAME in self.file_raw_metadata:
+            raw_value = self.file_raw_metadata[self.RiffTagKey.GENRE_NAME]
+            if isinstance(raw_value, str):
+                return raw_value
+            else:
+                try:
+                    genre_code = int(raw_value)
+                    return ID3V1_AND_RIFF_GENRE_CODE_MAP.get(genre_code, None)
+                except ValueError:
+                    return None
+        return None
 
     def get_track_number(self) -> Optional[int]:
-        part = self._get_first_value_str_if_exists_in_raw_metadata_or_none(key=self.RiffTagKeys.TRACK_NUMBER)
+        part = self.file_raw_metadata.get(self.RiffTagKey.TRACK_NUMBER, None)
         if part:
             try:
                 return int(part)
@@ -117,31 +113,27 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def update_specific_metadata_without_saving(
-            self,
-            normalized_metadata_value,
-            app_metadata_key: str,
-            normalized_rating_max_value: Optional[int] = None):
+    def update_specific_metadata_without_saving(self, normalized_metadata_value, app_metadata_key: str,):
         if app_metadata_key == AppMetadataKey.TITLE:
-            riff_tag_key = self.RiffTagKeys.TITLE
+            riff_tag_key = self.RiffTagKey.TITLE
         elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:
-            riff_tag_key = self.RiffTagKeys.ARTIST_NAME
+            riff_tag_key = self.RiffTagKey.ARTIST_NAME
         elif app_metadata_key == AppMetadataKey.ALBUM_NAME:
-            riff_tag_key = self.RiffTagKeys.ALBUM_NAME
+            riff_tag_key = self.RiffTagKey.ALBUM_NAME
         elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
-            riff_tag_key = self.RiffTagKeys.ALBUM_ARTISTS_NAMES
+            riff_tag_key = self.RiffTagKey.ALBUM_ARTISTS_NAMES
         elif app_metadata_key == AppMetadataKey.GENRE_NAME:
-            riff_tag_key = self.RiffTagKeys.GENRE_NAME
+            riff_tag_key = self.RiffTagKey.GENRE_NAME
         elif app_metadata_key == AppMetadataKey.RATING:
             raise UnsupportedMetadataError("RIFF format does not support ratings")
         elif app_metadata_key == AppMetadataKey.BPM:
             raise UnsupportedMetadataError("RIFF format does not support BPM metadata")
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
-            riff_tag_key = self.RiffTagKeys.LANGUAGE
+            riff_tag_key = self.RiffTagKey.LANGUAGE
         elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
-            riff_tag_key = self.RiffTagKeys.DATE
+            riff_tag_key = self.RiffTagKey.DATE
         elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
-            riff_tag_key = self.RiffTagKeys.TRACK_NUMBER
+            riff_tag_key = self.RiffTagKey.TRACK_NUMBER
         else:
             raise UnsupportedMetadataError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
 
