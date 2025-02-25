@@ -10,7 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 
 from ...utils.AudioFile import AudioFile
-from ...utils.rating_profiles import RatingWritingProfile
+from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
 from ..MetadataManager import AppMetadataKey
@@ -90,7 +90,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         }
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map=metadata_keys_direct_map,
-                         rating_profile=RatingWritingProfile.BASE_100,
+                         rating_write_profile=RatingWriteProfile.BASE_100_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
     def _extract_raw_metadata(self) -> FileType:
@@ -165,7 +165,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             vorbis_key = self.VorbisKey.RATING
             if app_rating:
                 vorbis_rating = self._convert_normalized_rating_to_file_rating(
-                    normalized_rating=app_rating, rating_writing_profile=RatingWritingProfile.BASE_100)
+                    normalized_rating=app_rating, rating_writing_profile=RatingWriteProfile.BASE_100_PROPORTIONAL)
                 app_metadata_value = str(vorbis_rating)
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
             vorbis_key = self.VorbisKey.LANGUAGE

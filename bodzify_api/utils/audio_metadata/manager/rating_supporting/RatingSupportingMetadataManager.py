@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from ..MetadataManager import MetadataManager
-from ...utils.rating_profiles import RatingWritingProfile
+from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
 from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
 from ...utils.AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
@@ -13,14 +13,14 @@ class RatingSupportingMetadataManager(MetadataManager):
     TRAKTOR_RATING_TAG_MAIL = 'traktor@native-instruments.de'
 
     normalized_rating_max_value: Optional[int]
-    rating_profile: RatingWritingProfile
+    rating_write_profile: RatingWriteProfile
 
     def __init__(self,
                  audio_file: AudioFile,
                  metadata_keys_direct_map: Dict[AppMetadataKey, Optional[RawMetadataKey]],
-                 rating_profile: RatingWritingProfile,
+                 rating_write_profile: RatingWriteProfile,
                  normalized_rating_max_value: Optional[int]):
-        self.rating_profile = rating_profile
+        self.rating_write_profile = rating_write_profile
         self.normalized_rating_max_value = normalized_rating_max_value
         super().__init__(audio_file, metadata_keys_direct_map)
 
@@ -37,23 +37,20 @@ class RatingSupportingMetadataManager(MetadataManager):
             self, key: AppMetadataKey) -> Optional[AppMetadataValue]:
         raise NotImplementedError()
 
-    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> None | AppMetadataValue:
+    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue | None:
         if app_metadata_key == AppMetadataKey.RATING:
             return self._get_eventually_normalized_rating_from_file()
         else:
             return self._get_undirectly_mapped_metadata_value_other_than_rating(app_metadata_key)
 
     def _convert_normalized_rating_to_file_rating(
-            self, normalized_rating: int, rating_writing_profile: RatingWritingProfile) -> int:
+            self, normalized_rating: int, rating_writing_profile: RatingWriteProfile) -> int | None:
         if not self.normalized_rating_max_value:
             raise ImproperlyConfigured(
                 "normalized_rating_max_value must be set to convert normalized rating to file rating.")
 
         star_rating_base_10 = (int)((normalized_rating * 10)/self.normalized_rating_max_value)
-        if rating_writing_profile == RatingWritingProfile.BASE_255:
-            return self.BASE_255_RATING_STAR_VALUES[star_rating_base_10]
-        else:
-            return self.BASE_100_RATING_STAR_VALUES[star_rating_base_10]
+        self.rating_write_profile.value[star_rating_base_10]
 
     def _get_eventually_normalized_rating_from_file(self) -> Optional[int]:
         file_rating = self._extract_file_rating()
@@ -76,11 +73,11 @@ class RatingSupportingMetadataManager(MetadataManager):
             if file_rating == 0 and is_rating_from_traktor:
                 return None
             for star_rating_base_10 in range(11):
-                if file_rating in [self.BASE_255_RATING_STAR_VALUES[star_rating_base_10],
-                                   self.BASE_255_PROPORTIONAL_RATING_STAR_VALUES[star_rating_base_10],
-                                   self.BASE_100_RATING_STAR_VALUES[star_rating_base_10]]:
+                if file_rating in [RatingReadProfile.BASE_255_PROPORTIONAL.value[star_rating_base_10],
+                                   RatingReadProfile.BASE_255_NON_PROPORTIONAL.value[star_rating_base_10],
+                                   RatingReadProfile.BASE_100_PROPORTIONAL.value[star_rating_base_10]]:
                     return int(star_rating_base_10 * self.normalized_rating_max_value / 10)
-            raise ValueError("Rating value not handled: " + str(file_rating))
+            return None
         else:
             return file_rating
 
@@ -97,7 +94,8 @@ class RatingSupportingMetadataManager(MetadataManager):
                 try:
                     normalized_rating = int(float(value))
                     file_rating = self._convert_normalized_rating_to_file_rating(
-                        normalized_rating=normalized_rating, rating_writing_profile=RatingWritingProfile.BASE_100)
+                        normalized_rating=normalized_rating,
+                        rating_writing_profile=RatingWriteProfile.BASE_100_PROPORTIONAL)
                     app_metadata_dict[AppMetadataKey.RATING] = file_rating
                 except (TypeError, ValueError):
                     raise ValueError(f"Invalid rating value: {value}. Expected a numeric value.")

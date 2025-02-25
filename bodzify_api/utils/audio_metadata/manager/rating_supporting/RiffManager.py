@@ -5,7 +5,7 @@ from mutagen._file import FileType
 from mutagen.wave import WAVE
 
 from ...utils.AudioFile import AudioFile
-from ...utils.rating_profiles import RatingWritingProfile
+from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from ...exceptions import FileCorruptedError, UnsupportedMetadataError
@@ -70,7 +70,7 @@ class RiffManager(RatingSupportingMetadataManager):
             # AppMetadataKey.TRACK_NUMBER: None,
         }
         super().__init__(audio_file, metadata_keys_direct_map,
-                         rating_profile=RatingWritingProfile.BASE_255,
+                         rating_write_profile=RatingWriteProfile.BASE_255_NON_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
     def _extract_raw_metadata(self) -> FileType:
@@ -81,16 +81,13 @@ class RiffManager(RatingSupportingMetadataManager):
         file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
         metadata = file_raw_metadata_wav.tags
         if metadata:
-            return metadata
-        else:
-            return {}
-            raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
+            # Convert WAVE tags to RawMetadataDict using RiffTagKey enum values
+            return {self.RiffTagKey(key): value for key, value in metadata.items()}
+        return {}
 
     def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> None | AppMetadataValue:
         if key == AppMetadataKey.GENRE_NAME:
             return self.get_genre_name()
-        elif key == AppMetadataKey.TRACK_NUMBER:
-            return self.get_track_number()
         else:
             raise UnsupportedMetadataError(f'Metadata key not handled: {key}')
 
@@ -121,7 +118,8 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _update_specific_metadata_without_saving(self, normalized_metadata_value, app_metadata_key: str,):
+    def _update_specific_metadata_without_saving(
+            self, normalized_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
         if app_metadata_key == AppMetadataKey.TITLE:
             riff_tag_key = self.RiffTagKey.TITLE
         elif app_metadata_key == AppMetadataKey.ARTISTS_NAMES_STR:
@@ -133,17 +131,11 @@ class RiffManager(RatingSupportingMetadataManager):
         elif app_metadata_key == AppMetadataKey.GENRE_NAME:
             riff_tag_key = self.RiffTagKey.GENRE_NAME
         elif app_metadata_key == AppMetadataKey.RATING:
-            raise UnsupportedMetadataError("RIFF format does not support ratings")
-        elif app_metadata_key == AppMetadataKey.BPM:
-            raise UnsupportedMetadataError("RIFF format does not support BPM metadata")
+
         elif app_metadata_key == AppMetadataKey.LANGUAGE:
             riff_tag_key = self.RiffTagKey.LANGUAGE
-        elif app_metadata_key == AppMetadataKey.RELEASE_DATE:
-            riff_tag_key = self.RiffTagKey.DATE
-        elif app_metadata_key == AppMetadataKey.TRACK_NUMBER:
-            riff_tag_key = self.RiffTagKey.TRACK_NUMBER
         else:
-            raise UnsupportedMetadataError(self.METADATA_UPDATE_KEY_NOT_HANDLED_MESSAGE)
+            raise UnsupportedMetadataError(f'Metadata key not handled: {app_metadata_key}')
 
         if normalized_metadata_value:
             if riff_tag_key not in self.file_raw_metadata:

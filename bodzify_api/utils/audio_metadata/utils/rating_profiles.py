@@ -60,18 +60,20 @@ Luckily, Traktor ratings are written with special tags making them easy to disti
 """
 
 
-class RatingReadingProfiles(Enum):
-    BASE_255_NOT_PROP = [0, 13, 1, 54, 64, 118, 128, 186, 196, 242, 255]
-    BASE_255_PROP = [None, None, 51, None, 102, None, 153, None, 204, None, 255]
-    BASE_100 = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+class RatingReadProfile(Enum):
+    BASE_255_NON_PROPORTIONAL = [0, 13, 1, 54, 64, 118, 128, 186, 196, 242, 255]
+    BASE_255_PROPORTIONAL = [None, None, 51, None, 102, None, 153, None, 204, None, 255]
+    BASE_100_PROPORTIONAL = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
 
 """
-Regarding the rating writing profiles, the app currently use 2 profiles:
-- 255 non-proportional: for 
+Regarding the ratings that the app will write in the audio files, the app currently uses the 2 most widely supported
+profiles:
+- 255 non proportional (ID3v2, RIFF)
+- 100 proportional (Vorbis)
 """
 
 
-class RatingWritingProfile(Enum):
-    BASE_255 = '255'
-    BASE_100 = '100'
+class RatingWriteProfile(Enum):
+    BASE_255_NON_PROPORTIONAL = RatingReadProfile.BASE_255_NON_PROPORTIONAL.value
+    BASE_100_PROPORTIONAL = RatingReadProfile.BASE_100_PROPORTIONAL.value
