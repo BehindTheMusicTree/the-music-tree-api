@@ -55,5 +55,6 @@ ID3V1_AND_RIFF_GENRE_CODE_MAP = {
     138: "Black Metal", 139: "Crossover", 140: "Contemporary Christian",
     141: "Christian Rock", 142: "Merengue", 143: "Salsa",
     144: "Thrash Metal", 145: "Anime", 146: "JPop",
-    147: "Synthpop"
+    147: "Synthpop",
+    255: None
 }

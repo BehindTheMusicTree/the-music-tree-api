@@ -1,0 +1,119 @@
+
+from typing import Dict, cast
+
+from mutagen._file import FileType
+
+from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadata import Id3v1RawMetadata
+
+from ...utils.AudioFile import AudioFile
+from ...utils.types import AppMetadataValue
+from ...exceptions import FileCorruptedError, UnsupportedMetadataError
+from ...utils.AppMetadataKey import AppMetadataKey
+from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
+from ..MetadataManager import MetadataManager
+from .Id3v1RawMetadataKey import Id3v1RawMetadataKey
+
+
+class Id3v1Manager(MetadataManager):
+    """
+    Manages ID3v1 metadata for audio files.
+
+    ID3v1 is a simple, legacy metadata format with significant limitations:
+    - Fixed 128-byte block at end of file
+    - No Unicode support (Latin-1 only)
+    - Limited field lengths (30 chars)
+    - No support for:
+        - Album artist
+        - BPM
+        - Ratings
+        - Language
+        - Custom genres
+        - Multiple genres
+        - Multiple artists
+        ...
+    - Read-only (modification not safe). ID3v1 tags have a fixed size of 128 bytes. Each field within the tag has a 
+    specific length (e.g., 30 bytes for title, artist, and album). This fixed size can make it challenging to modify the 
+    tags without potentially corrupting the file or losing data.
+
+    Format Structure:
+    - Bytes 0-2: "TAG" identifier
+    - Bytes 3-32: Title (30 chars)
+    - Bytes 33-62: Artist (30 chars)
+    - Bytes 63-92: Album (30 chars)
+    - Bytes 93-96: Release year (4 chars)
+    - Bytes 97-126: Comment (28 chars in ID3v1.1, 30 chars in ID3v1)
+    - Byte 125: Always 0 in ID3v1.1 to indicate track number presence
+    - Byte 126: Track number in ID3v1.1 (1-255, 0 = not set)
+    - Byte 127: Genre code (0-255)
+
+    Note: ID3v1.1 extends ID3v1 by using the last two bytes of the comment
+    field to store the track number. If byte 125 is 0 and byte 126 is not 0,
+    then byte 126 contains the track number (1-255).
+
+    Note 2: The genre code is an index into a predefined list of genres. 
+    """
+
+    def __init__(self, audio_file: AudioFile):
+        metadata_keys_direct_map_read: Dict = {
+            AppMetadataKey.TITLE: Id3v1RawMetadataKey.TITLE,
+            AppMetadataKey.ARTISTS_NAMES_STR: Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
+            AppMetadataKey.ALBUM_NAME: Id3v1RawMetadataKey.ALBUM_NAME,
+            AppMetadataKey.GENRE_NAME: Id3v1RawMetadataKey.GENRE_CODE,
+        }
+        metadata_keys_direct_map_write: Dict = {
+            AppMetadataKey.TITLE: Id3v1RawMetadataKey.TITLE,
+            AppMetadataKey.ARTISTS_NAMES_STR: Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
+            AppMetadataKey.ALBUM_NAME: Id3v1RawMetadataKey.ALBUM_NAME,
+            AppMetadataKey.GENRE_NAME: None,
+        }
+        super().__init__(audio_file=audio_file,
+                         metadata_keys_direct_map_read=metadata_keys_direct_map_read,
+                         metadata_keys_direct_map_write=metadata_keys_direct_map_write)
+
+    def _extract_raw_metadata(self) -> FileType:
+        try:
+            return Id3v1RawMetadata(fileobj=self.audio_file.get_file_path_or_object())
+        except Exception as exc:
+            raise FileCorruptedError(f"Failed to extract ID3v1 metadata: {exc}")
+
+    def _convert_raw_metadata_to_dict(self) -> Dict:
+        return self.file_raw_metadata  # type: ignore
+
+    def _get_str_metadata_value(self, app_metadata_key: AppMetadataKey) -> str | None:
+        """Helper method to get string metadata values."""
+        raw_metadata_key = self.metadata_keys_direct_map_read.get(app_metadata_key)
+        if not raw_metadata_key:
+            return None
+        value = self._get_value_from_raw_metadata_dict(raw_metadata_key=raw_metadata_key, value_type=str)
+        return cast(str, value) if value is not None else None
+
+    def _get_int_metadata_value(self, app_metadata_key: AppMetadataKey) -> int | None:
+        """Helper method to get integer metadata values."""
+        raw_metadata_key = self.metadata_keys_direct_map_read.get(app_metadata_key)
+        if not raw_metadata_key:
+            return None
+        value = self._get_value_from_raw_metadata_dict(raw_metadata_key=raw_metadata_key, value_type=int)
+        return cast(int, value) if value is not None else None
+
+    def get_title(self) -> str | None:
+        return self._get_str_metadata_value(AppMetadataKey.TITLE)
+
+    def get_artists_names(self) -> str | None:
+        return self._get_str_metadata_value(AppMetadataKey.ARTISTS_NAMES_STR)
+
+    def get_album_name(self) -> str | None:
+        return self._get_str_metadata_value(AppMetadataKey.ALBUM_NAME)
+
+    def get_genre_name(self) -> str | None:
+        genre_code = self._get_int_metadata_value(AppMetadataKey.GENRE_NAME)
+        if not genre_code:
+            return None
+        if not 0 <= genre_code < len(ID3V1_AND_RIFF_GENRE_CODE_MAP):
+            return None
+        return ID3V1_AND_RIFF_GENRE_CODE_MAP[genre_code]
+
+    def _update_undirectly_mapped_metadata(
+            self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
+            normalized_rating_max_value: int | None = None):
+        raise UnsupportedMetadataError(
+            "ID3v1 tag modification is not supported (fixed-length format)")
