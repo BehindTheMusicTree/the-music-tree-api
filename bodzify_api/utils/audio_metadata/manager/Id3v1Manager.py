@@ -53,16 +53,27 @@ class Id3v1Manager(MetadataManager):
         TITLE = AppMetadataKey.TITLE.value
         ARTISTS_NAMES_STR = AppMetadataKey.ARTISTS_NAMES_STR.value
         ALBUM_NAME = AppMetadataKey.ALBUM_NAME.value
-        GENRE_NAME = AppMetadataKey.GENRE_NAME.value
+        GENRE_CODE = 'genre_code'
+        YEAR = 'year'
+        TRACK_NUMBER = 'track_number'
+        COMMENT = 'comment'
 
     def __init__(self, audio_file: AudioFile):
-        metadata_keys_diract_map: Dict = {
+        metadata_keys_direct_map_read: Dict = {
             AppMetadataKey.TITLE: self.Id3v1RawMetadataKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES_STR: self.Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
             AppMetadataKey.ALBUM_NAME: self.Id3v1RawMetadataKey.ALBUM_NAME,
-            AppMetadataKey.GENRE_NAME: self.Id3v1RawMetadataKey.GENRE_NAME,
+            AppMetadataKey.GENRE_NAME: self.Id3v1RawMetadataKey.GENRE_CODE,
         }
-        super().__init__(audio_file=audio_file, metadata_keys_direct_map_read=metadata_keys_diract_map)
+        metadata_keys_direct_map_write: Dict = {
+            AppMetadataKey.TITLE: self.Id3v1RawMetadataKey.TITLE,
+            AppMetadataKey.ARTISTS_NAMES_STR: self.Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
+            AppMetadataKey.ALBUM_NAME: self.Id3v1RawMetadataKey.ALBUM_NAME,
+            AppMetadataKey.GENRE_NAME: None,
+        }
+        super().__init__(audio_file=audio_file,
+                         metadata_keys_direct_map_read=metadata_keys_direct_map_read,
+                         metadata_keys_direct_map_write=metadata_keys_direct_map_write)
 
     def _extract_raw_metadata(self) -> Dict:
         """Read ID3v1 tag from the end of the file."""
@@ -73,18 +84,18 @@ class Id3v1Manager(MetadataManager):
 
         # Unpack fixed-length fields
         title = data[3:33].strip(b'\0').decode('latin1', 'replace')
-        artist = data[33:63].strip(b'\0').decode('latin1', 'replace')
-        album = data[63:93].strip(b'\0').decode('latin1', 'replace')
+        artists_names_str = data[33:63].strip(b'\0').decode('latin1', 'replace')
+        album_name = data[63:93].strip(b'\0').decode('latin1', 'replace')
         year = data[93:97].strip(b'\0').decode('latin1', 'replace')
         comment = data[97:127].strip(b'\0')
-        genre = struct.unpack('B', data[127:128])[0]
+        genre_code = struct.unpack('B', data[127:128])[0]
 
         # Check for ID3v1.1 track number
         if comment[28] == 0 and comment[29] != 0:
-            track = str(comment[29])  # Convert track number byte to string
+            track_number = str(comment[29])  # Convert track number byte to string
             comment = comment[:28]
         else:
-            track = None
+            track_number = None
             comment = comment[:30]
 
         comment = comment.decode('latin1', 'replace')
@@ -92,30 +103,24 @@ class Id3v1Manager(MetadataManager):
         metadata = {}
 
         if title:
-            metadata[AppMetadataKey.TITLE.value] = [title]
-        if artist:
-            metadata[AppMetadataKey.ARTISTS_NAMES_STR.value] = [artist]
-        if album:
-            metadata[AppMetadataKey.ALBUM_NAME.value] = [album]
+            metadata[self.Id3v1RawMetadataKey.TITLE.value] = [title]
+        if artists_names_str:
+            metadata[self.Id3v1RawMetadataKey.ARTISTS_NAMES_STR.value] = [artists_names_str]
+        if album_name:
+            metadata[self.Id3v1RawMetadataKey.ALBUM_NAME.value] = [album_name]
         if year:
-            metadata[AppMetadataKey.RELEASE_DATE.value] = [year]
-        # Comments are not part of normalized metadata
-        if genre < len(ID3V1_AND_RIFF_GENRE_CODE_MAP):
-            metadata[AppMetadataKey.GENRE_NAME.value] = [genre]
-        if track and track != '0':
-            metadata[AppMetadataKey.TRACK_NUMBER.value] = [track]
+            metadata[self.Id3v1RawMetadataKey.YEAR.value] = [year]
+        if genre_code < len(ID3V1_AND_RIFF_GENRE_CODE_MAP):
+            metadata[self.Id3v1RawMetadataKey.GENRE_CODE.value] = [genre_code]
+        if track_number and track_number != '0':
+            metadata[self.Id3v1RawMetadataKey.TRACK_NUMBER.value] = [track_number]
+        if comment:
+            metadata[self.Id3v1RawMetadataKey.COMMENT.value] = [comment]
 
         return metadata
 
-    def _get_str_metadata_value(self, key: AppMetadataKey) -> str | None:
-        if key in self.file_raw_metadata:
-            return cast(str, self.file_raw_metadata[key.value])
-        return None
-
-    def _get_int_metadata_value(self, key: AppMetadataKey) -> int | None:
-        if key in self.file_raw_metadata:
-            return cast(int, self.file_raw_metadata[key.value])
-        return None
+    def _convert_raw_metadata_to_dict(self) -> Dict:
+        return self.file_raw_metadata  # type: ignore
 
     def get_title(self) -> str | None:
         return self._get_str_metadata_value(AppMetadataKey.TITLE)
