@@ -1,7 +1,7 @@
 meta {
-  name: | rartists a,,b
+  name: | albumName list
   type: http
-  seq: 27
+  seq: 4
 }
 
 post {
@@ -16,12 +16,12 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  rating: 11
+  artistsNames: mat
+  albumName: bo
+  albumArtistsNames: muse
 }
 
 vars:post-response {
-  libTrackHorsesUuid: res.body.uuid
-  genreOutlawUuid: res.body.genre.uuid
-  genreOutlawPlaylistUuid: res.body.playlists[0].uuid
-  title: horses
+  artistMatUuid: res.body.artists[0].uuid
+  albumBoUuid: res.body.album.uuid
 }

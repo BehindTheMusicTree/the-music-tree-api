@@ -1,7 +1,7 @@
 meta {
-  name: rocky | genreUuid rock
+  name: horses | genreName Outlaw
   type: http
-  seq: 23
+  seq: 6
 }
 
 post {
@@ -16,10 +16,13 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  genreUuid: b7579b59-6fda-4981-86e0-b124859057a9
-  ~title: rocky
+  title: Horses
+  genreName: Outlaw
 }
 
 vars:post-response {
-  trackRockUuid: res.body.uuid
+  libTrackHorsesUuid: res.body.uuid
+  genreOutlawUuid: res.body.genre.uuid
+  genreOutlawPlaylistUuid: res.body.playlists[0].uuid
+  title: horses
 }

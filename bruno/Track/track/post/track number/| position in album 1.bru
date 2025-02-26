@@ -1,7 +1,7 @@
 meta {
-  name: | title duplicate
+  name: | position in album 1
   type: http
-  seq: 8
+  seq: 2
 }
 
 post {
@@ -16,11 +16,12 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  title: Jo
-  title: steeve
+  positionInAlbum: 1
 }
 
 vars:post-response {
-  albumJoUuid: res.body.album.uuid
-  artistSteeveUuid: res.body.artists[0].uuid
+  libTrackHorsesUuid: res.body.uuid
+  genreOutlawUuid: res.body.genre.uuid
+  genreOutlawPlaylistUuid: res.body.playlists[0].uuid
+  title: horses
 }

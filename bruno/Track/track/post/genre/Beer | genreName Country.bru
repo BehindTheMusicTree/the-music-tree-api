@@ -1,7 +1,7 @@
 meta {
-  name: Beer2 | genre name Country
+  name: Beer | genreName Country
   type: http
-  seq: 20
+  seq: 4
 }
 
 post {
@@ -10,12 +10,16 @@ post {
   auth: inherit
 }
 
+headers {
+  : 
+}
+
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/generic_file_sample/tags none.mp3)
-  title: Beer2
+  title: Beer
   genreName: Country
 }
 
 vars:post-response {
-  trackBeer2Uuid: res.body.uuid
+  trackBeerUuid: res.body.uuid
 }
