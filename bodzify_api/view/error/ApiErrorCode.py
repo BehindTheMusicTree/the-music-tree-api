@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ApiErrorCode(Enum):
+class ApiErrorCode(int, Enum):
     """
     Enumerated error codes organized by domain for API responses.
     Format: CATEGORY_SPECIFIC_ERROR

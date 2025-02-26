@@ -135,11 +135,7 @@ class AppValidationException(DrfValidationError):
         error_details = extract_error_details(detail)
         if error_details:
             field, message, code = error_details
-            return cls(
-                field_name=field,
-                message=message,
-                field_validation_error_code=FieldValidationErrorCode(code)
-            )
+            return cls(field_name=field, message=message, field_validation_error_code=code)
 
         # Fallback for unknown format
         return cls(message=str(detail),

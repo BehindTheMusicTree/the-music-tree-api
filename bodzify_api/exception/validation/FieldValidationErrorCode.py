@@ -150,3 +150,6 @@ class FieldValidationErrorCode(str, Enum):
 
     # Database Validation
     DB_INTEGRITY_ERROR = 'db_integrity_error'
+
+    def __str__(self) -> str:
+        return str(self.value)

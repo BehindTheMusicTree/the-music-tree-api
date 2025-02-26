@@ -32,28 +32,23 @@ class ErrorResponse:
 
     @staticmethod
     def _create_error_response(
-            error_detail: dict[str, Any],
-            error_code: ApiErrorCode = ApiErrorCode.VALIDATION_INVALID_INPUT
+        error_detail: dict[str, Any], api_error_code: ApiErrorCode = ApiErrorCode.VALIDATION_INVALID_INPUT
     ) -> JsonResponse:
-        http_status = ErrorResponseFields.ERROR_TO_HTTP_STATUS.get(error_code, status.HTTP_400_BAD_REQUEST)
+        http_status = ErrorResponseFields.ERROR_TO_HTTP_STATUS.get(api_error_code, status.HTTP_400_BAD_REQUEST)
         status_message = ErrorResponseFields.STATUS_MESSAGES.get(http_status, "An error occurred")
 
         response_data = {
-            ErrorResponseFields.FieldErrors.CODE: error_code,
+            ErrorResponseFields.FieldErrors.CODE: api_error_code,
             ErrorResponseFields.MESSAGE: status_message,
             ErrorResponseFields.SUCCESS: False,
             ErrorResponseFields.DETAILS: [error_detail]
         }
 
-        return JsonResponse(
-            data=response_data,
-            status=http_status,
-            safe=False
-        )
+        return JsonResponse(data=response_data, status=http_status, safe=False
+                            )
 
     @staticmethod
-    def _parse_error_message(error: Any) -> tuple[str, str]:
-        """Parse error message and code from various error formats."""
+    def _parse_error_message_from_various_error_formats(error: Any) -> tuple[str, str]:
         if isinstance(error, str):
             # Try to parse if it looks like a serialized list/dict
             if error.startswith('[') or error.startswith('{'):
@@ -85,7 +80,7 @@ class ErrorResponse:
             camel_case_field = to_camel_case(field)
             field_errors = []
             for error in errors:
-                message, code = ErrorResponse._parse_error_message(error)
+                message, code = ErrorResponse._parse_error_message_from_various_error_formats(error)
                 field_errors.append({
                     ErrorResponseFields.MESSAGE: message,
                     ErrorResponseFields.CODE: code
@@ -107,7 +102,7 @@ class ErrorResponse:
         }
         return ErrorResponse._create_error_response(
             error_detail=error_detail,
-            error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR
+            api_error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR
         )
 
     @staticmethod
@@ -128,7 +123,7 @@ class ErrorResponse:
             }
             return ErrorResponse._create_error_response(
                 error_detail=formatted_error,
-                error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
+                api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
             )
         elif isinstance(exception, DrfValidationError):
             error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
@@ -137,7 +132,7 @@ class ErrorResponse:
             if isinstance(error_detail, dict) and ErrorResponseFields.MESSAGE in error_detail:
                 return ErrorResponse._create_error_response(
                     error_detail=error_detail,
-                    error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
+                    api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
 
             # If it's a dict with field errors
@@ -145,7 +140,7 @@ class ErrorResponse:
                 formatted_error = ErrorResponse._format_from_drf_validation_error_detail(error_detail)
                 return ErrorResponse._create_error_response(
                     error_detail=formatted_error,
-                    error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
+                    api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
 
             # For any other case, wrap it in a standard format
@@ -170,7 +165,7 @@ class ErrorResponse:
                 }
                 return ErrorResponse._create_error_response(
                     error_detail=formatted_error,
-                    error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
+                    api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
             else:
                 # Single error message
@@ -187,7 +182,7 @@ class ErrorResponse:
                 }
                 return ErrorResponse._create_error_response(
                     error_detail=formatted_error,
-                    error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
+                    api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
 
         # Generic validation error
@@ -197,5 +192,5 @@ class ErrorResponse:
         }
         return ErrorResponse._create_error_response(
             error_detail=error_detail,
-            error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
+            api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
         )
