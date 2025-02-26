@@ -28,7 +28,6 @@ from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
 from bodzify_api.utils.audio_metadata.utils.types import AppMetadataDict
-from bodzify_api.utils.utils import print_file_status
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields
