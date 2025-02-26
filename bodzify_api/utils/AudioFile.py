@@ -12,7 +12,7 @@ from mutagen.flac import FLAC
 from mutagen.mp3 import MP3
 from mutagen.wave import WAVE
 
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
+from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FileCorruptedError
 
 
 class AudioFile:
@@ -56,8 +56,13 @@ class AudioFile:
             audio = WAVE(path)
             return audio.info.length
         elif self.file_extension == '.flac':
-            audio = FLAC(path)
-            return audio.info.length
+            try:
+                return FLAC(path).info.length
+            except Exception as exc:
+                error_str = str(exc)
+                if "file said" in error_str and "bytes, read" in error_str:
+                    raise FileByteMismatchError(error_str.capitalize())
+                raise
         else:
             raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 

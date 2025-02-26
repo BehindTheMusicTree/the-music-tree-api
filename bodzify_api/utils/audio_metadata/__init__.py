@@ -141,14 +141,7 @@ def extract_raw_metadata_dict(file, tag_format: MetadataFormat | None = None) ->
 
 
 def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None = None) -> dict[str, AppMetadataValue]:
-    try:
-        audio_file = AudioFile(file)
-    except Exception as error:
-        error_str = str(error)
-        if "file said" in error_str and "bytes, read" in error_str:
-            raise FileByteMismatchError(error_str.capitalize())
-        raise
-
+    audio_file = AudioFile(file)
     managers = _get_metadata_managers(file, normalized_rating_max_value=normalized_rating_max_value)
     metadata = {}
 
