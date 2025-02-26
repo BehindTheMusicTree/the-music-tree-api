@@ -8,20 +8,20 @@ from bodzify_api.model.field.foreign_key.AppManyToManyField import AppManyToMany
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 
 from ...MusicbrainzResource import MusicbrainzResource
-from ..artist.MusicbrainzArtist import MusicbrainzArtist
+from ..artist.MbArtist import MbArtist
 from .Fields import Fields
 
 
 class MusicbrainzRecording(MusicbrainzResource):
     musicbrainz_link = models.GeneratedField(  # type: ignore
-        expression=ConcatOp(Value(settings.MUSICBRAINZ_RECORDING_URL), F(Fields.MUSICBRAINZ_ID)),
-        output_field=models.CharField(max_length=len(settings.MUSICBRAINZ_RECORDING_URL) + settings.UUID_LEN),
+        expression=ConcatOp(Value(settings.MB_RECORDING_URL), F(Fields.MUSICBRAINZ_ID)),
+        output_field=models.CharField(max_length=len(settings.MB_RECORDING_URL) + settings.UUID_LEN),
         db_persist=True)
-    title = models.CharField(max_length=settings.MUSICBRAINZ_RECORDING_TITLE_LEN_MAX, editable=False)
+    title = models.CharField(max_length=settings.MB_RECORDING_TITLE_LEN_MAX, editable=False)
     score = models.DecimalField(max_digits=9, decimal_places=8, editable=False)
     duration_in_sec = models.IntegerField(editable=False, null=True)
     release_date = models.DateField(null=True, blank=True, editable=False)
-    musicbrainz_artists = AppManyToManyField(MusicbrainzArtist)
+    musicbrainz_artists = AppManyToManyField(MbArtist)
 
     @property
     def duration_str_in_hour_min_sec(self) -> str | None:

@@ -6,14 +6,13 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from bodzify_api import settings
 from bodzify_api.exception import musicbrainz as musicbrainz_exception
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import (
-    MusicbrainzRecordingMissingCauseCode
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
+    MbRecordingMissingCauseCode)
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import (
+    MbRecordingMissingCause
 )
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import (
-    MusicbrainzRecordingMissingCause
-)
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult import (
+from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MbRecordingLookupResult import (
     MusicbrainzRecordingLookupResult
 )
 from bodzify_api.model.user.User import User
@@ -74,7 +73,7 @@ def get_musicbrainz_recording_lookup_result(user: User,
     musicbrainz_recording_missing_cause_code = None
 
     if duration_in_sec <= 1:
-        musicbrainz_recording_missing_cause_code = MusicbrainzRecordingMissingCauseCode.Codes.DURATION_BELOW_OR_EQUAL_1_SEC
+        musicbrainz_recording_missing_cause_code = MbRecordingMissingCauseCode.Codes.DURATION_BELOW_OR_EQUAL_1_SEC
         musicbrainz_recording_missing_cause_message = None
     else:
         try:
@@ -82,7 +81,7 @@ def get_musicbrainz_recording_lookup_result(user: User,
                 fingerprint=fingerprint, duration_in_sec=duration_in_sec)
             if not musicbrainz_recording_dict:
                 musicbrainz_recording_missing_cause_code = \
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FOUND_NO_MATCHING_RECORDING
+                    MbRecordingMissingCauseCode.Codes.LOOKUP_FOUND_NO_MATCHING_RECORDING
                 musicbrainz_recording_missing_cause_message = None
             else:
                 musicbrainz_recording_id = musicbrainz_recording_dict[ApiFields.Names.ID]
@@ -94,27 +93,27 @@ def get_musicbrainz_recording_lookup_result(user: User,
                         musicbrainz_recording_dict=musicbrainz_recording_dict)
 
         except musicbrainz_exception.MusicbrainzRecordingLookupException as e:
-            exception_mapping: dict[type, MusicbrainzRecordingMissingCauseCode.Codes] = {
+            exception_mapping: dict[type, MbRecordingMissingCauseCode.Codes] = {
                 musicbrainz_exception.InvalidFingerprintMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DUE_TO_INVALID_FINGERPRINT,
+                    MbRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DUE_TO_INVALID_FINGERPRINT,
                 musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INTERNAL_ERROR,
+                    MbRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_INTERNAL_ERROR,
                 musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_ERROR_CODE,
+                    MbRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_ERROR_CODE,
                 musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_STATUS_CODE,
+                    MbRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_STATUS_CODE,
                 musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException:
-                    MusicbrainzRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DNS_RESOLUTION_ERROR}
+                    MbRecordingMissingCauseCode.Codes.LOOKUP_FAILED_DNS_RESOLUTION_ERROR}
             musicbrainz_recording_missing_cause_code = exception_mapping[type(e)]
             error_message = str(e)
-            if len(error_message) > settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX:
+            if len(error_message) > settings.MB_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX:
                 musicbrainz_recording_missing_cause_message = error_message[
-                    :settings.MUSICBRAINZ_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX - 3] + "..."
+                    :settings.MB_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX - 3] + "..."
             else:
                 musicbrainz_recording_missing_cause_message = error_message
 
     if musicbrainz_recording_missing_cause_code:
-        musicbrainz_recording_missing_cause = MusicbrainzRecordingMissingCause.objects.create(
+        musicbrainz_recording_missing_cause = MbRecordingMissingCause.objects.create(
             user=user,
             code=musicbrainz_recording_missing_cause_code,
             message=musicbrainz_recording_missing_cause_message)

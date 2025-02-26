@@ -5,7 +5,7 @@ from bodzify_api.model.public_standard_resource.PublicStandardResource import Pu
 
 
 class MusicbrainzResource(PublicStandardResource):
-    musicbrainz_id = AppCharField(max_length=settings.MUSICBRAINZ_ID_LEN_MAX, unique=True)
+    musicbrainz_id = AppCharField(max_length=settings.MB_ID_LEN_MAX, unique=True)
 
     class Meta:
         abstract = True

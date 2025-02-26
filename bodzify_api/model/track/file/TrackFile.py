@@ -15,13 +15,13 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import (
-    MusicbrainzRecordingMissingCauseCode)
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import (
-    MusicbrainzRecordingMissingCause
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
+    MbRecordingMissingCauseCode)
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import (
+    MbRecordingMissingCause
 )
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult import (
+from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MbRecordingLookupResult import (
     MusicbrainzRecordingLookupResult
 )
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
@@ -69,7 +69,7 @@ class TrackFile(PrivateStandardResource):
                                           default=None,
                                           null=True)
     musicbrainz_recording_missing_cause = AppOneToOneField(
-        MusicbrainzRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
+        MbRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
         verbose_name = 'Track File'
@@ -132,7 +132,7 @@ class TrackFile(PrivateStandardResource):
                 self.fingerprint_missing_cause = fingerprinting_result.missing_cause
         else:
             self.fingerprint_missing_cause = FingerprintMissingCause.objects.create(
-                user=self.user, code=MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED)
+                user=self.user, code=MbRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED)
 
         return fingerprinting_result
 
@@ -142,14 +142,14 @@ class TrackFile(PrivateStandardResource):
 
         if self.fingerprint_missing_cause:
             if self.fingerprint_missing_cause.code.code == \
-                    MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED:
-                self.musicbrainz_recording_missing_cause = MusicbrainzRecordingMissingCause.objects.create(
+                    MbRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED:
+                self.musicbrainz_recording_missing_cause = MbRecordingMissingCause.objects.create(
                     user=self.user,
-                    code=MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED)
+                    code=MbRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED)
             else:
-                self.musicbrainz_recording_missing_cause = MusicbrainzRecordingMissingCause.objects.create(
+                self.musicbrainz_recording_missing_cause = MbRecordingMissingCause.objects.create(
                     user=self.user,
-                    code=MusicbrainzRecordingMissingCauseCode.Codes.TRACK_FILE_FINGERPRINTING_FAILED,
+                    code=MbRecordingMissingCauseCode.Codes.TRACK_FILE_FINGERPRINTING_FAILED,
                     message=f"Fingerprinting failed.")
         else:
             fingerprinting_result: FingerprintingResult = fingerprinting_result_nullable  # type: ignore

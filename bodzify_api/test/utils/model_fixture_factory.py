@@ -21,11 +21,11 @@ from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
-from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import (
+from bodzify_api.model.musicbrainz_resource.children.artist.MbArtist import MbArtist
+from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import (
     Fields as MusicbrainzRecordingFields
 )
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 from bodzify_api.model.play.Fields import Fields as PlayFields
 from bodzify_api.model.play.Play import Play
 from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlayListFields
@@ -228,7 +228,7 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return G(MusicbrainzRecording, **model_fields)
 
-    def create_musicbrainz_artist(self, musicbrainz_id: str, name: str, **kwargs) -> MusicbrainzArtist:
+    def create_musicbrainz_artist(self, musicbrainz_id: str, name: str, **kwargs) -> MbArtist:
         model_fields = {
             MusicbrainzArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
             MusicbrainzArtistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -236,4 +236,4 @@ class ModelFixtureFactory:
             MusicbrainzArtistFields.NAME: name
         }
         model_fields.update(kwargs)
-        return G(MusicbrainzArtist, **model_fields)
+        return G(MbArtist, **model_fields)

@@ -2,9 +2,9 @@ import datetime
 from calendar import monthrange
 
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
-from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
+from bodzify_api.model.musicbrainz_resource.children.artist.MbArtist import MbArtist
 from bodzify_api.model.musicbrainz_resource.children.recording.Fields import Fields as MusicbrainzRecordingFields
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 
 from .ApiFields import ApiFields
 
@@ -56,9 +56,9 @@ def create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_id: st
     musicbrainz_artists_dict = musicbrainz_recording_dict[ApiFields.Names.ARTISTS]
     musicbrainz_artists = []
     for artist_dict in musicbrainz_artists_dict:
-        artist, _ = MusicbrainzArtist.objects.get_or_create(musicbrainz_id=artist_dict[ApiFields.Names.ID],
-                                                            defaults={MusicbrainzArtistFields.NAME:
-                                                                      artist_dict[ApiFields.Names.NAME]})
+        artist, _ = MbArtist.objects.get_or_create(musicbrainz_id=artist_dict[ApiFields.Names.ID],
+                                                   defaults={MusicbrainzArtistFields.NAME:
+                                                             artist_dict[ApiFields.Names.NAME]})
         musicbrainz_artists.append(artist)
 
     earliest_release_date = get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict)

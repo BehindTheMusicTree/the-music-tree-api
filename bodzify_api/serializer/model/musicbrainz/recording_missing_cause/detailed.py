@@ -1,11 +1,11 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import (
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import (
     Fields as ModelFields
 )
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import (
-    MusicbrainzRecordingMissingCause
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import (
+    MbRecordingMissingCause
 )
 
 
@@ -20,5 +20,5 @@ class MusicbrainzRecordingMissingCauseDetailedSerializer(serializers.ModelSerial
     code = serializers.IntegerField(source=Fields.CODE)
 
     class Meta:
-        model = MusicbrainzRecordingMissingCause
+        model = MbRecordingMissingCause
         fields = [Fields.CODE, Fields.LABEL]

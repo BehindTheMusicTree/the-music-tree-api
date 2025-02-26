@@ -1,9 +1,8 @@
 
 from rest_framework import status
 
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import (
-    MusicbrainzRecordingMissingCauseCode
-)
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
+    MbRecordingMissingCauseCode)
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -15,4 +14,4 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code == \
-            MusicbrainzRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED
+            MbRecordingMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED
