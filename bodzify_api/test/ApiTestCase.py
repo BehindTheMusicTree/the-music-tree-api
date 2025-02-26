@@ -37,7 +37,6 @@ class ApiTestCase(AppTestCase, Generic[T]):
         BELOW_1_SEC = "below 1 sec"
         ONE_STAR = "1 star"
         TAGS_NONE = "tags none"
-        TAGS_3_ARTISTS_AND_2_COMMAS_IN_ARTIST = "tags 3 artists and two commas in artist"
         TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS = "tags album koko without album artists"
         TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM = "tags album artists koko without album"
         TAGS_MAX_LEN_WITH_LETTER_A = "tags max length with letter a"
