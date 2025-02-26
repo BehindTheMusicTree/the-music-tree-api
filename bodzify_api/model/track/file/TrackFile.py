@@ -175,7 +175,7 @@ class TrackFile(PrivateStandardResource):
         fingerprinting_result = self._manage_fingerprint()
         self._manage_musicbrainz_recording(fingerprinting_result)
 
-    def update_file_tags(self, app_metadata_dict: MetadataDict):
+    def update_file_tags(self, app_metadata_dict: AppMetadataDict):
         audio_metadata.update_metadata(file=self.file,
                                        app_metadata_dict=app_metadata_dict,
                                        normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
