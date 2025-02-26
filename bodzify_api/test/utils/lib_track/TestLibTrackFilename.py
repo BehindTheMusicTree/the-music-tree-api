@@ -35,6 +35,8 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_QUEEN_DURATION_181_MP3 = "recording=queen_duration_181.mp3"
     RECORDING_QUEEN_MULTIPLE_RELEASE_DATES_MP3 = "recording=queen_multiple_release_dates.mp3"
     RECORDING_SHOWMUSTGOON_MP3 = "recording=showmustgoon.mp3"
+    RECORDING_TEMPERATURE_NO_MUSICBRAINZ_RECORDING_MP3 = \
+        "recording=Tokyo Drift x Temperature - no musicbrainz recording.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M53_WAV = "recording_Y do i - Carmina Burana Remix - 7m53.wav"
     TAGS_ALL_ID3V2_FLAC = "tags=all_id3v2.flac"
