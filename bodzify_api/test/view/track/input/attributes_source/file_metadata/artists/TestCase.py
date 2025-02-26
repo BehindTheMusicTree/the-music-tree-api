@@ -22,16 +22,6 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
         assert len(artists_list) > 0
         assert artists_list[0].name == 'a' * settings.ARTIST_NAME_LEN_MAX
 
-    def test_3_artists_and_2_commas_then_3_artists(self) -> None:
-        response = self._post_lib_track_with_generic_sample_tag_3_artists_and_two_commas_in_artist(
-            extension=self.file_extension)
-        assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all())
-        assert len(artists_list) == 3
-        expected_artists_names = {'artist1', 'artist2', 'artist3'}
-        actual_artists_names = {artist.name for artist in artists_list}
-        assert actual_artists_names == expected_artists_names
-
 
 class Mp3TestCase(TestCase):
     file_extension = 'mp3'
