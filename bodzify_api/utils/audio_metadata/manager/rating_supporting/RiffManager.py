@@ -63,9 +63,9 @@ class RiffManager(RatingSupportingMetadataManager):
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: None | int = None):
         metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
-            AppMetadataKey.ARTISTS_NAMES_STR: self.RiffTagKey.ARTIST_NAME,
+            AppMetadataKey.ARTISTS_NAMES: self.RiffTagKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.RiffTagKey.ALBUM_NAME,
-            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: self.RiffTagKey.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES: self.RiffTagKey.ALBUM_ARTISTS_NAMES,
             AppMetadataKey.GENRE_NAME: None,
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,
@@ -73,9 +73,9 @@ class RiffManager(RatingSupportingMetadataManager):
         }
         metadata_keys_direct_map_write = {
             AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
-            AppMetadataKey.ARTISTS_NAMES_STR: self.RiffTagKey.ARTIST_NAME,
+            AppMetadataKey.ARTISTS_NAMES: self.RiffTagKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.RiffTagKey.ALBUM_NAME,
-            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: self.RiffTagKey.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES: self.RiffTagKey.ALBUM_ARTISTS_NAMES,
             AppMetadataKey.GENRE_NAME: self.RiffTagKey.GENRE_NAME,
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,

@@ -191,18 +191,18 @@ class Id3v2Manager(RatingSupportingMetadataManager):
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: int | None = None):
         metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.Id3TextFrame.TITLE,
-            AppMetadataKey.ARTISTS_NAMES_STR: self.Id3TextFrame.ARTIST_NAME,
+            AppMetadataKey.ARTISTS_NAMES: self.Id3TextFrame.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.Id3TextFrame.ALBUM_NAME,
-            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: self.Id3TextFrame.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES: self.Id3TextFrame.ALBUM_ARTISTS_NAMES,
             AppMetadataKey.GENRE_NAME: self.Id3TextFrame.GENRE_NAME,
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.Id3TextFrame.LANGUAGE,
         }
         metadata_keys_direct_map_write: dict = {
             AppMetadataKey.TITLE: self.Id3TextFrame.TITLE,
-            AppMetadataKey.ARTISTS_NAMES_STR: self.Id3TextFrame.ARTIST_NAME,
+            AppMetadataKey.ARTISTS_NAMES: self.Id3TextFrame.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.Id3TextFrame.ALBUM_NAME,
-            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: self.Id3TextFrame.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES: self.Id3TextFrame.ALBUM_ARTISTS_NAMES,
             AppMetadataKey.GENRE_NAME: self.Id3TextFrame.GENRE_NAME,
             AppMetadataKey.RATING: self.Id3TextFrame.RATING,
             AppMetadataKey.LANGUAGE: self.Id3TextFrame.LANGUAGE,

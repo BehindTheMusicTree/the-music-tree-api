@@ -70,18 +70,18 @@ class VorbisManager(RatingSupportingMetadataManager):
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: int | None = None):
         metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.VorbisKey.TITLE,
-            AppMetadataKey.ARTISTS_NAMES_STR: self.VorbisKey.ARTIST_NAME,
+            AppMetadataKey.ARTISTS_NAMES: self.VorbisKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.VorbisKey.ALBUM_NAME,
-            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: None,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES: None,
             AppMetadataKey.GENRE_NAME: None,
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.VorbisKey.LANGUAGE,
         }
         metadata_keys_direct_map_write = {
             AppMetadataKey.TITLE: self.VorbisKey.TITLE,
-            AppMetadataKey.ARTISTS_NAMES_STR: self.VorbisKey.ARTIST_NAME,
+            AppMetadataKey.ARTISTS_NAMES: self.VorbisKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.VorbisKey.ALBUM_NAME,
-            AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: self.VorbisKey.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES: self.VorbisKey.ALBUM_ARTISTS_NAMES,
             AppMetadataKey.GENRE_NAME: self.VorbisKey.GENRE_NAME,
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.VorbisKey.LANGUAGE,
@@ -131,7 +131,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             self, app_metadata_key: AppMetadataKey) -> MetadataValue | None:
         if app_metadata_key == AppMetadataKey.GENRE_NAME:
             return self._get_genre_name()
-        elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
+        elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES:
             return self._get_album_artists_name_str()
         else:
             raise ImproperlyConfigured('Metadata key not handled')

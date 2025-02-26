@@ -123,7 +123,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_schema_data_from_file(self, file):
         try:
-            normalized_metadata = audio_metadata.get_merged_app_metadata_dict(
+            app_merged_metadata_dict = audio_metadata.get_merged_app_metadata_dict(
                 file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except FileCorruptedError as exc:
             raise AppValidationException(
@@ -132,24 +132,14 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
 
         schema_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
-            data_dict=normalized_metadata,
+            data_dict=app_merged_metadata_dict,
             keys=[AppMetadataKey.TITLE,
+                  AppMetadataKey.ARTISTS_NAMES,
                   AppMetadataKey.ALBUM_NAME,
+                  AppMetadataKey.ALBUM_ARTISTS_NAMES,
                   AppMetadataKey.GENRE_NAME,
                   AppMetadataKey.RATING,
                   AppMetadataKey.LANGUAGE])
-
-        for artists_names_keys in [
-            [AppMetadataKey.ARTISTS_NAMES_STR, SchemaFields.ARTISTS_NAMES],
-            [AppMetadataKey.ALBUM_ARTISTS_NAMES_STR, SchemaFields.ALBUM_ARTISTS_NAMES]
-        ]:
-            app_metadata_key, schema_key = artists_names_keys
-            if app_metadata_key in normalized_metadata:
-                artists_names_str: str = normalized_metadata[app_metadata_key]  # type: ignore
-                if artists_names_str is not None and artists_names_str != "":
-                    artists_names_list = \
-                        Artist.objects.get_artists_names_list_from_metadata_str(names_str=artists_names_str)
-                    schema_data_with_potential_none[schema_key] = artists_names_list
 
         schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(schema_data_with_potential_none)
         schema_data_clean[SchemaFields.TRACK_FILE_PUBLIC] = file
@@ -168,21 +158,20 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             if SchemaFields.ALBUM_ARTISTS_NAMES in schema_data:
                 album_artists_names_list = schema_data[SchemaFields.ALBUM_ARTISTS_NAMES]
 
-            album = Album.objects.get_album_from_name_and_album_artists_names_list_after_eventual_creations(
+            album = Album.objects.get_album_from_name_and_album_artists_names_after_eventual_creations(
                 user=schema_data[Fields.USER],
                 name=album_name,
-                album_artists_names_list=album_artists_names_list)
+                album_artists_names=album_artists_names_list)
 
             model_data[Fields.ALBUM] = album
 
     def _update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
             self, model_data: dict, schema_data: dict) -> None:
         if SchemaFields.ARTISTS_NAMES in schema_data:
-            artists_names_list = schema_data[SchemaFields.ARTISTS_NAMES]
-            if artists_names_list:
+            artists_names = schema_data[SchemaFields.ARTISTS_NAMES]
+            if artists_names:
                 artists = Artist.objects.get_artists_list_from_names_after_eventual_creation(
-                    user=schema_data[Fields.USER],
-                    artists_names_list=artists_names_list)
+                    user=schema_data[Fields.USER], artists_names=artists_names)
             else:
                 artists = []
         else:

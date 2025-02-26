@@ -8,7 +8,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 class TestCase(UpdateFileMetadataStrTestCase):
     save_field = PostFields.ALBUM_ARTISTS_NAMES_ARRAY
-    lib_track_app_metadata_key = AppMetadataKey.ALBUM_ARTISTS_NAMES_STR
+    lib_track_app_metadata_key = AppMetadataKey.ALBUM_ARTISTS_NAMES
     length_max = settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX
     album_data_dict = {PostFields.ALBUM_NAME: "The Great Twenty-Eight"}
 
