@@ -2,7 +2,5 @@ from bodzify_api.model.public_standard_resource.Fields import Fields as PublicRe
 from bodzify_api.model.uuid.Fields import Fields as UuidFields
 
 
-class Fields:
-    CREATED_ON = PublicRelationFields.CREATED_ON
-    UPDATED_ON = PublicRelationFields.UPDATED_ON
-    UUID = UuidFields.UUID
+class Fields(PublicRelationFields, UuidFields):
+    pass

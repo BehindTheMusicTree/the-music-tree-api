@@ -1,18 +1,5 @@
-from bodzify_api.model.playlist.Fields import Fields as BaseFields
+from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 
 
-class Fields:
-    CREATED_ON = BaseFields.CREATED_ON
-    UPDATED_ON = BaseFields.UPDATED_ON
-    UUID = BaseFields.UUID
-    USER = BaseFields.USER
-    NAME_PUBLIC = BaseFields.NAME_PUBLIC
-    NAME_INTERNAL = BaseFields.NAME_INTERNAL
-    LIB_TRACKS_INTERNAL = BaseFields.LIB_TRACKS_NOT_ARCHIVED_INTERNAL
-    LIB_TRACKS_PUBLIC = BaseFields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC
-    LIB_TRACKS_COUNT_INTERNAL = BaseFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
-    LIB_TRACKS_COUNT_PUBLIC = BaseFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
-    DURATION_IN_SEC = BaseFields.DURATION_IN_SEC
-    DURATION_STR_IN_HOUR_MIN_SEC = BaseFields.DURATION_STR_IN_HOUR_MIN_SEC
-    PLAY_COUNT = BaseFields.PLAY_COUNT
-    LAST_TRACK_LIST_UPDATE_DATE = BaseFields.LAST_TRACK_LIST_UPDATE_DATE
+class Fields(PlaylistFields):
+    pass

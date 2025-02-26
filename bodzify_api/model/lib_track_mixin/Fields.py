@@ -1,11 +1,7 @@
 from bodzify_api.model.private_unique_resource.Fields import Fields as PrivateResourceFields
 
 
-class Fields:
-    UUID = PrivateResourceFields.UUID
-    USER = PrivateResourceFields.USER
-    CREATED_ON = PrivateResourceFields.CREATED_ON
-    UPDATED_ON = PrivateResourceFields.UPDATED_ON
+class Fields(PrivateResourceFields):
     NAME_PUBLIC = 'name'
     NAME_INTERNAL = f'_{NAME_PUBLIC}'
     LIB_TRACKS_NOT_ARCHIVED_INTERNAL = 'lib_tracks_not_archived'

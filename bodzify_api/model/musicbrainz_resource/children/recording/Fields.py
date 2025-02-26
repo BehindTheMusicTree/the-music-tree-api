@@ -1,11 +1,7 @@
-from bodzify_api.model.musicbrainz_resource.Fields import Fields as MusicbrainzResourceFields
+from bodzify_api.model.musicbrainz_resource.Fields import Fields as MbResourceFields
 
 
-class Fields:
-    CREATED_ON = MusicbrainzResourceFields.CREATED_ON
-    UPDATED_ON = MusicbrainzResourceFields.UPDATED_ON
-    MUSICBRAINZ_ID = MusicbrainzResourceFields.MUSICBRAINZ_ID
-    MUSICBRAINZ_LINK = MusicbrainzResourceFields.MUSICBRAINZ_LINK
+class Fields(MbResourceFields):
     TITLE = 'title'
     SCORE = 'score'
     DURATION_IN_SEC = 'duration_in_sec'

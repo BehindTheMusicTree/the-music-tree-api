@@ -1,10 +1,7 @@
 from bodzify_api.model.private_standard_resource.Fields import Fields as PrivateStandardResourceFields
 
 
-class Fields:
-    CREATED_ON = PrivateStandardResourceFields.CREATED_ON
-    UPDATED_ON = PrivateStandardResourceFields.UPDATED_ON
-    USER = PrivateStandardResourceFields.USER
+class Fields(PrivateStandardResourceFields):
     LIB_TRACK = 'lib_track'
     FILE = 'file'
     FILENAME = 'filename'
