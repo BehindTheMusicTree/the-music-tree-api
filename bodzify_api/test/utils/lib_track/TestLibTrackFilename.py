@@ -26,6 +26,8 @@ class TestLibTrackFilename(str, Enum):
         "recording=Celinekin Park - no musicbrainz recording duration.mp3"
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = \
         "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
+    RECORDING_LORIE_2_MATCHES_BUT_ONE_WITH_CLOSEST_DURATION_MP3 = \
+        "recording=lorie_2_matches_but_one_with_closest_duration.mp3"
     RECORDING_SHOWMUSTGOON_MP3 = "recording=showmustgoon.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M53_WAV = "recording_Y do i - Carmina Burana Remix - 7m53.wav"
