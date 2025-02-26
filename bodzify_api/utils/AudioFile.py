@@ -133,13 +133,19 @@ class AudioFile:
         else:
             return self.file_path
 
-    def get_file_name(self):
+    def get_file_name_original(self):
+        """
+        "Original" means the name of the file that was uploaded by the user.
+        The actual file name may be different if the file was renamed during the upload process.
+        """
         if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, DjangoFile)):
             return self.file.name
         elif isinstance(self.file, str):
             return self.file
         else:
             raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
+
+    def get_file_name_system(self):
 
     def is_flac_file_md5_valid(self) -> bool:
         if not self.file_extension == '.flac':
