@@ -2,10 +2,10 @@
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import serializers
 
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
-from bodzify_api.serializer.model.criteria.output.simple import     CriteriaSimpleSerializer
-from bodzify_api.serializer.model.playlist.children.criteria.output.Fields import     Fields as AvailableFields
-from bodzify_api.serializer.model.playlist.children.criteria.output.minumum import     CriteriaPlaylistMinimumSerializer
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.serializer.model.criteria.output.simple import CriteriaSimpleSerializer
+from bodzify_api.serializer.model.playlist.children.criteria.output.Fields import Fields as AvailableFields
+from bodzify_api.serializer.model.playlist.children.criteria.output.minumum import CriteriaPlaylistMinimumSerializer
 
 
 class Fields:

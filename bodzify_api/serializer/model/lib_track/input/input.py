@@ -12,6 +12,7 @@ from bodzify_api.serializer.field.RatingField import RatingField
 
 from .Fields import Fields
 
+
 ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
 TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album position is."""
 

@@ -7,6 +7,7 @@ from bodzify_api.model.base.DynamicTableNameModelBase import DynamicTableNameMod
 from bodzify_api.model.lib_track_mixin.query_utils import transform_name_fields
 from bodzify_api.utils.model import SaveContext
 
+
 T = TypeVar('T', bound='BaseModel')
 
 

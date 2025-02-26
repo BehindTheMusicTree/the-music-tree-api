@@ -1,9 +1,9 @@
 from rest_framework import status
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
-from bodzify_api.serializer.model.playlist.base.output.detailed import     Fields as RetrieveFields
-from bodzify_api.test.view.playlist.base.PlaylistTestCase import     PlaylistTestCase
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as RetrieveFields
+from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 
 
 class TestCase(PlaylistTestCase):

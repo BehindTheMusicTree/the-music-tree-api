@@ -1,11 +1,11 @@
 from django.db import transaction
-from drf_spectacular.utils import (OpenApiParameter,  # type: ignore
-                                   OpenApiTypes, extend_schema)
+from drf_spectacular.utils import OpenApiParameter  # type: ignore
+from drf_spectacular.utils import OpenApiTypes, extend_schema
 
 from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet
-from bodzify_api.filtering.set.artist.ArtistFilterSet import     Fields as FilterFields
+from bodzify_api.filtering.set.artist.ArtistFilterSet import Fields as FilterFields
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.serializer.model.artist.detailed import     ArtistDetailedSerializer
+from bodzify_api.serializer.model.artist.detailed import ArtistDetailedSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 

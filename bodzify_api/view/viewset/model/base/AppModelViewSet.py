@@ -1,4 +1,4 @@
-from typing import (Any, Generic, Sequence, Type, TypeVar, Union, cast)
+from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import IntegrityError
@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.serializers import (BaseSerializer, ModelSerializer, Serializer)
+from rest_framework.serializers import BaseSerializer, ModelSerializer, Serializer
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
@@ -23,6 +23,7 @@ from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
 
 from ....pagination.AppPagination import AppPagination
+
 
 T = TypeVar('T', bound=BaseModel)
 

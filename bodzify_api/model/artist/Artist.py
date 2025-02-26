@@ -9,6 +9,7 @@ from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from .ArtistManager import ArtistManager
 from .Fields import Fields
 
+
 if TYPE_CHECKING:
     from bodzify_api.model.album.Album import Album
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack

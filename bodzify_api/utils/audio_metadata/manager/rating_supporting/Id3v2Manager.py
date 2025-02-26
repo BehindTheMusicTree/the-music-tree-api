@@ -3,8 +3,7 @@ from typing import Type
 
 from mutagen._file import FileType
 from mutagen.id3 import ID3
-from mutagen.id3._frames import (POPM, TALB, TBPM, TCON, TDRC, TIT2, TLAN,
-                                 TPE1, TPE2, TRCK, TYER)
+from mutagen.id3._frames import POPM, TALB, TBPM, TCON, TDRC, TIT2, TLAN, TPE1, TPE2, TRCK, TYER
 from mutagen.id3._util import ID3NoHeaderError
 
 from bodzify_api import settings

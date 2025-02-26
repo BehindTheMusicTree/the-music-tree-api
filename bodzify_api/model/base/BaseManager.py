@@ -5,6 +5,7 @@ from django.db import models
 
 from .BaseQuerySet import BaseQuerySet
 
+
 if TYPE_CHECKING:
     from .BaseModel import BaseModel
 

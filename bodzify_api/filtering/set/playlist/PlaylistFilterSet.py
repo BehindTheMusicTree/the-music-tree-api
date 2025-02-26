@@ -3,7 +3,8 @@ from django.db.models.query import QuerySet
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
 from bodzify_api.filtering.filter.char.OptionalEnumCharFilter import OptionalEnumCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
-    PrivateUniqueResourceFilterSet)
+    PrivateUniqueResourceFilterSet
+)
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.model.playlist.Fields import Fields as ModelFields

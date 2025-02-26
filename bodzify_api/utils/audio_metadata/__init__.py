@@ -85,6 +85,7 @@ from .utils.AppMetadataKey import AppMetadataKey
 from .utils.TagFormat import MetadataFormat
 from .utils.types import AppMetadataDict, AppMetadataValue
 
+
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
 TAG_FORMAT_MANAGER_CLASS_MAP = {

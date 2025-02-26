@@ -1,9 +1,10 @@
 from typing import TYPE_CHECKING
 
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.public_standard_resource.StandardResourceManager import     StandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 
 from .Fields import Fields
+
 
 if TYPE_CHECKING:
     from .LibTrackPlaylistRel import LibTrackPlaylistRel

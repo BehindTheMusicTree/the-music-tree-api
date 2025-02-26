@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from bodzify_api.model.track.file.TrackFile import TrackFile
     from bodzify_api.model.user.User import User

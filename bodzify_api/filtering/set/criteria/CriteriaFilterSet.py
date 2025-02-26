@@ -1,7 +1,8 @@
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
 from bodzify_api.filtering.filter.foreign_key.DescendantAwareFilter import DescendantAwareFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
-    PrivateUniqueResourceFilterSet)
+    PrivateUniqueResourceFilterSet
+)
 from bodzify_api.model.criteria.Criteria import Criteria
 
 from .Fields import Fields

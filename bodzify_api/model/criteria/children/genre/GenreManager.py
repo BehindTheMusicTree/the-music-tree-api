@@ -6,6 +6,7 @@ from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 
 from ...CriteriaManager import CriteriaManager
 
+
 if TYPE_CHECKING:
     from .Genre import Genre
 

@@ -12,6 +12,7 @@ from rest_framework.relations import ManyRelatedField
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
+
 T = TypeVar('T')
 
 

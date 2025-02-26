@@ -6,12 +6,8 @@ from typing import Any
 
 from mutagen._file import FileType
 
-from bodzify_api.utils.audio_metadata.exceptions import (
-    UnsupportedMetadataError
-)
-from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadataKey import (
-    Id3v1RawMetadataKey
-)
+from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
+from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadataKey import Id3v1RawMetadataKey
 
 
 class Id3v1RawMetadata(FileType):

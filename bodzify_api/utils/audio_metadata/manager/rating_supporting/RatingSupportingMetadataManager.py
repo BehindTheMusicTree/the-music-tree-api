@@ -1,6 +1,5 @@
 from abc import abstractmethod
 
-
 from django.core.exceptions import ImproperlyConfigured
 
 from ....AudioFile import AudioFile

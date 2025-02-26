@@ -7,9 +7,10 @@ from django.dispatch import receiver
 from bodzify_api import settings
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import     CriteriaPlaylist
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
 from .Fields import Fields
+
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
@@ -50,5 +51,5 @@ def create_user_criterialess_playlists(sender, instance, created, **kwargs):
             type = CriteriaType.objects.get(pk=criteria_type)
             CriteriaPlaylist.objects.create(user=instance, type=type, criteria=None)
 
-        from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import             AllLibTracksMixin
+        from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
         AllLibTracksMixin.objects.create(user=instance)

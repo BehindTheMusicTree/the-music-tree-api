@@ -1,7 +1,6 @@
 import datetime
 from calendar import monthrange
 
-
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
 from bodzify_api.model.musicbrainz_resource.children.recording.Fields import Fields as MusicbrainzRecordingFields

@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.model.lib_track.output.Fields import     Fields as LibTrackOutputFields
+from bodzify_api.serializer.model.lib_track.output.Fields import Fields as LibTrackOutputFields
 
 from ..AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
 

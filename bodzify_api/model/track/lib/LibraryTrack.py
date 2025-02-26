@@ -27,6 +27,7 @@ from ..file.TrackFile import TrackFile
 from .Fields import Fields
 from .LibTrackManager import LibTrackManager
 
+
 if TYPE_CHECKING:
     from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 

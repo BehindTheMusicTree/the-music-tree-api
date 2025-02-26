@@ -5,11 +5,14 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
 from bodzify_api.serializer.AppSerializer import AppSerializer
 from bodzify_api.serializer.model.criteria_lineage_rel.without_ascendant import (
-    CriteriaLineageRelWithoutAscendantSerializer)
+    CriteriaLineageRelWithoutAscendantSerializer
+)
 from bodzify_api.serializer.model.criteria_lineage_rel.without_descendant import (
-    CriteriaLineageRelWithoutDescendantSerializer)
+    CriteriaLineageRelWithoutDescendantSerializer
+)
 from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album_and_genre import (
-    LibTrackWithoutAlbumPlaylistGenreSerializer)
+    LibTrackWithoutAlbumPlaylistGenreSerializer
+)
 from bodzify_api.serializer.model.playlist.children.criteria.output.minumum import CriteriaPlaylistMinimumSerializer
 
 from .Fields import Fields as Fields

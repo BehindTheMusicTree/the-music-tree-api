@@ -1,6 +1,6 @@
 
 
-from bodzify_api.test.utils.field.filter.char.FreeCharFilterTestCase import     FreeCharFilterTestCase
+from bodzify_api.test.utils.field.filter.char.FreeCharFilterTestCase import FreeCharFilterTestCase
 
 
 class NullableFreeCharFilterTestCase(FreeCharFilterTestCase):

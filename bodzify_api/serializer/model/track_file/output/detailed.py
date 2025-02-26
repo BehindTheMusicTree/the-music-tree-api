@@ -2,8 +2,8 @@ from rest_framework import serializers
 
 from bodzify_api.model.track.file.flac.FlacTrackFile import FlacTrackFile
 from bodzify_api.model.track.file.TrackFile import TrackFile
-from bodzify_api.serializer.model.fingerprint_missing_cause.detailed import     FingerprintMissingCauseDetailedSerializer
-from bodzify_api.serializer.model.musicbrainz.recording.detailed import     MusicbrainzRecordingDetailedSerializer
+from bodzify_api.serializer.model.fingerprint_missing_cause.detailed import FingerprintMissingCauseDetailedSerializer
+from bodzify_api.serializer.model.musicbrainz.recording.detailed import MusicbrainzRecordingDetailedSerializer
 
 from .Fields import Fields
 from .FlacSpecificFields import FlacSpecificFields

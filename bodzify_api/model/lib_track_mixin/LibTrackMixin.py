@@ -6,6 +6,7 @@ from django.db import models
 from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 
+
 if TYPE_CHECKING:
     from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 

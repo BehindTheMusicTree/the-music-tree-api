@@ -1,5 +1,5 @@
-from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import     GenrePlaylist
-from bodzify_api.view.viewset.model.playlist.children.criteria.CriteriaPlaylistViewSet import     CriteriaPlaylistViewSet
+from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
+from bodzify_api.view.viewset.model.playlist.children.criteria.CriteriaPlaylistViewSet import CriteriaPlaylistViewSet
 
 
 class GenrePlaylistViewSet(CriteriaPlaylistViewSet):

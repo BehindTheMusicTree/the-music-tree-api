@@ -8,9 +8,11 @@ from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 from .model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from .model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
 from .model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import (
-    MusicbrainzRecordingMissingCauseCode)
+    MusicbrainzRecordingMissingCauseCode
+)
 from .model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import (
-    MusicbrainzRecordingMissingCause)
+    MusicbrainzRecordingMissingCause
+)
 from .model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from .model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from .model.playlist.children.manual.ManualPlaylist import ManualPlaylist
@@ -21,6 +23,7 @@ from .model.track.file.TrackFile import TrackFile
 from .model.track.lib.LibraryTrack import LibraryTrack
 from .model.user.admin.UserAdmin import UserAdmin
 from .model.user.User import User
+
 
 admin.site.register(User, UserAdmin)
 admin.site.register(LibraryTrack)

@@ -1,7 +1,7 @@
 
 from rest_framework import status
 
-from bodzify_api.test.view.playlist.children.criteria.tag.TagPlaylistTestCase import     TagPlaylistTestCase
+from bodzify_api.test.view.playlist.children.criteria.tag.TagPlaylistTestCase import TagPlaylistTestCase
 
 
 class TestCase(TagPlaylistTestCase):

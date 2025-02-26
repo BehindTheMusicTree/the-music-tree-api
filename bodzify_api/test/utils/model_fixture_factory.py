@@ -23,7 +23,8 @@ from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz_resource.children.artist.MusicbrainzArtist import MusicbrainzArtist
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import (
-    Fields as MusicbrainzRecordingFields)
+    Fields as MusicbrainzRecordingFields
+)
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.play.Fields import Fields as PlayFields
 from bodzify_api.model.play.Play import Play

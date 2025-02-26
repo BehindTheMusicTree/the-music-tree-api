@@ -16,12 +16,15 @@ from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import (
-    MusicbrainzRecordingMissingCauseCode)
+    MusicbrainzRecordingMissingCauseCode
+)
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import (
-    MusicbrainzRecordingMissingCause)
+    MusicbrainzRecordingMissingCause
+)
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 from bodzify_api.model.musicbrainz_resource.children.recording.MusicBrainzRecordingLookupResult import (
-    MusicbrainzRecordingLookupResult)
+    MusicbrainzRecordingLookupResult
+)
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.utils import utils as model_utils
@@ -33,6 +36,7 @@ from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 from .Fields import Fields
 from .fingerprinting.FingerprintingResult import FingerprintingResult
 from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
+
 
 if TYPE_CHECKING:
     from ..lib.LibraryTrack import LibraryTrack

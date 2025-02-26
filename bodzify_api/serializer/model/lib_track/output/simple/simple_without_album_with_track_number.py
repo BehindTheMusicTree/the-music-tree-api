@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
-from bodzify_api.serializer.model.criteria.output.minimum import     CriteriaMinimumSerializer
+from bodzify_api.serializer.model.criteria.output.minimum import CriteriaMinimumSerializer
 
 from .Fields import Fields as SimpleFields
 

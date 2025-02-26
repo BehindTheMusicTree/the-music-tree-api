@@ -1,8 +1,10 @@
 
 from dataclasses import dataclass
 
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import     MusicbrainzRecordingMissingCause
-from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import     MusicbrainzRecording
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import (
+    MusicbrainzRecordingMissingCause
+)
+from bodzify_api.model.musicbrainz_resource.children.recording.MusicbrainzRecording import MusicbrainzRecording
 
 
 @dataclass

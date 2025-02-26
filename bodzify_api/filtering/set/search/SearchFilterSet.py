@@ -1,6 +1,8 @@
 from django_filters import rest_framework as filters
 
-from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import     PrivateUniqueResourceFilterSet
+from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
+    PrivateUniqueResourceFilterSet
+)
 
 from .Fields import Fields
 

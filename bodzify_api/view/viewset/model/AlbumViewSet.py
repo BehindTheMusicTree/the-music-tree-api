@@ -1,6 +1,6 @@
 from django.db import transaction
-from drf_spectacular.utils import (OpenApiParameter,  # type: ignore
-                                   OpenApiTypes, extend_schema)
+from drf_spectacular.utils import OpenApiParameter  # type: ignore
+from drf_spectacular.utils import OpenApiTypes, extend_schema
 
 from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet
 from bodzify_api.filtering.set.album.Fields import Fields as FilterFields

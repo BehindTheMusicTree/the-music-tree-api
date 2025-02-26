@@ -1,7 +1,6 @@
 
 from enum import Enum
 
-
 from .AppMetadataKey import AppMetadataKey
 
 

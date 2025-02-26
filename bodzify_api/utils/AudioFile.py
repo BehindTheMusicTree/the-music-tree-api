@@ -6,7 +6,7 @@ from typing import Union
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files import File as DjangoFile
-from django.core.files.uploadedfile import (InMemoryUploadedFile, TemporaryUploadedFile)
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 from mutagen.flac import FLAC
 from mutagen.mp3 import MP3

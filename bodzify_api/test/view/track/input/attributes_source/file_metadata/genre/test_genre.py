@@ -2,7 +2,10 @@ import pytest
 
 from bodzify_api.test import conftest
 from bodzify_api.test.view.track.input.attributes_source.file_metadata.genre.TestCase import (
-    FlacTestCase, Mp3TestCase, WavTestCase)
+    FlacTestCase,
+    Mp3TestCase,
+    WavTestCase
+)
 
 
 @pytest.fixture(params=[Mp3TestCase, WavTestCase, FlacTestCase])

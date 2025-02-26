@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.field.AppCharField import AppCharField
-from bodzify_api.serializer.model.playlist.base.output.Fields import     Fields as AvailableFields
+from bodzify_api.serializer.model.playlist.base.output.Fields import Fields as AvailableFields
 
 
 class Fields:

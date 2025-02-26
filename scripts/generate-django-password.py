@@ -5,6 +5,7 @@ import django
 from django.conf import settings
 from django.contrib.auth.hashers import PBKDF2PasswordHasher
 
+
 settings.configure(
     PASSWORD_HASHERS=[
         'django.contrib.auth.hashers.PBKDF2PasswordHasher',

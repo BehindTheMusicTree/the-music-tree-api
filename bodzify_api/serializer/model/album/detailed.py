@@ -3,7 +3,9 @@ from rest_framework import serializers
 from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.model.album.Fields import Fields
 from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
-from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album_with_track_number import     LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer
+from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album_with_track_number import (
+    LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer
+)
 
 
 class AlbumDetailedSerializer(serializers.ModelSerializer):

@@ -2,7 +2,7 @@ from uuid import UUID
 
 from django.urls import reverse
 
-from bodzify_api.model.playlist.children.criteria.tag.TagPlaylist import     TagPlaylist
+from bodzify_api.model.playlist.children.criteria.tag.TagPlaylist import TagPlaylist
 from bodzify_api.test.ApiTestCase import ApiTestCase
 
 

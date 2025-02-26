@@ -4,6 +4,7 @@ from typing import Any
 
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 
+
 """
 Error Response Detail Module
 

@@ -5,6 +5,7 @@ from django.db.models import QuerySet
 from bodzify_api.model.lib_track_mixin.Fields import Fields
 from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 
+
 if TYPE_CHECKING:
     from bodzify_api.model.artist.Artist import Artist
     from bodzify_api.model.user.User import User

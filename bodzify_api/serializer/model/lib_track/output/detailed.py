@@ -4,10 +4,10 @@ from bodzify_api.model.track.lib.LibraryTrack import Fields as ModelFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
-from bodzify_api.serializer.model.criteria.output.minimum import     CriteriaMinimumSerializer
+from bodzify_api.serializer.model.criteria.output.minimum import CriteriaMinimumSerializer
 from bodzify_api.serializer.model.lib_track.output.Fields import Fields
-from bodzify_api.serializer.model.playlist.base.output.minimum import     PlaylistMinimumSerializer
-from bodzify_api.serializer.model.track_file.output.detailed import     FileDetailedSerializer
+from bodzify_api.serializer.model.playlist.base.output.minimum import PlaylistMinimumSerializer
+from bodzify_api.serializer.model.track_file.output.detailed import FileDetailedSerializer
 
 
 class LibTrackDetailedSerializer(serializers.ModelSerializer):

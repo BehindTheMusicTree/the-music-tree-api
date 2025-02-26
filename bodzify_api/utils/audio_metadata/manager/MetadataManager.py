@@ -12,6 +12,7 @@ from ..exceptions import UnsupportedMetadataError
 from ..utils.AppMetadataKey import AppMetadataKey
 from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey, RawMetadataValue
 
+
 METADATA_ARTISTS_SEPARATION_CHAR = ","
 
 T = TypeVar('T', str, int)

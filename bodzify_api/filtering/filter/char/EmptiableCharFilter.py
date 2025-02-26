@@ -5,6 +5,7 @@ from django_filters import CharFilter
 from bodzify_api.filtering.filter.AppFilter import AppFilter
 from bodzify_api.model.base.BaseQuerySet import BaseQuerySet
 
+
 if TYPE_CHECKING:
     from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 

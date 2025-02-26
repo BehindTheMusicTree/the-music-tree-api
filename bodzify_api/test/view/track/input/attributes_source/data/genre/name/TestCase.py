@@ -1,7 +1,9 @@
 from rest_framework import status
 
-from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as PostFields
-from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import     NullableStrFieldFromDataTestCase
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import (
+    NullableStrFieldFromDataTestCase
+)
 
 
 class TestCase(NullableStrFieldFromDataTestCase):

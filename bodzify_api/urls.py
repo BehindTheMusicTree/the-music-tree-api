@@ -1,9 +1,9 @@
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView)
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework import routers
-from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.view.viewset.model.AllLibTracksMixinViewSet import AllLibTracksViewSet
@@ -21,6 +21,7 @@ from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from .view.viewset.model.PlayViewSet import PlayViewSet
 from .view.viewset.model.UserViewSet import UserViewSet
 from .view.viewset.SearchViewSet import SearchViewSet
+
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')

@@ -9,6 +9,7 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.model.uuid.UuidModel import UuidModel
 from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
+
 T = TypeVar('T', bound=models.Model)
 
 

@@ -2,6 +2,7 @@ from rest_framework import status
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
+
 """
 Small files are handled differently by Django. They are stored in memory instead of being written to disk.
 Thus the python file object is not available. This test case is to ensure that the API handles this case.

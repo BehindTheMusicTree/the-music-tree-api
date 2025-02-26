@@ -6,7 +6,8 @@ from rest_framework.request import Request
 
 from bodzify_api.model.uuid.UuidModel import UuidModel
 from bodzify_api.serializer.field.AppUuidField import AppUuidField
-from bodzify_api.serializer.field.foreign_key.ForeignKeyField import     ForeignKeyField
+from bodzify_api.serializer.field.foreign_key.ForeignKeyField import ForeignKeyField
+
 
 T = TypeVar('T', bound=models.Model)
 

@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
 from bodzify_api import settings
-from bodzify_api.model.playlist.children.manual.Fields import     Fields as ModelFields
-from bodzify_api.model.playlist.children.manual.ManualPlaylist import     ManualPlaylist
+from bodzify_api.model.playlist.children.manual.Fields import Fields as ModelFields
+from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.serializer.AppSerializer import AppSerializer
-from bodzify_api.serializer.field.UniquePerUserNameField import     UniquePerUserNameField
+from bodzify_api.serializer.field.UniquePerUserNameField import UniquePerUserNameField
 
 
 class ManualPlaylistInputSerializer(AppSerializer, serializers.ModelSerializer):

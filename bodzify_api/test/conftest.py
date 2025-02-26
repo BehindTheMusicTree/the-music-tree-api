@@ -2,11 +2,11 @@ import os
 import shutil
 from pathlib import Path
 
-
 import pytest
 from _pytest.main import Session
 
 from bodzify_api import settings
+
 
 critical_test_failed = False
 

@@ -7,6 +7,7 @@ from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneT
 
 from .AppCharField import AppCharField
 
+
 __all__ = [
     'AppCharField',
     'AppForeignKey',

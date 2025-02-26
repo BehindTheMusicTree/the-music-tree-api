@@ -4,9 +4,9 @@ from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
-from bodzify_api.model.public_standard_resource.StandardResourceManager import     StandardResourceManager
+from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 
-from .children.criteria.CriterialessPlaylistNames import     CriterialessPlaylistNames
+from .children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from .Fields import Fields
 from .PlaylistQuerySet import PlaylistQuerySet
 

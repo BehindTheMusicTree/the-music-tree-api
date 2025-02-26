@@ -1,7 +1,9 @@
 from bodzify_api import settings
-from bodzify_api.serializer.model.lib_track.input.post.Fields import     Fields as PostFields
-from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import     UpdateFileMetadataStrTestCase
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import     AppMetadataKey
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import (
+    UpdateFileMetadataStrTestCase
+)
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 
 class TestCase(UpdateFileMetadataStrTestCase):

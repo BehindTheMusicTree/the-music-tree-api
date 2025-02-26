@@ -23,12 +23,13 @@ from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as P
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
 from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.AppDjangoFIle import AppDjangoFile
-from bodzify_api.utils.AudioFile import AudioFile
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.AudioFile import AudioFile
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 from .Fields import Fields
+
 
 if TYPE_CHECKING:
     from bodzify_api.model.criteria.children.genre.Genre import Genre
@@ -64,12 +65,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 playlist=genreless_criteria_playlist, lib_track=instance).delete()
 
     def _add_to_genre_playlists(self, instance: 'LibraryTrack', genre_limit=None):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import (
-            LibTrackPlaylistRel
-        )
-        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import (
-            CriteriaPlaylist
-        )
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
         update_date = timezone.now()
         if instance.genre:
@@ -316,12 +313,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         return self._get_model_data_from_post_and_extract_common_schema_data(schema_data=schema_data)
 
     def decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import (
-            Fields as LibTrackPlaylistRelFields
-        )
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import (
-            LibTrackPlaylistRel
-        )
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         for playlist_uuid, old_position in playlists_with_old_position:
             lib_track_playlist_rels_to_update = LibTrackPlaylistRel.objects.filter(
                 user=user, playlist=playlist_uuid, position__gt=old_position)

@@ -1,5 +1,7 @@
 from bodzify_api.serializer.model.lib_track.input.Fields import Fields as InputFields
-from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIntTestCase import UpdateFileMetadataIntTestCase
+from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataIntTestCase import (
+    UpdateFileMetadataIntTestCase
+)
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 
