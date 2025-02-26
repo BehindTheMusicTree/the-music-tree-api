@@ -33,14 +33,6 @@ class ApiTestCase(AppTestCase, Generic[T]):
     model_class: Type[T]  # Must be defined in child classes
     saved_object: T  # Must be defined in child classes
 
-    class LibTrackGenericSamplesFilenameWithoutExtension:
-        BELOW_1_SEC = "below 1 sec"
-        ONE_STAR = "1 star"
-        TAGS_NONE = "tags none"
-        TAGS_ALBUM_KOKO_WITHOUT_ALBUM_ARTISTS = "tags album koko without album artists"
-        TAGS_ALBUM_ARTISTS_KOKO_WITHOUT_ALBUM = "tags album artists koko without album"
-        TAGS_MAX_LEN_WITH_LETTER_A = "tags max length with letter a"
-
     api_client: AppApiClient
     saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict
