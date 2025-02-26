@@ -56,17 +56,9 @@ class Id3v1Manager(MetadataManager):
             AppMetadataKey.TITLE: Id3v1RawMetadataKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES: Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
             AppMetadataKey.ALBUM_NAME: Id3v1RawMetadataKey.ALBUM_NAME,
-            AppMetadataKey.GENRE_NAME: Id3v1RawMetadataKey.GENRE_CODE,
-        }
-        metadata_keys_direct_map_write: dict = {
-            AppMetadataKey.TITLE: Id3v1RawMetadataKey.TITLE,
-            AppMetadataKey.ARTISTS_NAMES: Id3v1RawMetadataKey.ARTISTS_NAMES_STR,
-            AppMetadataKey.ALBUM_NAME: Id3v1RawMetadataKey.ALBUM_NAME,
             AppMetadataKey.GENRE_NAME: None,
         }
-        super().__init__(audio_file=audio_file,
-                         metadata_keys_direct_map_read=metadata_keys_direct_map_read,
-                         metadata_keys_direct_map_write=metadata_keys_direct_map_write)
+        super().__init__(audio_file=audio_file, metadata_keys_direct_map_read=metadata_keys_direct_map_read)
 
     def _extract_raw_metadata(self) -> Id3v1RawMetadata:
         try:
@@ -99,6 +91,11 @@ class Id3v1Manager(MetadataManager):
                         result[enum_member] = value
                     break
         return result
+
+    def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> str | None:
+        if app_netadata_key == AppMetadataKey.GENRE_NAME:
+            return self.get_genre_name()
+        return None
 
     def get_genre_name(self) -> str | None:
         genre_code: int | None = self.raw_metadata_dict.get(Id3v1RawMetadataKey.GENRE_CODE)  # type: ignore

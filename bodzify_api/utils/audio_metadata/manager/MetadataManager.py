@@ -22,14 +22,14 @@ class MetadataManager:
 
     audio_file: AudioFile
     metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None]
-    metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None]
+    metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None
     file_raw_metadata: FileType
     raw_metadata_dict: dict[RawMetadataKey, MetadataValue]
 
     def __init__(
             self, audio_file: AudioFile,
             metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
-            metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None]):
+            metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None = None):
         self.audio_file = audio_file
         self.metadata_keys_direct_map_read = metadata_keys_direct_map_read
         self.metadata_keys_direct_map_write = metadata_keys_direct_map_write
@@ -65,7 +65,7 @@ class MetadataManager:
         else:
             raise ImproperlyConfigured('Value type not handled')
 
-    def _update_prepared_value_in_raw_metadata(
+    def _update_formatted_value_in_raw_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: MetadataValue):
         self.file_raw_metadata[raw_metadata_key] = app_metadata_value
 
@@ -93,7 +93,7 @@ class MetadataManager:
             else:
                 raw_metadata_key = self.metadata_keys_direct_map_write[app_metadata_key]
                 if raw_metadata_key:
-                    self._update_prepared_value_in_raw_metadata(
+                    self._update_formatted_value_in_raw_metadata(
                         raw_metadata_key=raw_metadata_key, app_metadata_value=value)
                 else:
                     self._update_undirectly_mapped_metadata(

@@ -255,7 +255,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
 
         return result
 
-    def _update_prepared_value_in_raw_metadata(
+    def _update_formatted_value_in_raw_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: MetadataValue):
         file_raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
         file_raw_metadata_id3.delall(raw_metadata_key)
