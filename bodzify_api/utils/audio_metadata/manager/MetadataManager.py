@@ -26,7 +26,6 @@ class MetadataManager:
         AppMetadataKey.ALBUM_NAME: str,
         AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: str,
         AppMetadataKey.GENRE_NAME: str,
-        AppMetadataKey.DURATION_IN_SEC: int,
         AppMetadataKey.RATING: int,
         AppMetadataKey.LANGUAGE: str,
     }
