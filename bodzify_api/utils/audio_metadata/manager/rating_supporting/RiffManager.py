@@ -16,13 +16,22 @@ class RiffManager(RatingSupportingMetadataManager):
     """
     Manages RIFF metadata for WAV audio files.
 
-    RIFF (Resource Interchange File Format) is the standard metadata format for WAV files.
+    Implementation Note:
+    While mutagen is used for reading WAV metadata, it does not support writing RIFF metadata. This is a known 
+    limitation of the library, which only provides read-only access to WAVE files' metadata through its WAVE class.
+    Therefore, this manager implements its own RIFF metadata writing functionality by directly manipulating the file's 
+    INFO chunk according to the RIFF specification.
 
-    The INFO chunk in RIFF/WAV files uses standardized 4-character codes (FourCC) like INAM(Title), IART(Artist) or 
-    ICMT(Comments).
+    RIFF Format:
+    RIFF (Resource Interchange File Format) is the standard metadata format for WAV files. The INFO chunk in RIFF/WAV 
+    files uses standardized 4-character codes (FourCC) like INAM(Title), IART(Artist) or ICMT(Comments).
 
     These codes are defined in RiffTagKey and are part of the standard RIFF specification. Each tag in the INFO chunk 
-    follows the format: FourCC (4 chars) + data length (4 bytes) + data (UTF-8 text)
+    follows the format:
+    - FourCC (4 chars): Identifies the metadata field (e.g., 'INAM' for title)
+    - Size (4 bytes): Length of the data in bytes
+    - Data (UTF-8): The actual metadata content
+    - Padding: If needed for word alignment (2 bytes)
 
     Genre Support:
     The IGNR tag in RIFF files has two modes:
@@ -37,7 +46,8 @@ class RiffManager(RatingSupportingMetadataManager):
        - Use genre codes for better compatibility
 
     Note: This manager is the preferred way to handle WAV metadata, as it uses the format's native metadata system 
-    rather than non-standard alternatives like ID3v2 tags.
+    rather than non-standard alternatives like ID3v2 tags. The custom implementation ensures proper handling of RIFF 
+    chunk structures, maintaining word alignment and size fields according to the specification.
     """
 
     class RiffTagKey(RawMetadataKey):
