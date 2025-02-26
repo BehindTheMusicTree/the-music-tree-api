@@ -17,6 +17,8 @@ class TestLibTrackFilename(str, Enum):
     RATING_1_STAR_ID3V2_MP3 = "rating=1 star_id3v2.mp3"
     RATING_1_STAR_ID3V2_WAV = "rating=1 star_id3v2.wav"
     RATING_1_STAR_VORBIS_FLAC = "rating=1 star_vorbis.flac"
+    RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3 = \
+        "recording=allumerlefeu_2_matches_one_with_more_release_groups.mp3"
     RECORDING_CARMINAREMIX__472S_WAV = "recording=carminaremix 472s.wav"
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = \
         "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
