@@ -9,4 +9,4 @@ class SerializerType(str, Enum):
 
     @property
     def class_name(self) -> str:
-        return f"{self}_serializer_class"
+        return f"{self.lower()}_serializer_class"

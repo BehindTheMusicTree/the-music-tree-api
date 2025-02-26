@@ -27,6 +27,8 @@ from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
+from bodzify_api.utils.audio_metadata.utils.types import AppMetadataDict
+from bodzify_api.utils.utils import print_file_status
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields
@@ -171,9 +173,9 @@ class TrackFile(PrivateStandardResource):
         fingerprinting_result = self._manage_fingerprint()
         self._manage_musicbrainz_recording(fingerprinting_result)
 
-    def update_file_tags(self, normalized_metadata: dict):
+    def update_file_tags(self, app_metadata_dict: AppMetadataDict):
         audio_metadata.update_metadata(file=self.file,
-                                       app_metadata_dict=normalized_metadata,
+                                       app_metadata_dict=app_metadata_dict,
                                        normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:

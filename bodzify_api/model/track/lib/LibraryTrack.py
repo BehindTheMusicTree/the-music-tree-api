@@ -127,7 +127,7 @@ class LibraryTrack(TrackablePlayCount):
         normalized_metadata[AppMetadataKey.RATING] = self.rating
         normalized_metadata[AppMetadataKey.LANGUAGE] = self.language if self.language else ""
 
-        self.track_file.update_file_tags(normalized_metadata=normalized_metadata)
+        self.track_file.update_file_tags(app_metadata_dict=normalized_metadata)
 
     @property
     def playlists_with_positions(self) -> list[tuple[str, int]]:

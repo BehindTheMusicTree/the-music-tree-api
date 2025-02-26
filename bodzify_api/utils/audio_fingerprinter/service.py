@@ -15,14 +15,13 @@ from .utils import exception as audio_fingerprinter_exc
 def _get_fingerprint_and_duration_from_file(user_id: str, file, title: str) -> tuple[bytes, int]:
     from bodzify_api.utils.AudioFile import AudioFile
 
-    with AudioFile(file) as audio_file:
-        filename = os.path.basename(audio_file.get_file_name())
-        fingerprint, duration_in_sec = utils.post_fingerprint_audio(
-            user_id=user_id,
-            filename=filename,
-            title=title
-        )
-        return fingerprint, int(duration_in_sec)
+    filename = AudioFile(file).get_file_name()
+    fingerprint, duration_in_sec = utils.post_fingerprint_audio(
+        user_id=user_id,
+        filename=filename,
+        title=title
+    )
+    return fingerprint, int(duration_in_sec)
 
 
 def get_fingerprinting_result(user: User, track_file: DjangoFile, title: str) -> FingerprintingResult:
