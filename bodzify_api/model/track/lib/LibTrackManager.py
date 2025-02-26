@@ -154,14 +154,14 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             if not album_name:
                 return None
 
-            album_artists_names_list = []
+            album_artists_names = []
             if SchemaFields.ALBUM_ARTISTS_NAMES in schema_data:
-                album_artists_names_list = schema_data[SchemaFields.ALBUM_ARTISTS_NAMES]
+                album_artists_names = schema_data[SchemaFields.ALBUM_ARTISTS_NAMES]
 
             album = Album.objects.get_album_from_name_and_album_artists_names_after_eventual_creations(
                 user=schema_data[Fields.USER],
                 name=album_name,
-                album_artists_names=album_artists_names_list)
+                album_artists_names=album_artists_names)
 
             model_data[Fields.ALBUM] = album
 
