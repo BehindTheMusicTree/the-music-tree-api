@@ -158,26 +158,19 @@ def get_merged_normalized_metadata(
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
 
-    managers = _get_metadata_managers(file=file, normalized_rating_max_value=normalized_rating_max_value)
-    metadata = {}
+    managers_prioritized = _get_metadata_managers(file=file, normalized_rating_max_value=normalized_rating_max_value)
+    app_metadata_dicts_prioritized = {}
 
     # Get normalized metadata from each manager
-    for tag_format, manager in managers.items():
-        metadata[tag_format] = manager.get_app_metadata_dict()
-
-    priorities = MetadataFormat.get_priorities().get(file.file_extension, [])
-    if not priorities:
-        # Never reached because already checked in _get_metadata_managers
-        raise ImproperlyConfigured(f"No priority order defined for {file.file_extension}")
+    for tag_format, manager in managers_prioritized.items():
+        app_metadata_dicts_prioritized[tag_format] = manager.get_app_metadata_dict()
 
     result = {}
     for app_metadata_key in AppMetadataKey:
-        for tag_format in priorities:
-            value = metadata[tag_format].get(app_metadata_key)
-            if value is not None:
-                result[app_metadata_key] = value
+        for app_metadata_dict in app_metadata_dicts_prioritized:
+            if app_metadata_key in app_metadata_dict:
+                result[app_metadata_key] = app_metadata_dict[app_metadata_key]
                 break
-
     return result
 
 
