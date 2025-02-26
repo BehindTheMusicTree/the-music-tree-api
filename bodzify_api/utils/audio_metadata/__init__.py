@@ -70,11 +70,15 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
+from ast import In
+from typing import Any
+
 from django.core.exceptions import ImproperlyConfigured
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from django.db.models.fields.files import FieldFile
 from mutagen._file import FileType
 
 from ..AudioFile import AudioFile
-from .exceptions import FileByteMismatchError
 from .manager.id3v1.Id3v1Manager import Id3v1Manager
 from .manager.MetadataManager import MetadataManager
 from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
@@ -95,13 +99,16 @@ TAG_FORMAT_MANAGER_CLASS_MAP = {
     MetadataFormat.RIFF: RiffManager
 }
 
+FILE_TYPE = AudioFile | InMemoryUploadedFile | TemporaryUploadedFile | FieldFile | str
+
 
 def _get_metadata_manager(
-        file, tag_format: MetadataFormat | None = None, normalized_rating_max_value: int | None = None
+        file: FILE_TYPE, tag_format: MetadataFormat | None = None, normalized_rating_max_value: int | None = None
 ) -> MetadataManager:
-    audio_file = AudioFile(file)
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
 
-    audio_file_prioritized_tag_formats = MetadataFormat.get_priorities().get(audio_file.file_extension)
+    audio_file_prioritized_tag_formats = MetadataFormat.get_priorities().get(file.file_extension)
     if not audio_file_prioritized_tag_formats:
         raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
@@ -110,23 +117,25 @@ def _get_metadata_manager(
     else:
         if tag_format not in audio_file_prioritized_tag_formats:
             raise ImproperlyConfigured(
-                f"Tag format {tag_format} not supported for file extension {audio_file.file_extension}")
+                f"Tag format {tag_format} not supported for file extension {file.file_extension}")
 
     manager_class = TAG_FORMAT_MANAGER_CLASS_MAP[tag_format]
     if issubclass(manager_class, RatingSupportingMetadataManager):
         return manager_class(
-            audio_file=audio_file, normalized_rating_max_value=normalized_rating_max_value)  # type: ignore
-    return manager_class(audio_file=audio_file)
+            audio_file=file, normalized_rating_max_value=normalized_rating_max_value)  # type: ignore
+    return manager_class(audio_file=file)
 
 
 def _get_metadata_managers(
-    file, tag_formats: list[MetadataFormat] | None = None, normalized_rating_max_value: int | None = None
+    file: FILE_TYPE, tag_formats: list[MetadataFormat] | None = None, normalized_rating_max_value: int | None = None
 ) -> dict[MetadataFormat, MetadataManager]:
-    audio_file = AudioFile(file)
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
+
     managers = {}
 
     if not tag_formats:
-        tag_formats = MetadataFormat.get_priorities().get(audio_file.file_extension)
+        tag_formats = MetadataFormat.get_priorities().get(file.file_extension)
         if not tag_formats:
             raise ImproperlyConfigured(FILE_EXTENSION_NOT_HANDLED_MESSAGE)
 
@@ -136,23 +145,30 @@ def _get_metadata_managers(
     return managers
 
 
-def extract_raw_metadata_dict(file, tag_format: MetadataFormat | None = None) -> FileType:
+def extract_raw_metadata_dict(file: FILE_TYPE, tag_format: MetadataFormat | None = None) -> FileType:
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
+
     return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
 
 
-def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None = None) -> dict[str, AppMetadataValue]:
-    audio_file = AudioFile(file)
-    managers = _get_metadata_managers(file, normalized_rating_max_value=normalized_rating_max_value)
+def get_merged_normalized_metadata(
+        file: FILE_TYPE, normalized_rating_max_value: int | None = None) -> dict[
+        str, AppMetadataValue]:
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
+
+    managers = _get_metadata_managers(file=file, normalized_rating_max_value=normalized_rating_max_value)
     metadata = {}
 
     # Get normalized metadata from each manager
     for tag_format, manager in managers.items():
         metadata[tag_format] = manager.get_app_metadata_dict()
 
-    priorities = MetadataFormat.get_priorities().get(audio_file.file_extension, [])
+    priorities = MetadataFormat.get_priorities().get(file.file_extension, [])
     if not priorities:
         # Never reached because already checked in _get_metadata_managers
-        raise ImproperlyConfigured(f"No priority order defined for {audio_file.file_extension}")
+        raise ImproperlyConfigured(f"No priority order defined for {file.file_extension}")
 
     result = {}
     for app_metadata_key in AppMetadataKey:
@@ -165,42 +181,56 @@ def get_merged_normalized_metadata(file, normalized_rating_max_value: int | None
     return result
 
 
-def get_specific_metadata(file, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
+def get_specific_metadata(file: FILE_TYPE, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
     value = _get_metadata_manager(file).get_app_specific_metadata(app_metadata_key=app_metadata_key)
     if value is not None and isinstance(value, AppMetadataValue):
         return value
     return ""  # Return empty string as fallback
 
 
-def update_metadata(file, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: int | None = None) -> None:
+def update_metadata(
+        file: FILE_TYPE, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: int | None = None) -> None:
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
     metadata_manager = _get_metadata_manager(file=file, normalized_rating_max_value=normalized_rating_max_value)
     metadata_manager.update_bulk(app_metadata_dict=app_metadata_dict)
 
 
 def delete_metadata(file, tag_format: MetadataFormat | None = None) -> bool:
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
     return _get_metadata_manager(file, tag_format=tag_format).delete_metadata()
 
 
-def get_bitrate(file) -> int:
-    return AudioFile(file).get_bitrate()
+def get_bitrate(file: FILE_TYPE) -> int:
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
+    return file.get_bitrate()
 
 
-def get_duration_in_sec(file) -> float:
-    return AudioFile(file).get_duration()
+def get_duration_in_sec(file: FILE_TYPE) -> float:
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
+    return file.get_duration()
 
 
-def is_flac_md5_valid(file, check_id3v2: bool = False):
-    audio_file = AudioFile(file)
+def is_flac_md5_valid(file: FILE_TYPE, check_id3v2: bool = False):
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
 
-    if audio_file.file_extension == ".flac":
+    if file.file_extension == ".flac":
         if check_id3v2:
-            id3v2_tags = Id3v2Manager(audio_file).file_raw_metadata
+            id3v2_tags = Id3v2Manager(file).file_raw_metadata
             if id3v2_tags:
                 return False
-        return audio_file.is_flac_file_md5_valid()
+        return file.is_flac_file_md5_valid()
     else:
         raise ImproperlyConfigured('The file must be a FLAC file to check the MD5.')
 
 
-def replace_flac_with_corrected_md5(file):
-    return AudioFile(file).replace_flac_with_corrected_md5()
+def replace_flac_with_corrected_md5(file: FILE_TYPE) -> None:
+    if not isinstance(file, AudioFile):
+        file = AudioFile(file)
+    return file.replace_flac_with_corrected_md5()
