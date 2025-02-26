@@ -1,4 +1,3 @@
-import os
 
 from django.core.files.base import File as DjangoFile
 
@@ -15,7 +14,9 @@ from .utils import exception as audio_fingerprinter_exc
 def _get_fingerprint_and_duration_from_file(user_id: str, file, title: str) -> tuple[bytes, int]:
     from bodzify_api.utils.AudioFile import AudioFile
 
-    filename = AudioFile(file).get_file_name_system()
+    audio_file = AudioFile(file)
+    filename = audio_file.get_file_name_system()
+    file_path = audio_file.get_file_path_or_object()
     fingerprint, duration_in_sec = utils.post_fingerprint_audio(filename=filename, title=title, user_id=user_id)
     return fingerprint, int(duration_in_sec)
 

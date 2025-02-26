@@ -123,15 +123,25 @@ class AudioFile:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
-    def get_file_path_or_object(self):
+    def get_file_path_or_object(self) -> str:
+        """
+        Returns a path to the file on the filesystem.
+        For InMemoryUploadedFile, creates a temporary file in Django's upload directory.
+        """
         if isinstance(self.file, (InMemoryUploadedFile)):
-            temp_file = tempfile.NamedTemporaryFile(delete=False)
+            from django.conf import settings
+            temp_dir = settings.FILE_UPLOAD_TEMP_DIR
+            if temp_dir:
+                temp_file = tempfile.NamedTemporaryFile(dir=temp_dir, delete=False)
+            else:
+                # Fallback to system default if Django temp dir not configured
+                temp_file = tempfile.NamedTemporaryFile(delete=False)
             for chunk in self.file.chunks():
                 temp_file.write(chunk)
             temp_file.close()
             return temp_file.name
         else:
-            return self.file_path
+            return self.file_path  # type: ignore  # We validate in __init__ that it exists and is str
 
     def get_file_name_original(self):
         """
@@ -146,6 +156,13 @@ class AudioFile:
             raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 
     def get_file_name_system(self):
+        """
+        Returns the actual filename in the system, which may be different from the original name
+        if the file was renamed during upload or processing.
+        For InMemoryUploadedFile, creates a temporary file and returns its path.
+        """
+        path = self.get_file_path_or_object()  # This handles creating temp file for InMemoryUploadedFile
+        return os.path.basename(path)
 
     def is_flac_file_md5_valid(self) -> bool:
         if not self.file_extension == '.flac':
@@ -170,7 +187,9 @@ class AudioFile:
 
     def replace_flac_with_corrected_md5(self):
         # Create a temporary file to store the corrected FLAC content
-        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        from django.conf import settings
+        temp_dir = settings.FILE_UPLOAD_TEMP_DIR
+        with tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False) as temp_file:
             temp_path = temp_file.name
 
         if isinstance(self.file, InMemoryUploadedFile):
