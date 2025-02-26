@@ -1,5 +1,4 @@
 
-
 from ....AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, UnsupportedMetadataError
 from ...utils.AppMetadataKey import AppMetadataKey
@@ -79,26 +78,21 @@ class Id3v1Manager(MetadataManager):
             # Find the matching enum member by its value
             for enum_member in Id3v1RawMetadataKey:
                 if enum_member == key:
-                    # Convert numeric values to integers
-                    if enum_member in (Id3v1RawMetadataKey.GENRE_CODE, Id3v1RawMetadataKey.TRACK_NUMBER):
-                        try:
-                            result[enum_member] = int(value[0])
-                        except (ValueError, IndexError):
-                            continue
-                    else:
-                        result[enum_member] = value
-                    break
+                    result[enum_member] = value
         return result
 
-    def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> str | None:
+    def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> MetadataValue:
         if app_netadata_key == AppMetadataKey.GENRE_NAME:
-            return self.get_genre_name()
+            genre_name = self.get_genre_name()
+            return [genre_name] if genre_name else None
         return None
 
     def get_genre_name(self) -> str | None:
-        genre_code: int | None = self.raw_metadata_dict.get(Id3v1RawMetadataKey.GENRE_CODE)  # type: ignore
-        if not genre_code:
+        genre_codes = self.raw_metadata_dict.get(Id3v1RawMetadataKey.GENRE_CODE)
+        if not genre_codes:
             return None
+
+        genre_code: int | None = int(genre_codes[0])
         if not 0 <= genre_code < len(ID3V1_AND_RIFF_GENRE_CODE_MAP):
             return None
         return ID3V1_AND_RIFF_GENRE_CODE_MAP[genre_code]

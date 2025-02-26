@@ -16,12 +16,12 @@ class RatingSupportingMetadataManager(MetadataManager):
     normalized_rating_max_value: int | None
     rating_write_profile: RatingWriteProfile
 
-    def __init__(self,
-                 audio_file: AudioFile,
+    def __init__(self, audio_file: AudioFile,
                  metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
                  metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None],
                  rating_write_profile: RatingWriteProfile,
                  normalized_rating_max_value: int | None):
+
         self.rating_write_profile = rating_write_profile
         self.normalized_rating_max_value = normalized_rating_max_value
         super().__init__(audio_file=audio_file,

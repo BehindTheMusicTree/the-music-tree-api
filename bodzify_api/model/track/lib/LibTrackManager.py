@@ -112,10 +112,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genre = schema_data[SchemaFields.GENRE_UUID]
         elif SchemaFields.GENRE_NAME in schema_data:
             genre_name = schema_data[SchemaFields.GENRE_NAME]
-            genre = None if not genre_name else Genre.objects.get_or_create(
-                name=genre_name,
-                user=schema_data[Fields.USER]
-            )[0]
+            genre = None if not genre_name else Genre.objects.get_or_create(name=genre_name,
+                                                                            user=schema_data[Fields.USER])[0]
         else:
             return
 
@@ -159,9 +157,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 album_artists_names = schema_data[SchemaFields.ALBUM_ARTISTS_NAMES]
 
             album = Album.objects.get_album_from_name_and_album_artists_names_after_eventual_creations(
-                user=schema_data[Fields.USER],
-                name=album_name,
-                album_artists_names=album_artists_names)
+                user=schema_data[Fields.USER], name=album_name, album_artists_names=album_artists_names)
 
             model_data[Fields.ALBUM] = album
 

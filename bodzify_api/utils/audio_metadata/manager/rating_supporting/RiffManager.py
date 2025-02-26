@@ -106,11 +106,12 @@ class RiffManager(RatingSupportingMetadataManager):
             return {}
 
         # Convert INFO chunk tags to RawMetadataDict
-        return {self.RiffTagKey(key): value for key, value in info_chunk.items()}
+        return {self.RiffTagKey(key): [value] for key, value in info_chunk.items()}
 
-    def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> None | MetadataValue:
+    def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> MetadataValue:
         if key == AppMetadataKey.GENRE_NAME:
-            return self.get_genre_name()
+            genre_name = self.get_genre_name()
+            return [genre_name] if genre_name else None
         else:
             raise UnsupportedMetadataError(f'Metadata key not handled: {key}')
 

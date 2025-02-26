@@ -11,7 +11,7 @@ from bodzify_api import settings
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import MetadataValue, RawMetadataDict, RawMetadataKey, MetadataValue
+from ...utils.types import MetadataValue, RawMetadataDict, RawMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
 
@@ -163,7 +163,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
 
     class Id3TextFrame(RawMetadataKey):
         TITLE = 'TIT2'
-        ARTIST_NAME = 'TPE1'
+        ARTISTS_NAMES = 'TPE1'
         ALBUM_NAME = 'TALB'
         ALBUM_ARTISTS_NAMES = 'TPE2'
         GENRE_NAME = 'TCON'
@@ -176,7 +176,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
 
     ID3_TEXT_FRAME_CLASS_MAP: dict[RawMetadataKey, Type] = {
         Id3TextFrame.TITLE: TIT2,
-        Id3TextFrame.ARTIST_NAME: TPE1,
+        Id3TextFrame.ARTISTS_NAMES: TPE1,
         Id3TextFrame.ALBUM_NAME: TALB,
         Id3TextFrame.ALBUM_ARTISTS_NAMES: TPE2,
         Id3TextFrame.GENRE_NAME: TCON,
@@ -191,7 +191,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: int | None = None):
         metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.Id3TextFrame.TITLE,
-            AppMetadataKey.ARTISTS_NAMES: self.Id3TextFrame.ARTIST_NAME,
+            AppMetadataKey.ARTISTS_NAMES: self.Id3TextFrame.ARTISTS_NAMES,
             AppMetadataKey.ALBUM_NAME: self.Id3TextFrame.ALBUM_NAME,
             AppMetadataKey.ALBUM_ARTISTS_NAMES: self.Id3TextFrame.ALBUM_ARTISTS_NAMES,
             AppMetadataKey.GENRE_NAME: self.Id3TextFrame.GENRE_NAME,
@@ -200,13 +200,14 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         }
         metadata_keys_direct_map_write: dict = {
             AppMetadataKey.TITLE: self.Id3TextFrame.TITLE,
-            AppMetadataKey.ARTISTS_NAMES: self.Id3TextFrame.ARTIST_NAME,
+            AppMetadataKey.ARTISTS_NAMES: self.Id3TextFrame.ARTISTS_NAMES,
             AppMetadataKey.ALBUM_NAME: self.Id3TextFrame.ALBUM_NAME,
             AppMetadataKey.ALBUM_ARTISTS_NAMES: self.Id3TextFrame.ALBUM_ARTISTS_NAMES,
             AppMetadataKey.GENRE_NAME: self.Id3TextFrame.GENRE_NAME,
             AppMetadataKey.RATING: self.Id3TextFrame.RATING,
             AppMetadataKey.LANGUAGE: self.Id3TextFrame.LANGUAGE,
         }
+
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write,
@@ -229,10 +230,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
         result = {}
 
-        MULTI_VALUE_FRAMES = {
-            self.Id3TextFrame.ARTIST_NAME,  # TPE1
-            self.Id3TextFrame.ALBUM_ARTISTS_NAMES,  # TPE2
-        }
+        MULTI_VALUE_FRAMES = {self.Id3TextFrame.ARTISTS_NAMES, self.Id3TextFrame.ALBUM_ARTISTS_NAMES, }
 
         for frame_key in self.Id3TextFrame:
             if not isinstance(frame_key, str) or frame_key.startswith('_'):
@@ -243,15 +241,12 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                 continue
 
             if frame_key == self.Id3TextFrame.RATING:
-                result[frame_key] = frame_value.rating
+                result[frame_key] = [frame_value.rating]
             else:
                 if not frame_value.text:
                     continue
 
-                if frame_key in MULTI_VALUE_FRAMES:
-                    result[frame_key] = frame_value.text
-                else:
-                    result[frame_key] = frame_value.text[0]
+                result[frame_key] = frame_value.text
 
         return result
 
