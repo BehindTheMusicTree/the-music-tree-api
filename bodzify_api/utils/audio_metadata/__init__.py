@@ -87,7 +87,7 @@ from .manager.rating_supporting.RiffManager import RiffManager
 from .manager.rating_supporting.VorbisManager import VorbisManager
 from .utils.AppMetadataKey import AppMetadataKey
 from .utils.TagFormat import MetadataFormat
-from .utils.types import AppMetadataDict, AppMetadataValue
+from .utils.types import AppMetadataDict, MetadataValue
 
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
@@ -153,7 +153,7 @@ def extract_raw_metadata_dict(file: FILE_TYPE, tag_format: MetadataFormat | None
 
 
 def get_merged_app_metadata_dict(
-        file: FILE_TYPE, normalized_rating_max_value: int | None = None) -> dict[str, AppMetadataValue]:
+        file: FILE_TYPE, normalized_rating_max_value: int | None = None) -> dict[str, MetadataValue]:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
 
@@ -175,13 +175,10 @@ def get_merged_app_metadata_dict(
     return result
 
 
-def get_specific_metadata(file: FILE_TYPE, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
+def get_specific_metadata(file: FILE_TYPE, app_metadata_key: AppMetadataKey) -> MetadataValue:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
-    value = _get_metadata_manager(file).get_app_specific_metadata(app_metadata_key=app_metadata_key)
-    if value is not None and isinstance(value, AppMetadataValue):
-        return value
-    return ""  # Return empty string as fallback
+    return _get_metadata_manager(file).get_app_specific_metadata(app_metadata_key=app_metadata_key)
 
 
 def update_metadata(

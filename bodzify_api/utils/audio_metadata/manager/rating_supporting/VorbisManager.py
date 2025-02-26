@@ -9,7 +9,7 @@ from bodzify_api.utils import data_transformer
 from ....AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
+from ...utils.types import MetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -113,11 +113,6 @@ class VorbisManager(RatingSupportingMetadataManager):
         else:
             raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
 
-    def _get_value_from_raw_metadata_dict(
-            self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> str | int | None:
-        return self._get_first_value_in_raw_metadata_dict_or_none(
-            raw_metadata_key=raw_metadata_key, value_type=value_type)
-
     def _extract_file_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
         rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
             str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING)
@@ -133,7 +128,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         return None, False
 
     def _get_undirectly_mapped_metadata_value_other_than_rating(
-            self, app_metadata_key: AppMetadataKey) -> AppMetadataValue | None:
+            self, app_metadata_key: AppMetadataKey) -> MetadataValue | None:
         if app_metadata_key == AppMetadataKey.GENRE_NAME:
             return self._get_genre_name()
         elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES_STR:
@@ -160,7 +155,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         return None
 
     def _update_prepared_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: MetadataValue):
         if app_metadata_value:
             if raw_metadata_key not in self.file_raw_metadata:
                 self.file_raw_metadata[raw_metadata_key] = [1]

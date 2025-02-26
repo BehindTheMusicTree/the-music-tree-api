@@ -11,7 +11,7 @@ from bodzify_api import settings
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import AppMetadataValue, RawMetadataKey, RawMetadataValue
+from ...utils.types import MetadataValue, RawMetadataDict, RawMetadataKey, MetadataValue
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
 
@@ -225,13 +225,16 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
             return id3  # type: ignore[return-value]
 
-    def _convert_raw_metadata_to_dict(self) -> dict[RawMetadataKey, RawMetadataValue]:
+    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
         raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
-        result: dict[RawMetadataKey, RawMetadataValue] = {}
+        result = {}
 
-        # Iterate through all defined ID3 text frames
+        MULTI_VALUE_FRAMES = {
+            self.Id3TextFrame.ARTIST_NAME,  # TPE1
+            self.Id3TextFrame.ALBUM_ARTISTS_NAMES,  # TPE2
+        }
+
         for frame_key in self.Id3TextFrame:
-            # Skip class attributes that aren't frame keys
             if not isinstance(frame_key, str) or frame_key.startswith('_'):
                 continue
 
@@ -239,20 +242,21 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             if not frame_value:
                 continue
 
-            # Handle POPM (rating) frame differently as it has a different structure
             if frame_key == self.Id3TextFrame.RATING:
                 result[frame_key] = frame_value.rating
             else:
-                # For text frames, get the text value
-                # ID3 text frames store values in a text list, typically with one item
-                text_value = frame_value.text[0] if frame_value.text else None
-                if text_value is not None:
-                    result[frame_key] = text_value
+                if not frame_value.text:
+                    continue
+
+                if frame_key in MULTI_VALUE_FRAMES:
+                    result[frame_key] = frame_value.text
+                else:
+                    result[frame_key] = frame_value.text[0]
 
         return result
 
     def _update_prepared_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: MetadataValue):
         file_raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
         file_raw_metadata_id3.delall(raw_metadata_key)
         text_frame_class = self.ID3_TEXT_FRAME_CLASS_MAP[raw_metadata_key]

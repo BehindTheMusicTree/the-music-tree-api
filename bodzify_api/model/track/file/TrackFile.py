@@ -16,8 +16,7 @@ from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MusicbrainzRecordingMissingCauseCode import (
-    MusicbrainzRecordingMissingCauseCode
-)
+    MusicbrainzRecordingMissingCauseCode)
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MusicbrainzRecordingMissingCause import (
     MusicbrainzRecordingMissingCause
 )
@@ -176,7 +175,7 @@ class TrackFile(PrivateStandardResource):
         fingerprinting_result = self._manage_fingerprint()
         self._manage_musicbrainz_recording(fingerprinting_result)
 
-    def update_file_tags(self, app_metadata_dict: AppMetadataDict):
+    def update_file_tags(self, app_metadata_dict: MetadataDict):
         audio_metadata.update_metadata(file=self.file,
                                        app_metadata_dict=app_metadata_dict,
                                        normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)

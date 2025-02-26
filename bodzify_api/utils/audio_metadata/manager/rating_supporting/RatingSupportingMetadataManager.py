@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
-from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
+from ...utils.types import AppMetadataDict, MetadataValue, RawMetadataKey
 from ..MetadataManager import MetadataManager
 
 
@@ -37,10 +37,10 @@ class RatingSupportingMetadataManager(MetadataManager):
 
     @abstractmethod
     def _get_undirectly_mapped_metadata_value_other_than_rating(
-            self, key: AppMetadataKey) -> AppMetadataValue:
+            self, key: AppMetadataKey) -> MetadataValue:
         raise NotImplementedError()
 
-    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue | None:
+    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> MetadataValue | None:
         if app_metadata_key == AppMetadataKey.RATING:
             return self._get_eventually_normalized_rating_from_file()
         else:
@@ -48,8 +48,7 @@ class RatingSupportingMetadataManager(MetadataManager):
 
     def _convert_normalized_rating_to_file_rating(self, normalized_rating: int) -> int | None:
         if not self.normalized_rating_max_value:
-            raise ImproperlyConfigured(
-                "normalized_rating_max_value must be set to convert normalized rating to file rating.")
+            raise ImproperlyConfigured("normalized_rating_max_value must be set.")
 
         star_rating_base_10 = (int)((normalized_rating * 10)/self.normalized_rating_max_value)
         self.rating_write_profile[star_rating_base_10]
@@ -79,7 +78,7 @@ class RatingSupportingMetadataManager(MetadataManager):
 
     def update_bulk(self, app_metadata_dict: AppMetadataDict):
         if AppMetadataKey.RATING in list(app_metadata_dict.keys()):
-            value = app_metadata_dict[AppMetadataKey.RATING]
+            value: int | None = app_metadata_dict[AppMetadataKey.RATING]  # type: ignore
             if value is None:
                 del app_metadata_dict[AppMetadataKey.RATING]
             else:

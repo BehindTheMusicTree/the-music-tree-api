@@ -10,7 +10,7 @@ from bodzify_api.utils.AudioFile import AudioFile
 
 from ..exceptions import UnsupportedMetadataError
 from ..utils.AppMetadataKey import AppMetadataKey
-from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey, RawMetadataValue
+from ..utils.types import AppMetadataDict, MetadataValue, RawMetadataDict, RawMetadataKey, MetadataValue
 
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
@@ -20,21 +20,11 @@ T = TypeVar('T', str, int)
 
 class MetadataManager:
 
-    APP_METADATA_KEY_TYPE_MAP = {
-        AppMetadataKey.TITLE: str,
-        AppMetadataKey.ARTISTS_NAMES_STR: str,
-        AppMetadataKey.ALBUM_NAME: str,
-        AppMetadataKey.ALBUM_ARTISTS_NAMES_STR: str,
-        AppMetadataKey.GENRE_NAME: str,
-        AppMetadataKey.RATING: int,
-        AppMetadataKey.LANGUAGE: str,
-    }
-
     audio_file: AudioFile
     metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None]
     metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None]
     file_raw_metadata: FileType
-    raw_metadata_dict: dict[RawMetadataKey, RawMetadataValue]
+    raw_metadata_dict: dict[RawMetadataKey, MetadataValue]
 
     def __init__(
             self, audio_file: AudioFile,
@@ -60,7 +50,7 @@ class MetadataManager:
 
     @abstractmethod
     def _update_undirectly_mapped_metadata(
-            self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
+            self, app_metadata_value: MetadataValue, app_metadata_key: AppMetadataKey):
         raise NotImplementedError()
 
     def _get_first_value_in_raw_metadata_dict_or_none(
@@ -75,12 +65,8 @@ class MetadataManager:
         else:
             raise ImproperlyConfigured('Value type not handled')
 
-    def _get_value_from_raw_metadata_dict(
-            self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> AppMetadataValue:
-        return self.raw_metadata_dict.get(raw_metadata_key, None)
-
     def _update_prepared_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: MetadataValue):
         self.file_raw_metadata[raw_metadata_key] = app_metadata_value
 
     def get_app_metadata_dict(self) -> AppMetadataDict:
@@ -97,8 +83,7 @@ class MetadataManager:
         if not raw_metadata_key:
             return self._get_undirectly_mapped_metadata_value(app_metadata_key)
         else:
-            value_type = self.APP_METADATA_KEY_TYPE_MAP[app_metadata_key]
-            return self._get_value_from_raw_metadata_dict(raw_metadata_key=raw_metadata_key, value_type=value_type)
+            return self.raw_metadata_dict.get(raw_metadata_key)
 
     def update_bulk(self, app_metadata_dict: AppMetadataDict):
         for app_metadata_key in list(app_metadata_dict.keys()):

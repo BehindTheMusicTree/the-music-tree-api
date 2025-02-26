@@ -1,7 +1,6 @@
 
 from enum import Enum
 
-
 """
 Rating Compatibility Table Across Different Audio Players
 
@@ -60,7 +59,7 @@ Luckily, Traktor ratings are written with special tags making them easy to disti
 """
 
 
-class RatingReadProfile(Enum):
+class RatingReadProfile(list[int | None], Enum):
     BASE_255_NON_PROPORTIONAL = [0, 13, 1, 54, 64, 118, 128, 186, 196, 242, 255]
     BASE_255_PROPORTIONAL = [None, None, 51, None, 102, None, 153, None, 204, None, 255]
     BASE_100_PROPORTIONAL = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -74,6 +73,6 @@ profiles:
 """
 
 
-class RatingWriteProfile(Enum):
+class RatingWriteProfile(list[int | None], Enum):
     BASE_255_NON_PROPORTIONAL = RatingReadProfile.BASE_255_NON_PROPORTIONAL
     BASE_100_PROPORTIONAL = RatingReadProfile.BASE_100_PROPORTIONAL

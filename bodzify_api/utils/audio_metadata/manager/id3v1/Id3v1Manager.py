@@ -7,7 +7,7 @@ from ....AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, UnsupportedMetadataError
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
-from ...utils.types import AppMetadataValue, RawMetadataDict
+from ...utils.types import MetadataValue, RawMetadataDict
 from ..MetadataManager import MetadataManager
 from .Id3v1RawMetadataKey import Id3v1RawMetadataKey
 
@@ -100,33 +100,8 @@ class Id3v1Manager(MetadataManager):
                     break
         return result
 
-    def _get_str_metadata_value(self, app_metadata_key: AppMetadataKey) -> str | None:
-        """Helper method to get string metadata values."""
-        raw_metadata_key = self.metadata_keys_direct_map_read.get(app_metadata_key)
-        if not raw_metadata_key:
-            return None
-        value = self._get_value_from_raw_metadata_dict(raw_metadata_key=raw_metadata_key, value_type=str)
-        return cast(str, value) if value is not None else None
-
-    def _get_int_metadata_value(self, app_metadata_key: AppMetadataKey) -> int | None:
-        """Helper method to get integer metadata values."""
-        raw_metadata_key = self.metadata_keys_direct_map_read.get(app_metadata_key)
-        if not raw_metadata_key:
-            return None
-        value = self._get_value_from_raw_metadata_dict(raw_metadata_key=raw_metadata_key, value_type=int)
-        return cast(int, value) if value is not None else None
-
-    def get_title(self) -> str | None:
-        return self._get_str_metadata_value(AppMetadataKey.TITLE)
-
-    def get_artists_names(self) -> str | None:
-        return self._get_str_metadata_value(AppMetadataKey.ARTISTS_NAMES_STR)
-
-    def get_album_name(self) -> str | None:
-        return self._get_str_metadata_value(AppMetadataKey.ALBUM_NAME)
-
     def get_genre_name(self) -> str | None:
-        genre_code = self._get_int_metadata_value(AppMetadataKey.GENRE_NAME)
+        genre_code: int | None = self.raw_metadata_dict.get(Id3v1RawMetadataKey.GENRE_CODE)  # type: ignore
         if not genre_code:
             return None
         if not 0 <= genre_code < len(ID3V1_AND_RIFF_GENRE_CODE_MAP):
@@ -134,7 +109,7 @@ class Id3v1Manager(MetadataManager):
         return ID3V1_AND_RIFF_GENRE_CODE_MAP[genre_code]
 
     def _update_undirectly_mapped_metadata(
-            self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey,
+            self, app_metadata_value: MetadataValue, app_metadata_key: AppMetadataKey,
             normalized_rating_max_value: int | None = None):
         raise UnsupportedMetadataError(
             "ID3v1 tag modification is not supported (fixed-length format)")

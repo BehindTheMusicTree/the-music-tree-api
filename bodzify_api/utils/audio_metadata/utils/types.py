@@ -8,11 +8,10 @@ class RawMetadataKey(str, Enum):
     pass
 
 
-AppMetadataValue = str | int | float | None
-AppMetadataDict = dict[AppMetadataKey, AppMetadataValue]
-
 """
-Raw metadata value can be string (title), integer (rating), float(BPM) or list[str] (Vorbis).
+Raw metadata value can be none (when not set), string (title), integer (rating), float(BPM) or list[str] (artists 
+names).
 """
-RawMetadataValue = str | int | float | list[str]
-RawMetadataDict = dict[RawMetadataKey, RawMetadataValue]
+MetadataValue = str | int | float | list[str] | None
+RawMetadataDict = dict[RawMetadataKey, MetadataValue]
+AppMetadataDict = dict[AppMetadataKey, MetadataValue]
