@@ -123,7 +123,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_schema_data_from_file(self, file):
         try:
-            normalized_metadata = audio_metadata.get_merged_normalized_metadata(
+            normalized_metadata = audio_metadata.get_merged_app_metadata_dict(
                 file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
         except FileCorruptedError as exc:
             raise AppValidationException(

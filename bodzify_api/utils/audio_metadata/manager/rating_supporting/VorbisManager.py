@@ -1,4 +1,5 @@
 
+from typing import Type, TypeVar
 from django.core.exceptions import ImproperlyConfigured
 from mutagen._file import FileType
 from mutagen.flac import FLAC, VCFLACDict
@@ -11,6 +12,8 @@ from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
+
+T = TypeVar('T', str, int)
 
 
 class VorbisManager(RatingSupportingMetadataManager):
@@ -109,6 +112,11 @@ class VorbisManager(RatingSupportingMetadataManager):
             return {}
         else:
             raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
+
+    def _get_value_from_raw_metadata_dict(
+            self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> str | int | None:
+        return self._get_first_value_in_raw_metadata_dict_or_none(
+            raw_metadata_key=raw_metadata_key, value_type=value_type)
 
     def _extract_file_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
         rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(

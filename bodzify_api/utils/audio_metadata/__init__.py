@@ -152,25 +152,26 @@ def extract_raw_metadata_dict(file: FILE_TYPE, tag_format: MetadataFormat | None
     return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
 
 
-def get_merged_normalized_metadata(
-        file: FILE_TYPE, normalized_rating_max_value: int | None = None) -> dict[
-        str, AppMetadataValue]:
+def get_merged_app_metadata_dict(
+        file: FILE_TYPE, normalized_rating_max_value: int | None = None) -> dict[str, AppMetadataValue]:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
 
     managers_prioritized = _get_metadata_managers(file=file, normalized_rating_max_value=normalized_rating_max_value)
-    app_metadata_dicts_prioritized = {}
+    app_metadata_dicts_prioritized = []
 
     # Get normalized metadata from each manager
-    for tag_format, manager in managers_prioritized.items():
-        app_metadata_dicts_prioritized[tag_format] = manager.get_app_metadata_dict()
+    for _, manager in managers_prioritized.items():
+        app_metadata_dicts_prioritized.append(manager.get_app_metadata_dict())
 
     result = {}
     for app_metadata_key in AppMetadataKey:
         for app_metadata_dict in app_metadata_dicts_prioritized:
             if app_metadata_key in app_metadata_dict:
-                result[app_metadata_key] = app_metadata_dict[app_metadata_key]
-                break
+                value = app_metadata_dict[app_metadata_key]
+                if value is not None:
+                    result[app_metadata_key] = value
+                    break
     return result
 
 

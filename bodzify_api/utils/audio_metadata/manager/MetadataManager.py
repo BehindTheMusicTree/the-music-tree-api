@@ -76,9 +76,8 @@ class MetadataManager:
             raise ImproperlyConfigured('Value type not handled')
 
     def _get_value_from_raw_metadata_dict(
-            self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> str | int | None:
-        return self._get_first_value_in_raw_metadata_dict_or_none(
-            raw_metadata_key=raw_metadata_key, value_type=value_type)
+            self, raw_metadata_key: RawMetadataKey, value_type: Type[T]) -> AppMetadataValue:
+        return self.raw_metadata_dict.get(raw_metadata_key, None)
 
     def _update_prepared_value_in_raw_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
@@ -86,9 +85,8 @@ class MetadataManager:
 
     def get_app_metadata_dict(self) -> AppMetadataDict:
         app_metadata_dict = {}
-        for format_supported_metadata_key in self.metadata_keys_direct_map_read:
-            app_metadata_dict[format_supported_metadata_key] = self.get_app_specific_metadata(
-                format_supported_metadata_key)
+        for metadata_key in self.metadata_keys_direct_map_read:
+            app_metadata_dict[metadata_key] = self.get_app_specific_metadata(metadata_key)
         return app_metadata_dict
 
     def get_app_specific_metadata(self, app_metadata_key: AppMetadataKey):
