@@ -1,13 +1,15 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
+from bodzify_api import settings
+
 from .PaginatedResponseFields import PaginatedResponseFields
 
 
 class AppPagination(PageNumberPagination):
-    page_size = 30
+    page_size = settings.PAGINATION_PAGE_SIZE_DEFAULT
     page_size_query_param = 'page_size'
-    max_page_size = 100
+    max_page_size = settings.PAGINATION_PAGE_SIZE_MAX
 
     def get_paginated_response(self, data):
         return Response({
