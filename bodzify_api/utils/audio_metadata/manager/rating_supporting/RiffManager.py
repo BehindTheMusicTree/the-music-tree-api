@@ -49,11 +49,10 @@ class RiffManager(RatingSupportingMetadataManager):
         DATE = 'ICRD'  # Creation/Release date
         TRACK_NUMBER = 'IPRT'  # Part number (track number)
 
-        # Non-standard but commonly used
+        # Non-standard
         ALBUM_ARTISTS_NAMES = 'IAAR'
         LANGUAGE = 'ILNG'
-
-        # Less common
+        RATING = 'IRTD'
         COMMENTS = 'ICMT'
         ENGINEER = 'IENG'  # Engineer who worked on the track
         SOFTWARE = 'ISFT'  # Software used to create the file
@@ -108,6 +107,15 @@ class RiffManager(RatingSupportingMetadataManager):
         # Convert INFO chunk tags to RawMetadataDict
         return {self.RiffTagKey(key): [value] for key, value in info_chunk.items()}
 
+    def _extract_file_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
+        raw_rating = self.file_raw_metadata.get(self.RiffTagKey.RATING, None)
+        if raw_rating is None:
+            return None, False
+        try:
+            return int(raw_rating), False
+        except ValueError:
+            return None, False
+
     def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> AppMetadataValue:
         if key == AppMetadataKey.GENRE_NAME:
             genre_name = self.get_genre_name()
@@ -142,7 +150,8 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _update_formatted_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
+    def _update_formatted_value_in_raw_metadata(
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
 
         # Ensure we have tags
@@ -158,7 +167,7 @@ class RiffManager(RatingSupportingMetadataManager):
 
         # Handle the value using FourCC code
         fourcc = raw_metadata_key  # Get the 4-character code
-        if value is None and fourcc in file_raw_metadata_wav.tags['INFO']:
+        if app_metadata_value is None and fourcc in file_raw_metadata_wav.tags['INFO']:
             del file_raw_metadata_wav.tags['INFO'][fourcc]
-        elif value is not None:
-            file_raw_metadata_wav.tags['INFO'][fourcc] = str(value)
+        elif app_metadata_value is not None:
+            file_raw_metadata_wav.tags['INFO'][fourcc] = str(app_metadata_value)
