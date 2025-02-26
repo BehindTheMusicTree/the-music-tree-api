@@ -11,7 +11,7 @@ from bodzify_api import settings
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import MetadataValue, RawMetadataDict, RawMetadataKey
+from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
 
@@ -251,7 +251,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         return result
 
     def _update_formatted_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: MetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         file_raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
         file_raw_metadata_id3.delall(raw_metadata_key)
         text_frame_class = self.ID3_TEXT_FRAME_CLASS_MAP[raw_metadata_key]

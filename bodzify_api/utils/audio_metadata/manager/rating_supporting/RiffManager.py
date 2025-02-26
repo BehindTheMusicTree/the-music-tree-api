@@ -7,7 +7,7 @@ from ....AudioFile import AudioFile
 from ...exceptions import UnsupportedMetadataError
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import MetadataValue, RawMetadataDict, RawMetadataKey
+from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from ..rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -108,7 +108,7 @@ class RiffManager(RatingSupportingMetadataManager):
         # Convert INFO chunk tags to RawMetadataDict
         return {self.RiffTagKey(key): [value] for key, value in info_chunk.items()}
 
-    def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> MetadataValue:
+    def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> AppMetadataValue:
         if key == AppMetadataKey.GENRE_NAME:
             genre_name = self.get_genre_name()
             return [genre_name] if genre_name else None
@@ -142,7 +142,7 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _update_formatted_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: MetadataValue):
+    def _update_formatted_value_in_raw_metadata(self, raw_metadata_key: RawMetadataKey, value: AppMetadataValue):
         file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
 
         # Ensure we have tags

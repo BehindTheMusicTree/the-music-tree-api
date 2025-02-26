@@ -3,7 +3,7 @@ from ....AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, UnsupportedMetadataError
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
-from ...utils.types import MetadataValue, RawMetadataDict
+from ...utils.types import AppMetadataValue, RawMetadataDict
 from ..MetadataManager import MetadataManager
 from .Id3v1RawMetadata import Id3v1RawMetadata
 from .Id3v1RawMetadataKey import Id3v1RawMetadataKey
@@ -81,10 +81,10 @@ class Id3v1Manager(MetadataManager):
                     result[enum_member] = value
         return result
 
-    def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> MetadataValue:
+    def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> AppMetadataValue:
         if app_netadata_key == AppMetadataKey.GENRE_NAME:
             genre_name = self.get_genre_name()
-            return [genre_name] if genre_name else None
+            return genre_name if genre_name else None
         return None
 
     def get_genre_name(self) -> str | None:
@@ -97,8 +97,8 @@ class Id3v1Manager(MetadataManager):
             return None
         return ID3V1_AND_RIFF_GENRE_CODE_MAP[genre_code]
 
-    def _update_undirectly_mapped_metadata(
-            self, app_metadata_value: MetadataValue, app_metadata_key: AppMetadataKey,
-            normalized_rating_max_value: int | None = None):
+    def _update_undirectly_mapped_metadata(self, app_metadata_value: AppMetadataValue,
+                                           app_metadata_key: AppMetadataKey,
+                                           normalized_rating_max_value: int | None = None):
         raise UnsupportedMetadataError(
             "ID3v1 tag modification is not supported (fixed-length format)")

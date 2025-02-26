@@ -10,7 +10,7 @@ from bodzify_api.utils.AudioFile import AudioFile
 
 from ..exceptions import UnsupportedMetadataError
 from ..utils.AppMetadataKey import AppMetadataKey
-from ..utils.types import AppMetadataDict, MetadataValue, RawMetadataDict, RawMetadataKey
+from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey
 
 
 METADATA_ARTISTS_SEPARATION_CHAR = ","
@@ -25,7 +25,7 @@ class MetadataManager:
     metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None]
     metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None
     file_raw_metadata: FileType
-    raw_metadata_dict: dict[RawMetadataKey, MetadataValue]
+    raw_metadata_dict: RawMetadataDict
 
     def __init__(self, audio_file: AudioFile,
                  metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
@@ -38,7 +38,7 @@ class MetadataManager:
         self._regroup_raw_metadata_dict_multiple_entries_in_list()
 
     @abstractmethod
-    def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> str | None:
+    def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> AppMetadataValue:
         raise NotImplementedError()
 
     @abstractmethod
@@ -51,12 +51,12 @@ class MetadataManager:
 
     @abstractmethod
     def _update_undirectly_mapped_metadata(
-            self, app_metadata_value: MetadataValue, app_metadata_key: AppMetadataKey):
+            self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
         raise NotImplementedError()
 
     @abstractmethod
     def _update_formatted_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: MetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         raise NotImplementedError()
 
     def _regroup_raw_metadata_dict_multiple_entries_in_list(self):
@@ -74,15 +74,18 @@ class MetadataManager:
             app_metadata_dict[metadata_key] = self.get_app_specific_metadata(metadata_key)
         return app_metadata_dict
 
-    def get_app_specific_metadata(self, app_metadata_key: AppMetadataKey):
+    def get_app_specific_metadata(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
         if app_metadata_key not in self.metadata_keys_direct_map_read:
             raise UnsupportedMetadataError(f'{app_metadata_key} metadata not supported by this format')
 
         raw_metadata_key = self.metadata_keys_direct_map_read[app_metadata_key]
         if not raw_metadata_key:
-            value = self._get_undirectly_mapped_metadata_value(app_metadata_key)
-        else:
-            value = self.raw_metadata_dict.get(raw_metadata_key)
+            return self._get_undirectly_mapped_metadata_value(app_metadata_key)
+
+        value = self.raw_metadata_dict.get(raw_metadata_key)
+
+        if not value or not len(value) or not value[0]:
+            return None
 
         app_metadata_key_optional_type = app_metadata_key.get_optional_type()
         if app_metadata_key_optional_type == int:
@@ -94,13 +97,14 @@ class MetadataManager:
         if app_metadata_key_optional_type == list[str]:
             if not value:
                 return None
+            values_list_str = cast(list[str], value)
             if app_metadata_key.may_contain_separated_values():
-                list_with_eventual_separated_values: list[str] = cast(list[str], value)
-                value = []
-                for str_with_eventual_separated_values in list_with_eventual_separated_values:
-                    value.append(str_with_eventual_separated_values.split(METADATA_ARTISTS_SEPARATION_CHAR))
-                return value
-            return value
+                values_list_str_with_separated_values_processed: list[str] = []
+                for str_with_eventual_separated_values in values_list_str:
+                    separated_values = str_with_eventual_separated_values.split(METADATA_ARTISTS_SEPARATION_CHAR)
+                    values_list_str_with_separated_values_processed.extend(separated_values)
+                return values_list_str_with_separated_values_processed
+            return values_list_str
         raise ImproperlyConfigured(f'Unsupported metadata type: {app_metadata_key_optional_type}')
 
     def update_bulk(self, app_metadata_dict: AppMetadataDict):

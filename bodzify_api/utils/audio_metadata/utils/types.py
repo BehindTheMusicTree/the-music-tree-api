@@ -12,6 +12,7 @@ class RawMetadataKey(str, Enum):
 Raw metadata value can be none (when not set), string (title), integer (rating), float(BPM) or list[str] (artists 
 names).
 """
-MetadataValue = list[int] | list[float] | list[str] | None
-RawMetadataDict = dict[RawMetadataKey, MetadataValue]
-AppMetadataDict = dict[AppMetadataKey, MetadataValue]
+AppMetadataValue = int | float | str | list[str] | None
+RawMetadataValue = list[int] | list[float] | list[str] | None
+RawMetadataDict = dict[RawMetadataKey, RawMetadataValue]
+AppMetadataDict = dict[AppMetadataKey, AppMetadataValue]

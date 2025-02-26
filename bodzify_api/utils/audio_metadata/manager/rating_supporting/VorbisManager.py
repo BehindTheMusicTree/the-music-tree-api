@@ -10,7 +10,7 @@ from bodzify_api.utils import data_transformer
 from ....AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
 from ...utils.rating_profiles import RatingWriteProfile
-from ...utils.types import MetadataValue, RawMetadataDict, RawMetadataKey
+from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
 
@@ -74,8 +74,8 @@ class VorbisManager(RatingSupportingMetadataManager):
             AppMetadataKey.TITLE: self.VorbisKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES: self.VorbisKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.VorbisKey.ALBUM_NAME,
-            AppMetadataKey.ALBUM_ARTISTS_NAMES: None,
-            AppMetadataKey.GENRE_NAME: None,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES: self.VorbisKey.ALBUM_ARTISTS_NAMES,
+            AppMetadataKey.GENRE_NAME: self.VorbisKey.ALBUM_NAME,
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.VorbisKey.LANGUAGE,
         }
@@ -126,38 +126,10 @@ class VorbisManager(RatingSupportingMetadataManager):
             str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING_TRAKTOR)
         if rating:
             return rating, True
-
         return None, False
 
-    def _get_undirectly_mapped_metadata_value_other_than_rating(
-            self, app_metadata_key: AppMetadataKey) -> MetadataValue | None:
-        if app_metadata_key == AppMetadataKey.GENRE_NAME:
-            return self._get_genre_name()
-        elif app_metadata_key == AppMetadataKey.ALBUM_ARTISTS_NAMES:
-            return self._get_album_artists_name_str()
-        else:
-            raise ImproperlyConfigured('Metadata key not handled')
-
-    def _get_genre_name(self) -> str | None:
-        if self.VorbisKey.GENRE_NAME in self.file_raw_metadata:
-            genres_names = self.file_raw_metadata.get(self.VorbisKey.GENRE_NAME)
-            if isinstance(genres_names, list):
-                return genres_names[0]
-            elif isinstance(genres_names, str):
-                return genres_names
-            return ""
-        else:
-            return ""
-
-    def _get_album_artists_name_str(self) -> str | None:
-        album_artists_name_str_raw = self.file_raw_metadata.get(self.VorbisKey.ALBUM_ARTISTS_NAMES)
-
-        if album_artists_name_str_raw:
-            return album_artists_name_str_raw.strip()
-        return None
-
     def _update_formatted_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: MetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         if app_metadata_value:
             if raw_metadata_key not in self.file_raw_metadata:
                 self.file_raw_metadata[raw_metadata_key] = [1]

@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
-from ...utils.types import AppMetadataDict, MetadataValue, RawMetadataKey
+from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
 from ..MetadataManager import MetadataManager
 
 
@@ -36,11 +36,10 @@ class RatingSupportingMetadataManager(MetadataManager):
         raise NotImplementedError()
 
     @abstractmethod
-    def _get_undirectly_mapped_metadata_value_other_than_rating(
-            self, key: AppMetadataKey) -> MetadataValue:
+    def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> AppMetadataValue:
         raise NotImplementedError()
 
-    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> MetadataValue | None:
+    def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue | None:
         if app_metadata_key == AppMetadataKey.RATING:
             return self._get_eventually_normalized_rating_from_file()
         else:
