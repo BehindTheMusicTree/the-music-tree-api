@@ -51,12 +51,22 @@ class Id3v1RawMetadata(FileType):
         )
 
         # Handle ID3v1.1 track number in comment field
-        comment = data[97:127].strip(b'\0')
-        if comment[28] == 0 and comment[29] != 0:
-            tag.track_number = comment[29]
-            tag.comment = comment[:28].decode('latin1', 'replace')
-        else:
-            tag.comment = comment[:30].decode('latin1', 'replace')
+        try:
+            comment = data[97:127].strip(b'\0')
+
+            # Check if comment has enough length for v1.1 format
+            if len(comment) >= 30:
+                if comment[28] == 0 and comment[29] != 0:
+                    tag.track_number = comment[29]
+                    tag.comment = comment[:28].decode('latin1', 'replace')
+                else:
+                    tag.comment = comment[:30].decode('latin1', 'replace')
+            else:
+                # Handle short comment
+                tag.comment = comment.decode('latin1', 'replace')
+                tag.track_number = None
+        except Exception as e:
+            pass
 
         # Convert to dictionary format similar to other metadata formats
         self.tags = {}
