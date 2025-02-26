@@ -22,6 +22,8 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_BONNIE_TYLER_TOTAL_ECLIPSE_OF_THE_HEART_5M35_FLAC_5M43_FLAC = \
         "recording=Bonnie Tyler - Total Eclipse of the Heart - 5m35.flac"
     RECORDING_CARMINAREMIX__472S_WAV = "recording=carminaremix 472s.wav"
+    RECORDING_CELINEKIN_PARK_NO_MUSICBRAINZ_RECORDING_DURATION_MP3 = \
+        "recording=Celinekin Park - no musicbrainz recording duration.mp3"
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = \
         "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
     RECORDING_SHOWMUSTGOON_MP3 = "recording=showmustgoon.mp3"
