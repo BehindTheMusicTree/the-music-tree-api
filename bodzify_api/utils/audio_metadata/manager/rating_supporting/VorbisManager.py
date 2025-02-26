@@ -75,7 +75,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             AppMetadataKey.ARTISTS_NAMES: self.VorbisKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.VorbisKey.ALBUM_NAME,
             AppMetadataKey.ALBUM_ARTISTS_NAMES: self.VorbisKey.ALBUM_ARTISTS_NAMES,
-            AppMetadataKey.GENRE_NAME: self.VorbisKey.ALBUM_NAME,
+            AppMetadataKey.GENRE_NAME: self.VorbisKey.GENRE_NAME,
             AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.VorbisKey.LANGUAGE,
         }
