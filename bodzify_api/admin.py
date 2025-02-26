@@ -7,13 +7,11 @@ from .model.criteria.Criteria import Criteria
 from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 from .model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from .model.musicbrainz_resource.children.artist.MbArtist import MbArtist
+from .model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 from .model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
     MbRecordingMissingCauseCode
 )
-from .model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import (
-    MbRecordingMissingCause
-)
-from .model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
+from .model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import MbRecordingMissingCause
 from .model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from .model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from .model.playlist.Playlist import Playlist

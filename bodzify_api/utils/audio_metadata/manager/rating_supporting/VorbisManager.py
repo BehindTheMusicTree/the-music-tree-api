@@ -1,5 +1,6 @@
 
-from typing import Type, TypeVar
+from typing import TypeVar
+
 from django.core.exceptions import ImproperlyConfigured
 from mutagen._file import FileType
 from mutagen.flac import FLAC, VCFLACDict
@@ -12,6 +13,7 @@ from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import MetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
 from .RatingSupportingMetadataManager import RatingSupportingMetadataManager
+
 
 T = TypeVar('T', str, int)
 

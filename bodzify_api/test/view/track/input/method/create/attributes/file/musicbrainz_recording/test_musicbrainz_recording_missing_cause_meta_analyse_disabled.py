@@ -2,7 +2,8 @@
 from rest_framework import status
 
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
-    MbRecordingMissingCauseCode)
+    MbRecordingMissingCauseCode
+)
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 

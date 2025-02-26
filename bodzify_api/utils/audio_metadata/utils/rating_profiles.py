@@ -1,6 +1,7 @@
 
 from enum import Enum
 
+
 """
 Rating Compatibility Table Across Different Audio Players
 

@@ -6,14 +6,15 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from bodzify_api import settings
 from bodzify_api.exception import musicbrainz as musicbrainz_exception
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
-    MbRecordingMissingCauseCode)
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import (
-    MbRecordingMissingCause
-)
 from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 from bodzify_api.model.musicbrainz_resource.children.recording.MbRecordingLookupResult import (
     MusicbrainzRecordingLookupResult
+)
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
+    MbRecordingMissingCauseCode
+)
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import (
+    MbRecordingMissingCause
 )
 from bodzify_api.model.user.User import User
 

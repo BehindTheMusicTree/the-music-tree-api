@@ -70,8 +70,6 @@ Legend:
 - *: Uses standard genre codes (0-147)
 """
 
-from ast import In
-from typing import Any
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
