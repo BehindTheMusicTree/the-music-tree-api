@@ -12,6 +12,16 @@ class AppPagination(PageNumberPagination):
     max_page_size = settings.PAGINATION_PAGE_SIZE_MAX
 
     def get_paginated_response(self, data):
+        # Check if pagination has been performed
+        if not hasattr(self, 'page') or self.page is None:
+            return Response({
+                PaginatedResponseFields.OVERALL_TOTAL: 0,
+                PaginatedResponseFields.NEXT: None,
+                PaginatedResponseFields.PREVIOUS: None,
+                PaginatedResponseFields.RESULTS: data
+            })
+
+    # Normal pagination response
         return Response({
             PaginatedResponseFields.OVERALL_TOTAL: self.count,
             PaginatedResponseFields.NEXT: self.get_next_link(),
