@@ -19,5 +19,6 @@ class LanguageTestCase(NullableCharBodyDataTestCase):
 
     def test_empty_then_none(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.LANGUAGE: ""})
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language == None
