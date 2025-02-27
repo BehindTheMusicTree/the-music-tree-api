@@ -50,6 +50,7 @@ class TestLibTrackFilename(str, Enum):
     RATING_1_STAR_ID3V2_MP3 = "rating=1 star_id3v2.mp3"
     RATING_1_STAR_ID3V2_WAV = "rating=1 star_id3v2.wav"
     RATING_1_STAR_VORBIS_FLAC = "rating=1 star_vorbis.flac"
+    RATING_2_STAR_ID3V2_FLAC = "rating=2 star_id3v2.flac"
 
     RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3 = \
         "recording=Allumerlefeu_2 matches one with more release groups.mp3"
