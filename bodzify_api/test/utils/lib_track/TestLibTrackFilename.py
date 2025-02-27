@@ -19,6 +19,7 @@ class TestLibTrackFilename(str, Enum):
     DURATION_472S_WAV = "duration=472s.wav"
 
     FORMAT_BAD_MP3 = "format=bad.mp3"
+    FORMAT_IMAGE_JPEG = "format=image.jpeg"
 
     GENRE_ABSTRACT_ID3V1_MP3 = "genre=abstract_id3v1.mp3"
 
