@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_short_wav_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_MP3, extension='wav')
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_WAV, extension='wav')
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 1
 
@@ -22,17 +22,17 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.track_file.duration_in_sec == 1
 
     def test_short_mp3_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, extension='mp3')
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_MP3, extension='mp3')
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.duration_in_sec == self.SAMPLE_LIB_TRACK_MP3_DURATION
+        assert self.saved_object.track_file.duration_in_sec == 1
 
     def test_normal_mp3_then_ok(self):
-        response = self._post_lib_track('showmustgoon_277s.mp3')
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_177S_MP3)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.duration_in_sec == 277
+        assert self.saved_object.track_file.duration_in_sec == 177
 
     def test_flac_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, extension='flac')
+        response = self._post_lib_track(TestLibTrackFilename.D, extension='flac')
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == self.SAMPLE_LIB_TRACK_FLAC_DURATION
 
