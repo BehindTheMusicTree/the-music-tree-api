@@ -251,7 +251,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         return result
 
     def _update_formatted_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue, must_save: bool = False):
         file_raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
         file_raw_metadata_id3.delall(raw_metadata_key)
         text_frame_class = self.ID3_TEXT_FRAME_CLASS_MAP[raw_metadata_key]
@@ -260,6 +260,9 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             file_raw_metadata_id3.add(text_frame_class(email=self.ID3_RATING_APP_EMAIL, rating=app_metadata_value))
         else:
             file_raw_metadata_id3.add(text_frame_class(encoding=3, text=app_metadata_value))
+
+        if must_save:
+            self.save_raw_metadata()
 
     def _get_eventually_normalized_rating_from_file(self) -> int | None:
         file_rating_value = None

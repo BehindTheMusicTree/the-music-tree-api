@@ -3,6 +3,8 @@ import io
 from mutagen._file import FileType
 from mutagen.wave import WAVE
 
+from django.core.exceptions import ImproperlyConfigured
+
 from ....AudioFile import AudioFile
 from ...exceptions import UnsupportedMetadataError
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
@@ -17,16 +19,16 @@ class RiffManager(RatingSupportingMetadataManager):
     Manages RIFF metadata for WAV audio files.
 
     Implementation Note:
-    While mutagen is used for reading WAV metadata, it does not support writing RIFF metadata. This is a known 
+    While mutagen is used for reading WAV metadata, it does not support writing RIFF metadata. This is a known
     limitation of the library, which only provides read-only access to WAVE files' metadata through its WAVE class.
-    Therefore, this manager implements its own RIFF metadata writing functionality by directly manipulating the file's 
+    Therefore, this manager implements its own RIFF metadata writing functionality by directly manipulating the file's
     INFO chunk according to the RIFF specification.
 
     RIFF Format:
-    RIFF (Resource Interchange File Format) is the standard metadata format for WAV files. The INFO chunk in RIFF/WAV 
+    RIFF (Resource Interchange File Format) is the standard metadata format for WAV files. The INFO chunk in RIFF/WAV
     files uses standardized 4-character codes (FourCC) like INAM(Title), IART(Artist) or ICMT(Comments).
 
-    These codes are defined in RiffTagKey and are part of the standard RIFF specification. Each tag in the INFO chunk 
+    These codes are defined in RiffTagKey and are part of the standard RIFF specification. Each tag in the INFO chunk
     follows the format:
     - FourCC (4 chars): Identifies the metadata field (e.g., 'INAM' for title)
     - Size (4 bytes): Length of the data in bytes
@@ -45,8 +47,8 @@ class RiffManager(RatingSupportingMetadataManager):
        - May not work with all software
        - Use genre codes for better compatibility
 
-    Note: This manager is the preferred way to handle WAV metadata, as it uses the format's native metadata system 
-    rather than non-standard alternatives like ID3v2 tags. The custom implementation ensures proper handling of RIFF 
+    Note: This manager is the preferred way to handle WAV metadata, as it uses the format's native metadata system
+    rather than non-standard alternatives like ID3v2 tags. The custom implementation ensures proper handling of RIFF
     chunk structures, maintaining word alignment and size fields according to the specification.
     """
 
@@ -102,20 +104,25 @@ class RiffManager(RatingSupportingMetadataManager):
 
     def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
         """
-        Convert RIFF INFO chunk metadata to dictionary.
-        Only extracts tags from the INFO chunk.
+        Convert RIFF metadata to dictionary.
+        Extracts tags from both the INFO chunk and direct tags.
         """
         file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
-        if not file_raw_metadata_wav.tags:
-            return {}
+        metadata_dict: RawMetadataDict = {}
 
-        # Extract only INFO chunk tags
-        info_chunk = file_raw_metadata_wav.tags.get('INFO')
-        if not info_chunk:
-            return {}
+        # First try to get metadata from the INFO chunk
+        if file_raw_metadata_wav.tags:
+            info_chunk = file_raw_metadata_wav.tags.get('INFO')
+            if info_chunk is not None:
+                metadata_dict.update({self.RiffTagKey(key): [value] for key, value in info_chunk.items()})
 
-        # Convert INFO chunk tags to RawMetadataDict
-        return {self.RiffTagKey(key): [value] for key, value in info_chunk.items()}
+        # Then try to get metadata from direct tags
+        if hasattr(file_raw_metadata_wav, '_tags'):
+            direct_tags = getattr(file_raw_metadata_wav, '_tags')
+            if direct_tags is not None:
+                metadata_dict.update({self.RiffTagKey(key): [value] for key, value in direct_tags.items()})
+
+        return metadata_dict
 
     def _extract_file_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
         raw_rating = self.file_raw_metadata.get(self.RiffTagKey.RATING, None)
@@ -161,14 +168,14 @@ class RiffManager(RatingSupportingMetadataManager):
         return None
 
     def _update_formatted_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue, must_save: bool = True):
         """
         Updates a metadata value in the RIFF INFO chunk.
-
-        Args:
-            raw_metadata_key: The FourCC code key (e.g., 'INAM' for title)
-            app_metadata_value: The value to write (string or list of strings)
         """
+
+        if not must_save:
+            raise ImproperlyConfigured(
+                "Saving RIFF metadata is not supported by mutagen. Data must be saved in this function.")
         if not isinstance(raw_metadata_key, self.RiffTagKey):
             raise ValueError(f"Invalid RIFF metadata key: {raw_metadata_key}")
 
@@ -232,7 +239,8 @@ class RiffManager(RatingSupportingMetadataManager):
                             file_data[tag_pos:tag_pos+8+len(value_bytes)] = chunk_data
                             if size_diff < 0:
                                 # Fill remaining space with zeros
-                                file_data[tag_pos+8+len(value_bytes):tag_pos+8+old_size_with_padding] = b'\x00' * (-size_diff)
+                                file_data[tag_pos+8+len(value_bytes)
+                                                        :tag_pos+8+old_size_with_padding] = b'\x00' * (-size_diff)
                         else:
                             # Need to expand the chunk
                             file_data[tag_pos:tag_pos+8+old_size_with_padding] = b''
@@ -258,3 +266,6 @@ class RiffManager(RatingSupportingMetadataManager):
         # Write updated data back to file
         self.audio_file.seek(0)
         self.audio_file.write(file_data)
+
+    def save_raw_metadata(self):
+        raise ImproperlyConfigured("Saving RIFF metadata is not supported by mutagen. Use the update method instead.")

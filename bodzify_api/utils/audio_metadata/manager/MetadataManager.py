@@ -56,7 +56,7 @@ class MetadataManager:
 
     @abstractmethod
     def _update_formatted_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue, must_save: bool = False):
         raise NotImplementedError()
 
     def _regroup_raw_metadata_dict_multiple_entries_in_list(self):
@@ -121,9 +121,11 @@ class MetadataManager:
                     self._update_formatted_value_in_raw_metadata(
                         raw_metadata_key=raw_metadata_key, app_metadata_value=value)
                 else:
-                    self._update_undirectly_mapped_metadata(
-                        app_metadata_value=value, app_metadata_key=app_metadata_key)
+                    self._update_undirectly_mapped_metadata(app_metadata_value=value, app_metadata_key=app_metadata_key)
 
+        self.save_raw_metadata()
+
+    def save_raw_metadata(self):
         self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())
 
     def delete_metadata(self) -> bool:
