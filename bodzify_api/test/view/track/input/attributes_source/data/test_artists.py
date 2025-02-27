@@ -10,8 +10,8 @@ class TestCase(LibTrackTestCase):
 
     def test_value_then_ok(self) -> None:
         value = 'rovk'
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **
-                                        {f'{PostFields.ARTISTS_NAMES_ARRAY} [] ': value})
+        response = self._post_lib_track(
+            TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.ARTISTS_NAMES_ARRAY: value})
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -19,8 +19,8 @@ class TestCase(LibTrackTestCase):
         assert artists_list[0].name == value
 
     def test_empty_then_none(self) -> None:
-        response = self._post_lib_track(TestLibTrackFilename.RATING_ID3V2_1_STAR_MP3 **
-                                        {PostFields.ARTISTS_NAMES_ARRAY: ""})
+        response = self._post_lib_track(
+            TestLibTrackFilename.RATING_ID3V2_1_STAR_MP3, **{PostFields.ARTISTS_NAMES_ARRAY: ""})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
