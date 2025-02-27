@@ -11,13 +11,13 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
 
     def test_none_then_none(self):
         response = \
-            self._post_lib_track_with_generic_sample_tag_album_koko_without_album_artists(extension=self.file_extension)
+            self._post_lib_track(TestLibTrackFilename.ALBUM_KOKO_ID3V2_MP3, extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
         assert self.saved_object.album.album_artists.count() == 0
 
     def test_longest_then_ok(self):
-        response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3, extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
 
         expected_name = 'a' * settings.ARTIST_NAME_LEN_MAX
