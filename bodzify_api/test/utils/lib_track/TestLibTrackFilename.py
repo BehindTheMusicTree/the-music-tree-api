@@ -45,6 +45,13 @@ class TestLibTrackFilename(str, Enum):
     METADATA_NONE_MP3 = "metadata=none.mp3"
     METADATA_NONE_WAV = "metadata=none.wav"
 
+    RATING_ID3V2_NONE_WAV = "rating_id3v2=none.wav"
+    RATING_ID3V2_1_STAR_WAV = "rating_id3v2=1 star.wav"
+    RATING_ID3V2_2_STAR_WAV = "rating_id3v2=2 star.wav"
+    RATING_ID3V2_4_STAR_WAV = "rating_id3v2=4 star.wav"
+    RATING_ID3V2_5_STAR_WAV = "rating_id3v2=5 star.wav"
+    RATING_ID3V2_3_STAR_WAV = "rating_id3v2=3 star.wav"
+
     RATING_ID3V2_0_STAR_FLAC = "rating_id3v2=0 star.flac"
     RATING_ID3V2_0_STAR_MP3 = "rating_id3v2=0 star.mp3"
 
@@ -53,7 +60,6 @@ class TestLibTrackFilename(str, Enum):
 
     RATING_ID3V2_1_STAR_FLAC = "rating_id3v2=1 star.flac"
     RATING_ID3V2_1_STAR_MP3 = "rating_id3v2=1 star.mp3"
-    RATING_ID3V2_1_STAR_WAV = "rating_id3v2=1 star.wav"
 
     RATING_ID3V2_1_5_STAR_FLAC = "rating_id3v2=1.5 star.flac"
     RATING_ID3V2_1_5_STAR_MP3 = "rating_id3v2=1.5 star.mp3"
@@ -61,7 +67,6 @@ class TestLibTrackFilename(str, Enum):
 
     RATING_ID3V2_2_STAR_FLAC = "rating_id3v2=2 star.flac"
     RATING_ID3V2_2_STAR_MP3 = "rating_id3v2=2 star.mp3"
-    RATING_ID3V2_2_STAR_WAV = "rating_id3v2=2 star.wav"
 
     RATING_ID3V2_2_5_STAR_FLAC = "rating_id3v2=2.5 star.flac"
     RATING_ID3V2_2_5_STAR_MP3 = "rating_id3v2=2.5 star.mp3"
@@ -69,7 +74,6 @@ class TestLibTrackFilename(str, Enum):
 
     RATING_ID3V2_3_STAR_FLAC = "rating_id3v2=3 star.flac"
     RATING_ID3V2_3_STAR_MP3 = "rating_id3v2=3 star.mp3"
-    RATING_ID3V2_3_STAR_WAV = "rating_id3v2=3 star.wav"
 
     RATING_ID3V2_3_5_STAR_FLAC = "rating_id3v2=3_5 star.flac"
     RATING_ID3V2_3_5_STAR_MP3 = "rating_id3v2=3_5 star.mp3"
@@ -77,11 +81,9 @@ class TestLibTrackFilename(str, Enum):
 
     RATING_ID3V2_4_STAR_FLAC = "rating_id3v2=4 star.flac"
     RATING_ID3V2_4_STAR_MP3 = "rating_id3v2=4 star.mp3"
-    RATING_ID3V2_4_STAR_WAV = "rating_id3v2=4 star.wav"
 
     RATING_ID3V2_5_STAR_FLAC = "rating_id3v2=5 star.flac"
     RATING_ID3V2_5_STAR_MP3 = "rating_id3v2=5 star.mp3"
-    RATING_ID3V2_5_STAR_WAV = "rating_id3v2=5 star.wav"
 
     RATING_ID3V2_TRACKTOR_1_STAR_MP3 = "rating_id3v2_tracktor=1 star.mp3"
     RATING_ID3V2_TRACKTOR_2_STAR_MP3 = "rating_id3v2_tracktor=2 star.mp3"
