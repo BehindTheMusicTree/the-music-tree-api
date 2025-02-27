@@ -1,23 +1,23 @@
 from rest_framework import status
 
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase):
 
     def test_short_wav_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, extension='wav')
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_MP3, extension='wav')
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.duration_in_sec == self.SAMPLE_LIB_TRACK_WAV_DURATION
+        assert self.saved_object.track_file.duration_in_sec == 1
 
     def test_normal_wav_then_ok(self):
-        response = self._post_lib_track('carminaremix_472s.wav')
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_472S_WAV)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 472
 
     def test_wav_with_issues_while_reading_duration_from_mutagen_and_tynitag_then_ok(self):
-        response = self._post_lib_track(
-            '1_sec_but_issue_with_duration_reading_from_mutagen_and_tynitag.wav')
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_1S_ISSUE_READING_FROM_MUTAGEN_AND_TYNITAG_WAV)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 1
 
