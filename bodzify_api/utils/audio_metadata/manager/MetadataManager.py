@@ -8,7 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from bodzify_api.utils.AudioFile import AudioFile
 
-from ..exceptions import UnsupportedMetadataError
+from ..exceptions import MetadataNotSupportedError
 from ..utils.AppMetadataKey import AppMetadataKey
 from ..utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey
 
@@ -26,13 +26,16 @@ class MetadataManager:
     metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None
     file_raw_metadata: FileType
     raw_metadata_dict: RawMetadataDict
+    must_save_updates_in_bulk: bool
 
     def __init__(self, audio_file: AudioFile,
                  metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
-                 metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None = None):
+                 metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None = None,
+                 must_save_updates_in_bulk: bool = True):
         self.audio_file = audio_file
         self.metadata_keys_direct_map_read = metadata_keys_direct_map_read
         self.metadata_keys_direct_map_write = metadata_keys_direct_map_write
+        self.must_save_updates_in_bulk = must_save_updates_in_bulk
         self.file_raw_metadata = self._extract_raw_metadata()
         self.raw_metadata_dict = self._convert_raw_metadata_to_dict()
         self._regroup_raw_metadata_dict_multiple_entries_in_list()
@@ -56,7 +59,7 @@ class MetadataManager:
 
     @abstractmethod
     def _update_formatted_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue, must_save: bool = False):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         raise NotImplementedError()
 
     def _regroup_raw_metadata_dict_multiple_entries_in_list(self):
@@ -76,7 +79,7 @@ class MetadataManager:
 
     def get_app_specific_metadata(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
         if app_metadata_key not in self.metadata_keys_direct_map_read:
-            raise UnsupportedMetadataError(f'{app_metadata_key} metadata not supported by this format')
+            raise MetadataNotSupportedError(f'{app_metadata_key} metadata not supported by this format')
 
         raw_metadata_key = self.metadata_keys_direct_map_read[app_metadata_key]
         if not raw_metadata_key:
@@ -109,24 +112,26 @@ class MetadataManager:
 
     def update_bulk(self, app_metadata_dict: AppMetadataDict):
         if not self.metadata_keys_direct_map_write:
-            raise UnsupportedMetadataError('This format does not support metadata modification')
+            raise MetadataNotSupportedError('This format does not support metadata modification')
 
         for app_metadata_key in list(app_metadata_dict.keys()):
-            value = app_metadata_dict[app_metadata_key]
+            app_metadata_value = app_metadata_dict[app_metadata_key]
             if app_metadata_key not in self.metadata_keys_direct_map_write:
-                raise UnsupportedMetadataError(f'{app_metadata_key} metadata not supported by this format')
+                raise MetadataNotSupportedError(f'{app_metadata_key} metadata not supported by this format')
             else:
                 raw_metadata_key = self.metadata_keys_direct_map_write[app_metadata_key]
                 if raw_metadata_key:
                     self._update_formatted_value_in_raw_metadata(
-                        raw_metadata_key=raw_metadata_key, app_metadata_value=value)
+                        raw_metadata_key=raw_metadata_key, app_metadata_value=app_metadata_value)
                 else:
-                    self._update_undirectly_mapped_metadata(app_metadata_value=value, app_metadata_key=app_metadata_key)
+                    self._update_undirectly_mapped_metadata(
+                        app_metadata_value=app_metadata_value, app_metadata_key=app_metadata_key)
 
-        self.save_raw_metadata()
+        self.save_raw_metadata_in_bulk_if_authorized()
 
-    def save_raw_metadata(self):
-        self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())
+    def save_raw_metadata_in_bulk_if_authorized(self):
+        if self.must_save_updates_in_bulk:
+            self.file_raw_metadata.save(self.audio_file.get_file_path_or_object())
 
     def delete_metadata(self) -> bool:
         try:

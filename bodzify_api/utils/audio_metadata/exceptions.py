@@ -22,7 +22,7 @@ class FileTypeNotSupportedError(Exception):
     pass
 
 
-class UnsupportedMetadataError(Exception):
+class MetadataNotSupportedError(Exception):
     """Raised when attempting to read or write metadata not supported by the format.
 
     This error indicates a format limitation (e.g., trying to write BPM to RIFF),

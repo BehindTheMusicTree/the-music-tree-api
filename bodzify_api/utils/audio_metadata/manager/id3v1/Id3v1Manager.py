@@ -1,6 +1,6 @@
 
 from ....AudioFile import AudioFile
-from ...exceptions import FileCorruptedError, UnsupportedMetadataError
+from ...exceptions import FileCorruptedError, MetadataNotSupportedError
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from ...utils.types import AppMetadataValue, RawMetadataDict
@@ -55,7 +55,9 @@ class Id3v1Manager(MetadataManager):
             AppMetadataKey.ALBUM_NAME: Id3v1RawMetadataKey.ALBUM_NAME,
             AppMetadataKey.GENRE_NAME: None,
         }
-        super().__init__(audio_file=audio_file, metadata_keys_direct_map_read=metadata_keys_direct_map_read)
+        super().__init__(audio_file=audio_file,
+                         metadata_keys_direct_map_read=metadata_keys_direct_map_read,
+                         must_save_updates_in_bulk=False)
 
     def _extract_raw_metadata(self) -> Id3v1RawMetadata:
         try:
@@ -100,5 +102,5 @@ class Id3v1Manager(MetadataManager):
     def _update_undirectly_mapped_metadata(self, app_metadata_value: AppMetadataValue,
                                            app_metadata_key: AppMetadataKey,
                                            normalized_rating_max_value: int | None = None):
-        raise UnsupportedMetadataError(
+        raise MetadataNotSupportedError(
             "ID3v1 tag modification is not supported (fixed-length format)")

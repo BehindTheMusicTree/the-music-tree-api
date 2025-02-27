@@ -91,6 +91,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write,
+                         must_save_updates_in_bulk=True,
                          rating_write_profile=RatingWriteProfile.BASE_100_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
@@ -138,7 +139,7 @@ class VorbisManager(RatingSupportingMetadataManager):
             del self.file_raw_metadata[raw_metadata_key]
 
         if must_save:
-            self.save_raw_metadata()
+            self.save_raw_metadata_in_bulk_if_authorized()
 
     def _update_undirectly_mapped_metadata(self, app_metadata_value, app_metadata_key: AppMetadataKey):
         if app_metadata_key == AppMetadataKey.RATING:

@@ -6,7 +6,7 @@ from mutagen.wave import WAVE
 from django.core.exceptions import ImproperlyConfigured
 
 from ....AudioFile import AudioFile
-from ...exceptions import UnsupportedMetadataError
+from ...exceptions import MetadataNotSupportedError
 from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
 from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataValue, RawMetadataDict, RawMetadataKey
@@ -95,6 +95,7 @@ class RiffManager(RatingSupportingMetadataManager):
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write,
+                         must_save_updates_in_bulk=False,
                          rating_write_profile=RatingWriteProfile.BASE_100_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
@@ -138,7 +139,7 @@ class RiffManager(RatingSupportingMetadataManager):
             genre_name = self.get_genre_name()
             return [genre_name] if genre_name else None
         else:
-            raise UnsupportedMetadataError(f'Metadata key not handled: {key}')
+            raise MetadataNotSupportedError(f'Metadata key not handled: {key}')
 
     def get_genre_name(self) -> str | None:
         """
@@ -168,16 +169,17 @@ class RiffManager(RatingSupportingMetadataManager):
         return None
 
     def _update_formatted_value_in_raw_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue, must_save: bool = True):
+            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         """
         Updates a metadata value in the RIFF INFO chunk.
         """
 
-        if not must_save:
+        if self.must_save_updates_in_bulk:
             raise ImproperlyConfigured(
-                "Saving RIFF metadata is not supported by mutagen. Data must be saved in this function.")
+                "Saving RIFF metadata in bulk not supported. Data must be saved one by one in this function.")
+
         if not isinstance(raw_metadata_key, self.RiffTagKey):
-            raise ValueError(f"Invalid RIFF metadata key: {raw_metadata_key}")
+            raise MetadataNotSupportedError(f"Invalid RIFF metadata key: {raw_metadata_key}")
 
         # Convert app_metadata_value to string
         if app_metadata_value is None:
@@ -239,8 +241,7 @@ class RiffManager(RatingSupportingMetadataManager):
                             file_data[tag_pos:tag_pos+8+len(value_bytes)] = chunk_data
                             if size_diff < 0:
                                 # Fill remaining space with zeros
-                                file_data[tag_pos+8+len(value_bytes)
-                                                        :tag_pos+8+old_size_with_padding] = b'\x00' * (-size_diff)
+                                file_data[tag_pos+8+len(value_bytes)                                          :tag_pos+8+old_size_with_padding] = b'\x00' * (-size_diff)
                         else:
                             # Need to expand the chunk
                             file_data[tag_pos:tag_pos+8+old_size_with_padding] = b''
@@ -266,6 +267,3 @@ class RiffManager(RatingSupportingMetadataManager):
         # Write updated data back to file
         self.audio_file.seek(0)
         self.audio_file.write(file_data)
-
-    def save_raw_metadata(self):
-        raise ImproperlyConfigured("Saving RIFF metadata is not supported by mutagen. Use the update method instead.")

@@ -6,7 +6,7 @@ from typing import Any
 
 from mutagen._file import FileType
 
-from bodzify_api.utils.audio_metadata.exceptions import UnsupportedMetadataError
+from bodzify_api.utils.audio_metadata.exceptions import MetadataNotSupportedError
 from bodzify_api.utils.audio_metadata.manager.id3v1.Id3v1RawMetadataKey import Id3v1RawMetadataKey
 
 
@@ -87,7 +87,7 @@ class Id3v1RawMetadata(FileType):
 
     def save(self) -> None:
         """Placeholder for save operation - ID3v1 is read-only."""
-        raise UnsupportedMetadataError()
+        raise MetadataNotSupportedError()
 
     @property
     def mime(self) -> list[str]:
@@ -96,11 +96,11 @@ class Id3v1RawMetadata(FileType):
 
     def add_tags(self) -> None:
         """Add a new ID3v1 tag to the file."""
-        raise UnsupportedMetadataError("ID3v1 tags cannot be added (read-only format)")
+        raise MetadataNotSupportedError("ID3v1 tags cannot be added (read-only format)")
 
     def delete(self, filename: str) -> None:
         """Remove tags from a file."""
-        raise UnsupportedMetadataError("ID3v1 tags cannot be deleted (read-only format)")
+        raise MetadataNotSupportedError("ID3v1 tags cannot be deleted (read-only format)")
 
     @staticmethod
     def score(filename: str, fileobj: Any, header: Any) -> float:
