@@ -95,7 +95,7 @@ class VorbisManager(RatingSupportingMetadataManager):
                          rating_write_profile=RatingWriteProfile.BASE_100_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def _extract_raw_metadata(self) -> FileType:
+    def _extract_mutagen_metadata(self) -> FileType:
         try:
             return FLAC(self.audio_file.get_file_path_or_object())
         except Exception as error:
@@ -104,9 +104,9 @@ class VorbisManager(RatingSupportingMetadataManager):
                 raise InvalidChunkDecodeError(error_str)
             raise
 
-    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
-        file_raw_metadata_flac: FLAC = self.file_raw_metadata  # type: ignore
-        metadata = file_raw_metadata_flac.tags
+    def _convert_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
+        raw_mutagen_metadata_flac: FLAC = self.raw_mutagen_metadata  # type: ignore
+        metadata = raw_mutagen_metadata_flac.tags
         if isinstance(metadata, dict):
             return metadata
         elif isinstance(metadata, VCFLACDict):
@@ -116,27 +116,28 @@ class VorbisManager(RatingSupportingMetadataManager):
         else:
             raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
 
-    def _extract_file_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
+    def _get_raw_mutagen_metadata_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
         rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
-            str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING)
+            str_dict=dict(self.raw_mutagen_metadata), key=self.VorbisKey.RATING)
 
         if rating:
             return rating, False
 
         rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
-            str_dict=self.raw_metadata_dict, key=self.VorbisKey.RATING_TRAKTOR)
+            str_dict=dict(self.raw_mutagen_metadata), key=self.VorbisKey.RATING_TRAKTOR)
+
         if rating:
             return rating, True
         return None, False
 
-    def _update_formatted_value_in_raw_metadata(
+    def _update_formatted_value_in_raw_mutagen_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue, must_save: bool = False):
         if app_metadata_value:
-            if raw_metadata_key not in self.file_raw_metadata:
-                self.file_raw_metadata[raw_metadata_key] = [1]
-            self.file_raw_metadata[raw_metadata_key] = raw_metadata_key
-        elif raw_metadata_key in self.file_raw_metadata:
-            del self.file_raw_metadata[raw_metadata_key]
+            if raw_metadata_key not in self.raw_mutagen_metadata:
+                self.raw_mutagen_metadata[raw_metadata_key] = [1]
+            self.raw_mutagen_metadata[raw_metadata_key] = raw_metadata_key
+        elif raw_metadata_key in self.raw_mutagen_metadata:
+            del self.raw_mutagen_metadata[raw_metadata_key]
 
         if must_save:
             self.save_raw_metadata_in_bulk_if_authorized()
@@ -145,7 +146,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         if app_metadata_key == AppMetadataKey.RATING:
             if app_metadata_value:
                 app_metadata_value = str(app_metadata_value)
-            self._update_formatted_value_in_raw_metadata(
+            self._update_formatted_value_in_raw_mutagen_metadata(
                 raw_metadata_key=self.VorbisKey.RATING, app_metadata_value=app_metadata_value)
         else:
             raise ImproperlyConfigured('Metadata key not handled')

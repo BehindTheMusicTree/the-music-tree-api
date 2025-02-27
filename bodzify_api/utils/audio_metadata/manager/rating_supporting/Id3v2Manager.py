@@ -215,7 +215,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                          rating_write_profile=RatingWriteProfile.BASE_255_NON_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def _extract_raw_metadata(self) -> FileType:
+    def _extract_mutagen_metadata(self) -> FileType:
         try:
             id3 = ID3(self.audio_file.get_file_path_or_object())
             # Force v2.3 update to ensure compatibility
@@ -227,8 +227,8 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
             return id3  # type: ignore[return-value]
 
-    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
-        raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
+    def _convert_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
+        raw_metadata_id3: ID3 = self.raw_mutagen_metadata  # type: ignore
         result = {}
 
         for frame_key in self.Id3TextFrame:
@@ -249,34 +249,26 @@ class Id3v2Manager(RatingSupportingMetadataManager):
 
         return result
 
-    def _update_formatted_value_in_raw_metadata(
+    def _get_raw_mutagen_metadata_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
+        for key in self.raw_mutagen_metadata:
+            if self.Id3TextFrame.RATING in key:
+                file_rating_tag = self.raw_mutagen_metadata[key]
+                return file_rating_tag.rating, file_rating_tag.email == self.TRAKTOR_RATING_TAG_MAIL
+
+        return None, False
+
+    def _update_formatted_value_in_raw_mutagen_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
-        file_raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
-        file_raw_metadata_id3.delall(raw_metadata_key)
+        raw_mutagen_metadata_id3: ID3 = self.raw_mutagen_metadata  # type: ignore
+        raw_mutagen_metadata_id3.delall(raw_metadata_key)
         text_frame_class = self.ID3_TEXT_FRAME_CLASS_MAP[raw_metadata_key]
 
         if raw_metadata_key == self.Id3TextFrame.RATING:
-            file_raw_metadata_id3.add(text_frame_class(email=self.ID3_RATING_APP_EMAIL, rating=app_metadata_value))
+            raw_mutagen_metadata_id3.add(text_frame_class(email=self.ID3_RATING_APP_EMAIL, rating=app_metadata_value))
         else:
-            file_raw_metadata_id3.add(text_frame_class(encoding=3, text=app_metadata_value))
+            raw_mutagen_metadata_id3.add(text_frame_class(encoding=3, text=app_metadata_value))
 
         self.save_raw_metadata_in_bulk_if_authorized()
-
-    def _get_eventually_normalized_rating_from_file(self) -> int | None:
-        file_rating_value = None
-        file_rating_email = None
-        for key in self.file_raw_metadata:
-            if self.Id3TextFrame.RATING in key:
-                file_rating_tag = self.file_raw_metadata[key]
-                file_rating_email = file_rating_tag.email
-                file_rating_value = file_rating_tag.rating
-                break
-        if file_rating_value is None:
-            return None
-        else:
-            return self._convert_file_rating_to_eventually_normalized_rating(
-                file_rating=file_rating_value,
-                is_rating_from_traktor=(file_rating_email == self.TRAKTOR_RATING_TAG_MAIL))
 
     def delete_metadata(self) -> bool:
         """Delete all ID3v2 metadata from the audio file.

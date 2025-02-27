@@ -59,14 +59,14 @@ class Id3v1Manager(MetadataManager):
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          must_save_updates_in_bulk=False)
 
-    def _extract_raw_metadata(self) -> Id3v1RawMetadata:
+    def _extract_mutagen_metadata(self) -> Id3v1RawMetadata:
         try:
             return Id3v1RawMetadata(fileobj=self.audio_file.file)
         except Exception as exc:
             raise FileCorruptedError(f"Failed to extract ID3v1 metadata: {exc}")
 
-    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
-        raw_metadata_id3v1: Id3v1RawMetadata = self.file_raw_metadata  # type: ignore
+    def _convert_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
+        raw_metadata_id3v1: Id3v1RawMetadata = self.raw_mutagen_metadata  # type: ignore
         if not raw_metadata_id3v1.tags:
             return {}
 
@@ -90,7 +90,7 @@ class Id3v1Manager(MetadataManager):
         return None
 
     def get_genre_name(self) -> str | None:
-        genre_codes = self.raw_metadata_dict.get(Id3v1RawMetadataKey.GENRE_CODE)
+        genre_codes = self.raw_cleaned_metadata.get(Id3v1RawMetadataKey.GENRE_CODE)
         if not genre_codes:
             return None
 

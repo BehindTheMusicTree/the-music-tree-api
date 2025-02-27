@@ -143,11 +143,11 @@ def _get_metadata_managers(
     return managers
 
 
-def extract_raw_metadata_dict(file: FILE_TYPE, tag_format: MetadataFormat | None = None) -> FileType:
+def extract_raw_cleaned_metadata(file: FILE_TYPE, tag_format: MetadataFormat | None = None) -> FileType:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
 
-    return _get_metadata_manager(file, tag_format=tag_format).file_raw_metadata
+    return _get_metadata_manager(file, tag_format=tag_format).raw_mutagen_metadata
 
 
 def get_merged_app_metadata_dict(
@@ -160,7 +160,7 @@ def get_merged_app_metadata_dict(
 
     # Get normalized metadata from each manager
     for _, manager in managers_prioritized.items():
-        app_metadata_dicts_prioritized.append(manager.get_app_metadata_dict())
+        app_metadata_dicts_prioritized.append(manager.app_metadata)
 
     result = {}
     for app_metadata_key in AppMetadataKey:
@@ -211,7 +211,7 @@ def is_flac_md5_valid(file: FILE_TYPE, check_id3v2: bool = False):
 
     if file.file_extension == ".flac":
         if check_id3v2:
-            id3v2_tags = Id3v2Manager(file).file_raw_metadata
+            id3v2_tags = Id3v2Manager(file).raw_mutagen_metadata
             if id3v2_tags:
                 return False
         return file.is_flac_file_md5_valid()

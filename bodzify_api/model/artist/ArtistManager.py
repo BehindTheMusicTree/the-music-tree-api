@@ -20,19 +20,19 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
         return [LibTrackMixinFields.NAME_INTERNAL]
 
     def get_artists_names_list_from_metadata_str(self, names_str: str) -> list:
-        names_with_eventual_spaces_around_and_duplicates = names_str.split(METADATA_ARTISTS_SEPARATION_CHAR)
+        names_with_potential_spaces_around_and_duplicates = names_str.split(METADATA_ARTISTS_SEPARATION_CHAR)
         names = []
-        for name_with_eventual_spaces_around in names_with_eventual_spaces_around_and_duplicates:
-            name = name_with_eventual_spaces_around.strip()
+        for name_with_potential_spaces_around in names_with_potential_spaces_around_and_duplicates:
+            name = name_with_potential_spaces_around.strip()
             if name != "" and names.count(name) == 0:
                 names.append(name)
         return names
 
-    def get_artists_list_from_names_after_eventual_creation(self, user: 'User', artists_names: str) -> list['Artist']:
+    def get_artists_list_from_names_after_potential_creation(self, user: 'User', artists_names: str) -> list['Artist']:
         return [self.get_or_create(user=user, name=artist_name)[0] for artist_name in artists_names] \
             if len(artists_names) > 0 else []
 
-    def get_artists_list_from_metadata_str_after_eventual_creation(
+    def get_artists_list_from_metadata_str_after_potential_creation(
             self, user: 'User', artists_names_str: str) -> list['Artist']:
         if not user:
             raise ImproperlyConfigured("User must be provided")
@@ -53,7 +53,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
         # Keep deletion order for rollback tests
 
         for album in instance.albums.all():
-            Album.objects.delete_instance_with_tracks_and_eventually_artists(album)
+            Album.objects.delete_instance_with_tracks_and_potentially_artists(album)
 
         for lib_track in instance.lib_tracks.all():
             LibraryTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(lib_track)

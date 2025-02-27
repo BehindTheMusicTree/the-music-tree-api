@@ -82,13 +82,13 @@ class RiffManager(RatingSupportingMetadataManager):
             AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,
             # AppMetadataKey.TRACK_NUMBER: None,
         }
-        metadata_keys_direct_map_write = {
+        metadata_keys_direct_map_write: dict = {
             AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES: self.RiffTagKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.RiffTagKey.ALBUM_NAME,
             AppMetadataKey.ALBUM_ARTISTS_NAMES: self.RiffTagKey.ALBUM_ARTISTS_NAMES,
             AppMetadataKey.GENRE_NAME: self.RiffTagKey.GENRE_NAME,
-            AppMetadataKey.RATING: None,
+            AppMetadataKey.RATING: self.RiffTagKey.RATING,
             AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,
             # AppMetadataKey.TRACK_NUMBER: self.RiffTagKey.TRACK_NUMBER,
         }
@@ -99,34 +99,71 @@ class RiffManager(RatingSupportingMetadataManager):
                          rating_write_profile=RatingWriteProfile.BASE_100_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def _extract_raw_metadata(self) -> FileType:
+    def _extract_mutagen_metadata(self) -> FileType:
+        """
+        Extract RIFF metadata by directly reading the INFO chunk.
+        WAVE/RIFF files are structured as:
+        'RIFF' + size + 'WAVE' + chunks, where each chunk is:
+        FourCC + size + data
+        We look for the LIST chunk containing INFO data.
+        """
         self.audio_file.seek(0)
-        return WAVE(io.BytesIO(self.audio_file.read()))
+        file_data = self.audio_file.read()
+        wave = WAVE(io.BytesIO(file_data))
 
-    def _convert_raw_metadata_to_dict(self) -> RawMetadataDict:
+        # Store INFO chunk data in a custom attribute
+        info_tags: dict[str, str] = {}
+
+        # Parse RIFF chunks directly since mutagen doesn't expose all metadata
+        pos = 0
+        size = len(file_data)
+        while pos < size - 8:  # Need at least 8 bytes for chunk header
+            if file_data[pos:pos+4] == b'LIST' and file_data[pos+8:pos+12] == b'INFO':
+                info_size = int.from_bytes(file_data[pos+4:pos+8], 'little')
+                info_data = file_data[pos+12:pos+12+info_size-4]  # -4 for 'INFO'
+
+                # Parse INFO chunk tags
+                tag_pos = 0
+                while tag_pos < len(info_data) - 8:
+                    tag_id = info_data[tag_pos:tag_pos+4].decode('ascii')
+                    tag_size = int.from_bytes(info_data[tag_pos+4:tag_pos+8], 'little')
+                    tag_data = info_data[tag_pos+8:tag_pos+8+tag_size].decode('utf-8').rstrip('\x00')
+
+                    # Store in our custom dict
+                    info_tags[tag_id] = tag_data
+
+                    # Move to next tag (aligned to word boundary)
+                    tag_pos += 8 + ((tag_size + 1) & ~1)
+                break
+            pos += 1
+
+        # Store the parsed INFO tags as a custom attribute
+        setattr(wave, 'info', info_tags)
+        return wave
+
+    def _convert_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
         """
         Convert RIFF metadata to dictionary.
-        Extracts tags from both the INFO chunk and direct tags.
+        Extracts tags from our custom info_tags attribute which contains
+        the directly parsed INFO chunk data.
         """
-        file_raw_metadata_wav: WAVE = self.file_raw_metadata  # type: ignore
-        metadata_dict: RawMetadataDict = {}
+        raw_mutagen_metadata_wav: WAVE = self.raw_mutagen_metadata  # type: ignore
+        raw_metadata_dict: dict = {}
 
-        # First try to get metadata from the INFO chunk
-        if file_raw_metadata_wav.tags:
-            info_chunk = file_raw_metadata_wav.tags.get('INFO')
-            if info_chunk is not None:
-                metadata_dict.update({self.RiffTagKey(key): [value] for key, value in info_chunk.items()})
+        # Get metadata from our custom info which contains the directly parsed INFO chunk
+        if hasattr(raw_mutagen_metadata_wav, 'info'):
+            info_tags = getattr(raw_mutagen_metadata_wav, 'info')
+            for key, value in info_tags.items():
+                if key in self.RiffTagKey:
+                    raw_metadata_dict[key] = value
 
-        # Then try to get metadata from direct tags
-        if hasattr(file_raw_metadata_wav, '_tags'):
-            direct_tags = getattr(file_raw_metadata_wav, '_tags')
-            if direct_tags is not None:
-                metadata_dict.update({self.RiffTagKey(key): [value] for key, value in direct_tags.items()})
+        return raw_metadata_dict
 
-        return metadata_dict
+    def _get_raw_mutagen_metadata_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
+        if not self.raw_mutagen_metadata.info or self.RiffTagKey.RATING not in self.raw_mutagen_metadata.info:
+            return None, False
 
-    def _extract_file_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
-        raw_rating = self.file_raw_metadata.get(self.RiffTagKey.RATING, None)
+        raw_rating = self.raw_mutagen_metadata.info[self.RiffTagKey.RATING]
         if raw_rating is None:
             return None, False
         try:
@@ -136,19 +173,19 @@ class RiffManager(RatingSupportingMetadataManager):
 
     def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> AppMetadataValue:
         if key == AppMetadataKey.GENRE_NAME:
-            genre_name = self.get_genre_name()
+            genre_name = self._get_genre_name()
             return [genre_name] if genre_name else None
         else:
             raise MetadataNotSupportedError(f'Metadata key not handled: {key}')
 
-    def get_genre_name(self) -> str | None:
+    def _get_genre_name(self) -> str | None:
         """
         The IGNR tag in RIFF files typically contains a genre code
         that corresponds to the ID3v1 genre list. This method converts
         the code to a human-readable genre name.
         """
-        if self.RiffTagKey.GENRE_NAME in self.file_raw_metadata:
-            raw_value = self.file_raw_metadata[self.RiffTagKey.GENRE_NAME]
+        if self.RiffTagKey.GENRE_NAME in self.raw_mutagen_metadata:
+            raw_value = self.raw_mutagen_metadata[self.RiffTagKey.GENRE_NAME]
             if isinstance(raw_value, str):
                 return raw_value
             else:
@@ -159,8 +196,8 @@ class RiffManager(RatingSupportingMetadataManager):
                     return None
         return None
 
-    def get_track_number(self) -> int | None:
-        part = self.file_raw_metadata.get(self.RiffTagKey.TRACK_NUMBER, None)
+    def _get_track_number(self) -> int | None:
+        part = self.raw_mutagen_metadata.get(self.RiffTagKey.TRACK_NUMBER, None)
         if part:
             try:
                 return int(part)
@@ -168,7 +205,7 @@ class RiffManager(RatingSupportingMetadataManager):
                 return None
         return None
 
-    def _update_formatted_value_in_raw_metadata(
+    def _update_formatted_value_in_raw_mutagen_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
         """
         Updates a metadata value in the RIFF INFO chunk.
@@ -241,7 +278,7 @@ class RiffManager(RatingSupportingMetadataManager):
                             file_data[tag_pos:tag_pos+8+len(value_bytes)] = chunk_data
                             if size_diff < 0:
                                 # Fill remaining space with zeros
-                                file_data[tag_pos+8+len(value_bytes)                                          :tag_pos+8+old_size_with_padding] = b'\x00' * (-size_diff)
+                                file_data[tag_pos+8+len(value_bytes):tag_pos+8+old_size_with_padding] = b'\x00' * (-size_diff)
                         else:
                             # Need to expand the chunk
                             file_data[tag_pos:tag_pos+8+old_size_with_padding] = b''

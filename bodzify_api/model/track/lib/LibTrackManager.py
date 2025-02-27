@@ -156,7 +156,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             if SchemaFields.ALBUM_ARTISTS_NAMES in schema_data:
                 album_artists_names = schema_data[SchemaFields.ALBUM_ARTISTS_NAMES]
 
-            album = Album.objects.get_album_from_name_and_album_artists_names_after_eventual_creations(
+            album = Album.objects.get_album_from_name_and_album_artists_names_after_potential_creations(
                 user=schema_data[Fields.USER], name=album_name, album_artists_names=album_artists_names)
 
             model_data[Fields.ALBUM] = album
@@ -166,7 +166,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         if SchemaFields.ARTISTS_NAMES in schema_data:
             artists_names = schema_data[SchemaFields.ARTISTS_NAMES]
             if artists_names:
-                artists = Artist.objects.get_artists_list_from_names_after_eventual_creation(
+                artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
                     user=schema_data[Fields.USER], artists_names=artists_names)
             else:
                 artists = []
@@ -385,7 +385,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             self.update_genre_playlists(updated_instance, old_genre=old_genre)
 
         if old_album and updated_instance.album and old_album != updated_instance.album:
-            Album.objects.delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(old_album)
+            Album.objects.delete_instance_if_no_track_linked_with_potential_album_artist_deletion(old_album)
             for album_artist in old_album_artists:
                 Artist.objects.delete_instance_if_nothing_linked(album_artist)
 
@@ -415,7 +415,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         instance.delete()
 
         if album:
-            Album.objects.delete_instance_if_no_track_linked_with_eventual_album_artist_deletion(album)
+            Album.objects.delete_instance_if_no_track_linked_with_potential_album_artist_deletion(album)
         for artist in artists:
             Artist.objects.delete_instance_if_nothing_linked(artist)
 
