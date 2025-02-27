@@ -45,12 +45,11 @@ class TestLibTrackFilename(str, Enum):
     METADATA_NONE_MP3 = "metadata=none.mp3"
     METADATA_NONE_WAV = "metadata=none.wav"
 
-    RATING_ID3V2_NONE_WAV = "rating_id3v2=none.wav"
-    RATING_ID3V2_1_STAR_WAV = "rating_id3v2=1 star.wav"
-    RATING_ID3V2_2_STAR_WAV = "rating_id3v2=2 star.wav"
-    RATING_ID3V2_4_STAR_WAV = "rating_id3v2=4 star.wav"
-    RATING_ID3V2_5_STAR_WAV = "rating_id3v2=5 star.wav"
-    RATING_ID3V2_3_STAR_WAV = "rating_id3v2=3 star.wav"
+    RATING_ID3V2_KID3_1_STAR_WAV = "rating_id3v2_kid3=1 star.wav"
+    RATING_ID3V2_KID3_2_STAR_WAV = "rating_id3v2_kid3=2 star.wav"
+    RATING_ID3V2_KID3_3_STAR_WAV = "rating_id3v2_kid3=3 star.wav"
+    RATING_ID3V2_KID3_4_STAR_WAV = "rating_id3v2_kid3=4 star.wav"
+    RATING_ID3V2_KID3_5_STAR_WAV = "rating_id3v2_kid3=5 star.wav"
 
     RATING_ID3V2_0_STAR_FLAC = "rating_id3v2=0 star.flac"
     RATING_ID3V2_0_STAR_MP3 = "rating_id3v2=0 star.mp3"
@@ -91,6 +90,8 @@ class TestLibTrackFilename(str, Enum):
     RATING_ID3V2_TRACKTOR_4_STAR_MP3 = "rating_id3v2_tracktor=4 star.mp3"
     RATING_ID3V2_TRACKTOR_5_STAR_MP3 = "rating_id3v2_tracktor=5 star.mp3"
     RATING_ID3V2_TRACKTOR_NONE_MP3 = "rating_id3v2_tracktor=none.mp3"
+
+    RATING_ID3V2_NONE_WAV = "rating_id3v2=none.wav"
 
     RATING_VORBIS_0_5_STAR_FLAC = "rating_vorbis=0.5 star.flac"
     RATING_VORBIS_0_STAR_FLAC = "rating_vorbis=0 star.flac"
