@@ -16,7 +16,9 @@ class TestLibTrackFilename(str, Enum):
     DURATION_1S_ISSUE_READING_FROM_MUTAGEN_AND_TYNITAG_WAV = "duration=1s issue reading from mutagen and tynitag.wav"
     DURATION_1S_MP3 = "duration=1s.wav"
     DURATION_472S_WAV = "duration=472s.wav"
+    DURATION_LESS_THAN_1_SEC_FLAC = "duration < 1 sec.flac"
     DURATION_LESS_THAN_1_SEC_MP3 = "duration < 1 sec.mp3"
+    DURATION_LESS_THAN_1_SEC_WAV = "duration < 1 sec.wav"
 
     FILENAME_DODIDO_MYFREEMP3_VIP_MP3 = "filename=dodido myfreemp3.vip .mp3"
     FILENAME_DOT_IN_FILENAME_MP3 = "filename=dot.in.filename.mp3"
