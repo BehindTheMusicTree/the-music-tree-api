@@ -49,6 +49,7 @@ class TestLibTrackFilename(str, Enum):
         "recording=queen_25_matches_but_one_with_best_duration_and_most_fields_and_most_release_groups.mp3"
     RECORDING_QUEEN_DURATION_181_MP3 = "recording=queen_duration_181.mp3"
     RECORDING_QUEEN_MULTIPLE_RELEASE_DATES_MP3 = "recording=queen_multiple_release_dates.mp3"
+    RECORDING_QUEEN_WEARETHECHAMPIONS_MP3 = "recording=queen_wearethechampions.mp3"
     RECORDING_SHOWMUSTGOON_MP3 = "recording=showmustgoon.mp3"
     RECORDING_TEMPERATURE_NO_MUSICBRAINZ_RECORDING_MP3 = \
         "recording=Tokyo Drift x Temperature - no musicbrainz recording.mp3"
