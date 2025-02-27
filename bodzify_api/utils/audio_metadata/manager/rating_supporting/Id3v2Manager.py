@@ -211,7 +211,6 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write,
-                         must_save_updates_in_bulk=True,
                          rating_write_profile=RatingWriteProfile.BASE_255_NON_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
@@ -268,7 +267,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         else:
             raw_mutagen_metadata_id3.add(text_frame_class(encoding=3, text=app_metadata_value))
 
-        self.save_raw_metadata_in_bulk_if_authorized()
+        self._save_raw_metadata_in_bulk_if_authorized()
 
     def delete_metadata(self) -> bool:
         """Delete all ID3v2 metadata from the audio file.

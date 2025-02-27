@@ -27,16 +27,13 @@ class MetadataManager:
     raw_mutagen_metadata: MutagenMetadata
     raw_cleaned_metadata: RawMetadataDict
     app_metadata: AppMetadataDict
-    must_save_updates_in_bulk: bool
 
     def __init__(self, audio_file: AudioFile,
                  metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
-                 metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None = None,
-                 must_save_updates_in_bulk: bool = True):
+                 metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None = None,):
         self.audio_file = audio_file
         self.metadata_keys_direct_map_read = metadata_keys_direct_map_read
         self.metadata_keys_direct_map_write = metadata_keys_direct_map_write
-        self.must_save_updates_in_bulk = must_save_updates_in_bulk
         self.raw_mutagen_metadata = self._extract_mutagen_metadata()
         self.raw_cleaned_metadata = self._get_cleaned_raw_metadata()
         self.app_metadata = self._get_app_metadata_dict_from_raw_cleaned_metadata()
@@ -138,11 +135,7 @@ class MetadataManager:
                     self._update_undirectly_mapped_metadata(
                         app_metadata_value=app_metadata_value, app_metadata_key=app_metadata_key)
 
-        self.save_raw_metadata_in_bulk_if_authorized()
-
-    def save_raw_metadata_in_bulk_if_authorized(self):
-        if self.must_save_updates_in_bulk:
-            self.raw_mutagen_metadata.save(self.audio_file.get_file_path_or_object())
+        self.raw_mutagen_metadata.save(self.audio_file.get_file_path_or_object())
 
     def delete_metadata(self) -> bool:
         try:

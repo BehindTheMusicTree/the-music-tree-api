@@ -55,9 +55,7 @@ class Id3v1Manager(MetadataManager):
             AppMetadataKey.ALBUM_NAME: Id3v1RawMetadataKey.ALBUM_NAME,
             AppMetadataKey.GENRE_NAME: None,
         }
-        super().__init__(audio_file=audio_file,
-                         metadata_keys_direct_map_read=metadata_keys_direct_map_read,
-                         must_save_updates_in_bulk=False)
+        super().__init__(audio_file=audio_file, metadata_keys_direct_map_read=metadata_keys_direct_map_read,)
 
     def _extract_mutagen_metadata(self) -> Id3v1RawMetadata:
         try:

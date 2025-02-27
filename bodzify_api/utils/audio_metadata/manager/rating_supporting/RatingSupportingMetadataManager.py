@@ -20,15 +20,13 @@ class RatingSupportingMetadataManager(MetadataManager):
                  metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
                  metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None],
                  rating_write_profile: RatingWriteProfile,
-                 normalized_rating_max_value: int | None,
-                 must_save_updates_in_bulk: bool = True,):
+                 normalized_rating_max_value: int | None):
 
         self.rating_write_profile = rating_write_profile
         self.normalized_rating_max_value = normalized_rating_max_value
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
-                         metadata_keys_direct_map_write=metadata_keys_direct_map_write,
-                         must_save_updates_in_bulk=must_save_updates_in_bulk)
+                         metadata_keys_direct_map_write=metadata_keys_direct_map_write)
 
     @abstractmethod
     def _get_raw_mutagen_metadata_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
@@ -62,9 +60,8 @@ class RatingSupportingMetadataManager(MetadataManager):
         star_rating_base_10 = (int)((normalized_rating * 10)/self.normalized_rating_max_value)
         self.rating_write_profile[star_rating_base_10]
 
-    def _convert_file_rating_to_potentially_normalized_rating(self,
-                                                              file_rating: int,
-                                                              is_rating_from_traktor: bool = False):
+    def _convert_file_rating_to_potentially_normalized_rating(
+            self, file_rating: int, is_rating_from_traktor: bool = False):
         if self.normalized_rating_max_value:
             if file_rating == 0 and is_rating_from_traktor:
                 return None
