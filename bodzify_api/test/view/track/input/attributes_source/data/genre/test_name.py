@@ -1,12 +1,12 @@
 from rest_framework import status
 
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.view.track.input.attributes_source.data.FieldFromDataTestCase import (
-    NullableStrFieldFromDataTestCase
-)
+from bodzify_api.test.utils.field.body_data.type.NullableCharBodyDataTestCase import NullableCharBodyDataTestCase
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(NullableStrFieldFromDataTestCase):
+class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
     post_field_key = PostFields.GENRE_NAME
 
     def test_value_then_ok(self):
