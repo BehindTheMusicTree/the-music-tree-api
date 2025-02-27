@@ -44,7 +44,7 @@ class TestLibTrackFilename(str, Enum):
     RATING_1_STAR_VORBIS_FLAC = "rating=1 star_vorbis.flac"
 
     RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3 = \
-        "recording=allumerlefeu_2_matches_one_with_more_release_groups.mp3"
+        "recording=Allumerlefeu_2 matches one with more release groups.mp3"
     RECORDING_CELINEKIN_PARK_NO_MUSICBRAINZ_RECORDING_DURATION_MP3 = \
         "recording=Celinekin Park - no musicbrainz recording duration.mp3"
     RECORDING_DANS_LA_LEGENDE = "recording=Dans la legende.flac"
@@ -73,9 +73,9 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
 
-    TAGS_ALL_ID3V2_FLAC = "tags=all_id3v2.flac"
-    TAGS_MAX_A_ID32V2_WAV = "tags=max a_id32v2.wav"
-    TAGS_MAX_A_MP3 = "tags=max a.mp3"
-    TAGS_NONE_FLAC = "tags=none.flac"
-    TAGS_NONE_MP3 = "tags=none.mp3"
-    TAGS_NONE_WAV = "tags=none.wav"
+    METADATA_ALL_ID3V2_FLAC = "metadata=all_id3v2.flac"
+    METADATA_MAX_A_ID32V2_WAV = "metadata=max a_id32v2.wav"
+    METADATA_MAX_A_MP3 = "metadata=max a.mp3"
+    METADATA_NONE_FLAC = "metadata=none.flac"
+    METADATA_NONE_MP3 = "metadata=none.mp3"
+    METADATA_NONE_WAV = "metadata=none.wav"
