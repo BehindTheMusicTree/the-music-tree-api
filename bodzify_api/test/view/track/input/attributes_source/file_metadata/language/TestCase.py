@@ -15,7 +15,7 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
         assert self.saved_object.language == None
 
     def test_longest_then_ok(self):
-        response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(extension=self.file_extension)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3, extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language == 'a' * settings.LIB_TRACK_LANGUAGE_LEN_MAX
 
