@@ -80,7 +80,7 @@ check_bool_vars_are_set() {
     fi
 }
 
-export_value_removing_eventual_surrounding_quotes() {
+export_value_removing_potential_surrounding_quotes() {
     local VAR_NAME=$1
     local VAR_VALUE=${!VAR_NAME}
     VAR_VALUE=${VAR_VALUE#\'}

@@ -35,7 +35,7 @@ check_script_vars_are_set() {
 	done
 	check_bool_vars_are_set APP_IS_EXPOSED
 
-	export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
+	export_value_removing_potential_surrounding_quotes DB_SUPERUSER_PASSWORD
 	export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 }
 
