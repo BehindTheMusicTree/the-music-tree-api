@@ -209,6 +209,7 @@ class RiffManager(RatingSupportingMetadataManager):
         """
         Update a single metadata field in the RIFF INFO chunk.
         Since mutagen doesn't support writing RIFF metadata, we implement our own writer.
+        First removes any existing tag with the same key to prevent multi-values.
         """
         # Read the entire file
         self.audio_file.seek(0)
@@ -228,6 +229,30 @@ class RiffManager(RatingSupportingMetadataManager):
                 has_info_chunk = True
                 break
             pos += 1
+
+        # Remove existing tag if present
+        if has_info_chunk:
+            info_data_start = info_chunk_start + 12  # After LIST+size+INFO
+            info_data_end = info_data_start + info_chunk_size - 4  # -4 for 'INFO'
+            tag_pos = info_data_start
+
+            while tag_pos < info_data_end - 8:  # Need at least 8 bytes for tag header
+                tag_id = file_data[tag_pos:tag_pos+4].decode('ascii')
+                tag_size = int.from_bytes(file_data[tag_pos+4:tag_pos+8], 'little')
+                total_tag_size = 8 + ((tag_size + 1) & ~1)  # Include header and padding
+
+                if tag_id == raw_metadata_key:
+                    # Remove the tag by shifting remaining data left
+                    file_data[tag_pos: tag_pos + info_chunk_size - total_tag_size] = file_data[tag_pos +
+                                                                                               total_tag_size: tag_pos + info_chunk_size]
+                    # Update chunk sizes
+                    info_chunk_size -= total_tag_size
+                    file_data[info_chunk_start+4:info_chunk_start+8] = info_chunk_size.to_bytes(4, 'little')
+                    riff_size = int.from_bytes(file_data[4:8], 'little')
+                    file_data[4:8] = (riff_size - total_tag_size).to_bytes(4, 'little')
+                    break
+
+                tag_pos += total_tag_size
 
         # Create new INFO chunk if none exists
         if not has_info_chunk:
@@ -316,7 +341,7 @@ class RiffManager(RatingSupportingMetadataManager):
             file_data[4:8] = (riff_size + info_chunk_size + 8).to_bytes(4, 'little')  # Update RIFF size
             file_data[info_chunk_start:info_chunk_start] = b'LIST' + info_chunk_size.to_bytes(4, 'little') + b'INFO'
 
-        # Convert app metadata to RIFF tags
+        # Remove existing tags and write new ones
         for app_key, value in app_metadata_dict.items():
             if value is None or value == "":
                 continue
@@ -333,6 +358,30 @@ class RiffManager(RatingSupportingMetadataManager):
                     value = self._convert_normalized_rating_to_file_rating(app_rating)
                 else:
                     raise MetadataNotSupportedError(f"Metadata key not handled: {app_key}")
+
+            # Remove existing tag if present
+            if has_info_chunk:
+                info_data_start = info_chunk_start + 12  # After LIST+size+INFO
+                info_data_end = info_data_start + info_chunk_size - 4  # -4 for 'INFO'
+                tag_pos = info_data_start
+
+                while tag_pos < info_data_end - 8:  # Need at least 8 bytes for tag header
+                    tag_id = file_data[tag_pos:tag_pos+4].decode('ascii')
+                    tag_size = int.from_bytes(file_data[tag_pos+4:tag_pos+8], 'little')
+                    total_tag_size = 8 + ((tag_size + 1) & ~1)  # Include header and padding
+
+                    if tag_id == riff_key:
+                        # Remove the tag by shifting remaining data left
+                        file_data[tag_pos: tag_pos + info_chunk_size - total_tag_size] = file_data[tag_pos +
+                                                                                                   total_tag_size: tag_pos + info_chunk_size]
+                        # Update chunk sizes
+                        info_chunk_size -= total_tag_size
+                        file_data[info_chunk_start+4:info_chunk_start+8] = info_chunk_size.to_bytes(4, 'little')
+                        riff_size = int.from_bytes(file_data[4:8], 'little')
+                        file_data[4:8] = (riff_size - total_tag_size).to_bytes(4, 'little')
+                        break
+
+                    tag_pos += total_tag_size
 
             # Convert value to string if it's a list
             if isinstance(value, list):
