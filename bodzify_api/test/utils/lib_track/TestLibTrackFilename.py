@@ -59,7 +59,7 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_TOTAL_ECLIPSE_5M43_FLAC = "recording=total eclipse_5m35.flac"
     RECORDING_TOTAL_ECLIPSE_3_SCORES_FLAC = "recording=total eclipse_3 scores.flac"
     RECORDING_TOTAL_ECLIPSE_9_MATCHES_BUT_ONE_WITH_DURATION_FLAC = \
-        "recording=total eclipse_9_matches_but_one_with_duration.flac"
+        "recording=total eclipse_9 matches one with duration.flac"
     RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
 
