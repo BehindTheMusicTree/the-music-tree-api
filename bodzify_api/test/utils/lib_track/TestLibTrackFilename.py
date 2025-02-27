@@ -3,16 +3,21 @@ from enum import Enum
 
 class TestLibTrackFilename(str, Enum):
     ALBUM_ARTISTS_MUSE_ID3V2_MP3 = "album artists=muse_id3v2.mp3"
+
     ALBUM_KOKO_ID3V2_MP3 = "album=koko_id3v2.mp3"
     ALBUM_KOKO_ID3V2_WAV = "album=koko_id3v2.wav"
     ALBUM_KOKO_VORBIS_FLAC = "album=koko_vorbis.flac"
+
     COPYRIGHT_DOMAINE_PUBLIC_RIFF_WAV = "copyright=domaine public_riff.wav"
+
     DEFAULT_MP3 = "default.mp3"
+
     DURATION_177S_MP3 = "duration=177s.mp3"
     DURATION_1S_ISSUE_READING_FROM_MUTAGEN_AND_TYNITAG_WAV = "duration=1s issue reading from mutagen and tynitag.wav"
     DURATION_1S_MP3 = "duration=1s.wav"
     DURATION_472S_WAV = "duration=472s.wav"
     DURATION_LESS_THAN_1_SEC_MP3 = "duration < 1 sec.mp3"
+
     FILENAME_DODIDO_MYFREEMP3_VIP_MP3 = "filename=dodido myfreemp3.vip .mp3"
     FILENAME_DOT_IN_FILENAME_MP3 = "filename=dot.in.filename.mp3"
     FILENAME_DOT_IN_FILENAME_WAV = "filename=with spaces  .mp3"
@@ -22,19 +27,24 @@ class TestLibTrackFilename(str, Enum):
         "kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2ruMgVZ46B78iqu6vQpJ7hytZLbbv5Q1L6tiP6MfZAFRnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd51.mp3"
     FINGERPRINT_MP3 = "fingerprint.mp3"
     FINGERPRINT_WAV = "fingerprint.wav"
+
     FORMAT_BAD_EXTENSION_MP4 = "format=bad_extension.mp4"
     FORMAT_BAD_MP3 = "format=bad.mp3"
     FORMAT_IMAGE_JPEG = "format=image.jpeg"
     FORMAT_IN_MEMORY_FLAC = "format=in_memory.flac"
     FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC = "format=md5_not_valid_and_corrupted.flac"
     FORMAT_MD5_NOT_VALID_FLAC = "format=md5_not_valid.flac"
+
     GENRE_ABSTRACT_ID3V1_MP3 = "genre=abstract_id3v1.mp3"
+
     METADATA_MAX_A_ID3V2_FLAC = "metadata=max a_id3v2.flac"
     METADATA_MAX_A_ID3V2_WAV = "metadata=max a_id3v2.wav"
     METADATA_MAX_A_ID3v2_MP3 = "metadata=max a_id3v2.mp3"
+
     METADATA_NONE_FLAC = "metadata=none.flac"
     METADATA_NONE_MP3 = "metadata=none.mp3"
     METADATA_NONE_WAV = "metadata=none.wav"
+
     RATING_ID3V2_1_STAR_FLAC = "rating_id3v2=1 star.flac"
     RATING_ID3V2_1_STAR_MP3 = "rating_id3v2=1 star.mp3"
     RATING_ID3V2_1_STAR_WAV = "rating_id3v2=1 star.wav"
@@ -42,12 +52,14 @@ class TestLibTrackFilename(str, Enum):
     RATING_ID3V2_3_STAR_FLAC = "rating_id3v2=3 star.flac"
     RATING_ID3V2_4_STAR_FLAC = "rating_id3v2=4 star.flac"
     RATING_ID3V2_5_STAR_FLAC = "rating_id3v2=5 star.flac"
+
     RATING_ID3V2_TRACKTOR_1_STAR_MP3 = "rating_id3v2_tracktor=1 star.mp3"
     RATING_ID3V2_TRACKTOR_2_STAR_MP3 = "rating_id3v2_tracktor=2 star.mp3"
     RATING_ID3V2_TRACKTOR_3_STAR_MP3 = "rating_id3v2_tracktor=3 star.mp3"
     RATING_ID3V2_TRACKTOR_4_STAR_MP3 = "rating_id3v2_tracktor=4 star.mp3"
     RATING_ID3V2_TRACKTOR_5_STAR_MP3 = "rating_id3v2_tracktor=5 star.mp3"
     RATING_ID3V2_TRACKTOR_NONE_MP3 = "rating_id3v2_tracktor=none.mp3"
+
     RATING_VORBIS_0_5_STAR_FLAC = "rating_vorbis=0.5 star.flac"
     RATING_VORBIS_0_STAR_FLAC = "rating_vorbis=0 star.flac"
     RATING_VORBIS_1_5_STAR_FLAC = "rating_vorbis=1.5 star.flac"
@@ -59,12 +71,14 @@ class TestLibTrackFilename(str, Enum):
     RATING_VORBIS_4_5_STAR_FLAC = "rating_vorbis=4.5 star.flac"
     RATING_VORBIS_4_STAR_FLAC = "rating_vorbis=4 star.flac"
     RATING_VORBIS_5_STAR_FLAC = "rating_vorbis=5 star.flac"
+
     RATING_VORBIS_TRAKTOR_1_STAR_FLAC = "rating_vorbis_traktor=1 star.flac"
     RATING_VORBIS_TRAKTOR_2_STAR_FLAC = "rating_vorbis_traktor=2 star.flac"
     RATING_VORBIS_TRAKTOR_3_STAR_FLAC = "rating_vorbis_traktor=3 star.flac"
     RATING_VORBIS_TRAKTOR_4_STAR_FLAC = "rating_vorbis_traktor=4 star.flac"
     RATING_VORBIS_TRAKTOR_5_STAR_FLAC = "rating_vorbis_traktor=5 star.flac"
     RATING_VORBIS_TRAKTOR_NONE_FLAC = "rating_vorbis_traktor=none.flac"
+
     RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3 = \
         "recording=Allumerlefeu_2 matches one with more release groups.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
