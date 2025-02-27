@@ -231,8 +231,6 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         raw_metadata_id3: ID3 = self.file_raw_metadata  # type: ignore
         result = {}
 
-        MULTI_VALUE_FRAMES = {self.Id3TextFrame.ARTISTS_NAMES, self.Id3TextFrame.ALBUM_ARTISTS_NAMES, }
-
         for frame_key in self.Id3TextFrame:
             if not isinstance(frame_key, str) or frame_key.startswith('_'):
                 continue
