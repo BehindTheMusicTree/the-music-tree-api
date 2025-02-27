@@ -22,6 +22,8 @@ class TestLibTrackFilename(str, Enum):
     FILENAME_DODIDO_MYFREEMP3_VIP_MP3 = "filename=dodido myfreemp3.vip .mp3"
     FILENAME_DOT_IN_FILENAME_MP3 = "filename=dot.in.filename.mp3"
     FILENAME_DOT_IN_FILENAME_WAV = "filename=with spaces  .mp3"
+    FILENAME_LONG_MP3 = \
+        "kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2ruMgVZ46B78iqu6vQpJ7hytZLbbv5Q1L6tiP6MfZAFRnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd5.mp3"
 
     FINGERPRINT_MP3 = "fingerprint.mp3"
     FINGERPRINT_WAV = "fingerprint.wav"
