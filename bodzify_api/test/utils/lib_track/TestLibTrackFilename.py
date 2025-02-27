@@ -27,6 +27,13 @@ class TestLibTrackFilename(str, Enum):
     FILENAME_LONG_PLUS_1_MP3 = \
         "kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2ruMgVZ46B78iqu6vQpJ7hytZLbbv5Q1L6tiP6MfZAFRnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd51.mp3"
 
+    METADATA_ALL_ID3V2_FLAC = "metadata=all_id3v2.flac"
+    METADATA_MAX_A_ID32V2_WAV = "metadata=max a_id32v2.wav"
+    METADATA_MAX_A_MP3 = "metadata=max a.mp3"
+    METADATA_NONE_FLAC = "metadata=none.flac"
+    METADATA_NONE_MP3 = "metadata=none.mp3"
+    METADATA_NONE_WAV = "metadata=none.wav"
+
     FINGERPRINT_MP3 = "fingerprint.mp3"
     FINGERPRINT_WAV = "fingerprint.wav"
 
@@ -72,10 +79,3 @@ class TestLibTrackFilename(str, Enum):
         "recording=total eclipse_9 matches one with duration.flac"
     RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
-
-    METADATA_ALL_ID3V2_FLAC = "metadata=all_id3v2.flac"
-    METADATA_MAX_A_ID32V2_WAV = "metadata=max a_id32v2.wav"
-    METADATA_MAX_A_MP3 = "metadata=max a.mp3"
-    METADATA_NONE_FLAC = "metadata=none.flac"
-    METADATA_NONE_MP3 = "metadata=none.mp3"
-    METADATA_NONE_WAV = "metadata=none.wav"
