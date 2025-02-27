@@ -15,7 +15,7 @@ class TestLibTrackFilename(str, Enum):
     DURATION_LESS_THAN_1_SEC_MP3 = "duration < 1 sec.mp3"
     DURATION_177S_MP3 = "duration=177s.mp3"
     DURATION_1_SEC_ISSUE_READING_FROM_MUTAGEN_AND_TYNITAG_WAV = \
-        "duration=1_sec_issue_reading_from_mutagen_and_tynitag.wav"
+        "duration=1 sec but issue with reading from mutagen and tynitag.wav"
     DURATION_472S_WAV = "duration=472s.wav"
 
     FINGERPRINT_MP3 = "fingerprint.mp3"
