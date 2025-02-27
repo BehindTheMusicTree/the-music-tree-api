@@ -12,6 +12,7 @@ from bodzify_api import settings
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.utils.ConditionalExpression import ConditionalExpression
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 
 from .Fields import Fields
 from .UserManager import UserManager
@@ -70,8 +71,8 @@ class User(AbstractUser, BaseModel):
     def copy_file_to_lib(self, file_abs_path: Path):
         shutil.copy(file_abs_path, self.lib_abs_path)
 
-    def does_track_filename_exist_in_lib(self, filename: str):
-        return os.path.isfile(Path(self.lib_abs_path) / filename)
+    def does_track_filename_exist_in_lib(self, test_lib_track_filename: TestLibTrackFilename):
+        return os.path.isfile(Path(self.lib_abs_path) / test_lib_track_filename)
 
     def delete(self, *args, **kwargs):
         if self.lib_abs_path.exists():
