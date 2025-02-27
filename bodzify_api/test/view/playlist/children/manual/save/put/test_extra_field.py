@@ -9,6 +9,7 @@ class TestCase(ManualPlaylistTestCase):
 
     def test_extra_field_then_error(self):
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name="teuf")
+
         non_existing_field = 'nonExistingField'
         response = self._put_manual_playlist(uuid=manual_playlist.uuid, **{non_existing_field: 'value'})
 

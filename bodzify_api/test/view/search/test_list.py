@@ -21,6 +21,7 @@ class TestCase(SearchTestCase):
         summerlove_track = self.model_fixture_factory.create_lib_track_with_file(title="Summer Love")
 
         response = self._search(**{SearchFields.QUERY: "Sum"})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 3
         title_key = LibTrackGetFields.TITLE
@@ -35,6 +36,7 @@ class TestCase(SearchTestCase):
         self.model_fixture_factory.create_genre(name=us_rap_criteria_name)
 
         response = self._search(**{SearchFields.QUERY: "rap"})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
         assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlayListFields.NAME] == rap_criteria_name
@@ -43,7 +45,9 @@ class TestCase(SearchTestCase):
     def test_manual_playlist_then_results(self):
         manual_playlist_foot = self.model_fixture_factory.create_manual_playlist(name='foot')
         self.model_fixture_factory.create_manual_playlist(name='cuisine')
+
         response = self._search(**{SearchFields.QUERY: "Foo"})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
         assert self.results[ManualPlaylist.__name__][0][CriteriaPlayListFields.NAME] == manual_playlist_foot.name
@@ -51,7 +55,9 @@ class TestCase(SearchTestCase):
     def test_criteria_playlist_then_results(self):
         criteria_playlist_rock = self.model_fixture_factory.create_genre(name='rock')
         self.model_fixture_factory.create_genre(name='punk')
+
         response = self._search(**{SearchFields.QUERY: "roC"})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
         assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlayListFields.NAME] == criteria_playlist_rock.name
@@ -59,7 +65,9 @@ class TestCase(SearchTestCase):
     def test_album_then_results(self):
         album = self.model_fixture_factory.create_album(name='album')
         self.model_fixture_factory.create_album(name='another one')
+
         response = self._search(**{SearchFields.QUERY: "aLb"})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
         assert self.results[Album.__name__][0][AlbumFields.NAME] == album.name
@@ -67,7 +75,9 @@ class TestCase(SearchTestCase):
     def test_lib_track_then_results(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title='track')
         self.model_fixture_factory.create_lib_track_with_file(title='another one')
+
         response = self._search(**{SearchFields.QUERY: "trA"})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
         assert self.results[LibraryTrack.__name__][0][LibTrackGetFields.TITLE] == lib_track.title
@@ -75,7 +85,9 @@ class TestCase(SearchTestCase):
     def test_artist_then_results(self):
         artist = self.model_fixture_factory.create_artist(name='artist')
         self.model_fixture_factory.create_artist(name='another one')
+
         response = self._search(**{SearchFields.QUERY: "Art"})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
         assert self.results[Artist.__name__][0][ArtistFields.NAME] == artist.name
