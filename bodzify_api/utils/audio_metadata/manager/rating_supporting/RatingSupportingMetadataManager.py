@@ -58,7 +58,7 @@ class RatingSupportingMetadataManager(MetadataManager):
             raise ImproperlyConfigured("normalized_rating_max_value must be set.")
 
         star_rating_base_10 = (int)((normalized_rating * 10)/self.normalized_rating_max_value)
-        self.rating_write_profile[star_rating_base_10]
+        return self.rating_write_profile[star_rating_base_10]
 
     def _convert_file_rating_to_potentially_normalized_rating(
             self, file_rating: int, is_rating_from_traktor: bool = False):

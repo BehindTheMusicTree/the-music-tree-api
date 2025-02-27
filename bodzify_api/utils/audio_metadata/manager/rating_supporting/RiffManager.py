@@ -1,4 +1,5 @@
 import io
+from typing import cast
 
 from mutagen._file import FileType
 from mutagen.wave import WAVE
@@ -6,7 +7,7 @@ from mutagen.wave import WAVE
 
 from ....AudioFile import AudioFile
 from ...exceptions import MetadataNotSupportedError
-from ...utils.id3v1_and_riff_genre_code_map import ID3V1_AND_RIFF_GENRE_CODE_MAP
+from ...utils.id3v1_genre_code_map import ID3V1_GENRE_CODE_MAP
 from ...utils.rating_profiles import RatingWriteProfile
 from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataDict, RawMetadataKey
 from ..MetadataManager import AppMetadataKey
@@ -56,9 +57,9 @@ class RiffManager(RatingSupportingMetadataManager):
         TITLE = 'INAM'
         ARTIST_NAME = 'IART'
         ALBUM_NAME = 'IPRD'
-        GENRE_NAME = 'IGNR'  # Numeric code or string
+        GENRE_NAME_OR_ID3V1_CODE = 'IGNR'
         DATE = 'ICRD'  # Creation/Release date
-        TRACK_NUMBER = 'IPRT'  # Part number (track number)
+        TRACK_NUMBER = 'IPRT'
 
         # Non-standard
         ALBUM_ARTISTS_NAMES = 'IAAR'
@@ -86,8 +87,8 @@ class RiffManager(RatingSupportingMetadataManager):
             AppMetadataKey.ARTISTS_NAMES: self.RiffTagKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.RiffTagKey.ALBUM_NAME,
             AppMetadataKey.ALBUM_ARTISTS_NAMES: self.RiffTagKey.ALBUM_ARTISTS_NAMES,
-            AppMetadataKey.GENRE_NAME: self.RiffTagKey.GENRE_NAME,
-            AppMetadataKey.RATING: self.RiffTagKey.RATING,
+            AppMetadataKey.GENRE_NAME: None,
+            AppMetadataKey.RATING: None,
             AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,
             # AppMetadataKey.TRACK_NUMBER: self.RiffTagKey.TRACK_NUMBER,
         }
@@ -182,14 +183,14 @@ class RiffManager(RatingSupportingMetadataManager):
         that corresponds to the ID3v1 genre list. This method converts
         the code to a human-readable genre name.
         """
-        if self.RiffTagKey.GENRE_NAME in self.raw_mutagen_metadata:
-            raw_value = self.raw_mutagen_metadata[self.RiffTagKey.GENRE_NAME]
+        if self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE in self.raw_mutagen_metadata:
+            raw_value = self.raw_mutagen_metadata[self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE]
             if isinstance(raw_value, str):
                 return raw_value
             else:
                 try:
                     genre_code = int(raw_value)
-                    return ID3V1_AND_RIFF_GENRE_CODE_MAP.get(genre_code, None)
+                    return ID3V1_GENRE_CODE_MAP.get(genre_code, None)
                 except ValueError:
                     return None
         return None
@@ -282,6 +283,9 @@ class RiffManager(RatingSupportingMetadataManager):
         Since mutagen doesn't support writing RIFF metadata, we implement our own writer.
         """
 
+        if not self.metadata_keys_direct_map_write:
+            raise MetadataNotSupportedError("No writable metadata keys found")
+
         # Read the entire file
         self.audio_file.seek(0)
         file_data = bytearray(self.audio_file.read())
@@ -318,10 +322,17 @@ class RiffManager(RatingSupportingMetadataManager):
                 continue
 
             # Get corresponding RIFF tag from the guaranteed-to-exist map
-            assert self.metadata_keys_direct_map_write is not None
             riff_key = self.metadata_keys_direct_map_write.get(app_key)
             if not riff_key:
-                continue
+                if app_key == AppMetadataKey.GENRE_NAME:
+                    riff_key = self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE
+                    value = self._get_genre_code(str(value))
+                elif app_key == AppMetadataKey.RATING:
+                    riff_key = self.RiffTagKey.RATING
+                    app_rating = cast(int, value)
+                    value = self._convert_normalized_rating_to_file_rating(app_rating)
+                else:
+                    raise MetadataNotSupportedError(f"Metadata key not handled: {app_key}")
 
             # Convert value to string if it's a list
             if isinstance(value, list):
@@ -350,3 +361,9 @@ class RiffManager(RatingSupportingMetadataManager):
         # Write back to file
         self.audio_file.seek(0)
         self.audio_file.write(file_data)
+
+    def _get_genre_code(self, genre_name: str) -> int | None:
+        for code, name in ID3V1_GENRE_CODE_MAP.items():
+            if name == genre_name:
+                return code
+        return None

@@ -1,4 +1,4 @@
-"""Standard ID3v1/RIFF genre codes mapping.
+"""Standard ID3v1 genre codes mapping.
 
 This is the complete standard genre map used by both ID3v1 and RIFF formats.
 Genres 0-79 are from the original ID3v1 spec.
@@ -6,7 +6,7 @@ Genres 80-125 were added by Winamp.
 Genres 126-147 were added by other players.
 """
 
-ID3V1_AND_RIFF_GENRE_CODE_MAP = {
+ID3V1_GENRE_CODE_MAP = {
     0: "Blues", 1: "Classic Rock", 2: "Country", 3: "Dance",
     4: "Disco", 5: "Funk", 6: "Grunge", 7: "Hip-Hop",
     8: "Jazz", 9: "Metal", 10: "New Age", 11: "Oldies",
