@@ -8,13 +8,13 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_flac(self):
-        response = self._post_lib_track_with_specific_sample("sample.flac")
+        response = self._post_lib_track("sample.flac")
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_mp3(self):
-        response = self._post_lib_track_with_specific_sample("sample.mp3")
+        response = self._post_lib_track("sample.mp3")
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_wav(self):
-        response = self._post_lib_track_with_specific_sample("sample.wav")
+        response = self._post_lib_track("sample.wav")
         assert response.status_code == status.HTTP_201_CREATED

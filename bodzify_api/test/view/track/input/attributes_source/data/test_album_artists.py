@@ -2,11 +2,10 @@
 
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(LibTrackTestCase):
@@ -17,7 +16,7 @@ class TestCase(LibTrackTestCase):
             PostFields.ALBUM_NAME: 'albumito',
             PostFields.ALBUM_ARTISTS_NAMES_ARRAY: value
         }
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -28,9 +27,9 @@ class TestCase(LibTrackTestCase):
     def test_empty_then_none(self):
         data = {
             PostFields.ALBUM_NAME: "albumito",
-            PostFields.ALBUM_ARTISTS_NAMES_ARRAY[]: ""
+            PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ""
         }
-        response = self._post_lib_track_with_generic_sample_1_star(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album

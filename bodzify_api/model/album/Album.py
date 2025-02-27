@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 from django.db.models import Q
+from django.db.models.query import QuerySet
 
 from bodzify_api import settings
 from bodzify_api.model.album.AlbumManager import AlbumManager
@@ -23,7 +24,7 @@ if TYPE_CHECKING:
 class Album(LibTrackMixin):
     _name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
     year = AppCharField(max_length=4, default=None, null=True)
-    album_artists = PrivateManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
+    album_artists: QuerySet[Artist] = PrivateManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
 
     objects: AlbumManager = AlbumManager()
 

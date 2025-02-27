@@ -9,10 +9,10 @@ class TestCase(LibTrackTestCase):
         source_filename_without_extension = "sample"
         source_filename_extension = ".mp3"
         source_filename_with_extension = source_filename_without_extension + source_filename_extension
-        self._post_lib_track_with_specific_sample(specific_sample_filename=source_filename_with_extension)
+        self._post_lib_track(specific_sample_filename=source_filename_with_extension)
         track1 = self.saved_object
 
-        response = self._post_lib_track_with_specific_sample(specific_sample_filename=source_filename_with_extension)
+        response = self._post_lib_track(specific_sample_filename=source_filename_with_extension)
         track2 = self.saved_object
 
         assert response.status_code == status.HTTP_201_CREATED

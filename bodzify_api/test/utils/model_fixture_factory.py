@@ -36,6 +36,7 @@ from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 
@@ -44,13 +45,11 @@ global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedF
 
 class ModelFixtureFactory:
     default_test_user: 'User'
-    lib_samples_dir: Path
-    generic_sample_path: Path
+    test_lib_track_dir: Path
 
-    def __init__(self, default_test_user: 'User', lib_samples_dir: Path, generic_sample_path: Path) -> None:
+    def __init__(self, default_test_user: 'User', test_lib_track_dir: Path) -> None:
         self.default_test_user = default_test_user
-        self.lib_samples_dir = lib_samples_dir
-        self.generic_sample_path = generic_sample_path
+        self.test_lib_track_dir = test_lib_track_dir
 
     @staticmethod
     def create_user(username=None, email=None, password='password123', **kwargs) -> 'User':
@@ -67,10 +66,7 @@ class ModelFixtureFactory:
 
     T = TypeVar('T', bound='Criteria')
 
-    def __create_criteria(self,
-                          name: str,
-                          model_class: type[T],
-                          user: User | None = None, **kwargs) -> T:
+    def __create_criteria(self, name: str, model_class: type[T], user: User | None = None, **kwargs) -> T:
         now = timezone.make_aware(datetime.now())
         model_fields = {
             CriteriaFields.CREATED_ON: kwargs.get(CriteriaFields.CREATED_ON, now),
@@ -83,8 +79,7 @@ class ModelFixtureFactory:
         return model_class.objects.create(**model_fields)
 
     def _create_file(
-            self, user: User, lib_track: LibraryTrack, track_file_path_in_lib: Path | None,
-            **kwargs) -> TrackFile:
+            self, user: User, lib_track: LibraryTrack, track_file_path_in_lib: Path | None, **kwargs) -> TrackFile:
         model_fields = {
             TrackFileFields.CREATED_ON: timezone.make_aware(datetime.now()),
             TrackFileFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -114,7 +109,7 @@ class ModelFixtureFactory:
     def create_lib_track_with_file(
         self,
         title: str,
-        filename: str | None = None,
+        test_lib_track_filename: TestLibTrackFilename | None = TestLibTrackFilename.DEFAULT_MP3,
         user: User | None = None,
         use_manager_for_genre_playlist_adding: bool = False,
         **kwargs
@@ -132,8 +127,9 @@ class ModelFixtureFactory:
 
         if not os.path.exists(user.lib_abs_path):
             os.makedirs(user.lib_abs_path)
-        file_path = self.lib_samples_dir / filename if filename else self.generic_sample_path
-        track_file_path_in_lib = user.lib_abs_path / os.path.basename(file_path)
+
+        file_path = self.test_lib_track_dir / str(test_lib_track_filename)
+        track_file_path_in_lib = user.lib_abs_path / str(test_lib_track_filename)
         shutil.copy(file_path, track_file_path_in_lib)
 
         if use_manager_for_genre_playlist_adding:

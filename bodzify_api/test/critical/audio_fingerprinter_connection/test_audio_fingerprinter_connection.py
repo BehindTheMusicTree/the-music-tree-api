@@ -10,7 +10,7 @@ class TestCase(LibTrackTestCase):
     @pytest.mark.critical
     def test_audio_fingerprinter_connection_ok(self):
         print("test_audio_fingerprinter_connection_ok")
-        response = self._post_lib_track_with_specific_sample("oostil - drown (massano remix) - 7m21.mp3")
+        response = self._post_lib_track("oostil - drown (massano remix) - 7m21.mp3")
         is_reponse_ok = response.status_code == status.HTTP_201_CREATED
         if not is_reponse_ok:
             print(response.data)  # type: ignore

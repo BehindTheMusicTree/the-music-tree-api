@@ -16,14 +16,12 @@ class TestCase(AlbumTestCase):
     def test_2_tracks_linked_then_delete_them(self):
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
         assassin_track_filename = "Assassin.mp3"
-        assassin_track = self.model_fixture_factory.create_lib_track_with_file(title="Assassin",
-                                                                               album=black_holes_album,
-                                                                               filename=assassin_track_filename)
+        assassin_track = self.model_fixture_factory.create_lib_track_with_file(
+            title="Assassin", album=black_holes_album, test_lib_track_filename=assassin_track_filename)
 
         starlight_track_filename = "Starlight.mp3"
-        starlight_track = self.model_fixture_factory.create_lib_track_with_file(title="Starlight",
-                                                                                album=black_holes_album,
-                                                                                filename=starlight_track_filename)
+        starlight_track = self.model_fixture_factory.create_lib_track_with_file(
+            title="Starlight", album=black_holes_album, test_lib_track_filename=starlight_track_filename)
 
         assert self.test_user1.does_track_filename_exist_in_lib(assassin_track_filename)
         assert self.test_user1.does_track_filename_exist_in_lib(starlight_track_filename)

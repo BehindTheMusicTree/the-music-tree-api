@@ -10,7 +10,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestCase(LibTrackTestCase):
 
     def test_flac_md5_not_valid_then_corrected(self):
-        response = self._post_lib_track_with_specific_sample("md5_not_valid.flac")
+        response = self._post_lib_track("md5_not_valid.flac")
 
         assert response.status_code == status.HTTP_201_CREATED
         track_file = self.saved_object.track_file
@@ -19,7 +19,7 @@ class TestCase(LibTrackTestCase):
         assert audio_metadata.is_flac_md5_valid(track_file.file.path)
 
     def test_flac_md5_not_valid_and_corrupted_then_error(self):
-        response = self._post_lib_track_with_specific_sample("md5_not_valid_and_corrupted.flac")
+        response = self._post_lib_track("md5_not_valid_and_corrupted.flac")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -36,7 +36,7 @@ class TestCase(LibTrackTestCase):
         assert not track_file.flac_md5_has_been_corrected
 
     def test_mp3_then_md5_check_is_none(self):
-        response = self._post_lib_track_with_specific_sample("sample.mp3")
+        response = self._post_lib_track("sample.mp3")
 
         assert response.status_code == status.HTTP_201_CREATED
         track_file = self.saved_object.track_file

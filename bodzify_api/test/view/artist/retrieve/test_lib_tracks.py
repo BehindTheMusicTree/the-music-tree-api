@@ -11,11 +11,11 @@ class TestCase(ArtistTestCase):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")
         self.model_fixture_factory.create_lib_track_with_file(
             title="celine",
-            filename="Celinekin Park 284 sec.mp3",
+            test_lib_track_filename="Celinekin Park 284 sec.mp3",
             artists=[artist])
         self.model_fixture_factory.create_lib_track_with_file(
             title="tokyo",
-            filename="tokyo drift x sean paul 152 sec.mp3",
+            test_lib_track_filename="tokyo drift x sean paul 152 sec.mp3",
             artists=[artist])
 
         response = self._retrieve_artist(artist.uuid)

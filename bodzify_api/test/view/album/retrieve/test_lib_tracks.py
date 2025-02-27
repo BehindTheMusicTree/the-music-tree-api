@@ -52,10 +52,9 @@ class TestCase(AlbumTestCase):
         album = self.model_fixture_factory.create_album(name="Chuck")
         self.model_fixture_factory.create_lib_track_with_file(title='ciline',
                                                               album=album,
-                                                              filename="Celinekin Park 284 sec.mp3")
-        self.model_fixture_factory.create_lib_track_with_file(title='tokyo',
-                                                              album=album,
-                                                              filename="tokyo drift x sean paul 152 sec.mp3")
+                                                              test_lib_track_filename="Celinekin Park 284 sec.mp3")
+        self.model_fixture_factory.create_lib_track_with_file(
+            title='tokyo', album=album, test_lib_track_filename="tokyo drift x sean paul 152 sec.mp3")
 
         response = self._retrieve_album(album.uuid)
 

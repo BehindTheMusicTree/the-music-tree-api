@@ -11,12 +11,12 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.track_file.duration_in_sec == self.SAMPLE_LIB_TRACK_WAV_DURATION
 
     def test_normal_wav_then_ok(self):
-        response = self._post_lib_track_with_specific_sample('carminaremix_472s.wav')
+        response = self._post_lib_track('carminaremix_472s.wav')
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 472
 
     def test_wav_with_issues_while_reading_duration_from_mutagen_and_tynitag_then_ok(self):
-        response = self._post_lib_track_with_specific_sample(
+        response = self._post_lib_track(
             '1_sec_but_issue_with_duration_reading_from_mutagen_and_tynitag.wav')
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 1
@@ -27,7 +27,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.track_file.duration_in_sec == self.SAMPLE_LIB_TRACK_MP3_DURATION
 
     def test_normal_mp3_then_ok(self):
-        response = self._post_lib_track_with_specific_sample('showmustgoon_277s.mp3')
+        response = self._post_lib_track('showmustgoon_277s.mp3')
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 277
 
@@ -37,6 +37,6 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.track_file.duration_in_sec == self.SAMPLE_LIB_TRACK_FLAC_DURATION
 
     def test_normal_flac_then_ok(self):
-        response = self._post_lib_track_with_specific_sample('drown_440s.flac')
+        response = self._post_lib_track('drown_440s.flac')
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 440

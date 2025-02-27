@@ -10,7 +10,8 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_delete_then_delete_file(self):
         filename = "sample.mp3"
-        track = self.model_fixture_factory.create_lib_track_with_file(title="We're All To Blame", filename=filename)
+        track = self.model_fixture_factory.create_lib_track_with_file(
+            title="We're All To Blame", test_lib_track_filename=filename)
         assert self.test_user1.does_track_filename_exist_in_lib(filename)
         assert track.track_file.file
         response = self._delete_lib_track(uuid=track.uuid)

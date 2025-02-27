@@ -39,12 +39,12 @@ class TestCase(PlaylistTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="celine",
             genre=genre,
-            filename="Celinekin Park 284 sec.mp3",
+            test_lib_track_filename="Celinekin Park 284 sec.mp3",
             use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_lib_track_with_file(
             title="celine",
             genre=genre,
-            filename="tokyo drift x sean paul 152 sec.mp3",
+            test_lib_track_filename="tokyo drift x sean paul 152 sec.mp3",
             use_manager_for_genre_playlist_adding=True)
 
         response = self._retrieve_playlist(genre_criteria_playlist.uuid)

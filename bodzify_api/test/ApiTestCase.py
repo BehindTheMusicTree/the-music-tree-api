@@ -1,8 +1,9 @@
 from typing import Generic, Type, TypeVar, Union
-from uuid import UUID
 
+from django.core.management import call_command
 from django.db import models
 from django.http import HttpResponse, JsonResponse
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework_simplejwt.tokens import AccessToken
@@ -11,8 +12,9 @@ from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.user.User import User
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
-from bodzify_api.test.AppApiClient import AppApiClient
-from bodzify_api.test.AppTestCase import AppTestCase
+from bodzify_api.test.utils.AppApiClient import AppApiClient
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
@@ -21,7 +23,7 @@ from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedRespons
 T = TypeVar('T', bound=models.Model)
 
 
-class ApiTestCase(AppTestCase, Generic[T]):
+class ApiTestCase(TestCase, Generic[T]):
     """Base class for API test cases that handle model instances.
 
     Child classes should:
@@ -125,36 +127,13 @@ class ApiTestCase(AppTestCase, Generic[T]):
         self.saved_lib_track_metadata = \
             audio_metadata.get_merged_app_metadata_dict(file=saved_lib_track.track_file.file)
 
-    def _post_lib_track_with_generic_sample(self,
-                                            generic_sample_filename_without_extension,
-                                            generic_sample_file_extension,
-                                            **kwargs) -> Union[JsonResponse, HttpResponse]:
-        filename_with_extension = generic_sample_filename_without_extension + '.' + generic_sample_file_extension
-        generic_sample_abs_path = self.generic_sample_dir_abs_path / filename_with_extension
-        return self._post_lib_track(file_abs_path=generic_sample_abs_path, **kwargs)
-
-    def _post_lib_track_with_generic_sample_no_tags(self,
-                                                    extension: str = 'mp3',
-                                                    **kwargs) -> Union[JsonResponse, HttpResponse]:
-        filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_NONE
-        response = self._post_lib_track_with_generic_sample(
-            generic_sample_filename_without_extension=filename_without_extension,
-            generic_sample_file_extension=extension,
-            **kwargs)
-        return response
-
-    def _post_lib_track_with_specific_sample(self,
-                                             specific_sample_filename=None,
-                                             **kwargs) -> Union[JsonResponse, HttpResponse]:
-        if specific_sample_filename is None:
-            return self._post_lib_track(file_abs_path=None, **kwargs)
-        else:
-            file_abs_path = self.specific_sample_dir_abs_path / specific_sample_filename
-            return self._post_lib_track(file_abs_path=file_abs_path, **kwargs)
-
-    # Defined here and not in TrackTestCase because other views needs sometimes to post a track for testing purposes
+    # Defined here and not in LibTrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
-    def _post_lib_track(self, file_abs_path, **kwargs) -> Union[JsonResponse, HttpResponse]:
+    def _post_lib_track(
+            self, test_lib_track_filename: TestLibTrackFilename = TestLibTrackFilename.DEFAULT_MP3, **kwargs
+    ) -> Union[JsonResponse, HttpResponse]:
+        file_abs_path = self.TEST_FILES_BASE_DIR / test_lib_track_filename
+
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {LibTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
             if kwargs:
@@ -163,30 +142,29 @@ class ApiTestCase(AppTestCase, Generic[T]):
                 kwargs = file_field_dict
 
             return self.api_client.post(
-                path=reverse('library-track-list'),
-                data=kwargs,
-                format='multipart',
-                handle_response=self._set_results
-            )
+                path=reverse('library-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
 
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
-        super().setUp(methods_names_to_implement=methods_names_to_implement)
+
+        call_command('loaddata', 'app')
+        self.test_admin_user = User.objects.create_superuser(
+            username='test_admin', password='test_admin', email='test_admin@example.com', is_test_user=True)
+
+        self.test_user1 = User.objects.create_instance(
+            username='pytest_user1', password='pytest_user1', email='pytest@user1.com', is_test_user=True)
+
+        self.test_user2 = User.objects.create_instance(
+            username='pytest_user2', password='pytest_user2', email='pytest@user2.com', is_test_user=True)
+
+        self.model_fixture_factory = ModelFixtureFactory(
+            default_test_user=self.test_user1, test_lib_track_dir=self.TEST_FILES_BASE_DIR,)
+
+        super().setUp()
+
+        if methods_names_to_implement:
+            for method_name in methods_names_to_implement:
+                if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
+                    raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")
 
         self.api_client = AppApiClient(test_case=self)
         self._login_as_test_user1()
-
-    def _post_album(self, **kwargs):
-        return self.api_client.post(
-            path=reverse('album-list'),
-            data=kwargs,
-            content_type='application/x-www-form-urlencoded',
-            handle_response=self._set_results
-        )
-
-    def _put_album(self, uuid: UUID, **kwargs):
-        return self.api_client.put(
-            path=reverse('album-detail', kwargs={'pk': uuid}),
-            data=kwargs,
-            content_type='application/x-www-form-urlencoded',
-            handle_response=self._set_results
-        )
