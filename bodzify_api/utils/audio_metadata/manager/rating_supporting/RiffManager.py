@@ -93,7 +93,7 @@ class RiffManager(RatingSupportingMetadataManager):
         super().__init__(audio_file=audio_file,
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write,
-                         rating_write_profile=RatingWriteProfile.BASE_255_NON_PROPORTIONAL,
+                         rating_write_profile=RatingWriteProfile.BASE_100_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
     def _extract_raw_metadata(self) -> FileType:
