@@ -24,8 +24,8 @@ class UpdateFileMetadataIntTestCase(LibTrackTestCase):
             data.update(additional_data_dict)
 
         if file_has_tags:
-            response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(
-                extension=self.file_extension, **data)
+            response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3,
+                                            extension=self.file_extension, **data)
         else:
             response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
                                             extension=self.file_extension, **data)
