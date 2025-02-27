@@ -28,7 +28,6 @@ class ApiTestCase(TestCase, Generic[T]):
     saved_object: T  # Must be defined in child classes
 
     api_client: AppApiClient
-    saved_lib_track: LibraryTrack
     saved_lib_track_metadata: dict
 
     def _login_as_user(self, user: User):

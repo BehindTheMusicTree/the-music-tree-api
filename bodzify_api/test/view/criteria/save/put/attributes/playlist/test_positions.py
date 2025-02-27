@@ -23,6 +23,7 @@ class TestCase(GenreTestCase):
             title="loul", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
+
         assert response.status_code == status.HTTP_200_OK
 
         lib_track_playlist_rels = \

@@ -15,6 +15,7 @@ class TestCase(GenreTestCase):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
+
         assert response.status_code == status.HTTP_200_OK
         updated_genre_punk: Criteria = Criteria.objects.get(user=self.test_user1, uuid=genre_punk.uuid)
         ascendant_relations: QuerySet[CriteriaLineageRel] = \
@@ -27,6 +28,7 @@ class TestCase(GenreTestCase):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ""})
+
         assert response.status_code == status.HTTP_200_OK
         updated_genre_punk: Criteria = Criteria.objects.get(user=self.test_user1, uuid=genre_punk.uuid)
         assert updated_genre_punk.ascendants_rels.count() == 0
@@ -37,6 +39,7 @@ class TestCase(GenreTestCase):
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=genre_punk)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
+
         assert response.status_code == status.HTTP_200_OK
 
         updated_punkhardcore_genre: Criteria = Criteria.objects.get(uuid=punkhardcore_genre.uuid)
@@ -59,6 +62,7 @@ class TestCase(GenreTestCase):
                                                                            parent=frenchpunkhardcore_genre)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
+
         assert response.status_code == status.HTTP_200_OK
 
         updated_bretonpunkhardcore_genre: Criteria = Criteria.objects.get(user=self.test_user1,
@@ -83,6 +87,7 @@ class TestCase(GenreTestCase):
         punkhardcore_genre = self.model_fixture_factory.create_genre(name="Punk hardcore", parent=genre_punk)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ""})
+
         assert response.status_code == status.HTTP_200_OK
 
         assert self.saved_object.root == genre_punk

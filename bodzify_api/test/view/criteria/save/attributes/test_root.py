@@ -13,7 +13,7 @@ class TestCase(GenreTestCase):
         response = self._put_genre(uuid=genre_punk.uuid, **{Fields.PARENT: None})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_object.root == self.saved_genre
+        assert self.saved_object.root == self.saved_object
 
     def test_one_acendant_then_root_is_parent(self):
         rock = self.model_fixture_factory.create_genre(name="Rock")

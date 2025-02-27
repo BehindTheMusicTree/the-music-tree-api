@@ -11,6 +11,7 @@ class TestCase(GenreTestCase):
 
     def test_no_parent_provided_then_no_ascendants(self):
         response = self._post_genre(**{PostFields.NAME_PUBLIC: "Rock"})
+
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.ascendants.count() == 0
 

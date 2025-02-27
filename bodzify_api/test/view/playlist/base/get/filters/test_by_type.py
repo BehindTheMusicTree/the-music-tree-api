@@ -49,6 +49,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         self.model_fixture_factory.create_genre(name=rock_criteria_name)
 
         response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_PUBLIC: 'genre'})
+
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
@@ -57,6 +58,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
 
     def test_value_is_tag_then_results(self):
         self.model_fixture_factory.create_tag(name='teuf')
+
         response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_PUBLIC: 'tag'})
 
         assert response.status_code == status.HTTP_200_OK
@@ -78,6 +80,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
 
     def test_value_is_wrong_then_error(self):
         response = self._get_playlists(**{to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC): 'wrong_value'})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]

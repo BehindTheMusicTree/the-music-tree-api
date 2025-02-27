@@ -20,32 +20,23 @@ class TagTestCase(ApiTestCase[Tag]):
 
     def _retrieve_tag(self, uuid: UUID):
         return self.api_client.get(
-            path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
-            handle_response=self._set_results
-        )
+            path=reverse(self.detail_endpoint, kwargs={'pk': uuid}), handle_response=self._set_results)
 
     def _get_tags(self, **kwargs):
         return self.api_client.get(
-            path=reverse(self.list_endpoint),
-            data=kwargs,
-            handle_response=self._set_results
-        )
+            path=reverse(self.list_endpoint), data=kwargs, handle_response=self._set_results)
 
     def _post_tag(self, **kwargs):
-        return self.api_client.post(
-            path=reverse(self.list_endpoint),
-            data=kwargs,
-            content_type='application/json',
-            handle_response=self._set_results
-        )
+        return self.api_client.post(path=reverse(self.list_endpoint),
+                                    data=kwargs,
+                                    content_type='application/json',
+                                    handle_response=self._set_results)
 
     def _put_tag(self, uuid: UUID, **kwargs):
-        return self.api_client.put(
-            path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
-            data=kwargs,
-            content_type='application/json',
-            handle_response=self._set_results
-        )
+        return self.api_client.put(path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
+                                   data=kwargs,
+                                   content_type='application/json',
+                                   handle_response=self._set_results)
 
     def _delete_tag(self, uuid: UUID):
         return self.api_client.delete(path=reverse(self.detail_endpoint, kwargs={'pk': uuid}))

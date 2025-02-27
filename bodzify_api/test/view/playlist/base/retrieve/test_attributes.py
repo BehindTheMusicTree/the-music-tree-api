@@ -20,9 +20,8 @@ class TestCase(PlaylistTestCase):
     def test_retrieve_genre_then_ok(self):
         name = 'rock'
         genre = self.model_fixture_factory.create_genre(name=name)
-        playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1,
-                                                                  criteria=genre,
-                                                                  type=CriteriaTypePks.GENRE)
+        playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria=genre, type=CriteriaTypePks.GENRE)
 
         response = self._retrieve_playlist(uuid=playlist.uuid)
 
@@ -32,9 +31,8 @@ class TestCase(PlaylistTestCase):
     def test_retrieve_tag_then_ok(self):
         name = 'foot'
         tag = self.model_fixture_factory.create_tag(name=name)
-        playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1,
-                                                                  criteria=tag,
-                                                                  type=CriteriaTypePks.TAG)
+        playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria=tag, type=CriteriaTypePks.TAG)
 
         response = self._retrieve_playlist(uuid=playlist.uuid)
 

@@ -5,6 +5,7 @@ from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import Criter
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album import Fields as LibTrackOutputFields
 from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as PlaylistOutputFields
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.utils import data_transformer
 
@@ -39,18 +40,18 @@ class TestCase(PlaylistTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="celine",
             genre=genre,
-            test_lib_track_filename="Celinekin Park 284 sec.mp3",
+            test_lib_track_filename=TestLibTrackFilename.DURATION_472S_WAV,
             use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_lib_track_with_file(
             title="celine",
             genre=genre,
-            test_lib_track_filename="tokyo drift x sean paul 152 sec.mp3",
+            test_lib_track_filename=TestLibTrackFilename.DURATION_177S_MP3,
             use_manager_for_genre_playlist_adding=True)
 
         response = self._retrieve_playlist(genre_criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.DURATION_IN_SEC)] == 284 + 152
+        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.DURATION_IN_SEC)] == 472 + 177
 
     def test_count(self):
         genre = self.model_fixture_factory.create_genre(name='rock')

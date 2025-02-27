@@ -32,6 +32,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
 
         self._login_as_test_user2()
         response = self._get_genres(**{FilterfFields.PARENT: test_user1_genre.uuid})
+
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 0
 

@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.criteria.input.Fields import Fields
-from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryCharBodyDataTestCase import PrimaryCharBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.PrimaryCharBodyDataTestCase import PrimaryCharBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
