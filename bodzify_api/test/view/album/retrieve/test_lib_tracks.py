@@ -2,6 +2,7 @@ from rest_framework import status
 
 from bodzify_api.serializer.model.album.detailed import Fields as RetrieveFields
 from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album import Fields as LibTrackOutputFields
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
@@ -50,16 +51,15 @@ class TestCase(AlbumTestCase):
 
     def test_duration(self):
         album = self.model_fixture_factory.create_album(name="Chuck")
-        self.model_fixture_factory.create_lib_track_with_file(title='ciline',
-                                                              album=album,
-                                                              test_lib_track_filename="Celinekin Park 284 sec.mp3")
         self.model_fixture_factory.create_lib_track_with_file(
-            title='tokyo', album=album, test_lib_track_filename="tokyo drift x sean paul 152 sec.mp3")
+            title='ciline', album=album, test_lib_track_filename=TestLibTrackFilename.DURATION_177S_MP3)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title='tokyo', album=album, test_lib_track_filename=TestLibTrackFilename.DURATION_472S_WAV)
 
         response = self._retrieve_album(album.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[to_camel_case(RetrieveFields.DURATION_IN_SEC)] == 284 + 152
+        assert self.result[to_camel_case(RetrieveFields.DURATION_IN_SEC)] == 177 + 472
 
     def test_count(self):
         album = self.model_fixture_factory.create_album(name="Chuck")

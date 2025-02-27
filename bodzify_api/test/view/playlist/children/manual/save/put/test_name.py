@@ -18,7 +18,7 @@ class TestCase(ManualPlaylistTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.name == manual_playlist_name_new
 
-    def test_empty_then_error(self):
+    def test_empty_then_400(self):
         uuid = self.model_fixture_factory.create_manual_playlist(name='foero').uuid
 
         response = self._put_manual_playlist(uuid=uuid, **{PlayListFields.NAME_PUBLIC: ""})

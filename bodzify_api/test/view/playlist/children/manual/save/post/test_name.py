@@ -13,7 +13,7 @@ class TestCase(ManualPlaylistTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
 
-    def test_empty_then_error(self):
+    def test_empty_then_400(self):
         response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: ""})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

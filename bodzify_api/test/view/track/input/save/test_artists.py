@@ -18,17 +18,17 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_longest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
-    def test_one_too_long_then_error(self):
+    def test_one_too_long_then_400(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
         data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -40,7 +40,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
         artist_name2 = "b"
         data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name, artist_name2]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -48,10 +48,10 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert artists_list[0].name == artist_name
         assert artists_list[1].name == artist_name2
 
-    def test_malformed_array_then_error(self) -> None:
+    def test_malformed_array_then_400(self) -> None:
         malformed_field_name = "artists_names"
         data = {malformed_field_name: ['muse']}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -61,16 +61,16 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
 
     def test_comma_separated_then_only_one_value(self):
         data = {PostFields.ARTISTS_NAMES_ARRAY: "Muse, Kopoe"}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) == 1
         assert artists_list[0].name == "Muse, Kopoe"
 
-    def test_duplicate_values_then_error(self) -> None:
+    def test_duplicate_values_then_400(self) -> None:
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: ['Muse', 'Muse']}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -79,15 +79,16 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
 
     def test_empty_then_none(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(**{ExtractFields.ARTISTS_NAMES_ARRAY: []})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **
+                                        {ExtractFields.ARTISTS_NAMES_ARRAY: []})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
 
-    def test_values_with_one_empty_then_error(self) -> None:
+    def test_values_with_one_empty_then_400(self) -> None:
         artist_name = "Muse"
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name, ""]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -100,7 +101,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         self.model_fixture_factory.create_artist(name=artist_name)
 
         data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -110,7 +111,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_one_not_existing_then_ok(self) -> None:
         artist_name = "hoho"
         data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -124,7 +125,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         self.model_fixture_factory.create_artist(name=artist2_name)
 
         data = {PostFields.ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         print('saved_object', self.saved_object)
@@ -139,7 +140,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         artist3_name = "NewArtist3"
 
         data = {PostFields.ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name, artist3_name]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
@@ -155,7 +156,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         new_artist2 = "NewArtist2"
 
         data = {PostFields.ARTISTS_NAMES_ARRAY: [existing_artist, new_artist1, new_artist2]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
@@ -169,7 +170,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
         data = {PostFields.ARTISTS_NAMES_ARRAY: [valid_artist, too_long_artist]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -180,7 +181,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_multiple_artists_with_duplicates_then_error(self) -> None:
         artist_name = "Duplicate Artist"
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name, artist_name, artist_name]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -191,7 +192,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_multiple_artists_with_empty_names_then_error(self) -> None:
         valid_artist = "ValidArtist"
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: [valid_artist, "", "", valid_artist]}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

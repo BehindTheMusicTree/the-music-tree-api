@@ -24,7 +24,7 @@ class TestCase(TagPlaylistTestCase, PrivateForeignKeyFilterTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 4
 
-    def test_invalid_uuid_then_error(self):
+    def test_invalid_uuid_then_400(self):
         self.model_fixture_factory.create_tag(name="Fiesta")
 
         response = self._get_tag_playlists(**{RietrieveFields.PARENT: 'invalid-uuid'})

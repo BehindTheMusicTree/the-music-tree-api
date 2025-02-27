@@ -9,7 +9,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_error(self):
+    def test_empty_then_400(self):
         response = self._get_albums(name='')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

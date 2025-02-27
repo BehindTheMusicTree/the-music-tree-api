@@ -9,7 +9,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(ManualPlaylistTestCase):
 
-    def test_multiple_values_then_error(self):
+    def test_list_then_400(self):
         response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: ["value", "value2"]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -34,7 +34,7 @@ class TestCase(ManualPlaylistTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.NAME_PUBLIC
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_already_exists_then_error(self):
+    def test_already_exists_then_400(self):
         name = "value"
         self.model_fixture_factory.create_manual_playlist(name=name)
 

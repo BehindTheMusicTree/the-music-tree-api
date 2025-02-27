@@ -35,7 +35,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert CriterialessPlaylistNames.GENRE in names
         assert CriterialessPlaylistNames.TAG in names
 
-    def test_empty_then_error(self):
+    def test_empty_then_400(self):
         response = self._get_playlists(**{to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC): ''})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

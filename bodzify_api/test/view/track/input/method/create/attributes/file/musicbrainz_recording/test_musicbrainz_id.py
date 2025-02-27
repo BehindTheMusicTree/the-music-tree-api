@@ -14,7 +14,7 @@ logger = logging.getLogger(LoggersName.INFO)
 class TestCase(LibTrackTestCase):
 
     def test_not_found_then_none(self):
-        response = self._post_lib_track_with_generic_sample_1_star()
+        response = self._post_lib_track_with_generic_sample_1_star(TestLibTrackFilename.METADATA_NONE_MP3, )
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording is None
 

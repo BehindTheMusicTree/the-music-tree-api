@@ -24,7 +24,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == None
 
-    def test_multiple_values_then_error(self):
+    def test_list_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.ALBUM_NAME: "a",
                                                                                    PostFields.ALBUM_NAME: "b"})
 

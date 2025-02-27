@@ -27,8 +27,8 @@ class UpdateFileMetadataIntTestCase(LibTrackTestCase):
             response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(
                 extension=self.file_extension, **data)
         else:
-            response = self._post_lib_track_with_generic_sample_no_tags(
-                extension=self.file_extension, **data)
+            response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
+                                            extension=self.file_extension, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
 

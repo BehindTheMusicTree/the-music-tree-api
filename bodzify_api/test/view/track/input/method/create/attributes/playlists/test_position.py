@@ -15,7 +15,7 @@ class TestCase(LibTrackTestCase):
         lib_track2 = self.model_fixture_factory.create_lib_track_with_file(
             title="We're All To lol", genre=genre, use_manager_for_genre_playlist_adding=True)
 
-        response = self._post_lib_track_with_generic_sample_no_tags()
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, )
 
         assert response.status_code == status.HTTP_201_CREATED
 

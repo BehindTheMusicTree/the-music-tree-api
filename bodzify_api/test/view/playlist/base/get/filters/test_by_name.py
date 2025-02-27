@@ -14,7 +14,7 @@ class TestCase(PlaylistTestCase, NotNullableFreeCharFilterTestCase):
     def setUp(self) -> None:
         super().setUp(methods_names_to_implement=None)
 
-    def test_empty_then_error(self) -> None:
+    def test_empty_then_400(self) -> None:
         response = self._get_playlists(**{Filters.NAME: ''})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

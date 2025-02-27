@@ -9,7 +9,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_no_genre_then_in_genreless_playlists(self):
-        response = self._post_lib_track_with_generic_sample_no_tags()
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, )
 
         assert response.status_code == status.HTTP_201_CREATED
         track_playlists = self.saved_object.playlists.all()

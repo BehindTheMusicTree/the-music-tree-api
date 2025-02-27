@@ -14,7 +14,7 @@ from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
 from bodzify_api.test.utils.AppApiClient import AppApiClient
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
-from bodzify_api.test.utils.model_fixture_factory import ModelFixtureFactory
+from bodzify_api.test.utils.ModelFixtureFactory import ModelFixtureFactory
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
@@ -24,14 +24,6 @@ T = TypeVar('T', bound=models.Model)
 
 
 class ApiTestCase(TestCase, Generic[T]):
-    """Base class for API test cases that handle model instances.
-
-    Child classes should:
-    1. Define model_class class variable pointing to their model
-    2. Override _set_saved_object if custom fetching logic is needed
-    3. Use handle_response=self._set_results in API calls
-    """
-
     model_class: Type[T]  # Must be defined in child classes
     saved_object: T  # Must be defined in child classes
 

@@ -17,11 +17,11 @@ class TestCase(AlbumTestCase):
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
         assassin_track_filename = "Assassin.mp3"
         assassin_track = self.model_fixture_factory.create_lib_track_with_file(
-            title="Assassin", album=black_holes_album, test_lib_track_filename=assassin_track_filename)
+            title="Assassin", album=black_holes_album)
 
         starlight_track_filename = "Starlight.mp3"
         starlight_track = self.model_fixture_factory.create_lib_track_with_file(
-            title="Starlight", album=black_holes_album, test_lib_track_filename=starlight_track_filename)
+            title="Starlight", album=black_holes_album,)
 
         assert self.test_user1.does_track_filename_exist_in_lib(assassin_track_filename)
         assert self.test_user1.does_track_filename_exist_in_lib(starlight_track_filename)
@@ -38,9 +38,8 @@ class TestCase(AlbumTestCase):
     def test_delete_then_delete_track_artist_as_nothing_linked_to_it_anymore(self):
         muse_artist = self.model_fixture_factory.create_artist(name="Muse")
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
-        self.model_fixture_factory.create_lib_track_with_file(title="Assassin",
-                                                              artists=[muse_artist],
-                                                              album=black_holes_album)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="Assassin", artists=[muse_artist], album=black_holes_album)
 
         response = self._delete_album(uuid=black_holes_album.uuid)
 
@@ -50,11 +49,9 @@ class TestCase(AlbumTestCase):
     def test_delete_then_dont_delete_track_artist_as_tracks_still_linked_to_it(self):
         muse_artist = self.model_fixture_factory.create_artist(name="Muse")
         album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
-        self.model_fixture_factory.create_lib_track_with_file(title="Assassin",
-                                                              artists=[muse_artist],
-                                                              album=album)
-        self.model_fixture_factory.create_lib_track_with_file(title="Supermassive Black Hole",
-                                                              artists=[muse_artist])
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="Assassin", artists=[muse_artist], album=album)
+        self.model_fixture_factory.create_lib_track_with_file(title="Supermassive Black Hole", artists=[muse_artist])
 
         response = self._delete_album(uuid=album.uuid)
 

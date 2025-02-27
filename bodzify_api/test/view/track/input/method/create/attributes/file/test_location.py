@@ -11,7 +11,7 @@ class TestCase(LibTrackTestCase):
         filename_without_extension = self.LibTrackGenericSamplesFilenameWithoutExtension.TAGS_NONE
         file_extension = 'wav'
         filename_with_extension = f'{filename_without_extension}.{file_extension}'
-        response = self._post_lib_track_with_generic_sample_no_tags(extension=file_extension)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, extension=file_extension)
         assert response.status_code == status.HTTP_201_CREATED
         assert Path(self.saved_object.track_file.file.name) == \
             Path(self.test_user1.lib_path_relative_to_media) / filename_with_extension

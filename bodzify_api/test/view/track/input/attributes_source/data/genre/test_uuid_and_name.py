@@ -15,7 +15,7 @@ class TestCase(LibTrackTestCase):
             PostFields.GENRE_NAME: None,
             PostFields.GENRE_UUID: None,
         }
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre == None
@@ -26,7 +26,7 @@ class TestCase(LibTrackTestCase):
             PostFields.GENRE_NAME: 'dnb',
             PostFields.GENRE_UUID: genre.uuid,
         }
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0][

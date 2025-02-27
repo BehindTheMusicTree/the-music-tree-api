@@ -3,12 +3,12 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.criteria.input.Fields import Fields
-from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryBodyDataTestCase import PrimaryBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.to_extend_from.PrimaryCharBodyDataTestCase import PrimaryCharBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
-class TestCase(GenreTestCase, PrimaryBodyDataTestCase):
+class TestCase(GenreTestCase, PrimaryCharBodyDataTestCase):
 
     def test_longest_then_ok(self):
         genre_name = "a" * settings.CRITERIA_NAME_LEN_MAX
@@ -26,7 +26,7 @@ class TestCase(GenreTestCase, PrimaryBodyDataTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.NAME_PUBLIC
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_multiple_values_then_error(self):
+    def test_list_then_400(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: ["value", "value2"]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -35,7 +35,7 @@ class TestCase(GenreTestCase, PrimaryBodyDataTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.NAME_PUBLIC
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST
 
-    def test_already_exists_then_error(self):
+    def test_already_exists_then_400(self):
         genre_name = "Rock"
         self.model_fixture_factory.create_genre(name=genre_name)
 
@@ -47,7 +47,7 @@ class TestCase(GenreTestCase, PrimaryBodyDataTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.NAME_PUBLIC
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.NAME_DUPLICATE
 
-    def test_empty_then_error(self):
+    def test_empty_then_400(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: ''})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

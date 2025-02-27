@@ -11,7 +11,7 @@ class TitleTestCase(NonNullableStrFieldFromDataTestCase):
 
     def test_value_then_ok(self):
         value = 'fr'
-        response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.TITLE: value})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TITLE: value})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.title == value

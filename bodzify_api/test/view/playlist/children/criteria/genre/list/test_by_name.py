@@ -11,7 +11,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(GenrePlaylistTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_error(self):
+    def test_empty_then_400(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._get_genre_playlists(**{FilterFields.NAME: ''})

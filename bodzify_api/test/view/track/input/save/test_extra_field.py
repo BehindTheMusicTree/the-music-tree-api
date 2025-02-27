@@ -10,8 +10,8 @@ class TestCase(LibTrackTestCase):
 
     def test_extra_field_then_error(self):
         excta_field = "extra_field"
-        response = self._post_lib_track_with_generic_sample_no_tags(
-            **{PostFields.TITLE: "Rock", excta_field: "extra_value"})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
+                                        **{PostFields.TITLE: "Rock", excta_field: "extra_value"})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

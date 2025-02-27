@@ -11,19 +11,19 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestCase(LibTrackTestCase):
 
     def test_empty_then_none(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.TRACK_NUMBER: None})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: None})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == None
 
     def test_empty_string_then_none(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.TRACK_NUMBER: ''})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == None
 
     def test_zero_then_error(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.TRACK_NUMBER: 0})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: 0})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -34,23 +34,23 @@ class TestCase(LibTrackTestCase):
     def test_one_then_ok(self):
         track_number = 1
 
-        response = self._post_lib_track_with_generic_sample_no_tags(
-            albumName='hey', track_number=track_number)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
+                                        albumName='hey', track_number=track_number)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
 
     def test_max_then_ok(self):
         track_number = settings.LIB_TRACK_TRACK_NUMBER_MAX
-        response = self._post_lib_track_with_generic_sample_no_tags(
-            album_name='album', track_number=track_number)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
+                                        album_name='album', track_number=track_number)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
 
     def test_max_plus_one_then_error(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(
-            album_name='album', track_number=settings.LIB_TRACK_TRACK_NUMBER_MAX + 1)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
+                                        album_name='album', track_number=settings.LIB_TRACK_TRACK_NUMBER_MAX + 1)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -59,7 +59,7 @@ class TestCase(LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE
 
     def test_negative_one_then_error(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(album_name='album', track_number=-1)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, album_name='album', track_number=-1)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -68,7 +68,7 @@ class TestCase(LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
 
     def test_not_integer_then_error(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.TRACK_NUMBER: 5.5})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: 5.5})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

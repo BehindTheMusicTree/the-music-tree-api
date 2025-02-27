@@ -11,13 +11,13 @@ class TestCase(NullableStrFieldFromDataTestCase):
 
     def test_value_then_ok(self):
         value = 'rovk'
-        response = self._post_lib_track_with_generic_sample_no_tags(**{PostFields.GENRE_NAME: value})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: value})
         assert response.status_code == status.HTTP_201_CREATED
         genre = self.saved_object.genre
         assert genre
         assert genre.name == value
 
     def test_empty_then_none(self):
-        response = self._post_lib_track_with_generic_sample_1_star(**{PostFields.GENRE_NAME: ""})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: ""})
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre == None

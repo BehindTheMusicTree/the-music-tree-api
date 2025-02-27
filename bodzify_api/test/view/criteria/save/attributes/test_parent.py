@@ -11,7 +11,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
 
-    def test_multiple_values_then_error(self):
+    def test_list_then_400(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: ["value", "value2"]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -34,7 +34,7 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.parent == genre_rock
 
-    def test_non_existing_then_error(self):
+    def test_non_existing_then_400(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._post_genre(

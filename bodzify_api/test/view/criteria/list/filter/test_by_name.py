@@ -10,7 +10,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(GenreTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_error(self):
+    def test_empty_then_400(self):
         self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop")
 

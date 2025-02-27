@@ -28,7 +28,7 @@ class TestCase(UserTestCase):
     def test_delete_then_lib_dir_removed(self):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
-        self._post_lib_track_with_generic_sample_no_tags()
+        self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, )
         user_lib_abs_path = settings.LIBRARIES_DIR / (settings.USER_LIBRARIES_DIR_NAME_PREFIXE + str(user.pk))
         assert os.path.exists(user_lib_abs_path)
 
@@ -43,7 +43,7 @@ class TestCase(UserTestCase):
         self._login_as_user(user)
         criteria_name = 'Rock'
         data = {TrackPostFields.GENRE_NAME: criteria_name}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
         assert Criteria.objects.filter(user=user, name=criteria_name).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -82,7 +82,7 @@ class TestCase(UserTestCase):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
         title = 'Dr mo'
-        response = self._post_lib_track_with_generic_sample_no_tags(**{TrackPostFields.TITLE: title})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{TrackPostFields.TITLE: title})
         assert LibraryTrack.objects.filter(user=user, title=title).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -97,7 +97,8 @@ class TestCase(UserTestCase):
         self._login_as_user(user)
         album_name = 'Skyfall'
 
-        response = self._post_lib_track_with_generic_sample_no_tags(**{TrackPostFields.ALBUM_NAME: album_name})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **
+                                        {TrackPostFields.ALBUM_NAME: album_name})
 
         assert Album.objects.filter(user=user, name=album_name).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
@@ -114,7 +115,7 @@ class TestCase(UserTestCase):
         artist_name = 'Adele'
 
         data = {TrackPostFields.ARTISTS_NAMES: artist_name}
-        response = self._post_lib_track_with_generic_sample_no_tags(**data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert Artist.objects.filter(user=user, name=artist_name).count() == 1

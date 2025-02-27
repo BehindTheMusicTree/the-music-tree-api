@@ -6,19 +6,19 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_wav(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(extension='wav')
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, extension='wav')
         assert response.status_code == status.HTTP_201_CREATED
         assert str(round(self.saved_object.track_file.size_in_mo, 2)) == str(
             self.LibTrackGenericSamplesTagsNoneSizeInMo.WAV)
 
     def test_mp3(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(extension='mp3')
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, extension='mp3')
         assert response.status_code == status.HTTP_201_CREATED
         assert str(round(self.saved_object.track_file.size_in_mo, 2)) == str(
             self.LibTrackGenericSamplesTagsNoneSizeInMo.MP3)
 
     def test_flac(self):
-        response = self._post_lib_track_with_generic_sample_no_tags(extension='flac')
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, extension='flac')
         assert response.status_code == status.HTTP_201_CREATED
         assert str(round(self.saved_object.track_file.size_in_mo, 2)) == str(
             self.LibTrackGenericSamplesTagsNoneSizeInMo.FLAC)
