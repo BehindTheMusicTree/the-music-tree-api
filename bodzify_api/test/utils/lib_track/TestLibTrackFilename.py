@@ -47,6 +47,7 @@ class TestLibTrackFilename(str, Enum):
         "recording=allumerlefeu_2_matches_one_with_more_release_groups.mp3"
     RECORDING_CELINEKIN_PARK_NO_MUSICBRAINZ_RECORDING_DURATION_MP3 = \
         "recording=Celinekin Park - no musicbrainz recording duration.mp3"
+    RECORDING_DANS_LA_LEGENDE = "recording=Dans la legende.flac"
 
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = \
         "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
