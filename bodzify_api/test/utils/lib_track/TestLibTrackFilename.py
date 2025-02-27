@@ -18,6 +18,8 @@ class TestLibTrackFilename(str, Enum):
         "duration=1_sec_issue_reading_from_mutagen_and_tynitag.wav"
     DURATION_472S_WAV = "duration=472s.wav"
 
+    FINGERPRINT_MP3 = "fingerprint.mp3"
+
     FORMAT_BAD_MP3 = "format=bad.mp3"
     FORMAT_IMAGE_JPEG = "format=image.jpeg"
 
