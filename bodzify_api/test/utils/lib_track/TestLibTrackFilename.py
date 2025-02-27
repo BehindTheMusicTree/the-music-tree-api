@@ -138,3 +138,6 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_TOTAL_ECLIPSE_5M43_FLAC = "recording=total eclipse_5m35.flac"
     RECORDING_TOTAL_ECLIPSE_9_MATCHES_BUT_ONE_WITH_DURATION_FLAC = \
         "recording=total eclipse_9 matches one with duration.flac"
+
+    def __str__(self) -> str:
+        return str(self.value)
