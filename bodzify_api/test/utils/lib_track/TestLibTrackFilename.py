@@ -46,6 +46,7 @@ class TestLibTrackFilename(str, Enum):
 
     GENRE_ABSTRACT_ID3V1_MP3 = "genre=abstract_id3v1.mp3"
 
+    RATING_1_STAR_ID3V2_FLAC = "rating=1 star_id3v2.flac"
     RATING_1_STAR_ID3V2_MP3 = "rating=1 star_id3v2.mp3"
     RATING_1_STAR_ID3V2_WAV = "rating=1 star_id3v2.wav"
     RATING_1_STAR_VORBIS_FLAC = "rating=1 star_vorbis.flac"
