@@ -9,8 +9,8 @@ The following table shows how different audio players handle ratings across vari
 Values represent the actual numbers written to files for each star rating (0-5 stars).
 
 +----+------------+------------+------------+------------+------------+---------+
-| ⭐ |     kid3   |   Windows  |  MusicBee  |   Winamp   |   Traktor  |  iTunes |
-|    |  /Lollypop |Media Player|            |            |            |  iTunes |
+| ⭐ |    kid3    |   Windows  |  MusicBee  |   Winamp   |   Traktor  |  iTunes |
+|    | /Lollypop  |Media Player|            |            |            |  iTunes |
 +----+------------+------------+------------+------------+------------+---------+
 |ext.|mp3 wav flac|mp3 wav flac|mp3 wav flac|mp3 wav flac|mp3 wav flac|W ops not|
 +----+------------+------------+------------+------------+------------+         +
