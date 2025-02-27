@@ -38,13 +38,16 @@ class TestLibTrackFilename(str, Enum):
         "recording=allumerlefeu_2_matches_one_with_more_release_groups.mp3"
     RECORDING_BONNIE_TYLER_TOTAL_ECLIPSE_OF_THE_HEART_5M35_FLAC_5M43_FLAC = \
         "recording=Bonnie Tyler - Total Eclipse of the Heart - 5m35.flac"
-    RECORDING_CARMINAREMIX__472S_WAV = "recording=carminaremix 472s.wav"
+    RECORDING_CARMINAREMIX_472S_WAV = "recording=carminaremix 472s.wav"
     RECORDING_CELINEKIN_PARK_NO_MUSICBRAINZ_RECORDING_DURATION_MP3 = \
         "recording=Celinekin Park - no musicbrainz recording duration.mp3"
+
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = \
         "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3 = \
         "recording=juan hansen oostil - drown (massano remix) - 7m21.mp3"
+
+    RECORDING_KEMAR_FRANCE_MP3 = "recording=Kemar - France.mp3"
     RECORDING_LORIE_2_MATCHES_BUT_ONE_WITH_CLOSEST_DURATION_MP3 = \
         "recording=lorie_2_matches_but_one_with_closest_duration.mp3"
     RECORDING_QUEEN_25_MATCHES_BUT_ONE_WITH_BEST_DURATION_AND_MOST_FIELDS_AND_MOST_RELEASE_GROUPS_MP3 = \
