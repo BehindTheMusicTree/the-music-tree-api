@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -9,7 +10,7 @@ class TestCase(LibTrackTestCase):
     def test_genre_name_in_both_then_take_data(self):
         data_genre_name = "Rock"
         data_dict = {PostFields.GENRE_NAME: data_genre_name}
-        response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(**data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3, **data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre
@@ -18,8 +19,9 @@ class TestCase(LibTrackTestCase):
     def test_genre_uuid_in_data_and_genre_name_in_matadata_then_take_data(self):
         data_genre_name = "Rock"
         genre_uuid = self.model_fixture_factory.create_genre(name=data_genre_name).uuid
+
         data_dict = {PostFields.GENRE_UUID: genre_uuid}
-        response = self._post_lib_track_with_generic_sample_tags_max_length_of_a(**data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3, **data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre
