@@ -1,0 +1,17 @@
+meta {
+  name: uuid
+  type: http
+  seq: 11
+}
+
+put {
+  url: {{BASE_URL}}tracks/{{trackJohnnyUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Noir cest noir"
+  }
+}

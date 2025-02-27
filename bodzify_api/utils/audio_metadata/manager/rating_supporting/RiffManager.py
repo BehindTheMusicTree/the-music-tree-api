@@ -81,7 +81,7 @@ class RiffManager(RatingSupportingMetadataManager):
             AppMetadataKey.LANGUAGE: self.RiffTagKey.LANGUAGE,
             # AppMetadataKey.TRACK_NUMBER: None,
         }
-        metadata_keys_direct_map_write: dict = {
+        metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] = {
             AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES: self.RiffTagKey.ARTIST_NAME,
             AppMetadataKey.ALBUM_NAME: self.RiffTagKey.ALBUM_NAME,
@@ -205,6 +205,148 @@ class RiffManager(RatingSupportingMetadataManager):
 
     def _update_formatted_value_in_raw_mutagen_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
-        raise NotImplementedError("Writing RIFF metadata is not supported by mutagen")
+        """
+        Update a single metadata field in the RIFF INFO chunk.
+        Since mutagen doesn't support writing RIFF metadata, we implement our own writer.
+        """
+        # Read the entire file
+        self.audio_file.seek(0)
+        file_data = bytearray(self.audio_file.read())
+
+        # Find the LIST INFO chunk
+        pos = 0
+        size = len(file_data)
+        info_chunk_start = 0
+        info_chunk_size = 0
+        has_info_chunk = False
+
+        while pos < size - 8:  # Need at least 8 bytes for chunk header
+            if file_data[pos:pos+4] == b'LIST' and file_data[pos+8:pos+12] == b'INFO':
+                info_chunk_start = pos
+                info_chunk_size = int.from_bytes(file_data[pos+4:pos+8], 'little')
+                has_info_chunk = True
+                break
+            pos += 1
+
+        # Create new INFO chunk if none exists
+        if not has_info_chunk:
+            # Find RIFF header size
+            riff_size = int.from_bytes(file_data[4:8], 'little')
+            # Insert after WAVE header
+            info_chunk_start = 12  # After RIFF+size+WAVE
+            info_chunk_size = 4  # Initial size just for 'INFO'
+            # Insert empty LIST INFO chunk
+            file_data[4:8] = (riff_size + info_chunk_size + 8).to_bytes(4, 'little')  # Update RIFF size
+            file_data[info_chunk_start:info_chunk_start] = b'LIST' + info_chunk_size.to_bytes(4, 'little') + b'INFO'
+
+        # Convert value to string if it's a list
+        if isinstance(app_metadata_value, list):
+            value = app_metadata_value[0] if app_metadata_value else ""
+        else:
+            value = app_metadata_value if app_metadata_value is not None else ""
+
+        # Convert to bytes, ensuring UTF-8 encoding
+        value_bytes = str(value).encode('utf-8')
+        # Add null terminator and pad to even length
+        value_bytes += b'\x00'
+        if len(value_bytes) % 2:
+            value_bytes += b'\x00'
+
+        # Create tag data
+        tag_data = raw_metadata_key.encode('ascii') + len(value_bytes).to_bytes(4, 'little') + value_bytes
+
+        # Insert at end of INFO chunk
+        insert_pos = info_chunk_start + 12 + info_chunk_size - 4  # After LIST+size+INFO
+        file_data[insert_pos:insert_pos] = tag_data
+
+        # Update chunk sizes
+        info_chunk_size += len(tag_data)
+        file_data[info_chunk_start+4:info_chunk_start+8] = info_chunk_size.to_bytes(4, 'little')
+        riff_size = int.from_bytes(file_data[4:8], 'little')
+        file_data[4:8] = (riff_size + len(tag_data)).to_bytes(4, 'little')
+
+        # Write back to file
+        self.audio_file.seek(0)
+        self.audio_file.write(file_data)
+
+        # Update our cached metadata
+        if not hasattr(self.raw_mutagen_metadata, 'info'):
+            setattr(self.raw_mutagen_metadata, 'info', {})
+        info_dict = getattr(self.raw_mutagen_metadata, 'info')
+        if isinstance(info_dict, dict):
+            info_dict[raw_metadata_key] = str(value)
 
     def update_bulk(self, app_metadata_dict: AppMetadataDict):
+        """
+        Update multiple metadata fields in the RIFF INFO chunk.
+        Since mutagen doesn't support writing RIFF metadata, we implement our own writer.
+        """
+
+        # Read the entire file
+        self.audio_file.seek(0)
+        file_data = bytearray(self.audio_file.read())
+
+        # Find the LIST INFO chunk
+        pos = 0
+        size = len(file_data)
+        info_chunk_start = 0
+        info_chunk_size = 0
+        has_info_chunk = False
+
+        while pos < size - 8:  # Need at least 8 bytes for chunk header
+            if file_data[pos:pos+4] == b'LIST' and file_data[pos+8:pos+12] == b'INFO':
+                info_chunk_start = pos
+                info_chunk_size = int.from_bytes(file_data[pos+4:pos+8], 'little')
+                has_info_chunk = True
+                break
+            pos += 1
+
+        # Create new INFO chunk if none exists
+        if not has_info_chunk:
+            # Find RIFF header size
+            riff_size = int.from_bytes(file_data[4:8], 'little')
+            # Insert after WAVE header
+            info_chunk_start = 12  # After RIFF+size+WAVE
+            info_chunk_size = 4  # Initial size just for 'INFO'
+            # Insert empty LIST INFO chunk
+            file_data[4:8] = (riff_size + info_chunk_size + 8).to_bytes(4, 'little')  # Update RIFF size
+            file_data[info_chunk_start:info_chunk_start] = b'LIST' + info_chunk_size.to_bytes(4, 'little') + b'INFO'
+
+        # Convert app metadata to RIFF tags
+        for app_key, value in app_metadata_dict.items():
+            if value is None or value == "":
+                continue
+
+            # Get corresponding RIFF tag from the guaranteed-to-exist map
+            assert self.metadata_keys_direct_map_write is not None
+            riff_key = self.metadata_keys_direct_map_write.get(app_key)
+            if not riff_key:
+                continue
+
+            # Convert value to string if it's a list
+            if isinstance(value, list):
+                value = value[0] if value else ""
+
+            # Convert to bytes, ensuring UTF-8 encoding
+            value_bytes = str(value).encode('utf-8')
+            # Add null terminator and pad to even length
+            value_bytes += b'\x00'
+            if len(value_bytes) % 2:
+                value_bytes += b'\x00'
+
+            # Create tag data
+            tag_data = riff_key.encode('ascii') + len(value_bytes).to_bytes(4, 'little') + value_bytes
+
+            # Insert at end of INFO chunk
+            insert_pos = info_chunk_start + 12 + info_chunk_size - 4  # After LIST+size+INFO
+            file_data[insert_pos:insert_pos] = tag_data
+
+            # Update chunk sizes
+            info_chunk_size += len(tag_data)
+            file_data[info_chunk_start+4:info_chunk_start+8] = info_chunk_size.to_bytes(4, 'little')
+            riff_size = int.from_bytes(file_data[4:8], 'little')
+            file_data[4:8] = (riff_size + len(tag_data)).to_bytes(4, 'little')
+
+        # Write back to file
+        self.audio_file.seek(0)
+        self.audio_file.write(file_data)
