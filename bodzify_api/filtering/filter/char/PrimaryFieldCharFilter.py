@@ -26,9 +26,7 @@ class PrimaryFieldCharFilter(EmptiableCharFilter):
 
     def filter(self, qs: QuerySet, value: str | None) -> QuerySet:
         if not self.field_name:
-            raise ImproperlyConfigured(
-                f'{self.__class__.__name__} requires a field_name to be set.'
-            )
+            raise ImproperlyConfigured(f'field_name must be set.')
 
         if not value:
             return qs.filter(**{f"{self.field_name}__isnull": True})
