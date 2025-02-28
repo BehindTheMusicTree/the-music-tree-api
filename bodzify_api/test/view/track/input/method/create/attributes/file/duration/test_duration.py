@@ -32,7 +32,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_normal_mp3_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.DURATION_177S_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_277S_MP3)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 177
 
