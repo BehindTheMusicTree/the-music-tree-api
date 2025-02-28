@@ -5,9 +5,8 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as ExtractFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.utils.field.body_data.type.NullablelistBodyDataTestCase import (
-    NullablelistBodyDataTestCase
-)
+from bodzify_api.test.utils.field.body_data.type.NullableListBodyDataTestCase import NullablelistBodyDataTestCase
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -50,8 +49,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
 
     def test_malformed_array_then_400(self) -> None:
         malformed_field_name = "artists_names"
-        data = {malformed_field_name: ['muse']}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{malformed_field_name: ['muse']})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -79,8 +77,8 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
 
     def test_empty_then_none(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **
-                                        {ExtractFields.ARTISTS_NAMES_ARRAY: []})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
+                                        **{ExtractFields.ARTISTS_NAMES_ARRAY: []})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
@@ -128,7 +126,6 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        print('saved_object', self.saved_object)
         artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) == 2
         assert artists_list[0].name == artist1_name
@@ -165,7 +162,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert artists_list[1].name == new_artist1
         assert artists_list[2].name == new_artist2
 
-    def test_multiple_artists_one_too_long_then_error(self) -> None:
+    def test_multiple_artists_one_too_long_then_400(self) -> None:
         valid_artist = "ValidArtist"
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
@@ -178,7 +175,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(ExtractFields.ARTISTS_NAMES_ARRAY)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_multiple_artists_with_duplicates_then_error(self) -> None:
+    def test_multiple_artists_with_duplicates_then_400(self) -> None:
         artist_name = "Duplicate Artist"
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: [artist_name, artist_name, artist_name]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
@@ -189,7 +186,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(ExtractFields.ARTISTS_NAMES_ARRAY)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
 
-    def test_multiple_artists_with_empty_names_then_error(self) -> None:
+    def test_multiple_artists_with_empty_names_then_400(self) -> None:
         valid_artist = "ValidArtist"
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: [valid_artist, "", "", valid_artist]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
