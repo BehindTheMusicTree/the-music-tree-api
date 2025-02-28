@@ -31,7 +31,7 @@ class TestLibTrackFilename(str, Enum):
         "kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2ruMgVZ46B78iqu6vQpJ7hytZLbbv5Q1L6tiP6MfZAFRnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd5.mp3"
     FILENAME_LONG_PLUS_1_MP3 = \
         "kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2ruMgVZ46B78iqu6vQpJ7hytZLbbv5Q1L6tiP6MfZAFRnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd51.mp3"
-    FILENAME_SPACES_MP3 = "filename= with spaces .mp3"
+    FILENAME_SPACES_TRAILING_MP3 = "filename= with spaces .mp3"
 
     FINGERPRINT_MP3 = "fingerprint.mp3"
     FINGERPRINT_WAV = "fingerprint.wav"
