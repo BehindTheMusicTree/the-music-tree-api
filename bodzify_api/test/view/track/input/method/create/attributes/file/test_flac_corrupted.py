@@ -17,7 +17,7 @@ class TestCase(LibTrackTestCase):
                 "The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted."
             mock_replace_flac_file_with_corrected_md5.side_effect = FlacMd5CheckFailedError(exception_message)
 
-            response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, )
+            response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3)
 
             assert response.status_code == status.HTTP_400_BAD_REQUEST
             assert len(self.bad_request_result_field_errors) == 1
