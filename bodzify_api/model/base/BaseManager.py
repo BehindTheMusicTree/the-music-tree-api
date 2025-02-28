@@ -33,6 +33,15 @@ class BaseManager(models.Manager, Generic[T]):
     def get_queryset(self) -> BaseQuerySet:
         return BaseQuerySet(self.model, using=self._db)
 
+    def _transform_field_key(self, instance: T, key: str) -> str:
+        """Transform field key based on model's field configuration"""
+        from bodzify_api.model.lib_track_mixin.query_utils import uses_internal_name, Fields
+
+        # Handle internal name transformation if applicable
+        if key == Fields.NAME_PUBLIC and uses_internal_name(instance.__class__):
+            return Fields.NAME_INTERNAL
+        return key
+
     def update_instance(self, instance: T, **kwargs) -> T:
         # Initialize dictionaries for different types of updates
         save_kwargs = {}
@@ -45,15 +54,16 @@ class BaseManager(models.Manager, Generic[T]):
                 save_kwargs[key] = value
             else:
                 if hasattr(instance, key):
-                    field = instance._meta.get_field(key)
+                    transformed_key = self._transform_field_key(instance, key)
+                    field = instance._meta.get_field(transformed_key)
                     if isinstance(field, models.ManyToManyField):
-                        many_to_many_updates[key] = value
+                        many_to_many_updates[transformed_key] = value
                     else:
-                        regular_updates[key] = value
+                        regular_updates[transformed_key] = value
                 else:
                     raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
 
-        # Update regular fields
+        # Update regular fields with transformed keys
         for key, value in regular_updates.items():
             setattr(instance, key, value)
 
