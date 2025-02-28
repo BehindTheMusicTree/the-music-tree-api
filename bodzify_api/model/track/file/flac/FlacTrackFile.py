@@ -14,7 +14,7 @@ from .Fields import Fields
 
 
 class FlacTrackFile(TrackFile):
-    id3v2_tags_found_and_converted = models.BooleanField(default=False)
+    id3v2_tags_found_and_converted_to_vorbis = models.BooleanField(default=False)
     md5_has_been_corrected = models.BooleanField(default=False)
 
     def _prepare_save(self, ctx) -> dict:
@@ -26,7 +26,7 @@ class FlacTrackFile(TrackFile):
                     message='Failed to clear ID3v2 tags from FLAC file.',
                     field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
 
-            self.id3v2_tags_found_and_converted = True
+            self.id3v2_tags_found_and_converted_to_vorbis = True
 
         if not audio_metadata.is_flac_md5_valid(self.file):
             try:
