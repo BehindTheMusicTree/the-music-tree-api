@@ -35,7 +35,6 @@ from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
@@ -136,10 +135,6 @@ class ModelFixtureFactory:
             with open(track_file_path_in_lib, 'rb') as f:
                 django_file = File(f, name=os.path.basename(track_file_path_in_lib))
                 model_fields.update({LibraryTrackFields.TRACK_FILE_PUBLIC: django_file})
-                if LibraryTrackFields.GENRE in model_fields:
-                    genre: Genre = model_fields[LibraryTrackFields.GENRE]
-                    model_fields[LibTrackPostFields.GENRE_UUID] = genre.uuid
-                    model_fields.pop(LibraryTrackFields.GENRE)
                 lib_track = LibraryTrack.objects.create(**model_fields, creation_type=LibTrackCreationType.POST)
         else:
             with transaction.atomic():

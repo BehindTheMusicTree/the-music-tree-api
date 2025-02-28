@@ -5,7 +5,6 @@ from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as P
 from bodzify_api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import ForeignKeyBodyDataTestCase
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
@@ -18,12 +17,12 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.GENRE_UUID)
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_REFERENCE
 
     def test_value_then_ok(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_UUID: genre.uuid})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object
@@ -39,15 +38,15 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         genre = self.model_fixture_factory.create_genre(name="rock")
 
         data = {
-            PostFields.GENRE_UUID: genre.uuid,
-            PostFields.GENRE_UUID: genre.uuid,
+            PostFields.GENRE: genre.uuid,
+            PostFields.GENRE: genre.uuid,
         }
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.GENRE_UUID)
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST
 
     def test_invalid_uuid_then_400(self):
@@ -56,5 +55,5 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE_UUID
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT
