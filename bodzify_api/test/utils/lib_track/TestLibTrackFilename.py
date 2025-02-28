@@ -129,8 +129,6 @@ class TestLibTrackFilename(str, Enum):
 
     RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3 = \
         "recording=Allumerlefeu_2 matches one with more release groups.mp3"
-    RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
-    RECORDING_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
     RECORDING_CELINEKIN_PARK_NO_MUSICBRAINZ_RECORDING_DURATION_MP3 = \
         "recording=Celinekin Park - no musicbrainz recording duration.mp3"
     RECORDING_DANS_LA_LEGENDE = "recording=Dans la legende.flac"
@@ -149,10 +147,12 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_SHOWMUSTGOON_MP3 = "recording=showmustgoon.mp3"
     RECORDING_TEMPERATURE_NO_MUSICBRAINZ_RECORDING_MP3 = \
         "recording=Tokyo Drift x Temperature - no musicbrainz recording.mp3"
+    RECORDING_TOTAL_ECLIPSE_5M35_FLAC = "recording=total eclipse_5m35.flac"
     RECORDING_TOTAL_ECLIPSE_3_SCORES_FLAC = "recording=total eclipse_3 scores.flac"
-    RECORDING_TOTAL_ECLIPSE_5M43_FLAC = "recording=total eclipse_5m35.flac"
     RECORDING_TOTAL_ECLIPSE_9_MATCHES_BUT_ONE_WITH_DURATION_FLAC = \
         "recording=total eclipse_9 matches one with duration.flac"
+    RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
+    RECORDING_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
 
     def __str__(self) -> str:
         return str(self.value)

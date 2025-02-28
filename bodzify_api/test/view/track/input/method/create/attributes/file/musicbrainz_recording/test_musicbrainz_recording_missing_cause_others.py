@@ -16,7 +16,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_ok_then_no_missing_cause(self):
-        response = self._post_lib_track_with_queenshowmustgoon()
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not self.saved_object.track_file.musicbrainz_recording_missing_cause
@@ -47,7 +47,7 @@ class TestCase(LibTrackTestCase):
                     'message': error_message
                 }
             }
-            response = self._post_lib_track_with_queenshowmustgoon()
+            response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
 
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
@@ -61,7 +61,7 @@ class TestCase(LibTrackTestCase):
             mock_get_fingerprint.side_effect = (
                 musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(exception_message))
 
-            response = self._post_lib_track_with_queenshowmustgoon()
+            response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
 
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
@@ -74,7 +74,7 @@ class TestCase(LibTrackTestCase):
             mock_get_fingerprint.side_effect = (
                 musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException(error_message))
 
-            response = self._post_lib_track_with_queenshowmustgoon()
+            response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
 
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
@@ -89,7 +89,7 @@ class TestCase(LibTrackTestCase):
             mock_get_fingerprint.side_effect = (
                 musicbrainz_exception.InternalErrorMusicbrainzRecordingLookupException(error_message))
 
-            response = self._post_lib_track_with_queenshowmustgoon()
+            response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
 
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
@@ -109,7 +109,7 @@ class TestCase(LibTrackTestCase):
                 }
             }
 
-            response = self._post_lib_track_with_queenshowmustgoon()
+            response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
 
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause
@@ -122,7 +122,7 @@ class TestCase(LibTrackTestCase):
             mock_get_fingerprint.side_effect = (
                 musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException("unknown_status"))
 
-            response = self._post_lib_track_with_queenshowmustgoon()
+            response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
 
             assert response.status_code == status.HTTP_201_CREATED
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause

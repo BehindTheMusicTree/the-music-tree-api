@@ -7,7 +7,18 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_short_wav_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_WAV, extension='wav')
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_WAV)
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.track_file.duration_in_sec == 1
+        assert self.saved_object.track_file.duration_in_sec == 1
+
+    def test_short_mp3_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_MP3)
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.track_file.duration_in_sec == 1
+
+    def test_short_flac_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 1
 
@@ -19,24 +30,13 @@ class TestCase(LibTrackTestCase):
     def test_wav_with_issues_while_reading_duration_from_mutagen_and_tynitag_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.DURATION_1S_ISSUE_READING_FROM_MUTAGEN_AND_TYNITAG_WAV)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.duration_in_sec == 1
-
-    def test_short_mp3_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.DURATION_LESS_THAN_1_SEC_MP3, extension='mp3')
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.duration_in_sec == 1
 
     def test_normal_mp3_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.DURATION_177S_MP3)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.duration_in_sec == 177
 
-    def test_flac_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.D, extension='flac')
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.duration_in_sec == self.SAMPLE_LIB_TRACK_FLAC_DURATION
-
     def test_normal_flac_then_ok(self):
-        response = self._post_lib_track('drown_440s.flac')
+        response = self._post_lib_track(TestLibTrackFilename.DURATION_335S_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.duration_in_sec == 440
+        assert self.saved_object.track_file.duration_in_sec == 335

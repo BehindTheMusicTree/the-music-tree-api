@@ -18,7 +18,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.track_file.bitrate_in_kbps == 192
 
     def test_flac_without_corrected_md5(self):
-        response = self._post_lib_track_with_queenshowmustgoon(extension='flac')
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3extension='flac')
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.bitrate_in_kbps == 723
 

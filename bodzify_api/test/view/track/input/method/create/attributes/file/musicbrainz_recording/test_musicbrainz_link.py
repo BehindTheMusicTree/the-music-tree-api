@@ -8,7 +8,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_musicbrainz_link(self):
-        response = self._post_lib_track("queen_duration_181.mp3")
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_QUEEN_DURATION_181_MP3)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording
         assert self.saved_object.track_file.musicbrainz_recording.musicbrainz_link == (

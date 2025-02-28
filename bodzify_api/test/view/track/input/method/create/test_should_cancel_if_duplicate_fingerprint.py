@@ -20,7 +20,7 @@ class TestCase(LibTrackTestCase):
     def test_not_duplicate_fingerprint_and_must_cancel_if_duplicate_fingerprint_then_ok(self):
         data = {Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE: True}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
-        response = self._post_lib_track_with_queenshowmustgoon(**data)
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3**data)
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_duplicate_fingerprint_and_not_must_cancel_if_duplicate_fingerprint_then_ok(self):
