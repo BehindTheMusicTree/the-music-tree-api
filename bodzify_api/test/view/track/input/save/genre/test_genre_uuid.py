@@ -47,7 +47,7 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT
 
     def test_invalid_uuid_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, genre_uuid="invalid")

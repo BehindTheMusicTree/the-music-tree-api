@@ -48,8 +48,10 @@ class AppField(Field):
             class_name = self.__class__.__name__
             msg = f"Invalid input for {class_name}."
 
-        # Get the error code from the mapping, defaulting to DEFAULT if not found
-        code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)
+        if key == 'invalid' and msg == 'Not a valid string.':
+            code = FieldValidationErrorCode.INVALID_FORMAT
+        else:
+            code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)
 
         raise AppValidationException(
             field_name=self.get_error_field_name(), message=msg, field_validation_error_code=code)

@@ -64,15 +64,13 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             if field_name in data:
                 raise AppValidationException(
                     field_name=field_name,
-                    message=_(f"list field '{field_name}' must be specified as '{field_name}[]'"),
+                    message=_(f"list field '{field_name} ' must be specified as '{field_name} []'"),
                     field_validation_error_code=FieldValidationErrorCode.MALFORMED_LIST
                 )
         elif field_name in data and isinstance(data[field_name], list):
-            raise AppValidationException(
-                field_name=field_name,
-                message=_("The field does not accept list values"),
-                field_validation_error_code=FieldValidationErrorCode.UNEXPECTED_LIST
-            )
+            raise AppValidationException(field_name=field_name,
+                                         message=_("The field does not accept list values"),
+                                         field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT)
 
     def _collect_known_fields_and_malformed_array_fields_names(self, data: dict) -> tuple[set, list]:
         known_fields = set()
