@@ -8,7 +8,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(LibTrackTestCase):
 
-    def test_extra_field_then_error(self):
+    def test_extra_field_then_400(self):
         excta_field = "extra_field"
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
                                         **{PostFields.TITLE: "Rock", excta_field: "extra_value"})
