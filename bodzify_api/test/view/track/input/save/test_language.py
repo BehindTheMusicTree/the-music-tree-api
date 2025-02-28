@@ -18,7 +18,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language == language
 
-    def test_too_long_then_error(self):
+    def test_too_long_then_400(self):
         language = "a" * (settings.LIB_TRACK_LANGUAGE_LEN_MAX + 1)
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: language})
 

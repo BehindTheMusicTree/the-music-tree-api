@@ -8,7 +8,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(GenreTestCase):
 
-    def test_not_provided_then_error(self):
+    def test_not_provided_then_400(self):
         response = self._post_genre(**{})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

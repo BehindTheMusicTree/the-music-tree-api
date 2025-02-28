@@ -11,7 +11,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 @pytest.mark.django_db
 class TextCase(LibTrackTestCase):
 
-    def test_bad_format_then_error(self):
+    def test_bad_format_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.FORMAT_BAD_CONTENT_MP3)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

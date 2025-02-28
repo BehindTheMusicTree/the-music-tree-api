@@ -11,7 +11,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(LibTrackTestCase):
 
-    def test_flac_md5_not_valid_and_corrupted_then_error(self):
+    def test_flac_md5_not_valid_and_corrupted_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

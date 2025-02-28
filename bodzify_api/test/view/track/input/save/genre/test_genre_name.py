@@ -20,7 +20,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         assert self.saved_object.genre
         assert self.saved_object.genre.name == genre_name
 
-    def test_too_long_then_error(self):
+    def test_too_long_then_400(self):
         genre_name = "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: genre_name})
 

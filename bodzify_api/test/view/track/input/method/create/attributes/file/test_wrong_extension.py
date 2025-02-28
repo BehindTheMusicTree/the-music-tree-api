@@ -11,7 +11,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 @pytest.mark.django_db
 class TestCase(LibTrackTestCase):
 
-    def test_jpeg_then_error(self):
+    def test_jpeg_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.FORMAT_IMAGE_JPEG)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -20,7 +20,7 @@ class TestCase(LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackPostFields.TRACK_FILE_PUBLIC
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FILE_TYPE
 
-    def test_mp4_then_error(self):
+    def test_mp4_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.FORMAT_BAD_EXTENSION_MP4)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

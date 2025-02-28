@@ -7,7 +7,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(ArtistTestCase):
 
-    def test_filter_not_existing_then_error(self):
+    def test_filter_not_existing_then_400(self):
         invalid_filter_name = 'invalidFilter'
 
         response = self._get_artists(**{invalid_filter_name: 'invalidFilter'})

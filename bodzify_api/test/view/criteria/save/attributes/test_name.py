@@ -17,7 +17,7 @@ class TestCase(GenreTestCase, PrimaryCharBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.name == genre_name
 
-    def test_too_long_then_error(self):
+    def test_too_long_then_400(self):
         response = self._post_genre(**{Fields.NAME_PUBLIC: "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

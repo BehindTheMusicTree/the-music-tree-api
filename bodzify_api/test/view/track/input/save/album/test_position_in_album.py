@@ -23,7 +23,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == None
 
-    def test_zero_then_error(self):
+    def test_zero_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: 0})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -49,7 +49,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
 
-    def test_max_plus_one_then_error(self):
+    def test_max_plus_one_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
                                         album_name='album', track_number=settings.LIB_TRACK_TRACK_NUMBER_MAX + 1)
 
@@ -59,7 +59,7 @@ class TestCase(LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE
 
-    def test_negative_one_then_error(self):
+    def test_negative_one_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, album_name='album', track_number=-1)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -68,7 +68,7 @@ class TestCase(LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
 
-    def test_not_integer_then_error(self):
+    def test_not_integer_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: 5.5})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

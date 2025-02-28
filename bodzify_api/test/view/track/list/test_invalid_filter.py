@@ -7,7 +7,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(LibTrackTestCase):
 
-    def test_filter_not_existing_then_error(self):
+    def test_filter_not_existing_then_400(self):
         invalid_filter = "invalidFilter"
         response = self._get_lib_tracks(**{invalid_filter: 'invalid_filter'})
 

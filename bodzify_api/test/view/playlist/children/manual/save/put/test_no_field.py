@@ -8,7 +8,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(ManualPlaylistTestCase):
 
-    def test_no_field_specified_then_error(self):
+    def test_no_field_specified_then_400(self):
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name="Kitchen")
 
         response = self._put_manual_playlist(uuid=manual_playlist.uuid)

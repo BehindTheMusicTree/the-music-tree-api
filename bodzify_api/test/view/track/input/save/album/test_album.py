@@ -21,7 +21,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
         assert self.saved_object.album
         assert self.saved_object.album.name == album_name
 
-    def test_too_long_then_error(self):
+    def test_too_long_then_400(self):
         album_name = "a" * (settings.ALBUM_NAME_LEN_MAX + 1)
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
                                         **{ExtractFields.ALBUM_NAME: album_name})

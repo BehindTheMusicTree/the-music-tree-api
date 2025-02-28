@@ -8,7 +8,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(AlbumTestCase):
 
-    def test_filter_not_existing_then_error(self):
+    def test_filter_not_existing_then_400(self):
         invalid_filter = 'invalidFilter'
         response = self._get_albums(**{invalid_filter: 'value'})
 

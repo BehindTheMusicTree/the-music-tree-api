@@ -22,7 +22,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
-    def test_too_long_then_error(self):
+    def test_too_long_then_400(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
@@ -33,7 +33,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_malformed_array_field_name_then_error(self) -> None:
+    def test_malformed_array_field_name_then_400(self) -> None:
         malformed_field_name = "album_artists_names"
         data = {malformed_field_name: ['muse']}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)

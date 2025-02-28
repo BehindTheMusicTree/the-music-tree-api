@@ -5,7 +5,7 @@ from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCas
 
 class TestCase(PlaylistTestCase):
 
-    def test_delete_then_error(self):
+    def test_delete_then_405(self):
         genre = self.model_fixture_factory.create_genre(name='genre')
 
         response = self._delete_playlist(uuid=genre.criteria_playlist.uuid)

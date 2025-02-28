@@ -7,7 +7,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(ManualPlaylistTestCase):
 
-    def test_filter_not_existing_then_error(self):
+    def test_filter_not_existing_then_400(self):
         invalid_filter = 'invalidfilter'
         response = self._get_manual_playlists(**{invalid_filter: 'a'})
 

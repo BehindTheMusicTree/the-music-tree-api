@@ -21,7 +21,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre == None
 
-    def test_uuid_and_name_both_fed_then_error(self):
+    def test_uuid_and_name_both_fed_then_400(self):
         genre = self.model_fixture_factory.create_genre(**{CriteriaFields.NAME_PUBLIC: 'Rock'})
         data = {
             PostFields.GENRE_NAME: 'dnb',

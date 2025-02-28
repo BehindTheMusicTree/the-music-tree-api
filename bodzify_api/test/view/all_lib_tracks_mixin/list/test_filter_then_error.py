@@ -8,7 +8,7 @@ from ..AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
 
 class TestCase(AllLibTracksMixinTestCase):
 
-    def test_filter_then_error(self):
+    def test_filter_then_(self):
         filter = 'filter'
         response = self._get_all_lib_tracks_mixin(**{filter: 'a'})
 

@@ -8,7 +8,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(GenreTestCase):
 
-    def test_no_field_specified_then_error(self):
+    def test_no_field_specified_then_400(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._put_genre(uuid=genre_rock.uuid)

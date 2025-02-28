@@ -23,7 +23,7 @@ class TestCase(PlayTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == extra_field
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNKNOWN_FIELD
 
-    def test_multiple_values_for_content_then_error(self) -> None:
+    def test_multiple_values_for_content_then_400(self) -> None:
         playlist1_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
         playlist2_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
 
@@ -36,7 +36,7 @@ class TestCase(PlayTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(Fields.CONTENT)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST
 
-    def test_non_existant_content_then_error(self):
+    def test_non_existant_content_then_400(self):
         response = self._post_play(**{to_camel_case(Fields.CONTENT): '88978e5e-5238-442b-bd24-dbbde478e090'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
