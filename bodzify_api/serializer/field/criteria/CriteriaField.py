@@ -29,19 +29,28 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
         # Create validation fields based on enabled input types
         self.char_field = None
         if CriteriaFieldInputType.NAME in input_types:
-            char_kwargs = {
-                'required': kwargs.get('required', True),
-                'max_length': settings.CRITERIA_NAME_LEN_MAX,
-                'allow_blank': self._allow_blank,
-                'allow_null': self._allow_null,
-                'field_name': kwargs.get('source') or kwargs.get('field_name')
-            }
-            self.char_field = AppCharField(**char_kwargs)
+            self.char_field = AppCharField(
+                required=self.required,
+                max_length=settings.CRITERIA_NAME_LEN_MAX,
+                allow_blank=self._allow_blank,
+                allow_null=self._allow_null
+            )
 
         # Initialize UUID validation if enabled
-        self._uuid_validator = None
+        self.uuid_field = None
         if CriteriaFieldInputType.UUID in input_types:
-            self._uuid_validator = PrivateUuidField(queryset=queryset, allow_null=self._allow_null)
+            self.uuid_field = PrivateUuidField(queryset=queryset, allow_null=self._allow_null)
+
+    def bind(self, field_name: str, parent: Any) -> None:
+        """
+        Called when the field is bound to a serializer.
+        Propagate the field name to child fields for proper error reporting.
+        """
+        super().bind(field_name, parent)
+        if self.char_field:
+            self.char_field.bind(field_name, parent)
+        if self.uuid_field:
+            self.uuid_field.bind(field_name, parent)
 
     def get_queryset(self) -> QuerySet:
         queryset = super().get_queryset()
@@ -57,9 +66,9 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
             return None
 
         # Try UUID first if enabled
-        if CriteriaFieldInputType.UUID in self.input_types and self._uuid_validator:
+        if CriteriaFieldInputType.UUID in self.input_types and self.uuid_field:
             try:
-                return self._uuid_validator.to_internal_value(data)
+                return self.uuid_field.to_internal_value(data)
             except ValidationError:
                 pass  # Not a valid UUID or not found, try next input type
 
