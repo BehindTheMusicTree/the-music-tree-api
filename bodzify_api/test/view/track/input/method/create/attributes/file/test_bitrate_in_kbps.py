@@ -18,12 +18,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.bitrate_in_kbps == 192
 
-    def test_flac_without_corrected_md5(self):
-        response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.bitrate_in_kbps == 723
-
-    def test_flac_with_corrected_md5_because_of_id3v2_metadata(self):
+    def test_flac(self):
         response = self._post_lib_track(TestLibTrackFilename.BITRATE_1411_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.bitrate_in_kbps == 1411
