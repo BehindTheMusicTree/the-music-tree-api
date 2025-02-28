@@ -11,7 +11,7 @@ class TestCase(ArtistTestCase):
     def test_duration(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")
         self.model_fixture_factory.create_lib_track_with_file(
-            title="celine", test_lib_track_filename=TestLibTrackFilename.DURATION_177S_MP3, artists=[artist])
+            title="celine", test_lib_track_filename=TestLibTrackFilename.DURATION_277S_MP3, artists=[artist])
         self.model_fixture_factory.create_lib_track_with_file(
             title="tokyo", test_lib_track_filename=TestLibTrackFilename.DURATION_472S_WAV, artists=[artist])
 
