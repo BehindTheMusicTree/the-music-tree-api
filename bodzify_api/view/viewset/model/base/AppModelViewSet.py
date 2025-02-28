@@ -144,7 +144,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return None
         if isinstance(queryset, Sequence) and not isinstance(queryset, QuerySet):
             queryset = self.model_class.objects.filter(id__in=[obj.id for obj in queryset])
-            return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
+        return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def handle_exception(self, exc: Exception) -> Response:
         if isinstance(exc, DrfValidationError):
