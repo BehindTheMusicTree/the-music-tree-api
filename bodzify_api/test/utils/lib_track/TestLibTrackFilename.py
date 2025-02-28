@@ -26,10 +26,13 @@ class TestLibTrackFilename(str, Enum):
     FILENAME_DODIDO_MYFREEMP3_VIP_MP3 = "filename=dodido myfreemp3.vip .mp3"
     FILENAME_DOT_IN_FILENAME_MP3 = "filename=dot.in.filename.mp3"
     FILENAME_DOT_IN_FILENAME_WAV = "filename=with spaces  .mp3"
+    FILENAME_DOT_NOT_IN_FILENAME_MP3 = "filename=dotnotinfilename.mp3"
     FILENAME_LONG_MP3 = \
         "kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2ruMgVZ46B78iqu6vQpJ7hytZLbbv5Q1L6tiP6MfZAFRnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd5.mp3"
     FILENAME_LONG_PLUS_1_MP3 = \
         "kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2ruMgVZ46B78iqu6vQpJ7hytZLbbv5Q1L6tiP6MfZAFRnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd51.mp3"
+    FILENAME_SPACES_MP3 = "filename= with spaces .mp3"
+
     FINGERPRINT_MP3 = "fingerprint.mp3"
     FINGERPRINT_WAV = "fingerprint.wav"
 
@@ -133,7 +136,7 @@ class TestLibTrackFilename(str, Enum):
         "recording=Allumerlefeu_2 matches one with more release groups.mp3"
     RECORDING_CELINEKIN_PARK_NO_MUSICBRAINZ_RECORDING_DURATION_MP3 = \
         "recording=Celinekin Park - no musicbrainz recording duration.mp3"
-    RECORDING_DANS_LA_LEGENDE = "recording=Dans la legende.flac"
+    RECORDING_DANS_LA_LEGENDE_FLAC = "recording=Dans la legende.flac"
 
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = \
         "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
