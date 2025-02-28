@@ -3,6 +3,7 @@ from rest_framework import status
 from bodzify_api.serializer.model.album.Fields import Fields as AlbumFields
 from bodzify_api.test.utils.field.filter.char.NullableFreeCharFilterTestCase import NullableFreeCharFilterTestCase
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
+from bodzify_api.filtering.set.album.Fields import Fields as FilterFields
 
 
 class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):
@@ -13,7 +14,7 @@ class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):
         artist = self.model_fixture_factory.create_artist(name="Muse")
         self.model_fixture_factory.create_album(name="Jon", album_artists=[artist])
 
-        response = self._get_albums(album_artist_name='')
+        response = self._get_albums(**{FilterFields.ALBUM_ARTIST_NAME: ''})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -26,7 +27,7 @@ class TestCase(AlbumTestCase, NullableFreeCharFilterTestCase):
         album = self.model_fixture_factory.create_album(name="Dark", album_artists=[artist])
         self.model_fixture_factory.create_album(name="Jon")
 
-        response = self._get_albums(album_artist_name='MUs')
+        response = self._get_albums(**{FilterFields.ALBUM_ARTIST_NAME: 'MUs'})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
