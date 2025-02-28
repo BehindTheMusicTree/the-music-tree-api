@@ -7,7 +7,4 @@ from .Fields import Fields
 
 
 class LibTrackPostSerializer(LibTrackInputSerializer):
-    file = AppFileField(
-        required=True,
-        field_name=Fields.TRACK_FILE_PUBLIC,
-        validators=[TrackFileValidator()],)
+    file = AppFileField(required=True, field_name=Fields.TRACK_FILE_PUBLIC, validators=[TrackFileValidator()],)

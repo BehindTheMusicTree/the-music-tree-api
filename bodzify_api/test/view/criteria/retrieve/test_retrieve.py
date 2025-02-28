@@ -27,8 +27,7 @@ class TestCase(GenreTestCase):
 
         title2 = 'bien'
         track2_uuid = self.model_fixture_factory.create_lib_track_with_file(
-            title=title2, genre=criteria,
-            use_manager_for_genre_playlist_adding=True).uuid
+            title=title2, genre=criteria, use_manager_for_genre_playlist_adding=True).uuid
 
         response = self._retrieve_genre(uuid=criteria.uuid)
 

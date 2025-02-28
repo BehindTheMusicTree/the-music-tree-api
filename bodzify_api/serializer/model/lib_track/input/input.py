@@ -19,42 +19,27 @@ TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specif
 
 class LibTrackInputSerializer(AppSerializer):
     track_file_fingerprint_must_be_unique = serializers.BooleanField(required=False)
-    title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX,
-                         required=False,
-                         allow_blank=True,
-                         allow_null=True)
+    title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
     force_title_generation = serializers.BooleanField(required=False)
-    artists_names = ArtistsNamesField(max_length=settings.ARTISTS_NAMES_LEN_MAX,
-                                      required=False,
-                                      allow_null=True)
-    album_name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX,
-                              required=False,
-                              allow_blank=True,
-                              allow_null=True)
-    album_artists_names = ArtistsNamesField(max_length=settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,
-                                            required=False,
-                                            allow_null=True)
+    artists_names = ArtistsNamesField(max_length=settings.ARTISTS_NAMES_LEN_MAX, required=False, allow_null=True)
+    album_name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, required=False, allow_blank=True, allow_null=True)
+    album_artists_names = ArtistsNamesField(
+        max_length=settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX, required=False, allow_null=True)
     track_number = PositionInAlbumField()
 
     genre_uuid = GenreField(required=False, allow_null=True)
-    genre_name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX,
-                              required=False,
-                              allow_blank=True,
-                              allow_null=True)
+    genre_name = AppCharField(
+        max_length=settings.CRITERIA_NAME_LEN_MAX, required=False, allow_blank=True, allow_null=True)
     rating = RatingField()
-    language = AppCharField(max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX,
-                            required=False,
-                            allow_blank=True,
-                            allow_null=True)
+    language = AppCharField(
+        max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
 
     def validate(self, data):
         if Fields.GENRE_UUID in data and Fields.GENRE_NAME in data:
             if data[Fields.GENRE_UUID] not in ['', None] and data[Fields.GENRE_NAME] not in ['', None]:
-                raise AppValidationException(
-                    field_name=Fields.GENRE_NAME,
-                    message='Genre name and genre uuid cannot be specified at the same time',
-                    field_validation_error_code=FieldValidationErrorCode.MUTUALLY_EXCLUSIVE
-                )
+                raise AppValidationException(field_name=Fields.GENRE_NAME,
+                                             message='Genre name and genre uuid cannot be specified at the same time',
+                                             field_validation_error_code=FieldValidationErrorCode.MUTUALLY_EXCLUSIVE)
 
         if Fields.ALBUM_ARTISTS_NAMES_ARRAY in data:
             error_message = None
