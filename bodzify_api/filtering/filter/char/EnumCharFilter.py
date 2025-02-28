@@ -20,11 +20,9 @@ class EnumCharFilter(EmptiableCharFilter):
 
     def filter(self, qs, value):
         if value == '':
-            raise AppValidationException(
-                field_name=str(self.field_name),
-                message=_('This field may not be blank.'),
-                field_validation_error_code=FieldValidationErrorCode.BLANK
-            )
+            raise AppValidationException(field_name=str(self.field_name),
+                                         message=_('This field may not be blank.'),
+                                         field_validation_error_code=FieldValidationErrorCode.BLANK)
 
         if value is not None:
             normalized_value = str(value).lower()

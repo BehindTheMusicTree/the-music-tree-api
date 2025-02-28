@@ -4,14 +4,13 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.criteria.input.put import Fields as PutFields
 from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
-from bodzify_api.test.utils.field.body_data.type.PrimaryCharBodyDataTestCase import PrimaryCharBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
-class TestCase(GenreTestCase, PutBodyDataTestCase, PrimaryCharBodyDataTestCase):
+class TestCase(GenreTestCase, PutBodyDataTestCase):
 
     def test_provided_then_update(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
