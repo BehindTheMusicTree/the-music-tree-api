@@ -16,7 +16,6 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
     """
     A unified field that handles both UUID and name-based criteria inputs.
     Automatically detects input type and processes accordingly.
-    Can be used directly or inherited by specific criteria type fields.
     """
 
     def __init__(
@@ -25,16 +24,17 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
         self._allow_blank = kwargs.get('allow_blank', True)
         self._allow_null = kwargs.get('allow_null', True)
 
-        # Initialize base classes first
         super().__init__(queryset=queryset, **kwargs)
 
         # Create validation fields based on enabled input types
         self.char_field = None
         if CriteriaFieldInputType.NAME in input_types:
             char_kwargs = {
+                'required': kwargs.get('required', True),
                 'max_length': settings.CRITERIA_NAME_LEN_MAX,
                 'allow_blank': self._allow_blank,
-                'allow_null': self._allow_null
+                'allow_null': self._allow_null,
+                'field_name': kwargs.get('source') or kwargs.get('field_name')
             }
             self.char_field = AppCharField(**char_kwargs)
 
@@ -65,15 +65,10 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
 
         # Try name if enabled
         if CriteriaFieldInputType.NAME in self.input_types and self.char_field:
-            try:
-                validated_name = self.char_field.to_internal_value(data)
-                return self.get_queryset().get_or_create(name=validated_name)[0]
-            except ValidationError as e:
-                self.fail('invalid', detail=str(e))
-            except Exception as e:
-                raise ValidationError(f"Error processing criteria name: {str(e)}")
+            validated_name = self.char_field.to_internal_value(data)
+            return self.get_queryset().get_or_create(name=validated_name)[0]
 
-        self.fail('invalid', detail='Invalid criteria input')
+        self.fail('invalid', detail='Field must be a valid UUID or name.')
 
     def to_representation(self, value: Any) -> str:
         return str(value.uuid)

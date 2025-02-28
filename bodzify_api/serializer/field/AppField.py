@@ -52,10 +52,7 @@ class AppField(Field):
         code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)
 
         raise AppValidationException(
-            field_name=self.get_error_field_name(),
-            message=msg,
-            field_validation_error_code=code
-        )
+            field_name=self.get_error_field_name(), message=msg, field_validation_error_code=code)
 
     def get_error_field_name(self) -> str | None:
         if hasattr(self, 'field_name') and self.field_name:
