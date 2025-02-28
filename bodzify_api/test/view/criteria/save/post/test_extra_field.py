@@ -8,7 +8,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(GenreTestCase):
 
-    def test_extra_field_then_error(self):
+    def test_extra_field_then_400(self):
         extra_field = "extraField"
         response = self._post_genre(**{PostFields.NAME_PUBLIC: "Rock", extra_field: "extra_value"})
 
