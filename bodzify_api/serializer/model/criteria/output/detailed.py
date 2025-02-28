@@ -1,9 +1,10 @@
 from rest_framework import serializers
-from rest_framework.fields import CharField, IntegerField
+from rest_framework.fields import IntegerField
 
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
 from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.model.criteria_lineage_rel.without_ascendant import (
     CriteriaLineageRelWithoutAscendantSerializer
 )
@@ -30,22 +31,20 @@ class CriteriaDetailedSerializer(AppSerializer, serializers.ModelSerializer):
     root = CriteriaMinimumSerializer()  # type: ignore
     children = CriteriaMinimumSerializer(many=True)
     criteria_playlist = CriteriaPlaylistMinimumSerializer()
-    name = CharField(source=ModelFields.NAME_INTERNAL)
+    name = AppCharField(source=ModelFields.NAME_INTERNAL)
 
     class Meta:
         model = Criteria
-        fields = [
-            Fields.UUID,
-            Fields.NAME,
-            Fields.PARENT,
-            Fields.ASCENDANTS,
-            Fields.DESCENDANTS,
-            Fields.ROOT,
-            Fields.CHILDREN,
-            Fields.CRITERIA_PLAYLIST,
-            Fields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC,
-            Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
-            Fields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC,
-            Fields.CREATED_ON,
-            Fields.UPDATED_ON
-        ]
+        fields = [Fields.UUID,
+                  Fields.NAME,
+                  Fields.PARENT,
+                  Fields.ASCENDANTS,
+                  Fields.DESCENDANTS,
+                  Fields.ROOT,
+                  Fields.CHILDREN,
+                  Fields.CRITERIA_PLAYLIST,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC,
+                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC,
+                  Fields.CREATED_ON,
+                  Fields.UPDATED_ON]

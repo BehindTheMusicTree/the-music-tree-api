@@ -3,15 +3,15 @@ from typing import Any, Type
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
+from bodzify_api.model.field.AppCharField import AppCharField
+
 from .Fields import Fields
 
 
 def uses_internal_name(model: Type[models.Model]) -> bool:
     try:
         field = model._meta.get_field(Fields.NAME_INTERNAL)
-        # Verify it's a CharField with db_column='name'
-        return (isinstance(field, models.CharField) and
-                field.db_column == Fields.NAME_PUBLIC)
+        return (isinstance(field, AppCharField) and field.db_column == Fields.NAME_PUBLIC)
     except FieldDoesNotExist:
         return False
 

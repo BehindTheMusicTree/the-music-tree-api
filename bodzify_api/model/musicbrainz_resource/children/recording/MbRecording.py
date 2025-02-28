@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import F, Value
 
 from bodzify_api import settings
+from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.AppManyToManyField import AppManyToManyField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 
@@ -15,9 +16,9 @@ from .Fields import Fields
 class MusicbrainzRecording(MusicbrainzResource):
     musicbrainz_link = models.GeneratedField(  # type: ignore
         expression=ConcatOp(Value(settings.MB_RECORDING_URL), F(Fields.MUSICBRAINZ_ID)),
-        output_field=models.CharField(max_length=len(settings.MB_RECORDING_URL) + settings.UUID_LEN),
+        output_field=AppCharField(max_length=len(settings.MB_RECORDING_URL) + settings.UUID_LEN),
         db_persist=True)
-    title = models.CharField(max_length=settings.MB_RECORDING_TITLE_LEN_MAX, editable=False)
+    title = AppCharField(max_length=settings.MB_RECORDING_TITLE_LEN_MAX, editable=False)
     score = models.DecimalField(max_digits=9, decimal_places=8, editable=False)
     duration_in_sec = models.IntegerField(editable=False, null=True)
     release_date = models.DateField(null=True, blank=True, editable=False)

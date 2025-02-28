@@ -2,6 +2,7 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.base.BaseModel import BaseModel
+from bodzify_api.model.field.AppCharField import AppCharField
 
 
 class FingerprintMissingCauseCode(BaseModel):
@@ -19,7 +20,7 @@ class FingerprintMissingCauseCode(BaseModel):
         UNKNOWN_UNPROCESSABLE_ENTITY_ERROR = 10
 
     code = models.IntegerField(primary_key=True, choices=Codes.choices, unique=True)
-    label = models.CharField(unique=True, max_length=settings.FINGERPRINTING_ERROR_CODE_LABEL_LEN_MAX)
+    label = AppCharField(unique=True, max_length=settings.FINGERPRINTING_ERROR_CODE_LABEL_LEN_MAX)
 
     def __str__(self) -> str:
         return f"{self.pk} {self.label}"

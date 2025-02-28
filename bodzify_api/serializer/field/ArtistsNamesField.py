@@ -1,10 +1,10 @@
 from typing import Any
 
-from rest_framework import serializers
 from rest_framework.fields import ListField
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.AppField import AppField
 
 
@@ -14,7 +14,7 @@ class ArtistsNamesField(AppField, ListField):
     def __init__(self, max_length: int, **kwargs):
         # Initialize both parent classes properly
         AppField.__init__(self, **kwargs)
-        ListField.__init__(self, child=serializers.CharField(max_length=max_length), **kwargs)
+        ListField.__init__(self, child=AppCharField(max_length=max_length), **kwargs)
         self.max_length = max_length  # Keep this for our own validation
 
     def to_internal_value(self, data: Any) -> list[str] | None:

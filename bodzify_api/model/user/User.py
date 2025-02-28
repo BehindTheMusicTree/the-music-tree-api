@@ -10,6 +10,7 @@ from django.utils.functional import cached_property
 
 from bodzify_api import settings
 from bodzify_api.model.base.BaseModel import BaseModel
+from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.utils.ConditionalExpression import ConditionalExpression
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
@@ -37,8 +38,8 @@ class User(AbstractUser, BaseModel):
                                 Value('/'),
                                 Value(settings.USER_LIBRARIES_DIR_NAME_PREFIXE),
                                 F(Fields.ID)),
-            output_field=models.CharField(max_length=255)),
-        output_field=models.CharField(max_length=255),
+            output_field=AppCharField(max_length=255)),
+        output_field=AppCharField(max_length=255),
         db_persist=True)
 
     objects: UserManager = UserManager()

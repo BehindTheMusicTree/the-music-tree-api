@@ -1,10 +1,11 @@
 
-from django.db.models import Case, CharField, Q, Value, When
+from django.db.models import Case, Q, Value, When
 
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
 from bodzify_api.model.base.BaseQuerySet import BaseQuerySet
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
+from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 
 
@@ -20,7 +21,7 @@ class CriteriaNameFilter(NonEmptiableCharFilter):
         special_name = Case(
             When(type__pk=CriteriaTypePks.GENRE, then=Value(CriterialessPlaylistNames.GENRE)),
             When(type__pk=CriteriaTypePks.TAG, then=Value(CriterialessPlaylistNames.TAG)),
-            output_field=CharField(),
+            output_field=AppCharField(),
         )
 
         # For playlists without criteria, filter by special name
