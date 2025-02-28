@@ -20,11 +20,13 @@ class RatingSupportingMetadataManager(MetadataManager):
                  metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
                  metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None],
                  rating_write_profile: RatingWriteProfile,
-                 normalized_rating_max_value: int | None):
+                 normalized_rating_max_value: int | None,
+                 update_using_mutagen: bool = True):
 
         self.rating_write_profile = rating_write_profile
         self.normalized_rating_max_value = normalized_rating_max_value
         super().__init__(audio_file=audio_file,
+                         update_using_mutagen=update_using_mutagen,
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write)
 

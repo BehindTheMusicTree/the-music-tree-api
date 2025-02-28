@@ -26,13 +26,16 @@ class MetadataManager:
     metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None
     raw_mutagen_metadata: MutagenMetadata
     raw_cleaned_metadata: RawMetadataDict | None = None
+    update_using_mutagen: bool
 
     def __init__(self, audio_file: AudioFile,
                  metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
-                 metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None = None,):
+                 metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None = None,
+                 update_using_mutagen: bool = True):
         self.audio_file = audio_file
         self.metadata_keys_direct_map_read = metadata_keys_direct_map_read
         self.metadata_keys_direct_map_write = metadata_keys_direct_map_write
+        self.update_using_mutagen = update_using_mutagen
         self.raw_mutagen_metadata = self._extract_mutagen_metadata()
 
     @abstractmethod
@@ -55,6 +58,10 @@ class MetadataManager:
     @abstractmethod
     def _update_formatted_value_in_raw_mutagen_metadata(
             self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _update_not_using_mutagen(self, app_metadata_dict: AppMetadataDict):
         raise NotImplementedError()
 
     def _get_cleaned_raw_metadata(self) -> RawMetadataDict:
@@ -119,7 +126,13 @@ class MetadataManager:
             return values_list_str
         raise ImproperlyConfigured(f'Unsupported metadata type: {app_metadata_key_optional_type}')
 
-    def update_bulk(self, app_metadata_dict: AppMetadataDict):
+    def _update_file_metadata(self, app_metadata_dict: AppMetadataDict):
+        if self.update_using_mutagen:
+            self._update_using_mutagen(app_metadata_dict)
+        else:
+            self._update_not_using_mutagen(app_metadata_dict)
+
+    def _update_using_mutagen(self, app_metadata_dict: AppMetadataDict):
         if not self.metadata_keys_direct_map_write:
             raise MetadataNotSupportedError('This format does not support metadata modification')
 
