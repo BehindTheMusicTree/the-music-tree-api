@@ -11,4 +11,4 @@ class NullableCharFilterTestCase(CharFilterTestCase):
                                             'test_empty_then_results']
         if methods_names_to_implement:
             class_methods_names_to_implement += methods_names_to_implement
-        super().setUp(allow_empty_value=True, methods_names_to_implement=class_methods_names_to_implement)
+        super().setUp(methods_names_to_implement=class_methods_names_to_implement)

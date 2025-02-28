@@ -12,4 +12,4 @@ class NotNullableFreeCharFilterTestCase(FilterTestCase):
                                             'test_empty_then_400',]
         if methods_names_to_implement:
             class_methods_names_to_implement += methods_names_to_implement
-        super().setUp(allow_empty_value=False, methods_names_to_implement=class_methods_names_to_implement)
+        super().setUp(methods_names_to_implement=class_methods_names_to_implement)
