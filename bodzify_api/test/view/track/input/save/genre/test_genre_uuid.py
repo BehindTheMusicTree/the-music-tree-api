@@ -2,9 +2,8 @@ from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import (
-    ForeignKeyBodyDataTestCase
-)
+from bodzify_api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import ForeignKeyBodyDataTestCase
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -38,6 +37,7 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
 
     def test_list_then_400(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
+
         data = {
             PostFields.GENRE_UUID: genre.uuid,
             PostFields.GENRE_UUID: genre.uuid,
@@ -48,7 +48,7 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.GENRE_UUID)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.UNEXPECTED_LIST
 
     def test_invalid_uuid_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, genre_uuid="invalid")
