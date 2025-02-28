@@ -28,8 +28,6 @@ class AudioFile:
 
         self.file = file
 
-        print('file class is:', file.__class__)
-
         if isinstance(file, TemporaryUploadedFile):
             self.file_path = file.temporary_file_path()
         elif isinstance(file, InMemoryUploadedFile):
