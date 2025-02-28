@@ -267,8 +267,6 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         else:
             raw_mutagen_metadata_id3.add(text_frame_class(encoding=3, text=app_metadata_value))
 
-        self._save_raw_metadata_in_bulk_if_authorized()
-
     def delete_metadata(self) -> bool:
         """Delete all ID3v2 metadata from the audio file.
 
