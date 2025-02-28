@@ -57,7 +57,7 @@ class TestCase(UserTestCase):
     def test_delete_then_musicbrainz_recording_not_removed(self):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
-        response = self._post_lib_track("oostil - drown (massano remix) - 7m21.mp3")
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
         assert response.status_code == status.HTTP_201_CREATED
         assert MusicbrainzRecording.objects.filter(musicbrainz_id="4a45b00b-273d-40ed-9ecd-42f387f59c22").count() == 1
 
