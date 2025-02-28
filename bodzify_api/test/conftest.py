@@ -11,6 +11,16 @@ from bodzify_api import settings
 critical_test_failed = False
 
 
+IGNORED_TEST_DIRS = [
+    'utils/',
+]
+
+
+def pytest_ignore_collect(path, config):
+    str_path = str(path)
+    return any(ignored_dir in str_path for ignored_dir in IGNORED_TEST_DIRS)
+
+
 def base_childinstance(request, db):
     test_case = request.param()
     test_case.setUp()
