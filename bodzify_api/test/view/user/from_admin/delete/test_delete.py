@@ -28,7 +28,7 @@ class TestCase(UserTestCase):
     def test_delete_then_lib_dir_removed(self):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
-        self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, )
+        self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3)
         user_lib_abs_path = settings.LIBRARIES_DIR / (settings.USER_LIBRARIES_DIR_NAME_PREFIXE + str(user.pk))
         assert os.path.exists(user_lib_abs_path)
 
