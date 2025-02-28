@@ -8,6 +8,8 @@ class TestLibTrackFilename(str, Enum):
     ALBUM_KOKO_ID3V2_WAV = "album=koko_id3v2.wav"
     ALBUM_KOKO_VORBIS_FLAC = "album=koko_vorbis.flac"
 
+    BITRATE_1411_FLAC = "bitrate=1411.flac"
+
     COPYRIGHT_DOMAINE_PUBLIC_RIFF_WAV = "copyright=domaine public_riff.wav"
 
     DEFAULT_MP3 = "default.mp3"
@@ -32,7 +34,7 @@ class TestLibTrackFilename(str, Enum):
     FINGERPRINT_WAV = "fingerprint.wav"
 
     FORMAT_BAD_EXTENSION_MP4 = "format=bad_extension.mp4"
-    FORMAT_BAD_MP3 = "format=bad.mp3"
+    FORMAT_BAD_CONTENT_MP3 = "format=bad.mp3"
     FORMAT_IMAGE_JPEG = "format=image.jpeg"
     FORMAT_IN_MEMORY_FLAC = "format=in_memory.flac"
     FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC = "format=md5_not_valid_and_corrupted.flac"
@@ -132,10 +134,12 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_CELINEKIN_PARK_NO_MUSICBRAINZ_RECORDING_DURATION_MP3 = \
         "recording=Celinekin Park - no musicbrainz recording duration.mp3"
     RECORDING_DANS_LA_LEGENDE = "recording=Dans la legende.flac"
+
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = \
         "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3 = \
         "recording=juan hansen oostil - drown (massano remix) - 7m21.mp3"
+
     RECORDING_KEMAR_FRANCE_MP3 = "recording=Kemar - France.mp3"
     RECORDING_LORIE_2_MATCHES_BUT_ONE_WITH_CLOSEST_DURATION_MP3 = \
         "recording=lorie_2_matches_but_one_with_closest_duration.mp3"
@@ -145,12 +149,14 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_QUEEN_MULTIPLE_RELEASE_DATES_MP3 = "recording=queen_multiple_release_dates.mp3"
     RECORDING_QUEEN_WEARETHECHAMPIONS_MP3 = "recording=queen_wearethechampions.mp3"
     RECORDING_SHOWMUSTGOON_MP3 = "recording=showmustgoon.mp3"
-    RECORDING_TEMPERATURE_NO_MUSICBRAINZ_RECORDING_MP3 = \
-        "recording=Tokyo Drift x Temperature - no musicbrainz recording.mp3"
+    RECORDING_CALIFORNIA_GURLS_ID3V2_TAGS_FLAC = "recording=california gurls_id3v2 tags.flac"
+    RECORDING_TOKYO_DRIFT_NO_MUSICBRAINZ_RECORDING_MP3 = "recording=Tokyo Drift_no mb recording.mp3"
+
     RECORDING_TOTAL_ECLIPSE_5M35_FLAC = "recording=total eclipse_5m35.flac"
     RECORDING_TOTAL_ECLIPSE_3_SCORES_FLAC = "recording=total eclipse_3 scores.flac"
     RECORDING_TOTAL_ECLIPSE_9_MATCHES_BUT_ONE_WITH_DURATION_FLAC = \
         "recording=total eclipse_9 matches one with duration.flac"
+
     RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
 
