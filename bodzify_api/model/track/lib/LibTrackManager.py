@@ -105,20 +105,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             title = filename_without_expressions_to_exclude
         return title
 
-    def _update_model_data_with_genre_if_in_schema_data(self, model_data: dict, schema_data: dict):
-        from bodzify_api.model.criteria.children.genre.Genre import Genre
-
-        if SchemaFields.GENRE_UUID in schema_data:
-            genre = schema_data[SchemaFields.GENRE_UUID]
-        elif SchemaFields.GENRE_NAME in schema_data:
-            genre_name = schema_data[SchemaFields.GENRE_NAME]
-            genre = None if not genre_name else Genre.objects.get_or_create(name=genre_name,
-                                                                            user=schema_data[Fields.USER])[0]
-        else:
-            return
-
-        model_data[Fields.GENRE] = genre
-
     def _get_schema_data_from_file(self, file):
         try:
             app_merged_metadata_dict = audio_metadata.get_merged_app_metadata_dict(
@@ -205,17 +191,17 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                     Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                     Fields.TRACK_FILE,
                     Fields.TITLE,
+                    Fields.TRACK_NUMBER,
+                    Fields.GENRE,
                     Fields.RATING,
                     Fields.LANGUAGE,
-                    Fields.ARCHIVED,
-                    Fields.TRACK_NUMBER]:
+                    Fields.ARCHIVED]:
             data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict=creation_schema_data)
 
         self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
             model_data=model_data, schema_data=creation_schema_data)
         self._update_model_data_with_album_if_name_in_schema_data(
             model_data=model_data, schema_data=creation_schema_data)
-        self._update_model_data_with_genre_if_in_schema_data(model_data=model_data, schema_data=creation_schema_data)
 
         return model_data
 

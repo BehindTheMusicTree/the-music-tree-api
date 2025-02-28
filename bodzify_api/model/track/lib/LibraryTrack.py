@@ -35,6 +35,7 @@ if TYPE_CHECKING:
 class LibraryTrack(TrackablePlayCount):
     title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
+    artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_RELATED_NAME)
     album: Album = PrivateForeignKey(Album,  # type: ignore
                                      on_delete=models.CASCADE,
                                      null=True,
@@ -44,7 +45,6 @@ class LibraryTrack(TrackablePlayCount):
         null=True,
         blank=True,
         validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_TRACK_NUMBER_MAX)])
-    artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_RELATED_NAME)
     genre = PrivateForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
                               null=True,

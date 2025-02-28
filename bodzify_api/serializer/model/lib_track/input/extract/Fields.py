@@ -9,7 +9,6 @@ class Fields:
     ALBUM_NAME = InputFields.ALBUM_NAME
     ALBUM_ARTISTS_NAMES_ARRAY = InputFields.ALBUM_ARTISTS_NAMES_ARRAY
     TRACK_NUMBER = InputFields.TRACK_NUMBER
-    GENRE_UUID = InputFields.GENRE_UUID
-    GENRE_NAME = InputFields.GENRE_NAME
+    GENRE = InputFields.GENRE
     RATING = InputFields.RATING
     LANGUAGE = InputFields.LANGUAGE

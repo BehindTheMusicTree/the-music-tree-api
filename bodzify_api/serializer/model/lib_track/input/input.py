@@ -8,8 +8,8 @@ from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.ArtistsNamesField import ArtistsNamesField
 from bodzify_api.serializer.field.TrackNumberField import TrackNumberField
 from bodzify_api.serializer.field.RatingField import RatingField
+from bodzify_api.serializer.field.criteria.CriteriaFieldInputType import CriteriaFieldInputType
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
-from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 
 from .Fields import Fields
 
@@ -27,7 +27,8 @@ class LibTrackInputSerializer(AppSerializer):
     album_artists_names = ArtistsNamesField(
         max_length=settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX, required=False, allow_null=True)
     track_number = TrackNumberField()
-    genre = GenreField(input_types=[CriteriaFields.UUID, CriteriaFields.NAME_PUBLIC], required=False, allow_null=True)
+    genre = GenreField(
+        input_types=[CriteriaFieldInputType.UUID, CriteriaFieldInputType.NAME], required=False, allow_null=True)
     rating = RatingField()
     language = AppCharField(
         max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
@@ -41,11 +42,9 @@ class LibTrackInputSerializer(AppSerializer):
                 error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
-                raise AppValidationException(
-                    field_name=Fields.ALBUM_ARTISTS_NAMES_ARRAY,
-                    message=error_message,
-                    field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING
-                )
+                raise AppValidationException(field_name=Fields.ALBUM_ARTISTS_NAMES_ARRAY,
+                                             message=error_message,
+                                             field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
         if Fields.TRACK_NUMBER in data:
             error_message = None
@@ -55,10 +54,8 @@ class LibTrackInputSerializer(AppSerializer):
                 error_message = TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
 
             if error_message:
-                AppValidationException(
-                    field_name=Fields.ALBUM_NAME,
-                    message=error_message,
-                    field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING
-                )
+                AppValidationException(field_name=Fields.ALBUM_NAME,
+                                       message=error_message,
+                                       field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
         return super().validate(data)
