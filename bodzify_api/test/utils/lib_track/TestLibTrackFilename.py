@@ -53,6 +53,8 @@ class TestLibTrackFilename(str, Enum):
     METADATA_NONE_MP3 = "metadata=none.mp3"
     METADATA_NONE_WAV = "metadata=none.wav"
 
+    METADATA_WITH_ID3V2_WAV = "metadata=with_id3v2.wav"
+
     RATING_ID3V2_KID3_1_STAR_WAV = "rating_id3v2_kid3=1 star.wav"
     RATING_ID3V2_KID3_2_STAR_WAV = "rating_id3v2_kid3=2 star.wav"
     RATING_ID3V2_KID3_3_STAR_WAV = "rating_id3v2_kid3=3 star.wav"
