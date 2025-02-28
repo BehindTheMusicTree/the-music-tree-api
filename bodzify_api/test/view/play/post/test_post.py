@@ -13,7 +13,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(PlayTestCase):
 
-    def test_extra_field_then_error(self) -> None:
+    def test_extra_field_then_400(self) -> None:
         extra_field = 'extraField'
         response = self._post_play(**{extra_field: 'value'})
 
