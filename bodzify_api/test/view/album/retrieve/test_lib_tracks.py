@@ -52,7 +52,7 @@ class TestCase(AlbumTestCase):
     def test_duration(self):
         album = self.model_fixture_factory.create_album(name="Chuck")
         self.model_fixture_factory.create_lib_track_with_file(
-            title='ciline', album=album, test_lib_track_filename=TestLibTrackFilename.DURATION_177S_MP3)
+            title='ciline', album=album, test_lib_track_filename=TestLibTrackFilename.DURATION_277S_MP3)
         self.model_fixture_factory.create_lib_track_with_file(
             title='tokyo', album=album, test_lib_track_filename=TestLibTrackFilename.DURATION_472S_WAV)
 
