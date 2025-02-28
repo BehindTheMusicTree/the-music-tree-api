@@ -119,7 +119,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert artists_list[1].name == new_artist1
         assert artists_list[2].name == new_artist2
 
-    def test_multiple_artists_one_too_long_then_error(self) -> None:
+    def test_multiple_artists_one_too_long_then_400(self) -> None:
         valid_artist = "ValidArtist"
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
@@ -132,7 +132,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_multiple_artists_with_duplicates_then_error(self) -> None:
+    def test_multiple_artists_with_duplicates_then_400(self) -> None:
         artist_name = "DuplicateArtist"
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: f"{artist_name}, {artist_name}, {artist_name}"}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
@@ -143,7 +143,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == ExtractFields.ARTISTS_NAMES_ARRAY
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
 
-    def test_multiple_artists_with_empty_names_then_error(self) -> None:
+    def test_multiple_artists_with_empty_names_then_400(self) -> None:
         valid_artist = "ValidArtist"
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: f"{valid_artist}, , , {valid_artist}"}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
