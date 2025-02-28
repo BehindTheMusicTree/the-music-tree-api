@@ -1,6 +1,5 @@
 from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
-from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 
 
@@ -15,8 +14,7 @@ class Fields:
     ALBUM_ARTISTS_NAMES = f'{AlbumFields.ALBUM_ARTISTS}_{ArtistFields.NAME_PUBLIC}s'
     ALBUM_ARTISTS_NAMES_ARRAY = f'{ALBUM_ARTISTS_NAMES}[]'
     TRACK_NUMBER = ModelFields.TRACK_NUMBER
-    GENRE_UUID = f'{ModelFields.GENRE}_{CriteriaFields.UUID}'
-    GENRE_NAME = f'{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}'
+    GENRE = ModelFields.GENRE
     RATING = ModelFields.RATING
     LANGUAGE = ModelFields.LANGUAGE
     ARCHIVED = ModelFields.ARCHIVED

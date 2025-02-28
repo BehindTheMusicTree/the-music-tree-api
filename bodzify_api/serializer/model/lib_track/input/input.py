@@ -9,6 +9,7 @@ from bodzify_api.serializer.field.ArtistsNamesField import ArtistsNamesField
 from bodzify_api.serializer.field.TrackNumberField import TrackNumberField
 from bodzify_api.serializer.field.RatingField import RatingField
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
+from bodzify_api.model.criteria.Fields import Fields as CriteriaFields
 
 from .Fields import Fields
 
@@ -26,18 +27,12 @@ class LibTrackInputSerializer(AppSerializer):
     album_artists_names = ArtistsNamesField(
         max_length=settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX, required=False, allow_null=True)
     track_number = TrackNumberField()
-    genre = GenreField(input_types=['uuid', 'name'], required=False, allow_null=True)
+    genre = GenreField(input_types=[CriteriaFields.UUID, CriteriaFields.NAME_PUBLIC], required=False, allow_null=True)
     rating = RatingField()
     language = AppCharField(
         max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
 
     def validate(self, data):
-        if Fields.GENRE_UUID in data and Fields.GENRE_NAME in data:
-            if data[Fields.GENRE_UUID] not in ['', None] and data[Fields.GENRE_NAME] not in ['', None]:
-                raise AppValidationException(field_name=Fields.GENRE_NAME,
-                                             message='Genre name and genre uuid cannot be specified at the same time',
-                                             field_validation_error_code=FieldValidationErrorCode.MUTUALLY_EXCLUSIVE)
-
         if Fields.ALBUM_ARTISTS_NAMES_ARRAY in data:
             error_message = None
             if Fields.ALBUM_NAME not in data:

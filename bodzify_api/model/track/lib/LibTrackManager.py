@@ -198,7 +198,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 is_filename_randomly_generated = True
         return filename_with_extension, is_filename_randomly_generated
 
-    def _get_model_data_from_post_and_extract_common_schema_data(self, schema_data: dict[str, str]) -> dict:
+    def _get_model_data_from_creation_schema_data(self, creation_schema_data: dict[str, str]) -> dict:
         model_data = dict()
 
         for key in [Fields.USER,
@@ -209,12 +209,13 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                     Fields.LANGUAGE,
                     Fields.ARCHIVED,
                     Fields.TRACK_NUMBER]:
-            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict=schema_data)
+            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict=creation_schema_data)
 
         self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
-            model_data=model_data, schema_data=schema_data)
-        self._update_model_data_with_album_if_name_in_schema_data(model_data=model_data, schema_data=schema_data)
-        self._update_model_data_with_genre_if_in_schema_data(model_data=model_data, schema_data=schema_data)
+            model_data=model_data, schema_data=creation_schema_data)
+        self._update_model_data_with_album_if_name_in_schema_data(
+            model_data=model_data, schema_data=creation_schema_data)
+        self._update_model_data_with_genre_if_in_schema_data(model_data=model_data, schema_data=creation_schema_data)
 
         return model_data
 
@@ -234,7 +235,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 SchemaFields.TITLE,
                 SchemaFields.ALBUM_NAME,
                 SchemaFields.TRACK_NUMBER,
-                SchemaFields.GENRE_UUID,
+                SchemaFields.GENRE,
                 SchemaFields.RATING,
                 SchemaFields.LANGUAGE]
         data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(
@@ -248,17 +249,13 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         if SchemaFields.TITLE not in schema_data:
             schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
-        if SchemaFields.GENRE_UUID not in post_data:
-            data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(dict1=schema_data,
-                                                                                    dict2=post_data,
-                                                                                    keys=[SchemaFields.GENRE_NAME])
 
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
     def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         schema_data = self._get_schema_data_from_post_data(post_data)
-        model_data = self._get_model_data_from_post_and_extract_common_schema_data(schema_data)
+        model_data = self._get_model_data_from_creation_schema_data(schema_data)
         model_data[Fields.TRACK_FILE] = schema_data[SchemaFields.TRACK_FILE_PUBLIC]
         return model_data
 
@@ -295,7 +292,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
-        return self._get_model_data_from_post_and_extract_common_schema_data(schema_data=schema_data)
+        return self._get_model_data_from_creation_schema_data(creation_schema_data=schema_data)
 
     def decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
