@@ -26,7 +26,6 @@ class FieldValidationErrorCode(str, Enum):
         UNKNOWN_FIELDS = 2111           # Multiple unknown fields
 
     list Validation:
-        UNEXPECTED_LIST = 2120          # list provided when single value expected
         LIST_EXPECTED = 2121            # Single value when list expected
         MALFORMED_LIST = 2122           # Malformed list structure (e.g., missing [] suffix)
         LIST_EMPTY = 2123               # list is empty when values required
@@ -97,7 +96,6 @@ class FieldValidationErrorCode(str, Enum):
     UNKNOWN_FIELDS = 'unknown_fields'
 
     # list Validation
-    UNEXPECTED_LIST = 'unexpected_list'
     LIST_EXPECTED = 'list_expected'
     MALFORMED_LIST = 'malformed_list'
     LIST_EMPTY = 'list_empty'
