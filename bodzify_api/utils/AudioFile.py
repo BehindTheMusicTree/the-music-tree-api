@@ -7,6 +7,7 @@ from typing import Union
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files import File as DjangoFile
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from django.core.files.base import File as DjangoBaseFile
 from django.db.models.fields.files import FieldFile
 from mutagen.flac import FLAC
 from mutagen.mp3 import MP3
@@ -27,10 +28,14 @@ class AudioFile:
 
         self.file = file
 
+        print('file class is:', file.__class__)
+
         if isinstance(file, TemporaryUploadedFile):
             self.file_path = file.temporary_file_path()
         elif isinstance(file, InMemoryUploadedFile):
             self.file_path = None
+        elif isinstance(file, DjangoBaseFile):
+            self.file_path = file.file.name
         elif isinstance(file, DjangoFile):
             self.file_path = file.name
         else:
