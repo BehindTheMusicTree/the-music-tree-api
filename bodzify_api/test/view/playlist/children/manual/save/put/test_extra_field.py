@@ -7,7 +7,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(ManualPlaylistTestCase):
 
-    def test_extra_field_then_error(self):
+    def test_extra_field_then_400(self):
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name="teuf")
 
         non_existing_field = 'nonExistingField'
