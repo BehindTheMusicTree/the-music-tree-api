@@ -7,7 +7,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(ManualPlaylistTestCase):
 
-    def test_extra_field_then_error(self):
+    def test_extra_field_then_400(self):
         invalid_field = 'nonExistingField'
         response = self._post_manual_playlist(**{invalid_field: 'oifjqoif'})
 
