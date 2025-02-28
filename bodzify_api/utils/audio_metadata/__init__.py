@@ -160,7 +160,7 @@ def get_merged_app_metadata_dict(
 
     # Get normalized metadata from each manager
     for _, manager in managers_prioritized.items():
-        app_metadata_dicts_prioritized.append(manager.app_metadata)
+        app_metadata_dicts_prioritized.append(manager.get_app_metadata())
 
     result = {}
     for app_metadata_key in AppMetadataKey:

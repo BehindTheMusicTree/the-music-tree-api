@@ -25,8 +25,7 @@ class MetadataManager:
     metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None]
     metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None] | None
     raw_mutagen_metadata: MutagenMetadata
-    raw_cleaned_metadata: RawMetadataDict
-    app_metadata: AppMetadataDict
+    raw_cleaned_metadata: RawMetadataDict | None = None
 
     def __init__(self, audio_file: AudioFile,
                  metadata_keys_direct_map_read: dict[AppMetadataKey, RawMetadataKey | None],
@@ -35,8 +34,6 @@ class MetadataManager:
         self.metadata_keys_direct_map_read = metadata_keys_direct_map_read
         self.metadata_keys_direct_map_write = metadata_keys_direct_map_write
         self.raw_mutagen_metadata = self._extract_mutagen_metadata()
-        self.raw_cleaned_metadata = self._get_cleaned_raw_metadata()
-        self.app_metadata = self._get_app_metadata_dict_from_raw_cleaned_metadata()
 
     @abstractmethod
     def _get_undirectly_mapped_metadata_value(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
@@ -77,7 +74,9 @@ class MetadataManager:
                 raw_cleaned_metadata_with_regrouped_lists[raw_metadata_key] = [raw_metadata_value]
         return raw_cleaned_metadata_with_regrouped_lists
 
-    def _get_app_metadata_dict_from_raw_cleaned_metadata(self) -> AppMetadataDict:
+    def get_app_metadata(self) -> AppMetadataDict:
+        self.raw_cleaned_metadata = self.raw_cleaned_metadata or self._get_cleaned_raw_metadata()
+
         app_metadata_dict = {}
         for metadata_key in self.metadata_keys_direct_map_read:
             app_metadata_value = self.get_app_specific_metadata(metadata_key)
@@ -86,6 +85,8 @@ class MetadataManager:
         return app_metadata_dict
 
     def get_app_specific_metadata(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
+        self.raw_cleaned_metadata = self.raw_cleaned_metadata or self._get_cleaned_raw_metadata()
+
         if app_metadata_key not in self.metadata_keys_direct_map_read:
             raise MetadataNotSupportedError(f'{app_metadata_key} metadata not supported by this format')
 
