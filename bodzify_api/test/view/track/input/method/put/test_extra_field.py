@@ -7,7 +7,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(LibTrackTestCase):
 
-    def test_extra_field_then_error(self):
+    def test_extra_field_then_400(self):
         extra_field = "extraField"
         track = self.model_fixture_factory.create_lib_track_with_file(title="Foire")
 
