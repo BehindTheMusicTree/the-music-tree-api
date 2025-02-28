@@ -18,25 +18,21 @@ class TestPrivateUniqueResourceFilterSet(ApiTestCase):
         self.past = self.now - timedelta(days=5)
         self.future = self.now + timedelta(days=5)
 
-        self.past_record = self.model_fixture_factory.create_genre(name='past_genre',
-                                                                   created_on=self.past,
-                                                                   updated_on=self.past)
-
-        self.present_record = self.model_fixture_factory.create_genre(name='present_genre',
-                                                                      created_on=self.now,
-                                                                      updated_on=self.now)
-        self.future_record = self.model_fixture_factory.create_genre(name='future_genre',
-                                                                     created_on=self.future,
-                                                                     updated_on=self.future)
+        self.past_record = self.model_fixture_factory.create_genre(
+            name='past_genre', created_on=self.past, updated_on=self.past)
+        self.present_record = self.model_fixture_factory.create_genre(
+            name='present_genre', created_on=self.now, updated_on=self.now)
+        self.future_record = self.model_fixture_factory.create_genre(
+            name='future_genre', created_on=self.future, updated_on=self.future)
 
     def test_created_on_exact_filter(self):
-        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.CREATED_ON: self.now.isoformat()},
-                                                   queryset=Genre.objects.all())
+        filterset = PrivateUniqueResourceFilterSet(
+            {PrivateUniqueResourceFields.CREATED_ON: self.now.isoformat()}, queryset=Genre.objects.all())
         assert list(filterset.qs) == [self.present_record]
 
     def test_created_on_gt_filter(self):
-        filterset = PrivateUniqueResourceFilterSet({PrivateUniqueResourceFields.CREATED_ON_GT: self.now.isoformat()},
-                                                   queryset=Genre.objects.all())
+        filterset = PrivateUniqueResourceFilterSet(
+            {PrivateUniqueResourceFields.CREATED_ON_GT: self.now.isoformat()}, queryset=Genre.objects.all())
         assert list(filterset.qs) == [self.future_record]
 
     def test_created_on_lt_filter(self):

@@ -78,7 +78,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert manual_playlist_name in names
 
-    def test_value_is_wrong_then_error(self):
+    def test_invalid_enum_then_400(self):
         response = self._get_playlists(**{to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC): 'wrong_value'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

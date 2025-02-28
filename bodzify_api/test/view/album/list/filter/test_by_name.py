@@ -19,17 +19,17 @@ class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
 
     def test_contains_in_another_case_then_results(self):
-        album = self.model_fixture_factory.create_album(name="Muse")
+        album = self.model_fixture_factory.create_album(name="Black")
         self.model_fixture_factory.create_album(name="Jon")
 
-        response = self._get_albums(name='MUs')
+        response = self._get_albums(name='BLA')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
         assert self.results[0][AlbumFields.NAME_PUBLIC] == album.name
 
     def test_not_provided_then_results(self):
-        self.model_fixture_factory.create_album(name="Muse")
+        self.model_fixture_factory.create_album(name="Dark")
         self.model_fixture_factory.create_album(name="Jon")
 
         response = self._get_albums()
