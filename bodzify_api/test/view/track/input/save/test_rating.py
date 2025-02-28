@@ -2,11 +2,15 @@ from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.utils.field.body_data.type.NullablePositiveIntBodyDataTestCase import (
+    NullablePositiveIntBodyDataTestCase
+)
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
     def test_empty_then_none(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: None})
