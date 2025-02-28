@@ -18,7 +18,7 @@ class TestCase(ArtistTestCase):
         response = self._retrieve_artist(artist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(ArtistFields.DURATION_IN_SEC)] == 177 + 472
+        assert self.result[data_transformer.to_camel_case(ArtistFields.DURATION_IN_SEC)] == 277 + 472
 
     def test_count(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")

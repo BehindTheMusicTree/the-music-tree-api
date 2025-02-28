@@ -59,7 +59,7 @@ class TestCase(AlbumTestCase):
         response = self._retrieve_album(album.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[to_camel_case(RetrieveFields.DURATION_IN_SEC)] == 177 + 472
+        assert self.result[to_camel_case(RetrieveFields.DURATION_IN_SEC)] == 277 + 472
 
     def test_count(self):
         album = self.model_fixture_factory.create_album(name="Chuck")

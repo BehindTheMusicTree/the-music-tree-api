@@ -34,7 +34,7 @@ class TestCase(LibTrackTestCase):
     def test_normal_mp3_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.DURATION_277S_MP3)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.duration_in_sec == 177
+        assert self.saved_object.track_file.duration_in_sec == 277
 
     def test_normal_flac_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.DURATION_335S_FLAC)

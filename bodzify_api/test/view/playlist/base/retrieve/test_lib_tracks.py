@@ -51,7 +51,7 @@ class TestCase(PlaylistTestCase):
         response = self._retrieve_playlist(genre_criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.DURATION_IN_SEC)] == 472 + 177
+        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.DURATION_IN_SEC)] == 472 + 277
 
     def test_count(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
