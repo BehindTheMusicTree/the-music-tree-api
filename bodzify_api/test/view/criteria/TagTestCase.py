@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.serializer.model.criteria.output.Fields import Fields
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.ApiTestCase import ApiTestCase
 
 
 class TagTestCase(ApiTestCase[Tag]):

@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.ApiTestCase import ApiTestCase
 
 
 class SearchTestCase(ApiTestCase):

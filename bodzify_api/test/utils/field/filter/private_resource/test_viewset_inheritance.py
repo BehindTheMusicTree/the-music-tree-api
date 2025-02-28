@@ -11,7 +11,7 @@ from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import LibTrackFilter
 from bodzify_api.filtering.set.playlist.PlaylistFilterSet import PlaylistFilterSet
 from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 from bodzify_api.filtering.set.search.SearchFilterSet import SearchFilterSet
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.ApiTestCase import ApiTestCase
 
 
 class TestFilterInheritance(ApiTestCase):

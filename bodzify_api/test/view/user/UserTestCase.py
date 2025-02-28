@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from bodzify_api.model.user.User import User
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.ApiTestCase import ApiTestCase
 
 
 class UserTestCase(ApiTestCase[User]):

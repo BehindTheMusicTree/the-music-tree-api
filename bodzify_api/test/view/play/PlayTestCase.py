@@ -3,7 +3,7 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.play.Play import Play
-from bodzify_api.test.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.ApiTestCase import ApiTestCase
 
 
 class PlayTestCase(ApiTestCase[Play]):
