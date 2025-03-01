@@ -5,6 +5,8 @@ from mutagen._file import FileType as MutagenMetadata
 from mutagen.wave import WAVE
 from tinytag import TinyTag
 
+from django.core.exceptions import ImproperlyConfigured
+
 from ....AudioFile import AudioFile
 from ...exceptions import MetadataNotSupportedError
 from ...utils.id3v1_genre_code_map import ID3V1_GENRE_CODE_MAP
@@ -236,7 +238,7 @@ class RiffManager(RatingSupportingMetadataManager):
         Therefore, we implement our own RIFF chunk writer following the specification.
         """
         if not self.metadata_keys_direct_map_write:
-            raise MetadataNotSupportedError("No writable metadata keys found")
+            raise ImproperlyConfigured('metadata_keys_direct_map_write must be set')
 
         # Read the entire file into a mutable bytearray
         self.audio_file.seek(0)
@@ -251,9 +253,9 @@ class RiffManager(RatingSupportingMetadataManager):
             raise MetadataNotSupportedError("Invalid WAV file format")
 
         # Find or create LIST INFO chunk
-        info_chunk_start = self._find_info_chunk(file_data)
+        info_chunk_start = self._find_info_chunk_in_file_data(file_data)
         if info_chunk_start == -1:
-            info_chunk_start = self._create_info_chunk(file_data)
+            info_chunk_start = self._create_info_chunk_after_wave_header(file_data)
 
         # Process metadata updates
         info_chunk_size = int.from_bytes(bytes(file_data[info_chunk_start+4:info_chunk_start+8]), 'little')
@@ -275,7 +277,7 @@ class RiffManager(RatingSupportingMetadataManager):
                 continue
 
             # Create tag data with proper alignment
-            new_tags_data.extend(self._create_aligned_tag(riff_key, value_bytes))
+            new_tags_data.extend(self._create_aligned_metadata_with_proper_padding(riff_key, value_bytes))
 
         # Create new INFO chunk
         new_info_chunk = bytearray()
@@ -295,8 +297,7 @@ class RiffManager(RatingSupportingMetadataManager):
         self.audio_file.seek(0)
         self.audio_file.write(file_data)
 
-    def _find_info_chunk(self, file_data: bytearray) -> int:
-        """Find the LIST INFO chunk in the file data."""
+    def _find_info_chunk_in_file_data(self, file_data: bytearray) -> int:
         pos = 12  # Start after RIFF header
         while pos < len(file_data) - 8:
             if (bytes(file_data[pos:pos+4]) == b'LIST' and
@@ -307,8 +308,7 @@ class RiffManager(RatingSupportingMetadataManager):
             pos += 8 + ((chunk_size + 1) & ~1)  # Move to next chunk, maintaining alignment
         return -1
 
-    def _create_info_chunk(self, file_data: bytearray) -> int:
-        """Create a new LIST INFO chunk after the WAVE header."""
+    def _create_info_chunk_after_wave_header(self, file_data: bytearray) -> int:
         info_chunk = bytearray(b'LIST\x04\x00\x00\x00INFO')  # Minimal INFO chunk
         insert_pos = 12  # After RIFF+size+WAVE
         file_data[insert_pos:insert_pos] = info_chunk
@@ -340,8 +340,7 @@ class RiffManager(RatingSupportingMetadataManager):
 
         return str(value).encode('utf-8')
 
-    def _create_aligned_tag(self, tag_id: str, value_bytes: bytes) -> bytes:
-        """Create an aligned tag with proper padding."""
+    def _create_aligned_metadata_with_proper_padding(self, metadata_id: str, value_bytes: bytes) -> bytes:
         # Add null terminator
         value_bytes = value_bytes + b'\x00'
         # Pad to even length if needed
@@ -349,7 +348,7 @@ class RiffManager(RatingSupportingMetadataManager):
             value_bytes = value_bytes + b'\x00'
 
         return (
-            tag_id.encode('ascii') +
+            metadata_id.encode('ascii') +
             len(value_bytes).to_bytes(4, 'little') +
             value_bytes
         )
