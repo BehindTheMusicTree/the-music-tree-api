@@ -38,6 +38,7 @@ class TestLibTrackFilename(str, Enum):
 
     FORMAT_BAD_EXTENSION_MP4 = "format=bad_extension.mp4"
     FORMAT_BAD_CONTENT_MP3 = "format=bad.mp3"
+    FORMAT_CORRUPTED_WAV = "format=corrupted.wav"
     FORMAT_IMAGE_JPEG = "format=image.jpeg"
     FORMAT_IN_MEMORY_FLAC = "format=in_memory.flac"
     FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC = "format=md5_not_valid_and_corrupted.flac"
