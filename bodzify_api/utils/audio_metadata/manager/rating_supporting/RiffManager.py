@@ -177,7 +177,7 @@ class RiffManager(RatingSupportingMetadataManager):
         setattr(wave, 'info', info_tags)
         return wave
 
-    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(
+    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(
             self, raw_mutagen_metadata: MutagenMetadata) -> RawMetadataDict:
         """
         Convert RIFF metadata to dictionary.

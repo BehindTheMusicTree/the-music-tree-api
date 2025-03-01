@@ -42,7 +42,8 @@ class MetadataManager:
         raise NotImplementedError()
 
     @abstractmethod
-    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
+    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(
+            self, raw_mutagen_metadata: MutagenMetadata) -> RawMetadataDict:
         raise NotImplementedError()
 
     @abstractmethod
@@ -66,21 +67,19 @@ class MetadataManager:
 
     def _get_cleaned_raw_metadata_from_file(self) -> RawMetadataDict:
         self.raw_mutagen_metadata = self._extract_mutagen_metadata()
-        raw_clean_metadata_with_potential_duplicate_keys_and_multi_values = \
-            self._convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values()
-
-        return self._extract_and_regroup_raw_metadata_unique_entries(
-            raw_clean_metadata_with_potential_duplicate_keys_and_multi_values)
+        raw_metadata_with_potential_duplicate_keys = \
+            self._convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(self.raw_mutagen_metadata)
+        return self._extract_and_regroup_raw_metadata_unique_entries(raw_metadata_with_potential_duplicate_keys)
 
     def _extract_and_regroup_raw_metadata_unique_entries(
-            self, raw_clean_metadata_with_potential_duplicate_keys_and_multi_values: RawMetadataDict):
-        raw_clean_metadata_with_regrouped_lists = {}
-        for raw_metadata_key, raw_metadata_value in raw_clean_metadata_with_potential_duplicate_keys_and_multi_values.items():
-            if isinstance(raw_metadata_value, list):
-                raw_clean_metadata_with_regrouped_lists[raw_metadata_key] = raw_metadata_value
-            else:
-                raw_clean_metadata_with_regrouped_lists[raw_metadata_key] = [raw_metadata_value]
-        return raw_clean_metadata_with_regrouped_lists
+            self, raw_metadata_with_potential_duplicate_keys: RawMetadataDict):
+        raw_clean_metadata = {}
+
+        for raw_metadata_key, raw_metadata_value in raw_metadata_with_potential_duplicate_keys.items():
+            raw_clean_metadata[raw_metadata_key] = \
+                raw_metadata_value if isinstance(raw_metadata_value, list) else [raw_metadata_value]
+
+        return raw_clean_metadata
 
     def get_app_metadata(self) -> AppMetadata:
         if not self.raw_clean_metadata:

@@ -63,7 +63,7 @@ class Id3v1Manager(MetadataManager):
         except Exception as exc:
             raise FileCorruptedError(f"Failed to extract ID3v1 metadata: {exc}")
 
-    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
+    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(self) -> RawMetadataDict:
         raw_metadata_id3v1: Id3v1RawMetadata = self.raw_mutagen_metadata  # type: ignore
         if not raw_metadata_id3v1.tags:
             return {}

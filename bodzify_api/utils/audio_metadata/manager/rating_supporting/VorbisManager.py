@@ -103,7 +103,7 @@ class VorbisManager(RatingSupportingMetadataManager):
                 raise InvalidChunkDecodeError(error_str)
             raise
 
-    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
+    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(self) -> RawMetadataDict:
         raw_mutagen_metadata_flac: FLAC = self.raw_mutagen_metadata  # type: ignore
         metadata = raw_mutagen_metadata_flac.tags
         if isinstance(metadata, dict):
