@@ -1,11 +1,10 @@
 
-from typing import TypeVar
+from typing import TypeVar, cast
 
 from django.core.exceptions import ImproperlyConfigured
-from mutagen._file import FileType
+from mutagen._file import FileType as MutagenMetadata
 from mutagen.flac import FLAC, VCFLACDict
 
-from bodzify_api.utils import data_transformer
 
 from ....AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, InvalidChunkDecodeError
@@ -94,7 +93,7 @@ class VorbisManager(RatingSupportingMetadataManager):
                          rating_write_profile=RatingWriteProfile.BASE_100_PROPORTIONAL,
                          normalized_rating_max_value=normalized_rating_max_value)
 
-    def _extract_mutagen_metadata(self) -> FileType:
+    def _extract_mutagen_metadata(self) -> MutagenMetadata:
         try:
             return FLAC(self.audio_file.get_file_path_or_object())
         except Exception as error:
@@ -103,8 +102,9 @@ class VorbisManager(RatingSupportingMetadataManager):
                 raise InvalidChunkDecodeError(error_str)
             raise
 
-    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(self) -> RawMetadataDict:
-        raw_mutagen_metadata_flac: FLAC = self.raw_mutagen_metadata  # type: ignore
+    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(
+            self, raw_mutagen_metadata: MutagenMetadata) -> RawMetadataDict:
+        raw_mutagen_metadata_flac: FLAC = cast(FLAC, raw_mutagen_metadata)
         metadata = raw_mutagen_metadata_flac.tags
         if isinstance(metadata, dict):
             return metadata
@@ -115,34 +115,34 @@ class VorbisManager(RatingSupportingMetadataManager):
         else:
             raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
 
-    def _get_raw_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
-        rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
-            str_dict=dict(self.raw_mutagen_metadata), key=self.VorbisKey.RATING)
+    def _get_raw_rating_by_traktor_or_not(self, raw_clean_metadata: RawMetadataDict) -> tuple[int | None, bool]:
+        rating = raw_clean_metadata.get(self.VorbisKey.RATING, None) \
+            or raw_clean_metadata.get(self.VorbisKey.RATING_TRAKTOR, None)
 
-        if rating:
-            return rating, False
+        if not rating:
+            return None, False
+        if isinstance(rating, str):
+            return int(rating), True
+        return cast(int, rating), False
 
-        rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
-            str_dict=dict(self.raw_mutagen_metadata), key=self.VorbisKey.RATING_TRAKTOR)
-
-        if rating:
-            return rating, True
-        return None, False
-
-    def _update_formatted_value_in_raw_mutagen_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+    def _update_formatted_value_in_raw_mutagen_metadata(self, raw_mutagen_metadata: MutagenMetadata,
+                                                        raw_metadata_key: RawMetadataKey,
+                                                        app_metadata_value: AppMetadataValue):
         if app_metadata_value:
-            if raw_metadata_key not in self.raw_mutagen_metadata:
-                self.raw_mutagen_metadata[raw_metadata_key] = [1]
-            self.raw_mutagen_metadata[raw_metadata_key] = raw_metadata_key
-        elif raw_metadata_key in self.raw_mutagen_metadata:
-            del self.raw_mutagen_metadata[raw_metadata_key]
+            if raw_metadata_key not in raw_mutagen_metadata:
+                raw_mutagen_metadata[raw_metadata_key] = [1]
+            raw_mutagen_metadata[raw_metadata_key] = raw_metadata_key
+        elif raw_metadata_key in raw_mutagen_metadata:
+            del raw_mutagen_metadata[raw_metadata_key]
 
-    def _update_undirectly_mapped_metadata(self, app_metadata_value, app_metadata_key: AppMetadataKey):
+    def _update_undirectly_mapped_metadata(self, raw_mutagen_metadata: MutagenMetadata,
+                                           app_metadata_value: AppMetadataValue,
+                                           app_metadata_key: AppMetadataKey):
         if app_metadata_key == AppMetadataKey.RATING:
             if app_metadata_value:
                 app_metadata_value = str(app_metadata_value)
-            self._update_formatted_value_in_raw_mutagen_metadata(
-                raw_metadata_key=self.VorbisKey.RATING, app_metadata_value=app_metadata_value)
+            self._update_formatted_value_in_raw_mutagen_metadata(raw_mutagen_metadata=raw_mutagen_metadata,
+                                                                 raw_metadata_key=self.VorbisKey.RATING,
+                                                                 app_metadata_value=app_metadata_value)
         else:
             raise ImproperlyConfigured('Metadata key not handled')

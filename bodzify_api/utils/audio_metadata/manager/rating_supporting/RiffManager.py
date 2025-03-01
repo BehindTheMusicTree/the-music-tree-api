@@ -214,13 +214,11 @@ class RiffManager(RatingSupportingMetadataManager):
                     return None
         return None
 
-    def _get_raw_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
-        if not self.raw_clean_metadata:
-            self.raw_clean_metadata = self._get_cleaned_raw_metadata_from_file()
-
-        if not self.RiffTagKey.RATING in self.raw_clean_metadata:
+    def _get_raw_rating_by_traktor_or_not(self, raw_clean_metadata: RawMetadataDict) -> tuple[int | None, bool]:
+        if not self.RiffTagKey.RATING in raw_clean_metadata:
             return None, False
-        raw_rating = self.raw_clean_metadata[self.RiffTagKey.RATING]
+
+        raw_rating = raw_clean_metadata[self.RiffTagKey.RATING]
         if isinstance(raw_rating, str):
             return int(raw_rating), False
         return cast(int, raw_rating), True

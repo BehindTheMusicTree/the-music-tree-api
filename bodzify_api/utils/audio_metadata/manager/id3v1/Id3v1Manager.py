@@ -1,4 +1,7 @@
 
+from typing import cast
+from mutagen._file import FileType as MutagenMetadata
+
 from ....AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, MetadataNotSupportedError
 from ...utils.AppMetadataKey import AppMetadataKey
@@ -63,8 +66,9 @@ class Id3v1Manager(MetadataManager):
         except Exception as exc:
             raise FileCorruptedError(f"Failed to extract ID3v1 metadata: {exc}")
 
-    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(self) -> RawMetadataDict:
-        raw_metadata_id3v1: Id3v1RawMetadata = self.raw_mutagen_metadata  # type: ignore
+    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(
+            self, raw_mutagen_metadata: MutagenMetadata) -> RawMetadataDict:
+        raw_metadata_id3v1: Id3v1RawMetadata = cast(Id3v1RawMetadata, raw_mutagen_metadata)
         if not raw_metadata_id3v1.tags:
             return {}
 

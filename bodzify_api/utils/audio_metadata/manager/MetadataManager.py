@@ -57,8 +57,9 @@ class MetadataManager:
         raise NotImplementedError()
 
     @abstractmethod
-    def _update_formatted_value_in_raw_mutagen_metadata(
-            self, raw_metadata_key: RawMetadataKey, app_metadata_value: AppMetadataValue):
+    def _update_formatted_value_in_raw_mutagen_metadata(self, raw_mutagen_metadata: MutagenMetadata,
+                                                        raw_metadata_key: RawMetadataKey,
+                                                        app_metadata_value: AppMetadataValue):
         raise NotImplementedError()
 
     @abstractmethod
@@ -82,7 +83,7 @@ class MetadataManager:
         return raw_clean_metadata
 
     def get_app_metadata(self) -> AppMetadata:
-        if not self.raw_clean_metadata:
+        if self.raw_clean_metadata is None:
             self.raw_clean_metadata = self._get_cleaned_raw_metadata_from_file()
 
         app_metadata = {}
@@ -93,7 +94,7 @@ class MetadataManager:
         return app_metadata
 
     def get_app_specific_metadata(self, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
-        if not self.raw_clean_metadata:
+        if self.raw_clean_metadata is None:
             self.raw_clean_metadata = self._get_cleaned_raw_metadata_from_file()
 
         if app_metadata_key not in self.metadata_keys_direct_map_read:
@@ -136,7 +137,7 @@ class MetadataManager:
         if not self.update_using_mutagen_metadata:
             self._update_not_using_mutagen_metadata(app_metadata)
         else:
-            if not self.raw_mutagen_metadata:
+            if self.raw_mutagen_metadata is None:
                 self.raw_mutagen_metadata = self._extract_mutagen_metadata()
 
             for app_metadata_key in list(app_metadata.keys()):
@@ -147,14 +148,15 @@ class MetadataManager:
                     raw_metadata_key = self.metadata_keys_direct_map_write[app_metadata_key]
                     if raw_metadata_key:
                         self._update_formatted_value_in_raw_mutagen_metadata(
-                            raw_metadata_key=raw_metadata_key, app_metadata_value=app_metadata_value)
+                            raw_mutagen_metadata=self.raw_mutagen_metadata, raw_metadata_key=raw_metadata_key,
+                            app_metadata_value=app_metadata_value)
                     else:
                         self._update_undirectly_mapped_metadata(
                             app_metadata_value=app_metadata_value, app_metadata_key=app_metadata_key)
             self.raw_mutagen_metadata.save(self.audio_file.get_file_path_or_object())
 
     def delete_metadata(self) -> bool:
-        if not self.raw_mutagen_metadata:
+        if self.raw_mutagen_metadata is None:
             self.raw_mutagen_metadata = self._extract_mutagen_metadata()
 
         try:
