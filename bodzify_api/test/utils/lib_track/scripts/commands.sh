@@ -9,7 +9,7 @@ metaflac --remove-tag=RATING --set-tag="RATING=80" test.flac
 
 ## Id3v2
 ### Read
-mutagen-inspect "rating_id3v2=1 star.wav"
+mid3v2 -l "files/metadata=max a_id3v2.flac"
 
 ### Write
 id3v2 --artist "Artist Name" test.flac
