@@ -81,24 +81,21 @@ class Id3v1Manager(MetadataManager):
                     result[enum_member] = value
         return result
 
-    def _get_undirectly_mapped_metadata_value(self, app_netadata_key: AppMetadataKey) -> AppMetadataValue:
-        if app_netadata_key == AppMetadataKey.GENRE_NAME:
-            genre_name = self.get_genre_name()
-            return genre_name if genre_name else None
-        return None
+    def _get_undirectly_mapped_metadata_value_from_raw_clean_metadata(
+            self, raw_clean_metadata: RawMetadataDict, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
+        if app_metadata_key == AppMetadataKey.GENRE_NAME:
+            return self._get_genre_name(raw_clean_metadata)
+        raise MetadataNotSupportedError(f'{app_metadata_key} metadata is not undirectly handled')
 
-    def get_genre_name(self) -> str | None:
-        genre_codes = self.raw_cleaned_metadata.get(Id3v1RawMetadataKey.GENRE_CODE)
+    def _get_genre_name(self, raw_clean_metadata: RawMetadataDict) -> str | None:
+        genre_codes = raw_clean_metadata.get(Id3v1RawMetadataKey.GENRE_CODE)
         if not genre_codes:
             return None
 
         genre_code: int | None = int(genre_codes[0])
-        if not 0 <= genre_code < len(ID3V1_GENRE_CODE_MAP):
-            return None
-        return ID3V1_GENRE_CODE_MAP[genre_code]
+        return None if not 0 <= genre_code < len(ID3V1_GENRE_CODE_MAP) else ID3V1_GENRE_CODE_MAP[genre_code]
 
     def _update_undirectly_mapped_metadata(self, app_metadata_value: AppMetadataValue,
                                            app_metadata_key: AppMetadataKey,
                                            normalized_rating_max_value: int | None = None):
-        raise MetadataNotSupportedError(
-            "ID3v1 tag modification is not supported (fixed-length format)")
+        raise MetadataNotSupportedError("ID3v1 tag modification is not supported")

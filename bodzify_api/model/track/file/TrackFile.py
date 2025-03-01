@@ -176,9 +176,9 @@ class TrackFile(PrivateStandardResource):
         fingerprinting_result = self._manage_fingerprint()
         self._manage_musicbrainz_recording(fingerprinting_result)
 
-    def update_file_metadata(self, app_metadata_dict: AppMetadata):
+    def update_file_metadata(self, app_metadata: AppMetadata):
         audio_metadata.update_file_metadata(file=self.file,
-                                            app_metadata_dict=app_metadata_dict,
+                                            app_metadata=app_metadata,
                                             normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:

@@ -248,11 +248,13 @@ class Id3v2Manager(RatingSupportingMetadataManager):
 
         return result
 
-    def _get_raw_mutagen_metadata_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
-        for key in self.raw_mutagen_metadata:
-            if self.Id3TextFrame.RATING in key:
-                file_rating_tag = self.raw_mutagen_metadata[key]
-                return file_rating_tag.rating, file_rating_tag.email == self.TRAKTOR_RATING_TAG_MAIL
+    def _get_raw_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
+        if not self.raw_mutagen_metadata:
+            self.raw_mutagen_metadata = self._extract_mutagen_metadata()
+
+        if self.Id3TextFrame.RATING in self.raw_mutagen_metadata:
+            file_rating_tag = self.raw_mutagen_metadata[self.Id3TextFrame.RATING]
+            return file_rating_tag.rating, file_rating_tag.email == self.TRAKTOR_RATING_TAG_MAIL
 
         return None, False
 

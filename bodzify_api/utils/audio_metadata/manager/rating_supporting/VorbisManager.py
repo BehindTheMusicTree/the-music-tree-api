@@ -115,7 +115,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         else:
             raise FileCorruptedError(f"Invalid Vorbis metadata type: {type(metadata)}")
 
-    def _get_raw_mutagen_metadata_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
+    def _get_raw_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
         rating = data_transformer.get_first_value_int_if_exists_in_str_dict_or_none(
             str_dict=dict(self.raw_mutagen_metadata), key=self.VorbisKey.RATING)
 

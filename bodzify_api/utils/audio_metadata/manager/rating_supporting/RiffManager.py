@@ -1,7 +1,7 @@
 import io
 from typing import cast
 
-from mutagen._file import FileType
+from mutagen._file import FileType as MutagenMetadata
 from mutagen.wave import WAVE
 
 
@@ -124,7 +124,7 @@ class RiffManager(RatingSupportingMetadataManager):
             return data[10 + size:]
         return data
 
-    def _extract_mutagen_metadata(self) -> FileType:
+    def _extract_mutagen_metadata(self) -> MutagenMetadata:
         """
         Extract RIFF metadata by directly reading the INFO chunk.
         WAVE/RIFF files are structured as:
@@ -177,13 +177,14 @@ class RiffManager(RatingSupportingMetadataManager):
         setattr(wave, 'info', info_tags)
         return wave
 
-    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
+    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(
+            self, raw_mutagen_metadata: MutagenMetadata) -> RawMetadataDict:
         """
         Convert RIFF metadata to dictionary.
         Extracts tags from our custom info_tags attribute which contains
         the directly parsed INFO chunk data.
         """
-        raw_mutagen_metadata_wav: WAVE = self.raw_mutagen_metadata  # type: ignore
+        raw_mutagen_metadata_wav: WAVE = cast(WAVE, raw_mutagen_metadata)
         raw_metadata_dict: dict = {}
 
         # Get metadata from our custom info which contains the directly parsed INFO chunk
@@ -195,53 +196,45 @@ class RiffManager(RatingSupportingMetadataManager):
 
         return raw_metadata_dict
 
-    def _get_raw_mutagen_metadata_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
-        if not self.raw_mutagen_metadata.info or self.RiffTagKey.RATING not in self.raw_mutagen_metadata.info:
-            return None, False
-
-        raw_rating = self.raw_mutagen_metadata.info[self.RiffTagKey.RATING]
-        if raw_rating is None:
-            return None, False
-        try:
-            return int(raw_rating), False
-        except ValueError:
-            return None, False
-
-    def _get_undirectly_mapped_metadata_value_other_than_rating(self, key: AppMetadataKey) -> AppMetadataValue:
-        if key == AppMetadataKey.GENRE_NAME:
-            genre_name = self._get_genre_name()
-            return [genre_name] if genre_name else None
-        else:
-            raise MetadataNotSupportedError(f'Metadata key not handled: {key}')
-
-    def _get_genre_name(self) -> str | None:
+    def _get_genre_name_from_raw_clean_metadata(self, raw_clean_metadata: RawMetadataDict) -> str | None:
         """
         The IGNR tag in RIFF files typically contains a genre code
         that corresponds to the ID3v1 genre list. This method converts
         the code to a human-readable genre name.
         """
-        if self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE in self.raw_mutagen_metadata:
-            raw_value = self.raw_mutagen_metadata[self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE]
+        if self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE in raw_clean_metadata:
+            raw_value = raw_clean_metadata[self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE]
             if isinstance(raw_value, str):
                 return raw_value
             else:
                 try:
-                    genre_code = int(raw_value)
+                    genre_code = int(cast(int, raw_value))
                     return ID3V1_GENRE_CODE_MAP.get(genre_code, None)
                 except ValueError:
                     return None
         return None
 
-    def _get_track_number(self) -> int | None:
-        part = self.raw_mutagen_metadata.get(self.RiffTagKey.TRACK_NUMBER, None)
-        if part:
-            try:
-                return int(part)
-            except ValueError:
-                return None
-        return None
+    def _get_raw_rating_by_traktor_or_not(self) -> tuple[int | None, bool]:
+        if not self.raw_clean_metadata:
+            self.raw_clean_metadata = self._get_cleaned_raw_metadata_from_file()
 
-    def _update_not_using_mutagen(self, app_metadata_dict: AppMetadata):
+        if not self.RiffTagKey.RATING in self.raw_clean_metadata:
+            return None, False
+        raw_rating = self.raw_clean_metadata[self.RiffTagKey.RATING]
+        if isinstance(raw_rating, str):
+            return int(raw_rating), False
+        return cast(int, raw_rating), True
+
+    def _get_undirectly_mapped_metadata_value_other_than_rating_from_raw_clean_metadata(
+            self, key: AppMetadataKey, raw_clean_metadata: RawMetadataDict) -> AppMetadataValue:
+
+        if key == AppMetadataKey.GENRE_NAME:
+            genre_name = self._get_genre_name_from_raw_clean_metadata(raw_clean_metadata)
+            return [genre_name] if genre_name else None
+        else:
+            raise MetadataNotSupportedError(f'Metadata key not handled: {key}')
+
+    def _update_not_using_mutagen_metadata(self, app_metadata: AppMetadata):
         """
         Update metadata fields in the RIFF INFO chunk using a dictionary approach.
         Since mutagen doesn't support writing RIFF metadata, we implement our own writer.
@@ -282,7 +275,7 @@ class RiffManager(RatingSupportingMetadataManager):
             file_data[info_chunk_start:info_chunk_start] = b'LIST' + info_chunk_size.to_bytes(4, 'little') + b'INFO'
 
         # Process each metadata field
-        for app_key, value in app_metadata_dict.items():
+        for app_key, value in app_metadata.items():
             if value is None or value == "":
                 continue
 
@@ -291,7 +284,7 @@ class RiffManager(RatingSupportingMetadataManager):
             if not riff_key:
                 if app_key == AppMetadataKey.GENRE_NAME:
                     riff_key = self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE
-                    value = self._get_genre_code(str(value))
+                    value = self._get_genre_code_from_name(str(value))
                 elif app_key == AppMetadataKey.RATING:
                     riff_key = self.RiffTagKey.RATING
                     app_rating = cast(int, value)
@@ -347,26 +340,11 @@ class RiffManager(RatingSupportingMetadataManager):
             riff_size = int.from_bytes(file_data[4:8], 'little')
             file_data[4:8] = (riff_size + len(tag_data)).to_bytes(4, 'little')
 
-            # Update our cached metadata
-            if not hasattr(self.raw_mutagen_metadata, 'info'):
-                setattr(self.raw_mutagen_metadata, 'info', {})
-            info_dict = getattr(self.raw_mutagen_metadata, 'info')
-            if isinstance(info_dict, dict):
-                info_dict[riff_key] = str(value)
-
         # Write back to file
         self.audio_file.seek(0)
         self.audio_file.write(file_data)
 
-    def update_file_metadata(self, app_metadata_dict: AppMetadata):
-        """
-        Update multiple metadata fields in the RIFF INFO chunk.
-        Since mutagen doesn't support writing RIFF metadata, we implement our own writer.
-        This method delegates to _update_not_using_mutagen which handles the actual writing.
-        """
-        self._update_not_using_mutagen(app_metadata_dict)
-
-    def _get_genre_code(self, genre_name: str) -> int | None:
+    def _get_genre_code_from_name(self, genre_name: str) -> int | None:
         for code, name in ID3V1_GENRE_CODE_MAP.items():
             if name == genre_name:
                 return code

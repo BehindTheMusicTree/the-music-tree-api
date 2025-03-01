@@ -158,17 +158,17 @@ def get_merged_app_metadata(
         file = AudioFile(file)
 
     managers_prioritized = _get_metadata_managers(file=file, normalized_rating_max_value=normalized_rating_max_value)
-    app_metadata_dicts_prioritized = []
+    app_metadatas_prioritized = []
 
     # Get normalized metadata from each manager
     for _, manager in managers_prioritized.items():
-        app_metadata_dicts_prioritized.append(manager.get_app_metadata())
+        app_metadatas_prioritized.append(manager.get_app_metadata())
 
     result = {}
     for app_metadata_key in AppMetadataKey:
-        for app_metadata_dict in app_metadata_dicts_prioritized:
-            if app_metadata_key in app_metadata_dict:
-                value = app_metadata_dict[app_metadata_key]
+        for app_metadata in app_metadatas_prioritized:
+            if app_metadata_key in app_metadata:
+                value = app_metadata[app_metadata_key]
                 if value is not None:
                     result[app_metadata_key] = value
                     break
@@ -182,11 +182,11 @@ def get_specific_metadata(file: FILE_TYPE, app_metadata_key: AppMetadataKey) -> 
 
 
 def update_file_metadata(
-        file: FILE_TYPE, app_metadata_dict: AppMetadata, normalized_rating_max_value: int | None = None) -> None:
+        file: FILE_TYPE, app_metadata: AppMetadata, normalized_rating_max_value: int | None = None) -> None:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
     metadata_manager = _get_metadata_manager(file=file, normalized_rating_max_value=normalized_rating_max_value)
-    metadata_manager.update_file_metadata(app_metadata_dict=app_metadata_dict)
+    metadata_manager.update_file_metadata(app_metadata=app_metadata)
 
 
 def delete_metadata(file, tag_format: MetadataFormat | None = None) -> bool:
