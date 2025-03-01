@@ -97,6 +97,8 @@ class AudioFile:
             except json.JSONDecodeError:
                 raise RuntimeError("Failed to parse audio file metadata")
             except Exception as exc:
+                if str(exc) == "Failed to probe audio file":
+                    raise FileCorruptedError("ffprobe could not parse the audio file.")
                 raise RuntimeError(f"Failed to read WAV file duration: {str(exc)}")
 
         elif self.file_extension == '.flac':

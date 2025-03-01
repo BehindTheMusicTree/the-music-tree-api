@@ -30,6 +30,7 @@ from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
+from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.utils.types import AppMetadata
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 
@@ -167,10 +168,17 @@ class TrackFile(PrivateStandardResource):
         return musicbrainz_recording_lookup_result
 
     def _prepare_save(self, ctx) -> dict:
-        self.duration_in_sec = audio_metadata.get_duration_in_sec(self.file)
-        self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
-        self.size_in_bytes = self.file.size
-        return ctx.kwargs
+        try:
+            self.duration_in_sec = audio_metadata.get_duration_in_sec(self.file)
+            self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
+            self.size_in_bytes = self.file.size
+            return ctx.kwargs
+        except FileCorruptedError as e:
+            raise AppValidationException(field_name=Fields.FILE,
+                                         message="File corrupted",
+                                         field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
+        except Exception:
+            raise
 
     def _perform_save(self, adding: bool, ctx) -> None:
         fingerprinting_result = self._manage_fingerprint()
