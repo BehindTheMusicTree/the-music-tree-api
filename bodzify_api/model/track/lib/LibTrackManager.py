@@ -125,6 +125,17 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                   AppMetadataKey.RATING,
                   AppMetadataKey.LANGUAGE])
 
+        metadata_max_lengths = {
+            AppMetadataKey.TITLE: settings.LIB_TRACK_TITLE_LEN_MAX,
+            AppMetadataKey.ARTISTS_NAMES: settings.ARTISTS_NAMES_LEN_MAX,
+            AppMetadataKey.ALBUM_NAME: settings.ALBUM_NAME_LEN_MAX,
+            AppMetadataKey.ALBUM_ARTISTS_NAMES: settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,
+            AppMetadataKey.LANGUAGE: settings.LIB_TRACK_LANGUAGE_LEN_MAX,
+        }
+        for key, max_length in metadata_max_lengths.items():
+            if key in schema_data_with_potential_none and schema_data_with_potential_none[key]:
+                schema_data_with_potential_none[key] = schema_data_with_potential_none[key][:max_length]
+
         schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(schema_data_with_potential_none)
         schema_data_clean[SchemaFields.TRACK_FILE_PUBLIC] = file
 
