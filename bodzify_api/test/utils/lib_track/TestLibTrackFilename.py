@@ -46,10 +46,12 @@ class TestLibTrackFilename(str, Enum):
 
     GENRE_ABSTRACT_ID3V1_MP3 = "genre=abstract_id3v1.mp3"
 
-    METADATA_MAX_A_VORBIS_FLAC = "metadata=max a_vorbis.flac"
+    METADATA_MAX_A_ID3V1_MP3 = "metadata=max a_id3v1.mp3"
+    METADATA_MAX_A_ID3V2_FLAC = "metadata=max a_id3v2.flac"
+    METADATA_MAX_A_ID3V2_MP3 = "metadata=max a_id3v2.mp3"
     METADATA_MAX_A_ID3V2_WAV = "metadata=max a_id3v2.wav"
-    METADATA_MAX_A_ID3v2_MP3 = "metadata=max a_id3v2.mp3"
-    METADATA_MAX_A_RIFF_A = "metadata=max a_riff.wav"
+    METADATA_MAX_A_RIFF_WAV = "metadata=max a_riff.wav"
+    METADATA_MAX_A_VORBIS_FLAC = "metadata=max a_vorbis.flac"
 
     METADATA_NONE_FLAC = "metadata=none.flac"
     METADATA_NONE_MP3 = "metadata=none.mp3"
