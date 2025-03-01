@@ -126,33 +126,46 @@ class RiffManager(RatingSupportingMetadataManager):
 
     def _extract_mutagen_metadata(self) -> MutagenMetadata:
         """
-        Extract RIFF metadata using TinyTag for faster parsing, then convert to mutagen format.
-        TinyTag is optimized for quick metadata extraction and handles ID3 tags automatically.
-        """
+        Extract RIFF metadata using TinyTag for optimized parsing, then convert to mutagen format.
+        TinyTag provides fast, memory-efficient metadata extraction and handles various tag formats.
 
-        # Use TinyTag for fast metadata extraction
-        tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object())  # TinyTag is already optimized for WAV files
+        Note: TinyTag is used here for its efficient reading capabilities, while our custom
+        RIFF writer handles the writing operations since TinyTag is read-only.
+        """
+        # Use TinyTag for optimized metadata extraction
+        tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object(), tags=True)
 
         # Create mutagen WAVE object from the same data
         self.audio_file.seek(0)
         file_data = self.audio_file.read()
         wave = WAVE(io.BytesIO(file_data))
 
-        # Convert TinyTag metadata to RIFF INFO format
+        # Convert TinyTag metadata to RIFF INFO format with extended tag support
         info_tags: dict[str, str] = {}
 
-        if tiny_tag.title:
-            info_tags[self.RiffTagKey.TITLE] = tiny_tag.title
-        if tiny_tag.artist:
-            info_tags[self.RiffTagKey.ARTIST_NAME] = tiny_tag.artist
-        if tiny_tag.album:
-            info_tags[self.RiffTagKey.ALBUM_NAME] = tiny_tag.album
-        if tiny_tag.genre:
-            info_tags[self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE] = tiny_tag.genre
-        if tiny_tag.year:
-            info_tags[self.RiffTagKey.DATE] = str(tiny_tag.year)
-        if tiny_tag.track:
-            info_tags[self.RiffTagKey.TRACK_NUMBER] = str(tiny_tag.track)
+        # Map standard tags
+        tag_mapping = {
+            'title': self.RiffTagKey.TITLE,
+            'artist': self.RiffTagKey.ARTIST_NAME,
+            'album': self.RiffTagKey.ALBUM_NAME,
+            'genre': self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE,
+            'year': self.RiffTagKey.DATE,
+            'track': self.RiffTagKey.TRACK_NUMBER,
+            'comment': self.RiffTagKey.COMMENTS,
+        }
+
+        # Process standard tags
+        for tiny_tag_key, riff_key in tag_mapping.items():
+            value = getattr(tiny_tag, tiny_tag_key, None)
+            if value:
+                info_tags[riff_key] = str(value)
+
+        # Handle additional metadata if available
+        if hasattr(tiny_tag, 'extra'):
+            extra_tags = getattr(tiny_tag, 'extra', {})
+            for key, value in extra_tags.items():
+                if key in self.RiffTagKey and value:
+                    info_tags[key] = str(value)
 
         # Store the converted tags as a custom attribute
         setattr(wave, 'info', info_tags)
@@ -215,113 +228,133 @@ class RiffManager(RatingSupportingMetadataManager):
 
     def _update_not_using_mutagen_metadata(self, app_metadata: AppMetadata):
         """
-        Update metadata fields in the RIFF INFO chunk using a dictionary approach.
-        Since mutagen doesn't support writing RIFF metadata, we implement our own writer.
-        This method handles multiple metadata fields at once, removing existing tags
-        and writing new ones while maintaining proper chunk sizes and alignment.
+        Update metadata fields in the RIFF INFO chunk using an optimized chunk-based approach.
+        This implementation maintains RIFF specification compliance while providing better
+        performance and reliability for metadata updates.
+
+        Note: While TinyTag is excellent for reading metadata, it doesn't support writing.
+        Therefore, we implement our own RIFF chunk writer following the specification.
         """
         if not self.metadata_keys_direct_map_write:
             raise MetadataNotSupportedError("No writable metadata keys found")
 
-        # Read the entire file
+        # Read the entire file into a mutable bytearray
         self.audio_file.seek(0)
         file_data = bytearray(self.audio_file.read())
 
-        # Find the LIST INFO chunk
-        pos = 0
-        size = len(file_data)
-        info_chunk_start = 0
-        info_chunk_size = 0
-        has_info_chunk = False
+        # Skip any ID3v2 tags that might be present
+        skipped_data = self._skip_id3v2_tags(bytes(file_data))
+        file_data = bytearray(skipped_data)
 
-        while pos < size - 8:  # Need at least 8 bytes for chunk header
-            if file_data[pos:pos+4] == b'LIST' and file_data[pos+8:pos+12] == b'INFO':
-                info_chunk_start = pos
-                info_chunk_size = int.from_bytes(file_data[pos+4:pos+8], 'little')
-                has_info_chunk = True
-                break
-            pos += 1
+        # Find RIFF header and validate
+        if len(file_data) < 12 or bytes(file_data[:4]) != b'RIFF' or bytes(file_data[8:12]) != b'WAVE':
+            raise MetadataNotSupportedError("Invalid WAV file format")
 
-        # Create new INFO chunk if none exists
-        if not has_info_chunk:
-            # Find RIFF header size
-            riff_size = int.from_bytes(file_data[4:8], 'little')
-            # Insert after WAVE header
-            info_chunk_start = 12  # After RIFF+size+WAVE
-            info_chunk_size = 4  # Initial size just for 'INFO'
-            # Insert empty LIST INFO chunk
-            file_data[4:8] = (riff_size + info_chunk_size + 8).to_bytes(4, 'little')  # Update RIFF size
-            file_data[info_chunk_start:info_chunk_start] = b'LIST' + info_chunk_size.to_bytes(4, 'little') + b'INFO'
+        # Find or create LIST INFO chunk
+        info_chunk_start = self._find_info_chunk(file_data)
+        if info_chunk_start == -1:
+            info_chunk_start = self._create_info_chunk(file_data)
 
-        # Process each metadata field
+        # Process metadata updates
+        info_chunk_size = int.from_bytes(bytes(file_data[info_chunk_start+4:info_chunk_start+8]), 'little')
+
+        # Build new tags data
+        new_tags_data = bytearray()
         for app_key, value in app_metadata.items():
             if value is None or value == "":
                 continue
 
-            # Get corresponding RIFF tag from the map
-            riff_key = self.metadata_keys_direct_map_write.get(app_key)
+            # Get corresponding RIFF tag
+            riff_key = self._get_riff_key_for_metadata(app_key, value)
             if not riff_key:
-                if app_key == AppMetadataKey.GENRE_NAME:
-                    riff_key = self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE
-                    value = self._get_genre_code_from_name(str(value))
-                elif app_key == AppMetadataKey.RATING:
-                    riff_key = self.RiffTagKey.RATING
-                    app_rating = cast(int, value)
-                    value = self._convert_normalized_rating_to_file_rating(app_rating)
-                else:
-                    raise MetadataNotSupportedError(f"Metadata key not handled: {app_key}")
+                continue
 
-            # Remove existing tag if present
-            if has_info_chunk:
-                info_data_start = info_chunk_start + 12  # After LIST+size+INFO
-                info_data_end = info_data_start + info_chunk_size - 4  # -4 for 'INFO'
-                tag_pos = info_data_start
+            # Prepare tag value
+            value_bytes = self._prepare_tag_value(value, app_key)
+            if not value_bytes:
+                continue
 
-                while tag_pos < info_data_end - 8:  # Need at least 8 bytes for tag header
-                    tag_id = file_data[tag_pos:tag_pos+4].decode('ascii')
-                    tag_size = int.from_bytes(file_data[tag_pos+4:tag_pos+8], 'little')
-                    total_tag_size = 8 + ((tag_size + 1) & ~1)  # Include header and padding
+            # Create tag data with proper alignment
+            new_tags_data.extend(self._create_aligned_tag(riff_key, value_bytes))
 
-                    if tag_id == riff_key:
-                        # Remove the tag by shifting remaining data left
-                        file_data[tag_pos: tag_pos + info_chunk_size - total_tag_size] = file_data[tag_pos +
-                                                                                                   total_tag_size: tag_pos + info_chunk_size]
-                        # Update chunk sizes
-                        info_chunk_size -= total_tag_size
-                        file_data[info_chunk_start+4:info_chunk_start+8] = info_chunk_size.to_bytes(4, 'little')
-                        riff_size = int.from_bytes(file_data[4:8], 'little')
-                        file_data[4:8] = (riff_size - total_tag_size).to_bytes(4, 'little')
-                        break
+        # Create new INFO chunk
+        new_info_chunk = bytearray()
+        new_info_chunk.extend(b'LIST')
+        new_info_chunk.extend((len(new_tags_data) + 4).to_bytes(4, 'little'))  # +4 for 'INFO'
+        new_info_chunk.extend(b'INFO')
+        new_info_chunk.extend(new_tags_data)
 
-                    tag_pos += total_tag_size
+        # Replace old INFO chunk
+        file_data[info_chunk_start:info_chunk_start + info_chunk_size + 8] = new_info_chunk
 
-            # Convert value to string if it's a list
-            if isinstance(value, list):
-                value = value[0] if value else ""
+        # Update RIFF chunk size
+        total_size = len(file_data) - 8  # Exclude RIFF and size fields
+        file_data[4:8] = total_size.to_bytes(4, 'little')
 
-            # Convert to bytes, ensuring UTF-8 encoding
-            value_bytes = str(value).encode('utf-8')
-            # Add null terminator and pad to even length
-            value_bytes += b'\x00'
-            if len(value_bytes) % 2:
-                value_bytes += b'\x00'
-
-            # Create tag data
-            tag_data = riff_key.encode('ascii') + len(value_bytes).to_bytes(4, 'little') + value_bytes
-
-            # Insert at end of INFO chunk
-            insert_pos = info_chunk_start + 12 + info_chunk_size - 4  # After LIST+size+INFO
-            file_data[insert_pos:insert_pos] = tag_data
-
-            # Update chunk sizes
-            info_chunk_size += len(tag_data)
-            file_data[info_chunk_start+4:info_chunk_start+8] = info_chunk_size.to_bytes(4, 'little')
-            riff_size = int.from_bytes(file_data[4:8], 'little')
-            file_data[4:8] = (riff_size + len(tag_data)).to_bytes(4, 'little')
-
-        # Write back to file
+        # Write updated file
         self.audio_file.seek(0)
         self.audio_file.write(file_data)
+
+    def _find_info_chunk(self, file_data: bytearray) -> int:
+        """Find the LIST INFO chunk in the file data."""
+        pos = 12  # Start after RIFF header
+        while pos < len(file_data) - 8:
+            if (bytes(file_data[pos:pos+4]) == b'LIST' and
+                pos + 8 < len(file_data) and
+                    bytes(file_data[pos+8:pos+12]) == b'INFO'):
+                return pos
+            chunk_size = int.from_bytes(bytes(file_data[pos+4:pos+8]), 'little')
+            pos += 8 + ((chunk_size + 1) & ~1)  # Move to next chunk, maintaining alignment
+        return -1
+
+    def _create_info_chunk(self, file_data: bytearray) -> int:
+        """Create a new LIST INFO chunk after the WAVE header."""
+        info_chunk = bytearray(b'LIST\x04\x00\x00\x00INFO')  # Minimal INFO chunk
+        insert_pos = 12  # After RIFF+size+WAVE
+        file_data[insert_pos:insert_pos] = info_chunk
+        return insert_pos
+
+    def _get_riff_key_for_metadata(self, app_key: AppMetadataKey, value: AppMetadataValue) -> str | None:
+        """Get the appropriate RIFF tag key for the metadata."""
+        if not self.metadata_keys_direct_map_write:
+            return None
+
+        riff_key = self.metadata_keys_direct_map_write.get(app_key)
+        if not riff_key:
+            if app_key == AppMetadataKey.GENRE_NAME:
+                return self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE
+            elif app_key == AppMetadataKey.RATING:
+                return self.RiffTagKey.RATING
+        return riff_key
+
+    def _prepare_tag_value(self, value: AppMetadataValue, app_key: AppMetadataKey) -> bytes | None:
+        """Prepare the tag value for writing, handling special cases."""
+        if isinstance(value, list):
+            value = value[0] if value else ""
+
+        if app_key == AppMetadataKey.GENRE_NAME:
+            value = self._get_genre_code_from_name(str(value))
+        elif app_key == AppMetadataKey.RATING:
+            value = self._convert_normalized_rating_to_file_rating(cast(int, value))
+
+        if value is None:
+            return None
+
+        return str(value).encode('utf-8')
+
+    def _create_aligned_tag(self, tag_id: str, value_bytes: bytes) -> bytes:
+        """Create an aligned tag with proper padding."""
+        # Add null terminator
+        value_bytes = value_bytes + b'\x00'
+        # Pad to even length if needed
+        if len(value_bytes) % 2:
+            value_bytes = value_bytes + b'\x00'
+
+        return (
+            tag_id.encode('ascii') +
+            len(value_bytes).to_bytes(4, 'little') +
+            value_bytes
+        )
 
     def _get_genre_code_from_name(self, genre_name: str) -> int | None:
         for code, name in ID3V1_GENRE_CODE_MAP.items():
