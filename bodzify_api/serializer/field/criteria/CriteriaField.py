@@ -1,7 +1,6 @@
 from typing import Any
 
 from django.db.models.query import QuerySet
-from rest_framework.exceptions import ValidationError
 from rest_framework.relations import PrimaryKeyRelatedField
 
 from bodzify_api import settings
@@ -58,14 +57,17 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
                 self.fail('null')
             return None
 
-        # Try UUID first if enabled
-        if CriteriaFieldInputType.UUID in self.input_types and self.uuid_field:
-            try:
-                return self.uuid_field.to_internal_value(data)
-            except ValidationError:
-                pass  # Not a valid UUID or not found, try next input type
+        # Check if input looks like a UUID (basic format check)
+        looks_like_uuid = isinstance(data, str) and len(data.split('-')) == 5
 
-        # Try name if enabled
+        # If it looks like a UUID and UUID input is enabled
+        if looks_like_uuid:
+            if CriteriaFieldInputType.UUID in self.input_types and self.uuid_field is not None:
+                return self.uuid_field.to_internal_value(data)
+            else:
+                self.fail('invalid', detail='UUID input type is not enabled for this field.')
+
+        # If it doesn't look like a UUID, try name validation
         if CriteriaFieldInputType.NAME in self.input_types and self.char_field:
             validated_name = self.char_field.to_internal_value(data)
             model_class = self.get_queryset().model

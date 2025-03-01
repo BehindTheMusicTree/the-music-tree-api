@@ -29,6 +29,11 @@ class AppField(Field):
         'min_size': FieldValidationErrorCode.FILE_TOO_SMALL,
     }
 
+    invalid_message_validation_error_code_mapping: dict[str, FieldValidationErrorCode] = {
+        'Not a valid string.': FieldValidationErrorCode.INVALID_FORMAT,
+        'Invalid UUID format.': FieldValidationErrorCode.INVALID_FORMAT,
+    }
+
     def fail(self, key: str, **kwargs: Any) -> None:
         """
         Raise an AppValidationError with appropriate error code and message.
@@ -48,8 +53,8 @@ class AppField(Field):
             class_name = self.__class__.__name__
             msg = f"Invalid input for {class_name}."
 
-        if key == 'invalid' and msg == 'Not a valid string.':
-            code = FieldValidationErrorCode.INVALID_FORMAT
+        if key == 'invalid':
+            code = self.invalid_message_validation_error_code_mapping.get(msg, FieldValidationErrorCode.DEFAULT)
         else:
             code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)
 
