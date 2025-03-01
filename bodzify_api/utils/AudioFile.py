@@ -1,4 +1,5 @@
 
+import json
 import os
 import subprocess
 import tempfile
@@ -51,13 +52,53 @@ class AudioFile:
         return
 
     def get_duration(self) -> float:
+        """Get audio file duration in seconds. Handles potentially mislabeled files by trying multiple formats."""
         path = self.get_file_path_or_object()
+
         if self.file_extension == '.mp3':
-            audio = MP3(path)
-            return audio.info.length
+            try:
+                audio = MP3(path)
+                return audio.info.length
+            except Exception as exc:
+                # If MP3 fails, try other formats as fallback
+                try:
+                    return WAVE(path).info.length
+                except:
+                    try:
+                        return FLAC(path).info.length
+                    except:
+                        raise exc  # If all attempts fail, raise original MP3 error
+
         elif self.file_extension == '.wav':
-            audio = WAVE(path)
-            return audio.info.length
+            try:
+                # Use ffprobe to get duration, more tolerant of file format issues
+                result = subprocess.run([
+                    'ffprobe',
+                    '-v', 'quiet',
+                    '-print_format', 'json',
+                    '-show_format',
+                    '-show_streams',
+                    path
+                ], capture_output=True, text=True)
+
+                if result.returncode != 0:
+                    raise RuntimeError("Failed to probe audio file")
+
+                data = json.loads(result.stdout)
+                # Try format duration first, then stream duration if available
+                duration = float(data.get('format', {}).get('duration') or
+                                 next((s.get('duration') for s in data.get('streams', [])
+                                       if s.get('duration')), 0))
+
+                if duration <= 0:
+                    raise RuntimeError("Could not determine audio duration")
+
+                return duration
+            except json.JSONDecodeError:
+                raise RuntimeError("Failed to parse audio file metadata")
+            except Exception as exc:
+                raise RuntimeError(f"Failed to read WAV file duration: {str(exc)}")
+
         elif self.file_extension == '.flac':
             try:
                 return FLAC(path).info.length
@@ -79,10 +120,42 @@ class AudioFile:
                 return int((file_size * 8) / self.get_duration() / 1000)
             return 0
         elif self.file_extension == '.wav':
-            audio = WAVE(path)
-            # WAV bitrate = sample_rate * channels * bits_per_sample
-            return (audio.info.sample_rate * audio.info.channels *
-                    audio.info.bits_per_sample) // 1000
+            try:
+                # Use ffprobe to get audio stream information
+                result = subprocess.run([
+                    'ffprobe',
+                    '-v', 'quiet',
+                    '-print_format', 'json',
+                    '-show_streams',
+                    '-select_streams', 'a:0',  # Select first audio stream
+                    path
+                ], capture_output=True, text=True)
+
+                if result.returncode != 0:
+                    raise RuntimeError("Failed to probe audio file")
+
+                data = json.loads(result.stdout)
+                if not data.get('streams'):
+                    raise RuntimeError("No audio streams found")
+
+                stream = data['streams'][0]
+                # Get bitrate directly if available
+                if 'bit_rate' in stream:
+                    return int(stream['bit_rate']) // 1000
+
+                # Calculate from sample_rate * channels * bits_per_sample if no direct bitrate
+                sample_rate = int(stream.get('sample_rate', 0))
+                channels = int(stream.get('channels', 0))
+                bits_per_sample = int(stream.get('bits_per_raw_sample', 0) or stream.get('bits_per_sample', 0))
+
+                if not all([sample_rate, channels, bits_per_sample]):
+                    raise RuntimeError("Missing audio stream information")
+
+                return (sample_rate * channels * bits_per_sample) // 1000
+            except json.JSONDecodeError:
+                raise RuntimeError("Failed to parse audio file metadata")
+            except Exception as exc:
+                raise RuntimeError(f"Failed to read WAV file bitrate: {str(exc)}")
         elif self.file_extension == '.flac':
             audio = FLAC(path)
             # FLAC bitrate = sample_rate * channels * bits_per_sample

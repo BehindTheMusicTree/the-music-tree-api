@@ -119,7 +119,7 @@ class ApiTestCase(TestCase, Generic[T]):
     def _set_saved_lib_track_metadata(self, response):
         saved_lib_track: LibraryTrack = self.saved_object  # type: ignore
         self.saved_lib_track_metadata = \
-            audio_metadata.get_merged_app_metadata_dict(file=saved_lib_track.track_file.file)
+            audio_metadata.get_merged_app_metadata(file=saved_lib_track.track_file.file)
 
     # Defined here and not in LibTrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)

@@ -72,14 +72,13 @@ Legend:
 
 
 from bodzify_api.utils.audio_metadata.manager.rating_supporting.RiffManager import RiffManager
-from .utils.types import AppMetadataDict, AppMetadataValue
+from .utils.types import AppMetadata, AppMetadataValue
 from .utils.TagFormat import MetadataFormat
 from .utils.AppMetadataKey import AppMetadataKey
 from .manager.rating_supporting.VorbisManager import VorbisManager
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
-from mutagen._file import FileType
 
 from ..AudioFile import AudioFile
 from .manager.id3v1.Id3v1Manager import Id3v1Manager
@@ -143,15 +142,18 @@ def _get_metadata_managers(
     return managers
 
 
-def extract_raw_cleaned_metadata(file: FILE_TYPE, tag_format: MetadataFormat | None = None) -> FileType:
+def get_single_format_app_metadata(
+        file: FILE_TYPE, tag_format: MetadataFormat, normalized_rating_max_value: int | None = None) -> AppMetadata:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
 
-    return _get_metadata_manager(file, tag_format=tag_format).raw_mutagen_metadata
+    manager = _get_metadata_manager(
+        file=file, tag_format=tag_format, normalized_rating_max_value=normalized_rating_max_value)
+    return manager.get_app_metadata()
 
 
-def get_merged_app_metadata_dict(
-        file: FILE_TYPE, normalized_rating_max_value: int | None = None) -> dict[str, AppMetadataValue]:
+def get_merged_app_metadata(
+        file: FILE_TYPE, normalized_rating_max_value: int | None = None) -> AppMetadata:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
 
@@ -179,12 +181,12 @@ def get_specific_metadata(file: FILE_TYPE, app_metadata_key: AppMetadataKey) -> 
     return _get_metadata_manager(file).get_app_specific_metadata(app_metadata_key=app_metadata_key)
 
 
-def update_metadata(
-        file: FILE_TYPE, app_metadata_dict: AppMetadataDict, normalized_rating_max_value: int | None = None) -> None:
+def update_file_metadata(
+        file: FILE_TYPE, app_metadata_dict: AppMetadata, normalized_rating_max_value: int | None = None) -> None:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
     metadata_manager = _get_metadata_manager(file=file, normalized_rating_max_value=normalized_rating_max_value)
-    metadata_manager.update_bulk(app_metadata_dict=app_metadata_dict)
+    metadata_manager.update_file_metadata(app_metadata_dict=app_metadata_dict)
 
 
 def delete_metadata(file, tag_format: MetadataFormat | None = None) -> bool:

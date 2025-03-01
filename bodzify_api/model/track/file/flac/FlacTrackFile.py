@@ -18,7 +18,7 @@ class FlacTrackFile(TrackFile):
     md5_has_been_corrected = models.BooleanField(default=False)
 
     def _prepare_save(self, ctx) -> dict:
-        id3v2_tags = audio_metadata.extract_raw_cleaned_metadata(self.file, tag_format=MetadataFormat.ID3V2)
+        id3v2_tags = audio_metadata.get_single_format_app_metadata(self.file, tag_format=MetadataFormat.ID3V2)
         if id3v2_tags:
             if not audio_metadata.delete_metadata(self.file, MetadataFormat.ID3V2):
                 raise AppValidationException(

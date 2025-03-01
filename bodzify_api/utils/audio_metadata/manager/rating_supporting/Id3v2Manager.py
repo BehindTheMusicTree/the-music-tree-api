@@ -226,7 +226,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
             id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
             return id3  # type: ignore[return-value]
 
-    def _convert_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
+    def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys_and_multi_values(self) -> RawMetadataDict:
         raw_metadata_id3: ID3 = self.raw_mutagen_metadata  # type: ignore
         result = {}
 

@@ -18,4 +18,4 @@ names).
 AppMetadataValue = int | float | str | list[str] | None
 RawMetadataValue = list[int] | list[float] | list[str] | None
 RawMetadataDict = dict[RawMetadataKey, RawMetadataValue]
-AppMetadataDict = dict[AppMetadataKey, AppMetadataValue]
+AppMetadata = dict[AppMetadataKey, AppMetadataValue]

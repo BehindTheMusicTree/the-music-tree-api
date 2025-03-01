@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from ....AudioFile import AudioFile
 from ...utils.AppMetadataKey import AppMetadataKey
 from ...utils.rating_profiles import RatingReadProfile, RatingWriteProfile
-from ...utils.types import AppMetadataDict, AppMetadataValue, RawMetadataKey
+from ...utils.types import AppMetadata, AppMetadataValue, RawMetadataKey
 from ..MetadataManager import MetadataManager
 
 
@@ -21,12 +21,12 @@ class RatingSupportingMetadataManager(MetadataManager):
                  metadata_keys_direct_map_write: dict[AppMetadataKey, RawMetadataKey | None],
                  rating_write_profile: RatingWriteProfile,
                  normalized_rating_max_value: int | None,
-                 update_using_mutagen: bool = True):
+                 update_using_mutagen_metadata: bool = True):
 
         self.rating_write_profile = rating_write_profile
         self.normalized_rating_max_value = normalized_rating_max_value
         super().__init__(audio_file=audio_file,
-                         update_using_mutagen=update_using_mutagen,
+                         update_using_mutagen_metadata=update_using_mutagen_metadata,
                          metadata_keys_direct_map_read=metadata_keys_direct_map_read,
                          metadata_keys_direct_map_write=metadata_keys_direct_map_write)
 
@@ -76,7 +76,7 @@ class RatingSupportingMetadataManager(MetadataManager):
         else:
             return file_rating
 
-    def update_bulk(self, app_metadata_dict: AppMetadataDict):
+    def update_file_metadata(self, app_metadata_dict: AppMetadata):
         if AppMetadataKey.RATING in list(app_metadata_dict.keys()):
             value: int | None = app_metadata_dict[AppMetadataKey.RATING]  # type: ignore
             if value is None:
@@ -93,4 +93,4 @@ class RatingSupportingMetadataManager(MetadataManager):
                 except (TypeError, ValueError):
                     raise ValueError(f"Invalid rating value: {value}. Expected a numeric value.")
 
-        super().update_bulk(app_metadata_dict)
+        super().update_file_metadata(app_metadata_dict)
