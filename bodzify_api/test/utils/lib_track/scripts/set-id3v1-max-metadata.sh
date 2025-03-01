@@ -40,7 +40,7 @@ id3v2 \
     --year "$YEAR" \
     --track "$TRACK" \
     --genre "$GENRE" \
-    --v1 \
+    --id3v1-only \
     "$AUDIO_FILE"
 
 # Verify tags
