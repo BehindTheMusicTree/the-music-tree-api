@@ -334,8 +334,6 @@ class RiffManager(RatingSupportingMetadataManager):
 
         if app_key == AppMetadataKey.GENRE_NAME:
             value = self._get_genre_code_from_name(str(value))
-        elif app_key == AppMetadataKey.RATING:
-            value = self._convert_normalized_rating_to_file_rating(cast(int, value))
 
         if value is None:
             return None
