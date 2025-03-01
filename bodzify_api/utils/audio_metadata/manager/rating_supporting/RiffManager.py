@@ -126,50 +126,97 @@ class RiffManager(RatingSupportingMetadataManager):
             return data[10 + size:]
         return data
 
+    def _extract_riff_metadata_directly(self, file_data: bytes) -> dict[str, str]:
+        """
+        Manually extract metadata from RIFF chunks without relying on external libraries.
+        This method directly parses the RIFF structure to extract metadata from the INFO chunk.
+        """
+        info_tags: dict[str, str] = {}
+
+        # Skip ID3v2 if present
+        file_data = self._skip_id3v2_tags(file_data)
+
+        # Validate RIFF header
+        if len(file_data) < 12 or file_data[:4] != b'RIFF' or file_data[8:12] != b'WAVE':
+            return info_tags
+
+        pos = 12  # Start after RIFF header
+        while pos < len(file_data) - 8:
+            chunk_id = file_data[pos:pos + 4]
+            chunk_size = int.from_bytes(file_data[pos + 4:pos + 8], 'little')
+
+            if chunk_id == b'LIST' and pos + 12 <= len(file_data):
+                if file_data[pos + 8:pos + 12] == b'INFO':
+                    # Process INFO chunk
+                    info_pos = pos + 12
+                    info_end = pos + 8 + chunk_size
+
+                    while info_pos < info_end - 8:
+                        # Extract each metadata field
+                        field_id = file_data[info_pos:info_pos + 4].decode('ascii', errors='ignore')
+                        field_size = int.from_bytes(file_data[info_pos + 4:info_pos + 8], 'little')
+
+                        if field_size > 0 and info_pos + 8 + field_size <= info_end:
+                            # -1 to exclude null terminator
+                            field_data = file_data[info_pos + 8:info_pos + 8 + field_size - 1]
+                            try:
+                                field_value = field_data.decode('utf-8', errors='ignore').strip()
+                                if field_id in self.RiffTagKey and field_value:
+                                    info_tags[field_id] = field_value
+                            except UnicodeDecodeError:
+                                pass
+
+                        # Move to next field, maintaining alignment
+                        info_pos += 8 + ((field_size + 1) & ~1)
+                    break
+
+            # Move to next chunk, maintaining alignment
+            pos += 8 + ((chunk_size + 1) & ~1)
+
+        return info_tags
+
     def _extract_mutagen_metadata(self) -> MutagenMetadata:
         """
-        Extract RIFF metadata using TinyTag for optimized parsing, then convert to mutagen format.
-        TinyTag provides fast, memory-efficient metadata extraction and handles various tag formats.
-
-        Note: TinyTag is used here for its efficient reading capabilities, while our custom
-        RIFF writer handles the writing operations since TinyTag is read-only.
+        Extract RIFF metadata using direct parsing when TinyTag fails, then convert to mutagen format.
+        Falls back to manual RIFF parsing for in-memory files or when TinyTag fails.
         """
-        # Use TinyTag for optimized metadata extraction
-        tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object(), tags=True)
-
-        # Create mutagen WAVE object from the same data
         self.audio_file.seek(0)
         file_data = self.audio_file.read()
         wave = WAVE(io.BytesIO(file_data))
 
-        # Convert TinyTag metadata to RIFF INFO format with extended tag support
-        info_tags: dict[str, str] = {}
+        try:
+            # Try TinyTag first
+            tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object(), tags=True)
 
-        # Map standard tags
-        tag_mapping = {
-            'title': self.RiffTagKey.TITLE,
-            'artist': self.RiffTagKey.ARTIST_NAME,
-            'album': self.RiffTagKey.ALBUM_NAME,
-            'genre': self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE,
-            'year': self.RiffTagKey.DATE,
-            'track': self.RiffTagKey.TRACK_NUMBER,
-            'comment': self.RiffTagKey.COMMENTS,
-        }
+            # Convert TinyTag metadata to RIFF INFO format
+            info_tags: dict[str, str] = {}
+            tag_mapping = {
+                'title': self.RiffTagKey.TITLE,
+                'artist': self.RiffTagKey.ARTIST_NAME,
+                'album': self.RiffTagKey.ALBUM_NAME,
+                'genre': self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE,
+                'year': self.RiffTagKey.DATE,
+                'track': self.RiffTagKey.TRACK_NUMBER,
+                'comment': self.RiffTagKey.COMMENTS,
+            }
 
-        # Process standard tags
-        for tiny_tag_key, riff_key in tag_mapping.items():
-            value = getattr(tiny_tag, tiny_tag_key, None)
-            if value:
-                info_tags[riff_key] = str(value)
+            for tiny_tag_key, riff_key in tag_mapping.items():
+                value = getattr(tiny_tag, tiny_tag_key, None)
+                if value:
+                    info_tags[riff_key] = str(value)
 
-        # Handle additional metadata if available
-        if hasattr(tiny_tag, 'extra'):
-            extra_tags = getattr(tiny_tag, 'extra', {})
-            for key, value in extra_tags.items():
-                if key in self.RiffTagKey and value:
-                    info_tags[key] = str(value)
+            # Handle additional metadata
+            if hasattr(tiny_tag, 'extra'):
+                extra_tags = getattr(tiny_tag, 'extra', {})
+                for key, value in extra_tags.items():
+                    if key in self.RiffTagKey and value:
+                        info_tags[key] = str(value)
 
-        # Store the converted tags as a custom attribute
+        except Exception:
+            # Fall back to direct RIFF parsing if TinyTag fails
+            info_tags = self._extract_riff_metadata_directly(file_data)
+
+        # Store the metadata
         setattr(wave, 'info', info_tags)
         return wave
 

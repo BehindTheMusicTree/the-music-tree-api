@@ -1,106 +1,143 @@
 #!/bin/bash
 
-# Test file path
-FILE="$1"
-
-if [ -z "$FILE" ]; then
-    echo "Usage: ./set-riff-max-metadata.sh <filename>"
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <wav_file>"
     exit 1
 fi
 
-# Resolve the file path and check if file exists
-RESOLVED_FILE=$(readlink -f "$FILE")
-if [ ! -f "$RESOLVED_FILE" ]; then
-    echo "Error: File not found: $FILE"
+WAV_FILE="$1"
+TMP_FILE="${WAV_FILE}.tmp"
+
+# Validate input file
+if [ ! -f "$WAV_FILE" ]; then
+    echo "Error: File not found: $WAV_FILE"
     exit 1
 fi
 
-# Check if required tools are available
-for cmd in wavpack wvunpack; do
-    if ! command -v $cmd &> /dev/null; then
-        echo "Error: $cmd is required but not installed."
-        echo "Please install: wavpack"
-        exit 1
-    fi
-done
+# Check if it's a valid WAV file
+if ! head -c 4 "$WAV_FILE" | grep -q "RIFF"; then
+    echo "Error: Not a valid RIFF/WAV file"
+    exit 1
+fi
 
-# Maximum lengths for RIFF INFO chunks
-# These are conservative estimates based on common implementations
-MAX_TEXT=256    # Conservative max for text fields
-MAX_COMMENT=1024 # Longer text for comments
-MAX_URL=512     # URL length
-
-# Create max length strings for different fields
-# Using different characters for each field to make them distinguishable
-ARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-TITLE=$(printf 'b%.0s' $(seq 1 $MAX_TEXT))
-ALBUM=$(printf 'c%.0s' $(seq 1 $MAX_TEXT))
-COMMENT=$(printf 'd%.0s' $(seq 1 $MAX_COMMENT))
-GENRE=$(printf 'e%.0s' $(seq 1 $MAX_TEXT))
-COPYRIGHT=$(printf 'f%.0s' $(seq 1 $MAX_TEXT))
-SOFTWARE=$(printf 'g%.0s' $(seq 1 $MAX_TEXT))
-ENGINEER=$(printf 'h%.0s' $(seq 1 $MAX_TEXT))
-SOURCE=$(printf 'i%.0s' $(seq 1 $MAX_TEXT))
-KEYWORDS=$(printf 'j%.0s' $(seq 1 $MAX_TEXT))
-TECHNICIAN=$(printf 'k%.0s' $(seq 1 $MAX_TEXT))
-URL=$(printf 'l%.0s' $(seq 1 $MAX_URL))
-
-# Fixed length fields
+# Standard RIFF INFO metadata
+TITLE="Test Title"
+ARTIST="Test Artist"
+ALBUM="Test Album"
+GENRE="Rock"
 YEAR="2024"
-CREATION_DATE="2024-03-01"
-ARCHIVAL_LOCATION="TEST-ARCHIVE-001"
-MEDIUM="Digital Audio File"
-SUBJECT="Test Subject"
+COMMENT="Test Comment"
 
-echo "Setting metadata for: $RESOLVED_FILE"
+# Write 32-bit integer in little-endian
+write_int32_le() {
+    local VALUE=$1
+    local B0=$((VALUE & 255))
+    local B1=$(((VALUE >> 8) & 255))
+    local B2=$(((VALUE >> 16) & 255))
+    local B3=$(((VALUE >> 24) & 255))
+    printf "\\$(printf '%03o' $B0)"
+    printf "\\$(printf '%03o' $B1)"
+    printf "\\$(printf '%03o' $B2)"
+    printf "\\$(printf '%03o' $B3)"
+}
 
-# Create a temporary WavPack file
-TEMP_WV=$(mktemp).wv
-wavpack -w "IART=$ARTIST" \
-    -w "INAM=$TITLE" \
-    -w "IPRD=$ALBUM" \
-    -w "ICMT=$COMMENT" \
-    -w "IGNR=$GENRE" \
-    -w "ICOP=$COPYRIGHT" \
-    -w "ISFT=$SOFTWARE" \
-    -w "IENG=$ENGINEER" \
-    -w "ISRC=$SOURCE" \
-    -w "IKEY=$KEYWORDS" \
-    -w "ITCH=$TECHNICIAN" \
-    -w "ICRD=$CREATION_DATE" \
-    -w "IYER=$YEAR" \
-    -w "IARL=$ARCHIVAL_LOCATION" \
-    -w "IMED=$MEDIUM" \
-    -w "ISBJ=$SUBJECT" \
-    "$RESOLVED_FILE" -o "$TEMP_WV"
+# Write INFO tag
+write_info_tag() {
+    local ID=$1
+    local VALUE=$2
+    local LEN=${#VALUE}
+    local PADDED_LEN=$((LEN + (LEN % 2)))  # Ensure even length
+    
+    # Write chunk ID
+    printf "%s" "$ID"
+    
+    # Write chunk size (actual data length, not including padding)
+    write_int32_le "$LEN"
+    
+    # Write data
+    printf "%s" "$VALUE"
+    
+    # Add padding byte if needed
+    [ $((LEN % 2)) -eq 1 ] && printf "\0"
+}
 
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to write metadata"
-    rm -f "$TEMP_WV"
+# Create LIST chunk
+LIST_CHUNK=$(mktemp)
+trap 'rm -f "$LIST_CHUNK" "$TMP_FILE"' EXIT
+
+# Write LIST chunk content
+{
+    # Write INFO identifier
+    printf "INFO"
+    
+    # Write standard INFO tags
+    write_info_tag "INAM" "$TITLE"    # Name/Title
+    write_info_tag "IART" "$ARTIST"   # Artist
+    write_info_tag "IPRD" "$ALBUM"    # Product/Album
+    write_info_tag "IGNR" "$GENRE"    # Genre
+    write_info_tag "ICRD" "$YEAR"     # Creation date
+    write_info_tag "ICMT" "$COMMENT"  # Comment
+} > "$LIST_CHUNK"
+
+LIST_SIZE=$(stat -f%z "$LIST_CHUNK")
+
+# Create temporary file for audio data
+AUDIO_CHUNK=$(mktemp)
+trap 'rm -f "$LIST_CHUNK" "$TMP_FILE" "$AUDIO_CHUNK"' EXIT
+
+# Extract audio data (skip RIFF header and any existing metadata)
+{
+    # Copy WAVE header
+    dd if="$WAV_FILE" bs=1 skip=8 count=4 2>/dev/null
+    
+    # Find and copy fmt chunk
+    dd if="$WAV_FILE" bs=1 skip=12 2>/dev/null | (
+        while IFS= read -r -d '' -n 4 chunk_id; do
+            if [ "$chunk_id" = "fmt " ]; then
+                printf "%s" "$chunk_id"
+                dd bs=1 count=4 2>/dev/null | (
+                    read -r -d '' -n 4 size_bytes
+                    printf "%s" "$size_bytes"
+                    size=$(printf "%d" "0x${size_bytes}" 2>/dev/null)
+                    dd bs=1 count=$((size + (size % 2))) 2>/dev/null
+                )
+            elif [ "$chunk_id" = "data" ]; then
+                printf "%s" "$chunk_id"
+                dd 2>/dev/null
+                break
+            else
+                size_bytes=$(dd bs=1 count=4 2>/dev/null)
+                size=$(printf "%d" "0x${size_bytes}" 2>/dev/null)
+                dd bs=1 count=$((size + (size % 2))) 2>/dev/null >/dev/null
+            fi
+        done
+    )
+} > "$AUDIO_CHUNK"
+
+AUDIO_SIZE=$(stat -f%z "$AUDIO_CHUNK")
+TOTAL_SIZE=$((AUDIO_SIZE + LIST_SIZE + 8))  # +8 for LIST chunk header
+
+# Create new WAV file
+{
+    # Write RIFF header
+    printf "RIFF"
+    write_int32_le "$TOTAL_SIZE"
+    
+    # Write audio data (includes WAVE header, fmt chunk, and data chunk)
+    cat "$AUDIO_CHUNK"
+    
+    # Write LIST chunk
+    printf "LIST"
+    write_int32_le "$LIST_SIZE"
+    cat "$LIST_CHUNK"
+} > "$TMP_FILE"
+
+# Verify output
+if [ ! -s "$TMP_FILE" ]; then
+    echo "Error: Failed to create output file"
     exit 1
 fi
 
-# Convert back to WAV
-wvunpack "$TEMP_WV" -o "$RESOLVED_FILE"
-
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to convert back to WAV"
-    rm -f "$TEMP_WV"
-    exit 1
-fi
-
-# Clean up temporary file
-rm -f "$TEMP_WV"
-
-# Verification section
-echo -e "\nVerifying metadata using wvunpack:"
-wvunpack -s "$RESOLVED_FILE"
-
-# Additional verification for specific fields
-echo -e "\nVerifying specific fields:"
-for tag in IART INAM IPRD ICMT IGNR ICOP; do
-    echo -n "Checking $tag: "
-    wvunpack -s "$RESOLVED_FILE" | grep "$tag" || echo "Not found!"
-done
-
-echo -e "\nMetadata setting completed successfully!"
+# Replace original file
+mv "$TMP_FILE" "$WAV_FILE"
+echo "RIFF INFO tags written successfully"
