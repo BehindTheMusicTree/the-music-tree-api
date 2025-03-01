@@ -10,7 +10,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase, ForeignKeyBodyDataTestCase):
 
     def test_non_existing_then_400(self):
-        data = {PostFields.GENRE: 'a' * settings.UUID_LEN}
+        data = {PostFields.GENRE: '8adfc3f9-18f6-4f06-b3cb-e16d5032121w' * settings.UUID_LEN}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
