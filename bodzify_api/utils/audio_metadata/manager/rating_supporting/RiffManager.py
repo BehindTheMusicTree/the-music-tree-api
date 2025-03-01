@@ -246,7 +246,10 @@ class RiffManager(RatingSupportingMetadataManager):
         the code to a human-readable genre name.
         """
         if self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE in raw_clean_metadata:
-            raw_value = raw_clean_metadata[self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE]
+            raw_value_list = raw_clean_metadata[self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE]
+            if not raw_value_list or len(raw_value_list) == 0:
+                return None
+            raw_value = raw_value_list[0]
             if isinstance(raw_value, str):
                 return raw_value
             else:
