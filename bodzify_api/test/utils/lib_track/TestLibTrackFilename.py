@@ -49,6 +49,7 @@ class TestLibTrackFilename(str, Enum):
     METADATA_MAX_A_VORBIS_FLAC = "metadata=max a_vorbis.flac"
     METADATA_MAX_A_ID3V2_WAV = "metadata=max a_id3v2.wav"
     METADATA_MAX_A_ID3v2_MP3 = "metadata=max a_id3v2.mp3"
+    METADATA_MAX_A_RIFF_A = "metadata=max a_riff.wav"
 
     METADATA_NONE_FLAC = "metadata=none.flac"
     METADATA_NONE_MP3 = "metadata=none.mp3"

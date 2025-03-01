@@ -19,26 +19,33 @@ if ! head -c 4 "$WAV_FILE" | grep -q "RIFF"; then
     exit 1
 fi
 
-# Standard RIFF INFO metadata values
-TITLE="Test Title"
-ARTIST="Test Artist"
-ALBUM="Test Album"
-GENRE="Rock"
-YEAR="2024"
-COMMENT="Test Comment"
+# Generate a string of 'a' characters for maximum length testing
+MAX_STRING=$(printf 'a%.0s' {1..256})
 
-# Use bwfmetaedit to set all metadata fields
+# Use bwfmetaedit to set all available RIFF INFO metadata fields
 bwfmetaedit \
-    --INAM="$TITLE" \
-    --IART="$ARTIST" \
-    --IPRD="$ALBUM" \
-    --IGNR="$GENRE" \
-    --ICRD="$YEAR" \
-    --ICMT="$COMMENT" \
+    --INAM="$MAX_STRING" \
+    --IART="$MAX_STRING" \
+    --IPRD="$MAX_STRING" \
+    --IGNR="$MAX_STRING" \
+    --ICRD="$MAX_STRING" \
+    --ICMT="$MAX_STRING" \
+    --ISFT="$MAX_STRING" \
+    --ICOP="$MAX_STRING" \
+    --IENG="$MAX_STRING" \
+    --ITCH="$MAX_STRING" \
+    --ISRC="$MAX_STRING" \
+    --ISBJ="$MAX_STRING" \
+    --IKEY="$MAX_STRING" \
+    --IMED="$MAX_STRING" \
+    --ICMS="$MAX_STRING" \
+    --ITRK="$MAX_STRING" \
+    --IARL="$MAX_STRING" \
+    --ILOC="$MAX_STRING" \
     "$WAV_FILE"
 
 if [ $? -eq 0 ]; then
-    echo "RIFF INFO tags written successfully"
+    echo "All RIFF INFO tags written successfully with maximum length values"
 else
     echo "Error: Failed to write RIFF INFO tags"
     exit 1
