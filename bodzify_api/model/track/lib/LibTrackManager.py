@@ -280,9 +280,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             os.chmod(track_temp_file.name, os.stat.S_IRWXU | os.stat.S_IRWXG | os.stat.S_IROTH | os.stat.S_IXOTH)
 
             post_data = self._get_post_data_from_extract_data(**kwargs)
-            post_data[PostFields.TRACK_FILE_PUBLIC] = AppDjangoFile(file=track_temp_file,
-                                                                    name=track_filename,
-                                                                    file_abs_path=track_temp_file.name)
+            post_data[PostFields.TRACK_FILE_PUBLIC] = AppDjangoFile(
+                file=track_temp_file, name=track_filename, file_abs_path=track_temp_file.name)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
             return self._get_model_data_from_post_data(post_data=post_data)

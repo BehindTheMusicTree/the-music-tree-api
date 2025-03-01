@@ -52,13 +52,6 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
         if self.uuid_field:
             self.uuid_field.bind(field_name, parent)
 
-    def get_queryset(self) -> QuerySet:
-        queryset = super().get_queryset()
-        request = self.context.get('request')
-        if request and request.user:
-            return queryset.filter(user=request.user)
-        return queryset
-
     def to_internal_value(self, data: Any) -> Any:
         if data in [None, '']:
             if not self._allow_null:
@@ -75,7 +68,9 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
         # Try name if enabled
         if CriteriaFieldInputType.NAME in self.input_types and self.char_field:
             validated_name = self.char_field.to_internal_value(data)
-            return self.get_queryset().get_or_create(name=validated_name)[0]
+            model_class = self.get_queryset().model
+            user = self.context['request'].user
+            return model_class.objects.get_or_create(user=user, name=validated_name)[0]
 
         self.fail('invalid', detail='Field must be a valid UUID or name.')
 
