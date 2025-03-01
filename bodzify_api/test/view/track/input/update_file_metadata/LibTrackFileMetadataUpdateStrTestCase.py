@@ -2,7 +2,6 @@
 
 from rest_framework import status
 
-from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.input.update_file_metadata.LibTrackFileMetadataUpdateTestCase import LibTrackFileMetadataUpdateTestCase
 
 
@@ -11,19 +10,6 @@ class LibTrackFileMetadataUpdateStrTestCase(LibTrackFileMetadataUpdateTestCase):
     VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
 
     length_max: int
-
-    def setUp(self):
-        super().setUp()
-        self.file_extension_metadata_none_test_lib_track_mapping = {
-            '.mp3': TestLibTrackFilename.METADATA_NONE_MP3,
-            '.flac': TestLibTrackFilename.METADATA_NONE_FLAC,
-            '.wav': TestLibTrackFilename.METADATA_NONE_WAV
-        }
-        self.file_extension_metadata_max_a_test_lib_track_mapping = {
-            '.mp3': TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3,
-            '.flac': TestLibTrackFilename.METADATA_MAX_A_ID3V2_FLAC,
-            '.wav': TestLibTrackFilename.METADATA_MAX_A_ID3V2_WAV
-        }
 
     def _test_value(self,
                     value: str | None,
