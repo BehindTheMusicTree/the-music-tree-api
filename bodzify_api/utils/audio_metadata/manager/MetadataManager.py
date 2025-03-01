@@ -1,5 +1,6 @@
 
 from abc import abstractmethod
+import datetime
 from typing import TypeVar, cast
 
 from mutagen._file import FileType as MutagenMetadata
@@ -131,6 +132,7 @@ class MetadataManager:
         raise ImproperlyConfigured(f'Unsupported metadata type: {app_metadata_key_optional_type}')
 
     def update_file_metadata(self, app_metadata: AppMetadata):
+        print('update_file_metadata start', datetime.datetime.now())
         if not self.metadata_keys_direct_map_write:
             raise MetadataNotSupportedError('This format does not support metadata modification')
 
@@ -154,6 +156,7 @@ class MetadataManager:
                         self._update_undirectly_mapped_metadata(
                             app_metadata_value=app_metadata_value, app_metadata_key=app_metadata_key)
             self.raw_mutagen_metadata.save(self.audio_file.get_file_path_or_object())
+        print('update_file_metadata end', datetime.datetime.now())
 
     def delete_metadata(self) -> bool:
         if self.raw_mutagen_metadata is None:

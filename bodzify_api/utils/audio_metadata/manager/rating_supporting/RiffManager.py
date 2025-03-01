@@ -3,7 +3,7 @@ from typing import cast
 
 from mutagen._file import FileType as MutagenMetadata
 from mutagen.wave import WAVE
-
+from tinytag import TinyTag
 
 from ....AudioFile import AudioFile
 from ...exceptions import MetadataNotSupportedError
@@ -126,54 +126,35 @@ class RiffManager(RatingSupportingMetadataManager):
 
     def _extract_mutagen_metadata(self) -> MutagenMetadata:
         """
-        Extract RIFF metadata by directly reading the INFO chunk.
-        WAVE/RIFF files are structured as:
-        'RIFF' + size + 'WAVE' + chunks, where each chunk is:
-        FourCC + size + data
-        We look for the LIST chunk containing INFO data.
-
-        If ID3v2 tags are present at the start of the file, they are skipped
-        to get to the RIFF data.
+        Extract RIFF metadata using TinyTag for faster parsing, then convert to mutagen format.
+        TinyTag is optimized for quick metadata extraction and handles ID3 tags automatically.
         """
+
+        # Use TinyTag for fast metadata extraction
+        tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object())  # TinyTag is already optimized for WAV files
+
+        # Create mutagen WAVE object from the same data
         self.audio_file.seek(0)
         file_data = self.audio_file.read()
+        wave = WAVE(io.BytesIO(file_data))
 
-        # Skip ID3v2 tags if present
-        riff_data = self._skip_id3v2_tags(file_data)
-        if not riff_data.startswith(b'RIFF'):
-            raise ValueError("Invalid WAV file: no RIFF header found after ID3 tags")
-
-        wave = WAVE(io.BytesIO(riff_data))
-
-        # Store INFO chunk data in a custom attribute
+        # Convert TinyTag metadata to RIFF INFO format
         info_tags: dict[str, str] = {}
 
-        # Parse RIFF chunks directly since mutagen doesn't expose all metadata
-        print('starting to parse')
-        pos = 0
-        size = len(riff_data)
-        while pos < size - 8:  # Need at least 8 bytes for chunk header
-            if riff_data[pos:pos+4] == b'LIST' and riff_data[pos+8:pos+12] == b'INFO':
-                info_size = int.from_bytes(riff_data[pos+4:pos+8], 'little')
-                info_data = riff_data[pos+12:pos+12+info_size-4]  # -4 for 'INFO'
+        if tiny_tag.title:
+            info_tags[self.RiffTagKey.TITLE] = tiny_tag.title
+        if tiny_tag.artist:
+            info_tags[self.RiffTagKey.ARTIST_NAME] = tiny_tag.artist
+        if tiny_tag.album:
+            info_tags[self.RiffTagKey.ALBUM_NAME] = tiny_tag.album
+        if tiny_tag.genre:
+            info_tags[self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE] = tiny_tag.genre
+        if tiny_tag.year:
+            info_tags[self.RiffTagKey.DATE] = str(tiny_tag.year)
+        if tiny_tag.track:
+            info_tags[self.RiffTagKey.TRACK_NUMBER] = str(tiny_tag.track)
 
-                # Parse INFO chunk tags
-                tag_pos = 0
-                while tag_pos < len(info_data) - 8:
-                    tag_id = info_data[tag_pos:tag_pos+4].decode('ascii')
-                    tag_size = int.from_bytes(info_data[tag_pos+4:tag_pos+8], 'little')
-                    tag_data = info_data[tag_pos+8:tag_pos+8+tag_size].decode('utf-8').rstrip('\x00')
-
-                    # Store in our custom dict
-                    info_tags[tag_id] = tag_data
-
-                    # Move to next tag (aligned to word boundary)
-                    tag_pos += 8 + ((tag_size + 1) & ~1)
-                break
-            pos += 1
-        print('done parsing')
-
-        # Store the parsed INFO tags as a custom attribute
+        # Store the converted tags as a custom attribute
         setattr(wave, 'info', info_tags)
         return wave
 
@@ -224,13 +205,13 @@ class RiffManager(RatingSupportingMetadataManager):
         return cast(int, raw_rating), True
 
     def _get_undirectly_mapped_metadata_value_other_than_rating_from_raw_clean_metadata(
-            self, key: AppMetadataKey, raw_clean_metadata: RawMetadataDict) -> AppMetadataValue:
+            self, app_metadata_key: AppMetadataKey, raw_clean_metadata: RawMetadataDict) -> AppMetadataValue:
 
-        if key == AppMetadataKey.GENRE_NAME:
+        if app_metadata_key == AppMetadataKey.GENRE_NAME:
             genre_name = self._get_genre_name_from_raw_clean_metadata(raw_clean_metadata)
             return [genre_name] if genre_name else None
         else:
-            raise MetadataNotSupportedError(f'Metadata key not handled: {key}')
+            raise MetadataNotSupportedError(f'Metadata key not handled: {app_metadata_key}')
 
     def _update_not_using_mutagen_metadata(self, app_metadata: AppMetadata):
         """
