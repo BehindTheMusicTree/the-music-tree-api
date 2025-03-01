@@ -28,7 +28,7 @@ Metadata Support by Format:
 | Album Artist    |              |   ✓ (~8M)      |    ✓ (~8M)    |               |    ✓ (255)     |
 | Genre           |✓ (1#) or str |   ✓ (~8M)      |    ✓ (~8M)    |  ✓ (~1M#)     |    ✓ (255)     |
 | Release Date    |    ✓ (4)     |    ✓ (10)      |    ✓ (10)     |   ✓ (10)      |      (10)      |
-| Track Number    |    ✓ (1#)    |    ✓ (0-255#)  |   ✓ (Unlim#)  |  ✓ (Unlim#)   |    ✓ (0-999#)  |
+| Track Number    |    ✓ (1#)    |    ✓ (0-255#)  |   ✓ (Unlim#)  |  ✓ (Unlim#)   |     (0-999#)  |
 | Rating          |              |    ✓ (0-255#)  |    ✓ (0-100#) |               |    ✓ (0-10#)   |
 | BPM             |              |    ✓ (0-65535#)|   ✓ (0-65535#)|               |      (0-999#)  |
 | Language        |              |    ✓ (3)       |    ✓ (3)      |               |    ✓ (3)       |
