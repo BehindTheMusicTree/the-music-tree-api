@@ -1,4 +1,7 @@
+import contextlib
 import io
+import logging
+import os
 from typing import cast
 
 from mutagen._file import FileType as MutagenMetadata
@@ -74,6 +77,9 @@ class RiffManager(RatingSupportingMetadataManager):
         TECHNICIAN = 'ITCH'  # Technician who worked on the track
 
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: None | int = None):
+        # Suppress TinyTag prints at initialization
+        logging.getLogger('tinytag').setLevel(logging.ERROR)
+
         metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES: self.RiffTagKey.ARTIST_NAME,
@@ -175,6 +181,13 @@ class RiffManager(RatingSupportingMetadataManager):
 
         return info_tags
 
+    @contextlib.contextmanager
+    def _suppress_output(self):
+        """Context manager to suppress all output including direct prints."""
+        with open(os.devnull, 'w') as devnull:
+            with contextlib.redirect_stdout(devnull), contextlib.redirect_stderr(devnull):
+                yield
+
     def _extract_mutagen_metadata(self) -> MutagenMetadata:
         """
         Extract RIFF metadata using direct parsing when TinyTag fails, then convert to mutagen format.
@@ -185,8 +198,9 @@ class RiffManager(RatingSupportingMetadataManager):
         wave = WAVE(io.BytesIO(file_data))
 
         try:
-            # Try TinyTag first
-            tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object(), tags=True)
+            # Try TinyTag first with all output suppressed
+            with self._suppress_output():
+                tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object(), tags=True)
 
             # Convert TinyTag metadata to RIFF INFO format
             info_tags: dict[str, str] = {}
@@ -252,9 +266,8 @@ class RiffManager(RatingSupportingMetadataManager):
             self, app_metadata_key: AppMetadataKey, raw_clean_metadata: RawMetadataDict) -> AppMetadataValue:
 
         if app_metadata_key == AppMetadataKey.GENRE_NAME:
-            genre_name = self._get_genre_name_from_raw_clean_metadata_id3v1(
+            return self._get_genre_name_from_raw_clean_metadata_id3v1(
                 raw_clean_metadata=raw_clean_metadata, raw_metadata_ket=self.RiffTagKey.GENRE_NAME_OR_CODE)
-            return [genre_name] if genre_name else None
         else:
             raise MetadataNotSupportedError(f'Metadata key not handled: {app_metadata_key}')
 
