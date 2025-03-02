@@ -38,9 +38,9 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.genre.name == 'a' * settings.CRITERIA_NAME_LEN_MAX
 
     def test_id3v1_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.GENRE_ID3V1_A_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre
-        assert len(self.saved_object.genre.name) == settings.CRITERIA_NAME_LEN_MAX
-        assert self.saved_object.genre.name == 'a' * settings.CRITERIA_NAME_LEN_MAX
+        assert len(self.saved_object.genre.name) == settings.CRITERIA_NAME_LEN_MAX_ID3v1
+        assert self.saved_object.genre.name == 'a' * settings.CRITERIA_NAME_LEN_MAX_ID3v1
