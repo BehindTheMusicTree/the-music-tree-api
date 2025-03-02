@@ -79,7 +79,7 @@ class Id3v1RawMetadata(FileType):
         if tag.year:
             self.tags[Id3v1RawMetadataKey.YEAR] = [tag.year]
         if tag.genre_code:
-            self.tags[Id3v1RawMetadataKey.GENRE_CODE] = [str(tag.genre_code)]
+            self.tags[Id3v1RawMetadataKey.GENRE_CODE_OR_NAME] = [str(tag.genre_code)]
         if tag.track_number and tag.track_number != 0:
             self.tags[Id3v1RawMetadataKey.TRACK_NUMBER] = [str(tag.track_number)]
         if tag.comment:

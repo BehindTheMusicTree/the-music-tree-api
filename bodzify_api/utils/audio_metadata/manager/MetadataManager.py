@@ -8,6 +8,7 @@ from mutagen._file import FileType as MutagenMetadata
 from django.core.exceptions import ImproperlyConfigured
 
 from bodzify_api.utils.AudioFile import AudioFile
+from bodzify_api.utils.audio_metadata.utils.id3v1_genre_code_map import ID3V1_GENRE_CODE_MAP
 
 from ..exceptions import MetadataNotSupportedError
 from ..utils.AppMetadataKey import AppMetadataKey
@@ -82,6 +83,25 @@ class MetadataManager:
                 raw_metadata_value if isinstance(raw_metadata_value, list) else [raw_metadata_value]
 
         return raw_clean_metadata
+
+    def _get_genre_name_from_raw_clean_metadata_id3v1(
+            self, raw_clean_metadata: RawMetadataDict, raw_metadata_ket: RawMetadataKey) -> str | None:
+        """
+        RIFF and ID3v1 files typically contain a genre code.
+        that corresponds to the ID3v1 genre list. This method converts
+        the code to a human-readable genre name.
+        """
+        if raw_metadata_ket in raw_clean_metadata:
+            raw_value_list = raw_clean_metadata.get(raw_metadata_ket)
+            if not raw_value_list or len(raw_value_list) == 0:
+                return None
+            raw_value = raw_value_list[0]
+            try:
+                genre_code_or_name = int(cast(int, raw_value))
+                return ID3V1_GENRE_CODE_MAP.get(genre_code_or_name)
+            except ValueError:
+                return cast(str, genre_code_or_name)
+        return None
 
     def get_app_metadata(self) -> AppMetadata:
         if self.raw_clean_metadata is None:

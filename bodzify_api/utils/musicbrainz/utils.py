@@ -34,7 +34,7 @@ def get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_record
     earliest_release_date = None
     for releasegroup in musicbrainz_recording_dict.get(ApiFields.Names.RELEASEGROUPS, []):
         for release in releasegroup.get(ApiFields.Names.RELEASES, []):
-            current_release_date = release.get(ApiFields.Names.DATE, None)
+            current_release_date = release.get(ApiFields.Names.DATE)
             if current_release_date:
                 year = current_release_date.get(ApiFields.Names.YEAR)
                 month_or_12 = current_release_date.get(ApiFields.Names.MONTH, 12)
@@ -66,8 +66,8 @@ def create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_id: st
     defaults = {MusicbrainzRecordingFields.SCORE: musicbrainz_recording_dict[ApiFields.Names.SCORE],
                 MusicbrainzRecordingFields.TITLE: musicbrainz_recording_dict[ApiFields.Names.TITLE],
                 MusicbrainzRecordingFields.DURATION_IN_SEC: musicbrainz_recording_dict.get(
-                    ApiFields.Names.DURATION_IN_SEC, None),
-                MusicbrainzRecordingFields.RELEASE_DATE: earliest_release_date, }
+                    ApiFields.Names.DURATION_IN_SEC),
+                MusicbrainzRecordingFields.RELEASE_DATE: earliest_release_date}
     musicbrainz_recording: MusicbrainzRecording
     musicbrainz_recording, _ = MusicbrainzRecording.objects.get_or_create(musicbrainz_id=musicbrainz_recording_id,
                                                                           defaults=defaults)

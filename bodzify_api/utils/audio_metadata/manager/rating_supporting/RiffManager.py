@@ -59,7 +59,7 @@ class RiffManager(RatingSupportingMetadataManager):
         TITLE = 'INAM'
         ARTIST_NAME = 'IART'
         ALBUM_NAME = 'IPRD'
-        GENRE_NAME_OR_ID3V1_CODE = 'IGNR'
+        GENRE_NAME_OR_CODE = 'IGNR'
         DATE = 'ICRD'  # Creation/Release date
         TRACK_NUMBER = 'IPRT'
 
@@ -194,7 +194,7 @@ class RiffManager(RatingSupportingMetadataManager):
                 'title': self.RiffTagKey.TITLE,
                 'artist': self.RiffTagKey.ARTIST_NAME,
                 'album': self.RiffTagKey.ALBUM_NAME,
-                'genre': self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE,
+                'genre': self.RiffTagKey.GENRE_NAME_OR_CODE,
                 'year': self.RiffTagKey.DATE,
                 'track': self.RiffTagKey.TRACK_NUMBER,
                 'comment': self.RiffTagKey.COMMENTS,
@@ -239,27 +239,6 @@ class RiffManager(RatingSupportingMetadataManager):
 
         return raw_metadata_dict
 
-    def _get_genre_name_from_raw_clean_metadata(self, raw_clean_metadata: RawMetadataDict) -> str | None:
-        """
-        The IGNR tag in RIFF files typically contains a genre code
-        that corresponds to the ID3v1 genre list. This method converts
-        the code to a human-readable genre name.
-        """
-        if self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE in raw_clean_metadata:
-            raw_value_list = raw_clean_metadata[self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE]
-            if not raw_value_list or len(raw_value_list) == 0:
-                return None
-            raw_value = raw_value_list[0]
-            if isinstance(raw_value, str):
-                return raw_value
-            else:
-                try:
-                    genre_code = int(cast(int, raw_value))
-                    return ID3V1_GENRE_CODE_MAP.get(genre_code, None)
-                except ValueError:
-                    return None
-        return None
-
     def _get_raw_rating_by_traktor_or_not(self, raw_clean_metadata: RawMetadataDict) -> tuple[int | None, bool]:
         if not self.RiffTagKey.RATING in raw_clean_metadata:
             return None, False
@@ -273,7 +252,8 @@ class RiffManager(RatingSupportingMetadataManager):
             self, app_metadata_key: AppMetadataKey, raw_clean_metadata: RawMetadataDict) -> AppMetadataValue:
 
         if app_metadata_key == AppMetadataKey.GENRE_NAME:
-            genre_name = self._get_genre_name_from_raw_clean_metadata(raw_clean_metadata)
+            genre_name = self._get_genre_name_from_raw_clean_metadata_id3v1(
+                raw_clean_metadata=raw_clean_metadata, raw_metadata_ket=self.RiffTagKey.GENRE_NAME_OR_CODE)
             return [genre_name] if genre_name else None
         else:
             raise MetadataNotSupportedError(f'Metadata key not handled: {app_metadata_key}')
@@ -372,7 +352,7 @@ class RiffManager(RatingSupportingMetadataManager):
         riff_key = self.metadata_keys_direct_map_write.get(app_key)
         if not riff_key:
             if app_key == AppMetadataKey.GENRE_NAME:
-                return self.RiffTagKey.GENRE_NAME_OR_ID3V1_CODE
+                return self.RiffTagKey.GENRE_NAME_OR_CODE
             elif app_key == AppMetadataKey.RATING:
                 return self.RiffTagKey.RATING
         return riff_key

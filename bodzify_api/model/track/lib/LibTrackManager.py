@@ -105,7 +105,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             title = filename_without_expressions_to_exclude
         return title
 
-    def _get_schema_data_from_file(self, file):
+    def _get_schema_data_from_file(self, file, user: User):
         try:
             app_merged_metadata_dict = audio_metadata.get_merged_app_metadata(
                 file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
@@ -121,9 +121,13 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                   AppMetadataKey.ARTISTS_NAMES,
                   AppMetadataKey.ALBUM_NAME,
                   AppMetadataKey.ALBUM_ARTISTS_NAMES,
-                  AppMetadataKey.GENRE_NAME,
                   AppMetadataKey.RATING,
                   AppMetadataKey.LANGUAGE])
+
+        genre_name = app_merged_metadata_dict.get(AppMetadataKey.GENRE_NAME)
+        if genre_name:
+            from bodzify_api.model.criteria.children.genre.Genre import Genre
+            schema_data_with_potential_none[Fields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[0]
 
         metadata_max_lengths = {
             AppMetadataKey.TITLE: settings.LIB_TRACK_TITLE_LEN_MAX,
@@ -223,7 +227,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_schema_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
         file = post_data[PostFields.TRACK_FILE_PUBLIC]
-        schema_data_from_file = self._get_schema_data_from_file(file=file)
+        schema_data_from_file = self._get_schema_data_from_file(file=file, user=post_data[Fields.USER])
 
         schema_data = schema_data_from_file.copy()
         keys = [Fields.USER,

@@ -5,7 +5,6 @@ from mutagen._file import FileType as MutagenMetadata
 from ....AudioFile import AudioFile
 from ...exceptions import FileCorruptedError, MetadataNotSupportedError
 from ...utils.AppMetadataKey import AppMetadataKey
-from ...utils.id3v1_genre_code_map import ID3V1_GENRE_CODE_MAP
 from ...utils.types import AppMetadataValue, RawMetadataDict
 from ..MetadataManager import MetadataManager
 from .Id3v1RawMetadata import Id3v1RawMetadata
@@ -88,16 +87,9 @@ class Id3v1Manager(MetadataManager):
     def _get_undirectly_mapped_metadata_value_from_raw_clean_metadata(
             self, raw_clean_metadata: RawMetadataDict, app_metadata_key: AppMetadataKey) -> AppMetadataValue:
         if app_metadata_key == AppMetadataKey.GENRE_NAME:
-            return self._get_genre_name(raw_clean_metadata)
+            return self._get_genre_name_from_raw_clean_metadata_id3v1(
+                raw_clean_metadata=raw_clean_metadata, raw_metadata_ket=Id3v1RawMetadataKey.GENRE_CODE_OR_NAME)
         raise MetadataNotSupportedError(f'{app_metadata_key} metadata is not undirectly handled')
-
-    def _get_genre_name(self, raw_clean_metadata: RawMetadataDict) -> str | None:
-        genre_codes = raw_clean_metadata.get(Id3v1RawMetadataKey.GENRE_CODE)
-        if not genre_codes:
-            return None
-
-        genre_code: int | None = int(genre_codes[0])
-        return None if not 0 <= genre_code < len(ID3V1_GENRE_CODE_MAP) else ID3V1_GENRE_CODE_MAP.get(genre_code)
 
     def _update_undirectly_mapped_metadata(self, app_metadata_value: AppMetadataValue,
                                            app_metadata_key: AppMetadataKey,

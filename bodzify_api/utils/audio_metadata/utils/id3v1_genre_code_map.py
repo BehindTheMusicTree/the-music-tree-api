@@ -4,6 +4,7 @@ This is the complete standard genre map used by both ID3v1 and RIFF formats.
 Genres 0-79 are from the original ID3v1 spec.
 Genres 80-125 were added by Winamp.
 Genres 126-147 were added by other players.
+Genres 148-191 were added in Winamp 5.6 (November 2010).
 """
 
 ID3V1_GENRE_CODE_MAP = {
@@ -37,7 +38,7 @@ ID3V1_GENRE_CODE_MAP = {
     89: "Bluegrass", 90: "Avantgarde", 91: "Gothic Rock",
     92: "Progressive Rock", 93: "Psychedelic Rock", 94: "Symphonic Rock",
     95: "Slow Rock", 96: "Big Band", 97: "Chorus",
-    98: "Easy listening", 99: "Acoustic", 100: "Humour",
+    98: "Easy Listening", 99: "Acoustic", 100: "Humour",
     101: "Speech", 102: "Chanson", 103: "Opera",
     104: "Chamber Music", 105: "Sonata", 106: "Symphony",
     107: "Booty Bass", 108: "Primus", 109: "Porn Groove",
@@ -56,5 +57,21 @@ ID3V1_GENRE_CODE_MAP = {
     141: "Christian Rock", 142: "Merengue", 143: "Salsa",
     144: "Thrash Metal", 145: "Anime", 146: "JPop",
     147: "Synthpop",
+    # Winamp 5.6 extensions (November 2010)
+    148: "Christmas", 149: "Art Rock", 150: "Baroque",
+    151: "Bhangra", 152: "Big Beat", 153: "Breakbeat",
+    154: "Chillout", 155: "Downtempo", 156: "Dub",
+    157: "EBM", 158: "Eclectic", 159: "Electro",
+    160: "Electroclash", 161: "Emo", 162: "Experimental",
+    163: "Garage", 164: "Global", 165: "IDM",
+    166: "Illbient", 167: "Industro-Goth", 168: "Jam Band",
+    169: "Krautrock", 170: "Leftfield", 171: "Lounge",
+    172: "Math Rock", 173: "New Romantic", 174: "Nu-Breakz",
+    175: "Post-Punk", 176: "Post-Rock", 177: "Psytrance",
+    178: "Shoegaze", 179: "Space Rock", 180: "Trop Rock",
+    181: "World Music", 182: "Neoclassical", 183: "Audiobook",
+    184: "Audio Theatre", 185: "Neue Deutsche Welle", 186: "Podcast",
+    187: "Indie Rock", 188: "G-Funk", 189: "Dubstep",
+    190: "Garage Rock", 191: "Psybient",
     255: None
 }

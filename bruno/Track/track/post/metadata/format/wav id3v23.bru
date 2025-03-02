@@ -1,5 +1,5 @@
 meta {
-  name: wav with id3v23
+  name: wav id3v23
   type: http
   seq: 1
 }
@@ -16,6 +16,9 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/metadata=with id3v23.wav)
+  rating: 10
+  artistsNames[]: jul
+  artistsNames[]: sch
 }
 
 vars:post-response {
