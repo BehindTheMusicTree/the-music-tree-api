@@ -7,6 +7,17 @@ metaflac --remove-tag=RATING --set-tag="RATING=80" test.flac
 ## Id3v1
 ### Read
 id3v2 -l1 file.mp3
+### Write
+id3v2 \
+    --comment "COMMENT" \
+    --artist "ARTIST" \
+    --album "ALBUM" \
+    --song "TITLE" \
+    --year "YEAR" \
+    --track "TRACK" \
+    --genre "254" \
+    --id3v1-only \
+    "test.mp3"
 
 ## Id3v2
 ### Read
