@@ -20,6 +20,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language
         assert len(self.saved_object.language) == settings.LANGUAGE_LEN_MAX
+        assert self.saved_object.language == 'a' * settings.LANGUAGE_LEN_MAX
 
     def test_long_riff_then_truncated(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_RIFF_WAV)
@@ -27,6 +28,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language
         assert len(self.saved_object.language) == settings.LANGUAGE_LEN_MAX
+        assert self.saved_object.language == 'a' * settings.LANGUAGE_LEN_MAX
 
     def test_long_vorbis_then_truncated(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_VORBIS_FLAC)
@@ -34,3 +36,4 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language
         assert len(self.saved_object.language) == settings.LANGUAGE_LEN_MAX
+        assert self.saved_object.language == 'a' * settings.LANGUAGE_LEN_MAX

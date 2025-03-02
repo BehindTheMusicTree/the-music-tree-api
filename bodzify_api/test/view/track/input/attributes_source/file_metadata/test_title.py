@@ -13,28 +13,28 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.title
 
-    def test_longest_from_id3v1_then_truncated(self):
+    def test_long_from_id3v1_then_truncated(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert len(self.saved_object.title) == 30
-        assert self.saved_object.title == 'a' * 30
+        assert len(self.saved_object.title) == settings.LIB_TRACK_TITLE_LEN_MAX
+        assert self.saved_object.title == 'a' * settings.LIB_TRACK_TITLE_LEN_MAX
 
-    def test_longest_from_id3v2_then_truncated(self):
+    def test_long_from_id3v2_then_truncated(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert len(self.saved_object.title) == settings.LIB_TRACK_TITLE_LEN_MAX
         assert self.saved_object.title == 'a' * settings.LIB_TRACK_TITLE_LEN_MAX
 
-    def test_longest_from_riff_then_truncated(self):
+    def test_long_from_riff_then_truncated(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_RIFF_WAV)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert len(self.saved_object.title) == settings.LIB_TRACK_TITLE_LEN_MAX
         assert self.saved_object.title == 'a' * settings.LIB_TRACK_TITLE_LEN_MAX
 
-    def test_longest_from_vorbis_then_truncated(self):
+    def test_long_from_vorbis_then_truncated(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_VORBIS_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
