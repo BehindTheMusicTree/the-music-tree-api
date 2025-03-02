@@ -31,41 +31,41 @@ if command -v convert &> /dev/null; then
 fi
 
 # Maximum lengths for ID3v2 frames
-MAX_TEXT=250  # Conservative max for text frames
-MAX_COMMENT=4000
-MAX_URL=2000
+MAX_TEXT=256     # Maximum text length
+MAX_COMMENT=4000 # Maximum comment length
+MAX_URL=2000     # Maximum URL length
 
 # Create max length strings for different fields
 # Using different characters for each field to make them distinguishable
 ARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-ALBUM_ARTIST=$(printf 'b%.0s' $(seq 1 $MAX_TEXT))
-TITLE=$(printf 'c%.0s' $(seq 1 $MAX_TEXT))
-SUBTITLE=$(printf 'd%.0s' $(seq 1 $MAX_TEXT))
-ALBUM=$(printf 'e%.0s' $(seq 1 $MAX_TEXT))
-COMPOSER=$(printf 'f%.0s' $(seq 1 $MAX_TEXT))
-COMMENT=$(printf 'g%.0s' $(seq 1 $MAX_COMMENT))
-GENRE=$(printf 'h%.0s' $(seq 1 $MAX_TEXT))
-COPYRIGHT=$(printf 'i%.0s' $(seq 1 $MAX_TEXT))
-ENCODED_BY=$(printf 'j%.0s' $(seq 1 $MAX_TEXT))
-ORIGINAL_ARTIST=$(printf 'k%.0s' $(seq 1 $MAX_TEXT))
-PUBLISHER=$(printf 'l%.0s' $(seq 1 $MAX_TEXT))
-CONDUCTOR=$(printf 'm%.0s' $(seq 1 $MAX_TEXT))
-REMIXER=$(printf 'n%.0s' $(seq 1 $MAX_TEXT))
-MOOD=$(printf 'o%.0s' $(seq 1 $MAX_TEXT))
-LYRICS=$(printf 'p%.0s' $(seq 1 $MAX_COMMENT))
-URL=$(printf 'q%.0s' $(seq 1 $MAX_URL))
-ISRC=$(printf 'r%.0s' $(seq 1 12))  # ISRC is exactly 12 characters
+ALBUM_ARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+TITLE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+SUBTITLE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ALBUM=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+COMPOSER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+COMMENT=$(printf 'a%.0s' $(seq 1 $MAX_COMMENT))
+GENRE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+COPYRIGHT=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ENCODED_BY=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ORIGINAL_ARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+PUBLISHER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+CONDUCTOR=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+REMIXER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+MOOD=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+LYRICS=$(printf 'a%.0s' $(seq 1 $MAX_COMMENT))
+URL=$(printf 'a%.0s' $(seq 1 $MAX_URL))
+ISRC="USXXX9999999"  # Maximum ISRC format
 
-# Fixed length fields
-YEAR="2024"
-TRACK="1/1"
-DISC="1/2"
-BPM="128"
-LANGUAGE="eng"
-RECORDING_DATE="2024-03-01 12:00:00"
-ORIGINAL_RELEASE="2023-01-01"
-MEDIA_TYPE="DIG"  # Digital Media
-RATING="80"  # Rating out of 100
+# Fixed length fields with maximum values
+YEAR="9999"                    # Maximum 4-digit year
+TRACK="99/99"                  # Maximum track number/total
+DISC="99/99"                   # Maximum disc number/total
+BPM="999"                      # Maximum reasonable BPM
+LANGUAGE="eng"                 # Standard language code
+RECORDING_DATE="9999-12-31"    # Maximum date
+ORIGINAL_RELEASE="9999-12-31"  # Maximum date
+MEDIA_TYPE="DIG"              # Digital Media
+RATING="255"                   # Maximum rating (8-bit)
 
 echo "Setting metadata for: $RESOLVED_FILE"
 

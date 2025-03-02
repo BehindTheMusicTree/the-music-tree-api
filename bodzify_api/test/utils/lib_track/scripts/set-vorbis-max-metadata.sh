@@ -6,41 +6,41 @@ if [ "$#" -ne 1 ]; then
 fi
 
 FLAC_FILE="$1"
-MAX_TEXT=256
+MAX_TEXT=256  # Maximum length for text fields
 
-# Standard Vorbis fields
-TITLE=$(printf 'T%.0s' $(seq 1 $MAX_TEXT))
-ARTIST=$(printf 'A%.0s' $(seq 1 $MAX_TEXT))
-ALBUM=$(printf 'L%.0s' $(seq 1 $MAX_TEXT))
-ALBUMARTIST=$(printf 'AA%.0s' $(seq 1 $MAX_TEXT))
-TRACKNUMBER="01"
-TRACKTOTAL="99"
-DISCNUMBER="1"
-DISCTOTAL="9"
-DATE="2024"
-GENRE="Heavy Metal"
-COMMENT=$(printf 'C%.0s' $(seq 1 $MAX_TEXT))
-COPYRIGHT="CC0"
-COMPOSER=$(printf 'C%.0s' $(seq 1 $MAX_TEXT))
-CONDUCTOR=$(printf 'CD%.0s' $(seq 1 $MAX_TEXT))
-ARRANGER=$(printf 'AR%.0s' $(seq 1 $MAX_TEXT))
-LYRICIST=$(printf 'L%.0s' $(seq 1 $MAX_TEXT))
-AUTHOR=$(printf 'AU%.0s' $(seq 1 $MAX_TEXT))
-ORGANIZATION=$(printf 'O%.0s' $(seq 1 $MAX_TEXT))
-LOCATION=$(printf 'L%.0s' $(seq 1 $MAX_TEXT))
-CONTACT=$(printf 'C%.0s' $(seq 1 $MAX_TEXT))
-ISRC="USXXX0000001"
-CATALOGNUMBER="CAT001"
-DESCRIPTION=$(printf 'D%.0s' $(seq 1 $MAX_TEXT))
-PERFORMER=$(printf 'P%.0s' $(seq 1 $MAX_TEXT))
-RATING="255"
-BPM="128"
-MOOD="Happy"
-VERSION="1.0"
-LANGUAGE="eng"
-LABEL=$(printf 'L%.0s' $(seq 1 $MAX_TEXT))
-ENCODEDBY="Bodzify"
-ENCODERSETTINGS="FLAC level 8"
+# Standard Vorbis fields with maximum values
+TITLE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ALBUM=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ALBUMARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+TRACKNUMBER="99"  # Max 2-digit track number
+TRACKTOTAL="99"   # Max 2-digit total tracks
+DISCNUMBER="99"   # Max 2-digit disc number
+DISCTOTAL="99"    # Max 2-digit total discs
+DATE="9999"       # Max 4-digit year
+GENRE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+COMMENT=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+COPYRIGHT=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+COMPOSER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+CONDUCTOR=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ARRANGER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+LYRICIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+AUTHOR=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ORGANIZATION=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+LOCATION=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+CONTACT=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ISRC="USXXX9999999"  # Max ISRC format
+CATALOGNUMBER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+DESCRIPTION=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+PERFORMER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+RATING="255"      # Max rating value (8-bit)
+BPM="999"         # Max reasonable BPM value
+MOOD=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+VERSION=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+LANGUAGE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+LABEL=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ENCODEDBY=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ENCODERSETTINGS=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
 
 # Remove existing tags
 metaflac --remove-all-tags "$FLAC_FILE"

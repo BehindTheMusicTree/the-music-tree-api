@@ -24,24 +24,24 @@ MAX_STRING=$(printf 'a%.0s' {1..256})
 
 # Use bwfmetaedit to set all available RIFF INFO metadata fields
 bwfmetaedit \
-    --INAM="$MAX_STRING" \
-    --IART="$MAX_STRING" \
-    --IPRD="$MAX_STRING" \
-    --IGNR="$MAX_STRING" \
-    --ICRD="$MAX_STRING" \
-    --ICMT="$MAX_STRING" \
-    --ISFT="$MAX_STRING" \
-    --ICOP="$MAX_STRING" \
-    --IENG="$MAX_STRING" \
-    --ITCH="$MAX_STRING" \
-    --ISRC="$MAX_STRING" \
-    --ISBJ="$MAX_STRING" \
-    --IKEY="$MAX_STRING" \
-    --IMED="$MAX_STRING" \
-    --ICMS="$MAX_STRING" \
-    --ITRK="$MAX_STRING" \
-    --IARL="$MAX_STRING" \
-    --ILOC="$MAX_STRING" \
+    --INAM="$MAX_STRING" \     # Title
+    --IART="$MAX_STRING" \     # Artist
+    --IPRD="$MAX_STRING" \     # Album
+    --IGNR="$MAX_STRING" \     # Genre
+    --ICRD="9999" \           # Creation date (max year)
+    --ICMT="$MAX_STRING" \     # Comments
+    --ISFT="$MAX_STRING" \     # Software
+    --ICOP="$MAX_STRING" \     # Copyright
+    --IENG="$MAX_STRING" \     # Engineer
+    --ITCH="$MAX_STRING" \     # Technician
+    --ISRC="USXXX9999999" \   # ISRC (max format)
+    --ISBJ="$MAX_STRING" \     # Subject
+    --IKEY="$MAX_STRING" \     # Keywords
+    --IMED="$MAX_STRING" \     # Medium
+    --ICMS="$MAX_STRING" \     # Commissioned by
+    --ITRK="99" \             # Track number (max 2-digit)
+    --IARL="$MAX_STRING" \     # Archival Location
+    --ILOC="$MAX_STRING" \     # Location
     "$WAV_FILE"
 
 if [ $? -eq 0 ]; then
