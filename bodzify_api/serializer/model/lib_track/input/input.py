@@ -31,7 +31,7 @@ class LibTrackInputSerializer(AppSerializer):
         input_types=[CriteriaFieldInputType.UUID, CriteriaFieldInputType.NAME], required=False, allow_null=True)
     rating = RatingField()
     language = AppCharField(
-        max_length=settings.LIB_TRACK_LANGUAGE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
+        max_length=settings.LANGUAGE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
 
     def validate(self, data):
         if Fields.ALBUM_ARTISTS_NAMES_ARRAY in data:

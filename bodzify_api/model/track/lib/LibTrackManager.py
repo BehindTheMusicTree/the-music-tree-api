@@ -131,7 +131,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             AppMetadataKey.ALBUM_NAME: settings.ALBUM_NAME_LEN_MAX,
             AppMetadataKey.ALBUM_ARTISTS_NAMES: settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,
             AppMetadataKey.GENRE_NAME: settings.CRITERIA_NAME_LEN_MAX,
-            AppMetadataKey.LANGUAGE: settings.LIB_TRACK_LANGUAGE_LEN_MAX,
+            AppMetadataKey.LANGUAGE: settings.LANGUAGE_LEN_MAX,
         }
         for key, max_length in metadata_max_lengths_with_type.items():
             metadata_value = schema_data_with_potential_none.get(key)
