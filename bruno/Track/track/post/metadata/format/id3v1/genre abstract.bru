@@ -15,13 +15,5 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/metadata=with id3v23.wav)
-  rating: 10
-  artistsNames[]: jul
-  artistsNames[]: sch
-}
-
-vars:post-response {
-  trackAllumerUuid: res.body.uuid
-  albumStadeUuid: res.body.album.uuid
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/rating_id3v2=1 star.mp3)
 }
