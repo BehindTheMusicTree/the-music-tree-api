@@ -14,7 +14,8 @@ from ..utils.AppMetadataKey import AppMetadataKey
 from ..utils.types import AppMetadata, AppMetadataValue, RawMetadataDict, RawMetadataKey
 
 
-METADATA_ARTISTS_SEPARATION_CHAR = ","
+# Separators in order of priority
+METADATA_ARTISTS_SEPARATORS = ("//", "\\\\", ";", "\\", "/", ",")
 
 
 T = TypeVar('T', str, int)
@@ -144,8 +145,16 @@ class MetadataManager:
             if app_metadata_key.may_contain_separated_values():
                 values_list_str_with_separated_values_processed: list[str] = []
                 for str_with_potential_separated_values in values_list_str:
-                    separated_values = str_with_potential_separated_values.split(METADATA_ARTISTS_SEPARATION_CHAR)
-                    values_list_str_with_separated_values_processed.extend(separated_values)
+                    # Try each separator in order
+                    current_values = [str_with_potential_separated_values]
+                    for separator in METADATA_ARTISTS_SEPARATORS:
+                        new_values = []
+                        for val in current_values:
+                            new_values.extend(val.split(separator))
+                        current_values = new_values
+                    values_list_str_with_separated_values_processed.extend(
+                        [val.strip() for val in current_values if val.strip()]
+                    )
                 return values_list_str_with_separated_values_processed
             return values_list_str
         raise ImproperlyConfigured(f'Unsupported metadata type: {app_metadata_key_optional_type}')

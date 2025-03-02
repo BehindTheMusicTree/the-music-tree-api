@@ -20,7 +20,7 @@ from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateMa
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
-from bodzify_api.utils.audio_metadata.manager.MetadataManager import METADATA_ARTISTS_SEPARATION_CHAR
+from bodzify_api.utils.audio_metadata.manager.MetadataManager import METADATA_ARTISTS_SEPARATORS
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 from ..file.TrackFile import TrackFile
@@ -103,7 +103,7 @@ class LibraryTrack(TrackablePlayCount):
             artists_list: list[Artist] = list(self.artists.all())
             for artist in artists_list:
                 if artists_names_tag != "":
-                    artists_names_tag = artists_names_tag + METADATA_ARTISTS_SEPARATION_CHAR
+                    artists_names_tag = artists_names_tag + METADATA_ARTISTS_SEPARATORS[0]
                 artists_names_tag = artists_names_tag + artist.name
         else:
             artists_names_tag = ""
@@ -116,7 +116,7 @@ class LibraryTrack(TrackablePlayCount):
             album_artists_list = self.album.album_artists.all()
             for album_artist in album_artists_list:
                 if album_artists_name_index != 0:
-                    album_artists_tag = album_artists_tag + METADATA_ARTISTS_SEPARATION_CHAR
+                    album_artists_tag = album_artists_tag + METADATA_ARTISTS_SEPARATORS[0]
                 album_artists_tag = album_artists_tag + album_artist.name
                 album_artists_name_index = album_artists_name_index + 1
         else:
