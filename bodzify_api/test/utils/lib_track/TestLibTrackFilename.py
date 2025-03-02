@@ -12,8 +12,9 @@ class TestLibTrackFilename(str, Enum):
     ARTISTS_ONE_TWO_THREE_COMMA_ID3V2 = "artists=One Two Three_comma_id3v2.mp3"
     ARTISTS_ONE_TWO_THREE_DOUBLE_ANTISLASH_ID3V2 = "artists=One Two Three_double antislash_id3v2.mp3"
     ARTISTS_ONE_TWO_THREE_DOUBLE_SLASH_ID3V2 = "artists=One Two Three_double slash_id3v2.mp3"
-    ARTISTS_ONE_TWO_THREE_SEMICOLON_ID3V2 = "artists=One Two Three_semicolon_id3v2.mp3"
+    ARTISTS_ONE_TWO_THREE_MULTI_TAGS_AND_SLASH_VORBIS_FLAC = "artists=One Two Three_muti tags and slash_vorbis.flac"
     ARTISTS_ONE_TWO_THREE_MULTI_TAGS_VORBIS_FLAC = "artists=One Two Three_muti tags_vorbis.flac"
+    ARTISTS_ONE_TWO_THREE_SEMICOLON_ID3V2 = "artists=One Two Three_semicolon_id3v2.mp3"
     ARTISTS_ONE_TWO_THREE_SLASH_ID3V2 = "artists=One Two Three_slash_id3v2.mp3"
 
     BITRATE_1411_FLAC = "bitrate=1411.flac"
