@@ -38,8 +38,8 @@ class User(AbstractUser, BaseModel):
                                 Value('/'),
                                 Value(settings.USER_LIBRARIES_DIR_NAME_PREFIXE),
                                 F(Fields.ID)),
-            output_field=AppCharField(max_length=255)),
-        output_field=AppCharField(max_length=255),
+            output_field=AppCharField(max_length=256)),
+        output_field=AppCharField(max_length=256),
         db_persist=True)
 
     objects: UserManager = UserManager()
