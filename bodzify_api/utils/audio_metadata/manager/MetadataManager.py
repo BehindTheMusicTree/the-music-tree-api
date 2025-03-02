@@ -99,7 +99,7 @@ class MetadataManager:
                 genre_code_or_name = int(cast(int, raw_value))
                 return ID3V1_GENRE_CODE_MAP.get(genre_code_or_name)
             except ValueError:
-                return cast(str, genre_code_or_name)
+                return cast(str, raw_value)
         return None
 
     def get_app_metadata(self) -> AppMetadata:
