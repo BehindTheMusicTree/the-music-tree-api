@@ -59,3 +59,59 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.artists.count() == 3
         artists = self.saved_object.artists.all()
         assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+
+    def test_3_artists_separated_by_comma_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.ARTISTS_ONE_TWO_THREE_COMMA_ID3V2)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 3
+        artists = self.saved_object.artists.all()
+        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+
+    def test_3_artists_separated_by_double_antislash_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.ARTISTS_ONE_TWO_THREE_DOUBLE_ANTISLASH_ID3V2)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 3
+        artists = self.saved_object.artists.all()
+        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+
+    def test_3_artists_separated_by_double_slash_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.ARTISTS_ONE_TWO_THREE_DOUBLE_SLASH_ID3V2)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 3
+        artists = self.saved_object.artists.all()
+        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+
+    def test_3_artists_multi_tags_and_slash_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.ARTISTS_ONE_TWO_THREE_MULTI_TAGS_AND_SLASH_VORBIS)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 3
+        artists = self.saved_object.artists.all()
+        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+
+    def test_3_artists_multi_tags_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.ARTISTS_ONE_TWO_THREE_MULTI_TAGS_VORBIS)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 3
+        artists = self.saved_object.artists.all()
+        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+
+    def test_3_artists_separated_by_semicolon_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.ARTISTS_ONE_TWO_THREE_SEMICOLON_ID3V2)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 3
+        artists = self.saved_object.artists.all()
+        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+
+    def test_3_artists_separated_by_slash_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.ARTISTS_ONE_TWO_THREE_SLASH_ID3V2)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 3
+        artists = self.saved_object.artists.all()
+        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
