@@ -9,7 +9,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 class TestCase(LibTrackFileMetadataUpdateStrTestCase):
     save_field = InputFields.LANGUAGE
     lib_track_app_metadata_key = AppMetadataKey.LANGUAGE
-    length_max = settings.LIB_TRACK_LANGUAGE_LEN_MAX
+    length_max = settings.LANGUAGE_LEN_MAX
 
 
 class Mp3TestCase(TestCase):

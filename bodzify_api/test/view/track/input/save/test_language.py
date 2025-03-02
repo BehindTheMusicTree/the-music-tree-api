@@ -12,14 +12,14 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
 
     def test_longest_then_ok(self):
-        language = "a" * settings.LIB_TRACK_LANGUAGE_LEN_MAX
+        language = "a" * settings.LANGUAGE_LEN_MAX
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: language})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language == language
 
     def test_too_long_then_400(self):
-        language = "a" * (settings.LIB_TRACK_LANGUAGE_LEN_MAX + 1)
+        language = "a" * (settings.LANGUAGE_LEN_MAX + 1)
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: language})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
