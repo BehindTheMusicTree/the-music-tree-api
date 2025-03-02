@@ -31,27 +31,27 @@ if command -v convert &> /dev/null; then
 fi
 
 # Maximum lengths for ID3v2 frames
-MAX_TEXT=256     # Maximum text length
+TEXT_BIG_LENGTH=1000     # Text length to test truncation
 MAX_COMMENT=4000 # Maximum comment length
 MAX_URL=2000     # Maximum URL length
 
 # Create max length strings for different fields
 # Using different characters for each field to make them distinguishable
-ARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-ALBUM_ARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-TITLE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-SUBTITLE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-ALBUM=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-COMPOSER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+ARTIST=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+ALBUM_ARTIST=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+TITLE=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+SUBTITLE=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+ALBUM=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+COMPOSER=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
 COMMENT=$(printf 'a%.0s' $(seq 1 $MAX_COMMENT))
-GENRE=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-COPYRIGHT=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-ENCODED_BY=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-ORIGINAL_ARTIST=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-PUBLISHER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-CONDUCTOR=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-REMIXER=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
-MOOD=$(printf 'a%.0s' $(seq 1 $MAX_TEXT))
+GENRE=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+COPYRIGHT=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+ENCODED_BY=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+ORIGINAL_ARTIST=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+PUBLISHER=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+CONDUCTOR=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+REMIXER=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
+MOOD=$(printf 'a%.0s' $(seq 1 $TEXT_BIG_LENGTH))
 LYRICS=$(printf 'a%.0s' $(seq 1 $MAX_COMMENT))
 URL=$(printf 'a%.0s' $(seq 1 $MAX_URL))
 ISRC="USXXX9999999"  # Maximum ISRC format

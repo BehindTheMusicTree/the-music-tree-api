@@ -5,11 +5,16 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-WAV_FILE="$1"
-
-# Validate input file
+# Resolve the file path and check if file exists
+WAV_FILE=$(readlink -f "$1")
 if [ ! -f "$WAV_FILE" ]; then
-    echo "Error: File not found: $WAV_FILE"
+    echo "Error: File not found: $1"
+    exit 1
+fi
+
+# Check if bwfmetaedit is available
+if ! command -v bwfmetaedit &> /dev/null; then
+    echo "Error: bwfmetaedit is required but not installed."
     exit 1
 fi
 
@@ -20,33 +25,38 @@ if ! head -c 4 "$WAV_FILE" | grep -q "RIFF"; then
 fi
 
 # Generate a string of 'a' characters for maximum length testing
-MAX_STRING=$(printf 'a%.0s' {1..256})
+STRING_BIG_LENGTH=$(printf 'a%.0s' {1..1000}) # 1000 to test truncation
+
+echo "Setting metadata for: $WAV_FILE"
 
 # Use bwfmetaedit to set all available RIFF INFO metadata fields
+# Note: Removed trailing backslashes which could cause issues
 bwfmetaedit \
-    --INAM="$MAX_STRING" \     # Title
-    --IART="$MAX_STRING" \     # Artist
-    --IPRD="$MAX_STRING" \     # Album
-    --IGNR="$MAX_STRING" \     # Genre
-    --ICRD="9999" \           # Creation date (max year)
-    --ICMT="$MAX_STRING" \     # Comments
-    --ISFT="$MAX_STRING" \     # Software
-    --ICOP="$MAX_STRING" \     # Copyright
-    --IENG="$MAX_STRING" \     # Engineer
-    --ITCH="$MAX_STRING" \     # Technician
-    --ISRC="USXXX9999999" \   # ISRC (max format)
-    --ISBJ="$MAX_STRING" \     # Subject
-    --IKEY="$MAX_STRING" \     # Keywords
-    --IMED="$MAX_STRING" \     # Medium
-    --ICMS="$MAX_STRING" \     # Commissioned by
-    --ITRK="99" \             # Track number (max 2-digit)
-    --IARL="$MAX_STRING" \     # Archival Location
-    --ILOC="$MAX_STRING" \     # Location
+    --INAM="$STRING_BIG_LENGTH" \
+    --IART="$STRING_BIG_LENGTH" \
+    --IPRD="$STRING_BIG_LENGTH" \
+    --IGNR="$STRING_BIG_LENGTH" \
+    --ICRD="9999" \
+    --ICMT="$STRING_BIG_LENGTH" \
+    --ISFT="$STRING_BIG_LENGTH" \
+    --ICOP="$STRING_BIG_LENGTH" \
+    --IENG="$STRING_BIG_LENGTH" \
+    --ITCH="$STRING_BIG_LENGTH" \
+    --ISRC="USXXX9999999" \
+    --ISBJ="$STRING_BIG_LENGTH" \
+    --IKEY="$STRING_BIG_LENGTH" \
+    --IMED="$STRING_BIG_LENGTH" \
+    --ICMS="$STRING_BIG_LENGTH" \
+    --ITRK="99" \
+    --IARL="$STRING_BIG_LENGTH" \
+    --ILOC="$STRING_BIG_LENGTH" \
     "$WAV_FILE"
 
-if [ $? -eq 0 ]; then
+RESULT=$?
+if [ $RESULT -eq 0 ]; then
     echo "All RIFF INFO tags written successfully with maximum length values"
+    echo "Metadata setting completed successfully!"
 else
-    echo "Error: Failed to write RIFF INFO tags"
+    echo "Error: Failed to write RIFF INFO tags (exit code: $RESULT)"
     exit 1
 fi

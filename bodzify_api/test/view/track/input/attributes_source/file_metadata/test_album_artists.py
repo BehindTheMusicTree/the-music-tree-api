@@ -17,7 +17,7 @@ class TestCase(StrMetadataFromFileTestCase):
         assert self.saved_object.album
         assert self.saved_object.album.album_artists.count() == 0
 
-    def test_longest_then_ok(self):
+    def test_longest_id3v2_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3, extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -26,14 +26,11 @@ class TestCase(StrMetadataFromFileTestCase):
         assert album
         assert album.name == expected_name
 
+    def test_longest_riff_then_truncated(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_RIFF_WAV, extension=self.file_extension)
+        assert response.status_code == status.HTTP_201_CREATED
 
-class Mp3TestCase(TestCase):
-    file_extension = 'mp3'
-
-
-class FlacTestCase(TestCase):
-    file_extension = 'flac'
-
-
-class WavTestCase(TestCase):
-    file_extension = 'wav'
+        expected_name = 'a' * settings.ARTIST_NAME_LEN_MAX
+        album = self.saved_object.album
+        assert album
+        assert album.name == expected_name
