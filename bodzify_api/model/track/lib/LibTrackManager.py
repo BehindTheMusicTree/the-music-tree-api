@@ -121,24 +121,34 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                   AppMetadataKey.ARTISTS_NAMES,
                   AppMetadataKey.ALBUM_NAME,
                   AppMetadataKey.ALBUM_ARTISTS_NAMES,
+                  AppMetadataKey.GENRE_NAME,
                   AppMetadataKey.RATING,
                   AppMetadataKey.LANGUAGE])
 
-        genre_name = app_merged_metadata_dict.get(AppMetadataKey.GENRE_NAME)
-        if genre_name:
-            from bodzify_api.model.criteria.children.genre.Genre import Genre
-            schema_data_with_potential_none[Fields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[0]
-
-        metadata_max_lengths = {
+        metadata_max_lengths_with_type = {
             AppMetadataKey.TITLE: settings.LIB_TRACK_TITLE_LEN_MAX,
             AppMetadataKey.ARTISTS_NAMES: settings.ARTISTS_NAMES_LEN_MAX,
             AppMetadataKey.ALBUM_NAME: settings.ALBUM_NAME_LEN_MAX,
             AppMetadataKey.ALBUM_ARTISTS_NAMES: settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,
+            AppMetadataKey.GENRE_NAME: settings.CRITERIA_NAME_LEN_MAX,
             AppMetadataKey.LANGUAGE: settings.LIB_TRACK_LANGUAGE_LEN_MAX,
         }
-        for key, max_length in metadata_max_lengths.items():
-            if key in schema_data_with_potential_none and schema_data_with_potential_none[key]:
-                schema_data_with_potential_none[key] = schema_data_with_potential_none[key][:max_length]
+        for key, max_length in metadata_max_lengths_with_type.items():
+            metadata_value = schema_data_with_potential_none.get(key)
+            if metadata_value:
+                if key.get_optional_type() == list[str]:
+                    truncated_values = []
+                    for value in metadata_value:
+                        truncated_values.append(value[:max_length])
+                    schema_data_with_potential_none[key] = truncated_values
+                else:
+                    schema_data_with_potential_none[key] = schema_data_with_potential_none[key][:max_length]
+
+        genre_name = schema_data_with_potential_none.get(AppMetadataKey.GENRE_NAME)
+        if genre_name:
+            print('len genrename', len(genre_name))
+            from bodzify_api.model.criteria.children.genre.Genre import Genre
+            schema_data_with_potential_none[Fields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[0]
 
         schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(schema_data_with_potential_none)
         schema_data_clean[SchemaFields.TRACK_FILE_PUBLIC] = file
