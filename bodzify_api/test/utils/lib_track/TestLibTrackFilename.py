@@ -44,8 +44,8 @@ class TestLibTrackFilename(str, Enum):
     FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC = "format=md5_not_valid_and_corrupted.flac"
     FORMAT_MD5_NOT_VALID_FLAC = "format=md5_not_valid.flac"
 
-    GENRE_CODE_ID3V1_ABSTRACT_MP3 = "genre_code_id3v1_abstract.mp3"
-    GENRE_CODE_ID3V1_UNKNOWN_MP3 = "genre_code_id3v1_unknown.mp3"
+    GENRE_CODE_ID3V1_ABSTRACT_MP3 = "genre_code_id3v1=Abstract.mp3"
+    GENRE_CODE_ID3V1_UNKNOWN_MP3 = "genre_code_id3v1=Unknown.mp3"
 
     METADATA_MAX_A_ID3V1_FLAC = "metadata=max a_id3v1.flac"
     METADATA_MAX_A_ID3V1_MP3 = "metadata=max a_id3v1.mp3"
