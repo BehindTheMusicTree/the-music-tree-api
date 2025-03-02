@@ -44,7 +44,8 @@ class TestLibTrackFilename(str, Enum):
     FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC = "format=md5_not_valid_and_corrupted.flac"
     FORMAT_MD5_NOT_VALID_FLAC = "format=md5_not_valid.flac"
 
-    GENRE_ABSTRACT_ID3V1_MP3 = "genre=abstract_id3v1.mp3"
+    GENRE_CODE_ID3V1_ABSTRACT_MP3 = "genre_code_id3v1_abstract.mp3"
+    GENRE_CODE_ID3V1_UNKNOWN_MP3 = "genre_code_id3v1_unknown.mp3"
 
     METADATA_MAX_A_ID3V1_FLAC = "metadata=max a_id3v1.flac"
     METADATA_MAX_A_ID3V1_MP3 = "metadata=max a_id3v1.mp3"
@@ -67,26 +68,17 @@ class TestLibTrackFilename(str, Enum):
     RATING_ID3V2_KID3_4_STAR_WAV = "rating_id3v2_kid3=4 star.wav"
     RATING_ID3V2_KID3_5_STAR_WAV = "rating_id3v2_kid3=5 star.wav"
 
-    RATING_ID3V2_MUSICBEE_0_STAR_WAV = "rating_id3v2_musicbee=0 star.wav"
-    RATING_ID3V2_MUSICBEE_0_5_STAR_WAV = "rating_id3v2_musicbee=0.5 star.wav"
-    RATING_ID3V2_MUSICBEE_1_STAR_WAV = "rating_id3v2_musicbee=1 star.wav"
-    RATING_ID3V2_MUSICBEE_1_5_STAR_WAV = "rating_id3v2_musicbee=1.5 star.wav"
-    RATING_ID3V2_MUSICBEE_2_STAR_WAV = "rating_id3v2_musicbee=2 star.wav"
-    RATING_ID3V2_MUSICBEE_2_5_STAR_WAV = "rating_id3v2_musicbee=2.5 star.wav"
-    RATING_ID3V2_MUSICBEE_3_STAR_WAV = "rating_id3v2_musicbee=3 star.wav"
-    RATING_ID3V2_MUSICBEE_3_5_STAR_WAV = "rating_id3v2_musicbee=3.5 star.wav"
-    RATING_ID3V2_MUSICBEE_4_STAR_WAV = "rating_id3v2_musicbee=4 star.wav"
-    RATING_ID3V2_MUSICBEE_4_5_STAR_WAV = "rating_id3v2_musicbee=4.5 star.wav"
-    RATING_ID3V2_MUSICBEE_5_STAR_WAV = "rating_id3v2_musicbee=5 star.wav"
-
     RATING_ID3V2_0_STAR_FLAC = "rating_id3v2=0 star.flac"
     RATING_ID3V2_0_STAR_MP3 = "rating_id3v2=0 star.mp3"
+    RATING_ID3V2_0_STAR_WAV = "rating_id3v2=0 star.wav"
 
     RATING_ID3V2_0_5_STAR_FLAC = "rating_id3v2=0.5 star.flac"
     RATING_ID3V2_0_5_STAR_MP3 = "rating_id3v2=0.5 star.mp3"
+    RATING_ID3V2_0_5_STAR_WAV = "rating_id3v2=0.5 star.wav"
 
     RATING_ID3V2_1_STAR_FLAC = "rating_id3v2=1 star.flac"
     RATING_ID3V2_1_STAR_MP3 = "rating_id3v2=1 star.mp3"
+    RATING_ID3V2_1_STAR_WAV = "rating_id3v2=1 star.wav"
 
     RATING_ID3V2_1_5_STAR_FLAC = "rating_id3v2=1.5 star.flac"
     RATING_ID3V2_1_5_STAR_MP3 = "rating_id3v2=1.5 star.mp3"
@@ -94,6 +86,7 @@ class TestLibTrackFilename(str, Enum):
 
     RATING_ID3V2_2_STAR_FLAC = "rating_id3v2=2 star.flac"
     RATING_ID3V2_2_STAR_MP3 = "rating_id3v2=2 star.mp3"
+    RATING_ID3V2_2_STAR_WAV = "rating_id3v2=2 star.wav"
 
     RATING_ID3V2_2_5_STAR_FLAC = "rating_id3v2=2.5 star.flac"
     RATING_ID3V2_2_5_STAR_MP3 = "rating_id3v2=2.5 star.mp3"
@@ -101,6 +94,7 @@ class TestLibTrackFilename(str, Enum):
 
     RATING_ID3V2_3_STAR_FLAC = "rating_id3v2=3 star.flac"
     RATING_ID3V2_3_STAR_MP3 = "rating_id3v2=3 star.mp3"
+    RATING_ID3V2_3_STAR_WAV = "rating_id3v2=3 star.wav"
 
     RATING_ID3V2_3_5_STAR_FLAC = "rating_id3v2=3_5 star.flac"
     RATING_ID3V2_3_5_STAR_MP3 = "rating_id3v2=3_5 star.mp3"
@@ -108,9 +102,15 @@ class TestLibTrackFilename(str, Enum):
 
     RATING_ID3V2_4_STAR_FLAC = "rating_id3v2=4 star.flac"
     RATING_ID3V2_4_STAR_MP3 = "rating_id3v2=4 star.mp3"
+    RATING_ID3V2_4_STAR_WAV = "rating_id3v2=4 star.wav"
+
+    RATING_ID3V2_4_5_STAR_FLAC = "rating_id3v2=4_5 star.flac"
+    RATING_ID3V2_4_5_STAR_MP3 = "rating_id3v2=4_5 star.mp3"
+    RATING_ID3V2_4_5_STAR_WAV = "rating_id3v2=4_5 star.wav"
 
     RATING_ID3V2_5_STAR_FLAC = "rating_id3v2=5 star.flac"
     RATING_ID3V2_5_STAR_MP3 = "rating_id3v2=5 star.mp3"
+    RATING_ID3V2_5_STAR_WAV = "rating_id3v2=5 star.wav"
 
     RATING_ID3V2_TRACKTOR_1_STAR_MP3 = "rating_id3v2_tracktor=1 star.mp3"
     RATING_ID3V2_TRACKTOR_2_STAR_MP3 = "rating_id3v2_tracktor=2 star.mp3"
