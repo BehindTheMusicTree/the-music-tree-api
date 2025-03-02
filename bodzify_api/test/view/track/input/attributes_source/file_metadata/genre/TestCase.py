@@ -1,6 +1,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.input.attributes_source.file_metadata.FieldStrFromFileMetadataTestCase import (
     FieldStrNullableFromFileMetadataTestCase
 )
@@ -15,7 +16,7 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
         assert self.saved_object.genre == None
 
     def test_longest_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3,
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3,
                                         extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre

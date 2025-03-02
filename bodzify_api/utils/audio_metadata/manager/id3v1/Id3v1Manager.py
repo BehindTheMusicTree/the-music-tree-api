@@ -97,7 +97,7 @@ class Id3v1Manager(MetadataManager):
             return None
 
         genre_code: int | None = int(genre_codes[0])
-        return None if not 0 <= genre_code < len(ID3V1_GENRE_CODE_MAP) else ID3V1_GENRE_CODE_MAP[genre_code]
+        return None if not 0 <= genre_code < len(ID3V1_GENRE_CODE_MAP) else ID3V1_GENRE_CODE_MAP.get(genre_code)
 
     def _update_undirectly_mapped_metadata(self, app_metadata_value: AppMetadataValue,
                                            app_metadata_key: AppMetadataKey,

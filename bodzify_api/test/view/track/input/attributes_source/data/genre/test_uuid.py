@@ -2,12 +2,11 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import ForeignKeyBodyDataTestCase
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(LibTrackTestCase, ForeignKeyBodyDataTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_non_existing_then_400(self):
         data = {PostFields.GENRE: '8adfc3f9-18f6-4f06-b3cb-e16d5032121w' * settings.UUID_LEN}

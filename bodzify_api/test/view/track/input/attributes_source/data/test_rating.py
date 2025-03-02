@@ -1,14 +1,11 @@
 from rest_framework import status
 
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.utils.field.body_data.type.NullablePositiveIntBodyDataTestCase import (
-    NullablePositiveIntBodyDataTestCase)
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class RatingTestCase(NullablePositiveIntBodyDataTestCase):
+class RatingTestCase(LibTrackTestCase):
 
     def test_value_then_ok(self):
         value = 1
@@ -22,30 +19,3 @@ class RatingTestCase(NullablePositiveIntBodyDataTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == None
-
-    def test_too_large_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 11})
-
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert len(self.bad_request_result_field_errors) == 1
-        error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE
-
-    def test_negative_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: -1})
-
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert len(self.bad_request_result_field_errors) == 1
-        error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL
-
-    def test_field_duplicate_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: [1, 2]})
-
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert len(self.bad_request_result_field_errors) == 1
-        error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE

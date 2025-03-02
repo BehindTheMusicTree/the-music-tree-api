@@ -16,7 +16,7 @@ class TestCase(FieldStrNullableFromFileMetadataTestCase):
         assert self.saved_object.artists.count() == 0
 
     def test_longest_then_ok(self) -> None:
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3, extension=self.file_extension)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3, extension=self.file_extension)
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
         assert len(artists_list) > 0

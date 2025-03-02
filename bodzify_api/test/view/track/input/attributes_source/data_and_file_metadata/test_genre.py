@@ -10,7 +10,7 @@ class TestCase(LibTrackTestCase):
     def test_genre_name_in_both_then_take_data(self):
         data_genre_name = "Rock"
         data_dict = {PostFields.GENRE: data_genre_name}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3, **data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3, **data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre
@@ -21,7 +21,7 @@ class TestCase(LibTrackTestCase):
         genre_uuid = self.model_fixture_factory.create_genre(name=data_genre_name).uuid
 
         data_dict = {PostFields.GENRE: genre_uuid}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3v2_MP3, **data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3, **data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre
