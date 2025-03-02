@@ -146,7 +146,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         genre_name = schema_data_with_potential_none.get(AppMetadataKey.GENRE_NAME)
         if genre_name:
-            print('len genrename', len(genre_name))
             from bodzify_api.model.criteria.children.genre.Genre import Genre
             schema_data_with_potential_none[Fields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[0]
 
