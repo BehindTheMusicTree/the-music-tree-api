@@ -3,12 +3,12 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
-from bodzify_api.test.view.track.input.attributes_source.file_metadata.FieldStrFromFileMetadataTestCase import (
-    FieldStrNullableFromFileMetadataTestCase
+from bodzify_api.test.view.track.input.attributes_source.file_metadata.StrMetadataFromFileTestCase import (
+    StrMetadataFromFileTestCase
 )
 
 
-class TestCase(FieldStrNullableFromFileMetadataTestCase):
+class TestCase(StrMetadataFromFileTestCase):
     file_extension: str
 
     def test_none_then_none(self) -> None:
