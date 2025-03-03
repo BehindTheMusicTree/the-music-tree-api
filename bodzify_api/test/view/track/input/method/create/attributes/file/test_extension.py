@@ -6,12 +6,8 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestCase(LibTrackTestCase):
 
-    def test_wav_without_id3v2_metadata(self):
+    def test_wav(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_WAV)
-        assert response.status_code == status.HTTP_201_CREATED
-
-    def test_wav_with_id3v2_metadata(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_WITH_ID3V2_WAV)
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_mp3(self):

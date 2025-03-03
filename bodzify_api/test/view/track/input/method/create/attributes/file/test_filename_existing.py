@@ -1,22 +1,20 @@
 from rest_framework import status
 
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase):
 
     def test_same_filename_so_suffixe_added(self):
-        source_filename_without_extension = "sample"
-        source_filename_extension = ".mp3"
-        source_filename_with_extension = source_filename_without_extension + source_filename_extension
-        self._post_lib_track(specific_sample_filename=source_filename_with_extension)
+        self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3)
         track1 = self.saved_object
 
-        response = self._post_lib_track(specific_sample_filename=source_filename_with_extension)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3)
         track2 = self.saved_object
 
         assert response.status_code == status.HTTP_201_CREATED
         assert track1.track_file
-        assert track1.track_file.filename == source_filename_with_extension
-        assert track2.track_file.filename.startswith(source_filename_without_extension)
-        assert track2.track_file.filename.endswith(source_filename_extension)
+        assert track1.track_file.filename == TestLibTrackFilename.METADATA_NONE_MP3
+        assert track2.track_file.filename.startswith(TestLibTrackFilename.METADATA_NONE_MP3[:-4])
+        assert track2.track_file.filename.endswith('.mp3')
