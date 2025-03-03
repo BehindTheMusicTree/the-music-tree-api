@@ -44,8 +44,8 @@ if TYPE_CHECKING:
 
 
 class TrackFile(PrivateStandardResource):
-    lib_track = PrivateOneToOneField('LibraryTrack', on_delete=models.CASCADE,
-                                     related_name=LibraryTrackFields.TRACK_FILE)
+    lib_track = PrivateOneToOneField(
+        'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE)
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",
