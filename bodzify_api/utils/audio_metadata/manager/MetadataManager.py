@@ -54,8 +54,9 @@ class MetadataManager:
         raise NotImplementedError()
 
     @abstractmethod
-    def _update_undirectly_mapped_metadata(
-            self, app_metadata_value: AppMetadataValue, app_metadata_key: AppMetadataKey):
+    def _update_undirectly_mapped_metadata(self, raw_mutagen_metadata: MutagenMetadata,
+                                           app_metadata_value: AppMetadataValue,
+                                           app_metadata_key: AppMetadataKey):
         raise NotImplementedError()
 
     @abstractmethod
@@ -181,7 +182,8 @@ class MetadataManager:
                             app_metadata_value=app_metadata_value)
                     else:
                         self._update_undirectly_mapped_metadata(
-                            app_metadata_value=app_metadata_value, app_metadata_key=app_metadata_key)
+                            raw_mutagen_metadata=self.raw_mutagen_metadata, app_metadata_value=app_metadata_value,
+                            app_metadata_key=app_metadata_key)
             self.raw_mutagen_metadata.save(self.audio_file.get_file_path_or_object())
 
     def delete_metadata(self) -> bool:

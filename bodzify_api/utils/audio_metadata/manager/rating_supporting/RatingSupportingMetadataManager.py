@@ -52,20 +52,19 @@ class RatingSupportingMetadataManager(MetadataManager):
 
     def _get_potentially_normalized_rating_from_raw(self, raw_clean_metadata: RawMetadataDict) -> int | None:
         file_rating, is_rating_from_traktor = self._get_raw_rating_by_traktor_or_not(raw_clean_metadata)
-        if file_rating is None or file_rating == "":
+        if file_rating is None:
+            return None
+        if self.normalized_rating_max_value:
+            if file_rating == 0 and is_rating_from_traktor:
+                return None
+            for star_rating_base_10 in range(11):
+                if file_rating in [RatingReadProfile.BASE_255_PROPORTIONAL[star_rating_base_10],
+                                   RatingReadProfile.BASE_255_NON_PROPORTIONAL[star_rating_base_10],
+                                   RatingReadProfile.BASE_100_PROPORTIONAL[star_rating_base_10]]:
+                    return int(star_rating_base_10 * self.normalized_rating_max_value / 10)
             return None
         else:
-            if self.normalized_rating_max_value:
-                if file_rating == 0 and is_rating_from_traktor:
-                    return None
-                for star_rating_base_10 in range(11):
-                    if file_rating in [RatingReadProfile.BASE_255_PROPORTIONAL[star_rating_base_10],
-                                       RatingReadProfile.BASE_255_NON_PROPORTIONAL[star_rating_base_10],
-                                       RatingReadProfile.BASE_100_PROPORTIONAL[star_rating_base_10]]:
-                        return int(star_rating_base_10 * self.normalized_rating_max_value / 10)
-                return None
-            else:
-                return file_rating
+            return file_rating
 
     def _convert_normalized_rating_to_file_rating(self, normalized_rating: int) -> int | None:
         if not self.normalized_rating_max_value:

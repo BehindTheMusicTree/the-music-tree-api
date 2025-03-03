@@ -6,7 +6,6 @@ from mutagen.id3 import ID3
 from mutagen.id3._frames import POPM, TALB, TBPM, TCON, TDRC, TIT2, TLAN, TPE1, TPE2, TRCK, TYER
 from mutagen.id3._util import ID3NoHeaderError
 
-from django.core.exceptions import ImproperlyConfigured
 
 from bodzify_api import settings
 
@@ -234,16 +233,18 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         result = {}
 
         for frame_key in self.Id3TextFrame:
-            if not isinstance(frame_key, str) or frame_key.startswith('_'):
-                continue
-
-            frame_value = frame_key in raw_metadata_id3 and raw_metadata_id3[frame_key]
-            if not frame_value:
-                continue
-
             if frame_key == self.Id3TextFrame.RATING:
-                result[frame_key] = [frame_value.rating]
+                for raw_mutagen_frame in raw_mutagen_metadata.items():
+                    popm_key = raw_mutagen_frame[0]
+                    if popm_key.startswith(self.Id3TextFrame.RATING):
+                        popm: POPM = raw_mutagen_frame[1]
+                        result[popm_key] = popm.rating  # type: ignore[assignment]
+                        break
             else:
+                frame_value = frame_key in raw_metadata_id3 and raw_metadata_id3[frame_key]
+                if not frame_value:
+                    continue
+
                 if not frame_value.text:
                     continue
 
@@ -252,12 +253,12 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         return result
 
     def _get_raw_rating_by_traktor_or_not(self, raw_clean_metadata: RawMetadataDict) -> tuple[int | None, bool]:
-        if self.raw_mutagen_metadata is None:
-            raise ImproperlyConfigured("raw_clean_metadata should already be set as raw_clean_metadata is.")
-
-        if self.Id3TextFrame.RATING in self.raw_mutagen_metadata:
-            file_rating_tag = self.raw_mutagen_metadata[self.Id3TextFrame.RATING]
-            return file_rating_tag.rating, file_rating_tag.email == self.TRAKTOR_RATING_TAG_MAIL
+        for raw_metadata_key, raw_metadata_values in raw_clean_metadata.items():
+            if raw_metadata_values and len(raw_metadata_values) > 0:
+                if raw_metadata_key.startswith(self.Id3TextFrame.RATING):
+                    if raw_metadata_key.find("Traktor") != -1:
+                        return int(raw_metadata_values[0]), True
+                    return int(raw_metadata_values[0]), False
 
         return None, False
 
