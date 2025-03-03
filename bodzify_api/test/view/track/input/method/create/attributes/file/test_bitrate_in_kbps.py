@@ -9,9 +9,9 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_wav(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_WAV)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.bitrate_in_kbps == 1190
+        assert self.saved_object.track_file.bitrate_in_kbps == 1152
 
     def test_mp3(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3)
