@@ -13,7 +13,7 @@ def childinstance(request, db):
     yield from conftest.base_childinstance(request, db)
 
 
-def test_3_artists_then_ok(childinstance):
+def test_3_then_ok(childinstance):
     childinstance._test_value(value="artist1, artist2, artist3",
                               value_expected_in_metadata="artist1,artist2,artist3",
                               additional_data_dict=None,
