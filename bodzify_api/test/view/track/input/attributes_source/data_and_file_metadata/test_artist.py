@@ -10,7 +10,7 @@ class TestCase(LibTrackTestCase):
     def test_artist_in_both_then_take_data(self):
         data_artist_name = "Queen"
         data_dict = {PostFields.ARTISTS_NAMES_ARRAY: [data_artist_name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3, **data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_SHORT_MP3, **data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists = self.saved_object.artists.all()

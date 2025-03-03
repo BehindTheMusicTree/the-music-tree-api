@@ -14,7 +14,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.album is None
 
     def test_long_id3v2_then_truncated(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_SHORT_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -22,7 +22,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.album.name == 'a' * settings.ALBUM_NAME_LEN_MAX
 
     def test_long_riff_then_truncated(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_RIFF_WAV)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_RIFF_SHORT_WAV)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -30,7 +30,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.album.name == 'a' * settings.ALBUM_NAME_LEN_MAX
 
     def test_long_vorbis_then_truncated(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_VORBIS_FLAC)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_VORBIS_SHORT_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -38,7 +38,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.album.name == 'a' * settings.ALBUM_NAME_LEN_MAX
 
     def test_max_id3v1_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_SHORT_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album

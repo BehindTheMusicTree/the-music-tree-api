@@ -17,8 +17,8 @@ class LibTrackFileMetadataUpdateTestCase(LibTrackTestCase):
         '.wav': TestLibTrackFilename.METADATA_NONE_WAV
     }
     file_extension_metadata_max_a_test_lib_track_mapping: dict[str, TestLibTrackFilename] = {
-        '.mp3': TestLibTrackFilename.METADATA_MAX_A_ID3V2_MP3,
-        '.flac': TestLibTrackFilename.METADATA_MAX_A_VORBIS_FLAC,
+        '.mp3': TestLibTrackFilename.METADATA_MAX_A_ID3V2_SHORT_MP3,
+        '.flac': TestLibTrackFilename.METADATA_MAX_A_VORBIS_SHORT_FLAC,
         '.wav': TestLibTrackFilename.METADATA_MAX_A_ID3V2_WAV
     }
 
