@@ -25,6 +25,9 @@ id3v2 --artist "Artist Name" test.flac
 id3v2 --album "Album Name" test.flac
 id3v2 --song "Song Title" test.flac
 
+### Remove
+ffmpeg -i "input.flac" -map_metadata -1 -c:a copy "output.flac"
+
 #### Set rating
 mid3v2 --POPM "Windows Media Player 9 Series:128" test.mp3
 mid3v2 --POPM "kid3:128" test.mp3
