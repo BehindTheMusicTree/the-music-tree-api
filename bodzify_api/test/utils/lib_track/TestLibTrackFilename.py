@@ -56,14 +56,27 @@ class TestLibTrackFilename(str, Enum):
     GENRE_CODE_ID3V1_ABSTRACT_MP3 = "genre_code_id3v1=Abstract.mp3"
     GENRE_CODE_ID3V1_UNKNOWN_MP3 = "genre_code_id3v1=Unknown.mp3"
 
-    METADATA_MAX_A_ID3V1_FLAC = "metadata=max a_id3v1.flac"
-    METADATA_MAX_A_ID3V1_MP3 = "metadata=max a_id3v1.mp3"
-    METADATA_MAX_A_ID3V1_WAV = "metadata=max a_id3v1.wav"
-    METADATA_MAX_A_ID3V2_FLAC = "metadata=max a_id3v2.flac"
-    METADATA_MAX_A_ID3V2_MP3 = "metadata=max a_id3v2.mp3"
-    METADATA_MAX_A_ID3V2_WAV = "metadata=max a_id3v2.wav"
-    METADATA_MAX_A_RIFF_WAV = "metadata=max a_riff.wav"
-    METADATA_MAX_A_VORBIS_FLAC = "metadata=max a_vorbis.flac"
+    METADATA_MAX_A_ID3V1_LONG_FLAC = "metadata=max a_id3v1_long.flac"
+    METADATA_MAX_A_ID3V1_LONG_MP3 = "metadata=max a_id3v1_long.mp3"
+    METADATA_MAX_A_ID3V1_LONG_WAV = "metadata=max a_id3v1_long.wav"
+
+    METADATA_MAX_A_ID3V1_SHORT_FLAC = "metadata=max a_id3v1_short.flac"
+    METADATA_MAX_A_ID3V1_SHORT_MP3 = "metadata=max a_id3v1_short.mp3"
+    METADATA_MAX_A_ID3V1_SHORT_WAV = "metadata=max a_id3v1_short.wav"
+
+    METADATA_MAX_A_ID3V2_LONG_FLAC = "metadata=max a_id3v2_long.flac"
+    METADATA_MAX_A_ID3V2_LONG_MP3 = "metadata=max a_id3v2_long.mp3"
+    METADATA_MAX_A_ID3V2_LONG_WAV = "metadata=max a_id3v2_long.wav"
+
+    METADATA_MAX_A_ID3V2_SHORT_FLAC = "metadata=max a_id3v2_short.flac"
+    METADATA_MAX_A_ID3V2_SHORT_MP3 = "metadata=max a_id3v2_short.mp3"
+    METADATA_MAX_A_ID3V2_SHORT_WAV = "metadata=max a_id3v2_short.wav"
+
+    METADATA_MAX_A_RIFF_LONG_WAV = "metadata=max a_riff_long.wav"
+    METADATA_MAX_A_RIFF_SHORT_WAV = "metadata=max a_riff_short.wav"
+
+    METADATA_MAX_A_VORBIS_LONG_FLAC = "metadata=max a_vorbis_long.flac"
+    METADATA_MAX_A_VORBIS_SHORT_FLAC = "metadata=max a_vorbis_short.flac"
 
     METADATA_NONE_FLAC = "metadata=none.flac"
     METADATA_NONE_MP3 = "metadata=none.mp3"
