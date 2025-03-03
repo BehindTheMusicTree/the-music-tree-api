@@ -1,11 +1,10 @@
 import contextlib
-import logging
 import os
 from typing import cast
 
 from mutagen._file import FileType as MutagenMetadata
 from mutagen.wave import WAVE
-from tinytag import TinyTag
+from wavefile import WaveReader
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -76,9 +75,6 @@ class RiffManager(RatingSupportingMetadataManager):
         TECHNICIAN = 'ITCH'  # Technician who worked on the track
 
     def __init__(self, audio_file: AudioFile, normalized_rating_max_value: None | int = None):
-        # Suppress TinyTag prints at initialization
-        logging.getLogger('tinytag').setLevel(logging.ERROR)
-
         metadata_keys_direct_map_read = {
             AppMetadataKey.TITLE: self.RiffTagKey.TITLE,
             AppMetadataKey.ARTISTS_NAMES: self.RiffTagKey.ARTIST_NAME,
@@ -198,32 +194,30 @@ class RiffManager(RatingSupportingMetadataManager):
 
         try:
             wave = WAVE()  # Create empty WAVE object
-            with self._suppress_output():
-                tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object(), tags=True)
-
-            # Convert TinyTag metadata to RIFF INFO format
             info_tags: dict[str, str] = {}
-            tag_mapping = {
-                'title': self.RiffTagKey.TITLE,
-                'artist': self.RiffTagKey.ARTIST_NAME,
-                'album': self.RiffTagKey.ALBUM_NAME,
-                'genre': self.RiffTagKey.GENRE_NAME_OR_CODE,
-                'year': self.RiffTagKey.DATE,
-                'track': self.RiffTagKey.TRACK_NUMBER,
-                'comment': self.RiffTagKey.COMMENTS,
-            }
 
-            for tiny_tag_key, riff_key in tag_mapping.items():
-                value = getattr(tiny_tag, tiny_tag_key, None)
-                if value:
-                    info_tags[riff_key] = str(value)
-
-            # Handle additional metadata
-            if hasattr(tiny_tag, 'extra'):
-                extra_tags = getattr(tiny_tag, 'extra', {})
-                for key, value in extra_tags.items():
-                    if key in self.RiffTagKey and value:
-                        info_tags[key] = str(value)
+            # Use WaveReader to read WAV metadata
+            with WaveReader(self.audio_file.get_file_path_or_object()) as wav:
+                # Map WAV metadata to RIFF INFO format
+                if wav.metadata:
+                    for key, value in wav.metadata.items():
+                        if key == 'title':
+                            info_tags[self.RiffTagKey.TITLE] = str(value)
+                        elif key == 'artist':
+                            info_tags[self.RiffTagKey.ARTIST_NAME] = str(value)
+                        elif key == 'album':
+                            info_tags[self.RiffTagKey.ALBUM_NAME] = str(value)
+                        elif key == 'genre':
+                            info_tags[self.RiffTagKey.GENRE_NAME_OR_CODE] = str(value)
+                        elif key == 'date':
+                            info_tags[self.RiffTagKey.DATE] = str(value)
+                        elif key == 'tracknumber':
+                            info_tags[self.RiffTagKey.TRACK_NUMBER] = str(value)
+                        elif key == 'comment':
+                            info_tags[self.RiffTagKey.COMMENTS] = str(value)
+                        # Handle any additional metadata that matches our RIFF tags
+                        elif key in self.RiffTagKey:
+                            info_tags[key] = str(value)
 
             setattr(wave, 'info', info_tags)
             return wave
