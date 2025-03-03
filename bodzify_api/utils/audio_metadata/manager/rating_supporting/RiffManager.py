@@ -160,7 +160,10 @@ class RiffManager(RatingSupportingMetadataManager):
                             # -1 to exclude null terminator
                             field_data = file_data[info_pos + 8:info_pos + 8 + field_size - 1]
                             try:
-                                field_value = field_data.decode('utf-8', errors='ignore').strip()
+                                # Decode and handle null-terminated strings
+                                field_value = field_data.decode('utf-8', errors='ignore')
+                                # Split on null byte and take first part if exists
+                                field_value = field_value.split('\x00')[0].strip()
                                 if field_id in self.RiffTagKey and field_value:
                                     info_tags[field_id] = field_value
                             except UnicodeDecodeError:
@@ -220,7 +223,14 @@ class RiffManager(RatingSupportingMetadataManager):
         if not self.RiffTagKey.RATING in raw_clean_metadata:
             return None, False
 
-        raw_rating = raw_clean_metadata[self.RiffTagKey.RATING]
+        raw_ratings = raw_clean_metadata.get(self.RiffTagKey.RATING)
+        if not raw_ratings or len(raw_ratings) == 0:
+            return None, False
+
+        raw_rating = raw_ratings[0]
+        if not raw_rating:
+            return None, False
+
         if isinstance(raw_rating, str):
             return int(raw_rating), False
         return cast(int, raw_rating), True
