@@ -217,7 +217,7 @@ class Id3v2Manager(RatingSupportingMetadataManager):
 
     def _extract_mutagen_metadata(self) -> MutagenMetadata:
         try:
-            id3 = ID3(self.audio_file.get_file_path_or_object())
+            id3 = ID3(self.audio_file.get_file_path_or_object(), load_v1=False)
             # Force v2.3 update to ensure compatibility
             id3.update_to_v23()
             return id3  # type: ignore[return-value]
