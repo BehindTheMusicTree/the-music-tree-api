@@ -342,7 +342,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         track_file_model_data[TrackFileFields.LIB_TRACK] = instance
 
         file_extension = AudioFile(track_file_model_data[TrackFileFields.FILE]).file_extension
-        if file_extension == 'flac':
+        if file_extension == '.flac':
             from ..file.flac.FlacTrackFile import FlacTrackFile
             FlacTrackFile.objects.create(**track_file_model_data)
         else:
