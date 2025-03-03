@@ -1,5 +1,4 @@
 import contextlib
-import io
 import logging
 import os
 from typing import cast
@@ -190,15 +189,15 @@ class RiffManager(RatingSupportingMetadataManager):
 
     def _extract_mutagen_metadata(self) -> MutagenMetadata:
         """
-        Extract RIFF metadata using direct parsing when TinyTag fails, then convert to mutagen format.
-        Falls back to manual RIFF parsing for in-memory files or when TinyTag fails.
+        Extract RIFF metadata from WAV files, handling various tag formats:
+        1. Try to parse with TinyTag
+        3. If TinyTag fails, fall back to direct RIFF parsing
         """
         self.audio_file.seek(0)
         file_data = self.audio_file.read()
-        wave = WAVE(io.BytesIO(file_data))
 
         try:
-            # Try TinyTag first with all output suppressed
+            wave = WAVE()  # Create empty WAVE object
             with self._suppress_output():
                 tiny_tag = TinyTag.get(self.audio_file.get_file_path_or_object(), tags=True)
 
@@ -226,13 +225,14 @@ class RiffManager(RatingSupportingMetadataManager):
                     if key in self.RiffTagKey and value:
                         info_tags[key] = str(value)
 
+            setattr(wave, 'info', info_tags)
+            return wave
         except Exception:
-            # Fall back to direct RIFF parsing if TinyTag fails
+            # Last resort: Direct RIFF parsing
+            wave = WAVE()  # Create empty WAVE object
             info_tags = self._extract_riff_metadata_directly(file_data)
-
-        # Store the metadata
-        setattr(wave, 'info', info_tags)
-        return wave
+            setattr(wave, 'info', info_tags)
+            return wave
 
     def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(
             self, raw_mutagen_metadata: MutagenMetadata) -> RawMetadataDict:
