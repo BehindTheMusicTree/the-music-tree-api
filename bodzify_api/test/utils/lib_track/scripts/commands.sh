@@ -34,8 +34,10 @@ mid3v2 --POPM "kid3:128" test.mp3
 mid3v2 --POPM "Traktor:153" test.mp3
 
 ## RIFF
+### Read
 brew install mediainfo
 mediainfo "rating_id3v2=3 star.wav"
+
 
 ## Vorbis 
 ### Read
