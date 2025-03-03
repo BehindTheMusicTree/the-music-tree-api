@@ -4,6 +4,15 @@ from enum import Enum
 class TestLibTrackFilename(str, Enum):
     ALBUM_ARTISTS_MUSE_ID3V2_MP3 = "album artists=muse_id3v2.mp3"
 
+    ALBUM_ARTISTS_ONE_TWO_THREE_ANTISLASH_ID3V2 = "album artists=One Two Three_antislash_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_COMMA_ID3V2 = "album artists=One Two Three_comma_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_DOUBLE_ANTISLASH_ID3V2 = "album artists=One Two Three_double antislash_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_DOUBLE_SLASH_ID3V2 = "album artists=One Two Three_double slash_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_MULTI_TAGS_AND_SLASH_VORBIS = "album artists=One Two Three_muti tags and slash_vorbis.flac"
+    ALBUM_ARTISTS_ONE_TWO_THREE_MULTI_TAGS_VORBIS = "album artists=One Two Three_muti tags_vorbis.flac"
+    ALBUM_ARTISTS_ONE_TWO_THREE_SEMICOLON_ID3V2 = "album artists=One Two Three_semicolon_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_SLASH_ID3V2 = "album artists=One Two Three_slash_id3v2.mp3"
+
     ALBUM_KOKO_ID3V2_MP3 = "album=koko_id3v2.mp3"
     ALBUM_KOKO_ID3V2_WAV = "album=koko_id3v2.wav"
     ALBUM_KOKO_VORBIS_FLAC = "album=koko_vorbis.flac"
