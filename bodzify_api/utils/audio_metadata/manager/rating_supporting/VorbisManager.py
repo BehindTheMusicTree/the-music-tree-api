@@ -133,7 +133,7 @@ class VorbisManager(RatingSupportingMetadataManager):
         if app_metadata_value:
             if raw_metadata_key not in raw_mutagen_metadata:
                 raw_mutagen_metadata[raw_metadata_key] = [1]
-            raw_mutagen_metadata[raw_metadata_key] = raw_metadata_key
+            raw_mutagen_metadata[raw_metadata_key] = app_metadata_value
         elif raw_metadata_key in raw_mutagen_metadata:
             del raw_mutagen_metadata[raw_metadata_key]
 
