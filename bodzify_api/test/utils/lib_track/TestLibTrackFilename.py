@@ -149,15 +149,18 @@ class TestLibTrackFilename(str, Enum):
     RATING_ID3V2_TRACKTOR_3_STAR_MP3 = "rating_id3v2_tracktor=3 star.mp3"
     RATING_ID3V2_TRACKTOR_4_STAR_MP3 = "rating_id3v2_tracktor=4 star.mp3"
     RATING_ID3V2_TRACKTOR_5_STAR_MP3 = "rating_id3v2_tracktor=5 star.mp3"
+
     RATING_ID3V2_TRACKTOR_NONE_MP3 = "rating_id3v2_tracktor=none.mp3"
 
     RATING_ID3V2_NONE_WAV = "rating_id3v2=none.wav"
 
-    RATING_RIFF_BASE_100_1_STAR_MP3 = "rating_riff_base 100=1 star.mp3"
-    RATING_RIFF_BASE_100_2_STAR_MP3 = "rating_riff_base 100=2 star.mp3"
-    RATING_RIFF_BASE_100_3_STAR_MP3 = "rating_riff_base 100=3 star.mp3"
-    RATING_RIFF_BASE_100_4_STAR_MP3 = "rating_riff_base 100=4 star.mp3"
-    RATING_RIFF_BASE_100_5_STAR_MP3 = "rating_riff_base 100=5 star.mp3"
+    RATING_RIFF_BASE_100_KID3_1_STAR_WAV = "rating_riff_base 100_kid3=1 star.wav"
+    RATING_RIFF_BASE_100_KID3_2_STAR_WAV = "rating_riff_base 100_kid3=2 star.wav"
+    RATING_RIFF_BASE_100_KID3_3_STAR_WAV = "rating_riff_base 100_kid3=3 star.wav"
+    RATING_RIFF_BASE_100_KID3_4_STAR_WAV = "rating_riff_base 100_kid3=4 star.wav"
+    RATING_RIFF_BASE_100_KID3_5_STAR_WAV = "rating_riff_base 100_kid3=5 star.wav"
+
+    RATING_RIFF_KID3_NONE_WAV = "rating_riff_kid3=none.wav"
 
     RATING_VORBIS_0_5_STAR_FLAC = "rating_vorbis=0.5 star.flac"
     RATING_VORBIS_0_STAR_FLAC = "rating_vorbis=0 star.flac"
