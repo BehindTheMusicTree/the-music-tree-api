@@ -9,9 +9,9 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_musicbrainz_link(self):
-        response = self._post_lib_track(TestLibTrackFilename.DURATION_182S_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_DANS_LA_LEGENDE_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording
         assert self.saved_object.track_file.musicbrainz_recording.musicbrainz_link == (
-            "https://musicbrainz.org/recording/3604eb06-4bc2-4416-9b31-ceadae51bc70"
+            "https://musicbrainz.org/recording/2f880dca-3a46-42c4-a0a0-ecdba619d2d1"
         )
