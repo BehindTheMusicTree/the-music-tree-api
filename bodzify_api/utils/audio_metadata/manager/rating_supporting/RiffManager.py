@@ -4,7 +4,6 @@ from typing import cast
 
 from mutagen._file import FileType as MutagenMetadata
 from mutagen.wave import WAVE
-from wavefile import WaveReader
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -185,48 +184,18 @@ class RiffManager(RatingSupportingMetadataManager):
 
     def _extract_mutagen_metadata(self) -> MutagenMetadata:
         """
-        Extract RIFF metadata from WAV files, handling various tag formats:
-        1. Try to parse with TinyTag
-        3. If TinyTag fails, fall back to direct RIFF parsing
+        Extract RIFF metadata from WAV files using direct RIFF chunk parsing.
+        This method reads the WAV file's INFO chunk directly, providing the most
+        reliable way to access RIFF metadata.
         """
         self.audio_file.seek(0)
         file_data = self.audio_file.read()
 
-        try:
-            wave = WAVE()  # Create empty WAVE object
-            info_tags: dict[str, str] = {}
-
-            # Use WaveReader to read WAV metadata
-            with WaveReader(self.audio_file.get_file_path_or_object()) as wav:
-                # Map WAV metadata to RIFF INFO format
-                if wav.metadata:
-                    for key, value in wav.metadata.items():
-                        if key == 'title':
-                            info_tags[self.RiffTagKey.TITLE] = str(value)
-                        elif key == 'artist':
-                            info_tags[self.RiffTagKey.ARTIST_NAME] = str(value)
-                        elif key == 'album':
-                            info_tags[self.RiffTagKey.ALBUM_NAME] = str(value)
-                        elif key == 'genre':
-                            info_tags[self.RiffTagKey.GENRE_NAME_OR_CODE] = str(value)
-                        elif key == 'date':
-                            info_tags[self.RiffTagKey.DATE] = str(value)
-                        elif key == 'tracknumber':
-                            info_tags[self.RiffTagKey.TRACK_NUMBER] = str(value)
-                        elif key == 'comment':
-                            info_tags[self.RiffTagKey.COMMENTS] = str(value)
-                        # Handle any additional metadata that matches our RIFF tags
-                        elif key in self.RiffTagKey:
-                            info_tags[key] = str(value)
-
-            setattr(wave, 'info', info_tags)
-            return wave
-        except Exception:
-            # Last resort: Direct RIFF parsing
-            wave = WAVE()  # Create empty WAVE object
-            info_tags = self._extract_riff_metadata_directly(file_data)
-            setattr(wave, 'info', info_tags)
-            return wave
+        # Create empty WAVE object and populate with directly parsed metadata
+        wave = WAVE()
+        info_tags = self._extract_riff_metadata_directly(file_data)
+        setattr(wave, 'info', info_tags)
+        return wave
 
     def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(
             self, raw_mutagen_metadata: MutagenMetadata) -> RawMetadataDict:
