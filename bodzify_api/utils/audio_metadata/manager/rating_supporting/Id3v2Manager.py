@@ -168,6 +168,9 @@ class Id3v2Manager(RatingSupportingMetadataManager):
         ALBUM_NAME = 'TALB'
         ALBUM_ARTISTS_NAMES = 'TPE2'
         GENRE_NAME = 'TCON'
+
+        # In cleaned metadata, the rating is stored as a tuple the potential identifier (e.g. 'Traktor') and the rating
+        # value
         RATING = 'POPM'
         LANGUAGE = 'TLAN'
         RECORDING_TIME = 'TDRC'  # ID3v2.4 recording time
@@ -238,7 +241,9 @@ class Id3v2Manager(RatingSupportingMetadataManager):
                     popm_key = raw_mutagen_frame[0]
                     if popm_key.startswith(self.Id3TextFrame.RATING):
                         popm: POPM = raw_mutagen_frame[1]
-                        result[popm_key] = popm.rating  # type: ignore[assignment]
+                        popm_key_without_prefixes = popm_key.replace(f'{self.Id3TextFrame.RATING}:', '')
+                        result[self.Id3TextFrame.RATING] = [
+                            popm_key_without_prefixes, popm.rating]  # type: ignore[index]
                         break
             else:
                 frame_value = frame_key in raw_metadata_id3 and raw_metadata_id3[frame_key]
@@ -255,10 +260,13 @@ class Id3v2Manager(RatingSupportingMetadataManager):
     def _get_raw_rating_by_traktor_or_not(self, raw_clean_metadata: RawMetadataDict) -> tuple[int | None, bool]:
         for raw_metadata_key, raw_metadata_values in raw_clean_metadata.items():
             if raw_metadata_values and len(raw_metadata_values) > 0:
-                if raw_metadata_key.startswith(self.Id3TextFrame.RATING):
-                    if raw_metadata_key.find("Traktor") != -1:
-                        return int(raw_metadata_values[0]), True
-                    return int(raw_metadata_values[0]), False
+                if raw_metadata_key == self.Id3TextFrame.RATING:
+                    first_popm = cast(list, raw_metadata_values)
+                    first_popm_identifier = first_popm[0]
+                    first_popm_rating = first_popm[1]
+                    if first_popm_identifier.find("Traktor") != -1:
+                        return int(first_popm_rating), True
+                    return int(first_popm_rating), False
 
         return None, False
 
