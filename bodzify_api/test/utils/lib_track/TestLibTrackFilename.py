@@ -105,17 +105,17 @@ class TestLibTrackFilename(str, Enum):
     RATING_ID3V2_3_STAR_MP3 = "rating_id3v2=3 star.mp3"
     RATING_ID3V2_3_STAR_WAV = "rating_id3v2=3 star.wav"
 
-    RATING_ID3V2_3_5_STAR_FLAC = "rating_id3v2=3_5 star.flac"
-    RATING_ID3V2_3_5_STAR_MP3 = "rating_id3v2=3_5 star.mp3"
-    RATING_ID3V2_3_5_STAR_WAV = "rating_id3v2=3_5 star.wav"
+    RATING_ID3V2_3_5_STAR_FLAC = "rating_id3v2=3.5 star.flac"
+    RATING_ID3V2_3_5_STAR_MP3 = "rating_id3v2=3.5 star.mp3"
+    RATING_ID3V2_3_5_STAR_WAV = "rating_id3v2=3.5 star.wav"
 
     RATING_ID3V2_4_STAR_FLAC = "rating_id3v2=4 star.flac"
     RATING_ID3V2_4_STAR_MP3 = "rating_id3v2=4 star.mp3"
     RATING_ID3V2_4_STAR_WAV = "rating_id3v2=4 star.wav"
 
-    RATING_ID3V2_4_5_STAR_FLAC = "rating_id3v2=4_5 star.flac"
-    RATING_ID3V2_4_5_STAR_MP3 = "rating_id3v2=4_5 star.mp3"
-    RATING_ID3V2_4_5_STAR_WAV = "rating_id3v2=4_5 star.wav"
+    RATING_ID3V2_4_5_STAR_FLAC = "rating_id3v2=4.5 star.flac"
+    RATING_ID3V2_4_5_STAR_MP3 = "rating_id3v2=4.5 star.mp3"
+    RATING_ID3V2_4_5_STAR_WAV = "rating_id3v2=4.5 star.wav"
 
     RATING_ID3V2_5_STAR_FLAC = "rating_id3v2=5 star.flac"
     RATING_ID3V2_5_STAR_MP3 = "rating_id3v2=5 star.mp3"
