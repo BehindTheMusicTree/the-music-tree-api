@@ -1,3 +1,4 @@
+from typing import cast
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
@@ -43,7 +44,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.RECORDING_DANS_LA_LEGENDE_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
-        track_file: FlacTrackFile = self.saved_object.track_file  # type: ignore
+        track_file = cast(FlacTrackFile, self.saved_object.track_file)
         assert track_file
         assert not track_file.md5_has_been_corrected
         assert not track_file.id3v2_tags_found_and_converted_to_vorbis
