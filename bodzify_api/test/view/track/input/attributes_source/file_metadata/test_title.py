@@ -13,12 +13,12 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.title
 
-    def test_long_from_id3v1_then_truncated(self):
+    def test_from_id3v1_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_SHORT_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert len(self.saved_object.title) == settings.LIB_TRACK_TITLE_LEN_MAX
-        assert self.saved_object.title == 'a' * settings.LIB_TRACK_TITLE_LEN_MAX
+        assert len(self.saved_object.title) == settings.LIB_TRACK_TITLE_LEN_MAX_ID3V1
+        assert self.saved_object.title == 'a' * settings.LIB_TRACK_TITLE_LEN_MAX_ID3V1
 
     def test_long_from_id3v2_then_truncated(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_SHORT_MP3)

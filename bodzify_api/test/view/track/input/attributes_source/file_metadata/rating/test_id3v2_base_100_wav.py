@@ -1,13 +1,10 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
-from bodzify_api.test.view.track.input.attributes_source.file_metadata.rating.RatingNotNoneWithHalfValuesAndZeroTestCase import (
-    RatingNotNoneWithHalfValuesAndZeroTestCase)
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
-class TestCase(RatingNotNoneWithHalfValuesAndZeroTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_0_then_0(self):
         response = self._post_lib_track(TestLibTrackFilename.RATING_ID3V2_BASE_100_0_STAR_WAV)
