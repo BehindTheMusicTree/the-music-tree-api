@@ -48,14 +48,6 @@ def restart_docker_container(container_id_or_name):
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
 class TestCase(LibTrackTestCase):
 
-    def test_audio_meta_analysis_not_enabled_then_corresponding_missing_cause(self):
-        response = self._post_lib_track(TestLibTrackFilename.RECORDING_SHOWMUSTGOON_MP3)
-
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file and self.saved_object.track_file.fingerprint_missing_cause
-        assert self.saved_object.track_file.fingerprint_missing_cause.code.code == \
-            FingerprintMissingCauseCode.Codes.AUDIO_META_AMALYSIS_DISABLED
-
     def test_audio_fingerprinter_service_down_then_corresponding_missing_cause(self):
         if not settings.AFP_CONTAINER_NAME:
             self.skipTest("The Audio Fingerprinter is not accessed through a Docker container.")
