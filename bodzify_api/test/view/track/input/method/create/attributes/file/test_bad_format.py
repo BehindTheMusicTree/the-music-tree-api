@@ -12,10 +12,10 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TextCase(LibTrackTestCase):
 
     def test_bad_format_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.FORMAT_BAD_CONTENT_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.FORMAT_BAD_CONTENT_WAV)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackPostFields.TRACK_FILE_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.METADATA_EXTRACTION_FAILED
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FILE_TYPE

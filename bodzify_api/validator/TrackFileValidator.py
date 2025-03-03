@@ -12,13 +12,6 @@ from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields
 
 @deconstructible
 class TrackFileValidator:
-    """
-    A validator that encapsulates all track file validations:
-    - File extension validation
-    - File size validation
-    - Audio content type validation
-    - Filename length validation
-    """
 
     AUDIO_MAGIC_BYTES = {
         b'ID3': 'audio/mpeg',
@@ -31,22 +24,12 @@ class TrackFileValidator:
         self.field_name = field_name or Fields.TRACK_FILE_PUBLIC
 
     def __call__(self, value, field=None):
-        # Validate file extension
         self._validate_extension(value, field)
-
-        # Validate filename length
         self._validate_filename_length(value, field)
-
-        # Validate file size
         self._validate_file_size(value, field)
-
-        # Validate content type
-        self._validate_content_type_is_audio(value, field)
+        self._validate_content_type_is_audio_from_magic_bytes_and_content(value, field)
 
     def _validate_extension(self, value, field=None):
-        """
-        Validates if the file extension is in the list of allowed extensions.
-        """
         allowed_extensions = [ext.lower() for ext in settings.LIB_TRACK_FILE_EXTENSIONS]
         extension = Path(value.name).suffix[1:].lower()
 
@@ -63,16 +46,11 @@ class TrackFileValidator:
                 field.fail(FieldValidationErrorCode.INVALID_EXTENSION, message)
             else:
                 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
-                raise AppValidationException(
-                    message=message,
-                    field_validation_error_code=FieldValidationErrorCode.INVALID_EXTENSION,
-                    field_name=self.field_name
-                )
+                raise AppValidationException(message=message,
+                                             field_validation_error_code=FieldValidationErrorCode.INVALID_EXTENSION,
+                                             field_name=self.field_name)
 
     def _validate_file_size(self, file, field=None):
-        """
-        Validates if the file size is within the allowed range.
-        """
         track_size_max_in_ko = settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1000000
         if file.size > track_size_max_in_ko:
             message = _('File too large. Size should not exceed %(size).3f Mo.') % {
@@ -103,10 +81,7 @@ class TrackFileValidator:
                     field_validation_error_code=FieldValidationErrorCode.FILE_TOO_SMALL
                 )
 
-    def _validate_content_type_is_audio(self, file, field=None):
-        """
-        Validates if the file is an audio file by checking its magic bytes and content.
-        """
+    def _validate_content_type_is_audio_from_magic_bytes_and_content(self, file, field=None):
         first_few_bytes = file.read(4)
 
         for magic_bytes, _ in self.AUDIO_MAGIC_BYTES.items():
@@ -126,16 +101,11 @@ class TrackFileValidator:
                 field.fail(FieldValidationErrorCode.INVALID_FILE_TYPE, message)
             else:
                 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
-                raise AppValidationException(
-                    field_name=self.field_name,
-                    message=message,
-                    field_validation_error_code=FieldValidationErrorCode.INVALID_FILE_TYPE
-                )
+                raise AppValidationException(field_name=self.field_name,
+                                             message=message,
+                                             field_validation_error_code=FieldValidationErrorCode.INVALID_FILE_TYPE)
 
     def _validate_filename_length(self, value, field=None):
-        """
-        Validates if the filename length is within the allowed limit.
-        """
         try:
             filename = os.path.basename(value.file.name)
         except AttributeError:
