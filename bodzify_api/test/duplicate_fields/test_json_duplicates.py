@@ -7,8 +7,6 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestJsonDuplicateFields(GenreTestCase):
-    def setUp(self):
-        super().setUp()
 
     def test_duplicate_fields_json_post_then_400(self):
         response = self._post_genre(**{CriteriaPostFields.NAME_PUBLIC: "test", CriteriaPostFields.NAME_PUBLIC: "test2"})
