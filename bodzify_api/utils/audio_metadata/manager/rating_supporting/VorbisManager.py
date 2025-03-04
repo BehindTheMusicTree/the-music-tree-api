@@ -100,6 +100,8 @@ class VorbisManager(RatingSupportingMetadataManager):
             error_str = str(error)
             if "InvalidChunk" in error_str and "UnicodeDecodeError" in error_str:
                 raise InvalidChunkDecodeError(error_str)
+            if "file said" in error_str and "bytes, read" in error_str:
+                raise FileCorruptedError(f"File size mismatch: {error_str}")
             raise
 
     def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(
