@@ -224,7 +224,7 @@ class TestLibTrackFilename(str, Enum):
 
     SIZE_BIG_9_98_MO_MP3 = "size_big=9.98mo.mp3"
     SIZE_BIG_26_6_MO_FLAC = "size_big=26.6mo.flac"
-    SIZE_BIG_79_55_MO_WAV = "size_big=79_55mo.wav"
+    SIZE_BIG_79_55_MO_WAV = "size_big=79.55mo.wav"
 
     SIZE_SMALL_0_01_MO_MP3 = "size_small=0.01mo.mp3"
     SIZE_SMALL_0_05_MO_FLAC = "size_small=0.05mo.flac"
