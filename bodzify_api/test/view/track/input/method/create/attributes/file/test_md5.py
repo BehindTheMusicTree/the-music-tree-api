@@ -22,11 +22,11 @@ class TestCase(LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FILE_CORRUPTED
 
     def test_flac_md5_not_valid_not_because_of_id3v2_metadata_then_corrected(self):
-        response = self._post_lib_track(TestLibTrackFilename.FORMAT_MD5_NOT_VALID_FLAC)
+        response = self._post_lib_track(TestLibTrackFilename.FORMAT_MD5_NOT_VALID_BECAUSE_OF_ID3V2_METADATA_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
-        track_file: FlacTrackFile = self.saved_object.track_file  # type: ignore
-        assert track_file
+        track_file = self.saved_object.track_file
+        assert isinstance(track_file, FlacTrackFile)
         assert track_file.md5_has_been_corrected
         assert not track_file.id3v2_tags_found_and_converted_to_vorbis
         assert audio_metadata.is_flac_md5_valid(track_file.file.path)
@@ -35,7 +35,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.RECORDING_CALIFORNIA_GURLS_ID3V2_TAGS_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
-        track_file: FlacTrackFile = self.saved_object.track_file  # type: ignore
+        track_file = cast(FlacTrackFile, self.saved_object.track_file)
         assert track_file
         assert track_file.md5_has_been_corrected
         assert track_file.id3v2_tags_found_and_converted_to_vorbis
