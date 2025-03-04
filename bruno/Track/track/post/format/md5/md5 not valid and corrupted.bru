@@ -15,10 +15,5 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/album=koko_vorbis.flac)
-}
-
-vars:post-response {
-  trackAllumerUuid: res.body.uuid
-  albumStadeUuid: res.body.album.uuid
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/format=md5_not_valid_and_corrupted.flac)
 }
