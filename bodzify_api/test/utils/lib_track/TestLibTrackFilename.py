@@ -226,9 +226,9 @@ class TestLibTrackFilename(str, Enum):
     SIZE_BIG_26_6_MO_FLAC = "size_big=26.6mo.flac"
     SIZE_BIG_79_55_MO_WAV = "size_big=79_55mo.wav"
 
-    SIZE_SMALL_0_01_MO_MP3 = "size_small=9.98mo.mp3"
-    SIZE_SMALL_0_05_MO_FLAC = "size_small=26.6mo.flac"
-    SIZE_SMALL_0_08_MO_WAV = "size_small=79_55mo.wav"
+    SIZE_SMALL_0_01_MO_MP3 = "size_small=0.01mo.mp3"
+    SIZE_SMALL_0_05_MO_FLAC = "size_small=0.05mo.flac"
+    SIZE_SMALL_0_08_MO_WAV = "size_small=0.08mo.wav"
 
     def __str__(self) -> str:
         return str(self.value)
