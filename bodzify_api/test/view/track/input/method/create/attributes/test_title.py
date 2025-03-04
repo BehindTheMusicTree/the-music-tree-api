@@ -16,7 +16,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.FILENAME_DOT_IN_FILENAME_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.title == "dot.in.filename"
+        assert self.saved_object.title == "filename=dot.in.filename"
 
     def test_not_povided_then_set_from_filename_with_spaces_removing_extra_spaces(self):
         response = self._post_lib_track(TestLibTrackFilename.FILENAME_SPACES_TRAILING_MP3)

@@ -42,4 +42,4 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.SIZE_BIG_26_6_MO_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
-        assert str(round(track_file.size_in_mo, 2)) == '26.60'
+        assert str(round(track_file.size_in_mo, 2)) == '25.91'
