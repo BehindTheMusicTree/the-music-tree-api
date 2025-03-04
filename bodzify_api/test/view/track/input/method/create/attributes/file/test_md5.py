@@ -21,24 +21,23 @@ class TestCase(LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackPostFields.TRACK_FILE_PUBLIC
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FILE_CORRUPTED
 
-    def test_flac_md5_not_valid_not_because_of_id3v2_metadata_then_corrected(self):
-        response = self._post_lib_track(TestLibTrackFilename.FORMAT_MD5_NOT_VALID_BECAUSE_OF_ID3V2_METADATA_FLAC)
+    def test_flac_md5_not_valid_not_because_of_id3v2_metadata_then_corrected_by_rewriting(self):
+        response = self._post_lib_track(TestLibTrackFilename.FORMAT_MD5_NOT_VALID_NOT_BECAUSE_OF_ID3_METADATA_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         track_file = self.saved_object.track_file
         assert isinstance(track_file, FlacTrackFile)
         assert track_file.md5_has_been_corrected
-        assert not track_file.id3v2_tags_found_and_converted_to_vorbis
         assert audio_metadata.is_flac_md5_valid(track_file.file.path)
 
-    def test_flac_md5_not_valid_because_of_id3v2_metadata_then_corrected(self):
+    def test_flac_md5_not_valid_because_of_id3v2_metadata_then_corrected_with_vorbis_conversion(self):
         response = self._post_lib_track(TestLibTrackFilename.RECORDING_CALIFORNIA_GURLS_ID3V2_TAGS_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(FlacTrackFile, self.saved_object.track_file)
         assert track_file
         assert track_file.md5_has_been_corrected
-        assert track_file.id3v2_tags_found_and_converted_to_vorbis
+        assert track_file.id3v1_tags_found_and_converted_to_vorbis
 
     def test_flac_md5_is_valid(self):
         response = self._post_lib_track(TestLibTrackFilename.RECORDING_DANS_LA_LEGENDE_FLAC)
@@ -47,4 +46,4 @@ class TestCase(LibTrackTestCase):
         track_file = cast(FlacTrackFile, self.saved_object.track_file)
         assert track_file
         assert not track_file.md5_has_been_corrected
-        assert not track_file.id3v2_tags_found_and_converted_to_vorbis
+        assert not track_file.id3v1_tags_found_and_converted_to_vorbis
