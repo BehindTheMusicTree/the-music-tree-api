@@ -37,7 +37,7 @@ class AudioFile:
         elif isinstance(file, InMemoryUploadedFile):
             self.file_path = None
         elif isinstance(file, DjangoBaseFile):
-            self.file_path = file.file.name if hasattr(file.file, 'name') else file.file
+            self.file_path = file.file.name
         elif isinstance(file, DjangoFile):
             self.file_path = file.name
         else:
@@ -46,11 +46,8 @@ class AudioFile:
         if self.file_path is not None and not os.path.exists(self.file_path):
             raise FileNotFoundError(f"File {self.file_path} does not exist")
 
-        file_extension = os.path.splitext(
-            self.file.name if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile))
-            else self.file if isinstance(self.file, str)
-            else str(self.file)
-        )[1].lower()
+        file_extension = os.path.splitext(self.file.name if not self.file_path else self.file_path)[  # type: ignore
+            1].lower()
         self.file_extension = file_extension
         return
 

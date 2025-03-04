@@ -1,6 +1,5 @@
 
 import os
-import stat
 import tempfile
 from typing import TYPE_CHECKING, Any
 
@@ -23,7 +22,6 @@ from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields a
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
 from bodzify_api.utils import audio_metadata, data_transformer, utils
-from bodzify_api.utils.AppDjangoFIle import AppDjangoFile
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
@@ -275,6 +273,25 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         del post_data[ExtractFields.URL]
         return post_data
 
+    def download_to_temp_file(self, streamed_response):
+        """Download a streamed response to a temporary file and return the path."""
+        # Create temporary file with appropriate extension
+        # Try to get extension from content type or URL if needed
+        fd, temp_path = tempfile.mkstemp(suffix='.mp3')  # Use appropriate extension
+
+        try:
+            with os.fdopen(fd, 'wb') as temp_file:
+                # Stream content in chunks to avoid memory issues with large files
+                for chunk in streamed_response.iter_content(chunk_size=8192):
+                    if chunk:
+                        temp_file.write(chunk)
+            return temp_path
+        except Exception as e:
+            # Clean up on error
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+            raise e
+
     def _get_model_data_from_extract_data(self, **kwargs):
         mine_track_url = kwargs[ExtractFields.URL]
         _, is_filename_randomly_generated = \
@@ -282,22 +299,13 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         # stream=True makes it more effective for large files.
         track_file_streamed = requests.get(mine_track_url, stream=True)
+        temp_file_path = self.download_to_temp_file(track_file_streamed)
 
-        with tempfile.NamedTemporaryFile(delete=True, dir=settings.FILE_UPLOAD_TEMP_DIR) as track_temp_file:
-            for block in track_file_streamed.iter_content(1024 * 8):
-                if not block:
-                    break
-                track_temp_file.write(block)
-            track_temp_file.flush()
-            track_temp_file.seek(0)
-
-            os.chmod(track_temp_file.name, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
-
-            post_data = self._get_post_data_from_extract_data(**kwargs)
-            post_data[PostFields.TRACK_FILE_PUBLIC] = AppDjangoFile(file_abs_path=track_temp_file.name)
-            force_title_generation_str = str(is_filename_randomly_generated)
-            post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
-            return self._get_model_data_from_post_data(**post_data)
+        post_data = self._get_post_data_from_extract_data(**kwargs)
+        post_data[PostFields.TRACK_FILE_PUBLIC] = temp_file_path
+        force_title_generation_str = str(is_filename_randomly_generated)
+        post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
+        return self._get_model_data_from_post_data(**post_data)
 
     def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
