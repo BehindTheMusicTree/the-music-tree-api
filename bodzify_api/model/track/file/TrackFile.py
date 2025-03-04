@@ -170,7 +170,8 @@ class TrackFile(PolymorphicModel, PrivateStandardResource):
 
     def _prepare_save(self, ctx) -> dict:
         try:
-            self.duration_in_sec = audio_metadata.get_duration_in_sec(self.file)
+            duration = audio_metadata.get_duration_in_sec(self.file)
+            self.duration_in_sec = duration if duration > 1 else 1
             self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
             self.size_in_bytes = self.file.size
             fingerprinting_result = self._manage_fingerprint()

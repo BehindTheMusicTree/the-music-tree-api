@@ -58,7 +58,7 @@ class AudioFile:
         if self.file_extension == '.mp3':
             try:
                 audio = MP3(path)
-                duration = audio.info.length
+                return audio.info.length
             except Exception as exc:
                 # If MP3 fails, try other formats as fallback
                 try:
@@ -92,6 +92,7 @@ class AudioFile:
 
                 if duration <= 0:
                     raise RuntimeError("Could not determine audio duration")
+                return duration
 
             except json.JSONDecodeError:
                 raise RuntimeError("Failed to parse audio file metadata")
@@ -102,7 +103,7 @@ class AudioFile:
 
         elif self.file_extension == '.flac':
             try:
-                duration = FLAC(path).info.length
+                return FLAC(path).info.length
             except Exception as exc:
                 error_str = str(exc)
                 if "file said" in error_str and "bytes, read" in error_str:
@@ -110,8 +111,6 @@ class AudioFile:
                 raise
         else:
             raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
-
-        return duration if duration > 1 else 1
 
     def get_bitrate(self) -> int:
         path = self.get_file_path_or_object()
