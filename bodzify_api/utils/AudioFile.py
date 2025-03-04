@@ -285,7 +285,12 @@ class AudioFile:
         else:
             raise FileCorruptedError("The Flac file md5 check failed")
 
-    def fix_md5_checking(self):
+    def get_file_with_corrected_md5(self) -> Union[InMemoryUploadedFile, str]:
+        """
+        Returns a new file with corrected MD5 signature.
+        For InMemoryUploadedFile, returns a new InMemoryUploadedFile instance.
+        For file-based files, returns the path to the corrected file.
+        """
         # Create a temporary file to store the corrected FLAC content
         temp_dir = settings.FILE_UPLOAD_TEMP_DIR
         with tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False) as temp_file:
@@ -308,16 +313,14 @@ class AudioFile:
 
         stderr = result.stderr.decode()
         if 'wrote' not in stderr:
+            os.unlink(temp_path)  # Clean up on error
             raise FileCorruptedError(
                 "The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")
 
-        # Replace original file content with corrected content
         if isinstance(self.file, InMemoryUploadedFile):
-            print("DEBUG: Fixing MD5 for InMemoryUploadedFile")
             # Read the corrected content
             with open(temp_path, 'rb') as f:
                 corrected_content = f.read()
-            print(f"DEBUG: Read {len(corrected_content)} bytes from temporary file")
 
             # Create a new InMemoryUploadedFile with the corrected content
             from io import BytesIO
@@ -325,10 +328,10 @@ class AudioFile:
             file_obj.write(corrected_content)
             file_obj.seek(0)  # Reset position for reading
 
-            original_file = cast(InMemoryUploadedFile, self.file)  # Cast to ensure type safety
+            original_file = cast(InMemoryUploadedFile, self.file)
 
             # Create new file with same metadata as original
-            self.file = InMemoryUploadedFile(
+            new_file = InMemoryUploadedFile(
                 file=file_obj,
                 field_name=original_file.field_name or None,
                 name=original_file.name,
@@ -337,19 +340,16 @@ class AudioFile:
                 charset=original_file.charset,
                 content_type_extra=original_file.content_type_extra or {}
             )
-            print(f"DEBUG: Created new InMemoryUploadedFile with {len(corrected_content)} bytes")
 
-            # Ensure the file is ready for reading
-            self.file.seek(0)
+            # Clean up and verify
+            os.unlink(temp_path)
 
-            # Verify the file is valid after fixing
-            if not self.is_flac_file_md5_valid():
+            # Create temporary AudioFile to verify the fix worked
+            temp_audio_file = AudioFile(new_file)
+            if not temp_audio_file.is_flac_file_md5_valid():
                 raise FileCorruptedError("Failed to fix FLAC MD5 signature")
-        else:
-            # Path is not None
-            file_path: str = self.file_path  # type: ignore
-            with open(file_path, 'wb') as f, open(temp_path, 'rb') as temp_f:
-                f.write(temp_f.read())
 
-        # Clean up temporary file
-        os.unlink(temp_path)
+            return new_file
+        else:
+            # For file-based files, return the path to the corrected file
+            return temp_path

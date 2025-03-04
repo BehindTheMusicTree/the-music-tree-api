@@ -1,4 +1,5 @@
 
+import os
 from django.db import models
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -41,14 +42,32 @@ class FlacTrackFile(TrackFile):
                 print(f"MD5 valid: {md5_valid_before}")
 
                 print("\n=== Attempting MD5 fix... ===")
-                # Create AudioFile instance and fix MD5
+                # Create AudioFile instance and get fixed file
                 audio_file = audio_metadata.AudioFile(self.file)
-                audio_file.fix_md5_checking()
+                fixed_file = audio_file.get_file_with_corrected_md5()
 
-                # Get the potentially new file from AudioFile instance
-                if isinstance(audio_file.file, InMemoryUploadedFile):
-                    print("Updating file reference with corrected file...")
-                    self.file = audio_file.file
+                # Update file reference with corrected file
+                if isinstance(fixed_file, InMemoryUploadedFile):
+                    print("Updating file reference with corrected InMemoryUploadedFile...")
+                    self.file = fixed_file
+                else:
+                    print(f"Updating file reference with corrected file at path: {fixed_file}")
+                    with open(fixed_file, 'rb') as f:
+                        content = f.read()
+                    # Create new InMemoryUploadedFile from the corrected content
+                    from io import BytesIO
+                    from django.core.files.uploadedfile import InMemoryUploadedFile
+                    file_obj = BytesIO(content)
+                    self.file = InMemoryUploadedFile(
+                        file=file_obj,
+                        field_name=None,
+                        name=os.path.basename(fixed_file),
+                        content_type='audio/x-flac',
+                        size=len(content),
+                        charset=None,
+                        content_type_extra={}
+                    )
+                    os.unlink(fixed_file)  # Clean up the temporary file
                 self.md5_has_been_corrected = True
 
                 # Check file state after fix
