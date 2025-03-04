@@ -44,7 +44,6 @@ class AppApiClient(APIClient):
              content_type=None,
              follow=False,
              format=None,
-             keep_duplicate_fields: bool = False,
              **extra) -> HttpResponse:
         data_url_encoded = None
         if data:
@@ -55,7 +54,7 @@ class AppApiClient(APIClient):
                 if format != 'multipart':
                     data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
 
-            if not content_type:
+            if not content_type and not format:
                 content_type = 'application/json'
 
         # Set default headers for JSON content type

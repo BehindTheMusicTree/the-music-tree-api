@@ -21,10 +21,10 @@ class TestCase(LibTrackTestCase):
         assert track_file.bitrate_in_kbps == 192
 
     def test_small_flac(self):
-        response = self._post_lib_track(TestLibTrackFilename.BITRATE_IN_KPBPS_SMALL_1152_FLAC)
+        response = self._post_lib_track(TestLibTrackFilename.BITRATE_IN_KPBPS_SMALL_723_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
-        assert track_file.bitrate_in_kbps == 1152
+        assert track_file.bitrate_in_kbps == 723
 
     def test_big_wav(self):
         response = self._post_lib_track(TestLibTrackFilename.BITRATE_IN_KPBPS_BIG_1411_WAV)
@@ -42,4 +42,4 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.BITRATE_IN_KPBPS_BIG_946_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
-        assert track_file.bitrate_in_kbps == 946
+        assert track_file.bitrate_in_kbps == 922
