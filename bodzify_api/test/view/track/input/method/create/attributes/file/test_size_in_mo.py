@@ -13,7 +13,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.SIZE_SMALL_0_08_MO_WAV)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
-        assert Decimal(round(track_file.size_in_mo, 2) == round(81/1024, 2))
+        assert Decimal(round(track_file.size_in_mo, 2)) == 0.08
 
     def test_small_mp3(self):
         response = self._post_lib_track(TestLibTrackFilename.SIZE_SMALL_0_01_MO_MP3)
@@ -43,4 +43,4 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.SIZE_BIG_26_6_MO_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
-        assert Decimal(round(track_file.size_in_mo, 2) == 26.6
+        assert Decimal(round(track_file.size_in_mo, 2)) == 26.6
