@@ -27,7 +27,7 @@ class TestLibTrackFilename(str, Enum):
     ARTISTS_ONE_TWO_THREE_SLASH_ID3V2 = "artists=One Two Three_slash_id3v2.mp3"
 
     BITRATE_IN_KPBPS_BIG_320_MP3 = "bitrate in kbps_big=320.mp3"
-    BITRATE_IN_KPBPS_BIG_705_FLAC = "bitrate in kbps_big=705.flac"
+    BITRATE_IN_KPBPS_BIG_946_FLAC = "bitrate in kbps_big=946.flac"
     BITRATE_IN_KPBPS_BIG_1411_WAV = "bitrate in kbps_big=1411.wav"
 
     BITRATE_IN_KPBPS_SMALL_192_MP3 = "bitrate in kbps_small=192.mp3"

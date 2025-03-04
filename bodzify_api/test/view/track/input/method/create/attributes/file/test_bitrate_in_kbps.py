@@ -39,7 +39,7 @@ class TestCase(LibTrackTestCase):
         assert track_file.bitrate_in_kbps == 320
 
     def test_big_flac(self):
-        response = self._post_lib_track(TestLibTrackFilename.BITRATE_IN_KPBPS_BIG_705_FLAC)
+        response = self._post_lib_track(TestLibTrackFilename.BITRATE_IN_KPBPS_BIG_946_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
-        assert track_file.bitrate_in_kbps == 705
+        assert track_file.bitrate_in_kbps == 946
