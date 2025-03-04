@@ -26,16 +26,20 @@ class FlacTrackFile(TrackFile):
             return ctx
         else:
             try:
-                size_before = self.file.size
+                content_before = self.file.read()
+                self.file.seek(0)
                 md5_valid_before = audio_metadata.is_flac_md5_valid(self.file)
                 print(
-                    f"File before MD5 fix - Size: {size_before} bytes, MD5 valid: {md5_valid_before}")
+                    f"File before MD5 fix - Content length: {len(content_before)} bytes, MD5 valid: {md5_valid_before}")
+
                 audio_metadata.fix_md5_checking(self.file)
                 self.md5_has_been_corrected = True
-                size_after = self.file.size
+
+                content_after = self.file.read()
+                self.file.seek(0)
                 md5_valid_after = audio_metadata.is_flac_md5_valid(self.file)
                 print(
-                    f"File after MD5 fix - Size: {size_after} bytes, MD5 valid: {md5_valid_after}, Changed: {size_before != size_after}")
+                    f"File after MD5 fix - Content length: {len(content_after)} bytes, MD5 valid: {md5_valid_after}, Content changed: {content_before != content_after}")
             except FileCorruptedError as e:
                 if not isinstance(e, FlacMd5CheckFailedError):
                     raise AppValidationException(
