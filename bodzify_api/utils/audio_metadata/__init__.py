@@ -223,7 +223,7 @@ def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     return file.is_flac_file_md5_valid()
 
 
-def fix_md5_checking(file: FILE_TYPE) -> None:
+def fix_md5_checking(file: FILE_TYPE) -> InMemoryUploadedFile | str:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
     return file.get_file_with_corrected_md5()

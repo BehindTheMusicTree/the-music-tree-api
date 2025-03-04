@@ -43,8 +43,7 @@ class FlacTrackFile(TrackFile):
 
                 print("\n=== Attempting MD5 fix... ===")
                 # Create AudioFile instance and get fixed file
-                audio_file = audio_metadata.AudioFile(self.file)
-                fixed_file = audio_file.get_file_with_corrected_md5()
+                fixed_file = audio_metadata.fix_md5_checking(self.file)
 
                 # Update file reference with corrected file
                 if isinstance(fixed_file, InMemoryUploadedFile):

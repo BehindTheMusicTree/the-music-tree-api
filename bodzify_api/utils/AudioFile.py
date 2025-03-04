@@ -285,7 +285,7 @@ class AudioFile:
         else:
             raise FileCorruptedError("The Flac file md5 check failed")
 
-    def get_file_with_corrected_md5(self) -> Union[InMemoryUploadedFile, str]:
+    def get_file_with_corrected_md5(self) -> InMemoryUploadedFile | str:
         """
         Returns a new file with corrected MD5 signature.
         For InMemoryUploadedFile, returns a new InMemoryUploadedFile instance.
