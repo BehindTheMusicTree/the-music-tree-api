@@ -184,13 +184,13 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             artists = []
         model_data[Fields.ARTISTS] = artists
 
-    def _get_track_filename_with_extension(self, mine_track_url: str, data: dict):
+    def _get_track_filename_with_extension(self, mine_track_url: str, **kwargs):
         file_extension = utils.get_file_extension_from_url(mine_track_url)
         is_filename_randomly_generated = False
-        if Fields.TITLE in data:
-            title = data[Fields.TITLE]
-            if SchemaFields.ARTISTS_NAMES in data:
-                artists_names_list = data[SchemaFields.ARTISTS_NAMES]
+        if Fields.TITLE in kwargs:
+            title = kwargs[Fields.TITLE]
+            if SchemaFields.ARTISTS_NAMES in kwargs:
+                artists_names_list = kwargs[SchemaFields.ARTISTS_NAMES]
                 artists_names = ", ".join(artists_names_list)
                 if artists_names is None or artists_names == "":
                     filename_without_extension = title
@@ -277,7 +277,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     def _get_model_data_from_extract_data(self, **kwargs):
         mine_track_url = kwargs[ExtractFields.URL]
         track_filename, is_filename_randomly_generated = \
-            self._get_track_filename_with_extension(mine_track_url=mine_track_url, data=kwargs)
+            self._get_track_filename_with_extension(mine_track_url=mine_track_url, **kwargs)
 
         # stream=True makes it more effective for large files.
         track_file_streamed = requests.get(mine_track_url, stream=True)
