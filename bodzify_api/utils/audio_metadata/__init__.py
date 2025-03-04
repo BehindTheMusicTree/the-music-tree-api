@@ -223,10 +223,10 @@ def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     return file.is_flac_file_md5_valid()
 
 
-def replace_flac_with_corrected_md5(file: FILE_TYPE) -> None:
+def fix_md5_checking(file: FILE_TYPE) -> None:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
-    return file.replace_flac_with_corrected_md5()
+    return file.fix_md5_checking()
 
 
 def delete_potential_id3_metadata_with_header(file: FILE_TYPE) -> None:

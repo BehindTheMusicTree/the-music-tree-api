@@ -1,4 +1,3 @@
-import os
 
 from django.db import models
 
@@ -17,37 +16,30 @@ class FlacTrackFile(TrackFile):
     def _prepare_save(self, ctx) -> dict:
         ctx = super()._prepare_save(ctx)
 
-        # First try to validate and correct MD5 without touching ID3 metadata
-        if not audio_metadata.is_flac_md5_valid(self.file):
+        # ID3 metadata can be present in FLAC files, causing a mismatch in the MD5 checksum.
+        # They are therefore removed which won't affect the file's metadata integrity as all the metadata
+        # is stored in the Vorbis comment block.
+        audio_metadata.delete_potential_id3_metadata_with_header(self.file)
+
+        if audio_metadata.is_flac_md5_valid(self.file):
+            self.md5_has_been_corrected = False
+            return ctx
+        else:
             try:
-                # Try correcting MD5 first without removing ID3
-                audio_metadata.replace_flac_with_corrected_md5(self.file)
-                if audio_metadata.is_flac_md5_valid(self.file):
-                    self.md5_has_been_corrected = True
-                    return ctx
-            except (FlacMd5CheckFailedError, FileCorruptedError):
-                # If direct correction failed, try removing ID3 metadata and correct again
-                try:
-                    audio_metadata.delete_potential_id3_metadata_with_header(self.file)
-                    audio_metadata.replace_flac_with_corrected_md5(self.file)
-                    if not audio_metadata.is_flac_md5_valid(self.file):
-                        raise FlacMd5CheckFailedError()
-                    self.md5_has_been_corrected = True
-                except (FlacMd5CheckFailedError, FileCorruptedError):
+                size_before = self.file.size
+                md5_valid_before = audio_metadata.is_flac_md5_valid(self.file)
+                print(
+                    f"File before MD5 fix - Size: {size_before} bytes, MD5 valid: {md5_valid_before}")
+                audio_metadata.fix_md5_checking(self.file)
+                self.md5_has_been_corrected = True
+                size_after = self.file.size
+                md5_valid_after = audio_metadata.is_flac_md5_valid(self.file)
+                print(
+                    f"File after MD5 fix - Size: {size_after} bytes, MD5 valid: {md5_valid_after}, Changed: {size_before != size_after}")
+            except FileCorruptedError as e:
+                if not isinstance(e, FlacMd5CheckFailedError):
                     raise AppValidationException(
                         field_name=Fields.FILE,
-                        message='The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.',
+                        message='The FLAC file appears to be corrupted and cannot be processed.',
                         field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
-        else:
-            self.md5_has_been_corrected = False
-
         return ctx
-
-    def handle_flac_md5(self) -> bool:
-
-        return True
-
-    def delete_file(self):
-        if self.file:
-            if os.path.isfile(self.file.path):
-                os.remove(self.file.path)

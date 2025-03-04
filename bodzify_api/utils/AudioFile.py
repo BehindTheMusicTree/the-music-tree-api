@@ -3,7 +3,7 @@ import json
 import os
 import subprocess
 import tempfile
-from typing import Union
+from typing import Union, cast
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files import File as DjangoFile
@@ -253,9 +253,23 @@ class AudioFile:
             raise ImproperlyConfigured("The file is not a FLAC file")
 
         if isinstance(self.file, InMemoryUploadedFile):
+            # Create a temporary file for validation
+            temp_dir = settings.FILE_UPLOAD_TEMP_DIR
+            with tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False) as temp_file:
+                temp_path = temp_file.name
+                self.file.seek(0)
+                temp_file.write(self.read())
+
+            try:
+                # Validate the temporary file
+                result = subprocess.run(['flac', '-t', temp_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                os.unlink(temp_path)  # Clean up
+            except Exception as e:
+                os.unlink(temp_path)  # Clean up even on error
+                raise e
+
+            # Reset file position for future operations
             self.file.seek(0)
-            result = subprocess.run(
-                ['flac', '-t', '-'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=self.read())
         else:
             # Then the file path is not None
             file_path: str = self.file_path  # type: ignore
@@ -271,7 +285,7 @@ class AudioFile:
         else:
             raise FileCorruptedError("The Flac file md5 check failed")
 
-    def replace_flac_with_corrected_md5(self):
+    def fix_md5_checking(self):
         # Create a temporary file to store the corrected FLAC content
         temp_dir = settings.FILE_UPLOAD_TEMP_DIR
         with tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False) as temp_file:
@@ -285,7 +299,7 @@ class AudioFile:
                                     stderr=subprocess.PIPE)
         else:
             # The file path is not None
-            file_path: str = self.file_path  # type: ignore
+            file_path = cast(str, self.file_path)
             with open(file_path, 'rb') as f:
                 result = subprocess.run(['flac', '-f', '--best', '-o', temp_path, '-'],
                                         input=f.read(),
@@ -299,9 +313,38 @@ class AudioFile:
 
         # Replace original file content with corrected content
         if isinstance(self.file, InMemoryUploadedFile):
-            self.seek(0)
+            print("DEBUG: Fixing MD5 for InMemoryUploadedFile")
+            # Read the corrected content
             with open(temp_path, 'rb') as f:
-                self.write(f.read())
+                corrected_content = f.read()
+            print(f"DEBUG: Read {len(corrected_content)} bytes from temporary file")
+
+            # Create a new InMemoryUploadedFile with the corrected content
+            from io import BytesIO
+            file_obj = BytesIO()
+            file_obj.write(corrected_content)
+            file_obj.seek(0)  # Reset position for reading
+
+            original_file = cast(InMemoryUploadedFile, self.file)  # Cast to ensure type safety
+
+            # Create new file with same metadata as original
+            self.file = InMemoryUploadedFile(
+                file=file_obj,
+                field_name=original_file.field_name or None,
+                name=original_file.name,
+                content_type=original_file.content_type or 'audio/x-flac',
+                size=len(corrected_content),
+                charset=original_file.charset,
+                content_type_extra=original_file.content_type_extra or {}
+            )
+            print(f"DEBUG: Created new InMemoryUploadedFile with {len(corrected_content)} bytes")
+
+            # Ensure the file is ready for reading
+            self.file.seek(0)
+
+            # Verify the file is valid after fixing
+            if not self.is_flac_file_md5_valid():
+                raise FileCorruptedError("Failed to fix FLAC MD5 signature")
         else:
             # Path is not None
             file_path: str = self.file_path  # type: ignore
