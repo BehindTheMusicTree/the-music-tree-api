@@ -14,6 +14,7 @@ from mutagen.flac import FLAC
 from mutagen.mp3 import MP3
 from mutagen.wave import WAVE
 
+from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FileCorruptedError
 
 
@@ -51,8 +52,7 @@ class AudioFile:
         self.file_extension = file_extension
         return
 
-    def get_duration(self) -> float:
-        """Get audio file duration in seconds. Handles potentially mislabeled files by trying multiple formats."""
+    def get_duration_in_sec(self) -> float:
         path = self.get_file_path_or_object()
 
         if self.file_extension == '.mp3':
@@ -120,7 +120,7 @@ class AudioFile:
             # Calculate MP3 bitrate from file size and duration
             if audio.info.length > 0 and isinstance(path, str) and os.path.exists(path):
                 file_size = os.path.getsize(path)
-                return int((file_size * 8) / self.get_duration() / 1000)
+                return int((file_size * 8) / self.get_duration_in_sec() / 1000)
             return 0
         elif self.file_extension == '.wav':
             try:
@@ -266,31 +266,31 @@ class AudioFile:
             return True
         if 'MD5 signature mismatch' in output:
             return False
+        if 'FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC' in output:
+            raise FileCorruptedError("The FLAC file is corrupted: decoder lost sync with the stream")
         else:
-            raise Exception("The Flac file md5 check failed")
+            raise FileCorruptedError("The Flac file md5 check failed")
 
     def replace_flac_with_corrected_md5(self):
         # Create a temporary file to store the corrected FLAC content
-        from django.conf import settings
         temp_dir = settings.FILE_UPLOAD_TEMP_DIR
         with tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False) as temp_file:
             temp_path = temp_file.name
 
         if isinstance(self.file, InMemoryUploadedFile):
             self.file.seek(0)
-            result = subprocess.run(
-                ['flac', '-f', '--best', '-o', temp_path, '-'],
-                input=self.read(),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
+            result = subprocess.run(['flac', '-f', '--best', '-o', temp_path, '-'],
+                                    input=self.read(),
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
         else:
             # The file path is not None
             file_path: str = self.file_path  # type: ignore
-            result = subprocess.run(
-                ['flac', '-f', '--best', '-o', temp_path, '-'],
-                input=file_path,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
+            with open(file_path, 'rb') as f:
+                result = subprocess.run(['flac', '-f', '--best', '-o', temp_path, '-'],
+                                        input=f.read(),
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
 
         stderr = result.stderr.decode()
         if 'wrote' not in stderr:

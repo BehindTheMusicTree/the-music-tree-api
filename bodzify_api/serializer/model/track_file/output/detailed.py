@@ -33,7 +33,7 @@ class FileDetailedSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         if isinstance(instance, FlacTrackFile):
-            data[FlacSpecificFields.ID3v2_TAGS_FOUND_AND_CONVERTED] = instance.id3v2_tags_found_and_converted_to_vorbis
+            data[FlacSpecificFields.ID3v2_TAGS_FOUND_AND_CONVERTED] = instance.id3v1_tags_found_and_converted_to_vorbis
             data[FlacSpecificFields.MD5_HAS_BEEN_CORRECTED] = instance.md5_has_been_corrected
         return data
 

@@ -79,21 +79,22 @@ Legend:
 - (~1M): Approximately 1 million characters (format limit)
 """
 
+from mutagen.id3 import ID3
 
-from bodzify_api.utils.audio_metadata.manager.rating_supporting.RiffManager import RiffManager
-from .utils.types import AppMetadata, AppMetadataValue
-from .utils.TagFormat import MetadataFormat
-from .utils.AppMetadataKey import AppMetadataKey
-from .manager.rating_supporting.VorbisManager import VorbisManager
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 
 from ..AudioFile import AudioFile
+from .utils.types import AppMetadata, AppMetadataValue
+from .utils.TagFormat import MetadataFormat
+from .utils.AppMetadataKey import AppMetadataKey
 from .manager.id3v1.Id3v1Manager import Id3v1Manager
 from .manager.MetadataManager import MetadataManager
-from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
 from .manager.rating_supporting.RatingSupportingMetadataManager import RatingSupportingMetadataManager
+from .manager.rating_supporting.Id3v2Manager import Id3v2Manager
+from .manager.rating_supporting.RiffManager import RiffManager
+from .manager.rating_supporting.VorbisManager import VorbisManager
 
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
@@ -213,24 +214,26 @@ def get_bitrate(file: FILE_TYPE) -> int:
 def get_duration_in_sec(file: FILE_TYPE) -> float:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
-    return file.get_duration()
+    return file.get_duration_in_sec()
 
 
-def is_flac_md5_valid(file: FILE_TYPE, check_id3v2: bool = False):
+def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
-
-    if file.file_extension == ".flac":
-        if check_id3v2:
-            id3v2_tags = Id3v2Manager(file).raw_mutagen_metadata
-            if id3v2_tags:
-                return False
-        return file.is_flac_file_md5_valid()
-    else:
-        raise ImproperlyConfigured('The file must be a FLAC file to check the MD5.')
+    return file.is_flac_file_md5_valid()
 
 
 def replace_flac_with_corrected_md5(file: FILE_TYPE) -> None:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
     return file.replace_flac_with_corrected_md5()
+
+
+def delete_potential_id3_metadata_with_header(file: FILE_TYPE) -> None:
+    if not isinstance(file, AudioFile):
+        audio_file = AudioFile(file)
+    try:
+        id_metadata = ID3(audio_file.get_file_path_or_object())
+        id_metadata.delete()
+    except Exception:
+        pass
