@@ -1,4 +1,3 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
@@ -7,7 +6,7 @@ from bodzify_api.serializer.model.lib_track.input.put.Fields import Fields as Pu
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TestCase(LibTrackTestCase):
     def test_track_newly_linked_to_genre_then_update_genre_playlist_last_track_list_update_date(self):
         genre = self.model_fixture_factory.create_genre(name='rock')

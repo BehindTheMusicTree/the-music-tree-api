@@ -1,9 +1,8 @@
-import pytest
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TestCase(LibTrackTestCase):
 
     """

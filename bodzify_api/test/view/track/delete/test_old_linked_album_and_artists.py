@@ -1,4 +1,3 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
@@ -6,7 +5,7 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TestCase(LibTrackTestCase):
 
     def test_linked_album_then_delete_it_as_nothing_linked_to_it_anymore(self):

@@ -1,4 +1,3 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
@@ -6,7 +5,7 @@ from bodzify_api.test.view.track.input.attributes_source.file_metadata.rating.Ra
     RatingNotNoneWithHalfValuesAndZeroTestCase)
 
 
-@pytest.mark.django_db
+@
 class TestCase(RatingNotNoneWithHalfValuesAndZeroTestCase):
 
     def test_0_then_0(self):

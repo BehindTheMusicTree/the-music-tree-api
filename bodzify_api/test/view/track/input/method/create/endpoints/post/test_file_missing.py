@@ -1,4 +1,3 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
@@ -7,7 +6,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
-@pytest.mark.django_db
+@
 class TestCase(LibTrackTestCase):
 
     def test_missing_then_400(self):

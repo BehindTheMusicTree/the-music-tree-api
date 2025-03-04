@@ -1,4 +1,3 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
@@ -6,7 +5,7 @@ from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFi
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_delete_then_delete_file(self):

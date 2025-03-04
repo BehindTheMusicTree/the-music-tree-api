@@ -1,11 +1,10 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TextCase(LibTrackTestCase):
 
     def test_id3v1_short_mp3_then_ok(self):

@@ -1,11 +1,10 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_delete_then_remove_from_the_genre_playlists(self):

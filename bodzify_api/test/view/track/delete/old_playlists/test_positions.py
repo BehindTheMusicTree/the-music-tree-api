@@ -1,11 +1,10 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_removal_then_next_tracks_in_playlist_decrease_position(self):

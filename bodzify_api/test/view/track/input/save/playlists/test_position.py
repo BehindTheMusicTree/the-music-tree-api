@@ -1,4 +1,3 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
@@ -7,7 +6,7 @@ from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFi
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TestCase(LibTrackTestCase):
 
     def test_new_genre_then_first_position(self):

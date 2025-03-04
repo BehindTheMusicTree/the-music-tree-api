@@ -1,10 +1,9 @@
-import pytest
 from rest_framework import status
 
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
+@
 class TestCase(LibTrackTestCase):
 
     def test_retrieve_then_ok(self):
