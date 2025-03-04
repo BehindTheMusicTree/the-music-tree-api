@@ -5,14 +5,16 @@ import subprocess
 import tempfile
 from typing import Union, cast
 
+from mutagen.flac import FLAC
+from mutagen.flac import StreamInfo
+from mutagen.mp3 import MP3
+from mutagen.wave import WAVE
+
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files import File as DjangoFile
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.core.files.base import File as DjangoBaseFile
 from django.db.models.fields.files import FieldFile
-from mutagen.flac import FLAC
-from mutagen.mp3 import MP3
-from mutagen.wave import WAVE
 
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FileCorruptedError
@@ -159,10 +161,8 @@ class AudioFile:
             except Exception as exc:
                 raise RuntimeError(f"Failed to read WAV file bitrate: {str(exc)}")
         elif self.file_extension == '.flac':
-            audio = FLAC(path)
-            # FLAC bitrate = sample_rate * channels * bits_per_sample
-            return (audio.info.sample_rate * audio.info.channels *
-                    audio.info.bits_per_sample) // 1000
+            audio_info = cast(StreamInfo, FLAC(path).info)
+            return int(audio_info.bitrate / 1000)
         else:
             raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 
