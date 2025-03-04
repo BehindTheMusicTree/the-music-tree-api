@@ -275,9 +275,22 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def download_to_temp_file(self, streamed_response):
         """Download a streamed response to a temporary file and return the path."""
-        # Create temporary file with appropriate extension
-        # Try to get extension from content type or URL if needed
-        fd, temp_path = tempfile.mkstemp(suffix='.mp3')  # Use appropriate extension
+        # Try to get extension from content type or URL
+        content_type = streamed_response.headers.get('content-type', '')
+        if content_type:
+            if 'audio/mpeg' in content_type or 'audio/mp3' in content_type:
+                extension = '.mp3'
+            elif 'audio/wav' in content_type:
+                extension = '.wav'
+            elif 'audio/flac' in content_type:
+                extension = '.flac'
+        elif streamed_response.url:
+            url_extension = os.path.splitext(streamed_response.url)[1].lower()
+            if url_extension in ['.mp3', '.wav', '.flac']:
+                extension = url_extension
+
+        temp_dir = settings.FILE_UPLOAD_TEMP_DIR
+        fd, temp_path = tempfile.mkstemp(suffix=extension, dir=temp_dir if temp_dir else None)
 
         try:
             with os.fdopen(fd, 'wb') as temp_file:

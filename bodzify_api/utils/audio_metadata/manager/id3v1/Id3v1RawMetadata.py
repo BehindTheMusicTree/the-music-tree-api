@@ -34,8 +34,14 @@ class Id3v1RawMetadata(FileType):
         self._load_tags()
 
     def _load_tags(self) -> None:
-        self.fileobj.seek(-128, 2)  # Seek from end
-        data = self.fileobj.read(128)
+        # Handle both file objects and file paths
+        if isinstance(self.fileobj, str):
+            with open(self.fileobj, 'rb') as f:
+                f.seek(-128, 2)  # Seek from end
+                data = f.read(128)
+        else:
+            self.fileobj.seek(-128, 2)  # Seek from end
+            data = self.fileobj.read(128)
 
         if not data.startswith(b'TAG'):
             self.tags = None
