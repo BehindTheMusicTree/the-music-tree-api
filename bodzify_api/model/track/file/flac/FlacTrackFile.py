@@ -21,10 +21,9 @@ class FlacTrackFile(TrackFile):
         id3v2_tags = audio_metadata.get_single_format_app_metadata(self.file, tag_format=MetadataFormat.ID3V2)
         if id3v2_tags:
             if not audio_metadata.delete_metadata(self.file, MetadataFormat.ID3V2):
-                raise AppValidationException(
-                    field_name=Fields.FILE,
-                    message='Failed to clear ID3v2 tags from FLAC file.',
-                    field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
+                raise AppValidationException(field_name=Fields.FILE,
+                                             message='Failed to clear ID3v2 tags from FLAC file.',
+                                             field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
 
             self.id3v2_tags_found_and_converted_to_vorbis = True
 
