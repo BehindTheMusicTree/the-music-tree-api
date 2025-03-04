@@ -37,7 +37,7 @@ class AudioFile:
         elif isinstance(file, InMemoryUploadedFile):
             self.file_path = None
         elif isinstance(file, DjangoBaseFile):
-            self.file_path = file.file.name
+            self.file_path = file.file.name if hasattr(file.file, 'name') else file.file
         elif isinstance(file, DjangoFile):
             self.file_path = file.name
         else:

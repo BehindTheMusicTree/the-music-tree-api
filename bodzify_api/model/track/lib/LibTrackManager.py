@@ -1,5 +1,6 @@
 
 import os
+import stat
 import tempfile
 from typing import TYPE_CHECKING, Any
 
@@ -276,7 +277,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_model_data_from_extract_data(self, **kwargs):
         mine_track_url = kwargs[ExtractFields.URL]
-        track_filename, is_filename_randomly_generated = \
+        _, is_filename_randomly_generated = \
             self._get_track_filename_with_extension(mine_track_url=mine_track_url, **kwargs)
 
         # stream=True makes it more effective for large files.
@@ -290,14 +291,13 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             track_temp_file.flush()
             track_temp_file.seek(0)
 
-            os.chmod(track_temp_file.name, os.stat.S_IRWXU | os.stat.S_IRWXG | os.stat.S_IROTH | os.stat.S_IXOTH)
+            os.chmod(track_temp_file.name, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
 
             post_data = self._get_post_data_from_extract_data(**kwargs)
-            post_data[PostFields.TRACK_FILE_PUBLIC] = AppDjangoFile(
-                file=track_temp_file, name=track_filename, file_abs_path=track_temp_file.name)
+            post_data[PostFields.TRACK_FILE_PUBLIC] = AppDjangoFile(file_abs_path=track_temp_file.name)
             force_title_generation_str = str(is_filename_randomly_generated)
             post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
-            return self._get_model_data_from_post_data(post_data=post_data)
+            return self._get_model_data_from_post_data(**post_data)
 
     def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
