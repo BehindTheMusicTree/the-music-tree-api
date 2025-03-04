@@ -39,15 +39,27 @@ class AppApiClient(APIClient):
         response = super().get(path, data_url_encoded, follow, **extra)
         return self._handle_response(response, handle_response)
 
-    def post(self, path, data: dict | None = None, content_type=None, follow=False, format=None, **extra
-             ) -> HttpResponse:
+    def post(self, path,
+             data: dict | str | None = None,
+             content_type=None,
+             follow=False,
+             format=None,
+             keep_duplicate_fields: bool = False,
+             **extra) -> HttpResponse:
         data_url_encoded = None
         if data:
-            data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
-            if format != 'multipart':
-                data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
-                if not content_type:
-                    content_type = 'application/json'
+            if isinstance(data, str):
+                data_url_encoded = data  # Use raw JSON string directly
+            else:
+                data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
+                if format != 'multipart':
+                    if not keep_duplicate_fields:
+                        data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
+                    else:
+                        data_url_encoded = data
+
+            if not content_type:
+                content_type = 'application/json'
 
         # Set default headers for JSON content type
         if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:
@@ -58,15 +70,19 @@ class AppApiClient(APIClient):
         response = super().post(path, data_url_encoded, content_type=content_type, follow=follow, format=format, **extra)
         return self._handle_response(response, handle_response)
 
-    def put(self, path, data: dict | None = None, format=None, content_type=None, follow=False, **extra
-            ) -> HttpResponse:
+    def put(
+            self, path, data: dict | str | None = None, format=None, content_type=None, follow=False, **extra
+    ) -> HttpResponse:
         data_url_encoded = None
         if data:
-            data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
-            if format != 'multipart':
-                data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
-                if not content_type:
-                    content_type = 'application/json'
+            if isinstance(data, str):
+                data_url_encoded = data  # Use raw JSON string directly
+            else:
+                data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
+                if format != 'multipart':
+                    data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
+            if not content_type:
+                content_type = 'application/json'
 
         # Set default headers for JSON content type
         if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:

@@ -34,6 +34,12 @@ class GenreTestCase(ApiTestCase[Genre]):
                                     content_type='application/json',
                                     handle_response=self._set_results)
 
+    def _post_with_duplicate_fields(self, raw_json: str, **kwargs):
+        return self.api_client.post(path=reverse(self.list_endpoint),
+                                    data=raw_json,
+                                    content_type='application/json',
+                                    handle_response=self._set_results)
+
     def _put_genre(self, uuid: UUID, **kwargs):
         return self.api_client.put(path=reverse(self.detail_endpoint, kwargs={'pk': uuid}),
                                    data=kwargs,
