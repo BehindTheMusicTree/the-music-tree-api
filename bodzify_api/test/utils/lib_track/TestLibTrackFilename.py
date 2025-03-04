@@ -214,5 +214,13 @@ class TestLibTrackFilename(str, Enum):
     RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
     RECORDING_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
 
+    SIZE_BIG_9_98_MO_MP3 = "size_big=9.98mo.mp3"
+    SIZE_BIG_26_6_MO_FLAC = "size_big=26.6mo.flac"
+    SIZE_BIG_79_55_MO_WAV = "size_big=79_55mo.wav"
+
+    SIZE_SMALL_0_01_MO_MP3 = "size_small=9.98mo.mp3"
+    SIZE_SMALL_0_05_MO_FLAC = "size_small=26.6mo.flac"
+    SIZE_SMALL_0_08_MO_WAV = "size_small=79_55mo.wav"
+
     def __str__(self) -> str:
         return str(self.value)
