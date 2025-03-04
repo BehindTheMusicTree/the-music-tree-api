@@ -1,4 +1,3 @@
-
 import os
 
 from django.db import models
@@ -7,31 +6,26 @@ from bodzify_api.exception.validation.app.AppValidationException import AppValid
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.utils import audio_metadata
-from bodzify_api.utils.audio_metadata.exceptions import FlacMd5CheckFailedError
-from bodzify_api.utils.audio_metadata.utils.TagFormat import MetadataFormat
+from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError, FlacMd5CheckFailedError
 
 from .Fields import Fields
 
 
 class FlacTrackFile(TrackFile):
-    id3v2_tags_found_and_converted_to_vorbis = models.BooleanField(default=False)
     md5_has_been_corrected = models.BooleanField(default=False)
 
     def _prepare_save(self, ctx) -> dict:
-        id3v2_tags = audio_metadata.get_single_format_app_metadata(self.file, tag_format=MetadataFormat.ID3V2)
-        if id3v2_tags:
-            if not audio_metadata.delete_metadata(self.file, MetadataFormat.ID3V2):
-                raise AppValidationException(field_name=Fields.FILE,
-                                             message='Failed to clear ID3v2 tags from FLAC file.',
-                                             field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
+        ctx = super()._prepare_save(ctx)
 
-            self.id3v2_tags_found_and_converted_to_vorbis = True
+        audio_metadata.delete_potential_id3_metadata_with_header(self.file)
 
         if not audio_metadata.is_flac_md5_valid(self.file):
             try:
                 audio_metadata.replace_flac_with_corrected_md5(self.file)
+                if not audio_metadata.is_flac_md5_valid(self.file):
+                    raise FlacMd5CheckFailedError()
                 self.md5_has_been_corrected = True
-            except FlacMd5CheckFailedError:
+            except (FlacMd5CheckFailedError, FileCorruptedError):
                 raise AppValidationException(
                     field_name=Fields.FILE,
                     message='The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.',
@@ -39,7 +33,7 @@ class FlacTrackFile(TrackFile):
         else:
             self.md5_has_been_corrected = False
 
-        return super()._prepare_save(ctx)
+        return ctx
 
     def handle_flac_md5(self) -> bool:
 

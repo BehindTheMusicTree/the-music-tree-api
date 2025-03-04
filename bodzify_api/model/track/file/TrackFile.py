@@ -8,6 +8,7 @@ from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
+from polymorphic.models import PolymorphicModel
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -38,12 +39,11 @@ from .Fields import Fields
 from .fingerprinting.FingerprintingResult import FingerprintingResult
 from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 
-
 if TYPE_CHECKING:
     from ..lib.LibraryTrack import LibraryTrack
 
 
-class TrackFile(PrivateStandardResource):
+class TrackFile(PolymorphicModel, PrivateStandardResource):
     lib_track = PrivateOneToOneField(
         'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE)
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
@@ -76,6 +76,7 @@ class TrackFile(PrivateStandardResource):
     class Meta:
         verbose_name = 'Track File'
         verbose_name_plural = 'Track Files'
+        base_manager_name = 'objects'
 
     @property
     def filename(self) -> str:
