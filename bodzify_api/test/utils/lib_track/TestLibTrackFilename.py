@@ -61,8 +61,8 @@ class TestLibTrackFilename(str, Enum):
     FORMAT_IMAGE_JPEG = "format=image.jpeg"
     FORMAT_IN_MEMORY_FLAC = "format=in_memory.flac"
     FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC = "format=md5_not_valid_and_corrupted.flac"
-    FORMAT_MD5_NOT_VALID_BECAUSE_OF_ID3_METADATA_FLAC = "format=md5 not valid because of id3 metadata.flac"
-    FORMAT_MD5_NOT_VALID_NOT_BECAUSE_OF_ID3_METADATA_FLAC = "format=md5 not valid not because of id3 metadata.flac"
+    FORMAT_MD5_NOT_VALID_BECAUSE_OF_ID3V2_METADATA_FLAC = "format=md5 not valid because of id3v2 metadata.flac"
+    FORMAT_MD5_NOT_VALID_NOT_BECAUSE_OF_ID3V2_METADATA_FLAC = "format=md5 not valid not because of id3v2 metadata.flac"
 
     GENRE_CODE_ID3V1_ABSTRACT_MP3 = "genre_code_id3v1=Abstract.mp3"
     GENRE_CODE_ID3V1_UNKNOWN_MP3 = "genre_code_id3v1=Unknown.mp3"
