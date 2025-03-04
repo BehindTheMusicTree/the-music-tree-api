@@ -49,14 +49,11 @@ class AppApiClient(APIClient):
         data_url_encoded = None
         if data:
             if isinstance(data, str):
-                data_url_encoded = data  # Use raw JSON string directly
+                data_url_encoded = data
             else:
                 data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
                 if format != 'multipart':
-                    if not keep_duplicate_fields:
-                        data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
-                    else:
-                        data_url_encoded = data
+                    data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
 
             if not content_type:
                 content_type = 'application/json'
@@ -76,7 +73,7 @@ class AppApiClient(APIClient):
         data_url_encoded = None
         if data:
             if isinstance(data, str):
-                data_url_encoded = data  # Use raw JSON string directly
+                data_url_encoded = data
             else:
                 data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
                 if format != 'multipart':

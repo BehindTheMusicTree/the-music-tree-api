@@ -11,7 +11,7 @@ class TestJsonDuplicateFields(GenreTestCase):
     def test_duplicate_fields_json_post_then_400(self):
         raw_json = '{"%s": "test", "%s": "test2"}' \
             % (CriteriaPostFields.NAME_PUBLIC, CriteriaPostFields.NAME_PUBLIC)
-        response = self._post_with_duplicate_fields(raw_json=raw_json)
+        response = self._post_genre_with_duplicate_fields(raw_json=raw_json)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         self._set_bad_request_result(response)
@@ -23,11 +23,9 @@ class TestJsonDuplicateFields(GenreTestCase):
     def test_duplicate_fields_on_json_put_then_400(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
 
-        datat = {
-            CriteriaPostFields.NAME_PUBLIC: "test",
-            CriteriaPostFields.NAME_PUBLIC: "test2",
-        }
-        response = self._put_genre(genre.uuid, **datat)
+        raw_json = '{"%s": "test", "%s": "test2"}' \
+            % (CriteriaPostFields.NAME_PUBLIC, CriteriaPostFields.NAME_PUBLIC)
+        response = self._put_genre_with_duplicate_fields(genre.uuid, raw_json=raw_json)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         self._set_bad_request_result(response)
