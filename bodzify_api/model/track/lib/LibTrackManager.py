@@ -234,9 +234,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
-    def _get_schema_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
-        file = post_data[PostFields.TRACK_FILE_PUBLIC]
-        schema_data_from_file = self._get_schema_data_from_file(file=file, user=post_data[Fields.USER])
+    def _get_schema_data_from_post_data(self, **kwargs) -> dict[str, Any]:
+        file = kwargs[PostFields.TRACK_FILE_PUBLIC]
+        schema_data_from_file = self._get_schema_data_from_file(file=file, user=kwargs[Fields.USER])
 
         schema_data = schema_data_from_file.copy()
         keys = [Fields.USER,
@@ -249,22 +249,22 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 SchemaFields.RATING,
                 SchemaFields.LANGUAGE]
         data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(
-            dict1=schema_data, dict2=post_data, keys=keys)
+            dict1=schema_data, dict2=kwargs, keys=keys)
 
         for key in [SchemaFields.ARTISTS_NAMES, SchemaFields.ALBUM_ARTISTS_NAMES]:
-            if key in post_data:
-                schema_data[key] = post_data[key]
+            if key in kwargs:
+                schema_data[key] = kwargs[key]
             elif key in schema_data_from_file:
                 schema_data[key] = schema_data_from_file[key]
 
         if SchemaFields.TITLE not in schema_data:
-            schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, data=post_data)
+            schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, data=kwargs)
 
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
-    def _get_model_data_from_post_data(self, post_data: dict[str, Any]) -> dict[str, Any]:
-        schema_data = self._get_schema_data_from_post_data(post_data)
+    def _get_model_data_from_post_data(self, **kwargs) -> dict[str, Any]:
+        schema_data = self._get_schema_data_from_post_data(**kwargs)
         model_data = self._get_model_data_from_creation_schema_data(schema_data)
         model_data[Fields.TRACK_FILE] = schema_data[SchemaFields.TRACK_FILE_PUBLIC]
         return model_data
@@ -324,9 +324,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         model_data: dict
         if creation_type == LibTrackCreationType.POST:
-            model_data = self._get_model_data_from_post_data(post_data=kwargs)
+            model_data = self._get_model_data_from_post_data(**kwargs)
         elif creation_type == LibTrackCreationType.EXTRACT:
-            model_data = self._get_model_data_from_extract_data(extract_data=kwargs)
+            model_data = self._get_model_data_from_extract_data(**kwargs)
         else:
             raise NotImplementedError(f"Creation type {creation_type} is not implemented")
 

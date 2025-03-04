@@ -79,9 +79,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _create_instance(
             self, request: Request, create_data: dict[str, Any], creation_type: str | None) -> T:
-        if self.action != 'create':
-            raise NotImplementedError(f"No action defined for action {self.action}")
-
         serializer_class = self._get_create_serializer_class()
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
@@ -113,9 +110,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _handle_post(self, request: Request, creation_type: str | None = None) -> Response:
         create_data_in_snake_case = data_transformer.form_data_to_snake_case(request.data)
-        instance = self._create_instance(request=request,
-                                         create_data=create_data_in_snake_case,
-                                         creation_type=creation_type)
+        instance = self._create_instance(
+            request=request, create_data=create_data_in_snake_case, creation_type=creation_type)
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
         headers = self.get_success_headers(serializer.data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
