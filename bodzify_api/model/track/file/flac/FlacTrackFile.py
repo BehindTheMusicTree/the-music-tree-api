@@ -26,20 +26,44 @@ class FlacTrackFile(TrackFile):
             return ctx
         else:
             try:
+                import hashlib
+                from django.core.files.uploadedfile import InMemoryUploadedFile
+
+                # Save original file state
+                print("=== Before MD5 fix ===")
+                self.file.seek(0)
                 content_before = self.file.read()
+                content_hash_before = hashlib.md5(content_before).hexdigest()
                 self.file.seek(0)
                 md5_valid_before = audio_metadata.is_flac_md5_valid(self.file)
-                print(
-                    f"File before MD5 fix - Content length: {len(content_before)} bytes, MD5 valid: {md5_valid_before}")
+                print(f"Content length: {len(content_before)} bytes")
+                print(f"Content hash: {content_hash_before}")
+                print(f"MD5 valid: {md5_valid_before}")
 
-                audio_metadata.fix_md5_checking(self.file)
+                print("\n=== Attempting MD5 fix... ===")
+                # Create AudioFile instance and fix MD5
+                audio_file = audio_metadata.AudioFile(self.file)
+                audio_file.fix_md5_checking()
+
+                # Get the potentially new file from AudioFile instance
+                if isinstance(audio_file.file, InMemoryUploadedFile):
+                    print("Updating file reference with corrected file...")
+                    self.file = audio_file.file
                 self.md5_has_been_corrected = True
 
+                # Check file state after fix
+                print("\n=== After MD5 fix ===")
+                self.file.seek(0)
                 content_after = self.file.read()
+                content_hash_after = hashlib.md5(content_after).hexdigest()
                 self.file.seek(0)
                 md5_valid_after = audio_metadata.is_flac_md5_valid(self.file)
-                print(
-                    f"File after MD5 fix - Content length: {len(content_after)} bytes, MD5 valid: {md5_valid_after}, Content changed: {content_before != content_after}")
+                print(f"Content length: {len(content_after)} bytes")
+                print(f"Content hash: {content_hash_after}")
+                print(f"Content changed: {content_hash_before != content_hash_after}")
+                print(f"MD5 valid: {md5_valid_after}")
+                print(f"MD5 correction status: {'fixed' if md5_valid_after else 'still invalid'}")
+                self.file.seek(0)  # Ensure file is ready for next operation
             except FileCorruptedError as e:
                 if not isinstance(e, FlacMd5CheckFailedError):
                     raise AppValidationException(
