@@ -1,5 +1,4 @@
 
-import os
 from django.db import models
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -27,61 +26,8 @@ class FlacTrackFile(TrackFile):
             return ctx
         else:
             try:
-                import hashlib
-                from django.core.files.uploadedfile import InMemoryUploadedFile
-
-                # Save original file state
-                print("=== Before MD5 fix ===")
-                self.file.seek(0)
-                content_before = self.file.read()
-                content_hash_before = hashlib.md5(content_before).hexdigest()
-                self.file.seek(0)
-                md5_valid_before = audio_metadata.is_flac_md5_valid(self.file)
-                print(f"Content length: {len(content_before)} bytes")
-                print(f"Content hash: {content_hash_before}")
-                print(f"MD5 valid: {md5_valid_before}")
-
-                print("\n=== Attempting MD5 fix... ===")
-                # Create AudioFile instance and get fixed file
-                fixed_file = audio_metadata.fix_md5_checking(self.file)
-
-                # Update file reference with corrected file
-                if isinstance(fixed_file, InMemoryUploadedFile):
-                    print("Updating file reference with corrected InMemoryUploadedFile...")
-                    self.file = fixed_file
-                else:
-                    print(f"Updating file reference with corrected file at path: {fixed_file}")
-                    with open(fixed_file, 'rb') as f:
-                        content = f.read()
-                    # Create new InMemoryUploadedFile from the corrected content
-                    from io import BytesIO
-                    from django.core.files.uploadedfile import InMemoryUploadedFile
-                    file_obj = BytesIO(content)
-                    self.file = InMemoryUploadedFile(
-                        file=file_obj,
-                        field_name=None,
-                        name=os.path.basename(fixed_file),
-                        content_type='audio/x-flac',
-                        size=len(content),
-                        charset=None,
-                        content_type_extra={}
-                    )
-                    os.unlink(fixed_file)  # Clean up the temporary file
+                self.file = audio_metadata.fix_md5_checking(self.file)
                 self.md5_has_been_corrected = True
-
-                # Check file state after fix
-                print("\n=== After MD5 fix ===")
-                self.file.seek(0)
-                content_after = self.file.read()
-                content_hash_after = hashlib.md5(content_after).hexdigest()
-                self.file.seek(0)
-                md5_valid_after = audio_metadata.is_flac_md5_valid(self.file)
-                print(f"Content length: {len(content_after)} bytes")
-                print(f"Content hash: {content_hash_after}")
-                print(f"Content changed: {content_hash_before != content_hash_after}")
-                print(f"MD5 valid: {md5_valid_after}")
-                print(f"MD5 correction status: {'fixed' if md5_valid_after else 'still invalid'}")
-                self.file.seek(0)  # Ensure file is ready for next operation
             except FileCorruptedError as e:
                 if not isinstance(e, FlacMd5CheckFailedError):
                     raise AppValidationException(
