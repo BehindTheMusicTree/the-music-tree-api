@@ -28,7 +28,7 @@ class TestCase(LibTrackTestCase):
         track_file = self.saved_object.track_file
         assert isinstance(track_file, FlacTrackFile)
         assert track_file.md5_has_been_corrected
-        assert audio_metadata.is_flac_md5_valid(track_file.file.path)
+        assert audio_metadata.is_flac_md5_valid(track_file.file)
 
     def test_flac_md5_not_valid_because_of_id3v2_metadata_then_corrected(self):
         response = self._post_lib_track(TestLibTrackFilename.RECORDING_CALIFORNIA_GURLS_ID3V2_TAGS_FLAC)
