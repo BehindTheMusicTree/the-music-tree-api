@@ -232,11 +232,4 @@ class TrackFile(PrivateStandardResource):
 
 @receiver(pre_delete, sender=TrackFile)
 def handle_pre_delete(sender, instance: TrackFile, using, **kwargs):
-    # Add a try/except to be extra safe
-    try:
-        if hasattr(instance.file, 'delete') and callable(instance.file.delete):  # type: ignore
-            instance.file.delete()  # type: ignore
-    except AttributeError:
-        # Log the error but don't crash
-        import logging
-        logging.warning(f"Could not delete file for {instance}")
+    instance.file.delete(False)  # type: ignore
