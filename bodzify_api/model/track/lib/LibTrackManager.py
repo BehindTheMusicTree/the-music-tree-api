@@ -89,6 +89,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
+        filename = filename.rstrip()
         filename_without_expressions_to_exclude = data_transformer.remove_substrings_from_string(
             string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
         if SchemaFields.FORCE_TITLE_GENERATION in data:
