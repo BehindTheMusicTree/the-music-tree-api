@@ -22,4 +22,4 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.FILENAME_SPACES_TRAILING_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.title == "filename= withs spaces"
+        assert self.saved_object.title == "filename= with spaces"

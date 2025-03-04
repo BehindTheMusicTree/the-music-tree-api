@@ -1,0 +1,17 @@
+meta {
+  name: default
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}tracks/extract/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "url": "https://lasonotheque.org/UPLOAD/mp3/0001.mp3"
+  }
+}
