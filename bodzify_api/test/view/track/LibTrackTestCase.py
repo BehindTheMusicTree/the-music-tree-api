@@ -12,11 +12,6 @@ class LibTrackTestCase(ApiTestCase[LibraryTrack]):
     model_class = LibraryTrack
     saved_object: LibraryTrack
 
-    class LibTrackGenericSamplesTagsNoneSizeInMo:
-        WAV = round(79 / 1000, 2)
-        MP3 = round(14 / 1000, 2)
-        FLAC = round(51 / 1000, 2)
-
     class SampleMineTrackUrls:
         WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
         MP3 = "https://lasonotheque.org/UPLOAD/mp3/0001.mp3"
