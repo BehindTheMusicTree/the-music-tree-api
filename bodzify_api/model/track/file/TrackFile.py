@@ -8,7 +8,6 @@ from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
-from polymorphic.models import PolymorphicModel
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -31,7 +30,7 @@ from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
+from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError, FlacMd5CheckFailedError
 from bodzify_api.utils.audio_metadata.utils.types import AppMetadata
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 
@@ -43,7 +42,7 @@ if TYPE_CHECKING:
     from ..lib.LibraryTrack import LibraryTrack
 
 
-class TrackFile(PolymorphicModel, PrivateStandardResource):
+class TrackFile(PrivateStandardResource):
     lib_track = PrivateOneToOneField(
         'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE)
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
@@ -53,10 +52,9 @@ class TrackFile(PolymorphicModel, PrivateStandardResource):
                             max_length=settings.FILE_PATH_MAX_LENGTH)
     duration_in_sec = models.PositiveIntegerField()
     fingerprint_memory = models.BinaryField(null=True, blank=True, default=None, editable=True)
-    fingerprint_missing_cause = AppForeignKey(FingerprintMissingCause,
-                                              on_delete=models.DO_NOTHING,
-                                              null=True,
-                                              blank=True)
+    fingerprint_missing_cause = AppForeignKey(
+        FingerprintMissingCause,  on_delete=models.DO_NOTHING, null=True, blank=True)
+    md5_has_been_corrected = models.BooleanField(default=False)
     size_in_bytes = models.DecimalField(max_digits=11, decimal_places=2)
     size_in_ko = models.GeneratedField(expression=F(Fields.SIZE_IN_BYTES) / 1024,  # type: ignore
                                        output_field=models.DecimalField(max_digits=8, decimal_places=2),
@@ -65,18 +63,13 @@ class TrackFile(PolymorphicModel, PrivateStandardResource):
                                        output_field=models.DecimalField(max_digits=5, decimal_places=2),
                                        db_persist=True)
     bitrate_in_kbps = models.IntegerField()
-
-    musicbrainz_recording = AppForeignKey(MusicbrainzRecording,
-                                          on_delete=models.DO_NOTHING,
-                                          default=None,
-                                          null=True)
+    musicbrainz_recording = AppForeignKey(MusicbrainzRecording, on_delete=models.DO_NOTHING, default=None, null=True)
     musicbrainz_recording_missing_cause = AppOneToOneField(
         MbRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
         verbose_name = 'Track File'
         verbose_name_plural = 'Track Files'
-        base_manager_name = 'objects'
 
     @property
     def filename(self) -> str:
@@ -169,6 +162,50 @@ class TrackFile(PolymorphicModel, PrivateStandardResource):
         return musicbrainz_recording_lookup_result
 
     def _prepare_save(self, ctx) -> dict:
+        if self.extension.lower() == '.flac':
+            if audio_metadata.is_flac_md5_valid(self.file):
+                self.md5_has_been_corrected = False
+            else:
+                try:
+                    # ID3v2 metadata can be present in FLAC files, causing a mismatch in the MD5 checksum.
+                    # They are therefore removed which won't affect the file's metadata integrity as all the metadata
+                    # is stored in the Vorbis comment block.
+                    audio_metadata.delete_potential_id3_metadata_with_header(self.file)
+
+                    # Fix MD5 and preserve file path
+                    corrected_file = audio_metadata.fix_md5_checking(self.file)
+                    if isinstance(corrected_file, str):
+                        # If we got a file path, create a new InMemoryUploadedFile
+                        from django.core.files.uploadedfile import InMemoryUploadedFile
+                        from io import BytesIO
+
+                        # Read the corrected file content
+                        with open(corrected_file, 'rb') as f:
+                            content = f.read()
+
+                        # Create a new BytesIO object with the content
+                        file_obj = BytesIO(content)
+
+                        # Create new InMemoryUploadedFile with same name and content type
+                        self.file = InMemoryUploadedFile(
+                            file=file_obj,
+                            field_name=None,
+                            name=getattr(self.file, 'name', corrected_file),
+                            content_type='audio/x-flac',
+                            size=len(content),
+                            charset=None,
+                            content_type_extra={}
+                        )
+                    else:
+                        # If we got an InMemoryUploadedFile, use it directly
+                        self.file = corrected_file
+                    self.md5_has_been_corrected = True
+                except FileCorruptedError as e:
+                    if not isinstance(e, FlacMd5CheckFailedError):
+                        raise AppValidationException(
+                            field_name=Fields.FILE,
+                            message='The FLAC file appears to be corrupted and cannot be processed.',
+                            field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
         try:
             duration = audio_metadata.get_duration_in_sec(self.file)
             self.duration_in_sec = duration if duration > 1 else 1
@@ -194,5 +231,12 @@ class TrackFile(PolymorphicModel, PrivateStandardResource):
 
 
 @receiver(pre_delete, sender=TrackFile)
-def handle_pre_delete(sender, instance: TrackFile, using, **kwargs):  # type: ignore
-    instance.file.delete(False)
+def handle_pre_delete(sender, instance: TrackFile, using, **kwargs):
+    # Add a try/except to be extra safe
+    try:
+        if hasattr(instance.file, 'delete') and callable(instance.file.delete):  # type: ignore
+            instance.file.delete()  # type: ignore
+    except AttributeError:
+        # Log the error but don't crash
+        import logging
+        logging.warning(f"Could not delete file for {instance}")

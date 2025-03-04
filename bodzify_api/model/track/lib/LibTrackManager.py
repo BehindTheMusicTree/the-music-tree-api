@@ -25,7 +25,6 @@ from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.AppDjangoFIle import AppDjangoFile
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
-from bodzify_api.utils.AudioFile import AudioFile
 from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 from .Fields import Fields
@@ -341,12 +340,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         track_file_model_data[TrackFileFields.USER] = instance.user
         track_file_model_data[TrackFileFields.LIB_TRACK] = instance
 
-        file_extension = AudioFile(track_file_model_data[TrackFileFields.FILE]).file_extension
-        if file_extension == '.flac':
-            from ..file.flac.FlacTrackFile import FlacTrackFile
-            FlacTrackFile.objects.create(**track_file_model_data)
-        else:
-            TrackFile.objects.create(**track_file_model_data)
+        TrackFile.objects.create(**track_file_model_data)
 
         self._add_to_genre_playlists(instance)
         instance.update_file_tags_from_lib_track_instance_values()

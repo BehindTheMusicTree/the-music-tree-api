@@ -1,12 +1,10 @@
 from rest_framework import serializers
 
-from bodzify_api.model.track.file.flac.FlacTrackFile import FlacTrackFile
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.serializer.model.fingerprint_missing_cause.detailed import FingerprintMissingCauseDetailedSerializer
 from bodzify_api.serializer.model.musicbrainz.recording.detailed import MusicbrainzRecordingDetailedSerializer
 
 from .Fields import Fields
-from .FlacSpecificFields import FlacSpecificFields
 
 
 class FileDetailedSerializer(serializers.ModelSerializer):
@@ -18,6 +16,7 @@ class FileDetailedSerializer(serializers.ModelSerializer):
         model = TrackFile
         fields = [Fields.FILENAME,
                   Fields.EXTENSION,
+                  Fields.MD5_HAS_BEEN_CORRECTED,
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.FINGERPRINT_MISSING_CAUSE,
@@ -29,12 +28,6 @@ class FileDetailedSerializer(serializers.ModelSerializer):
                   Fields.MUSICBRAINZ_RECORDING_MISSING_CAUSE,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if isinstance(instance, FlacTrackFile):
-            data[FlacSpecificFields.MD5_HAS_BEEN_CORRECTED] = instance.md5_has_been_corrected
-        return data
 
     def get_fingerprint_missing_cause(self, obj: TrackFile):
         if obj.fingerprint_memory is None:

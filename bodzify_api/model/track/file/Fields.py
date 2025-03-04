@@ -17,3 +17,4 @@ class Fields(PrivateStandardResourceFields):
     BITRATE_IN_KBPS = 'bitrate_in_kbps'
     MUSICBRAINZ_RECORDING = 'musicbrainz_recording'
     MUSICBRAINZ_RECORDING_MISSING_CAUSE = 'musicbrainz_recording_missing_cause'
+    MD5_HAS_BEEN_CORRECTED = 'md5_has_been_corrected'

@@ -56,9 +56,8 @@ class LibraryTrack(TrackablePlayCount):
         validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
     language = AppCharField(max_length=settings.LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
-    playlists = PrivateManyToManyField(Playlist,
-                                       through='LibTrackPlaylistRel',
-                                       related_name=PlayListFields.LIB_TRACKS_RELATED_NAME)
+    playlists = PrivateManyToManyField(
+        Playlist, through='LibTrackPlaylistRel', related_name=PlayListFields.LIB_TRACKS_RELATED_NAME)
 
     if TYPE_CHECKING:
         track_file: TrackFile
