@@ -16,16 +16,16 @@ class FlacTrackFile(TrackFile):
     def _prepare_save(self, ctx) -> dict:
         ctx = super()._prepare_save(ctx)
 
-        # ID3 metadata can be present in FLAC files, causing a mismatch in the MD5 checksum.
-        # They are therefore removed which won't affect the file's metadata integrity as all the metadata
-        # is stored in the Vorbis comment block.
-        audio_metadata.delete_potential_id3_metadata_with_header(self.file)
-
         if audio_metadata.is_flac_md5_valid(self.file):
             self.md5_has_been_corrected = False
             return ctx
         else:
             try:
+                # ID3v2 metadata can be present in FLAC files, causing a mismatch in the MD5 checksum.
+                # They are therefore removed which won't affect the file's metadata integrity as all the metadata
+                # is stored in the Vorbis comment block.
+                audio_metadata.delete_potential_id3_metadata_with_header(self.file)
+
                 self.file = audio_metadata.fix_md5_checking(self.file)
                 self.md5_has_been_corrected = True
             except FileCorruptedError as e:

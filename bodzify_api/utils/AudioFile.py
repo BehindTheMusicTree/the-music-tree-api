@@ -281,7 +281,7 @@ class AudioFile:
         if 'MD5 signature mismatch' in output:
             return False
         if 'FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC' in output:
-            raise FileCorruptedError("The FLAC file is corrupted: decoder lost sync with the stream")
+            return False
         else:
             raise FileCorruptedError("The Flac file md5 check failed")
 
