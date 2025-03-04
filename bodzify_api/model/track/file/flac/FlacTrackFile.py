@@ -26,7 +26,33 @@ class FlacTrackFile(TrackFile):
                 # is stored in the Vorbis comment block.
                 audio_metadata.delete_potential_id3_metadata_with_header(self.file)
 
-                self.file = audio_metadata.fix_md5_checking(self.file)
+                # Fix MD5 and preserve file path
+                corrected_file = audio_metadata.fix_md5_checking(self.file)
+                if isinstance(corrected_file, str):
+                    # If we got a file path, create a new InMemoryUploadedFile
+                    from django.core.files.uploadedfile import InMemoryUploadedFile
+                    from io import BytesIO
+
+                    # Read the corrected file content
+                    with open(corrected_file, 'rb') as f:
+                        content = f.read()
+
+                    # Create a new BytesIO object with the content
+                    file_obj = BytesIO(content)
+
+                    # Create new InMemoryUploadedFile with same name and content type
+                    self.file = InMemoryUploadedFile(
+                        file=file_obj,
+                        field_name=None,
+                        name=getattr(self.file, 'name', corrected_file),
+                        content_type='audio/x-flac',
+                        size=len(content),
+                        charset=None,
+                        content_type_extra={}
+                    )
+                else:
+                    # If we got an InMemoryUploadedFile, use it directly
+                    self.file = corrected_file
                 self.md5_has_been_corrected = True
             except FileCorruptedError as e:
                 if not isinstance(e, FlacMd5CheckFailedError):

@@ -173,6 +173,8 @@ class TrackFile(PolymorphicModel, PrivateStandardResource):
             self.duration_in_sec = audio_metadata.get_duration_in_sec(self.file)
             self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
             self.size_in_bytes = self.file.size
+            fingerprinting_result = self._manage_fingerprint()
+            self._manage_musicbrainz_recording(fingerprinting_result)
             return ctx.kwargs
         except FileCorruptedError as e:
             raise AppValidationException(field_name=Fields.FILE,
@@ -180,10 +182,6 @@ class TrackFile(PolymorphicModel, PrivateStandardResource):
                                          field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
         except Exception:
             raise
-
-    def _perform_save(self, adding: bool, ctx) -> None:
-        fingerprinting_result = self._manage_fingerprint()
-        self._manage_musicbrainz_recording(fingerprinting_result)
 
     def update_file_metadata(self, app_metadata: AppMetadata):
         audio_metadata.update_file_metadata(file=self.file,

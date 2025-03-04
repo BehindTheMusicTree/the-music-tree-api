@@ -26,7 +26,7 @@ class AudioFile:
     def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, str]):
 
         if isinstance(file, FieldFile):
-            file = file.file
+            file = file.file or file.name
 
         self.file = file
 
