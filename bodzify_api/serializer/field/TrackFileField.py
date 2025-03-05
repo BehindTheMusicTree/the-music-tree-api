@@ -25,17 +25,8 @@ class TrackFileField(AppField):
         self._allow_null = kwargs.get('allow_null', True)
         super().__init__(**kwargs)
 
-        # Initialize URL validation
-        self.url_field = URLField(
-            validators=[TrackUrlValidator()],
-            allow_null=self._allow_null
-        )
-
-        # Initialize file validation
-        self.file_field = AppFileField(
-            validators=[TrackFileValidator()],
-            allow_null=self._allow_null
-        )
+        self.url_field = URLField(validators=[TrackUrlValidator()], allow_null=self._allow_null)
+        self.file_field = AppFileField(validators=[TrackFileValidator()], allow_null=self._allow_null)
 
     def bind(self, field_name: str, parent: Any) -> None:
         """
