@@ -5,11 +5,12 @@ from urllib.parse import urlparse
 
 import requests
 from django.core.files.uploadedfile import UploadedFile, InMemoryUploadedFile
-from rest_framework.exceptions import ValidationError
-from rest_framework.fields import URLField
 
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.field.AppField import AppField
 from bodzify_api.serializer.field.AppFileField import AppFileField
+from bodzify_api.serializer.field.AppUrlField import AppUrlField
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 from bodzify_api.validator.TrackUrlValidator import TrackUrlValidator
 
@@ -25,7 +26,7 @@ class TrackFileField(AppField):
         self._allow_null = kwargs.get('allow_null', True)
         super().__init__(**kwargs)
 
-        self.url_field = URLField(validators=[TrackUrlValidator()], allow_null=self._allow_null)
+        self.url_field = AppUrlField(validators=[TrackUrlValidator()], allow_null=self._allow_null)
         self.file_field = AppFileField(validators=[TrackFileValidator()], allow_null=self._allow_null)
 
     def bind(self, field_name: str, parent: Any) -> None:
@@ -42,12 +43,19 @@ class TrackFileField(AppField):
     def _download_file_from_url(self, url: str) -> InMemoryUploadedFile:
         """
         Downloads a file from a URL and returns it as an InMemoryUploadedFile.
-        Raises ValidationError if download fails or file is invalid.
+
+        Args:
+            url: The URL to download the file from
+
+        Returns:
+            InMemoryUploadedFile: The downloaded file in memory
+
+        Raises:
+            AppValidationException: If the download fails, times out, or encounters other errors
         """
         try:
             # Download the file in chunks
             response = requests.get(url, stream=True, timeout=30)
-            response.raise_for_status()
 
             # Get the filename from the URL or Content-Disposition header
             filename = os.path.basename(urlparse(url).path)
@@ -67,7 +75,10 @@ class TrackFileField(AppField):
                 elif 'flac' in content_type:
                     filename += '.flac'
                 else:
-                    filename += '.mp3'  # default to mp3
+                    raise AppValidationException(
+                        field_name=self.get_error_field_name(),
+                        message='Invalid file extension. Supported formats are: mp3, wav, flac',
+                        field_validation_error_code=FieldValidationErrorCode.INVALID_EXTENSION)
 
             # Create a BytesIO object to store the file content
             content = BytesIO()
@@ -76,22 +87,25 @@ class TrackFileField(AppField):
                     content.write(chunk)
             content.seek(0)
 
-            # Create an InMemoryUploadedFile
-            return InMemoryUploadedFile(
-                file=content,
-                field_name=None,
-                name=filename,
-                content_type=response.headers.get('Content-Type', 'audio/mpeg'),
-                size=len(content.getvalue()),
-                charset=None,
-                content_type_extra={}
-            )
+            return InMemoryUploadedFile(file=content,
+                                        field_name=None,
+                                        name=filename,
+                                        content_type=response.headers.get('Content-Type', 'audio/mpeg'),
+                                        size=len(content.getvalue()),
+                                        charset=None,
+                                        content_type_extra={})
         except requests.Timeout:
-            raise ValidationError('URL request timed out. Please try again.')
+            raise AppValidationException(field_name=self.get_error_field_name(),
+                                         message='URL request timed out. Please try again.',
+                                         field_validation_error_code=FieldValidationErrorCode.URL_REQUEST_FAILED)
         except requests.RequestException as e:
-            raise ValidationError(f'Failed to download file: {str(e)}')
+            raise AppValidationException(field_name=self.get_error_field_name(),
+                                         message=f'Failed to download file: {str(e)}',
+                                         field_validation_error_code=FieldValidationErrorCode.FILE_DOWNLOAD_FAILED)
         except Exception as e:
-            raise ValidationError(f'Unexpected error while downloading file: {str(e)}')
+            raise AppValidationException(field_name=self.get_error_field_name(),
+                                         message=f'Unexpected error while downloading file: {str(e)}',
+                                         field_validation_error_code=FieldValidationErrorCode.FILE_DOWNLOAD_FAILED)
 
     def to_internal_value(self, data: Any) -> Any:
         if data in [None, '']:
@@ -99,29 +113,20 @@ class TrackFileField(AppField):
                 self.fail('null')
             return None
 
-        # If it's a file upload
         if isinstance(data, UploadedFile):
             return self.file_field.to_internal_value(data)
 
-        # If it's a URL
         if isinstance(data, str):
-            # First validate the URL
             validated_url = self.url_field.to_internal_value(data)
-            # Then download the file and convert to InMemoryUploadedFile
             downloaded_file = self._download_file_from_url(validated_url)
-            # Validate and return the downloaded file
             return self.file_field.to_internal_value(downloaded_file)
 
         self.fail('invalid', detail='Field must be either a valid audio file or URL.')
 
     def to_representation(self, value: Any) -> str:
-        """
-        Convert the native value into a string representation.
-        Returns empty string for None values to maintain string type consistency.
-        """
         if value is None:
             return ''
-        # For URLs, return as is
+
         if isinstance(value, str):
             return value
         # For files, return the file URL or empty string if no URL

@@ -1,0 +1,24 @@
+meta {
+  name: wrong format
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/album=koko_vorbis.flac)
+}
+
+vars:post-response {
+  trackAllumerUuid: res.body.uuid
+  albumStadeUuid: res.body.album.uuid
+}

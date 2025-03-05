@@ -7,7 +7,7 @@ from .AppField import AppField
 
 class AppCharField(AppField, serializers.CharField):
     """
-    Custom CharField that raises AppValidationError instead of DRF's ValidationError.
+    Custom CharField that calls fail() instead of DRF's ValidationError.
     This ensures consistent error handling across the application.
 
     Unlike PrimaryKeyRelatedField which natively uses fail() for validation errors,

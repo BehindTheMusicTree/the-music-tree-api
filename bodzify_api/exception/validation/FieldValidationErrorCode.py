@@ -112,6 +112,7 @@ class FieldValidationErrorCode(str, Enum):
     # File Validation
     FILE_TOO_LARGE = 'file_too_large'
     FILE_TOO_SMALL = 'file_too_small'
+    FILE_DOWNLOAD_FAILED = 'file_download_failed'
     INVALID_FILE_TYPE = 'invalid_file_type'
     INVALID_FILENAME = 'invalid_filename'
     INVALID_EXTENSION = 'invalid_extension'

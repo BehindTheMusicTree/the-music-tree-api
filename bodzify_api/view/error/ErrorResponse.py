@@ -41,11 +41,10 @@ class ErrorResponse:
             ErrorResponseFields.FieldErrors.CODE: api_error_code,
             ErrorResponseFields.MESSAGE: status_message,
             ErrorResponseFields.SUCCESS: False,
-            ErrorResponseFields.DETAILS: [error_detail]
+            ErrorResponseFields.DETAILS: error_detail
         }
 
-        return JsonResponse(data=response_data, status=http_status, safe=False
-                            )
+        return JsonResponse(data=response_data, status=http_status, safe=False)
 
     @staticmethod
     def _parse_error_message_from_various_error_formats(error: Any) -> tuple[str, str]:

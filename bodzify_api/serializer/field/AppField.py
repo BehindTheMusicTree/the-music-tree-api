@@ -18,6 +18,7 @@ class AppField(Field):
         'null': FieldValidationErrorCode.REQUIRED,
         'blank': FieldValidationErrorCode.BLANK,
         'invalid': FieldValidationErrorCode.INVALID_FORMAT,
+        'invalid_extension': FieldValidationErrorCode.INVALID_EXTENSION,
         'invalid_choice': FieldValidationErrorCode.INVALID_ENUM,
         'does_not_exist': FieldValidationErrorCode.INVALID_REFERENCE,
         'incorrect_type': FieldValidationErrorCode.INVALID_FORMAT,
@@ -54,6 +55,8 @@ class AppField(Field):
             msg = f"Invalid input for {class_name}."
 
         if key == 'invalid':
+            if msg.startswith('Failed to download file:'):
+                code = FieldValidationErrorCode.FILE_DOWNLOAD_FAILED
             code = self.invalid_message_validation_error_code_mapping.get(msg, FieldValidationErrorCode.DEFAULT)
         else:
             code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)

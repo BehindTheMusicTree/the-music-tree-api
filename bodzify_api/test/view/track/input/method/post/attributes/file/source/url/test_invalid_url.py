@@ -16,4 +16,4 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.TRACK_FILE_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_URL
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FILE_DOWNLOAD_FAILED
