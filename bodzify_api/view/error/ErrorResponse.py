@@ -97,13 +97,22 @@ class ErrorResponse:
     def from_unhandled_integrity_error(exception: IntegrityError) -> JsonResponse:
         error_detail = {
             ErrorResponseFields.FieldErrors.MESSAGE:
-            ErrorResponseFields.DefaultFieldValidationValues.DbIntegrityError.MESSAGE,
+                ErrorResponseFields.DefaultFieldValidationValues.DbIntegrityError.MESSAGE,
             ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
         }
         return ErrorResponse._create_error_response(
             error_detail=error_detail,
             api_error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR
         )
+
+    @staticmethod
+    def from_unhandled_exception(exception: Exception) -> JsonResponse:
+        error_detail = {
+            ErrorResponseFields.FieldErrors.MESSAGE: str(exception),
+            ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
+        }
+        return ErrorResponse._create_error_response(
+            error_detail=error_detail, api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT)
 
     @staticmethod
     def from_validation_error(
