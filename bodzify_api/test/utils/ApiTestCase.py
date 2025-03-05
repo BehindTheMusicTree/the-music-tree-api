@@ -94,18 +94,18 @@ class ApiTestCase(TestCase, Generic[T]):
         """
         self.bad_request_result = response.json()
         bad_request_result_details = self.bad_request_result[ErrorResponseFields.DETAILS]
-        self.bad_request_result_field_errors_json = bad_request_result_details[ErrorResponseFields.FIELD_ERRORS]
-
-        # Convert field errors to a list format for easier testing
-        self.bad_request_result_field_errors = []
-        for field_name, error_list in self.bad_request_result_field_errors_json.items():
-            # error_list is a list of error dictionaries
-            for error in error_list:
-                self.bad_request_result_field_errors.append({
-                    ErrorResponseFields.FieldErrors.FIELD: field_name,
-                    ErrorResponseFields.FieldErrors.MESSAGE: error[ErrorResponseFields.MESSAGE],
-                    ErrorResponseFields.FieldErrors.CODE: error[ErrorResponseFields.FieldErrors.CODE]
-                })
+        self.bad_request_result_field_errors_json = bad_request_result_details.get(ErrorResponseFields.FIELD_ERRORS)
+        if self.bad_request_result_field_errors_json:
+            # Convert field errors to a list format for easier testing
+            self.bad_request_result_field_errors = []
+            for field_name, error_list in self.bad_request_result_field_errors_json.items():
+                # error_list is a list of error dictionaries
+                for error in error_list:
+                    self.bad_request_result_field_errors.append({
+                        ErrorResponseFields.FieldErrors.FIELD: field_name,
+                        ErrorResponseFields.FieldErrors.MESSAGE: error[ErrorResponseFields.MESSAGE],
+                        ErrorResponseFields.FieldErrors.CODE: error[ErrorResponseFields.FieldErrors.CODE]
+                    })
 
     def _set_results_attributes(self, response):
         response_json = response.json()
