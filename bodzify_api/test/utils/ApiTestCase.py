@@ -47,11 +47,7 @@ class ApiTestCase(TestCase, Generic[T]):
     def _login_as_test_admin(self):
         self._login_as_user(self.test_admin_user)
 
-    def _set_saved_object(self, response):
-        """Get model instance from response UUID.
-
-        Child classes must define model_class class attribute.
-        """
+    def _set_saved_object_from_response(self, response):
         if not hasattr(self, 'model_class') or self.model_class is None:
             raise NotImplementedError("Test case must define model_class")
 
@@ -64,7 +60,7 @@ class ApiTestCase(TestCase, Generic[T]):
     def _set_single_result(self, response):
         self.result = response.json()
         if hasattr(self, 'model_class'):
-            self._set_saved_object(response)
+            self._set_saved_object_from_response(response)
         else:
             raise NotImplementedError("Test case must define model_class")
 

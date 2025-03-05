@@ -16,7 +16,7 @@ class GenreTestCase(ApiTestCase[Genre]):
         self.detail_endpoint = 'genre-detail'
         self.list_endpoint = 'genre-list'
 
-    def _set_saved_object(self, response):
+    def _set_saved_object_from_response(self, response):
         """Override base method to add user filter to query."""
         uuid = response.json()[Fields.UUID]
         self.saved_object = self.model_class.objects.get(user=self.test_user1, uuid=uuid)  # type: ignore

@@ -3,45 +3,19 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as LibTrackExtractFields
 from bodzify_api.test.utils.ApiTestCase import ApiTestCase
-from bodzify_api.utils import data_transformer
+from bodzify_api.test.utils.lib_track.TestLibTrackUrl import TestLibTrackUrl
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields
 
 
 class LibTrackTestCase(ApiTestCase[LibraryTrack]):
     model_class = LibraryTrack
     saved_object: LibraryTrack
 
-    class SampleMineTrackUrls:
-        WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
-        MP3 = "https://lasonotheque.org/UPLOAD/mp3/0001.mp3"
-
-    SAMPLE_MINE_TRACK_DEFAULT_URL = SampleMineTrackUrls.MP3
-    SAMPLE_MINE_TRACK_DEFAULT_EXTENSION = SAMPLE_MINE_TRACK_DEFAULT_URL.split('.')[-1]
-
-    def _extract(self, **kwargs):
-        return self.api_client.post(path=reverse('library-track-extract'),
-                                    data=kwargs,
-                                    content_type='application/x-www-form-urlencoded',
-                                    handle_response=self._set_results)
-
-    def _extract_default_mine_track(self, extension=None, **kwargs):
-        if extension is None:
-            url = self.SAMPLE_MINE_TRACK_DEFAULT_URL
-        elif extension == 'wav':
-            url = self.SampleMineTrackUrls.WAV
-        elif extension == 'mp3':
-            url = self.SampleMineTrackUrls.MP3
-        else:
-            raise ValueError(f"Unknown extension: {extension}")
-
-        extract_data_dict = {LibTrackExtractFields.URL: url}
-
-        if kwargs:
-            extract_data_dict = data_transformer.merge_two_dicts(extract_data_dict, kwargs)
-
-        response = self._extract(**extract_data_dict)
-        return response
+    def _post_lib_track_from_url(self, test_lib_track_url: TestLibTrackUrl = TestLibTrackUrl.MP3, **kwargs):
+        kwargs[Fields.TRACK_FILE_PUBLIC] = str(test_lib_track_url)
+        return self.api_client.post(
+            path=reverse('library-track-list'), data=kwargs, format='json', handle_response=self._set_results)
 
     def _post_lib_track_without_file(self, **kwargs):
         return self.api_client.post(

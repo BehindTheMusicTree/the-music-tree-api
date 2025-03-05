@@ -13,7 +13,7 @@ class TagTestCase(ApiTestCase[Tag]):
         self.detail_endpoint = 'tag-detail'
         self.list_endpoint = 'tag-list'
 
-    def _set_saved_object(self, response):
+    def _set_saved_object_from_response(self, response):
         """Override base method to add user filter to query."""
         uuid = response.json()[Fields.UUID]
         self.saved_object = self.model_class.objects.get(user=self.test_user1, uuid=uuid)  # type: ignore
