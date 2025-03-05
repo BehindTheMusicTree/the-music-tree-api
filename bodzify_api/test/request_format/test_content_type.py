@@ -8,7 +8,7 @@ from django.http import HttpRequest, HttpResponse
 from django.test import RequestFactory, TestCase
 
 from bodzify_api import settings
-from bodzify_api.middleware.content_type_validation import ContentTypeValidationMiddleware
+from bodzify_api.middleware.ContentTypeValidationMiddleware import ContentTypeValidationMiddleware
 
 
 class ContentTypeValidationMiddlewareTest(TestCase):

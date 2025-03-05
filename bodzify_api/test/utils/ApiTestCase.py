@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Generic, Type, TypeVar, Union
+from typing import Generic, Type, TypeVar, Union, cast
 
 from django.core.management import call_command
 from django.db import models
@@ -55,7 +55,7 @@ class ApiTestCase(TestCase, Generic[T]):
         # At this point model_class is guaranteed to be a Model class with objects manager
         self.saved_object = self.model_class.objects.get(uuid=uuid)  # type: ignore
         if isinstance(self.saved_object, LibraryTrack):
-            self._set_saved_lib_track_metadata(response)
+            self._set_saved_lib_track_metadata()
 
     def _set_single_result(self, response):
         self.result = response.json()
@@ -93,7 +93,7 @@ class ApiTestCase(TestCase, Generic[T]):
         }
         """
         self.bad_request_result = response.json()
-        bad_request_result_details = self.bad_request_result[ErrorResponseFields.DETAILS][0]
+        bad_request_result_details = self.bad_request_result[ErrorResponseFields.DETAILS]
         self.bad_request_result_field_errors_json = bad_request_result_details[ErrorResponseFields.FIELD_ERRORS]
 
         # Convert field errors to a list format for easier testing
@@ -112,16 +112,14 @@ class ApiTestCase(TestCase, Generic[T]):
         self.results = response_json[PaginatedResponseFields.RESULTS]
         self.results_overall_total = response_json[PaginatedResponseFields.OVERALL_TOTAL]
 
-    def _set_saved_lib_track_metadata(self, response):
-        saved_lib_track: LibraryTrack = self.saved_object  # type: ignore
-        self.saved_lib_track_metadata = \
-            audio_metadata.get_merged_app_metadata(file=saved_lib_track.track_file.file)
+    def _set_saved_lib_track_metadata(self):
+        saved_lib_track = cast(LibraryTrack, self.saved_object)
+        self.saved_lib_track_metadata = audio_metadata.get_merged_app_metadata(file=saved_lib_track.track_file.file)
 
     # Defined here and not in LibTrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
-    def _post_lib_track(
-            self, test_lib_track_filename: TestLibTrackFilename = TestLibTrackFilename.DEFAULT_MP3, **kwargs
-    ) -> Union[JsonResponse, HttpResponse]:
+    def _post_lib_track(self, test_lib_track_filename: TestLibTrackFilename = TestLibTrackFilename.DEFAULT_MP3, **kwargs
+                        ) -> Union[JsonResponse, HttpResponse]:
         file_abs_path = self.TEST_FILES_BASE_DIR / test_lib_track_filename
 
         with open(file_abs_path, "rb") as sample_file:

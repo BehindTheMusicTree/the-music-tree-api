@@ -13,7 +13,7 @@ class TagPlaylistTestCase(ApiTestCase):
     def _post_tag_playlist(self, **kwargs):
         return self.api_client.post(path=reverse('tag-playlist-list'),
                                     data=kwargs,
-                                    content_type='application/x-www-form-urlencoded',
+                                    content_type='application/json',
                                     handle_response=self._set_results)
 
     def _retrieve_tag_playlist(self, uuid):
@@ -27,7 +27,7 @@ class TagPlaylistTestCase(ApiTestCase):
     def _put_tag_playlist(self, uuid: UUID, **kwargs):
         return self.api_client.put(path=reverse('tag-playlist-detail', kwargs={'pk': uuid}),
                                    data=kwargs,
-                                   content_type='application/x-www-form-urlencoded',
+                                   content_type='application/json',
                                    handle_response=self._set_results)
 
     def _delete_tag_playlist(self, uuid):

@@ -13,7 +13,7 @@ class GenrePlaylistTestCase(ApiTestCase):
     def _post_genre_playlist(self, **kwargs):
         return self.api_client.post(path=reverse('genre-playlist-list'),
                                     data=kwargs,
-                                    content_type='application/x-www-form-urlencoded',
+                                    content_type='application/json',
                                     handle_response=self._set_results)
 
     def _retrieve_genre_playlist(self, uuid):
@@ -27,7 +27,7 @@ class GenrePlaylistTestCase(ApiTestCase):
     def _put_genre_playlist(self, uuid: UUID, **kwargs):
         return self.api_client.put(path=reverse('genre-playlist-detail', kwargs={'pk': uuid}),
                                    data=kwargs,
-                                   content_type='application/x-www-form-urlencoded',
+                                   content_type='application/json',
                                    handle_response=self._set_results)
 
     def _delete_genre_playlist(self, uuid):

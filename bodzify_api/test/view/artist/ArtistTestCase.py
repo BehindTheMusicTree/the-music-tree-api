@@ -13,7 +13,7 @@ class ArtistTestCase(ApiTestCase[Artist]):
     def _post_artist(self, **kwargs):
         return self.api_client.post(path=reverse('artist-list'),
                                     data=kwargs,
-                                    content_type='application/x-www-form-urlencoded',
+                                    content_type='application/json',
                                     handle_response=self._set_results)
 
     def _get_artists(self, **kwargs):
@@ -26,7 +26,7 @@ class ArtistTestCase(ApiTestCase[Artist]):
     def _put_artist(self, uuid: UUID, **kwargs):
         return self.api_client.put(path=reverse('artist-detail', kwargs={'pk': uuid}),
                                    data=kwargs,
-                                   content_type='application/x-www-form-urlencoded',
+                                   content_type='application/json',
                                    handle_response=self._set_results)
 
     def _delete_artist(self, uuid: UUID):
