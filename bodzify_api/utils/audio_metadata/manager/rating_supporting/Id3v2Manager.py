@@ -220,15 +220,16 @@ class Id3v2Manager(RatingSupportingMetadataManager):
 
     def _extract_mutagen_metadata(self) -> MutagenMetadata:
         try:
-            id3 = ID3(self.audio_file.get_file_path_or_object(), load_v1=False)
-            # Force v2.3 update to ensure compatibility
-            id3.update_to_v23()
-            return id3  # type: ignore[return-value]
+            return ID3(self.audio_file.get_file_path_or_object(), load_v1=False)  # type: ignore[return-value]
         except ID3NoHeaderError:
-            # Create new ID3 instance for files without existing tags
-            id3 = ID3()
-            id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
-            return id3  # type: ignore[return-value]
+            try:
+                id3 = ID3(self.audio_file.get_file_path_or_object(), load_v1=True)
+                id3.clear()  # Exclude ID3v1 tags
+                return id3  # type: ignore[return-value]
+            except ID3NoHeaderError:
+                id3 = ID3()
+                id3.save(self.audio_file.get_file_path_or_object(), v2_version=3)
+                return id3  # type: ignore[return-value]
 
     def _convert_raw_mutagen_metadata_to_dict_with_potential_duplicate_keys(
             self, raw_mutagen_metadata: MutagenMetadata) -> RawMetadataDict:

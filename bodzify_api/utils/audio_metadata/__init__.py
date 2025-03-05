@@ -195,8 +195,9 @@ def update_file_metadata(
         file: FILE_TYPE, app_metadata: AppMetadata, normalized_rating_max_value: int | None = None) -> None:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
-    metadata_manager = _get_metadata_manager(file=file, normalized_rating_max_value=normalized_rating_max_value)
-    metadata_manager.update_file_metadata(app_metadata=app_metadata)
+    prioritary_metadata_manager = _get_metadata_manager(
+        file=file, normalized_rating_max_value=normalized_rating_max_value)
+    prioritary_metadata_manager.update_file_metadata(app_metadata=app_metadata)
 
 
 def delete_metadata(file, tag_format: MetadataFormat | None = None) -> bool:
