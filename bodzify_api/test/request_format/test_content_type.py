@@ -3,7 +3,6 @@ from typing import cast
 
 
 from rest_framework import status
-from rest_framework.exceptions import ParseError, UnsupportedMediaType
 from django.http import HttpRequest, HttpResponse
 from django.test import RequestFactory, TestCase
 
@@ -26,10 +25,8 @@ class ContentTypeValidationMiddlewareTest(TestCase):
 
         request = self.factory.post(
             f'/api/{settings.APP_VERSION}/tracks/', data=double_encoded, content_type='application/json')
-
-        with self.assertRaises(ParseError) as context:
-            self.middleware(request)
-        self.assertIn('Double-encoded JSON detected', str(context.exception))
+        response = self.middleware(request)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_regular_json_then_ok(self):
         data = {"file": "https://example.com/file.mp3"}
@@ -42,10 +39,8 @@ class ContentTypeValidationMiddlewareTest(TestCase):
     def test_missing_content_type_then_error(self):
         data = {"file": "https://example.com/file.mp3"}
         request = self.factory.post(f'/api/{settings.APP_VERSION}/tracks/', data=json.dumps(data), content_type='')
-
-        with self.assertRaises(UnsupportedMediaType) as context:
-            self.middleware(request)
-        self.assertIn('Content-Type header is required', str(context.exception))
+        response = self.middleware(request)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_non_json_request_then_ok(self):
         request = self.factory.get(f'/api/{settings.APP_VERSION}/tracks/')

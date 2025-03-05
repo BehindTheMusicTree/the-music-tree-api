@@ -15,9 +15,8 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
 
     def setUp(self, methods_names_to_implement=None):
         specific_values = [CriterialessPlaylistNames.GENRE, CriterialessPlaylistNames.TAG]
-        return super().setUp(specific_values=specific_values,
-                             allow_empty_value=False,
-                             methods_names_to_implement=methods_names_to_implement)
+        return super().setUp(
+            specific_values=specific_values, methods_names_to_implement=methods_names_to_implement)
 
     def test_not_provided_then_results(self):
         rock_criteria_name = "Rock"
