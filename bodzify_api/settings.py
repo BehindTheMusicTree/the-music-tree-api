@@ -285,7 +285,7 @@ def init_logs_if_needed():
 
 def setup_app_exposure_if_needed():
     global ALLOWED_HOSTS
-
+    global APP_VERSION
     APP_VERSION = load_required_str_env_var('APP_VERSION')
     global API_ROOT_BASE
     API_ROOT_BASE = 'api/' + APP_VERSION + '/'
@@ -528,6 +528,7 @@ def setup_middlewares():
     global MIDDLEWARE
     MIDDLEWARE = [
         f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
+        f'{APP_NAME}.middleware.content_type_validation.ContentTypeValidationMiddleware',
         f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
         f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.security.SecurityMiddleware',
