@@ -71,16 +71,11 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             data[PrivateFields.USER] = request.user
         return data
 
-    def _create_instance(
-            self, request: Request, create_data: dict[str, Any], creation_type: str | None) -> T:
+    def _create_instance(self, request: Request, create_data: dict[str, Any]) -> T:
         serializer_class = self._require_serializer(SerializerType.CREATE)
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
-
-        if creation_type:
-            return self.model_class.objects.create(creation_type=creation_type, **validated_data)
-        else:
-            return self.model_class.objects.create(**validated_data)
+        return self.model_class.objects.create(**validated_data)
 
     def _update_instance(self, request: Request, instance: T, update_data: dict[str, Any]) -> T:
         serializer_class = self._require_serializer(SerializerType.UPDATE)
@@ -102,10 +97,9 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
         return self.get_paginated_response(data)
 
-    def _handle_post(self, request: Request, creation_type: str | None = None) -> Response:
+    def _handle_post(self, request: Request) -> Response:
         create_data_in_snake_case = data_transformer.form_data_to_snake_case(request.data)
-        instance = self._create_instance(
-            request=request, create_data=create_data_in_snake_case, creation_type=creation_type)
+        instance = self._create_instance(request=request, create_data=create_data_in_snake_case)
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
         headers = self.get_success_headers(serializer.data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)

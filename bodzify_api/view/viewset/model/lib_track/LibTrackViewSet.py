@@ -13,7 +13,6 @@ from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album_a
     LibTrackWithoutAlbumPlaylistGenreSerializer
 )
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
-from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 
 class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
@@ -63,7 +62,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         """)
                    )
     def create(self, request, *args, **kwargs):
-        return self._handle_post(request=request, creation_type=LibTrackCreationType.POST)
+        return self._handle_post(request)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
