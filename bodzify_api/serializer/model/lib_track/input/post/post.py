@@ -131,7 +131,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
         data = self._get_schema_data_from_post_data(user=user, **data)
 
         # If title is not provided, generate it from the file
-        if PostFields.TITLE not in data or data.get(SchemaFields.TITLE) in [None, '']:
+        if data.get(PostFields.TITLE) in [None, '']:
             file = cast(DjangoFile, data.get(PostFields.TRACK_FILE_PUBLIC))
             if isinstance(file, str):  # URL case
                 # Get filename from URL
